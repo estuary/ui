@@ -90,7 +90,7 @@ function Topbar(props: TopbarProps) {
                         right: 0,
                     }}
                 >
-                    <IconButton aria-label="Open alertas panel">
+                    <IconButton aria-label="Open alerts panel">
                         <Badge
                             badgeContent={10}
                             variant="dot"
