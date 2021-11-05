@@ -20,7 +20,8 @@ export default function App() {
     const [navigationOpen, setNavigationOpen] = React.useState(false);
     const [navWidth, setNavigationWidth] = React.useState(railNavWidth);
 
-    const toggleNavigationDrawer = () => {
+    // Fake change to test prettier
+     const toggleNavigationDrawer = () => {
         setNavigationWidth(navigationOpen ? railNavWidth : fullNavWidth);
         setNavigationOpen(!navigationOpen);
     };
