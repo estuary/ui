@@ -23,12 +23,15 @@
         "react-router-dom": "^6.0.0-beta.8"
     },
     "devDependencies": {
+        "@testing-library/jest-dom": "^5.15.0",
+        "@testing-library/react": "^12.1.2",
+        "eslint-plugin-jest-dom": "^3.9.2",
+        "husky": "^7.0.0",
         "lint-staged": "^11.2.6",
         "prettier": "^2.4.1",
         "react-scripts": "latest",
         "tsc-files": "^1.1.2",
-        "typescript": "latest",
-        "husky": "^7.0.0"
+        "typescript": "latest"
     },
     "scripts": {
         "start": "react-scripts start",
@@ -47,10 +50,13 @@
         "extends": [
             "react-app",
             "react-app/jest",
+            "plugin:jest-dom/recommended",
             "plugin:jsx-a11y/recommended"
         ],
         "plugins": [
-            "jsx-a11y"
+            "jsx-a11y",
+            "testing-library",
+            "jest-dom"
         ]
     },
     "browserslist": {
