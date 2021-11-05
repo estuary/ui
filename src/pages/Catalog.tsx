@@ -1,26 +1,31 @@
-import React, { useCallback } from 'react';
-import {
-    Toolbar,
-    Button,
-    ToggleButtonGroup,
-    ToggleButton,
-    Box,
-    Typography,
-    TextField,
-    Stack,
-} from '@mui/material';
-
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
+import {
+    Box,
+    Button,
+    Stack,
+    TextField,
+    ToggleButton,
+    ToggleButtonGroup,
+    Toolbar,
+    Typography,
+} from '@mui/material';
 import InputAdornment from '@mui/material/InputAdornment';
+import NewCaptureModal from 'components/NewCaptureModal';
 import PageContainer from 'components/shared/PageContainer';
+import React, { useCallback } from 'react';
 
 export default function Catalog() {
+    const [newCaptureOpen, setNewCaptureOpen] = React.useState(false);
     const [searchScope, setSearchScope] = React.useState<string | null>('all');
 
     const handleAlignment = useCallback(() => {
         setSearchScope(searchScope);
     }, [searchScope]);
+
+    const openNewCaptureModal = () => {
+        setNewCaptureOpen(true);
+    };
 
     return (
         <PageContainer>
@@ -35,9 +40,7 @@ export default function Catalog() {
                     variant="contained"
                     color="success"
                     startIcon={<AddIcon />}
-                    onClick={() =>
-                        alert("Hey - this is where we'll open a modal.")
-                    }
+                    onClick={openNewCaptureModal}
                     sx={{
                         borderTopRightRadius: 12,
                         borderBottomRightRadius: 12,
@@ -51,6 +54,7 @@ export default function Catalog() {
                     direction="row"
                     sx={{
                         alignItems: 'baseline',
+                        display: 'none',
                     }}
                 >
                     <TextField
@@ -124,6 +128,10 @@ export default function Catalog() {
                     </Typography>
                 </Box>
             </Box>
+            <NewCaptureModal
+                open={newCaptureOpen}
+                setOpen={setNewCaptureOpen}
+            />
         </PageContainer>
     );
 }
