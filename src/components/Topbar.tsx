@@ -1,7 +1,6 @@
-import { Badge, Box, IconButton, Stack, styled, Toolbar } from '@mui/material';
+import { Box, IconButton, Stack, styled, Toolbar } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
 
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import MenuIcon from '@mui/icons-material/Menu';
 
 import Logo from './navigation/Logo';

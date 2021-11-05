@@ -40,7 +40,7 @@ const ListItemLink = (props: ListItemLinkProps) => {
                     />
                 );
             }),
-        [link]
+        [disabled, link]
     );
 
     return (
