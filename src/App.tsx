@@ -38,7 +38,7 @@ export default function App() {
             /
             <Box sx={{ gridArea: 'header' }}>
                 <Topbar
-                    title="Explore &amp; Share"
+                    title="Estuary Global Actions"
                     isNavigationOpen={navigationOpen}
                     onNavigationToggle={toggleNavigationDrawer}
                 />
