@@ -1,9 +1,18 @@
 {
-    "name": "estuary-react",
-    "version": "0.1.0",
+    "name": "estuary-ui",
+    "version": "0.1.0-alpha",
     "description": "A web based UI to assist in working with Estuary Flow",
     "main": "index.js",
     "private": true,
+    "scripts": {
+        "start": "react-scripts start",
+        "build": "react-scripts build",
+        "test": "react-scripts test",
+        "pre-commit": "lint-staged",
+        "prepare": "husky install",
+        "format": "prettier --write 'src/**/*.{ts,tsx}'",
+        "lint": "eslint --ext ts,tsx src"
+    },
     "dependencies": {
         "@emotion/react": "latest",
         "@emotion/styled": "latest",
@@ -14,8 +23,6 @@
         "@mui/icons-material": "latest",
         "@mui/material": "latest",
         "@mui/x-data-grid": "latest",
-        "@types/react": "latest",
-        "@types/react-dom": "latest",
         "prop-types": "^15.7.2",
         "react": "latest",
         "react-dom": "latest",
@@ -23,6 +30,8 @@
         "react-router-dom": "^6.0.0-beta.8"
     },
     "devDependencies": {
+        "@types/react": "latest",
+        "@types/react-dom": "latest",
         "@testing-library/jest-dom": "^5.15.0",
         "@testing-library/react": "^12.1.2",
         "eslint-plugin-jest-dom": "^3.9.2",
@@ -33,30 +42,14 @@
         "tsc-files": "^1.1.2",
         "typescript": "latest"
     },
-    "scripts": {
-        "start": "react-scripts start",
-        "build": "react-scripts build",
-        "test": "react-scripts test",
-        "lint": "eslint . --color",
-        "pre-commit": "lint-staged",
-        "prepare": "husky install"
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
     },
     "lint-staged": {
         "*.{js,jsx,ts,tsx,json,css,scss,md}": [
             "prettier --write"
-        ]
-    },
-    "eslintConfig": {
-        "extends": [
-            "react-app",
-            "react-app/jest",
-            "plugin:jest-dom/recommended",
-            "plugin:jsx-a11y/recommended"
-        ],
-        "plugins": [
-            "jsx-a11y",
-            "testing-library",
-            "jest-dom"
         ]
     },
     "browserslist": {

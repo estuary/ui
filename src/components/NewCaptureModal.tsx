@@ -63,6 +63,11 @@ function NewCaptureModal(props: NewCaptureModalProps) {
                 <DialogContentText>
                     Please fill out the form below
                 </DialogContentText>
+            </DialogContent>
+            <DialogContent dividers>
+                <DialogContentText>
+                    Please fill out the form below
+                </DialogContentText>
                 <JsonForms
                     schema={CaptureSchema}
                     data={newCaptureFormData}
