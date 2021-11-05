@@ -1,3 +1,10 @@
 {
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true,
+        "source.fixAll.eslint": true
+    },
+    "eslint.codeAction.showDocumentation": {
+        "enable": true
+    }
 }
