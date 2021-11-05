@@ -1,10 +1,10 @@
+import { Skeleton } from '@mui/material';
 import Box from '@mui/material/Box';
+import Home from 'pages/Home';
 import React, { Suspense } from 'react';
+import { Route, Routes } from 'react-router';
 import Navigation from './components/navigation/Navigation';
 import Topbar from './components/Topbar';
-
-import { Skeleton } from '@mui/material';
-import { Route, Routes } from 'react-router';
 
 const Admin = React.lazy(() => import('./pages/Admin'));
 const Catalog = React.lazy(() => import('./pages/Catalog'));
@@ -58,6 +58,7 @@ export default function App() {
             >
                 <Suspense fallback={<Skeleton animation="wave" />}>
                     <Routes>
+                        <Route path="/" element={<Home />} />
                         <Route path="/app">
                             <Route
                                 path="collections"

@@ -1,14 +1,12 @@
-import { Box, List, Toolbar, useMediaQuery, useTheme } from '@mui/material';
-
-import MuiDrawer from '@mui/material/Drawer';
-import ListItemLink from './ListItemLink';
-
+import ExploreIcon from '@mui/icons-material/Explore';
+import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
 //TODO - These are not final
 import InputIcon from '@mui/icons-material/Input';
-import TransformIcon from '@mui/icons-material/Transform';
 import StorageIcon from '@mui/icons-material/Storage';
-import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
-import ExploreIcon from '@mui/icons-material/Explore';
+import TransformIcon from '@mui/icons-material/Transform';
+import { Box, List, Toolbar, useMediaQuery, useTheme } from '@mui/material';
+import MuiDrawer from '@mui/material/Drawer';
+import ListItemLink from './ListItemLink';
 
 type navigationProps = {
     open: boolean;

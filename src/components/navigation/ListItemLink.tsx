@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import { ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { NavLink } from 'react-router-dom';
 
 const ListItemLinkTypes = {
@@ -26,7 +26,7 @@ const ListItemLink = (props: ListItemLinkProps) => {
                         to={link}
                         ref={ref}
                         {...props}
-                        className={function (isActive: boolean) {
+                        className={function ({ isActive }) {
                             const classList = [props.className];
 
                             if (disabled) {

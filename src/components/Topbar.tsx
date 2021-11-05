@@ -1,10 +1,8 @@
+import MenuIcon from '@mui/icons-material/Menu';
 import { Box, IconButton, Stack, styled, Toolbar } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
-
-import MenuIcon from '@mui/icons-material/Menu';
-
-import Logo from './navigation/Logo';
 import HelpMenu from './help/HelpMenu';
+import Logo from './navigation/Logo';
 
 type TopbarProps = {
     isNavigationOpen: boolean;
@@ -34,6 +32,7 @@ function Topbar(props: TopbarProps) {
             <Toolbar
                 sx={{
                     px: 1,
+                    justifyContent: 'space-between',
                 }}
             >
                 <Box
@@ -70,14 +69,7 @@ function Topbar(props: TopbarProps) {
                     </IconButton>
                 </Paper> */}
 
-                <Stack
-                    direction="row"
-                    spacing={2}
-                    sx={{
-                        position: 'absolute',
-                        right: 0,
-                    }}
-                >
+                <Stack direction="row" spacing={2}>
                     {/* <IconButton aria-label="Open alerts panel">
                         <Badge
                             badgeContent={0}
