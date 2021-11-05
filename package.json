@@ -42,7 +42,7 @@
     }
   },
   "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx,json,md}": [
+    "*.{js,jsx,ts,tsx,json,md}": [
       "format"
     ]
   },
