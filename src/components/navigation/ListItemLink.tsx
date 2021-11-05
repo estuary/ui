@@ -7,28 +7,36 @@ const ListItemLinkTypes = {
     icon: PropTypes.element,
     title: PropTypes.string.isRequired,
     link: PropTypes.string.isRequired,
+    disabled: PropTypes.bool,
 };
 
 type ListItemLinkProps = PropTypes.InferProps<typeof ListItemLinkTypes>;
 
 const ListItemLink = (props: ListItemLinkProps) => {
-    const { icon, title, link } = props;
+    const { icon, title, link, disabled } = props;
 
     const renderLink = React.useMemo(
         () =>
             React.forwardRef(function (props: any, ref: any) {
                 const activeClassName = 'Mui-selected';
+                const disabledClassName = 'Mui-disabled';
 
                 return (
                     <NavLink
                         to={link}
                         ref={ref}
                         {...props}
-                        className={({ isActive }) =>
-                            [props.className, isActive ? activeClassName : null]
-                                .filter(Boolean)
-                                .join(' ')
-                        }
+                        className={function (isActive: boolean) {
+                            const classList = [props.className];
+
+                            if (disabled) {
+                                classList.push(disabledClassName);
+                            } else if (isActive) {
+                                classList.push(activeClassName);
+                            }
+
+                            return classList.filter(Boolean).join(' ');
+                        }}
                     />
                 );
             }),

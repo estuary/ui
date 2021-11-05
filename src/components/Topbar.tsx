@@ -1,18 +1,7 @@
-import {
-    Avatar,
-    Badge,
-    Box,
-    IconButton,
-    InputBase,
-    Paper,
-    Stack,
-    styled,
-    Toolbar,
-} from '@mui/material';
+import { Badge, Box, IconButton, Stack, styled, Toolbar } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
 
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import SearchIcon from '@mui/icons-material/Search';
 import MenuIcon from '@mui/icons-material/Menu';
 
 import Logo from './navigation/Logo';
@@ -62,7 +51,7 @@ function Topbar(props: TopbarProps) {
                 </Box>
                 <Logo alt="Estuary" width={120} />
 
-                <Paper
+                {/* <Paper
                     variant="outlined"
                     sx={{
                         mr: 2,
@@ -80,7 +69,7 @@ function Topbar(props: TopbarProps) {
                     >
                         <SearchIcon />
                     </IconButton>
-                </Paper>
+                </Paper> */}
 
                 <Stack
                     direction="row"
@@ -90,18 +79,17 @@ function Topbar(props: TopbarProps) {
                         right: 0,
                     }}
                 >
-                    <IconButton aria-label="Open alerts panel">
+                    {/* <IconButton aria-label="Open alerts panel">
                         <Badge
-                            badgeContent={10}
+                            badgeContent={0}
                             variant="dot"
                             overlap="circular"
                             color="info"
                         >
                             <NotificationsIcon />
                         </Badge>
-                    </IconButton>
+                    </IconButton> */}
                     <HelpMenu />
-                    <Avatar>EU</Avatar>
                 </Stack>
             </Toolbar>
         </AppBar>

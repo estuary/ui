@@ -57,6 +57,7 @@ function Navigation(props: navigationProps) {
                         title="Collections"
                         link="/app/collections"
                         key="Collections"
+                        disabled={true}
                     />
                     <ListItemLink
                         icon={<InputIcon />}
@@ -69,18 +70,21 @@ function Navigation(props: navigationProps) {
                         title="Derivations"
                         link="/app/derivations"
                         key="Derivations"
+                        disabled={true}
                     />
                     <ListItemLink
                         icon={<StorageIcon />}
                         title="Materializations"
                         link="/app/materializations"
                         key="Materializations"
+                        disabled={true}
                     />
                     <ListItemLink
                         icon={<HomeRepairServiceIcon />}
                         title="Administration"
                         link="/app/admin"
                         key="Administration"
+                        disabled={true}
                     />
                 </List>
             </Box>
