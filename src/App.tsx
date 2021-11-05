@@ -13,6 +13,10 @@ const Users = React.lazy(() => import('./pages/Users'));
 const Alerts = React.lazy(() => import('./pages/Alerts'));
 const Logs = React.lazy(() => import('./pages/Logs'));
 
+// test
+const blub = {
+    1: 1,
+};
 export default function App() {
     const railNavWidth = 65;
     const fullNavWidth = 225;
