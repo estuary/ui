@@ -9,12 +9,15 @@ import {
     DialogContentText,
     DialogTitle,
     IconButton,
+    TextField,
     useMediaQuery,
 } from '@mui/material';
 import { useTheme } from '@mui/system';
 import { CaptureSchema } from 'forms/CaptureSchema';
+import { CaptureUISchema } from 'forms/CaptureUISchema';
 import PropTypes from 'prop-types';
 import React from 'react';
+import SourceTypeSelect from './SourceTypeSelect';
 
 NewCaptureModal.propTypes = {
     open: PropTypes.bool.isRequired,
@@ -61,15 +64,20 @@ function NewCaptureModal(props: NewCaptureModalProps) {
             </DialogTitle>
             <DialogContent dividers>
                 <DialogContentText>
-                    Please fill out the form below
+                    To get started please provide a unique name and the source
+                    type of the Capture you want to create.
                 </DialogContentText>
+                <TextField
+                    id="capture-name"
+                    label="Name of capture"
+                    variant="outlined"
+                />
+                <SourceTypeSelect id="source-type-select" />
             </DialogContent>
             <DialogContent dividers>
-                <DialogContentText>
-                    Please fill out the form below
-                </DialogContentText>
                 <JsonForms
                     schema={CaptureSchema}
+                    uischema={CaptureUISchema}
                     data={newCaptureFormData}
                     renderers={vanillaRenderers}
                     cells={vanillaCells}

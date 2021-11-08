@@ -85,8 +85,4 @@ export const CaptureUISchema = {
             ],
         },
     ],
-    options: {
-        variant: 'stepper',
-        showNavButtons: true,
-    },
 };

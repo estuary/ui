@@ -5,18 +5,6 @@ export const CaptureSchema = {
             type: 'string',
             minLength: 1,
         },
-        type: {
-            type: 'string',
-            enum: [
-                'PostgreSQL',
-                'Hadoop',
-                'AWS',
-                'Facebook',
-                'SalesForce',
-                'Azure',
-                'MySQL',
-            ],
-        },
         db: {
             type: 'object',
             properties: {
@@ -47,5 +35,5 @@ export const CaptureSchema = {
             },
         },
     },
-    required: [],
+    required: ['host', 'name', 'port'],
 };

@@ -11,7 +11,7 @@ import {
     Typography,
 } from '@mui/material';
 import InputAdornment from '@mui/material/InputAdornment';
-import NewCaptureModal from 'components/NewCaptureModal';
+import NewCaptureModal from 'components/endpointCreation/NewCaptureModal';
 import PageContainer from 'components/shared/PageContainer';
 import React, { useCallback } from 'react';
 
