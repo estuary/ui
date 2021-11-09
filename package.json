@@ -4,7 +4,6 @@
     "description": "A web based UI to assist in working with Estuary Flow",
     "main": "index.js",
     "private": true,
-    "proxy": "http://localhost:3001",
     "scripts": {
         "start": "react-scripts start",
         "build": "react-scripts build",
@@ -17,20 +16,17 @@
     "dependencies": {
         "@emotion/react": "latest",
         "@emotion/styled": "latest",
-        "@jsonforms/core": "^2.5.2",
-        "@jsonforms/material-renderers": "^2.5.2",
-        "@jsonforms/react": "^2.5.2",
-        "@jsonforms/vanilla-renderers": "^2.5.2",
+        "@jsonforms/core": "latest",
+        "@jsonforms/material-renderers": "latest",
+        "@jsonforms/react": "latest",
+        "@jsonforms/vanilla-renderers": "latest",
         "@mui/icons-material": "latest",
         "@mui/material": "latest",
         "@mui/x-data-grid": "latest",
-        "@xstate/react": "^1.6.2",
-        "prop-types": "^15.7.2",
+        "prop-types": "latest",
         "react": "latest",
         "react-dom": "latest",
-        "react-jsonschema-form-material-ui": "^3.0.0-beta.2",
-        "react-router-dom": "^6.0.0-beta.8",
-        "xstate": "^4.26.0"
+        "react-router-dom": "^6.0.0-beta.8"
     },
     "devDependencies": {
         "@testing-library/jest-dom": "^5.15.0",
