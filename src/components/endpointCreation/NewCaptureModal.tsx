@@ -1,5 +1,3 @@
-import { JsonForms } from '@jsonforms/react';
-import { vanillaCells, vanillaRenderers } from '@jsonforms/vanilla-renderers';
 import CloseIcon from '@mui/icons-material/Close';
 import {
     Button,
@@ -13,10 +11,8 @@ import {
     useMediaQuery,
 } from '@mui/material';
 import { useTheme } from '@mui/system';
-import { CaptureSchema } from 'forms/CaptureSchema';
-import { CaptureUISchema } from 'forms/CaptureUISchema';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { useState } from 'react';
 import SourceTypeSelect from './SourceTypeSelect';
 
 NewCaptureModal.propTypes = {
@@ -28,14 +24,38 @@ type NewCaptureModalProps = PropTypes.InferProps<
 >;
 
 function NewCaptureModal(props: NewCaptureModalProps) {
+    const [sourceType] = useState('');
+    const [currentSchema, setCurrentSchema] = useState({
+        isFetching: true,
+        schema: {},
+    });
+
     const { open, setOpen } = props;
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
-    const [newCaptureFormData, setNewCaptureFormData] = React.useState({});
-
     const handleClose = () => {
         setOpen(false);
+    };
+
+    const getSourceDetails = async (key: string) => {
+        setCurrentSchema({ schema: {}, isFetching: true });
+        fetch(`http://localhost:3001/source/details/${key}`)
+            .then((res) => res.json())
+            .then(
+                (result) => {
+                    setCurrentSchema({
+                        isFetching: false,
+                        schema: result,
+                    });
+                },
+                (error) => {
+                    setCurrentSchema({
+                        isFetching: false,
+                        schema: {},
+                    });
+                }
+            );
     };
 
     return (
@@ -72,17 +92,16 @@ function NewCaptureModal(props: NewCaptureModalProps) {
                     label="Name of capture"
                     variant="outlined"
                 />
-                <SourceTypeSelect id="source-type-select" />
+                <SourceTypeSelect
+                    id="source-type-select"
+                    type={sourceType}
+                    onSourceChange={getSourceDetails}
+                />
             </DialogContent>
             <DialogContent dividers>
-                <JsonForms
-                    schema={CaptureSchema}
-                    uischema={CaptureUISchema}
-                    data={newCaptureFormData}
-                    renderers={vanillaRenderers}
-                    cells={vanillaCells}
-                    onChange={({ data }) => setNewCaptureFormData(data)}
-                />
+                {currentSchema.isFetching
+                    ? 'Fetching schema...'
+                    : JSON.stringify(currentSchema.schema)}
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose}>Cancel</Button>
