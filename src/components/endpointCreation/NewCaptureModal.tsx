@@ -1,3 +1,8 @@
+import {
+    materialCells,
+    materialRenderers,
+} from '@jsonforms/material-renderers';
+import { JsonForms } from '@jsonforms/react';
 import CloseIcon from '@mui/icons-material/Close';
 import {
     Button,
@@ -24,38 +29,65 @@ type NewCaptureModalProps = PropTypes.InferProps<
 >;
 
 function NewCaptureModal(props: NewCaptureModalProps) {
-    const [sourceType] = useState('');
-    const [currentSchema, setCurrentSchema] = useState({
-        isFetching: true,
-        schema: {},
-    });
-
+    const initialSchemaState = {
+        error: null,
+        schema: null,
+    };
     const { open, setOpen } = props;
+
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
+    const [sourceType] = useState('');
+    const [currentSchema, setCurrentSchema] = useState(initialSchemaState);
+    const [newCaptureFormData, setNewCaptureFormData] = useState({});
+
     const handleClose = () => {
+        setCurrentSchema(initialSchemaState);
         setOpen(false);
     };
 
+    const jsonFormRendered = (() => {
+        if (currentSchema.error !== null) {
+            return currentSchema.error;
+        } else {
+            if (currentSchema.schema !== null) {
+                return (
+                    <JsonForms
+                        schema={currentSchema.schema}
+                        data={newCaptureFormData}
+                        renderers={materialRenderers}
+                        cells={materialCells}
+                        onChange={({ data }) => setNewCaptureFormData(data)}
+                    />
+                );
+            } else {
+                return 'Please select a source type above to get started.';
+            }
+        }
+    })();
+
     const getSourceDetails = async (key: string) => {
-        setCurrentSchema({ schema: {}, isFetching: true });
-        fetch(`http://localhost:3001/source/details/${key}`)
-            .then((res) => res.json())
-            .then(
-                (result) => {
-                    setCurrentSchema({
-                        isFetching: false,
-                        schema: result,
-                    });
-                },
-                (error) => {
-                    setCurrentSchema({
-                        isFetching: false,
-                        schema: {},
-                    });
-                }
-            );
+        setCurrentSchema(initialSchemaState);
+        if (key !== '') {
+            setCurrentSchema(initialSchemaState);
+            fetch(`http://localhost:3001/source/details/${key}`)
+                .then((response) => response.json())
+                .then(
+                    (result) => {
+                        setCurrentSchema({
+                            error: null,
+                            schema: result,
+                        });
+                    },
+                    (error) => {
+                        setCurrentSchema({
+                            schema: null,
+                            error: error.message,
+                        });
+                    }
+                );
+        }
     };
 
     return (
@@ -98,11 +130,7 @@ function NewCaptureModal(props: NewCaptureModalProps) {
                     onSourceChange={getSourceDetails}
                 />
             </DialogContent>
-            <DialogContent dividers>
-                {currentSchema.isFetching
-                    ? 'Fetching schema...'
-                    : JSON.stringify(currentSchema.schema)}
-            </DialogContent>
+            <DialogContent dividers>{jsonFormRendered}</DialogContent>
             <DialogActions>
                 <Button onClick={handleClose}>Cancel</Button>
                 <Button onClick={handleClose}>Save</Button>
