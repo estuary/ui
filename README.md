@@ -2,9 +2,11 @@
 
 The web UI for Estuary Flow.
 
-# How do I run it?
+# How do I run the UI?
 
 To get it started please look at build.md
+
+Also - there is a test server that needs started. That is current being stored in the temp-test-server folder. Look at the readme in there for how to start it.
 
 # What is the status?
 

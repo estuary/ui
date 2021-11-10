@@ -1,0 +1,20 @@
+{
+  "name": "testapp",
+  "version": "0.0.0-alpha",
+  "description": "Fake server to stub out making calls to Flow's backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node ./server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Travis Jenkins",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "express": "^4.17.1",
+    "extract-json-string": "^1.0.1",
+    "file-lines-count": "^1.0.1",
+    "shelljs": "^0.8.4",
+    "thread-sleep": "^2.2.0"
+  }
+}

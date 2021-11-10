@@ -20,7 +20,7 @@ function SourceTypeSelect(props: SourceTypeProps) {
     // this useEffect will run once
     // similar to componentDidMount()
     useEffect(() => {
-        fetch('http://localhost:3001/source/all')
+        fetch('http://localhost:3001/sources/all')
             .then((res) => res.json())
             .then(
                 (result) => {
