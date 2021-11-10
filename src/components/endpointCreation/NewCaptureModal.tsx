@@ -5,13 +5,16 @@ import {
 import { JsonForms } from '@jsonforms/react';
 import CloseIcon from '@mui/icons-material/Close';
 import {
+    Box,
     Button,
     Dialog,
     DialogActions,
     DialogContent,
     DialogContentText,
     DialogTitle,
+    Fade,
     IconButton,
+    LinearProgress,
     TextField,
     useMediaQuery,
 } from '@mui/material';
@@ -31,6 +34,7 @@ type NewCaptureModalProps = PropTypes.InferProps<
 function NewCaptureModal(props: NewCaptureModalProps) {
     const initialSchemaState = {
         error: null,
+        fetching: false,
         schema: null,
     };
     const { open, setOpen } = props;
@@ -62,27 +66,30 @@ function NewCaptureModal(props: NewCaptureModalProps) {
                     />
                 );
             } else {
-                return 'Please select a source type above to get started.';
+                return null;
             }
         }
     })();
 
     const getSourceDetails = async (key: string) => {
-        setCurrentSchema(initialSchemaState);
-        if (key !== '') {
+        if (key === '') {
             setCurrentSchema(initialSchemaState);
+        } else {
+            setCurrentSchema({ ...initialSchemaState, fetching: true });
             fetch(`http://localhost:3001/source/details/${key}`)
                 .then((response) => response.json())
                 .then(
                     (result) => {
                         setCurrentSchema({
                             error: null,
+                            fetching: false,
                             schema: result,
                         });
                     },
                     (error) => {
                         setCurrentSchema({
                             schema: null,
+                            fetching: false,
                             error: error.message,
                         });
                     }
@@ -130,7 +137,25 @@ function NewCaptureModal(props: NewCaptureModalProps) {
                     onSourceChange={getSourceDetails}
                 />
             </DialogContent>
-            <DialogContent dividers>{jsonFormRendered}</DialogContent>
+            <DialogContent dividers>
+                <Box sx={{ width: '100%' }}>
+                    {currentSchema.fetching ? (
+                        <Fade
+                            in={currentSchema.fetching}
+                            style={{
+                                transitionDelay: currentSchema.fetching
+                                    ? '900ms'
+                                    : '0ms',
+                            }}
+                            unmountOnExit
+                        >
+                            <LinearProgress color="secondary" />
+                        </Fade>
+                    ) : (
+                        jsonFormRendered
+                    )}
+                </Box>
+            </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose}>Cancel</Button>
                 <Button onClick={handleClose}>Save</Button>
