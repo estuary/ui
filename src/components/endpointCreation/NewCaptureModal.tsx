@@ -44,6 +44,27 @@ function NewCaptureModal(
     const [currentSchema, setCurrentSchema] = useState(initialSchemaState);
     const [newCaptureFormData, setNewCaptureFormData] = useState({});
 
+    const fetchSchemaForForm = (key: string) => {
+        fetch(`http://localhost:3001/source/details/${key}`)
+            .then((response) => response.json())
+            .then(
+                (result) => {
+                    setCurrentSchema({
+                        error: null,
+                        fetching: false,
+                        schema: result,
+                    });
+                },
+                (error) => {
+                    setCurrentSchema({
+                        schema: null,
+                        fetching: false,
+                        error: error.message,
+                    });
+                }
+            );
+    };
+
     const handleClose = () => {
         setCurrentSchema(initialSchemaState);
 
@@ -76,26 +97,13 @@ function NewCaptureModal(
             setCurrentSchema(initialSchemaState);
         } else {
             setCurrentSchema({ ...initialSchemaState, fetching: true });
-            fetch(`http://localhost:3001/source/details/${key}`)
-                .then((response) => response.json())
-                .then(
-                    (result) => {
-                        setCurrentSchema({
-                            error: null,
-                            fetching: false,
-                            schema: result,
-                        });
-                    },
-                    (error) => {
-                        setCurrentSchema({
-                            schema: null,
-                            fetching: false,
-                            error: error.message,
-                        });
-                    }
-                );
+            fetchSchemaForForm(key);
         }
     };
+
+    if (params.sourceType) {
+        fetchSchemaForForm(params.sourceType);
+    }
 
     return (
         <Dialog
