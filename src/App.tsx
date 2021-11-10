@@ -1,5 +1,6 @@
 import { Skeleton } from '@mui/material';
 import Box from '@mui/material/Box';
+import NewCaptureModal from 'components/endpointCreation/NewCaptureModal';
 import Home from 'pages/Home';
 import React, { Suspense } from 'react';
 import { Route, Routes } from 'react-router';
@@ -64,7 +65,12 @@ export default function App() {
                                 path="collections"
                                 element={<Collections />}
                             />
-                            <Route path="captures" element={<Catalog />} />
+                            <Route path="captures" element={<Catalog />}>
+                                <Route
+                                    path="new"
+                                    element={<NewCaptureModal />}
+                                />
+                            </Route>
                             <Route path="derivations" element={<Catalog />} />
                             <Route
                                 path="materializations"

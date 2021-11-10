@@ -11,21 +11,16 @@ import {
     Typography,
 } from '@mui/material';
 import InputAdornment from '@mui/material/InputAdornment';
-import NewCaptureModal from 'components/endpointCreation/NewCaptureModal';
 import PageContainer from 'components/shared/PageContainer';
 import React, { useCallback } from 'react';
+import { Link, Outlet } from 'react-router-dom';
 
 export default function Catalog() {
-    const [newCaptureOpen, setNewCaptureOpen] = React.useState(false);
     const [searchScope, setSearchScope] = React.useState<string | null>('all');
 
     const handleAlignment = useCallback(() => {
         setSearchScope(searchScope);
     }, [searchScope]);
-
-    const openNewCaptureModal = () => {
-        setNewCaptureOpen(true);
-    };
 
     return (
         <PageContainer>
@@ -36,20 +31,21 @@ export default function Catalog() {
                     justifyContent: 'space-between',
                 }}
             >
-                <Button
-                    variant="contained"
-                    color="success"
-                    startIcon={<AddIcon />}
-                    onClick={openNewCaptureModal}
-                    sx={{
-                        borderTopRightRadius: 12,
-                        borderBottomRightRadius: 12,
-                        borderBottomLeftRadius: 12,
-                        height: 40,
-                    }}
-                >
-                    New Capture
-                </Button>
+                <Link to={'new'}>
+                    <Button
+                        variant="contained"
+                        color="success"
+                        startIcon={<AddIcon />}
+                        sx={{
+                            borderTopRightRadius: 12,
+                            borderBottomRightRadius: 12,
+                            borderBottomLeftRadius: 12,
+                            height: 40,
+                        }}
+                    >
+                        New Capture
+                    </Button>
+                </Link>
                 <Stack
                     direction="row"
                     sx={{
@@ -128,10 +124,7 @@ export default function Catalog() {
                     </Typography>
                 </Box>
             </Box>
-            <NewCaptureModal
-                open={newCaptureOpen}
-                setOpen={setNewCaptureOpen}
-            />
+            <Outlet />
         </PageContainer>
     );
 }

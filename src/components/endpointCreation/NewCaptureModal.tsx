@@ -12,33 +12,29 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
-    Fade,
+    Divider,
     IconButton,
-    LinearProgress,
     TextField,
     useMediaQuery,
 } from '@mui/material';
 import { useTheme } from '@mui/system';
+import PaitentLoad from 'components/shared/PaitentLoad';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import SourceTypeSelect from './SourceTypeSelect';
 
-NewCaptureModal.propTypes = {
-    open: PropTypes.bool.isRequired,
-    setOpen: PropTypes.func.isRequired,
-};
-type NewCaptureModalProps = PropTypes.InferProps<
-    typeof NewCaptureModal.propTypes
->;
-
-function NewCaptureModal(props: NewCaptureModalProps) {
+NewCaptureModal.propTypes = {};
+function NewCaptureModal(
+    props: PropTypes.InferProps<typeof NewCaptureModal.propTypes>
+) {
     const initialSchemaState = {
         error: null,
         fetching: false,
         schema: null,
     };
-    const { open, setOpen } = props;
 
+    const navigate = useNavigate();
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -48,7 +44,9 @@ function NewCaptureModal(props: NewCaptureModalProps) {
 
     const handleClose = () => {
         setCurrentSchema(initialSchemaState);
-        setOpen(false);
+
+        //This is assuming this modal is opened as a child. This will blow up big time if that is not true.
+        navigate('../');
     };
 
     const jsonFormRendered = (() => {
@@ -99,7 +97,7 @@ function NewCaptureModal(props: NewCaptureModalProps) {
 
     return (
         <Dialog
-            open={open}
+            open
             onClose={handleClose}
             scroll="paper"
             fullScreen={fullScreen}
@@ -124,7 +122,9 @@ function NewCaptureModal(props: NewCaptureModalProps) {
             <DialogContent dividers>
                 <DialogContentText>
                     To get started please provide a unique name and the source
-                    type of the Capture you want to create.
+                    type of the Capture you want to create. Once you've filled
+                    out the source details you can click save to test the
+                    connection.
                 </DialogContentText>
                 <TextField
                     id="capture-name"
@@ -136,21 +136,10 @@ function NewCaptureModal(props: NewCaptureModalProps) {
                     type={sourceType}
                     onSourceChange={getSourceDetails}
                 />
-            </DialogContent>
-            <DialogContent dividers>
+                <Divider />
                 <Box sx={{ width: '100%' }}>
                     {currentSchema.fetching ? (
-                        <Fade
-                            in={currentSchema.fetching}
-                            style={{
-                                transitionDelay: currentSchema.fetching
-                                    ? '900ms'
-                                    : '0ms',
-                            }}
-                            unmountOnExit
-                        >
-                            <LinearProgress color="secondary" />
-                        </Fade>
+                        <PaitentLoad on={currentSchema.fetching} />
                     ) : (
                         jsonFormRendered
                     )}
@@ -158,7 +147,7 @@ function NewCaptureModal(props: NewCaptureModalProps) {
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose}>Cancel</Button>
-                <Button onClick={handleClose}>Save</Button>
+                <Button onClick={handleClose}>Save (and test)</Button>
             </DialogActions>
         </Dialog>
     );
