@@ -16,4 +16,4 @@ Returns a list of all the sources available in the cache. This is passed back as
 
 Send over the source key to get the schema back. It will first try to server up one from the "cache" that is stored locally. If it cannot it will go fetch a fresh copy. It always puts latest and also ALWAYS stores the response in the `schema-local-cache` folder so it won't have to make the trip again.
 
-If you want to test edge cases you can edit the local cache.
+The sourceKey sent over should look like "source-trello" or "source-amazon-ads"
