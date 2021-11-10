@@ -1,5 +1,5 @@
 {
-  "name": "testapp",
+  "name": "temp-test-server",
   "version": "0.0.0-alpha",
   "description": "Fake server to stub out making calls to Flow's backend",
   "main": "server.js",

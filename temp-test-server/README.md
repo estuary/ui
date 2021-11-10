@@ -1,18 +1,19 @@
 # test-schema-server
+
 Test server to fetch Airbyte connector schemas
 
-Starts a server on port 3001
+Starts a server on port 3001 and has CORS setup for responses. It will
 
-Has CORS setup.
+# How to start?
 
-Can respond with a set of test schemas that are hardcoded into the system.
+Just run `npm run start`
 
-# /source/all
-Returns a list of all the hardcoded schemas that are setup. Used to put them into a dropdown list and fetch the schemas later
+# /sources/all
+
+Returns a list of all the sources available in the cache. This is passed back as an object with a `key` and `label`. The `label` is meant to be human readable and put into UIs. The `key` is meant to be passed back to the server to fetch details.
 
 # /source/details/:sourceKey
-Send over the source key to get the schema back. Has to be one of the hardcoded provided in the list from /source/all
 
-# /source/dynamic/:sourceName
-This will go fetch a fresh copy of the schema from the docker hub of Airbyte. Sometimes this breaks since the Docker command does not always return proper JSON. 
+Send over the source key to get the schema back. It will first try to server up one from the "cache" that is stored locally. If it cannot it will go fetch a fresh copy. It always puts latest and also ALWAYS stores the response in the `schema-local-cache` folder so it won't have to make the trip again.
 
+If you want to test edge cases you can edit the local cache.
