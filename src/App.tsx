@@ -67,6 +67,10 @@ export default function App() {
                             />
                             <Route path="captures" element={<Catalog />}>
                                 <Route
+                                    path="new/:sourceType"
+                                    element={<NewCaptureModal />}
+                                />
+                                <Route
                                     path="new"
                                     element={<NewCaptureModal />}
                                 />

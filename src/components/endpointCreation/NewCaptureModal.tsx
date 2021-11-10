@@ -21,7 +21,7 @@ import { useTheme } from '@mui/system';
 import PaitentLoad from 'components/shared/PaitentLoad';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import SourceTypeSelect from './SourceTypeSelect';
 
 NewCaptureModal.propTypes = {};
@@ -35,10 +35,12 @@ function NewCaptureModal(
     };
 
     const navigate = useNavigate();
+    const params = useParams();
+
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
-    const [sourceType] = useState('');
+    const [sourceType] = useState(params.sourceType ? params.sourceType : '');
     const [currentSchema, setCurrentSchema] = useState(initialSchemaState);
     const [newCaptureFormData, setNewCaptureFormData] = useState({});
 
