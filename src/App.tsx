@@ -6,6 +6,7 @@ import React, { Suspense } from 'react';
 import { Route, Routes } from 'react-router';
 import Navigation from './components/navigation/Navigation';
 import Topbar from './components/Topbar';
+import Error from './pages/Error';
 
 const Admin = React.lazy(() => import('./pages/Admin'));
 const Catalog = React.lazy(() => import('./pages/Catalog'));
@@ -67,10 +68,6 @@ export default function App() {
                             />
                             <Route path="captures" element={<Catalog />}>
                                 <Route
-                                    path="new/:sourceType"
-                                    element={<NewCaptureModal />}
-                                />
-                                <Route
                                     path="new"
                                     element={<NewCaptureModal />}
                                 />
@@ -86,6 +83,7 @@ export default function App() {
                                 <Route path="users" element={<Users />} />
                             </Route>
                         </Route>
+                        <Route path="*" element={<Error />} />
                     </Routes>
                 </Suspense>
             </Box>
