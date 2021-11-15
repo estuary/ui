@@ -50,12 +50,7 @@ function SourceTypeSelect(props: SourceTypeProps) {
                 noOptionsText="No Options"
                 loading={!isLoaded}
                 onChange={function (event, reason: any) {
-                    if (reason !== null) {
-                        const key = reason.key;
-                        props.onSourceChange(key);
-                    } else {
-                        props.onSourceChange('');
-                    }
+                    props.onSourceChange(reason ? reason.key : '');
                 }}
                 renderOption={(props, option: any) => (
                     <Box component="li" {...props}>
