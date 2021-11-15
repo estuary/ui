@@ -43,6 +43,7 @@ function NewCaptureModal(
     const [sourceType] = useState(params.sourceType ? params.sourceType : '');
     const [currentSchema, setCurrentSchema] = useState(initialSchemaState);
     const [newCaptureFormData, setNewCaptureFormData] = useState({});
+    const [saveEnabled] = useState(false);
 
     const fetchSchemaForForm = (key: string) => {
         fetch(`http://localhost:3001/source/details/${key}`)
@@ -157,7 +158,9 @@ function NewCaptureModal(
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose}>Cancel</Button>
-                <Button onClick={handleClose}>Save (and test)</Button>
+                <Button onClick={handleClose} disabled={!saveEnabled}>
+                    Save (and test)
+                </Button>
             </DialogActions>
         </Dialog>
     );
