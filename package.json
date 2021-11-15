@@ -23,6 +23,7 @@
         "@mui/icons-material": "latest",
         "@mui/material": "latest",
         "@mui/x-data-grid": "latest",
+        "axios": "^0.24.0",
         "prop-types": "latest",
         "react": "latest",
         "react-dom": "latest",
