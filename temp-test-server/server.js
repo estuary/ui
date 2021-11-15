@@ -127,13 +127,17 @@ app.get('/source/details/:sourceName', (req, res) => {
 });
 
 app.post('/capture', (req, res) => {
-    if (false) {
+    if (true) {
         res.status(200);
         res.end('success');
     } else {
         res.status(500);
         res.end('failure');
     }
+});
+
+app.get('/captures/all', (req, res) => {
+    sendResponse(res, []);
 });
 
 const port = 3001;
