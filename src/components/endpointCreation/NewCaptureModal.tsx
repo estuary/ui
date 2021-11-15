@@ -94,7 +94,7 @@ function NewCaptureModal(
         if (newCaptureFormErrors.length > 0) {
             setShowValidation(true);
         } else {
-            alert('TODO: FORM SUBMIT GOES HERE');
+            console.log('TODO: FORM SUBMIT GOES HERE');
         }
     };
 
