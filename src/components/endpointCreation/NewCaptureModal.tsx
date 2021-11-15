@@ -20,6 +20,7 @@ import {
     useMediaQuery,
 } from '@mui/material';
 import { useTheme } from '@mui/system';
+import axios from 'axios';
 import PaitentLoad from 'components/shared/PaitentLoad';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
@@ -59,6 +60,8 @@ function NewCaptureModal(
     const [newCaptureFormErrors, setnewCaptureFormErrors] = useState([]);
     const [saveEnabled, setSaveEnabled] = useState(false);
     const [showValidation, setShowValidation] = useState(false);
+    const [formSubmitting, setFormSubmitting] = useState(false);
+    const [formSubmitError, setFormSubmitError] = useState(false);
 
     const fetchSchemaForForm = (key: any) => {
         setShowValidation(false);
@@ -90,11 +93,22 @@ function NewCaptureModal(
         navigate('../'); //This is assuming this modal is opened as a child. This will blow up big time if that is not true.
     };
 
-    const handleSave = () => {
+    const handleSave = (event: any) => {
+        event.preventDefault();
         if (newCaptureFormErrors.length > 0) {
             setShowValidation(true);
         } else {
-            console.log('TODO: FORM SUBMIT GOES HERE');
+            console.log('TODO: FORM SUBMIT GOES HERE', newCaptureFormData);
+            setFormSubmitting(true);
+            axios
+                .post('http://localhost:3001/capture', newCaptureFormData)
+                .then((response) => {
+                    handleClose();
+                })
+                .catch((error) => {
+                    setFormSubmitting(false);
+                    setFormSubmitError(true);
+                });
         }
     };
 
@@ -124,13 +138,14 @@ function NewCaptureModal(
         } else {
             if (currentSchema.schema !== null) {
                 return (
-                    <>
+                    <form id="newCaptureForm">
                         <JsonForms
                             schema={currentSchema.schema}
                             data={newCaptureFormData}
                             renderers={materialRenderers}
                             cells={materialCells}
                             config={formOptions}
+                            readonly={formSubmitting}
                             validationMode={
                                 showValidation
                                     ? 'ValidateAndShow'
@@ -138,7 +153,7 @@ function NewCaptureModal(
                             }
                             onChange={formChanged}
                         />
-                    </>
+                    </form>
                 );
             } else {
                 return null;
@@ -190,6 +205,15 @@ function NewCaptureModal(
                     />
                 </Stack>
                 <Box sx={{ width: '100%' }}>
+                    {formSubmitError ? (
+                        <Alert severity="error">
+                            <AlertTitle>Creation Failed</AlertTitle>
+                            There was an issue trying to create your capture.
+                            Before submitting again - review the form and ensure
+                            everything is correct.
+                        </Alert>
+                    ) : null}
+
                     {currentSchema.fetching ? (
                         <PaitentLoad on={currentSchema.fetching} />
                     ) : (
@@ -198,8 +222,19 @@ function NewCaptureModal(
                 </Box>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClose}>Cancel</Button>
-                <Button onClick={handleSave} disabled={!saveEnabled}>
+                <Button onClick={handleClose} size="large" color="error">
+                    Cancel
+                </Button>
+                <Button
+                    onClick={handleSave}
+                    disabled={!saveEnabled}
+                    form="newCaptureForm"
+                    size="large"
+                    type="submit"
+                    color="success"
+                    variant="contained"
+                    disableElevation
+                >
                     Save (and test)
                 </Button>
             </DialogActions>
