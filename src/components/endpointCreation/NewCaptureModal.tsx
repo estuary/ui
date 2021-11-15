@@ -98,10 +98,15 @@ function NewCaptureModal(
         if (newCaptureFormErrors.length > 0) {
             setShowValidation(true);
         } else {
-            console.log('TODO: FORM SUBMIT GOES HERE', newCaptureFormData);
+            const formSubmitData = {
+                airbyteSource: {
+                    image: sourceTypeParam,
+                    config: newCaptureFormData,
+                },
+            };
             setFormSubmitting(true);
             axios
-                .post('http://localhost:3001/capture', newCaptureFormData)
+                .post('http://localhost:3001/capture', formSubmitData)
                 .then((response) => {
                     handleClose();
                 })
