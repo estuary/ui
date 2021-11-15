@@ -1,12 +1,13 @@
-import { Typography } from '@mui/material';
+import { Alert, AlertTitle } from '@mui/material';
 import PageContainer from 'components/shared/PageContainer';
 
 export default function Error() {
     return (
         <PageContainer>
-            <Typography>
-                Uh oh - looks like there was an error in the routing.
-            </Typography>
+            <Alert severity="error">
+                <AlertTitle>Error</AlertTitle>
+                This path does not exist.
+            </Alert>
         </PageContainer>
     );
 }
