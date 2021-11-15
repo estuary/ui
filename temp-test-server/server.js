@@ -1,8 +1,10 @@
 /** @format */
 
+import cors from 'cors';
 import express from 'express';
 import fs from 'fs';
 import shellJS from 'shelljs';
+
 const { exec } = shellJS;
 
 const testFolder = './schema-local-cache/';
@@ -54,7 +56,6 @@ function parseDataAndStoreInCache(key, data) {
 
 function sendResponse(res, body, status) {
     res.status(status | 200);
-    res.set('Access-Control-Allow-Origin', '*');
     res.send(body);
 }
 
@@ -91,6 +92,7 @@ getSourcesList(schemaMemoryCache).map((val) => {
 console.log('------------------------------');
 
 const app = express();
+app.use(cors());
 
 app.get('/sources/all', (req, res) => {
     const allSourcesWithLabels = getSourcesList(schemaMemoryCache);
@@ -121,6 +123,16 @@ app.get('/source/details/:sourceName', (req, res) => {
                 sendResponse(res, response.schema.spec.connectionSpecification);
             }
         });
+    }
+});
+
+app.post('/capture', (req, res) => {
+    if (false) {
+        res.status(200);
+        res.end('success');
+    } else {
+        res.status(500);
+        res.end('failure');
     }
 });
 
