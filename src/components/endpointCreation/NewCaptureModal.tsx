@@ -36,21 +36,33 @@ function NewCaptureModal(
         schema: null,
     };
 
-    const navigate = useNavigate();
-    const [searchParams, setSearchParams] = useSearchParams();
-    let sourceTypeParam = searchParams.get('sourceType');
-
-    console.log('HEY - sourceTypeParam', sourceTypeParam);
+    const formOptions = {
+        restrict: true,
+        showUnfocusedDescription: true,
+    };
 
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
+    const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const sourceTypeParam = searchParams.get('sourcetype');
+    useEffect(() => {
+        if (sourceTypeParam !== null) {
+            fetchSchemaForForm(sourceTypeParam);
+        }
+    }, [sourceTypeParam]);
+
     const [sourceType] = useState(sourceTypeParam ? sourceTypeParam : '');
     const [currentSchema, setCurrentSchema] = useState(initialSchemaState);
-    const [newCaptureFormData, setNewCaptureFormData] = useState({});
-    const [saveEnabled] = useState(false);
+    const [newCaptureFormData, setnewCaptureFormData] = useState({});
+    const [newCaptureFormErrors, setnewCaptureFormErrors] = useState([]);
+    const [saveEnabled, setSaveEnabled] = useState(false);
+    const [showValidation, setShowValidation] = useState(false);
 
     const fetchSchemaForForm = (key: any) => {
+        setShowValidation(false);
+        setnewCaptureFormData({});
         fetch(`http://localhost:3001/source/details/${key}`)
             .then((response) => response.json())
             .then(
@@ -60,6 +72,7 @@ function NewCaptureModal(
                         fetching: false,
                         schema: result,
                     });
+                    setSaveEnabled(true);
                 },
                 (error) => {
                     setCurrentSchema({
@@ -67,6 +80,7 @@ function NewCaptureModal(
                         fetching: false,
                         error: error,
                     });
+                    setSaveEnabled(false);
                 }
             );
     };
@@ -76,22 +90,28 @@ function NewCaptureModal(
         navigate('../'); //This is assuming this modal is opened as a child. This will blow up big time if that is not true.
     };
 
-    const getSourceDetails = async (key: string) => {
-        if (key && key.length > 0) {
-            setCurrentSchema({ ...initialSchemaState, fetching: true });
+    const handleSave = () => {
+        if (newCaptureFormErrors.length > 0) {
+            setShowValidation(true);
         } else {
-            setCurrentSchema(initialSchemaState);
+            alert('TODO: FORM SUBMIT GOES HERE');
         }
+    };
+
+    const getSourceDetails = async (key: string) => {
+        setCurrentSchema({
+            ...initialSchemaState,
+            fetching: Boolean(key && key.length > 0),
+        });
         setSearchParams({
-            sourceType: key,
+            sourcetype: key,
         });
     };
 
-    useEffect(() => {
-        if (sourceTypeParam !== null) {
-            fetchSchemaForForm(sourceTypeParam);
-        }
-    }, [sourceTypeParam]);
+    const formChanged = ({ data, errors }: { data: any; errors: any }) => {
+        setnewCaptureFormData(data);
+        setnewCaptureFormErrors(errors);
+    };
 
     const jsonFormRendered = (() => {
         if (currentSchema.error !== null) {
@@ -104,13 +124,21 @@ function NewCaptureModal(
         } else {
             if (currentSchema.schema !== null) {
                 return (
-                    <JsonForms
-                        schema={currentSchema.schema}
-                        data={newCaptureFormData}
-                        renderers={materialRenderers}
-                        cells={materialCells}
-                        onChange={({ data }) => setNewCaptureFormData(data)}
-                    />
+                    <>
+                        <JsonForms
+                            schema={currentSchema.schema}
+                            data={newCaptureFormData}
+                            renderers={materialRenderers}
+                            cells={materialCells}
+                            config={formOptions}
+                            validationMode={
+                                showValidation
+                                    ? 'ValidateAndShow'
+                                    : 'ValidateAndHide'
+                            }
+                            onChange={formChanged}
+                        />
+                    </>
                 );
             } else {
                 return null;
@@ -171,7 +199,7 @@ function NewCaptureModal(
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose}>Cancel</Button>
-                <Button onClick={handleClose} disabled={!saveEnabled}>
+                <Button onClick={handleSave} disabled={!saveEnabled}>
                     Save (and test)
                 </Button>
             </DialogActions>
