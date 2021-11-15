@@ -5,6 +5,8 @@ import {
 import { JsonForms } from '@jsonforms/react';
 import CloseIcon from '@mui/icons-material/Close';
 import {
+    Alert,
+    AlertTitle,
     Box,
     Button,
     Dialog,
@@ -20,8 +22,8 @@ import {
 import { useTheme } from '@mui/system';
 import PaitentLoad from 'components/shared/PaitentLoad';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import SourceTypeSelect from './SourceTypeSelect';
 
 NewCaptureModal.propTypes = {};
@@ -35,17 +37,20 @@ function NewCaptureModal(
     };
 
     const navigate = useNavigate();
-    const params = useParams();
+    const [searchParams, setSearchParams] = useSearchParams();
+    let sourceTypeParam = searchParams.get('sourceType');
+
+    console.log('HEY - sourceTypeParam', sourceTypeParam);
 
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
-    const [sourceType] = useState(params.sourceType ? params.sourceType : '');
+    const [sourceType] = useState(sourceTypeParam ? sourceTypeParam : '');
     const [currentSchema, setCurrentSchema] = useState(initialSchemaState);
     const [newCaptureFormData, setNewCaptureFormData] = useState({});
     const [saveEnabled] = useState(false);
 
-    const fetchSchemaForForm = (key: string) => {
+    const fetchSchemaForForm = (key: any) => {
         fetch(`http://localhost:3001/source/details/${key}`)
             .then((response) => response.json())
             .then(
@@ -60,7 +65,7 @@ function NewCaptureModal(
                     setCurrentSchema({
                         schema: null,
                         fetching: false,
-                        error: error.message,
+                        error: error,
                     });
                 }
             );
@@ -71,9 +76,31 @@ function NewCaptureModal(
         navigate('../'); //This is assuming this modal is opened as a child. This will blow up big time if that is not true.
     };
 
+    const getSourceDetails = async (key: string) => {
+        if (key && key.length > 0) {
+            setCurrentSchema({ ...initialSchemaState, fetching: true });
+        } else {
+            setCurrentSchema(initialSchemaState);
+        }
+        setSearchParams({
+            sourceType: key,
+        });
+    };
+
+    useEffect(() => {
+        if (sourceTypeParam !== null) {
+            fetchSchemaForForm(sourceTypeParam);
+        }
+    }, [sourceTypeParam]);
+
     const jsonFormRendered = (() => {
         if (currentSchema.error !== null) {
-            return currentSchema.error;
+            return (
+                <Alert severity="error">
+                    <AlertTitle>Error</AlertTitle>
+                    {currentSchema.error}
+                </Alert>
+            );
         } else {
             if (currentSchema.schema !== null) {
                 return (
@@ -90,19 +117,6 @@ function NewCaptureModal(
             }
         }
     })();
-
-    const getSourceDetails = async (key: string) => {
-        if (key === '') {
-            setCurrentSchema(initialSchemaState);
-        } else {
-            setCurrentSchema({ ...initialSchemaState, fetching: true });
-            fetchSchemaForForm(key);
-        }
-    };
-
-    if (params.sourceType) {
-        fetchSchemaForForm(params.sourceType);
-    }
 
     return (
         <Dialog
