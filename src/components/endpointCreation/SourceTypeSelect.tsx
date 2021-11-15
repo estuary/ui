@@ -1,4 +1,4 @@
-import { Alert, AlertTitle, Autocomplete, TextField } from '@mui/material';
+import { Autocomplete, TextField } from '@mui/material';
 import { Box } from '@mui/system';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
@@ -40,48 +40,44 @@ function SourceTypeSelect(props: SourceTypeProps) {
 
     return (
         <>
-            {error !== null ? (
-                <Alert severity="error" variant="filled">
-                    <AlertTitle>Error</AlertTitle>
-                    We failed to fetch the list of available sources. This is
-                    normally is a networking or server issue.
-                </Alert>
-            ) : (
-                <Autocomplete
-                    id={props.id}
-                    sx={{ width: 300 }}
-                    options={sourceTypes}
-                    autoHighlight
-                    openOnFocus
-                    blurOnSelect="mouse"
-                    noOptionsText="No sources installed"
-                    loading={!isLoaded}
-                    onChange={function (event, reason: any) {
-                        if (reason !== null) {
-                            const key = reason.key;
-                            props.onSourceChange(key);
-                        } else {
-                            props.onSourceChange('');
+            <Autocomplete
+                id={props.id}
+                sx={{ width: 300 }}
+                options={sourceTypes}
+                autoHighlight
+                openOnFocus
+                blurOnSelect="mouse"
+                noOptionsText="No Options"
+                loading={!isLoaded}
+                onChange={function (event, reason: any) {
+                    if (reason !== null) {
+                        const key = reason.key;
+                        props.onSourceChange(key);
+                    } else {
+                        props.onSourceChange('');
+                    }
+                }}
+                renderOption={(props, option: any) => (
+                    <Box component="li" {...props}>
+                        {option.label}
+                    </Box>
+                )}
+                renderInput={(params) => (
+                    <TextField
+                        {...params}
+                        label={
+                            error !== null
+                                ? 'Failed Fetching Source Type'
+                                : 'Source type'
                         }
-                    }}
-                    renderOption={(props, option: any) => (
-                        <Box component="li" {...props}>
-                            {option.label}
-                        </Box>
-                    )}
-                    renderInput={(params) => (
-                        <TextField
-                            {...params}
-                            label="Source type"
-                            error={error !== null}
-                            inputProps={{
-                                ...params.inputProps,
-                                autoComplete: 'new-password', // disable autocomplete and autofill
-                            }}
-                        />
-                    )}
-                />
-            )}
+                        error={error !== null}
+                        inputProps={{
+                            ...params.inputProps,
+                            autoComplete: 'new-password', // disable autocomplete and autofill
+                        }}
+                    />
+                )}
+            />
         </>
     );
 }

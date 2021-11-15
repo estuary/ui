@@ -12,8 +12,8 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
-    Divider,
     IconButton,
+    Stack,
     TextField,
     useMediaQuery,
 } from '@mui/material';
@@ -68,9 +68,7 @@ function NewCaptureModal(
 
     const handleClose = () => {
         setCurrentSchema(initialSchemaState);
-
-        //This is assuming this modal is opened as a child. This will blow up big time if that is not true.
-        navigate('../');
+        navigate('../'); //This is assuming this modal is opened as a child. This will blow up big time if that is not true.
     };
 
     const jsonFormRendered = (() => {
@@ -137,17 +135,18 @@ function NewCaptureModal(
                     out the source details you can click save to test the
                     connection.
                 </DialogContentText>
-                <TextField
-                    id="capture-name"
-                    label="Name of capture"
-                    variant="outlined"
-                />
-                <SourceTypeSelect
-                    id="source-type-select"
-                    type={sourceType}
-                    onSourceChange={getSourceDetails}
-                />
-                <Divider />
+                <Stack direction="row" spacing={2}>
+                    <TextField
+                        id="capture-name"
+                        label="Name of capture"
+                        variant="outlined"
+                    />
+                    <SourceTypeSelect
+                        id="source-type-select"
+                        type={sourceType}
+                        onSourceChange={getSourceDetails}
+                    />
+                </Stack>
                 <Box sx={{ width: '100%' }}>
                     {currentSchema.fetching ? (
                         <PaitentLoad on={currentSchema.fetching} />
