@@ -93,6 +93,7 @@ console.log('------------------------------');
 
 const app = express();
 app.use(cors());
+app.use(express.json());
 
 app.get('/sources/all', (req, res) => {
     const allSourcesWithLabels = getSourcesList(schemaMemoryCache);
@@ -127,6 +128,9 @@ app.get('/source/details/:sourceName', (req, res) => {
 });
 
 app.post('/capture', (req, res) => {
+    console.log('Capture Creation Called');
+    console.log(' - config sent', req.body);
+
     if (true) {
         res.status(200);
         res.end('success');
