@@ -1,8 +1,13 @@
 import AddIcon from '@mui/icons-material/Add';
+import InputIcon from '@mui/icons-material/Input';
 import SearchIcon from '@mui/icons-material/Search';
 import {
     Box,
     Button,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
     Stack,
     TextField,
     ToggleButton,
@@ -12,15 +17,63 @@ import {
 } from '@mui/material';
 import InputAdornment from '@mui/material/InputAdornment';
 import PageContainer from 'components/shared/PageContainer';
-import React, { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 
 export default function Catalog() {
-    const [searchScope, setSearchScope] = React.useState<string | null>('all');
+    const [searchScope, setSearchScope] = useState<string | null>('all');
+    const [captureList, setCaptureList] = useState([]);
 
     const handleAlignment = useCallback(() => {
         setSearchScope(searchScope);
     }, [searchScope]);
+
+    useEffect(() => {
+        fetch('http://localhost:3001/captures/all')
+            .then((res) => res.json())
+            .then(
+                (result) => {
+                    setCaptureList(result);
+                },
+                (error) => {
+                    console.warn(
+                        'There was an issue fetching the Captures',
+                        error.stack
+                    );
+                    setCaptureList([]);
+                }
+            );
+    }, []);
+
+    function CatalogList(props: any) {
+        const { captures } = props;
+
+        if (captures.length > 0) {
+            return (
+                <List>
+                    {captures.map((element: any) => (
+                        <ListItem>
+                            <ListItemIcon>
+                                <InputIcon />
+                            </ListItemIcon>
+                            <ListItemText primary={element.name} />
+                        </ListItem>
+                    ))}
+                </List>
+            );
+        } else {
+            return (
+                <>
+                    <Typography gutterBottom variant="h5" component="div">
+                        No Captures?
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                        Click the "New Capture" button up above to get started
+                    </Typography>
+                </>
+            );
+        }
+    }
 
     return (
         <PageContainer>
@@ -116,12 +169,7 @@ export default function Catalog() {
                         textAlign: 'center',
                     }}
                 >
-                    <Typography gutterBottom variant="h5" component="div">
-                        No Captures?
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                        Click the "New Capture" button up above to get started
-                    </Typography>
+                    <CatalogList captures={captureList} />
                 </Box>
             </Box>
             <Outlet />
