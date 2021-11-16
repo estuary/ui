@@ -15,6 +15,7 @@
     "express": "^4.17.1",
     "extract-json-string": "^1.0.1",
     "file-lines-count": "^1.0.1",
+    "json-to-pretty-yaml": "^1.2.2",
     "shelljs": "^0.8.4",
     "thread-sleep": "^2.2.0"
   }

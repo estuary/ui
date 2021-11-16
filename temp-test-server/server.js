@@ -126,7 +126,7 @@ app.get('/source/details/:sourceName', (req, res) => {
                 console.log(' - - - - - executing ', airByteCommand);
                 exec(airByteCommand, (error, stdout, stderr) => {
                     if (error !== 0) {
-                        sendResponse(res, stderr, 500);
+                        sendResponse(res, stderr, 400);
                     } else {
                         saveSchemaResponse(
                             airBytePath,
@@ -148,17 +148,30 @@ app.post('/capture', (req, res) => {
     console.log('Capture Creation Called');
     console.log(' - config sent', req.body);
 
-    if (true) {
-        writeResponseToFileSystem(
-            captureFolder,
-            `${req.body.captureName}.json`,
-            JSON.stringify(req.body)
-        );
-        res.status(200);
-        res.end('success');
-    } else {
+    try {
+        const captureName = Object.keys(req.body)[0];
+        const newFile = `${captureName}.json`;
+        const fileAlreadyExists = fs.existsSync(captureFolder + newFile);
+
+        if (fileAlreadyExists === true) {
+            res.status(400);
+            res.json({
+                message: `There is already a Capture with the name "${captureName}".`,
+            });
+        } else {
+            writeResponseToFileSystem(
+                captureFolder,
+                newFile,
+                JSON.stringify(req.body)
+            );
+            res.status(200);
+            res.end('success');
+        }
+    } catch (error) {
         res.status(500);
-        res.end('failure');
+        res.json({
+            message: `There was a server error.`,
+        });
     }
 });
 
@@ -185,7 +198,6 @@ app.get('/captures/all', (req, res) => {
 });
 
 const port = 3001;
-
 app.listen(port, () => {
     console.log('');
     console.log(`Example app listening at http://localhost:${port}`);

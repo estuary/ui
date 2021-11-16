@@ -17,6 +17,7 @@ import {
     IconButton,
     Stack,
     TextField,
+    Typography,
     useMediaQuery,
 } from '@mui/material';
 import { useTheme } from '@mui/system';
@@ -64,7 +65,7 @@ function NewCaptureModal(
     const [saveEnabled, setSaveEnabled] = useState(false);
     const [showValidation, setShowValidation] = useState(false);
     const [formSubmitting, setFormSubmitting] = useState(false);
-    const [formSubmitError, setFormSubmitError] = useState(false);
+    const [formSubmitError, setFormSubmitError] = useState(null);
 
     const fetchSchemaForForm = (key: any) => {
         setShowValidation(false);
@@ -100,12 +101,20 @@ function NewCaptureModal(
         if (newCaptureFormErrors.length > 0) {
             setShowValidation(true);
         } else {
-            console.log('saving', sourceType);
-            const formSubmitData = {
-                captureName: sourceName,
-                airbyteSource: {
-                    image: currentSchema.image,
-                    config: newCaptureFormData,
+            const formSubmitData = {};
+            formSubmitData[sourceName] = {
+                endpoint: {
+                    airbyteSource: {
+                        image: currentSchema.image,
+                        config: newCaptureFormData,
+                    },
+                },
+                bindings: {
+                    resources: {
+                        stream: '${TABLE_NAME}',
+                        syncMode: 'incremental',
+                    },
+                    target: '${COLLECTION_NAME}',
                 },
             };
             setFormSubmitting(true);
@@ -115,8 +124,12 @@ function NewCaptureModal(
                     handleClose();
                 })
                 .catch((error) => {
+                    if (error.response) {
+                        setFormSubmitError(error.response.data.message);
+                    } else {
+                        setFormSubmitError(error.message);
+                    }
                     setFormSubmitting(false);
-                    setFormSubmitError(true);
                 });
         }
     };
@@ -226,10 +239,10 @@ function NewCaptureModal(
                 <Box sx={{ width: '100%' }}>
                     {formSubmitError ? (
                         <Alert severity="error">
-                            <AlertTitle>Creation Failed</AlertTitle>
-                            There was an issue trying to create your capture.
-                            Before submitting again - review the form and ensure
-                            everything is correct.
+                            <AlertTitle>Capture test failed</AlertTitle>
+                            <Typography variant="subtitle1">
+                                {formSubmitError}
+                            </Typography>
                         </Alert>
                     ) : null}
 
