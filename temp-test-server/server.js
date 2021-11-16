@@ -8,7 +8,8 @@ import shellJS from 'shelljs';
 const { exec } = shellJS;
 
 const testFolder = './schema-local-cache/';
-const files = fs.readdirSync(testFolder);
+const captureFolder = './captures-created/';
+const schemaFiles = fs.readdirSync(testFolder);
 let schemaMemoryCache = {};
 
 function cleanUpSchema(data) {
@@ -59,7 +60,7 @@ function sendResponse(res, body, status) {
     res.send(body);
 }
 
-function writeResponseToFileSystem(fileName, fileContent) {
+function writeResponseToFileSystem(testFolder, fileName, fileContent) {
     console.log('Writing to', testFolder + fileName);
     fs.writeFileSync(testFolder + fileName, fileContent, 'utf-8');
 }
@@ -72,7 +73,7 @@ function getSourcesList(allSources) {
     });
 }
 
-files.forEach((file) => {
+schemaFiles.forEach((file) => {
     // Clean up file name stuff
     const sourceName = file.replace('.json', '');
 
@@ -118,6 +119,7 @@ app.get('/source/details/:sourceName', (req, res) => {
             } else {
                 const response = parseDataAndStoreInCache(name, stdout);
                 writeResponseToFileSystem(
+                    testFolder,
                     `${name}.json`,
                     JSON.stringify(response.schema)
                 );
@@ -132,6 +134,11 @@ app.post('/capture', (req, res) => {
     console.log(' - config sent', req.body);
 
     if (true) {
+        writeResponseToFileSystem(
+            captureFolder,
+            req.body.captureName,
+            JSON.stringify(req.body.airbyteSource)
+        );
         res.status(200);
         res.end('success');
     } else {
@@ -141,7 +148,25 @@ app.post('/capture', (req, res) => {
 });
 
 app.get('/captures/all', (req, res) => {
-    sendResponse(res, []);
+    const captureFiles = fs.readdirSync(captureFolder);
+    const allCaptures = [];
+
+    captureFiles.forEach((file) => {
+        // Clean up file name stuff
+        const sourceName = file.replace('.json', '');
+
+        // Fetch the files
+        const fileName = captureFolder + file;
+        const data = JSON.parse(fs.readFileSync(fileName, 'utf-8'));
+
+        // Parse then store into cache
+        allCaptures.push({
+            name: sourceName,
+            type: data.image,
+        });
+    });
+
+    sendResponse(res, allCaptures);
 });
 
 const port = 3001;
