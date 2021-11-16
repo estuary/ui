@@ -11,7 +11,9 @@ const { exec } = shellJS;
 const testFolder = './schema-local-cache/';
 const captureFolder = './captures-created/';
 
-function cleanUpSchema(data) {
+// This only work on the responses from docker / stdout.
+//It assumes the valid JSON is all on one line
+function getJSONFromStdOut(data) {
     // Split up each line
     let response = data.split('\n');
 
@@ -30,7 +32,7 @@ function safeJSONParse(data) {
     try {
         response = JSON.parse(data);
     } catch (error) {
-        response = JSON.parse(cleanUpSchema(data));
+        response = JSON.parse(getJSONFromStdOut(data));
     }
 
     return response;
