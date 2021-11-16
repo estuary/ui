@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import Topbar from './Topbar';
 
-test('the hardcoded user avatar render', () => {
+test('there is a help menu available', () => {
     const mockNavToggle = () => {
         return null;
     };
@@ -15,5 +15,5 @@ test('the hardcoded user avatar render', () => {
         />
     );
 
-    expect(screen.queryByText('EU')).toBeInTheDocument();
+    expect(screen.queryByLabelText('Open help')).toBeInTheDocument();
 });
