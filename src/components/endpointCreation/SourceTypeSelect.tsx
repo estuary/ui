@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 const SourceTypePropTypes = {
     id: PropTypes.string.isRequired,
     onSourceChange: PropTypes.func.isRequired,
-    type: PropTypes.string.isRequired,
+    sourceType: PropTypes.string.isRequired,
 };
 SourceTypeSelect.propTypes = SourceTypePropTypes;
 type SourceTypeProps = PropTypes.InferProps<typeof SourceTypePropTypes>;
@@ -16,9 +16,6 @@ function SourceTypeSelect(props: SourceTypeProps) {
     const [isLoaded, setIsLoaded] = useState(false);
     const [sourceTypes, setSourceTypes] = useState([]);
 
-    // Note: the empty deps array [] means
-    // this useEffect will run once
-    // similar to componentDidMount()
     useEffect(() => {
         fetch('http://localhost:3001/sources/all')
             .then((res) => res.json())
@@ -49,6 +46,7 @@ function SourceTypeSelect(props: SourceTypeProps) {
                 blurOnSelect="mouse"
                 noOptionsText="No Options"
                 loading={!isLoaded}
+                defaultValue={props.sourceType ? props.sourceType : null}
                 onChange={function (event, reason: any) {
                     props.onSourceChange(reason ? reason.key : '');
                 }}
