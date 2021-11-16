@@ -4,11 +4,13 @@ import cors from 'cors';
 import express from 'express';
 import fs from 'fs';
 import shellJS from 'shelljs';
+import allSources from './allSources.js';
 
 const { exec } = shellJS;
 
 const testFolder = './schema-local-cache/';
 const captureFolder = './captures-created/';
+
 const schemaFiles = fs.readdirSync(testFolder);
 let schemaMemoryCache = {};
 
@@ -37,16 +39,23 @@ function safeJSONParse(data) {
     return response;
 }
 
-function populateSourceInMemory(name, data) {
+function removePrefix(name) {
     const prefix = 'source-';
     let labelName = name;
     labelName = labelName.replace(prefix, '');
     labelName = labelName.replace('-', ' ');
 
+    return labelName;
+}
+
+function populateSourceInMemory(name, data) {
+    const labelName = removePrefix(name);
+
     return (schemaMemoryCache[name] = {
         label: labelName,
         description: `This is the ${name} description. It is used for stuff.`,
         schema: data,
+        version: 'we need something like this',
     });
 }
 
@@ -65,12 +74,22 @@ function writeResponseToFileSystem(testFolder, fileName, fileContent) {
     fs.writeFileSync(testFolder + fileName, fileContent, 'utf-8');
 }
 
-function getSourcesList(allSources) {
+function getSourcesListFromCache(allSources) {
     const allSourceKeys = Object.keys(allSources);
     return allSourceKeys.map((key) => {
         const label = allSources[key].label;
         return { key, label };
     });
+}
+
+function saveSchemaResponse(name, stdout, res) {
+    const response = parseDataAndStoreInCache(name, stdout);
+    writeResponseToFileSystem(
+        testFolder,
+        `${name}.json`,
+        JSON.stringify(response.schema)
+    );
+    sendResponse(res, response.schema.spec.connectionSpecification);
 }
 
 schemaFiles.forEach((file) => {
@@ -87,7 +106,7 @@ schemaFiles.forEach((file) => {
 
 console.log('------------------------------');
 console.log('|Sources ready during startup');
-getSourcesList(schemaMemoryCache).map((val) => {
+getSourcesListFromCache(schemaMemoryCache).map((val) => {
     console.log(`|- ${val.label}`);
 });
 console.log('------------------------------');
@@ -97,13 +116,19 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/sources/all', (req, res) => {
-    const allSourcesWithLabels = getSourcesList(schemaMemoryCache);
+    const allSourcesWithLabels = allSources.map((source) => {
+        const key = source;
+        const label = removePrefix(source);
+
+        return { key, label };
+    });
     sendResponse(res, allSourcesWithLabels);
 });
 
 app.get('/source/details/:sourceName', (req, res) => {
     const name = req.params.sourceName;
-    const command = `docker run --rm airbyte/${name}:latest spec`;
+    const airByteCommand = `docker run --rm airbyte/${name}:latest spec`;
+    const estuaryCommand = `docker run --rm ghcr.io/estuary/${name}:dev spec`;
     const cachedSchema = schemaMemoryCache[`${name}`];
 
     if (cachedSchema) {
@@ -111,19 +136,21 @@ app.get('/source/details/:sourceName', (req, res) => {
         sendResponse(res, cachedSchema.schema.spec.connectionSpecification);
     } else {
         console.log(' - source needs fetching');
-        console.log(' - - executing ', command);
-        exec(command, (error, stdout, stderr) => {
+        console.log(' - - executing ', estuaryCommand);
+        exec(estuaryCommand, (error, stdout, stderr) => {
             if (error !== 0) {
-                console.log('Issue fetching', [error, stdout, stderr]);
-                sendResponse(res, stderr, 500);
+                console.log(' - - - Estuary does not have this connector');
+                console.log(' - - - - - executing ', airByteCommand);
+                exec(airByteCommand, (error, stdout, stderr) => {
+                    if (error !== 0) {
+                        console.log('Issue fetching', [error, stdout, stderr]);
+                        sendResponse(res, stderr, 500);
+                    } else {
+                        saveSchemaResponse(name, stdout, res);
+                    }
+                });
             } else {
-                const response = parseDataAndStoreInCache(name, stdout);
-                writeResponseToFileSystem(
-                    testFolder,
-                    `${name}.json`,
-                    JSON.stringify(response.schema)
-                );
-                sendResponse(res, response.schema.spec.connectionSpecification);
+                saveSchemaResponse(name, stdout, res);
             }
         });
     }
