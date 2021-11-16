@@ -55,9 +55,10 @@ function NewCaptureModal(
     }, [sourceTypeParam]);
 
     const [sourceType] = useState(sourceTypeParam ? sourceTypeParam : '');
+    const [sourceName, setSourceName] = useState('');
     const [currentSchema, setCurrentSchema] = useState(initialSchemaState);
-    const [newCaptureFormData, setnewCaptureFormData] = useState({});
-    const [newCaptureFormErrors, setnewCaptureFormErrors] = useState([]);
+    const [newCaptureFormData, setNewCaptureFormData] = useState({});
+    const [newCaptureFormErrors, setNewCaptureFormErrors] = useState([]);
     const [saveEnabled, setSaveEnabled] = useState(false);
     const [showValidation, setShowValidation] = useState(false);
     const [formSubmitting, setFormSubmitting] = useState(false);
@@ -65,27 +66,26 @@ function NewCaptureModal(
 
     const fetchSchemaForForm = (key: any) => {
         setShowValidation(false);
-        setnewCaptureFormData({});
-        fetch(`http://localhost:3001/source/details/${key}`)
-            .then((response) => response.json())
-            .then(
-                (result) => {
-                    setCurrentSchema({
-                        error: null,
-                        fetching: false,
-                        schema: result,
-                    });
-                    setSaveEnabled(true);
-                },
-                (error) => {
-                    setCurrentSchema({
-                        schema: null,
-                        fetching: false,
-                        error: error,
-                    });
-                    setSaveEnabled(false);
-                }
-            );
+        setNewCaptureFormData({});
+        setNewCaptureFormErrors([]);
+        axios.get(`http://localhost:3001/source/details/${key}`).then(
+            (response) => {
+                setCurrentSchema({
+                    error: null,
+                    fetching: false,
+                    schema: response.data,
+                });
+                setSaveEnabled(true);
+            },
+            (error) => {
+                setCurrentSchema({
+                    schema: null,
+                    fetching: false,
+                    error: error,
+                });
+                setSaveEnabled(false);
+            }
+        );
     };
 
     const handleClose = () => {
@@ -98,7 +98,9 @@ function NewCaptureModal(
         if (newCaptureFormErrors.length > 0) {
             setShowValidation(true);
         } else {
+            console.log('saving', sourceType);
             const formSubmitData = {
+                captureName: sourceName,
                 airbyteSource: {
                     image: sourceTypeParam,
                     config: newCaptureFormData,
@@ -128,8 +130,12 @@ function NewCaptureModal(
     };
 
     const formChanged = ({ data, errors }: { data: any; errors: any }) => {
-        setnewCaptureFormData(data);
-        setnewCaptureFormErrors(errors);
+        setNewCaptureFormData(data);
+        setNewCaptureFormErrors(errors);
+    };
+
+    const handleNameChange = (event: any) => {
+        setSourceName(event.target.value);
     };
 
     const jsonFormRendered = (() => {
@@ -174,6 +180,10 @@ function NewCaptureModal(
             fullScreen={fullScreen}
             fullWidth={!fullScreen}
             maxWidth={'md'}
+            sx={{
+                position: 'absolute',
+                top: '25px',
+            }}
             aria-labelledby="new-capture-dialog-title"
         >
             <DialogTitle id="new-capture-dialog-title">
@@ -202,10 +212,12 @@ function NewCaptureModal(
                         id="capture-name"
                         label="Name of capture"
                         variant="outlined"
+                        value={sourceName}
+                        onChange={handleNameChange}
                     />
                     <SourceTypeSelect
                         id="source-type-select"
-                        type={sourceType}
+                        sourceType={sourceType}
                         onSourceChange={getSourceDetails}
                     />
                 </Stack>
