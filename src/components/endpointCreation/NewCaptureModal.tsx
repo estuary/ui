@@ -118,13 +118,13 @@ function NewCaptureModal(
     };
 
     const getSourceDetails = async (key: string) => {
+        const hasKey = Boolean(key && key.length > 0);
         setCurrentSchema({
             ...initialSchemaState,
-            fetching: Boolean(key && key.length > 0),
+            fetching: hasKey,
         });
-        setSearchParams({
-            sourcetype: key,
-        });
+        setSearchParams(hasKey ? { sourcetype: key } : {});
+        setSaveEnabled(hasKey);
     };
 
     const formChanged = ({ data, errors }: { data: any; errors: any }) => {
