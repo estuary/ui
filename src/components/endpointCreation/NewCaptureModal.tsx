@@ -35,6 +35,7 @@ function NewCaptureModal(
         error: null,
         fetching: false,
         schema: null,
+        image: null,
     };
 
     const formOptions = {
@@ -48,6 +49,7 @@ function NewCaptureModal(
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const sourceTypeParam = searchParams.get('sourcetype');
+
     useEffect(() => {
         if (sourceTypeParam !== null) {
             fetchSchemaForForm(sourceTypeParam);
@@ -71,17 +73,17 @@ function NewCaptureModal(
         axios.get(`http://localhost:3001/source/details/${key}`).then(
             (response) => {
                 setCurrentSchema({
-                    error: null,
-                    fetching: false,
-                    schema: response.data,
+                    ...initialSchemaState,
+                    schema: response.data.specification.spec
+                        .connectionSpecification,
+                    image: response.data.details.image,
                 });
                 setSaveEnabled(true);
             },
             (error) => {
                 setCurrentSchema({
-                    schema: null,
-                    fetching: false,
-                    error: error,
+                    ...initialSchemaState,
+                    error: error.message,
                 });
                 setSaveEnabled(false);
             }
@@ -93,7 +95,7 @@ function NewCaptureModal(
         navigate('../'); //This is assuming this modal is opened as a child. This will blow up big time if that is not true.
     };
 
-    const handleSave = (event: any) => {
+    const handleTest = (event: any) => {
         event.preventDefault();
         if (newCaptureFormErrors.length > 0) {
             setShowValidation(true);
@@ -102,7 +104,7 @@ function NewCaptureModal(
             const formSubmitData = {
                 captureName: sourceName,
                 airbyteSource: {
-                    image: sourceTypeParam,
+                    image: currentSchema.image,
                     config: newCaptureFormData,
                 },
             };
@@ -243,8 +245,8 @@ function NewCaptureModal(
                     Cancel
                 </Button>
                 <Button
-                    onClick={handleSave}
-                    disabled={!saveEnabled}
+                    onClick={handleTest}
+                    disabled={!saveEnabled || currentSchema.fetching}
                     form="newCaptureForm"
                     size="large"
                     type="submit"
@@ -252,7 +254,7 @@ function NewCaptureModal(
                     variant="contained"
                     disableElevation
                 >
-                    Save (and test)
+                    Test Capture
                 </Button>
             </DialogActions>
         </Dialog>

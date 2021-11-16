@@ -11,9 +11,6 @@ const { exec } = shellJS;
 const testFolder = './schema-local-cache/';
 const captureFolder = './captures-created/';
 
-const schemaFiles = fs.readdirSync(testFolder);
-let schemaMemoryCache = {};
-
 function cleanUpSchema(data) {
     // Split up each line
     let response = data.split('\n');
@@ -48,22 +45,6 @@ function removePrefix(name) {
     return labelName;
 }
 
-function populateSourceInMemory(name, data) {
-    const labelName = removePrefix(name);
-
-    return (schemaMemoryCache[name] = {
-        label: labelName,
-        description: `This is the ${name} description. It is used for stuff.`,
-        schema: data,
-        version: 'we need something like this',
-    });
-}
-
-function parseDataAndStoreInCache(key, data) {
-    const parsedData = safeJSONParse(data);
-    return populateSourceInMemory(key, parsedData);
-}
-
 function sendResponse(res, body, status) {
     res.status(status | 200);
     res.send(body);
@@ -74,42 +55,35 @@ function writeResponseToFileSystem(testFolder, fileName, fileContent) {
     fs.writeFileSync(testFolder + fileName, fileContent, 'utf-8');
 }
 
-function getSourcesListFromCache(allSources) {
-    const allSourceKeys = Object.keys(allSources);
-    return allSourceKeys.map((key) => {
-        const label = allSources[key].label;
-        return { key, label };
-    });
+function saveSchemaResponse(image, name, fetchedOn, stdout, res) {
+    const pargedResponse = safeJSONParse(stdout);
+    const data = {};
+
+    data.details = {
+        label: removePrefix(name),
+        image: image,
+        fetchedOn: fetchedOn,
+    };
+
+    data.specification = pargedResponse;
+
+    writeResponseToFileSystem(testFolder, `${name}.json`, JSON.stringify(data));
+    sendResponse(res, data);
 }
 
-function saveSchemaResponse(name, stdout, res) {
-    const response = parseDataAndStoreInCache(name, stdout);
-    writeResponseToFileSystem(
-        testFolder,
-        `${name}.json`,
-        JSON.stringify(response.schema)
-    );
-    sendResponse(res, response.schema.spec.connectionSpecification);
+function attemptCacheRead(name) {
+    const fileName = testFolder + name;
+    let response;
+
+    try {
+        const file = fs.readFileSync(`${fileName}.json`, 'utf-8');
+        response = safeJSONParse(file);
+    } catch (error) {
+        response = null;
+    }
+
+    return response;
 }
-
-schemaFiles.forEach((file) => {
-    // Clean up file name stuff
-    const sourceName = file.replace('.json', '');
-
-    // Fetch the files
-    const fileName = testFolder + file;
-    const data = fs.readFileSync(fileName, 'utf-8');
-
-    // Parse then store into cache
-    parseDataAndStoreInCache(sourceName, data);
-});
-
-console.log('------------------------------');
-console.log('|Sources ready during startup');
-getSourcesListFromCache(schemaMemoryCache).map((val) => {
-    console.log(`|- ${val.label}`);
-});
-console.log('------------------------------');
 
 const app = express();
 app.use(cors());
@@ -127,30 +101,42 @@ app.get('/sources/all', (req, res) => {
 
 app.get('/source/details/:sourceName', (req, res) => {
     const name = req.params.sourceName;
-    const airByteCommand = `docker run --rm airbyte/${name}:latest spec`;
-    const estuaryCommand = `docker run --rm ghcr.io/estuary/${name}:dev spec`;
-    const cachedSchema = schemaMemoryCache[`${name}`];
+    const cachedFile = attemptCacheRead(name);
 
-    if (cachedSchema) {
-        console.log(' - source cached', cachedSchema);
-        sendResponse(res, cachedSchema.schema.spec.connectionSpecification);
+    if (cachedFile) {
+        console.log(' - source cached', cachedFile);
+        sendResponse(res, cachedFile);
     } else {
+        const dockerRun = 'docker run --rm __PATH__ spec';
+        const estuaryPath = `ghcr.io/estuary/${name}:dev`;
+        const estuaryCommand = dockerRun.replace('__PATH__', estuaryPath);
+
         console.log(' - source needs fetching');
         console.log(' - - executing ', estuaryCommand);
         exec(estuaryCommand, (error, stdout, stderr) => {
             if (error !== 0) {
+                const airBytePath = `airbyte/${name}:latest`;
+                const airByteCommand = dockerRun.replace(
+                    '__PATH__',
+                    airBytePath
+                );
                 console.log(' - - - Estuary does not have this connector');
                 console.log(' - - - - - executing ', airByteCommand);
                 exec(airByteCommand, (error, stdout, stderr) => {
                     if (error !== 0) {
-                        console.log('Issue fetching', [error, stdout, stderr]);
                         sendResponse(res, stderr, 500);
                     } else {
-                        saveSchemaResponse(name, stdout, res);
+                        saveSchemaResponse(
+                            airBytePath,
+                            name,
+                            Date.now(),
+                            stdout,
+                            res
+                        );
                     }
                 });
             } else {
-                saveSchemaResponse(name, stdout, res);
+                saveSchemaResponse(estuaryPath, name, Date.now(), stdout, res);
             }
         });
     }
@@ -163,8 +149,8 @@ app.post('/capture', (req, res) => {
     if (true) {
         writeResponseToFileSystem(
             captureFolder,
-            req.body.captureName,
-            JSON.stringify(req.body.airbyteSource)
+            `${req.body.captureName}.json`,
+            JSON.stringify(req.body)
         );
         res.status(200);
         res.end('success');
@@ -197,6 +183,8 @@ app.get('/captures/all', (req, res) => {
 });
 
 const port = 3001;
+
 app.listen(port, () => {
+    console.log('');
     console.log(`Example app listening at http://localhost:${port}`);
 });
