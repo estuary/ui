@@ -93,7 +93,7 @@ function NewCaptureModal(
 
     const handleClose = () => {
         setCurrentSchema(initialSchemaState);
-        navigate('..'); //This is assuming this modal is opened as a child. This will blow up big time if that is not true.
+        navigate('..'); //This is assuming this is a child of the /captures route.
     };
 
     const handleTest = (event: any) => {
