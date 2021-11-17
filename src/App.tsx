@@ -16,7 +16,7 @@ const Alerts = React.lazy(() => import('./pages/Alerts'));
 const Logs = React.lazy(() => import('./pages/Logs'));
 
 export default function App() {
-    const railNavWidth = 65;
+    const railNavWidth = 70;
     const fullNavWidth = 225;
 
     const [navigationOpen, setNavigationOpen] = React.useState(false);
