@@ -93,7 +93,7 @@ function NewCaptureModal(
 
     const handleClose = () => {
         setCurrentSchema(initialSchemaState);
-        navigate('../'); //This is assuming this modal is opened as a child. This will blow up big time if that is not true.
+        navigate('..'); //This is assuming this modal is opened as a child. This will blow up big time if that is not true.
     };
 
     const handleTest = (event: any) => {
@@ -188,89 +188,91 @@ function NewCaptureModal(
     })();
 
     return (
-        <Dialog
-            open
-            onClose={handleClose}
-            scroll="paper"
-            fullScreen={fullScreen}
-            fullWidth={!fullScreen}
-            maxWidth={'md'}
-            sx={{
-                position: 'absolute',
-                top: '25px',
-            }}
-            aria-labelledby="new-capture-dialog-title"
-        >
-            <DialogTitle id="new-capture-dialog-title">
-                New Capture
-                <IconButton
-                    aria-label="close"
-                    onClick={handleClose}
-                    sx={{
-                        color: (theme) => theme.palette.grey[500],
-                        position: 'absolute',
-                        right: 0,
-                    }}
-                >
-                    <CloseIcon />
-                </IconButton>
-            </DialogTitle>
-            <DialogContent dividers>
-                <DialogContentText>
-                    To get started please provide a unique name and the source
-                    type of the Capture you want to create. Once you've filled
-                    out the source details you can click save to test the
-                    connection.
-                </DialogContentText>
-                <Stack direction="row" spacing={2}>
-                    <TextField
-                        id="capture-name"
-                        label="Name of capture"
-                        variant="outlined"
-                        value={sourceName}
-                        onChange={handleNameChange}
-                    />
-                    <SourceTypeSelect
-                        id="source-type-select"
-                        sourceType={sourceType}
-                        onSourceChange={getSourceDetails}
-                    />
-                </Stack>
-                <Box sx={{ width: '100%' }}>
-                    {formSubmitError ? (
-                        <Alert severity="error">
-                            <AlertTitle>Capture test failed</AlertTitle>
-                            <Typography variant="subtitle1">
-                                {formSubmitError}
-                            </Typography>
-                        </Alert>
-                    ) : null}
+        <>
+            <Dialog
+                open
+                onClose={handleClose}
+                scroll="paper"
+                fullScreen={fullScreen}
+                fullWidth={!fullScreen}
+                maxWidth={'md'}
+                sx={{
+                    position: 'absolute',
+                    top: '25px',
+                }}
+                aria-labelledby="new-capture-dialog-title"
+            >
+                <DialogTitle id="new-capture-dialog-title">
+                    New Capture
+                    <IconButton
+                        aria-label="close"
+                        onClick={handleClose}
+                        sx={{
+                            color: (theme) => theme.palette.grey[500],
+                            position: 'absolute',
+                            right: 0,
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                </DialogTitle>
+                <DialogContent dividers>
+                    <DialogContentText>
+                        To get started please provide a unique name and the
+                        source type of the Capture you want to create. Once
+                        you've filled out the source details you can click save
+                        to test the connection.
+                    </DialogContentText>
+                    <Stack direction="row" spacing={2}>
+                        <TextField
+                            id="capture-name"
+                            label="Name of capture"
+                            variant="outlined"
+                            value={sourceName}
+                            onChange={handleNameChange}
+                        />
+                        <SourceTypeSelect
+                            id="source-type-select"
+                            sourceType={sourceType}
+                            onSourceChange={getSourceDetails}
+                        />
+                    </Stack>
+                    <Box sx={{ width: '100%' }}>
+                        {formSubmitError ? (
+                            <Alert severity="error">
+                                <AlertTitle>Capture test failed</AlertTitle>
+                                <Typography variant="subtitle1">
+                                    {formSubmitError}
+                                </Typography>
+                            </Alert>
+                        ) : null}
 
-                    {currentSchema.fetching ? (
-                        <PaitentLoad on={currentSchema.fetching} />
-                    ) : (
-                        jsonFormRendered
-                    )}
-                </Box>
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={handleClose} size="large" color="error">
-                    Cancel
-                </Button>
-                <Button
-                    onClick={handleTest}
-                    disabled={!saveEnabled || currentSchema.fetching}
-                    form="newCaptureForm"
-                    size="large"
-                    type="submit"
-                    color="success"
-                    variant="contained"
-                    disableElevation
-                >
-                    Test Capture
-                </Button>
-            </DialogActions>
-        </Dialog>
+                        {currentSchema.fetching ? (
+                            <PaitentLoad on={currentSchema.fetching} />
+                        ) : (
+                            jsonFormRendered
+                        )}
+                    </Box>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose} size="large" color="error">
+                        Cancel
+                    </Button>
+                    <Button
+                        onClick={handleTest}
+                        disabled={!saveEnabled || currentSchema.fetching}
+                        form="newCaptureForm"
+                        size="large"
+                        type="submit"
+                        color="success"
+                        variant="contained"
+                        disableElevation
+                    >
+                        Test Capture
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </>
     );
 }
 
