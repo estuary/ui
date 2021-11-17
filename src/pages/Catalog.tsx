@@ -12,30 +12,35 @@ import {
 } from '@mui/material';
 import PageContainer from 'components/shared/PageContainer';
 import { useEffect, useState } from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 
 export default function Catalog() {
+    const { pathname } = useLocation();
+
     const [captureList, setCaptureList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        fetch('http://localhost:3001/captures/all')
-            .then((res) => res.json())
-            .then(
-                (result) => {
-                    setCaptureList(result);
-                    setIsLoading(false);
-                },
-                (error) => {
-                    console.warn(
-                        'There was an issue fetching the Captures',
-                        error.stack
-                    );
-                    setCaptureList([]);
-                    setIsLoading(false);
-                }
-            );
-    }, [isLoading]);
+        if (pathname === '/app/captures') {
+            console.log('making the vall');
+            fetch('http://localhost:3001/captures/all')
+                .then((res) => res.json())
+                .then(
+                    (result) => {
+                        setCaptureList(result);
+                        setIsLoading(false);
+                    },
+                    (error) => {
+                        console.warn(
+                            'There was an issue fetching the Captures',
+                            error.stack
+                        );
+                        setCaptureList([]);
+                        setIsLoading(false);
+                    }
+                );
+        }
+    }, [pathname]);
 
     function CatalogList(props: any) {
         const { captures } = props;
