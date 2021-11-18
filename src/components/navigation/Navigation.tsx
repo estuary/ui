@@ -47,7 +47,6 @@ function Navigation(props: navigationProps) {
             }}
         >
             <Toolbar />
-
             <Box sx={{ overflowX: 'hidden' }}>
                 <List aria-label="main application navigation">
                     <ListItemLink
