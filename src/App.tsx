@@ -1,4 +1,4 @@
-import { Skeleton } from '@mui/material';
+import { Skeleton, useMediaQuery, useTheme } from '@mui/material';
 import Box from '@mui/material/Box';
 import NewCaptureModal from 'components/endpointCreation/NewCaptureModal';
 import Home from 'pages/Home';
@@ -19,8 +19,19 @@ export default function App() {
     const railNavWidth = 70;
     const fullNavWidth = 225;
 
+    const theme = useTheme();
+    const isBelowMd = useMediaQuery(theme.breakpoints.down('md'));
+
     const [navigationOpen, setNavigationOpen] = React.useState(false);
     const [navWidth, setNavigationWidth] = React.useState(railNavWidth);
+
+    let gridSettings = {
+        display: 'grid',
+        gridTemplateRows: 'auto 1fr',
+        gridTemplateColumns: `${navWidth}px auto`,
+        gridTemplateAreas: `"header header"
+        "nav main"`,
+    };
 
     const toggleNavigationDrawer = () => {
         setNavigationWidth(navigationOpen ? railNavWidth : fullNavWidth);
@@ -28,16 +39,7 @@ export default function App() {
     };
 
     return (
-        <Box
-            sx={{
-                display: 'grid',
-                gridTemplateRows: 'auto 1fr',
-                gridTemplateColumns: `${navWidth}px auto`,
-                gridTemplateAreas: `"header header"
-        "nav main"`,
-            }}
-        >
-            /
+        <Box sx={isBelowMd ? null : gridSettings}>
             <Box sx={{ gridArea: 'header' }}>
                 <Topbar
                     title="Estuary Global Actions"
