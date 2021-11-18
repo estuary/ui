@@ -101,25 +101,23 @@ function NewCaptureModal(
         if (newCaptureFormErrors.length > 0) {
             setShowValidation(true);
         } else {
-            const formSubmitData = {};
-            formSubmitData[sourceName] = {
-                endpoint: {
-                    airbyteSource: {
-                        image: currentSchema.image,
-                        config: newCaptureFormData,
+            const formSubmitData = {
+                config: newCaptureFormData,
+                name: sourceName,
+                type: sourceTypeParam,
+                details: {
+                    endpoint: {
+                        airbyteSource: {
+                            image: currentSchema.image,
+                            config: newCaptureFormData,
+                        },
                     },
-                },
-                bindings: {
-                    resources: {
-                        stream: '${TABLE_NAME}',
-                        syncMode: 'incremental',
-                    },
-                    target: '${COLLECTION_NAME}',
+                    bindings: [],
                 },
             };
             setFormSubmitting(true);
             axios
-                .post('http://localhost:3001/capture', formSubmitData)
+                .post('http://localhost:3001/realCapture', formSubmitData)
                 .then((response) => {
                     handleClose();
                 })
@@ -196,10 +194,6 @@ function NewCaptureModal(
                 fullScreen={fullScreen}
                 fullWidth={!fullScreen}
                 maxWidth={'md'}
-                sx={{
-                    position: 'absolute',
-                    top: '25px',
-                }}
                 aria-labelledby="new-capture-dialog-title"
             >
                 <DialogTitle id="new-capture-dialog-title">
@@ -220,8 +214,8 @@ function NewCaptureModal(
                     <DialogContentText>
                         To get started please provide a unique name and the
                         source type of the Capture you want to create. Once
-                        you've filled out the source details you can click save
-                        to test the connection.
+                        you've filled out the source details you can click "Test
+                        Capture" down below to test the connection.
                     </DialogContentText>
                     <Stack direction="row" spacing={2}>
                         <TextField
