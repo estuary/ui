@@ -3,13 +3,18 @@
 import cors from 'cors';
 import express from 'express';
 import fs from 'fs';
+import json2yaml from 'json2yaml';
+import os from 'os';
 import shellJS from 'shelljs';
 import allSources from './allSources.js';
 
 const { exec } = shellJS;
 
+const homedir = os.homedir();
+
 const testFolder = './schema-local-cache/';
 const captureFolder = './captures-created/';
+const localFlow = homedir + '/stuff/test-flow/';
 
 // This only work on the responses from docker / stdout.
 //It assumes the valid JSON is all on one line
@@ -171,6 +176,61 @@ app.post('/capture', (req, res) => {
         res.status(500);
         res.json({
             message: `There was a server error.`,
+        });
+    }
+});
+
+app.post('/realCapture', (req, res) => {
+    console.log('Real capture creation called');
+    console.log(' - config sent', req.body);
+
+    try {
+        const captureName = req.body.name;
+        const type = req.body.type;
+        const newFile = `discover-${type}.config.yaml`;
+        const fileAlreadyExists = fs.existsSync(localFlow + newFile);
+
+        if (fileAlreadyExists === true) {
+            res.status(400);
+            res.json({
+                message: `There is already a capture config started here: "${
+                    localFlow + newFile
+                }".`,
+            });
+        } else {
+            writeResponseToFileSystem(
+                localFlow,
+                newFile,
+                json2yaml.stringify(req.body.config)
+            );
+            try {
+                exec(
+                    `flowctl discover --image=${req.body.details.endpoint.airbyteSource.image}`,
+                    (error, stdout, stderr) => {
+                        if (error !== 0) {
+                            res.status(500);
+                            res.json({
+                                message: stdout,
+                                error: stderr,
+                            });
+                        } else {
+                            res.status(200);
+                            res.end('success');
+                        }
+                    }
+                );
+            } catch (error) {
+                res.status(200);
+                res.end(
+                    'failed but okay cause that command would not work anyway'
+                );
+            }
+        }
+    } catch (error) {
+        res.status(500);
+        res.json({
+            message: `There was a server error.`,
+            error: error,
         });
     }
 });
