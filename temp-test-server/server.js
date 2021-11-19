@@ -142,10 +142,6 @@ function fetchSchema(name) {
                         }
                     });
                 } else {
-                    console.log('>>>>>>>>', {
-                        image: estuaryPath,
-                        data: stdout,
-                    });
                     resolve({
                         image: estuaryPath,
                         data: stdout,
