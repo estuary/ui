@@ -116,7 +116,9 @@ function NewCaptureModal(
             axios
                 .post('http://localhost:3001/capture', formSubmitData)
                 .then((response) => {
-                    console.log('Capture Creation Done', response);
+                    console.log('Capture Creation Done', response.data);
+                    setFormSubmitting(false);
+                    setFormSubmitError(null);
                 })
                 .catch((error) => {
                     if (error.response) {

@@ -323,7 +323,9 @@ app.post('/capture', (req, res) => {
                         const file = fs.readFileSync(catalogPath, {
                             encoding: 'ascii',
                         });
-                        const responseData = yaml.load(file);
+                        const responseData = yaml.load(file, {
+                            json: true,
+                        });
 
                         res.status(200);
                         res.json(responseData);
