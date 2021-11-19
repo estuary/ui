@@ -117,7 +117,7 @@ function NewCaptureModal(
             };
             setFormSubmitting(true);
             axios
-                .post('http://localhost:3001/realCapture', formSubmitData)
+                .post('http://localhost:3001/capture', formSubmitData)
                 .then((response) => {
                     handleClose();
                 })
