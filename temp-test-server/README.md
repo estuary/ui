@@ -4,6 +4,12 @@ Test server to fetch [Airbyte connector](https://airbyte.io/connectors) schemas
 
 Starts a server on port 3001 and has CORS setup for responses. It will
 
+# How to install?
+
+Start by running `npm install`. We use [node-pty](https://github.com/microsoft/node-pty) as a dependency and that [might require extra steps](https://github.com/microsoft/node-pty/blob/main/README.md#dependencies) in some environments.
+
+Once stuff is installed you then need to configure where you flow development directory is located. Edit the `flowDevDirectory` const in the `server.js` file.
+
 # How to start?
 
 Just run `npm run start`
@@ -24,10 +30,18 @@ If it hits number 2 or 3 then it will store the response in the `schema-local-ca
 
 The sourceKey sent over should look like `source-trello` or `source-amazon-ads`
 
-# /captures/all
+# /test-captures/all
 
-A GET endpoint that will return a simple array of all captures stored in the `captures-created` folder.
+A GET endpoint that will return a simple array of all captures stored in the directory set in `captureStorage`. Just a test endpoint for now as we have not created an endpoint to pull the actual list of captures available on your local.
+
+# /test-capture
+
+A POST endpoint that will save off whatever is sent in the body. It saves a JSON files into the directory set in `captureStorage`. This is useful to see what the requests are being sent over like and double checking stuff.
 
 # /capture
 
-A POST endpoint that will save off whatever is sent in the body. It saves a JSON files into the `captures-created` folder.
+A POST endpoint that will create a config YAML file in the `flowDevDirectory` you set.
+
+1. Check if a config file is already started
+2. Create new config yaml with settings provided in UI
+3. Run a `flowctl discover` command on newly created config

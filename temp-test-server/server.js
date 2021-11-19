@@ -1,24 +1,31 @@
-/** @format */
-
 import cors from 'cors';
 import express from 'express';
 import fs from 'fs';
 import json2yaml from 'json2yaml';
-import os from 'os';
+import * as pty from 'node-pty';
 import shellJS from 'shelljs';
 import allSources from './allSources.js';
-
 const { exec } = shellJS;
 
-const homedir = os.homedir();
+//////////////////////////////
+//  █▀▀ █▀█ █▄░█ █▀▀ █ █▀▀  //
+//  █▄▄ █▄█ █░▀█ █▀░ █ █▄█  //
+//////////////////////////////
+const homedir = process.env.HOME;
+const schemaStorage = './schema-local-cache/';
+const requestStorage = './requests/';
+const captureStorage = requestStorage + '/captures/';
+const flowDevDirectory = homedir + '/stuff/test-flow/';
 
-const testFolder = './schema-local-cache/';
-const captureFolder = './captures-created/';
-const localFlow = homedir + '/stuff/test-flow/';
-
-// This only work on the responses from docker / stdout.
-//It assumes the valid JSON is all on one line
+//////////////////////////////////
+//  █░█ █▀▀ █░░ █▀█ █▀▀ █▀█ █▀  //
+//  █▀█ ██▄ █▄▄ █▀▀ ██▄ █▀▄ ▄█  //
+//////////////////////////////////
 function getJSONFromStdOut(data) {
+    // WARNING!!
+    // This only works on the responses from docker via stdout.
+    // It assumes the valid JSON is all on one line.
+
     // Split up each line
     let response = data.split('\n');
 
@@ -52,13 +59,7 @@ function removePrefix(name) {
     return labelName;
 }
 
-function sendResponse(res, body, status) {
-    res.status(status | 200);
-    res.send(body);
-}
-
 function writeResponseToFileSystem(testFolder, fileName, fileContent) {
-    console.log('Writing to', testFolder + fileName);
     fs.writeFileSync(testFolder + fileName, fileContent, 'utf-8');
 }
 
@@ -74,12 +75,16 @@ function saveSchemaResponse(image, name, fetchedOn, stdout, res) {
 
     data.specification = pargedResponse;
 
-    writeResponseToFileSystem(testFolder, `${name}.json`, JSON.stringify(data));
+    writeResponseToFileSystem(
+        schemaStorage,
+        `${name}.json`,
+        JSON.stringify(data)
+    );
     sendResponse(res, data);
 }
 
 function attemptCacheRead(name) {
-    const fileName = testFolder + name;
+    const fileName = schemaStorage + name;
     let response;
 
     try {
@@ -92,10 +97,23 @@ function attemptCacheRead(name) {
     return response;
 }
 
+function sendResponse(res, body, status) {
+    res.status(status | 200);
+    res.send(body);
+}
+
+/////////////////////////////////////////
+//  ▄▀█ █▀█ █▀█ ▄▄ █▀ █▀▀ ▀█▀ █░█ █▀█  //
+//  █▀█ █▀▀ █▀▀ ░░ ▄█ ██▄ ░█░ █▄█ █▀▀  //
+/////////////////////////////////////////
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+/////////////////////////////////
+//  █▀ █▀█ █░█ █▀█ █▀▀ █▀▀ █▀  //
+//  ▄█ █▄█ █▄█ █▀▄ █▄▄ ██▄ ▄█  //
+/////////////////////////////////
 app.get('/sources/all', (req, res) => {
     const allSourcesWithLabels = allSources.map((source) => {
         const key = source;
@@ -149,14 +167,40 @@ app.get('/source/details/:sourceName', (req, res) => {
     }
 });
 
-app.post('/capture', (req, res) => {
+//////////////////////////////////////
+//  █▀▀ ▄▀█ █▀█ ▀█▀ █░█ █▀█ █▀▀ █▀  //
+//  █▄▄ █▀█ █▀▀ ░█░ █▄█ █▀▄ ██▄ ▄█  //
+//////////////////////////////////////
+app.get('/test-captures/all', (req, res) => {
+    const captureFiles = fs.readdirSync(captureStorage);
+    const allCaptures = [];
+
+    captureFiles.forEach((file) => {
+        // Clean up file name stuff
+        const sourceName = file.replace('.json', '');
+
+        // Fetch the files
+        const fileName = captureStorage + file;
+        const data = JSON.parse(fs.readFileSync(fileName, 'utf-8'));
+
+        // Parse then store into cache
+        allCaptures.push({
+            name: sourceName,
+            type: data.image,
+        });
+    });
+
+    sendResponse(res, allCaptures);
+});
+
+app.post('/test-capture', (req, res) => {
     console.log('Capture Creation Called');
     console.log(' - config sent', req.body);
 
     try {
         const captureName = Object.keys(req.body)[0];
         const newFile = `${captureName}.json`;
-        const fileAlreadyExists = fs.existsSync(captureFolder + newFile);
+        const fileAlreadyExists = fs.existsSync(captureStorage + newFile);
 
         if (fileAlreadyExists === true) {
             res.status(400);
@@ -165,7 +209,7 @@ app.post('/capture', (req, res) => {
             });
         } else {
             writeResponseToFileSystem(
-                captureFolder,
+                captureStorage,
                 newFile,
                 JSON.stringify(req.body)
             );
@@ -180,7 +224,7 @@ app.post('/capture', (req, res) => {
     }
 });
 
-app.post('/realCapture', (req, res) => {
+app.post('/capture', (req, res) => {
     console.log('Real capture creation called');
     console.log(' - config sent', req.body);
 
@@ -188,42 +232,55 @@ app.post('/realCapture', (req, res) => {
         const captureName = req.body.name;
         const type = req.body.type;
         const newFile = `discover-${type}.config.yaml`;
-        const fileAlreadyExists = fs.existsSync(localFlow + newFile);
+        const filePath = flowDevDirectory + newFile;
+        const fileAlreadyExists = fs.existsSync(filePath);
 
         if (fileAlreadyExists === true) {
             res.status(400);
             res.json({
-                message: `There is already a capture config started here: "${
-                    localFlow + newFile
-                }".`,
+                message: `There is already a capture config started : "${filePath}"`,
             });
         } else {
             writeResponseToFileSystem(
-                localFlow,
+                flowDevDirectory,
                 newFile,
                 json2yaml.stringify(req.body.config)
             );
             try {
-                exec(
-                    `flowctl discover --image=${req.body.details.endpoint.airbyteSource.image}`,
-                    (error, stdout, stderr) => {
-                        if (error !== 0) {
-                            res.status(500);
-                            res.json({
-                                message: stdout,
-                                error: stderr,
-                            });
-                        } else {
-                            res.status(200);
-                            res.end('success');
-                        }
+                const flowShell = pty.spawn(
+                    `flowctl`,
+                    [
+                        'discover',
+                        `--image=${req.body.details.endpoint.airbyteSource.image}`,
+                    ],
+                    {
+                        cwd: flowDevDirectory,
                     }
                 );
+
+                flowShell.onData((data) => {
+                    flowShell.kill();
+
+                    if (data.includes('Error:')) {
+                        fs.unlinkSync(filePath);
+                        res.status(500);
+                        res.json({
+                            message: data.split('Error:')[1],
+                        });
+                    } else {
+                        res.status(200);
+                        res.json({
+                            message: data,
+                        });
+                    }
+                });
             } catch (error) {
-                res.status(200);
-                res.end(
-                    'failed but okay cause that command would not work anyway'
-                );
+                console.log('OH NO');
+                res.status(500);
+                res.json({
+                    message: 'Massive failure and we are not sure why. Sorry.',
+                    error: error,
+                });
             }
         }
     } catch (error) {
@@ -235,28 +292,10 @@ app.post('/realCapture', (req, res) => {
     }
 });
 
-app.get('/captures/all', (req, res) => {
-    const captureFiles = fs.readdirSync(captureFolder);
-    const allCaptures = [];
-
-    captureFiles.forEach((file) => {
-        // Clean up file name stuff
-        const sourceName = file.replace('.json', '');
-
-        // Fetch the files
-        const fileName = captureFolder + file;
-        const data = JSON.parse(fs.readFileSync(fileName, 'utf-8'));
-
-        // Parse then store into cache
-        allCaptures.push({
-            name: sourceName,
-            type: data.image,
-        });
-    });
-
-    sendResponse(res, allCaptures);
-});
-
+/////////////////////////////////////////
+//  ▄▀█ █▀█ █▀█ ▄▄ █▀ ▀█▀ ▄▀█ █▀█ ▀█▀  //
+//  █▀█ █▀▀ █▀▀ ░░ ▄█ ░█░ █▀█ █▀▄ ░█░  //
+/////////////////////////////////////////
 const port = 3001;
 app.listen(port, () => {
     console.log('');
