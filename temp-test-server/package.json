@@ -17,6 +17,7 @@
     "file-lines-count": "^1.0.1",
     "json-to-pretty-yaml": "^1.2.2",
     "json2yaml": "^1.1.0",
+    "node-pty": "^0.10.1",
     "shelljs": "^0.8.4",
     "thread-sleep": "^2.2.0"
   }
