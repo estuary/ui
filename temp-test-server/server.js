@@ -1,10 +1,12 @@
 import cors from 'cors';
 import express from 'express';
 import fs from 'fs';
+import yaml from 'js-yaml';
 import json2yaml from 'json2yaml';
 import * as pty from 'node-pty';
 import shellJS from 'shelljs';
 import allSources from './allSources.js';
+
 const { exec } = shellJS;
 
 //////////////////////////////
@@ -97,9 +99,77 @@ function attemptCacheRead(name) {
     return response;
 }
 
+function fetchSchema(name) {
+    const cachedFile = attemptCacheRead(name);
+    let response;
+
+    if (cachedFile) {
+        console.log(' - source cached');
+        response = new Promise((resolve) => {
+            resolve({
+                image: cachedFile.details.image,
+                data: JSON.stringify(cachedFile.specification),
+            });
+        });
+    } else {
+        const dockerRun = 'docker run --rm __PATH__ spec';
+        const estuaryPath = `ghcr.io/estuary/${name}:dev`;
+        const estuaryCommand = dockerRun.replace('__PATH__', estuaryPath);
+
+        console.log(' - source needs fetching');
+        console.log(' - - executing ', estuaryCommand);
+        response = new Promise((resolve, reject) => {
+            exec(estuaryCommand, (error, stdout, stderr) => {
+                if (error !== 0) {
+                    const airBytePath = `airbyte/${name}:latest`;
+                    const airByteCommand = dockerRun.replace(
+                        '__PATH__',
+                        airBytePath
+                    );
+                    console.log(' - - - Estuary does not have this connector');
+                    console.log(' - - - - - executing ', airByteCommand);
+                    exec(airByteCommand, (error, stdout, stderr) => {
+                        if (error !== 0) {
+                            reject({
+                                data: null,
+                                error: stderr,
+                            });
+                        } else {
+                            resolve({
+                                image: airBytePath,
+                                data: stdout,
+                            });
+                        }
+                    });
+                } else {
+                    console.log('>>>>>>>>', {
+                        image: estuaryPath,
+                        data: stdout,
+                    });
+                    resolve({
+                        image: estuaryPath,
+                        data: stdout,
+                    });
+                }
+            });
+        });
+    }
+
+    return response;
+}
+
 function sendResponse(res, body, status) {
     res.status(status | 200);
     res.send(body);
+}
+
+function hugeFailure(res, error) {
+    console.log('OH NO');
+    res.status(500);
+    res.json({
+        message: 'Massive failure and we are not sure why. Sorry.',
+        error: error,
+    });
 }
 
 /////////////////////////////////////////
@@ -124,46 +194,98 @@ app.get('/sources/all', (req, res) => {
     sendResponse(res, allSourcesWithLabels);
 });
 
-app.get('/source/details/:sourceName', (req, res) => {
+app.get('/source/:sourceName', (req, res) => {
     const name = req.params.sourceName;
-    const cachedFile = attemptCacheRead(name);
+    const schema = fetchSchema(name);
 
-    if (cachedFile) {
-        console.log(' - source cached', cachedFile);
-        sendResponse(res, cachedFile);
-    } else {
-        const dockerRun = 'docker run --rm __PATH__ spec';
-        const estuaryPath = `ghcr.io/estuary/${name}:dev`;
-        const estuaryCommand = dockerRun.replace('__PATH__', estuaryPath);
-
-        console.log(' - source needs fetching');
-        console.log(' - - executing ', estuaryCommand);
-        exec(estuaryCommand, (error, stdout, stderr) => {
-            if (error !== 0) {
-                const airBytePath = `airbyte/${name}:latest`;
-                const airByteCommand = dockerRun.replace(
-                    '__PATH__',
-                    airBytePath
+    schema
+        .then((schema) => {
+            if (schema && schema.data) {
+                console.log('lakjsdf', schema);
+                saveSchemaResponse(
+                    schema.image,
+                    name,
+                    Date.now(),
+                    schema.data,
+                    res
                 );
-                console.log(' - - - Estuary does not have this connector');
-                console.log(' - - - - - executing ', airByteCommand);
-                exec(airByteCommand, (error, stdout, stderr) => {
-                    if (error !== 0) {
-                        sendResponse(res, stderr, 400);
-                    } else {
-                        saveSchemaResponse(
-                            airBytePath,
-                            name,
-                            Date.now(),
-                            stdout,
-                            res
-                        );
-                    }
-                });
             } else {
-                saveSchemaResponse(estuaryPath, name, Date.now(), stdout, res);
+                hugeFailure(res);
+            }
+        })
+        .catch(() => {
+            res.status(400);
+            res.json({
+                message: 'No sources could be found with that name.',
+            });
+        });
+});
+
+app.get('/source-delete/:name', (req, res) => {
+    const name = req.params.name;
+    const schema = fetchSchema(name);
+    const imagePath = schema.details.image;
+
+    try {
+        const flowShell = pty.spawn(
+            `flowctl`,
+            ['discover', `--image=${imagePath}`],
+            {
+                cwd: flowDevDirectory,
+            }
+        );
+
+        flowShell.onData((data) => {
+            const fatalString = 'fatal';
+            const errorString = 'Error:';
+            const successString = 'Creating a connector configuration stub at ';
+            const validationString = 'validating';
+
+            console.log('on data', data);
+
+            if (data.includes(fatalString)) {
+                hugeFailure(res, fatalString);
+            } else if (data.includes(errorString)) {
+                if (data.includes(validationString)) {
+                    res.status(500);
+                    res.json({
+                        message:
+                            'A capture has already been started with this type.',
+                    });
+                } else {
+                    res.status(500);
+                    res.json({
+                        message: data.split(errorString)[1],
+                    });
+                }
+
+                flowShell.kill();
+            } else if (data.includes(successString)) {
+                let defaultConfigPath = data
+                    .split(successString)[1] //get part that contains path
+                    .split('.yaml')[0] // remove anyting after file type
+                    .concat('.yaml') // add back in the file type
+                    .replace('/home/flow/project/', flowDevDirectory); //use real path
+
+                console.log('defaultConfigPath =', defaultConfigPath);
+
+                setTimeout(() => {
+                    const file = fs.readFileSync(defaultConfigPath);
+                    const defaults = yaml.load(file);
+                    const responseData = {
+                        details: schema.details,
+                        defaults: defaults,
+                        specification: schema.specification,
+                    };
+
+                    res.status(200);
+                    res.json(responseData);
+                    flowShell.kill();
+                }, 3500); //Just give the fs a second to write file
             }
         });
+    } catch (error) {
+        hugeFailure(res, error);
     }
 });
 
@@ -238,7 +360,7 @@ app.post('/capture', (req, res) => {
         if (fileAlreadyExists === true) {
             res.status(400);
             res.json({
-                message: `There is already a capture config started : "${filePath}"`,
+                message: `There is already a config started - please remove and try again : "${filePath}"`,
             });
         } else {
             writeResponseToFileSystem(
@@ -259,36 +381,89 @@ app.post('/capture', (req, res) => {
                 );
 
                 flowShell.onData((data) => {
-                    flowShell.kill();
+                    const fatalString = 'fatal';
+                    const errorString = 'Error:';
+                    const successString =
+                        'Creating a connector configuration stub at ';
+                    const validationString = 'validating';
 
-                    if (data.includes('Error:')) {
-                        fs.unlinkSync(filePath);
-                        res.status(500);
-                        res.json({
-                            message: data.split('Error:')[1],
-                        });
-                    } else {
-                        res.status(200);
-                        res.json({
-                            message: data,
-                        });
+                    if (data.includes(fatalString)) {
+                        hugeFailure(res, fatalString);
+                    } else if (data.includes(errorString)) {
+                        if (data.includes(validationString)) {
+                            res.status(500);
+                            res.json({
+                                message: `Validation issue`,
+                            });
+                        } else {
+                            res.status(500);
+                            res.json({
+                                message: data.split(errorString)[1],
+                            });
+                        }
+
+                        flowShell.kill();
+                    } else if (data.includes(successString)) {
+                        let defaultConfigPath = data
+                            .split(successString)[1] //get part that contains path
+                            .split('.yaml')[0] // remove anyting after file type
+                            .concat('.yaml') // add back in the file type
+                            .replace('/home/flow/project/', flowDevDirectory); //use real path
+
+                        console.log('defaultConfigPath =', defaultConfigPath);
+
+                        setTimeout(() => {
+                            const file = fs.readFileSync(defaultConfigPath);
+                            const defaults = yaml.load(file);
+                            const responseData = {
+                                details: schema.details,
+                                defaults: defaults,
+                                specification: schema.specification,
+                            };
+
+                            res.status(200);
+                            res.json(responseData);
+                            flowShell.kill();
+                        }, 3500); //Just give the fs a second to write file
                     }
                 });
             } catch (error) {
-                console.log('OH NO');
-                res.status(500);
-                res.json({
-                    message: 'Massive failure and we are not sure why. Sorry.',
-                    error: error,
-                });
+                hugeFailure(res, error);
             }
         }
     } catch (error) {
-        res.status(500);
-        res.json({
-            message: `There was a server error.`,
-            error: error,
+        hugeFailure(res, error);
+    }
+});
+
+///////////////////////////////////
+//  █▀▀ ▄▀█ ▀█▀ ▄▀█ █░░ █▀█ █▀▀  //
+//  █▄▄ █▀█ ░█░ █▀█ █▄▄ █▄█ █▄█  //
+///////////////////////////////////
+app.get('/catalog', (req, res) => {
+    try {
+        const flowShell = pty.spawn(`flowctl`, ['json-schema'], {
+            cwd: flowDevDirectory,
+            encoding: 'utf8',
         });
+
+        flowShell.onData((data) => {
+            console.log('data', data);
+
+            if (data.includes('Error:')) {
+                res.status(500);
+                res.json({
+                    message: data.split('Error:')[1],
+                });
+            } else {
+                res.status(200);
+                res.json({
+                    message: data,
+                });
+            }
+        });
+    } catch (error) {
+        hugeFailure(res, error);
     }
 });
 

@@ -1,3 +1,4 @@
+import { createAjv } from '@jsonforms/core';
 import {
     materialCells,
     materialRenderers,
@@ -32,6 +33,8 @@ NewCaptureModal.propTypes = {};
 function NewCaptureModal(
     props: PropTypes.InferProps<typeof NewCaptureModal.propTypes>
 ) {
+    const handleDefaultsAjv = createAjv({ useDefaults: true });
+
     const initialSchemaState = {
         error: null,
         fetching: false,
@@ -71,7 +74,7 @@ function NewCaptureModal(
         setShowValidation(false);
         setNewCaptureFormData({});
         setNewCaptureFormErrors([]);
-        axios.get(`http://localhost:3001/source/details/${key}`).then(
+        axios.get(`http://localhost:3001/source/${key}`).then(
             (response) => {
                 setCurrentSchema({
                     ...initialSchemaState,
@@ -84,7 +87,9 @@ function NewCaptureModal(
             (error) => {
                 setCurrentSchema({
                     ...initialSchemaState,
-                    error: error.message,
+                    error: error.response
+                        ? error.response.data.message
+                        : error.message,
                 });
                 setSaveEnabled(false);
             }
@@ -170,6 +175,7 @@ function NewCaptureModal(
                             cells={materialCells}
                             config={formOptions}
                             readonly={formSubmitting}
+                            ajv={handleDefaultsAjv}
                             validationMode={
                                 showValidation
                                     ? 'ValidateAndShow'
