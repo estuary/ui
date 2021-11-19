@@ -22,8 +22,7 @@ export default function Catalog() {
 
     useEffect(() => {
         if (pathname === '/app/captures') {
-            console.log('making the vall');
-            fetch('http://localhost:3001/captures/all')
+            fetch('http://localhost:3001/test-captures/all')
                 .then((res) => res.json())
                 .then(
                     (result) => {
