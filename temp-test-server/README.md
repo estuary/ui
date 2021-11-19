@@ -30,15 +30,15 @@ If it hits number 2 or 3 then it will store the response in the `schema-local-ca
 
 The sourceKey sent over should look like `source-trello` or `source-amazon-ads`
 
-# /test-captures/all
+# /test-catalogs/all
 
-A GET endpoint that will return a simple array of all captures stored in the directory set in `captureStorage`. Just a test endpoint for now as we have not created an endpoint to pull the actual list of captures available on your local.
+A GET endpoint that will return a simple array of all captures stored in the directory set in `catalogStorage`. Just a test endpoint for now as we have not created an endpoint to pull the actual list of captures available on your local.
 
-# /test-capture
+# /test-catalog
 
-A POST endpoint that will save off whatever is sent in the body. It saves a JSON files into the directory set in `captureStorage`. This is useful to see what the requests are being sent over like and double checking stuff.
+A POST endpoint that will save off whatever is sent in the body. It saves a JSON files into the directory set in `catalogStorage`. This is useful to see what the requests are being sent over like and double checking stuff.
 
-# /capture
+# /catalog
 
 A POST endpoint that will create a config YAML file in the `flowDevDirectory` you set.
 

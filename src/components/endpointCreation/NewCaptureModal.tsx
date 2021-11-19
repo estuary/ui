@@ -114,9 +114,9 @@ function NewCaptureModal(
             };
             setFormSubmitting(true);
             axios
-                .post('http://localhost:3001/capture', formSubmitData)
+                .post('http://localhost:3001/catalog', formSubmitData)
                 .then((response) => {
-                    console.log('Capture Creation Done', response.data);
+                    console.log('Catalog Created', response.data);
                     setFormSubmitting(false);
                     setFormSubmitError(null);
                 })

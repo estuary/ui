@@ -13,10 +13,11 @@ const { exec } = shellJS;
 //  █▀▀ █▀█ █▄░█ █▀▀ █ █▀▀  //
 //  █▄▄ █▄█ █░▀█ █▀░ █ █▄█  //
 //////////////////////////////
+const port = 3001;
 const homedir = process.env.HOME;
 const schemaStorage = './schema-local-cache/';
 const requestStorage = './requests/';
-const captureStorage = requestStorage + '/captures/';
+const catalogStorage = requestStorage + '/captures/';
 const flowDevDirectory = homedir + '/stuff/test-flow/';
 
 //////////////////////////////////
@@ -218,63 +219,12 @@ app.get('/source/:sourceName', (req, res) => {
         });
 });
 
-//////////////////////////////////////
-//  █▀▀ ▄▀█ █▀█ ▀█▀ █░█ █▀█ █▀▀ █▀  //
-//  █▄▄ █▀█ █▀▀ ░█░ █▄█ █▀▄ ██▄ ▄█  //
-//////////////////////////////////////
-app.get('/test-captures/all', (req, res) => {
-    const captureFiles = fs.readdirSync(captureStorage);
-    const allCaptures = [];
-
-    captureFiles.forEach((file) => {
-        // Clean up file name stuff
-        const sourceName = file.replace('.json', '');
-
-        // Fetch the files
-        const fileName = captureStorage + file;
-        const data = JSON.parse(fs.readFileSync(fileName, 'utf-8'));
-
-        // Parse then store into cache
-        allCaptures.push({
-            name: sourceName,
-            type: data.image,
-        });
-    });
-
-    sendResponse(res, allCaptures);
-});
-
-app.post('/test-capture', (req, res) => {
-    console.log('Capture Creation Called');
-    console.log(' - config sent', req.body);
-
-    try {
-        const newFile = `${req.name}.json`;
-        const fileAlreadyExists = fs.existsSync(captureStorage + newFile);
-
-        if (fileAlreadyExists === true) {
-            res.status(400);
-            res.json({
-                message: `There is already a Capture with the name "${newFile}".`,
-            });
-        } else {
-            writeResponseToFileSystem(
-                captureStorage,
-                newFile,
-                JSON.stringify(req.body.config)
-            );
-            res.status(200);
-            res.end('success');
-        }
-    } catch (error) {
-        res.status(500);
-        res.json({
-            message: `There was a server error.`,
-        });
-    }
-});
-
-app.post('/capture', (req, res) => {
+///////////////////////////////////
+//  █▀▀ ▄▀█ ▀█▀ ▄▀█ █░░ █▀█ █▀▀  //
+//  █▄▄ █▀█ ░█░ █▀█ █▄▄ █▄█ █▄█  //
+///////////////////////////////////
+// Creation
+app.post('/catalog', (req, res) => {
     console.log('Capture creationg started');
 
     try {
@@ -370,42 +320,71 @@ app.post('/capture', (req, res) => {
     }
 });
 
-///////////////////////////////////
-//  █▀▀ ▄▀█ ▀█▀ ▄▀█ █░░ █▀█ █▀▀  //
-//  █▄▄ █▀█ ░█░ █▀█ █▄▄ █▄█ █▄█  //
-///////////////////////////////////
-app.get('/catalog', (req, res) => {
+// Apply
+app.post('', (req, res) => {
+    //flowctl apply --source=discover-source-postgres.flow.yaml
+    res.status(500);
+    res.json({
+        message: `Not implemented yet`,
+    });
+});
+
+app.post('/test-catalog', (req, res) => {
+    console.log('Capture Creation Called');
+    console.log(' - config sent', req.body);
+
     try {
-        const flowShell = pty.spawn(`flowctl`, ['json-schema'], {
-            cwd: flowDevDirectory,
-            encoding: 'utf8',
-        });
+        const newFile = `${req.name}.json`;
+        const fileAlreadyExists = fs.existsSync(catalogStorage + newFile);
 
-        flowShell.onData((data) => {
-            console.log('data', data);
-
-            if (data.includes('Error:')) {
-                res.status(500);
-                res.json({
-                    message: data.split('Error:')[1],
-                });
-            } else {
-                res.status(200);
-                res.json({
-                    message: data,
-                });
-            }
-        });
+        if (fileAlreadyExists === true) {
+            res.status(400);
+            res.json({
+                message: `There is already a Capture with the name "${newFile}".`,
+            });
+        } else {
+            writeResponseToFileSystem(
+                catalogStorage,
+                newFile,
+                JSON.stringify(req.body.config)
+            );
+            res.status(200);
+            res.end('success');
+        }
     } catch (error) {
-        hugeFailure(res, error);
+        res.status(500);
+        res.json({
+            message: `There was a server error.`,
+        });
     }
+});
+
+app.get('/test-captures/all', (req, res) => {
+    const captureFiles = fs.readdirSync(catalogStorage);
+    const allCaptures = [];
+
+    captureFiles.forEach((file) => {
+        // Clean up file name stuff
+        const sourceName = file.replace('.json', '');
+
+        // Fetch the files
+        const fileName = catalogStorage + file;
+        const data = JSON.parse(fs.readFileSync(fileName, 'utf-8'));
+
+        // Parse then store into cache
+        allCaptures.push({
+            name: sourceName,
+            type: data.image,
+        });
+    });
+
+    sendResponse(res, allCaptures);
 });
 
 /////////////////////////////////////////
 //  ▄▀█ █▀█ █▀█ ▄▄ █▀ ▀█▀ ▄▀█ █▀█ ▀█▀  //
 //  █▀█ █▀▀ █▀▀ ░░ ▄█ ░█░ █▀█ █▀▄ ░█░  //
 /////////////////////////////////////////
-const port = 3001;
 app.listen(port, () => {
     console.log('');
     console.log(`Example app listening at http://localhost:${port}`);
