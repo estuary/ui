@@ -62,6 +62,7 @@ function removePrefix(name) {
 }
 
 function writeResponseToFileSystem(testFolder, fileName, fileContent) {
+    console.log('Writing new file ' + testFolder + fileName);
     fs.writeFileSync(testFolder + fileName, fileContent, 'utf-8');
 }
 
@@ -316,20 +317,19 @@ app.post('/test-capture', (req, res) => {
     console.log(' - config sent', req.body);
 
     try {
-        const captureName = Object.keys(req.body)[0];
-        const newFile = `${captureName}.json`;
+        const newFile = `${req.name}.json`;
         const fileAlreadyExists = fs.existsSync(captureStorage + newFile);
 
         if (fileAlreadyExists === true) {
             res.status(400);
             res.json({
-                message: `There is already a Capture with the name "${captureName}".`,
+                message: `There is already a Capture with the name "${newFile}".`,
             });
         } else {
             writeResponseToFileSystem(
                 captureStorage,
                 newFile,
-                JSON.stringify(req.body)
+                JSON.stringify(req.body.config)
             );
             res.status(200);
             res.end('success');
@@ -343,91 +343,97 @@ app.post('/test-capture', (req, res) => {
 });
 
 app.post('/capture', (req, res) => {
-    console.log('Real capture creation called');
-    console.log(' - config sent', req.body);
+    console.log('Capture creationg started');
 
     try {
         const captureName = req.body.name;
         const type = req.body.type;
-        const newFile = `discover-${type}.config.yaml`;
-        const filePath = flowDevDirectory + newFile;
-        const fileAlreadyExists = fs.existsSync(filePath);
+        const newConfig = `discover-${type}.config.yaml`;
+        const newCatalog = `discover-${type}.flow.yaml`;
+        const configPath = flowDevDirectory + newConfig;
+        const catalogPath = flowDevDirectory + newCatalog;
+        const configAlreadyExists = fs.existsSync(configPath);
+        const catalogAlreadyExists = fs.existsSync(catalogPath);
 
-        if (fileAlreadyExists === true) {
+        if (configAlreadyExists) {
             res.status(400);
             res.json({
-                message: `There is already a config started - please remove and try again : "${filePath}"`,
+                message: `There is already a config started with this source : "${configPath}"`,
+            });
+        } else if (catalogAlreadyExists) {
+            res.status(400);
+            res.json({
+                message: `There is already a catalog with this source : "${catalogPath}"`,
             });
         } else {
             writeResponseToFileSystem(
                 flowDevDirectory,
-                newFile,
+                newConfig,
                 json2yaml.stringify(req.body.config)
             );
-            try {
-                const flowShell = pty.spawn(
-                    `flowctl`,
-                    [
-                        'discover',
-                        `--image=${req.body.details.endpoint.airbyteSource.image}`,
-                    ],
-                    {
-                        cwd: flowDevDirectory,
-                    }
-                );
 
-                flowShell.onData((data) => {
+            var flowShell = pty.spawn(
+                `flowctl`,
+                ['discover', `--image=${req.body.image}`],
+                {
+                    cwd: flowDevDirectory,
+                    encoding: 'utf8',
+                }
+            );
+
+            flowShell.onData((data) => {
+                console.log('FlowCTL Responded : ', data);
+                const successString = 'Created a Flow catalog';
+
+                if (data.includes(successString)) {
+                    console.log('4');
+                    console.log(' -  - Flow file created');
+                    setTimeout(() => {
+                        console.log('5');
+                        const file = fs.readFileSync(catalogPath, {
+                            encoding: 'utf8',
+                        });
+                        const responseData = file;
+
+                        console.log('6');
+                        console.log('>>>>>>>', responseData);
+
+                        res.status(200);
+                        res.json('responseData');
+                        flowShell.kill();
+                    }, 1500); //Just give the fs a second to write file
+                } else {
                     const fatalString = 'fatal';
                     const errorString = 'Error:';
-                    const successString =
-                        'Creating a connector configuration stub at ';
                     const validationString = 'validating';
 
+                    let message = 'failed';
+
                     if (data.includes(fatalString)) {
-                        hugeFailure(res, fatalString);
+                        console.log(' -  - Fatal Error');
+                        message = 'There was a fatal error running flowctl.';
                     } else if (data.includes(errorString)) {
                         if (data.includes(validationString)) {
-                            res.status(500);
-                            res.json({
-                                message: `Validation issue`,
-                            });
+                            console.log(' -  - Validation Failure');
+                            message =
+                                'There was some validation issues found while running flowctl.';
                         } else {
-                            res.status(500);
-                            res.json({
-                                message: data.split(errorString)[1],
-                            });
+                            console.log(' -  - Non-fatal Error');
+                            message = data.split(errorString)[1];
                         }
-
-                        flowShell.kill();
-                    } else if (data.includes(successString)) {
-                        let defaultConfigPath = data
-                            .split(successString)[1] //get part that contains path
-                            .split('.yaml')[0] // remove anyting after file type
-                            .concat('.yaml') // add back in the file type
-                            .replace('/home/flow/project/', flowDevDirectory); //use real path
-
-                        console.log('defaultConfigPath =', defaultConfigPath);
-
-                        setTimeout(() => {
-                            const file = fs.readFileSync(defaultConfigPath);
-                            const defaults = yaml.load(file);
-                            const responseData = {
-                                details: schema.details,
-                                defaults: defaults,
-                                specification: schema.specification,
-                            };
-
-                            res.status(200);
-                            res.json(responseData);
-                            flowShell.kill();
-                        }, 3500); //Just give the fs a second to write file
                     }
-                });
-            } catch (error) {
-                hugeFailure(res, error);
-            }
+                    res.status(500);
+                    res.json({
+                        message: message,
+                    });
+                    flowShell.kill();
+                }
+            });
         }
     } catch (error) {
+        if (flowShell && flowShell.kill()) {
+            flowShell.kill();
+        }
         hugeFailure(res, error);
     }
 });

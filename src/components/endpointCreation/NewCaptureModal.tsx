@@ -108,17 +108,9 @@ function NewCaptureModal(
         } else {
             const formSubmitData = {
                 config: newCaptureFormData,
+                image: currentSchema.image,
                 name: sourceName,
                 type: sourceTypeParam,
-                details: {
-                    endpoint: {
-                        airbyteSource: {
-                            image: currentSchema.image,
-                            config: newCaptureFormData,
-                        },
-                    },
-                    bindings: [],
-                },
             };
             setFormSubmitting(true);
             axios
