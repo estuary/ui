@@ -259,7 +259,6 @@ app.post('/catalog', (req, res) => {
                 ['discover', `--image=${req.body.image}`],
                 {
                     cwd: flowDevDirectory,
-                    encoding: 'utf8',
                 }
             );
 
@@ -270,12 +269,27 @@ app.post('/catalog', (req, res) => {
                 if (data.includes(successString)) {
                     console.log(' -  - Flow file created');
                     setTimeout(() => {
-                        const file = fs.readFileSync(catalogPath, {
-                            encoding: 'ascii',
-                        });
-                        const responseData = yaml.load(file, {
-                            json: true,
-                        });
+                        const fileString = fs
+                            .readFileSync(catalogPath, {
+                                encoding: 'ascii',
+                            })
+                            .toString()
+                            .replaceAll('acmeCo', captureName);
+
+                        writeResponseToFileSystem(
+                            flowDevDirectory,
+                            newCatalog,
+                            fileString
+                        );
+
+                        const responseData = yaml.load(
+                            fs.readFileSync(catalogPath, {
+                                encoding: 'ascii',
+                            }),
+                            {
+                                json: true,
+                            }
+                        );
 
                         res.status(200);
                         res.json(responseData);
@@ -290,19 +304,17 @@ app.post('/catalog', (req, res) => {
 
                     if (data.includes(fatalString)) {
                         console.log(' -  - Fatal Error');
-                        message = 'There was a fatal error running flowctl.';
+                        message = 'Flowctl ran into a fatal error.';
                     } else if (data.includes(errorString)) {
                         if (data.includes(validationString)) {
                             console.log(' -  - Validation Failure');
-                            message =
-                                'There was some validation issues found while running flowctl.';
+                            message = 'Flowctl ran into a validation issue.';
                         } else {
                             console.log(' -  - Non-fatal Error');
                             message = data.split(errorString)[1];
                         }
                     } else {
-                        message =
-                            "Something went wrong - but we're not sure what.";
+                        message = 'Something went wrong.';
                     }
                     res.status(500);
                     res.json({
@@ -350,10 +362,13 @@ app.post('/catalog/apply', (req, res) => {
             if (data.includes(compileString)) {
                 // do nothing - wait for more data
             } else if (data.includes(errorString)) {
-                let message = 'Flowctl apply ran into an issue : ';
+                const dataLine = data.split(/\r?\n/);
+                const errorMessage =
+                    dataLine.length > 0 ? dataLine[1] : dataLine[0];
+                let message = `Flowctl apply ran into an issue : ${errorMessage}`;
                 res.status(500);
                 res.json({
-                    message: message + data,
+                    message: message,
                 });
                 flowShell.kill();
             }
