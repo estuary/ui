@@ -133,6 +133,7 @@ function NewCaptureModal(
                     setFormSubmitting(false);
                     setFormSubmitError(null);
                     setCatalogResponse(response.data);
+                    setSaveEnabled(true);
                     setActiveStep(3);
                 })
                 .catch((error) => {
@@ -165,6 +166,39 @@ function NewCaptureModal(
 
     const handleNameChange = (event: any) => {
         setSourceName(event.target.value);
+    };
+
+    const handleApply = (event: any) => {
+        event.preventDefault();
+        if (newCaptureFormErrors.length > 0) {
+            setShowValidation(true);
+        } else {
+            const formSubmitData = {
+                config: catalogResponse,
+                type: sourceTypeParam,
+            };
+            setSaveEnabled(false);
+            setFormSubmitting(true);
+            axios
+                .post('http://localhost:3001/catalog/apply', formSubmitData)
+                .then((response) => {
+                    console.log('Catalog Applied', response.data);
+                    setFormSubmitting(false);
+                    setFormSubmitError(null);
+                    setCatalogResponse({});
+                    handleClose();
+                })
+                .catch((error) => {
+                    if (error.response) {
+                        setFormSubmitError(error.response.data.message);
+                    } else {
+                        setFormSubmitError(error.message);
+                    }
+                    setFormSubmitting(false);
+                    setSaveEnabled(true);
+                    setActiveStep(1);
+                });
+        }
     };
 
     const jsonFormRendered = (() => {
@@ -325,13 +359,14 @@ function NewCaptureModal(
                     </Button>
                     {activeStep > 2 ? (
                         <Button
-                            onClick={handleClose}
+                            onClick={handleApply}
+                            disabled={!saveEnabled}
                             size="large"
                             color="success"
                             variant="contained"
                             disableElevation
                         >
-                            Close
+                            Apply to Flow
                         </Button>
                     ) : (
                         <Button

@@ -321,11 +321,43 @@ app.post('/catalog', (req, res) => {
 });
 
 // Apply
-app.post('', (req, res) => {
-    //flowctl apply --source=discover-source-postgres.flow.yaml
-    res.status(500);
-    res.json({
-        message: `Not implemented yet`,
+app.post('/catalog/apply', (req, res) => {
+    var flowShell = pty.spawn(
+        `flowctl`,
+        ['apply', `--source=discover-${req.body.type}.flow.yaml`],
+        {
+            cwd: flowDevDirectory,
+            encoding: 'utf8',
+        }
+    );
+
+    flowShell.onData((data) => {
+        console.log('FlowCTL Apply Responded : ', data);
+        const compileString = 'compile /workspace';
+        const errorString = 'error';
+        const successString = 'no clue what this is yet';
+
+        if (data.includes(successString)) {
+            console.log(' -  - Flow file created');
+            setTimeout(() => {
+                res.status(200);
+                res.json({
+                    message: 'made it',
+                });
+                flowShell.kill();
+            }, 1500); //Just give the fs a second to write file
+        } else {
+            if (data.includes(compileString)) {
+                // do nothing - wait for more data
+            } else if (data.includes(errorString)) {
+                let message = 'Flowctl apply ran into an issue : ';
+                res.status(500);
+                res.json({
+                    message: message + data,
+                });
+                flowShell.kill();
+            }
+        }
     });
 });
 
