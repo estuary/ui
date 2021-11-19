@@ -43,5 +43,7 @@ A POST endpoint that will save off whatever is sent in the body. It saves a JSON
 A POST endpoint that will create a config YAML file in the `flowDevDirectory` you set.
 
 1. Check if a config file is already started
-2. Create new config yaml with settings provided in UI
-3. Run a `flowctl discover` command on newly created config
+1. Check if a Flow catalog already exists
+1. Create new config yaml with settings provided in UI
+1. Run a `flowctl discover` command on newly created config
+1. Return the generated Flow catalog to UI as JSON
