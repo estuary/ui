@@ -218,74 +218,6 @@ app.get('/source/:sourceName', (req, res) => {
         });
 });
 
-app.get('/source-delete/:name', (req, res) => {
-    const name = req.params.name;
-    const schema = fetchSchema(name);
-    const imagePath = schema.details.image;
-
-    try {
-        const flowShell = pty.spawn(
-            `flowctl`,
-            ['discover', `--image=${imagePath}`],
-            {
-                cwd: flowDevDirectory,
-            }
-        );
-
-        flowShell.onData((data) => {
-            const fatalString = 'fatal';
-            const errorString = 'Error:';
-            const successString = 'Creating a connector configuration stub at ';
-            const validationString = 'validating';
-
-            console.log('on data', data);
-
-            if (data.includes(fatalString)) {
-                hugeFailure(res, fatalString);
-            } else if (data.includes(errorString)) {
-                if (data.includes(validationString)) {
-                    res.status(500);
-                    res.json({
-                        message:
-                            'A capture has already been started with this type.',
-                    });
-                } else {
-                    res.status(500);
-                    res.json({
-                        message: data.split(errorString)[1],
-                    });
-                }
-
-                flowShell.kill();
-            } else if (data.includes(successString)) {
-                let defaultConfigPath = data
-                    .split(successString)[1] //get part that contains path
-                    .split('.yaml')[0] // remove anyting after file type
-                    .concat('.yaml') // add back in the file type
-                    .replace('/home/flow/project/', flowDevDirectory); //use real path
-
-                console.log('defaultConfigPath =', defaultConfigPath);
-
-                setTimeout(() => {
-                    const file = fs.readFileSync(defaultConfigPath);
-                    const defaults = yaml.load(file);
-                    const responseData = {
-                        details: schema.details,
-                        defaults: defaults,
-                        specification: schema.specification,
-                    };
-
-                    res.status(200);
-                    res.json(responseData);
-                    flowShell.kill();
-                }, 3500); //Just give the fs a second to write file
-            }
-        });
-    } catch (error) {
-        hugeFailure(res, error);
-    }
-});
-
 //////////////////////////////////////
 //  █▀▀ ▄▀█ █▀█ ▀█▀ █░█ █▀█ █▀▀ █▀  //
 //  █▄▄ █▀█ █▀▀ ░█░ █▄█ █▀▄ ██▄ ▄█  //
@@ -386,20 +318,15 @@ app.post('/capture', (req, res) => {
                 const successString = 'Created a Flow catalog';
 
                 if (data.includes(successString)) {
-                    console.log('4');
                     console.log(' -  - Flow file created');
                     setTimeout(() => {
-                        console.log('5');
                         const file = fs.readFileSync(catalogPath, {
-                            encoding: 'utf8',
+                            encoding: 'ascii',
                         });
-                        const responseData = file;
-
-                        console.log('6');
-                        console.log('>>>>>>>', responseData);
+                        const responseData = yaml.load(file);
 
                         res.status(200);
-                        res.json('responseData');
+                        res.json(responseData);
                         flowShell.kill();
                     }, 1500); //Just give the fs a second to write file
                 } else {
@@ -407,7 +334,7 @@ app.post('/capture', (req, res) => {
                     const errorString = 'Error:';
                     const validationString = 'validating';
 
-                    let message = 'failed';
+                    let message;
 
                     if (data.includes(fatalString)) {
                         console.log(' -  - Fatal Error');
@@ -421,6 +348,9 @@ app.post('/capture', (req, res) => {
                             console.log(' -  - Non-fatal Error');
                             message = data.split(errorString)[1];
                         }
+                    } else {
+                        message =
+                            "Something went wrong - but we're not sure what.";
                     }
                     res.status(500);
                     res.json({

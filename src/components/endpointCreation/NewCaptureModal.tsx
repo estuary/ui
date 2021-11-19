@@ -56,7 +56,7 @@ function NewCaptureModal(
 
     useEffect(() => {
         if (sourceTypeParam !== null) {
-            fetchSchemaForForm(sourceTypeParam);
+            return fetchSchemaForForm(sourceTypeParam);
         }
     }, [sourceTypeParam]);
 
@@ -116,7 +116,7 @@ function NewCaptureModal(
             axios
                 .post('http://localhost:3001/capture', formSubmitData)
                 .then((response) => {
-                    handleClose();
+                    console.log('Capture Creation Done', response);
                 })
                 .catch((error) => {
                     if (error.response) {
