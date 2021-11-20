@@ -362,9 +362,8 @@ app.post('/catalog/apply', (req, res) => {
             if (data.includes(compileString)) {
                 // do nothing - wait for more data
             } else if (data.includes(errorString)) {
-                const dataLine = data.split(/\r?\n/);
-                const errorMessage =
-                    dataLine.length > 0 ? dataLine[1] : dataLine[0];
+                let errorMessage = data;
+
                 let message = `Flowctl apply ran into an issue : ${errorMessage}`;
                 res.status(500);
                 res.json({

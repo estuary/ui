@@ -245,6 +245,11 @@ function NewCaptureModal(
                 fullScreen={fullScreen}
                 fullWidth={!fullScreen}
                 maxWidth={'md'}
+                sx={{
+                    '.MuiDialog-container': {
+                        alignItems: 'flex-start',
+                    },
+                }}
                 aria-labelledby="new-capture-dialog-title"
             >
                 <DialogTitle id="new-capture-dialog-title">
