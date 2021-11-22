@@ -75,7 +75,7 @@ function NewCaptureModal(
     const [showValidation, setShowValidation] = useState(false);
     const [formSubmitting, setFormSubmitting] = useState(false);
     const [formSubmitError, setFormSubmitError] = useState(null);
-    const [catalogResponse, setCatalogResponse] = useState({});
+    const [catalogResponse, setCatalogResponse] = useState({} as any);
 
     const [activeStep, setActiveStep] = useState(0);
 
@@ -174,7 +174,7 @@ function NewCaptureModal(
             setShowValidation(true);
         } else {
             const formSubmitData = {
-                config: catalogResponse,
+                config: catalogResponse.data,
                 type: sourceTypeParam,
             };
             setSaveEnabled(false);
@@ -346,12 +346,30 @@ function NewCaptureModal(
                             </StepContent>
                         </Step>
                         <Step key={3}>
-                            <StepLabel>Finalize</StepLabel>
+                            <StepLabel>Review &amp; Save</StepLabel>
                             <StepContent>
+                                <DialogContentText>
+                                    <Typography variant="subtitle1">
+                                        Below configuration located :
+                                    </Typography>
+                                    <Typography
+                                        variant="caption"
+                                        color="success"
+                                    >
+                                        {catalogResponse.path}
+                                    </Typography>
+                                </DialogContentText>
                                 <ReactJson
-                                    src={catalogResponse}
+                                    src={catalogResponse.data}
                                     collapsed={2}
-                                    enableClipboard={false}
+                                    enableClipboard={true}
+                                    name={null}
+                                    theme={
+                                        theme.palette.mode === 'light'
+                                            ? 'bright:inverted'
+                                            : 'bright'
+                                    }
+                                    displayObjectSize={false}
                                 />
                             </StepContent>
                         </Step>
