@@ -18,7 +18,8 @@ const homedir = process.env.HOME;
 const schemaStorage = './schema-local-cache/';
 const requestStorage = './requests/';
 const catalogStorage = requestStorage + '/captures/';
-const flowDevDirectory = homedir + '/stuff/test-flow/';
+const flowDevDirectory = homedir + '/stuff/new-flow-testing/';
+const capturesDirectory = flowDevDirectory + 'captures/';
 
 //////////////////////////////////
 //  █░█ █▀▀ █░░ █▀█ █▀▀ █▀█ █▀  //
@@ -64,6 +65,13 @@ function removePrefix(name) {
 
 function writeResponseToFileSystem(testFolder, fileName, fileContent) {
     console.log('Writing new file ' + testFolder + fileName);
+
+    if (!fs.existsSync(testFolder)) {
+        fs.mkdirSync(testFolder, { recursive: true }, (error) => {
+            if (error) throw error;
+        });
+    }
+
     fs.writeFileSync(testFolder + fileName, fileContent, 'utf-8');
 }
 
@@ -229,27 +237,34 @@ app.post('/catalog', (req, res) => {
 
     try {
         const captureName = req.body.name;
+        const workingDirectory = `${capturesDirectory}${captureName}/`;
         const type = req.body.type;
         const newConfig = `discover-${type}.config.yaml`;
         const newCatalog = `discover-${type}.flow.yaml`;
-        const configPath = flowDevDirectory + newConfig;
-        const catalogPath = flowDevDirectory + newCatalog;
+        const configPath = workingDirectory + newConfig;
+        const catalogPath = workingDirectory + newCatalog;
+        const folderAlreadyExists = fs.existsSync(workingDirectory);
         const configAlreadyExists = fs.existsSync(configPath);
         const catalogAlreadyExists = fs.existsSync(catalogPath);
 
-        if (configAlreadyExists) {
+        if (folderAlreadyExists) {
+            let message;
+
+            if (configAlreadyExists) {
+                message = `There is already a config started with this source : "${configPath}"`;
+            } else if (catalogAlreadyExists) {
+                message = `There is already a catalog with this source : "${catalogPath}"`;
+            } else {
+                message = `There is already a capture started with that name : "${workingDirectory}"`;
+            }
+
             res.status(400);
             res.json({
-                message: `There is already a config started with this source : "${configPath}"`,
-            });
-        } else if (catalogAlreadyExists) {
-            res.status(400);
-            res.json({
-                message: `There is already a catalog with this source : "${catalogPath}"`,
+                message,
             });
         } else {
             writeResponseToFileSystem(
-                flowDevDirectory,
+                workingDirectory,
                 newConfig,
                 json2yaml.stringify(req.body.config)
             );
@@ -258,7 +273,7 @@ app.post('/catalog', (req, res) => {
                 `flowctl`,
                 ['discover', `--image=${req.body.image}`],
                 {
-                    cwd: flowDevDirectory,
+                    cwd: workingDirectory,
                 }
             );
 
@@ -277,7 +292,7 @@ app.post('/catalog', (req, res) => {
                             .replaceAll('acmeCo', captureName);
 
                         writeResponseToFileSystem(
-                            flowDevDirectory,
+                            workingDirectory,
                             newCatalog,
                             fileString
                         );
@@ -285,14 +300,14 @@ app.post('/catalog', (req, res) => {
                         const responseData = yaml.load(
                             fs.readFileSync(catalogPath, {
                                 encoding: 'ascii',
-                            }),
-                            {
-                                json: true,
-                            }
+                            })
                         );
 
                         res.status(200);
-                        res.json(responseData);
+                        res.json({
+                            path: workingDirectory + newCatalog,
+                            data: responseData,
+                        });
                         flowShell.kill();
                     }, 1500); //Just give the fs a second to write file
                 } else {
@@ -427,6 +442,23 @@ app.get('/test-captures/all', (req, res) => {
     sendResponse(res, allCaptures);
 });
 
+app.get('/schema/', (req, res) => {
+    var flowShell = pty.spawn(`flowctl`, ['json-schema'], {
+        cwd: flowDevDirectory,
+        encoding: 'ascii',
+    });
+
+    flowShell.onData((data) => {
+        console.log('FlowCTL JSON-Schema Responded : ', data);
+
+        flowShell.kill();
+        res.status(200);
+        res.json({
+            data: JSON.parse(data),
+        });
+    });
+});
+
 /////////////////////////////////////////
 //  ▄▀█ █▀█ █▀█ ▄▄ █▀ ▀█▀ ▄▀█ █▀█ ▀█▀  //
 //  █▀█ █▀▀ █▀▀ ░░ ▄█ ░█░ █▀█ █▀▄ ░█░  //
@@ -434,4 +466,6 @@ app.get('/test-captures/all', (req, res) => {
 app.listen(port, () => {
     console.log('');
     console.log(`Example app listening at http://localhost:${port}`);
+    console.log(`Flow directory     : ${flowDevDirectory}`);
+    console.log(`Captures directory : ${capturesDirectory}`);
 });
