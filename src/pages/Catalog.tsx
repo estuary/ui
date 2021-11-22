@@ -22,7 +22,7 @@ export default function Catalog() {
 
     useEffect(() => {
         if (pathname === '/app/captures') {
-            fetch('http://localhost:3001/test-captures/all')
+            fetch('http://localhost:3001/captures/all')
                 .then((res) => res.json())
                 .then(
                     (result) => {
@@ -51,7 +51,7 @@ export default function Catalog() {
                 <Box>
                     <List>
                         {captures.map((element: any) => (
-                            <ListItem>
+                            <ListItem key={element.path}>
                                 <ListItemIcon>
                                     <InputIcon />
                                 </ListItemIcon>

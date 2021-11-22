@@ -22,6 +22,8 @@ A GET endpoint that returns a list of all the sources list in `appSources.js` (h
 
 A GET endpoint that expects the source key and will return the schema back. It will go through the following steps:
 
+_What happens when called:_
+
 1. Try to read a stored copy from the `schema-local-cache` folder
 2. Try to fetch a fresh copy from `ghcr.io/estuary/${name}:dev`
 3. Try to fetch a fresh copy from `airbyte/${name}:latest`
@@ -30,20 +32,18 @@ If it hits number 2 or 3 then it will store the response in the `schema-local-ca
 
 The sourceKey sent over should look like `source-trello` or `source-amazon-ads`
 
-# /test-catalogs/all
-
-A GET endpoint that will return a simple array of all captures stored in the directory set in `catalogStorage`. Just a test endpoint for now as we have not created an endpoint to pull the actual list of captures available on your local.
-
-# /test-catalog
-
-A POST endpoint that will save off whatever is sent in the body. It saves a JSON files into the directory set in `catalogStorage`. This is useful to see what the requests are being sent over like and double checking stuff.
-
-# /catalog
+# /capture
 
 A POST endpoint that will create a config YAML file in the `flowDevDirectory` you set.
 
-1. Check if a config file is already started
-1. Check if a Flow catalog already exists
+_What happens when called:_
+
+1. Check if this capture has been made before
+1. Create new folder with the capture name
 1. Create new config yaml with settings provided in UI
 1. Run a `flowctl discover` command on newly created config
 1. Return the generated Flow catalog to UI as JSON
+
+# /captures/all
+
+A GET endpoint that returns list of all configs stores in the `capturesDirectory` you set.

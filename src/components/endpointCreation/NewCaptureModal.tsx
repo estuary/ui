@@ -17,6 +17,7 @@ import {
     DialogContentText,
     DialogTitle,
     IconButton,
+    Paper,
     Stack,
     Step,
     StepContent,
@@ -127,9 +128,8 @@ function NewCaptureModal(
             setActiveStep(2);
             setFormSubmitting(true);
             axios
-                .post('http://localhost:3001/catalog', formSubmitData)
+                .post('http://localhost:3001/capture', formSubmitData)
                 .then((response) => {
-                    console.log('Catalog Created', response.data);
                     setFormSubmitting(false);
                     setFormSubmitError(null);
                     setCatalogResponse(response.data);
@@ -168,6 +168,11 @@ function NewCaptureModal(
         setSourceName(event.target.value);
     };
 
+    const handleDelete = () => {
+        alert('Delete? You sure?');
+    };
+
+    /*
     const handleApply = (event: any) => {
         event.preventDefault();
         if (newCaptureFormErrors.length > 0) {
@@ -200,6 +205,7 @@ function NewCaptureModal(
                 });
         }
     };
+    */
 
     const jsonFormRendered = (() => {
         if (currentSchema.error !== null) {
@@ -348,62 +354,72 @@ function NewCaptureModal(
                         <Step key={3}>
                             <StepLabel>Review &amp; Save</StepLabel>
                             <StepContent>
-                                <DialogContentText>
-                                    <Typography variant="subtitle1">
-                                        Below configuration located :
-                                    </Typography>
-                                    <Typography
-                                        variant="caption"
-                                        color="success"
-                                    >
-                                        {catalogResponse.path}
-                                    </Typography>
-                                </DialogContentText>
-                                <ReactJson
-                                    src={catalogResponse.data}
-                                    collapsed={2}
-                                    enableClipboard={true}
-                                    name={null}
-                                    theme={
-                                        theme.palette.mode === 'light'
-                                            ? 'bright:inverted'
-                                            : 'bright'
-                                    }
-                                    displayObjectSize={false}
-                                />
+                                <Paper variant="outlined">
+                                    <ReactJson
+                                        src={catalogResponse.data}
+                                        enableClipboard={true}
+                                        name={null}
+                                        theme={
+                                            theme.palette.mode === 'light'
+                                                ? 'bright:inverted'
+                                                : 'bright'
+                                        }
+                                        displayObjectSize={false}
+                                    />
+                                </Paper>
+                                <Typography variant="caption" color="success">
+                                    location: {catalogResponse.path}
+                                </Typography>
                             </StepContent>
                         </Step>
                     </Stepper>
                 </DialogContent>
 
                 <DialogActions>
-                    <Button onClick={handleClose} size="large" color="error">
-                        Cancel
-                    </Button>
                     {activeStep > 2 ? (
-                        <Button
-                            onClick={handleApply}
-                            disabled={!saveEnabled}
-                            size="large"
-                            color="success"
-                            variant="contained"
-                            disableElevation
-                        >
-                            Apply to Flow
-                        </Button>
+                        <>
+                            <Button
+                                onClick={handleDelete}
+                                size="large"
+                                color="error"
+                            >
+                                Delete
+                            </Button>
+                            <Button
+                                onClick={handleClose}
+                                disabled={!saveEnabled}
+                                size="large"
+                                color="success"
+                                variant="contained"
+                                disableElevation
+                            >
+                                Save
+                            </Button>
+                        </>
                     ) : (
-                        <Button
-                            onClick={handleTest}
-                            disabled={!saveEnabled || currentSchema.fetching}
-                            form="newCaptureForm"
-                            size="large"
-                            type="submit"
-                            color="success"
-                            variant="contained"
-                            disableElevation
-                        >
-                            Test Capture
-                        </Button>
+                        <>
+                            <Button
+                                onClick={handleClose}
+                                size="large"
+                                color="error"
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                onClick={handleTest}
+                                disabled={
+                                    !saveEnabled || currentSchema.fetching
+                                }
+                                form="newCaptureForm"
+                                size="large"
+                                type="submit"
+                                color="success"
+                                variant="contained"
+                                disableElevation
+                            >
+                                Test Capture
+                            </Button>
+                        </>
                     )}
                 </DialogActions>
             </Dialog>

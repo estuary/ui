@@ -4,6 +4,7 @@ import fs from 'fs';
 import yaml from 'js-yaml';
 import json2yaml from 'json2yaml';
 import * as pty from 'node-pty';
+import path from 'path';
 import shellJS from 'shelljs';
 import allSources from './allSources.js';
 
@@ -178,6 +179,29 @@ function hugeFailure(res, error) {
     });
 }
 
+//https://coderrocketfuel.com/article/recursively-list-all-the-files-in-a-directory-using-node-js
+function getAllFiles(dirPath, arrayOfFiles) {
+    const files = fs.readdirSync(dirPath);
+
+    arrayOfFiles = arrayOfFiles || [];
+
+    files.forEach(function (file) {
+        if (fs.statSync(dirPath + '/' + file).isDirectory()) {
+            arrayOfFiles = getAllFiles(dirPath + '/' + file, arrayOfFiles);
+        } else {
+            arrayOfFiles.push({
+                name: dirPath.replace(capturesDirectory, '').replace('/', ''),
+                path: path.join(dirPath, '/', file),
+                type: file
+                    .replace('.flow.yaml', '')
+                    .replace('.config.yaml', ''),
+            });
+        }
+    });
+
+    return arrayOfFiles;
+}
+
 /////////////////////////////////////////
 //  ▄▀█ █▀█ █▀█ ▄▄ █▀ █▀▀ ▀█▀ █░█ █▀█  //
 //  █▀█ █▀▀ █▀▀ ░░ ▄█ ██▄ ░█░ █▄█ █▀▀  //
@@ -227,13 +251,12 @@ app.get('/source/:sourceName', (req, res) => {
         });
 });
 
-///////////////////////////////////
-//  █▀▀ ▄▀█ ▀█▀ ▄▀█ █░░ █▀█ █▀▀  //
-//  █▄▄ █▀█ ░█░ █▀█ █▄▄ █▄█ █▄█  //
-///////////////////////////////////
-// Creation
-app.post('/catalog', (req, res) => {
-    console.log('Capture creationg started');
+//////////////////////////////////////
+//  █▀▀ ▄▀█ █▀█ ▀█▀ █░█ █▀█ █▀▀ █▀  //
+//  █▄▄ █▀█ █▀▀ ░█░ █▄█ █▀▄ ██▄ ▄█  //
+//////////////////////////////////////
+app.post('/capture', (req, res) => {
+    console.log('Capture creation started');
 
     try {
         const captureName = req.body.name;
@@ -347,11 +370,32 @@ app.post('/catalog', (req, res) => {
     }
 });
 
-// Apply
-app.post('/catalog/apply', (req, res) => {
+app.get('/captures/all', (req, res) => {
+    console.log('Getting list of all captures');
+
+    const captureFiles = getAllFiles(capturesDirectory);
+    const allCaptures = [];
+
+    captureFiles.forEach((file) => {
+        // Parse then store into cache
+        allCaptures.push({
+            path: file.path,
+            name: file.file,
+        });
+    });
+
+    sendResponse(res, captureFiles);
+});
+
+///////////////////////////////////////
+//  ░░█ █▀█ █░█ █▀█ █▄░█ ▄▀█ █░░ █▀  //
+//  █▄█ █▄█ █▄█ █▀▄ █░▀█ █▀█ █▄▄ ▄█  //
+///////////////////////////////////////
+// TODO : no real dev has been done on this yet
+app.post('/journal/apply', (req, res) => {
     var flowShell = pty.spawn(
         `flowctl`,
-        ['apply', `--source=discover-${req.body.type}.flow.yaml`],
+        ['apply', `--source=${req.body.somethingToFigureOutLater}`],
         {
             cwd: flowDevDirectory,
             encoding: 'utf8',
@@ -390,64 +434,17 @@ app.post('/catalog/apply', (req, res) => {
     });
 });
 
-app.post('/test-catalog', (req, res) => {
-    console.log('Capture Creation Called');
-    console.log(' - config sent', req.body);
-
-    try {
-        const newFile = `${req.name}.json`;
-        const fileAlreadyExists = fs.existsSync(catalogStorage + newFile);
-
-        if (fileAlreadyExists === true) {
-            res.status(400);
-            res.json({
-                message: `There is already a Capture with the name "${newFile}".`,
-            });
-        } else {
-            writeResponseToFileSystem(
-                catalogStorage,
-                newFile,
-                JSON.stringify(req.body.config)
-            );
-            res.status(200);
-            res.end('success');
-        }
-    } catch (error) {
-        res.status(500);
-        res.json({
-            message: `There was a server error.`,
-        });
-    }
-});
-
-app.get('/test-captures/all', (req, res) => {
-    const captureFiles = fs.readdirSync(catalogStorage);
-    const allCaptures = [];
-
-    captureFiles.forEach((file) => {
-        // Clean up file name stuff
-        const sourceName = file.replace('.json', '');
-
-        // Fetch the files
-        const fileName = catalogStorage + file;
-        const data = JSON.parse(fs.readFileSync(fileName, 'utf-8'));
-
-        // Parse then store into cache
-        allCaptures.push({
-            name: sourceName,
-            type: data.image,
-        });
-    });
-
-    sendResponse(res, allCaptures);
-});
-
+////////////////////////////////
+//  █▀ █▀▀ █░█ █▀▀ █▀▄▀█ ▄▀█  //
+//  ▄█ █▄▄ █▀█ ██▄ █░▀░█ █▀█  //
+////////////////////////////////
 app.get('/schema/', (req, res) => {
     var flowShell = pty.spawn(`flowctl`, ['json-schema'], {
         cwd: flowDevDirectory,
         encoding: 'ascii',
     });
 
+    // TODO - this blows up right now because the data isn't read all in at once.
     flowShell.onData((data) => {
         console.log('FlowCTL JSON-Schema Responded : ', data);
 
