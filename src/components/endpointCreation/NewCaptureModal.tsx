@@ -4,6 +4,7 @@ import {
     materialRenderers,
 } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
+import Editor from '@monaco-editor/react';
 import CloseIcon from '@mui/icons-material/Close';
 import {
     Alert,
@@ -31,8 +32,7 @@ import { useTheme } from '@mui/system';
 import axios from 'axios';
 import PaitentLoad from 'components/shared/PaitentLoad';
 import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
-import ReactJson from 'react-json-view';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import SourceTypeSelect from './SourceTypeSelect';
 
@@ -56,6 +56,25 @@ function NewCaptureModal(
 
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
+    const editorRef = useRef(null);
+    function handleEditorDidMount(editor: any) {
+        editorRef.current = editor;
+        console.log('handle 1');
+        const handler = editor.onDidChangeModelDecorations((_: any) => {
+            console.log('handle 2');
+            handler.dispose();
+            editor
+                .getAction('editor.action.formatDocument')
+                .run()
+                .then(() =>
+                    editor.updateOptions({
+                        readOnly: true,
+                        domReadOnly: true,
+                    })
+                );
+        });
+    }
 
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
@@ -280,13 +299,7 @@ function NewCaptureModal(
                             <StepContent
                                 TransitionProps={{ unmountOnExit: false }}
                             >
-                                <DialogContentText>
-                                    To get started please provide a unique name
-                                    and the source type of the Capture you want
-                                    to create. Once you've filled out the source
-                                    details you can click "Test Capture" down
-                                    below to test the connection.
-                                </DialogContentText>
+                                <DialogContentText></DialogContentText>
                                 <Stack direction="row" spacing={2}>
                                     <TextField
                                         id="capture-name"
@@ -355,16 +368,18 @@ function NewCaptureModal(
                             <StepLabel>Review &amp; Save</StepLabel>
                             <StepContent>
                                 <Paper variant="outlined">
-                                    <ReactJson
-                                        src={catalogResponse.data}
-                                        enableClipboard={true}
-                                        name={null}
+                                    <Editor
+                                        height="350px"
+                                        defaultLanguage="json"
                                         theme={
                                             theme.palette.mode === 'light'
-                                                ? 'bright:inverted'
-                                                : 'bright'
+                                                ? 'vs'
+                                                : 'vs-dark'
                                         }
-                                        displayObjectSize={false}
+                                        defaultValue={JSON.stringify(
+                                            catalogResponse.data
+                                        )}
+                                        onMount={handleEditorDidMount}
                                     />
                                 </Paper>
                                 <Typography variant="caption" color="success">
