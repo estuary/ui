@@ -31,6 +31,7 @@ import {
 import { useTheme } from '@mui/system';
 import axios from 'axios';
 import PaitentLoad from 'components/shared/PaitentLoad';
+import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import PropTypes from 'prop-types';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -57,22 +58,16 @@ function NewCaptureModal(
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
-    const editorRef = useRef(null);
-    function handleEditorDidMount(editor: any) {
+    const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(
+        null
+    );
+    function handleEditorDidMount(
+        editor: monacoEditor.editor.IStandaloneCodeEditor
+    ) {
         editorRef.current = editor;
-        console.log('handle 1');
-        const handler = editor.onDidChangeModelDecorations((_: any) => {
-            console.log('handle 2');
+        const handler = editor.onDidChangeModelDecorations(() => {
             handler.dispose();
-            editor
-                .getAction('editor.action.formatDocument')
-                .run()
-                .then(() =>
-                    editor.updateOptions({
-                        readOnly: true,
-                        domReadOnly: true,
-                    })
-                );
+            editor.getAction('editor.action.formatDocument').run();
         });
     }
 
@@ -147,7 +142,7 @@ function NewCaptureModal(
             setActiveStep(2);
             setFormSubmitting(true);
             axios
-                .post('http://localhost:3001/capture', formSubmitData)
+                .post('http://localhost:3001/capture/test', formSubmitData)
                 .then((response) => {
                     setFormSubmitting(false);
                     setFormSubmitError(null);
@@ -163,7 +158,7 @@ function NewCaptureModal(
                     }
                     setFormSubmitting(false);
                     setSaveEnabled(true);
-                    setActiveStep(1);
+                    setActiveStep(0);
                 });
         }
     };
@@ -191,40 +186,41 @@ function NewCaptureModal(
         alert('Delete? You sure?');
     };
 
-    /*
-    const handleApply = (event: any) => {
+    const handleSave = (event: any) => {
         event.preventDefault();
-        if (newCaptureFormErrors.length > 0) {
-            setShowValidation(true);
-        } else {
-            const formSubmitData = {
-                config: catalogResponse.data,
-                type: sourceTypeParam,
-            };
-            setSaveEnabled(false);
-            setFormSubmitting(true);
-            axios
-                .post('http://localhost:3001/catalog/apply', formSubmitData)
-                .then((response) => {
-                    console.log('Catalog Applied', response.data);
-                    setFormSubmitting(false);
-                    setFormSubmitError(null);
-                    setCatalogResponse({});
-                    handleClose();
-                })
-                .catch((error) => {
-                    if (error.response) {
-                        setFormSubmitError(error.response.data.message);
-                    } else {
-                        setFormSubmitError(error.message);
-                    }
-                    setFormSubmitting(false);
-                    setSaveEnabled(true);
-                    setActiveStep(1);
-                });
+        const formSubmitData = {
+            config: {},
+            image: currentSchema.image,
+            name: sourceName,
+            type: sourceTypeParam,
+        };
+        let catalogVal = '';
+
+        if (editorRef && editorRef.current) {
+            catalogVal = editorRef.current.getValue();
         }
+        formSubmitData.config = JSON.parse(catalogVal);
+
+        setSaveEnabled(false);
+        setActiveStep(2);
+        setFormSubmitting(true);
+        axios
+            .post('http://localhost:3001/capture/save', formSubmitData)
+            .then((response: any) => {
+                alert('Saved ' + response.path);
+                handleClose();
+            })
+            .catch((error) => {
+                if (error.response) {
+                    setFormSubmitError(error.response.data.message);
+                } else {
+                    setFormSubmitError(error.message);
+                }
+                setFormSubmitting(false);
+                setSaveEnabled(true);
+                setActiveStep(0);
+            });
     };
-    */
 
     const jsonFormRendered = (() => {
         if (currentSchema.error !== null) {
@@ -292,6 +288,17 @@ function NewCaptureModal(
                     </IconButton>
                 </DialogTitle>
 
+                <Box sx={{ width: '100%' }}>
+                    {formSubmitError ? (
+                        <Alert severity="error">
+                            <AlertTitle>Capture test failed</AlertTitle>
+                            <Typography variant="subtitle1">
+                                {formSubmitError}
+                            </Typography>
+                        </Alert>
+                    ) : null}
+                </Box>
+
                 <DialogContent dividers>
                     <Stepper activeStep={activeStep} orientation="vertical">
                         <Step key={0}>
@@ -299,7 +306,14 @@ function NewCaptureModal(
                             <StepContent
                                 TransitionProps={{ unmountOnExit: false }}
                             >
-                                <DialogContentText></DialogContentText>
+                                <DialogContentText>
+                                    To get started please provide a unique name
+                                    and the source type of the Capture you want
+                                    to create. Once you've filled out the source
+                                    details you can click "Test Capture" down
+                                    below to test the connection.
+                                </DialogContentText>
+
                                 <Stack direction="row" spacing={2}>
                                     <TextField
                                         id="capture-name"
@@ -322,17 +336,6 @@ function NewCaptureModal(
                                 TransitionProps={{ unmountOnExit: false }}
                             >
                                 <Box sx={{ width: '100%' }}>
-                                    {formSubmitError ? (
-                                        <Alert severity="error">
-                                            <AlertTitle>
-                                                Capture test failed
-                                            </AlertTitle>
-                                            <Typography variant="subtitle1">
-                                                {formSubmitError}
-                                            </Typography>
-                                        </Alert>
-                                    ) : null}
-
                                     {currentSchema.fetching ? (
                                         <PaitentLoad
                                             on={currentSchema.fetching}
@@ -368,22 +371,28 @@ function NewCaptureModal(
                             <StepLabel>Review &amp; Save</StepLabel>
                             <StepContent>
                                 <Paper variant="outlined">
-                                    <Editor
-                                        height="350px"
-                                        defaultLanguage="json"
-                                        theme={
-                                            theme.palette.mode === 'light'
-                                                ? 'vs'
-                                                : 'vs-dark'
-                                        }
-                                        defaultValue={JSON.stringify(
-                                            catalogResponse.data
-                                        )}
-                                        onMount={handleEditorDidMount}
-                                    />
+                                    {catalogResponse &&
+                                    catalogResponse.data &&
+                                    catalogResponse.data.data ? (
+                                        <Editor
+                                            height="350px"
+                                            defaultLanguage="json"
+                                            theme={
+                                                theme.palette.mode === 'light'
+                                                    ? 'vs'
+                                                    : 'vs-dark'
+                                            }
+                                            defaultValue={JSON.stringify(
+                                                catalogResponse.data.data
+                                            )}
+                                            onMount={handleEditorDidMount}
+                                        />
+                                    ) : (
+                                        <>Loading...</>
+                                    )}
                                 </Paper>
                                 <Typography variant="caption" color="success">
-                                    location: {catalogResponse.path}
+                                    Will be saved at : {catalogResponse.path}
                                 </Typography>
                             </StepContent>
                         </Step>
@@ -401,7 +410,7 @@ function NewCaptureModal(
                                 Delete
                             </Button>
                             <Button
-                                onClick={handleClose}
+                                onClick={handleSave}
                                 disabled={!saveEnabled}
                                 size="large"
                                 color="success"

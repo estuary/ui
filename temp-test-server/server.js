@@ -17,10 +17,11 @@ const { exec } = shellJS;
 const port = 3001;
 const homedir = process.env.HOME;
 const schemaStorage = './schema-local-cache/';
-const requestStorage = './requests/';
-const catalogStorage = requestStorage + '/captures/';
 const flowDevDirectory = homedir + '/stuff/new-flow-testing/';
 const capturesDirectory = flowDevDirectory + 'captures/';
+
+// Make this global so we can kill it at anytime without passing it around.
+let flowShell;
 
 //////////////////////////////////
 //  █░█ █▀▀ █░░ █▀█ █▀▀ █▀█ █▀  //
@@ -171,12 +172,16 @@ function sendResponse(res, body, status) {
 }
 
 function hugeFailure(res, error) {
-    console.log('OH NO');
+    console.log('OH NO', error);
     res.status(500);
     res.json({
         message: 'Massive failure and we are not sure why. Sorry.',
         error: error,
     });
+
+    if (flowShell && flowShell.kill) {
+        flowShell.kill();
+    }
 }
 
 //https://coderrocketfuel.com/article/recursively-list-all-the-files-in-a-directory-using-node-js
@@ -200,6 +205,161 @@ function getAllFiles(dirPath, arrayOfFiles) {
     });
 
     return arrayOfFiles;
+}
+
+// Capture helpers
+function generatePaths(captureName, type) {
+    const workingDirectory = `${capturesDirectory}${captureName}/`;
+    let response = {};
+
+    response.newConfig = `discover-${type}.config.yaml`;
+    response.newCatalog = `discover-${type}.flow.yaml`;
+    response.configPath = workingDirectory + response.newConfig;
+    response.catalogPath = workingDirectory + response.newCatalog;
+    response.workingDirectory = workingDirectory;
+
+    return response;
+}
+function checkIfCaptureAlreadyExists(captureName, type) {
+    const paths = generatePaths(captureName, type);
+    let message = null;
+
+    if (fs.existsSync(paths.configPath)) {
+        message = `There is already a config started with this source : "${paths.configPath}"`;
+    } else if (fs.existsSync(paths.catalogPath)) {
+        message = `There is already a catalog with this source : "${paths.catalogPath}"`;
+    } else if (fs.existsSync(paths.workingDirectory)) {
+        message = `There is already a capture started with that name : "${paths.workingDirectory}"`;
+    }
+
+    return message;
+}
+function returnSpecificError(res, message) {
+    res.status(500);
+    res.json({
+        message: message,
+    });
+
+    if (flowShell && flowShell.kill) {
+        flowShell.kill();
+    }
+}
+function flowctlFailure(res, data) {
+    const fatalString = 'fatal';
+    const errorString = 'Error:';
+    const validationString = 'validating';
+
+    let message;
+
+    if (data.includes(fatalString)) {
+        console.log(' -  - Fatal Error');
+        message = 'Flowctl ran into a fatal error.';
+    } else if (data.includes(errorString)) {
+        if (data.includes(validationString)) {
+            console.log(' -  - Validation Failure');
+            message = 'Flowctl ran into a validation issue.';
+        } else {
+            console.log(' -  - Non-fatal Error');
+            message = data.split(errorString)[1];
+        }
+    } else {
+        message = 'Something went wrong.';
+    }
+
+    returnSpecificError(res, message);
+}
+function runDiscover(res, captureName, config, image, paths) {
+    const discoverPromise = new Promise((resolve, reject) => {
+        writeResponseToFileSystem(
+            paths.workingDirectory,
+            paths.newConfig,
+            json2yaml.stringify(config)
+        );
+
+        flowShell = pty.spawn(`flowctl`, ['discover', `--image=${image}`], {
+            cwd: paths.workingDirectory,
+        });
+
+        flowShell.onData((data) => {
+            console.log('FlowCTL Responded : ', data);
+            const successString = 'Created a Flow catalog';
+
+            if (data.includes(successString)) {
+                console.log(' -  - Flow file created');
+                setTimeout(() => {
+                    const fileString = fs
+                        .readFileSync(paths.catalogPath, {
+                            encoding: 'ascii',
+                        })
+                        .toString()
+                        .replaceAll('acmeCo', captureName);
+
+                    writeResponseToFileSystem(
+                        paths.workingDirectory,
+                        paths.newCatalog,
+                        fileString
+                    );
+
+                    const responseData = yaml.load(
+                        fs.readFileSync(paths.catalogPath, {
+                            encoding: 'ascii',
+                        })
+                    );
+
+                    flowShell.kill();
+                    resolve({
+                        path: paths.workingDirectory + paths.newCatalog,
+                        data: responseData,
+                    });
+                }, 1500); //Just give the filesystem a second to write file
+            } else {
+                reject({
+                    data,
+                });
+            }
+        });
+    });
+
+    return discoverPromise;
+}
+function captureCreation(req, res) {
+    return new Promise((resolve, reject) => {
+        try {
+            const captureName = req.body.name;
+            const type = req.body.type;
+            const paths = generatePaths(captureName, type);
+            const errorMessage = checkIfCaptureAlreadyExists(captureName, type);
+
+            if (errorMessage) {
+                reject({
+                    message: errorMessage,
+                });
+            } else {
+                runDiscover(
+                    res,
+                    captureName,
+                    req.body.config,
+                    req.body.image,
+                    paths
+                )
+                    .then((data) => {
+                        resolve({
+                            path: paths.workingDirectory + paths.newCatalog,
+                            data: data,
+                        });
+                    })
+                    .catch((data) => {
+                        reject({
+                            data,
+                        });
+                    });
+            }
+        } catch (error) {
+            reject({
+                error: error,
+            });
+        }
+    });
 }
 
 /////////////////////////////////////////
@@ -255,119 +415,46 @@ app.get('/source/:sourceName', (req, res) => {
 //  █▀▀ ▄▀█ █▀█ ▀█▀ █░█ █▀█ █▀▀ █▀  //
 //  █▄▄ █▀█ █▀▀ ░█░ █▄█ █▀▄ ██▄ ▄█  //
 //////////////////////////////////////
-app.post('/capture', (req, res) => {
-    console.log('Capture creation started');
+app.post('/capture/test', (req, res) => {
+    console.log('Capture test started');
 
-    try {
-        const captureName = req.body.name;
-        const workingDirectory = `${capturesDirectory}${captureName}/`;
-        const type = req.body.type;
-        const newConfig = `discover-${type}.config.yaml`;
-        const newCatalog = `discover-${type}.flow.yaml`;
-        const configPath = workingDirectory + newConfig;
-        const catalogPath = workingDirectory + newCatalog;
-        const folderAlreadyExists = fs.existsSync(workingDirectory);
-        const configAlreadyExists = fs.existsSync(configPath);
-        const catalogAlreadyExists = fs.existsSync(catalogPath);
+    captureCreation(req, res)
+        .then((data) => {
+            const paths = generatePaths(req.body.name, req.body.type);
 
-        if (folderAlreadyExists) {
-            let message;
-
-            if (configAlreadyExists) {
-                message = `There is already a config started with this source : "${configPath}"`;
-            } else if (catalogAlreadyExists) {
-                message = `There is already a catalog with this source : "${catalogPath}"`;
+            fs.rmSync(paths.workingDirectory, {
+                recursive: true,
+            });
+            res.status(200);
+            res.json(data);
+        })
+        .catch((data) => {
+            if (data.error) {
+                hugeFailure(res, data.error);
+            } else if (data.message) {
+                returnSpecificError(res, data.message);
             } else {
-                message = `There is already a capture started with that name : "${workingDirectory}"`;
+                flowctlFailure(res, data.data);
             }
+        });
+});
 
-            res.status(400);
-            res.json({
-                message,
-            });
-        } else {
-            writeResponseToFileSystem(
-                workingDirectory,
-                newConfig,
-                json2yaml.stringify(req.body.config)
-            );
+app.post('/capture/save', (req, res) => {
+    console.log('Capture creation started');
+    const captureName = req.body.name;
+    const type = req.body.type;
+    const paths = generatePaths(captureName, type);
 
-            var flowShell = pty.spawn(
-                `flowctl`,
-                ['discover', `--image=${req.body.image}`],
-                {
-                    cwd: workingDirectory,
-                }
-            );
+    writeResponseToFileSystem(
+        paths.workingDirectory,
+        paths.newCatalog,
+        JSON.stringify(req.body.config)
+    );
 
-            flowShell.onData((data) => {
-                console.log('FlowCTL Responded : ', data);
-                const successString = 'Created a Flow catalog';
-
-                if (data.includes(successString)) {
-                    console.log(' -  - Flow file created');
-                    setTimeout(() => {
-                        const fileString = fs
-                            .readFileSync(catalogPath, {
-                                encoding: 'ascii',
-                            })
-                            .toString()
-                            .replaceAll('acmeCo', captureName);
-
-                        writeResponseToFileSystem(
-                            workingDirectory,
-                            newCatalog,
-                            fileString
-                        );
-
-                        const responseData = yaml.load(
-                            fs.readFileSync(catalogPath, {
-                                encoding: 'ascii',
-                            })
-                        );
-
-                        res.status(200);
-                        res.json({
-                            path: workingDirectory + newCatalog,
-                            data: responseData,
-                        });
-                        flowShell.kill();
-                    }, 1500); //Just give the fs a second to write file
-                } else {
-                    const fatalString = 'fatal';
-                    const errorString = 'Error:';
-                    const validationString = 'validating';
-
-                    let message;
-
-                    if (data.includes(fatalString)) {
-                        console.log(' -  - Fatal Error');
-                        message = 'Flowctl ran into a fatal error.';
-                    } else if (data.includes(errorString)) {
-                        if (data.includes(validationString)) {
-                            console.log(' -  - Validation Failure');
-                            message = 'Flowctl ran into a validation issue.';
-                        } else {
-                            console.log(' -  - Non-fatal Error');
-                            message = data.split(errorString)[1];
-                        }
-                    } else {
-                        message = 'Something went wrong.';
-                    }
-                    res.status(500);
-                    res.json({
-                        message: message,
-                    });
-                    flowShell.kill();
-                }
-            });
-        }
-    } catch (error) {
-        if (flowShell && flowShell.kill()) {
-            flowShell.kill();
-        }
-        hugeFailure(res, error);
-    }
+    res.status(200);
+    res.json({
+        path: paths.workingDirectory + paths.newCatalog,
+    });
 });
 
 app.get('/captures/all', (req, res) => {
@@ -393,7 +480,7 @@ app.get('/captures/all', (req, res) => {
 ///////////////////////////////////////
 // TODO : no real dev has been done on this yet
 app.post('/journal/apply', (req, res) => {
-    var flowShell = pty.spawn(
+    flowShell = pty.spawn(
         `flowctl`,
         ['apply', `--source=${req.body.somethingToFigureOutLater}`],
         {
@@ -439,7 +526,7 @@ app.post('/journal/apply', (req, res) => {
 //  ▄█ █▄▄ █▀█ ██▄ █░▀░█ █▀█  //
 ////////////////////////////////
 app.get('/schema/', (req, res) => {
-    var flowShell = pty.spawn(`flowctl`, ['json-schema'], {
+    flowShell = pty.spawn(`flowctl`, ['json-schema'], {
         cwd: flowDevDirectory,
         encoding: 'ascii',
     });
