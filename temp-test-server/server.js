@@ -225,11 +225,11 @@ function checkIfCaptureAlreadyExists(captureName, type) {
     let message = null;
 
     if (fs.existsSync(paths.configPath)) {
-        message = `There is already a config started with this source : "${paths.configPath}"`;
+        message = `There is already a config named "${captureName}". It can be found at : "${paths.configPath}"`;
     } else if (fs.existsSync(paths.catalogPath)) {
-        message = `There is already a catalog with this source : "${paths.catalogPath}"`;
+        message = `There is already a Capture named "${captureName}". It can be found at : "${paths.catalogPath}"`;
     } else if (fs.existsSync(paths.workingDirectory)) {
-        message = `There is already a capture started with that name : "${paths.workingDirectory}"`;
+        message = `There is already a folder for "${captureName}". It can be found at : "${paths.workingDirectory}"`;
     }
 
     return message;

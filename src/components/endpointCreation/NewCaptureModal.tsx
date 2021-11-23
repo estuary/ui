@@ -207,7 +207,7 @@ function NewCaptureModal(
         axios
             .post('http://localhost:3001/capture/save', formSubmitData)
             .then((response: any) => {
-                alert('Saved ' + response.path);
+                alert('Saved ' + response.data.path);
                 handleClose();
             })
             .catch((error) => {
