@@ -55,7 +55,7 @@ export default function Catalog() {
                                 <ListItemIcon>
                                     <InputIcon />
                                 </ListItemIcon>
-                                <ListItemText primary={element.name} />
+                                <ListItemText primary={`${element.path}`} />
                             </ListItem>
                         ))}
                     </List>

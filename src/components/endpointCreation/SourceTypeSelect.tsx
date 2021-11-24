@@ -64,6 +64,7 @@ function SourceTypeSelect(props: SourceTypeProps) {
                                 : 'Source type'
                         }
                         error={error !== null}
+                        required={true}
                         inputProps={{
                             ...params.inputProps,
                             autoComplete: 'new-password', // disable autocomplete and autofill

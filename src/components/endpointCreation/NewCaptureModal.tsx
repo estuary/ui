@@ -98,7 +98,7 @@ function NewCaptureModal(
         setShowValidation(false);
         setNewCaptureFormData({});
         setNewCaptureFormErrors([]);
-        setActiveStep(1);
+
         axios.get(`http://localhost:3001/source/${key}`).then(
             (response) => {
                 setCurrentSchema({
@@ -139,7 +139,7 @@ function NewCaptureModal(
                 type: sourceTypeParam,
             };
             setSaveEnabled(false);
-            setActiveStep(2);
+            setActiveStep(1);
             setFormSubmitting(true);
             axios
                 .post('http://localhost:3001/capture/test', formSubmitData)
@@ -148,7 +148,7 @@ function NewCaptureModal(
                     setFormSubmitError(null);
                     setCatalogResponse(response.data);
                     setSaveEnabled(true);
-                    setActiveStep(3);
+                    setActiveStep(2);
                 })
                 .catch((error) => {
                     if (error.response) {
@@ -202,7 +202,7 @@ function NewCaptureModal(
         formSubmitData.config = JSON.parse(catalogVal);
 
         setSaveEnabled(false);
-        setActiveStep(2);
+        setActiveStep(1);
         setFormSubmitting(true);
         axios
             .post('http://localhost:3001/capture/save', formSubmitData)
@@ -288,21 +288,21 @@ function NewCaptureModal(
                     </IconButton>
                 </DialogTitle>
 
-                <Box sx={{ width: '100%' }}>
-                    {formSubmitError ? (
+                {formSubmitError ? (
+                    <Box sx={{ width: '100%' }}>
                         <Alert severity="error">
                             <AlertTitle>Capture test failed</AlertTitle>
                             <Typography variant="subtitle1">
                                 {formSubmitError}
                             </Typography>
                         </Alert>
-                    ) : null}
-                </Box>
+                    </Box>
+                ) : null}
 
                 <DialogContent dividers>
                     <Stepper activeStep={activeStep} orientation="vertical">
                         <Step key={0}>
-                            <StepLabel>Name &amp; Source Type</StepLabel>
+                            <StepLabel>Config</StepLabel>
                             <StepContent
                                 TransitionProps={{ unmountOnExit: false }}
                             >
@@ -314,27 +314,24 @@ function NewCaptureModal(
                                     below to test the connection.
                                 </DialogContentText>
 
-                                <Stack direction="row" spacing={2}>
-                                    <TextField
-                                        id="capture-name"
-                                        label="Name of capture"
-                                        variant="outlined"
-                                        value={sourceName}
-                                        onChange={handleNameChange}
-                                    />
-                                    <SourceTypeSelect
-                                        id="source-type-select"
-                                        sourceType={sourceType}
-                                        onSourceChange={getSourceDetails}
-                                    />
-                                </Stack>
-                            </StepContent>
-                        </Step>
-                        <Step key={1}>
-                            <StepLabel>Configuration</StepLabel>
-                            <StepContent
-                                TransitionProps={{ unmountOnExit: false }}
-                            >
+                                <form id="newCaptureNaming">
+                                    <Stack direction="row" spacing={2}>
+                                        <TextField
+                                            id="capture-name"
+                                            label="Name of capture"
+                                            variant="outlined"
+                                            value={sourceName}
+                                            onChange={handleNameChange}
+                                            required={true}
+                                        />
+                                        <SourceTypeSelect
+                                            id="source-type-select"
+                                            sourceType={sourceType}
+                                            onSourceChange={getSourceDetails}
+                                        />
+                                    </Stack>
+                                </form>
+
                                 <Box sx={{ width: '100%' }}>
                                     {currentSchema.fetching ? (
                                         <PaitentLoad
@@ -346,7 +343,7 @@ function NewCaptureModal(
                                 </Box>
                             </StepContent>
                         </Step>
-                        <Step key={2}>
+                        <Step key={1}>
                             <StepLabel>Test</StepLabel>
                             <StepContent>
                                 <Box
@@ -367,8 +364,8 @@ function NewCaptureModal(
                                 </Box>
                             </StepContent>
                         </Step>
-                        <Step key={3}>
-                            <StepLabel>Review &amp; Save</StepLabel>
+                        <Step key={2}>
+                            <StepLabel>Review</StepLabel>
                             <StepContent>
                                 <Paper variant="outlined">
                                     {catalogResponse &&
@@ -400,7 +397,7 @@ function NewCaptureModal(
                 </DialogContent>
 
                 <DialogActions>
-                    {activeStep > 2 ? (
+                    {activeStep > 1 ? (
                         <>
                             <Button
                                 onClick={handleDelete}
