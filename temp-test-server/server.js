@@ -251,16 +251,22 @@ function flowctlFailure(res, data) {
 
     let message;
 
-    if (data.includes(fatalString)) {
-        console.log(' -  - Fatal Error');
-        message = 'Flowctl ran into a fatal error.';
-    } else if (data.includes(errorString)) {
-        if (data.includes(validationString)) {
-            console.log(' -  - Validation Failure');
-            message = 'Flowctl ran into a validation issue.';
+    console.log('Error state hit', data);
+
+    if (data) {
+        if (data.includes(fatalString)) {
+            console.log(' -  - Fatal Error');
+            message = 'Flowctl ran into a fatal error.';
+        } else if (data.includes(errorString)) {
+            if (data.includes(validationString)) {
+                console.log(' -  - Validation Failure');
+                message = 'Flowctl ran into a validation issue.';
+            } else {
+                console.log(' -  - Non-fatal Error');
+                message = data.split(errorString)[1];
+            }
         } else {
-            console.log(' -  - Non-fatal Error');
-            message = data.split(errorString)[1];
+            message = 'Something went wrong.';
         }
     } else {
         message = 'Something went wrong.';
