@@ -30,10 +30,11 @@ import {
 } from '@mui/material';
 import { useTheme } from '@mui/system';
 import axios from 'axios';
-import PaitentLoad from 'components/shared/PaitentLoad';
+import FormLoading from 'components/shared/FormLoading';
+import { useSourceSchema } from 'hooks/useSourceSchema';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import PropTypes from 'prop-types';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import SourceTypeSelect from './SourceTypeSelect';
 
@@ -42,13 +43,6 @@ function NewCaptureModal(
     props: PropTypes.InferProps<typeof NewCaptureModal.propTypes>
 ) {
     const handleDefaultsAjv = createAjv({ useDefaults: true });
-
-    const initialSchemaState = {
-        error: null,
-        fetching: false,
-        schema: null,
-        image: null,
-    };
 
     const formOptions = {
         restrict: true,
@@ -72,18 +66,13 @@ function NewCaptureModal(
     }
 
     const navigate = useNavigate();
+
     const [searchParams, setSearchParams] = useSearchParams();
     const sourceTypeParam = searchParams.get('sourcetype');
+    const { isFetching, schema, error, image } =
+        useSourceSchema(sourceTypeParam);
 
-    useEffect(() => {
-        if (sourceTypeParam !== null) {
-            fetchSchemaForForm(sourceTypeParam);
-        }
-    }, [sourceTypeParam]);
-
-    const [sourceType] = useState(sourceTypeParam ? sourceTypeParam : '');
     const [sourceName, setSourceName] = useState('');
-    const [currentSchema, setCurrentSchema] = useState(initialSchemaState);
     const [newCaptureFormData, setNewCaptureFormData] = useState({});
     const [newCaptureFormErrors, setNewCaptureFormErrors] = useState([]);
     const [saveEnabled, setSaveEnabled] = useState(false);
@@ -94,36 +83,7 @@ function NewCaptureModal(
 
     const [activeStep, setActiveStep] = useState(0);
 
-    const fetchSchemaForForm = (key: any) => {
-        setShowValidation(false);
-        setNewCaptureFormData({});
-        setNewCaptureFormErrors([]);
-
-        axios.get(`http://localhost:3001/source/${key}`).then(
-            (response) => {
-                setCurrentSchema({
-                    ...initialSchemaState,
-                    schema: response.data.specification.spec
-                        .connectionSpecification,
-                    image: response.data.details.image,
-                });
-                setSaveEnabled(true);
-            },
-            (error) => {
-                setCurrentSchema({
-                    ...initialSchemaState,
-                    error: error.response
-                        ? error.response.data.message
-                        : error.message,
-                });
-                setSaveEnabled(false);
-                setActiveStep(0);
-            }
-        );
-    };
-
     const handleClose = () => {
-        setCurrentSchema(initialSchemaState);
         navigate('..'); //This is assuming this is a child of the /captures route.
     };
 
@@ -134,7 +94,7 @@ function NewCaptureModal(
         } else {
             const formSubmitData = {
                 config: newCaptureFormData,
-                image: currentSchema.image,
+                image: image,
                 name: sourceName,
                 type: sourceTypeParam,
             };
@@ -165,10 +125,6 @@ function NewCaptureModal(
 
     const getSourceDetails = async (key: string) => {
         const hasKey = Boolean(key && key.length > 0);
-        setCurrentSchema({
-            ...initialSchemaState,
-            fetching: hasKey,
-        });
         setSearchParams(hasKey ? { sourcetype: key } : {});
         setSaveEnabled(hasKey);
     };
@@ -190,7 +146,7 @@ function NewCaptureModal(
         event.preventDefault();
         const formSubmitData = {
             config: {},
-            image: currentSchema.image,
+            image: image,
             name: sourceName,
             type: sourceTypeParam,
         };
@@ -223,37 +179,31 @@ function NewCaptureModal(
     };
 
     const jsonFormRendered = (() => {
-        if (currentSchema.error !== null) {
+        if (error !== null) {
             return (
                 <Alert severity="error">
                     <AlertTitle>Error</AlertTitle>
-                    {currentSchema.error}
+                    {error}
                 </Alert>
             );
+        } else if (schema !== null) {
+            return (
+                <JsonForms
+                    schema={schema}
+                    data={newCaptureFormData}
+                    renderers={materialRenderers}
+                    cells={materialCells}
+                    config={formOptions}
+                    readonly={formSubmitting}
+                    ajv={handleDefaultsAjv}
+                    validationMode={
+                        showValidation ? 'ValidateAndShow' : 'ValidateAndHide'
+                    }
+                    onChange={formChanged}
+                />
+            );
         } else {
-            if (currentSchema.schema !== null) {
-                return (
-                    <form id="newCaptureForm">
-                        <JsonForms
-                            schema={currentSchema.schema}
-                            data={newCaptureFormData}
-                            renderers={materialRenderers}
-                            cells={materialCells}
-                            config={formOptions}
-                            readonly={formSubmitting}
-                            ajv={handleDefaultsAjv}
-                            validationMode={
-                                showValidation
-                                    ? 'ValidateAndShow'
-                                    : 'ValidateAndHide'
-                            }
-                            onChange={formChanged}
-                        />
-                    </form>
-                );
-            } else {
-                return null;
-            }
+            return null;
         }
     })();
 
@@ -314,33 +264,30 @@ function NewCaptureModal(
                                     below to test the connection.
                                 </DialogContentText>
 
-                                <form id="newCaptureNaming">
+                                <form id="newCaptureForm">
                                     <Stack direction="row" spacing={2}>
                                         <TextField
                                             id="capture-name"
                                             label="Name of capture"
-                                            variant="outlined"
                                             value={sourceName}
                                             onChange={handleNameChange}
                                             required={true}
                                         />
                                         <SourceTypeSelect
                                             id="source-type-select"
-                                            sourceType={sourceType}
+                                            sourceType={sourceTypeParam}
                                             onSourceChange={getSourceDetails}
                                         />
                                     </Stack>
-                                </form>
 
-                                <Box sx={{ width: '100%' }}>
-                                    {currentSchema.fetching ? (
-                                        <PaitentLoad
-                                            on={currentSchema.fetching}
-                                        />
-                                    ) : (
-                                        jsonFormRendered
-                                    )}
-                                </Box>
+                                    <Box sx={{ width: '100%' }}>
+                                        {isFetching ? (
+                                            <FormLoading />
+                                        ) : (
+                                            jsonFormRendered
+                                        )}
+                                    </Box>
+                                </form>
                             </StepContent>
                         </Step>
                         <Step key={1}>
@@ -428,9 +375,7 @@ function NewCaptureModal(
                             </Button>
                             <Button
                                 onClick={handleTest}
-                                disabled={
-                                    !saveEnabled || currentSchema.fetching
-                                }
+                                disabled={!saveEnabled || isFetching}
                                 form="newCaptureForm"
                                 size="large"
                                 type="submit"

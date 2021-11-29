@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 const SourceTypePropTypes = {
     id: PropTypes.string.isRequired,
     onSourceChange: PropTypes.func.isRequired,
-    sourceType: PropTypes.string.isRequired,
+    sourceType: PropTypes.string,
 };
 SourceTypeSelect.propTypes = SourceTypePropTypes;
 type SourceTypeProps = PropTypes.InferProps<typeof SourceTypePropTypes>;
