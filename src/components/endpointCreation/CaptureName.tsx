@@ -32,7 +32,7 @@ export default function CaptureName(props: CaptureNameProps) {
                     callback: (results?: readonly TenantType[]) => void
                 ) => {
                     axios
-                        .get(`http://localhost:3001/tenants`, {
+                        .get(`http://localhost:3001/test-tenants`, {
                             params: { s: request.input },
                         })
                         .then(

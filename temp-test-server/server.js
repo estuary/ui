@@ -21,9 +21,8 @@ const flowDevDirectory = homedir + '/stuff/new-flow-testing/';
 const capturesDirectory = flowDevDirectory + 'captures/';
 const tenants = [
     'acmeCo',
-    'foo',
-    'bar',
-    'buz',
+    'foo/bar',
+    'buz/testing',
     'testing',
     'admin',
     'account',
@@ -581,7 +580,7 @@ app.get('/schema/', (req, res) => {
 //  ░█░ ██▄ █░▀█ █▀█ █░▀█ ░█░ ▄█  //
 ////////////////////////////////////
 //https://gabrieleromanato.name/nodejs-autocomplete-in-expressjs-with-jquery-ui
-app.get('/tenants/', (req, res) => {
+app.get('/test-tenants/', (req, res) => {
     const s = req.query.s.trim();
     const results = [];
 
