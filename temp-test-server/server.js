@@ -19,6 +19,32 @@ const homedir = process.env.HOME;
 const schemaStorage = './schema-local-cache/';
 const flowDevDirectory = homedir + '/stuff/new-flow-testing/';
 const capturesDirectory = flowDevDirectory + 'captures/';
+const tenants = [
+    'foo',
+    'bar',
+    'buz',
+    'testing',
+    'admin',
+    'account',
+    'faint',
+    'auction',
+    'crown',
+    'head',
+    'compound',
+    'wardrobe',
+    'consensus',
+    'marathon',
+    'district',
+    'attraction',
+    'fine',
+    'advantage',
+    'seat',
+    'prize',
+    'familiar',
+    'equal',
+    'night',
+    'camp',
+];
 
 // Make this global so we can kill it at anytime without passing it around.
 let flowShell;
@@ -547,6 +573,31 @@ app.get('/schema/', (req, res) => {
             data: JSON.parse(data),
         });
     });
+});
+
+////////////////////////////////////
+//  ▀█▀ █▀▀ █▄░█ ▄▀█ █▄░█ ▀█▀ █▀  //
+//  ░█░ ██▄ █░▀█ █▀█ █░▀█ ░█░ ▄█  //
+////////////////////////////////////
+//https://gabrieleromanato.name/nodejs-autocomplete-in-expressjs-with-jquery-ui
+app.get('/tenants/', (req, res) => {
+    const s = req.query.s.trim();
+    const results = [];
+
+    try {
+        tenants.forEach((tenant, index) => {
+            if (tenant.includes(s)) {
+                results.push({
+                    id: index,
+                    name: tenant,
+                });
+            }
+        });
+    } catch (err) {
+        console.log(err);
+    }
+
+    res.json(results);
 });
 
 /////////////////////////////////////////
