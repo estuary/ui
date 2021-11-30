@@ -30,6 +30,7 @@ import {
 } from '@mui/material';
 import { useTheme } from '@mui/system';
 import axios from 'axios';
+import ErrorBoundary from 'components/shared/ErrorBoundry';
 import FormLoading from 'components/shared/FormLoading';
 import { useSourceSchema } from 'hooks/useSourceSchema';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
@@ -188,19 +189,23 @@ function NewCaptureModal(
             );
         } else if (schema !== null) {
             return (
-                <JsonForms
-                    schema={schema}
-                    data={newCaptureFormData}
-                    renderers={materialRenderers}
-                    cells={materialCells}
-                    config={formOptions}
-                    readonly={formSubmitting}
-                    ajv={handleDefaultsAjv}
-                    validationMode={
-                        showValidation ? 'ValidateAndShow' : 'ValidateAndHide'
-                    }
-                    onChange={formChanged}
-                />
+                <ErrorBoundary>
+                    <JsonForms
+                        schema={schema}
+                        data={newCaptureFormData}
+                        renderers={materialRenderers}
+                        cells={materialCells}
+                        config={formOptions}
+                        readonly={formSubmitting}
+                        ajv={handleDefaultsAjv}
+                        validationMode={
+                            showValidation
+                                ? 'ValidateAndShow'
+                                : 'ValidateAndHide'
+                        }
+                        onChange={formChanged}
+                    />
+                </ErrorBoundary>
             );
         } else {
             return null;
@@ -314,6 +319,13 @@ function NewCaptureModal(
                         <Step key={2}>
                             <StepLabel>Review</StepLabel>
                             <StepContent>
+                                <DialogContentText>
+                                    Look over the catalog configuration that was
+                                    generated. Once you click Save it will write
+                                    the contents to the file listed below. If
+                                    you want to edit anything you can do that
+                                    directly in the editor.
+                                </DialogContentText>
                                 <Paper variant="outlined">
                                     {catalogResponse &&
                                     catalogResponse.data &&
