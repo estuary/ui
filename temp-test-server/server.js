@@ -20,6 +20,7 @@ const schemaStorage = './schema-local-cache/';
 const flowDevDirectory = homedir + '/stuff/new-flow-testing/';
 const capturesDirectory = flowDevDirectory + 'captures/';
 const tenants = [
+    'acmeCo',
     'foo',
     'bar',
     'buz',
@@ -585,11 +586,11 @@ app.get('/tenants/', (req, res) => {
     const results = [];
 
     try {
-        tenants.forEach((tenant, index) => {
+        tenants.sort().forEach((tenant, index) => {
             if (tenant.includes(s)) {
                 results.push({
                     id: index,
-                    name: tenant,
+                    name: `${tenant}/`,
                 });
             }
         });

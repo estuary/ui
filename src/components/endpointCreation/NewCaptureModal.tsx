@@ -24,7 +24,6 @@ import {
     StepContent,
     StepLabel,
     Stepper,
-    TextField,
     Typography,
     useMediaQuery,
 } from '@mui/material';
@@ -37,6 +36,7 @@ import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import PropTypes from 'prop-types';
 import { useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import CaptureName from './CaptureName';
 import SourceTypeSelect from './SourceTypeSelect';
 
 NewCaptureModal.propTypes = {};
@@ -135,8 +135,8 @@ function NewCaptureModal(
         setNewCaptureFormErrors(errors);
     };
 
-    const handleNameChange = (event: any) => {
-        setSourceName(event.target.value);
+    const handleNameChange = (value: string) => {
+        setSourceName(value);
     };
 
     const handleDelete = () => {
@@ -271,12 +271,9 @@ function NewCaptureModal(
 
                                 <form id="newCaptureForm">
                                     <Stack direction="row" spacing={2}>
-                                        <TextField
+                                        <CaptureName
                                             id="capture-name"
-                                            label="Name of capture"
-                                            value={sourceName}
-                                            onChange={handleNameChange}
-                                            required={true}
+                                            onValueChange={handleNameChange}
                                         />
                                         <SourceTypeSelect
                                             id="source-type-select"
