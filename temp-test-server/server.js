@@ -202,7 +202,7 @@ function hugeFailure(res, error) {
     res.status(500);
     res.json({
         message: 'Massive failure and we are not sure why. Sorry.',
-        error: error,
+        errors: [error],
     });
 
     if (flowShell && flowShell.kill) {
@@ -260,9 +260,11 @@ function checkIfCaptureAlreadyExists(captureName, type) {
 
     return message;
 }
-function returnSpecificError(res, message) {
+function returnSpecificError(res, message, errors) {
+    const resErrors = errors && errors.length > 0 ? errors : [];
     res.status(500);
     res.json({
+        errors: resErrors,
         message: message,
     });
 
@@ -276,20 +278,20 @@ function flowctlFailure(res, data) {
     const validationString = 'validating';
 
     let message;
+    let errors = [];
 
-    console.log('Error state hit', data);
-
-    if (data) {
-        if (data.includes(fatalString)) {
+    if (data.data) {
+        if (data.data.includes(fatalString)) {
             console.log(' -  - Fatal Error');
             message = 'Flowctl ran into a fatal error.';
-        } else if (data.includes(errorString)) {
-            if (data.includes(validationString)) {
+        } else if (data.data.includes(errorString)) {
+            if (data.data.includes(validationString)) {
                 console.log(' -  - Validation Failure');
                 message = 'Flowctl ran into a validation issue.';
             } else {
                 console.log(' -  - Non-fatal Error');
-                message = data.split(errorString)[1];
+                errors.push(data.data.split(errorString)[1]);
+                message = 'Flowctl ran into a non-fatal error';
             }
         } else {
             message = 'Something went wrong.';
@@ -298,7 +300,7 @@ function flowctlFailure(res, data) {
         message = 'Something went wrong.';
     }
 
-    returnSpecificError(res, message);
+    returnSpecificError(res, message, errors);
 }
 function runDiscover(res, captureName, config, image, paths) {
     const discoverPromise = new Promise((resolve, reject) => {
@@ -356,10 +358,10 @@ function runDiscover(res, captureName, config, image, paths) {
 }
 function captureCreation(req, res) {
     return new Promise((resolve, reject) => {
+        const captureName = req.body.name;
+        const type = req.body.type;
+        const paths = generatePaths(captureName, type);
         try {
-            const captureName = req.body.name;
-            const type = req.body.type;
-            const paths = generatePaths(captureName, type);
             const errorMessage = checkIfCaptureAlreadyExists(captureName, type);
 
             if (errorMessage) {
@@ -438,6 +440,7 @@ app.get('/source/:sourceName', (req, res) => {
         .catch(() => {
             res.status(400);
             res.json({
+                errors: [],
                 message: 'No sources could be found with that name.',
             });
         });
@@ -449,18 +452,48 @@ app.get('/source/:sourceName', (req, res) => {
 //////////////////////////////////////
 app.post('/capture/test', (req, res) => {
     console.log('Capture test started');
+    const paths = generatePaths(req.body.name, req.body.type);
 
     captureCreation(req, res)
         .then((data) => {
-            const paths = generatePaths(req.body.name, req.body.type);
+            const errors = [];
 
             fs.rmSync(paths.workingDirectory, {
                 recursive: true,
             });
-            res.status(200);
-            res.json(data);
+
+            const collections = data.data.collections;
+            const hasCollections = collections && collections.length > 0;
+
+            const bindings =
+                data.data.data.captures[`${req.body.name}/${req.body.type}`]
+                    .bindings;
+            const hasBindings = bindings && bindings.length > 0;
+
+            if (!hasCollections) {
+                errors.push(`Your collections are empty.`);
+            }
+
+            if (!hasBindings) {
+                errors.push(`Your bindings are empty.`);
+            }
+
+            if (errors.length > 0) {
+                res.status(400);
+                res.json({
+                    errors: errors,
+                    message: 'There was an issue generating your catalog.',
+                });
+            } else {
+                res.status(200);
+                res.json(data);
+            }
         })
         .catch((data) => {
+            fs.rmSync(paths.workingDirectory, {
+                recursive: true,
+            });
+
             if (data.error) {
                 hugeFailure(res, data.error);
             } else if (data.message) {
@@ -506,12 +539,12 @@ app.get('/captures/all', (req, res) => {
     sendResponse(res, captureFiles);
 });
 
-///////////////////////////////////////
-//  ░░█ █▀█ █░█ █▀█ █▄░█ ▄▀█ █░░ █▀  //
-//  █▄█ █▄█ █▄█ █▀▄ █░▀█ █▀█ █▄▄ ▄█  //
-///////////////////////////////////////
+///////////////////////////////////
+//  █▀▀ ▄▀█ ▀█▀ ▄▀█ █░░ █▀█ █▀▀  //
+//  █▄▄ █▀█ ░█░ █▀█ █▄▄ █▄█ █▄█  //
+///////////////////////////////////
 // TODO : no real dev has been done on this yet
-app.post('/journal/apply', (req, res) => {
+app.post('/catalog/apply', (req, res) => {
     flowShell = pty.spawn(
         `flowctl`,
         ['apply', `--source=${req.body.somethingToFigureOutLater}`],
@@ -545,6 +578,7 @@ app.post('/journal/apply', (req, res) => {
                 let message = `Flowctl apply ran into an issue : ${errorMessage}`;
                 res.status(500);
                 res.json({
+                    errors: [],
                     message: message,
                 });
                 flowShell.kill();

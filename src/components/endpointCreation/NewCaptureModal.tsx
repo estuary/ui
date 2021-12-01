@@ -18,6 +18,8 @@ import {
     DialogContentText,
     DialogTitle,
     IconButton,
+    List,
+    ListItem,
     Paper,
     Stack,
     Step,
@@ -79,7 +81,10 @@ function NewCaptureModal(
     const [saveEnabled, setSaveEnabled] = useState(false);
     const [showValidation, setShowValidation] = useState(false);
     const [formSubmitting, setFormSubmitting] = useState(false);
-    const [formSubmitError, setFormSubmitError] = useState(null);
+    const [formSubmitError, setFormSubmitError] = useState<{
+        message: string;
+        errors: any[];
+    } | null>(null);
     const [catalogResponse, setCatalogResponse] = useState({} as any);
 
     const [activeStep, setActiveStep] = useState(0);
@@ -112,10 +117,10 @@ function NewCaptureModal(
                     setActiveStep(2);
                 })
                 .catch((error) => {
-                    if (error.response) {
-                        setFormSubmitError(error.response.data.message);
+                    if (error.response && error.response.data) {
+                        setFormSubmitError(error.response.data);
                     } else {
-                        setFormSubmitError(error.message);
+                        setFormSubmitError(error);
                     }
                     setFormSubmitting(false);
                     setSaveEnabled(true);
@@ -169,7 +174,7 @@ function NewCaptureModal(
             })
             .catch((error) => {
                 if (error.response) {
-                    setFormSubmitError(error.response.data.message);
+                    setFormSubmitError(error.response.data);
                 } else {
                     setFormSubmitError(error.message);
                 }
@@ -212,6 +217,48 @@ function NewCaptureModal(
         }
     })();
 
+    const errorList = (() => {
+        if (
+            formSubmitError &&
+            formSubmitError.errors &&
+            formSubmitError.errors.length > 0
+        ) {
+            return (
+                <List dense>
+                    {formSubmitError.errors.map(
+                        (error: string, index: number) => {
+                            return (
+                                <ListItem key={index + error}>{error}</ListItem>
+                            );
+                        }
+                    )}
+                </List>
+            );
+        } else {
+            return null;
+        }
+    })();
+
+    const errorRendered = (() => {
+        let response;
+
+        if (formSubmitError) {
+            response = (
+                <Box sx={{ width: '100%' }}>
+                    <Alert severity="error">
+                        <AlertTitle>Capture test failed</AlertTitle>
+                        <Typography variant="subtitle1">
+                            {formSubmitError.message}
+                        </Typography>
+                        {errorList}
+                    </Alert>
+                </Box>
+            );
+        }
+
+        return response;
+    })();
+
     return (
         <>
             <Dialog
@@ -243,16 +290,7 @@ function NewCaptureModal(
                     </IconButton>
                 </DialogTitle>
 
-                {formSubmitError ? (
-                    <Box sx={{ width: '100%' }}>
-                        <Alert severity="error">
-                            <AlertTitle>Capture test failed</AlertTitle>
-                            <Typography variant="subtitle1">
-                                {formSubmitError}
-                            </Typography>
-                        </Alert>
-                    </Box>
-                ) : null}
+                {errorRendered}
 
                 <DialogContent dividers>
                     <Stepper activeStep={activeStep} orientation="vertical">
