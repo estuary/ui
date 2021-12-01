@@ -220,7 +220,7 @@ function NewCaptureModal(
                 scroll="paper"
                 fullScreen={fullScreen}
                 fullWidth={!fullScreen}
-                maxWidth={'md'}
+                maxWidth={'lg'}
                 sx={{
                     '.MuiDialog-container': {
                         alignItems: 'flex-start',

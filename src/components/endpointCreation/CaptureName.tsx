@@ -78,14 +78,16 @@ export default function CaptureName(props: CaptureNameProps) {
             filterSelectedOptions
             disableClearable
             freeSolo
-            getOptionLabel={(option) => option.name}
+            getOptionLabel={(option) =>
+                typeof option === 'string' ? option : option.name
+            }
             onChange={(event: any, newValue: any) => {
                 setValue(newValue ? newValue : null);
                 setInputValue(newValue ? newValue.name : '');
-                props.onValueChange(newValue ? newValue.name : '');
             }}
             onInputChange={(event, newInputValue) => {
                 setInputValue(newInputValue);
+                props.onValueChange(newInputValue);
             }}
             isOptionEqualToValue={(option: TenantType, value: TenantType) => {
                 return option.name === value.name;
@@ -97,7 +99,7 @@ export default function CaptureName(props: CaptureNameProps) {
                     required={true}
                     inputProps={{
                         ...params.inputProps,
-                        autoComplete: 'new-password',
+                        autoComplete: 'off',
                     }}
                 />
             )}

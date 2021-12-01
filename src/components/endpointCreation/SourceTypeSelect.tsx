@@ -46,7 +46,6 @@ function SourceTypeSelect(props: SourceTypeProps) {
                 blurOnSelect="mouse"
                 noOptionsText="No Options"
                 loading={!isLoaded}
-                defaultValue={props.sourceType ? props.sourceType : null}
                 onChange={function (event, reason: any) {
                     props.onSourceChange(reason ? reason.key : '');
                 }}
@@ -67,7 +66,7 @@ function SourceTypeSelect(props: SourceTypeProps) {
                         required={true}
                         inputProps={{
                             ...params.inputProps,
-                            autoComplete: 'new-password', // disable autocomplete and autofill
+                            autoComplete: 'off',
                         }}
                     />
                 )}

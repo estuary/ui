@@ -23,17 +23,18 @@ class ErrorBoundary extends Component<Props, State> {
     }
 
     public render() {
-        console.log('render', this.state.hasError);
         if (this.state.hasError) {
+            console.log('render failed', this.state);
             return (
                 <h1>
-                    Sorry - there was a massive error. Some details are in the
-                    dev console if you want to take a look.
+                    Sorry - there was an error in some UI code. We've logged
+                    some details in the dev console if you want to take a look.
                 </h1>
             );
+        } else {
+            console.log('Render going ahead');
+            return this.props.children;
         }
-
-        return this.props.children;
     }
 }
 
