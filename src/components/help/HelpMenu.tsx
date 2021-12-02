@@ -1,9 +1,9 @@
-import React from 'react';
-import { IconButton, Link } from '@mui/material';
+import HelpIcon from '@mui/icons-material/Help';
+import { IconButton } from '@mui/material';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-
-import HelpIcon from '@mui/icons-material/Help';
+import ExternalLink from 'components/shared/ExternalLink';
+import React from 'react';
 
 function HelpMenu() {
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -64,26 +64,19 @@ function HelpMenu() {
                 }}
             >
                 <MenuItem>
-                    <Link href="https://docs.estuary.dev/" target="_blank">
+                    <ExternalLink link="https://docs.estuary.dev/">
                         Flow Docs
-                    </Link>
+                    </ExternalLink>
                 </MenuItem>
                 <MenuItem>
-                    <Link
-                        href="https://join.slack.com/t/estuary-dev/shared_invite/zt-86nal6yr-VPbv~YfZE9Q~6Zl~gmZdFQ"
-                        target="_blank"
-                        rel="noopener"
-                    >
+                    <ExternalLink link="https://join.slack.com/t/estuary-dev/shared_invite/zt-86nal6yr-VPbv~YfZE9Q~6Zl~gmZdFQ">
                         Estuary's Slack
-                    </Link>
+                    </ExternalLink>
                 </MenuItem>
                 <MenuItem>
-                    <Link
-                        href="https://www.estuary.dev/#get-in-touch"
-                        target="_blank"
-                    >
+                    <ExternalLink link="https://www.estuary.dev/#get-in-touch">
                         Contact Us
-                    </Link>
+                    </ExternalLink>
                 </MenuItem>
             </Menu>
         </>

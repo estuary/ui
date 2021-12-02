@@ -9,6 +9,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import {
     Alert,
     AlertTitle,
+    AppBar,
     Box,
     Button,
     CircularProgress,
@@ -17,8 +18,8 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
+    Divider,
     IconButton,
-    Link,
     List,
     ListItem,
     Paper,
@@ -34,6 +35,7 @@ import {
 import { useTheme } from '@mui/system';
 import axios from 'axios';
 import ErrorBoundary from 'components/shared/ErrorBoundry';
+import ExternalLink from 'components/shared/ExternalLink';
 import FormLoading from 'components/shared/FormLoading';
 import { useSourceSchema } from 'hooks/useSourceSchema';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
@@ -202,16 +204,16 @@ function NewCaptureModal(
         } else if (schema && schema.connectionSpecification !== null) {
             return (
                 <ErrorBoundary>
-                    <Toolbar>
-                        {schema.documentationUrl ? (
-                            <Link
-                                href={schema.documentationUrl}
-                                target="_blank"
-                            >
-                                Connector Docs
-                            </Link>
-                        ) : null}
-                    </Toolbar>
+                    <AppBar position="relative" elevation={0}>
+                        <Toolbar variant="dense">
+                            {schema.documentationUrl ? (
+                                <ExternalLink link={schema.documentationUrl}>
+                                    Connector Docs
+                                </ExternalLink>
+                            ) : null}
+                        </Toolbar>
+                    </AppBar>
+                    <Divider />
                     <JsonForms
                         schema={schema.connectionSpecification}
                         data={newCaptureFormData}
@@ -337,13 +339,16 @@ function NewCaptureModal(
                                         />
                                     </Stack>
 
-                                    <Box sx={{ width: '100%' }}>
+                                    <Paper
+                                        sx={{ width: '100%' }}
+                                        variant="outlined"
+                                    >
                                         {isFetching ? (
                                             <FormLoading />
                                         ) : (
                                             jsonFormRendered
                                         )}
-                                    </Box>
+                                    </Paper>
                                 </form>
                             </StepContent>
                         </Step>
@@ -378,7 +383,7 @@ function NewCaptureModal(
                                     you're ready you can download the file for
                                     your local.
                                 </DialogContentText>
-                                <Paper variant="outlined">
+                                <Paper variant="outlined" elevation={1}>
                                     {catalogResponse &&
                                     catalogResponse.data &&
                                     catalogResponse.data.data ? (

@@ -3,7 +3,6 @@ import InputIcon from '@mui/icons-material/Input';
 import {
     Box,
     Button,
-    Link,
     List,
     ListItem,
     ListItemIcon,
@@ -11,6 +10,7 @@ import {
     Toolbar,
     Typography,
 } from '@mui/material';
+import ExternalLink from 'components/shared/ExternalLink';
 import PageContainer from 'components/shared/PageContainer';
 import { useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
@@ -86,12 +86,9 @@ export default function Catalog() {
                         <Typography variant="h6" color="text.secondary">
                             It will guide you through generating and downloading
                             a valid{' '}
-                            <Link
-                                href="https://docs.estuary.dev/concepts/catalog-entities/catalog-spec"
-                                target="_blank"
-                            >
+                            <ExternalLink link="https://docs.estuary.dev/concepts/catalog-entities/catalog-spec">
                                 catalog spec
-                            </Link>
+                            </ExternalLink>
                             .
                         </Typography>
                     </Box>
