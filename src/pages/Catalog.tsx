@@ -3,6 +3,7 @@ import InputIcon from '@mui/icons-material/Input';
 import {
     Box,
     Button,
+    Link,
     List,
     ListItem,
     ListItemIcon,
@@ -11,35 +12,34 @@ import {
     Typography,
 } from '@mui/material';
 import PageContainer from 'components/shared/PageContainer';
-import { useEffect, useState } from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { useState } from 'react';
+import { NavLink, Outlet } from 'react-router-dom';
 
 export default function Catalog() {
-    const { pathname } = useLocation();
+    const [captureList] = useState([]);
+    const [isLoading] = useState(false);
 
-    const [captureList, setCaptureList] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        if (pathname === '/app/captures') {
-            fetch('http://localhost:3001/captures/all')
-                .then((res) => res.json())
-                .then(
-                    (result) => {
-                        setCaptureList(result);
-                        setIsLoading(false);
-                    },
-                    (error) => {
-                        console.warn(
-                            'There was an issue fetching the Captures',
-                            error.stack
-                        );
-                        setCaptureList([]);
-                        setIsLoading(false);
-                    }
-                );
-        }
-    }, [pathname]);
+    // const { pathname } = useLocation();
+    // useEffect(() => {
+    //     if (pathname === '/app/captures') {
+    //         fetch('http://localhost:3001/captures/all')
+    //             .then((res) => res.json())
+    //             .then(
+    //                 (result) => {
+    //                     setCaptureList(result);
+    //                     setIsLoading(false);
+    //                 },
+    //                 (error) => {
+    //                     console.warn(
+    //                         'There was an issue fetching the Captures',
+    //                         error.stack
+    //                     );
+    //                     setCaptureList([]);
+    //                     setIsLoading(false);
+    //                 }
+    //             );
+    //     }
+    // }, [pathname]);
 
     function CatalogList(props: any) {
         const { captures } = props;
@@ -80,11 +80,19 @@ export default function Catalog() {
                         }}
                     >
                         <Typography gutterBottom variant="h5" component="div">
-                            No Captures?
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
                             Click the "New Capture" button up above to get
-                            started
+                            started.
+                        </Typography>
+                        <Typography variant="h6" color="text.secondary">
+                            It will guide you through generating and downloading
+                            a valid{' '}
+                            <Link
+                                href="https://docs.estuary.dev/concepts/catalog-entities/catalog-spec"
+                                target="_blank"
+                            >
+                                catalog spec
+                            </Link>
+                            .
                         </Typography>
                     </Box>
                 </Box>
@@ -101,7 +109,7 @@ export default function Catalog() {
                     justifyContent: 'space-between',
                 }}
             >
-                <Link to={'new'}>
+                <NavLink to={'new'}>
                     <Button
                         variant="contained"
                         color="success"
@@ -115,7 +123,7 @@ export default function Catalog() {
                     >
                         New Capture
                     </Button>
-                </Link>
+                </NavLink>
             </Toolbar>
             <CatalogList captures={captureList} />
             <Outlet />
