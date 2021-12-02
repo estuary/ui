@@ -403,6 +403,7 @@ function captureCreation(req, res) {
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.static('public'));
 
 /////////////////////////////////
 //  █▀ █▀█ █░█ █▀█ █▀▀ █▀▀ █▀  //
@@ -462,16 +463,16 @@ app.post('/capture/test', (req, res) => {
                 recursive: true,
             });
 
-            const collections = data.data.collections;
-            const hasCollections = collections && collections.length > 0;
+            const collections = data.data.data.collections;
+            const hasCollections =
+                collections && Object.keys(collections).length > 0;
 
-            const bindings =
-                data.data.data.captures[`${req.body.name}/${req.body.type}`]
-                    .bindings;
+            const captures = data.data.data.captures;
+            const bindings = captures[`${Object.keys(captures)[0]}`].bindings;
             const hasBindings = bindings && bindings.length > 0;
 
             if (!hasCollections) {
-                errors.push(`Your collections are empty.`);
+                errors.push(`No data found in your source.`);
             }
 
             if (!hasBindings) {
@@ -490,10 +491,6 @@ app.post('/capture/test', (req, res) => {
             }
         })
         .catch((data) => {
-            fs.rmSync(paths.workingDirectory, {
-                recursive: true,
-            });
-
             if (data.error) {
                 hugeFailure(res, data.error);
             } else if (data.message) {
@@ -517,9 +514,7 @@ app.post('/capture/save', (req, res) => {
     );
 
     res.status(200);
-    res.json({
-        path: paths.workingDirectory + paths.newCatalog,
-    });
+    res.send(JSON.stringify(req.body.config));
 });
 
 app.get('/captures/all', (req, res) => {
@@ -545,14 +540,11 @@ app.get('/captures/all', (req, res) => {
 ///////////////////////////////////
 // TODO : no real dev has been done on this yet
 app.post('/catalog/apply', (req, res) => {
-    flowShell = pty.spawn(
-        `flowctl`,
-        ['apply', `--source=${req.body.somethingToFigureOutLater}`],
-        {
-            cwd: flowDevDirectory,
-            encoding: 'utf8',
-        }
-    );
+    console.log('apply called ', req.body);
+    flowShell = pty.spawn(`flowctl`, ['apply', `--source=${req.body.path}`], {
+        cwd: flowDevDirectory,
+        encoding: 'utf8',
+    });
 
     flowShell.onData((data) => {
         console.log('FlowCTL Apply Responded : ', data);
@@ -575,10 +567,10 @@ app.post('/catalog/apply', (req, res) => {
             } else if (data.includes(errorString)) {
                 let errorMessage = data;
 
-                let message = `Flowctl apply ran into an issue : ${errorMessage}`;
+                let message = `Flowctl apply ran into an issue :`;
                 res.status(500);
                 res.json({
-                    errors: [],
+                    errors: [errorMessage],
                     message: message,
                 });
                 flowShell.kill();
