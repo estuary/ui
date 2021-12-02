@@ -18,6 +18,7 @@ import {
     DialogContentText,
     DialogTitle,
     IconButton,
+    Link,
     List,
     ListItem,
     Paper,
@@ -26,6 +27,7 @@ import {
     StepContent,
     StepLabel,
     Stepper,
+    Toolbar,
     Typography,
     useMediaQuery,
 } from '@mui/material';
@@ -104,6 +106,7 @@ function NewCaptureModal(
                 name: sourceName,
                 type: sourceTypeParam,
             };
+            setFormSubmitError(null);
             setSaveEnabled(false);
             setActiveStep(1);
             setFormSubmitting(true);
@@ -111,20 +114,12 @@ function NewCaptureModal(
                 .post('http://localhost:3001/capture/test', formSubmitData)
                 .then((response) => {
                     setFormSubmitting(false);
-                    setFormSubmitError(null);
                     setCatalogResponse(response.data);
                     setSaveEnabled(true);
                     setActiveStep(2);
                 })
                 .catch((error) => {
-                    if (error.response && error.response.data) {
-                        setFormSubmitError(error.response.data);
-                    } else {
-                        setFormSubmitError(error);
-                    }
-                    setFormSubmitting(false);
-                    setSaveEnabled(true);
-                    setActiveStep(0);
+                    errorResponseHandler(error);
                 });
         }
     };
@@ -148,40 +143,52 @@ function NewCaptureModal(
         alert('Delete? You sure?');
     };
 
+    const errorResponseHandler = (error: any, step: number = 0) => {
+        if (error.response) {
+            setFormSubmitError(error.response.data);
+        } else {
+            setFormSubmitError(error.message);
+        }
+        setFormSubmitting(false);
+        setSaveEnabled(true);
+        setActiveStep(step);
+    };
+
     const handleSave = (event: any) => {
         event.preventDefault();
-        const formSubmitData = {
-            config: {},
-            image: image,
-            name: sourceName,
-            type: sourceTypeParam,
-        };
         let catalogVal = '';
 
         if (editorRef && editorRef.current) {
             catalogVal = editorRef.current.getValue();
         }
-        formSubmitData.config = JSON.parse(catalogVal);
 
         setSaveEnabled(false);
-        setActiveStep(1);
         setFormSubmitting(true);
-        axios
-            .post('http://localhost:3001/capture/save', formSubmitData)
-            .then((response: any) => {
-                alert('Saved ' + response.data.path);
-                handleClose();
+
+        // Create blob link to download
+        const url = window.URL.createObjectURL(
+            new Blob([catalogVal], {
+                type: 'text/plain',
             })
-            .catch((error) => {
-                if (error.response) {
-                    setFormSubmitError(error.response.data);
-                } else {
-                    setFormSubmitError(error.message);
-                }
-                setFormSubmitting(false);
-                setSaveEnabled(true);
-                setActiveStep(0);
-            });
+        );
+
+        // Make download link
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `${sourceName}.flow.yaml`);
+
+        // Append to html link element page
+        document.body.appendChild(link);
+
+        // Start download
+        link.click();
+
+        window.setTimeout(() => {
+            // Clean up and remove the link
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+            handleClose();
+        }, 0);
     };
 
     const jsonFormRendered = (() => {
@@ -192,11 +199,21 @@ function NewCaptureModal(
                     {error}
                 </Alert>
             );
-        } else if (schema !== null) {
+        } else if (schema && schema.connectionSpecification !== null) {
             return (
                 <ErrorBoundary>
+                    <Toolbar>
+                        {schema.documentationUrl ? (
+                            <Link
+                                href={schema.documentationUrl}
+                                target="_blank"
+                            >
+                                Connector Docs
+                            </Link>
+                        ) : null}
+                    </Toolbar>
                     <JsonForms
-                        schema={schema}
+                        schema={schema.connectionSpecification}
                         data={newCaptureFormData}
                         renderers={materialRenderers}
                         cells={materialCells}
@@ -356,10 +373,10 @@ function NewCaptureModal(
                             <StepContent>
                                 <DialogContentText>
                                     Look over the catalog configuration that was
-                                    generated. Once you click Save it will write
-                                    the contents to the file listed below. If
-                                    you want to edit anything you can do that
-                                    directly in the editor.
+                                    generated. If you want to edit anything you
+                                    can do that directly in the editor. Once
+                                    you're ready you can download the file for
+                                    your local.
                                 </DialogContentText>
                                 <Paper variant="outlined">
                                     {catalogResponse &&
@@ -376,15 +393,13 @@ function NewCaptureModal(
                                             defaultValue={JSON.stringify(
                                                 catalogResponse.data.data
                                             )}
+                                            path={catalogResponse.path}
                                             onMount={handleEditorDidMount}
                                         />
                                     ) : (
                                         <>Loading...</>
                                     )}
                                 </Paper>
-                                <Typography variant="caption" color="success">
-                                    Will be saved at : {catalogResponse.path}
-                                </Typography>
                             </StepContent>
                         </Step>
                     </Stepper>
@@ -408,7 +423,7 @@ function NewCaptureModal(
                                 variant="contained"
                                 disableElevation
                             >
-                                Save
+                                Download Copy
                             </Button>
                         </>
                     ) : (
