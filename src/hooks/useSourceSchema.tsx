@@ -21,9 +21,7 @@ export const useSourceSchema = (
         axios.get(`http://localhost:3001/source/${key}`).then(
             (response) => {
                 setIsFetching(false);
-                setSchema(
-                    response.data.specification.spec.connectionSpecification
-                );
+                setSchema(response.data.specification.spec);
                 setImage(response.data.details.image);
             },
             (error) => {
