@@ -5,6 +5,8 @@
     "main": "index.js",
     "private": true,
     "scripts": {
+        "server": "cd temp-test-server && npm start",
+        "start-all": "npm run server & npm start",
         "start": "react-scripts start",
         "build": "react-scripts build",
         "test": "react-scripts test",

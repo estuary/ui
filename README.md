@@ -4,9 +4,11 @@ The web UI for Estuary Flow.
 
 # How do I run the UI?
 
-To get it started please look at build.md
+`npm run start-all` starts UI and test server
+`npm start` starts UI
 
-Also - there is a _test server that needs started_. That is currently being stored in the `temp-test-server` folder. Look at the readme in there for how to start it.
+For more details on UI commands please look at `build.md`.
+For more details on the test server look in the directory `temp-test-server`.
 
 # What is the status?
 
