@@ -4,7 +4,7 @@
   "description": "Fake server to stub out making calls to Flow's backend",
   "main": "server.js",
   "scripts": {
-    "start": "node ./server.js",
+    "start": "nodemon ./server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Travis Jenkins",
@@ -20,5 +20,8 @@
     "node-pty": "^0.10.1",
     "shelljs": "^0.8.4",
     "thread-sleep": "^2.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
   }
 }
