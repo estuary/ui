@@ -630,11 +630,6 @@ app.get('/test-tenants/', (req, res) => {
 //  ▄▀█ █▀█ █▀█ ▄▄ █▀ ▀█▀ ▄▀█ █▀█ ▀█▀  //
 //  █▀█ █▀▀ █▀▀ ░░ ▄█ ░█░ █▀█ █▀▄ ░█░  //
 /////////////////////////////////////////
-app.get('/quit', function (req, res) {
-    res.send('closing..');
-    app.close();
-});
-
 app.listen(port, () => {
     console.log('');
     console.log(`Example app listening at http://localhost:${port}`);
