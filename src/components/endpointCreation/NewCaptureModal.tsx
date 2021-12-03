@@ -50,6 +50,11 @@ function NewCaptureModal(
     props: PropTypes.InferProps<typeof NewCaptureModal.propTypes>
 ) {
     const handleDefaultsAjv = createAjv({ useDefaults: true });
+    const renderers = [
+        ...materialRenderers,
+        //register custom renderers
+        //{ tester: estuaryInputControlTester, renderer: estuaryInputControl },
+    ];
 
     const formOptions = {
         restrict: true,
@@ -217,7 +222,7 @@ function NewCaptureModal(
                     <JsonForms
                         schema={schema.connectionSpecification}
                         data={newCaptureFormData}
-                        renderers={materialRenderers}
+                        renderers={renderers}
                         cells={materialCells}
                         config={formOptions}
                         readonly={formSubmitting}
@@ -383,7 +388,7 @@ function NewCaptureModal(
                                     you're ready you can download the file for
                                     your local.
                                 </DialogContentText>
-                                <Paper variant="outlined" elevation={1}>
+                                <Paper variant="outlined">
                                     {catalogResponse &&
                                     catalogResponse.data &&
                                     catalogResponse.data.data ? (

@@ -1,3 +1,5 @@
+import { JsonForms } from '@jsonforms/react';
+import { vanillaCells, vanillaRenderers } from '@jsonforms/vanilla-renderers';
 import {
     Avatar,
     Divider,
@@ -9,10 +11,7 @@ import {
 import MuiDrawer from '@mui/material/Drawer';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import { CaptureSchema } from '../forms/CaptureSchema';
 import AppTheme from '../AppTheme';
-import { JsonForms } from '@jsonforms/react';
-import { vanillaCells, vanillaRenderers } from '@jsonforms/vanilla-renderers';
 
 const SlideoutPropTypes = {
     header: PropTypes.string.isRequired,
@@ -53,7 +52,6 @@ function Slideout(props: SlideoutProps) {
                 <Grid item sm={6}>
                     <AppTheme>
                         <JsonForms
-                            schema={CaptureSchema}
                             data={jsonformsData}
                             renderers={vanillaRenderers}
                             cells={vanillaCells}
