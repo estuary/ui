@@ -30,7 +30,7 @@ function Navigation(props: navigationProps) {
                 transition: (theme) =>
                     `${theme.transitions.duration.shortest}ms`,
                 width: drawerWidth,
-                '& .MuiDrawer-paper': {
+                '& .Mui5Drawer-paper': {
                     transition: (theme) =>
                         `${theme.transitions.duration.shortest}ms`,
                     width: drawerWidth,

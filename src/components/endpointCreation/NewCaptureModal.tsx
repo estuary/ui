@@ -32,6 +32,7 @@ import {
     Typography,
     useMediaQuery,
 } from '@mui/material';
+import { StyledEngineProvider } from '@mui/material/styles';
 import { useTheme } from '@mui/system';
 import axios from 'axios';
 import ErrorBoundary from 'components/shared/ErrorBoundry';
@@ -259,21 +260,23 @@ function NewCaptureModal(
                         </Toolbar>
                     </AppBar>
                     <Divider />
-                    <JsonForms
-                        schema={schema.connectionSpecification}
-                        data={newCaptureFormData}
-                        renderers={renderers}
-                        cells={materialCells}
-                        config={formOptions}
-                        readonly={formSubmitting}
-                        ajv={handleDefaultsAjv}
-                        validationMode={
-                            showValidation
-                                ? 'ValidateAndShow'
-                                : 'ValidateAndHide'
-                        }
-                        onChange={formChanged}
-                    />
+                    <StyledEngineProvider injectFirst>
+                        <JsonForms
+                            schema={schema.connectionSpecification}
+                            data={newCaptureFormData}
+                            renderers={renderers}
+                            cells={materialCells}
+                            config={formOptions}
+                            readonly={formSubmitting}
+                            ajv={handleDefaultsAjv}
+                            validationMode={
+                                showValidation
+                                    ? 'ValidateAndShow'
+                                    : 'ValidateAndHide'
+                            }
+                            onChange={formChanged}
+                        />
+                    </StyledEngineProvider>
                 </ErrorBoundary>
             );
         } else {
@@ -333,7 +336,7 @@ function NewCaptureModal(
                 fullWidth={!fullScreen}
                 maxWidth={'lg'}
                 sx={{
-                    '.MuiDialog-container': {
+                    '.Mui5Dialog-container': {
                         alignItems: 'flex-start',
                     },
                 }}

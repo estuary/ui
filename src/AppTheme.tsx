@@ -1,12 +1,17 @@
-import CssBaseline from '@mui/material/CssBaseline';
 import {
+    createTheme,
     PaletteOptions,
     ThemeProvider,
-    createTheme,
     useMediaQuery,
 } from '@mui/material';
-import React from 'react';
+import CssBaseline from '@mui/material/CssBaseline';
+import { unstable_ClassNameGenerator as ClassNameGenerator } from '@mui/material/utils';
 import PropTypes from 'prop-types';
+import React from 'react';
+
+ClassNameGenerator.configure((componentName) =>
+    componentName.replace('Mui', 'Mui5')
+); //TODO remove once JSONForms get updates
 
 // Colors
 const primary = '#97AFB9';
