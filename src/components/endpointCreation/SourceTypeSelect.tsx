@@ -22,6 +22,7 @@ function SourceTypeSelect(props: SourceTypeProps) {
                 options={sourceTypes}
                 autoHighlight
                 openOnFocus
+                disableClearable
                 blurOnSelect="mouse"
                 noOptionsText="No Options"
                 loading={isFetching}
