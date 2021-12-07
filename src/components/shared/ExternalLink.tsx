@@ -17,6 +17,10 @@ function ExternalLink(
             href={props.link}
             target="_blank"
             rel="noopener"
+            color="secondary"
+            sx={{
+                fontWeight: 700,
+            }}
         >
             {props.children}
         </Button>
