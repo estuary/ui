@@ -273,6 +273,7 @@ function returnSpecificError(res, message, errors) {
     }
 }
 function flowctlFailure(res, data) {
+    const dockerString = 'docker:';
     const fatalString = 'fatal';
     const errorString = 'Error:';
     const validationString = 'validating';
@@ -281,7 +282,11 @@ function flowctlFailure(res, data) {
     let errors = [];
 
     if (data.data) {
-        if (data.data.includes(fatalString)) {
+        if (data.data.includes(dockerString)) {
+            console.log(' -  - Docker Error');
+            errors.push(data.data.split(dockerString)[1]);
+            message = 'Flowctl had an issue due to the container';
+        } else if (data.data.includes(fatalString)) {
             console.log(' -  - Fatal Error');
             message = 'Flowctl ran into a fatal error.';
         } else if (data.data.includes(errorString)) {

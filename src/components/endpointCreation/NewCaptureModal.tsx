@@ -23,6 +23,7 @@ import {
     List,
     ListItem,
     Paper,
+    Skeleton,
     Stack,
     Step,
     StepContent,
@@ -87,12 +88,12 @@ function NewCaptureModal(
         useSourceSchema(sourceTypeParam);
 
     const [newCaptureDetailsFormData, setNewCaptureDetailsFormData] = useState<{
-        preface: string | null;
-        name: string | null;
+        tenantName: string | null;
+        captureName: string | null;
         sourceType: string | null;
     }>({
-        preface: null,
-        name: null,
+        tenantName: null,
+        captureName: null,
         sourceType: sourceTypeParam,
     });
     const [newCaptureDetailsFormErrors, setNewCaptureDetailsFormErrors] =
@@ -118,6 +119,7 @@ function NewCaptureModal(
     const handleTest = (event: any) => {
         event.preventDefault();
         if (
+            newCaptureDetailsFormData === null ||
             newCaptureDetailsFormErrors.length > 0 ||
             newCaptureFormErrors.length > 0
         ) {
@@ -126,7 +128,8 @@ function NewCaptureModal(
             const formSubmitData = {
                 config: newCaptureFormData,
                 image: image,
-                name: newCaptureDetailsFormData.name,
+                name: `${newCaptureDetailsFormData.sourceType}/
+                    ${newCaptureDetailsFormData.captureName}`,
                 type: newCaptureDetailsFormData.sourceType,
             };
             setFormSubmitError(null);
@@ -200,7 +203,7 @@ function NewCaptureModal(
         link.href = url;
         link.setAttribute(
             'download',
-            `${newCaptureDetailsFormData.name}.flow.yaml`
+            `${newCaptureDetailsFormData.captureName}.flow.yaml`
         );
 
         // Append to html link element page
@@ -398,7 +401,23 @@ function NewCaptureModal(
                                                 onChange={typeNameChanged}
                                             />
                                         ) : (
-                                            <FormLoading />
+                                            <>
+                                                <Skeleton
+                                                    variant="rectangular"
+                                                    height={40}
+                                                    width={'33%'}
+                                                />
+                                                <Skeleton
+                                                    variant="rectangular"
+                                                    height={40}
+                                                    width={'33%'}
+                                                />
+                                                <Skeleton
+                                                    variant="rectangular"
+                                                    height={40}
+                                                    width={'33%'}
+                                                />
+                                            </>
                                         )}
                                     </Stack>
 

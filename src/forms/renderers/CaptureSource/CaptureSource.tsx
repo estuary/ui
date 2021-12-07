@@ -1,4 +1,4 @@
-import { Autocomplete, Box, TextField } from '@mui/material';
+import { Autocomplete, Box, Skeleton, TextField } from '@mui/material';
 import { useSourceTypes } from 'hooks/useSourceTypes';
 import React from 'react';
 
@@ -13,7 +13,7 @@ export const CaptureSource: React.FC<CaptureSourceProps> = (props) => {
     const { isFetching, error, sourceTypes } = useSourceTypes();
 
     if (sourceTypes === null) {
-        return <>loading</>;
+        return <Skeleton variant="rectangular" height={40} width={'auto'} />;
     } else {
         return (
             <Autocomplete
