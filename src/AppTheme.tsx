@@ -15,7 +15,7 @@ ClassNameGenerator.configure((componentName) =>
 
 // Colors
 const primary = '#97AFB9';
-const secondary = '#4FD6FF';
+const secondary = '#5660BD';
 const background = '#F7F7F7';
 
 // Status Colors

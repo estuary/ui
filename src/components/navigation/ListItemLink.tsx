@@ -1,4 +1,11 @@
-import { ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+import {
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    Tooltip,
+    useMediaQuery,
+    useTheme,
+} from '@mui/material';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { NavLink } from 'react-router-dom';
@@ -8,12 +15,16 @@ const ListItemLinkTypes = {
     title: PropTypes.string.isRequired,
     link: PropTypes.string.isRequired,
     disabled: PropTypes.bool,
+    isOpen: PropTypes.bool,
 };
 
 type ListItemLinkProps = PropTypes.InferProps<typeof ListItemLinkTypes>;
 
 const ListItemLink = (props: ListItemLinkProps) => {
-    const { icon, title, link, disabled } = props;
+    const { icon, title, link, disabled, isOpen } = props;
+
+    const theme = useTheme();
+    const isBelowMd = useMediaQuery(theme.breakpoints.down('md'));
 
     const renderLink = React.useMemo(
         () =>
@@ -45,18 +56,23 @@ const ListItemLink = (props: ListItemLinkProps) => {
 
     return (
         <li>
-            <ListItemButton
-                component={renderLink}
-                sx={{
-                    marginLeft: 1,
-                    borderRadius: 2,
-                    borderRight: 0,
-                    whiteSpace: 'nowrap',
-                }}
+            <Tooltip
+                title={!isBelowMd && !isOpen ? title : ''}
+                placement="right-end"
             >
-                {icon ? <ListItemIcon>{icon}</ListItemIcon> : null}
-                <ListItemText primary={title} />
-            </ListItemButton>
+                <ListItemButton
+                    component={renderLink}
+                    sx={{
+                        marginLeft: 1,
+                        borderRadius: 2,
+                        borderRight: 0,
+                        whiteSpace: 'nowrap',
+                    }}
+                >
+                    {icon ? <ListItemIcon>{icon}</ListItemIcon> : null}
+                    <ListItemText primary={title} />
+                </ListItemButton>
+            </Tooltip>
         </li>
     );
 };

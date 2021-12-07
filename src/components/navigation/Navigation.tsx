@@ -54,6 +54,7 @@ function Navigation(props: navigationProps) {
                         title="Collections"
                         link="/app/collections"
                         key="Collections"
+                        isOpen={props.open}
                         disabled={true}
                     />
                     <ListItemLink
@@ -61,12 +62,14 @@ function Navigation(props: navigationProps) {
                         title="Captures"
                         link="/app/captures"
                         key="Capture"
+                        isOpen={props.open}
                     />
                     <ListItemLink
                         icon={<TransformIcon />}
                         title="Derivations"
                         link="/app/derivations"
                         key="Derivations"
+                        isOpen={props.open}
                         disabled={true}
                     />
                     <ListItemLink
@@ -74,6 +77,7 @@ function Navigation(props: navigationProps) {
                         title="Materializations"
                         link="/app/materializations"
                         key="Materializations"
+                        isOpen={props.open}
                         disabled={true}
                     />
                     <ListItemLink
@@ -81,6 +85,7 @@ function Navigation(props: navigationProps) {
                         title="Administration"
                         link="/app/admin"
                         key="Administration"
+                        isOpen={props.open}
                         disabled={true}
                     />
                 </List>

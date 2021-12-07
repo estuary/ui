@@ -25,17 +25,17 @@ export default function App() {
     const [navigationOpen, setNavigationOpen] = React.useState(false);
     const [navWidth, setNavigationWidth] = React.useState(railNavWidth);
 
+    const toggleNavigationDrawer = () => {
+        setNavigationWidth(navigationOpen ? railNavWidth : fullNavWidth);
+        setNavigationOpen(!navigationOpen);
+    };
+
     let gridSettings = {
         display: 'grid',
         gridTemplateRows: 'auto 1fr',
         gridTemplateColumns: `${navWidth}px auto`,
         gridTemplateAreas: `"header header"
         "nav main"`,
-    };
-
-    const toggleNavigationDrawer = () => {
-        setNavigationWidth(navigationOpen ? railNavWidth : fullNavWidth);
-        setNavigationOpen(!navigationOpen);
     };
 
     return (
