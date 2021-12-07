@@ -250,15 +250,19 @@ function NewCaptureModal(
         } else if (schema && schema.connectionSpecification !== null) {
             return (
                 <ErrorBoundary>
-                    <AppBar position="relative" elevation={0}>
-                        <Toolbar variant="dense">
-                            {schema.documentationUrl ? (
+                    {schema.documentationUrl ? (
+                        <AppBar
+                            position="relative"
+                            elevation={0}
+                            color="default"
+                        >
+                            <Toolbar variant="dense">
                                 <ExternalLink link={schema.documentationUrl}>
                                     Connector Docs
                                 </ExternalLink>
-                            ) : null}
-                        </Toolbar>
-                    </AppBar>
+                            </Toolbar>
+                        </AppBar>
+                    ) : null}
                     <Divider />
                     <StyledEngineProvider injectFirst>
                         <JsonForms
