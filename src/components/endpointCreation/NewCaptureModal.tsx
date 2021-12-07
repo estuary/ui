@@ -37,13 +37,14 @@ import axios from 'axios';
 import ErrorBoundary from 'components/shared/ErrorBoundry';
 import ExternalLink from 'components/shared/ExternalLink';
 import FormLoading from 'components/shared/FormLoading';
+import CaptureSourceControl from 'forms/renderers/CaptureSource/CaptureSourceControl';
+import captureSourceTester from 'forms/renderers/CaptureSource/captureSourceTester';
+import { useCaptureSchema } from 'hooks/useCaptureSchema';
 import { useSourceSchema } from 'hooks/useSourceSchema';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import PropTypes from 'prop-types';
 import { useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import CaptureName from './CaptureName';
-import SourceTypeSelect from './SourceTypeSelect';
 
 NewCaptureModal.propTypes = {};
 function NewCaptureModal(
@@ -53,7 +54,7 @@ function NewCaptureModal(
     const renderers = [
         ...materialRenderers,
         //register custom renderers
-        //{ tester: estuaryInputControlTester, renderer: estuaryInputControl },
+        { tester: captureSourceTester, renderer: CaptureSourceControl },
     ];
 
     const formOptions = {
@@ -84,10 +85,21 @@ function NewCaptureModal(
     const { isFetching, schema, error, image } =
         useSourceSchema(sourceTypeParam);
 
-    const [sourceName, setSourceName] = useState('');
+    const [newCaptureDetailsFormData, setNewCaptureDetailsFormData] = useState<{
+        preface: string | null;
+        name: string | null;
+        sourceType: string | null;
+    }>({
+        preface: null,
+        name: null,
+        sourceType: sourceTypeParam,
+    });
+    const [newCaptureDetailsFormErrors, setNewCaptureDetailsFormErrors] =
+        useState([]);
+
     const [newCaptureFormData, setNewCaptureFormData] = useState({});
     const [newCaptureFormErrors, setNewCaptureFormErrors] = useState([]);
-    const [saveEnabled, setSaveEnabled] = useState(false);
+
     const [showValidation, setShowValidation] = useState(false);
     const [formSubmitting, setFormSubmitting] = useState(false);
     const [formSubmitError, setFormSubmitError] = useState<{
@@ -104,17 +116,19 @@ function NewCaptureModal(
 
     const handleTest = (event: any) => {
         event.preventDefault();
-        if (newCaptureFormErrors.length > 0) {
+        if (
+            newCaptureDetailsFormErrors.length > 0 ||
+            newCaptureFormErrors.length > 0
+        ) {
             setShowValidation(true);
         } else {
             const formSubmitData = {
                 config: newCaptureFormData,
                 image: image,
-                name: sourceName,
-                type: sourceTypeParam,
+                name: newCaptureDetailsFormData.name,
+                type: newCaptureDetailsFormData.sourceType,
             };
             setFormSubmitError(null);
-            setSaveEnabled(false);
             setActiveStep(1);
             setFormSubmitting(true);
             axios
@@ -122,7 +136,6 @@ function NewCaptureModal(
                 .then((response) => {
                     setFormSubmitting(false);
                     setCatalogResponse(response.data);
-                    setSaveEnabled(true);
                     setActiveStep(2);
                 })
                 .catch((error) => {
@@ -134,7 +147,6 @@ function NewCaptureModal(
     const getSourceDetails = async (key: string) => {
         const hasKey = Boolean(key && key.length > 0);
         setSearchParams(hasKey ? { sourcetype: key } : {});
-        setSaveEnabled(hasKey);
     };
 
     const formChanged = ({ data, errors }: { data: any; errors: any }) => {
@@ -142,8 +154,13 @@ function NewCaptureModal(
         setNewCaptureFormErrors(errors);
     };
 
-    const handleNameChange = (value: string) => {
-        setSourceName(value);
+    const typeNameChanged = ({ data, errors }: { data: any; errors: any }) => {
+        setNewCaptureDetailsFormData(data);
+        setNewCaptureDetailsFormErrors(errors);
+
+        if (data.sourceType) {
+            getSourceDetails(data.sourceType);
+        }
     };
 
     const handleDelete = () => {
@@ -157,7 +174,6 @@ function NewCaptureModal(
             setFormSubmitError(error.message);
         }
         setFormSubmitting(false);
-        setSaveEnabled(true);
         setActiveStep(step);
     };
 
@@ -169,7 +185,6 @@ function NewCaptureModal(
             catalogVal = editorRef.current.getValue();
         }
 
-        setSaveEnabled(false);
         setFormSubmitting(true);
 
         // Create blob link to download
@@ -182,7 +197,10 @@ function NewCaptureModal(
         // Make download link
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', `${sourceName}.flow.yaml`);
+        link.setAttribute(
+            'download',
+            `${newCaptureDetailsFormData.name}.flow.yaml`
+        );
 
         // Append to html link element page
         document.body.appendChild(link);
@@ -196,6 +214,28 @@ function NewCaptureModal(
             window.URL.revokeObjectURL(url);
             handleClose();
         }, 0);
+    };
+
+    const captureSchema = useCaptureSchema();
+    const foo = {
+        type: 'HorizontalLayout',
+        elements: [
+            {
+                type: 'Control',
+                label: 'Tenant',
+                scope: '#/properties/tenantName',
+            },
+            {
+                type: 'Control',
+                label: 'Name',
+                scope: '#/properties/captureName',
+            },
+            {
+                type: 'Control',
+                label: 'Source Type',
+                scope: '#/properties/sourceType',
+            },
+        ],
     };
 
     const jsonFormRendered = (() => {
@@ -333,15 +373,26 @@ function NewCaptureModal(
 
                                 <form id="newCaptureForm">
                                     <Stack direction="row" spacing={2}>
-                                        <CaptureName
-                                            id="capture-name"
-                                            onValueChange={handleNameChange}
-                                        />
-                                        <SourceTypeSelect
-                                            id="source-type-select"
-                                            sourceType={sourceTypeParam}
-                                            onSourceChange={getSourceDetails}
-                                        />
+                                        {captureSchema.schema !== null ? (
+                                            <JsonForms
+                                                schema={captureSchema.schema}
+                                                uischema={foo}
+                                                data={newCaptureDetailsFormData}
+                                                renderers={renderers}
+                                                cells={materialCells}
+                                                config={formOptions}
+                                                readonly={formSubmitting}
+                                                ajv={handleDefaultsAjv}
+                                                validationMode={
+                                                    showValidation
+                                                        ? 'ValidateAndShow'
+                                                        : 'ValidateAndHide'
+                                                }
+                                                onChange={typeNameChanged}
+                                            />
+                                        ) : (
+                                            <FormLoading />
+                                        )}
                                     </Stack>
 
                                     <Paper
@@ -427,7 +478,6 @@ function NewCaptureModal(
                             </Button>
                             <Button
                                 onClick={handleSave}
-                                disabled={!saveEnabled}
                                 size="large"
                                 color="success"
                                 variant="contained"
@@ -447,7 +497,7 @@ function NewCaptureModal(
                             </Button>
                             <Button
                                 onClick={handleTest}
-                                disabled={!saveEnabled || isFetching}
+                                disabled={isFetching}
                                 form="newCaptureForm"
                                 size="large"
                                 type="submit"
