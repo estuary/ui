@@ -217,7 +217,7 @@ function NewCaptureModal(
     };
 
     const captureSchema = useCaptureSchema();
-    const foo = {
+    const captureUISchema = {
         type: 'HorizontalLayout',
         elements: [
             {
@@ -376,7 +376,7 @@ function NewCaptureModal(
                                         {captureSchema.schema !== null ? (
                                             <JsonForms
                                                 schema={captureSchema.schema}
-                                                uischema={foo}
+                                                uischema={captureUISchema}
                                                 data={newCaptureDetailsFormData}
                                                 renderers={renderers}
                                                 cells={materialCells}
