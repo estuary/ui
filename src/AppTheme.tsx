@@ -11,7 +11,7 @@ import React from 'react';
 
 ClassNameGenerator.configure((componentName) =>
     componentName.replace('Mui', 'Mui5')
-); //TODO remove once JSONForms get updates
+); //TODO remove once JSONForms get updates and then clean up everything that says 'Mui5' back to 'Mui'
 
 // Colors
 const primary = '#97AFB9';
