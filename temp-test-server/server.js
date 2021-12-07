@@ -451,6 +451,44 @@ app.get('/source/:sourceName', (req, res) => {
 //  █▀▀ ▄▀█ █▀█ ▀█▀ █░█ █▀█ █▀▀ █▀  //
 //  █▄▄ █▀█ █▀▀ ░█░ █▄█ █▀▄ ██▄ ▄█  //
 //////////////////////////////////////
+app.get('/capture/', (req, res) => {
+    console.log('Call to fetch create form schema');
+
+    let schema = {
+        title: 'Capture Details',
+        type: 'object',
+        properties: {
+            tenantName: {
+                description: 'The tenant in which to create the capture.',
+                type: 'string',
+                enum: [],
+            },
+            captureName: {
+                description: 'Name of the capture - must be unique.',
+                type: 'string',
+                minLength: 1,
+                maxLength: 10000,
+            },
+            sourceType: {
+                type: 'string',
+            },
+        },
+        required: ['tenantName', 'captureName', 'sourceType'],
+    };
+
+    // This would get populated based on what tenants the user has access to.
+    schema.properties.tenantName.enum = [
+        'foo',
+        'bar',
+        'buz',
+        'acmeCo',
+        'estuary',
+    ];
+
+    res.status(200);
+    res.json(schema);
+});
+
 app.post('/capture/test', (req, res) => {
     console.log('Capture test started');
     const paths = generatePaths(req.body.name, req.body.type);
