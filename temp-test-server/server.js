@@ -86,7 +86,7 @@ function removePrefix(name) {
     const prefix = 'source-';
     let labelName = name;
     labelName = labelName.replace(prefix, '');
-    labelName = labelName.replace('-', ' ');
+    labelName = labelName.replaceAll('-', ' ');
 
     return labelName;
 }
@@ -472,10 +472,11 @@ app.get('/capture/', (req, res) => {
                 description: 'Name of the capture - must be unique.',
                 type: 'string',
                 minLength: 1,
-                maxLength: 10000,
+                maxLength: 1000,
             },
             sourceType: {
                 type: 'string',
+                oneOf: [],
             },
         },
         required: ['tenantName', 'captureName', 'sourceType'],
@@ -483,12 +484,18 @@ app.get('/capture/', (req, res) => {
 
     // This would get populated based on what tenants the user has access to.
     schema.properties.tenantName.enum = [
-        'foo',
-        'bar',
-        'buz',
-        'acmeCo',
-        'estuary',
+        'foo/',
+        'bar/',
+        'buz/',
+        'acmeCo/',
+        'estuary/',
     ];
+
+    schema.properties.sourceType.oneOf = allSources.map((source) => {
+        const title = removePrefix(source);
+
+        return { const: source, title };
+    });
 
     res.status(200);
     res.json(schema);
@@ -496,7 +503,7 @@ app.get('/capture/', (req, res) => {
 
 app.post('/capture/test', (req, res) => {
     console.log('Capture test started');
-    const paths = generatePaths(req.body.name, req.body.type);
+    const paths = generatePaths(req.body.name + req.body.name, req.body.type);
 
     captureCreation(req, res)
         .then((data) => {
