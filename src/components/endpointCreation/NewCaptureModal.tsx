@@ -88,13 +88,13 @@ function NewCaptureModal(
         useSourceSchema(sourceTypeParam);
 
     const [newCaptureDetailsFormData, setNewCaptureDetailsFormData] = useState<{
-        tenantName: string | null;
-        captureName: string | null;
-        sourceType: string | null;
+        tenantName: string;
+        captureName: string;
+        sourceType: string;
     }>({
-        tenantName: null,
-        captureName: null,
-        sourceType: sourceTypeParam,
+        tenantName: '',
+        captureName: '',
+        sourceType: sourceTypeParam ? sourceTypeParam : '',
     });
     const [newCaptureDetailsFormErrors, setNewCaptureDetailsFormErrors] =
         useState([]);
@@ -128,8 +128,8 @@ function NewCaptureModal(
             const formSubmitData = {
                 config: newCaptureFormData,
                 image: image,
-                name: `${newCaptureDetailsFormData.sourceType}/
-                    ${newCaptureDetailsFormData.captureName}`,
+                name: newCaptureDetailsFormData.captureName,
+                tenant: newCaptureDetailsFormData.tenantName,
                 type: newCaptureDetailsFormData.sourceType,
             };
             setFormSubmitError(null);
@@ -203,7 +203,7 @@ function NewCaptureModal(
         link.href = url;
         link.setAttribute(
             'download',
-            `${newCaptureDetailsFormData.captureName}.flow.yaml`
+            `${newCaptureDetailsFormData.tenantName}.${newCaptureDetailsFormData.captureName}.flow.yaml`
         );
 
         // Append to html link element page

@@ -1,4 +1,10 @@
-import { Autocomplete, Box, Skeleton, TextField } from '@mui/material';
+import {
+    Autocomplete,
+    Box,
+    Skeleton,
+    TextField,
+    Typography,
+} from '@mui/material';
 import { useSourceTypes } from 'hooks/useSourceTypes';
 import React from 'react';
 
@@ -6,11 +12,19 @@ interface CaptureSourceProps {
     id?: string;
     value: number;
     updateValue: (newValue: any) => void;
+    errors: string;
 }
 
 export const CaptureSource: React.FC<CaptureSourceProps> = (props) => {
-    const { id, updateValue } = props;
+    const { id, updateValue, errors } = props;
     const { isFetching, error, sourceTypes } = useSourceTypes();
+    let inputError: string;
+
+    if (error) {
+        inputError = error;
+    } else if (errors !== '') {
+        inputError = errors;
+    }
 
     if (sourceTypes === null) {
         return <Skeleton variant="rectangular" height={40} width={'auto'} />;
@@ -40,20 +54,25 @@ export const CaptureSource: React.FC<CaptureSourceProps> = (props) => {
                     </Box>
                 )}
                 renderInput={(params) => (
-                    <TextField
-                        {...params}
-                        label={
-                            error !== null
-                                ? 'Failed Fetching Source Type'
-                                : 'Source type'
-                        }
-                        error={error !== null}
-                        required={true}
-                        inputProps={{
-                            ...params.inputProps,
-                            autoComplete: 'off',
-                        }}
-                    />
+                    <>
+                        <TextField
+                            {...params}
+                            label={
+                                error !== null
+                                    ? 'Failed to fetch source types'
+                                    : 'Source type'
+                            }
+                            error={inputError !== null}
+                            required={true}
+                            inputProps={{
+                                ...params.inputProps,
+                                autoComplete: 'off',
+                            }}
+                        />
+                        <Typography variant="caption" color="red">
+                            {inputError}
+                        </Typography>
+                    </>
                 )}
             />
         );

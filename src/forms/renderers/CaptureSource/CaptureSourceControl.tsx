@@ -1,3 +1,4 @@
+import { ControlProps } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
 import { CaptureSource } from './CaptureSource';
 
@@ -11,10 +12,12 @@ const CaptureSourceControl = ({
     data,
     handleChange,
     path,
-}: CaptureSourceControlProps) => (
+    errors,
+}: ControlProps & CaptureSourceControlProps) => (
     <CaptureSource
         value={data}
         updateValue={(newValue: string) => handleChange(path, newValue)}
+        errors={errors}
     />
 );
 
