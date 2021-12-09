@@ -8,6 +8,8 @@ You'll need to make sure the UI and the test server have all the depencies insta
 
 # How do I run the UI?
 
+You need to run with Node 16 right now. There is an issue with Node 17.
+
 You can run both apps from a single command if you just want to play around. If you try this for dev it'll get funky and we do not recommend it.
 
 `npm run start-all` starts UI and test server together
