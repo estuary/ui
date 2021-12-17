@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 
 export const useSourceSchema = (
-    key: string | null
+    key: string
 ): {
     isFetching: boolean;
     schema: any;
@@ -18,7 +18,7 @@ export const useSourceSchema = (
     const fetchSchema = useCallback(async () => {
         setIsFetching(true);
         setError(null);
-        axios.get(`http://localhost:3001/source/${key}`).then(
+        axios.get(`http://localhost:3001/source/path/${encodeURIComponent(key)}`).then(
             (response) => {
                 setIsFetching(false);
                 setSchema(response.data.specification.spec);

@@ -1,4 +1,12 @@
-const allSources = [
+const estuarySources = [
+    'source-gcs',
+    'source-kafka',
+    'source-kinesis',
+    'source-postgres',
+    'source-s3',
+];
+
+const airbyteSources = [
     'source-amazon-ads',
     'source-amazon-seller-partner',
     'source-amazon-sqs',
@@ -116,4 +124,4 @@ const allSources = [
     'source-zuora',
 ];
 
-export default allSources;
+export default estuarySources;
