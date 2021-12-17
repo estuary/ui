@@ -18,9 +18,9 @@
     "dependencies": {
         "@emotion/react": "latest",
         "@emotion/styled": "latest",
-        "@jsonforms/core": "v3.0.0-alpha.2",
-        "@jsonforms/material-renderers": "v3.0.0-alpha.2",
-        "@jsonforms/react": "v3.0.0-alpha.2",
+        "@jsonforms/core": "v3.0.0-alpha.3",
+        "@jsonforms/material-renderers": "v3.0.0-alpha.3",
+        "@jsonforms/react": "v3.0.0-alpha.3",
         "@monaco-editor/react": "^4.3.1",
         "@mui/icons-material": "latest",
         "@mui/material": "latest",

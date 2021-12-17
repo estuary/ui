@@ -5,13 +5,8 @@ import {
     useMediaQuery,
 } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
-import { unstable_ClassNameGenerator as ClassNameGenerator } from '@mui/material/utils';
 import PropTypes from 'prop-types';
 import React from 'react';
-
-ClassNameGenerator.configure((componentName) =>
-    componentName.replace('Mui', 'Mui5')
-); //TODO remove once JSONForms get updates and then clean up everything that says 'Mui5' back to 'Mui'
 
 // Colors
 const primary = '#97AFB9';
