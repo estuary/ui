@@ -1,11 +1,12 @@
+import CodeIcon from '@mui/icons-material/Code';
 import ExploreIcon from '@mui/icons-material/Explore';
 import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
 //TODO - These are not final
 import InputIcon from '@mui/icons-material/Input';
 import StorageIcon from '@mui/icons-material/Storage';
-import TransformIcon from '@mui/icons-material/Transform';
 import { Box, List, Toolbar, useMediaQuery, useTheme } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
+import { styled } from '@mui/material/styles';
 import ListItemLink from './ListItemLink';
 
 type navigationProps = {
@@ -24,19 +25,24 @@ function Navigation(props: navigationProps) {
         props.onNavigationToggle(false);
     };
 
+    const Drawer = styled(MuiDrawer)(({ theme }) => ({
+        transition: theme.transitions.create(['width'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.shortest,
+        }),
+        width: drawerWidth,
+        '& .MuiDrawer-paper': {
+            transition: theme.transitions.create(['width'], {
+                easing: theme.transitions.easing.sharp,
+                duration: theme.transitions.duration.shortest,
+            }),
+            width: drawerWidth,
+            boxSizing: 'border-box',
+        },
+    }));
+
     return (
-        <MuiDrawer
-            sx={{
-                transition: (theme) =>
-                    `${theme.transitions.duration.shortest}ms`,
-                width: drawerWidth,
-                '& .MuiDrawer-paper': {
-                    transition: (theme) =>
-                        `${theme.transitions.duration.shortest}ms`,
-                    width: drawerWidth,
-                    boxSizing: 'border-box',
-                },
-            }}
+        <Drawer
             anchor="left"
             open={props.open}
             onClose={closeNavigation}
@@ -55,7 +61,6 @@ function Navigation(props: navigationProps) {
                         link="/app/collections"
                         key="Collections"
                         isOpen={props.open}
-                        disabled={true}
                     />
                     <ListItemLink
                         icon={<InputIcon />}
@@ -65,12 +70,11 @@ function Navigation(props: navigationProps) {
                         isOpen={props.open}
                     />
                     <ListItemLink
-                        icon={<TransformIcon />}
+                        icon={<CodeIcon />}
                         title="Derivations"
                         link="/app/derivations"
                         key="Derivations"
                         isOpen={props.open}
-                        disabled={true}
                     />
                     <ListItemLink
                         icon={<StorageIcon />}
@@ -78,7 +82,6 @@ function Navigation(props: navigationProps) {
                         link="/app/materializations"
                         key="Materializations"
                         isOpen={props.open}
-                        disabled={true}
                     />
                     <ListItemLink
                         icon={<HomeRepairServiceIcon />}
@@ -86,11 +89,10 @@ function Navigation(props: navigationProps) {
                         link="/app/admin"
                         key="Administration"
                         isOpen={props.open}
-                        disabled={true}
                     />
                 </List>
             </Box>
-        </MuiDrawer>
+        </Drawer>
     );
 }
 

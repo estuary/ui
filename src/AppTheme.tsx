@@ -9,13 +9,13 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 // Colors
-const primary = '#97AFB9';
-const secondary = '#5660BD';
+const primary = '#5660BD';
+const secondary = '#3c5584';
 const background = '#F7F7F7';
 
 // Status Colors
 const errorMain = '#f67375';
-const warningMain = '#DD6A7A';
+const warningMain = '#f5d75e';
 const infoMain = '#4FD6FF';
 const successMain = '#00c892';
 
@@ -29,9 +29,6 @@ const lg = 1500;
 const md = 900;
 const sm = 600;
 const xs = 300;
-
-// Spacing
-const spacing = 8;
 
 // Color Palettes
 const lightMode: PaletteOptions = {
@@ -57,11 +54,15 @@ const lightMode: PaletteOptions = {
     background: {
         default: background,
     },
-    tonalOffset: 0.1,
+    tonalOffset: 0.3,
 };
 
 const darkMode: PaletteOptions = {
     mode: 'dark',
+    background: {
+        default: '#363636',
+    },
+    tonalOffset: 0.3,
 };
 
 export const themeSettings = createTheme({
@@ -77,80 +78,34 @@ export const themeSettings = createTheme({
     components: {
         MuiButtonBase: {
             defaultProps: {
-                disableRipple: false, //Since they use ripple to show focus going to leave it on for now
+                disableRipple: true,
+                sx: {
+                    '&:hover:active::after': {
+                        // based on React-Admin's solution
+                        //   https://github.com/marmelab/react-admin/blob/master/packages/ra-ui-materialui/src/defaultTheme.ts
+                        content: '""',
+                        display: 'block',
+                        width: '100%',
+                        height: '100%',
+                        position: 'absolute',
+                        top: 0,
+                        right: 0,
+                        backgroundColor: 'currentColor',
+                        opacity: 0.1,
+                        borderRadius: 'inherit',
+                    },
+                },
             },
-        },
-        MuiButton: {
-            defaultProps: {
-                size: 'small',
-            },
-        },
-        MuiButtonGroup: {
-            defaultProps: {
-                size: 'small',
-            },
-        },
-        MuiCheckbox: {
-            defaultProps: {
-                size: 'small',
-            },
-        },
-        MuiFab: {
-            defaultProps: {
-                size: 'small',
-            },
-        },
-        MuiFormControl: {
-            defaultProps: {
-                margin: 'dense',
-                size: 'small',
-            },
-        },
-        MuiFormHelperText: {
-            defaultProps: {
-                margin: 'dense',
-            },
-        },
-        MuiIconButton: {
-            defaultProps: { size: 'small' },
-        },
-        MuiInputBase: {
-            defaultProps: { margin: 'dense' },
-        },
-        MuiInputLabel: {
-            defaultProps: { margin: 'dense' },
-        },
-        MuiRadio: {
-            defaultProps: { size: 'small' },
-        },
-        MuiSwitch: {
-            defaultProps: { size: 'small' },
-        },
-        MuiTextField: {
-            defaultProps: {
-                margin: 'dense',
-                size: 'small',
-            },
-        },
-        MuiList: {
-            defaultProps: { dense: true },
-        },
-        MuiMenuItem: {
-            defaultProps: { dense: true },
         },
         MuiTabs: {
             defaultProps: {
                 indicatorColor: 'secondary',
             },
         },
-        MuiTable: {
-            defaultProps: { size: 'small' },
-        },
     },
     shape: {
-        borderRadius: 3,
+        borderRadius: 2,
     },
-    spacing,
     typography: {
         fontFamily: [
             'Poppins',
@@ -182,6 +137,17 @@ export default function AppTheme(props: AppThemeProps) {
             createTheme({
                 ...themeSettings,
                 palette: prefersDarkMode ? darkMode : lightMode,
+                components: {
+                    MuiAppBar: {
+                        defaultProps: {
+                            sx: {
+                                backgroundColor: prefersDarkMode
+                                    ? '#121212'
+                                    : '#97AFB9',
+                            },
+                        },
+                    },
+                },
             }),
         [prefersDarkMode]
     );

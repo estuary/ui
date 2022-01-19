@@ -13,6 +13,7 @@ type TopbarProps = {
 const AppBar = styled(MuiAppBar, {
     shouldForwardProp: (prop) => prop !== 'open',
 })(({ theme }) => ({
+    backgroundColor: '#97AFB9',
     boxShadow: 'none',
     position: 'fixed',
     [theme.breakpoints.down('md')]: {
@@ -44,6 +45,7 @@ function Topbar(props: TopbarProps) {
                     <IconButton
                         aria-label="Expand Navigation"
                         onClick={openNavigation}
+                        edge="start"
                     >
                         <MenuIcon />
                     </IconButton>
