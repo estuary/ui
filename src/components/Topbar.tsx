@@ -13,6 +13,7 @@ type TopbarProps = {
 const AppBar = styled(MuiAppBar, {
     shouldForwardProp: (prop) => prop !== 'open',
 })(({ theme }) => ({
+    boxShadow: 'none',
     position: 'fixed',
     [theme.breakpoints.down('md')]: {
         zIndex: theme.zIndex.drawer,

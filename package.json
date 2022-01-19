@@ -27,11 +27,11 @@
         "@mui/x-data-grid": "latest",
         "axios": "latest",
         "lodash": "latest",
-        "monaco-editor": "^0.30.1",
+        "monaco-editor": "^0.31.1",
         "prop-types": "latest",
         "react": "latest",
         "react-dom": "latest",
-        "react-router-dom": "^6.0.0-beta.8"
+        "react-router-dom": "6.2.1"
     },
     "devDependencies": {
         "@testing-library/jest-dom": "latest",
