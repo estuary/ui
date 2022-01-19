@@ -63,7 +63,6 @@ const ListItemLink = (props: ListItemLinkProps) => {
                 <ListItemButton
                     component={renderLink}
                     sx={{
-                        borderRight: 0,
                         whiteSpace: 'nowrap',
                     }}
                 >
