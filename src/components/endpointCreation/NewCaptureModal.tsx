@@ -32,9 +32,9 @@ import {
     Toolbar,
     Typography,
     useMediaQuery,
+    useTheme,
 } from '@mui/material';
 import { StyledEngineProvider } from '@mui/material/styles';
-import { useTheme } from '@mui/system';
 import axios from 'axios';
 import ErrorBoundary from 'components/shared/ErrorBoundry';
 import ExternalLink from 'components/shared/ExternalLink';

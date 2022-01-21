@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-const ListItemLinkTypes = {
+const ListItemLinkProps = {
     icon: PropTypes.element,
     title: PropTypes.string.isRequired,
     link: PropTypes.string.isRequired,
@@ -18,9 +18,9 @@ const ListItemLinkTypes = {
     isOpen: PropTypes.bool,
 };
 
-type ListItemLinkProps = PropTypes.InferProps<typeof ListItemLinkTypes>;
-
-const ListItemLink = (props: ListItemLinkProps) => {
+const ListItemLink = (
+    props: PropTypes.InferProps<typeof ListItemLinkProps>
+) => {
     const { icon, title, link, disabled, isOpen } = props;
 
     const theme = useTheme();
@@ -73,7 +73,5 @@ const ListItemLink = (props: ListItemLinkProps) => {
         </li>
     );
 };
-
-ListItemLink.propTypes = ListItemLinkTypes;
 
 export default ListItemLink;

@@ -135,8 +135,8 @@ const AppTheme: React.FC = ({ children }) => {
     const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
     const generatedTheme = React.useMemo(() => {
-        themeSettings.components!.MuiAppBar!.defaultProps = {
-            sx: {
+        themeSettings.components!.MuiAppBar!.styleOverrides = {
+            root: {
                 backgroundColor: prefersDarkMode ? '#121212' : '#97AFB9',
             },
         };

@@ -1,20 +1,21 @@
 import CodeIcon from '@mui/icons-material/Code';
 import ExploreIcon from '@mui/icons-material/Explore';
 import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
-//TODO - These are not final
+//TODO - These icons are not final
 import InputIcon from '@mui/icons-material/Input';
 import StorageIcon from '@mui/icons-material/Storage';
 import { Box, List, Toolbar, useMediaQuery, useTheme } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
+import PropTypes from 'prop-types';
 import ListItemLink from './ListItemLink';
 
-type navigationProps = {
-    open: boolean;
-    onNavigationToggle: Function;
-    width: number;
+const NavigationProps = {
+    open: PropTypes.bool.isRequired,
+    onNavigationToggle: PropTypes.func.isRequired,
+    width: PropTypes.number.isRequired,
 };
 
-function Navigation(props: navigationProps) {
+const Navigation = (props: PropTypes.InferProps<typeof NavigationProps>) => {
     const drawerWidth = props.width;
 
     const theme = useTheme();
@@ -92,6 +93,6 @@ function Navigation(props: navigationProps) {
             </Box>
         </MuiDrawer>
     );
-}
+};
 
 export default Navigation;

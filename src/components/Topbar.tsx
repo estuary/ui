@@ -1,6 +1,7 @@
 import MenuIcon from '@mui/icons-material/Menu';
-import { Box, IconButton, Stack, styled, Toolbar } from '@mui/material';
+import { Box, IconButton, Stack, Toolbar } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
+import { useTheme } from '@mui/material/styles';
 import HelpMenu from './help/HelpMenu';
 import Logo from './navigation/Logo';
 
@@ -10,26 +11,26 @@ type TopbarProps = {
     title: string;
 };
 
-const AppBar = styled(MuiAppBar, {
-    shouldForwardProp: (prop) => prop !== 'open',
-})(({ theme }) => ({
-    boxShadow: 'none',
-    position: 'fixed',
-    [theme.breakpoints.down('md')]: {
-        zIndex: theme.zIndex.drawer,
-    },
-    [theme.breakpoints.up('md')]: {
-        zIndex: theme.zIndex.drawer + 1,
-    },
-}));
+const Topbar: React.FC<TopbarProps> = ({ onNavigationToggle }) => {
+    const theme = useTheme();
 
-function Topbar(props: TopbarProps) {
     const openNavigation = () => {
-        props.onNavigationToggle(true);
+        onNavigationToggle(true);
     };
 
     return (
-        <AppBar>
+        <MuiAppBar
+            sx={{
+                boxShadow: 'none',
+                position: 'fixed',
+                [theme.breakpoints.down('md')]: {
+                    zIndex: theme.zIndex.drawer,
+                },
+                [theme.breakpoints.up('md')]: {
+                    zIndex: theme.zIndex.drawer + 1,
+                },
+            }}
+        >
             <Toolbar
                 sx={{
                     px: 1,
@@ -85,8 +86,8 @@ function Topbar(props: TopbarProps) {
                     <HelpMenu />
                 </Stack>
             </Toolbar>
-        </AppBar>
+        </MuiAppBar>
     );
-}
+};
 
 export default Topbar;
