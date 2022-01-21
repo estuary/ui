@@ -84,17 +84,20 @@ function NewCaptureModal(
 
     const [searchParams, setSearchParams] = useSearchParams();
     const sourceTypeParam = searchParams.get('sourcetype');
-    const { isFetching, schema, error, image } =
-        useSourceSchema(sourceTypeParam);
+    const { isFetching, schema, error, image } = useSourceSchema(
+        sourceTypeParam ? sourceTypeParam : ''
+    );
 
     const [newCaptureDetailsFormData, setNewCaptureDetailsFormData] = useState<{
         tenantName: string;
         captureName: string;
         sourceType: string;
+        sourceImage: string;
     }>({
         tenantName: '',
         captureName: '',
         sourceType: sourceTypeParam ? sourceTypeParam : '',
+        sourceImage: image ? image : '',
     });
     const [newCaptureDetailsFormErrors, setNewCaptureDetailsFormErrors] =
         useState([]);
@@ -127,10 +130,9 @@ function NewCaptureModal(
         } else {
             const formSubmitData = {
                 config: newCaptureFormData,
-                image: image,
-                name: newCaptureDetailsFormData.captureName,
-                tenant: newCaptureDetailsFormData.tenantName,
-                type: newCaptureDetailsFormData.sourceType,
+                captureName: newCaptureDetailsFormData.captureName,
+                tenantName: newCaptureDetailsFormData.tenantName,
+                sourceImage: newCaptureDetailsFormData.sourceType,
             };
             setFormSubmitError(null);
             setActiveStep(1);
@@ -163,7 +165,9 @@ function NewCaptureModal(
         setNewCaptureDetailsFormErrors(errors);
 
         if (data.sourceType) {
-            getSourceDetails(data.sourceType);
+            if (data.sourceType !== 'custom') {
+                getSourceDetails(data.sourceType);
+            }
         }
     };
 
@@ -222,22 +226,39 @@ function NewCaptureModal(
 
     const captureSchema = useCaptureSchema();
     const captureUISchema = {
-        type: 'HorizontalLayout',
+        type: 'VerticalLayout',
         elements: [
             {
-                type: 'Control',
-                label: 'Tenant',
-                scope: '#/properties/tenantName',
+                type: 'HorizontalLayout',
+                elements: [
+                    {
+                        type: 'Control',
+                        label: 'Tenant',
+                        scope: '#/properties/tenantName',
+                    },
+                    {
+                        type: 'Control',
+                        label: 'Name',
+                        scope: '#/properties/captureName',
+                    },
+                    {
+                        type: 'Control',
+                        label: 'Source',
+                        scope: '#/properties/sourceType',
+                    },
+                ],
             },
             {
                 type: 'Control',
-                label: 'Name',
-                scope: '#/properties/captureName',
-            },
-            {
-                type: 'Control',
-                label: 'Source Type',
-                scope: '#/properties/sourceType',
+                label: 'Image',
+                scope: '#/properties/sourceImage',
+                rule: {
+                    effect: 'SHOW',
+                    condition: {
+                        scope: '#/properties/sourceType',
+                        schema: { const: 'custom' },
+                    },
+                },
             },
         ],
     };
@@ -253,19 +274,23 @@ function NewCaptureModal(
         } else if (schema && schema.connectionSpecification !== null) {
             return (
                 <ErrorBoundary>
-                    {schema.documentationUrl ? (
-                        <AppBar
-                            position="relative"
-                            elevation={0}
-                            color="default"
+                    <AppBar position="relative" elevation={0} color="default">
+                        <Toolbar
+                            variant="dense"
+                            sx={{
+                                justifyContent: 'space-between',
+                            }}
                         >
-                            <Toolbar variant="dense">
+                            <Typography variant="h5" color="initial">
+                                {image}
+                            </Typography>
+                            {schema.documentationUrl ? (
                                 <ExternalLink link={schema.documentationUrl}>
                                     Connector Docs
                                 </ExternalLink>
-                            </Toolbar>
-                        </AppBar>
-                    ) : null}
+                            ) : null}
+                        </Toolbar>
+                    </AppBar>
                     <Divider />
                     <StyledEngineProvider injectFirst>
                         <JsonForms
@@ -343,7 +368,7 @@ function NewCaptureModal(
                 fullWidth={!fullScreen}
                 maxWidth={'lg'}
                 sx={{
-                    '.Mui5Dialog-container': {
+                    '.MuiDialog-container': {
                         alignItems: 'flex-start',
                     },
                 }}

@@ -1,6 +1,6 @@
-import { rankWith, scopeEndsWith } from '@jsonforms/core';
+import { rankWith, scopeEndIs } from '@jsonforms/core';
 
 export default rankWith(
   3,
-  scopeEndsWith('1sourceType')
+  scopeEndIs('sourceType')
 );

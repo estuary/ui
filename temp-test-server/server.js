@@ -6,7 +6,7 @@ import json2yaml from 'json2yaml';
 import * as pty from 'node-pty';
 import path from 'path';
 import shellJS from 'shelljs';
-import allSources from './allSources.js';
+import estuarySources from './allSources.js';
 
 const { exec } = shellJS;
 
@@ -16,9 +16,10 @@ const { exec } = shellJS;
 //////////////////////////////
 const port = 3001;
 const homedir = process.env.HOME;
+const tmp = './tmp/';
 const schemaStorage = './schema-local-cache/';
-const flowDevDirectory = homedir + '/stuff/new-flow-testing/';
-const capturesDirectory = flowDevDirectory + 'captures/';
+const flowDevDirectory = tmp;
+const capturesDirectory = tmp + 'captures/';
 const tenants = [
     'acmeCo',
     'foo/bar',
@@ -108,7 +109,7 @@ function saveSchemaResponse(image, name, fetchedOn, stdout, res) {
     const data = {};
 
     data.details = {
-        label: removePrefix(name),
+        label: name.startsWith('source-') ? removePrefix(name) : name,
         image: image,
         fetchedOn: fetchedOn,
     };
@@ -124,8 +125,14 @@ function saveSchemaResponse(image, name, fetchedOn, stdout, res) {
 }
 
 function attemptCacheRead(name) {
-    const fileName = schemaStorage + name;
+    let fileName = schemaStorage;
     let response;
+
+    if (name.includes('/')) {
+        fileName = fileName + getSourceNameFromPath(name);
+    } else {
+        fileName = fileName + name;
+    }
 
     try {
         const file = fs.readFileSync(`${fileName}.json`, 'utf-8');
@@ -192,6 +199,43 @@ function fetchSchema(name) {
     return response;
 }
 
+function fetchSchemaWithPath(path) {
+    const cachedFile = attemptCacheRead(path);
+    let response;
+
+    if (cachedFile) {
+        console.log(' - source cached');
+        response = new Promise((resolve) => {
+            resolve({
+                image: cachedFile.details.image,
+                data: JSON.stringify(cachedFile.specification),
+            });
+        });
+    } else {
+        const dockerRun = `docker run --rm ${path} spec`;
+
+        console.log(' - source needs fetching');
+        console.log(' - - executing ', dockerRun);
+        response = new Promise((resolve, reject) => {
+            exec(dockerRun, (error, stdout, stderr) => {
+                if (error !== 0) {
+                    reject({
+                        data: null,
+                        error: stderr,
+                    });
+                } else {
+                    resolve({
+                        image: path,
+                        data: stdout,
+                    });
+                }
+            });
+        });
+    }
+
+    return response;
+}
+
 function sendResponse(res, body, status) {
     res.status(status | 200);
     res.send(body);
@@ -234,9 +278,22 @@ function getAllFiles(dirPath, arrayOfFiles) {
 }
 
 // Capture helpers
-function generatePaths(captureName, type) {
+function generatePaths(captureName, capturePathOrType) {
     const workingDirectory = `${capturesDirectory}${captureName}/`;
+    let type;
     let response = {};
+
+    if (capturePathOrType.startsWith('source-')) {
+        type = capturePathOrType;
+    } else {
+        console.log('Full path sent back. Cleaning up', capturePathOrType);
+        type = getSourceNameFromPath(capturePathOrType);
+    }
+
+    console.log('Generating paths', {
+        captureName,
+        type,
+    });
 
     response.newConfig = `discover-${type}.config.yaml`;
     response.newCatalog = `discover-${type}.flow.yaml`;
@@ -255,7 +312,7 @@ function checkIfCaptureAlreadyExists(captureName, type) {
     } else if (fs.existsSync(paths.catalogPath)) {
         message = `There is already a Capture named "${captureName}". It can be found at : "${paths.catalogPath}"`;
     } else if (fs.existsSync(paths.workingDirectory)) {
-        message = `There is already a folder for "${captureName}". It can be found at : "${paths.workingDirectory}"`;
+        message = `There is already a capture with the name "${captureName}". It can be found at : "${paths.workingDirectory}"`;
     }
 
     return message;
@@ -308,6 +365,7 @@ function flowctlFailure(res, data) {
     returnSpecificError(res, message, errors);
 }
 function runDiscover(res, captureName, config, image, paths) {
+    console.log('Running discover for ', image);
     const discoverPromise = new Promise((resolve, reject) => {
         writeResponseToFileSystem(
             paths.workingDirectory,
@@ -362,25 +420,25 @@ function runDiscover(res, captureName, config, image, paths) {
     return discoverPromise;
 }
 function captureCreation(req, res) {
+    console.log('starting capture creation');
     return new Promise((resolve, reject) => {
-        const captureName = req.body.name;
-        const type = req.body.type;
-        const paths = generatePaths(captureName, type);
+        const captureName = `${req.body.tenantName}/${req.body.captureName}`;
+        const image = req.body.sourceImage;
+        const config = req.body.config;
+
+        const paths = generatePaths(captureName, image);
         try {
-            const errorMessage = checkIfCaptureAlreadyExists(captureName, type);
+            const errorMessage = checkIfCaptureAlreadyExists(
+                captureName,
+                image
+            );
 
             if (errorMessage) {
                 reject({
                     message: errorMessage,
                 });
             } else {
-                runDiscover(
-                    res,
-                    captureName,
-                    req.body.config,
-                    req.body.image,
-                    paths
-                )
+                runDiscover(res, captureName, config, image, paths)
                     .then((data) => {
                         resolve({
                             path: paths.workingDirectory + paths.newCatalog,
@@ -401,6 +459,17 @@ function captureCreation(req, res) {
     });
 }
 
+function getSourceNameFromPath(value) {
+    const path = value;
+    return path.substring(path.lastIndexOf('/') + 1, path.lastIndexOf(':'));
+}
+
+function cleanUpTmp() {
+    fs.rmSync(tmp, {
+        recursive: true,
+    });
+}
+
 /////////////////////////////////////////
 //  ▄▀█ █▀█ █▀█ ▄▄ █▀ █▀▀ ▀█▀ █░█ █▀█  //
 //  █▀█ █▀▀ █▀▀ ░░ ▄█ ██▄ ░█░ █▄█ █▀▀  //
@@ -415,7 +484,7 @@ app.use(express.static('public'));
 //  ▄█ █▄█ █▄█ █▀▄ █▄▄ ██▄ ▄█  //
 /////////////////////////////////
 app.get('/sources/all', (req, res) => {
-    const allSourcesWithLabels = allSources.map((source) => {
+    const allSourcesWithLabels = estuarySources.map((source) => {
         const key = source;
         const label = removePrefix(source);
 
@@ -424,6 +493,7 @@ app.get('/sources/all', (req, res) => {
     sendResponse(res, allSourcesWithLabels);
 });
 
+//Replaced with the one below using path
 app.get('/source/:sourceName', (req, res) => {
     const name = req.params.sourceName;
     const schema = fetchSchema(name);
@@ -431,10 +501,36 @@ app.get('/source/:sourceName', (req, res) => {
     schema
         .then((schema) => {
             if (schema && schema.data) {
-                console.log('lakjsdf', schema);
                 saveSchemaResponse(
                     schema.image,
                     name,
+                    Date.now(),
+                    schema.data,
+                    res
+                );
+            } else {
+                hugeFailure(res);
+            }
+        })
+        .catch(() => {
+            res.status(400);
+            res.json({
+                errors: [],
+                message: 'No sources could be found with that name.',
+            });
+        });
+});
+
+app.get('/source/path/:path', (req, res) => {
+    const decodedPath = req.params.path;
+    const schema = fetchSchemaWithPath(decodedPath);
+
+    schema
+        .then((schema) => {
+            if (schema && schema.data) {
+                saveSchemaResponse(
+                    schema.image,
+                    getSourceNameFromPath(decodedPath),
                     Date.now(),
                     schema.data,
                     res
@@ -462,6 +558,7 @@ app.get('/capture/', (req, res) => {
     let schema = {
         title: 'Capture Details',
         type: 'object',
+        required: ['tenantName', 'captureName', 'sourceType'],
         properties: {
             tenantName: {
                 description: 'The tenant in which to create the capture.',
@@ -478,23 +575,45 @@ app.get('/capture/', (req, res) => {
                 type: 'string',
                 oneOf: [],
             },
+            sourceImage: {
+                description:
+                    'Image you would like us to pull. SHA256 (do not include the SHA256 prefix) or path (whatever will work with a docker pull command)',
+                type: 'string',
+                onOf: [
+                    {
+                        type: 'string',
+                        pattern: '^[A-Fa-f0-9]{64}$',
+                    },
+                    {
+                        type: 'string',
+                        pattern: '^[1]{12}$',
+                    },
+                ],
+            },
         },
-        required: ['tenantName', 'captureName', 'sourceType'],
     };
 
     // This would get populated based on what tenants the user has access to.
     schema.properties.tenantName.enum = [
-        'foo/',
-        'bar/',
-        'buz/',
         'acmeCo/',
         'estuary/',
+        'examples/',
+        'test/',
     ];
 
-    schema.properties.sourceType.oneOf = allSources.map((source) => {
+    estuarySources.forEach((source) => {
         const title = removePrefix(source);
+        const estuaryPath = `ghcr.io/estuary/${source}:dev`;
 
-        return { const: source, title };
+        schema.properties.sourceType.oneOf.push({
+            const: estuaryPath,
+            title,
+        });
+    });
+
+    schema.properties.sourceType.oneOf.push({
+        const: 'custom',
+        title: `I'll provide an image`,
     });
 
     res.status(200);
@@ -502,16 +621,11 @@ app.get('/capture/', (req, res) => {
 });
 
 app.post('/capture/test', (req, res) => {
-    console.log('Capture test started');
-    const paths = generatePaths(req.body.name + req.body.name, req.body.type);
+    console.log('Capture test started', req.body);
 
     captureCreation(req, res)
         .then((data) => {
             const errors = [];
-
-            fs.rmSync(paths.workingDirectory, {
-                recursive: true,
-            });
 
             const collections = data.data.data.collections;
             const hasCollections =
@@ -548,6 +662,9 @@ app.post('/capture/test', (req, res) => {
             } else {
                 flowctlFailure(res, data.data);
             }
+        })
+        .finally(() => {
+            cleanUpTmp();
         });
 });
 

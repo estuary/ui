@@ -1,9 +1,9 @@
+import CodeIcon from '@mui/icons-material/Code';
 import ExploreIcon from '@mui/icons-material/Explore';
 import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
 //TODO - These are not final
 import InputIcon from '@mui/icons-material/Input';
 import StorageIcon from '@mui/icons-material/Storage';
-import TransformIcon from '@mui/icons-material/Transform';
 import { Box, List, Toolbar, useMediaQuery, useTheme } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
 import ListItemLink from './ListItemLink';
@@ -27,10 +27,10 @@ function Navigation(props: navigationProps) {
     return (
         <MuiDrawer
             sx={{
+                width: drawerWidth,
                 transition: (theme) =>
                     `${theme.transitions.duration.shortest}ms`,
-                width: drawerWidth,
-                '& .Mui5Drawer-paper': {
+                '& .MuiDrawer-paper': {
                     transition: (theme) =>
                         `${theme.transitions.duration.shortest}ms`,
                     width: drawerWidth,
@@ -65,7 +65,7 @@ function Navigation(props: navigationProps) {
                         isOpen={props.open}
                     />
                     <ListItemLink
-                        icon={<TransformIcon />}
+                        icon={<CodeIcon />}
                         title="Derivations"
                         link="/app/derivations"
                         key="Derivations"

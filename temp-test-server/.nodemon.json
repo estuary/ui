@@ -1,0 +1,9 @@
+{
+  "verbose": true,
+  "ignore": [
+    "tmp/*",
+    "tmp/**/*",
+    "schema-local-cache/*",
+    "requests/**/*"
+  ]
+}

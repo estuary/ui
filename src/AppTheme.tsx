@@ -1,28 +1,28 @@
 import {
     createTheme,
     PaletteOptions,
+    ThemeOptions,
     ThemeProvider,
     useMediaQuery,
 } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
-import { unstable_ClassNameGenerator as ClassNameGenerator } from '@mui/material/utils';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-ClassNameGenerator.configure((componentName) =>
-    componentName.replace('Mui', 'Mui5')
-); //TODO remove once JSONForms get updates and then clean up everything that says 'Mui5' back to 'Mui'
-
 // Colors
-const primary = '#97AFB9';
-const secondary = '#5660BD';
+const primary = '#5660BD';
+const secondary = '#3c5584';
 const background = '#F7F7F7';
 
 // Status Colors
 const errorMain = '#f67375';
-const warningMain = '#DD6A7A';
+const warningMain = '#f5d75e';
 const infoMain = '#4FD6FF';
 const successMain = '#00c892';
+
+// Color modifiers
+const contrastThreshold = 4;
+const tonalOffset = 0.1;
 
 // Borders
 // const borderWidth = 2;
@@ -34,9 +34,6 @@ const lg = 1500;
 const md = 900;
 const sm = 600;
 const xs = 300;
-
-// Spacing
-const spacing = 8;
 
 // Color Palettes
 const lightMode: PaletteOptions = {
@@ -62,14 +59,20 @@ const lightMode: PaletteOptions = {
     background: {
         default: background,
     },
-    tonalOffset: 0.1,
+    contrastThreshold: contrastThreshold,
+    tonalOffset: tonalOffset,
 };
 
 const darkMode: PaletteOptions = {
     mode: 'dark',
+    background: {
+        default: '#363636',
+    },
+    contrastThreshold: contrastThreshold,
+    tonalOffset: tonalOffset,
 };
 
-export const themeSettings = createTheme({
+const themeSettings = createTheme({
     breakpoints: {
         values: {
             xl,
@@ -80,82 +83,37 @@ export const themeSettings = createTheme({
         },
     },
     components: {
+        MuiAppBar: {},
         MuiButtonBase: {
             defaultProps: {
-                disableRipple: false, //Since they use ripple to show focus going to leave it on for now
+                // based on React-Admin's solution
+                //   https://github.com/marmelab/react-admin/blob/master/packages/ra-ui-materialui/src/defaultTheme.ts
+                disableRipple: true,
+                sx: {
+                    '&:hover:active::after': {
+                        content: '""',
+                        display: 'block',
+                        width: '100%',
+                        height: '100%',
+                        position: 'absolute',
+                        top: 0,
+                        right: 0,
+                        backgroundColor: 'currentColor',
+                        opacity: 0.1,
+                        borderRadius: 'inherit',
+                    },
+                },
             },
-        },
-        MuiButton: {
-            defaultProps: {
-                size: 'small',
-            },
-        },
-        MuiButtonGroup: {
-            defaultProps: {
-                size: 'small',
-            },
-        },
-        MuiCheckbox: {
-            defaultProps: {
-                size: 'small',
-            },
-        },
-        MuiFab: {
-            defaultProps: {
-                size: 'small',
-            },
-        },
-        MuiFormControl: {
-            defaultProps: {
-                margin: 'dense',
-                size: 'small',
-            },
-        },
-        MuiFormHelperText: {
-            defaultProps: {
-                margin: 'dense',
-            },
-        },
-        MuiIconButton: {
-            defaultProps: { size: 'small' },
-        },
-        MuiInputBase: {
-            defaultProps: { margin: 'dense' },
-        },
-        MuiInputLabel: {
-            defaultProps: { margin: 'dense' },
-        },
-        MuiRadio: {
-            defaultProps: { size: 'small' },
-        },
-        MuiSwitch: {
-            defaultProps: { size: 'small' },
-        },
-        MuiTextField: {
-            defaultProps: {
-                margin: 'dense',
-                size: 'small',
-            },
-        },
-        MuiList: {
-            defaultProps: { dense: true },
-        },
-        MuiMenuItem: {
-            defaultProps: { dense: true },
         },
         MuiTabs: {
             defaultProps: {
                 indicatorColor: 'secondary',
             },
         },
-        MuiTable: {
-            defaultProps: { size: 'small' },
-        },
     },
     shape: {
-        borderRadius: 3,
+        borderRadius: 2,
     },
-    spacing,
     typography: {
         fontFamily: [
             'Poppins',
@@ -172,7 +130,7 @@ export const themeSettings = createTheme({
             '"Segoe UI Symbol"',
         ].join(','),
     },
-});
+} as ThemeOptions);
 
 const AppThemePropTypes = {
     children: PropTypes.element.isRequired,
@@ -182,14 +140,18 @@ type AppThemeProps = PropTypes.InferProps<typeof AppThemePropTypes>;
 export default function AppTheme(props: AppThemeProps) {
     const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
-    const generatedTheme = React.useMemo(
-        () =>
-            createTheme({
-                ...themeSettings,
-                palette: prefersDarkMode ? darkMode : lightMode,
-            }),
-        [prefersDarkMode]
-    );
+    const generatedTheme = React.useMemo(() => {
+        themeSettings.components!.MuiAppBar!.defaultProps = {
+            sx: {
+                backgroundColor: prefersDarkMode ? '#121212' : '#97AFB9',
+            },
+        };
+
+        return createTheme({
+            ...themeSettings,
+            palette: prefersDarkMode ? darkMode : lightMode,
+        });
+    }, [prefersDarkMode]);
 
     return (
         <ThemeProvider theme={generatedTheme}>

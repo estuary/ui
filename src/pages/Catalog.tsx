@@ -86,7 +86,7 @@ export default function Catalog() {
                         <Typography variant="h6" color="text.secondary">
                             It will guide you through generating and downloading
                             a valid{' '}
-                            <ExternalLink link="https://docs.estuary.dev/concepts/catalog-entities/catalog-spec">
+                            <ExternalLink link="https://docs.estuary.dev/concepts/#catalogs">
                                 catalog spec
                             </ExternalLink>
                             .

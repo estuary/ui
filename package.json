@@ -18,20 +18,20 @@
     "dependencies": {
         "@emotion/react": "latest",
         "@emotion/styled": "latest",
-        "@jsonforms/core": "v3.0.0-alpha.2",
-        "@jsonforms/material-renderers": "v3.0.0-alpha.2",
-        "@jsonforms/react": "v3.0.0-alpha.2",
+        "@jsonforms/core": "v3.0.0-alpha.3",
+        "@jsonforms/material-renderers": "v3.0.0-alpha.3",
+        "@jsonforms/react": "v3.0.0-alpha.3",
         "@monaco-editor/react": "^4.3.1",
         "@mui/icons-material": "latest",
         "@mui/material": "latest",
         "@mui/x-data-grid": "latest",
         "axios": "latest",
         "lodash": "latest",
-        "monaco-editor": "^0.30.1",
+        "monaco-editor": "^0.31.1",
         "prop-types": "latest",
         "react": "latest",
         "react-dom": "latest",
-        "react-router-dom": "^6.0.0-beta.8"
+        "react-router-dom": "6.2.1"
     },
     "devDependencies": {
         "@testing-library/jest-dom": "latest",
