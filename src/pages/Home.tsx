@@ -1,5 +1,6 @@
 import { Box, Toolbar, Typography } from '@mui/material';
 import PageContainer from 'components/shared/PageContainer';
+import { FormattedMessage } from 'react-intl';
 
 const Home: React.FC = () => {
     return (
@@ -9,7 +10,9 @@ const Home: React.FC = () => {
                     justifyContent: 'center',
                 }}
             >
-                <Typography variant="h3">Welcome!</Typography>
+                <Typography variant="h3">
+                    <FormattedMessage id="home.main.header" />
+                </Typography>
             </Toolbar>
             <Box
                 sx={{
@@ -20,8 +23,7 @@ const Home: React.FC = () => {
                 }}
             >
                 <Typography variant="body2" color="text.secondary">
-                    Click the Capture link over on the side navigation to get
-                    started.
+                    <FormattedMessage id="home.main.description" />
                 </Typography>
             </Box>
         </PageContainer>

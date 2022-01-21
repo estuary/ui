@@ -31,6 +31,7 @@
         "prop-types": "latest",
         "react": "latest",
         "react-dom": "latest",
+        "react-intl": "^5.24.3",
         "react-router-dom": "6.2.1"
     },
     "devDependencies": {

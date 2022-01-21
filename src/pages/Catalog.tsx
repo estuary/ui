@@ -13,6 +13,7 @@ import {
 import ExternalLink from 'components/shared/ExternalLink';
 import PageContainer from 'components/shared/PageContainer';
 import { useState } from 'react';
+import { FormattedMessage } from 'react-intl';
 import { NavLink, Outlet } from 'react-router-dom';
 
 const Catalog: React.FC = () => {
@@ -45,7 +46,11 @@ const Catalog: React.FC = () => {
         const { captures } = props;
 
         if (isLoading) {
-            return <Box>Loading</Box>;
+            return (
+                <Box>
+                    <FormattedMessage id="common.loading" />
+                </Box>
+            );
         } else if (captures.length > 0) {
             return (
                 <Box>
@@ -80,16 +85,13 @@ const Catalog: React.FC = () => {
                         }}
                     >
                         <Typography gutterBottom variant="h5" component="div">
-                            Click the "New Capture" button up above to get
-                            started.
+                            <FormattedMessage id="captures.main.message1" />
                         </Typography>
                         <Typography variant="h6" color="text.secondary">
-                            It will guide you through generating and downloading
-                            a valid{' '}
+                            <FormattedMessage id="captures.main.message2" />
                             <ExternalLink link="https://docs.estuary.dev/concepts/#catalogs">
                                 catalog spec
                             </ExternalLink>
-                            .
                         </Typography>
                     </Box>
                 </Box>

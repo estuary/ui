@@ -1,11 +1,11 @@
 import { Box } from '@mui/material';
+import { FormattedMessage } from 'react-intl';
 
 const Users: React.FC = () => {
     return (
         <>
             <Box>
-                This is where you will be able to manage your users... basically
-                a little User CRUD UI.
+                <FormattedMessage id="users.main.message" />
             </Box>
         </>
     );
