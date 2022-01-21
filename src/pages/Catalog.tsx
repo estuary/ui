@@ -13,10 +13,12 @@ import {
 import ExternalLink from 'components/shared/ExternalLink';
 import PageContainer from 'components/shared/PageContainer';
 import { useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { NavLink, Outlet } from 'react-router-dom';
 
 const Catalog: React.FC = () => {
+    const intl = useIntl();
+
     const [captureList] = useState([]);
     const [isLoading] = useState(false);
 
@@ -88,10 +90,20 @@ const Catalog: React.FC = () => {
                             <FormattedMessage id="captures.main.message1" />
                         </Typography>
                         <Typography variant="h6" color="text.secondary">
-                            <FormattedMessage id="captures.main.message2" />
-                            <ExternalLink link="https://docs.estuary.dev/concepts/#catalogs">
-                                catalog spec
-                            </ExternalLink>
+                            <FormattedMessage
+                                id="captures.main.message2"
+                                values={{
+                                    docLink: (
+                                        <ExternalLink
+                                            link={intl.formatMessage({
+                                                id: 'captures.main.message2.docPath',
+                                            })}
+                                        >
+                                            <FormattedMessage id="captures.main.message2.docLink" />
+                                        </ExternalLink>
+                                    ),
+                                }}
+                            />
                         </Typography>
                     </Box>
                 </Box>
