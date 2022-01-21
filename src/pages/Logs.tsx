@@ -1,9 +1,11 @@
 import { Box } from '@mui/material';
 
-export default function Logs() {
+const Logs: React.FC = () => {
     return (
         <>
             <Box>This is where we will show the logs for the system.</Box>
         </>
     );
-}
+};
+
+export default Logs;

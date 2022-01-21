@@ -15,7 +15,7 @@ const Users = React.lazy(() => import('./pages/Users'));
 const Alerts = React.lazy(() => import('./pages/Alerts'));
 const Logs = React.lazy(() => import('./pages/Logs'));
 
-export default function App() {
+const App: React.FC = () => {
     const railNavWidth = 63;
     const fullNavWidth = 225;
 
@@ -91,4 +91,6 @@ export default function App() {
             </Box>
         </Box>
     );
-}
+};
+
+export default App;

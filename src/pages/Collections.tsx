@@ -1,9 +1,9 @@
-import ExploreTable from './../components/table/ExploreTable';
+import { Container, Toolbar } from '@mui/material';
 import CardCarousel from './../components/cardCarousel/CardCarousel';
 import { CatalogCardContentProps } from './../components/cardCarousel/CatalogCardContent';
-import { Container, Toolbar } from '@mui/material';
+import ExploreTable from './../components/table/ExploreTable';
 
-export default function Explore() {
+const Collections: React.FC = () => {
     const fakeCards: CatalogCardContentProps[] = [
         {
             description:
@@ -73,4 +73,6 @@ export default function Explore() {
             <ExploreTable />
         </Container>
     );
-}
+};
+
+export default Collections;

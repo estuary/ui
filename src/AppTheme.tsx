@@ -6,7 +6,6 @@ import {
     useMediaQuery,
 } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
-import PropTypes from 'prop-types';
 import React from 'react';
 
 // Colors
@@ -132,12 +131,7 @@ const themeSettings = createTheme({
     },
 } as ThemeOptions);
 
-const AppThemePropTypes = {
-    children: PropTypes.element.isRequired,
-};
-type AppThemeProps = PropTypes.InferProps<typeof AppThemePropTypes>;
-
-export default function AppTheme(props: AppThemeProps) {
+const AppTheme: React.FC = ({ children }) => {
     const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
     const generatedTheme = React.useMemo(() => {
@@ -156,7 +150,9 @@ export default function AppTheme(props: AppThemeProps) {
     return (
         <ThemeProvider theme={generatedTheme}>
             <CssBaseline />
-            {props.children}
+            {children}
         </ThemeProvider>
     );
-}
+};
+
+export default AppTheme;

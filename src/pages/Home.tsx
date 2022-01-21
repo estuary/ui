@@ -1,7 +1,7 @@
 import { Box, Toolbar, Typography } from '@mui/material';
 import PageContainer from 'components/shared/PageContainer';
 
-export default function Home() {
+const Home: React.FC = () => {
     return (
         <PageContainer>
             <Toolbar
@@ -26,4 +26,6 @@ export default function Home() {
             </Box>
         </PageContainer>
     );
-}
+};
+
+export default Home;

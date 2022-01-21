@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 
-export default function Alerts() {
+const Alerts: React.FC = () => {
     return (
         <>
             <Box>
@@ -9,4 +9,6 @@ export default function Alerts() {
             </Box>
         </>
     );
-}
+};
+
+export default Alerts;

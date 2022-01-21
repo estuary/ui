@@ -1,7 +1,7 @@
 import { Alert, AlertTitle } from '@mui/material';
 import PageContainer from 'components/shared/PageContainer';
 
-export default function Error() {
+const Error: React.FC = () => {
     return (
         <PageContainer>
             <Alert severity="error">
@@ -10,4 +10,6 @@ export default function Error() {
             </Alert>
         </PageContainer>
     );
-}
+};
+
+export default Error;

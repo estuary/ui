@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 
-export default function Users() {
+const Users: React.FC = () => {
     return (
         <>
             <Box>
@@ -9,4 +9,6 @@ export default function Users() {
             </Box>
         </>
     );
-}
+};
+
+export default Users;

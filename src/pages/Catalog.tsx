@@ -15,7 +15,7 @@ import PageContainer from 'components/shared/PageContainer';
 import { useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 
-export default function Catalog() {
+const Catalog: React.FC = () => {
     const [captureList] = useState([]);
     const [isLoading] = useState(false);
 
@@ -126,4 +126,6 @@ export default function Catalog() {
             <Outlet />
         </PageContainer>
     );
-}
+};
+
+export default Catalog;

@@ -2,7 +2,7 @@ import { Box, Typography } from '@mui/material';
 import PageContainer from 'components/shared/PageContainer';
 import { Outlet } from 'react-router-dom';
 
-export default function Admin() {
+const Admin: React.FC = () => {
     return (
         <PageContainer>
             <Typography>Admin</Typography>
@@ -20,4 +20,6 @@ export default function Admin() {
             </Box>
         </PageContainer>
     );
-}
+};
+
+export default Admin;
