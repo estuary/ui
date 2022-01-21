@@ -5,7 +5,7 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
-import { useSourceTypes } from 'hooks/useSourceTypes';
+import useSourceTypes from 'hooks/useSourceTypes';
 import React from 'react';
 
 interface CaptureSourceProps {

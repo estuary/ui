@@ -1,6 +1,6 @@
 import { Autocomplete, TextField } from '@mui/material';
 import { Box } from '@mui/system';
-import { useSourceTypes } from 'hooks/useSourceTypes';
+import useSourceTypes from 'hooks/useSourceTypes';
 import PropTypes from 'prop-types';
 
 const SourceTypePropTypes = {

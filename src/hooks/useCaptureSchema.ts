@@ -1,12 +1,14 @@
 import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 
-export const useCaptureSchema = (): {
+type CaptureSchemaService = {
     isFetching: boolean;
-    schema: any;
-    error: any;
+    schema: object | null;
+    error: string | null;
     fetchSchema: any;
-} => {
+}
+
+const useCaptureSchema = (): CaptureSchemaService => {
     const [schema, setSchema] = useState<object | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [isFetching, setIsFetching] = useState<boolean>(true);
@@ -35,3 +37,5 @@ export const useCaptureSchema = (): {
 
     return { isFetching, schema, error, fetchSchema };
 };
+
+export default useCaptureSchema;

@@ -1,12 +1,14 @@
 import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 
-export const useSourceTypes = (): {
+type SourceTypesService = {
     isFetching: boolean;
     sourceTypes: any;
     error: any;
     fetchSourceTypes: any;
-} => {
+}
+
+const useSourceTypes = (): SourceTypesService => {
     const [sourceTypes, setSourceTypes] = useState<object | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [isFetching, setIsFetching] = useState<boolean>(false);
@@ -36,3 +38,5 @@ export const useSourceTypes = (): {
 
     return { isFetching, sourceTypes, error, fetchSourceTypes };
 };
+
+export default useSourceTypes

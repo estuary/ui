@@ -1,15 +1,17 @@
 import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 
-export const useSourceSchema = (
-    key: string
-): {
+type SourceSchemaService = {
     isFetching: boolean;
     schema: any;
     error: any;
     image: any;
     fetchSchema: any;
-} => {
+}
+
+const useSourceSchema = (
+    key: string
+): SourceSchemaService => {
     const [schema, setSchema] = useState<object | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [image, setImage] = useState<string | null>(null);
@@ -43,3 +45,5 @@ export const useSourceSchema = (
 
     return { isFetching, schema, image, error, fetchSchema };
 };
+
+export default useSourceSchema;
