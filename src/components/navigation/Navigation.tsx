@@ -56,14 +56,12 @@ const Navigation = (props: PropTypes.InferProps<typeof NavigationProps>) => {
                         link="/app/collections"
                         key="Collections"
                         isOpen={props.open}
-                        disabled={true}
                     />
                     <ListItemLink
                         icon={<InputIcon />}
                         title="Captures"
                         link="/app/captures"
                         key="Capture"
-                        isOpen={props.open}
                     />
                     <ListItemLink
                         icon={<CodeIcon />}
@@ -71,7 +69,6 @@ const Navigation = (props: PropTypes.InferProps<typeof NavigationProps>) => {
                         link="/app/derivations"
                         key="Derivations"
                         isOpen={props.open}
-                        disabled={true}
                     />
                     <ListItemLink
                         icon={<StorageIcon />}
@@ -79,7 +76,6 @@ const Navigation = (props: PropTypes.InferProps<typeof NavigationProps>) => {
                         link="/app/materializations"
                         key="Materializations"
                         isOpen={props.open}
-                        disabled={true}
                     />
                     <ListItemLink
                         icon={<HomeRepairServiceIcon />}
@@ -87,7 +83,6 @@ const Navigation = (props: PropTypes.InferProps<typeof NavigationProps>) => {
                         link="/app/admin"
                         key="Administration"
                         isOpen={props.open}
-                        disabled={true}
                     />
                 </List>
             </Box>

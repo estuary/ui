@@ -9,7 +9,7 @@ import Topbar from './components/Topbar';
 import Error from './pages/Error';
 
 const Admin = React.lazy(() => import('./pages/Admin'));
-const Catalog = React.lazy(() => import('./pages/Catalog'));
+const Capture = React.lazy(() => import('./pages/Captures'));
 const Collections = React.lazy(() => import('./pages/Collections'));
 const Users = React.lazy(() => import('./pages/Users'));
 const Alerts = React.lazy(() => import('./pages/Alerts'));
@@ -68,16 +68,16 @@ const App: React.FC = () => {
                                 path="collections"
                                 element={<Collections />}
                             />
-                            <Route path="captures" element={<Catalog />}>
+                            <Route path="captures" element={<Capture />}>
                                 <Route
                                     path="new"
                                     element={<NewCaptureModal />}
                                 />
                             </Route>
-                            <Route path="derivations" element={<Catalog />} />
+                            <Route path="derivations" element={<Error />} />
                             <Route
                                 path="materializations"
-                                element={<Catalog />}
+                                element={<Error />}
                             />
                             <Route path="admin/*" element={<Admin />}>
                                 <Route path="logs" element={<Logs />} />

@@ -1,5 +1,6 @@
 import { Box, Typography } from '@mui/material';
 import PageContainer from 'components/shared/PageContainer';
+import { FormattedMessage } from 'react-intl';
 import { Outlet } from 'react-router-dom';
 
 const Admin: React.FC = () => {
@@ -13,8 +14,7 @@ const Admin: React.FC = () => {
                         height: 45,
                     }}
                 >
-                    This will most likely be a smaller "sub app" where you can
-                    view logs, alerts, users, etc.
+                    <FormattedMessage id="admin.main.message" />
                     <Outlet />
                 </Box>
             </Box>

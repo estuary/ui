@@ -16,7 +16,7 @@ import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { NavLink, Outlet } from 'react-router-dom';
 
-const Catalog: React.FC = () => {
+const Capture: React.FC = () => {
     const intl = useIntl();
 
     const [captureList] = useState([]);
@@ -123,14 +123,9 @@ const Catalog: React.FC = () => {
                 <NavLink to={'new'}>
                     <Button
                         variant="contained"
+                        size="large"
                         color="success"
                         startIcon={<AddIcon />}
-                        sx={{
-                            borderTopRightRadius: 12,
-                            borderBottomRightRadius: 12,
-                            borderBottomLeftRadius: 12,
-                            height: 40,
-                        }}
                     >
                         New Capture
                     </Button>
@@ -142,4 +137,4 @@ const Catalog: React.FC = () => {
     );
 };
 
-export default Catalog;
+export default Capture;
