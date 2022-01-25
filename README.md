@@ -12,7 +12,7 @@ You need to run with Node 16 right now. There is an issue with Node 17.
 
 You can run both apps from a single command if you just want to play around. If you try this for dev it'll get funky and we do not recommend it.
 
-`npm run start-all` starts UI and test server together
+`npm run start-all` starts UI and test server together (not good for dev)
 `npm start` starts UI
 
 For more details on UI commands please look at `build.md`.
