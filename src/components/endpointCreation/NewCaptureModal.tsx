@@ -1,7 +1,7 @@
 import { createAjv } from '@jsonforms/core';
 import {
     materialCells,
-    materialRenderers,
+    materialRenderers
 } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import Editor from '@monaco-editor/react';
@@ -30,9 +30,7 @@ import {
     StepLabel,
     Stepper,
     Toolbar,
-    Typography,
-    useMediaQuery,
-    useTheme,
+    Typography, useTheme
 } from '@mui/material';
 import { StyledEngineProvider } from '@mui/material/styles';
 import axios from 'axios';
@@ -65,7 +63,6 @@ function NewCaptureModal(
     };
 
     const theme = useTheme();
-    const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
     const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(
         null
@@ -102,8 +99,8 @@ function NewCaptureModal(
     const [newCaptureDetailsFormErrors, setNewCaptureDetailsFormErrors] =
         useState([]);
 
-    const [newCaptureFormData, setNewCaptureFormData] = useState({});
-    const [newCaptureFormErrors, setNewCaptureFormErrors] = useState([]);
+    const [newCaptureFormData] = useState({});
+    const [newCaptureFormErrors] = useState([]);
 
     const [showValidation, setShowValidation] = useState(false);
     const [formSubmitting, setFormSubmitting] = useState(false);
@@ -155,10 +152,10 @@ function NewCaptureModal(
         setSearchParams(hasKey ? { sourcetype: key } : {});
     };
 
-    const formChanged = ({ data, errors }: { data: any; errors: any }) => {
-        setNewCaptureFormData(data);
-        setNewCaptureFormErrors(errors);
-    };
+    // const formChanged = ({ data, errors }: { data: any; errors: any }) => {
+    //     setNewCaptureFormData(data);
+    //     setNewCaptureFormErrors(errors);
+    // };
 
     const typeNameChanged = ({ data, errors }: { data: any; errors: any }) => {
         setNewCaptureDetailsFormData(data);
@@ -293,20 +290,18 @@ function NewCaptureModal(
                     </AppBar>
                     <Divider />
                     <StyledEngineProvider injectFirst>
-                        <JsonForms
-                            schema={schema.connectionSpecification}
-                            data={newCaptureFormData}
-                            renderers={renderers}
-                            cells={materialCells}
-                            config={formOptions}
-                            readonly={formSubmitting}
-                            ajv={handleDefaultsAjv}
-                            validationMode={
-                                showValidation
-                                    ? 'ValidateAndShow'
-                                    : 'ValidateAndHide'
+                        <Editor
+                            height="350px"
+                            defaultLanguage="json"
+                            theme={
+                                theme.palette.mode === 'light'
+                                    ? 'vs'
+                                    : 'vs-dark'
                             }
-                            onChange={formChanged}
+                            defaultValue={JSON.stringify(
+                                schema.connectionSpecification
+                            )}
+                            onMount={handleEditorDidMount}
                         />
                     </StyledEngineProvider>
                 </ErrorBoundary>
@@ -364,8 +359,8 @@ function NewCaptureModal(
                 open
                 onClose={handleClose}
                 scroll="paper"
-                fullScreen={fullScreen}
-                fullWidth={!fullScreen}
+                fullScreen={true}
+                fullWidth={true}
                 maxWidth={'lg'}
                 sx={{
                     '.MuiDialog-container': {
@@ -492,8 +487,8 @@ function NewCaptureModal(
                                 </DialogContentText>
                                 <Paper variant="outlined">
                                     {catalogResponse &&
-                                    catalogResponse.data &&
-                                    catalogResponse.data.data ? (
+                                        catalogResponse.data &&
+                                        catalogResponse.data.data ? (
                                         <Editor
                                             height="350px"
                                             defaultLanguage="json"
