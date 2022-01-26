@@ -3,10 +3,11 @@ import {
     Box,
     Skeleton,
     TextField,
-    Typography,
+    Typography
 } from '@mui/material';
 import useSourceTypes from 'hooks/useSourceTypes';
 import React from 'react';
+import { useIntl } from 'react-intl';
 
 interface CaptureSourceProps {
     id?: string;
@@ -16,8 +17,10 @@ interface CaptureSourceProps {
 }
 
 export const CaptureSource: React.FC<CaptureSourceProps> = (props) => {
-    const { id, updateValue, errors } = props;
+    const intl = useIntl();
     const { isFetching, error, sourceTypes } = useSourceTypes();
+
+    const { id, updateValue, errors } = props;
     let inputError: string;
 
     if (error) {
@@ -36,7 +39,9 @@ export const CaptureSource: React.FC<CaptureSourceProps> = (props) => {
                 autoHighlight
                 openOnFocus
                 blurOnSelect="mouse"
-                noOptionsText="No sources found."
+                noOptionsText={intl.formatMessage({
+                    id: "common.errors.source.missing",
+                })}
                 loading={isFetching}
                 onChange={function (event, reason: any) {
                     updateValue(reason.key ? reason.key : '');
@@ -58,9 +63,12 @@ export const CaptureSource: React.FC<CaptureSourceProps> = (props) => {
                         <TextField
                             {...params}
                             label={
-                                error !== null
-                                    ? 'Failed to fetch source types'
-                                    : 'Source type'
+                                intl.formatMessage({
+                                    id: error !== null
+                                        ? 'capturesource.types.fetch.failed'
+                                        : "capturesource.types.label",
+                                })
+
                             }
                             error={inputError !== null}
                             required={true}
