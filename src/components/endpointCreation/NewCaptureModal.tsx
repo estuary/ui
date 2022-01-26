@@ -236,18 +236,18 @@ function NewCaptureModal(
                 elements: [
                     {
                         type: 'Control',
-                        label: intl.formatMessage({ id: "captureCreation.form.tenant.label" })
+                        label: intl.formatMessage({ id: "captureCreation.tenant.label" })
                         ,
                         scope: '#/properties/tenantName',
                     },
                     {
                         type: 'Control',
-                        label: intl.formatMessage({ id: "captureCreation.form.name.label" }),
+                        label: intl.formatMessage({ id: "captureCreation.name.label" }),
                         scope: '#/properties/captureName',
                     },
                     {
                         type: 'Control',
-                        label: intl.formatMessage({ id: "captureCreation.form.source.label" }),
+                        label: intl.formatMessage({ id: "captureCreation.source.label" }),
                         scope: '#/properties/sourceType',
                     },
                 ],
@@ -350,7 +350,7 @@ function NewCaptureModal(
                 <Box sx={{ width: '100%' }}>
                     <Alert severity="error">
                         <AlertTitle>
-                            <FormattedMessage id='captureCreation.testing.config.failed' />
+                            <FormattedMessage id='captureCreation.config.testing.failed' />
                         </AlertTitle>
                         <Typography variant="subtitle1">
                             {formSubmitError.message}
@@ -477,7 +477,7 @@ function NewCaptureModal(
                                             ml: 2,
                                         }}
                                     >
-                                        <FormattedMessage id='captureCreation.testing.config.loading' />
+                                        <FormattedMessage id='captureCreation.config.testing' />
                                     </Typography>
                                 </Box>
                             </StepContent>
@@ -486,7 +486,7 @@ function NewCaptureModal(
                             <StepLabel>Review</StepLabel>
                             <StepContent>
                                 <DialogContentText>
-                                    <FormattedMessage id='captureCreation.final.review.instructions' />
+                                    <FormattedMessage id='captureCreation.finalReview.instructions' />
                                 </DialogContentText>
                                 <Paper variant="outlined">
                                     {catalogResponse &&
