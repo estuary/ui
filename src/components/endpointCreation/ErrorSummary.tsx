@@ -1,5 +1,6 @@
 import { Alert, AlertTitle } from '@mui/material';
 import PropTypes from 'prop-types';
+import { FormattedMessage } from 'react-intl';
 
 ErrorSummary.propTypes = {
     errors: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -15,7 +16,7 @@ function ErrorSummary(
     if (errors && errors.length > 0) {
         return (
             <Alert severity="error">
-                <AlertTitle>Form failed validation</AlertTitle>
+                <AlertTitle><FormattedMessage id="forms.validation.failure.heading" /></AlertTitle>
                 {errors.map((error: any) => {
                     return error;
                 })}

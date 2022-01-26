@@ -65,8 +65,8 @@ export const CaptureSource: React.FC<CaptureSourceProps> = (props) => {
                             label={
                                 intl.formatMessage({
                                     id: error !== null
-                                        ? 'capturesource.types.fetch.failed'
-                                        : "capturesource.types.label",
+                                        ? 'capturesource.fetch.failed'
+                                        : "capturesource.label",
                                 })
 
                             }

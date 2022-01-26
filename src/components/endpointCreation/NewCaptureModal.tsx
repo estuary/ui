@@ -1,7 +1,7 @@
 import { createAjv } from '@jsonforms/core';
 import {
     materialCells,
-    materialRenderers,
+    materialRenderers
 } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import Editor from '@monaco-editor/react';
@@ -32,7 +32,7 @@ import {
     Toolbar,
     Typography,
     useMediaQuery,
-    useTheme,
+    useTheme
 } from '@mui/material';
 import { StyledEngineProvider } from '@mui/material/styles';
 import axios from 'axios';
@@ -46,6 +46,7 @@ import useSourceSchema from 'hooks/useSourceSchema';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import PropTypes from 'prop-types';
 import { useRef, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 NewCaptureModal.propTypes = {};
@@ -63,6 +64,8 @@ function NewCaptureModal(
         restrict: true,
         showUnfocusedDescription: true,
     };
+
+    const intl = useIntl();
 
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -233,17 +236,18 @@ function NewCaptureModal(
                 elements: [
                     {
                         type: 'Control',
-                        label: 'Tenant',
+                        label: intl.formatMessage({ id: "captureCreation.form.tenant.label" })
+                        ,
                         scope: '#/properties/tenantName',
                     },
                     {
                         type: 'Control',
-                        label: 'Name',
+                        label: intl.formatMessage({ id: "captureCreation.form.name.label" }),
                         scope: '#/properties/captureName',
                     },
                     {
                         type: 'Control',
-                        label: 'Source',
+                        label: intl.formatMessage({ id: "captureCreation.form.source.label" }),
                         scope: '#/properties/sourceType',
                     },
                 ],
@@ -267,7 +271,7 @@ function NewCaptureModal(
         if (error !== null) {
             return (
                 <Alert severity="error">
-                    <AlertTitle>Error</AlertTitle>
+                    <AlertTitle><FormattedMessage id='common.errors.heading' /></AlertTitle>
                     {error}
                 </Alert>
             );
@@ -286,7 +290,7 @@ function NewCaptureModal(
                             </Typography>
                             {schema.documentationUrl ? (
                                 <ExternalLink link={schema.documentationUrl}>
-                                    Connector Docs
+                                    <FormattedMessage id='captureCreation.config.source.doclink' />
                                 </ExternalLink>
                             ) : null}
                         </Toolbar>
@@ -345,7 +349,9 @@ function NewCaptureModal(
             response = (
                 <Box sx={{ width: '100%' }}>
                     <Alert severity="error">
-                        <AlertTitle>Capture test failed</AlertTitle>
+                        <AlertTitle>
+                            <FormattedMessage id='captureCreation.testing.config.failed' />
+                        </AlertTitle>
                         <Typography variant="subtitle1">
                             {formSubmitError.message}
                         </Typography>
@@ -375,7 +381,7 @@ function NewCaptureModal(
                 aria-labelledby="new-capture-dialog-title"
             >
                 <DialogTitle id="new-capture-dialog-title">
-                    New Capture
+                    <FormattedMessage id='captureCreation.heading' />
                     <IconButton
                         aria-label="close"
                         onClick={handleClose}
@@ -399,11 +405,7 @@ function NewCaptureModal(
                                 TransitionProps={{ unmountOnExit: false }}
                             >
                                 <DialogContentText>
-                                    To get started please provide a unique name
-                                    and the source type of the Capture you want
-                                    to create. Once you've filled out the source
-                                    details you can click "Test Capture" down
-                                    below to test the connection.
+                                    <FormattedMessage id='captureCreation.instructions' />
                                 </DialogContentText>
 
                                 <form id="newCaptureForm">
@@ -475,7 +477,7 @@ function NewCaptureModal(
                                             ml: 2,
                                         }}
                                     >
-                                        Testing configuration...
+                                        <FormattedMessage id='captureCreation.testing.config.loading' />
                                     </Typography>
                                 </Box>
                             </StepContent>
@@ -484,16 +486,12 @@ function NewCaptureModal(
                             <StepLabel>Review</StepLabel>
                             <StepContent>
                                 <DialogContentText>
-                                    Look over the catalog configuration that was
-                                    generated. If you want to edit anything you
-                                    can do that directly in the editor. Once
-                                    you're ready you can download the file for
-                                    your local.
+                                    <FormattedMessage id='captureCreation.final.review.instructions' />
                                 </DialogContentText>
                                 <Paper variant="outlined">
                                     {catalogResponse &&
-                                    catalogResponse.data &&
-                                    catalogResponse.data.data ? (
+                                        catalogResponse.data &&
+                                        catalogResponse.data.data ? (
                                         <Editor
                                             height="350px"
                                             defaultLanguage="json"
@@ -509,7 +507,7 @@ function NewCaptureModal(
                                             onMount={handleEditorDidMount}
                                         />
                                     ) : (
-                                        <>Loading...</>
+                                        <FormattedMessage id='common.loading' />
                                     )}
                                 </Paper>
                             </StepContent>
@@ -525,7 +523,7 @@ function NewCaptureModal(
                                 size="large"
                                 color="error"
                             >
-                                Delete
+                                <FormattedMessage id='cta.delete' />
                             </Button>
                             <Button
                                 onClick={handleSave}
@@ -534,7 +532,7 @@ function NewCaptureModal(
                                 variant="contained"
                                 disableElevation
                             >
-                                Download Copy
+                                <FormattedMessage id='cta.download' />
                             </Button>
                         </>
                     ) : (
@@ -544,7 +542,7 @@ function NewCaptureModal(
                                 size="large"
                                 color="error"
                             >
-                                Cancel
+                                <FormattedMessage id='cta.cancel' />
                             </Button>
                             <Button
                                 onClick={handleTest}
@@ -556,7 +554,7 @@ function NewCaptureModal(
                                 variant="contained"
                                 disableElevation
                             >
-                                Test Capture
+                                <FormattedMessage id='captureCreation.ctas.test.config' />
                             </Button>
                         </>
                     )}
