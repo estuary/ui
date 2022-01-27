@@ -2,11 +2,15 @@ import { Skeleton, useMediaQuery, useTheme } from '@mui/material';
 import Box from '@mui/material/Box';
 import NewCaptureModal from 'components/endpointCreation/NewCaptureModal';
 import Home from 'pages/Home';
+import Login from 'pages/Login';
+import LoginHelp from 'pages/LoginHelp';
 import React, { Suspense } from 'react';
 import { Route, Routes } from 'react-router';
+import { Outlet } from 'react-router-dom';
 import Topbar from './components/header/Topbar';
 import Navigation from './components/navigation/Navigation';
 import Error from './pages/Error';
+
 
 const Admin = React.lazy(() => import('./pages/Admin'));
 const Capture = React.lazy(() => import('./pages/Captures'));
@@ -38,58 +42,72 @@ const App: React.FC = () => {
         "nav main"`,
     };
 
+    function Layout() {
+        return (
+            <Box sx={isBelowMd ? null : gridSettings}>
+                <Box sx={{ gridArea: 'header' }}>
+                    <Topbar
+                        title="Estuary Global Actions"
+                        isNavigationOpen={navigationOpen}
+                        onNavigationToggle={toggleNavigationDrawer}
+                    />
+                </Box>
+                <Box sx={{ gridArea: 'nav' }}>
+                    <Navigation
+                        open={navigationOpen}
+                        onNavigationToggle={toggleNavigationDrawer}
+                        width={navWidth}
+                    />
+                </Box>
+                <Box
+                    sx={{
+                        overflow: 'auto',
+                        gridArea: 'main',
+                    }}
+                >
+                    <Suspense fallback={<Skeleton animation="wave" />}>
+                        <Outlet />
+                    </Suspense>
+                </Box>
+            </Box>
+        );
+    }
+
     return (
-        <Box sx={isBelowMd ? null : gridSettings}>
-            <Box sx={{ gridArea: 'header' }}>
-                <Topbar
-                    title="Estuary Global Actions"
-                    isNavigationOpen={navigationOpen}
-                    onNavigationToggle={toggleNavigationDrawer}
-                />
-            </Box>
-            <Box sx={{ gridArea: 'nav' }}>
-                <Navigation
-                    open={navigationOpen}
-                    onNavigationToggle={toggleNavigationDrawer}
-                    width={navWidth}
-                />
-            </Box>
-            <Box
-                sx={{
-                    overflow: 'auto',
-                    gridArea: 'main',
-                }}
-            >
-                <Suspense fallback={<Skeleton animation="wave" />}>
-                    <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/app">
+        <Suspense fallback={<Skeleton animation="wave" />}>
+            <Routes>
+                <Route path="login/*">
+                    <Route path="" element={<Login />} />
+                    <Route path="help" element={<LoginHelp />} />
+                </Route>
+                <Route element={<Layout />}>
+                    <Route path="/dashboard" element={<Home />} />
+                    <Route path="/app">
+                        <Route
+                            path="collections"
+                            element={<Collections />}
+                        />
+                        <Route path="captures" element={<Capture />}>
                             <Route
-                                path="collections"
-                                element={<Collections />}
+                                path="new"
+                                element={<NewCaptureModal />}
                             />
-                            <Route path="captures" element={<Capture />}>
-                                <Route
-                                    path="new"
-                                    element={<NewCaptureModal />}
-                                />
-                            </Route>
-                            <Route path="derivations" element={<Error />} />
-                            <Route
-                                path="materializations"
-                                element={<Error />}
-                            />
-                            <Route path="admin/*" element={<Admin />}>
-                                <Route path="logs" element={<Logs />} />
-                                <Route path="alerts" element={<Alerts />} />
-                                <Route path="users" element={<Users />} />
-                            </Route>
                         </Route>
-                        <Route path="*" element={<Error />} />
-                    </Routes>
-                </Suspense>
-            </Box>
-        </Box>
+                        <Route path="derivations" element={<Error />} />
+                        <Route
+                            path="materializations"
+                            element={<Error />}
+                        />
+                        <Route path="admin/*" element={<Admin />}>
+                            <Route path="logs" element={<Logs />} />
+                            <Route path="alerts" element={<Alerts />} />
+                            <Route path="users" element={<Users />} />
+                        </Route>
+                    </Route>
+                </Route>
+                <Route path="*" element={<Error />} />
+            </Routes>
+        </Suspense>
     );
 };
 
