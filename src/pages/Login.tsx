@@ -22,7 +22,8 @@ const Login: React.FC = () => {
             // when they get to the protected page and click the back button, they
             // won't end up back on the login page, which is also really nice for the
             // user experience.
-            navigate(from, { replace: true });
+            const navigateTo = (from === "/") ? "/dashboard" : from;
+            navigate(navigateTo, { replace: true });
         });
     }
 
@@ -43,7 +44,7 @@ const Login: React.FC = () => {
                 <form onSubmit={handleSubmit}>
                     <TextField id="userName" label="User Name" fullWidth />
                     <TextField id="password" label="Password" fullWidth type="password" />
-                    <Button variant='contained'>Login</Button>
+                    <Button variant='contained' type='submit'>Login</Button>
                 </form>
             </CardActions>
             <CardContent>

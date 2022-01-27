@@ -1,3 +1,4 @@
+import AuthProvider from 'auth/Provider';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
@@ -8,11 +9,13 @@ import AppTheme from './AppTheme';
 ReactDOM.render(
     <React.StrictMode>
         <AppTheme>
-            <AppContent>
-                <AppRouter>
-                    <App />
-                </AppRouter>
-            </AppContent>
+            <AuthProvider>
+                <AppContent>
+                    <AppRouter>
+                        <App />
+                    </AppRouter>
+                </AppContent>
+            </AuthProvider>
         </AppTheme>
     </React.StrictMode>,
     document.querySelector('#root')
