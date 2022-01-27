@@ -21,6 +21,9 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     "capturesource.label": `Source type`,
     "capturesource.fetch.failed": `Failed to fetch source types`,
 
+    // Login Page Stuff
+    "login.main.message": `Login`,
+
     // Capture creation modal
     "captureCreation.ctas.test.config": `Test Capture`,
     "captureCreation.heading": `New Capture`,
