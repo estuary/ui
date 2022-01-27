@@ -1,3 +1,4 @@
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Box, IconButton, Stack, Toolbar } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
@@ -85,6 +86,9 @@ const Topbar: React.FC<TopbarProps> = ({ onNavigationToggle }) => {
                             <NotificationsIcon />
                         </Badge>
                     </IconButton> */}
+                    <IconButton aria-label='Open account panel'>
+                        <AccountCircleIcon />
+                    </IconButton>
                     <HelpMenu />
                 </Stack>
             </Toolbar>

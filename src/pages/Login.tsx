@@ -40,6 +40,9 @@ const Login: React.FC = () => {
                     Estuary Control Plane
                 </Typography>
             </CardContent>
+            <CardContent>
+                You can type anything you want - this isn't a real login form.
+            </CardContent>
             <CardActions style={{ justifyContent: "center" }}>
                 <form onSubmit={handleSubmit}>
                     <TextField id="userName" label="User Name" fullWidth />
