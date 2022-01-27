@@ -254,7 +254,7 @@ function NewCaptureModal(
             },
             {
                 type: 'Control',
-                label: 'Image',
+                label: intl.formatMessage({ id: "captureCreation.image.label" }),
                 scope: '#/properties/sourceImage',
                 rule: {
                     effect: 'SHOW',

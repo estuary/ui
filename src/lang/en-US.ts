@@ -2,9 +2,14 @@ import { ResolvedIntlConfig } from "react-intl/src/types";
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     // Common stuff
+    "company": `Estuary`,
     "common.loading": `Loading...`,
     "common.errors.heading": `Error`,
     "common.errors.source.missing": `No sources found.`,
+    "common.optionsMissing": `No options`,
+
+    // Header
+    "header.navigationMenu.aria.label": `Expand Navigation`,
 
     // CTA 
     "cta.cancel": `Cancel`,
@@ -13,7 +18,6 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
 
     // Common form stuff
     "forms.validation.failure.heading": `Form failed validation`,
-
     "capturesource.label": `Source type`,
     "capturesource.fetch.failed": `Failed to fetch source types`,
 
@@ -24,6 +28,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     "captureCreation.tenant.label": `Tenant`,
     "captureCreation.name.label": `Name`,
     "captureCreation.source.label": `Source`,
+    "captureCreation.image.label": `Image`,
     "captureCreation.config.source.doclink": `Connector Docs`,
     "captureCreation.config.testing": `Testing configuration...`,
     "captureCreation.config.testing.failed": `Capture test failed`,

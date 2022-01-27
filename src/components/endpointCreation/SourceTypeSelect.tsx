@@ -2,6 +2,7 @@ import { Autocomplete, TextField } from '@mui/material';
 import { Box } from '@mui/system';
 import useSourceTypes from 'hooks/useSourceTypes';
 import PropTypes from 'prop-types';
+import { useIntl } from 'react-intl';
 
 const SourceTypePropTypes = {
     id: PropTypes.string.isRequired,
@@ -12,6 +13,7 @@ SourceTypeSelect.propTypes = SourceTypePropTypes;
 type SourceTypeProps = PropTypes.InferProps<typeof SourceTypePropTypes>;
 
 function SourceTypeSelect(props: SourceTypeProps) {
+    const intl = useIntl();
     const { isFetching, sourceTypes, error } = useSourceTypes();
 
     return (
@@ -24,7 +26,9 @@ function SourceTypeSelect(props: SourceTypeProps) {
                 openOnFocus
                 disableClearable
                 blurOnSelect="mouse"
-                noOptionsText="No Options"
+                noOptionsText={intl.formatMessage({
+                    id: "common.optionsMissing"
+                })}
                 loading={isFetching}
                 onChange={function (event, reason: any) {
                     props.onSourceChange(reason ? reason.key : '');
@@ -38,9 +42,11 @@ function SourceTypeSelect(props: SourceTypeProps) {
                     <TextField
                         {...params}
                         label={
-                            error !== null
-                                ? 'Failed Fetching Source Type'
-                                : 'Source type'
+                            intl.formatMessage({
+                                id: error !== null
+                                    ? 'capturesource.fetch.failed'
+                                    : "capturesource.label",
+                            })
                         }
                         error={error !== null}
                         required={true}

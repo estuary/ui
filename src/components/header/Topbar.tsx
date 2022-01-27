@@ -2,8 +2,9 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { Box, IconButton, Stack, Toolbar } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
 import { useTheme } from '@mui/material/styles';
-import HelpMenu from './help/HelpMenu';
-import Logo from './navigation/Logo';
+import { useIntl } from 'react-intl';
+import HelpMenu from '../help/HelpMenu';
+import Logo from '../navigation/Logo';
 
 type TopbarProps = {
     isNavigationOpen: boolean;
@@ -12,6 +13,7 @@ type TopbarProps = {
 };
 
 const Topbar: React.FC<TopbarProps> = ({ onNavigationToggle }) => {
+    const intl = useIntl();
     const theme = useTheme();
 
     const openNavigation = () => {
@@ -43,14 +45,14 @@ const Topbar: React.FC<TopbarProps> = ({ onNavigationToggle }) => {
                     }}
                 >
                     <IconButton
-                        aria-label="Expand Navigation"
+                        aria-label={intl.formatMessage({ id: "header.navigationMenu.aria.label" })}
                         onClick={openNavigation}
                         edge="start"
                     >
                         <MenuIcon />
                     </IconButton>
                 </Box>
-                <Logo alt="Estuary" width={120} />
+                <Logo alt={intl.formatMessage({ id: "company" })} width={120} />
 
                 {/* <Paper
                     variant="outlined"

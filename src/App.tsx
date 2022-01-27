@@ -4,8 +4,8 @@ import NewCaptureModal from 'components/endpointCreation/NewCaptureModal';
 import Home from 'pages/Home';
 import React, { Suspense } from 'react';
 import { Route, Routes } from 'react-router';
+import Topbar from './components/header/Topbar';
 import Navigation from './components/navigation/Navigation';
-import Topbar from './components/Topbar';
 import Error from './pages/Error';
 
 const Admin = React.lazy(() => import('./pages/Admin'));
