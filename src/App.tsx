@@ -11,7 +11,6 @@ import Topbar from './components/header/Topbar';
 import Navigation from './components/navigation/Navigation';
 import Error from './pages/Error';
 
-
 const Admin = React.lazy(() => import('./pages/Admin'));
 const Capture = React.lazy(() => import('./pages/Captures'));
 const Collections = React.lazy(() => import('./pages/Collections'));
@@ -34,7 +33,7 @@ const App: React.FC = () => {
         setNavigationOpen(!navigationOpen);
     };
 
-    let gridSettings = {
+    const gridSettings = {
         display: 'grid',
         gridTemplateRows: 'auto 1fr',
         gridTemplateColumns: `${navWidth}px auto`,
@@ -48,6 +47,7 @@ const App: React.FC = () => {
                 <Box sx={{ gridArea: 'header' }}>
                     <Topbar
                         title="Estuary Global Actions"
+                        isLoggedIn={true}
                         isNavigationOpen={navigationOpen}
                         onNavigationToggle={toggleNavigationDrawer}
                     />
@@ -76,6 +76,10 @@ const App: React.FC = () => {
     return (
         <Suspense fallback={<Skeleton animation="wave" />}>
             <Routes>
+                {
+                    // TODO - do we need the default path to use a "redirector"/"landing" page kind of thing?
+                }
+                <Route path="" element={<Login />} />
                 <Route path="login/*">
                     <Route path="" element={<Login />} />
                     <Route path="help" element={<LoginHelp />} />
@@ -83,21 +87,12 @@ const App: React.FC = () => {
                 <Route element={<Layout />}>
                     <Route path="/dashboard" element={<Home />} />
                     <Route path="/app">
-                        <Route
-                            path="collections"
-                            element={<Collections />}
-                        />
+                        <Route path="collections" element={<Collections />} />
                         <Route path="captures" element={<Capture />}>
-                            <Route
-                                path="new"
-                                element={<NewCaptureModal />}
-                            />
+                            <Route path="new" element={<NewCaptureModal />} />
                         </Route>
                         <Route path="derivations" element={<Error />} />
-                        <Route
-                            path="materializations"
-                            element={<Error />}
-                        />
+                        <Route path="materializations" element={<Error />} />
                         <Route path="admin/*" element={<Admin />}>
                             <Route path="logs" element={<Logs />} />
                             <Route path="alerts" element={<Alerts />} />

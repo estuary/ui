@@ -1,16 +1,17 @@
 import { useTheme } from '@mui/material';
 import Box from '@mui/material/Box';
-import PropTypes from 'prop-types';
+import { useIntl } from 'react-intl';
 import logoDark from '../../images/dark/logo-estuary.png';
 import logoLight from '../../images/light/logo-estuary.png';
 
-const LogoProps = {
-    alt: PropTypes.string.isRequired,
-    width: PropTypes.number.isRequired,
+type LogoProps = {
+    width: number;
 };
 
-const Logo = (props: PropTypes.InferProps<typeof LogoProps>) => {
+const Logo = (props: LogoProps) => {
+    const intl = useIntl();
     const theme = useTheme();
+
     return (
         <Box
             sx={{
@@ -20,7 +21,7 @@ const Logo = (props: PropTypes.InferProps<typeof LogoProps>) => {
         >
             <img
                 src={theme.palette.mode === 'dark' ? logoDark : logoLight}
-                alt={props.alt}
+                alt={intl.formatMessage({ id: 'company' })}
                 width={props.width}
             />
         </Box>

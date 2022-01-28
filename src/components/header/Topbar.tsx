@@ -8,17 +8,18 @@ import HelpMenu from '../help/HelpMenu';
 import Logo from '../navigation/Logo';
 
 type TopbarProps = {
+    isLoggedIn: boolean;
     isNavigationOpen: boolean;
     onNavigationToggle: Function;
     title: string;
 };
 
-const Topbar: React.FC<TopbarProps> = ({ onNavigationToggle }) => {
+const Topbar: React.FC<TopbarProps> = (props: TopbarProps) => {
     const intl = useIntl();
     const theme = useTheme();
 
     const openNavigation = () => {
-        onNavigationToggle(true);
+        props.onNavigationToggle(true);
     };
 
     return (
@@ -36,59 +37,48 @@ const Topbar: React.FC<TopbarProps> = ({ onNavigationToggle }) => {
         >
             <Toolbar
                 sx={{
+                    justifyContent: 'center',
                     px: 1,
-                    justifyContent: 'space-between',
                 }}
             >
+                {props.isLoggedIn ? (
+                    <Box
+                        sx={{
+                            mr: 1,
+                        }}
+                    >
+                        <IconButton
+                            aria-label={intl.formatMessage({
+                                id: 'header.navigationMenu.aria.label',
+                            })}
+                            onClick={openNavigation}
+                            edge="start"
+                        >
+                            <MenuIcon />
+                        </IconButton>
+                    </Box>
+                ) : null}
+
                 <Box
                     sx={{
-                        mr: 1,
+                        ml: 'auto',
                     }}
                 >
-                    <IconButton
-                        aria-label={intl.formatMessage({ id: "header.navigationMenu.aria.label" })}
-                        onClick={openNavigation}
-                        edge="start"
-                    >
-                        <MenuIcon />
-                    </IconButton>
+                    <Logo width={120} />
                 </Box>
-                <Logo alt={intl.formatMessage({ id: "company" })} width={120} />
 
-                {/* <Paper
-                    variant="outlined"
+                <Stack
+                    direction="row"
+                    spacing={0}
                     sx={{
-                        mr: 2,
+                        ml: 'auto',
                     }}
                 >
-                    <InputBase
-                        sx={{ flex: 1 }}
-                        placeholder="Search everything"
-                        inputProps={{ 'aria-label': 'Global search' }}
-                    />
-                    <IconButton
-                        type="submit"
-                        sx={{ p: '10px' }}
-                        aria-label="search"
-                    >
-                        <SearchIcon />
-                    </IconButton>
-                </Paper> */}
-
-                <Stack direction="row" spacing={2}>
-                    {/* <IconButton aria-label="Open alerts panel">
-                        <Badge
-                            badgeContent={0}
-                            variant="dot"
-                            overlap="circular"
-                            color="info"
-                        >
-                            <NotificationsIcon />
-                        </Badge>
-                    </IconButton> */}
-                    <IconButton aria-label='Open account panel'>
-                        <AccountCircleIcon />
-                    </IconButton>
+                    {props.isLoggedIn ? (
+                        <IconButton aria-label="Open account panel">
+                            <AccountCircleIcon />
+                        </IconButton>
+                    ) : null}
                     <HelpMenu />
                 </Stack>
             </Toolbar>
