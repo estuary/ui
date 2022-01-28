@@ -1,11 +1,14 @@
-import HelpIcon from '@mui/icons-material/Help';
-import { IconButton } from '@mui/material';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import ExternalLink from 'components/shared/ExternalLink';
-import React from 'react';
+import { IconButton, Menu } from '@mui/material';
+import React, { ReactNode } from 'react';
 
-function HelpMenu() {
+type IconMenuProps = {
+    ariaLabel: string;
+    icon: ReactNode;
+    identifier: string;
+    children: ReactNode;
+};
+
+const IconMenu = (props: IconMenuProps) => {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     const handleClick = (event: any) => {
@@ -15,21 +18,24 @@ function HelpMenu() {
         setAnchorEl(null);
     };
 
+    const id = `${props.identifier}-button`;
+    const controls = `${props.identifier}-menu`;
+
     return (
         <>
             <IconButton
-                aria-label="Open help"
-                id="help-button"
-                aria-controls="help-menu"
+                aria-label={props.ariaLabel}
+                id={id}
+                aria-controls={controls}
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
                 onClick={handleClick}
             >
-                <HelpIcon />
+                {props.icon}
             </IconButton>
             <Menu
-                id="help-menu"
-                aria-labelledby="help-button"
+                id={controls}
+                aria-labelledby={id}
                 anchorEl={anchorEl}
                 open={open}
                 onClose={handleClose}
@@ -63,24 +69,10 @@ function HelpMenu() {
                     },
                 }}
             >
-                <MenuItem>
-                    <ExternalLink link="https://docs.estuary.dev/">
-                        Flow Docs
-                    </ExternalLink>
-                </MenuItem>
-                <MenuItem>
-                    <ExternalLink link="https://join.slack.com/t/estuary-dev/shared_invite/zt-86nal6yr-VPbv~YfZE9Q~6Zl~gmZdFQ">
-                        Estuary's Slack
-                    </ExternalLink>
-                </MenuItem>
-                <MenuItem>
-                    <ExternalLink link="https://www.estuary.dev/#get-in-touch">
-                        Contact Us
-                    </ExternalLink>
-                </MenuItem>
+                {props.children}
             </Menu>
         </>
     );
-}
+};
 
-export default HelpMenu;
+export default IconMenu;

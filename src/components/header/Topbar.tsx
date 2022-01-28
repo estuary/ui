@@ -1,10 +1,10 @@
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Box, IconButton, Stack, Toolbar } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
 import { useTheme } from '@mui/material/styles';
+import UserMenu from 'components/menus/UserMenu';
 import { useIntl } from 'react-intl';
-import HelpMenu from '../help/HelpMenu';
+import HelpMenu from '../menus/HelpMenu';
 import Logo from '../navigation/Logo';
 
 type TopbarProps = {
@@ -74,11 +74,7 @@ const Topbar: React.FC<TopbarProps> = (props: TopbarProps) => {
                         ml: 'auto',
                     }}
                 >
-                    {props.isLoggedIn ? (
-                        <IconButton aria-label="Open account panel">
-                            <AccountCircleIcon />
-                        </IconButton>
-                    ) : null}
+                    {props.isLoggedIn ? <UserMenu /> : null}
                     <HelpMenu />
                 </Stack>
             </Toolbar>
