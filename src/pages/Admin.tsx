@@ -6,7 +6,9 @@ import { Outlet } from 'react-router-dom';
 const Admin: React.FC = () => {
     return (
         <PageContainer>
-            <Typography>Admin</Typography>
+            <Typography>
+                <FormattedMessage id="admin.header" />
+            </Typography>
             <Box>
                 <Box
                     sx={{
