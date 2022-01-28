@@ -46,8 +46,6 @@ const App: React.FC = () => {
             <Box sx={isBelowMd ? null : gridSettings}>
                 <Box sx={{ gridArea: 'header' }}>
                     <Topbar
-                        title="Estuary Global Actions"
-                        isLoggedIn={true}
                         isNavigationOpen={navigationOpen}
                         onNavigationToggle={toggleNavigationDrawer}
                     />

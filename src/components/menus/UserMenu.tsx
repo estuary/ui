@@ -1,10 +1,18 @@
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import Logout from '@mui/icons-material/Logout';
+import { Avatar } from '@mui/material';
+import Divider from '@mui/material/Divider';
+import ListItemIcon from '@mui/material/ListItemIcon';
 import MenuItem from '@mui/material/MenuItem';
 import { useAuth } from 'auth/Context';
 import { useNavigate } from 'react-router-dom';
 import IconMenu from './IconMenu';
 
-const UserMenu = () => {
+type UserMenuProps = {
+    userName: string;
+};
+
+const UserMenu = (props: UserMenuProps) => {
     const auth = useAuth();
     const navigate = useNavigate();
 
@@ -18,16 +26,27 @@ const UserMenu = () => {
         <>
             <IconMenu
                 ariaLabel="Open account menu"
-                icon={<AccountCircleIcon />}
+                icon={<Avatar>{props.userName.charAt(0)}</Avatar>}
                 identifier="account-menu"
+                tooltip="Account Settings"
             >
                 <>
+                    <MenuItem>
+                        <ListItemIcon>
+                            <AccountCircleIcon fontSize="small" />
+                        </ListItemIcon>
+                        {props.userName}
+                    </MenuItem>
+                    <Divider />
                     <MenuItem
                         onClick={() => {
                             handleClick();
                         }}
                     >
-                        Log Out
+                        <ListItemIcon>
+                            <Logout fontSize="small" />
+                        </ListItemIcon>
+                        Logout
                     </MenuItem>
                 </>
             </IconMenu>

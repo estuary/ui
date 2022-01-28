@@ -1,4 +1,4 @@
-import { IconButton, Menu } from '@mui/material';
+import { IconButton, Menu, Tooltip } from '@mui/material';
 import React, { ReactNode } from 'react';
 
 type IconMenuProps = {
@@ -6,6 +6,7 @@ type IconMenuProps = {
     icon: ReactNode;
     identifier: string;
     children: ReactNode;
+    tooltip: string;
 };
 
 const IconMenu = (props: IconMenuProps) => {
@@ -23,16 +24,18 @@ const IconMenu = (props: IconMenuProps) => {
 
     return (
         <>
-            <IconButton
-                aria-label={props.ariaLabel}
-                id={id}
-                aria-controls={controls}
-                aria-haspopup="true"
-                aria-expanded={open ? 'true' : undefined}
-                onClick={handleClick}
-            >
-                {props.icon}
-            </IconButton>
+            <Tooltip title={props.tooltip}>
+                <IconButton
+                    aria-label={props.ariaLabel}
+                    id={id}
+                    aria-controls={controls}
+                    aria-haspopup="true"
+                    aria-expanded={open ? 'true' : undefined}
+                    onClick={handleClick}
+                >
+                    {props.icon}
+                </IconButton>
+            </Tooltip>
             <Menu
                 id={controls}
                 aria-labelledby={id}

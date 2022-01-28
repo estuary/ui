@@ -9,32 +9,30 @@ import {
 } from '@mui/material';
 import { useAuth } from 'auth/Context';
 import Topbar from 'components/header/Topbar';
+import { useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 
 const Login: React.FC = () => {
-    let navigate = useNavigate();
-    let location = useLocation() as any;
-    let auth = useAuth();
+    const navigate = useNavigate();
+    const location = useLocation() as any;
+    const auth = useAuth();
 
-    let from = location.state?.from?.pathname || '/';
+    const [userName, setUserName] = useState('');
 
-    function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    const from = location.state?.from?.pathname || '/';
+
+    const handleChange = (event: any) => {
+        setUserName(event.target.value);
+    };
+
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        let formData = new FormData(event.currentTarget);
-        let username = formData.get('username') as string;
-
-        auth.signin(username, () => {
-            // Send them back to the page they tried to visit when they were
-            // redirected to the login page. Use { replace: true } so we don't create
-            // another entry in the history stack for the login page.  This means that
-            // when they get to the protected page and click the back button, they
-            // won't end up back on the login page, which is also really nice for the
-            // user experience.
+        auth.signin(userName, () => {
             const navigateTo = from === '/' ? '/dashboard' : from;
             navigate(navigateTo, { replace: true });
         });
-    }
+    };
 
     return (
         <Grid
@@ -47,12 +45,7 @@ const Login: React.FC = () => {
                 height: '100vh',
             }}
         >
-            <Topbar
-                title="Estuary Global Actions"
-                isLoggedIn={false}
-                isNavigationOpen={false}
-                onNavigationToggle={() => {}}
-            />
+            <Topbar isNavigationOpen={false} onNavigationToggle={() => {}} />
             <Grid item xs={3}>
                 <Card elevation={24} sx={{ maxWidth: 400 }}>
                     <CardContent>
@@ -66,21 +59,25 @@ const Login: React.FC = () => {
                         </Typography>
                     </CardContent>
                     <CardContent>
-                        You can type anything you want - this isn't a real login
-                        form.
+                        This isn't a real login form. Whatever username you
+                        enter will be used in the UI.
                     </CardContent>
                     <CardActions sx={{ justifyContent: 'center' }}>
                         <form onSubmit={handleSubmit}>
                             <TextField
                                 id="userName"
                                 label="User Name"
+                                required
                                 fullWidth
+                                value={userName}
+                                onChange={handleChange}
                             />
                             <TextField
                                 id="password"
                                 label="Password"
-                                fullWidth
                                 type="password"
+                                required
+                                fullWidth
                             />
                             <Button variant="contained" type="submit">
                                 Login

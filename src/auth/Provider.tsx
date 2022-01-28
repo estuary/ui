@@ -1,6 +1,6 @@
-import React from "react";
-import AuthContext from "./Context";
-import { fakeAuthProvider } from "./fakeAuth";
+import React from 'react';
+import AuthContext from './Context';
+import { fakeAuthProvider } from './fakeAuth';
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     let [user, setUser] = React.useState<any>(null);
@@ -21,7 +21,9 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     let value = { user, signin, signout };
 
-    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
+    return (
+        <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+    );
+};
 
 export default AuthProvider;

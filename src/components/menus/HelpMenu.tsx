@@ -10,6 +10,7 @@ function HelpMenu() {
                 ariaLabel="Open help"
                 icon={<HelpIcon />}
                 identifier="help-menu"
+                tooltip="Help Links"
             >
                 <>
                     <MenuItem>

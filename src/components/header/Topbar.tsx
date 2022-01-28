@@ -2,21 +2,21 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { Box, IconButton, Stack, Toolbar } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
 import { useTheme } from '@mui/material/styles';
+import { useAuth } from 'auth/Context';
 import UserMenu from 'components/menus/UserMenu';
 import { useIntl } from 'react-intl';
 import HelpMenu from '../menus/HelpMenu';
 import Logo from '../navigation/Logo';
 
 type TopbarProps = {
-    isLoggedIn: boolean;
     isNavigationOpen: boolean;
     onNavigationToggle: Function;
-    title: string;
 };
 
 const Topbar: React.FC<TopbarProps> = (props: TopbarProps) => {
     const intl = useIntl();
     const theme = useTheme();
+    const auth = useAuth();
 
     const openNavigation = () => {
         props.onNavigationToggle(true);
@@ -41,7 +41,7 @@ const Topbar: React.FC<TopbarProps> = (props: TopbarProps) => {
                     px: 1,
                 }}
             >
-                {props.isLoggedIn ? (
+                {auth.user ? (
                     <Box
                         sx={{
                             mr: 1,
@@ -74,8 +74,8 @@ const Topbar: React.FC<TopbarProps> = (props: TopbarProps) => {
                         ml: 'auto',
                     }}
                 >
-                    {props.isLoggedIn ? <UserMenu /> : null}
                     <HelpMenu />
+                    {auth.user ? <UserMenu userName={auth.user} /> : null}
                 </Stack>
             </Toolbar>
         </MuiAppBar>

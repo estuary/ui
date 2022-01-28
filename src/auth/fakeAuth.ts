@@ -1,6 +1,3 @@
-/**
- * This represents some generic auth provider API, like Firebase.
- */
 const fakeAuthProvider = {
   isAuthenticated: false,
   signin(callback: VoidFunction) {
