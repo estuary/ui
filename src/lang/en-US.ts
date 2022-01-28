@@ -30,6 +30,9 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     "login.main.message": `This isn't a real login form. Whatever username you enter will be used in the UI.`,
     "login.help.message": `If you need help logging in`,
 
+    //Login Help Page
+    "loginHelp.header": `Login Help`,
+
     // Capture creation modal
     "captureCreation.ctas.test.config": `Test Capture`,
     "captureCreation.heading": `New Capture`,

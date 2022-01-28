@@ -1,9 +1,10 @@
 import PageContainer from 'components/shared/PageContainer';
+import { FormattedMessage } from 'react-intl';
 
 const LoginHelp: React.FC = () => {
     return (
         <PageContainer>
-            Login Help
+            <FormattedMessage id="loginHelp.header" />
         </PageContainer>
     );
 };
