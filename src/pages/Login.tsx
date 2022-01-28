@@ -10,12 +10,14 @@ import {
 import { useAuth } from 'auth/Context';
 import Topbar from 'components/header/Topbar';
 import { useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 
 const Login: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation() as any;
     const auth = useAuth();
+    const intl = useIntl();
 
     const [userName, setUserName] = useState('');
 
@@ -55,18 +57,19 @@ const Login: React.FC = () => {
                             component="h2"
                             sx={{ textAlign: 'center', paddingTop: '1rem' }}
                         >
-                            Control Plane
+                            <FormattedMessage id="productName" />
                         </Typography>
                     </CardContent>
                     <CardContent>
-                        This isn't a real login form. Whatever username you
-                        enter will be used in the UI.
+                        <FormattedMessage id="login.main.message" />
                     </CardContent>
                     <CardActions sx={{ justifyContent: 'center' }}>
                         <form onSubmit={handleSubmit}>
                             <TextField
                                 id="userName"
-                                label="User Name"
+                                label={intl.formatMessage({
+                                    id: 'username.label',
+                                })}
                                 required
                                 fullWidth
                                 value={userName}
@@ -74,20 +77,24 @@ const Login: React.FC = () => {
                             />
                             <TextField
                                 id="password"
-                                label="Password"
+                                label={intl.formatMessage({
+                                    id: 'password.label',
+                                })}
                                 type="password"
                                 required
                                 fullWidth
                             />
                             <Button variant="contained" type="submit">
-                                Login
+                                <FormattedMessage id="cta.login" />
                             </Button>
                         </form>
                     </CardActions>
                     <CardContent>
                         <Typography variant="caption" color="initial">
-                            If you need help logging in{' '}
-                            <NavLink to="/login/help">Click Here</NavLink>
+                            <FormattedMessage id="login.help.message" />
+                            <NavLink to="/login/help">
+                                <FormattedMessage id="cta.clickHere" />
+                            </NavLink>
                         </Typography>
                     </CardContent>
                 </Card>

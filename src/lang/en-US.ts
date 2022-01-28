@@ -3,6 +3,7 @@ import { ResolvedIntlConfig } from "react-intl/src/types";
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     // Common stuff
     "company": `Estuary`,
+    "productName": `Control Plane`,
     "common.loading": `Loading...`,
     "common.errors.heading": `Error`,
     "common.errors.source.missing": `No sources found.`,
@@ -15,14 +16,19 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     "cta.cancel": `Cancel`,
     "cta.delete": `Delete`,
     "cta.download": `Download`,
+    "cta.login": `Login`,
+    "cta.clickHere": `click here`,
 
     // Common form stuff
     "forms.validation.failure.heading": `Form failed validation`,
     "capturesource.label": `Source type`,
     "capturesource.fetch.failed": `Failed to fetch source types`,
+    "username.label": `User Name`,
+    "password.label": `Password`,
 
     // Login Page Stuff
-    "login.main.message": `Login`,
+    "login.main.message": `This isn't a real login form. Whatever username you enter will be used in the UI.`,
+    "login.help.message": `If you need help logging in`,
 
     // Capture creation modal
     "captureCreation.ctas.test.config": `Test Capture`,
