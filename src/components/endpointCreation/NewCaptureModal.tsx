@@ -1,7 +1,7 @@
 import { createAjv } from '@jsonforms/core';
 import {
     materialCells,
-    materialRenderers
+    materialRenderers,
 } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import Editor from '@monaco-editor/react';
@@ -31,8 +31,7 @@ import {
     Stepper,
     Toolbar,
     Typography,
-    useMediaQuery,
-    useTheme
+    useTheme,
 } from '@mui/material';
 import { StyledEngineProvider } from '@mui/material/styles';
 import axios from 'axios';
@@ -68,7 +67,6 @@ function NewCaptureModal(
     const intl = useIntl();
 
     const theme = useTheme();
-    const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
     const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(
         null
@@ -105,8 +103,8 @@ function NewCaptureModal(
     const [newCaptureDetailsFormErrors, setNewCaptureDetailsFormErrors] =
         useState([]);
 
-    const [newCaptureFormData, setNewCaptureFormData] = useState({});
-    const [newCaptureFormErrors, setNewCaptureFormErrors] = useState([]);
+    const [newCaptureFormData] = useState({});
+    const [newCaptureFormErrors] = useState([]);
 
     const [showValidation, setShowValidation] = useState(false);
     const [formSubmitting, setFormSubmitting] = useState(false);
@@ -158,10 +156,10 @@ function NewCaptureModal(
         setSearchParams(hasKey ? { sourcetype: key } : {});
     };
 
-    const formChanged = ({ data, errors }: { data: any; errors: any }) => {
-        setNewCaptureFormData(data);
-        setNewCaptureFormErrors(errors);
-    };
+    // const formChanged = ({ data, errors }: { data: any; errors: any }) => {
+    //     setNewCaptureFormData(data);
+    //     setNewCaptureFormErrors(errors);
+    // };
 
     const typeNameChanged = ({ data, errors }: { data: any; errors: any }) => {
         setNewCaptureDetailsFormData(data);
@@ -236,25 +234,32 @@ function NewCaptureModal(
                 elements: [
                     {
                         type: 'Control',
-                        label: intl.formatMessage({ id: "captureCreation.tenant.label" })
-                        ,
+                        label: intl.formatMessage({
+                            id: 'captureCreation.tenant.label',
+                        }),
                         scope: '#/properties/tenantName',
                     },
                     {
                         type: 'Control',
-                        label: intl.formatMessage({ id: "captureCreation.name.label" }),
+                        label: intl.formatMessage({
+                            id: 'captureCreation.name.label',
+                        }),
                         scope: '#/properties/captureName',
                     },
                     {
                         type: 'Control',
-                        label: intl.formatMessage({ id: "captureCreation.source.label" }),
+                        label: intl.formatMessage({
+                            id: 'captureCreation.source.label',
+                        }),
                         scope: '#/properties/sourceType',
                     },
                 ],
             },
             {
                 type: 'Control',
-                label: intl.formatMessage({ id: "captureCreation.image.label" }),
+                label: intl.formatMessage({
+                    id: 'captureCreation.image.label',
+                }),
                 scope: '#/properties/sourceImage',
                 rule: {
                     effect: 'SHOW',
@@ -271,7 +276,9 @@ function NewCaptureModal(
         if (error !== null) {
             return (
                 <Alert severity="error">
-                    <AlertTitle><FormattedMessage id='common.errors.heading' /></AlertTitle>
+                    <AlertTitle>
+                        <FormattedMessage id="common.errors.heading" />
+                    </AlertTitle>
                     {error}
                 </Alert>
             );
@@ -290,27 +297,25 @@ function NewCaptureModal(
                             </Typography>
                             {schema.documentationUrl ? (
                                 <ExternalLink link={schema.documentationUrl}>
-                                    <FormattedMessage id='captureCreation.config.source.doclink' />
+                                    <FormattedMessage id="captureCreation.config.source.doclink" />
                                 </ExternalLink>
                             ) : null}
                         </Toolbar>
                     </AppBar>
                     <Divider />
                     <StyledEngineProvider injectFirst>
-                        <JsonForms
-                            schema={schema.connectionSpecification}
-                            data={newCaptureFormData}
-                            renderers={renderers}
-                            cells={materialCells}
-                            config={formOptions}
-                            readonly={formSubmitting}
-                            ajv={handleDefaultsAjv}
-                            validationMode={
-                                showValidation
-                                    ? 'ValidateAndShow'
-                                    : 'ValidateAndHide'
+                        <Editor
+                            height="350px"
+                            defaultLanguage="json"
+                            theme={
+                                theme.palette.mode === 'light'
+                                    ? 'vs'
+                                    : 'vs-dark'
                             }
-                            onChange={formChanged}
+                            defaultValue={JSON.stringify(
+                                schema.connectionSpecification
+                            )}
+                            onMount={handleEditorDidMount}
                         />
                     </StyledEngineProvider>
                 </ErrorBoundary>
@@ -350,7 +355,7 @@ function NewCaptureModal(
                 <Box sx={{ width: '100%' }}>
                     <Alert severity="error">
                         <AlertTitle>
-                            <FormattedMessage id='captureCreation.config.testing.failed' />
+                            <FormattedMessage id="captureCreation.config.testing.failed" />
                         </AlertTitle>
                         <Typography variant="subtitle1">
                             {formSubmitError.message}
@@ -370,8 +375,8 @@ function NewCaptureModal(
                 open
                 onClose={handleClose}
                 scroll="paper"
-                fullScreen={fullScreen}
-                fullWidth={!fullScreen}
+                fullScreen={true}
+                fullWidth={true}
                 maxWidth={'lg'}
                 sx={{
                     '.MuiDialog-container': {
@@ -381,7 +386,7 @@ function NewCaptureModal(
                 aria-labelledby="new-capture-dialog-title"
             >
                 <DialogTitle id="new-capture-dialog-title">
-                    <FormattedMessage id='captureCreation.heading' />
+                    <FormattedMessage id="captureCreation.heading" />
                     <IconButton
                         aria-label="close"
                         onClick={handleClose}
@@ -405,7 +410,7 @@ function NewCaptureModal(
                                 TransitionProps={{ unmountOnExit: false }}
                             >
                                 <DialogContentText>
-                                    <FormattedMessage id='captureCreation.instructions' />
+                                    <FormattedMessage id="captureCreation.instructions" />
                                 </DialogContentText>
 
                                 <form id="newCaptureForm">
@@ -477,7 +482,7 @@ function NewCaptureModal(
                                             ml: 2,
                                         }}
                                     >
-                                        <FormattedMessage id='captureCreation.config.testing' />
+                                        <FormattedMessage id="captureCreation.config.testing" />
                                     </Typography>
                                 </Box>
                             </StepContent>
@@ -486,12 +491,12 @@ function NewCaptureModal(
                             <StepLabel>Review</StepLabel>
                             <StepContent>
                                 <DialogContentText>
-                                    <FormattedMessage id='captureCreation.finalReview.instructions' />
+                                    <FormattedMessage id="captureCreation.finalReview.instructions" />
                                 </DialogContentText>
                                 <Paper variant="outlined">
                                     {catalogResponse &&
-                                        catalogResponse.data &&
-                                        catalogResponse.data.data ? (
+                                    catalogResponse.data &&
+                                    catalogResponse.data.data ? (
                                         <Editor
                                             height="350px"
                                             defaultLanguage="json"
@@ -507,7 +512,7 @@ function NewCaptureModal(
                                             onMount={handleEditorDidMount}
                                         />
                                     ) : (
-                                        <FormattedMessage id='common.loading' />
+                                        <FormattedMessage id="common.loading" />
                                     )}
                                 </Paper>
                             </StepContent>
@@ -523,7 +528,7 @@ function NewCaptureModal(
                                 size="large"
                                 color="error"
                             >
-                                <FormattedMessage id='cta.delete' />
+                                <FormattedMessage id="cta.delete" />
                             </Button>
                             <Button
                                 onClick={handleSave}
@@ -532,7 +537,7 @@ function NewCaptureModal(
                                 variant="contained"
                                 disableElevation
                             >
-                                <FormattedMessage id='cta.download' />
+                                <FormattedMessage id="cta.download" />
                             </Button>
                         </>
                     ) : (
@@ -542,7 +547,7 @@ function NewCaptureModal(
                                 size="large"
                                 color="error"
                             >
-                                <FormattedMessage id='cta.cancel' />
+                                <FormattedMessage id="cta.cancel" />
                             </Button>
                             <Button
                                 onClick={handleTest}
@@ -554,7 +559,7 @@ function NewCaptureModal(
                                 variant="contained"
                                 disableElevation
                             >
-                                <FormattedMessage id='captureCreation.ctas.test.config' />
+                                <FormattedMessage id="captureCreation.ctas.test.config" />
                             </Button>
                         </>
                     )}
