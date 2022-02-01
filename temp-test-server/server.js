@@ -595,10 +595,10 @@ app.get('/capture/', (req, res) => {
 
     // This would get populated based on what tenants the user has access to.
     schema.properties.tenantName.enum = [
-        'acmeCo/',
-        'estuary/',
-        'examples/',
-        'test/',
+        'acmeCo',
+        'estuary',
+        'examples',
+        'test',
     ];
 
     estuarySources.forEach((source) => {
@@ -664,7 +664,7 @@ app.post('/capture/test', (req, res) => {
             }
         })
         .finally(() => {
-            cleanUpTmp();
+            //cleanUpTmp();
         });
 });
 

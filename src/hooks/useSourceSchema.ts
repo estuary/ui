@@ -23,7 +23,7 @@ const useSourceSchema = (
         axios.get(`http://localhost:3001/source/path/${encodeURIComponent(key)}`).then(
             (response) => {
                 setIsFetching(false);
-                setSchema(response.data.config);
+                setSchema(response.data.specification.spec);
                 setImage(response.data.details.image);
             },
             (error) => {
