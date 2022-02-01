@@ -24,7 +24,6 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     "capturesource.label": `Source type`,
     "capturesource.fetch.failed": `Failed to fetch source types`,
     "username.label": `User Name`,
-    "password.label": `Password`,
 
     // Login Page Stuff
     "login.main.message": `This isn't a real login form. Whatever username you enter will be used in the UI.`,

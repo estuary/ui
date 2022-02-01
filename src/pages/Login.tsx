@@ -75,15 +75,6 @@ const Login: React.FC = () => {
                                 value={userName}
                                 onChange={handleChange}
                             />
-                            <TextField
-                                id="password"
-                                label={intl.formatMessage({
-                                    id: 'password.label',
-                                })}
-                                type="password"
-                                required
-                                fullWidth
-                            />
                             <Button variant="contained" type="submit">
                                 <FormattedMessage id="cta.login" />
                             </Button>

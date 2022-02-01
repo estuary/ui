@@ -1,7 +1,7 @@
 import { createAjv } from '@jsonforms/core';
 import {
     materialCells,
-    materialRenderers
+    materialRenderers,
 } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import Editor from '@monaco-editor/react';
@@ -27,12 +27,11 @@ import {
     Stack,
     Step,
     StepContent,
-    StepLabel,
     Stepper,
     Toolbar,
     Typography,
     useMediaQuery,
-    useTheme
+    useTheme,
 } from '@mui/material';
 import { StyledEngineProvider } from '@mui/material/styles';
 import axios from 'axios';
@@ -236,33 +235,26 @@ function NewCaptureModal(
                 elements: [
                     {
                         type: 'Control',
-                        label: intl.formatMessage({ id: "captureCreation.tenant.label" })
-                        ,
+                        label: intl.formatMessage({
+                            id: 'captureCreation.tenant.label',
+                        }),
                         scope: '#/properties/tenantName',
                     },
                     {
                         type: 'Control',
-                        label: intl.formatMessage({ id: "captureCreation.name.label" }),
+                        label: intl.formatMessage({
+                            id: 'captureCreation.name.label',
+                        }),
                         scope: '#/properties/captureName',
                     },
                     {
                         type: 'Control',
-                        label: intl.formatMessage({ id: "captureCreation.source.label" }),
+                        label: intl.formatMessage({
+                            id: 'captureCreation.source.label',
+                        }),
                         scope: '#/properties/sourceType',
                     },
                 ],
-            },
-            {
-                type: 'Control',
-                label: intl.formatMessage({ id: "captureCreation.image.label" }),
-                scope: '#/properties/sourceImage',
-                rule: {
-                    effect: 'SHOW',
-                    condition: {
-                        scope: '#/properties/sourceType',
-                        schema: { const: 'custom' },
-                    },
-                },
             },
         ],
     };
@@ -271,7 +263,9 @@ function NewCaptureModal(
         if (error !== null) {
             return (
                 <Alert severity="error">
-                    <AlertTitle><FormattedMessage id='common.errors.heading' /></AlertTitle>
+                    <AlertTitle>
+                        <FormattedMessage id="common.errors.heading" />
+                    </AlertTitle>
                     {error}
                 </Alert>
             );
@@ -290,7 +284,7 @@ function NewCaptureModal(
                             </Typography>
                             {schema.documentationUrl ? (
                                 <ExternalLink link={schema.documentationUrl}>
-                                    <FormattedMessage id='captureCreation.config.source.doclink' />
+                                    <FormattedMessage id="captureCreation.config.source.doclink" />
                                 </ExternalLink>
                             ) : null}
                         </Toolbar>
@@ -350,7 +344,7 @@ function NewCaptureModal(
                 <Box sx={{ width: '100%' }}>
                     <Alert severity="error">
                         <AlertTitle>
-                            <FormattedMessage id='captureCreation.config.testing.failed' />
+                            <FormattedMessage id="captureCreation.config.testing.failed" />
                         </AlertTitle>
                         <Typography variant="subtitle1">
                             {formSubmitError.message}
@@ -381,7 +375,7 @@ function NewCaptureModal(
                 aria-labelledby="new-capture-dialog-title"
             >
                 <DialogTitle id="new-capture-dialog-title">
-                    <FormattedMessage id='captureCreation.heading' />
+                    <FormattedMessage id="captureCreation.heading" />
                     <IconButton
                         aria-label="close"
                         onClick={handleClose}
@@ -400,12 +394,12 @@ function NewCaptureModal(
                 <DialogContent dividers>
                     <Stepper activeStep={activeStep} orientation="vertical">
                         <Step key={0}>
-                            <StepLabel>Config</StepLabel>
+                            {/* <StepLabel>Config</StepLabel> */}
                             <StepContent
                                 TransitionProps={{ unmountOnExit: false }}
                             >
                                 <DialogContentText>
-                                    <FormattedMessage id='captureCreation.instructions' />
+                                    <FormattedMessage id="captureCreation.instructions" />
                                 </DialogContentText>
 
                                 <form id="newCaptureForm">
@@ -462,7 +456,7 @@ function NewCaptureModal(
                             </StepContent>
                         </Step>
                         <Step key={1}>
-                            <StepLabel>Test</StepLabel>
+                            {/* <StepLabel>Test</StepLabel> */}
                             <StepContent>
                                 <Box
                                     sx={{
@@ -477,21 +471,21 @@ function NewCaptureModal(
                                             ml: 2,
                                         }}
                                     >
-                                        <FormattedMessage id='captureCreation.config.testing' />
+                                        <FormattedMessage id="captureCreation.config.testing" />
                                     </Typography>
                                 </Box>
                             </StepContent>
                         </Step>
                         <Step key={2}>
-                            <StepLabel>Review</StepLabel>
+                            {/* <StepLabel>Review</StepLabel> */}
                             <StepContent>
                                 <DialogContentText>
-                                    <FormattedMessage id='captureCreation.finalReview.instructions' />
+                                    <FormattedMessage id="captureCreation.finalReview.instructions" />
                                 </DialogContentText>
                                 <Paper variant="outlined">
                                     {catalogResponse &&
-                                        catalogResponse.data &&
-                                        catalogResponse.data.data ? (
+                                    catalogResponse.data &&
+                                    catalogResponse.data.data ? (
                                         <Editor
                                             height="350px"
                                             defaultLanguage="json"
@@ -507,7 +501,7 @@ function NewCaptureModal(
                                             onMount={handleEditorDidMount}
                                         />
                                     ) : (
-                                        <FormattedMessage id='common.loading' />
+                                        <FormattedMessage id="common.loading" />
                                     )}
                                 </Paper>
                             </StepContent>
@@ -523,7 +517,7 @@ function NewCaptureModal(
                                 size="large"
                                 color="error"
                             >
-                                <FormattedMessage id='cta.delete' />
+                                <FormattedMessage id="cta.delete" />
                             </Button>
                             <Button
                                 onClick={handleSave}
@@ -532,7 +526,7 @@ function NewCaptureModal(
                                 variant="contained"
                                 disableElevation
                             >
-                                <FormattedMessage id='cta.download' />
+                                <FormattedMessage id="cta.download" />
                             </Button>
                         </>
                     ) : (
@@ -542,7 +536,7 @@ function NewCaptureModal(
                                 size="large"
                                 color="error"
                             >
-                                <FormattedMessage id='cta.cancel' />
+                                <FormattedMessage id="cta.cancel" />
                             </Button>
                             <Button
                                 onClick={handleTest}
@@ -554,7 +548,7 @@ function NewCaptureModal(
                                 variant="contained"
                                 disableElevation
                             >
-                                <FormattedMessage id='captureCreation.ctas.test.config' />
+                                <FormattedMessage id="captureCreation.ctas.test.config" />
                             </Button>
                         </>
                     )}
