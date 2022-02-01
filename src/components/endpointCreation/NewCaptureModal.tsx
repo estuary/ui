@@ -12,7 +12,6 @@ import {
     AppBar,
     Box,
     Button,
-    CircularProgress,
     Dialog,
     DialogActions,
     DialogContent,
@@ -25,10 +24,6 @@ import {
     Paper,
     Skeleton,
     Stack,
-    Step,
-    StepContent,
-    StepLabel,
-    Stepper,
     Toolbar,
     Typography,
     useTheme,
@@ -100,19 +95,12 @@ function NewCaptureModal(
         sourceType: sourceTypeParam ? sourceTypeParam : '',
         sourceImage: image ? image : '',
     });
-    const [newCaptureDetailsFormErrors, setNewCaptureDetailsFormErrors] =
-        useState([]);
 
-    const [newCaptureFormData] = useState({});
-    const [newCaptureFormErrors] = useState([]);
-
-    const [showValidation, setShowValidation] = useState(false);
     const [formSubmitting, setFormSubmitting] = useState(false);
     const [formSubmitError, setFormSubmitError] = useState<{
         message: string;
         errors: any[];
     } | null>(null);
-    const [catalogResponse, setCatalogResponse] = useState({} as any);
 
     const [activeStep, setActiveStep] = useState(0);
 
@@ -120,35 +108,38 @@ function NewCaptureModal(
         navigate('..'); //This is assuming this is a child of the /captures route.
     };
 
+    const getEditorValue = () => {
+        let catalogVal = '';
+
+        if (editorRef && editorRef.current) {
+            catalogVal = editorRef.current.getValue();
+        }
+
+        return catalogVal;
+    };
+
     const handleTest = (event: any) => {
         event.preventDefault();
-        if (
-            newCaptureDetailsFormData === null ||
-            newCaptureDetailsFormErrors.length > 0 ||
-            newCaptureFormErrors.length > 0
-        ) {
-            setShowValidation(true);
-        } else {
-            const formSubmitData = {
-                config: newCaptureFormData,
-                captureName: newCaptureDetailsFormData.captureName,
-                tenantName: newCaptureDetailsFormData.tenantName,
-                sourceImage: newCaptureDetailsFormData.sourceType,
-            };
-            setFormSubmitError(null);
-            setActiveStep(1);
-            setFormSubmitting(true);
-            axios
-                .post('http://localhost:3001/capture/test', formSubmitData)
-                .then((response) => {
-                    setFormSubmitting(false);
-                    setCatalogResponse(response.data);
-                    setActiveStep(2);
-                })
-                .catch((error) => {
-                    errorResponseHandler(error);
-                });
-        }
+        const catalogVal = getEditorValue();
+
+        setFormSubmitting(true);
+
+        const formSubmitData = {
+            config: JSON.parse(catalogVal),
+            captureName: 'postgres/source-documents',
+            tenantName: 'acmeCo',
+            sourceImage: 'ghcr.io/estuary/source-postgres:dev',
+        };
+
+        axios
+            .post('http://localhost:3001/capture/test', formSubmitData)
+            .then((response) => {
+                setFormSubmitting(false);
+                alert('hi :)');
+            })
+            .catch((error) => {
+                errorResponseHandler(error);
+            });
     };
 
     const getSourceDetails = async (key: string) => {
@@ -156,14 +147,9 @@ function NewCaptureModal(
         setSearchParams(hasKey ? { sourcetype: key } : {});
     };
 
-    // const formChanged = ({ data, errors }: { data: any; errors: any }) => {
-    //     setNewCaptureFormData(data);
-    //     setNewCaptureFormErrors(errors);
-    // };
-
     const typeNameChanged = ({ data, errors }: { data: any; errors: any }) => {
         setNewCaptureDetailsFormData(data);
-        setNewCaptureDetailsFormErrors(errors);
+        //setNewCaptureDetailsFormErrors(errors);
 
         if (data.sourceType) {
             if (data.sourceType !== 'custom') {
@@ -188,11 +174,7 @@ function NewCaptureModal(
 
     const handleSave = (event: any) => {
         event.preventDefault();
-        let catalogVal = '';
-
-        if (editorRef && editorRef.current) {
-            catalogVal = editorRef.current.getValue();
-        }
+        const catalogVal = getEditorValue();
 
         setFormSubmitting(true);
 
@@ -235,39 +217,11 @@ function NewCaptureModal(
                     {
                         type: 'Control',
                         label: intl.formatMessage({
-                            id: 'captureCreation.tenant.label',
-                        }),
-                        scope: '#/properties/tenantName',
-                    },
-                    {
-                        type: 'Control',
-                        label: intl.formatMessage({
-                            id: 'captureCreation.name.label',
-                        }),
-                        scope: '#/properties/captureName',
-                    },
-                    {
-                        type: 'Control',
-                        label: intl.formatMessage({
                             id: 'captureCreation.source.label',
                         }),
                         scope: '#/properties/sourceType',
                     },
                 ],
-            },
-            {
-                type: 'Control',
-                label: intl.formatMessage({
-                    id: 'captureCreation.image.label',
-                }),
-                scope: '#/properties/sourceImage',
-                rule: {
-                    effect: 'SHOW',
-                    condition: {
-                        scope: '#/properties/sourceType',
-                        schema: { const: 'custom' },
-                    },
-                },
             },
         ],
     };
@@ -282,7 +236,7 @@ function NewCaptureModal(
                     {error}
                 </Alert>
             );
-        } else if (schema && schema.connectionSpecification !== null) {
+        } else if (schema !== null) {
             return (
                 <ErrorBoundary>
                     <AppBar position="relative" elevation={0} color="default">
@@ -312,9 +266,7 @@ function NewCaptureModal(
                                     ? 'vs'
                                     : 'vs-dark'
                             }
-                            defaultValue={JSON.stringify(
-                                schema.connectionSpecification
-                            )}
+                            defaultValue={JSON.stringify(schema)}
                             onMount={handleEditorDidMount}
                         />
                     </StyledEngineProvider>
@@ -403,121 +355,40 @@ function NewCaptureModal(
                 {errorRendered}
 
                 <DialogContent dividers>
-                    <Stepper activeStep={activeStep} orientation="vertical">
-                        <Step key={0}>
-                            <StepLabel>Config</StepLabel>
-                            <StepContent
-                                TransitionProps={{ unmountOnExit: false }}
-                            >
-                                <DialogContentText>
-                                    <FormattedMessage id="captureCreation.instructions" />
-                                </DialogContentText>
+                    <DialogContentText>
+                        <FormattedMessage id="captureCreation.instructions" />
+                    </DialogContentText>
 
-                                <form id="newCaptureForm">
-                                    <Stack direction="row" spacing={2}>
-                                        {captureSchema.schema !== null ? (
-                                            <JsonForms
-                                                schema={captureSchema.schema}
-                                                uischema={captureUISchema}
-                                                data={newCaptureDetailsFormData}
-                                                renderers={renderers}
-                                                cells={materialCells}
-                                                config={formOptions}
-                                                readonly={formSubmitting}
-                                                ajv={handleDefaultsAjv}
-                                                validationMode={
-                                                    showValidation
-                                                        ? 'ValidateAndShow'
-                                                        : 'ValidateAndHide'
-                                                }
-                                                onChange={typeNameChanged}
-                                            />
-                                        ) : (
-                                            <>
-                                                <Skeleton
-                                                    variant="rectangular"
-                                                    height={40}
-                                                    width={'33%'}
-                                                />
-                                                <Skeleton
-                                                    variant="rectangular"
-                                                    height={40}
-                                                    width={'33%'}
-                                                />
-                                                <Skeleton
-                                                    variant="rectangular"
-                                                    height={40}
-                                                    width={'33%'}
-                                                />
-                                            </>
-                                        )}
-                                    </Stack>
+                    <form id="newCaptureForm">
+                        <Stack direction="row" spacing={2}>
+                            {captureSchema.schema !== null ? (
+                                <JsonForms
+                                    schema={captureSchema.schema}
+                                    uischema={captureUISchema}
+                                    data={newCaptureDetailsFormData}
+                                    renderers={renderers}
+                                    cells={materialCells}
+                                    config={formOptions}
+                                    readonly={formSubmitting}
+                                    ajv={handleDefaultsAjv}
+                                    validationMode="ValidateAndHide"
+                                    onChange={typeNameChanged}
+                                />
+                            ) : (
+                                <>
+                                    <Skeleton
+                                        variant="rectangular"
+                                        height={40}
+                                        width={'33%'}
+                                    />
+                                </>
+                            )}
+                        </Stack>
 
-                                    <Paper
-                                        sx={{ width: '100%' }}
-                                        variant="outlined"
-                                    >
-                                        {isFetching ? (
-                                            <FormLoading />
-                                        ) : (
-                                            jsonFormRendered
-                                        )}
-                                    </Paper>
-                                </form>
-                            </StepContent>
-                        </Step>
-                        <Step key={1}>
-                            <StepLabel>Test</StepLabel>
-                            <StepContent>
-                                <Box
-                                    sx={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                    }}
-                                >
-                                    <CircularProgress />
-                                    <Typography
-                                        variant="caption"
-                                        sx={{
-                                            ml: 2,
-                                        }}
-                                    >
-                                        <FormattedMessage id="captureCreation.config.testing" />
-                                    </Typography>
-                                </Box>
-                            </StepContent>
-                        </Step>
-                        <Step key={2}>
-                            <StepLabel>Review</StepLabel>
-                            <StepContent>
-                                <DialogContentText>
-                                    <FormattedMessage id="captureCreation.finalReview.instructions" />
-                                </DialogContentText>
-                                <Paper variant="outlined">
-                                    {catalogResponse &&
-                                    catalogResponse.data &&
-                                    catalogResponse.data.data ? (
-                                        <Editor
-                                            height="350px"
-                                            defaultLanguage="json"
-                                            theme={
-                                                theme.palette.mode === 'light'
-                                                    ? 'vs'
-                                                    : 'vs-dark'
-                                            }
-                                            defaultValue={JSON.stringify(
-                                                catalogResponse.data.data
-                                            )}
-                                            path={catalogResponse.path}
-                                            onMount={handleEditorDidMount}
-                                        />
-                                    ) : (
-                                        <FormattedMessage id="common.loading" />
-                                    )}
-                                </Paper>
-                            </StepContent>
-                        </Step>
-                    </Stepper>
+                        <Paper sx={{ width: '100%' }} variant="outlined">
+                            {isFetching ? <FormLoading /> : jsonFormRendered}
+                        </Paper>
+                    </form>
                 </DialogContent>
 
                 <DialogActions>
