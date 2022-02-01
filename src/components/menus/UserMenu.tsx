@@ -30,25 +30,23 @@ const UserMenu = (props: UserMenuProps) => {
                 identifier="account-menu"
                 tooltip="Account Settings"
             >
-                <>
-                    <MenuItem>
-                        <ListItemIcon>
-                            <AccountCircleIcon fontSize="small" />
-                        </ListItemIcon>
-                        {props.userName}
-                    </MenuItem>
-                    <Divider />
-                    <MenuItem
-                        onClick={() => {
-                            handleClick();
-                        }}
-                    >
-                        <ListItemIcon>
-                            <Logout fontSize="small" />
-                        </ListItemIcon>
-                        Logout
-                    </MenuItem>
-                </>
+                <MenuItem>
+                    <ListItemIcon>
+                        <AccountCircleIcon fontSize="small" />
+                    </ListItemIcon>
+                    {props.userName}
+                </MenuItem>
+                <Divider />
+                <MenuItem
+                    onClick={() => {
+                        handleClick();
+                    }}
+                >
+                    <ListItemIcon>
+                        <Logout fontSize="small" />
+                    </ListItemIcon>
+                    Logout
+                </MenuItem>
             </IconMenu>
         </>
     );

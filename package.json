@@ -18,6 +18,9 @@
     "dependencies": {
         "@emotion/react": "latest",
         "@emotion/styled": "latest",
+        "@jsonforms/core": "v3.0.0-beta.0",
+        "@jsonforms/material-renderers": "v3.0.0-beta.0",
+        "@jsonforms/react": "v3.0.0-beta.0",
         "@monaco-editor/react": "^4.3.1",
         "@mui/icons-material": "latest",
         "@mui/material": "latest",
@@ -60,14 +63,15 @@
     "browserslist": {
         "production": [
             ">1%",
-            "last 4 versions",
+            "not dead",
             "Firefox ESR",
             "not ie < 11"
         ],
         "development": [
-            "last 2 chrome versions",
-            "last 2 firefox versions",
-            "last 2 edge versions"
+            "last 2 chrome version",
+            "last 2 firefox version",
+            "last 2 edge versions",
+            "last 2 safari version"
         ]
     },
     "repository": {

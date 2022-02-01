@@ -290,10 +290,10 @@ function generatePaths(captureName, capturePathOrType) {
         type = getSourceNameFromPath(capturePathOrType);
     }
 
-    // console.log('Generating paths', {
-    //     captureName,
-    //     type,
-    // });
+    console.log('Generating paths', {
+        captureName,
+        type,
+    });
 
     response.newConfig = `discover-${type}.config.yaml`;
     response.newCatalog = `discover-${type}.flow.yaml`;
@@ -376,8 +376,6 @@ function runDiscover(res, captureName, config, image, paths) {
         flowShell = pty.spawn(`flowctl`, ['discover', `--image=${image}`], {
             cwd: paths.workingDirectory,
         });
-
-        console.log('Whatevs', flowShell);
 
         flowShell.onData((data) => {
             console.log('FlowCTL Responded : ', data);
@@ -524,39 +522,30 @@ app.get('/source/:sourceName', (req, res) => {
 });
 
 app.get('/source/path/:path', (req, res) => {
-    res.json({
-        details: {
-            image: 'ghcr.io/estuary/source-postgres:dev',
-        },
-        config: {
-            captures: {
-                'acmeCo/postgres/source-documents': {
-                    endpoint: {
-                        airbyteSource: {
-                            image: 'ghcr.io/estuary/source-postgres:dev',
-                            config: {
-                                database: 'flow',
-                                host: 'localhost',
-                                password: 'flow',
-                                port: 5432,
-                                user: 'flow',
-                            },
-                        },
-                    },
-                    bindings: [
-                        {
-                            resource: {
-                                namespace: 'public',
-                                stream: 'documents',
-                                syncMode: 'incremental',
-                            },
-                            target: 'acmeCo/documents',
-                        },
-                    ],
-                },
-            },
-        },
-    });
+    const decodedPath = req.params.path;
+    const schema = fetchSchemaWithPath(decodedPath);
+
+    schema
+        .then((schema) => {
+            if (schema && schema.data) {
+                saveSchemaResponse(
+                    schema.image,
+                    getSourceNameFromPath(decodedPath),
+                    Date.now(),
+                    schema.data,
+                    res
+                );
+            } else {
+                hugeFailure(res);
+            }
+        })
+        .catch(() => {
+            res.status(400);
+            res.json({
+                errors: [],
+                message: 'No sources could be found with that name.',
+            });
+        });
 });
 
 //////////////////////////////////////
@@ -569,49 +558,48 @@ app.get('/capture/', (req, res) => {
     let schema = {
         title: 'Capture Details',
         type: 'object',
-        required: ['sourceType'],
-        //required: ['tenantName', 'captureName', 'sourceType'],
+        required: ['tenantName', 'captureName', 'sourceType'],
         properties: {
-            // tenantName: {
-            //     description: 'The tenant in which to create the capture.',
-            //     type: 'string',
-            //     enum: [],
-            // },
-            // captureName: {
-            //     description: 'Name of the capture - must be unique.',
-            //     type: 'string',
-            //     minLength: 1,
-            //     maxLength: 1000,
-            // },
+            tenantName: {
+                description: 'The tenant in which to create the capture.',
+                type: 'string',
+                enum: [],
+            },
+            captureName: {
+                description: 'Name of the capture - must be unique.',
+                type: 'string',
+                minLength: 1,
+                maxLength: 1000,
+            },
             sourceType: {
                 type: 'string',
                 oneOf: [],
             },
-            // sourceImage: {
-            //     description:
-            //         'Image you would like us to pull. SHA256 (do not include the SHA256 prefix) or path (whatever will work with a docker pull command)',
-            //     type: 'string',
-            //     onOf: [
-            //         {
-            //             type: 'string',
-            //             pattern: '^[A-Fa-f0-9]{64}$',
-            //         },
-            //         {
-            //             type: 'string',
-            //             pattern: '^[1]{12}$',
-            //         },
-            //     ],
-            // },
+            sourceImage: {
+                description:
+                    'Image you would like us to pull. SHA256 (do not include the SHA256 prefix) or path (whatever will work with a docker pull command)',
+                type: 'string',
+                onOf: [
+                    {
+                        type: 'string',
+                        pattern: '^[A-Fa-f0-9]{64}$',
+                    },
+                    {
+                        type: 'string',
+                        pattern: '^[1]{12}$',
+                    },
+                ],
+            },
         },
     };
 
     // This would get populated based on what tenants the user has access to.
-    // schema.properties.tenantName.enum = [
-    //     'acmeCo/',
-    //     'estuary/',
-    //     'examples/',
-    //     'test/',
-    // ];
+    schema.properties.tenantName.enum = [
+        'acmeCo/',
+        'estuary/',
+        'examples/',
+        'test/',
+    ];
 
     estuarySources.forEach((source) => {
         const title = removePrefix(source);
@@ -637,9 +625,6 @@ app.post('/capture/test', (req, res) => {
 
     captureCreation(req, res)
         .then((data) => {
-            console.log('  Capture creation worked');
-            console.log('Starting to test');
-
             const errors = [];
 
             const collections = data.data.data.collections;

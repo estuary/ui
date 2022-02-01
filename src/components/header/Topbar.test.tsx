@@ -8,11 +8,7 @@ test('there is a help menu available', () => {
     };
 
     render(
-        <Topbar
-            title="Estuary Global Actions"
-            isNavigationOpen={false}
-            onNavigationToggle={mockNavToggle}
-        />
+        <Topbar isNavigationOpen={false} onNavigationToggle={mockNavToggle} />
     );
 
     expect(screen.queryByLabelText('Open help')).toBeInTheDocument();
