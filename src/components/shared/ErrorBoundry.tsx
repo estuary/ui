@@ -1,3 +1,5 @@
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 import { Component, ErrorInfo, ReactNode } from 'react';
 
 interface Props {
@@ -26,10 +28,12 @@ class ErrorBoundary extends Component<Props, State> {
         if (this.state.hasError) {
             console.log('render failed', this.state);
             return (
-                <h1>
-                    Sorry - there was an error in some UI code. We've logged
-                    some details in the dev console if you want to take a look.
-                </h1>
+                <Alert severity="error">
+                    <AlertTitle>Error</AlertTitle>
+                    Sorry - there was an unexpected error in some UI code. We've
+                    logged some details in the dev console if you want to take a
+                    look.
+                </Alert>
             );
         } else {
             console.log('Render going ahead');
