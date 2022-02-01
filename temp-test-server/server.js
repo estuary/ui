@@ -611,10 +611,10 @@ app.get('/capture/', (req, res) => {
         });
     });
 
-    schema.properties.sourceType.oneOf.push({
-        const: 'custom',
-        title: `I'll provide an image`,
-    });
+    // schema.properties.sourceType.oneOf.push({
+    //     const: 'custom',
+    //     title: `I'll provide an image`,
+    // });
 
     res.status(200);
     res.json(schema);
