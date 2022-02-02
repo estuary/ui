@@ -19,6 +19,11 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     "cta.login": `Login`,
     "cta.clickHere": `click here`,
 
+    // Error Boundry
+    "errorBoundry.title": `Error`,
+    "errorBoundry.message1": `Sorry - there was an unexpected error in some UI code. `,
+    "errorBoundry.message2": `Expand to see more details.`,
+
     // Common form stuff
     "forms.validation.failure.heading": `Form failed validation`,
     "capturesource.label": `Source type`,

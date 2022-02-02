@@ -1,45 +1,68 @@
-import Alert from '@mui/material/Alert';
-import AlertTitle from '@mui/material/AlertTitle';
-import { Component, ErrorInfo, ReactNode } from 'react';
+import { ExpandMore } from '@mui/icons-material';
+import {
+    Alert,
+    AlertTitle,
+    Collapse,
+    Divider,
+    IconButton,
+    Paper,
+} from '@mui/material';
+import React, { ReactNode } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { FormattedMessage } from 'react-intl';
 
-interface Props {
+type ErrorBoundryWrapperProps = {
     children: ReactNode;
-}
+};
 
-interface State {
-    hasError: boolean;
-}
+function ErrorFallback({
+    error,
+    resetErrorBoundary,
+}: {
+    error: any;
+    resetErrorBoundary: any;
+}): any {
+    const [expanded, setExpanded] = React.useState(false);
 
-class ErrorBoundary extends Component<Props, State> {
-    public state: State = {
-        hasError: false,
+    const handleExpandClick = () => {
+        setExpanded(!expanded);
     };
 
-    public static getDerivedStateFromError(_: Error): State {
-        // Update state so the next render will show the fallback UI.
-        return { hasError: true };
-    }
-
-    public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-        console.error('Uncaught error:', error, errorInfo);
-    }
-
-    public render() {
-        if (this.state.hasError) {
-            console.log('render failed', this.state);
-            return (
-                <Alert severity="error">
-                    <AlertTitle>Error</AlertTitle>
-                    Sorry - there was an unexpected error in some UI code. We've
-                    logged some details in the dev console if you want to take a
-                    look.
-                </Alert>
-            );
-        } else {
-            console.log('Render going ahead');
-            return this.props.children;
-        }
-    }
+    return (
+        <Alert severity="error">
+            <AlertTitle>
+                <FormattedMessage id="errorBoundry.title" />
+            </AlertTitle>
+            <FormattedMessage id="errorBoundry.message1" />
+            <FormattedMessage id="errorBoundry.message2" />
+            <IconButton
+                onClick={handleExpandClick}
+                aria-expanded={expanded}
+                aria-label="show more"
+                sx={{
+                    marginRight: 0,
+                    transform: !expanded ? 'rotate(0deg)' : 'rotate(180deg)',
+                    transition: 'all 250ms ease-in-out',
+                }}
+            >
+                <ExpandMore />
+            </IconButton>
+            <Divider />
+            <Collapse in={expanded} timeout="auto" unmountOnExit>
+                <Paper variant="outlined" square>
+                    {error.stack}
+                </Paper>
+            </Collapse>
+        </Alert>
+    );
 }
 
-export default ErrorBoundary;
+function ErrorBoundryWrapper(props: ErrorBoundryWrapperProps) {
+    return (
+        <ErrorBoundary FallbackComponent={ErrorFallback}>
+            {props.children}
+        </ErrorBoundary>
+    );
+}
+
+export default ErrorBoundryWrapper;
