@@ -3,16 +3,14 @@ import { useCallback, useEffect, useState } from 'react';
 
 type SourceSchemaService = {
     isFetching: boolean;
-    schema: any;
+    sourceSchema: any;
     error: any;
     image: any;
     fetchSchema: any;
-}
+};
 
-const useSourceSchema = (
-    key: string
-): SourceSchemaService => {
-    const [schema, setSchema] = useState<object | null>(null);
+const useSourceSchema = (key: string): SourceSchemaService => {
+    const [sourceSchema, setSourceSchema] = useState<object | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [image, setImage] = useState<string | null>(null);
     const [isFetching, setIsFetching] = useState<boolean>(false);
@@ -20,19 +18,46 @@ const useSourceSchema = (
     const fetchSchema = useCallback(async () => {
         setIsFetching(true);
         setError(null);
-        axios.get(`http://localhost:3001/source/path/${encodeURIComponent(key)}`).then(
-            (response) => {
-                setIsFetching(false);
-                setSchema(response.data.specification.spec);
-                setImage(response.data.details.image);
-            },
-            (error) => {
-                setIsFetching(false);
-                setError(
-                    error.response ? error.response.data.message : error.message
-                );
-            }
-        );
+        axios
+            .get(`http://localhost:3001/source/path/${encodeURIComponent(key)}`)
+            .then(
+                async (response: any) => {
+                    setIsFetching(false);
+
+                    try {
+                        const derefSchema = {};
+                        setSourceSchema(derefSchema);
+                        setImage(response.data.details.image);
+
+                        // const dereferencedSchema = await $RefParser.dereference(
+                        //     `http://localhost:3001/source/path/${encodeURIComponent(
+                        //         key
+                        //     )}`,
+                        //     {
+                        //         continueOnError: false,
+                        //         dereference: {
+                        //             circular: false,
+                        //         },
+                        //     }
+                        // );
+                        // setSourceSchema(dereferencedSchema);
+                        // setImage(response.data.details.image);
+                    } catch (error: any) {
+                        console.log(error);
+                        setSourceSchema(null);
+                        setIsFetching(false);
+                        setError(error.message);
+                    }
+                },
+                (error: any) => {
+                    setIsFetching(false);
+                    setError(
+                        error.response
+                            ? error.response.data.message
+                            : error.message
+                    );
+                }
+            );
     }, [key]);
 
     useEffect(() => {
@@ -43,7 +68,7 @@ const useSourceSchema = (
         })();
     }, [fetchSchema, key]);
 
-    return { isFetching, schema, image, error, fetchSchema };
+    return { isFetching, sourceSchema, image, error, fetchSchema };
 };
 
 export default useSourceSchema;

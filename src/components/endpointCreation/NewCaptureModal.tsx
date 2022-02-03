@@ -86,7 +86,7 @@ function NewCaptureModal(
 
     const [searchParams, setSearchParams] = useSearchParams();
     const sourceTypeParam = searchParams.get('sourcetype');
-    const { isFetching, schema, error, image } = useSourceSchema(
+    const { isFetching, sourceSchema, error, image } = useSourceSchema(
         sourceTypeParam ? sourceTypeParam : ''
     );
 
@@ -269,7 +269,7 @@ function NewCaptureModal(
                     {error}
                 </Alert>
             );
-        } else if (schema && schema.connectionSpecification !== null) {
+        } else if (sourceSchema !== null) {
             return (
                 <ErrorBoundary>
                     <AppBar position="relative" elevation={0} color="default">
@@ -282,8 +282,10 @@ function NewCaptureModal(
                             <Typography variant="h5" color="initial">
                                 {image}
                             </Typography>
-                            {schema.documentationUrl ? (
-                                <ExternalLink link={schema.documentationUrl}>
+                            {sourceSchema.documentationUrl ? (
+                                <ExternalLink
+                                    link={sourceSchema.documentationUrl}
+                                >
                                     <FormattedMessage id="captureCreation.config.source.doclink" />
                                 </ExternalLink>
                             ) : null}
@@ -292,7 +294,7 @@ function NewCaptureModal(
                     <Divider />
                     <StyledEngineProvider injectFirst>
                         <JsonForms
-                            schema={schema.connectionSpecification}
+                            schema={sourceSchema}
                             data={newCaptureFormData}
                             renderers={renderers}
                             cells={materialCells}
