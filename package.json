@@ -16,7 +16,6 @@
         "lint": "eslint --ext ts,tsx src"
     },
     "dependencies": {
-        "@apidevtools/json-schema-ref-parser": "^9.0.7",
         "@emotion/react": "^11.7.1",
         "@emotion/styled": "^11.6.0",
         "@jsonforms/core": "v3.0.0-alpha.3",
@@ -27,6 +26,7 @@
         "@mui/material": "^5.4.0",
         "auth0-js": "^9.19.0",
         "axios": "^0.25.0",
+        "json-refs": "^3.0.15",
         "lodash": "^4.17.21",
         "monaco-editor": "^0.31.1",
         "prop-types": "^15.8.1",

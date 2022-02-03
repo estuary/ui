@@ -1,4 +1,5 @@
 import axios from 'axios';
+import JsonRefs from 'json-refs';
 import { useCallback, useEffect, useState } from 'react';
 
 type SourceSchemaService = {
@@ -22,31 +23,19 @@ const useSourceSchema = (key: string): SourceSchemaService => {
             .get(`http://localhost:3001/source/path/${encodeURIComponent(key)}`)
             .then(
                 async (response: any) => {
-                    setIsFetching(false);
-
                     try {
-                        const derefSchema = {};
-                        setSourceSchema(derefSchema);
-                        setImage(response.data.details.image);
-
-                        // const dereferencedSchema = await $RefParser.dereference(
-                        //     `http://localhost:3001/source/path/${encodeURIComponent(
-                        //         key
-                        //     )}`,
-                        //     {
-                        //         continueOnError: false,
-                        //         dereference: {
-                        //             circular: false,
-                        //         },
-                        //     }
-                        // );
-                        // setSourceSchema(dereferencedSchema);
-                        // setImage(response.data.details.image);
+                        JsonRefs.resolveRefs(
+                            response.data.specification.spec
+                                .connectionSpecification
+                        ).then((derefSchema) => {
+                            setSourceSchema(derefSchema.resolved);
+                            setImage(response.data.details.image);
+                        });
                     } catch (error: any) {
-                        console.log(error);
                         setSourceSchema(null);
-                        setIsFetching(false);
                         setError(error.message);
+                    } finally {
+                        setIsFetching(false);
                     }
                 },
                 (error: any) => {
