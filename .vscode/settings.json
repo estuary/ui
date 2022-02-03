@@ -6,5 +6,6 @@
     },
     "eslint.codeAction.showDocumentation": {
         "enable": true
-    }
+    },
+    "git.ignoreLimitWarning": true
 }
