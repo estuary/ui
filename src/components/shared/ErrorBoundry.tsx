@@ -2,6 +2,7 @@ import { ExpandMore } from '@mui/icons-material';
 import {
     Alert,
     AlertTitle,
+    Button,
     Collapse,
     Divider,
     IconButton,
@@ -13,6 +14,7 @@ import { FormattedMessage } from 'react-intl';
 
 type ErrorBoundryWrapperProps = {
     children: ReactNode;
+    HandleReset: any; //fn
 };
 
 function ErrorFallback({
@@ -35,6 +37,11 @@ function ErrorFallback({
             </AlertTitle>
             <FormattedMessage id="errorBoundry.message1" />
             <FormattedMessage id="errorBoundry.message2" />
+
+            <Divider />
+            <Button variant="contained" onClick={resetErrorBoundary}>
+                Try again
+            </Button>
             <IconButton
                 onClick={handleExpandClick}
                 aria-expanded={expanded}
@@ -47,7 +54,6 @@ function ErrorFallback({
             >
                 <ExpandMore />
             </IconButton>
-            <Divider />
             <Collapse in={expanded} timeout="auto" unmountOnExit>
                 <Paper variant="outlined" square>
                     {error.stack}
@@ -59,7 +65,10 @@ function ErrorFallback({
 
 function ErrorBoundryWrapper(props: ErrorBoundryWrapperProps) {
     return (
-        <ErrorBoundary FallbackComponent={ErrorFallback}>
+        <ErrorBoundary
+            FallbackComponent={ErrorFallback}
+            onReset={props.HandleReset}
+        >
             {props.children}
         </ErrorBoundary>
     );

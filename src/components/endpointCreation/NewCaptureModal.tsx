@@ -152,6 +152,10 @@ function NewCaptureModal(
         }
     };
 
+    const handleErrorRetry = () => {
+        handleClose();
+    };
+
     const getSourceDetails = async (key: string) => {
         const hasKey = Boolean(key && key.length > 0);
         setSearchParams(hasKey ? { sourcetype: key } : {});
@@ -271,7 +275,7 @@ function NewCaptureModal(
             );
         } else if (sourceSchema !== null) {
             return (
-                <ErrorBoundary>
+                <ErrorBoundary HandleReset={handleErrorRetry}>
                     <AppBar position="relative" elevation={0} color="default">
                         <Toolbar
                             variant="dense"
