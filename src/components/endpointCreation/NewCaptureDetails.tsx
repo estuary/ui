@@ -1,12 +1,7 @@
-import {
-    materialCells,
-    materialRenderers,
-} from '@jsonforms/material-renderers';
+import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { DialogContentText, Skeleton, Stack } from '@mui/material';
-import { getDefaultOptions } from 'forms/Helper';
-import CaptureSourceControl from 'forms/renderers/CaptureSource/CaptureSourceControl';
-import captureSourceTester from 'forms/renderers/CaptureSource/captureSourceTester';
+import { getDefaultOptions, getRenderers } from 'forms/Helper';
 import useCaptureSchema from 'hooks/useCaptureSchema';
 import { FormattedMessage, useIntl } from 'react-intl';
 
@@ -51,13 +46,6 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
             },
         ],
     };
-
-    const renderers = [
-        ...materialRenderers,
-        //register custom renderers
-        { tester: captureSourceTester, renderer: CaptureSourceControl },
-    ];
-
     return (
         <>
             <DialogContentText>
@@ -70,7 +58,7 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
                         schema={captureSchema.schema}
                         uischema={captureUISchema}
                         data={props.formData}
-                        renderers={renderers}
+                        renderers={getRenderers()}
                         cells={materialCells}
                         config={getDefaultOptions()}
                         readonly={props.readonly}

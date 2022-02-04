@@ -8,13 +8,12 @@ import {
     IconButton,
     Paper,
 } from '@mui/material';
-import React, { ReactNode } from 'react';
+import React from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FormattedMessage } from 'react-intl';
 
 type ErrorBoundryWrapperProps = {
-    children: ReactNode;
-    HandleReset: any; //fn
+    handleReset?: any; //fn
 };
 
 function ErrorFallback({
@@ -63,15 +62,15 @@ function ErrorFallback({
     );
 }
 
-function ErrorBoundryWrapper(props: ErrorBoundryWrapperProps) {
+const ErrorBoundryWrapper: React.FC<ErrorBoundryWrapperProps> = (props) => {
     return (
         <ErrorBoundary
             FallbackComponent={ErrorFallback}
-            onReset={props.HandleReset}
+            onReset={props.handleReset ? props.handleReset : () => {}}
         >
             {props.children}
         </ErrorBoundary>
     );
-}
+};
 
 export default ErrorBoundryWrapper;

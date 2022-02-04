@@ -1,15 +1,6 @@
-import { createAjv } from '@jsonforms/core';
-import {
-    materialCells,
-    materialRenderers,
-} from '@jsonforms/material-renderers';
-import { JsonForms } from '@jsonforms/react';
 import Editor from '@monaco-editor/react';
 import CloseIcon from '@mui/icons-material/Close';
 import {
-    Alert,
-    AlertTitle,
-    AppBar,
     Box,
     Button,
     CircularProgress,
@@ -18,50 +9,30 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
-    Divider,
     IconButton,
-    List,
-    ListItem,
     Paper,
     Step,
     StepContent,
     Stepper,
-    Toolbar,
     Typography,
     useMediaQuery,
     useTheme,
 } from '@mui/material';
-import { StyledEngineProvider } from '@mui/material/styles';
 import axios from 'axios';
-import ErrorBoundary from 'components/shared/ErrorBoundry';
-import ExternalLink from 'components/shared/ExternalLink';
-import FormLoading from 'components/shared/FormLoading';
-import CaptureSourceControl from 'forms/renderers/CaptureSource/CaptureSourceControl';
-import captureSourceTester from 'forms/renderers/CaptureSource/captureSourceTester';
-import useSourceSchema from 'hooks/useSourceSchema';
+import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import PropTypes from 'prop-types';
 import { useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import NewCaptureDetails from './NewCaptureDetails';
+import NewCaptureError from './NewCaptureError';
+import NewCaptureSpecForm from './NewCaptureSpecForm';
 
 NewCaptureModal.propTypes = {};
 function NewCaptureModal(
     props: PropTypes.InferProps<typeof NewCaptureModal.propTypes>
 ) {
-    const handleDefaultsAjv = createAjv({ useDefaults: true });
-    const renderers = [
-        ...materialRenderers,
-        //register custom renderers
-        { tester: captureSourceTester, renderer: CaptureSourceControl },
-    ];
-
-    const formOptions = {
-        restrict: true,
-        showUnfocusedDescription: true,
-    };
-
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -82,9 +53,6 @@ function NewCaptureModal(
 
     const [searchParams, setSearchParams] = useSearchParams();
     const sourceTypeParam = searchParams.get('sourcetype');
-    const { isFetching, sourceSchema, error, image } = useSourceSchema(
-        sourceTypeParam ? sourceTypeParam : ''
-    );
 
     const [newCaptureDetailsFormData, setNewCaptureDetailsFormData] = useState<{
         tenantName: string;
@@ -95,7 +63,7 @@ function NewCaptureModal(
         tenantName: '',
         captureName: '',
         sourceType: sourceTypeParam ? sourceTypeParam : '',
-        sourceImage: image ? image : '',
+        sourceImage: '',
     });
     const [newCaptureDetailsFormErrors, setNewCaptureDetailsFormErrors] =
         useState([]);
@@ -146,10 +114,6 @@ function NewCaptureModal(
                     errorResponseHandler(error);
                 });
         }
-    };
-
-    const handleErrorRetry = () => {
-        handleClose();
     };
 
     const getSourceDetails = async (key: string) => {
@@ -226,107 +190,6 @@ function NewCaptureModal(
         }, 0);
     };
 
-    const jsonFormRendered = (() => {
-        if (error !== null) {
-            return (
-                <Alert severity="error">
-                    <AlertTitle>
-                        <FormattedMessage id="common.errors.heading" />
-                    </AlertTitle>
-                    {error}
-                </Alert>
-            );
-        } else if (sourceSchema !== null) {
-            return (
-                <ErrorBoundary HandleReset={handleErrorRetry}>
-                    <AppBar position="relative" elevation={0} color="default">
-                        <Toolbar
-                            variant="dense"
-                            sx={{
-                                justifyContent: 'space-between',
-                            }}
-                        >
-                            <Typography variant="h5" color="initial">
-                                {image}
-                            </Typography>
-                            {sourceSchema.documentationUrl ? (
-                                <ExternalLink
-                                    link={sourceSchema.documentationUrl}
-                                >
-                                    <FormattedMessage id="captureCreation.config.source.doclink" />
-                                </ExternalLink>
-                            ) : null}
-                        </Toolbar>
-                    </AppBar>
-                    <Divider />
-                    <StyledEngineProvider injectFirst>
-                        <JsonForms
-                            schema={sourceSchema}
-                            data={newCaptureFormData}
-                            renderers={renderers}
-                            cells={materialCells}
-                            config={formOptions}
-                            readonly={formSubmitting}
-                            ajv={handleDefaultsAjv}
-                            validationMode={
-                                showValidation
-                                    ? 'ValidateAndShow'
-                                    : 'ValidateAndHide'
-                            }
-                            onChange={formChanged}
-                        />
-                    </StyledEngineProvider>
-                </ErrorBoundary>
-            );
-        } else {
-            return null;
-        }
-    })();
-
-    const errorList = (() => {
-        if (
-            formSubmitError &&
-            formSubmitError.errors &&
-            formSubmitError.errors.length > 0
-        ) {
-            return (
-                <List dense>
-                    {formSubmitError.errors.map(
-                        (error: string, index: number) => {
-                            return (
-                                <ListItem key={index + error}>{error}</ListItem>
-                            );
-                        }
-                    )}
-                </List>
-            );
-        } else {
-            return null;
-        }
-    })();
-
-    const errorRendered = (() => {
-        let response;
-
-        if (formSubmitError) {
-            response = (
-                <Box sx={{ width: '100%' }}>
-                    <Alert severity="error">
-                        <AlertTitle>
-                            <FormattedMessage id="captureCreation.config.testing.failed" />
-                        </AlertTitle>
-                        <Typography variant="subtitle1">
-                            {formSubmitError.message}
-                        </Typography>
-                        {errorList}
-                    </Alert>
-                </Box>
-            );
-        }
-
-        return response;
-    })();
-
     return (
         <>
             <Dialog
@@ -358,7 +221,12 @@ function NewCaptureModal(
                     </IconButton>
                 </DialogTitle>
 
-                {errorRendered}
+                {formSubmitError && (
+                    <NewCaptureError
+                        title={formSubmitError.message}
+                        errors={formSubmitError.errors}
+                    />
+                )}
 
                 <DialogContent dividers>
                     <Stepper activeStep={activeStep} orientation="vertical">
@@ -376,11 +244,15 @@ function NewCaptureModal(
                                     sx={{ width: '100%' }}
                                     variant="outlined"
                                 >
-                                    {isFetching ? (
-                                        <FormLoading />
-                                    ) : (
-                                        jsonFormRendered
-                                    )}
+                                    <ErrorBoundryWrapper>
+                                        <NewCaptureSpecForm
+                                            connectorImage={sourceTypeParam}
+                                            formData={newCaptureFormData}
+                                            onFormChange={formChanged}
+                                            readonly={formSubmitting}
+                                            displayValidation={showValidation}
+                                        />
+                                    </ErrorBoundryWrapper>
                                 </Paper>
                             </StepContent>
                         </Step>
@@ -467,7 +339,7 @@ function NewCaptureModal(
                             </Button>
                             <Button
                                 onClick={handleTest}
-                                disabled={isFetching}
+                                disabled={false}
                                 form="newCaptureForm"
                                 size="large"
                                 type="submit"
