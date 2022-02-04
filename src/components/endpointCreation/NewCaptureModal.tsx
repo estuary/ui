@@ -1,4 +1,3 @@
-import Editor from '@monaco-editor/react';
 import CloseIcon from '@mui/icons-material/Close';
 import {
     Box,
@@ -7,7 +6,6 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
-    DialogContentText,
     DialogTitle,
     IconButton,
     Paper,
@@ -26,6 +24,7 @@ import { useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import NewCaptureDetails from './NewCaptureDetails';
+import NewCaptureEditor from './NewCaptureEditor';
 import NewCaptureError from './NewCaptureError';
 import NewCaptureSpecForm from './NewCaptureSpecForm';
 
@@ -39,15 +38,6 @@ function NewCaptureModal(
     const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(
         null
     );
-    function handleEditorDidMount(
-        editor: monacoEditor.editor.IStandaloneCodeEditor
-    ) {
-        editorRef.current = editor;
-        const handler = editor.onDidChangeModelDecorations(() => {
-            handler.dispose();
-            editor.getAction('editor.action.formatDocument').run();
-        });
-    }
 
     const navigate = useNavigate();
 
@@ -104,7 +94,7 @@ function NewCaptureModal(
             setActiveStep(1);
             setFormSubmitting(true);
             axios
-                .post('http://localhost:3001/capture/test', formSubmitData)
+                .post('http://localhost:3001/capture/test/fake', formSubmitData)
                 .then((response) => {
                     setFormSubmitting(false);
                     setCatalogResponse(response.data);
@@ -278,31 +268,7 @@ function NewCaptureModal(
                         </Step>
                         <Step key={2}>
                             <StepContent>
-                                <DialogContentText>
-                                    <FormattedMessage id="captureCreation.finalReview.instructions" />
-                                </DialogContentText>
-                                <Paper variant="outlined">
-                                    {catalogResponse &&
-                                    catalogResponse.data &&
-                                    catalogResponse.data.data ? (
-                                        <Editor
-                                            height="350px"
-                                            defaultLanguage="json"
-                                            theme={
-                                                theme.palette.mode === 'light'
-                                                    ? 'vs'
-                                                    : 'vs-dark'
-                                            }
-                                            defaultValue={JSON.stringify(
-                                                catalogResponse.data.data
-                                            )}
-                                            path={catalogResponse.path}
-                                            onMount={handleEditorDidMount}
-                                        />
-                                    ) : (
-                                        <FormattedMessage id="common.loading" />
-                                    )}
-                                </Paper>
+                                <NewCaptureEditor data={catalogResponse} />
                             </StepContent>
                         </Step>
                     </Stepper>

@@ -668,6 +668,15 @@ app.post('/capture/test', (req, res) => {
         });
 });
 
+app.post('/capture/test/fake', (req, res) => {
+    res.status(200);
+    res.json({
+        foo: 'foo',
+        bar: 'bar',
+        buzz: 'buzz',
+    });
+});
+
 app.post('/capture/save', (req, res) => {
     console.log('Capture creation started');
     const captureName = req.body.name;
