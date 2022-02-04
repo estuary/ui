@@ -23,8 +23,6 @@ import {
     List,
     ListItem,
     Paper,
-    Skeleton,
-    Stack,
     Step,
     StepContent,
     Stepper,
@@ -40,13 +38,13 @@ import ExternalLink from 'components/shared/ExternalLink';
 import FormLoading from 'components/shared/FormLoading';
 import CaptureSourceControl from 'forms/renderers/CaptureSource/CaptureSourceControl';
 import captureSourceTester from 'forms/renderers/CaptureSource/captureSourceTester';
-import useCaptureSchema from 'hooks/useCaptureSchema';
 import useSourceSchema from 'hooks/useSourceSchema';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import PropTypes from 'prop-types';
 import { useRef, useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import NewCaptureDetails from './NewCaptureDetails';
 
 NewCaptureModal.propTypes = {};
 function NewCaptureModal(
@@ -63,8 +61,6 @@ function NewCaptureModal(
         restrict: true,
         showUnfocusedDescription: true,
     };
-
-    const intl = useIntl();
 
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -230,39 +226,6 @@ function NewCaptureModal(
         }, 0);
     };
 
-    const captureSchema = useCaptureSchema();
-    const captureUISchema = {
-        type: 'VerticalLayout',
-        elements: [
-            {
-                type: 'HorizontalLayout',
-                elements: [
-                    {
-                        type: 'Control',
-                        label: intl.formatMessage({
-                            id: 'captureCreation.tenant.label',
-                        }),
-                        scope: '#/properties/tenantName',
-                    },
-                    {
-                        type: 'Control',
-                        label: intl.formatMessage({
-                            id: 'captureCreation.name.label',
-                        }),
-                        scope: '#/properties/captureName',
-                    },
-                    {
-                        type: 'Control',
-                        label: intl.formatMessage({
-                            id: 'captureCreation.source.label',
-                        }),
-                        scope: '#/properties/sourceType',
-                    },
-                ],
-            },
-        ],
-    };
-
     const jsonFormRendered = (() => {
         if (error !== null) {
             return (
@@ -400,69 +363,28 @@ function NewCaptureModal(
                 <DialogContent dividers>
                     <Stepper activeStep={activeStep} orientation="vertical">
                         <Step key={0}>
-                            {/* <StepLabel>Config</StepLabel> */}
                             <StepContent
                                 TransitionProps={{ unmountOnExit: false }}
                             >
-                                <DialogContentText>
-                                    <FormattedMessage id="captureCreation.instructions" />
-                                </DialogContentText>
-
-                                <form id="newCaptureForm">
-                                    <Stack direction="row" spacing={2}>
-                                        {captureSchema.schema !== null ? (
-                                            <JsonForms
-                                                schema={captureSchema.schema}
-                                                uischema={captureUISchema}
-                                                data={newCaptureDetailsFormData}
-                                                renderers={renderers}
-                                                cells={materialCells}
-                                                config={formOptions}
-                                                readonly={formSubmitting}
-                                                ajv={handleDefaultsAjv}
-                                                validationMode={
-                                                    showValidation
-                                                        ? 'ValidateAndShow'
-                                                        : 'ValidateAndHide'
-                                                }
-                                                onChange={typeNameChanged}
-                                            />
-                                        ) : (
-                                            <>
-                                                <Skeleton
-                                                    variant="rectangular"
-                                                    height={40}
-                                                    width={'33%'}
-                                                />
-                                                <Skeleton
-                                                    variant="rectangular"
-                                                    height={40}
-                                                    width={'33%'}
-                                                />
-                                                <Skeleton
-                                                    variant="rectangular"
-                                                    height={40}
-                                                    width={'33%'}
-                                                />
-                                            </>
-                                        )}
-                                    </Stack>
-
-                                    <Paper
-                                        sx={{ width: '100%' }}
-                                        variant="outlined"
-                                    >
-                                        {isFetching ? (
-                                            <FormLoading />
-                                        ) : (
-                                            jsonFormRendered
-                                        )}
-                                    </Paper>
-                                </form>
+                                <NewCaptureDetails
+                                    readonly={formSubmitting}
+                                    displayValidation={showValidation}
+                                    onFormChange={typeNameChanged}
+                                    formData={newCaptureDetailsFormData}
+                                />
+                                <Paper
+                                    sx={{ width: '100%' }}
+                                    variant="outlined"
+                                >
+                                    {isFetching ? (
+                                        <FormLoading />
+                                    ) : (
+                                        jsonFormRendered
+                                    )}
+                                </Paper>
                             </StepContent>
                         </Step>
                         <Step key={1}>
-                            {/* <StepLabel>Test</StepLabel> */}
                             <StepContent>
                                 <Box
                                     sx={{
@@ -483,7 +405,6 @@ function NewCaptureModal(
                             </StepContent>
                         </Step>
                         <Step key={2}>
-                            {/* <StepLabel>Review</StepLabel> */}
                             <StepContent>
                                 <DialogContentText>
                                     <FormattedMessage id="captureCreation.finalReview.instructions" />
