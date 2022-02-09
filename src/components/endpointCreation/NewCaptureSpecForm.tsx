@@ -66,7 +66,7 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
                 <StyledEngineProvider injectFirst>
                     <JsonForms
                         schema={sourceSchema}
-                        data={state.spec.data}
+                        data={state.spec}
                         renderers={defaultRenderers}
                         cells={materialCells}
                         config={defaultOptions}

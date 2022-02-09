@@ -19,8 +19,8 @@ export type NewCaptureStateType = {
         name: string;
         image: string;
     };
-    spec: Pick<JsonFormsCore, 'data'>;
-    errors: Pick<JsonFormsCore, 'errors'>[];
+    spec: JsonFormsCore['data'];
+    errors: JsonFormsCore['errors'];
 };
 
 export const NewCaptureDetailsInitState: NewCaptureStateType = {
@@ -28,10 +28,8 @@ export const NewCaptureDetailsInitState: NewCaptureStateType = {
         name: '',
         image: '',
     },
-    spec: {
-        data: {},
-    },
-    errors: [] as Pick<JsonFormsCore, 'errors'>[],
+    spec: {},
+    errors: [],
 };
 
 export const newCaptureReducer = (
@@ -47,15 +45,13 @@ export const newCaptureReducer = (
             return {
                 ...state,
                 details: payload.data,
-                errors: payload.errors as Pick<JsonFormsCore, 'errors'>[],
+                errors: payload.errors,
             };
         case ActionType.CAPTURE_SPEC_CHANGED:
             return {
                 ...state,
-                spec: {
-                    data: payload.data,
-                },
-                errors: payload.errors as Pick<JsonFormsCore, 'errors'>[],
+                spec: payload.data,
+                errors: payload.errors,
             };
         default:
             throw new Error();
