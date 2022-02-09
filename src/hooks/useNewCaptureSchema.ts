@@ -15,9 +15,9 @@ const useNewCaptureSchema = (): NewCaptureSchemaService => {
     const fetchSchema = useCallback(async () => {
         const captureSchema = {
             type: 'object',
-            required: ['captureName', 'image'],
+            required: ['name', 'image'],
             properties: {
-                captureName: {
+                name: {
                     description: intl.formatMessage({
                         id: 'captureCreation.name.description',
                     }),
