@@ -3,7 +3,7 @@ import {
     Box,
     Skeleton,
     TextField,
-    Typography
+    Typography,
 } from '@mui/material';
 import useSourceTypes from 'hooks/useSourceTypes';
 import React from 'react';
@@ -40,7 +40,7 @@ export const CaptureSource: React.FC<CaptureSourceProps> = (props) => {
                 openOnFocus
                 blurOnSelect="mouse"
                 noOptionsText={intl.formatMessage({
-                    id: "common.errors.source.missing",
+                    id: 'common.errors.source.missing',
                 })}
                 loading={isFetching}
                 onChange={function (event, reason: any) {
@@ -55,21 +55,19 @@ export const CaptureSource: React.FC<CaptureSourceProps> = (props) => {
                         key={`sourceTypeSelect-${option.key}`}
                         {...props}
                     >
-                        {option.label}
+                        foo - {option.label}
                     </Box>
                 )}
                 renderInput={(params) => (
                     <>
                         <TextField
                             {...params}
-                            label={
-                                intl.formatMessage({
-                                    id: error !== null
+                            label={intl.formatMessage({
+                                id:
+                                    error !== null
                                         ? 'capturesource.fetch.failed'
-                                        : "capturesource.label",
-                                })
-
-                            }
+                                        : 'capturesource.label',
+                            })}
                             error={inputError !== null}
                             required={true}
                             inputProps={{

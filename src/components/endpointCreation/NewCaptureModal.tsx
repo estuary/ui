@@ -9,9 +9,6 @@ import {
     DialogTitle,
     IconButton,
     Paper,
-    Step,
-    StepContent,
-    Stepper,
     Typography,
     useMediaQuery,
     useTheme,
@@ -48,11 +45,6 @@ function NewCaptureModal(
         newCaptureReducer,
         NewCaptureDetailsInitState
     );
-
-    // const [state, dispatch] = useReducer(
-    //     newCaptureReducer,
-    //     NewCaptureDetailsInitState
-    // );
     const providerState = {
         state,
         dispatch,
@@ -187,60 +179,43 @@ function NewCaptureModal(
                 )}
 
                 <DialogContent dividers>
-                    <Stepper activeStep={activeStep} orientation="vertical">
-                        <Step key={0}>
-                            <StepContent
-                                TransitionProps={{ unmountOnExit: false }}
-                            >
-                                <NewCaptureContext.Provider
-                                    value={providerState}
-                                >
-                                    <NewCaptureDetails
+                    {activeStep === 0 ? (
+                        <NewCaptureContext.Provider value={providerState}>
+                            <NewCaptureDetails
+                                readonly={formSubmitting}
+                                displayValidation={showValidation}
+                            />
+                            <Paper sx={{ width: '100%' }} variant="outlined">
+                                <ErrorBoundryWrapper>
+                                    <NewCaptureSpecForm
                                         readonly={formSubmitting}
                                         displayValidation={showValidation}
                                     />
-                                    <Paper
-                                        sx={{ width: '100%' }}
-                                        variant="outlined"
-                                    >
-                                        <ErrorBoundryWrapper>
-                                            <NewCaptureSpecForm
-                                                readonly={formSubmitting}
-                                                displayValidation={
-                                                    showValidation
-                                                }
-                                            />
-                                        </ErrorBoundryWrapper>
-                                    </Paper>
-                                </NewCaptureContext.Provider>
-                            </StepContent>
-                        </Step>
-                        <Step key={1}>
-                            <StepContent>
-                                <Box
-                                    sx={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                    }}
-                                >
-                                    <CircularProgress />
-                                    <Typography
-                                        variant="caption"
-                                        sx={{
-                                            ml: 2,
-                                        }}
-                                    >
-                                        <FormattedMessage id="captureCreation.config.testing" />
-                                    </Typography>
-                                </Box>
-                            </StepContent>
-                        </Step>
-                        <Step key={2}>
-                            <StepContent>
-                                <NewCaptureEditor data={catalogResponse} />
-                            </StepContent>
-                        </Step>
-                    </Stepper>
+                                </ErrorBoundryWrapper>
+                            </Paper>
+                        </NewCaptureContext.Provider>
+                    ) : null}
+                    {activeStep === 1 ? (
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                            }}
+                        >
+                            <CircularProgress />
+                            <Typography
+                                variant="caption"
+                                sx={{
+                                    ml: 2,
+                                }}
+                            >
+                                <FormattedMessage id="captureCreation.config.testing" />
+                            </Typography>
+                        </Box>
+                    ) : null}
+                    {activeStep === 2 ? (
+                        <NewCaptureEditor data={catalogResponse} />
+                    ) : null}
                 </DialogContent>
 
                 <DialogActions>

@@ -15,7 +15,7 @@ const useNewCaptureSchema = (): NewCaptureSchemaService => {
     const fetchSchema = useCallback(async () => {
         const captureSchema = {
             type: 'object',
-            required: ['captureName', 'sourceType'],
+            required: ['captureName', 'image'],
             properties: {
                 captureName: {
                     description: intl.formatMessage({
@@ -24,8 +24,12 @@ const useNewCaptureSchema = (): NewCaptureSchemaService => {
                     type: 'string',
                     minLength: 1,
                     maxLength: 1000,
+                    pattern: '^[a-zA-Z0-9_.-]*/[a-zA-Z0-9_.-]+$',
                 },
                 image: {
+                    descriptiong: intl.formatMessage({
+                        id: 'captureCreation.image.description',
+                    }),
                     type: 'string',
                     oneOf: [
                         {

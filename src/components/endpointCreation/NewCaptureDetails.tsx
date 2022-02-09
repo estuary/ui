@@ -33,7 +33,7 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
                     {
                         type: 'Control',
                         label: intl.formatMessage({
-                            id: 'captureCreation.source.label',
+                            id: 'captureCreation.image.label',
                         }),
                         scope: '#/properties/image',
                     },
