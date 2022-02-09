@@ -1,33 +1,28 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { DialogContentText, Skeleton, Stack } from '@mui/material';
-import { getDefaultOptions, getRenderers } from 'forms/Helper';
-import useCaptureSchema from 'hooks/useCaptureSchema';
+import { defaultOptions, defaultRenderers } from 'forms/Helper';
+import useNewCaptureSchema from 'hooks/useNewCaptureSchema';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { useNewCaptureContext } from './NewCaptureContext';
+import { ActionType } from './NewCaptureReducer';
 
 type NewCaptureDetailsProps = {
     displayValidation: boolean;
-    formData: object;
-    onFormChange: any; //fn
     readonly: boolean;
 };
 
 function NewCaptureDetails(props: NewCaptureDetailsProps) {
     const intl = useIntl();
-    const captureSchema = useCaptureSchema();
+    const { schema } = useNewCaptureSchema();
+    const { state, dispatch } = useNewCaptureContext();
+
     const captureUISchema = {
         type: 'VerticalLayout',
         elements: [
             {
                 type: 'HorizontalLayout',
                 elements: [
-                    {
-                        type: 'Control',
-                        label: intl.formatMessage({
-                            id: 'captureCreation.tenant.label',
-                        }),
-                        scope: '#/properties/tenantName',
-                    },
                     {
                         type: 'Control',
                         label: intl.formatMessage({
@@ -40,12 +35,13 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
                         label: intl.formatMessage({
                             id: 'captureCreation.source.label',
                         }),
-                        scope: '#/properties/sourceType',
+                        scope: '#/properties/image',
                     },
                 ],
             },
         ],
     };
+
     return (
         <>
             <DialogContentText>
@@ -53,38 +49,38 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
             </DialogContentText>
 
             <Stack direction="row" spacing={2}>
-                {captureSchema.schema !== null ? (
+                {schema !== null ? (
                     <JsonForms
-                        schema={captureSchema.schema}
+                        schema={schema}
                         uischema={captureUISchema}
-                        data={props.formData}
-                        renderers={getRenderers()}
+                        data={state.details}
+                        renderers={defaultRenderers}
                         cells={materialCells}
-                        config={getDefaultOptions()}
+                        config={defaultOptions}
                         readonly={props.readonly}
                         validationMode={
                             props.displayValidation
                                 ? 'ValidateAndShow'
                                 : 'ValidateAndHide'
                         }
-                        onChange={props.onFormChange}
+                        onChange={(data) => {
+                            dispatch({
+                                type: ActionType.DETAILS_CHANGED,
+                                payload: data,
+                            });
+                        }}
                     />
                 ) : (
                     <>
                         <Skeleton
                             variant="rectangular"
                             height={40}
-                            width={'33%'}
+                            width={'50%'}
                         />
                         <Skeleton
                             variant="rectangular"
                             height={40}
-                            width={'33%'}
-                        />
-                        <Skeleton
-                            variant="rectangular"
-                            height={40}
-                            width={'33%'}
+                            width={'50%'}
                         />
                     </>
                 )}

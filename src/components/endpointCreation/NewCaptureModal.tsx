@@ -20,12 +20,17 @@ import axios from 'axios';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import PropTypes from 'prop-types';
-import { useRef, useState } from 'react';
+import { useReducer, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import NewCaptureContext from './NewCaptureContext';
 import NewCaptureDetails from './NewCaptureDetails';
 import NewCaptureEditor from './NewCaptureEditor';
 import NewCaptureError from './NewCaptureError';
+import {
+    NewCaptureDetailsInitState,
+    newCaptureReducer,
+} from './NewCaptureReducer';
 import NewCaptureSpecForm from './NewCaptureSpecForm';
 
 NewCaptureModal.propTypes = {};
@@ -34,32 +39,24 @@ function NewCaptureModal(
 ) {
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
-
     const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(
         null
     );
-
     const navigate = useNavigate();
 
-    const [searchParams, setSearchParams] = useSearchParams();
-    const sourceTypeParam = searchParams.get('sourcetype');
+    const [state, dispatch] = useReducer(
+        newCaptureReducer,
+        NewCaptureDetailsInitState
+    );
 
-    const [newCaptureDetailsFormData, setNewCaptureDetailsFormData] = useState<{
-        tenantName: string;
-        captureName: string;
-        sourceType: string;
-        sourceImage: string;
-    }>({
-        tenantName: '',
-        captureName: '',
-        sourceType: sourceTypeParam ? sourceTypeParam : '',
-        sourceImage: '',
-    });
-    const [newCaptureDetailsFormErrors, setNewCaptureDetailsFormErrors] =
-        useState([]);
-
-    const [newCaptureFormData, setNewCaptureFormData] = useState({});
-    const [newCaptureFormErrors, setNewCaptureFormErrors] = useState([]);
+    // const [state, dispatch] = useReducer(
+    //     newCaptureReducer,
+    //     NewCaptureDetailsInitState
+    // );
+    const providerState = {
+        state,
+        dispatch,
+    };
 
     const [showValidation, setShowValidation] = useState(false);
     const [formSubmitting, setFormSubmitting] = useState(false);
@@ -77,18 +74,13 @@ function NewCaptureModal(
 
     const handleTest = (event: any) => {
         event.preventDefault();
-        if (
-            newCaptureDetailsFormData === null ||
-            newCaptureDetailsFormErrors.length > 0 ||
-            newCaptureFormErrors.length > 0
-        ) {
+        if (state.details.errors.length > 0 || state.spec.errors.length > 0) {
             setShowValidation(true);
         } else {
             const formSubmitData = {
-                config: newCaptureFormData,
-                captureName: newCaptureDetailsFormData.captureName,
-                tenantName: newCaptureDetailsFormData.tenantName,
-                sourceImage: newCaptureDetailsFormData.sourceType,
+                config: state.spec.data,
+                captureName: state.details.captureName,
+                sourceImage: state.details.sourceImage,
             };
             setFormSubmitError(null);
             setActiveStep(1);
@@ -103,27 +95,6 @@ function NewCaptureModal(
                 .catch((error) => {
                     errorResponseHandler(error);
                 });
-        }
-    };
-
-    const getSourceDetails = async (key: string) => {
-        const hasKey = Boolean(key && key.length > 0);
-        setSearchParams(hasKey ? { sourcetype: key } : {});
-    };
-
-    const formChanged = ({ data, errors }: { data: any; errors: any }) => {
-        setNewCaptureFormData(data);
-        setNewCaptureFormErrors(errors);
-    };
-
-    const typeNameChanged = ({ data, errors }: { data: any; errors: any }) => {
-        setNewCaptureDetailsFormData(data);
-        setNewCaptureDetailsFormErrors(errors);
-
-        if (data.sourceType) {
-            if (data.sourceType !== 'custom') {
-                getSourceDetails(data.sourceType);
-            }
         }
     };
 
@@ -161,10 +132,7 @@ function NewCaptureModal(
         // Make download link
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute(
-            'download',
-            `${newCaptureDetailsFormData.tenantName}.${newCaptureDetailsFormData.captureName}.flow.yaml`
-        );
+        link.setAttribute('download', `${state.details.captureName}.flow.yaml`);
 
         // Append to html link element page
         document.body.appendChild(link);
@@ -224,26 +192,27 @@ function NewCaptureModal(
                             <StepContent
                                 TransitionProps={{ unmountOnExit: false }}
                             >
-                                <NewCaptureDetails
-                                    readonly={formSubmitting}
-                                    displayValidation={showValidation}
-                                    onFormChange={typeNameChanged}
-                                    formData={newCaptureDetailsFormData}
-                                />
-                                <Paper
-                                    sx={{ width: '100%' }}
-                                    variant="outlined"
+                                <NewCaptureContext.Provider
+                                    value={providerState}
                                 >
-                                    <ErrorBoundryWrapper>
-                                        <NewCaptureSpecForm
-                                            connectorImage={sourceTypeParam}
-                                            formData={newCaptureFormData}
-                                            onFormChange={formChanged}
-                                            readonly={formSubmitting}
-                                            displayValidation={showValidation}
-                                        />
-                                    </ErrorBoundryWrapper>
-                                </Paper>
+                                    <NewCaptureDetails
+                                        readonly={formSubmitting}
+                                        displayValidation={showValidation}
+                                    />
+                                    <Paper
+                                        sx={{ width: '100%' }}
+                                        variant="outlined"
+                                    >
+                                        <ErrorBoundryWrapper>
+                                            <NewCaptureSpecForm
+                                                readonly={formSubmitting}
+                                                displayValidation={
+                                                    showValidation
+                                                }
+                                            />
+                                        </ErrorBoundryWrapper>
+                                    </Paper>
+                                </NewCaptureContext.Provider>
                             </StepContent>
                         </Step>
                         <Step key={1}>
