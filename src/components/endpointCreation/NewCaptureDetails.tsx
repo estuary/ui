@@ -1,7 +1,7 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { DialogContentText, Skeleton, Stack } from '@mui/material';
-import { defaultOptions, defaultRenderers } from 'forms/Helper';
+import { defaultOptions, defaultRenderers, showValidation } from 'forms/Helper';
 import useNewCaptureSchema from 'hooks/useNewCaptureSchema';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNewCaptureContext } from './NewCaptureContext';
@@ -58,11 +58,7 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
                         cells={materialCells}
                         config={defaultOptions}
                         readonly={props.readonly}
-                        validationMode={
-                            props.displayValidation
-                                ? 'ValidateAndShow'
-                                : 'ValidateAndHide'
-                        }
+                        validationMode={showValidation(props.displayValidation)}
                         onChange={(data) => {
                             dispatch({
                                 type: ActionType.DETAILS_CHANGED,

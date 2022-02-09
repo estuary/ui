@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import ExternalLink from 'components/shared/ExternalLink';
 import FormLoading from 'components/shared/FormLoading';
-import { defaultOptions, defaultRenderers } from 'forms/Helper';
+import { defaultOptions, defaultRenderers, showValidation } from 'forms/Helper';
 import useSourceSchema from 'hooks/useSourceSchema';
 import { FormattedMessage } from 'react-intl';
 import { useNewCaptureContext } from './NewCaptureContext';
@@ -72,11 +72,7 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
                         config={defaultOptions}
                         readonly={props.readonly}
                         ajv={handleDefaultsAjv}
-                        validationMode={
-                            props.displayValidation
-                                ? 'ValidateAndShow'
-                                : 'ValidateAndHide'
-                        }
+                        validationMode={showValidation(props.displayValidation)}
                         onChange={(event) => {
                             dispatch({
                                 type: ActionType.CAPTURE_SPEC_CHANGED,
