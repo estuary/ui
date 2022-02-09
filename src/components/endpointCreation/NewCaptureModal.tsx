@@ -74,13 +74,13 @@ function NewCaptureModal(
 
     const handleTest = (event: any) => {
         event.preventDefault();
-        if (state.details.errors.length > 0 || state.spec.errors.length > 0) {
+        if (state.errors && state.errors.length > 0) {
             setShowValidation(true);
         } else {
             const formSubmitData = {
                 config: state.spec.data,
-                captureName: state.details.captureName,
-                sourceImage: state.details.sourceImage,
+                captureName: state.details.name,
+                sourceImage: state.details.image,
             };
             setFormSubmitError(null);
             setActiveStep(1);
@@ -132,7 +132,7 @@ function NewCaptureModal(
         // Make download link
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', `${state.details.captureName}.flow.yaml`);
+        link.setAttribute('download', `${state.details.image}.flow.yaml`);
 
         // Append to html link element page
         document.body.appendChild(link);
