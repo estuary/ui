@@ -28,7 +28,7 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
                         label: intl.formatMessage({
                             id: 'captureCreation.name.label',
                         }),
-                        scope: '#/properties/captureName',
+                        scope: '#/properties/name',
                     },
                     {
                         type: 'Control',
