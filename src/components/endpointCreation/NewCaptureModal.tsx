@@ -29,7 +29,7 @@ import {
 } from './NewCaptureReducer';
 import NewCaptureSpecForm from './NewCaptureSpecForm';
 
-export enum Steps {
+enum Steps {
     DETAILS_AND_SPEC,
     WAITING_FOR_DISCOVER,
     REVIEW_SCHEMA_IN_EDITOR,
@@ -43,6 +43,7 @@ function NewCaptureModal() {
     );
     const navigate = useNavigate();
 
+    // Form data state
     const [state, dispatch] = useReducer(
         newCaptureReducer,
         NewCaptureDetailsInitState
@@ -52,6 +53,7 @@ function NewCaptureModal() {
         dispatch,
     };
 
+    // Form props
     const [showValidation, setShowValidation] = useState(false);
     const [formSubmitting, setFormSubmitting] = useState(false);
     const [formSubmitError, setFormSubmitError] = useState<{
@@ -59,95 +61,102 @@ function NewCaptureModal() {
         errors: any[];
     } | null>(null);
     const [catalogResponse, setCatalogResponse] = useState({} as any);
-
     const [activeStep, setActiveStep] = useState<Steps>(Steps.DETAILS_AND_SPEC);
 
-    const handleClose = () => {
-        navigate('..'); //This is assuming this is a child of the /captures route.
-    };
+    // Form Event Handlers
+    const handlers = {
+        close: () => {
+            navigate('..'); //This is assuming this is a child of the /captures route.
+        },
 
-    const handleTest = (event: any) => {
-        event.preventDefault();
+        delete: () => {
+            alert('Delete? You sure?');
+        },
 
-        if (state.details.errors!.length > 0 || state.spec.errors!.length > 0) {
-            setShowValidation(true);
-        } else {
-            const formSubmitData = {
-                config: state.spec.data,
-                captureName: state.details.data.name,
-                sourceImage: state.details.data.image,
-            };
+        save: (event: any) => {
+            event.preventDefault();
+            let catalogVal = '';
+
+            if (editorRef && editorRef.current) {
+                catalogVal = editorRef.current.getValue();
+            }
+
             setFormSubmitting(true);
-            setFormSubmitError(null);
-            setActiveStep(Steps.WAITING_FOR_DISCOVER);
-            axios
-                .post('http://localhost:3001/capture/test/fake', formSubmitData)
-                .then((response) => {
-                    setFormSubmitting(false);
-                    setCatalogResponse(response.data);
-                    setActiveStep(Steps.REVIEW_SCHEMA_IN_EDITOR);
+
+            // Create blob link to download
+            const url = window.URL.createObjectURL(
+                new Blob([catalogVal], {
+                    type: 'text/plain',
                 })
-                .catch((error) => {
-                    errorResponseHandler(error);
-                });
-        }
-    };
+            );
 
-    const handleDelete = () => {
-        alert('Delete? You sure?');
-    };
+            // Make download link
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute(
+                'download',
+                `${state.details.data.image}.flow.yaml`
+            );
 
-    const errorResponseHandler = (error: any) => {
-        if (error.response) {
-            setFormSubmitError(error.response.data);
-        } else {
-            setFormSubmitError(error.message);
-        }
-        setFormSubmitting(false);
-        setActiveStep(Steps.DETAILS_AND_SPEC);
-    };
+            // Append to html link element page
+            document.body.appendChild(link);
 
-    const handleSave = (event: any) => {
-        event.preventDefault();
-        let catalogVal = '';
+            // Start download
+            link.click();
 
-        if (editorRef && editorRef.current) {
-            catalogVal = editorRef.current.getValue();
-        }
+            window.setTimeout(() => {
+                // Clean up and remove the link
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+                handlers.close();
+            }, 0);
+        },
 
-        setFormSubmitting(true);
+        test: (event: any) => {
+            event.preventDefault();
 
-        // Create blob link to download
-        const url = window.URL.createObjectURL(
-            new Blob([catalogVal], {
-                type: 'text/plain',
-            })
-        );
-
-        // Make download link
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', `${state.details.data.image}.flow.yaml`);
-
-        // Append to html link element page
-        document.body.appendChild(link);
-
-        // Start download
-        link.click();
-
-        window.setTimeout(() => {
-            // Clean up and remove the link
-            document.body.removeChild(link);
-            window.URL.revokeObjectURL(url);
-            handleClose();
-        }, 0);
+            if (
+                state.details.errors!.length > 0 ||
+                state.spec.errors!.length > 0
+            ) {
+                setShowValidation(true);
+            } else {
+                const formSubmitData = {
+                    config: state.spec.data,
+                    captureName: state.details.data.name,
+                    sourceImage: state.details.data.image,
+                };
+                setFormSubmitting(true);
+                setFormSubmitError(null);
+                setActiveStep(Steps.WAITING_FOR_DISCOVER);
+                axios
+                    .post(
+                        'http://localhost:3001/capture/test/fake',
+                        formSubmitData
+                    )
+                    .then((response) => {
+                        setFormSubmitting(false);
+                        setCatalogResponse(response.data);
+                        setActiveStep(Steps.REVIEW_SCHEMA_IN_EDITOR);
+                    })
+                    .catch((error) => {
+                        if (error.response) {
+                            setFormSubmitError(error.response.data);
+                        } else {
+                            setFormSubmitError(error.message);
+                        }
+                        setFormSubmitting(false);
+                        setActiveStep(Steps.DETAILS_AND_SPEC);
+                    });
+            }
+        },
     };
 
     return (
         <>
             <Dialog
                 open
-                onClose={handleClose}
+                onClose={handlers.close}
                 scroll="paper"
                 fullScreen={fullScreen}
                 fullWidth={!fullScreen}
@@ -163,7 +172,7 @@ function NewCaptureModal() {
                     <FormattedMessage id="captureCreation.heading" />
                     <IconButton
                         aria-label="close"
-                        onClick={handleClose}
+                        onClick={handlers.close}
                         sx={{
                             color: (theme) => theme.palette.grey[500],
                             position: 'absolute',
@@ -225,14 +234,14 @@ function NewCaptureModal() {
                     {activeStep > Steps.WAITING_FOR_DISCOVER ? (
                         <>
                             <Button
-                                onClick={handleDelete}
+                                onClick={handlers.delete}
                                 size="large"
                                 color="error"
                             >
                                 <FormattedMessage id="cta.delete" />
                             </Button>
                             <Button
-                                onClick={handleSave}
+                                onClick={handlers.save}
                                 size="large"
                                 color="success"
                                 variant="contained"
@@ -244,14 +253,14 @@ function NewCaptureModal() {
                     ) : (
                         <>
                             <Button
-                                onClick={handleClose}
+                                onClick={handlers.close}
                                 size="large"
                                 color="error"
                             >
                                 <FormattedMessage id="cta.cancel" />
                             </Button>
                             <Button
-                                onClick={handleTest}
+                                onClick={handlers.test}
                                 disabled={false}
                                 form="newCaptureForm"
                                 size="large"
