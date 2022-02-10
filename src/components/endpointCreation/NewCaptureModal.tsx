@@ -77,9 +77,9 @@ function NewCaptureModal() {
                 captureName: state.details.data.name,
                 sourceImage: state.details.data.image,
             };
+            setFormSubmitting(true);
             setFormSubmitError(null);
             setActiveStep(Steps.WAITING_FOR_DISCOVER);
-            setFormSubmitting(true);
             axios
                 .post('http://localhost:3001/capture/test/fake', formSubmitData)
                 .then((response) => {
