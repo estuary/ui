@@ -1,5 +1,6 @@
 import { Skeleton, styled } from '@mui/material';
 import Box from '@mui/material/Box';
+import RequireAuth from 'auth/RequireAuth';
 import NewCaptureModal from 'components/endpointCreation/NewCaptureModal';
 import Home from 'pages/Home';
 import Login from 'pages/Login';
@@ -83,7 +84,14 @@ const App: React.FC = () => {
                     <Route path="" element={<Login />} />
                     <Route path="help" element={<LoginHelp />} />
                 </Route>
-                <Route element={<Layout />}>
+
+                <Route
+                    element={
+                        <RequireAuth>
+                            <Layout />
+                        </RequireAuth>
+                    }
+                >
                     <Route path="/dashboard" element={<Home />} />
                     <Route path="/app">
                         <Route path="collections" element={<Collections />} />
