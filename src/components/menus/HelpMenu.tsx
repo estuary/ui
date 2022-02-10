@@ -13,17 +13,17 @@ function HelpMenu() {
                 tooltip="Help Links"
             >
                 <MenuItem>
-                    <ExternalLink link="https://docs.estuary.dev/">
+                    <ExternalLink link="https://docs.estuary.dev/" disableHover>
                         Flow Docs
                     </ExternalLink>
                 </MenuItem>
                 <MenuItem>
-                    <ExternalLink link="https://join.slack.com/t/estuary-dev/shared_invite/zt-86nal6yr-VPbv~YfZE9Q~6Zl~gmZdFQ">
+                    <ExternalLink link="https://join.slack.com/t/estuary-dev/shared_invite/zt-86nal6yr-VPbv~YfZE9Q~6Zl~gmZdFQ" disableHover>
                         Estuary's Slack
                     </ExternalLink>
                 </MenuItem>
                 <MenuItem>
-                    <ExternalLink link="https://www.estuary.dev/#get-in-touch">
+                    <ExternalLink link="https://www.estuary.dev/#get-in-touch" disableHover>
                         Contact Us
                     </ExternalLink>
                 </MenuItem>

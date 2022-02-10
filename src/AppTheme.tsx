@@ -3,7 +3,7 @@ import {
     PaletteOptions,
     ThemeOptions,
     ThemeProvider,
-    useMediaQuery,
+    useMediaQuery
 } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import React from 'react';
