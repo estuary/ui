@@ -29,6 +29,7 @@ import {
 } from './NewCaptureReducer';
 import NewCaptureSpecForm from './NewCaptureSpecForm';
 
+const FORM_ID = 'newCaptureForm';
 enum Steps {
     DETAILS_AND_SPEC,
     WAITING_FOR_DISCOVER,
@@ -192,20 +193,25 @@ function NewCaptureModal() {
 
                 <DialogContent dividers>
                     {activeStep === Steps.DETAILS_AND_SPEC ? (
-                        <NewCaptureContext.Provider value={providerState}>
-                            <NewCaptureDetails
-                                readonly={formSubmitting}
-                                displayValidation={showValidation}
-                            />
-                            <Paper sx={{ width: '100%' }} variant="outlined">
-                                <ErrorBoundryWrapper>
-                                    <NewCaptureSpecForm
-                                        readonly={formSubmitting}
-                                        displayValidation={showValidation}
-                                    />
-                                </ErrorBoundryWrapper>
-                            </Paper>
-                        </NewCaptureContext.Provider>
+                        <form id={FORM_ID}>
+                            <NewCaptureContext.Provider value={providerState}>
+                                <NewCaptureDetails
+                                    readonly={formSubmitting}
+                                    displayValidation={showValidation}
+                                />
+                                <Paper
+                                    sx={{ width: '100%' }}
+                                    variant="outlined"
+                                >
+                                    <ErrorBoundryWrapper>
+                                        <NewCaptureSpecForm
+                                            readonly={formSubmitting}
+                                            displayValidation={showValidation}
+                                        />
+                                    </ErrorBoundryWrapper>
+                                </Paper>
+                            </NewCaptureContext.Provider>
+                        </form>
                     ) : null}
                     {activeStep === Steps.WAITING_FOR_DISCOVER ? (
                         <Box
@@ -262,7 +268,7 @@ function NewCaptureModal() {
                             <Button
                                 onClick={handlers.test}
                                 disabled={false}
-                                form="newCaptureForm"
+                                form={FORM_ID}
                                 size="large"
                                 type="submit"
                                 color="success"
