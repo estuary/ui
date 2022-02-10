@@ -12,21 +12,22 @@ import {
 } from '@mui/material';
 import ExternalLink from 'components/shared/ExternalLink';
 import FormLoading from 'components/shared/FormLoading';
-import { getDefaultOptions, getRenderers } from 'forms/Helper';
+import { defaultOptions, defaultRenderers, showValidation } from 'forms/Helper';
 import useSourceSchema from 'hooks/useSourceSchema';
 import { FormattedMessage } from 'react-intl';
+import { useNewCaptureContext } from './NewCaptureContext';
+import { ActionType } from './NewCaptureReducer';
 
 type NewCaptureSpecFormProps = {
     displayValidation: boolean;
-    connectorImage: string | null;
-    formData: object;
-    onFormChange: any; //fn
     readonly: boolean;
 };
 
 function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
+    const { state, dispatch } = useNewCaptureContext();
+
     const { isFetching, sourceSchema, error, image } = useSourceSchema(
-        props.connectorImage ? props.connectorImage : ''
+        state.details.data.image
     );
     const handleDefaultsAjv = createAjv({ useDefaults: true });
 
@@ -65,18 +66,19 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
                 <StyledEngineProvider injectFirst>
                     <JsonForms
                         schema={sourceSchema}
-                        data={props.formData}
-                        renderers={getRenderers()}
+                        data={state.spec.data}
+                        renderers={defaultRenderers}
                         cells={materialCells}
-                        config={getDefaultOptions()}
+                        config={defaultOptions}
                         readonly={props.readonly}
                         ajv={handleDefaultsAjv}
-                        validationMode={
-                            props.displayValidation
-                                ? 'ValidateAndShow'
-                                : 'ValidateAndHide'
-                        }
-                        onChange={props.onFormChange}
+                        validationMode={showValidation(props.displayValidation)}
+                        onChange={(event) => {
+                            dispatch({
+                                type: ActionType.CAPTURE_SPEC_CHANGED,
+                                payload: event,
+                            });
+                        }}
                     />
                 </StyledEngineProvider>
             </>

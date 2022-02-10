@@ -1,20 +1,64 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { DialogContentText, Skeleton, Stack } from '@mui/material';
-import { getDefaultOptions, getRenderers } from 'forms/Helper';
-import useCaptureSchema from 'hooks/useCaptureSchema';
+import { defaultOptions, defaultRenderers, showValidation } from 'forms/Helper';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { useNewCaptureContext } from './NewCaptureContext';
+import { ActionType } from './NewCaptureReducer';
 
 type NewCaptureDetailsProps = {
     displayValidation: boolean;
-    formData: object;
-    onFormChange: any; //fn
     readonly: boolean;
 };
 
 function NewCaptureDetails(props: NewCaptureDetailsProps) {
     const intl = useIntl();
-    const captureSchema = useCaptureSchema();
+    const { state, dispatch } = useNewCaptureContext();
+
+    const schema = {
+        type: 'object',
+        required: ['name', 'image'],
+        properties: {
+            name: {
+                description: intl.formatMessage({
+                    id: 'captureCreation.name.description',
+                }),
+                type: 'string',
+                minLength: 3,
+                maxLength: 1000,
+                pattern: '^[a-zA-Z0-9_.-]*/[a-zA-Z0-9_.-]+$',
+            },
+            image: {
+                descriptiong: intl.formatMessage({
+                    id: 'captureCreation.image.description',
+                }),
+                type: 'string',
+                oneOf: [
+                    {
+                        const: 'ghcr.io/estuary/source-gcs:dev',
+                        title: 'GCS',
+                    },
+                    {
+                        const: 'ghcr.io/estuary/source-kafka:dev',
+                        title: 'Kafka',
+                    },
+                    {
+                        const: 'ghcr.io/estuary/source-kinesis:dev',
+                        title: 'Kinesis',
+                    },
+                    {
+                        const: 'ghcr.io/estuary/source-postgres:dev',
+                        title: 'Postgres',
+                    },
+                    {
+                        const: 'ghcr.io/estuary/source-s3:dev',
+                        title: 'S3',
+                    },
+                ],
+            },
+        },
+    };
+
     const captureUISchema = {
         type: 'VerticalLayout',
         elements: [
@@ -24,28 +68,22 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
                     {
                         type: 'Control',
                         label: intl.formatMessage({
-                            id: 'captureCreation.tenant.label',
-                        }),
-                        scope: '#/properties/tenantName',
-                    },
-                    {
-                        type: 'Control',
-                        label: intl.formatMessage({
                             id: 'captureCreation.name.label',
                         }),
-                        scope: '#/properties/captureName',
+                        scope: '#/properties/name',
                     },
                     {
                         type: 'Control',
                         label: intl.formatMessage({
-                            id: 'captureCreation.source.label',
+                            id: 'captureCreation.image.label',
                         }),
-                        scope: '#/properties/sourceType',
+                        scope: '#/properties/image',
                     },
                 ],
             },
         ],
     };
+
     return (
         <>
             <DialogContentText>
@@ -53,38 +91,34 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
             </DialogContentText>
 
             <Stack direction="row" spacing={2}>
-                {captureSchema.schema !== null ? (
+                {schema !== null ? (
                     <JsonForms
-                        schema={captureSchema.schema}
+                        schema={schema}
                         uischema={captureUISchema}
-                        data={props.formData}
-                        renderers={getRenderers()}
+                        data={state.details.data}
+                        renderers={defaultRenderers}
                         cells={materialCells}
-                        config={getDefaultOptions()}
+                        config={defaultOptions}
                         readonly={props.readonly}
-                        validationMode={
-                            props.displayValidation
-                                ? 'ValidateAndShow'
-                                : 'ValidateAndHide'
-                        }
-                        onChange={props.onFormChange}
+                        validationMode={showValidation(props.displayValidation)}
+                        onChange={(data) => {
+                            dispatch({
+                                type: ActionType.DETAILS_CHANGED,
+                                payload: data,
+                            });
+                        }}
                     />
                 ) : (
                     <>
                         <Skeleton
                             variant="rectangular"
                             height={40}
-                            width={'33%'}
+                            width={'50%'}
                         />
                         <Skeleton
                             variant="rectangular"
                             height={40}
-                            width={'33%'}
-                        />
-                        <Skeleton
-                            variant="rectangular"
-                            height={40}
-                            width={'33%'}
+                            width={'50%'}
                         />
                     </>
                 )}

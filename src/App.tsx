@@ -1,4 +1,4 @@
-import { Skeleton, useMediaQuery, useTheme } from '@mui/material';
+import { Skeleton, styled } from '@mui/material';
 import Box from '@mui/material/Box';
 import NewCaptureModal from 'components/endpointCreation/NewCaptureModal';
 import Home from 'pages/Home';
@@ -19,31 +19,32 @@ const Alerts = React.lazy(() => import('./pages/Alerts'));
 const Logs = React.lazy(() => import('./pages/Logs'));
 
 const App: React.FC = () => {
-    const railNavWidth = 63;
-    const fullNavWidth = 225;
-
-    const theme = useTheme();
-    const isBelowMd = useMediaQuery(theme.breakpoints.down('md'));
+    enum Widths {
+        RAIL = 63,
+        FULL = 225,
+    }
 
     const [navigationOpen, setNavigationOpen] = React.useState(false);
-    const [navWidth, setNavigationWidth] = React.useState(railNavWidth);
+    const [navWidth, setNavigationWidth] = React.useState<Widths>(Widths.RAIL);
 
     const toggleNavigationDrawer = () => {
-        setNavigationWidth(navigationOpen ? railNavWidth : fullNavWidth);
+        setNavigationWidth(navigationOpen ? Widths.RAIL : Widths.FULL);
         setNavigationOpen(!navigationOpen);
     };
 
-    const gridSettings = {
-        display: 'grid',
-        gridTemplateRows: 'auto 1fr',
-        gridTemplateColumns: `${navWidth}px auto`,
-        gridTemplateAreas: `"header header"
-        "nav main"`,
-    };
+    const Root = styled(Box)(({ theme }) => ({
+        [theme.breakpoints.up('md')]: {
+            display: 'grid',
+            gridTemplateRows: 'auto 1fr',
+            gridTemplateColumns: `${navWidth}px auto`,
+            gridTemplateAreas: `"header header"
+            "nav main"`,
+        },
+    }));
 
     function Layout() {
         return (
-            <Box sx={isBelowMd ? null : gridSettings}>
+            <Root>
                 <Box sx={{ gridArea: 'header' }}>
                     <Topbar
                         isNavigationOpen={navigationOpen}
@@ -67,7 +68,7 @@ const App: React.FC = () => {
                         <Outlet />
                     </Suspense>
                 </Box>
-            </Box>
+            </Root>
         );
     }
 
