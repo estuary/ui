@@ -16,7 +16,6 @@ import {
 import axios from 'axios';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
-import PropTypes from 'prop-types';
 import { useReducer, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
@@ -30,10 +29,13 @@ import {
 } from './NewCaptureReducer';
 import NewCaptureSpecForm from './NewCaptureSpecForm';
 
-NewCaptureModal.propTypes = {};
-function NewCaptureModal(
-    props: PropTypes.InferProps<typeof NewCaptureModal.propTypes>
-) {
+export enum Steps {
+    DETAILS_AND_SPEC,
+    WAITING_FOR_DISCOVER,
+    REVIEW_SCHEMA_IN_EDITOR,
+}
+
+function NewCaptureModal() {
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
     const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(
@@ -58,7 +60,7 @@ function NewCaptureModal(
     } | null>(null);
     const [catalogResponse, setCatalogResponse] = useState({} as any);
 
-    const [activeStep, setActiveStep] = useState(0);
+    const [activeStep, setActiveStep] = useState<Steps>(Steps.DETAILS_AND_SPEC);
 
     const handleClose = () => {
         navigate('..'); //This is assuming this is a child of the /captures route.
@@ -66,23 +68,24 @@ function NewCaptureModal(
 
     const handleTest = (event: any) => {
         event.preventDefault();
-        if (state.errors && state.errors.length > 0) {
+
+        if (state.details.errors!.length > 0 || state.spec.errors!.length > 0) {
             setShowValidation(true);
         } else {
             const formSubmitData = {
                 config: state.spec.data,
-                captureName: state.details.name,
-                sourceImage: state.details.image,
+                captureName: state.details.data.name,
+                sourceImage: state.details.data.image,
             };
             setFormSubmitError(null);
-            setActiveStep(1);
+            setActiveStep(Steps.WAITING_FOR_DISCOVER);
             setFormSubmitting(true);
             axios
                 .post('http://localhost:3001/capture/test/fake', formSubmitData)
                 .then((response) => {
                     setFormSubmitting(false);
                     setCatalogResponse(response.data);
-                    setActiveStep(2);
+                    setActiveStep(Steps.REVIEW_SCHEMA_IN_EDITOR);
                 })
                 .catch((error) => {
                     errorResponseHandler(error);
@@ -94,14 +97,14 @@ function NewCaptureModal(
         alert('Delete? You sure?');
     };
 
-    const errorResponseHandler = (error: any, step: number = 0) => {
+    const errorResponseHandler = (error: any) => {
         if (error.response) {
             setFormSubmitError(error.response.data);
         } else {
             setFormSubmitError(error.message);
         }
         setFormSubmitting(false);
-        setActiveStep(step);
+        setActiveStep(Steps.DETAILS_AND_SPEC);
     };
 
     const handleSave = (event: any) => {
@@ -124,7 +127,7 @@ function NewCaptureModal(
         // Make download link
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', `${state.details.image}.flow.yaml`);
+        link.setAttribute('download', `${state.details.data.image}.flow.yaml`);
 
         // Append to html link element page
         document.body.appendChild(link);
@@ -179,7 +182,7 @@ function NewCaptureModal(
                 )}
 
                 <DialogContent dividers>
-                    {activeStep === 0 ? (
+                    {activeStep === Steps.DETAILS_AND_SPEC ? (
                         <NewCaptureContext.Provider value={providerState}>
                             <NewCaptureDetails
                                 readonly={formSubmitting}
@@ -195,7 +198,7 @@ function NewCaptureModal(
                             </Paper>
                         </NewCaptureContext.Provider>
                     ) : null}
-                    {activeStep === 1 ? (
+                    {activeStep === Steps.WAITING_FOR_DISCOVER ? (
                         <Box
                             sx={{
                                 display: 'flex',
@@ -213,13 +216,13 @@ function NewCaptureModal(
                             </Typography>
                         </Box>
                     ) : null}
-                    {activeStep === 2 ? (
+                    {activeStep === Steps.REVIEW_SCHEMA_IN_EDITOR ? (
                         <NewCaptureEditor data={catalogResponse} />
                     ) : null}
                 </DialogContent>
 
                 <DialogActions>
-                    {activeStep > 1 ? (
+                    {activeStep > Steps.WAITING_FOR_DISCOVER ? (
                         <>
                             <Button
                                 onClick={handleDelete}

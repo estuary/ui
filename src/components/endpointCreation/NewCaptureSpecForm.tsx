@@ -27,7 +27,7 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
     const { state, dispatch } = useNewCaptureContext();
 
     const { isFetching, sourceSchema, error, image } = useSourceSchema(
-        state.details.image
+        state.details.data.image
     );
     const handleDefaultsAjv = createAjv({ useDefaults: true });
 
@@ -66,7 +66,7 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
                 <StyledEngineProvider injectFirst>
                     <JsonForms
                         schema={sourceSchema}
-                        data={state.spec}
+                        data={state.spec.data}
                         renderers={defaultRenderers}
                         cells={materialCells}
                         config={defaultOptions}
