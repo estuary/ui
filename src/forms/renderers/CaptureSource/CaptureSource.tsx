@@ -55,7 +55,7 @@ export const CaptureSource: React.FC<CaptureSourceProps> = (props) => {
                         key={`sourceTypeSelect-${option.key}`}
                         {...props}
                     >
-                        foo - {option.label}
+                        {option.label}
                     </Box>
                 )}
                 renderInput={(params) => (
