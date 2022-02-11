@@ -21,8 +21,6 @@ export const collapsibleGroupTester: RankedTester = rankWith(
 const CollapsibleGroupRenderer = (props: any) => {
     const { uischema, schema, path, visible, renderers } = props;
 
-    console.log('props', props);
-
     const labelElement = uischema.elements.shift();
 
     const layoutProps = {
