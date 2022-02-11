@@ -136,28 +136,19 @@ function SortableTable(props: SortableTableProps) {
                     value={searchScope}
                     onChange={handleAlignment}
                 >
-                    <ToggleButton
-                        aria-label="search all collections"
-                        value="all"
-                    >
+                    <ToggleButton aria-label="search all" value="all">
                         All
                     </ToggleButton>
-                    <ToggleButton
-                        aria-label="search active collections"
-                        value="active"
-                    >
+                    <ToggleButton aria-label="search active" value="active">
                         Active
                     </ToggleButton>
-                    <ToggleButton
-                        aria-label="search all paused collections"
-                        value="paused"
-                    >
+                    <ToggleButton aria-label="search all paused" value="paused">
                         Paused
                     </ToggleButton>
                 </ToggleButtonGroup>
                 <TextField
                     id="outlined-search"
-                    label="Search for collection"
+                    label="Search for keyword"
                     type="search"
                     variant="filled"
                 />

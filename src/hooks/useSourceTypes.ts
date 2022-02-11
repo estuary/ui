@@ -6,7 +6,7 @@ type SourceTypesService = {
     sourceTypes: any;
     error: any;
     fetchSourceTypes: any;
-}
+};
 
 const useSourceTypes = (): SourceTypesService => {
     const [sourceTypes, setSourceTypes] = useState<object | null>(null);
@@ -39,4 +39,4 @@ const useSourceTypes = (): SourceTypesService => {
     return { isFetching, sourceTypes, error, fetchSourceTypes };
 };
 
-export default useSourceTypes
+export default useSourceTypes;
