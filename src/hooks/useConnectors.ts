@@ -4,13 +4,13 @@ import { useCallback, useEffect, useState } from 'react';
 type ConnectorsService = {
     isFetchingConnectors: boolean;
     connectors: any;
-    error: any;
+    fetchingConnectorsError: any;
     fetchConnectors: any;
 };
 
 const useConnectors = (): ConnectorsService => {
     const [connectors, setConnectors] = useState<object | null>(null);
-    const [error, setError] = useState<string | null>(null);
+    const [fetchingConnectorsError, setError] = useState<string | null>(null);
     const [isFetchingConnectors, setIsFetching] = useState<boolean>(false);
 
     const fetchConnectors = useCallback(async () => {
@@ -18,10 +18,12 @@ const useConnectors = (): ConnectorsService => {
         setError(null);
         axios.get(`http://localhost:3009/connectors`).then(
             (response) => {
+                console.log('response', response);
                 setIsFetching(false);
                 setConnectors(response.data);
             },
             (error) => {
+                console.log('Error', error);
                 setIsFetching(false);
                 setError(
                     error.response ? error.response.data.message : error.message
@@ -36,7 +38,12 @@ const useConnectors = (): ConnectorsService => {
         })();
     }, [fetchConnectors]);
 
-    return { isFetchingConnectors, connectors, error, fetchConnectors };
+    return {
+        isFetchingConnectors,
+        connectors,
+        fetchingConnectorsError,
+        fetchConnectors,
+    };
 };
 
 export default useConnectors;

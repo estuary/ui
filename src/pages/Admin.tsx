@@ -14,7 +14,8 @@ import useConnectors from 'hooks/useConnectors';
 import { FormattedDate, FormattedMessage } from 'react-intl';
 
 const Admin = () => {
-    const { connectors, isFetchingConnectors } = useConnectors();
+    const { connectors, isFetchingConnectors, fetchingConnectorsError } =
+        useConnectors();
 
     console.log('connectors', connectors);
 
@@ -33,6 +34,10 @@ const Admin = () => {
                     }}
                 >
                     {isFetchingConnectors ? <>Loading...</> : null}
+
+                    {fetchingConnectorsError ? (
+                        <>{fetchingConnectorsError}</>
+                    ) : null}
 
                     {connectors ? (
                         <TableContainer component={Box}>
