@@ -148,6 +148,7 @@ const generateUISchema = (
 
     const types = deriveTypes(jsonSchema);
     if (types.length === 0) {
+        // TODO - this was returning null initially but the compiler complained so I put this in here to make it be nice.
         return { type: 'Type Missing on UI Schema' };
     }
 
@@ -182,6 +183,7 @@ const generateUISchema = (
             // TODO this is a dumb check since above it was already done
             if (jsonSchema!.properties !== undefined) {
                 Object.keys(jsonSchema.properties).map((propName) => {
+                    // TODO like above this is safe but TS complained
                     let value = jsonSchema!.properties![propName];
                     const ref = `${nextRef}/${encode(propName)}`;
                     if (value.$ref !== undefined) {
