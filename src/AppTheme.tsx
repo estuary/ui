@@ -89,7 +89,7 @@ const themeSettings = createTheme({
                 //   https://github.com/marmelab/react-admin/blob/master/packages/ra-ui-materialui/src/defaultTheme.ts
                 disableRipple: true,
                 sx: {
-                    '&:hover:active::after': {
+                    '&.Mui-focusVisible::after, &:hover::after': {
                         content: '""',
                         display: 'block',
                         width: '100%',
