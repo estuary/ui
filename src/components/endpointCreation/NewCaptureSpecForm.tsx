@@ -13,7 +13,7 @@ import {
 import ExternalLink from 'components/shared/ExternalLink';
 import FormLoading from 'components/shared/FormLoading';
 import { defaultOptions, defaultRenderers, showValidation } from 'forms/Helper';
-import useSourceSchema from 'hooks/useSourceSchema';
+import useConnectorImageSpec from 'hooks/useConnectorImages';
 import { FormattedMessage } from 'react-intl';
 import { useNewCaptureContext } from './NewCaptureContext';
 import { ActionType } from './NewCaptureReducer';
@@ -26,23 +26,27 @@ type NewCaptureSpecFormProps = {
 function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
     const { state, dispatch } = useNewCaptureContext();
 
-    const { isFetching, sourceSchema, error, image } = useSourceSchema(
-        state.details.data.image
-    );
+    const {
+        isFetchingConnectorImages,
+        connectorImageSpecSchema,
+        connectorImageError,
+        connectorImageName,
+        connectorImageDocumentation,
+    } = useConnectorImageSpec(state.details.data.image);
     const handleDefaultsAjv = createAjv({ useDefaults: true });
 
-    if (isFetching) {
+    if (isFetchingConnectorImages) {
         return <FormLoading />;
-    } else if (error !== null) {
+    } else if (connectorImageError !== null) {
         return (
             <Alert severity="error">
                 <AlertTitle>
                     <FormattedMessage id="common.errors.heading" />
                 </AlertTitle>
-                {error}
+                {connectorImageError}
             </Alert>
         );
-    } else if (sourceSchema !== null) {
+    } else if (connectorImageSpecSchema !== null) {
         return (
             <>
                 <AppBar position="relative" elevation={0} color="default">
@@ -53,10 +57,10 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
                         }}
                     >
                         <Typography variant="h5" color="initial">
-                            {image}
+                            {connectorImageName}
                         </Typography>
-                        {sourceSchema.documentationUrl ? (
-                            <ExternalLink link={sourceSchema.documentationUrl}>
+                        {connectorImageDocumentation !== '' ? (
+                            <ExternalLink link={connectorImageDocumentation}>
                                 <FormattedMessage id="captureCreation.config.source.doclink" />
                             </ExternalLink>
                         ) : null}
@@ -65,7 +69,7 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
                 <Divider />
                 <StyledEngineProvider injectFirst>
                     <JsonForms
-                        schema={sourceSchema}
+                        schema={connectorImageSpecSchema}
                         data={state.spec.data}
                         renderers={defaultRenderers}
                         cells={materialCells}

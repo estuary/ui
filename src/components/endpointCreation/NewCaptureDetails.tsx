@@ -2,6 +2,8 @@ import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { DialogContentText, Skeleton, Stack } from '@mui/material';
 import { defaultOptions, defaultRenderers, showValidation } from 'forms/Helper';
+import useConnectors from 'hooks/useConnectors';
+import { useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNewCaptureContext } from './NewCaptureContext';
 import { ActionType } from './NewCaptureReducer';
@@ -14,8 +16,10 @@ type NewCaptureDetailsProps = {
 function NewCaptureDetails(props: NewCaptureDetailsProps) {
     const intl = useIntl();
     const { state, dispatch } = useNewCaptureContext();
+    const { isFetchingConnectors, connectors, fetchingConnectorsError } =
+        useConnectors();
 
-    const schema = {
+    const [schema, setSchema] = useState({
         type: 'object',
         required: ['name', 'image'],
         properties: {
@@ -33,33 +37,11 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
                     id: 'captureCreation.image.description',
                 }),
                 type: 'string',
-                oneOf: [
-                    {
-                        const: 'ghcr.io/estuary/source-gcs:dev',
-                        title: 'GCS',
-                    },
-                    {
-                        const: 'ghcr.io/estuary/source-kafka:dev',
-                        title: 'Kafka',
-                    },
-                    {
-                        const: 'ghcr.io/estuary/source-kinesis:dev',
-                        title: 'Kinesis',
-                    },
-                    {
-                        const: 'ghcr.io/estuary/source-postgres:dev',
-                        title: 'Postgres',
-                    },
-                    {
-                        const: 'ghcr.io/estuary/source-s3:dev',
-                        title: 'S3',
-                    },
-                ],
+                oneOf: [],
             },
         },
-    };
-
-    const captureUISchema = {
+    });
+    const uiSchema = {
         type: 'VerticalLayout',
         elements: [
             {
@@ -84,6 +66,21 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
         ],
     };
 
+    useEffect(() => {
+        setSchema((previous: any) => {
+            previous.properties.image.oneOf = connectors.map(
+                (connector: any) => {
+                    return {
+                        title: connector.attributes.name,
+                        const: connector.links.images,
+                    };
+                }
+            );
+
+            return previous;
+        });
+    }, [connectors]);
+
     return (
         <>
             <DialogContentText>
@@ -91,10 +88,25 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
             </DialogContentText>
 
             <Stack direction="row" spacing={2}>
-                {schema !== null ? (
+                {fetchingConnectorsError ? (
+                    <>Error</>
+                ) : isFetchingConnectors ? (
+                    <>
+                        <Skeleton
+                            variant="rectangular"
+                            height={40}
+                            width={'50%'}
+                        />
+                        <Skeleton
+                            variant="rectangular"
+                            height={40}
+                            width={'50%'}
+                        />
+                    </>
+                ) : (
                     <JsonForms
                         schema={schema}
-                        uischema={captureUISchema}
+                        uischema={uiSchema}
                         data={state.details.data}
                         renderers={defaultRenderers}
                         cells={materialCells}
@@ -108,19 +120,6 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
                             });
                         }}
                     />
-                ) : (
-                    <>
-                        <Skeleton
-                            variant="rectangular"
-                            height={40}
-                            width={'50%'}
-                        />
-                        <Skeleton
-                            variant="rectangular"
-                            height={40}
-                            width={'50%'}
-                        />
-                    </>
                 )}
             </Stack>
         </>

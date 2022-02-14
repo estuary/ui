@@ -9,27 +9,26 @@ type ConnectorsService = {
 };
 
 const useConnectors = (): ConnectorsService => {
-    const [connectors, setConnectors] = useState<object | null>(null);
+    const [connectors, setConnectors] = useState<object[]>([]);
     const [fetchingConnectorsError, setError] = useState<string | null>(null);
-    const [isFetchingConnectors, setIsFetching] = useState<boolean>(false);
+    const [isFetchingConnectors, setIsFetching] = useState<boolean>(true);
 
     const fetchConnectors = useCallback(async () => {
         setIsFetching(true);
         setError(null);
-        axios.get(`http://localhost:3009/connectors`).then(
-            (response) => {
-                console.log('response', response);
-                setIsFetching(false);
-                setConnectors(response.data);
-            },
-            (error) => {
-                console.log('Error', error);
-                setIsFetching(false);
+        axios
+            .get(`http://localhost:3009/connectors`)
+            .then((response) => {
+                setConnectors(response.data.data);
+            })
+            .catch((error) => {
                 setError(
                     error.response ? error.response.data.message : error.message
                 );
-            }
-        );
+            })
+            .finally(() => {
+                setIsFetching(false);
+            });
     }, []);
 
     useEffect(() => {
