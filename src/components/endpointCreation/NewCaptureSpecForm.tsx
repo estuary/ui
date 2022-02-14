@@ -18,7 +18,6 @@ import {
     generateUISchema,
     showValidation,
 } from 'forms/Helper';
-import { defaultOptions, defaultRenderers, showValidation } from 'forms/Helper';
 import useConnectorImageSpec from 'hooks/useConnectorImages';
 import { FormattedMessage } from 'react-intl';
 import { useNewCaptureContext } from './NewCaptureContext';
@@ -53,7 +52,7 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
             </Alert>
         );
     } else if (connectorImageSpecSchema !== null) {
-      const uiSchema = generateUISchema(sourceSchema);
+        const uiSchema = generateUISchema(connectorImageSpecSchema);
         return (
             <>
                 <AppBar position="relative" elevation={0} color="default">
