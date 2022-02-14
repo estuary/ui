@@ -5,7 +5,7 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
-import useSourceTypes from 'hooks/useSourceTypes';
+import useConnectors from 'hooks/useConnectors';
 import React from 'react';
 import { useIntl } from 'react-intl';
 
@@ -18,31 +18,32 @@ interface CaptureSourceProps {
 
 export const CaptureSource: React.FC<CaptureSourceProps> = (props) => {
     const intl = useIntl();
-    const { isFetching, error, sourceTypes } = useSourceTypes();
+    const { isFetchingConnectors, fetchingConnectorsError, connectors } =
+        useConnectors();
 
     const { id, updateValue, errors } = props;
     let inputError: string;
 
-    if (error) {
-        inputError = error;
+    if (fetchingConnectorsError) {
+        inputError = fetchingConnectorsError;
     } else if (errors !== '') {
         inputError = errors;
     }
 
-    if (sourceTypes === null) {
+    if (connectors === null) {
         return <Skeleton variant="rectangular" height={40} width={'auto'} />;
     } else {
         return (
             <Autocomplete
                 id={id}
-                options={sourceTypes}
+                options={connectors}
                 autoHighlight
                 openOnFocus
                 blurOnSelect="mouse"
                 noOptionsText={intl.formatMessage({
                     id: 'common.errors.source.missing',
                 })}
-                loading={isFetching}
+                loading={isFetchingConnectors}
                 onChange={function (event, reason: any) {
                     updateValue(reason.key ? reason.key : '');
                 }}
@@ -64,7 +65,7 @@ export const CaptureSource: React.FC<CaptureSourceProps> = (props) => {
                             {...params}
                             label={intl.formatMessage({
                                 id:
-                                    error !== null
+                                    fetchingConnectorsError !== null
                                         ? 'capturesource.fetch.failed'
                                         : 'capturesource.label',
                             })}
