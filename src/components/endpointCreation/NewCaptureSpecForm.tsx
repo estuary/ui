@@ -12,6 +12,12 @@ import {
 } from '@mui/material';
 import ExternalLink from 'components/shared/ExternalLink';
 import FormLoading from 'components/shared/FormLoading';
+import {
+    defaultOptions,
+    defaultRenderers,
+    generateUISchema,
+    showValidation,
+} from 'forms/Helper';
 import { defaultOptions, defaultRenderers, showValidation } from 'forms/Helper';
 import useConnectorImageSpec from 'hooks/useConnectorImages';
 import { FormattedMessage } from 'react-intl';
@@ -47,6 +53,7 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
             </Alert>
         );
     } else if (connectorImageSpecSchema !== null) {
+      const uiSchema = generateUISchema(sourceSchema);
         return (
             <>
                 <AppBar position="relative" elevation={0} color="default">
@@ -70,6 +77,7 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
                 <StyledEngineProvider injectFirst>
                     <JsonForms
                         schema={connectorImageSpecSchema}
+                        uischema={uiSchema}
                         data={state.spec.data}
                         renderers={defaultRenderers}
                         cells={materialCells}

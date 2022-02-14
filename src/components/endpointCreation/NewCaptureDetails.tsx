@@ -33,7 +33,7 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
                 pattern: '^[a-zA-Z0-9_.-]*/[a-zA-Z0-9_.-]+$',
             },
             image: {
-                descriptiong: intl.formatMessage({
+                description: intl.formatMessage({
                     id: 'captureCreation.image.description',
                 }),
                 type: 'string',
