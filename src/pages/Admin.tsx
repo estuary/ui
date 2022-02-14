@@ -39,7 +39,7 @@ const Admin = () => {
                         <>{fetchingConnectorsError}</>
                     ) : null}
 
-                    {connectors ? (
+                    {connectors.length > 0 ? (
                         <TableContainer component={Box}>
                             <Table
                                 sx={{ minWidth: 650 }}
@@ -56,7 +56,7 @@ const Admin = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {connectors.data.map((row: any) => (
+                                    {connectors.map((row: any) => (
                                         <TableRow
                                             key={row.name}
                                             sx={{

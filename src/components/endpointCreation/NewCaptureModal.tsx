@@ -7,6 +7,7 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
+    Divider,
     IconButton,
     Paper,
     Typography,
@@ -14,7 +15,6 @@ import {
     useTheme,
 } from '@mui/material';
 import axios from 'axios';
-import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useReducer, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -28,6 +28,7 @@ import {
     newCaptureReducer,
 } from './NewCaptureReducer';
 import NewCaptureSpecForm from './NewCaptureSpecForm';
+import NewCaptureSpecFormHeader from './NewCaptureSpecFormHeader';
 
 const FORM_ID = 'newCaptureForm';
 enum Steps {
@@ -122,21 +123,12 @@ function NewCaptureModal() {
             ) {
                 setShowValidation(true);
             } else {
-                const formSubmitData = {
-                    config: state.spec.data,
-                    captureName: state.details.data.name,
-                    sourceImage: state.details.data.image,
-                };
                 setFormSubmitting(true);
                 setFormSubmitError(null);
                 setActiveStep(Steps.WAITING_FOR_DISCOVER);
                 axios
-                    .post(
-                        'http://localhost:3001/capture/test/fake',
-                        formSubmitData
-                    )
+                    .post(state.endpoints.submit, state.spec.data)
                     .then((response) => {
-                        setFormSubmitting(false);
                         setCatalogResponse(response.data);
                         setActiveStep(Steps.REVIEW_SCHEMA_IN_EDITOR);
                     })
@@ -146,8 +138,10 @@ function NewCaptureModal() {
                         } else {
                             setFormSubmitError(error.message);
                         }
-                        setFormSubmitting(false);
                         setActiveStep(Steps.DETAILS_AND_SPEC);
+                    })
+                    .finally(() => {
+                        setFormSubmitting(false);
                     });
             }
         },
@@ -187,7 +181,7 @@ function NewCaptureModal() {
                 {formSubmitError && (
                     <NewCaptureError
                         title={formSubmitError.message}
-                        errors={formSubmitError.errors}
+                        errors={[]}
                     />
                 )}
 
@@ -196,19 +190,19 @@ function NewCaptureModal() {
                         <form id={FORM_ID}>
                             <NewCaptureContext.Provider value={providerState}>
                                 <NewCaptureDetails
-                                    readonly={formSubmitting}
                                     displayValidation={showValidation}
+                                    readonly={formSubmitting}
                                 />
                                 <Paper
                                     sx={{ width: '100%' }}
                                     variant="outlined"
                                 >
-                                    <ErrorBoundryWrapper>
-                                        <NewCaptureSpecForm
-                                            readonly={formSubmitting}
-                                            displayValidation={showValidation}
-                                        />
-                                    </ErrorBoundryWrapper>
+                                    <NewCaptureSpecFormHeader />
+                                    <Divider />
+                                    <NewCaptureSpecForm
+                                        displayValidation={showValidation}
+                                        readonly={formSubmitting}
+                                    />
                                 </Paper>
                             </NewCaptureContext.Provider>
                         </form>

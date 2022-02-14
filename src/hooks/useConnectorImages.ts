@@ -1,59 +1,43 @@
 import axios from 'axios';
-import JsonRefs from 'json-refs';
 import { useCallback, useEffect, useState } from 'react';
 
 type ConnectorImagesService = {
     isFetchingConnectorImages: boolean;
-    connectorImageSpecSchema: any;
+    connectorImageAttributes: any;
+    connectorImageLinks: any;
     connectorImageError: any;
-    connectorImageName: any;
-    connectorImageDocumentation: any;
     fetchConnectorImages: any;
 };
 
-const useConnectorImageSpec = (imagesURL: string): ConnectorImagesService => {
-    const [connectorImage, setConnectorImage] = useState<object | null>(null);
+const useConnectorImages = (
+    imagesURL: string,
+    whichOne: number = 0
+): ConnectorImagesService => {
+    const [isFetching, setIsFetching] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const [name, setName] = useState<string | null>(null);
-    const [docs, setDocs] = useState<string | null>(null);
-    const [isFetching, setIsFetching] = useState<boolean>(false);
+
+    const [attributes, setAttributes] = useState<object>({});
+    const [links, setLinks] = useState<object>({});
 
     const fetchSchema = useCallback(async () => {
         setIsFetching(true);
         setError(null);
-        axios.get(imagesURL).then(async (imageResponse: any) => {
-            const newestImage = imageResponse.data.data[0];
-            setName(newestImage.attributes.name);
-
-            axios
-                .get(newestImage.links.spec)
-                .then(async (specResponse: any) => {
-                    const { data } = specResponse.data;
-
-                    setDocs(data.attributes.documentationURL);
-                    try {
-                        JsonRefs.resolveRefs(
-                            data.attributes.endpointSpecSchema
-                        ).then((derefSchema) => {
-                            setConnectorImage(derefSchema.resolved);
-                        });
-                    } catch (error: any) {
-                        setConnectorImage(null);
-                        setError(error.message);
-                    }
-                })
-                .catch((error: any) => {
-                    setError(
-                        error.response
-                            ? error.response.data.message
-                            : error.message
-                    );
-                })
-                .finally(() => {
-                    setIsFetching(false);
-                });
-        });
-    }, [imagesURL]);
+        axios
+            .get(imagesURL)
+            .then(async (imageResponse: any) => {
+                const newestImage = imageResponse.data.data[whichOne];
+                setAttributes(newestImage.attributes);
+                setLinks(newestImage.links);
+            })
+            .catch((error: any) => {
+                setError(
+                    error.response ? error.response.data.message : error.message
+                );
+            })
+            .finally(() => {
+                setIsFetching(false);
+            });
+    }, [imagesURL, whichOne]);
 
     useEffect(() => {
         (async () => {
@@ -65,12 +49,11 @@ const useConnectorImageSpec = (imagesURL: string): ConnectorImagesService => {
 
     return {
         isFetchingConnectorImages: isFetching,
-        connectorImageSpecSchema: connectorImage,
+        connectorImageAttributes: attributes,
+        connectorImageLinks: links,
         connectorImageError: error,
-        connectorImageName: name,
-        connectorImageDocumentation: docs,
         fetchConnectorImages: fetchSchema,
     };
 };
 
-export default useConnectorImageSpec;
+export default useConnectorImages;
