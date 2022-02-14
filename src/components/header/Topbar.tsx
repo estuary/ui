@@ -70,6 +70,7 @@ const Topbar: React.FC<TopbarProps> = (props: TopbarProps) => {
                 <Stack
                     direction="row"
                     spacing={0}
+                    alignItems='center'
                     sx={{
                         ml: 'auto',
                     }}
