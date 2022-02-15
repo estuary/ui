@@ -10,35 +10,61 @@ import {
     showValidation,
 } from 'forms/Helper';
 import useConnectorImageSpec from 'hooks/useConnectorImagesSpec';
+import { isEmpty } from 'lodash';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useNewCaptureContext } from './NewCaptureContext';
-import { ActionType } from './NewCaptureReducer';
+import { ActionType } from './Reducer';
 
 type NewCaptureSpecFormProps = {
     displayValidation: boolean;
     readonly: boolean;
+
+    state: any;
+    dispatch: any;
+    endpoint: string;
 };
 
-function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
-    const { state, dispatch } = useNewCaptureContext();
+const defaultAjv = createAjv({ useDefaults: true });
 
-    console.log('>', state.endpoints.spec);
+function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
+    const { state, dispatch, endpoint } = props;
 
     const {
         isFetchingConnectorImageSpec,
         connectorImageSpecSchema,
         connectorImageSpecError,
-        // connectorImageDocumentation,
+        connectorImageDocumentation,
         connectorImageDiscoveryLink,
-    } = useConnectorImageSpec(state.endpoints.spec);
+    } = useConnectorImageSpec(endpoint);
 
     useEffect(() => {
         dispatch({
-            type: ActionType.ENDPOINT_CHANGED_SUBMIT,
+            type: ActionType.NEW_DISCOVERY_LINK,
             payload: connectorImageDiscoveryLink,
         });
     }, [connectorImageDiscoveryLink, dispatch]);
+
+    useEffect(() => {
+        dispatch({
+            type: ActionType.NEW_DOCS_LINK,
+            payload: connectorImageDocumentation,
+        });
+    }, [connectorImageDocumentation, dispatch]);
+
+    // This will hydrate the default values for us as we don't want JSONForms to
+    //  directly update the state object as it caused issues when switching connectors.
+    useEffect(() => {
+        const hydrateAndValidate = defaultAjv.compile(connectorImageSpecSchema);
+        const defaultValues = {};
+        hydrateAndValidate(defaultValues);
+
+        dispatch({
+            type: ActionType.CAPTURE_SPEC_CHANGED,
+            payload: {
+                data: defaultValues,
+            },
+        });
+    }, [connectorImageSpecSchema, dispatch]);
 
     if (isFetchingConnectorImageSpec) {
         return <FormLoading />;
@@ -52,7 +78,6 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
             </Alert>
         );
     } else if (connectorImageSpecSchema.type) {
-        const handleDefaultsAjv = createAjv({ useDefaults: true });
         const uiSchema = generateUISchema(connectorImageSpecSchema);
 
         return (
@@ -60,18 +85,19 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
                 <JsonForms
                     schema={connectorImageSpecSchema}
                     uischema={uiSchema}
-                    data={state.spec.data}
+                    data={state}
                     renderers={defaultRenderers}
                     cells={materialCells}
                     config={defaultOptions}
                     readonly={props.readonly}
-                    ajv={handleDefaultsAjv}
                     validationMode={showValidation(props.displayValidation)}
-                    onChange={(event) => {
-                        dispatch({
-                            type: ActionType.CAPTURE_SPEC_CHANGED,
-                            payload: event,
-                        });
+                    onChange={(form) => {
+                        if (!isEmpty(form.data)) {
+                            dispatch({
+                                type: ActionType.CAPTURE_SPEC_CHANGED,
+                                payload: form,
+                            });
+                        }
                     }}
                 />
             </StyledEngineProvider>

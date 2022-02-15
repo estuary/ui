@@ -15,20 +15,17 @@ import {
     useTheme,
 } from '@mui/material';
 import axios from 'axios';
+import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useReducer, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
-import NewCaptureContext from './NewCaptureContext';
-import NewCaptureDetails from './NewCaptureDetails';
-import NewCaptureEditor from './NewCaptureEditor';
-import NewCaptureError from './NewCaptureError';
-import {
-    NewCaptureDetailsInitState,
-    newCaptureReducer,
-} from './NewCaptureReducer';
-import NewCaptureSpecForm from './NewCaptureSpecForm';
-import NewCaptureSpecFormHeader from './NewCaptureSpecFormHeader';
+import NewCaptureDetails from './DetailsForm';
+import NewCaptureError from './Error';
+import { getInitialState, newCaptureReducer } from './Reducer';
+import NewCaptureEditor from './SchemaEditor';
+import NewCaptureSpecForm from './SpecForm';
+import NewCaptureSpecFormHeader from './SpecFormHeader';
 
 const FORM_ID = 'newCaptureForm';
 enum Steps {
@@ -46,14 +43,10 @@ function NewCaptureModal() {
     const navigate = useNavigate();
 
     // Form data state
-    const [state, dispatch] = useReducer(
-        newCaptureReducer,
-        NewCaptureDetailsInitState
-    );
-    const providerState = {
-        state,
-        dispatch,
-    };
+    const [state, dispatch] = useReducer(newCaptureReducer, getInitialState());
+    const { details, spec, links } = state;
+
+    // const [specState, specDispatch] = useReducer(specReducer, specInit);
 
     // Form props
     const [showValidation, setShowValidation] = useState(false);
@@ -95,10 +88,7 @@ function NewCaptureModal() {
             // Make download link
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute(
-                'download',
-                `${state.details.data.name}.flow.yaml`
-            );
+            link.setAttribute('download', `${details.data.name}.flow.yaml`);
 
             // Append to html link element page
             document.body.appendChild(link);
@@ -117,17 +107,14 @@ function NewCaptureModal() {
         test: (event: any) => {
             event.preventDefault();
 
-            if (
-                state.details.errors!.length > 0 ||
-                state.spec.errors!.length > 0
-            ) {
+            if (spec.errors!.length > 0 || details.errors!.length > 0) {
                 setShowValidation(true);
             } else {
                 setFormSubmitting(true);
                 setFormSubmitError(null);
                 setActiveStep(Steps.WAITING_FOR_DISCOVER);
                 axios
-                    .post(state.endpoints.submit, state.spec.data)
+                    .post(links.discovery, spec.data)
                     .then((response) => {
                         setCatalogResponse(response.data.data.attributes);
                         setActiveStep(Steps.REVIEW_SCHEMA_IN_EDITOR);
@@ -191,23 +178,31 @@ function NewCaptureModal() {
                 <DialogContent dividers>
                     {activeStep === Steps.DETAILS_AND_SPEC ? (
                         <form id={FORM_ID}>
-                            <NewCaptureContext.Provider value={providerState}>
+                            <ErrorBoundryWrapper>
                                 <NewCaptureDetails
                                     displayValidation={showValidation}
                                     readonly={formSubmitting}
+                                    state={details}
+                                    dispatch={dispatch}
                                 />
-                                <Paper
-                                    sx={{ width: '100%' }}
-                                    variant="outlined"
-                                >
-                                    <NewCaptureSpecFormHeader />
-                                    <Divider />
+                            </ErrorBoundryWrapper>
+                            <Paper sx={{ width: '100%' }} variant="outlined">
+                                <NewCaptureSpecFormHeader
+                                    dispatch={dispatch}
+                                    endpoint={links.connectorImage}
+                                    docs={links.documentation}
+                                />
+                                <Divider />
+                                <ErrorBoundryWrapper>
                                     <NewCaptureSpecForm
                                         displayValidation={showValidation}
                                         readonly={formSubmitting}
+                                        state={spec.data}
+                                        dispatch={dispatch}
+                                        endpoint={state.links.spec}
                                     />
-                                </Paper>
-                            </NewCaptureContext.Provider>
+                                </ErrorBoundryWrapper>
+                            </Paper>
                         </form>
                     ) : null}
                     {activeStep === Steps.WAITING_FOR_DISCOVER ? (

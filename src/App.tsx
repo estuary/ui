@@ -1,7 +1,6 @@
 import { Skeleton, styled } from '@mui/material';
 import Box from '@mui/material/Box';
 import RequireAuth from 'auth/RequireAuth';
-import NewCaptureModal from 'components/endpointCreation/NewCaptureModal';
 import Home from 'pages/Home';
 import Login from 'pages/Login';
 import LoginHelp from 'pages/LoginHelp';
@@ -14,6 +13,9 @@ import Error from './pages/Error';
 
 const Admin = React.lazy(() => import('./pages/Admin'));
 const Capture = React.lazy(() => import('./pages/Captures'));
+const NewCaptureModal = React.lazy(
+    () => import('components/capture/creation/index')
+);
 const Collections = React.lazy(() => import('./pages/Collections'));
 const Users = React.lazy(() => import('./pages/Users'));
 const Alerts = React.lazy(() => import('./pages/Alerts'));

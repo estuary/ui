@@ -2,23 +2,26 @@ import { Alert, AlertTitle, AppBar, Toolbar, Typography } from '@mui/material';
 import useConnectorImages from 'hooks/useConnectorImages';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useNewCaptureContext } from './NewCaptureContext';
-import { ActionType } from './NewCaptureReducer';
+import { ActionType } from './Reducer';
 
-type NewCaptureSpecFormHeaderProps = {};
+type NewCaptureSpecFormHeaderProps = {
+    dispatch: any;
+    endpoint: string;
+    docs: string;
+};
 
 function NewCaptureSpecFormHeader(props: NewCaptureSpecFormHeaderProps) {
-    const { state, dispatch } = useNewCaptureContext();
+    const { endpoint, dispatch, docs } = props;
 
     const {
         connectorImageAttributes,
         connectorImageLinks,
         connectorImageError,
-    } = useConnectorImages(state.details.data.image);
+    } = useConnectorImages(endpoint);
 
     useEffect(() => {
         dispatch({
-            type: ActionType.ENDPOINT_CHANGED_SPEC,
+            type: ActionType.NEW_SPEC_LINK,
             payload: connectorImageLinks.spec,
         });
     }, [connectorImageLinks.spec, dispatch]);
@@ -47,6 +50,7 @@ function NewCaptureSpecFormHeader(props: NewCaptureSpecFormHeaderProps) {
                     <Typography variant="h5" color="initial">
                         {connectorImageAttributes!.name}
                     </Typography>
+                    {docs !== '' ? <>Link here</> : null}
                 </Toolbar>
             </AppBar>
         );

@@ -5,17 +5,19 @@ import { defaultOptions, defaultRenderers, showValidation } from 'forms/Helper';
 import useConnectors from 'hooks/useConnectors';
 import { useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useNewCaptureContext } from './NewCaptureContext';
-import { ActionType } from './NewCaptureReducer';
+import { ActionType } from './Reducer';
 
 type NewCaptureDetailsProps = {
     displayValidation: boolean;
     readonly: boolean;
+    state: any;
+    dispatch: any;
 };
 
 function NewCaptureDetails(props: NewCaptureDetailsProps) {
     const intl = useIntl();
-    const { state, dispatch } = useNewCaptureContext();
+    const { state, dispatch } = props;
+
     const { isFetchingConnectors, connectors, fetchingConnectorsError } =
         useConnectors();
 
@@ -107,24 +109,23 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
                     <JsonForms
                         schema={schema}
                         uischema={uiSchema}
-                        data={state.details.data}
+                        data={state.data}
                         renderers={defaultRenderers}
                         cells={materialCells}
                         config={defaultOptions}
                         readonly={props.readonly}
                         validationMode={showValidation(props.displayValidation)}
-                        onChange={(data) => {
-                            if (state.details.data.image !== data.data.image) {
+                        onChange={(form) => {
+                            if (state.data.image !== form.data.image) {
                                 dispatch({
                                     type: ActionType.CONNECTOR_CHANGED,
-                                    payload: data.data.image as string,
-                                });
-                            } else {
-                                dispatch({
-                                    type: ActionType.DETAILS_CHANGED,
-                                    payload: data,
+                                    payload: form.data.image as string,
                                 });
                             }
+                            dispatch({
+                                type: ActionType.DETAILS_CHANGED,
+                                payload: form,
+                            });
                         }}
                     />
                 )}
