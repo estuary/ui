@@ -114,10 +114,17 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
                         readonly={props.readonly}
                         validationMode={showValidation(props.displayValidation)}
                         onChange={(data) => {
-                            dispatch({
-                                type: ActionType.DETAILS_CHANGED,
-                                payload: data,
-                            });
+                            if (state.details.data.image !== data.data.image) {
+                                dispatch({
+                                    type: ActionType.CONNECTOR_CHANGED,
+                                    payload: data.data.image as string,
+                                });
+                            } else {
+                                dispatch({
+                                    type: ActionType.DETAILS_CHANGED,
+                                    payload: data,
+                                });
+                            }
                         }}
                     />
                 )}

@@ -3,6 +3,7 @@ import { JsonFormsCore } from '@jsonforms/core';
 export enum ActionType {
     CAPTURE_SPEC_CHANGED = 'Capture Spec Changed',
     DETAILS_CHANGED = 'Details Changed',
+    CONNECTOR_CHANGED = 'Connector Changed',
     ENDPOINT_CHANGED_SPEC = 'Spec Endpoint Changed',
     ENDPOINT_CHANGED_SUBMIT = 'Discovery Endpoint Changed',
 }
@@ -13,6 +14,10 @@ export type Action =
       }
     | {
           type: ActionType.ENDPOINT_CHANGED_SUBMIT;
+          payload: string;
+      }
+    | {
+          type: ActionType.CONNECTOR_CHANGED;
           payload: string;
       }
     | {
@@ -52,7 +57,6 @@ export const newCaptureReducer = (
     state: NewCaptureStateType,
     action: Action
 ): NewCaptureStateType => {
-    console.log('Reducer', action.type);
     switch (action.type) {
         case ActionType.ENDPOINT_CHANGED_SUBMIT:
             return {
@@ -75,6 +79,23 @@ export const newCaptureReducer = (
                 ...state,
                 details: action.payload,
             };
+        case ActionType.CONNECTOR_CHANGED:
+            const foo = {
+                ...state,
+                details: {
+                    ...state.details,
+                    data: {
+                        ...state.details.data,
+                        image: action.payload,
+                    },
+                },
+                spec: {
+                    data: {},
+                    errors: [],
+                },
+            };
+
+            return foo;
         case ActionType.CAPTURE_SPEC_CHANGED:
             return {
                 ...state,
