@@ -97,7 +97,7 @@ function NewCaptureModal() {
             link.href = url;
             link.setAttribute(
                 'download',
-                `${state.details.data.image}.flow.yaml`
+                `${state.details.data.name}.flow.yaml`
             );
 
             // Append to html link element page
@@ -129,12 +129,15 @@ function NewCaptureModal() {
                 axios
                     .post(state.endpoints.submit, state.spec.data)
                     .then((response) => {
-                        setCatalogResponse(response.data);
+                        setCatalogResponse(response.data.data.attributes);
                         setActiveStep(Steps.REVIEW_SCHEMA_IN_EDITOR);
                     })
                     .catch((error) => {
-                        if (error.response) {
-                            setFormSubmitError(error.response.data);
+                        if (error.errors) {
+                            setFormSubmitError({
+                                message: 'title',
+                                errors: error.errors,
+                            });
                         } else {
                             setFormSubmitError(error.message);
                         }
