@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 type ConnectorImagesService = {
     isFetchingConnectorImageSpec: boolean;
-    connectorImageSpecSchema: object | null;
+    connectorImageSpecSchema: any;
     connectorImageSpecError: any;
     connectorImageDocumentation: string;
     connectorImageDiscoveryLink: string;
@@ -12,7 +12,7 @@ type ConnectorImagesService = {
 };
 
 const useConnectorImageSpec = (specURL: string): ConnectorImagesService => {
-    const [connectorImage, setConnectorImage] = useState<object | null>(null);
+    const [connectorImage, setConnectorImage] = useState<object>({});
     const [error, setError] = useState<string | null>(null);
     const [discovery, setDiscovery] = useState<string>('');
     const [docs, setDocs] = useState<string>('');
@@ -33,7 +33,7 @@ const useConnectorImageSpec = (specURL: string): ConnectorImagesService => {
                         setConnectorImage(derefSchema.resolved);
                     });
                 } catch (error: any) {
-                    setConnectorImage(null);
+                    setConnectorImage({});
                     setError(error.message);
                 }
 

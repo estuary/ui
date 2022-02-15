@@ -23,6 +23,8 @@ type NewCaptureSpecFormProps = {
 function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
     const { state, dispatch } = useNewCaptureContext();
 
+    console.log('>', state.endpoints.spec);
+
     const {
         isFetchingConnectorImageSpec,
         connectorImageSpecSchema,
@@ -49,38 +51,30 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
                 {connectorImageSpecError}
             </Alert>
         );
-    } else if (connectorImageSpecSchema !== null) {
+    } else if (connectorImageSpecSchema.type) {
         const handleDefaultsAjv = createAjv({ useDefaults: true });
         const uiSchema = generateUISchema(connectorImageSpecSchema);
 
         return (
-            <>
-                {isFetchingConnectorImageSpec ? (
-                    <FormLoading />
-                ) : connectorImageSpecSchema ? (
-                    <StyledEngineProvider injectFirst>
-                        <JsonForms
-                            schema={connectorImageSpecSchema}
-                            uischema={uiSchema}
-                            data={state.spec.data}
-                            renderers={defaultRenderers}
-                            cells={materialCells}
-                            config={defaultOptions}
-                            readonly={props.readonly}
-                            ajv={handleDefaultsAjv}
-                            validationMode={showValidation(
-                                props.displayValidation
-                            )}
-                            onChange={(event) => {
-                                dispatch({
-                                    type: ActionType.CAPTURE_SPEC_CHANGED,
-                                    payload: event,
-                                });
-                            }}
-                        />
-                    </StyledEngineProvider>
-                ) : null}
-            </>
+            <StyledEngineProvider injectFirst>
+                <JsonForms
+                    schema={connectorImageSpecSchema}
+                    uischema={uiSchema}
+                    data={state.spec.data}
+                    renderers={defaultRenderers}
+                    cells={materialCells}
+                    config={defaultOptions}
+                    readonly={props.readonly}
+                    ajv={handleDefaultsAjv}
+                    validationMode={showValidation(props.displayValidation)}
+                    onChange={(event) => {
+                        dispatch({
+                            type: ActionType.CAPTURE_SPEC_CHANGED,
+                            payload: event,
+                        });
+                    }}
+                />
+            </StyledEngineProvider>
         );
     } else {
         return <></>;
