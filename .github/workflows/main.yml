@@ -41,6 +41,7 @@ jobs:
                   only_changed: True
                   github_token: ${{ secrets.GITHUB_TOKEN }}
                   commit_options: --no-verify
+                  working_directory: src/
 
             - name: Linting
               run: npm run lint
