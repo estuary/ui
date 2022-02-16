@@ -39,7 +39,6 @@ jobs:
               with:
                   prettier_options: --config .prettierrc --ignore-path .prettierignore --write **/*.{js,jsx,ts,tsx}
                   only_changed: True
-                  dry: True
                   github_token: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Linting
