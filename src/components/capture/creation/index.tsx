@@ -177,23 +177,24 @@ function NewCaptureModal() {
 
                 <DialogContent dividers>
                     {activeStep === Steps.DETAILS_AND_SPEC ? (
-                        <form id={FORM_ID}>
-                            <ErrorBoundryWrapper>
+                        <ErrorBoundryWrapper>
+                            <form id={FORM_ID}>
                                 <NewCaptureDetails
                                     displayValidation={showValidation}
                                     readonly={formSubmitting}
                                     state={details}
                                     dispatch={dispatch}
                                 />
-                            </ErrorBoundryWrapper>
-                            <Paper sx={{ width: '100%' }} variant="outlined">
-                                <NewCaptureSpecFormHeader
-                                    dispatch={dispatch}
-                                    endpoint={links.connectorImage}
-                                    docs={links.documentation}
-                                />
-                                <Divider />
-                                <ErrorBoundryWrapper>
+                                <Paper
+                                    sx={{ width: '100%' }}
+                                    variant="outlined"
+                                >
+                                    <NewCaptureSpecFormHeader
+                                        dispatch={dispatch}
+                                        endpoint={links.connectorImage}
+                                        docs={links.documentation}
+                                    />
+                                    <Divider />
                                     <NewCaptureSpecForm
                                         displayValidation={showValidation}
                                         readonly={formSubmitting}
@@ -201,9 +202,9 @@ function NewCaptureModal() {
                                         dispatch={dispatch}
                                         endpoint={state.links.spec}
                                     />
-                                </ErrorBoundryWrapper>
-                            </Paper>
-                        </form>
+                                </Paper>
+                            </form>
+                        </ErrorBoundryWrapper>
                     ) : null}
                     {activeStep === Steps.WAITING_FOR_DISCOVER ? (
                         <Box
