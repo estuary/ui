@@ -12,5 +12,5 @@ test('there is a help menu available', () => {
         <Topbar isNavigationOpen={false} onNavigationToggle={mockNavToggle} />
     );
 
-    expect(screen.queryByLabelText('Open help')).toBeInTheDocument();
+    expect(screen.getByLabelText('Open help')).toBeInTheDocument();
 });

@@ -20,7 +20,5 @@ export const setupTests = () => {
     if (hasFullICU()) {
         Intl.NumberFormat.format = new Intl.NumberFormat('pt').format;
         Intl.DateTimeFormat.format = new Intl.DateTimeFormat('pt').format;
-    } else {
-        global.Intl = IntlPolyfill;
     }
 };

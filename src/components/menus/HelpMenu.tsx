@@ -18,12 +18,18 @@ function HelpMenu() {
                     </ExternalLink>
                 </MenuItem>
                 <MenuItem>
-                    <ExternalLink link="https://join.slack.com/t/estuary-dev/shared_invite/zt-86nal6yr-VPbv~YfZE9Q~6Zl~gmZdFQ" disableHover>
+                    <ExternalLink
+                        link="https://join.slack.com/t/estuary-dev/shared_invite/zt-86nal6yr-VPbv~YfZE9Q~6Zl~gmZdFQ"
+                        disableHover
+                    >
                         Estuary's Slack
                     </ExternalLink>
                 </MenuItem>
                 <MenuItem>
-                    <ExternalLink link="https://www.estuary.dev/#get-in-touch" disableHover>
+                    <ExternalLink
+                        link="https://www.estuary.dev/#get-in-touch"
+                        disableHover
+                    >
                         Contact Us
                     </ExternalLink>
                 </MenuItem>

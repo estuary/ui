@@ -22,9 +22,11 @@ function ExternalLink(
             sx={{
                 fontWeight: 700,
                 '&:hover': {
-                    // TODO: Retrieve the background hex code from AppTheme.tsx 
-                    backgroundColor: props.disableHover ? 'transparent' : '#F7F7F7'
-                }
+                    // TODO: Retrieve the background hex code from AppTheme.tsx
+                    backgroundColor: props.disableHover
+                        ? 'transparent'
+                        : '#F7F7F7',
+                },
             }}
         >
             {props.children}

@@ -16,7 +16,9 @@ function ErrorSummary(
     if (errors && errors.length > 0) {
         return (
             <Alert severity="error">
-                <AlertTitle><FormattedMessage id="forms.validation.failure.heading" /></AlertTitle>
+                <AlertTitle>
+                    <FormattedMessage id="forms.validation.failure.heading" />
+                </AlertTitle>
                 {errors.map((error: any) => {
                     return error;
                 })}
