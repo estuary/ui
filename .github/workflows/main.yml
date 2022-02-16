@@ -40,6 +40,7 @@ jobs:
                   prettier_options: --config .prettierrc --ignore-path .prettierignore --write **/*.{js,jsx,ts,tsx}
                   only_changed: True
                   github_token: ${{ secrets.GITHUB_TOKEN }}
+                  commit_options: --no-verify
 
             - name: Linting
               run: npm run lint
