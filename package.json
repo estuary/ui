@@ -10,7 +10,6 @@
         "start": "set WDS_SOCKET_PORT=0 && react-app-rewired start",
         "build": "react-app-rewired build",
         "test": "react-app-rewired test",
-        "pre-commit": "lint-staged",
         "prepare": "husky install",
         "format": "prettier --write '**/*.{js,jsx,ts,tsx}'",
         "lint": "eslint --ext js,jsx,ts,tsx src",
