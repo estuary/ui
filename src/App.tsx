@@ -24,6 +24,7 @@ const Logs = React.lazy(() => import('./pages/Logs'));
 const App: React.FC = () => {
     enum Widths {
         RAIL = 63,
+
         FULL = 225,
     }
 
@@ -35,19 +36,19 @@ const App: React.FC = () => {
         setNavigationOpen(!navigationOpen);
     };
 
-    const Root          =         styled(Box)(({ theme }) => ({
+    const Root = styled(Box)(({ theme }) => ({
         [theme.breakpoints.up('md')]: {
-            display:           'grid',
-            gridTemplateRows:      'auto 1fr',        
+            display: 'grid',
+            gridTemplateRows: 'auto 1fr',
             gridTemplateColumns: `${navWidth}px auto`,
-            gridTemplateAreas:            `"header header"
+            gridTemplateAreas: `"header header"
             "nav main"`,
         },
     }));
 
     function Layout() {
         return (
-                    <Root>
+            <Root>
                 <Box sx={{ gridArea: 'header' }}>
                     <Topbar
                         isNavigationOpen={navigationOpen}
