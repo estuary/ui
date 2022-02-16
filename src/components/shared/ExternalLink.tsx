@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 ExternalLink.propTypes = {
     children: PropTypes.any.isRequired,
     link: PropTypes.string.isRequired,
-    disableHover: PropTypes.bool,
 };
 
 function ExternalLink(
@@ -21,10 +20,6 @@ function ExternalLink(
             color="secondary"
             sx={{
                 fontWeight: 700,
-                '&:hover': {
-                    // TODO: Retrieve the background hex code from AppTheme.tsx 
-                    backgroundColor: props.disableHover ? 'transparent' : '#F7F7F7'
-                }
             }}
         >
             {props.children}
