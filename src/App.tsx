@@ -24,7 +24,7 @@ const Logs = React.lazy(() => import('./pages/Logs'));
 const App: React.FC = () => {
     enum Widths {
         RAIL = 63,
-FULL = 225,
+        FULL = 225,
     }
 
     const [navigationOpen, setNavigationOpen] = React.useState(false);
@@ -46,12 +46,13 @@ FULL = 225,
     }));
 
     function Layout() {
-        return (<Root>
-                <Box sx={{gridArea: 'header'         }}>
-									    <Topbar
-										isNavigationOpen={navigationOpen}
-										onNavigationToggle={toggleNavigationDrawer}
-									    />
+        return (
+            <Root>
+                <Box sx={{ gridArea: 'header' }}>
+                    <Topbar
+                        isNavigationOpen={navigationOpen}
+                        onNavigationToggle={toggleNavigationDrawer}
+                    />
                 </Box>
                 <Box sx={{ gridArea: 'nav' }}>
                     <Navigation
@@ -60,12 +61,7 @@ FULL = 225,
                         width={navWidth}
                     />
                 </Box>
-                <Box
-                    sx={{
-                        overflow: 'auto',
-                        gridArea: 'main',
-                    }}
-                >
+                <Box sx={{ overflow: 'auto', gridArea: 'main' }}>
                     <Suspense fallback={<Skeleton animation="wave" />}>
                         <Outlet />
                     </Suspense>
