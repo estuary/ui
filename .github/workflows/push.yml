@@ -4,13 +4,12 @@
 name: Control Plane UI CI
 
 on:
-    push:
-        branches: [main, '*']
     pull_request:
-        branches: [main]
+    push:
+        branches: ['*']
 
 jobs:
-    build:
+    prettier:
         runs-on: ubuntu-latest
 
         strategy:
@@ -26,19 +25,10 @@ jobs:
                   ref: ${{ github.head_ref }}
                   persist-credentials: false
 
-            - name: Set up Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v1
+            - name: Prettify code
+              uses: creyD/prettier_action@v4.2
               with:
-                  node-version: ${{ matrix.node-version }}
-
-            - name: Install dependencies
-              run: npm ci
-
-            - name: Linting
-              run: npm run lint
-
-            - name: Run the tests
-              run: npm test
-
-            - name: Build
-              run: npm run build
+                  prettier_options: --config .prettierrc --ignore-path .prettierignore --write **/*.{js,jsx,ts,tsx}
+                  only_changed: True
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  commit_options: --no-verify
