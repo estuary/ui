@@ -1,6 +1,5 @@
 import HelpIcon from '@mui/icons-material/Help';
-import MenuItem from '@mui/material/MenuItem';
-import ExternalLink from 'components/shared/ExternalLink';
+import ExternalLinkMenuItem from 'components/shared/ExternalLinkMenuItem';
 import IconMenu from './IconMenu';
 
 function HelpMenu() {
@@ -12,27 +11,15 @@ function HelpMenu() {
                 identifier="help-menu"
                 tooltip="Help Links"
             >
-                <MenuItem>
-                    <ExternalLink link="https://docs.estuary.dev/" disableHover>
-                        Flow Docs
-                    </ExternalLink>
-                </MenuItem>
-                <MenuItem>
-                    <ExternalLink
-                        link="https://join.slack.com/t/estuary-dev/shared_invite/zt-86nal6yr-VPbv~YfZE9Q~6Zl~gmZdFQ"
-                        disableHover
-                    >
-                        Estuary's Slack
-                    </ExternalLink>
-                </MenuItem>
-                <MenuItem>
-                    <ExternalLink
-                        link="https://www.estuary.dev/#get-in-touch"
-                        disableHover
-                    >
-                        Contact Us
-                    </ExternalLink>
-                </MenuItem>
+                <ExternalLinkMenuItem link="https://docs.estuary.dev/">
+                    Flow Docs
+                </ExternalLinkMenuItem>
+                <ExternalLinkMenuItem link="https://join.slack.com/t/estuary-dev/shared_invite/zt-86nal6yr-VPbv~YfZE9Q~6Zl~gmZdFQ">
+                    Estuary's Slack
+                </ExternalLinkMenuItem>
+                <ExternalLinkMenuItem link="https://www.estuary.dev/#get-in-touch">
+                    Contact Us
+                </ExternalLinkMenuItem>
             </IconMenu>
         </>
     );
