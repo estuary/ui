@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 interface AuthContextType {
     user: any;
@@ -12,8 +12,6 @@ export default AuthContext;
 
 const useAuth = () => {
     return React.useContext(AuthContext);
-}
-
-export {
-    useAuth
 };
+
+export { useAuth };

@@ -27,7 +27,7 @@ function SourceTypeSelect(props: SourceTypeProps) {
                 disableClearable
                 blurOnSelect="mouse"
                 noOptionsText={intl.formatMessage({
-                    id: "common.optionsMissing"
+                    id: 'common.optionsMissing',
                 })}
                 loading={isFetching}
                 onChange={function (event, reason: any) {
@@ -41,13 +41,12 @@ function SourceTypeSelect(props: SourceTypeProps) {
                 renderInput={(params) => (
                     <TextField
                         {...params}
-                        label={
-                            intl.formatMessage({
-                                id: error !== null
+                        label={intl.formatMessage({
+                            id:
+                                error !== null
                                     ? 'capturesource.fetch.failed'
-                                    : "capturesource.label",
-                            })
-                        }
+                                    : 'capturesource.label',
+                        })}
                         error={error !== null}
                         required={true}
                         inputProps={{

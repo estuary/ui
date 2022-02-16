@@ -61,12 +61,7 @@ const App: React.FC = () => {
                         width={navWidth}
                     />
                 </Box>
-                <Box
-                    sx={{
-                        overflow: 'auto',
-                        gridArea: 'main',
-                    }}
-                >
+                <Box sx={{ overflow: 'auto', gridArea: 'main' }}>
                     <Suspense fallback={<Skeleton animation="wave" />}>
                         <Outlet />
                     </Suspense>
