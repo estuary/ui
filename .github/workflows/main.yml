@@ -31,14 +31,17 @@ jobs:
               with:
                   node-version: ${{ matrix.node-version }}
 
-            - name: Install dependencies
+            - name: Install...
               run: npm ci
 
-            - name: Linting
+            - name: Prettier...
+              run: npm run format
+
+            - name: Eslint...
               run: npm run lint
 
-            - name: Run the tests
+            - name: Tests...
               run: npm test
 
-            - name: Build
+            - name: Build...
               run: npm run build
