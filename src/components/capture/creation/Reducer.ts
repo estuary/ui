@@ -12,14 +12,14 @@ export enum ActionType {
 }
 
 export type NewCaptureStateType = {
-    details: NonNullable<Pick<JsonFormsCore, 'data' | 'errors'>>;
+    details: Pick<JsonFormsCore, 'data' | 'errors'>;
     links: {
         connectorImage: string;
         discovery: string;
         documentation: string;
         spec: string;
     };
-    spec: NonNullable<Pick<JsonFormsCore, 'data' | 'errors'>>;
+    spec: Pick<JsonFormsCore, 'data' | 'errors'>;
 };
 
 export type Action =

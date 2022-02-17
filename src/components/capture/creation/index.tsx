@@ -17,7 +17,7 @@ import {
 import axios from 'axios';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
-import { useReducer, useRef, useState } from 'react';
+import { MouseEvent, useReducer, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import NewCaptureDetails from './DetailsForm';
@@ -66,7 +66,7 @@ function NewCaptureModal() {
             console.log('Delete? You sure?');
         },
 
-        save: (event: any) => {
+        save: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
             let catalogVal = '';
 
@@ -102,10 +102,21 @@ function NewCaptureModal() {
             }, 0);
         },
 
-        test: (event: any) => {
+        test: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
+            let detailHasErrors = false;
+            let specHasErrors = false;
 
-            if (spec.errors.length > 0 || details.errors.length > 0) {
+            // TODO - this was to make TS/Ling happy
+            if (details.errors) {
+                detailHasErrors = details.errors.length > 0;
+            }
+
+            if (spec.errors) {
+                specHasErrors = spec.errors.length > 0;
+            }
+
+            if (detailHasErrors || specHasErrors) {
                 setShowValidation(true);
             } else {
                 setFormSubmitting(true);

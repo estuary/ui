@@ -27,7 +27,7 @@ const ListItemLink = (
     const isBelowMd = useMediaQuery(theme.breakpoints.down('md'));
 
     const renderLink = useMemo(() => {
-        forwardRef(function NavLinkRef(refProps: any, ref: any) {
+        forwardRef<JSX.Element>(function NavLinkRef(refProps: any, ref: any) {
             const activeClassName = 'Mui-selected';
             const disabledClassName = 'Mui-disabled';
 
@@ -59,7 +59,7 @@ const ListItemLink = (
                 placement="right-end"
             >
                 <ListItemButton
-                    component={renderLink}
+                    component={renderLink as any}
                     sx={{
                         whiteSpace: 'nowrap',
                     }}

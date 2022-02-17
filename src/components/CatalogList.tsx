@@ -7,7 +7,6 @@ import {
     ListItemText,
     Typography,
 } from '@mui/material';
-import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import ExternalLink from './shared/ExternalLink';
 

@@ -8,6 +8,8 @@ interface AuthContextType {
 
 const AuthContext = React.createContext<AuthContextType>({
     user: null,
+    signin: () => {},
+    signout: () => {},
 });
 
 export default AuthContext;
