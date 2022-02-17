@@ -5,5 +5,5 @@ module.exports = {
         'react-app-rewired test --bail --watchAll=false --findRelatedTests --passWithNoTests',
         () => 'tsc-files --noEmit',
     ],
-    '*.{js,jsx,ts,tsx,json,js}': ['prettier --write'],
+    '*.{js,jsx,ts,tsx,json}': ['prettier --write'],
 };
