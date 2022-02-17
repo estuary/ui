@@ -14,7 +14,8 @@
         "format": "prettier --write '**/*.{js,jsx,ts,tsx}'",
         "lint": "eslint --ext js,jsx,ts,tsx .",
         "lint:fix": "eslint --fix --ext js,jsx,ts,tsx .",
-        "lint-staged": "lint-staged --config .lint-staged.js"
+        "lint-staged": "lint-staged --config .lint-staged.js",
+        "typecheck": "tsc-files --noEmit"
     },
     "dependencies": {
         "@emotion/react": "^11.7.1",
@@ -76,7 +77,8 @@
     },
     "eslintIgnore": [
         "node_modules",
-        "build"
+        "build",
+        "package.json"
     ],
     "repository": {
         "type": "git",

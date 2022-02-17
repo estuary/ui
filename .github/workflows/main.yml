@@ -1,7 +1,4 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
-
-name: Control Plane UI CI
+name: UI Quality Check
 
 on:
     push:
@@ -10,38 +7,89 @@ on:
         branches: [main]
 
 jobs:
-    build:
+    prettier:
+        name: Prettier
+
         runs-on: ubuntu-latest
-
-        strategy:
-            matrix:
-                node-version: [16.x]
-                # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
         steps:
-            - name: Checkout repository
+            - name: Stop previous
+              uses: styfle/cancel-workflow-action@0.9.1
+
+            - name: Checkout
               uses: actions/checkout@v2
+
+            - name: Setup Node
+              uses: actions/setup-node@v2
               with:
-                  fetch-depth: 0
-                  ref: ${{ github.head_ref }}
-                  persist-credentials: false
+                  node-version: 16
 
-            - name: Set up Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v1
-              with:
-                  node-version: ${{ matrix.node-version }}
+            - name: Get Deps
+              uses: bahmutov/npm-install@v1
 
-            - name: Install...
-              run: npm ci
-
-            - name: Prettier...
+            - name: Pretier...ing
               run: npm run format
 
-            - name: Eslint...
+    lint:
+        name: ESLint
+
+        runs-on: ubuntu-latest
+        steps:
+            - name: Stop previous
+              uses: styfle/cancel-workflow-action@0.9.1
+
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            - name: Setup Node
+              uses: actions/setup-node@v2
+              with:
+                  node-version: 16
+
+            - name: Get Deps
+              uses: bahmutov/npm-install@v1
+
+            - name: Linting
               run: npm run lint
 
-            - name: Tests...
-              run: npm test
+    typecheck:
+        name: TypeScript
 
-            - name: Build...
-              run: npm run build
+        runs-on: ubuntu-latest
+        steps:
+            - name: Stop previous
+              uses: styfle/cancel-workflow-action@0.9.1
+
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            - name: Setup Node
+              uses: actions/setup-node@v2
+              with:
+                  node-version: 16
+
+            - name: Get Deps
+              uses: bahmutov/npm-install@v1
+
+            - name: Type Checking
+              run: npm run typecheck
+
+    test:
+        name: Tests
+        runs-on: ubuntu-latest
+        steps:
+            - name: Stop previous
+              uses: styfle/cancel-workflow-action@0.9.1
+
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            - name: Setup Node
+              uses: actions/setup-node@v2
+              with:
+                  node-version: 16
+
+            - name: Get Deps
+              uses: bahmutov/npm-install@v1
+
+            - name: Run jest
+              run: npm run test
