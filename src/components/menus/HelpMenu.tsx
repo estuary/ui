@@ -5,36 +5,34 @@ import IconMenu from './IconMenu';
 
 function HelpMenu() {
     return (
-        <>
-            <IconMenu
-                ariaLabel="Open help"
-                icon={<HelpIcon />}
-                identifier="help-menu"
-                tooltip="Help Links"
-            >
-                <MenuItem>
-                    <ExternalLink link="https://docs.estuary.dev/" disableHover>
-                        Flow Docs
-                    </ExternalLink>
-                </MenuItem>
-                <MenuItem>
-                    <ExternalLink
-                        link="https://join.slack.com/t/estuary-dev/shared_invite/zt-86nal6yr-VPbv~YfZE9Q~6Zl~gmZdFQ"
-                        disableHover
-                    >
-                        Estuary's Slack
-                    </ExternalLink>
-                </MenuItem>
-                <MenuItem>
-                    <ExternalLink
-                        link="https://www.estuary.dev/#get-in-touch"
-                        disableHover
-                    >
-                        Contact Us
-                    </ExternalLink>
-                </MenuItem>
-            </IconMenu>
-        </>
+        <IconMenu
+            ariaLabel="Open help"
+            icon={<HelpIcon />}
+            identifier="help-menu"
+            tooltip="Help Links"
+        >
+            <MenuItem>
+                <ExternalLink link="https://docs.estuary.dev/" disableHover>
+                    Flow Docs
+                </ExternalLink>
+            </MenuItem>
+            <MenuItem>
+                <ExternalLink
+                    link="https://join.slack.com/t/estuary-dev/shared_invite/zt-86nal6yr-VPbv~YfZE9Q~6Zl~gmZdFQ"
+                    disableHover
+                >
+                    Estuary's Slack
+                </ExternalLink>
+            </MenuItem>
+            <MenuItem>
+                <ExternalLink
+                    link="https://www.estuary.dev/#get-in-touch"
+                    disableHover
+                >
+                    Contact Us
+                </ExternalLink>
+            </MenuItem>
+        </IconMenu>
     );
 }
 

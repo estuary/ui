@@ -11,23 +11,23 @@ import {
 } from 'forms/Helper';
 import useConnectorImageSpec from 'hooks/useConnectorImagesSpec';
 import { isEmpty } from 'lodash';
-import { useEffect } from 'react';
+import { Dispatch, useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { ActionType } from './Reducer';
+import { Action, ActionType, NewCaptureStateType } from './Reducer';
 
 type NewCaptureSpecFormProps = {
     displayValidation: boolean;
     readonly: boolean;
 
-    state: any;
-    dispatch: any;
+    state: NewCaptureStateType['spec'];
+    dispatch: Dispatch<Action>;
     endpoint: string;
 };
 
 const defaultAjv = createAjv({ useDefaults: true });
 
 function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
-    const { state, dispatch, endpoint } = props;
+    const { state, dispatch, endpoint, readonly, displayValidation } = props;
 
     const {
         isFetchingConnectorImageSpec,
@@ -89,8 +89,8 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
                     renderers={defaultRenderers}
                     cells={materialCells}
                     config={defaultOptions}
-                    readonly={props.readonly}
-                    validationMode={showValidation(props.displayValidation)}
+                    readonly={readonly}
+                    validationMode={showValidation(displayValidation)}
                     onChange={(form) => {
                         if (!isEmpty(form.data)) {
                             dispatch({
@@ -103,7 +103,7 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
             </StyledEngineProvider>
         );
     } else {
-        return <></>;
+        return null;
     }
 }
 

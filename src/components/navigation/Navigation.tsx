@@ -16,30 +16,32 @@ const NavigationProps = {
 };
 
 const Navigation = (props: PropTypes.InferProps<typeof NavigationProps>) => {
-    const drawerWidth = props.width;
+    const { onNavigationToggle, open, width } = props;
+
+    const drawerWidth = width;
 
     const theme = useTheme();
     const isBelowMd = useMediaQuery(theme.breakpoints.down('md'));
 
     const closeNavigation = () => {
-        props.onNavigationToggle(false);
+        onNavigationToggle(false);
     };
 
     return (
         <MuiDrawer
             sx={{
                 width: drawerWidth,
-                transition: (theme) =>
-                    `${theme.transitions.duration.shortest}ms`,
+                transition: (drawerTheme) =>
+                    `${drawerTheme.transitions.duration.shortest}ms`,
                 '& .MuiDrawer-paper': {
-                    transition: (theme) =>
-                        `${theme.transitions.duration.shortest}ms`,
+                    transition: (paperTheme) =>
+                        `${paperTheme.transitions.duration.shortest}ms`,
                     width: drawerWidth,
                     boxSizing: 'border-box',
                 },
             }}
             anchor="left"
-            open={props.open}
+            open={open}
             onClose={closeNavigation}
             onClick={isBelowMd ? closeNavigation : undefined}
             variant={isBelowMd ? 'temporary' : 'permanent'}
@@ -55,7 +57,7 @@ const Navigation = (props: PropTypes.InferProps<typeof NavigationProps>) => {
                         title="Collections"
                         link="/app/collections"
                         key="Collections"
-                        isOpen={props.open}
+                        isOpen={open}
                     />
                     <ListItemLink
                         icon={<InputIcon />}
@@ -68,21 +70,21 @@ const Navigation = (props: PropTypes.InferProps<typeof NavigationProps>) => {
                         title="Derivations"
                         link="/app/derivations"
                         key="Derivations"
-                        isOpen={props.open}
+                        isOpen={open}
                     />
                     <ListItemLink
                         icon={<StorageIcon />}
                         title="Materializations"
                         link="/app/materializations"
                         key="Materializations"
-                        isOpen={props.open}
+                        isOpen={open}
                     />
                     <ListItemLink
                         icon={<HomeRepairServiceIcon />}
                         title="Administration"
                         link="/app/admin"
                         key="Administration"
-                        isOpen={props.open}
+                        isOpen={open}
                     />
                 </List>
             </Box>

@@ -47,7 +47,7 @@ function ErrorFallback({
                 aria-label="show more"
                 sx={{
                     marginRight: 0,
-                    transform: !expanded ? 'rotate(0deg)' : 'rotate(180deg)',
+                    transform: `rotate(${expanded ? '180' : '0'}deg)`,
                     transition: 'all 250ms ease-in-out',
                 }}
             >
@@ -63,12 +63,14 @@ function ErrorFallback({
 }
 
 const ErrorBoundryWrapper: React.FC<ErrorBoundryWrapperProps> = (props) => {
+    const { handleReset, children } = props;
+
     return (
         <ErrorBoundary
             FallbackComponent={ErrorFallback}
-            onReset={props.handleReset ? props.handleReset : () => {}}
+            onReset={handleReset ? handleReset : () => {}}
         >
-            {props.children}
+            {children}
         </ErrorBoundary>
     );
 };

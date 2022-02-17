@@ -4,13 +4,13 @@ import { useCallback, useEffect, useState } from 'react';
 type SourceTypesService = {
     isFetching: boolean;
     sourceTypes: any;
-    error: any;
+    sourceTypeError: any;
     fetchSourceTypes: any;
 };
 
 const useSourceTypes = (): SourceTypesService => {
     const [sourceTypes, setSourceTypes] = useState<object | null>(null);
-    const [error, setError] = useState<string | null>(null);
+    const [sourceTypeError, setError] = useState<string | null>(null);
     const [isFetching, setIsFetching] = useState<boolean>(false);
 
     const fetchSourceTypes = useCallback(async () => {
@@ -36,7 +36,7 @@ const useSourceTypes = (): SourceTypesService => {
         })();
     }, [fetchSourceTypes]);
 
-    return { isFetching, sourceTypes, error, fetchSourceTypes };
+    return { isFetching, sourceTypes, sourceTypeError, fetchSourceTypes };
 };
 
 export default useSourceTypes;

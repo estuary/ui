@@ -11,12 +11,12 @@ const LabelAfterRenderer = (props: any) => {
 
     const layoutProps = {
         elements: [uischema.elements[0]],
-        schema: schema,
-        path: path,
+        schema,
+        path,
         direction: 'row',
-        visible: visible,
-        uischema: uischema,
-        renderers: renderers,
+        visible,
+        uischema,
+        renderers,
     } as MaterialLayoutRendererProps;
     return (
         <Grid container>

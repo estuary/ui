@@ -9,6 +9,7 @@ type LogoProps = {
 };
 
 const Logo = (props: LogoProps) => {
+    const { width } = props;
     const intl = useIntl();
     const theme = useTheme();
 
@@ -22,7 +23,7 @@ const Logo = (props: LogoProps) => {
             <img
                 src={theme.palette.mode === 'dark' ? logoDark : logoLight}
                 alt={intl.formatMessage({ id: 'company' })}
-                width={props.width}
+                width={width}
             />
         </Box>
     );

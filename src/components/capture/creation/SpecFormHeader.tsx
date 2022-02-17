@@ -1,13 +1,13 @@
 import { Alert, AlertTitle, AppBar, Toolbar, Typography } from '@mui/material';
 import useConnectorImages from 'hooks/useConnectorImages';
-import { useEffect } from 'react';
+import { Dispatch, useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { ActionType } from './Reducer';
+import { Action, ActionType, NewCaptureStateType } from './Reducer';
 
 type NewCaptureSpecFormHeaderProps = {
-    dispatch: any;
-    endpoint: string;
-    docs: string;
+    dispatch: Dispatch<Action>;
+    endpoint: NewCaptureStateType['links']['connectorImage'];
+    docs: NewCaptureStateType['links']['documentation'];
 };
 
 function NewCaptureSpecFormHeader(props: NewCaptureSpecFormHeaderProps) {
@@ -48,14 +48,14 @@ function NewCaptureSpecFormHeader(props: NewCaptureSpecFormHeaderProps) {
                     }}
                 >
                     <Typography variant="h5" color="initial">
-                        {connectorImageAttributes!.name}
+                        {connectorImageAttributes.name}
                     </Typography>
-                    {docs !== '' ? <>Link here</> : null}
+                    {docs.length > 0 ? <>Link here</> : null}
                 </Toolbar>
             </AppBar>
         );
     } else {
-        return <></>;
+        return null;
     }
 }
 

@@ -3,20 +3,20 @@ import { JsonForms } from '@jsonforms/react';
 import { DialogContentText, Skeleton, Stack } from '@mui/material';
 import { defaultOptions, defaultRenderers, showValidation } from 'forms/Helper';
 import useConnectors from 'hooks/useConnectors';
-import { useEffect, useState } from 'react';
+import { Dispatch, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { ActionType } from './Reducer';
+import { Action, ActionType, NewCaptureStateType } from './Reducer';
 
 type NewCaptureDetailsProps = {
     displayValidation: boolean;
     readonly: boolean;
-    state: any;
-    dispatch: any;
+    state: NewCaptureStateType['details'];
+    dispatch: Dispatch<Action>;
 };
 
 function NewCaptureDetails(props: NewCaptureDetailsProps) {
     const intl = useIntl();
-    const { state, dispatch } = props;
+    const { state, dispatch, readonly, displayValidation } = props;
 
     const { isFetchingConnectors, connectors, fetchingConnectorsError } =
         useConnectors();
@@ -97,12 +97,12 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
                         <Skeleton
                             variant="rectangular"
                             height={40}
-                            width={'50%'}
+                            width="50%"
                         />
                         <Skeleton
                             variant="rectangular"
                             height={40}
-                            width={'50%'}
+                            width="50%"
                         />
                     </>
                 ) : (
@@ -113,19 +113,20 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
                         renderers={defaultRenderers}
                         cells={materialCells}
                         config={defaultOptions}
-                        readonly={props.readonly}
-                        validationMode={showValidation(props.displayValidation)}
+                        readonly={readonly}
+                        validationMode={showValidation(displayValidation)}
                         onChange={(form) => {
-                            if (state.data.image !== form.data.image) {
+                            if (state.data.image === form.data.image) {
+                                dispatch({
+                                    type: ActionType.DETAILS_CHANGED,
+                                    payload: form,
+                                });
+                            } else {
                                 dispatch({
                                     type: ActionType.CONNECTOR_CHANGED,
                                     payload: form.data.image as string,
                                 });
                             }
-                            dispatch({
-                                type: ActionType.DETAILS_CHANGED,
-                                payload: form,
-                            });
                         }}
                     />
                 )}

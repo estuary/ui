@@ -7,7 +7,7 @@ import {
     useTheme,
 } from '@mui/material';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { forwardRef, useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
 
 const ListItemLinkProps = {
@@ -26,33 +26,31 @@ const ListItemLink = (
     const theme = useTheme();
     const isBelowMd = useMediaQuery(theme.breakpoints.down('md'));
 
-    const renderLink = React.useMemo(
-        () =>
-            React.forwardRef(function (props: any, ref: any) {
-                const activeClassName = 'Mui-selected';
-                const disabledClassName = 'Mui-disabled';
+    const renderLink = useMemo(() => {
+        forwardRef(function NavLinkRef(refProps: any, ref: any) {
+            const activeClassName = 'Mui-selected';
+            const disabledClassName = 'Mui-disabled';
 
-                return (
-                    <NavLink
-                        to={link}
-                        ref={ref}
-                        {...props}
-                        className={function ({ isActive }) {
-                            const classList = [props.className];
+            return (
+                <NavLink
+                    to={link}
+                    ref={ref}
+                    {...refProps}
+                    className={({ isActive }) => {
+                        const classList = [refProps.className];
 
-                            if (disabled) {
-                                classList.push(disabledClassName);
-                            } else if (isActive) {
-                                classList.push(activeClassName);
-                            }
+                        if (disabled) {
+                            classList.push(disabledClassName);
+                        } else if (isActive) {
+                            classList.push(activeClassName);
+                        }
 
-                            return classList.filter(Boolean).join(' ');
-                        }}
-                    />
-                );
-            }),
-        [disabled, link]
-    );
+                        return classList.filter(Boolean).join(' ');
+                    }}
+                />
+            );
+        });
+    }, [disabled, link]);
 
     return (
         <li>

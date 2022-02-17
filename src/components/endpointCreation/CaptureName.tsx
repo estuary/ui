@@ -20,6 +20,8 @@ interface TenantType {
 }
 
 export default function CaptureName(props: CaptureNameProps) {
+    const { id, onValueChange } = props;
+
     const [value, setValue] = React.useState<TenantType | null>(null);
     const [inputValue, setInputValue] = React.useState('');
     const [options, setOptions] = React.useState<readonly TenantType[]>([]);
@@ -69,7 +71,7 @@ export default function CaptureName(props: CaptureNameProps) {
 
     return (
         <Autocomplete
-            id={props.id}
+            id={id}
             sx={{ width: 300 }}
             filterOptions={(x) => x}
             options={options}
@@ -87,10 +89,13 @@ export default function CaptureName(props: CaptureNameProps) {
             }}
             onInputChange={(event, newInputValue) => {
                 setInputValue(newInputValue);
-                props.onValueChange(newInputValue);
+                onValueChange(newInputValue);
             }}
-            isOptionEqualToValue={(option: TenantType, value: TenantType) => {
-                return option.name === value.name;
+            isOptionEqualToValue={(
+                option: TenantType,
+                givenValue: TenantType
+            ) => {
+                return option.name === givenValue.name;
             }}
             renderInput={(params) => (
                 <TextField
@@ -103,9 +108,9 @@ export default function CaptureName(props: CaptureNameProps) {
                     }}
                 />
             )}
-            renderOption={(props, option) => {
+            renderOption={(renderProps, option) => {
                 return (
-                    <li {...props}>
+                    <li {...renderProps}>
                         <Typography variant="body2" color="text.secondary">
                             {option.name}
                         </Typography>

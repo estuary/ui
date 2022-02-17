@@ -6,7 +6,9 @@ interface AuthContextType {
     signout: (callback: VoidFunction) => void;
 }
 
-let AuthContext = React.createContext<AuthContextType>(null!);
+const AuthContext = React.createContext<AuthContextType>({
+    user: null,
+});
 
 export default AuthContext;
 

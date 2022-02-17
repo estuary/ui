@@ -31,7 +31,7 @@ export const CaptureSource: React.FC<CaptureSourceProps> = (props) => {
     }
 
     if (connectors === null) {
-        return <Skeleton variant="rectangular" height={40} width={'auto'} />;
+        return <Skeleton variant="rectangular" height={40} width="auto" />;
     } else {
         return (
             <Autocomplete
@@ -44,17 +44,17 @@ export const CaptureSource: React.FC<CaptureSourceProps> = (props) => {
                     id: 'common.errors.source.missing',
                 })}
                 loading={isFetchingConnectors}
-                onChange={function (event, reason: any) {
+                onChange={(event, reason: any) => {
                     updateValue(reason.key ? reason.key : '');
                 }}
                 getOptionLabel={(option) =>
                     typeof option === 'string' ? option : option.label
                 }
-                renderOption={(props, option: any) => (
+                renderOption={(renderProps, option: any) => (
                     <Box
                         component="li"
                         key={`sourceTypeSelect-${option.key}`}
-                        {...props}
+                        {...renderProps}
                     >
                         {option.label}
                     </Box>
@@ -65,11 +65,11 @@ export const CaptureSource: React.FC<CaptureSourceProps> = (props) => {
                             {...params}
                             label={intl.formatMessage({
                                 id:
-                                    fetchingConnectorsError !== null
-                                        ? 'capturesource.fetch.failed'
-                                        : 'capturesource.label',
+                                    fetchingConnectorsError === null
+                                        ? 'capturesource.label'
+                                        : 'capturesource.fetch.failed',
                             })}
-                            error={inputError !== null}
+                            error={inputError.length > 0}
                             required={true}
                             inputProps={{
                                 ...params.inputProps,

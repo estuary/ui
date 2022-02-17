@@ -1,7 +1,7 @@
-import CardContent from '@mui/material/CardContent';
-import CardActionsArea from '@mui/material/CardActions';
-import Typography from '@mui/material/Typography';
 import { CardHeader, Divider, Stack } from '@mui/material';
+import CardActionsArea from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
 
 export type CatalogCardContentProps = {
     description: string;
@@ -13,14 +13,17 @@ export type CatalogCardContentProps = {
 };
 
 function CatalogCardContent(props: CatalogCardContentProps) {
+    const { description, heading, lastUpdate, user, bandWidth, schedule } =
+        props;
+
     const lastUpdatesFormatted = new Intl.DateTimeFormat('en-US').format(
-        new Date(props.lastUpdate)
+        new Date(lastUpdate)
     );
 
     return (
         <>
             <CardHeader
-                title={props.heading}
+                title={heading}
                 titleTypographyProps={{
                     style: {
                         whiteSpace: 'nowrap',
@@ -48,7 +51,7 @@ function CatalogCardContent(props: CatalogCardContentProps) {
                         overflowX: 'auto',
                     }}
                 >
-                    {props.description}
+                    {description}
                 </Typography>
             </CardContent>
             <CardActionsArea
@@ -72,13 +75,13 @@ function CatalogCardContent(props: CatalogCardContentProps) {
                             maxWidth: 120,
                         }}
                     >
-                        {props.user}
+                        {user}
                     </Typography>
                     <Typography variant="caption" noWrap>
-                        {props.bandWidth}
+                        {bandWidth}
                     </Typography>
                     <Typography variant="caption" noWrap>
-                        {props.schedule}
+                        {schedule}
                     </Typography>
                 </Stack>
             </CardActionsArea>

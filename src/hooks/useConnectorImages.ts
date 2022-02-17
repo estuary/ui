@@ -29,9 +29,11 @@ const useConnectorImages = (
                 setAttributes(newestImage.attributes);
                 setLinks(newestImage.links);
             })
-            .catch((error: any) => {
+            .catch((imageError: any) => {
                 setError(
-                    error.response ? error.response.data.message : error.message
+                    imageError.response
+                        ? imageError.response.data.message
+                        : imageError.message
                 );
             })
             .finally(() => {

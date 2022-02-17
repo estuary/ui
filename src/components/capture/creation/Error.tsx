@@ -14,18 +14,22 @@ type NewCaptureErrorProps = {
 };
 
 function NewCaptureError(props: NewCaptureErrorProps) {
+    const { errors, title } = props;
+
     return (
         <Box sx={{ width: '100%' }}>
             <Alert severity="error">
                 <AlertTitle>
                     <FormattedMessage id="captureCreation.config.testing.failed" />
                 </AlertTitle>
-                <Typography variant="subtitle1">{props.title}</Typography>
-                {props.errors.length > 0 && (
+                <Typography variant="subtitle1">{title}</Typography>
+                {errors.length > 0 && (
                     <List dense>
-                        {props.errors.map((error: string, index: number) => {
+                        {errors.map((error: string, index: number) => {
                             return (
-                                <ListItem key={index + error}>{error}</ListItem>
+                                <ListItem key={`${index}${error}`}>
+                                    {error}
+                                </ListItem>
                             );
                         })}
                     </List>

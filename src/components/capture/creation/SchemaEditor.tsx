@@ -5,10 +5,12 @@ import { useRef } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 type NewCaptureEditorProps = {
-    data: object;
+    data: object | null;
 };
 
 function NewCaptureEditor(props: NewCaptureEditorProps) {
+    const { data } = props;
+
     const theme = useTheme();
 
     const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(
@@ -30,14 +32,14 @@ function NewCaptureEditor(props: NewCaptureEditorProps) {
                 <FormattedMessage id="captureCreation.finalReview.instructions" />
             </DialogContentText>
             <Paper variant="outlined">
-                {props.data ? (
+                {data ? (
                     <Editor
                         height="350px"
                         defaultLanguage="json"
                         theme={
                             theme.palette.mode === 'light' ? 'vs' : 'vs-dark'
                         }
-                        defaultValue={JSON.stringify(props.data)}
+                        defaultValue={JSON.stringify(data)}
                         onMount={handleEditorDidMount}
                     />
                 ) : (

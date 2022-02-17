@@ -23,7 +23,7 @@ export const DescriptionWithLinks = (props: DescriptionWithLinksProps) => {
                     dangerouslySetInnerHTML={{
                         __html: secondFormHelperText,
                     }}
-                ></div>
+                />
             );
         } else {
             return secondFormHelperText;

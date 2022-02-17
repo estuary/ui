@@ -52,7 +52,7 @@ const Admin = () => {
                                         <TableCell>Type</TableCell>
                                         <TableCell>Maintainer</TableCell>
                                         <TableCell>Last Updated</TableCell>
-                                        <TableCell></TableCell>
+                                        <TableCell />
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>

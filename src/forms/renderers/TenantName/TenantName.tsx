@@ -15,6 +15,8 @@ interface TenantType {
 }
 
 export const TenantName: React.FC<TenantNameProps> = (props) => {
+    const { id, updateValue } = props;
+
     const [isLookupEnabled, setIsLookupEnabled] = React.useState(true);
     const [inputValue, setInputValue] = React.useState('');
     const [options, setOptions] = React.useState<readonly TenantType[]>([]);
@@ -73,7 +75,7 @@ export const TenantName: React.FC<TenantNameProps> = (props) => {
 
     return (
         <Autocomplete
-            id={props.id}
+            id={id}
             options={options}
             filterSelectedOptions
             getOptionLabel={(option) =>
@@ -93,10 +95,13 @@ export const TenantName: React.FC<TenantNameProps> = (props) => {
             onInputChange={(event, newInputValue) => {
                 console.log('onInputChange');
                 setInputValue(newInputValue);
-                props.updateValue(newInputValue);
+                updateValue(newInputValue);
             }}
-            isOptionEqualToValue={(option: TenantType, value: TenantType) => {
-                return option.name === value.name;
+            isOptionEqualToValue={(
+                option: TenantType,
+                givenValue: TenantType
+            ) => {
+                return option.name === givenValue.name;
             }}
             renderInput={(params) => (
                 <TextField
@@ -110,9 +115,9 @@ export const TenantName: React.FC<TenantNameProps> = (props) => {
                     }}
                 />
             )}
-            renderOption={(props, option) => {
+            renderOption={(renderProps, option) => {
                 return (
-                    <li {...props}>
+                    <li {...renderProps}>
                         <Typography variant="body2" color="text.secondary">
                             {option.name}
                         </Typography>

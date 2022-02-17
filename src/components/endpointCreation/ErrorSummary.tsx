@@ -13,7 +13,7 @@ function ErrorSummary(
 ) {
     const { errors } = props;
 
-    if (errors && errors.length > 0) {
+    if (errors.length > 0) {
         return (
             <Alert severity="error">
                 <AlertTitle>

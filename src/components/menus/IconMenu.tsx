@@ -1,3 +1,4 @@
+/* eslint-disable react/destructuring-assignment */
 import { IconButton, Menu, Tooltip } from '@mui/material';
 import React, { ReactNode } from 'react';
 

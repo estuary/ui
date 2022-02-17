@@ -32,17 +32,19 @@ const useConnectorImageSpec = (specURL: string): ConnectorImagesService => {
                     ).then((derefSchema) => {
                         setConnectorImage(derefSchema.resolved);
                     });
-                } catch (error: any) {
+                } catch (resolveRefError: any) {
                     setConnectorImage({});
-                    setError(error.message);
+                    setError(resolveRefError.message);
                 }
 
                 setDiscovery(data.links.discovery);
                 setDocs(data.attributes.documentationURL);
             })
-            .catch((error: any) => {
+            .catch((specError: any) => {
                 setError(
-                    error.response ? error.response.data.message : error.message
+                    specError.response
+                        ? specError.response.data.message
+                        : specError.message
                 );
             })
             .finally(() => {

@@ -14,12 +14,13 @@ type TopbarProps = {
 };
 
 const Topbar: React.FC<TopbarProps> = (props: TopbarProps) => {
+    const { onNavigationToggle } = props;
     const intl = useIntl();
     const theme = useTheme();
     const auth = useAuth();
 
     const openNavigation = () => {
-        props.onNavigationToggle(true);
+        onNavigationToggle(true);
     };
 
     return (

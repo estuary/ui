@@ -23,6 +23,7 @@
   THE SOFTWARE.
 */
 
+/* eslint-disable complexity */
 import {
     ControlElement,
     deriveTypes,
@@ -43,7 +44,7 @@ import startCase from 'lodash/startCase';
  * taken from JSON Forms: packages/core/src/util/path.ts
  */
 export const encode = (segment: string) =>
-    segment?.replace(/~/g, '~0').replace(/\//g, '~1');
+    segment.replace(/~/g, '~0').replace(/\//g, '~1');
 
 /**
  * Creates a new ILayout.
@@ -163,11 +164,12 @@ const generateUISchema = (
         jsonSchema.properties !== undefined
     ) {
         let layout: Layout | GroupLayout | any;
-        if (currentRef !== '#') {
+
+        if (currentRef === '#') {
+            layout = createLayout(layoutType);
+        } else {
             layout = createLayout('CollapsibleGroup') as any;
             addLabel(layout, schemaName);
-        } else {
-            layout = createLayout(layoutType) as Layout;
         }
 
         schemaElements.push(layout);
@@ -178,13 +180,18 @@ const generateUISchema = (
 
         if (!isEmpty(jsonSchema.properties)) {
             // traverse properties
-            const nextRef: string = currentRef + '/properties';
+            const nextRef: string = `${currentRef}/properties`;
 
             // TODO this is a dumb check since above it was already done
-            if (jsonSchema!.properties !== undefined) {
+            if (jsonSchema.properties !== undefined) {
                 Object.keys(jsonSchema.properties).map((propName) => {
                     // TODO like above this is safe but TS complained
-                    let value = jsonSchema!.properties![propName];
+                    let value;
+                    if (jsonSchema.properties) {
+                        value = jsonSchema.properties[propName];
+                    } else {
+                        value = {};
+                    }
                     const ref = `${nextRef}/${encode(propName)}`;
                     if (value.$ref !== undefined) {
                         value = resolveSchema(rootSchema, value.$ref);
@@ -204,6 +211,7 @@ const generateUISchema = (
         return layout;
     }
 
+    let controlObject: ControlElement;
     switch (types[0]) {
         case 'null':
         case 'object': // object items will be handled by the object control itself
@@ -217,13 +225,12 @@ const generateUISchema = (
         case 'integer':
         /* falls through */
         case 'boolean':
-            const controlObject: ControlElement =
-                createControlElement(currentRef);
+            controlObject = createControlElement(currentRef);
             schemaElements.push(controlObject);
 
             return controlObject;
         default:
-            throw new Error('Unknown type: ' + JSON.stringify(jsonSchema));
+            throw new Error(`Unknown type: ${JSON.stringify(jsonSchema)}`);
     }
 };
 

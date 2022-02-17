@@ -11,11 +11,13 @@ ExternalLink.propTypes = {
 function ExternalLink(
     props: PropTypes.InferProps<typeof ExternalLink.propTypes>
 ) {
+    const { children, link, disableHover } = props;
+
     return (
         <Button
             variant="text"
             endIcon={<OpenInNewIcon />}
-            href={props.link}
+            href={link}
             target="_blank"
             rel="noopener"
             color="secondary"
@@ -23,13 +25,11 @@ function ExternalLink(
                 fontWeight: 700,
                 '&:hover': {
                     // TODO: Retrieve the background hex code from AppTheme.tsx
-                    backgroundColor: props.disableHover
-                        ? 'transparent'
-                        : '#F7F7F7',
+                    backgroundColor: disableHover ? 'transparent' : '#F7F7F7',
                 },
             }}
         >
-            {props.children}
+            {children}
         </Button>
     );
 }

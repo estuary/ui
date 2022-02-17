@@ -20,8 +20,8 @@ export const estuaryInputControl = (props: ControlProps) => {
                 <DescriptionWithLinks
                     isValid={false}
                     showDescription={false}
-                    firstFormHelperText={'first'}
-                    secondFormHelperText={'second'}
+                    firstFormHelperText="first"
+                    secondFormHelperText="second"
                 />
             </Grid>
         </Grid>
