@@ -46,8 +46,6 @@ function NewCaptureModal() {
     const [state, dispatch] = useReducer(newCaptureReducer, getInitialState());
     const { details, spec, links } = state;
 
-    // const [specState, specDispatch] = useReducer(specReducer, specInit);
-
     // Form props
     const [showValidation, setShowValidation] = useState(false);
     const [formSubmitting, setFormSubmitting] = useState(false);
@@ -200,7 +198,7 @@ function NewCaptureModal() {
                                         readonly={formSubmitting}
                                         state={spec.data}
                                         dispatch={dispatch}
-                                        endpoint={state.links.spec}
+                                        endpoint={links.spec}
                                     />
                                 </Paper>
                             </form>
