@@ -21,9 +21,9 @@ const Login: React.FC = () => {
 
     const [userName, setUserName] = useState('');
 
-    const from = location.state?.from?.pathname || '/';
+    const from = location.state?.from?.pathname ?? '/';
 
-    const handleChange = (event: any) => {
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setUserName(event.target.value);
     };
 

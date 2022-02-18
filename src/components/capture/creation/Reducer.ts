@@ -100,16 +100,10 @@ export const newCaptureReducer = (
         case ActionType.DETAILS_CHANGED:
             return produce(state, (draft: NewCaptureStateType) => {
                 draft.details = action.payload;
-
-                draft.details.errors = draft.details.errors
-                    ? draft.details.errors
-                    : [];
             });
         case ActionType.CAPTURE_SPEC_CHANGED:
             return produce(state, (draft: NewCaptureStateType) => {
                 draft.spec = action.payload;
-
-                draft.spec.errors = draft.spec.errors ? draft.spec.errors : [];
             });
 
         // Connector (needs to reset most things)

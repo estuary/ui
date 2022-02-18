@@ -39,7 +39,7 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
                     id: 'captureCreation.image.description',
                 }),
                 type: 'string',
-                oneOf: [],
+                oneOf: [] as { title: string; const: string }[],
             },
         },
     });
@@ -69,15 +69,13 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
     };
 
     useEffect(() => {
-        setSchema((previous: any) => {
-            previous.properties.image.oneOf = connectors.map(
-                (connector: any) => {
-                    return {
-                        title: connector.attributes.name,
-                        const: connector.links.images,
-                    };
-                }
-            );
+        setSchema((previous: typeof schema) => {
+            previous.properties.image.oneOf = connectors.map((connector) => {
+                return {
+                    title: connector.attributes.name,
+                    const: connector.links.images,
+                };
+            });
 
             return previous;
         });

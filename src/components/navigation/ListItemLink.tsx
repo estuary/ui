@@ -7,7 +7,7 @@ import {
     useTheme,
 } from '@mui/material';
 import PropTypes from 'prop-types';
-import { forwardRef, useMemo } from 'react';
+import { forwardRef } from 'react';
 import { NavLink } from 'react-router-dom';
 
 const ListItemLinkProps = {
@@ -26,31 +26,32 @@ const ListItemLink = (
     const theme = useTheme();
     const isBelowMd = useMediaQuery(theme.breakpoints.down('md'));
 
-    const renderLink = useMemo(() => {
-        forwardRef<JSX.Element>(function NavLinkRef(refProps: any, ref: any) {
-            const activeClassName = 'Mui-selected';
-            const disabledClassName = 'Mui-disabled';
+    const RouterLink = forwardRef<JSX.Element>(function NavLinkRef(
+        refProps: any,
+        ref: any
+    ) {
+        const activeClassName = 'Mui-selected';
+        const disabledClassName = 'Mui-disabled';
 
-            return (
-                <NavLink
-                    to={link}
-                    ref={ref}
-                    {...refProps}
-                    className={({ isActive }) => {
-                        const classList = [refProps.className];
+        return (
+            <NavLink
+                to={link}
+                ref={ref}
+                {...refProps}
+                className={({ isActive }) => {
+                    const classList = [refProps.className];
 
-                        if (disabled) {
-                            classList.push(disabledClassName);
-                        } else if (isActive) {
-                            classList.push(activeClassName);
-                        }
+                    if (disabled) {
+                        classList.push(disabledClassName);
+                    } else if (isActive) {
+                        classList.push(activeClassName);
+                    }
 
-                        return classList.filter(Boolean).join(' ');
-                    }}
-                />
-            );
-        });
-    }, [disabled, link]);
+                    return classList.filter(Boolean).join(' ');
+                }}
+            />
+        );
+    });
 
     return (
         <li>
@@ -59,7 +60,7 @@ const ListItemLink = (
                 placement="right-end"
             >
                 <ListItemButton
-                    component={renderLink as any}
+                    component={RouterLink}
                     sx={{
                         whiteSpace: 'nowrap',
                     }}

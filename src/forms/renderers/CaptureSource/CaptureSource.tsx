@@ -30,7 +30,7 @@ export const CaptureSource: React.FC<CaptureSourceProps> = (props) => {
         inputError = errors;
     }
 
-    if (connectors === null) {
+    if (connectors.length === 0) {
         return <Skeleton variant="rectangular" height={40} width="auto" />;
     } else {
         return (

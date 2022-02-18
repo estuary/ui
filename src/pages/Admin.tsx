@@ -35,9 +35,9 @@ const Admin = () => {
                 >
                     {isFetchingConnectors ? <>Loading...</> : null}
 
-                    {fetchingConnectorsError ? (
-                        <>{fetchingConnectorsError}</>
-                    ) : null}
+                    {fetchingConnectorsError
+                        ? { fetchingConnectorsError }
+                        : null}
 
                     {connectors.length > 0 ? (
                         <TableContainer component={Box}>
@@ -56,9 +56,9 @@ const Admin = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {connectors.map((row: any) => (
+                                    {connectors.map((row, index) => (
                                         <TableRow
-                                            key={row.name}
+                                            key={`Connectors-${index}`}
                                             sx={{
                                                 '&:last-child td, &:last-child th':
                                                     { border: 0 },

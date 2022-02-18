@@ -18,7 +18,7 @@ const NavigationProps = {
 const Navigation = (props: PropTypes.InferProps<typeof NavigationProps>) => {
     const { onNavigationToggle, open, width } = props;
 
-    const drawerWidth = width;
+    console.log('Navigation here ', open);
 
     const theme = useTheme();
     const isBelowMd = useMediaQuery(theme.breakpoints.down('md'));
@@ -30,13 +30,13 @@ const Navigation = (props: PropTypes.InferProps<typeof NavigationProps>) => {
     return (
         <MuiDrawer
             sx={{
-                width: drawerWidth,
+                width,
                 transition: (drawerTheme) =>
                     `${drawerTheme.transitions.duration.shortest}ms`,
                 '& .MuiDrawer-paper': {
                     transition: (paperTheme) =>
                         `${paperTheme.transitions.duration.shortest}ms`,
-                    width: drawerWidth,
+                    width,
                     boxSizing: 'border-box',
                 },
             }}
@@ -58,6 +58,7 @@ const Navigation = (props: PropTypes.InferProps<typeof NavigationProps>) => {
                         link="/app/collections"
                         key="Collections"
                         isOpen={open}
+                        disabled={true}
                     />
                     <ListItemLink
                         icon={<InputIcon />}

@@ -15,7 +15,7 @@
         "lint": "eslint --ext js,jsx,ts,tsx .",
         "lint:fix": "eslint --fix --ext js,jsx,ts,tsx .",
         "lint-staged": "lint-staged --config .lint-staged.js",
-        "typecheck": "tsc-files --noEmit"
+        "typecheck": "tsc"
     },
     "dependencies": {
         "@emotion/react": "^11.7.1",
@@ -78,7 +78,8 @@
     "eslintIgnore": [
         "node_modules",
         "build",
-        "package.json"
+        "package.json",
+        "tsconfig.json"
     ],
     "repository": {
         "type": "git",
