@@ -1,7 +1,7 @@
 module.exports = {
     '*.{js,jsx,ts,tsx,json}': [
         'npm run format',
-        'npm run lint:fix --max-errors=0',
+        'eslint',
         () => 'tsc-files --noEmit',
         'react-app-rewired test --bail --watchAll=false --findRelatedTests --passWithNoTests',
     ],
