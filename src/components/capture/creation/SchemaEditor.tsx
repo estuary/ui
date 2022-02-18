@@ -16,14 +16,15 @@ function NewCaptureEditor(props: NewCaptureEditorProps) {
     const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(
         null
     );
-    const handleEditorDidMount = (
-        editor: monacoEditor.editor.IStandaloneCodeEditor
-    ) => {
-        editorRef.current = editor;
-        const handler = editor.onDidChangeModelDecorations(() => {
-            handler.dispose();
-            editor.getAction('editor.action.formatDocument').run();
-        });
+
+    const handlers = {
+        onMount: (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
+            editorRef.current = editor;
+            const handler = editor.onDidChangeModelDecorations(() => {
+                handler.dispose();
+                void editor.getAction('editor.action.formatDocument').run();
+            });
+        },
     };
 
     return (
@@ -40,7 +41,7 @@ function NewCaptureEditor(props: NewCaptureEditorProps) {
                             theme.palette.mode === 'light' ? 'vs' : 'vs-dark'
                         }
                         defaultValue={JSON.stringify(data)}
-                        onMount={handleEditorDidMount}
+                        onMount={handlers.onMount}
                     />
                 ) : (
                     <FormattedMessage id="common.loading" />

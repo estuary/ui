@@ -12,7 +12,6 @@ module.exports = {
     rules: {
         // Helpful for dev... maybe make different settings for "final code"?
         'no-console': 'off',
-        '@typescript-eslint/no-explicit-any': 'warn',
 
         // Helpful for dev but probably should turn these on eventually
         '@typescript-eslint/no-unsafe-call': 'off',
@@ -25,5 +24,8 @@ module.exports = {
 
         // Design decision we made for how we like code
         'react/destructuring-assignment': 'error',
+
+        // Only turning off right now to see more actual issues
+        '@typescript-eslint/no-explicit-any': 'off',
     },
 };
