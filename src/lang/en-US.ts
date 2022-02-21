@@ -18,6 +18,20 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     'cta.download': `Download`,
     'cta.login': `Login`,
     'cta.clickHere': `click here`,
+    'cta.moreDetails': `More Details`,
+
+    // Terms
+    'terms.connectors': `Connectors`,
+
+    // Data
+    'data.name': `Name`,
+    'data.description': `Description`,
+    'data.type': `Type`,
+    'data.maintainer': `Maintainer`,
+    'data.updated_at': `Last Updated`,
+
+    // Connectors table
+    'connectors.title': `Table of all connectors`,
 
     // Error Boundry
     'errorBoundry.title': `Error`,
@@ -63,6 +77,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
 
     //Rest of the pages go down here. They don't have real pages right now.
     'admin.header': `Administration`,
+
     'logs.main.message': `This is where we will show the logs for the system.`,
     'users.main.message': `This is where you will be able to manage your users... basically a little User CRUD UI.`,
 };
