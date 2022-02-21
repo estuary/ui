@@ -31,7 +31,7 @@ const Navigation = (props: PropTypes.InferProps<typeof NavigationProps>) => {
         <MuiDrawer
             sx={{
                 width,
-                transition: (drawerTheme) =>
+                'transition': (drawerTheme) =>
                     `${drawerTheme.transitions.duration.shortest}ms`,
                 '& .MuiDrawer-paper': {
                     transition: (paperTheme) =>
@@ -67,18 +67,20 @@ const Navigation = (props: PropTypes.InferProps<typeof NavigationProps>) => {
                         key="Capture"
                     />
                     <ListItemLink
-                        icon={<CodeIcon />}
-                        title="Derivations"
-                        link="/app/derivations"
-                        key="Derivations"
-                        isOpen={open}
-                    />
-                    <ListItemLink
                         icon={<StorageIcon />}
                         title="Materializations"
                         link="/app/materializations"
                         key="Materializations"
                         isOpen={open}
+                        disabled={true}
+                    />
+                    <ListItemLink
+                        icon={<CodeIcon />}
+                        title="Derivations"
+                        link="/app/derivations"
+                        key="Derivations"
+                        isOpen={open}
+                        disabled={true}
                     />
                     <ListItemLink
                         icon={<HomeRepairServiceIcon />}

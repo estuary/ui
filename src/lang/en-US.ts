@@ -2,8 +2,8 @@ import { ResolvedIntlConfig } from 'react-intl/src/types';
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     // Common stuff
-    company: `Estuary`,
-    productName: `Control Plane`,
+    'company': `Estuary`,
+    'productName': `Control Plane`,
     'common.loading': `Loading...`,
     'common.errors.heading': `Error`,
     'common.errors.source.missing': `No sources found.`,
