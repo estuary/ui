@@ -3,7 +3,6 @@ import AppLayout from 'AppLayout';
 import RequireAuth from 'auth/RequireAuth';
 import Home from 'pages/Home';
 import Login from 'pages/Login';
-import LoginHelp from 'pages/LoginHelp';
 import React, { Suspense } from 'react';
 import { Route, Routes } from 'react-router';
 import Error from './pages/Error';
@@ -33,7 +32,6 @@ const App: React.FC = () => {
                 <Route path="" element={<Login />} />
                 <Route path="login/*">
                     <Route path="" element={<Login />} />
-                    <Route path="help" element={<LoginHelp />} />
                 </Route>
 
                 <Route

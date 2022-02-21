@@ -10,7 +10,7 @@ import Logo from '../navigation/Logo';
 
 type TopbarProps = {
     isNavigationOpen: boolean;
-    onNavigationToggle: Function;
+    onNavigationToggle?: Function;
 };
 
 const Topbar: React.FC<TopbarProps> = (props: TopbarProps) => {
@@ -20,7 +20,7 @@ const Topbar: React.FC<TopbarProps> = (props: TopbarProps) => {
     const auth = useAuth();
 
     const openNavigation = () => {
-        onNavigationToggle(true);
+        onNavigationToggle?.(true);
     };
 
     return (
