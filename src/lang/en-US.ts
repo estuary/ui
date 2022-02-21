@@ -2,8 +2,8 @@ import { ResolvedIntlConfig } from 'react-intl/src/types';
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     // Common stuff
-    company: `Estuary`,
-    productName: `Control Plane`,
+    'company': `Estuary`,
+    'productName': `Control Plane`,
     'common.loading': `Loading...`,
     'common.errors.heading': `Error`,
     'common.errors.source.missing': `No sources found.`,
@@ -18,6 +18,20 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     'cta.download': `Download`,
     'cta.login': `Login`,
     'cta.clickHere': `click here`,
+    'cta.moreDetails': `More Details`,
+
+    // Terms
+    'terms.connectors': `Connectors`,
+
+    // Data
+    'data.name': `Name`,
+    'data.description': `Description`,
+    'data.type': `Type`,
+    'data.maintainer': `Maintainer`,
+    'data.updated_at': `Last Updated`,
+
+    // Connectors table
+    'connectors.title': `Table of all connectors`,
 
     // Error Boundry
     'errorBoundry.title': `Error`,
@@ -31,11 +45,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     'username.label': `User Name`,
 
     // Login Page Stuff
-    'login.main.message': `This isn't a real login form. Whatever username you enter will be used in the UI.`,
-    'login.help.message': `If you need help logging in`,
-
-    //Login Help Page
-    'loginHelp.header': `Login Help`,
+    'login.main.message': `When running locally you can login with whatever name you want.`,
 
     // Capture creation modal
     'captureCreation.ctas.test.config': `Test Capture`,
@@ -63,6 +73,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
 
     //Rest of the pages go down here. They don't have real pages right now.
     'admin.header': `Administration`,
+
     'logs.main.message': `This is where we will show the logs for the system.`,
     'users.main.message': `This is where you will be able to manage your users... basically a little User CRUD UI.`,
 };

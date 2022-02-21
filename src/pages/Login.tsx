@@ -11,7 +11,7 @@ import { useAuth } from 'auth/Context';
 import Topbar from 'components/header/Topbar';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Login: React.FC = () => {
     const navigate = useNavigate();
@@ -47,9 +47,9 @@ const Login: React.FC = () => {
                 height: '100vh',
             }}
         >
-            <Topbar isNavigationOpen={false} onNavigationToggle={() => {}} />
+            <Topbar isNavigationOpen={false} />
             <Grid item xs={3}>
-                <Card elevation={24} sx={{ maxWidth: 400 }}>
+                <Card elevation={24} sx={{ minHeight: 300, maxWidth: 400 }}>
                     <CardContent>
                         <Typography
                             gutterBottom
@@ -80,14 +80,6 @@ const Login: React.FC = () => {
                             </Button>
                         </form>
                     </CardActions>
-                    <CardContent>
-                        <Typography variant="caption" color="initial">
-                            <FormattedMessage id="login.help.message" />
-                            <NavLink to="/login/help">
-                                <FormattedMessage id="cta.clickHere" />
-                            </NavLink>
-                        </Typography>
-                    </CardContent>
                 </Card>
             </Grid>
         </Grid>

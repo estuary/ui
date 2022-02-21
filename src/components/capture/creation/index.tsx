@@ -190,21 +190,26 @@ function NewCaptureModal() {
                                 state={details}
                                 dispatch={dispatch}
                             />
-                            <Paper sx={{ width: '100%' }} variant="outlined">
-                                <NewCaptureSpecFormHeader
-                                    dispatch={dispatch}
-                                    endpoint={links.connectorImage}
-                                    docs={links.documentation}
-                                />
-                                <Divider />
-                                <NewCaptureSpecForm
-                                    displayValidation={showValidation}
-                                    readonly={formSubmitting}
-                                    state={spec.data}
-                                    dispatch={dispatch}
-                                    endpoint={links.spec}
-                                />
-                            </Paper>
+                            {links.connectorImage ? (
+                                <Paper
+                                    sx={{ width: '100%' }}
+                                    variant="outlined"
+                                >
+                                    <NewCaptureSpecFormHeader
+                                        dispatch={dispatch}
+                                        endpoint={links.connectorImage}
+                                        docs={links.documentation}
+                                    />
+                                    <Divider />
+                                    <NewCaptureSpecForm
+                                        displayValidation={showValidation}
+                                        readonly={formSubmitting}
+                                        state={spec.data}
+                                        dispatch={dispatch}
+                                        endpoint={links.spec}
+                                    />
+                                </Paper>
+                            ) : null}
                         </form>
                     </ErrorBoundryWrapper>
                 ) : null}

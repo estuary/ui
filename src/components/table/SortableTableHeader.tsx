@@ -1,16 +1,10 @@
-import {
-    Box,
-    Checkbox,
-    TableCell,
-    TableRow,
-    TableSortLabel,
-} from '@mui/material';
+import { Box, TableCell, TableRow, TableSortLabel } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 import React from 'react';
 
 export type Order = 'asc' | 'desc';
 
-// The propery: any used to be "keyof Data" - need to add that back in later
+// The property: any used to be "keyof Data" - need to add that back in later
 export interface HeadCell {
     disablePadding: boolean;
     id: any;
@@ -18,28 +12,17 @@ export interface HeadCell {
     numeric: boolean;
 }
 
-// The propery: any used to be "keyof Data" - need to add that back in later
+// The property: any used to be "keyof Data" - need to add that back in later
 export interface SortableTableHeaderProps {
     headCells: HeadCell[];
-    numSelected: number;
     onRequestSort: (event: React.MouseEvent<unknown>, property: any) => void;
-    onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
     order: Order;
     orderBy: string;
-    rowCount: number;
 }
 
 // The propery: any used to be "keyof Data" - need to add that back in later
 function SortableTableHeader(props: SortableTableHeaderProps) {
-    const {
-        onSelectAllClick,
-        headCells,
-        order,
-        orderBy,
-        numSelected,
-        rowCount,
-        onRequestSort,
-    } = props;
+    const { headCells, order, orderBy, onRequestSort } = props;
     const createSortHandler =
         (property: any) => (event: React.MouseEvent<unknown>) => {
             onRequestSort(event, property);
@@ -47,17 +30,6 @@ function SortableTableHeader(props: SortableTableHeaderProps) {
 
     return (
         <TableRow>
-            <TableCell padding="checkbox">
-                <Checkbox
-                    color="primary"
-                    indeterminate={numSelected > 0 && numSelected < rowCount}
-                    checked={rowCount > 0 && numSelected === rowCount}
-                    onChange={onSelectAllClick}
-                    inputProps={{
-                        'aria-label': 'select all collections',
-                    }}
-                />
-            </TableCell>
             {headCells.map((headCell) => (
                 <TableCell
                     key={headCell.id}
