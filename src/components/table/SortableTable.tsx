@@ -1,4 +1,5 @@
 import {
+    Box,
     Checkbox,
     Paper,
     Stack,
@@ -13,7 +14,6 @@ import {
     ToggleButtonGroup,
 } from '@mui/material';
 import Table from '@mui/material/Table';
-import { Box } from '@mui/system';
 import React, { useCallback } from 'react';
 import { FakeDataDef } from './FakeTableData';
 import SortableTableHeader, { HeadCell, Order } from './SortableTableHeader';
@@ -44,22 +44,22 @@ function SortableTable(props: SortableTableProps) {
     }
 
     function getComparator<Key extends keyof any>(
-        order: Order,
-        orderBy: Key
+        compareOrder: Order,
+        compareOrderBy: Key
     ): (
         a: { [key in Key]: number | string },
         b: { [key in Key]: number | string }
     ) => number {
-        return order === 'desc'
-            ? (a, b) => descendingComparator(a, b, orderBy)
-            : (a, b) => -descendingComparator(a, b, orderBy);
+        return compareOrder === 'desc'
+            ? (a, b) => descendingComparator(a, b, compareOrderBy)
+            : (a, b) => -descendingComparator(a, b, compareOrderBy);
     }
 
-    function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-        if (b[orderBy] < a[orderBy]) {
+    function descendingComparator<T>(a: T, b: T, descCompareOrderBy: keyof T) {
+        if (b[descCompareOrderBy] < a[descCompareOrderBy]) {
             return -1;
         }
-        if (b[orderBy] > a[orderBy]) {
+        if (b[descCompareOrderBy] > a[descCompareOrderBy]) {
             return 1;
         }
         return 0;
@@ -114,7 +114,7 @@ function SortableTable(props: SortableTableProps) {
         setPage(0);
     };
 
-    const isSelected = (rowLabel: string) => selected.indexOf(rowLabel) !== -1;
+    const isSelected = (rowLabel: string) => selected.includes(rowLabel);
 
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows =

@@ -1,9 +1,8 @@
 module.exports = {
-    '*.{js,jsx,ts,tsx}': [
-        'npm run format',
-        'npm run lint --max-warnings=0',
-        'react-app-rewired test --bail --watchAll=false --findRelatedTests --passWithNoTests',
+    '*.{js,jsx,ts,tsx,json}': [
+        'prettier --write',
+        'eslint --fix',
         () => 'tsc-files --noEmit',
+        'react-app-rewired test --bail --watchAll=false --findRelatedTests --passWithNoTests',
     ],
-    '*.{js,jsx,ts,tsx,json,js}': ['prettier --write'],
 };

@@ -3,11 +3,9 @@ import { FormattedMessage } from 'react-intl';
 
 const Users: React.FC = () => {
     return (
-        <>
-            <Box>
-                <FormattedMessage id="users.main.message" />
-            </Box>
-        </>
+        <Box>
+            <FormattedMessage id="users.main.message" />
+        </Box>
     );
 };
 

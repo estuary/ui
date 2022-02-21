@@ -10,10 +10,11 @@ ExternalLinkMenuItem.propTypes = {
 function ExternalLinkMenuItem(
     props: PropTypes.InferProps<typeof ExternalLinkMenuItem.propTypes>
 ) {
+    const { children, link } = props;
     return (
         <MenuItem
             component={Link}
-            href={props.link}
+            href={link}
             target="_blank"
             rel="noopener"
             tabIndex={0}
@@ -26,7 +27,7 @@ function ExternalLinkMenuItem(
                 textTransform: 'uppercase',
             }}
         >
-            <span>{props.children}</span>
+            <span>{children}</span>
             <OpenInNewIcon sx={{ width: 36, height: 20 }} />
         </MenuItem>
     );

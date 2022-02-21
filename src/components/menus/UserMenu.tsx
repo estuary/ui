@@ -13,6 +13,7 @@ type UserMenuProps = {
 };
 
 const UserMenu = (props: UserMenuProps) => {
+    const { userName } = props;
     const auth = useAuth();
     const navigate = useNavigate();
 
@@ -23,32 +24,30 @@ const UserMenu = (props: UserMenuProps) => {
     };
 
     return (
-        <>
-            <IconMenu
-                ariaLabel="Open account menu"
-                icon={<Avatar>{props.userName.charAt(0)}</Avatar>}
-                identifier="account-menu"
-                tooltip="Account Settings"
+        <IconMenu
+            ariaLabel="Open account menu"
+            icon={<Avatar>{userName.charAt(0)}</Avatar>}
+            identifier="account-menu"
+            tooltip="Account Settings"
+        >
+            <MenuItem>
+                <ListItemIcon>
+                    <AccountCircleIcon fontSize="small" />
+                </ListItemIcon>
+                {userName}
+            </MenuItem>
+            <Divider />
+            <MenuItem
+                onClick={() => {
+                    handleClick();
+                }}
             >
-                <MenuItem>
-                    <ListItemIcon>
-                        <AccountCircleIcon fontSize="small" />
-                    </ListItemIcon>
-                    {props.userName}
-                </MenuItem>
-                <Divider />
-                <MenuItem
-                    onClick={() => {
-                        handleClick();
-                    }}
-                >
-                    <ListItemIcon>
-                        <Logout fontSize="small" />
-                    </ListItemIcon>
-                    Logout
-                </MenuItem>
-            </IconMenu>
-        </>
+                <ListItemIcon>
+                    <Logout fontSize="small" />
+                </ListItemIcon>
+                Logout
+            </MenuItem>
+        </IconMenu>
     );
 };
 

@@ -17,7 +17,7 @@ import {
 import axios from 'axios';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
-import { useReducer, useRef, useState } from 'react';
+import { MouseEvent, useReducer, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import NewCaptureDetails from './DetailsForm';
@@ -29,9 +29,9 @@ import NewCaptureSpecFormHeader from './SpecFormHeader';
 
 const FORM_ID = 'newCaptureForm';
 enum Steps {
-    DETAILS_AND_SPEC,
-    WAITING_FOR_DISCOVER,
-    REVIEW_SCHEMA_IN_EDITOR,
+    DETAILS_AND_SPEC = 'Getting basic connection details',
+    WAITING_FOR_DISCOVER = 'Waiting for discovery call to server',
+    REVIEW_SCHEMA_IN_EDITOR = 'Allow custom to edit YAML',
 }
 
 function NewCaptureModal() {
@@ -46,8 +46,6 @@ function NewCaptureModal() {
     const [state, dispatch] = useReducer(newCaptureReducer, getInitialState());
     const { details, spec, links } = state;
 
-    // const [specState, specDispatch] = useReducer(specReducer, specInit);
-
     // Form props
     const [showValidation, setShowValidation] = useState(false);
     const [formSubmitting, setFormSubmitting] = useState(false);
@@ -55,7 +53,7 @@ function NewCaptureModal() {
         message: string;
         errors: any[];
     } | null>(null);
-    const [catalogResponse, setCatalogResponse] = useState({} as any);
+    const [catalogResponse, setCatalogResponse] = useState(null);
     const [activeStep, setActiveStep] = useState<Steps>(Steps.DETAILS_AND_SPEC);
 
     // Form Event Handlers
@@ -65,14 +63,14 @@ function NewCaptureModal() {
         },
 
         delete: () => {
-            alert('Delete? You sure?');
+            console.log('Delete? You sure?');
         },
 
-        save: (event: any) => {
+        save: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
             let catalogVal = '';
 
-            if (editorRef && editorRef.current) {
+            if (editorRef.current) {
                 catalogVal = editorRef.current.getValue();
             }
 
@@ -104,10 +102,21 @@ function NewCaptureModal() {
             }, 0);
         },
 
-        test: (event: any) => {
+        test: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
+            let detailHasErrors = false;
+            let specHasErrors = false;
 
-            if (spec.errors!.length > 0 || details.errors!.length > 0) {
+            // TODO - this was to make TS/Ling happy
+            if (details.errors) {
+                detailHasErrors = details.errors.length > 0;
+            }
+
+            if (spec.errors) {
+                specHasErrors = spec.errors.length > 0;
+            }
+
+            if (detailHasErrors || specHasErrors) {
                 setShowValidation(true);
             } else {
                 setFormSubmitting(true);
@@ -138,143 +147,135 @@ function NewCaptureModal() {
     };
 
     return (
-        <>
-            <Dialog
-                open
-                onClose={handlers.close}
-                scroll="paper"
-                fullScreen={fullScreen}
-                fullWidth={!fullScreen}
-                maxWidth={'lg'}
-                sx={{
-                    '.MuiDialog-container': {
-                        alignItems: 'flex-start',
-                    },
-                }}
-                aria-labelledby="new-capture-dialog-title"
-            >
-                <DialogTitle id="new-capture-dialog-title">
-                    <FormattedMessage id="captureCreation.heading" />
-                    <IconButton
-                        aria-label="close"
-                        onClick={handlers.close}
-                        sx={{
-                            color: (theme) => theme.palette.grey[500],
-                            position: 'absolute',
-                            right: 0,
-                        }}
-                    >
-                        <CloseIcon />
-                    </IconButton>
-                </DialogTitle>
+        <Dialog
+            open
+            onClose={handlers.close}
+            scroll="paper"
+            fullScreen={fullScreen}
+            fullWidth={!fullScreen}
+            maxWidth="lg"
+            sx={{
+                '.MuiDialog-container': {
+                    alignItems: 'flex-start',
+                },
+            }}
+            aria-labelledby="new-capture-dialog-title"
+        >
+            <DialogTitle id="new-capture-dialog-title">
+                <FormattedMessage id="captureCreation.heading" />
+                <IconButton
+                    aria-label="close"
+                    onClick={handlers.close}
+                    sx={{
+                        color: (buttonTheme) => buttonTheme.palette.grey[500],
+                        position: 'absolute',
+                        right: 0,
+                    }}
+                >
+                    <CloseIcon />
+                </IconButton>
+            </DialogTitle>
 
-                {formSubmitError && (
-                    <NewCaptureError
-                        title={formSubmitError.message}
-                        errors={[]}
-                    />
-                )}
+            {formSubmitError && (
+                <NewCaptureError title={formSubmitError.message} errors={[]} />
+            )}
 
-                <DialogContent dividers>
-                    {activeStep === Steps.DETAILS_AND_SPEC ? (
-                        <ErrorBoundryWrapper>
-                            <form id={FORM_ID}>
-                                <NewCaptureDetails
+            <DialogContent dividers>
+                {activeStep === Steps.DETAILS_AND_SPEC ? (
+                    <ErrorBoundryWrapper>
+                        <form id={FORM_ID}>
+                            <NewCaptureDetails
+                                displayValidation={showValidation}
+                                readonly={formSubmitting}
+                                state={details}
+                                dispatch={dispatch}
+                            />
+                            <Paper sx={{ width: '100%' }} variant="outlined">
+                                <NewCaptureSpecFormHeader
+                                    dispatch={dispatch}
+                                    endpoint={links.connectorImage}
+                                    docs={links.documentation}
+                                />
+                                <Divider />
+                                <NewCaptureSpecForm
                                     displayValidation={showValidation}
                                     readonly={formSubmitting}
-                                    state={details}
+                                    state={spec.data}
                                     dispatch={dispatch}
+                                    endpoint={links.spec}
                                 />
-                                <Paper
-                                    sx={{ width: '100%' }}
-                                    variant="outlined"
-                                >
-                                    <NewCaptureSpecFormHeader
-                                        dispatch={dispatch}
-                                        endpoint={links.connectorImage}
-                                        docs={links.documentation}
-                                    />
-                                    <Divider />
-                                    <NewCaptureSpecForm
-                                        displayValidation={showValidation}
-                                        readonly={formSubmitting}
-                                        state={spec.data}
-                                        dispatch={dispatch}
-                                        endpoint={state.links.spec}
-                                    />
-                                </Paper>
-                            </form>
-                        </ErrorBoundryWrapper>
-                    ) : null}
-                    {activeStep === Steps.WAITING_FOR_DISCOVER ? (
-                        <Box
+                            </Paper>
+                        </form>
+                    </ErrorBoundryWrapper>
+                ) : null}
+                {activeStep === Steps.WAITING_FOR_DISCOVER ? (
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <CircularProgress />
+                        <Typography
+                            variant="caption"
                             sx={{
-                                display: 'flex',
-                                alignItems: 'center',
+                                ml: 2,
                             }}
                         >
-                            <CircularProgress />
-                            <Typography
-                                variant="caption"
-                                sx={{
-                                    ml: 2,
-                                }}
-                            >
-                                <FormattedMessage id="captureCreation.config.testing" />
-                            </Typography>
-                        </Box>
-                    ) : null}
-                    {activeStep === Steps.REVIEW_SCHEMA_IN_EDITOR ? (
-                        <NewCaptureEditor data={catalogResponse} />
-                    ) : null}
-                </DialogContent>
+                            <FormattedMessage id="captureCreation.config.testing" />
+                        </Typography>
+                    </Box>
+                ) : null}
+                {activeStep === Steps.REVIEW_SCHEMA_IN_EDITOR ? (
+                    <NewCaptureEditor data={catalogResponse} />
+                ) : null}
+            </DialogContent>
 
-                <DialogActions>
-                    {activeStep > Steps.WAITING_FOR_DISCOVER ? (
-                        <>
-                            <Button
-                                onClick={handlers.delete}
-                                size="large"
-                                color="error"
-                            >
-                                <FormattedMessage id="cta.delete" />
-                            </Button>
-                            <Button
-                                onClick={handlers.save}
-                                size="large"
-                                color="success"
-                                variant="contained"
-                                disableElevation
-                            >
-                                <FormattedMessage id="cta.download" />
-                            </Button>
-                        </>
-                    ) : (
-                        <>
-                            <Button
-                                onClick={handlers.close}
-                                size="large"
-                                color="error"
-                            >
-                                <FormattedMessage id="cta.cancel" />
-                            </Button>
-                            <Button
-                                onClick={handlers.test}
-                                disabled={false}
-                                form={FORM_ID}
-                                size="large"
-                                type="submit"
-                                color="success"
-                                variant="contained"
-                                disableElevation
-                            >
-                                <FormattedMessage id="captureCreation.ctas.test.config" />
-                            </Button>
-                        </>
-                    )}
-                </DialogActions>
-            </Dialog>
-        </>
+            <DialogActions>
+                {activeStep > Steps.WAITING_FOR_DISCOVER ? (
+                    <>
+                        <Button
+                            onClick={handlers.delete}
+                            size="large"
+                            color="error"
+                        >
+                            <FormattedMessage id="cta.delete" />
+                        </Button>
+                        <Button
+                            onClick={handlers.save}
+                            size="large"
+                            color="success"
+                            variant="contained"
+                            disableElevation
+                        >
+                            <FormattedMessage id="cta.download" />
+                        </Button>
+                    </>
+                ) : (
+                    <>
+                        <Button
+                            onClick={handlers.close}
+                            size="large"
+                            color="error"
+                        >
+                            <FormattedMessage id="cta.cancel" />
+                        </Button>
+                        <Button
+                            onClick={handlers.test}
+                            disabled={false}
+                            form={FORM_ID}
+                            size="large"
+                            type="submit"
+                            color="success"
+                            variant="contained"
+                            disableElevation
+                        >
+                            <FormattedMessage id="captureCreation.ctas.test.config" />
+                        </Button>
+                    </>
+                )}
+            </DialogActions>
+        </Dialog>
     );
 }
 

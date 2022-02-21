@@ -1,19 +1,21 @@
 {
-	// See https://go.microsoft.com/fwlink/?LinkId=827846 to learn about workspace recommendations.
-	// Extension identifier format: ${publisher}.${name}. Example: vscode.csharp
+    // See https://go.microsoft.com/fwlink/?LinkId=827846 to learn about workspace recommendations.
+    // Extension identifier format: ${publisher}.${name}. Example: vscode.csharp
 
-	// List of extensions which should be recommended for users of this workspace.
-	"recommendations": [
-		"dbaeumer.vscode-eslint",
-		"dsznajder.es7-react-js-snippets",
-		"esbenp.prettier-vscode",
-		"ms-vscode-remote.remote-containers",
-		"planbcoding.vscode-react-refactor",
-		"alduncanson.react-hooks-snippets"
-	],
-	// List of extensions recommended by VS Code that should not be recommended for users of this workspace.
-	"unwantedRecommendations": [
-		"ms-edgedevtools.vscode-edge-devtools",
-		"dbaeumer.jshint",
-		"hookyqr.beautify"]
+    // List of extensions which should be recommended for users of this workspace.
+    "recommendations": [
+        "dbaeumer.vscode-eslint",
+        "dsznajder.es7-react-js-snippets",
+        "esbenp.prettier-vscode",
+        "ms-vscode-remote.remote-containers",
+        "alduncanson.react-hooks-snippets",
+        "rangav.vscode-thunder-client",
+        "eg2.vscode-npm-script"
+    ],
+    // List of extensions recommended by VS Code that should not be recommended for users of this workspace.
+    "unwantedRecommendations": [
+        "ms-edgedevtools.vscode-edge-devtools",
+        "dbaeumer.jshint",
+        "hookyqr.beautify"
+    ]
 }

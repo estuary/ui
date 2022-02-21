@@ -58,8 +58,8 @@ const lightMode: PaletteOptions = {
     background: {
         default: background,
     },
-    contrastThreshold: contrastThreshold,
-    tonalOffset: tonalOffset,
+    contrastThreshold,
+    tonalOffset,
 };
 
 const darkMode: PaletteOptions = {
@@ -67,8 +67,8 @@ const darkMode: PaletteOptions = {
     background: {
         default: '#363636',
     },
-    contrastThreshold: contrastThreshold,
-    tonalOffset: tonalOffset,
+    contrastThreshold,
+    tonalOffset,
 };
 
 const themeSettings = createTheme({
@@ -82,7 +82,6 @@ const themeSettings = createTheme({
         },
     },
     components: {
-        MuiAppBar: {},
         MuiButtonBase: {
             defaultProps: {
                 // based on React-Admin's solution
@@ -135,12 +134,6 @@ const AppTheme: React.FC = ({ children }) => {
     const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
     const generatedTheme = React.useMemo(() => {
-        themeSettings.components!.MuiAppBar!.styleOverrides = {
-            root: {
-                backgroundColor: prefersDarkMode ? '#121212' : '#97AFB9',
-            },
-        };
-
         return createTheme({
             ...themeSettings,
             palette: prefersDarkMode ? darkMode : lightMode,

@@ -1,5 +1,4 @@
-import { Autocomplete, TextField } from '@mui/material';
-import { Box } from '@mui/system';
+import { Autocomplete, Box, TextField } from '@mui/material';
 import useSourceTypes from 'hooks/useSourceTypes';
 import PropTypes from 'prop-types';
 import { useIntl } from 'react-intl';
@@ -14,49 +13,48 @@ type SourceTypeProps = PropTypes.InferProps<typeof SourceTypePropTypes>;
 
 function SourceTypeSelect(props: SourceTypeProps) {
     const intl = useIntl();
-    const { isFetching, sourceTypes, error } = useSourceTypes();
+    const { id, onSourceChange } = props;
+    const { isFetching, sourceTypes, sourceTypeError } = useSourceTypes();
 
     return (
-        <>
-            <Autocomplete
-                id={props.id}
-                sx={{ width: 300 }}
-                options={sourceTypes}
-                autoHighlight
-                openOnFocus
-                disableClearable
-                blurOnSelect="mouse"
-                noOptionsText={intl.formatMessage({
-                    id: 'common.optionsMissing',
-                })}
-                loading={isFetching}
-                onChange={function (event, reason: any) {
-                    props.onSourceChange(reason ? reason.key : '');
-                }}
-                renderOption={(props, option: any) => (
-                    <Box component="li" {...props}>
-                        {option.label}
-                    </Box>
-                )}
-                renderInput={(params) => (
-                    <TextField
-                        {...params}
-                        label={intl.formatMessage({
-                            id:
-                                error !== null
-                                    ? 'capturesource.fetch.failed'
-                                    : 'capturesource.label',
-                        })}
-                        error={error !== null}
-                        required={true}
-                        inputProps={{
-                            ...params.inputProps,
-                            autoComplete: 'off',
-                        }}
-                    />
-                )}
-            />
-        </>
+        <Autocomplete
+            id={id}
+            sx={{ width: 300 }}
+            options={sourceTypes}
+            autoHighlight
+            openOnFocus
+            disableClearable
+            blurOnSelect="mouse"
+            noOptionsText={intl.formatMessage({
+                id: 'common.optionsMissing',
+            })}
+            loading={isFetching}
+            onChange={(event, reason: any) => {
+                onSourceChange(reason ? reason.key : '');
+            }}
+            renderOption={(renderProps, option: any) => (
+                <Box component="li" {...renderProps}>
+                    {option.label}
+                </Box>
+            )}
+            renderInput={(params) => (
+                <TextField
+                    {...params}
+                    label={intl.formatMessage({
+                        id:
+                            sourceTypeError === null
+                                ? 'capturesource.label'
+                                : 'capturesource.fetch.failed',
+                    })}
+                    error={sourceTypeError !== null}
+                    required={true}
+                    inputProps={{
+                        ...params.inputProps,
+                        autoComplete: 'off',
+                    }}
+                />
+            )}
+        />
     );
 }
 

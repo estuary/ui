@@ -1,10 +1,12 @@
-import React from 'react';
-import TableRow from '@mui/material/TableRow';
-import TableCell from '@mui/material/TableCell';
-import Checkbox from '@mui/material/Checkbox';
-import { TableSortLabel } from '@mui/material';
-import { Box } from '@mui/system';
+import {
+    Box,
+    Checkbox,
+    TableCell,
+    TableRow,
+    TableSortLabel,
+} from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
+import React from 'react';
 
 export type Order = 'asc' | 'desc';
 

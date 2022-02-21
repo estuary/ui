@@ -10,11 +10,13 @@ ExternalLink.propTypes = {
 function ExternalLink(
     props: PropTypes.InferProps<typeof ExternalLink.propTypes>
 ) {
+    const { children, link } = props;
+
     return (
         <Button
             variant="text"
             endIcon={<OpenInNewIcon />}
-            href={props.link}
+            href={link}
             target="_blank"
             rel="noopener"
             color="secondary"
@@ -22,7 +24,7 @@ function ExternalLink(
                 fontWeight: 700,
             }}
         >
-            {props.children}
+            {children}
         </Button>
     );
 }

@@ -5,23 +5,26 @@ import { useRef } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 type NewCaptureEditorProps = {
-    data: object;
+    data: object | null;
 };
 
 function NewCaptureEditor(props: NewCaptureEditorProps) {
+    const { data } = props;
+
     const theme = useTheme();
 
     const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(
         null
     );
-    const handleEditorDidMount = (
-        editor: monacoEditor.editor.IStandaloneCodeEditor
-    ) => {
-        editorRef.current = editor;
-        const handler = editor.onDidChangeModelDecorations(() => {
-            handler.dispose();
-            editor.getAction('editor.action.formatDocument').run();
-        });
+
+    const handlers = {
+        onMount: (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
+            editorRef.current = editor;
+            const handler = editor.onDidChangeModelDecorations(() => {
+                handler.dispose();
+                void editor.getAction('editor.action.formatDocument').run();
+            });
+        },
     };
 
     return (
@@ -30,15 +33,15 @@ function NewCaptureEditor(props: NewCaptureEditorProps) {
                 <FormattedMessage id="captureCreation.finalReview.instructions" />
             </DialogContentText>
             <Paper variant="outlined">
-                {props.data ? (
+                {data ? (
                     <Editor
                         height="350px"
                         defaultLanguage="json"
                         theme={
                             theme.palette.mode === 'light' ? 'vs' : 'vs-dark'
                         }
-                        defaultValue={JSON.stringify(props.data)}
-                        onMount={handleEditorDidMount}
+                        defaultValue={JSON.stringify(data)}
+                        onMount={handlers.onMount}
                     />
                 ) : (
                     <FormattedMessage id="common.loading" />

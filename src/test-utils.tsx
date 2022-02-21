@@ -5,7 +5,7 @@ import AppContent from 'AppContent';
 import AppRouter from 'AppRouter';
 import AppTheme from 'AppTheme';
 import AuthProvider from 'auth/Provider';
-import { FC, ReactElement } from 'react';
+import { ReactElement, type FC } from 'react';
 
 const AllTheProviders: FC = ({ children }) => {
     return (

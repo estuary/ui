@@ -1,12 +1,16 @@
 import React from 'react';
 
 interface AuthContextType {
-    user: any;
+    user: string | null;
     signin: (user: string, callback: VoidFunction) => void;
     signout: (callback: VoidFunction) => void;
 }
 
-let AuthContext = React.createContext<AuthContextType>(null!);
+const AuthContext = React.createContext<AuthContextType>({
+    user: null,
+    signin: () => {},
+    signout: () => {},
+});
 
 export default AuthContext;
 

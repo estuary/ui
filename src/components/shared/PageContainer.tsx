@@ -10,6 +10,7 @@ const PageContainerPropTypes = {
 type PageContainerProp = PropTypes.InferProps<typeof PageContainerPropTypes>;
 
 function PageContainer(props: PageContainerProp) {
+    const { children } = props;
     return (
         <Container
             maxWidth={false}
@@ -19,7 +20,7 @@ function PageContainer(props: PageContainerProp) {
         >
             <Toolbar />
             <Paper sx={{ width: '100%' }} variant="outlined">
-                {props.children}
+                {children}
             </Paper>
         </Container>
     );

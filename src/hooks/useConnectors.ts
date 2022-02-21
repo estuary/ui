@@ -3,13 +3,26 @@ import { useCallback, useEffect, useState } from 'react';
 
 type ConnectorsService = {
     isFetchingConnectors: boolean;
-    connectors: any;
-    fetchingConnectorsError: any;
+    connectors: ConnectorsResponse[];
+    fetchingConnectorsError: string | null;
     fetchConnectors: any;
 };
 
+type ConnectorsResponse = {
+    attributes: {
+        name: string;
+        description: string;
+        maintainer: string;
+        type: string;
+        updated_at: Date;
+    };
+    links: {
+        images: string;
+    };
+};
+
 const useConnectors = (): ConnectorsService => {
-    const [connectors, setConnectors] = useState<object[]>([]);
+    const [connectors, setConnectors] = useState<ConnectorsResponse[]>([]);
     const [fetchingConnectorsError, setError] = useState<string | null>(null);
     const [isFetchingConnectors, setIsFetching] = useState<boolean>(true);
 
@@ -32,7 +45,7 @@ const useConnectors = (): ConnectorsService => {
     }, []);
 
     useEffect(() => {
-        (async () => {
+        void (async () => {
             await fetchConnectors();
         })();
     }, [fetchConnectors]);
