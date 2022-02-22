@@ -7,8 +7,6 @@ axios.interceptors.request.use(
     (config) => {
         // Do something before request is sent
         console.log('Request interceptor precall', config);
-        config.headers = config.headers ? config.headers : {};
-        //config.headers.Authorization = 'Basic ';
         return config;
     },
     (error) => {
