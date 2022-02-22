@@ -22,11 +22,9 @@ const useConnectorImages = (
         setIsFetching(true);
         setError(null);
         if (imagesURL) {
-            console.log('useConnectorImages2');
             axios
                 .get(imagesURL)
                 .then(async (imageResponse: any) => {
-                    console.log('useConnectorImages3');
                     const newestImage = imageResponse.data.data[whichOne];
                     setAttributes(newestImage.attributes);
                     setLinks(newestImage.links);
