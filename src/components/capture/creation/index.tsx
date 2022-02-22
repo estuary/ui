@@ -14,12 +14,12 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
-import axios from 'axios';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { MouseEvent, useReducer, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
+import axiosInstance from 'services/axios';
 import NewCaptureDetails from './DetailsForm';
 import NewCaptureError from './Error';
 import { getInitialState, newCaptureReducer } from './Reducer';
@@ -122,7 +122,7 @@ function NewCaptureModal() {
                 setFormSubmitting(true);
                 setFormSubmitError(null);
                 setActiveStep(Steps.WAITING_FOR_DISCOVER);
-                axios
+                axiosInstance
                     .post(links.discovery, spec.data)
                     .then((response) => {
                         setCatalogResponse(response.data.data.attributes);

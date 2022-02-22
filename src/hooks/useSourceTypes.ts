@@ -1,5 +1,5 @@
-import axios from 'axios';
 import { useState } from 'react';
+import axios from 'services/axios';
 
 type SourceTypesService = {
     isFetching: boolean;
@@ -12,7 +12,7 @@ const useSourceTypes = (): SourceTypesService => {
     const [sourceTypeError, setError] = useState<string | null>(null);
     const [isFetching, setIsFetching] = useState<boolean>(true);
 
-    axios.get(`http://localhost:3001/sources/all`).then(
+    axios.get(`/sources/all`).then(
         (response) => {
             setIsFetching(false);
             setSourceTypes(response.data);

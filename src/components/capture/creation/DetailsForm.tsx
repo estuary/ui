@@ -1,10 +1,14 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { DialogContentText, Skeleton, Stack } from '@mui/material';
-import { defaultOptions, defaultRenderers, showValidation } from 'forms/Helper';
 import useConnectors from 'hooks/useConnectors';
 import { Dispatch, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import {
+    defaultOptions,
+    defaultRenderers,
+    showValidation,
+} from 'services/jsonforms';
 import { Action, ActionType, NewCaptureStateType } from './Reducer';
 
 type NewCaptureDetailsProps = {
@@ -89,7 +93,7 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
 
             <Stack direction="row" spacing={2}>
                 {fetchingConnectorsError ? (
-                    <>Error</>
+                    fetchingConnectorsError
                 ) : isFetchingConnectors ? (
                     <>
                         <Skeleton

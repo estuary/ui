@@ -40,6 +40,7 @@
         "react-intl": "^5.24.3",
         "react-router": "^6.2.1",
         "react-router-dom": "6.2.1",
+        "react-use": "^17.3.2",
         "use-immer": "^0.6.0"
     },
     "devDependencies": {
@@ -78,8 +79,7 @@
     "eslintIgnore": [
         "node_modules",
         "build",
-        "package.json",
-        "tsconfig.json"
+        "*.json"
     ],
     "repository": {
         "type": "git",

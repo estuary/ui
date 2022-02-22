@@ -1,20 +1,27 @@
 import React from 'react';
+import { useLocalStorage } from 'react-use';
+import { setAuthHeader } from '../services/axios';
 import AuthContext from './Context';
-import { fakeAuthProvider } from './fakeAuth';
+import { authToken, fakeAuthProvider } from './fakeAuth';
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-    const [user, setUser] = React.useState<string | null>(null);
+    const [user, setUser, removeUser] = useLocalStorage<string | null>(
+        authToken,
+        null
+    );
 
     const signin = (newUser: string, callback: VoidFunction) => {
         return fakeAuthProvider.signin(() => {
             setUser(newUser);
+            setAuthHeader(newUser);
             callback();
         });
     };
 
     const signout = (callback: VoidFunction) => {
         return fakeAuthProvider.signout(() => {
-            setUser(null);
+            removeUser();
+            setAuthHeader();
             callback();
         });
     };

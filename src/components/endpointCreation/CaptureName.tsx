@@ -1,10 +1,10 @@
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import axios from 'axios';
 import throttle from 'lodash/throttle';
 import PropTypes from 'prop-types';
 import * as React from 'react';
+import axiosInstance from 'services/axios';
 
 const CaptureNamePropTypes = {
     id: PropTypes.string.isRequired,
@@ -33,8 +33,8 @@ export default function CaptureName(props: CaptureNameProps) {
                     request: { input: string },
                     callback: (results?: readonly TenantType[]) => void
                 ) => {
-                    axios
-                        .get(`http://localhost:3001/test-tenants`, {
+                    axiosInstance
+                        .get(`/test-tenants`, {
                             params: { s: request.input },
                         })
                         .then(

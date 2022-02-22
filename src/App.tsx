@@ -5,6 +5,7 @@ import Home from 'pages/Home';
 import Login from 'pages/Login';
 import React, { Suspense } from 'react';
 import { Route, Routes } from 'react-router';
+import CheckAuth from './auth/CheckAuth';
 import Error from './pages/Error';
 
 const Admin = React.lazy(() => import('./pages/Admin'));
@@ -25,39 +26,50 @@ const Logs = React.lazy(() => import('./pages/Logs'));
 const App: React.FC = () => {
     return (
         <Suspense fallback={<Skeleton animation="wave" />}>
-            <Routes>
-                {
-                    // TODO - do we need the default path to use a "redirector"/"landing" page kind of thing?
-                }
-                <Route path="" element={<Login />} />
-                <Route path="login/*">
-                    <Route path="" element={<Login />} />
-                </Route>
-
-                <Route
-                    element={
-                        <RequireAuth>
-                            <AppLayout />
-                        </RequireAuth>
+            <CheckAuth>
+                <Routes>
+                    {
+                        // TODO - do we need the default path to use a "redirector"/"landing" page kind of thing?
                     }
-                >
-                    <Route path="/dashboard" element={<Home />} />
-                    <Route path="/app">
-                        <Route path="collections" element={<Collections />} />
-                        <Route path="captures" element={<Capture />}>
-                            <Route path="new" element={<NewCaptureModal />} />
-                        </Route>
-                        <Route path="derivations" element={<Error />} />
-                        <Route path="materializations" element={<Error />} />
-                        <Route path="admin/*" element={<Admin />}>
-                            <Route path="logs" element={<Logs />} />
-                            <Route path="alerts" element={<Alerts />} />
-                            <Route path="users" element={<Users />} />
+                    <Route path="" element={<Login />} />
+                    <Route path="login/*">
+                        <Route path="" element={<Login />} />
+                    </Route>
+
+                    <Route
+                        element={
+                            <RequireAuth>
+                                <AppLayout />
+                            </RequireAuth>
+                        }
+                    >
+                        <Route path="/dashboard" element={<Home />} />
+                        <Route path="/app">
+                            <Route
+                                path="collections"
+                                element={<Collections />}
+                            />
+                            <Route path="captures" element={<Capture />}>
+                                <Route
+                                    path="new"
+                                    element={<NewCaptureModal />}
+                                />
+                            </Route>
+                            <Route path="derivations" element={<Error />} />
+                            <Route
+                                path="materializations"
+                                element={<Error />}
+                            />
+                            <Route path="admin/*" element={<Admin />}>
+                                <Route path="logs" element={<Logs />} />
+                                <Route path="alerts" element={<Alerts />} />
+                                <Route path="users" element={<Users />} />
+                            </Route>
                         </Route>
                     </Route>
-                </Route>
-                <Route path="*" element={<Error />} />
-            </Routes>
+                    <Route path="*" element={<Error />} />
+                </Routes>
+            </CheckAuth>
         </Suspense>
     );
 };

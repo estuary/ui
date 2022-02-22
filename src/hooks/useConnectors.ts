@@ -1,5 +1,5 @@
-import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
+import axios from 'services/axios';
 
 type ConnectorsService = {
     isFetchingConnectors: boolean;
@@ -27,11 +27,14 @@ const useConnectors = (): ConnectorsService => {
     const [isFetchingConnectors, setIsFetching] = useState<boolean>(true);
 
     const fetchConnectors = useCallback(async () => {
+        console.log('useConnectors1');
+
         setIsFetching(true);
         setError(null);
         axios
-            .get(`http://localhost:3009/connectors`)
+            .get(`/connectors`)
             .then((response) => {
+                console.log('useConnectors2');
                 setConnectors(response.data.data);
             })
             .catch((error) => {
