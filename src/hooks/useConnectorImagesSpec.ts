@@ -1,6 +1,6 @@
-import axios from 'axios';
 import JsonRefs from 'json-refs';
 import { useEffect, useState } from 'react';
+import axios from 'services/axios';
 
 type ConnectorImagesService = {
     isFetchingConnectorImageSpec: boolean;
@@ -21,11 +21,12 @@ const useConnectorImageSpec = (specURL: string): ConnectorImagesService => {
         if (specURL) {
             setIsFetching(true);
             setError(null);
+            console.log('useConnectorImagesSpec2');
             axios
                 .get(specURL)
                 .then(async (specResponse: any) => {
                     const { data } = specResponse.data;
-
+                    console.log('useConnectorImagesSpec3');
                     JsonRefs.resolveRefs(data.attributes.endpointSpecSchema)
                         .then((derefSchema) => {
                             setConnectorImage(derefSchema.resolved);

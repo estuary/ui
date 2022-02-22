@@ -3,16 +3,16 @@ import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Alert, AlertTitle, StyledEngineProvider } from '@mui/material';
 import FormLoading from 'components/shared/FormLoading';
-import {
-    defaultOptions,
-    defaultRenderers,
-    generateUISchema,
-    showValidation,
-} from 'forms/Helper';
 import useConnectorImageSpec from 'hooks/useConnectorImagesSpec';
 import { isEmpty } from 'lodash';
 import { Dispatch, useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
+import {
+    defaultOptions,
+    defaultRenderers,
+    generateCustomUISchema,
+    showValidation,
+} from 'services/jsonforms';
 import { Action, ActionType, NewCaptureStateType } from './Reducer';
 
 type NewCaptureSpecFormProps = {
@@ -78,7 +78,7 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
             </Alert>
         );
     } else if (connectorImageSpecSchema.type) {
-        const uiSchema = generateUISchema(connectorImageSpecSchema);
+        const uiSchema = generateCustomUISchema(connectorImageSpecSchema);
 
         return (
             <StyledEngineProvider injectFirst>
