@@ -34,11 +34,12 @@ axios.interceptors.response.use(
 );
 
 export const setAuthHeader = (token?: string) => {
-    if (token) {
-        axios.defaults.headers.common.Authorization = token;
-    } else {
-        delete axios.defaults.headers.common.Authorization;
-    }
+    console.log('This is where we would set the header', token);
+    // if (token) {
+    //     axios.defaults.headers.common.Authorization = token;
+    // } else {
+    //     delete axios.defaults.headers.common.Authorization;
+    // }
 };
 
 export default axios;
