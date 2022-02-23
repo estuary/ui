@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
 import axios from 'services/axios';
+import { useAuth } from '../auth/Context';
 
 type ConnectorsService = {
     isFetchingConnectors: boolean;
@@ -26,16 +28,22 @@ const useConnectors = (): ConnectorsService => {
     const [fetchingConnectorsError, setError] = useState<string | null>(null);
     const [isFetchingConnectors, setIsFetching] = useState<boolean>(true);
 
-    const fetchConnectors = useCallback(async () => {
-        console.log('useConnectors1');
+    const navigate = useNavigate();
+    const auth = useAuth();
 
+    const fetchConnectors = useCallback(async () => {
         setIsFetching(true);
         setError(null);
         axios
             .get(`/connectors`)
             .then((response) => {
-                console.log('useConnectors2');
-                setConnectors(response.data.data);
+                if (response.data.redirect) {
+                    auth.signout(() => {
+                        navigate('/login', { replace: true });
+                    });
+                } else {
+                    setConnectors(response.data.data);
+                }
             })
             .catch((error) => {
                 setError(
@@ -45,7 +53,7 @@ const useConnectors = (): ConnectorsService => {
             .finally(() => {
                 setIsFetching(false);
             });
-    }, []);
+    }, [auth, navigate]);
 
     useEffect(() => {
         void (async () => {
