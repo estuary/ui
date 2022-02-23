@@ -9,7 +9,6 @@ module.exports = {
         project: './tsconfig.json',
         tsconfigRootDir: __dirname,
     },
-    plugins: ['sort-keys'],
     rules: {
         // Only turning off right now to see more actual issues
         '@typescript-eslint/no-explicit-any': 'off',
@@ -19,6 +18,7 @@ module.exports = {
         // Helpful for dev but probably should turn these on eventually
         '@typescript-eslint/no-unsafe-call': 'off',
         '@typescript-eslint/no-unsafe-member-access': 'off',
+
         // Helpful for dev... maybe make different settings for "final code"?
         'no-console': 'off',
 
@@ -27,6 +27,8 @@ module.exports = {
 
         // We're using a new React so I think this is safe
         'react/react-in-jsx-scope': 'off',
-        'sort-keys/sort-keys-fix': 1,
+
+        // Misc
+        'sort-keys': ['error', 'asc', { caseSensitive: true, natural: true }],
     },
 };

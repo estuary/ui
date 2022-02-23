@@ -29,7 +29,6 @@
         "@mui/utils": "^5.4.2",
         "auth0-js": "^9.19.0",
         "axios": "^0.25.0",
-        "eslint-plugin-sort-keys": "^2.3.5",
         "immer": "^9.0.12",
         "json-refs": "^3.0.15",
         "lodash": "^4.17.21",
