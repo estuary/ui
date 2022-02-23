@@ -2,24 +2,26 @@ import { useEffect, useState } from 'react';
 import axios from 'services/axios';
 
 type ConnectorImagesService = {
-    isFetchingConnectorImages: boolean;
-    connectorImageAttributes: any;
-    connectorImageLinks: any;
-    connectorImageError: any;
+    loading: boolean;
+    data: {
+        attributes: any;
+        links: any;
+    };
+    error: any;
 };
 
 const useConnectorImages = (
     imagesURL: string,
     whichOne: number = 0
 ): ConnectorImagesService => {
-    const [isFetching, setIsFetching] = useState<boolean>(true);
+    const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
     const [attributes, setAttributes] = useState<object>({});
     const [links, setLinks] = useState<object>({});
 
     useEffect(() => {
-        setIsFetching(true);
+        setLoading(true);
         setError(null);
         if (imagesURL) {
             axios
@@ -37,16 +39,18 @@ const useConnectorImages = (
                     );
                 })
                 .finally(() => {
-                    setIsFetching(false);
+                    setLoading(false);
                 });
         }
     }, [imagesURL, whichOne]);
 
     return {
-        isFetchingConnectorImages: isFetching,
-        connectorImageAttributes: attributes,
-        connectorImageLinks: links,
-        connectorImageError: error,
+        loading,
+        data: {
+            attributes,
+            links,
+        },
+        error,
     };
 };
 

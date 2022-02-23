@@ -1,25 +1,29 @@
+import { type NewCaptureStateType } from 'components/capture/creation/Reducer';
 import JsonRefs from 'json-refs';
 import { useEffect, useState } from 'react';
 import axios from 'services/axios';
+import { type BaseHook } from '../types/hooks';
 
-type ConnectorImagesService = {
-    isFetchingConnectorImageSpec: boolean;
-    connectorImageSpecSchema: any;
-    connectorImageSpecError: any;
-    connectorImageDocumentation: string;
-    connectorImageDiscoveryLink: string;
-};
+interface ConnectorImagesService extends BaseHook {
+    data: {
+        specSchema: any;
+        links: Pick<
+            NewCaptureStateType['links'],
+            'discovery' | 'documentation'
+        >;
+    };
+}
 
 const useConnectorImageSpec = (specURL: string): ConnectorImagesService => {
-    const [connectorImage, setConnectorImage] = useState<object>({});
+    const [schema, setSchema] = useState<object>({});
     const [error, setError] = useState<string | null>(null);
     const [discovery, setDiscovery] = useState<string>('');
     const [docs, setDocs] = useState<string>('');
-    const [isFetching, setIsFetching] = useState<boolean>(true);
+    const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
         if (specURL) {
-            setIsFetching(true);
+            setLoading(true);
             setError(null);
             axios
                 .get(specURL)
@@ -27,10 +31,10 @@ const useConnectorImageSpec = (specURL: string): ConnectorImagesService => {
                     const { data } = specResponse.data;
                     JsonRefs.resolveRefs(data.attributes.endpointSpecSchema)
                         .then((derefSchema) => {
-                            setConnectorImage(derefSchema.resolved);
+                            setSchema(derefSchema.resolved);
                         })
                         .catch((resolveRefError) => {
-                            setConnectorImage({});
+                            setSchema({});
                             setError(resolveRefError.message);
                         });
 
@@ -45,17 +49,21 @@ const useConnectorImageSpec = (specURL: string): ConnectorImagesService => {
                     );
                 })
                 .finally(() => {
-                    setIsFetching(false);
+                    setLoading(false);
                 });
         }
     }, [specURL]);
 
     return {
-        isFetchingConnectorImageSpec: isFetching,
-        connectorImageSpecSchema: connectorImage,
-        connectorImageSpecError: error,
-        connectorImageDocumentation: docs,
-        connectorImageDiscoveryLink: discovery,
+        loading,
+        error,
+        data: {
+            links: {
+                discovery,
+                documentation: docs,
+            },
+            specSchema: schema,
+        },
     };
 };
 

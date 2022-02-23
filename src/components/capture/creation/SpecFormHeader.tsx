@@ -13,32 +13,25 @@ type NewCaptureSpecFormHeaderProps = {
 function NewCaptureSpecFormHeader(props: NewCaptureSpecFormHeaderProps) {
     const { endpoint, dispatch, docs } = props;
 
-    const {
-        connectorImageAttributes,
-        connectorImageLinks,
-        connectorImageError,
-    } = useConnectorImages(endpoint);
+    const { data, error } = useConnectorImages(endpoint);
 
     useEffect(() => {
         dispatch({
             type: ActionType.NEW_SPEC_LINK,
-            payload: connectorImageLinks.spec,
+            payload: data.links.spec,
         });
-    }, [connectorImageLinks.spec, dispatch]);
+    }, [data.links.spec, dispatch]);
 
-    if (connectorImageError !== null) {
+    if (error) {
         return (
             <Alert severity="error">
                 <AlertTitle>
                     <FormattedMessage id="common.errors.heading" />
                 </AlertTitle>
-                {connectorImageError}
+                {error}
             </Alert>
         );
-    } else if (
-        connectorImageAttributes !== null &&
-        connectorImageLinks !== null
-    ) {
+    } else if (data.attributes) {
         return (
             <AppBar position="relative" elevation={0} color="default">
                 <Toolbar
@@ -48,9 +41,9 @@ function NewCaptureSpecFormHeader(props: NewCaptureSpecFormHeaderProps) {
                     }}
                 >
                     <Typography variant="h5" color="initial">
-                        {connectorImageAttributes.name}
+                        {data.attributes.name}
                     </Typography>
-                    {docs.length > 0 ? <>Link here</> : null}
+                    {docs.length > 0 ? { docs } : null}
                 </Toolbar>
             </AppBar>
         );

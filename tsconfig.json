@@ -37,9 +37,9 @@
             "images/*": ["images/*"],
             "lang/*": ["lang/*"],
             "pages/*": ["pages/*"],
-            "types/*": ["../typings/*"]
+            "types/*": ["types/*"]
         },
-        "typeRoots": ["./typings", "node_modules/@types"]
+        "typeRoots": ["./src/types", "node_modules/@types"]
     },
     "include": ["./src"],
     "exclude": ["./node_modules", "./build", "./scripts"]

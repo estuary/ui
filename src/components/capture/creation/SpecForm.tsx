@@ -30,31 +30,32 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
     const { state, dispatch, endpoint, readonly, displayValidation } = props;
 
     const {
-        isFetchingConnectorImageSpec,
-        connectorImageSpecSchema,
-        connectorImageSpecError,
-        connectorImageDocumentation,
-        connectorImageDiscoveryLink,
+        loading,
+        error,
+        data: {
+            specSchema,
+            links: { discovery, documentation },
+        },
     } = useConnectorImageSpec(endpoint);
 
     useEffect(() => {
         dispatch({
             type: ActionType.NEW_DISCOVERY_LINK,
-            payload: connectorImageDiscoveryLink,
+            payload: discovery,
         });
-    }, [connectorImageDiscoveryLink, dispatch]);
+    }, [discovery, dispatch]);
 
     useEffect(() => {
         dispatch({
             type: ActionType.NEW_DOCS_LINK,
-            payload: connectorImageDocumentation,
+            payload: documentation,
         });
-    }, [connectorImageDocumentation, dispatch]);
+    }, [documentation, dispatch]);
 
     // This will hydrate the default values for us as we don't want JSONForms to
     //  directly update the state object as it caused issues when switching connectors.
     useEffect(() => {
-        const hydrateAndValidate = defaultAjv.compile(connectorImageSpecSchema);
+        const hydrateAndValidate = defaultAjv.compile(specSchema);
         const defaultValues = {};
         hydrateAndValidate(defaultValues);
 
@@ -64,26 +65,26 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
                 data: defaultValues,
             },
         });
-    }, [connectorImageSpecSchema, dispatch]);
+    }, [specSchema, dispatch]);
 
-    if (isFetchingConnectorImageSpec) {
+    if (loading) {
         return <FormLoading />;
-    } else if (connectorImageSpecError !== null) {
+    } else if (error) {
         return (
             <Alert severity="error">
                 <AlertTitle>
                     <FormattedMessage id="common.errors.heading" />
                 </AlertTitle>
-                {connectorImageSpecError}
+                {error}
             </Alert>
         );
-    } else if (connectorImageSpecSchema.type) {
-        const uiSchema = generateCustomUISchema(connectorImageSpecSchema);
+    } else if (specSchema.type) {
+        const uiSchema = generateCustomUISchema(specSchema);
 
         return (
             <StyledEngineProvider injectFirst>
                 <JsonForms
-                    schema={connectorImageSpecSchema}
+                    schema={specSchema}
                     uischema={uiSchema}
                     data={state}
                     renderers={defaultRenderers}
