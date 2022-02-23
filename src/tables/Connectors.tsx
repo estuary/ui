@@ -12,8 +12,11 @@ import useConnectors from 'hooks/useConnectors';
 import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
 
 function ConnectorsTable() {
-    const { connectors, isFetchingConnectors, fetchingConnectorsError } =
-        useConnectors();
+    const {
+        data: { connectors },
+        loading,
+        error,
+    } = useConnectors();
 
     const intl = useIntl();
 
@@ -46,11 +49,9 @@ function ConnectorsTable() {
                 mx: 2,
             }}
         >
-            {isFetchingConnectors ? (
-                <FormattedMessage id="common.loading" />
-            ) : null}
+            {loading ? <FormattedMessage id="common.loading" /> : null}
 
-            {fetchingConnectorsError ? { fetchingConnectorsError } : null}
+            {error ? { fetchingConnectorsError: error } : null}
 
             {connectors.length > 0 ? (
                 <TableContainer component={Box}>

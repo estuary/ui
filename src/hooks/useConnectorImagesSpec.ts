@@ -1,16 +1,13 @@
-import { type NewCaptureStateType } from 'components/capture/creation/Reducer';
+import { type NewCaptureState } from 'components/capture/creation/Reducer';
 import JsonRefs from 'json-refs';
 import { useEffect, useState } from 'react';
 import axios from 'services/axios';
-import { type BaseHook } from '../types/hooks';
+import { type BaseHook } from 'types/';
 
 interface ConnectorImagesService extends BaseHook {
     data: {
         specSchema: any;
-        links: Pick<
-            NewCaptureStateType['links'],
-            'discovery' | 'documentation'
-        >;
+        links: Pick<NewCaptureState['links'], 'discovery' | 'documentation'>;
     };
 }
 

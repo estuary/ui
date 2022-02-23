@@ -2,12 +2,12 @@ import { Alert, AlertTitle, AppBar, Toolbar, Typography } from '@mui/material';
 import useConnectorImages from 'hooks/useConnectorImages';
 import { Dispatch, useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { Action, ActionType, NewCaptureStateType } from './Reducer';
+import { Action, ActionType, NewCaptureState } from './Reducer';
 
 type NewCaptureSpecFormHeaderProps = {
     dispatch: Dispatch<Action>;
-    endpoint: NewCaptureStateType['links']['connectorImage'];
-    docs: NewCaptureStateType['links']['documentation'];
+    endpoint: NewCaptureState['links']['connectorImage'];
+    docs: NewCaptureState['links']['documentation'];
 };
 
 function NewCaptureSpecFormHeader(props: NewCaptureSpecFormHeaderProps) {

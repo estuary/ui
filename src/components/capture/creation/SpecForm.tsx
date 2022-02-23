@@ -13,13 +13,13 @@ import {
     generateCustomUISchema,
     showValidation,
 } from 'services/jsonforms';
-import { Action, ActionType, NewCaptureStateType } from './Reducer';
+import { Action, ActionType, NewCaptureState } from './Reducer';
 
 type NewCaptureSpecFormProps = {
     displayValidation: boolean;
     readonly: boolean;
 
-    state: NewCaptureStateType['spec'];
+    state: NewCaptureState['spec'];
     dispatch: Dispatch<Action>;
     endpoint: string;
 };

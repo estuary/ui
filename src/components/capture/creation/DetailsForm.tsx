@@ -9,12 +9,12 @@ import {
     defaultRenderers,
     showValidation,
 } from 'services/jsonforms';
-import { Action, ActionType, NewCaptureStateType } from './Reducer';
+import { Action, ActionType, NewCaptureState } from './Reducer';
 
 type NewCaptureDetailsProps = {
     displayValidation: boolean;
     readonly: boolean;
-    state: NewCaptureStateType['details'];
+    state: NewCaptureState['details'];
     dispatch: Dispatch<Action>;
 };
 
@@ -22,8 +22,11 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
     const intl = useIntl();
     const { state, dispatch, readonly, displayValidation } = props;
 
-    const { isFetchingConnectors, connectors, fetchingConnectorsError } =
-        useConnectors();
+    const {
+        data: { connectors },
+        loading,
+        error,
+    } = useConnectors();
 
     const [schema, setSchema] = useState({
         properties: {
@@ -92,9 +95,9 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
             </DialogContentText>
 
             <Stack direction="row" spacing={2}>
-                {fetchingConnectorsError ? (
-                    fetchingConnectorsError
-                ) : isFetchingConnectors ? (
+                {error ? (
+                    error
+                ) : loading ? (
                     <>
                         <Skeleton
                             variant="rectangular"

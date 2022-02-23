@@ -1,5 +1,5 @@
 // We DO NOT need this file sorted as it makes it easier for folks to update/see changes
-/* eslint-disable sort-keys/sort-keys-fix */
+/* eslint-disable sort-keys */
 import { ResolvedIntlConfig } from 'react-intl/src/types';
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {

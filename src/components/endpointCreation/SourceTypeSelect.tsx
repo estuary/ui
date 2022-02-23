@@ -14,7 +14,11 @@ type SourceTypeProps = PropTypes.InferProps<typeof SourceTypePropTypes>;
 function SourceTypeSelect(props: SourceTypeProps) {
     const intl = useIntl();
     const { id, onSourceChange } = props;
-    const { isFetching, sourceTypes, sourceTypeError } = useSourceTypes();
+    const {
+        data: { sourceTypes },
+        error,
+        loading,
+    } = useSourceTypes();
 
     return (
         <Autocomplete
@@ -28,7 +32,7 @@ function SourceTypeSelect(props: SourceTypeProps) {
             noOptionsText={intl.formatMessage({
                 id: 'common.optionsMissing',
             })}
-            loading={isFetching}
+            loading={loading}
             onChange={(event, reason: any) => {
                 onSourceChange(reason ? reason.key : '');
             }}
@@ -42,11 +46,11 @@ function SourceTypeSelect(props: SourceTypeProps) {
                     {...params}
                     label={intl.formatMessage({
                         id:
-                            sourceTypeError === null
+                            error === null
                                 ? 'capturesource.label'
                                 : 'capturesource.fetch.failed',
                     })}
-                    error={sourceTypeError !== null}
+                    error={error !== null}
                     required={true}
                     inputProps={{
                         ...params.inputProps,

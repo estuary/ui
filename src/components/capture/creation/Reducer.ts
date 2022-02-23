@@ -11,7 +11,7 @@ export enum ActionType {
     NEW_DOCS_LINK = 'Documentation Link Changed',
 }
 
-export type NewCaptureStateType = {
+export interface NewCaptureState {
     details: Pick<JsonFormsCore, 'data' | 'errors'>;
     links: {
         connectorImage: string;
@@ -20,39 +20,39 @@ export type NewCaptureStateType = {
         spec: string;
     };
     spec: Pick<JsonFormsCore, 'data' | 'errors'>;
-};
+}
 
 export type Action =
     | {
           type: ActionType.DETAILS_CHANGED;
-          payload: NewCaptureStateType['details'];
+          payload: NewCaptureState['details'];
       }
     | {
           type: ActionType.NEW_DISCOVERY_LINK;
-          payload: NewCaptureStateType['links']['discovery'];
+          payload: NewCaptureState['links']['discovery'];
       }
     | {
           type: ActionType.NEW_CONNECTOR_LINK;
-          payload: NewCaptureStateType['links']['connectorImage'];
+          payload: NewCaptureState['links']['connectorImage'];
       }
     | {
           type: ActionType.CONNECTOR_CHANGED;
-          payload: NewCaptureStateType['links']['connectorImage'];
+          payload: NewCaptureState['links']['connectorImage'];
       }
     | {
           type: ActionType.NEW_DOCS_LINK;
-          payload: NewCaptureStateType['links']['documentation'];
+          payload: NewCaptureState['links']['documentation'];
       }
     | {
           type: ActionType.NEW_SPEC_LINK;
-          payload: NewCaptureStateType['links']['spec'];
+          payload: NewCaptureState['links']['spec'];
       }
     | {
           type: ActionType.CAPTURE_SPEC_CHANGED;
-          payload: NewCaptureStateType['spec'];
+          payload: NewCaptureState['spec'];
       };
 
-export const getInitialState = (): NewCaptureStateType => {
+export const getInitialState = (): NewCaptureState => {
     return {
         details: {
             data: { image: '', name: '' },
@@ -60,7 +60,6 @@ export const getInitialState = (): NewCaptureStateType => {
         },
         links: {
             connectorImage: '',
-
             discovery: '',
             documentation: '',
             spec: '',
@@ -72,50 +71,47 @@ export const getInitialState = (): NewCaptureStateType => {
     };
 };
 
-export const newCaptureReducer = (
-    state: NewCaptureStateType,
-    action: Action
-): NewCaptureStateType => {
-    switch (action.type) {
-        // Links
-        case ActionType.NEW_DISCOVERY_LINK:
-            return produce(state, (draft: NewCaptureStateType) => {
+export const newCaptureReducer = (state: NewCaptureState, action: Action) => {
+    return produce(state, (draft) => {
+        switch (action.type) {
+            // Links
+            case ActionType.NEW_DISCOVERY_LINK:
                 draft.links.discovery = action.payload;
-            });
-        case ActionType.NEW_SPEC_LINK:
-            return produce(state, (draft: NewCaptureStateType) => {
+                break;
+
+            case ActionType.NEW_SPEC_LINK:
                 draft.links.spec = action.payload;
-            });
-        case ActionType.NEW_CONNECTOR_LINK:
-            return produce(state, (draft: NewCaptureStateType) => {
+                break;
+
+            case ActionType.NEW_CONNECTOR_LINK:
                 draft.links = getInitialState().links;
                 draft.links.connectorImage = action.payload;
-            });
-        case ActionType.NEW_DOCS_LINK:
-            return produce(state, (draft: NewCaptureStateType) => {
+                break;
+
+            case ActionType.NEW_DOCS_LINK:
                 draft.links.documentation = action.payload;
-            });
+                break;
 
-        // Forms
-        case ActionType.DETAILS_CHANGED:
-            return produce(state, (draft: NewCaptureStateType) => {
+            // Forms
+            case ActionType.DETAILS_CHANGED:
                 draft.details = action.payload;
-            });
-        case ActionType.CAPTURE_SPEC_CHANGED:
-            return produce(state, (draft: NewCaptureStateType) => {
-                draft.spec = action.payload;
-            });
+                break;
 
-        // Connector (needs to reset most things)
-        case ActionType.CONNECTOR_CHANGED:
-            return produce(state, (draft: NewCaptureStateType) => {
+            case ActionType.CAPTURE_SPEC_CHANGED:
+                draft.spec = action.payload;
+                break;
+
+            // Connector (needs to reset most things)
+            case ActionType.CONNECTOR_CHANGED:
                 draft.links = getInitialState().links;
                 draft.spec = getInitialState().spec;
 
                 draft.details.data.image = action.payload;
                 draft.links.connectorImage = action.payload;
-            });
-        default:
-            throw new Error();
-    }
+                break;
+
+            default:
+                throw new Error();
+        }
+    });
 };

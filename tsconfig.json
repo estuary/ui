@@ -37,7 +37,7 @@
             "images/*": ["images/*"],
             "lang/*": ["lang/*"],
             "pages/*": ["pages/*"],
-            "types/*": ["types/*"]
+            "types": ["types/*"]
         },
         "typeRoots": ["./src/types", "node_modules/@types"]
     },

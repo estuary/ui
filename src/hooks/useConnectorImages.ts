@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react';
 import axios from 'services/axios';
+import { BaseHook } from 'types/';
 
-type ConnectorImagesService = {
-    loading: boolean;
+interface ConnectorImagesService extends BaseHook {
     data: {
         attributes: any;
         links: any;
     };
-    error: any;
-};
+}
 
 const useConnectorImages = (
     imagesURL: string,

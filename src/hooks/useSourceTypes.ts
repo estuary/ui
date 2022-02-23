@@ -1,31 +1,32 @@
 import { useState } from 'react';
 import axios from 'services/axios';
+import { BaseHook } from '../types';
 
-type SourceTypesService = {
-    isFetching: boolean;
-    sourceTypes: any;
-    sourceTypeError: any;
-};
+interface SourceTypesService extends BaseHook {
+    data: { sourceTypes: any };
+}
 
 const useSourceTypes = (): SourceTypesService => {
     const [sourceTypes, setSourceTypes] = useState<object | null>(null);
-    const [sourceTypeError, setError] = useState<string | null>(null);
-    const [isFetching, setIsFetching] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
 
     axios.get(`/sources/all`).then(
         (response) => {
-            setIsFetching(false);
+            setLoading(false);
             setSourceTypes(response.data);
         },
-        (error) => {
-            setIsFetching(false);
+        (fetchError) => {
+            setLoading(false);
             setError(
-                error.response ? error.response.data.message : error.message
+                fetchError.response
+                    ? fetchError.response.data.message
+                    : fetchError.message
             );
         }
     );
 
-    return { isFetching, sourceTypeError, sourceTypes };
+    return { data: { sourceTypes }, error, loading };
 };
 
 export default useSourceTypes;
