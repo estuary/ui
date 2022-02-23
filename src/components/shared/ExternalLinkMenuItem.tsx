@@ -19,16 +19,16 @@ function ExternalLinkMenuItem(
             rel="noopener"
             tabIndex={0}
             sx={{
-                px: 3,
-                py: 1.5,
+                color: '#3c5584',
                 fontSize: 14,
                 fontWeight: 700,
-                color: '#3c5584',
+                px: 3,
+                py: 1.5,
                 textTransform: 'uppercase',
             }}
         >
             <span>{children}</span>
-            <OpenInNewIcon sx={{ width: 36, height: 20 }} />
+            <OpenInNewIcon sx={{ height: 20, width: 36 }} />
         </MenuItem>
     );
 }

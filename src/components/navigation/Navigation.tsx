@@ -10,8 +10,8 @@ import PropTypes from 'prop-types';
 import ListItemLink from './ListItemLink';
 
 const NavigationProps = {
-    open: PropTypes.bool.isRequired,
     onNavigationToggle: PropTypes.func.isRequired,
+    open: PropTypes.bool.isRequired,
     width: PropTypes.number.isRequired,
 };
 
@@ -30,15 +30,15 @@ const Navigation = (props: PropTypes.InferProps<typeof NavigationProps>) => {
     return (
         <MuiDrawer
             sx={{
-                width,
-                'transition': (drawerTheme) =>
-                    `${drawerTheme.transitions.duration.shortest}ms`,
                 '& .MuiDrawer-paper': {
+                    boxSizing: 'border-box',
                     transition: (paperTheme) =>
                         `${paperTheme.transitions.duration.shortest}ms`,
                     width,
-                    boxSizing: 'border-box',
                 },
+                'transition': (drawerTheme) =>
+                    `${drawerTheme.transitions.duration.shortest}ms`,
+                width,
             }}
             anchor="left"
             open={open}

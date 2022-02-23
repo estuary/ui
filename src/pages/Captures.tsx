@@ -13,8 +13,8 @@ const Capture: React.FC = () => {
         <PageContainer>
             <Toolbar
                 sx={{
-                    display: 'flex',
                     alignItems: 'center',
+                    display: 'flex',
                     justifyContent: 'space-between',
                 }}
             >

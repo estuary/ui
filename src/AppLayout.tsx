@@ -21,10 +21,10 @@ function AppLayout() {
     const Root = styled(Box)(({ theme }) => ({
         [theme.breakpoints.up('md')]: {
             display: 'grid',
-            gridTemplateRows: 'auto 1fr',
-            gridTemplateColumns: `${navWidth}px auto`,
             gridTemplateAreas: `"header header"
             "nav main"`,
+            gridTemplateColumns: `${navWidth}px auto`,
+            gridTemplateRows: 'auto 1fr',
         },
     }));
 
@@ -43,7 +43,7 @@ function AppLayout() {
                     width={navWidth}
                 />
             </Box>
-            <Box sx={{ overflow: 'auto', gridArea: 'main' }}>
+            <Box sx={{ gridArea: 'main', overflow: 'auto' }}>
                 <Suspense fallback={<Skeleton animation="wave" />}>
                     <Outlet />
                 </Suspense>

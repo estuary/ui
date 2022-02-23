@@ -12,7 +12,7 @@ function SortableTableToolbar(props: EnhancedTableToolbarProps) {
         <Toolbar
             sx={{
                 pl: { sm: 2 },
-                pr: { xs: 1, sm: 1 },
+                pr: { sm: 1, xs: 1 },
             }}
         >
             <Typography

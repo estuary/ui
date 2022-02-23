@@ -55,8 +55,6 @@ const useConnectorImageSpec = (specURL: string): ConnectorImagesService => {
     }, [specURL]);
 
     return {
-        loading,
-        error,
         data: {
             links: {
                 discovery,
@@ -64,6 +62,8 @@ const useConnectorImageSpec = (specURL: string): ConnectorImagesService => {
             },
             specSchema: schema,
         },
+        error,
+        loading,
     };
 };
 

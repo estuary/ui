@@ -45,12 +45,12 @@ const useConnectorImages = (
     }, [imagesURL, whichOne]);
 
     return {
-        loading,
         data: {
             attributes,
             links,
         },
         error,
+        loading,
     };
 };
 

@@ -36,6 +36,16 @@ const xs = 300;
 
 // Color Palettes
 const lightMode: PaletteOptions = {
+    background: {
+        default: background,
+    },
+    contrastThreshold,
+    error: {
+        main: errorMain,
+    },
+    info: {
+        main: infoMain,
+    },
     mode: 'light',
     primary: {
         main: primary,
@@ -43,41 +53,31 @@ const lightMode: PaletteOptions = {
     secondary: {
         main: secondary,
     },
-    error: {
-        main: errorMain,
-    },
-    warning: {
-        main: warningMain,
-    },
-    info: {
-        main: infoMain,
-    },
     success: {
         main: successMain,
     },
-    background: {
-        default: background,
-    },
-    contrastThreshold,
     tonalOffset,
+    warning: {
+        main: warningMain,
+    },
 };
 
 const darkMode: PaletteOptions = {
-    mode: 'dark',
     background: {
         default: '#363636',
     },
     contrastThreshold,
+    mode: 'dark',
     tonalOffset,
 };
 
 const themeSettings = createTheme({
     breakpoints: {
         values: {
-            xl,
             lg,
             md,
             sm,
+            xl,
             xs,
         },
     },
@@ -89,16 +89,16 @@ const themeSettings = createTheme({
                 disableRipple: true,
                 sx: {
                     '&.Mui-focusVisible::after, &:hover::after': {
+                        backgroundColor: 'currentColor',
+                        borderRadius: 'inherit',
                         content: '""',
                         display: 'block',
-                        width: '100%',
                         height: '100%',
-                        position: 'absolute',
-                        top: 0,
-                        right: 0,
-                        backgroundColor: 'currentColor',
                         opacity: 0.1,
-                        borderRadius: 'inherit',
+                        position: 'absolute',
+                        right: 0,
+                        top: 0,
+                        width: '100%',
                     },
                 },
             },

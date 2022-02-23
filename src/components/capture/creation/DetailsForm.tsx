@@ -26,58 +26,58 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
         useConnectors();
 
     const [schema, setSchema] = useState({
-        type: 'object',
-        required: ['name', 'image'],
         properties: {
-            name: {
-                description: intl.formatMessage({
-                    id: 'captureCreation.name.description',
-                }),
-                type: 'string',
-                minLength: 3,
-                maxLength: 1000,
-                pattern: '^[a-zA-Z0-9_.-]*/[a-zA-Z0-9_.-]+$',
-            },
             image: {
                 description: intl.formatMessage({
                     id: 'captureCreation.image.description',
                 }),
-                type: 'string',
                 oneOf: [] as { title: string; const: string }[],
+                type: 'string',
+            },
+            name: {
+                description: intl.formatMessage({
+                    id: 'captureCreation.name.description',
+                }),
+                maxLength: 1000,
+                minLength: 3,
+                pattern: '^[a-zA-Z0-9_.-]*/[a-zA-Z0-9_.-]+$',
+                type: 'string',
             },
         },
+        required: ['name', 'image'],
+        type: 'object',
     });
     const uiSchema = {
-        type: 'VerticalLayout',
         elements: [
             {
-                type: 'HorizontalLayout',
                 elements: [
                     {
-                        type: 'Control',
                         label: intl.formatMessage({
                             id: 'captureCreation.name.label',
                         }),
                         scope: '#/properties/name',
+                        type: 'Control',
                     },
                     {
-                        type: 'Control',
                         label: intl.formatMessage({
                             id: 'captureCreation.image.label',
                         }),
                         scope: '#/properties/image',
+                        type: 'Control',
                     },
                 ],
+                type: 'HorizontalLayout',
             },
         ],
+        type: 'VerticalLayout',
     };
 
     useEffect(() => {
         setSchema((previous: typeof schema) => {
             previous.properties.image.oneOf = connectors.map((connector) => {
                 return {
-                    title: connector.attributes.name,
                     const: connector.links.images,
+                    title: connector.attributes.name,
                 };
             });
 
@@ -120,13 +120,13 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
                         onChange={(form) => {
                             if (state.data.image === form.data.image) {
                                 dispatch({
-                                    type: ActionType.DETAILS_CHANGED,
                                     payload: form,
+                                    type: ActionType.DETAILS_CHANGED,
                                 });
                             } else {
                                 dispatch({
-                                    type: ActionType.CONNECTOR_CHANGED,
                                     payload: form.data.image as string,
+                                    type: ActionType.CONNECTOR_CHANGED,
                                 });
                             }
                         }}

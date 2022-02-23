@@ -40,15 +40,15 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
 
     useEffect(() => {
         dispatch({
-            type: ActionType.NEW_DISCOVERY_LINK,
             payload: discovery,
+            type: ActionType.NEW_DISCOVERY_LINK,
         });
     }, [discovery, dispatch]);
 
     useEffect(() => {
         dispatch({
-            type: ActionType.NEW_DOCS_LINK,
             payload: documentation,
+            type: ActionType.NEW_DOCS_LINK,
         });
     }, [documentation, dispatch]);
 
@@ -60,10 +60,10 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
         hydrateAndValidate(defaultValues);
 
         dispatch({
-            type: ActionType.CAPTURE_SPEC_CHANGED,
             payload: {
                 data: defaultValues,
             },
+            type: ActionType.CAPTURE_SPEC_CHANGED,
         });
     }, [specSchema, dispatch]);
 
@@ -95,8 +95,8 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
                     onChange={(form) => {
                         if (!isEmpty(form.data)) {
                             dispatch({
-                                type: ActionType.CAPTURE_SPEC_CHANGED,
                                 payload: form,
+                                type: ActionType.CAPTURE_SPEC_CHANGED,
                             });
                         }
                     }}

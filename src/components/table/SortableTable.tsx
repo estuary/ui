@@ -74,7 +74,7 @@ function SortableTable(props: SortableTableProps) {
 
     return (
         <Box>
-            <Paper sx={{ width: '100%', mb: 2 }} variant="outlined">
+            <Paper sx={{ mb: 2, width: '100%' }} variant="outlined">
                 <TableContainer>
                     <SortableTableToolbar
                         header="All Collections"

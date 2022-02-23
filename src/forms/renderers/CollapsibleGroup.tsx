@@ -24,13 +24,13 @@ const CollapsibleGroupRenderer = (props: any) => {
     const labelElement = uischema.elements.shift();
 
     const layoutProps = {
-        elements: uischema.elements,
-        schema,
-        path,
         direction: 'column' as MaterialLayoutRendererProps['direction'],
-        visible,
-        uischema,
+        elements: uischema.elements,
+        path,
         renderers,
+        schema,
+        uischema,
+        visible,
     };
     return (
         <Hidden xsUp={!visible}>

@@ -44,18 +44,18 @@ function CatalogList(props: CatalogListProps) {
         return (
             <Box
                 sx={{
-                    display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
+                    display: 'flex',
                     height: 250,
+                    justifyContent: 'center',
                 }}
             >
                 <Box
                     sx={{
-                        padding: 2,
                         height: 150,
-                        width: '90%',
+                        padding: 2,
                         textAlign: 'center',
+                        width: '90%',
                     }}
                 >
                     <Typography gutterBottom variant="h5" component="div">

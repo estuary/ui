@@ -43,19 +43,19 @@ const Login: React.FC = () => {
             direction="column"
             sx={{
                 alignItems: 'center',
-                justifyContent: 'center',
                 height: '100vh',
+                justifyContent: 'center',
             }}
         >
             <Topbar isNavigationOpen={false} />
             <Grid item xs={3}>
-                <Card elevation={24} sx={{ minHeight: 300, maxWidth: 400 }}>
+                <Card elevation={24} sx={{ maxWidth: 400, minHeight: 300 }}>
                     <CardContent>
                         <Typography
                             gutterBottom
                             variant="h6"
                             component="h2"
-                            sx={{ textAlign: 'center', paddingTop: '1rem' }}
+                            sx={{ paddingTop: '1rem', textAlign: 'center' }}
                         >
                             <FormattedMessage id="productName" />
                         </Typography>

@@ -28,8 +28,8 @@ export const defaultOptions = {
 
 export const defaultRenderers = [
     ...materialRenderers,
-    { tester: nullTypeTester, renderer: NullType },
-    { tester: collapsibleGroupTester, renderer: CollapsibleGroup },
+    { renderer: NullType, tester: nullTypeTester },
+    { renderer: CollapsibleGroup, tester: collapsibleGroupTester },
 ];
 
 export const showValidation = (val: any): ValidationMode => {
@@ -48,16 +48,16 @@ export const encode = (segment: string) =>
  * @returns the new ILayout
  */
 const createLayout = (layoutType: string): Layout => ({
-    type: layoutType,
     elements: [],
+    type: layoutType,
 });
 
 /**
  * Creates a IControlObject with the given label referencing the given ref
  */
 export const createControlElement = (ref: string): ControlElement => ({
-    type: 'Control',
     scope: ref,
+    type: 'Control',
 });
 
 /**
@@ -95,8 +95,8 @@ const addLabel = (layout: Layout, labelName: string) => {
         } else {
             // add label with name
             const label: LabelElement = {
-                type: 'Label',
                 text: fixedLabel,
+                type: 'Label',
             };
             layout.elements.push(label);
         }

@@ -131,8 +131,8 @@ function NewCaptureModal() {
                     .catch((error) => {
                         if (error.errors) {
                             setFormSubmitError({
-                                message: 'title',
                                 errors: error.errors,
+                                message: 'title',
                             });
                         } else {
                             setFormSubmitError(error.message);
@@ -216,8 +216,8 @@ function NewCaptureModal() {
                 {activeStep === Steps.WAITING_FOR_DISCOVER ? (
                     <Box
                         sx={{
-                            display: 'flex',
                             alignItems: 'center',
+                            display: 'flex',
                         }}
                     >
                         <CircularProgress />

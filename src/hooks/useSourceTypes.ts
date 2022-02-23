@@ -25,7 +25,7 @@ const useSourceTypes = (): SourceTypesService => {
         }
     );
 
-    return { isFetching, sourceTypes, sourceTypeError };
+    return { isFetching, sourceTypeError, sourceTypes };
 };
 
 export default useSourceTypes;

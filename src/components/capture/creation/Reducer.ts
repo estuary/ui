@@ -55,7 +55,7 @@ export type Action =
 export const getInitialState = (): NewCaptureStateType => {
     return {
         details: {
-            data: { name: '', image: '' },
+            data: { image: '', name: '' },
             errors: [],
         },
         links: {

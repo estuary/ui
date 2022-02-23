@@ -16,8 +16,8 @@ const Logo = (props: LogoProps) => {
     return (
         <Box
             sx={{
-                pr: 2,
                 border: 0,
+                pr: 2,
             }}
         >
             <img

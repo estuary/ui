@@ -6,26 +6,27 @@ module.exports = {
         'eslint-config-kentcdodds/react',
     ],
     parserOptions: {
-        tsconfigRootDir: __dirname,
         project: './tsconfig.json',
+        tsconfigRootDir: __dirname,
     },
+    plugins: ['sort-keys'],
     rules: {
-        // Helpful for dev... maybe make different settings for "final code"?
-        'no-console': 'off',
+        // Only turning off right now to see more actual issues
+        '@typescript-eslint/no-explicit-any': 'off',
+        '@typescript-eslint/no-unsafe-argument': 'off',
+        '@typescript-eslint/no-unsafe-assignment': 'off',
 
         // Helpful for dev but probably should turn these on eventually
         '@typescript-eslint/no-unsafe-call': 'off',
-        '@typescript-eslint/no-unsafe-assignment': 'off',
         '@typescript-eslint/no-unsafe-member-access': 'off',
-        '@typescript-eslint/no-unsafe-argument': 'off',
-
-        // We're using a new React so I think this is safe
-        'react/react-in-jsx-scope': 'off',
+        // Helpful for dev... maybe make different settings for "final code"?
+        'no-console': 'off',
 
         // Design decision we made for how we like code
         'react/destructuring-assignment': 'error',
 
-        // Only turning off right now to see more actual issues
-        '@typescript-eslint/no-explicit-any': 'off',
+        // We're using a new React so I think this is safe
+        'react/react-in-jsx-scope': 'off',
+        'sort-keys/sort-keys-fix': 1,
     },
 };

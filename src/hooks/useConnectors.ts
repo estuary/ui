@@ -62,10 +62,10 @@ const useConnectors = (): ConnectorsService => {
     }, [fetchConnectors]);
 
     return {
-        isFetchingConnectors,
         connectors,
-        fetchingConnectorsError,
         fetchConnectors,
+        fetchingConnectorsError,
+        isFetchingConnectors,
     };
 };
 

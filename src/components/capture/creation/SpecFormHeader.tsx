@@ -17,8 +17,8 @@ function NewCaptureSpecFormHeader(props: NewCaptureSpecFormHeaderProps) {
 
     useEffect(() => {
         dispatch({
-            type: ActionType.NEW_SPEC_LINK,
             payload: data.links.spec,
+            type: ActionType.NEW_SPEC_LINK,
         });
     }, [data.links.spec, dispatch]);
 

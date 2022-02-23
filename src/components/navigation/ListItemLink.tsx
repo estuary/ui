@@ -11,11 +11,11 @@ import { forwardRef } from 'react';
 import { NavLink } from 'react-router-dom';
 
 const ListItemLinkProps = {
-    icon: PropTypes.element,
-    title: PropTypes.string.isRequired,
-    link: PropTypes.string.isRequired,
     disabled: PropTypes.bool,
+    icon: PropTypes.element,
     isOpen: PropTypes.bool,
+    link: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
 };
 
 const ListItemLink = (
