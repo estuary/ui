@@ -3,27 +3,30 @@ import AppLayout from 'AppLayout';
 import RequireAuth from 'auth/RequireAuth';
 import Home from 'pages/Home';
 import Login from 'pages/Login';
-import React, { Suspense } from 'react';
+import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router';
 import CheckAuth from './auth/CheckAuth';
 import Error from './pages/Error';
 
-const Admin = React.lazy(() => import('./pages/Admin'));
+const Admin = lazy(() => import('./pages/Admin'));
 
-const Capture = React.lazy(() => import('./pages/Captures'));
-const NewCaptureModal = React.lazy(
-    () => import('components/capture/creation/index')
+const Capture = lazy(() => import('./pages/Captures'));
+const NewCaptureModal = lazy(() => import('components/capture/creation/index'));
+
+const Materializations = lazy(() => import('./pages/Materializations'));
+const NewMaterialization = lazy(
+    () => import('./components/materialization/creation')
 );
 
-const Collections = React.lazy(() => import('./pages/Collections'));
+const Collections = lazy(() => import('./pages/Collections'));
 
-const Users = React.lazy(() => import('./pages/Users'));
+const Users = lazy(() => import('./pages/Users'));
 
-const Alerts = React.lazy(() => import('./pages/Alerts'));
+const Alerts = lazy(() => import('./pages/Alerts'));
 
-const Logs = React.lazy(() => import('./pages/Logs'));
+const Logs = lazy(() => import('./pages/Logs'));
 
-const App: React.FC = () => {
+const App = () => {
     return (
         <Suspense fallback={<Skeleton animation="wave" />}>
             <CheckAuth>
@@ -58,8 +61,13 @@ const App: React.FC = () => {
                             <Route path="derivations" element={<Error />} />
                             <Route
                                 path="materializations"
-                                element={<Error />}
-                            />
+                                element={<Materializations />}
+                            >
+                                <Route
+                                    path="new"
+                                    element={<NewMaterialization />}
+                                />
+                            </Route>
                             <Route path="admin/*" element={<Admin />}>
                                 <Route path="logs" element={<Logs />} />
                                 <Route path="alerts" element={<Alerts />} />

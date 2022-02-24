@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { useLocalStorage } from 'react-use';
 import { setAuthHeader } from '../services/axios';
 import AuthContext from './Context';

@@ -69,6 +69,9 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     'captures.main.message2.docLink': `catalog spec`,
     'captures.main.message2.docPath': `https://docs.estuary.dev/concepts/#catalogs`,
 
+    // Materialization creation modal
+    'materializationCreation.heading': `New Materialization`,
+
     // Landing page content
     'home.main.header': `Welcome to Control Plane!`,
     'home.main.description': `Click the Capture link over on the side navigation to get started.`,
