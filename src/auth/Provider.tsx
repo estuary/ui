@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router';
 import { useLocalStorage } from 'react-use';
 import { setAuthHeader } from '../services/axios';
 import AuthContext from './Context';
@@ -10,6 +11,8 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         null
     );
 
+    const navigate = useNavigate();
+
     const signin = (newUser: string, callback: VoidFunction) => {
         return fakeAuthProvider.signin(() => {
             setUser(newUser);
@@ -18,11 +21,12 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         });
     };
 
-    const signout = (callback: VoidFunction) => {
+    const signout = (callback?: VoidFunction) => {
         return fakeAuthProvider.signout(() => {
             removeUser();
             setAuthHeader();
-            callback();
+            navigate('/login', { replace: true });
+            callback?.();
         });
     };
 

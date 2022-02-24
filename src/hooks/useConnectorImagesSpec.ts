@@ -1,8 +1,9 @@
 import { type NewCaptureState } from 'components/capture/creation/Reducer';
 import JsonRefs from 'json-refs';
 import { useEffect, useState } from 'react';
-import axios from 'services/axios';
+import axios, { withAxios } from 'services/axios';
 import { type BaseHook } from 'types/';
+import { useAuth } from '../auth/Context';
 
 interface ConnectorImagesService extends BaseHook {
     data: {
@@ -18,13 +19,14 @@ const useConnectorImageSpec = (specURL: string): ConnectorImagesService => {
     const [docs, setDocs] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
 
+    const auth = useAuth();
+
     useEffect(() => {
         if (specURL) {
             setLoading(true);
             setError(null);
-            axios
-                .get(specURL)
-                .then(async (specResponse: any) => {
+            withAxios(axios.get(specURL), setError, setLoading, auth)
+                .then((specResponse: any) => {
                     const { data } = specResponse.data;
                     JsonRefs.resolveRefs(data.attributes.endpointSpecSchema)
                         .then((derefSchema) => {
@@ -38,18 +40,9 @@ const useConnectorImageSpec = (specURL: string): ConnectorImagesService => {
                     setDiscovery(data.links.discovery);
                     setDocs(data.attributes.documentationURL);
                 })
-                .catch((specError: any) => {
-                    setError(
-                        specError.response
-                            ? specError.response.data.message
-                            : specError.message
-                    );
-                })
-                .finally(() => {
-                    setLoading(false);
-                });
+                .catch(() => {});
         }
-    }, [specURL]);
+    }, [auth, specURL]);
 
     return {
         data: {

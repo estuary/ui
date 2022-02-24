@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import axios from 'services/axios';
+import axios, { withAxios } from 'services/axios';
+import { useAuth } from '../auth/Context';
 import { BaseHook } from '../types';
 
 interface SourceTypesService extends BaseHook {
@@ -11,20 +12,13 @@ const useSourceTypes = (): SourceTypesService => {
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
 
-    axios.get(`/sources/all`).then(
-        (response) => {
-            setLoading(false);
+    const auth = useAuth();
+
+    withAxios(axios.get('/sources/all'), setError, setLoading, auth)
+        .then((response: any) => {
             setSourceTypes(response.data);
-        },
-        (fetchError) => {
-            setLoading(false);
-            setError(
-                fetchError.response
-                    ? fetchError.response.data.message
-                    : fetchError.message
-            );
-        }
-    );
+        })
+        .catch(() => {});
 
     return { data: { sourceTypes }, error, loading };
 };

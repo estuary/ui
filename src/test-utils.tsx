@@ -10,11 +10,11 @@ import { ReactElement, type FC } from 'react';
 const AllTheProviders: FC = ({ children }) => {
     return (
         <AppTheme>
-            <AuthProvider>
-                <AppContent>
-                    <AppRouter>{children}</AppRouter>
-                </AppContent>
-            </AuthProvider>
+            <AppContent>
+                <AppRouter>
+                    <AuthProvider>{children}</AuthProvider>
+                </AppRouter>
+            </AppContent>
         </AppTheme>
     );
 };

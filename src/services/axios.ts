@@ -1,38 +1,7 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosPromise, AxiosResponse } from 'axios';
 
 axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL;
 axios.defaults.headers.post['Content-Type'] = 'application/json';
-
-axios.interceptors.request.use(
-    (config) => {
-        // Do something before request is sent
-        console.log('Request interceptor precall', config);
-        return config;
-    },
-    (error) => {
-        // Do something with request error
-        console.log('Request interceptor error', error);
-        return Promise.reject(error);
-    }
-);
-
-axios.interceptors.response.use(
-    (response: AxiosResponse<any, any>) => {
-        // Any status code that lie within the range of 2xx cause this function to trigger
-        // Do something with response data
-        console.log('Response interceptor precall', response);
-
-        // TODO - this is faked here so we can dev the "API call redirect to login" feature
-        //response.data.redirect = true;
-        return response;
-    },
-    (error) => {
-        // Any status codes that falls outside the range of 2xx cause this function to trigger
-        // Do something with response error
-        console.log('Response interceptor error', error);
-        return Promise.reject(error);
-    }
-);
 
 export const setAuthHeader = (token?: string) => {
     console.log('This is where we would set the header', token);
@@ -41,6 +10,33 @@ export const setAuthHeader = (token?: string) => {
     // } else {
     //     delete axios.defaults.headers.common.Authorization;
     // }
+};
+
+export const withAxios = (
+    fn: AxiosPromise,
+    setError: Function,
+    setLoading: Function,
+    auth: any
+) => {
+    return new Promise<AxiosResponse<any, any>>((resolve: any, reject: any) => {
+        fn.then((response) => {
+            if (response.data.redirect) {
+                auth.signout();
+            } else {
+                resolve(response);
+            }
+        })
+            .catch((error) => {
+                const errorMessage = error.response
+                    ? error.response.data.message
+                    : error.message;
+                setError(errorMessage);
+                reject(error);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    });
 };
 
 export default axios;
