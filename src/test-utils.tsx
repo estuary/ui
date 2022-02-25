@@ -1,22 +1,13 @@
 // https://testing-library.com/docs/react-testing-library/setup#custom-render
 
 import { render, RenderOptions } from '@testing-library/react';
-import AppContent from 'AppContent';
-import AppRouter from 'AppRouter';
-import AppTheme from 'AppTheme';
-import AuthProvider from 'auth/Provider';
 import { ReactElement, type FC } from 'react';
+import { act } from 'react-dom/test-utils';
+import { localStorageKey } from './auth';
+import AppProviders from './context';
 
 const AllTheProviders: FC = ({ children }) => {
-    return (
-        <AppTheme>
-            <AppContent>
-                <AppRouter>
-                    <AuthProvider>{children}</AuthProvider>
-                </AppRouter>
-            </AppContent>
-        </AppTheme>
-    );
+    return <AppProviders>{children}</AppProviders>;
 };
 
 const customRender = (
@@ -24,5 +15,11 @@ const customRender = (
     options?: Omit<RenderOptions, 'wrapper'>
 ) => render(ui, { wrapper: AllTheProviders, ...options });
 
+const loginAsUser = (userName: string = 'fakeUserName') => {
+    act(() => {
+        window.localStorage.setItem(localStorageKey, userName);
+    });
+};
+
 export * from '@testing-library/react';
-export { customRender as render };
+export { customRender as render, loginAsUser };

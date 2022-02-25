@@ -3,7 +3,6 @@ import JsonRefs from 'json-refs';
 import { useEffect, useState } from 'react';
 import axios, { withAxios } from 'services/axios';
 import { type BaseHook } from 'types/';
-import { useAuth } from '../auth/Context';
 
 interface ConnectorImagesService extends BaseHook {
     data: {
@@ -19,13 +18,11 @@ const useConnectorImageSpec = (specURL: string): ConnectorImagesService => {
     const [docs, setDocs] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
 
-    const auth = useAuth();
-
     useEffect(() => {
         if (specURL) {
             setLoading(true);
             setError(null);
-            withAxios(axios.get(specURL), setError, setLoading, auth)
+            withAxios(axios.get(specURL), setError, setLoading)
                 .then((specResponse: any) => {
                     const { data } = specResponse.data;
                     JsonRefs.resolveRefs(data.attributes.endpointSpecSchema)
@@ -42,7 +39,7 @@ const useConnectorImageSpec = (specURL: string): ConnectorImagesService => {
                 })
                 .catch(() => {});
         }
-    }, [auth, specURL]);
+    }, [specURL]);
 
     return {
         data: {

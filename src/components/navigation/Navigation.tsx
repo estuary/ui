@@ -18,8 +18,6 @@ const NavigationProps = {
 const Navigation = (props: PropTypes.InferProps<typeof NavigationProps>) => {
     const { onNavigationToggle, open, width } = props;
 
-    console.log('Navigation here ', open);
-
     const theme = useTheme();
     const isBelowMd = useMediaQuery(theme.breakpoints.down('md'));
 
