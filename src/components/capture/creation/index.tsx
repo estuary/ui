@@ -20,6 +20,7 @@ import { MouseEvent, useReducer, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from 'services/axios';
+import useChangeSetStore, { CaptureState } from 'stores/ChangeSetStore';
 import NewCaptureDetails from './DetailsForm';
 import NewCaptureError from './Error';
 import { getInitialState, newCaptureReducer } from './Reducer';
@@ -34,6 +35,8 @@ enum Steps {
     REVIEW_SCHEMA_IN_EDITOR = 'Allow custom to edit YAML',
 }
 
+const addCaptureSelector = (state: CaptureState) => state.addCapture;
+
 function NewCaptureModal() {
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -41,6 +44,9 @@ function NewCaptureModal() {
         null
     );
     const navigate = useNavigate();
+
+    // Change set store
+    const addCaptureToChangeSet = useChangeSetStore(addCaptureSelector);
 
     // Form data state
     const [state, dispatch] = useReducer(newCaptureReducer, getInitialState());
@@ -125,8 +131,15 @@ function NewCaptureModal() {
                 axiosInstance
                     .post(links.discovery, spec.data)
                     .then((response) => {
-                        setCatalogResponse(response.data.data.attributes);
+                        const catalog = response.data.data.attributes;
+
+                        setCatalogResponse(catalog);
                         setActiveStep(Steps.REVIEW_SCHEMA_IN_EDITOR);
+
+                        // TODO: Move change set function to a reasonable location. This placement was for testing purposes only.
+                        if (activeStep === Steps.REVIEW_SCHEMA_IN_EDITOR) {
+                            addCaptureToChangeSet(details.data.name, catalog);
+                        }
                     })
                     .catch((error) => {
                         if (error.errors) {
