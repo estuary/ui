@@ -15,6 +15,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     'header.navigationMenu.aria.label': `Expand Navigation`,
 
     // CTA
+    'cta.addToChangeSet': `Add to Change Set`,
     'cta.cancel': `Cancel`,
     'cta.delete': `Delete`,
     'cta.download': `Download`,

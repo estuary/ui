@@ -15,8 +15,7 @@ import {
     useTheme,
 } from '@mui/material';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
-import { MouseEvent, useReducer, useRef, useState } from 'react';
+import { MouseEvent, useReducer, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from 'services/axios';
@@ -40,9 +39,6 @@ const addCaptureSelector = (state: CaptureState) => state.addCapture;
 function NewCaptureModal() {
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
-    const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(
-        null
-    );
     const navigate = useNavigate();
 
     // Change set store
@@ -64,48 +60,23 @@ function NewCaptureModal() {
 
     // Form Event Handlers
     const handlers = {
+        addToChangeSet: (event: MouseEvent<HTMLElement>) => {
+            event.preventDefault();
+
+            addCaptureToChangeSet(details.data.name, catalogResponse);
+
+            setFormSubmitting(true);
+
+            // TODO: Route to the Change Set page (once created).
+            window.setTimeout(() => handlers.close(), 0);
+        },
+
         close: () => {
             navigate('..'); //This is assuming this is a child of the /captures route.
         },
 
         delete: () => {
             console.log('Delete? You sure?');
-        },
-
-        save: (event: MouseEvent<HTMLElement>) => {
-            event.preventDefault();
-            let catalogVal = '';
-
-            if (editorRef.current) {
-                catalogVal = editorRef.current.getValue();
-            }
-
-            setFormSubmitting(true);
-
-            // Create blob link to download
-            const url = window.URL.createObjectURL(
-                new Blob([catalogVal], {
-                    type: 'text/plain',
-                })
-            );
-
-            // Make download link
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', `${details.data.name}.flow.yaml`);
-
-            // Append to html link element page
-            document.body.appendChild(link);
-
-            // Start download
-            link.click();
-
-            window.setTimeout(() => {
-                // Clean up and remove the link
-                document.body.removeChild(link);
-                window.URL.revokeObjectURL(url);
-                handlers.close();
-            }, 0);
         },
 
         test: (event: MouseEvent<HTMLElement>) => {
@@ -131,15 +102,8 @@ function NewCaptureModal() {
                 axiosInstance
                     .post(links.discovery, spec.data)
                     .then((response) => {
-                        const catalog = response.data.data.attributes;
-
-                        setCatalogResponse(catalog);
+                        setCatalogResponse(response.data.data.attributes);
                         setActiveStep(Steps.REVIEW_SCHEMA_IN_EDITOR);
-
-                        // TODO: Move change set function to a reasonable location. This placement was for testing purposes only.
-                        if (activeStep === Steps.REVIEW_SCHEMA_IN_EDITOR) {
-                            addCaptureToChangeSet(details.data.name, catalog);
-                        }
                     })
                     .catch((error) => {
                         if (error.errors) {
@@ -250,47 +214,33 @@ function NewCaptureModal() {
             </DialogContent>
 
             <DialogActions>
-                {activeStep > Steps.WAITING_FOR_DISCOVER ? (
-                    <>
-                        <Button
-                            onClick={handlers.delete}
-                            size="large"
-                            color="error"
-                        >
-                            <FormattedMessage id="cta.delete" />
-                        </Button>
-                        <Button
-                            onClick={handlers.save}
-                            size="large"
-                            color="success"
-                            variant="contained"
-                            disableElevation
-                        >
-                            <FormattedMessage id="cta.download" />
-                        </Button>
-                    </>
+                <Button onClick={handlers.close} size="large" color="error">
+                    <FormattedMessage id="cta.cancel" />
+                </Button>
+
+                {activeStep === Steps.REVIEW_SCHEMA_IN_EDITOR ? (
+                    <Button
+                        onClick={handlers.addToChangeSet}
+                        size="large"
+                        color="success"
+                        variant="contained"
+                        disableElevation
+                    >
+                        <FormattedMessage id="cta.addToChangeSet" />
+                    </Button>
                 ) : (
-                    <>
-                        <Button
-                            onClick={handlers.close}
-                            size="large"
-                            color="error"
-                        >
-                            <FormattedMessage id="cta.cancel" />
-                        </Button>
-                        <Button
-                            onClick={handlers.test}
-                            disabled={false}
-                            form={FORM_ID}
-                            size="large"
-                            type="submit"
-                            color="success"
-                            variant="contained"
-                            disableElevation
-                        >
-                            <FormattedMessage id="captureCreation.ctas.test.config" />
-                        </Button>
-                    </>
+                    <Button
+                        onClick={handlers.test}
+                        disabled={false}
+                        form={FORM_ID}
+                        size="large"
+                        type="submit"
+                        color="success"
+                        variant="contained"
+                        disableElevation
+                    >
+                        <FormattedMessage id="captureCreation.ctas.test.config" />
+                    </Button>
                 )}
             </DialogActions>
         </Dialog>
