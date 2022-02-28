@@ -23,17 +23,18 @@ function AccountsTable() {
 
     const columns = [
         {
-            field: 'attributes.display_name',
-            headerIntlKey: 'data.display_name',
+            field: 'attributes.name',
+            headerIntlKey: 'data.name',
         },
         {
             field: 'attributes.email',
             headerIntlKey: 'data.email',
         },
         {
-            field: 'attributes.name',
-            headerIntlKey: 'data.name',
+            field: 'attributes.display_name',
+            headerIntlKey: 'data.display_name',
         },
+
         {
             field: 'attributes.updated_at',
             headerIntlKey: 'data.updated_at',
@@ -88,13 +89,13 @@ function AccountsTable() {
                                         key={`Accounts-${row.id}-${index}`}
                                     >
                                         <TableCell>
-                                            {row.attributes.display_name}
+                                            {row.attributes.name}
                                         </TableCell>
                                         <TableCell>
                                             {row.attributes.email}
                                         </TableCell>
                                         <TableCell>
-                                            {row.attributes.name}
+                                            {row.attributes.display_name}
                                         </TableCell>
                                         <TableCell>
                                             <FormattedDate
