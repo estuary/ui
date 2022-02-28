@@ -255,6 +255,41 @@ exports[`Authenticated app renders correctly 1`] = `
               </li>
               <li>
                 <a
+                  aria-label="Change Set"
+                  class="MuiListItemButton-root MuiListItemButton-gutters MuiButtonBase-root  css-gjl4xh-MuiButtonBase-root-MuiListItemButton-root"
+                  data-mui-internal-clone-element="true"
+                  href="/app/change-set"
+                  role="button"
+                  tabindex="0"
+                >
+                  <div
+                    class="MuiListItemIcon-root css-cveggr-MuiListItemIcon-root"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                      data-testid="CompareArrowsIcon"
+                      focusable="false"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M9.01 14H2v2h7.01v3L13 15l-3.99-4v3zm5.98-1v-3H22V8h-7.01V5L11 9l3.99 4z"
+                      />
+                    </svg>
+                  </div>
+                  <div
+                    class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                  >
+                    <span
+                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-1ler6va-MuiTypography-root"
+                    >
+                      Change Set
+                    </span>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a
                   aria-label="Administration"
                   class="MuiListItemButton-root MuiListItemButton-gutters MuiButtonBase-root  css-gjl4xh-MuiButtonBase-root-MuiListItemButton-root"
                   data-mui-internal-clone-element="true"
