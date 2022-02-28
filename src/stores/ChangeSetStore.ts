@@ -1,10 +1,26 @@
 import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
+type ChangeType = 'New Entity' | 'Update';
+type EntityType = 'Capture';
+
+export interface EntityMetadata {
+    changeType: ChangeType;
+    entityType: EntityType;
+    name: string;
+    namespace: string;
+    user: string;
+}
+
+export interface Entity<T = any> {
+    metadata: EntityMetadata;
+    schema: T;
+}
+
 // TODO: Create a distinct capture state slice that is spread into the change set store.
 export interface CaptureState<T = any> {
-    addCapture: (key: string, newCapture: T) => void;
-    captures: { [key: string]: T };
+    addCapture: (key: string, newCapture: Entity<T>) => void;
+    captures: { [key: string]: Entity<T> };
     hydrateCaptureState: () => void;
 }
 

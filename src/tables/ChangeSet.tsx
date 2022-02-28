@@ -9,37 +9,21 @@ import {
     Tooltip,
 } from '@mui/material';
 import { FormattedMessage, useIntl } from 'react-intl';
-import useChangeSetStore, { CaptureState } from '../stores/ChangeSetStore';
-
-interface CaptureDetails {
-    details: string;
-    entity: string;
-    entityType: string;
-    namespace: string;
-    user: string;
-}
+import useChangeSetStore, {
+    CaptureState,
+    EntityMetadata,
+} from '../stores/ChangeSetStore';
 
 const getCapturesSelector = (state: CaptureState) => state.captures;
 
 function ChangeSetTable() {
-    const captureSchemas = useChangeSetStore(getCapturesSelector);
-    const namespaces = Object.keys(captureSchemas);
+    const captureState = useChangeSetStore(getCapturesSelector);
+    const captures = Object.values(captureState);
 
     // TODO: Get the hard coded capture details from the store.
-    const captureDetails: CaptureDetails[] = namespaces.map((namespace) => {
-        const entity = namespace.substring(
-            namespace.lastIndexOf('/') + 1,
-            namespace.length
-        );
-
-        return {
-            details: 'New Entity',
-            entity,
-            entityType: 'Capture',
-            namespace,
-            user: 'cara.mel@gmail.com',
-        };
-    });
+    const captureDetails: EntityMetadata[] = captures.map(
+        (capture) => capture.metadata
+    );
 
     const intl = useIntl();
 
@@ -49,7 +33,7 @@ function ChangeSetTable() {
             headerIntlKey: 'changeSet.data.entityType',
         },
         {
-            field: 'entity',
+            field: 'name',
             headerIntlKey: 'changeSet.data.entity',
         },
         {
@@ -57,14 +41,14 @@ function ChangeSetTable() {
             headerIntlKey: 'changeSet.data.user',
         },
         {
-            field: 'details',
+            field: 'changeType',
             headerIntlKey: 'changeSet.data.details',
         },
     ];
 
     return (
         <Box sx={{ mx: 2 }}>
-            {namespaces.length > 0 ? (
+            {captures.length > 0 ? (
                 <TableContainer component={Box}>
                     <Table
                         sx={{ minWidth: 350 }}
@@ -96,23 +80,23 @@ function ChangeSetTable() {
                             {captureDetails.map(
                                 (
                                     {
+                                        name,
                                         entityType,
                                         namespace,
-                                        entity,
                                         user,
-                                        details,
+                                        changeType,
                                     },
                                     index
                                 ) => (
-                                    <TableRow key={`Entity-${entity}-${index}`}>
+                                    <TableRow key={`Entity-${name}-${index}`}>
                                         <TableCell>{entityType}</TableCell>
                                         <TableCell>
                                             <Tooltip title={namespace}>
-                                                <span>{entity}</span>
+                                                <span>{name}</span>
                                             </Tooltip>
                                         </TableCell>
                                         <TableCell>{user}</TableCell>
-                                        <TableCell>{details}</TableCell>
+                                        <TableCell>{changeType}</TableCell>
                                     </TableRow>
                                 )
                             )}

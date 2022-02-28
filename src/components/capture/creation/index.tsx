@@ -19,7 +19,7 @@ import { MouseEvent, useReducer, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from 'services/axios';
-import useChangeSetStore, { CaptureState } from 'stores/ChangeSetStore';
+import useChangeSetStore, { CaptureState, Entity } from 'stores/ChangeSetStore';
 import NewCaptureDetails from './DetailsForm';
 import NewCaptureError from './Error';
 import { getInitialState, newCaptureReducer } from './Reducer';
@@ -63,7 +63,24 @@ function NewCaptureModal() {
         addToChangeSet: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
-            addCaptureToChangeSet(details.data.name, catalogResponse);
+            const namespace: string = details.data.name;
+
+            // TODO: Get user identifier from authentication-related application state.
+            const capture: Entity = {
+                metadata: {
+                    changeType: 'New Entity',
+                    entityType: 'Capture',
+                    name: namespace.substring(
+                        namespace.lastIndexOf('/') + 1,
+                        namespace.length
+                    ),
+                    namespace,
+                    user: 'temp@gmail.com',
+                },
+                schema: catalogResponse,
+            };
+
+            addCaptureToChangeSet(namespace, capture);
 
             setFormSubmitting(true);
 
