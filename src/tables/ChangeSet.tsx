@@ -1,5 +1,7 @@
+import InfoIcon from '@mui/icons-material/Info';
 import {
     Box,
+    IconButton,
     Table,
     TableBody,
     TableCell,
@@ -90,8 +92,15 @@ function ChangeSetTable() {
                                     <TableRow key={`Entity-${name}-${index}`}>
                                         <TableCell>{entityType}</TableCell>
                                         <TableCell>
+                                            <span>{name}</span>
                                             <Tooltip title={namespace}>
-                                                <span>{name}</span>
+                                                <IconButton
+                                                    sx={{ ml: 0.5, p: 0.5 }}
+                                                >
+                                                    <InfoIcon
+                                                        sx={{ fontSize: 16 }}
+                                                    />
+                                                </IconButton>
                                             </Tooltip>
                                         </TableCell>
                                         <TableCell>{user}</TableCell>
