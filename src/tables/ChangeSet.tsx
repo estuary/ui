@@ -65,7 +65,7 @@ function ChangeSetTable() {
     ];
 
     return (
-        <Box sx={{ mx: 2 }}>
+        <Box sx={{ mb: 2, mx: 2 }}>
             {captures.length > 0 ? (
                 <TableContainer component={Box}>
                     <Table

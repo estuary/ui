@@ -1,5 +1,4 @@
-import DeleteIcon from '@mui/icons-material/Delete';
-import { Box, Button, IconButton, Toolbar, Typography } from '@mui/material';
+import { Box, Button, Toolbar, Typography } from '@mui/material';
 import PageContainer from 'components/shared/PageContainer';
 import { FormattedMessage } from 'react-intl';
 import ChangeSetTable from '../tables/ChangeSet';
@@ -15,11 +14,10 @@ const ChangeSet = () => {
                 <Box>
                     <Button
                         /* TODO: Differentiate bkg color of delete button */
-                        component={IconButton}
                         variant="contained"
                         disabled={true}
                     >
-                        <DeleteIcon />
+                        Delete
                     </Button>
 
                     <Button sx={{ ml: 2 }} variant="contained" disabled={true}>
