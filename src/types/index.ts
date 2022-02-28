@@ -54,3 +54,29 @@ export interface AuthLocalResponse extends BaseResponse {
         links: {};
     };
 }
+
+export interface AccountResponse extends BaseResponse {
+    data: {
+        id: string;
+        type: string;
+        attributes: {
+            created_at: string;
+            display_name: string;
+            email: string;
+            id: string;
+            name: string;
+            norm_name: string;
+            updated_at: string;
+        };
+        links: {
+            self: string;
+        };
+    };
+}
+
+export interface AccountsResponse extends BaseResponse {
+    data: AccountResponse['data'][];
+    links: {
+        self: string;
+    };
+}

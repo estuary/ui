@@ -1,7 +1,14 @@
 import { Box, Toolbar, Typography } from '@mui/material';
 import PageContainer from 'components/shared/PageContainer';
 import { FormattedMessage } from 'react-intl';
+import AccountsTable from '../tables/Accounts';
 import ConnectorsTable from '../tables/Connectors';
+
+const boxStyling = {
+    marginBottom: 2,
+    overflow: 'hidden',
+    width: '100%',
+};
 
 const Admin = () => {
     return (
@@ -12,14 +19,11 @@ const Admin = () => {
                 </Typography>
             </Toolbar>
 
-            <Box
-                sx={{
-                    maxHeight: 250,
-                    overflow: 'auto',
-                }}
-            >
+            <Box sx={boxStyling}>
                 <ConnectorsTable />
             </Box>
+
+            <AccountsTable />
         </PageContainer>
     );
 };

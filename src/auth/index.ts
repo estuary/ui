@@ -1,9 +1,24 @@
 import { AxiosResponse } from 'axios';
 import axios, { setAuthHeader } from '../services/axios';
-import { AuthLocalResponse } from '../types';
+import { AccountResponse, AuthLocalResponse } from '../types';
 
 const localStorageKey = '__auth_provider_token__';
 const auth = {
+    getAccountDetails(accountID: string) {
+        return new Promise<AxiosResponse<any, any>>(
+            (resolve: any, reject: any) => {
+                return axios
+                    .get(`accounts/${accountID}`)
+                    .then((response: AxiosResponse<AccountResponse>) => {
+                        const { display_name } = response.data.data.attributes;
+                        resolve(display_name);
+                    })
+                    .catch((error) => {
+                        reject(error);
+                    });
+            }
+        );
+    },
     async getToken() {
         return window.localStorage.getItem(localStorageKey);
     },
@@ -15,10 +30,17 @@ const auth = {
                         auth_token: username,
                     })
                     .then((response: AxiosResponse<AuthLocalResponse>) => {
-                        const { token } = response.data.data.attributes;
+                        const { account_id, token } =
+                            response.data.data.attributes;
                         window.localStorage.setItem(localStorageKey, token);
                         setAuthHeader(token);
-                        resolve(response);
+                        auth.getAccountDetails(account_id)
+                            .then((accountResponse) => {
+                                resolve(accountResponse);
+                            })
+                            .catch((accountError) => {
+                                reject(accountError);
+                            });
                     })
                     .catch((error) => {
                         reject(error);

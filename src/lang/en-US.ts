@@ -24,6 +24,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
 
     // Terms
     'terms.connectors': `Connectors`,
+    'terms.accounts': `Accounts`,
 
     // Data
     'data.name': `Name`,
@@ -31,9 +32,14 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     'data.type': `Type`,
     'data.maintainer': `Maintainer`,
     'data.updated_at': `Last Updated`,
+    'data.email': `Email`,
+    'data.display_name': `User Name`,
 
     // Connectors table
-    'connectors.title': `Table of all connectors`,
+    'connectors.title': `All installed connectors`,
+
+    // Accounts table
+    'accounts.title': `All existing accounts`,
 
     // Error Boundry
     'errorBoundry.title': `Error`,
