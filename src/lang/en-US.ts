@@ -82,6 +82,14 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
 
     'logs.main.message': `This is where we will show the logs for the system.`,
     'users.main.message': `This is where you will be able to manage your users... basically a little User CRUD UI.`,
+
+    'changeSet.header': `Change Set`,
+    'changeSet.title': `Change Set Table`,
+
+    'changeSet.data.entityType': `Entity Type`,
+    'changeSet.data.entity': `Entity`,
+    'changeSet.data.user': `User`,
+    'changeSet.data.details': `Details`,
 };
 
 export default enUSMessages;
