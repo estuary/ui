@@ -5,13 +5,13 @@ import AppTheme from './Theme';
 
 const AppProviders: React.FC = ({ children }) => {
     return (
-        <AuthProvider>
-            <AppTheme>
-                <AppContent>
+        <AppContent>
+            <AuthProvider>
+                <AppTheme>
                     <AppRouter>{children}</AppRouter>
-                </AppContent>
-            </AppTheme>
-        </AuthProvider>
+                </AppTheme>
+            </AuthProvider>
+        </AppContent>
     );
 };
 

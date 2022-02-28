@@ -10,7 +10,8 @@
         "ms-vscode-remote.remote-containers",
         "alduncanson.react-hooks-snippets",
         "rangav.vscode-thunder-client",
-        "eg2.vscode-npm-script"
+        "eg2.vscode-npm-script",
+        "Orta.vscode-jest"
     ],
     // List of extensions recommended by VS Code that should not be recommended for users of this workspace.
     "unwantedRecommendations": [

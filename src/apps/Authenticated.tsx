@@ -3,25 +3,25 @@ import AppLayout from 'AppLayout';
 import Home from 'pages/Home';
 import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router';
-import Error from './pages/Error';
+import Error from '../pages/Error';
 
-const Admin = lazy(() => import('./pages/Admin'));
+const Admin = lazy(() => import('../pages/Admin'));
 
-const Capture = lazy(() => import('./pages/Captures'));
+const Capture = lazy(() => import('../pages/Captures'));
 const NewCaptureModal = lazy(() => import('components/capture/creation/index'));
 
-const Materializations = lazy(() => import('./pages/Materializations'));
+const Materializations = lazy(() => import('../pages/Materializations'));
 const NewMaterialization = lazy(
-    () => import('./components/materialization/creation')
+    () => import('../components/materialization/creation')
 );
 
-const Collections = lazy(() => import('./pages/Collections'));
+const Collections = lazy(() => import('../pages/Collections'));
 
-const Users = lazy(() => import('./pages/Users'));
+const Users = lazy(() => import('../pages/Users'));
 
-const Alerts = lazy(() => import('./pages/Alerts'));
+const Alerts = lazy(() => import('../pages/Alerts'));
 
-const Logs = lazy(() => import('./pages/Logs'));
+const Logs = lazy(() => import('../pages/Logs'));
 
 const Authenticated = () => {
     return (

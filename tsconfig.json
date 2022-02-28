@@ -33,10 +33,14 @@
         "paths": {
             "auth/*": ["auth/*"],
             "components/*": ["components/*"],
+            "context/*": ["context/*"],
+            "forms/*": ["forms/*"],
             "hooks/*": ["hooks/*"],
             "images/*": ["images/*"],
             "lang/*": ["lang/*"],
             "pages/*": ["pages/*"],
+            "services/*": ["services/*"],
+            "tables/*": ["tables/*"],
             "types": ["types/*"]
         },
         "typeRoots": ["./src/types", "node_modules/@types"]

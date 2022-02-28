@@ -21,10 +21,10 @@ const Login: React.FC = () => {
         setUserName(event.target.value);
     };
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        login(userName);
+        await login(userName);
     };
 
     return (
