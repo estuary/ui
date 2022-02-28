@@ -4,51 +4,45 @@ import { Avatar } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import MenuItem from '@mui/material/MenuItem';
-import { useAuth } from 'auth/Context';
-import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/Auth';
 import IconMenu from './IconMenu';
 
-type UserMenuProps = {
-    userName: string;
-};
-
-const UserMenu = (props: UserMenuProps) => {
-    const { userName } = props;
-    const auth = useAuth();
-    const navigate = useNavigate();
-
+const UserMenu = () => {
+    const { logout, user } = useAuth();
     const handleClick = () => {
-        auth.signout(() => {
-            navigate('/', { replace: true });
-        });
+        void logout();
     };
 
-    return (
-        <IconMenu
-            ariaLabel="Open account menu"
-            icon={<Avatar>{userName.charAt(0)}</Avatar>}
-            identifier="account-menu"
-            tooltip="Account Settings"
-        >
-            <MenuItem>
-                <ListItemIcon>
-                    <AccountCircleIcon fontSize="small" />
-                </ListItemIcon>
-                {userName}
-            </MenuItem>
-            <Divider />
-            <MenuItem
-                onClick={() => {
-                    handleClick();
-                }}
+    if (user) {
+        return (
+            <IconMenu
+                ariaLabel="Open account menu"
+                icon={<Avatar>{user.charAt(0)}</Avatar>}
+                identifier="account-menu"
+                tooltip="Account Settings"
             >
-                <ListItemIcon>
-                    <Logout fontSize="small" />
-                </ListItemIcon>
-                Logout
-            </MenuItem>
-        </IconMenu>
-    );
+                <MenuItem>
+                    <ListItemIcon>
+                        <AccountCircleIcon fontSize="small" />
+                    </ListItemIcon>
+                    {user}
+                </MenuItem>
+                <Divider />
+                <MenuItem
+                    onClick={() => {
+                        handleClick();
+                    }}
+                >
+                    <ListItemIcon>
+                        <Logout fontSize="small" />
+                    </ListItemIcon>
+                    Logout
+                </MenuItem>
+            </IconMenu>
+        );
+    } else {
+        return null;
+    }
 };
 
 export default UserMenu;

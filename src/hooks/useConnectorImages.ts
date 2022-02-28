@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios, { withAxios } from 'services/axios';
 import { BaseHook } from 'types/';
-import { useAuth } from '../auth/Context';
 
 interface ConnectorImagesService extends BaseHook {
     data: {
@@ -20,11 +19,9 @@ const useConnectorImages = (
     const [attributes, setAttributes] = useState<object>({});
     const [links, setLinks] = useState<object>({});
 
-    const auth = useAuth();
-
     useEffect(() => {
         if (imagesURL) {
-            withAxios(axios.get(imagesURL), setError, setLoading, auth)
+            withAxios(axios.get(imagesURL), setError, setLoading)
                 .then((imageResponse: any) => {
                     const newestImage = imageResponse.data.data[whichOne];
                     setAttributes(newestImage.attributes);
@@ -32,7 +29,7 @@ const useConnectorImages = (
                 })
                 .catch(() => {});
         }
-    }, [auth, imagesURL, whichOne]);
+    }, [imagesURL, whichOne]);
 
     return {
         data: {

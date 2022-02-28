@@ -7,33 +7,24 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
-import { useAuth } from 'auth/Context';
 import Topbar from 'components/header/Topbar';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/Auth';
 
 const Login: React.FC = () => {
-    const navigate = useNavigate();
-    const location = useLocation() as any;
-    const auth = useAuth();
-    const intl = useIntl();
-
     const [userName, setUserName] = useState('');
-
-    const from = location.state?.from?.pathname ?? '/';
+    const intl = useIntl();
+    const { login } = useAuth();
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setUserName(event.target.value);
     };
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        auth.signin(userName, () => {
-            const navigateTo = from === '/' ? '/dashboard' : from;
-            navigate(navigateTo, { replace: true });
-        });
+        await login(userName);
     };
 
     return (

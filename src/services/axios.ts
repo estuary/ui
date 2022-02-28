@@ -1,27 +1,27 @@
 import axios, { AxiosPromise, AxiosResponse } from 'axios';
+import { auth } from '../auth';
 
 axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL;
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
-export const setAuthHeader = (token?: string) => {
-    console.log('This is where we would set the header', token);
-    // if (token) {
-    //     axios.defaults.headers.common.Authorization = token;
-    // } else {
-    //     delete axios.defaults.headers.common.Authorization;
-    // }
+export const setAuthHeader = (token: string | null) => {
+    console.log('auth header ', token);
+    if (token) {
+        axios.defaults.headers.common.Authorization = token;
+    } else {
+        delete axios.defaults.headers.common.Authorization;
+    }
 };
 
 export const withAxios = (
     fn: AxiosPromise,
     setError: Function,
-    setLoading: Function,
-    auth: any
+    setLoading: Function
 ) => {
     return new Promise<AxiosResponse<any, any>>((resolve: any, reject: any) => {
         fn.then((response) => {
             if (response.data.redirect) {
-                auth.signout();
+                void auth.signout();
             } else {
                 resolve(response);
             }

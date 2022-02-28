@@ -1,11 +1,11 @@
+import FullPageSpinner from 'components/FullPageSpinner';
+import { useAuth } from 'context/Auth';
 import * as React from 'react';
-import FullPageSpinner from './components/FullPageSpinner';
-import { useAuth } from './context/Auth';
 
 const AuthenticatedApp = React.lazy(
-    () => import(/* webpackPrefetch: true */ './apps/Authenticated')
+    () => import(/* webpackPrefetch: true */ './Authenticated')
 );
-const UnauthenticatedApp = React.lazy(() => import('./apps/Unauthenticated'));
+const UnauthenticatedApp = React.lazy(() => import('./Unauthenticated'));
 
 function App() {
     const { user } = useAuth();

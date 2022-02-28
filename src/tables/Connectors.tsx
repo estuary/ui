@@ -86,9 +86,7 @@ function ConnectorsTable() {
                         </TableHead>
                         <TableBody>
                             {connectors.map((row, index) => (
-                                <TableRow
-                                    key={`Connector-${row.attributes.name}-${index}`}
-                                >
+                                <TableRow key={`Connector-${row.id}-${index}`}>
                                     <TableCell>{row.attributes.name}</TableCell>
                                     <TableCell>
                                         {row.attributes.description}
