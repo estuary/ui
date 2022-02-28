@@ -7,7 +7,5 @@ test('Unauthenticated app renders correctly', async () => {
         route: '/login',
     });
 
-    await Promise.resolve();
-
     expect(container).toMatchSnapshot();
 });

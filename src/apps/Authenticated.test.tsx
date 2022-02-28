@@ -7,7 +7,5 @@ test('Authenticated app renders correctly', async () => {
         user: 'FooBar123',
     });
 
-    await Promise.resolve();
-
     expect(container).toMatchSnapshot();
 });

@@ -22,6 +22,10 @@ const goTo = (route?: string, name?: string) => {
     );
 };
 
+const waitForLoading = async () => {
+    return Promise.resolve();
+};
+
 // const waitForLoadingToFinish = () =>
 //     waitForElementToBeRemoved(screen.queryAllByText(/loading/i));
 
@@ -46,7 +50,11 @@ const customRender = async (
     //     await waitForLoadingToFinish();
     // }
 
-    return rtlRender(ui, { wrapper: AppProviders, ...options });
+    const view = rtlRender(ui, { wrapper: AppProviders, ...options });
+
+    await waitForLoading();
+
+    return view;
 };
 
-export { goTo, loginAsUser, logoutUser, customRender };
+export { goTo, loginAsUser, logoutUser, customRender, waitForLoading };
