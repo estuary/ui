@@ -21,7 +21,6 @@ export interface Entity<T = any> {
 export interface CaptureState<T = any> {
     addCapture: (key: string, newCapture: Entity<T>) => void;
     captures: { [key: string]: Entity<T> };
-    hydrateCaptureState: () => void;
 }
 
 const name = 'change-set-state';
@@ -30,7 +29,7 @@ const name = 'change-set-state';
 const useChangeSetStore = create<CaptureState>(
     devtools(
         persist(
-            (set, get) => ({
+            (set) => ({
                 addCapture: (key, newCapture) =>
                     set(
                         (state) => ({
@@ -40,14 +39,6 @@ const useChangeSetStore = create<CaptureState>(
                         'New Capture Added'
                     ),
                 captures: {},
-                hydrateCaptureState: () =>
-                    set(
-                        (state) => ({
-                            captures: { ...state.captures, ...get().captures },
-                        }),
-                        false,
-                        'Capture State Hydrated'
-                    ),
             }),
             { name }
         ),

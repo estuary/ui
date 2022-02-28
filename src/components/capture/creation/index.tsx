@@ -84,7 +84,6 @@ function NewCaptureModal() {
 
             setFormSubmitting(true);
 
-            // TODO: Route to the Change Set page (once created).
             window.setTimeout(() => handlers.close(), 0);
         },
 

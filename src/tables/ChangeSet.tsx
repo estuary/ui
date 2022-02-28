@@ -20,7 +20,6 @@ function ChangeSetTable() {
     const captureState = useChangeSetStore(getCapturesSelector);
     const captures = Object.values(captureState);
 
-    // TODO: Get the hard coded capture details from the store.
     const captureDetails: EntityMetadata[] = captures.map(
         (capture) => capture.metadata
     );
