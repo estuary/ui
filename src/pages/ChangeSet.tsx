@@ -24,12 +24,7 @@ const ChangeSet = () => {
                 </Box>
             </Toolbar>
 
-            <Box
-                sx={{
-                    maxHeight: 250,
-                    overflow: 'auto',
-                }}
-            >
+            <Box>
                 <ChangeSetTable />
             </Box>
         </PageContainer>
