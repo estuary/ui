@@ -13,12 +13,16 @@ const ChangeSet = () => {
                 </Typography>
 
                 <Box>
-                    <Button component={IconButton} variant="contained">
-                        <DeleteIcon /* TODO: Differentiate bkg color of delete button */
-                        />
+                    <Button
+                        /* TODO: Differentiate bkg color of delete button */
+                        component={IconButton}
+                        variant="contained"
+                        disabled={true}
+                    >
+                        <DeleteIcon />
                     </Button>
 
-                    <Button sx={{ ml: 2 }} variant="contained">
+                    <Button sx={{ ml: 2 }} variant="contained" disabled={true}>
                         Build
                     </Button>
                 </Box>
