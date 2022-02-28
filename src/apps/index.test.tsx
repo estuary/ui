@@ -1,11 +1,10 @@
 import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
-import { logoutUser, render } from 'utils/test-utils';
+import { customRender, logoutUser } from 'utils/test-utils';
 import App from '.';
 
 test('Unauthenticated app renders when no user is present', async () => {
-    await render(<App />, {
-        route: '/',
+    await customRender(<App />, {
         user: undefined,
     });
 
@@ -19,8 +18,7 @@ test('Unauthenticated app renders when no user is present', async () => {
 });
 
 test('Authenticated renders with user', async () => {
-    await render(<App />, {
-        route: '/',
+    await customRender(<App />, {
         user: 'FooBar123',
     });
 
@@ -32,8 +30,7 @@ test('Authenticated renders with user', async () => {
 });
 
 test('Unauthenticated renders with user is logged out', async () => {
-    await render(<App />, {
-        route: '/',
+    await customRender(<App />, {
         user: 'FooBar123',
     });
 
@@ -45,8 +42,7 @@ test('Unauthenticated renders with user is logged out', async () => {
 
     // Passing undefined below DOES NOT log the user out
     logoutUser();
-    await render(<App />, {
-        route: '/',
+    await customRender(<App />, {
         user: undefined,
     });
 
