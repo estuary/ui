@@ -11,7 +11,13 @@ import {
 import useConnectors from 'hooks/useConnectors';
 import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
 
-function ConnectorsTable() {
+interface ConnectorsTableProps {
+    maxHeight: number;
+}
+
+function ConnectorsTable(props: ConnectorsTableProps) {
+    const { maxHeight } = props;
+
     const {
         data: { connectors },
         loading,
@@ -46,7 +52,9 @@ function ConnectorsTable() {
     return (
         <Box
             sx={{
+                height: '100%',
                 mx: 2,
+                overflow: 'auto',
             }}
         >
             {loading ? <FormattedMessage id="common.loading" /> : null}
@@ -54,7 +62,7 @@ function ConnectorsTable() {
             {error ? { fetchingConnectorsError: error } : null}
 
             {connectors.length > 0 ? (
-                <TableContainer component={Box}>
+                <TableContainer sx={{ maxHeight }}>
                     <Typography>
                         <FormattedMessage id="terms.connectors" />
                     </Typography>

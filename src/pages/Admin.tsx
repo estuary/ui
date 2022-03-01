@@ -7,7 +7,7 @@ import ConnectorsTable from '../tables/Connectors';
 const boxStyling = {
     marginBottom: 2,
     overflow: 'hidden',
-    width: '100%',
+    padding: 2,
 };
 
 const Admin = () => {
@@ -20,10 +20,12 @@ const Admin = () => {
             </Toolbar>
 
             <Box sx={boxStyling}>
-                <ConnectorsTable />
+                <ConnectorsTable maxHeight={250} />
             </Box>
 
-            <AccountsTable />
+            <Box sx={boxStyling}>
+                <AccountsTable maxHeight={250} />
+            </Box>
         </PageContainer>
     );
 };

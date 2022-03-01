@@ -1,6 +1,5 @@
 import {
     Box,
-    Paper,
     Table,
     TableBody,
     TableCell,
@@ -12,7 +11,13 @@ import {
 import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
 import useAccounts from '../hooks/useAccounts';
 
-function AccountsTable() {
+interface AccountsTableProps {
+    maxHeight: number;
+}
+
+function AccountsTable(props: AccountsTableProps) {
+    const { maxHeight } = props;
+
     const {
         data: { accounts },
         loading,
@@ -44,7 +49,9 @@ function AccountsTable() {
     return (
         <Box
             sx={{
+                height: '100%',
                 mx: 2,
+                overflow: 'auto',
             }}
         >
             {loading ? <FormattedMessage id="common.loading" /> : null}
@@ -52,11 +59,11 @@ function AccountsTable() {
             {error ? error : null}
 
             {accounts.length > 0 ? (
-                <Paper sx={{ overflow: 'hidden', width: '100%' }}>
-                    <TableContainer sx={{ maxHeight: 440 }}>
-                        <Typography>
-                            <FormattedMessage id="terms.accounts" />
-                        </Typography>
+                <>
+                    <Typography>
+                        <FormattedMessage id="terms.accounts" />
+                    </Typography>
+                    <TableContainer sx={{ maxHeight }}>
                         <Table
                             stickyHeader
                             aria-label={intl.formatMessage({
@@ -112,7 +119,7 @@ function AccountsTable() {
                             </TableBody>
                         </Table>
                     </TableContainer>
-                </Paper>
+                </>
             ) : null}
         </Box>
     );
