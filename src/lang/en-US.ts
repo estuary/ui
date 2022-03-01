@@ -31,7 +31,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     'data.description': `Description`,
     'data.type': `Type`,
     'data.maintainer': `Maintainer`,
-    'data.updated_at': `Last Updated`,
+    'data.updated_at': `Updated`,
     'data.email': `Email`,
     'data.display_name': `User Name`,
 

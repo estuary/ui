@@ -1,22 +1,14 @@
-import {
-    Box,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Typography,
-} from '@mui/material';
-import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
+import { Box, Typography } from '@mui/material';
+import { DataGrid } from '@mui/x-data-grid';
+import { FormattedMessage, useIntl } from 'react-intl';
 import useAccounts from '../hooks/useAccounts';
 
 interface AccountsTableProps {
-    maxHeight: number;
+    height: number;
 }
 
 function AccountsTable(props: AccountsTableProps) {
-    const { maxHeight } = props;
+    const { height } = props;
 
     const {
         data: { accounts },
@@ -29,31 +21,34 @@ function AccountsTable(props: AccountsTableProps) {
     const columns = [
         {
             field: 'attributes.name',
-            headerIntlKey: 'data.name',
+            headerName: intl.formatMessage({ id: 'data.name' }),
+            valueGetter: (params: any) => params.row.attributes.name,
+            width: 150,
         },
         {
             field: 'attributes.email',
-            headerIntlKey: 'data.email',
+            headerName: intl.formatMessage({ id: 'data.email' }),
+            valueGetter: (params: any) => params.row.attributes.email,
+            width: 250,
         },
         {
             field: 'attributes.display_name',
-            headerIntlKey: 'data.display_name',
+            headerName: intl.formatMessage({ id: 'data.display_name' }),
+            valueGetter: (params: any) => params.row.attributes.display_name,
+            width: 150,
         },
 
         {
             field: 'attributes.updated_at',
-            headerIntlKey: 'data.updated_at',
+            headerName: intl.formatMessage({ id: 'data.updated_at' }),
+            valueGetter: (params: any) =>
+                intl.formatDate(params.row.attributes.updated_at, {}),
+            width: 125,
         },
     ];
 
     return (
-        <Box
-            sx={{
-                height: '100%',
-                mx: 2,
-                overflow: 'auto',
-            }}
-        >
+        <Box sx={{ height }}>
             {loading ? <FormattedMessage id="common.loading" /> : null}
 
             {error ? error : null}
@@ -63,62 +58,15 @@ function AccountsTable(props: AccountsTableProps) {
                     <Typography>
                         <FormattedMessage id="terms.accounts" />
                     </Typography>
-                    <TableContainer sx={{ maxHeight }}>
-                        <Table
-                            stickyHeader
-                            aria-label={intl.formatMessage({
-                                id: 'accounts.title',
-                            })}
-                        >
-                            <TableHead>
-                                <TableRow
-                                    sx={{
-                                        background: (theme) =>
-                                            theme.palette.background.default,
-                                    }}
-                                >
-                                    {columns.map((column, index) => {
-                                        return (
-                                            <TableCell
-                                                key={`${column.field}-${index}`}
-                                            >
-                                                <FormattedMessage
-                                                    id={column.headerIntlKey}
-                                                />
-                                            </TableCell>
-                                        );
-                                    })}
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {accounts.map((row, index) => (
-                                    <TableRow
-                                        key={`Accounts-${row.id}-${index}`}
-                                    >
-                                        <TableCell>
-                                            {row.attributes.name}
-                                        </TableCell>
-                                        <TableCell>
-                                            {row.attributes.email}
-                                        </TableCell>
-                                        <TableCell>
-                                            {row.attributes.display_name}
-                                        </TableCell>
-                                        <TableCell>
-                                            <FormattedDate
-                                                day="numeric"
-                                                month="long"
-                                                year="numeric"
-                                                value={
-                                                    row.attributes.updated_at
-                                                }
-                                            />
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+
+                    <DataGrid
+                        rows={accounts}
+                        columns={columns}
+                        pageSize={5}
+                        rowsPerPageOptions={[5]}
+                        checkboxSelection
+                        disableSelectionOnClick
+                    />
                 </>
             ) : null}
         </Box>

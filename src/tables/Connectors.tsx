@@ -1,22 +1,14 @@
-import {
-    Box,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Typography,
-} from '@mui/material';
+import { Box, Typography } from '@mui/material';
+import { DataGrid } from '@mui/x-data-grid';
 import useConnectors from 'hooks/useConnectors';
-import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 interface ConnectorsTableProps {
-    maxHeight: number;
+    height: number;
 }
 
 function ConnectorsTable(props: ConnectorsTableProps) {
-    const { maxHeight } = props;
+    const { height } = props;
 
     const {
         data: { connectors },
@@ -29,32 +21,42 @@ function ConnectorsTable(props: ConnectorsTableProps) {
     const columns = [
         {
             field: 'attributes.name',
-            headerIntlKey: 'data.name',
+            headerName: intl.formatMessage({ id: 'data.name' }),
+            valueGetter: (params: any) => params.row.attributes.name,
+            width: 150,
         },
         {
             field: 'attributes.description',
-            headerIntlKey: 'data.description',
+            headerName: intl.formatMessage({ id: 'data.description' }),
+            valueGetter: (params: any) => params.row.attributes.description,
+            width: 250,
         },
         {
             field: 'attributes.type',
-            headerIntlKey: 'data.type',
+            headerName: intl.formatMessage({ id: 'data.type' }),
+            valueGetter: (params: any) => params.row.attributes.type,
+            width: 100,
         },
+
         {
             field: 'attributes.maintainer',
-            headerIntlKey: 'data.maintainer',
+            headerName: intl.formatMessage({ id: 'data.maintainer' }),
+            valueGetter: (params: any) => params.row.attributes.maintainer,
+            width: 125,
         },
         {
             field: 'attributes.updated_at',
-            headerIntlKey: 'data.updated_at',
+            headerName: intl.formatMessage({ id: 'data.updated_at' }),
+            valueGetter: (params: any) =>
+                intl.formatDate(params.row.attributes.updated_at, {}),
+            width: 125,
         },
     ];
 
     return (
         <Box
             sx={{
-                height: '100%',
-                mx: 2,
-                overflow: 'auto',
+                height,
             }}
         >
             {loading ? <FormattedMessage id="common.loading" /> : null}
@@ -62,60 +64,20 @@ function ConnectorsTable(props: ConnectorsTableProps) {
             {error ? { fetchingConnectorsError: error } : null}
 
             {connectors.length > 0 ? (
-                <TableContainer sx={{ maxHeight }}>
+                <>
                     <Typography>
                         <FormattedMessage id="terms.connectors" />
                     </Typography>
-                    <Table
-                        sx={{ minWidth: 350 }}
-                        aria-label={intl.formatMessage({
-                            id: 'connectors.title',
-                        })}
-                    >
-                        <TableHead>
-                            <TableRow
-                                sx={{
-                                    background: (theme) =>
-                                        theme.palette.background.default,
-                                }}
-                            >
-                                {columns.map((column, index) => {
-                                    return (
-                                        <TableCell
-                                            key={`${column.field}-${index}`}
-                                        >
-                                            <FormattedMessage
-                                                id={column.headerIntlKey}
-                                            />
-                                        </TableCell>
-                                    );
-                                })}
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {connectors.map((row, index) => (
-                                <TableRow key={`Connector-${row.id}-${index}`}>
-                                    <TableCell>{row.attributes.name}</TableCell>
-                                    <TableCell>
-                                        {row.attributes.description}
-                                    </TableCell>
-                                    <TableCell>{row.attributes.type}</TableCell>
-                                    <TableCell>
-                                        {row.attributes.maintainer}
-                                    </TableCell>
-                                    <TableCell>
-                                        <FormattedDate
-                                            day="numeric"
-                                            month="long"
-                                            year="numeric"
-                                            value={row.attributes.updated_at}
-                                        />
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                    <DataGrid
+                        rows={connectors}
+                        columns={columns}
+                        pageSize={5}
+                        rowsPerPageOptions={[5]}
+                        checkboxSelection
+                        disableSelectionOnClick
+                        autoHeight
+                    />
+                </>
             ) : null}
         </Box>
     );

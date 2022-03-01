@@ -20,11 +20,11 @@ const Admin = () => {
             </Toolbar>
 
             <Box sx={boxStyling}>
-                <ConnectorsTable maxHeight={250} />
+                <ConnectorsTable height={250} />
             </Box>
 
             <Box sx={boxStyling}>
-                <AccountsTable maxHeight={250} />
+                <AccountsTable height={250} />
             </Box>
         </PageContainer>
     );
