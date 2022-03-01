@@ -3,12 +3,19 @@ import { DialogContentText, Paper, useTheme } from '@mui/material';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useRef } from 'react';
 import { FormattedMessage } from 'react-intl';
+import useSchemaEditorStore, {
+    SchemaEditorState,
+} from '../../../stores/SchemaEditorStore';
 
 type NewCaptureEditorProps = {
     data: object | null;
 };
 
+const setSchemaSelector = (state: SchemaEditorState) => state.setSchema;
+
 function NewCaptureEditor(props: NewCaptureEditorProps) {
+    const setSchema = useSchemaEditorStore(setSchemaSelector);
+
     const { data } = props;
 
     const theme = useTheme();
@@ -18,10 +25,16 @@ function NewCaptureEditor(props: NewCaptureEditorProps) {
     );
 
     const handlers = {
+        onChange: () => {
+            if (editorRef.current) {
+                setSchema(editorRef.current.getValue());
+            }
+        },
         onMount: (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
             editorRef.current = editor;
-            const handler = editor.onDidChangeModelDecorations(() => {
-                handler.dispose();
+
+            const formatHandler = editor.onDidChangeModelDecorations(() => {
+                formatHandler.dispose();
                 void editor.getAction('editor.action.formatDocument').run();
             });
         },
@@ -42,6 +55,7 @@ function NewCaptureEditor(props: NewCaptureEditorProps) {
                         }
                         defaultValue={JSON.stringify(data)}
                         onMount={handlers.onMount}
+                        onChange={handlers.onChange}
                     />
                 ) : (
                     <FormattedMessage id="common.loading" />

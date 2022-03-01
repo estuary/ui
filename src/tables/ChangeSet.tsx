@@ -23,7 +23,7 @@ const getCapturesSelector = (state: CaptureState) => state.captures;
 
 function ChangeSetTable() {
     const [page, setPage] = useState(0);
-    const rowsPerPage = 4;
+    const rowsPerPage = 10;
 
     const handleChangePage = (
         event: MouseEvent<HTMLButtonElement> | null,
@@ -116,10 +116,12 @@ function ChangeSetTable() {
                                         >
                                             <TableCell>{entityType}</TableCell>
                                             <TableCell sx={{ minWidth: 216 }}>
-                                                <span>{name}</span>
-                                                <Tooltip title={namespace}>
+                                                <Tooltip
+                                                    title={namespace}
+                                                    placement="bottom-start"
+                                                >
                                                     <IconButton
-                                                        sx={{ ml: 0.5, p: 0.5 }}
+                                                        sx={{ mr: 0.5, p: 0.5 }}
                                                     >
                                                         <InfoIcon
                                                             sx={{
@@ -128,6 +130,7 @@ function ChangeSetTable() {
                                                         />
                                                     </IconButton>
                                                 </Tooltip>
+                                                <span>{name}</span>
                                             </TableCell>
                                             <TableCell>{user}</TableCell>
                                             <TableCell>{changeType}</TableCell>

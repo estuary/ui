@@ -20,6 +20,9 @@ import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from 'services/axios';
 import useChangeSetStore, { CaptureState, Entity } from 'stores/ChangeSetStore';
+import useSchemaEditorStore, {
+    SchemaEditorState,
+} from '../../../stores/SchemaEditorStore';
 import NewCaptureDetails from './DetailsForm';
 import NewCaptureError from './Error';
 import { getInitialState, newCaptureReducer } from './Reducer';
@@ -34,12 +37,19 @@ enum Steps {
     REVIEW_SCHEMA_IN_EDITOR = 'Allow custom to edit YAML',
 }
 
+const schemaSelector = (state: SchemaEditorState) => state.schema;
+const removeSchemaSelector = (state: SchemaEditorState) => state.removeSchema;
+
 const addCaptureSelector = (state: CaptureState) => state.addCapture;
 
 function NewCaptureModal() {
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
     const navigate = useNavigate();
+
+    // Schema editor store
+    const schemaFromEditor = useSchemaEditorStore(schemaSelector);
+    const removeSchema = useSchemaEditorStore(removeSchemaSelector);
 
     // Change set store
     const addCaptureToChangeSet = useChangeSetStore(addCaptureSelector);
@@ -77,10 +87,11 @@ function NewCaptureModal() {
                     namespace,
                     user: 'temp@gmail.com',
                 },
-                schema: catalogResponse,
+                schema: schemaFromEditor || catalogResponse,
             };
 
             addCaptureToChangeSet(namespace, capture);
+            removeSchema();
 
             setFormSubmitting(true);
 
@@ -88,11 +99,11 @@ function NewCaptureModal() {
         },
 
         close: () => {
-            navigate('..'); //This is assuming this is a child of the /captures route.
-        },
+            if (schemaFromEditor) {
+                removeSchema();
+            }
 
-        delete: () => {
-            console.log('Delete? You sure?');
+            navigate('..'); //This is assuming this is a child of the /captures route.
         },
 
         test: (event: MouseEvent<HTMLElement>) => {

@@ -47,7 +47,7 @@ const Authenticated = () => {
                                 element={<NewMaterialization />}
                             />
                         </Route>
-                        <Route path="changeSet" element={<ChangeSet />} />
+                        <Route path="change-set" element={<ChangeSet />} />
                         <Route path="admin/*" element={<Admin />}>
                             <Route path="logs" element={<Logs />} />
                             <Route path="alerts" element={<Alerts />} />
