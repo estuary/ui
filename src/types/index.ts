@@ -10,12 +10,14 @@ export type BaseData = {
     attributes: any;
 };
 
+export type BaseError = {
+    detail: string;
+    title: string;
+};
+
 export interface BaseResponse {
     data: BaseData | BaseData[];
-    errors?: {
-        detail: string;
-        title: string;
-    }[];
+    errors?: BaseError[];
     links: any;
 }
 

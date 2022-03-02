@@ -1,4 +1,4 @@
-import FullPageSpinner from 'components/FullPageSpinner';
+import FullPageSpinner from 'components/fullPage/Spinner';
 import { useAuth } from 'context/Auth';
 import * as React from 'react';
 

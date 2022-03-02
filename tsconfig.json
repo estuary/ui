@@ -42,7 +42,7 @@
             "services/*": ["services/*"],
             "stores/*": ["stores/*"],
             "tables/*": ["tables/*"],
-            "types": ["types/*"],
+            "types/*": ["types/*"],
             "utils/*": ["utils/*"]
         },
         "typeRoots": ["./src/types", "node_modules/@types"]

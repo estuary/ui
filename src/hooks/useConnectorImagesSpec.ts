@@ -2,7 +2,7 @@ import { type NewCaptureState } from 'components/capture/creation/Reducer';
 import JsonRefs from 'json-refs';
 import { useEffect, useState } from 'react';
 import axios, { withAxios } from 'services/axios';
-import { type BaseHook } from 'types/';
+import { type BaseHook } from 'types';
 
 interface ConnectorImagesService extends BaseHook {
     data: {

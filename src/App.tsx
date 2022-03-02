@@ -1,5 +1,5 @@
 import * as React from 'react';
-import FullPageSpinner from './components/FullPageSpinner';
+import FullPageSpinner from './components/fullPage/Spinner';
 import { useAuth } from './context/Auth';
 
 const AuthenticatedApp = React.lazy(

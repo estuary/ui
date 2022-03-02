@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios, { withAxios } from 'services/axios';
-import { BaseHook } from 'types/';
+import { BaseHook } from 'types';
 
 interface ConnectorImagesService extends BaseHook {
     data: {

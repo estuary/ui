@@ -36,6 +36,9 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     'data.email': `Email`,
     'data.display_name': `User Name`,
 
+    // Full Page
+    'fullpage.error': `Major Error`,
+
     // Connectors table
     'connectors.title': `All installed connectors`,
 

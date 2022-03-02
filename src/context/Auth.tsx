@@ -1,7 +1,8 @@
-import FullPageSpinner from 'components/FullPageSpinner';
+import FullPageSpinner from 'components/fullPage/Spinner';
 import { useAsync } from 'hooks/useAsync';
 import React, { useCallback, useMemo } from 'react';
 import { auth } from '../auth';
+import FullPageError from '../components/fullPage/Error';
 
 export interface AuthContextType {
     login: (username: string) => Promise<void>;
@@ -16,7 +17,16 @@ export async function bootstrapUser() {
     if (token) {
         const accountID = await auth.getAccountID();
         if (accountID) {
-            user = await auth.getAccountDetails(accountID);
+            await auth
+                .getAccountDetails(accountID)
+                .then((response) => {
+                    user = response;
+                })
+                .catch(() => {
+                    user = null;
+                });
+
+            return user;
         }
     }
     return user;
@@ -35,6 +45,7 @@ export const AuthProvider = (props: any) => {
         isSuccess,
         run,
         setData,
+        setError,
         status,
     } = useAsync();
 
@@ -48,14 +59,13 @@ export const AuthProvider = (props: any) => {
             return auth
                 .signin(newUser)
                 .then((response: any) => {
-                    console.log('signed in work', response);
-                    setData(newUser);
+                    setData(response);
                 })
-                .catch(() => {
-                    console.log('signed in fail');
+                .catch((signinError: any) => {
+                    setError(signinError.response.data.errors);
                 });
         },
-        [setData]
+        [setData, setError]
     );
 
     const logout = useCallback(() => {
@@ -72,7 +82,7 @@ export const AuthProvider = (props: any) => {
     if (isLoading || isIdle) {
         return <FullPageSpinner />;
     } else if (isError) {
-        return error;
+        return <FullPageError errors={error} />;
     } else if (isSuccess) {
         return <AuthContext.Provider value={value} {...props} />;
     }

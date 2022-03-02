@@ -1,7 +1,7 @@
 import { AxiosResponse } from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import axios, { withAxios } from 'services/axios';
-import { BaseHook, ConnectorsResponse } from 'types/';
+import { BaseHook, ConnectorsResponse } from 'types';
 
 interface ConnectorsService extends BaseHook {
     data: {
