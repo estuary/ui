@@ -40,6 +40,7 @@
             "lang/*": ["lang/*"],
             "pages/*": ["pages/*"],
             "services/*": ["services/*"],
+            "stores/*": ["stores/*"],
             "tables/*": ["tables/*"],
             "types": ["types/*"]
         },

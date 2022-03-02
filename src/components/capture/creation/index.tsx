@@ -15,11 +15,14 @@ import {
     useTheme,
 } from '@mui/material';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
-import { MouseEvent, useReducer, useRef, useState } from 'react';
+import { MouseEvent, useReducer, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from 'services/axios';
+import useChangeSetStore, { CaptureState, Entity } from 'stores/ChangeSetStore';
+import useSchemaEditorStore, {
+    SchemaEditorState,
+} from 'stores/SchemaEditorStore';
 import NewCaptureDetails from './DetailsForm';
 import NewCaptureError from './Error';
 import { getInitialState, newCaptureReducer } from './Reducer';
@@ -34,13 +37,22 @@ enum Steps {
     REVIEW_SCHEMA_IN_EDITOR = 'Allow custom to edit YAML',
 }
 
+const schemaSelector = (state: SchemaEditorState) => state.schema;
+const removeSchemaSelector = (state: SchemaEditorState) => state.removeSchema;
+
+const addCaptureSelector = (state: CaptureState) => state.addCapture;
+
 function NewCaptureModal() {
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
-    const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(
-        null
-    );
     const navigate = useNavigate();
+
+    // Schema editor store
+    const schemaFromEditor = useSchemaEditorStore(schemaSelector);
+    const removeSchema = useSchemaEditorStore(removeSchemaSelector);
+
+    // Change set store
+    const addCaptureToChangeSet = useChangeSetStore(addCaptureSelector);
 
     // Form data state
     const [state, dispatch] = useReducer(newCaptureReducer, getInitialState());
@@ -58,48 +70,39 @@ function NewCaptureModal() {
 
     // Form Event Handlers
     const handlers = {
-        close: () => {
-            navigate('..'); //This is assuming this is a child of the /captures route.
-        },
-
-        delete: () => {
-            console.log('Delete? You sure?');
-        },
-
-        save: (event: MouseEvent<HTMLElement>) => {
+        addToChangeSet: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
-            let catalogVal = '';
 
-            if (editorRef.current) {
-                catalogVal = editorRef.current.getValue();
-            }
+            const catalogNamespace: string = details.data.name;
+
+            // TODO: Get user identifier from authentication-related application state.
+            const capture: Entity = {
+                metadata: {
+                    catalogNamespace,
+                    changeType: 'New Entity',
+                    entityType: 'Capture',
+                    name: catalogNamespace.substring(
+                        catalogNamespace.lastIndexOf('/') + 1,
+                        catalogNamespace.length
+                    ),
+                    user: 'temp@gmail.com',
+                },
+                schema: schemaFromEditor || catalogResponse,
+            };
+
+            addCaptureToChangeSet(catalogNamespace, capture);
 
             setFormSubmitting(true);
 
-            // Create blob link to download
-            const url = window.URL.createObjectURL(
-                new Blob([catalogVal], {
-                    type: 'text/plain',
-                })
-            );
+            handlers.close();
+        },
 
-            // Make download link
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', `${details.data.name}.flow.yaml`);
+        close: () => {
+            if (schemaFromEditor) {
+                removeSchema();
+            }
 
-            // Append to html link element page
-            document.body.appendChild(link);
-
-            // Start download
-            link.click();
-
-            window.setTimeout(() => {
-                // Clean up and remove the link
-                document.body.removeChild(link);
-                window.URL.revokeObjectURL(url);
-                handlers.close();
-            }, 0);
+            navigate('..'); //This is assuming this is a child of the /captures route.
         },
 
         test: (event: MouseEvent<HTMLElement>) => {
@@ -237,47 +240,33 @@ function NewCaptureModal() {
             </DialogContent>
 
             <DialogActions>
-                {activeStep > Steps.WAITING_FOR_DISCOVER ? (
-                    <>
-                        <Button
-                            onClick={handlers.delete}
-                            size="large"
-                            color="error"
-                        >
-                            <FormattedMessage id="cta.delete" />
-                        </Button>
-                        <Button
-                            onClick={handlers.save}
-                            size="large"
-                            color="success"
-                            variant="contained"
-                            disableElevation
-                        >
-                            <FormattedMessage id="cta.download" />
-                        </Button>
-                    </>
+                <Button onClick={handlers.close} size="large" color="error">
+                    <FormattedMessage id="cta.cancel" />
+                </Button>
+
+                {activeStep === Steps.REVIEW_SCHEMA_IN_EDITOR ? (
+                    <Button
+                        onClick={handlers.addToChangeSet}
+                        size="large"
+                        color="success"
+                        variant="contained"
+                        disableElevation
+                    >
+                        <FormattedMessage id="cta.addToChangeSet" />
+                    </Button>
                 ) : (
-                    <>
-                        <Button
-                            onClick={handlers.close}
-                            size="large"
-                            color="error"
-                        >
-                            <FormattedMessage id="cta.cancel" />
-                        </Button>
-                        <Button
-                            onClick={handlers.test}
-                            disabled={false}
-                            form={FORM_ID}
-                            size="large"
-                            type="submit"
-                            color="success"
-                            variant="contained"
-                            disableElevation
-                        >
-                            <FormattedMessage id="captureCreation.ctas.test.config" />
-                        </Button>
-                    </>
+                    <Button
+                        onClick={handlers.test}
+                        disabled={false}
+                        form={FORM_ID}
+                        size="large"
+                        type="submit"
+                        color="success"
+                        variant="contained"
+                        disableElevation
+                    >
+                        <FormattedMessage id="captureCreation.ctas.test.config" />
+                    </Button>
                 )}
             </DialogActions>
         </Dialog>
