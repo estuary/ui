@@ -1,10 +1,16 @@
-import { Box, Toolbar, Typography } from '@mui/material';
+import {
+    Box,
+    Toolbar,
+    Typography,
+    type SxProps,
+    type Theme,
+} from '@mui/material';
 import PageContainer from 'components/shared/PageContainer';
 import { FormattedMessage } from 'react-intl';
 import AccountsTable from '../tables/Accounts';
 import ConnectorsTable from '../tables/Connectors';
 
-const boxStyling = {
+const boxStyling: SxProps<Theme> = {
     marginBottom: 2,
     overflow: 'hidden',
     padding: 2,

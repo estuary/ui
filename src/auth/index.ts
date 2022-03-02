@@ -2,7 +2,8 @@ import { AxiosResponse } from 'axios';
 import axios, { setAuthHeader } from '../services/axios';
 import { AccountResponse, AuthLocalResponse } from '../types';
 
-const localStorageKey = '__auth_provider_token__';
+const authTokenKey = '__auth_provider_token__';
+const accountIDKey = '__auth_account_id__';
 const auth = {
     getAccountDetails(accountID: string) {
         return new Promise<AxiosResponse<any, any>>(
@@ -19,8 +20,11 @@ const auth = {
             }
         );
     },
+    async getAccountID() {
+        return window.localStorage.getItem(accountIDKey);
+    },
     async getToken() {
-        return window.localStorage.getItem(localStorageKey);
+        return window.localStorage.getItem(authTokenKey);
     },
     signin(username: string) {
         return new Promise<AxiosResponse<any, any>>(
@@ -32,7 +36,9 @@ const auth = {
                     .then((response: AxiosResponse<AuthLocalResponse>) => {
                         const { account_id, token } =
                             response.data.data.attributes;
-                        window.localStorage.setItem(localStorageKey, token);
+
+                        window.localStorage.setItem(authTokenKey, token);
+                        window.localStorage.setItem(accountIDKey, account_id);
                         setAuthHeader(token);
                         auth.getAccountDetails(account_id)
                             .then((accountResponse) => {
@@ -49,10 +55,11 @@ const auth = {
         );
     },
     async signout(callback?: VoidFunction) {
-        window.localStorage.removeItem(localStorageKey);
+        window.localStorage.removeItem(authTokenKey);
+        window.localStorage.removeItem(accountIDKey);
         setAuthHeader(null);
         callback?.();
     },
 };
 
-export { auth, localStorageKey };
+export { auth, authTokenKey, accountIDKey };

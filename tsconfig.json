@@ -41,7 +41,8 @@
             "pages/*": ["pages/*"],
             "services/*": ["services/*"],
             "tables/*": ["tables/*"],
-            "types": ["types/*"]
+            "types": ["types/*"],
+            "utils/*": ["utils/*"]
         },
         "typeRoots": ["./src/types", "node_modules/@types"]
     },

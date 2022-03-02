@@ -87,7 +87,7 @@ exports[`Authenticated app renders correctly 1`] = `
               <div
                 class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-12nwhkj-MuiAvatar-root"
               >
-                T
+                F
               </div>
             </button>
           </div>

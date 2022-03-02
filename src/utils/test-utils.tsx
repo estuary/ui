@@ -3,15 +3,20 @@
 
 import { render as rtlRender, RenderOptions } from '@testing-library/react';
 import { ReactElement } from 'react';
-import { localStorageKey } from '../auth';
-import AppProviders from '../context';
+import { accountIDKey, authTokenKey } from '../auth';
+import { AuthContext } from '../context/Auth';
+import AppContent from '../context/Content';
+import AppRouter from '../context/Router';
+import AppTheme from '../context/Theme';
 
 const loginAsUser = (userName: string = 'fakeUserName') => {
-    window.localStorage.setItem(localStorageKey, userName);
+    window.localStorage.setItem(authTokenKey, `${userName}-token`);
+    window.localStorage.setItem(accountIDKey, `${userName}-accountid`);
 };
 
 const logoutUser = () => {
-    window.localStorage.removeItem(localStorageKey);
+    window.localStorage.removeItem(authTokenKey);
+    window.localStorage.removeItem(accountIDKey);
 };
 
 const goTo = (route?: string, name?: string) => {
@@ -26,8 +31,32 @@ const waitForLoading = async () => {
     return Promise.resolve();
 };
 
-// const waitForLoadingToFinish = () =>
-//     waitForElementToBeRemoved(screen.queryAllByText(/loading/i));
+// Mocking AuthContext out basically skips all the loading screen and boostrapping
+//  stuff that happens on load. This should be fine for unit testing as it
+//  can help speed up tests a bit and makes things easier to deal with. This
+//  does mean that we need to eventually write a basic test that handles the
+//  account bootstrapping.
+interface MockAuthProps {
+    children: JSX.Element;
+    username?: string;
+}
+const MockAuthProvider = ({ children, username }: MockAuthProps) => {
+    const value = {
+        login: jest.fn(() => {
+            loginAsUser(username);
+            return Promise.resolve();
+        }),
+        logout: jest.fn(() => {
+            logoutUser();
+            return Promise.resolve();
+        }),
+        user: username,
+    };
+
+    return (
+        <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+    );
+};
 
 const customRender = async (
     ui: ReactElement,
@@ -37,24 +66,26 @@ const customRender = async (
     }
 ) => {
     const { route, user } = options;
-    if (user) {
-        loginAsUser(user);
-    }
 
     goTo(route, 'Test Page');
 
-    // TODO - this does not work so all the tests are wrapped in their own awaits.
-    //  eventually it would be great if this worked and we didn't need to have that
-    //  code duplicated all over the place.
-    // if (wait) {
-    //     await waitForLoadingToFinish();
-    // }
-
-    const view = rtlRender(ui, { wrapper: AppProviders, ...options });
+    const view = rtlRender(
+        <AppContent>
+            <MockAuthProvider username={user}>
+                <AppTheme>
+                    <AppRouter>{ui}</AppRouter>
+                </AppTheme>
+            </MockAuthProvider>
+        </AppContent>,
+        {
+            ...options,
+        }
+    );
 
     await waitForLoading();
 
     return view;
 };
 
+export * from '@testing-library/react';
 export { goTo, loginAsUser, logoutUser, customRender, waitForLoading };

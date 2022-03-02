@@ -3,29 +3,29 @@ import { useAsync } from 'hooks/useAsync';
 import React, { useCallback, useMemo } from 'react';
 import { auth } from '../auth';
 
-interface AuthContextType {
+export interface AuthContextType {
     login: (username: string) => Promise<void>;
     logout: () => Promise<void>;
     user: any;
 }
 
-async function bootstrapUser() {
+export async function bootstrapUser() {
     let user = null;
 
     const token = await auth.getToken();
     if (token) {
-        const data = {
-            user: 'This is fake',
-        };
-        user = data.user;
+        const accountID = await auth.getAccountID();
+        if (accountID) {
+            user = await auth.getAccountDetails(accountID);
+        }
     }
     return user;
 }
 
-const AuthContext = React.createContext<AuthContextType | null>(null);
+export const AuthContext = React.createContext<AuthContextType | null>(null);
 AuthContext.displayName = 'AuthContext';
 
-const AuthProvider = (props: any) => {
+export const AuthProvider = (props: any) => {
     const {
         data: user,
         error,
@@ -80,7 +80,7 @@ const AuthProvider = (props: any) => {
     throw new Error(`Unhandled status: ${status}`);
 };
 
-const useAuth = () => {
+export const useAuth = () => {
     const context = React.useContext(AuthContext);
     if (context) {
         return context;
@@ -88,5 +88,3 @@ const useAuth = () => {
         throw new Error(`useAuth must be used within a AuthProvider`);
     }
 };
-
-export { AuthProvider, useAuth };

@@ -27,7 +27,6 @@ export const setupTests = () => {
     }
 };
 // REACT INTL
-
 afterEach(async () => {
     // await waitFor(() => expect(queryCache.isFetching).toBe(0));
 
