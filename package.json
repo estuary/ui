@@ -14,8 +14,7 @@
         "format": "prettier --write '**/*.{js,jsx,ts,tsx}'",
         "lint": "eslint --ext js,jsx,ts,tsx .",
         "lint:fix": "eslint --fix --ext js,jsx,ts,tsx .",
-        "lint-staged-commit": "lint-staged --config .lint-staged-commit.js",
-        "lint-staged-push": "lint-staged --config .lint-staged-push.js",
+        "lint-staged": "lint-staged --config .lint-staged.js",
         "typecheck": "tsc"
     },
     "dependencies": {
