@@ -2,18 +2,16 @@ import { AxiosResponse } from 'axios';
 import { AccountResponse, AuthLocalResponse } from '../types';
 import axios, { setAuthHeader } from './axios';
 
-const authTokenKey = '__auth_provider_token__';
-const accountIDKey = '__auth_account_id__';
+export const authDetailsKey = '__auth_details__';
 
-const auth = {
+export const auth = {
     getAccountDetails(path: string) {
-        return new Promise<AxiosResponse<any, any>>(
+        return new Promise<AccountResponse['data']['attributes']>(
             (resolve: any, reject: any) => {
                 return axios
                     .get(path)
                     .then((response: AxiosResponse<AccountResponse>) => {
-                        const { display_name } = response.data.data.attributes;
-                        resolve(display_name);
+                        resolve(response.data.data.attributes);
                     })
                     .catch((error) => {
                         reject(error);
@@ -22,45 +20,58 @@ const auth = {
         );
     },
     async getAccountID() {
-        return window.localStorage.getItem(accountIDKey);
+        const details = window.localStorage.getItem(authDetailsKey);
+
+        if (details) {
+            return JSON.parse(details).account_id;
+        } else {
+            return null;
+        }
     },
     async getToken() {
-        return window.localStorage.getItem(authTokenKey);
+        const details = window.localStorage.getItem(authDetailsKey);
+
+        if (details) {
+            return JSON.parse(details).token;
+        } else {
+            return null;
+        }
     },
     signin(username: string) {
-        return new Promise<AxiosResponse<any, any>>(
-            (resolve: any, reject: any) => {
-                return axios
-                    .post('/sessions/local', {
-                        auth_token: username,
-                    })
-                    .then((response: AxiosResponse<AuthLocalResponse>) => {
-                        const { account_id, token } =
-                            response.data.data.attributes;
+        return new Promise<
+            AxiosResponse<
+                AccountResponse['data']['attributes']['display_name'],
+                any
+            >
+        >((resolve: any, reject: any) => {
+            return axios
+                .post('/sessions/local', {
+                    auth_token: username,
+                })
+                .then((response: AxiosResponse<AuthLocalResponse>) => {
+                    const { account_id, token } = response.data.data.attributes;
 
-                        window.localStorage.setItem(authTokenKey, token);
-                        window.localStorage.setItem(accountIDKey, account_id);
-                        setAuthHeader(token, account_id);
-                        auth.getAccountDetails(response.data.data.links.account)
-                            .then((display_name) => {
-                                resolve(display_name);
-                            })
-                            .catch((accountError) => {
-                                reject(accountError);
-                            });
-                    })
-                    .catch((error) => {
-                        reject(error);
-                    });
-            }
-        );
+                    window.localStorage.setItem(
+                        authDetailsKey,
+                        JSON.stringify(response.data.data.attributes)
+                    );
+                    setAuthHeader(token, account_id);
+                    auth.getAccountDetails(response.data.data.links.account)
+                        .then((accountDetails) => {
+                            resolve(accountDetails.display_name);
+                        })
+                        .catch((accountError) => {
+                            reject(accountError);
+                        });
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+        });
     },
     async signout(callback?: VoidFunction) {
-        window.localStorage.removeItem(authTokenKey);
-        window.localStorage.removeItem(accountIDKey);
+        window.localStorage.removeItem(authDetailsKey);
         setAuthHeader(null);
         callback?.();
     },
 };
-
-export { auth, authTokenKey, accountIDKey };

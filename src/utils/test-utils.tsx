@@ -2,21 +2,24 @@
 // https://testing-library.com/docs/react-testing-library/setup#custom-render
 
 import { render as rtlRender, RenderOptions } from '@testing-library/react';
+import { AuthContext } from 'context/Auth';
+import AppContent from 'context/Content';
+import AppRouter from 'context/Router';
+import AppTheme from 'context/Theme';
 import { ReactElement } from 'react';
-import { AuthContext } from '../context/Auth';
-import AppContent from '../context/Content';
-import AppRouter from '../context/Router';
-import AppTheme from '../context/Theme';
-import { accountIDKey, authTokenKey } from '../services/auth';
+import { authDetailsKey } from 'services/auth';
 
 const loginAsUser = (userName: string = 'fakeUserName') => {
-    window.localStorage.setItem(authTokenKey, `${userName}-token`);
-    window.localStorage.setItem(accountIDKey, `${userName}-accountid`);
+    const mockDetails = {
+        account_id: `${userName}-mock-token`,
+        token: `${userName}-mock-token`,
+    };
+
+    window.localStorage.setItem(authDetailsKey, JSON.stringify(mockDetails));
 };
 
 const logoutUser = () => {
-    window.localStorage.removeItem(authTokenKey);
-    window.localStorage.removeItem(accountIDKey);
+    window.localStorage.removeItem(authDetailsKey);
 };
 
 const goTo = (route?: string, name?: string) => {

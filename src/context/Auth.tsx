@@ -3,6 +3,7 @@ import { useAsync } from 'hooks/useAsync';
 import React, { useCallback, useMemo } from 'react';
 import FullPageError from '../components/fullPage/Error';
 import { auth } from '../services/auth';
+import { setAuthHeader } from '../services/axios';
 
 export interface AuthContextType {
     login: (username: string) => Promise<void>;
@@ -17,10 +18,13 @@ export async function bootstrapUser() {
     if (token) {
         const accountID = await auth.getAccountID();
         if (accountID) {
+            // TODO - This is basically what is done over in src/services/auth.ts signin function
+            //    we should clean it up so this is shared
+            setAuthHeader(token, accountID);
             await auth
                 .getAccountDetails(`accounts/${accountID}`)
-                .then((response) => {
-                    user = response;
+                .then((accountDetails) => {
+                    user = accountDetails.display_name;
                 })
                 .catch(() => {
                     user = null;
