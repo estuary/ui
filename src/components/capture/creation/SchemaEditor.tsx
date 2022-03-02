@@ -5,7 +5,7 @@ import { useRef } from 'react';
 import { FormattedMessage } from 'react-intl';
 import useSchemaEditorStore, {
     SchemaEditorState,
-} from '../../../stores/SchemaEditorStore';
+} from 'stores/SchemaEditorStore';
 
 type NewCaptureEditorProps = {
     data: object | null;
@@ -33,8 +33,8 @@ function NewCaptureEditor(props: NewCaptureEditorProps) {
         onMount: (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
             editorRef.current = editor;
 
-            const formatHandler = editor.onDidChangeModelDecorations(() => {
-                formatHandler.dispose();
+            const handler = editor.onDidChangeModelDecorations(() => {
+                handler.dispose();
                 void editor.getAction('editor.action.formatDocument').run();
             });
         },

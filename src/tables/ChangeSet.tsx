@@ -17,7 +17,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import useChangeSetStore, {
     CaptureState,
     EntityMetadata,
-} from '../stores/ChangeSetStore';
+} from 'stores/ChangeSetStore';
 
 const getCapturesSelector = (state: CaptureState) => state.captures;
 
@@ -105,7 +105,7 @@ function ChangeSetTable() {
                                         {
                                             name,
                                             entityType,
-                                            namespace,
+                                            catalogNamespace,
                                             user,
                                             changeType,
                                         },
@@ -117,7 +117,7 @@ function ChangeSetTable() {
                                             <TableCell>{entityType}</TableCell>
                                             <TableCell sx={{ minWidth: 216 }}>
                                                 <Tooltip
-                                                    title={namespace}
+                                                    title={catalogNamespace}
                                                     placement="bottom-start"
                                                 >
                                                     <IconButton

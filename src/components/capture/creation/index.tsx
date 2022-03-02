@@ -22,7 +22,7 @@ import axiosInstance from 'services/axios';
 import useChangeSetStore, { CaptureState, Entity } from 'stores/ChangeSetStore';
 import useSchemaEditorStore, {
     SchemaEditorState,
-} from '../../../stores/SchemaEditorStore';
+} from 'stores/SchemaEditorStore';
 import NewCaptureDetails from './DetailsForm';
 import NewCaptureError from './Error';
 import { getInitialState, newCaptureReducer } from './Reducer';
@@ -73,29 +73,28 @@ function NewCaptureModal() {
         addToChangeSet: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
-            const namespace: string = details.data.name;
+            const catalogNamespace: string = details.data.name;
 
             // TODO: Get user identifier from authentication-related application state.
             const capture: Entity = {
                 metadata: {
+                    catalogNamespace,
                     changeType: 'New Entity',
                     entityType: 'Capture',
-                    name: namespace.substring(
-                        namespace.lastIndexOf('/') + 1,
-                        namespace.length
+                    name: catalogNamespace.substring(
+                        catalogNamespace.lastIndexOf('/') + 1,
+                        catalogNamespace.length
                     ),
-                    namespace,
                     user: 'temp@gmail.com',
                 },
                 schema: schemaFromEditor || catalogResponse,
             };
 
-            addCaptureToChangeSet(namespace, capture);
-            removeSchema();
+            addCaptureToChangeSet(catalogNamespace, capture);
 
             setFormSubmitting(true);
 
-            window.setTimeout(() => handlers.close(), 0);
+            handlers.close();
         },
 
         close: () => {

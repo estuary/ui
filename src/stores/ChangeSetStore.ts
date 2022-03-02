@@ -8,7 +8,7 @@ export interface EntityMetadata {
     changeType: ChangeType;
     entityType: EntityType;
     name: string;
-    namespace: string;
+    catalogNamespace: string;
     user: string;
 }
 

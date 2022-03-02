@@ -15,12 +15,12 @@ const ChangeSet = () => {
                     <Button
                         /* TODO: Differentiate bkg color of delete button */
                         variant="contained"
-                        disabled={true}
+                        disabled
                     >
                         Delete
                     </Button>
 
-                    <Button sx={{ ml: 2 }} variant="contained" disabled={true}>
+                    <Button sx={{ ml: 2 }} variant="contained" disabled>
                         Build
                     </Button>
                 </Box>
