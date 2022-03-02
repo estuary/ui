@@ -40,7 +40,7 @@ const auth = {
 
                         window.localStorage.setItem(authTokenKey, token);
                         window.localStorage.setItem(accountIDKey, account_id);
-                        setAuthHeader(token);
+                        setAuthHeader(token, account_id);
                         auth.getAccountDetails(account_id)
                             .then((display_name) => {
                                 resolve(display_name);

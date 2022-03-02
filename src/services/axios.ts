@@ -4,12 +4,20 @@ import { auth } from '../auth';
 axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL;
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
-export const setAuthHeader = (token: string | null) => {
-    console.log('auth header ', token);
-    if (token) {
-        axios.defaults.headers.common.Authorization = token;
+export const setAuthHeader = (
+    token: string | null,
+    account_id?: string | null
+) => {
+    if (token && account_id) {
+        axios.defaults.auth = {
+            password: token,
+            username: account_id,
+        };
+
+        // TODO add this in when we have more auth optiosn
+        // axios.defaults.headers.common.Authorization = `Bearer `;
     } else {
-        delete axios.defaults.headers.common.Authorization;
+        delete axios.defaults.auth;
     }
 };
 
