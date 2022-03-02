@@ -12,7 +12,6 @@ import ConnectorsTable from '../components/tables/Connectors';
 
 const boxStyling: SxProps<Theme> = {
     marginBottom: 2,
-    overflow: 'hidden',
     padding: 2,
 };
 
@@ -26,11 +25,11 @@ const Admin = () => {
             </Toolbar>
 
             <Box sx={boxStyling}>
-                <ConnectorsTable height={250} />
+                <ConnectorsTable />
             </Box>
 
             <Box sx={boxStyling}>
-                <AccountsTable height={250} />
+                <AccountsTable />
             </Box>
         </PageContainer>
     );

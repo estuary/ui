@@ -8,8 +8,8 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     'productName': `Control Plane`,
     'common.loading': `Loading...`,
     'common.errors.heading': `Error`,
-    'common.errors.source.missing': `No sources found.`,
     'common.optionsMissing': `No options`,
+    'common.noData': `No data to display`,
 
     // Header
     'header.navigationMenu.aria.label': `Expand Navigation`,
@@ -63,6 +63,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     'captureCreation.ctas.test.config': `Test Capture`,
     'captureCreation.heading': `New Capture`,
     'captureCreation.instructions': `To get started please provide a unique name and the source type of the Capture you want to create. Once you've filled out the source details you can click "Test Capture" down below to test the connection.`,
+    'captureCreation.missingConnectors': `No connectors installed. You must install a source connector before being able to create a capture.`,
     'captureCreation.tenant.label': `Tenant`,
     'captureCreation.name.label': `Name`,
     'captureCreation.name.description': `Name of the capture - must be unique. (ex: acemCo/marketing_data)`,

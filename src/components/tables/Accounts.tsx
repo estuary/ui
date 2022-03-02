@@ -1,15 +1,17 @@
-import { Box, Typography } from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
-import { FormattedMessage, useIntl } from 'react-intl';
+import {
+    Box,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Typography,
+} from '@mui/material';
+import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
 import useAccounts from '../../hooks/useAccounts';
 
-interface AccountsTableProps {
-    height: number;
-}
-
-function AccountsTable(props: AccountsTableProps) {
-    const { height } = props;
-
+function AccountsTable() {
     const {
         data: { accounts },
         loading,
@@ -21,54 +23,106 @@ function AccountsTable(props: AccountsTableProps) {
     const columns = [
         {
             field: 'attributes.name',
-            headerName: intl.formatMessage({ id: 'data.name' }),
-            valueGetter: (params: any) => params.row.attributes.name,
-            width: 150,
+            headerIntlKey: 'data.name',
         },
         {
             field: 'attributes.email',
-            headerName: intl.formatMessage({ id: 'data.email' }),
-            valueGetter: (params: any) => params.row.attributes.email,
-            width: 250,
+            headerIntlKey: 'data.email',
         },
         {
             field: 'attributes.display_name',
-            headerName: intl.formatMessage({ id: 'data.display_name' }),
-            valueGetter: (params: any) => params.row.attributes.display_name,
-            width: 150,
+            headerIntlKey: 'data.display_name',
         },
 
         {
             field: 'attributes.updated_at',
-            headerName: intl.formatMessage({ id: 'data.updated_at' }),
-            valueGetter: (params: any) =>
-                intl.formatDate(params.row.attributes.updated_at, {}),
-            width: 125,
+            headerIntlKey: 'data.updated_at',
         },
     ];
 
     return (
-        <Box sx={{ height }}>
-            {loading ? <FormattedMessage id="common.loading" /> : null}
+        <Box>
+            <Typography>
+                <FormattedMessage id="terms.connectors" />
+            </Typography>
+            <TableContainer component={Box}>
+                <Table
+                    size="small"
+                    sx={{ minWidth: 350 }}
+                    aria-label={intl.formatMessage({
+                        id: 'connectors.title',
+                    })}
+                >
+                    <TableHead>
+                        <TableRow
+                            sx={{
+                                background: (theme) =>
+                                    theme.palette.background.default,
+                            }}
+                        >
+                            {columns.map((column, index) => {
+                                return (
+                                    <TableCell key={`${column.field}-${index}`}>
+                                        <FormattedMessage
+                                            id={column.headerIntlKey}
+                                        />
+                                    </TableCell>
+                                );
+                            })}
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {loading ? (
+                            <TableRow>
+                                <TableCell colSpan={columns.length}>
+                                    <FormattedMessage id="common.loading" />
+                                </TableCell>
+                            </TableRow>
+                        ) : null}
 
-            {error ? error : null}
+                        {error ? (
+                            <TableRow>
+                                <TableCell colSpan={columns.length}>
+                                    {error}
+                                </TableCell>
+                            </TableRow>
+                        ) : null}
 
-            {accounts.length > 0 ? (
-                <>
-                    <Typography>
-                        <FormattedMessage id="terms.accounts" />
-                    </Typography>
-
-                    <DataGrid
-                        rows={accounts}
-                        columns={columns}
-                        pageSize={5}
-                        rowsPerPageOptions={[5]}
-                        checkboxSelection
-                        disableSelectionOnClick
-                    />
-                </>
-            ) : null}
+                        {accounts.length > 0 ? (
+                            accounts.map((row, index) => (
+                                <TableRow
+                                    key={`Account-${row.attributes.name}-${index}`}
+                                >
+                                    <TableCell>{row.attributes.name}</TableCell>
+                                    <TableCell>
+                                        {row.attributes.email}
+                                    </TableCell>
+                                    <TableCell>
+                                        {row.attributes.display_name}
+                                    </TableCell>
+                                    <TableCell>
+                                        <FormattedDate
+                                            day="numeric"
+                                            month="long"
+                                            year="numeric"
+                                            value={row.attributes.updated_at}
+                                        />
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={columns.length}
+                                    align="center"
+                                >
+                                    <FormattedMessage id="common.noData" />
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+            </TableContainer>
         </Box>
     );
 }

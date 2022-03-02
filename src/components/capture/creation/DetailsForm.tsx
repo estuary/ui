@@ -1,6 +1,6 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
-import { DialogContentText, Skeleton, Stack } from '@mui/material';
+import { Alert, DialogContentText, Skeleton, Stack } from '@mui/material';
 import useConnectors from 'hooks/useConnectors';
 import { Dispatch, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -76,16 +76,20 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
     };
 
     useEffect(() => {
-        setSchema((previous: typeof schema) => {
-            previous.properties.image.oneOf = connectors.map((connector) => {
-                return {
-                    const: connector.links.images,
-                    title: connector.attributes.name,
-                };
-            });
+        if (connectors.length > 0) {
+            setSchema((previous: typeof schema) => {
+                previous.properties.image.oneOf = connectors.map(
+                    (connector) => {
+                        return {
+                            const: connector.links.images,
+                            title: connector.attributes.name,
+                        };
+                    }
+                );
 
-            return previous;
-        });
+                return previous;
+            });
+        }
     }, [connectors]);
 
     return (
@@ -110,7 +114,7 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
                             width="50%"
                         />
                     </>
-                ) : (
+                ) : connectors.length > 0 ? (
                     <JsonForms
                         schema={schema}
                         uischema={uiSchema}
@@ -134,6 +138,10 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
                             }
                         }}
                     />
+                ) : (
+                    <Alert severity="warning">
+                        <FormattedMessage id="captureCreation.missingConnectors" />
+                    </Alert>
                 )}
             </Stack>
         </>

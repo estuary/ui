@@ -1,15 +1,17 @@
-import { Box, Typography } from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
+import {
+    Box,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Typography,
+} from '@mui/material';
 import useConnectors from 'hooks/useConnectors';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
 
-interface ConnectorsTableProps {
-    height: number;
-}
-
-function ConnectorsTable(props: ConnectorsTableProps) {
-    const { height } = props;
-
+function ConnectorsTable() {
     const {
         data: { connectors },
         loading,
@@ -18,67 +20,125 @@ function ConnectorsTable(props: ConnectorsTableProps) {
 
     const intl = useIntl();
 
+    const columnStyling = {
+        maxWidth: '20%',
+        textOverflow: 'ellipsis',
+        width: '20%',
+    };
     const columns = [
         {
             field: 'attributes.name',
-            headerName: intl.formatMessage({ id: 'data.name' }),
-            valueGetter: (params: any) => params.row.attributes.name,
-            width: 150,
+            headerIntlKey: 'data.name',
         },
         {
             field: 'attributes.description',
-            headerName: intl.formatMessage({ id: 'data.description' }),
-            valueGetter: (params: any) => params.row.attributes.description,
-            width: 250,
+            headerIntlKey: 'data.description',
         },
         {
             field: 'attributes.type',
-            headerName: intl.formatMessage({ id: 'data.type' }),
-            valueGetter: (params: any) => params.row.attributes.type,
-            width: 100,
+            headerIntlKey: 'data.type',
         },
-
         {
             field: 'attributes.maintainer',
-            headerName: intl.formatMessage({ id: 'data.maintainer' }),
-            valueGetter: (params: any) => params.row.attributes.maintainer,
-            width: 125,
+            headerIntlKey: 'data.maintainer',
         },
         {
             field: 'attributes.updated_at',
-            headerName: intl.formatMessage({ id: 'data.updated_at' }),
-            valueGetter: (params: any) =>
-                intl.formatDate(params.row.attributes.updated_at, {}),
-            width: 125,
+            headerIntlKey: 'data.updated_at',
         },
     ];
 
     return (
-        <Box
-            sx={{
-                height,
-            }}
-        >
-            {loading ? <FormattedMessage id="common.loading" /> : null}
+        <Box>
+            <Typography>
+                <FormattedMessage id="terms.connectors" />
+            </Typography>
+            <TableContainer component={Box}>
+                <Table
+                    size="small"
+                    sx={{ minWidth: 350 }}
+                    aria-label={intl.formatMessage({
+                        id: 'connectors.title',
+                    })}
+                >
+                    <TableHead>
+                        <TableRow
+                            sx={{
+                                background: (theme) =>
+                                    theme.palette.background.default,
+                            }}
+                        >
+                            {columns.map((column, index) => {
+                                return (
+                                    <TableCell
+                                        key={`${column.field}-${index}`}
+                                        style={columnStyling}
+                                    >
+                                        <FormattedMessage
+                                            id={column.headerIntlKey}
+                                        />
+                                    </TableCell>
+                                );
+                            })}
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {loading ? (
+                            <TableRow>
+                                <TableCell colSpan={columns.length}>
+                                    <FormattedMessage id="common.loading" />
+                                </TableCell>
+                            </TableRow>
+                        ) : null}
 
-            {error ? { fetchingConnectorsError: error } : null}
+                        {error ? (
+                            <TableRow>
+                                <TableCell colSpan={columns.length}>
+                                    {error}
+                                </TableCell>
+                            </TableRow>
+                        ) : null}
 
-            {connectors.length > 0 ? (
-                <>
-                    <Typography>
-                        <FormattedMessage id="terms.connectors" />
-                    </Typography>
-                    <DataGrid
-                        rows={connectors}
-                        columns={columns}
-                        pageSize={5}
-                        rowsPerPageOptions={[5]}
-                        checkboxSelection
-                        disableSelectionOnClick
-                        autoHeight
-                    />
-                </>
-            ) : null}
+                        {connectors.length > 0 ? (
+                            connectors.map((row, index) => (
+                                <TableRow
+                                    key={`Connector-${row.attributes.name}-${index}`}
+                                >
+                                    <TableCell style={columnStyling}>
+                                        {row.attributes.name}
+                                    </TableCell>
+                                    <TableCell style={columnStyling}>
+                                        {row.attributes.description}
+                                    </TableCell>
+                                    <TableCell style={columnStyling}>
+                                        {row.attributes.type}
+                                    </TableCell>
+                                    <TableCell style={columnStyling}>
+                                        {row.attributes.maintainer}
+                                    </TableCell>
+                                    <TableCell style={columnStyling}>
+                                        <FormattedDate
+                                            day="numeric"
+                                            month="long"
+                                            year="numeric"
+                                            value={row.attributes.updated_at}
+                                        />
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={columns.length}
+                                    align="center"
+                                >
+                                    <FormattedMessage id="common.noData" />
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+            </TableContainer>
         </Box>
     );
 }
