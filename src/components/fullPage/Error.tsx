@@ -15,7 +15,7 @@ interface FullPageErrorProps {
 function FullPageError({ errors }: FullPageErrorProps) {
     return (
         <Backdrop
-            sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            sx={{ color: 'error', zIndex: (theme) => theme.zIndex.drawer + 1 }}
             open={true}
         >
             <Box sx={{ width: '100%' }}>

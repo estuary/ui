@@ -15,12 +15,7 @@ const auth = {
                         const { display_name } = response.data.data.attributes;
                         resolve(display_name);
                     })
-                    .catch(async (error) => {
-                        console.log('Failed3', error);
-                        if (error.response.status === 401) {
-                            await auth.signout();
-                        }
-
+                    .catch((error) => {
                         reject(error);
                     });
             }
@@ -51,12 +46,10 @@ const auth = {
                                 resolve(display_name);
                             })
                             .catch((accountError) => {
-                                console.log('Failed2', accountError);
                                 reject(accountError);
                             });
                     })
                     .catch((error) => {
-                        console.log('Failed1', error);
                         reject(error);
                     });
             }

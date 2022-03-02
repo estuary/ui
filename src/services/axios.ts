@@ -13,6 +13,19 @@ export const setAuthHeader = (token: string | null) => {
     }
 };
 
+axios.interceptors.response.use(
+    (response) => {
+        return response;
+    },
+    async (error) => {
+        if (error.response?.status === 401) {
+            await auth.signout();
+        }
+
+        return Promise.reject(error);
+    }
+);
+
 export const withAxios = (
     fn: AxiosPromise,
     setError: Function,

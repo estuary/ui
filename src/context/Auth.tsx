@@ -62,7 +62,16 @@ export const AuthProvider = (props: any) => {
                     setData(response);
                 })
                 .catch((signinError: any) => {
-                    setError(signinError.response.data.errors);
+                    if (signinError.response?.data?.errors) {
+                        setError(signinError.response.data.errors);
+                    } else {
+                        setError([
+                            {
+                                detail: 'There was an issue reaching the server',
+                                title: signinError.message,
+                            },
+                        ]);
+                    }
                 });
         },
         [setData, setError]
