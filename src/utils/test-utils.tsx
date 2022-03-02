@@ -3,11 +3,11 @@
 
 import { render as rtlRender, RenderOptions } from '@testing-library/react';
 import { ReactElement } from 'react';
-import { accountIDKey, authTokenKey } from '../auth';
 import { AuthContext } from '../context/Auth';
 import AppContent from '../context/Content';
 import AppRouter from '../context/Router';
 import AppTheme from '../context/Theme';
+import { accountIDKey, authTokenKey } from '../services/auth';
 
 const loginAsUser = (userName: string = 'fakeUserName') => {
     window.localStorage.setItem(authTokenKey, `${userName}-token`);

@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { FormattedMessage, useIntl } from 'react-intl';
-import useAccounts from '../hooks/useAccounts';
+import useAccounts from '../../hooks/useAccounts';
 
 interface AccountsTableProps {
     height: number;

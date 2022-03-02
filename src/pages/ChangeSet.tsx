@@ -1,7 +1,7 @@
 import { Box, Button, Toolbar, Typography } from '@mui/material';
 import PageContainer from 'components/shared/PageContainer';
 import { FormattedMessage } from 'react-intl';
-import ChangeSetTable from '../tables/ChangeSet';
+import ChangeSetTable from '../components/tables/ChangeSet';
 
 const ChangeSet = () => {
     return (

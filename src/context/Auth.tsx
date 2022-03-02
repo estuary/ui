@@ -1,8 +1,8 @@
 import FullPageSpinner from 'components/fullPage/Spinner';
 import { useAsync } from 'hooks/useAsync';
 import React, { useCallback, useMemo } from 'react';
-import { auth } from '../auth';
 import FullPageError from '../components/fullPage/Error';
+import { auth } from '../services/auth';
 
 export interface AuthContextType {
     login: (username: string) => Promise<void>;
@@ -18,7 +18,7 @@ export async function bootstrapUser() {
         const accountID = await auth.getAccountID();
         if (accountID) {
             await auth
-                .getAccountDetails(accountID)
+                .getAccountDetails(`accounts/${accountID}`)
                 .then((response) => {
                     user = response;
                 })

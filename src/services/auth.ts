@@ -1,16 +1,16 @@
 import { AxiosResponse } from 'axios';
-import axios, { setAuthHeader } from '../services/axios';
 import { AccountResponse, AuthLocalResponse } from '../types';
+import axios, { setAuthHeader } from './axios';
 
 const authTokenKey = '__auth_provider_token__';
 const accountIDKey = '__auth_account_id__';
 
 const auth = {
-    getAccountDetails(accountID: string) {
+    getAccountDetails(path: string) {
         return new Promise<AxiosResponse<any, any>>(
             (resolve: any, reject: any) => {
                 return axios
-                    .get(`accounts/${accountID}`)
+                    .get(path)
                     .then((response: AxiosResponse<AccountResponse>) => {
                         const { display_name } = response.data.data.attributes;
                         resolve(display_name);
@@ -41,7 +41,7 @@ const auth = {
                         window.localStorage.setItem(authTokenKey, token);
                         window.localStorage.setItem(accountIDKey, account_id);
                         setAuthHeader(token, account_id);
-                        auth.getAccountDetails(account_id)
+                        auth.getAccountDetails(response.data.data.links.account)
                             .then((display_name) => {
                                 resolve(display_name);
                             })
