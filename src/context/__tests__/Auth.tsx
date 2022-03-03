@@ -77,10 +77,4 @@ describe('if there is a user', () => {
             expect(screen.getByText(userMissing)).toBeInTheDocument();
         });
     });
-
-    test('should foo', () => {
-        const foo = window.localStorage.getItem(userStorageKey);
-
-        expect(foo).toBeFalsy();
-    });
 });
