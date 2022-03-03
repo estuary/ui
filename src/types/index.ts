@@ -50,7 +50,7 @@ export interface AuthLocalResponse extends BaseResponse {
         type: string;
         attributes: {
             account_id: string;
-            expires_at: number;
+            expires_at: string;
             token: string;
         };
         links: {
