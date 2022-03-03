@@ -43,6 +43,7 @@ export const auth = {
     },
     removeAuthDetails() {
         window.localStorage.removeItem(sessionStorageKey);
+        window.localStorage.removeItem(userStorageKey);
     },
     saveSession(session: AuthDetails['session']) {
         window.localStorage.setItem(sessionStorageKey, JSON.stringify(session));
