@@ -1,8 +1,14 @@
 import { AxiosResponse } from 'axios';
 import { AccountResponse, AuthLocalResponse } from '../types';
-import axios, { setAuthHeader } from './axios';
+import axios from './axios';
 
-export const authDetailsKey = '__auth_details__';
+export interface AuthDetails {
+    session: AuthLocalResponse['data']['attributes'];
+    user?: AccountResponse['data']['attributes'];
+}
+
+export const sessionStorageKey = '__auth_session__';
+export const userStorageKey = '__auth_user__';
 
 export const auth = {
     getAccountDetails(path: string) {
@@ -19,23 +25,30 @@ export const auth = {
             }
         );
     },
-    async getAccountID() {
-        const details = window.localStorage.getItem(authDetailsKey);
+    getAuthDetails() {
+        const session = window.localStorage.getItem(sessionStorageKey);
+        let response: AuthDetails | null = null;
 
-        if (details) {
-            return JSON.parse(details).account_id;
-        } else {
-            return null;
+        if (session) {
+            const user = window.localStorage.getItem(userStorageKey);
+
+            response = { session: JSON.parse(session) };
+
+            if (user) {
+                response.user = JSON.parse(user);
+            }
         }
+
+        return response;
     },
-    async getToken() {
-        const details = window.localStorage.getItem(authDetailsKey);
-
-        if (details) {
-            return JSON.parse(details).token;
-        } else {
-            return null;
-        }
+    removeAuthDetails() {
+        window.localStorage.removeItem(sessionStorageKey);
+    },
+    saveSession(session: AuthDetails['session']) {
+        window.localStorage.setItem(sessionStorageKey, JSON.stringify(session));
+    },
+    saveUser(user: AuthDetails['user']) {
+        window.localStorage.setItem(userStorageKey, JSON.stringify(user));
     },
     signin(username: string) {
         return new Promise<
@@ -48,16 +61,14 @@ export const auth = {
                 .post('/sessions/local', {
                     auth_token: username,
                 })
-                .then((response: AxiosResponse<AuthLocalResponse>) => {
-                    const { account_id, token } = response.data.data.attributes;
+                .then((sessionResponse: AxiosResponse<AuthLocalResponse>) => {
+                    auth.saveSession(sessionResponse.data.data.attributes);
 
-                    window.localStorage.setItem(
-                        authDetailsKey,
-                        JSON.stringify(response.data.data.attributes)
-                    );
-                    setAuthHeader(token, account_id);
-                    auth.getAccountDetails(response.data.data.links.account)
+                    auth.getAccountDetails(
+                        sessionResponse.data.data.links.account
+                    )
                         .then((accountDetails) => {
+                            auth.saveUser(accountDetails);
                             resolve(accountDetails.display_name);
                         })
                         .catch((accountError) => {
@@ -70,8 +81,7 @@ export const auth = {
         });
     },
     async signout(callback?: VoidFunction) {
-        window.localStorage.removeItem(authDetailsKey);
-        setAuthHeader(null);
+        auth.removeAuthDetails();
         callback?.();
     },
 };

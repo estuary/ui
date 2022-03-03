@@ -7,7 +7,7 @@ import AppContent from 'context/Content';
 import AppRouter from 'context/Router';
 import AppTheme from 'context/Theme';
 import { ReactElement } from 'react';
-import { authDetailsKey } from 'services/auth';
+import { sessionStorageKey } from 'services/auth';
 
 const loginAsUser = (userName: string = 'fakeUserName') => {
     const mockDetails = {
@@ -15,11 +15,11 @@ const loginAsUser = (userName: string = 'fakeUserName') => {
         token: `${userName}-mock-token`,
     };
 
-    window.localStorage.setItem(authDetailsKey, JSON.stringify(mockDetails));
+    window.localStorage.setItem(sessionStorageKey, JSON.stringify(mockDetails));
 };
 
 const logoutUser = () => {
-    window.localStorage.removeItem(authDetailsKey);
+    window.localStorage.removeItem(sessionStorageKey);
 };
 
 const goTo = (route?: string, name?: string) => {
