@@ -82,6 +82,11 @@ const themeSettings = createTheme({
         },
     },
     components: {
+        MuiBadge: {
+            defaultProps: {
+                color: 'info',
+            },
+        },
         MuiButtonBase: {
             defaultProps: {
                 // based on React-Admin's solution

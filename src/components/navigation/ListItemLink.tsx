@@ -1,4 +1,5 @@
 import {
+    Badge,
     ListItemButton,
     ListItemIcon,
     ListItemText,
@@ -9,19 +10,25 @@ import {
 import PropTypes from 'prop-types';
 import { forwardRef } from 'react';
 import { NavLink } from 'react-router-dom';
+import { Widths } from '../../AppLayout';
 
 const ListItemLinkProps = {
+    badgeContent: PropTypes.number,
     disabled: PropTypes.bool,
     icon: PropTypes.element,
     isOpen: PropTypes.bool,
     link: PropTypes.string.isRequired,
+    menuWidth: PropTypes.number,
     title: PropTypes.string.isRequired,
 };
+
+// const configureIcon: JSX.Element = (icon: PropTypes.ReactElementLike) => ();
 
 const ListItemLink = (
     props: PropTypes.InferProps<typeof ListItemLinkProps>
 ) => {
-    const { icon, title, link, disabled, isOpen } = props;
+    const { icon, title, link, disabled, isOpen, badgeContent, menuWidth } =
+        props;
 
     const theme = useTheme();
     const isBelowMd = useMediaQuery(theme.breakpoints.down('md'));
@@ -59,15 +66,33 @@ const ListItemLink = (
                 title={!isBelowMd && !isOpen ? title : ''}
                 placement="right-end"
             >
-                <ListItemButton
-                    component={RouterLink}
-                    sx={{
-                        whiteSpace: 'nowrap',
-                    }}
-                >
-                    {icon ? <ListItemIcon>{icon}</ListItemIcon> : null}
-                    <ListItemText primary={title} />
-                </ListItemButton>
+                {menuWidth === Widths.FULL ? (
+                    <ListItemButton
+                        component={RouterLink}
+                        sx={{
+                            whiteSpace: 'nowrap',
+                        }}
+                    >
+                        {icon ? <ListItemIcon>{icon}</ListItemIcon> : null}
+                        <ListItemText primary={title} />
+                    </ListItemButton>
+                ) : (
+                    <ListItemButton
+                        component={RouterLink}
+                        sx={{
+                            whiteSpace: 'nowrap',
+                        }}
+                    >
+                        {icon ? (
+                            <ListItemIcon>
+                                <Badge badgeContent={badgeContent}>
+                                    {icon}
+                                </Badge>
+                            </ListItemIcon>
+                        ) : null}
+                        <ListItemText primary={title} />
+                    </ListItemButton>
+                )}
             </Tooltip>
         </li>
     );

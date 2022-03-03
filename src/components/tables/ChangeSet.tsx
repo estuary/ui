@@ -12,14 +12,17 @@ import {
     TableRow,
     Tooltip,
 } from '@mui/material';
-import { MouseEvent, useState } from 'react';
+import { MouseEvent, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useChangeSetStore, {
     CaptureState,
     EntityMetadata,
 } from 'stores/ChangeSetStore';
 
-const getCapturesSelector = (state: CaptureState) => state.captures;
+const selectors = {
+    captures: (state: CaptureState) => state.captures,
+    updateViewStatus: (state: CaptureState) => state.updateViewStatus,
+};
 
 function ChangeSetTable() {
     const [page, setPage] = useState(0);
@@ -32,9 +35,12 @@ function ChangeSetTable() {
         setPage(newPage);
     };
 
-    const captureState = useChangeSetStore(getCapturesSelector);
-    const captures = Object.values(captureState);
+    const updateViewStatus = useChangeSetStore(selectors.updateViewStatus);
+    const captureState = useChangeSetStore(selectors.captures);
 
+    useEffect(() => updateViewStatus());
+
+    const captures = Object.values(captureState);
     const captureDetails: EntityMetadata[] = captures.map(
         (capture) => capture.metadata
     );

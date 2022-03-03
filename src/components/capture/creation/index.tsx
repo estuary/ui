@@ -88,6 +88,7 @@ function NewCaptureModal() {
                     user: 'temp@gmail.com',
                 },
                 schema: schemaFromEditor || catalogResponse,
+                viewed: false,
             };
 
             addCaptureToChangeSet(catalogNamespace, capture);
