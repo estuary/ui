@@ -1,7 +1,8 @@
 import axios, { AxiosResponse } from 'axios';
+import { AccountsResponse } from 'endpoints/account';
 import { useCallback, useEffect, useState } from 'react';
 import { withAxios } from '../services/axios';
-import { AccountsResponse, BaseHook } from '../types';
+import { BaseHook } from '../types';
 
 interface AccountsService extends BaseHook {
     data: {

@@ -10,6 +10,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     'common.errors.heading': `Error`,
     'common.optionsMissing': `No options`,
     'common.noData': `No data to display`,
+    'common.loggedOut': `You have been logged out. Please log back in.`,
 
     // Header
     'header.navigationMenu.aria.label': `Expand Navigation`,
