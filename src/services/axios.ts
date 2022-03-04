@@ -4,22 +4,23 @@ import { auth } from './auth';
 axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL;
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
-export const setAuthHeader = (
-    token: string | null,
-    account_id?: string | null
-) => {
-    if (token && account_id) {
-        axios.defaults.auth = {
-            password: token,
-            username: account_id,
-        };
+axios.interceptors.request.use(
+    (config) => {
+        const authDetails = auth.getAuthDetails();
 
-        // TODO add this in when we have more auth optiosn
-        // axios.defaults.headers.common.Authorization = `Bearer `;
-    } else {
-        delete axios.defaults.auth;
+        if (authDetails) {
+            config.auth = {
+                password: authDetails.session.token,
+                username: authDetails.session.account_id,
+            };
+        }
+
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
     }
-};
+);
 
 axios.interceptors.response.use(
     (response) => {
@@ -41,11 +42,7 @@ export const withAxios = (
 ) => {
     return new Promise<AxiosResponse<any, any>>((resolve: any, reject: any) => {
         fn.then((response) => {
-            if (response.data.redirect) {
-                void auth.signout();
-            } else {
-                resolve(response);
-            }
+            resolve(response);
         })
             .catch((error) => {
                 const errorMessage = error.response

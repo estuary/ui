@@ -7,19 +7,37 @@ import AppContent from 'context/Content';
 import AppRouter from 'context/Router';
 import AppTheme from 'context/Theme';
 import { ReactElement } from 'react';
-import { authDetailsKey } from 'services/auth';
+import { auth, AuthDetails } from 'services/auth';
 
-const loginAsUser = (userName: string = 'fakeUserName') => {
-    const mockDetails = {
-        account_id: `${userName}-mock-token`,
-        token: `${userName}-mock-token`,
+// TODO - this does not really do anything because we hardcode
+//   the username down below on the MockAuthProvider. However,
+//   this will be needed in the future so leaving the work so far
+//   so we can leverage this when wanting to test the "on load auth"
+//   functionality
+const loginAsUser = (username: string) => {
+    const mockAuthDetails: AuthDetails = {
+        session: {
+            account_id: '',
+            expires_at: '',
+            token: '',
+        },
+        user: {
+            created_at: '',
+            display_name: username,
+            email: `${username}@${username}`,
+            id: '',
+            name: username,
+            norm_name: username,
+            updated_at: '',
+        },
     };
 
-    window.localStorage.setItem(authDetailsKey, JSON.stringify(mockDetails));
+    auth.saveSession(mockAuthDetails.session);
+    auth.saveUser(mockAuthDetails.user);
 };
 
 const logoutUser = () => {
-    window.localStorage.removeItem(authDetailsKey);
+    auth.removeAuthDetails();
 };
 
 const goTo = (route?: string, name?: string) => {
@@ -46,7 +64,9 @@ interface MockAuthProps {
 const MockAuthProvider = ({ children, username }: MockAuthProps) => {
     const value = {
         login: jest.fn(() => {
-            loginAsUser(username);
+            if (username) {
+                loginAsUser(username);
+            }
             return Promise.resolve();
         }),
         logout: jest.fn(() => {

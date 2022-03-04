@@ -1,6 +1,10 @@
 import '@testing-library/jest-dom';
 import { act, configure } from '@testing-library/react';
 
+// https://github.com/clarkbw/jest-localstorage-mock#in-create-react-app
+require('jest-localstorage-mock');
+
+// https://github.com/testing-library/dom-testing-library/issues/552
 configure({ defaultHidden: true });
 
 // REACT INTL
@@ -26,10 +30,16 @@ export const setupTests = () => {
         };
     }
 };
-// REACT INTL
-afterEach(async () => {
-    // await waitFor(() => expect(queryCache.isFetching).toBe(0));
 
+// Cleaning up after our localstorage mock. It requires we disable
+//  jest auto cleaning up mocks so we call the clerAllMocks ourselves
+afterEach(async () => {
+    localStorage.clear();
+    jest.clearAllMocks();
+});
+
+// Must be LAST so it runs FIRST due to afterEachs running in reverse order
+afterEach(() => {
     if (jest.isMockFunction(setTimeout)) {
         act(() => jest.runOnlyPendingTimers());
         jest.useRealTimers();
