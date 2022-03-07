@@ -16,11 +16,13 @@ function NewCaptureSpecFormHeader(props: NewCaptureSpecFormHeaderProps) {
     const { data, error } = useConnectorImages(endpoint);
 
     useEffect(() => {
-        dispatch({
-            payload: data.links.spec,
-            type: ActionType.NEW_SPEC_LINK,
-        });
-    }, [data.links.spec, dispatch]);
+        if (data?.links) {
+            dispatch({
+                payload: data.links.spec,
+                type: ActionType.NEW_SPEC_LINK,
+            });
+        }
+    }, [data, dispatch]);
 
     if (error) {
         return (
@@ -31,7 +33,7 @@ function NewCaptureSpecFormHeader(props: NewCaptureSpecFormHeaderProps) {
                 {error}
             </Alert>
         );
-    } else if (data.attributes) {
+    } else if (data?.attributes) {
         return (
             <AppBar position="relative" elevation={0} color="default">
                 <Toolbar

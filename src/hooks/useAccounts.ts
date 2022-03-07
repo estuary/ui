@@ -1,8 +1,8 @@
 import { accountsEndpoint, AccountsResponse } from 'entities/accounts';
-import { useAsync, UseAsyncResponse } from 'hooks/useAsync';
+import { useAsync } from 'hooks/useAsync';
 import { useEffect } from 'react';
 
-function useAccounts(): UseAsyncResponse<AccountsResponse> {
+function useAccounts() {
     const response = useAsync<AccountsResponse>();
     const { run } = response;
 

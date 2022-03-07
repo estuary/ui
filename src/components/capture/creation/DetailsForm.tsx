@@ -27,6 +27,7 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
         isError,
         isIdle,
         isLoading,
+        isSuccess,
         error,
     } = useConnectors();
 
@@ -79,26 +80,26 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
     };
 
     useEffect(() => {
-        if (connectorsData && connectorsData.data.length > 0) {
-            setSchema((previous: typeof schema) => {
-                const listOfConnectors = connectorsData.data.map(
-                    (connector) => {
-                        console.log('set schema', connector);
+        if (isSuccess) {
+            if (connectorsData && connectorsData.data.length > 0) {
+                setSchema((previous: typeof schema) => {
+                    const listOfConnectors = connectorsData.data.map(
+                        (connector) => {
+                            return {
+                                const: connector.links.images,
+                                title: connector.attributes.name,
+                            };
+                        }
+                    );
+                    previous.properties.image.oneOf = listOfConnectors;
 
-                        return {
-                            const: connector.links.images,
-                            title: connector.attributes.name,
-                        };
-                    }
-                );
-                previous.properties.image.oneOf = listOfConnectors;
-
-                return previous;
-            });
+                    return previous;
+                });
+            }
 
             setPostProcessingDone(true);
         }
-    }, [connectorsData]);
+    }, [connectorsData, isSuccess]);
 
     return (
         <>
@@ -123,7 +124,12 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
                 ) : isError ? (
                     error
                 ) : isPostProcessingDone ? (
-                    schema.properties.image.oneOf.length > 0 ? (
+                    schema.properties.image.oneOf.length < 0 ? (
+                        <Alert severity="warning">
+                            <FormattedMessage id="captureCreation.missingConnectors" />
+                            {schema.properties.image.oneOf.length}
+                        </Alert>
+                    ) : (
                         <JsonForms
                             schema={schema}
                             uischema={uiSchema}
@@ -147,11 +153,6 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
                                 }
                             }}
                         />
-                    ) : (
-                        <Alert severity="warning">
-                            <FormattedMessage id="captureCreation.missingConnectors" />
-                            {schema.properties.image.oneOf.length}
-                        </Alert>
                     )
                 ) : null}
             </Stack>

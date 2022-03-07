@@ -1,40 +1,29 @@
-import { useEffect, useState } from 'react';
-import axios, { withAxios } from 'services/axios';
-import { BaseHook } from 'types';
+import {
+    ConnectorImageResponse,
+    connectorsEndpoint,
+} from 'entities/connectors';
+import { useAsync } from 'hooks/useAsync';
+import { useEffect } from 'react';
 
-const useConnectorImages = (
-    imagesURL: string,
-    whichOne: number = 0
-): BaseHook<{
-    attributes: any;
-    links: any;
-}> => {
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
-
-    const [attributes, setAttributes] = useState<object>({});
-    const [links, setLinks] = useState<object>({});
+const useConnectorImages = (imagesURL: string, whichOne: number = 0) => {
+    const response = useAsync<ConnectorImageResponse>();
+    const { run } = response;
 
     useEffect(() => {
         if (imagesURL) {
-            withAxios(axios.get(imagesURL), setError, setLoading)
-                .then((imageResponse: any) => {
-                    const newestImage = imageResponse.data.data[whichOne];
-                    setAttributes(newestImage.attributes);
-                    setLinks(newestImage.links);
-                })
-                .catch(() => {});
-        }
-    }, [imagesURL, whichOne]);
+            run(
+                connectorsEndpoint.images
+                    .read(imagesURL)
+                    .then((serverResponse) => {
+                        const newestImage = serverResponse.data[whichOne];
 
-    return {
-        data: {
-            attributes,
-            links,
-        },
-        error,
-        loading,
-    };
+                        return Promise.resolve(newestImage);
+                    })
+            );
+        }
+    }, [imagesURL, run, whichOne]);
+
+    return response;
 };
 
 export default useConnectorImages;

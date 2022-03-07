@@ -1,8 +1,8 @@
 import { connectorsEndpoint, ConnectorsResponse } from 'entities/connectors';
-import { useAsync, UseAsyncResponse } from 'hooks/useAsync';
+import { useAsync } from 'hooks/useAsync';
 import { useEffect } from 'react';
 
-function useConnectors(): UseAsyncResponse<ConnectorsResponse> {
+function useConnectors() {
     const response = useAsync<ConnectorsResponse>();
     const { run } = response;
 

@@ -27,7 +27,38 @@ export interface ConnectorsResponse extends BaseResponse {
     };
 }
 
+export interface ConnectorImageResponse {
+    id: string;
+    type: string;
+    attributes: {
+        connector_id: string;
+        created_at: string;
+        id: string;
+        name: string;
+        digest: string;
+        tag: string;
+        updated_at: string;
+    };
+    links: {
+        connector: string;
+        self: string;
+        spec: string;
+    };
+}
+
+export interface ConnectorImagesResponse extends BaseResponse {
+    data: ConnectorImageResponse[];
+    links: {
+        self: string;
+    };
+}
+
 export const connectorsEndpoint = {
+    images: {
+        read: (endpoint: ConnectorResponse['links']['images']) => {
+            return client<ConnectorsResponse>(endpoint);
+        },
+    },
     read: () => {
         return client<ConnectorsResponse>('connectors');
     },
