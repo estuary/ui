@@ -6,8 +6,8 @@ export interface BaseHook<T> {
 }
 
 export interface BaseHookNullableData<T> {
-    idle?: boolean;
-    loading: boolean;
+    isIdle: boolean;
+    isLoading: boolean;
     error: string | null;
     data: T | null;
 }

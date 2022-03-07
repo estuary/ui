@@ -1,5 +1,5 @@
+import { client } from 'services/client';
 import { BaseResponse } from 'types';
-import { client } from './client';
 
 export interface SourcesResponse extends BaseResponse {
     data: any;

@@ -7,13 +7,7 @@ enum States {
     SUCCESS = 3,
 }
 
-export interface DefaultState {
-    data: any;
-    error?: any;
-    status?: States;
-}
-
-const defaultInitialState: DefaultState = {
+const defaultInitialState = {
     data: null,
     error: null,
     status: States.IDLE,
@@ -33,8 +27,8 @@ const useSafeDispatch = (dispatch: any) => {
     );
 };
 
-interface UseAsyncResponse<T> {
-    data: T;
+export interface UseAsyncResponse<T> {
+    data: T | null;
     error: any;
     isError: boolean;
     isIdle: boolean;

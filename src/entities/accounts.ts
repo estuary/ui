@@ -1,6 +1,6 @@
+import { client } from 'services/client';
 import { BaseResponse } from 'types';
 import { AccountResponse } from './account';
-import { client } from './client';
 
 export interface AccountsResponse extends BaseResponse {
     data: AccountResponse['data'][];

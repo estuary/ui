@@ -1,5 +1,5 @@
+import { client } from 'services/client';
 import { BaseResponse } from 'types';
-import { client } from './client';
 
 // TODO - this is here as I think eventually we'll have a stand alone Connector
 interface ConnectorResponse {

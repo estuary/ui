@@ -22,8 +22,15 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
     const intl = useIntl();
     const { state, dispatch, readonly, displayValidation } = props;
 
-    const { data: connectors, loading, error } = useConnectors();
+    const {
+        data: connectorsData,
+        isError,
+        isIdle,
+        isLoading,
+        error,
+    } = useConnectors();
 
+    const [isPostProcessingDone, setPostProcessingDone] = useState(false);
     const [schema, setSchema] = useState({
         properties: {
             image: {
@@ -72,21 +79,26 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
     };
 
     useEffect(() => {
-        if (connectors && connectors.length > 0) {
+        if (connectorsData && connectorsData.data.length > 0) {
             setSchema((previous: typeof schema) => {
-                previous.properties.image.oneOf = connectors.map(
+                const listOfConnectors = connectorsData.data.map(
                     (connector) => {
+                        console.log('set schema', connector);
+
                         return {
                             const: connector.links.images,
                             title: connector.attributes.name,
                         };
                     }
                 );
+                previous.properties.image.oneOf = listOfConnectors;
 
                 return previous;
             });
+
+            setPostProcessingDone(true);
         }
-    }, [connectors]);
+    }, [connectorsData]);
 
     return (
         <>
@@ -95,9 +107,7 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
             </DialogContentText>
 
             <Stack direction="row" spacing={2}>
-                {error ? (
-                    error
-                ) : loading ? (
+                {isIdle || isLoading ? (
                     <>
                         <Skeleton
                             variant="rectangular"
@@ -110,35 +120,40 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
                             width="50%"
                         />
                     </>
-                ) : connectors && connectors.length > 0 ? (
-                    <JsonForms
-                        schema={schema}
-                        uischema={uiSchema}
-                        data={state.data}
-                        renderers={defaultRenderers}
-                        cells={materialCells}
-                        config={defaultOptions}
-                        readonly={readonly}
-                        validationMode={showValidation(displayValidation)}
-                        onChange={(form) => {
-                            if (state.data.image === form.data.image) {
-                                dispatch({
-                                    payload: form,
-                                    type: ActionType.DETAILS_CHANGED,
-                                });
-                            } else {
-                                dispatch({
-                                    payload: form.data.image as string,
-                                    type: ActionType.CONNECTOR_CHANGED,
-                                });
-                            }
-                        }}
-                    />
-                ) : (
-                    <Alert severity="warning">
-                        <FormattedMessage id="captureCreation.missingConnectors" />
-                    </Alert>
-                )}
+                ) : isError ? (
+                    error
+                ) : isPostProcessingDone ? (
+                    schema.properties.image.oneOf.length > 0 ? (
+                        <JsonForms
+                            schema={schema}
+                            uischema={uiSchema}
+                            data={state.data}
+                            renderers={defaultRenderers}
+                            cells={materialCells}
+                            config={defaultOptions}
+                            readonly={readonly}
+                            validationMode={showValidation(displayValidation)}
+                            onChange={(form) => {
+                                if (state.data.image === form.data.image) {
+                                    dispatch({
+                                        payload: form,
+                                        type: ActionType.DETAILS_CHANGED,
+                                    });
+                                } else {
+                                    dispatch({
+                                        payload: form.data.image as string,
+                                        type: ActionType.CONNECTOR_CHANGED,
+                                    });
+                                }
+                            }}
+                        />
+                    ) : (
+                        <Alert severity="warning">
+                            <FormattedMessage id="captureCreation.missingConnectors" />
+                            {schema.properties.image.oneOf.length}
+                        </Alert>
+                    )
+                ) : null}
             </Stack>
         </>
     );

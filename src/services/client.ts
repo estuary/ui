@@ -1,4 +1,4 @@
-import { auth } from '../services/auth';
+import { auth } from './auth';
 
 export interface ClientConfig<T> extends RequestInit {
     data?: T;

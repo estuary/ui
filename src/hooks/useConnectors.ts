@@ -1,26 +1,16 @@
-import { connectorsEndpoint, ConnectorsResponse } from 'endpoints/connectors';
-import { useAsync } from 'hooks/useAsync';
+import { connectorsEndpoint, ConnectorsResponse } from 'entities/connectors';
+import { useAsync, UseAsyncResponse } from 'hooks/useAsync';
 import { useEffect } from 'react';
-import { type BaseHookNullableData } from 'types';
 
-function useConnectors(): BaseHookNullableData<ConnectorsResponse['data']> {
-    const { data, error, isIdle, isLoading, run } =
-        useAsync<ConnectorsResponse['data']>();
+function useConnectors(): UseAsyncResponse<ConnectorsResponse> {
+    const response = useAsync<ConnectorsResponse>();
+    const { run } = response;
 
     useEffect(() => {
-        run(
-            connectorsEndpoint.read().then((serverResponse) => {
-                return Promise.resolve(serverResponse.data);
-            })
-        );
+        run(connectorsEndpoint.read());
     }, [run]);
 
-    return {
-        data,
-        error,
-        idle: isIdle,
-        loading: isLoading,
-    };
+    return response;
 }
 
 export default useConnectors;

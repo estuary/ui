@@ -1,5 +1,5 @@
+import { client } from 'services/client';
 import { BaseResponse } from 'types';
-import { client } from './client';
 import { SessionLocalResponse } from './session';
 
 export interface AccountResponse extends BaseResponse {

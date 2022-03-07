@@ -14,10 +14,10 @@ type SourceTypeProps = PropTypes.InferProps<typeof SourceTypePropTypes>;
 function SourceTypeSelect(props: SourceTypeProps) {
     const intl = useIntl();
     const { id, onSourceChange } = props;
-    const { data, error, loading } = useSourceTypes();
+    const { data, error, isLoading } = useSourceTypes();
     let sourceTypes;
 
-    if (data.data) {
+    if (data?.data) {
         sourceTypes = data.data;
     }
 
@@ -33,7 +33,7 @@ function SourceTypeSelect(props: SourceTypeProps) {
             noOptionsText={intl.formatMessage({
                 id: 'common.optionsMissing',
             })}
-            loading={loading}
+            loading={isLoading}
             onChange={(event, reason: any) => {
                 onSourceChange(reason ? reason.key : '');
             }}

@@ -12,7 +12,7 @@ import useAccounts from 'hooks/useAccounts';
 import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
 
 function AccountsTable() {
-    const { data: accounts, loading, error } = useAccounts();
+    const { data: accountsData, isLoading, error } = useAccounts();
 
     const intl = useIntl();
 
@@ -68,7 +68,7 @@ function AccountsTable() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {loading ? (
+                        {isLoading ? (
                             <TableRow>
                                 <TableCell colSpan={columns.length}>
                                     <FormattedMessage id="common.loading" />
@@ -80,8 +80,8 @@ function AccountsTable() {
                                     {error}
                                 </TableCell>
                             </TableRow>
-                        ) : accounts && accounts.length > 0 ? (
-                            accounts.map((row, index) => (
+                        ) : accountsData && accountsData.data.length > 0 ? (
+                            accountsData.data.map((row, index) => (
                                 <TableRow
                                     key={`Account-${row.attributes.name}-${index}`}
                                 >

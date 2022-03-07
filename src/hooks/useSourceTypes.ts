@@ -1,10 +1,10 @@
-import { sourcesEndpoint, SourcesResponse } from 'endpoints/sources';
-import { useAsync } from 'hooks/useAsync';
+import { sourcesEndpoint, SourcesResponse } from 'entities/sources';
+import { useAsync, UseAsyncResponse } from 'hooks/useAsync';
 import { useEffect } from 'react';
-import { BaseHook } from '../types';
 
-const useSourceTypes = (): BaseHook<SourcesResponse> => {
-    const { data, error, isIdle, isLoading, run } = useAsync<SourcesResponse>();
+const useSourceTypes = (): UseAsyncResponse<SourcesResponse> => {
+    const response = useAsync<SourcesResponse>();
+    const { run } = response;
 
     useEffect(() => {
         run(
@@ -14,12 +14,7 @@ const useSourceTypes = (): BaseHook<SourcesResponse> => {
         );
     }, [run]);
 
-    return {
-        data,
-        error,
-        idle: isIdle,
-        loading: isLoading,
-    };
+    return response;
 };
 
 export default useSourceTypes;
