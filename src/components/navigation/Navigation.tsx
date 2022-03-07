@@ -17,8 +17,6 @@ const NavigationProps = {
     width: PropTypes.number.isRequired,
 };
 
-// TODO: BUG REPAIR: The anchorEl prop provided to the component is invalid.
-// Pretty sure the prop drilling of the width is the source of the issue.
 const selectors = {
     newChangeCount: (state: CaptureState) => state.newChangeCount,
 };

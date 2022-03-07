@@ -22,8 +22,6 @@ const ListItemLinkProps = {
     title: PropTypes.string.isRequired,
 };
 
-// const configureIcon: JSX.Element = (icon: PropTypes.ReactElementLike) => ();
-
 const ListItemLink = (
     props: PropTypes.InferProps<typeof ListItemLinkProps>
 ) => {

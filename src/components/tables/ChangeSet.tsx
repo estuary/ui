@@ -21,7 +21,8 @@ import useChangeSetStore, {
 
 const selectors = {
     captures: (state: CaptureState) => state.captures,
-    updateViewStatus: (state: CaptureState) => state.updateViewStatus,
+    newChangeCount: (state: CaptureState) => state.newChangeCount,
+    resetNewChangeCount: (state: CaptureState) => state.resetNewChangeCount,
 };
 
 function ChangeSetTable() {
@@ -35,10 +36,17 @@ function ChangeSetTable() {
         setPage(newPage);
     };
 
-    const updateViewStatus = useChangeSetStore(selectors.updateViewStatus);
+    const newChangeCount = useChangeSetStore(selectors.newChangeCount);
+    const resetNewChangeCount = useChangeSetStore(
+        selectors.resetNewChangeCount
+    );
     const captureState = useChangeSetStore(selectors.captures);
 
-    useEffect(() => updateViewStatus());
+    useEffect(() => {
+        if (newChangeCount > 0) {
+            resetNewChangeCount();
+        }
+    }, [newChangeCount, resetNewChangeCount]);
 
     const captures = Object.values(captureState);
     const captureDetails: EntityMetadata[] = captures.map(

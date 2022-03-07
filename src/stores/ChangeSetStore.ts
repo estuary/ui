@@ -15,7 +15,6 @@ export interface EntityMetadata {
 export interface Entity<T = any> {
     metadata: EntityMetadata;
     schema: T;
-    viewed: boolean;
 }
 
 interface EntityDictionary<T = any> {
@@ -28,13 +27,8 @@ export interface CaptureState<T = any> {
     captures: EntityDictionary;
     // TODO: Move the following properties into the overarching state.
     newChangeCount: number;
-    updateViewStatus: () => void;
+    resetNewChangeCount: () => void;
 }
-
-/*
-const countNewChanges = (changeSet: EntityDictionary) =>
-    Object.values(changeSet).filter((entity: Entity) => !entity.viewed).length;
-    */
 
 const name = 'change-set-state';
 
@@ -54,35 +48,11 @@ const useChangeSetStore = create<CaptureState>(
                     ),
                 captures: {},
                 newChangeCount: 0,
-                updateViewStatus: () =>
+                resetNewChangeCount: () =>
                     set(
-                        (state) => {
-                            const outdatedEntityInfo: [string, Entity<any>][] =
-                                Object.entries(state.captures).filter(
-                                    ([_, entity]) => !entity.viewed
-                                );
-
-                            const updatedEntityInfo: [string, Entity<any>][] =
-                                outdatedEntityInfo.map(([key, entity]) => {
-                                    entity.viewed = true;
-
-                                    return [key, entity];
-                                });
-
-                            return {
-                                captures: Object.assign(
-                                    state.captures,
-                                    ...updatedEntityInfo.map(
-                                        ([key, entity]) => ({
-                                            [key]: entity,
-                                        })
-                                    )
-                                ),
-                                newChangeCount: 0,
-                            };
-                        },
+                        () => ({ newChangeCount: 0 }),
                         false,
-                        'Entity View Status Updated'
+                        'Change Set Viewed'
                     ),
             }),
             { name }
