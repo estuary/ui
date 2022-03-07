@@ -22,11 +22,7 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
     const intl = useIntl();
     const { state, dispatch, readonly, displayValidation } = props;
 
-    const {
-        data: { data: connectors },
-        loading,
-        error,
-    } = useConnectors();
+    const { data: connectors, loading, error } = useConnectors();
 
     const [schema, setSchema] = useState({
         properties: {
@@ -76,7 +72,7 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
     };
 
     useEffect(() => {
-        if (connectors.length > 0) {
+        if (connectors && connectors.length > 0) {
             setSchema((previous: typeof schema) => {
                 previous.properties.image.oneOf = connectors.map(
                     (connector) => {
@@ -114,7 +110,7 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
                             width="50%"
                         />
                     </>
-                ) : connectors.length > 0 ? (
+                ) : connectors && connectors.length > 0 ? (
                     <JsonForms
                         schema={schema}
                         uischema={uiSchema}

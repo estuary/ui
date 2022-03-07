@@ -6,8 +6,9 @@ import {
     type Theme,
 } from '@mui/material';
 import PageContainer from 'components/shared/PageContainer';
+import AccountsTable from 'components/tables/Accounts';
+import ConnectorsTable from 'components/tables/Connectors';
 import { FormattedMessage } from 'react-intl';
-import AccountsTable from '../components/tables/Accounts';
 
 const boxStyling: SxProps<Theme> = {
     marginBottom: 2,
@@ -23,9 +24,9 @@ const Admin = () => {
                 </Typography>
             </Toolbar>
 
-            {/* <Box sx={boxStyling}>
+            <Box sx={boxStyling}>
                 <ConnectorsTable />
-            </Box> */}
+            </Box>
 
             <Box sx={boxStyling}>
                 <AccountsTable />

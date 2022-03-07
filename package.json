@@ -85,7 +85,7 @@
         "node_modules",
         "build",
         "*.json",
-        ".vscode/**"
+        ".vscode"
     ],
     "jest": {
         "resetMocks": false

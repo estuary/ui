@@ -12,9 +12,7 @@ import useConnectors from 'hooks/useConnectors';
 import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
 
 function ConnectorsTable() {
-    const { data, loading, error } = useConnectors();
-
-    console.log('connectors ', data);
+    const { data: connectors, loading, error } = useConnectors();
 
     const intl = useIntl();
 
@@ -93,8 +91,8 @@ function ConnectorsTable() {
                                     {error}
                                 </TableCell>
                             </TableRow>
-                        ) : data.data.length > 0 ? (
-                            data.data.map((row: any, index: any) => (
+                        ) : connectors && connectors.length > 0 ? (
+                            connectors.map((row: any, index: any) => (
                                 <TableRow
                                     key={`Connector-${row.attributes.name}-${index}`}
                                 >

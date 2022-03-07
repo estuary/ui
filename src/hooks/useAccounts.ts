@@ -10,9 +10,7 @@ function useAccounts(): BaseHookNullableData<AccountsResponse['data']> {
     useEffect(() => {
         run(
             accountsEndpoint.read().then((serverResponse) => {
-                console.log('User accounts callback');
-
-                return Promise.resolve(serverResponse);
+                return Promise.resolve(serverResponse.data);
             })
         );
     }, [run]);
