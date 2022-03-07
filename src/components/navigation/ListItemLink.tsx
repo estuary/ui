@@ -73,6 +73,7 @@ const ListItemLink = (
                     >
                         {icon ? <ListItemIcon>{icon}</ListItemIcon> : null}
                         <ListItemText primary={title} />
+                        <Badge badgeContent={badgeContent} />
                     </ListItemButton>
                 ) : (
                     <ListItemButton
