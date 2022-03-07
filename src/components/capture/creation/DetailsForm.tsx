@@ -23,7 +23,7 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
     const { state, dispatch, readonly, displayValidation } = props;
 
     const {
-        data: { connectors },
+        data: { data: connectors },
         loading,
         error,
     } = useConnectors();

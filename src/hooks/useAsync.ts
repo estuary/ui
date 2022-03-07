@@ -33,7 +33,21 @@ const useSafeDispatch = (dispatch: any) => {
     );
 };
 
-const useAsync = (initialState?: any) => {
+interface UseAsyncResponse<T> {
+    data: T;
+    error: any;
+    isError: boolean;
+    isIdle: boolean;
+    isLoading: boolean;
+    isSuccess: boolean;
+    reset: () => any;
+    run: (promise: any, dataFetcher?: Function | undefined) => any;
+    setData: (setDataResponse: any) => void;
+    setError: (setErrorResponse: any) => any;
+    status: States;
+}
+
+const useAsync = <DataType>(initialState?: any): UseAsyncResponse<DataType> => {
     const initialStateRef = useRef({
         ...defaultInitialState,
         ...initialState,

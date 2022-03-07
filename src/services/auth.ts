@@ -72,7 +72,7 @@ export const auth = {
                 .create(username)
                 .then((sessionResponse) => {
                     auth.saveSession(sessionResponse.data.attributes);
-                    auth.getAccountDetails(sessionResponse.data.links.account)
+                    auth.getAccountDetails(sessionResponse.links.account)
                         .then((accountDetails) => {
                             auth.saveUser(accountDetails);
                             resolve(accountDetails.display_name);

@@ -14,11 +14,12 @@ type SourceTypeProps = PropTypes.InferProps<typeof SourceTypePropTypes>;
 function SourceTypeSelect(props: SourceTypeProps) {
     const intl = useIntl();
     const { id, onSourceChange } = props;
-    const {
-        data: { sourceTypes },
-        error,
-        loading,
-    } = useSourceTypes();
+    const { data, error, loading } = useSourceTypes();
+    let sourceTypes;
+
+    if (data.data) {
+        sourceTypes = data.data;
+    }
 
     return (
         <Autocomplete

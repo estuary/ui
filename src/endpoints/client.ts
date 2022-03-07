@@ -1,13 +1,13 @@
 import { auth } from '../services/auth';
 
-export interface ClientConfig<T = any> extends RequestInit {
+export interface ClientConfig<T> extends RequestInit {
     data?: T;
 }
 
-export const client = <T>(
+export const client = <Request, Response = {}>(
     endpoint: string,
-    { data, ...customConfig }: ClientConfig = {}
-): Promise<T> => {
+    { data, ...customConfig }: ClientConfig<Response> = {}
+): Promise<Request> => {
     const config: NonNullable<RequestInit> = {
         body: data ? JSON.stringify(data) : undefined,
         method: data ? 'POST' : 'GET',

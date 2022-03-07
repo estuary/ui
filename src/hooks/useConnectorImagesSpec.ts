@@ -4,14 +4,12 @@ import { useEffect, useState } from 'react';
 import axios, { withAxios } from 'services/axios';
 import { type BaseHook } from 'types';
 
-interface ConnectorImagesService extends BaseHook {
-    data: {
-        specSchema: any;
-        links: Pick<NewCaptureState['links'], 'discovery' | 'documentation'>;
-    };
-}
-
-const useConnectorImageSpec = (specURL: string): ConnectorImagesService => {
+const useConnectorImageSpec = (
+    specURL: string
+): BaseHook<{
+    specSchema: any;
+    links: Pick<NewCaptureState['links'], 'discovery' | 'documentation'>;
+}> => {
     const [schema, setSchema] = useState<object>({});
     const [error, setError] = useState<string | null>(null);
     const [discovery, setDiscovery] = useState<string>('');

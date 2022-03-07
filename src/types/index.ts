@@ -1,7 +1,15 @@
-export interface BaseHook {
+export interface BaseHook<T> {
+    idle?: boolean;
     loading: boolean;
     error: string | null;
-    data: any;
+    data: T;
+}
+
+export interface BaseHookNullableData<T> {
+    idle?: boolean;
+    loading: boolean;
+    error: string | null;
+    data: T | null;
 }
 
 export type BaseData = {
@@ -19,27 +27,4 @@ export interface BaseResponse {
     data: BaseData | BaseData[];
     errors?: BaseError[];
     links: any;
-}
-
-export interface ConnectorsResponse extends BaseResponse {
-    data: {
-        id: string;
-        type: string;
-        attributes: {
-            created_at: string;
-            description: string;
-            id: string;
-            name: string;
-            maintainer: string;
-            type: string;
-            updated_at: string;
-        };
-        links: {
-            images: string;
-            self: string;
-        };
-    }[];
-    links: {
-        self: string;
-    };
 }

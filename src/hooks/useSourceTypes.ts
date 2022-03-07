@@ -1,23 +1,25 @@
-import { useState } from 'react';
-import axios, { withAxios } from 'services/axios';
+import { sourcesEndpoint, SourcesResponse } from 'endpoints/sources';
+import { useAsync } from 'hooks/useAsync';
+import { useEffect } from 'react';
 import { BaseHook } from '../types';
 
-interface SourceTypesService extends BaseHook {
-    data: { sourceTypes: any };
-}
+const useSourceTypes = (): BaseHook<SourcesResponse> => {
+    const { data, error, isIdle, isLoading, run } = useAsync<SourcesResponse>();
 
-const useSourceTypes = (): SourceTypesService => {
-    const [sourceTypes, setSourceTypes] = useState<object | null>(null);
-    const [error, setError] = useState<string | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
+    useEffect(() => {
+        run(
+            sourcesEndpoint.read().then((serverResponse) => {
+                return Promise.resolve(serverResponse);
+            })
+        );
+    }, [run]);
 
-    withAxios(axios.get('/sources/all'), setError, setLoading)
-        .then((response: any) => {
-            setSourceTypes(response.data);
-        })
-        .catch(() => {});
-
-    return { data: { sourceTypes }, error, loading };
+    return {
+        data,
+        error,
+        idle: isIdle,
+        loading: isLoading,
+    };
 };
 
 export default useSourceTypes;

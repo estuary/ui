@@ -8,15 +8,11 @@ import {
     TableRow,
     Typography,
 } from '@mui/material';
+import useAccounts from 'hooks/useAccounts';
 import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
-import useAccounts from '../../hooks/useAccounts';
 
 function AccountsTable() {
-    const {
-        data: { accounts },
-        loading,
-        error,
-    } = useAccounts();
+    const { data: accounts, loading, error } = useAccounts();
 
     const intl = useIntl();
 
@@ -43,14 +39,14 @@ function AccountsTable() {
     return (
         <Box>
             <Typography>
-                <FormattedMessage id="terms.connectors" />
+                <FormattedMessage id="terms.accounts" />
             </Typography>
             <TableContainer component={Box}>
                 <Table
                     size="small"
                     sx={{ minWidth: 350 }}
                     aria-label={intl.formatMessage({
-                        id: 'connectors.title',
+                        id: 'accounts.title',
                     })}
                 >
                     <TableHead>
@@ -78,17 +74,13 @@ function AccountsTable() {
                                     <FormattedMessage id="common.loading" />
                                 </TableCell>
                             </TableRow>
-                        ) : null}
-
-                        {error ? (
+                        ) : error ? (
                             <TableRow>
                                 <TableCell colSpan={columns.length}>
                                     {error}
                                 </TableCell>
                             </TableRow>
-                        ) : null}
-
-                        {accounts.length > 0 ? (
+                        ) : accounts && accounts.length > 0 ? (
                             accounts.map((row, index) => (
                                 <TableRow
                                     key={`Account-${row.attributes.name}-${index}`}

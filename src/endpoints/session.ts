@@ -22,8 +22,11 @@ export interface SessionLocalResponse extends BaseResponse {
 
 export const sessionEndpoints = {
     create: (username: SessionLocalRequest['auth_token']) => {
-        return client<SessionLocalResponse>('sessions/local', {
-            data: { auth_token: username },
-        });
+        return client<SessionLocalResponse, SessionLocalRequest>(
+            'sessions/local',
+            {
+                data: { auth_token: username },
+            }
+        );
     },
 };

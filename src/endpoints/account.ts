@@ -2,10 +2,6 @@ import { BaseResponse } from 'types';
 import { client } from './client';
 import { SessionLocalResponse } from './session';
 
-export interface SessionLocalRequest {
-    auth_token: string;
-}
-
 export interface AccountResponse extends BaseResponse {
     data: {
         id: string;
@@ -22,13 +18,6 @@ export interface AccountResponse extends BaseResponse {
         links: {
             self: string;
         };
-    };
-}
-
-export interface AccountsResponse extends BaseResponse {
-    data: AccountResponse['data'][];
-    links: {
-        self: string;
     };
 }
 

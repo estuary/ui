@@ -84,7 +84,8 @@
     "eslintIgnore": [
         "node_modules",
         "build",
-        "*.json"
+        "*.json",
+        ".vscode/**"
     ],
     "jest": {
         "resetMocks": false

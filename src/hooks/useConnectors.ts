@@ -1,42 +1,25 @@
-import { AxiosResponse } from 'axios';
-import { useCallback, useEffect, useState } from 'react';
-import axios, { withAxios } from 'services/axios';
-import { BaseHook, ConnectorsResponse } from 'types';
+import { connectorsEndpoint, ConnectorsResponse } from 'endpoints/connectors';
+import { useAsync } from 'hooks/useAsync';
+import { useEffect } from 'react';
+import { BaseHook } from 'types';
 
-interface ConnectorsService extends BaseHook {
-    data: {
-        connectors: ConnectorsResponse['data'];
-    };
-}
+function useConnectors(): BaseHook<ConnectorsResponse> {
+    console.log('useConnectors ');
 
-const useConnectors = (): Readonly<ConnectorsService> => {
-    const [connectors, setConnectors] = useState<
-        ConnectorsService['data']['connectors']
-    >([]);
-    const [error, setError] = useState<string | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
-
-    const fetchConnectors = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-        withAxios(axios.get('/connectors'), setError, setLoading)
-            .then((response: AxiosResponse<ConnectorsResponse>) => {
-                setConnectors(response.data.data);
-            })
-            .catch(() => {});
-    }, []);
+    const { data, error, isIdle, isLoading, run } =
+        useAsync<ConnectorsResponse>();
 
     useEffect(() => {
-        void (async () => {
-            await fetchConnectors();
-        })();
-    }, [fetchConnectors]);
+        console.log('useConnectors run');
+        run(connectorsEndpoint.read());
+    }, [run]);
 
     return {
-        data: { connectors },
+        data,
         error,
-        loading,
+        idle: isIdle,
+        loading: isLoading,
     };
-};
+}
 
 export default useConnectors;

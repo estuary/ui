@@ -1,42 +1,27 @@
-import axios, { AxiosResponse } from 'axios';
-import { AccountsResponse } from 'endpoints/account';
-import { useCallback, useEffect, useState } from 'react';
-import { withAxios } from '../services/axios';
-import { BaseHook } from '../types';
+import { accountsEndpoint, AccountsResponse } from 'endpoints/accounts';
+import { useAsync } from 'hooks/useAsync';
+import { useEffect } from 'react';
+import { BaseHookNullableData } from 'types';
 
-interface AccountsService extends BaseHook {
-    data: {
-        accounts: AccountsResponse['data'];
-    };
-}
-
-function useAccounts() {
-    const [accounts, setAccounts] = useState<
-        AccountsService['data']['accounts']
-    >([]);
-    const [error, setError] = useState<string | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
-
-    const fetchConnectors = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-        withAxios(axios.get('/accounts'), setError, setLoading)
-            .then((response: AxiosResponse<AccountsResponse>) => {
-                setAccounts(response.data.data);
-            })
-            .catch(() => {});
-    }, []);
+function useAccounts(): BaseHookNullableData<AccountsResponse['data']> {
+    const { data, error, isIdle, isLoading, run } =
+        useAsync<AccountsResponse['data']>();
 
     useEffect(() => {
-        void (async () => {
-            await fetchConnectors();
-        })();
-    }, [fetchConnectors]);
+        run(
+            accountsEndpoint.read().then((serverResponse) => {
+                console.log('User accounts callback');
+
+                return Promise.resolve(serverResponse);
+            })
+        );
+    }, [run]);
 
     return {
-        data: { accounts },
+        data,
         error,
-        loading,
+        idle: isIdle,
+        loading: isLoading,
     };
 }
 

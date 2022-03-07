@@ -11,5 +11,5 @@
     "jest.autoRun": "off",
     "jest.showCoverageOnLoad": false,
     "git.ignoreLimitWarning": true,
-    "typescript.preferences.importModuleSpecifier": "project-relative"
+    "typescript.preferences.importModuleSpecifier": "non-relative"
 }
