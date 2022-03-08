@@ -21,8 +21,7 @@ const PageContainerPropTypes = {
 type PageContainerProp = PropTypes.InferProps<typeof PageContainerPropTypes>;
 
 const selectors = {
-    acknowledgeNotification: (state: NotificationState) =>
-        state.acknowledgeNotification,
+    hideNotification: (state: NotificationState) => state.hideNotification,
     notification: (state: NotificationState) => state.notification,
     updateNotificationHistory: (state: NotificationState) =>
         state.updateNotificationHistory,
@@ -36,9 +35,7 @@ function PageContainer(props: PageContainerProp) {
     const updateNotificationHistory = useNotificationStore(
         selectors.updateNotificationHistory
     );
-    const acknowledgeNotification = useNotificationStore(
-        selectors.acknowledgeNotification
-    );
+    const hideNotification = useNotificationStore(selectors.hideNotification);
 
     const [displayAlert, setDisplayAlert] = useState(true);
 
@@ -55,10 +52,12 @@ function PageContainer(props: PageContainerProp) {
     }, [notification]);
 
     const handlers = {
-        transitionExiting: () => {
+        transitionExited: () => {
+            setDisplayAlert(true);
+
             if (notification) {
                 updateNotificationHistory(notification);
-                acknowledgeNotification();
+                hideNotification();
             }
         },
     };
@@ -76,7 +75,7 @@ function PageContainer(props: PageContainerProp) {
                 <Collapse
                     ref={alertTransitionRef}
                     in={displayAlert}
-                    onExiting={handlers.transitionExiting}
+                    onExited={handlers.transitionExited}
                 >
                     <Alert severity={notification.severity} sx={{ mb: 2 }}>
                         <AlertTitle>{notification.title}</AlertTitle>

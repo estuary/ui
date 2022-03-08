@@ -11,8 +11,8 @@ export interface Notification {
 export interface NotificationState {
     notification: Notification | null;
     notificationHistory: Notification[];
-    acknowledgeNotification: () => void;
     addNotification: (notification: Notification) => void;
+    hideNotification: () => void;
     clearNotificationHistory: () => void;
     updateNotificationHistory: (notification: Notification) => void;
 }
@@ -20,12 +20,6 @@ export interface NotificationState {
 const useNotificationStore = create<NotificationState>(
     devtools(
         (set) => ({
-            acknowledgeNotification: () =>
-                set(
-                    () => ({ notification: null }),
-                    false,
-                    'Notification Acknowledged'
-                ),
             addNotification: (notification) =>
                 set(() => ({ notification }), false, 'Notification Added'),
             clearNotificationHistory: () =>
@@ -33,6 +27,12 @@ const useNotificationStore = create<NotificationState>(
                     () => ({ notificationHistory: [] }),
                     false,
                     'Notification History Cleared'
+                ),
+            hideNotification: () =>
+                set(
+                    () => ({ notification: null }),
+                    false,
+                    'Notification Hidden'
                 ),
             notification: null,
             notificationHistory: [],
