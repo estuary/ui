@@ -4,10 +4,10 @@ export interface ClientConfig<T> extends RequestInit {
     data?: T;
 }
 
-export const client = <Request, Response = {}>(
+export const client = <Response, Request = {}>(
     endpoint: string,
-    { data, ...customConfig }: ClientConfig<Response> = {}
-): Promise<Request> => {
+    { data, ...customConfig }: ClientConfig<Request> = {}
+): Promise<Response> => {
     const config: NonNullable<RequestInit> = {
         body: data ? JSON.stringify(data) : undefined,
         method: data ? 'POST' : 'GET',

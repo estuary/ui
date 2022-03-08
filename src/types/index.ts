@@ -23,8 +23,12 @@ export type BaseError = {
     title: string;
 };
 
+export type BaseLinks = {
+    self: string;
+};
+
 export interface BaseResponse {
     data: BaseData | BaseData[];
     errors?: BaseError[];
-    links: any;
+    links: BaseLinks;
 }

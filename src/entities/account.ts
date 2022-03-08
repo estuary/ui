@@ -22,7 +22,7 @@ export interface AccountResponse extends BaseResponse {
 }
 
 export const accountEndpoint = {
-    read: (endpoint: SessionLocalResponse['links']['account']) => {
+    read: (endpoint: SessionLocalResponse['data']['links']['account']) => {
         return client<AccountResponse>(endpoint);
     },
 };
