@@ -4,6 +4,24 @@ import { auth } from './auth';
 axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL;
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
+axios.interceptors.request.use(
+    (config) => {
+        const authDetails = auth.getAuthDetails();
+
+        if (authDetails) {
+            config.auth = {
+                password: authDetails.session.token,
+                username: authDetails.session.account_id,
+            };
+        }
+
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
 axios.interceptors.response.use(
     (response) => {
         return response;

@@ -22,14 +22,7 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
     const intl = useIntl();
     const { state, dispatch, readonly, displayValidation } = props;
 
-    const {
-        data: connectorsData,
-        isError,
-        isIdle,
-        isLoading,
-        isSuccess,
-        error,
-    } = useConnectors();
+    const { data: connectorsData, isError, isSuccess, error } = useConnectors();
 
     const [isPostProcessingDone, setPostProcessingDone] = useState(false);
     const [schema, setSchema] = useState({
@@ -108,7 +101,38 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
             </DialogContentText>
 
             <Stack direction="row" spacing={2}>
-                {isIdle || isLoading ? (
+                {isPostProcessingDone ? (
+                    <JsonForms
+                        schema={schema}
+                        uischema={uiSchema}
+                        data={state.data}
+                        renderers={defaultRenderers}
+                        cells={materialCells}
+                        config={defaultOptions}
+                        readonly={readonly}
+                        validationMode={showValidation(displayValidation)}
+                        onChange={(form) => {
+                            if (state.data.image === form.data.image) {
+                                dispatch({
+                                    payload: form,
+                                    type: ActionType.DETAILS_CHANGED,
+                                });
+                            } else {
+                                dispatch({
+                                    payload: form.data.image as string,
+                                    type: ActionType.CONNECTOR_CHANGED,
+                                });
+                            }
+                        }}
+                    />
+                ) : isError ? (
+                    error
+                ) : schema.properties.image.oneOf.length < 0 ? (
+                    <Alert severity="warning">
+                        <FormattedMessage id="captureCreation.missingConnectors" />
+                        {schema.properties.image.oneOf.length}
+                    </Alert>
+                ) : (
                     <>
                         <Skeleton
                             variant="rectangular"
@@ -121,40 +145,7 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
                             width="50%"
                         />
                     </>
-                ) : isError ? (
-                    error
-                ) : isPostProcessingDone ? (
-                    schema.properties.image.oneOf.length < 0 ? (
-                        <Alert severity="warning">
-                            <FormattedMessage id="captureCreation.missingConnectors" />
-                            {schema.properties.image.oneOf.length}
-                        </Alert>
-                    ) : (
-                        <JsonForms
-                            schema={schema}
-                            uischema={uiSchema}
-                            data={state.data}
-                            renderers={defaultRenderers}
-                            cells={materialCells}
-                            config={defaultOptions}
-                            readonly={readonly}
-                            validationMode={showValidation(displayValidation)}
-                            onChange={(form) => {
-                                if (state.data.image === form.data.image) {
-                                    dispatch({
-                                        payload: form,
-                                        type: ActionType.DETAILS_CHANGED,
-                                    });
-                                } else {
-                                    dispatch({
-                                        payload: form.data.image as string,
-                                        type: ActionType.CONNECTOR_CHANGED,
-                                    });
-                                }
-                            }}
-                        />
-                    )
-                ) : null}
+                )}
             </Stack>
         </>
     );

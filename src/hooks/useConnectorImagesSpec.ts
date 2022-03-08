@@ -1,55 +1,21 @@
-import { type NewCaptureState } from 'components/capture/creation/Reducer';
-import JsonRefs from 'json-refs';
-import { useEffect, useState } from 'react';
-import axios, { withAxios } from 'services/axios';
-import { type BaseHook } from 'types';
+import {
+    ConnectorImagesSpecResponse,
+    connectorsEndpoint,
+} from 'entities/connectors';
+import { useAsync } from 'hooks/useAsync';
+import { useEffect } from 'react';
 
-const useConnectorImageSpec = (
-    specURL: string
-): BaseHook<{
-    specSchema: any;
-    links: Pick<NewCaptureState['links'], 'discovery' | 'documentation'>;
-}> => {
-    const [schema, setSchema] = useState<object>({});
-    const [error, setError] = useState<string | null>(null);
-    const [discovery, setDiscovery] = useState<string>('');
-    const [docs, setDocs] = useState<string>('');
-    const [loading, setLoading] = useState<boolean>(true);
+const useConnectorImageSpec = (specURL: string) => {
+    const response = useAsync<ConnectorImagesSpecResponse>();
+    const { run, setError } = response;
 
     useEffect(() => {
-        if (specURL) {
-            setLoading(true);
-            setError(null);
-            withAxios(axios.get(specURL), setError, setLoading)
-                .then((specResponse: any) => {
-                    const { data } = specResponse.data;
-                    JsonRefs.resolveRefs(data.attributes.endpointSpecSchema)
-                        .then((derefSchema) => {
-                            setSchema(derefSchema.resolved);
-                        })
-                        .catch((resolveRefError) => {
-                            setSchema({});
-                            setError(resolveRefError.message);
-                        });
-
-                    setDiscovery(data.links.discovery);
-                    setDocs(data.attributes.documentationURL);
-                })
-                .catch(() => {});
+        if (specURL.length > 0) {
+            run(connectorsEndpoint.images.spec.read(specURL));
         }
-    }, [specURL]);
+    }, [run, setError, specURL]);
 
-    return {
-        data: {
-            links: {
-                discovery,
-                documentation: docs,
-            },
-            specSchema: schema,
-        },
-        error,
-        loading,
-    };
+    return response;
 };
 
 export default useConnectorImageSpec;

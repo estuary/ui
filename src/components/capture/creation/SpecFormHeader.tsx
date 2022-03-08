@@ -16,7 +16,7 @@ function NewCaptureSpecFormHeader(props: NewCaptureSpecFormHeaderProps) {
     const { data, error } = useConnectorImages(endpoint);
 
     useEffect(() => {
-        if (data?.links) {
+        if (data?.links.spec && data.links.spec.length > 0) {
             dispatch({
                 payload: data.links.spec,
                 type: ActionType.NEW_SPEC_LINK,

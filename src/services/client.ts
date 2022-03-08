@@ -32,15 +32,22 @@ export const client = <Response, Request = {}>(
         ? endpoint
         : `${process.env.REACT_APP_API_BASE_URL}/${endpoint}`;
 
-    return window.fetch(fullEndpoint, config).then(async (response) => {
-        if (response.status === 401) {
-            await auth.signout();
-            return Promise.reject({ message: 'common.loggedOut' });
-        } else if (response.ok) {
-            return response.json();
-        } else {
-            const errorMessage = await response.text();
-            return Promise.reject(new Error(errorMessage));
-        }
-    });
+    const fetchPromise = window
+        .fetch(fullEndpoint, config)
+        .then(async (response) => {
+            if (response.status === 401) {
+                await auth.signout();
+                return Promise.reject({ message: 'common.loggedOut' });
+            } else if (response.ok) {
+                return response.json();
+            } else {
+                const errorMessage = await response.text();
+                return Promise.reject(new Error(errorMessage));
+            }
+        })
+        .catch((error) => {
+            console.log('Failed client call', error);
+        });
+
+    return fetchPromise;
 };

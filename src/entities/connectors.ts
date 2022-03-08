@@ -1,7 +1,6 @@
 import { client } from 'services/client';
 import { BaseResponse } from 'types';
 
-// TODO - this is here as I think eventually we'll have a stand alone Connector
 interface ConnectorResponse {
     id: string;
     type: string;
@@ -53,10 +52,32 @@ export interface ConnectorImagesResponse extends BaseResponse {
     };
 }
 
+export interface ConnectorImagesSpecResponse {
+    data: {
+        attributes: {
+            type: string;
+            documentationURL: string;
+            endpointSpecSchema: any;
+            resourceSpecSchema: any;
+        };
+        links: {
+            connector: string;
+            discovery: string;
+            image: string;
+            self: string;
+        };
+    };
+}
+
 export const connectorsEndpoint = {
     images: {
         read: (endpoint: ConnectorResponse['links']['images']) => {
             return client<ConnectorsResponse>(endpoint);
+        },
+        spec: {
+            read: (endpoint: ConnectorImageResponse['links']['spec']) => {
+                return client<ConnectorImagesSpecResponse>(endpoint);
+            },
         },
     },
     read: () => {
