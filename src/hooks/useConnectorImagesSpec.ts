@@ -1,13 +1,16 @@
-import { connectorsEndpoint } from 'entities/connectors';
+import {
+    ConnectorImagesSpecResponse,
+    connectorsEndpoint,
+} from 'entities/connectors';
 import { useAsync } from 'hooks/useAsync';
 import JsonRefs from 'json-refs';
 import { useEffect } from 'react';
 
 interface Data {
-    endpointSchema: any;
+    endpointSchema: ConnectorImagesSpecResponse['data']['attributes']['endpointSpecSchema'];
     links: {
-        discovery: string;
-        documentation: string;
+        discovery: ConnectorImagesSpecResponse['data']['links']['discovery'];
+        documentation: ConnectorImagesSpecResponse['data']['attributes']['documentationURL'];
     };
 }
 
@@ -25,29 +28,25 @@ const useConnectorImageSpec = (specURL: string) => {
 
     useEffect(() => {
         if (specURL.length > 0) {
-            run(
+            void run(
                 connectorsEndpoint.images.spec
                     .read(specURL)
-                    .then((endpointResponse) => {
+                    .then(async (endpointResponse) => {
                         const { data } = endpointResponse;
-                        return JsonRefs.resolveRefs(
+                        const derefSchema = await JsonRefs.resolveRefs(
                             data.attributes.endpointSpecSchema
-                        )
-                            .then((derefSchema) => {
-                                console.log('blub', derefSchema);
+                        );
 
-                                return Promise.resolve({
-                                    endpointSchema: derefSchema.resolved,
-                                    links: {
-                                        discovery: data.links.discovery,
-                                        documentation:
-                                            data.attributes.documentationURL,
-                                    },
-                                });
-                            })
-                            .catch((resolveRefError: any) => {
-                                return Promise.reject(resolveRefError.message);
+                        return new Promise<Data>((resolve) => {
+                            resolve({
+                                endpointSchema: derefSchema.resolved,
+                                links: {
+                                    discovery: data.links.discovery,
+                                    documentation:
+                                        data.attributes.documentationURL,
+                                },
                             });
+                        });
                     })
             );
         }
