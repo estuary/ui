@@ -1,12 +1,9 @@
-import {
-    ConnectorImageResponse,
-    connectorsEndpoint,
-} from 'endpoints/connectors';
+import { ConnectorImageData, connectorsEndpoint } from 'endpoints/connectors';
 import { useAsync } from 'hooks/useAsync';
 import { useEffect } from 'react';
 
 const useConnectorImages = (imagesURL: string, whichOne: number = 0) => {
-    const response = useAsync<ConnectorImageResponse>();
+    const response = useAsync<ConnectorImageData>();
     const { run } = response;
 
     useEffect(() => {

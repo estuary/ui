@@ -5,17 +5,11 @@ export interface BaseHook<T> {
     data: T;
 }
 
-export interface BaseHookNullableData<T> {
-    isIdle: boolean;
-    isLoading: boolean;
-    error: string | null;
-    data: T | null;
-}
-
 export type BaseData = {
     id: string;
     type: string;
     attributes: any;
+    links?: any;
 };
 
 export type BaseError = {
@@ -23,12 +17,8 @@ export type BaseError = {
     title: string;
 };
 
-export type BaseLinks = {
-    self: string;
-};
-
 export interface BaseResponse {
     data: BaseData | BaseData[];
     errors?: BaseError[];
-    links: BaseLinks;
+    links?: any;
 }

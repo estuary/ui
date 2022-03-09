@@ -1,7 +1,7 @@
 import { client } from 'services/client';
 import { BaseResponse } from 'types';
 
-interface ConnectorResponse {
+interface ConnectorData {
     id: string;
     type: string;
     attributes: {
@@ -20,13 +20,13 @@ interface ConnectorResponse {
 }
 
 export interface ConnectorsResponse extends BaseResponse {
-    data: ConnectorResponse[];
+    data: ConnectorData[];
     links: {
         self: string;
     };
 }
 
-export interface ConnectorImageResponse {
+export interface ConnectorImageData {
     id: string;
     type: string;
     attributes: {
@@ -46,7 +46,7 @@ export interface ConnectorImageResponse {
 }
 
 export interface ConnectorImagesResponse extends BaseResponse {
-    data: ConnectorImageResponse[];
+    data: ConnectorImageData[];
     links: {
         self: string;
     };
@@ -71,11 +71,11 @@ export interface ConnectorImagesSpecResponse {
 
 export const connectorsEndpoint = {
     images: {
-        read: (endpoint: ConnectorResponse['links']['images']) => {
+        read: (endpoint: ConnectorData['links']['images']) => {
             return client<ConnectorsResponse>(endpoint);
         },
         spec: {
-            read: (endpoint: ConnectorImageResponse['links']['spec']) => {
+            read: (endpoint: ConnectorImageData['links']['spec']) => {
                 return client<ConnectorImagesSpecResponse>(endpoint);
             },
         },
