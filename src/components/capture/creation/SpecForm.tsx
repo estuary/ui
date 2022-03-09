@@ -4,9 +4,8 @@ import { JsonForms } from '@jsonforms/react';
 import { Alert, AlertTitle, StyledEngineProvider } from '@mui/material';
 import FormLoading from 'components/shared/FormLoading';
 import useConnectorImageSpec from 'hooks/useConnectorImagesSpec';
-import JsonRefs from 'json-refs';
 import { isEmpty } from 'lodash';
-import { Dispatch, useEffect, useState } from 'react';
+import { Dispatch, useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     defaultOptions,
@@ -30,75 +29,54 @@ const defaultAjv = createAjv({ useDefaults: true });
 function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
     const { state, dispatch, endpoint, readonly, displayValidation } = props;
 
-    const [isPostProcessingDone, setPostProcessingDone] = useState(false);
-    const { isSuccess, error, data } = useConnectorImageSpec(endpoint);
+    const { isIdle, isLoading, isSuccess, error, data } =
+        useConnectorImageSpec(endpoint);
 
     const {
-        links: { discovery },
-        attributes: { documentationURL, endpointSpecSchema },
-    } = data?.data ?? {
-        attributes: {
-            documentationURL: null,
-            endpointSpecSchema: null,
-        },
-        links: {
-            discovery: null,
-        },
-    };
+        links: { discovery, documentation },
+        endpointSchema,
+    } = data;
 
     useEffect(() => {
-        if (discovery) {
-            dispatch({
-                payload: discovery,
-                type: ActionType.NEW_DISCOVERY_LINK,
-            });
-        }
+        dispatch({
+            payload: discovery,
+            type: ActionType.NEW_DISCOVERY_LINK,
+        });
     }, [discovery, dispatch]);
 
     useEffect(() => {
-        if (documentationURL) {
-            dispatch({
-                payload: documentationURL,
-                type: ActionType.NEW_DOCS_LINK,
-            });
-        }
-    }, [documentationURL, dispatch]);
+        dispatch({
+            payload: documentation,
+            type: ActionType.NEW_DOCS_LINK,
+        });
+    }, [documentation, dispatch]);
 
     // This will hydrate the default values for us as we don't want JSONForms to
     //  directly update the state object as it caused issues when switching connectors.
     useEffect(() => {
         if (isSuccess) {
-            if (endpointSpecSchema) {
-                JsonRefs.resolveRefs(endpointSpecSchema)
-                    .then((derefSchema) => {
-                        const hydrateAndValidate = defaultAjv.compile(
-                            derefSchema.resolved
-                        );
-                        const defaultValues = {};
-                        hydrateAndValidate(defaultValues);
+            const hydrateAndValidate = defaultAjv.compile(endpointSchema);
+            const defaultValues = {};
+            hydrateAndValidate(defaultValues);
 
-                        setPostProcessingDone(true);
-                        dispatch({
-                            payload: {
-                                data: defaultValues,
-                            },
-                            type: ActionType.CAPTURE_SPEC_CHANGED,
-                        });
-                    })
-                    .catch((resolveRefError) => {
-                        // setError([
-                        //     {
-                        //         detail: 'Failed to resolve the JSON returned from the server',
-                        //         title: resolveRefError.message,
-                        //     },
-                        // ]);
-                        return Promise.reject(resolveRefError.message);
-                    });
-            }
+            dispatch({
+                payload: {
+                    data: defaultValues,
+                },
+                type: ActionType.CAPTURE_SPEC_CHANGED,
+            });
         }
-    }, [endpointSpecSchema, dispatch, isSuccess, data]);
+    }, [dispatch, endpointSchema, isSuccess]);
 
-    if (!isPostProcessingDone) {
+    const uiSchema = useMemo(() => {
+        if (endpointSchema.type) {
+            return generateCustomUISchema(endpointSchema);
+        } else {
+            return null;
+        }
+    }, [endpointSchema]);
+
+    if (isIdle || isLoading) {
         return <FormLoading />;
     } else if (error) {
         return (
@@ -109,13 +87,11 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
                 {error}
             </Alert>
         );
-    } else if (endpointSpecSchema?.type) {
-        const uiSchema = generateCustomUISchema(endpointSpecSchema);
-
+    } else if (uiSchema) {
         return (
             <StyledEngineProvider injectFirst>
                 <JsonForms
-                    schema={endpointSpecSchema}
+                    schema={endpointSchema}
                     uischema={uiSchema}
                     data={state}
                     renderers={defaultRenderers}

@@ -27,8 +27,8 @@ const useSafeDispatch = (dispatch: any) => {
     );
 };
 
-export interface UseAsyncResponse<T> {
-    data: T | null;
+export interface UseAsyncResponse<T, U> {
+    data: U extends any ? T : T | null;
     error: any;
     isError: boolean;
     isIdle: boolean;
@@ -41,10 +41,14 @@ export interface UseAsyncResponse<T> {
     status: States;
 }
 
-const useAsync = <DataType>(initialState?: any): UseAsyncResponse<DataType> => {
+const useAsync = <DataType>(
+    initialData?: any
+): UseAsyncResponse<DataType, typeof initialData> => {
     const initialStateRef = useRef({
         ...defaultInitialState,
-        ...initialState,
+        ...{
+            data: initialData,
+        },
     });
     const [{ status, data, error }, setState] = useReducer(
         (s: any, a: any) => ({ ...s, ...a }),
@@ -70,17 +74,22 @@ const useAsync = <DataType>(initialState?: any): UseAsyncResponse<DataType> => {
     );
 
     const run = useCallback(
-        (promise) => {
-            if (!promise || !promise.then) {
-                throw new Error(
-                    `The argument passed to useAsync().run must be a promise. Maybe a function that's passed isn't returning anything?`
-                );
-            }
+        (promise: Promise<DataType>, dataProcessor?: any) => {
             safeSetState({ status: States.LOADING });
             return promise.then(
-                (runResponseData: any) => {
-                    setData(runResponseData);
-                    return runResponseData;
+                (runResponse: any) => {
+                    let response;
+
+                    if (dataProcessor) {
+                        dataProcessor(runResponse).then(
+                            (dataProcessorResponse: any) => {
+                                setData(dataProcessorResponse);
+                            }
+                        );
+                    } else {
+                        setData(runResponse);
+                    }
+                    return response;
                 },
                 (runResponseError: any) => {
                     setError(runResponseError);

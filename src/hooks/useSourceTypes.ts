@@ -1,8 +1,8 @@
 import { sourcesEndpoint, SourcesResponse } from 'entities/sources';
-import { useAsync, UseAsyncResponse } from 'hooks/useAsync';
+import { useAsync } from 'hooks/useAsync';
 import { useEffect } from 'react';
 
-const useSourceTypes = (): UseAsyncResponse<SourcesResponse> => {
+const useSourceTypes = () => {
     const response = useAsync<SourcesResponse>();
     const { run } = response;
 
