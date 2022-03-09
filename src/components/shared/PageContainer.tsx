@@ -1,13 +1,6 @@
-import {
-    Alert,
-    AlertTitle,
-    Collapse,
-    Container,
-    Paper,
-    Toolbar,
-} from '@mui/material';
+import { Alert, Container, Paper, Snackbar, Toolbar } from '@mui/material';
 import PropTypes from 'prop-types';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import useNotificationStore, {
     NotificationState,
 } from 'stores/NotificationStore';
@@ -28,8 +21,6 @@ const selectors = {
 };
 
 function PageContainer(props: PageContainerProp) {
-    const alertTransitionRef = useRef<any>(null);
-
     const notification = useNotificationStore(selectors.notification);
 
     const updateNotificationHistory = useNotificationStore(
@@ -37,27 +28,15 @@ function PageContainer(props: PageContainerProp) {
     );
     const hideNotification = useNotificationStore(selectors.hideNotification);
 
-    const [displayAlert, setDisplayAlert] = useState(true);
+    const [displayAlert, setDisplayAlert] = useState(false);
 
     const { children } = props;
 
-    useEffect(() => {
-        if (notification) {
-            setTimeout(() => {
-                if (alertTransitionRef.current) {
-                    setDisplayAlert(false);
-                }
-            }, 10000);
-        }
-    }, [notification]);
+    useEffect(() => setDisplayAlert(!!notification), [notification]);
 
     const handlers = {
-        transitionExited: () => {
+        notificationClose: () => {
             if (notification) {
-                if (alertTransitionRef.current) {
-                    setDisplayAlert(true);
-                }
-
                 updateNotificationHistory(notification);
                 hideNotification();
             }
@@ -74,16 +53,15 @@ function PageContainer(props: PageContainerProp) {
             <Toolbar />
 
             {notification ? (
-                <Collapse
-                    ref={alertTransitionRef}
-                    in={displayAlert}
-                    onExited={handlers.transitionExited}
+                <Snackbar
+                    open={displayAlert}
+                    autoHideDuration={5000}
+                    onClose={handlers.notificationClose}
                 >
-                    <Alert severity={notification.severity} sx={{ mb: 2 }}>
-                        <AlertTitle>{notification.title}</AlertTitle>
-                        {notification.description}
+                    <Alert severity={notification.severity} variant="filled">
+                        {`${notification.title}. ${notification.description}`}
                     </Alert>
-                </Collapse>
+                </Snackbar>
             ) : null}
 
             <Paper sx={{ width: '100%' }} variant="outlined">
