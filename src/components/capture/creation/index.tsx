@@ -58,8 +58,6 @@ function NewCaptureModal() {
     const [state, dispatch] = useReducer(newCaptureReducer, getInitialState());
     const { details, spec, links } = state;
 
-    console.log('spec', spec);
-
     // Form props
     const [showValidation, setShowValidation] = useState(false);
     const [formSubmitting, setFormSubmitting] = useState(false);

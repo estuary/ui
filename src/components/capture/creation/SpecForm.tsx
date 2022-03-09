@@ -5,7 +5,7 @@ import { Alert, AlertTitle, StyledEngineProvider } from '@mui/material';
 import FormLoading from 'components/shared/FormLoading';
 import useConnectorImageSpec from 'hooks/useConnectorImagesSpec';
 import { isEmpty } from 'lodash';
-import { Dispatch, useEffect, useMemo } from 'react';
+import { Dispatch, useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     defaultOptions,
@@ -38,17 +38,21 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
     } = data;
 
     useEffect(() => {
-        dispatch({
-            payload: discovery,
-            type: ActionType.NEW_DISCOVERY_LINK,
-        });
+        if (discovery.length > 0) {
+            dispatch({
+                payload: discovery,
+                type: ActionType.NEW_DISCOVERY_LINK,
+            });
+        }
     }, [discovery, dispatch]);
 
     useEffect(() => {
-        dispatch({
-            payload: documentation,
-            type: ActionType.NEW_DOCS_LINK,
-        });
+        if (documentation.length > 0) {
+            dispatch({
+                payload: documentation,
+                type: ActionType.NEW_DOCS_LINK,
+            });
+        }
     }, [documentation, dispatch]);
 
     // This will hydrate the default values for us as we don't want JSONForms to
@@ -68,14 +72,6 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
         }
     }, [dispatch, endpointSchema, isSuccess]);
 
-    const uiSchema = useMemo(() => {
-        if (endpointSchema.type) {
-            return generateCustomUISchema(endpointSchema);
-        } else {
-            return null;
-        }
-    }, [endpointSchema]);
-
     if (isIdle || isLoading) {
         return <FormLoading />;
     } else if (error) {
@@ -87,7 +83,20 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
                 {error}
             </Alert>
         );
-    } else if (uiSchema) {
+    } else if (endpointSchema.type) {
+        const uiSchema = generateCustomUISchema(endpointSchema);
+        const showValidationVal = showValidation(displayValidation);
+        const handlers = {
+            onChange: (form: any) => {
+                if (!isEmpty(form.data)) {
+                    dispatch({
+                        payload: form,
+                        type: ActionType.CAPTURE_SPEC_CHANGED,
+                    });
+                }
+            },
+        };
+
         return (
             <StyledEngineProvider injectFirst>
                 <JsonForms
@@ -98,20 +107,13 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
                     cells={materialCells}
                     config={defaultOptions}
                     readonly={readonly}
-                    validationMode={showValidation(displayValidation)}
-                    onChange={(form) => {
-                        if (!isEmpty(form.data)) {
-                            dispatch({
-                                payload: form,
-                                type: ActionType.CAPTURE_SPEC_CHANGED,
-                            });
-                        }
-                    }}
+                    validationMode={showValidationVal}
+                    onChange={handlers.onChange}
                 />
             </StyledEngineProvider>
         );
     } else {
-        return <>uh oh!</>;
+        return null;
     }
 }
 
