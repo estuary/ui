@@ -42,7 +42,7 @@ export const AuthProvider = (props: any) => {
         setData,
         setError,
         status,
-    } = useAsync();
+    } = useAsync<string | null>();
 
     React.useEffect(() => {
         const appDataPromise = bootstrapUser();

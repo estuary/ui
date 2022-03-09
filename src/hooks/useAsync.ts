@@ -35,10 +35,7 @@ export interface UseAsyncResponse<T, U> {
     isLoading: boolean;
     isSuccess: boolean;
     reset: () => any;
-    run: (
-        promise: Promise<T | any>,
-        dataFetcher?: Function | undefined
-    ) => Promise<T>;
+    run: (promise: Promise<any>, dataFetcher?: Function | undefined) => any;
     setData: (setDataResponse: T) => void;
     setError: (setErrorResponse: any) => any;
     status: States;
