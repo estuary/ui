@@ -3,7 +3,7 @@ import PageContainer from 'components/shared/PageContainer';
 import { FormattedMessage } from 'react-intl';
 import ChangeSetTable from '../components/tables/ChangeSet';
 
-const ChangeSet = () => {
+const Builds = () => {
     return (
         <PageContainer>
             <Toolbar sx={{ justifyContent: 'space-between' }}>
@@ -33,4 +33,4 @@ const ChangeSet = () => {
     );
 };
 
-export default ChangeSet;
+export default Builds;
