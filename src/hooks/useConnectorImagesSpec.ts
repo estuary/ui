@@ -22,32 +22,35 @@ const defaultData: Data = {
     },
 };
 
+const generateResponse = async (
+    endpointResponse: ConnectorImagesSpecResponse
+) => {
+    const { data } = endpointResponse;
+    const derefSchema = await JsonRefs.resolveRefs(
+        data.attributes.endpointSpecSchema
+    );
+
+    return new Promise<Data>((resolve) => {
+        resolve({
+            endpointSchema: derefSchema.resolved,
+            links: {
+                discovery: data.links.discovery,
+                documentation: data.attributes.documentationURL,
+            },
+        });
+    });
+};
+
 const useConnectorImageSpec = (specURL: string) => {
     const response = useAsync<Data>(defaultData);
     const { run, setError } = response;
 
     useEffect(() => {
         if (specURL.length > 0) {
-            void run(
+            run(
                 connectorsEndpoint.images.spec
                     .read(specURL)
-                    .then(async (endpointResponse) => {
-                        const { data } = endpointResponse;
-                        const derefSchema = await JsonRefs.resolveRefs(
-                            data.attributes.endpointSpecSchema
-                        );
-
-                        return new Promise<Data>((resolve) => {
-                            resolve({
-                                endpointSchema: derefSchema.resolved,
-                                links: {
-                                    discovery: data.links.discovery,
-                                    documentation:
-                                        data.attributes.documentationURL,
-                                },
-                            });
-                        });
-                    })
+                    .then(generateResponse)
             );
         }
     }, [run, setError, specURL]);
