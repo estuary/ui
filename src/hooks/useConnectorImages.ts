@@ -1,7 +1,7 @@
 import {
     ConnectorImageResponse,
     connectorsEndpoint,
-} from 'entities/connectors';
+} from 'endpoints/connectors';
 import { useAsync } from 'hooks/useAsync';
 import { useEffect } from 'react';
 

@@ -1,4 +1,4 @@
-import { accountsEndpoint, AccountsResponse } from 'entities/accounts';
+import { accountsEndpoint, AccountsResponse } from 'endpoints/accounts';
 import { useAsync } from 'hooks/useAsync';
 import { useEffect } from 'react';
 

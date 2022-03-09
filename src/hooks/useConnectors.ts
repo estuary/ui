@@ -1,4 +1,4 @@
-import { connectorsEndpoint, ConnectorsResponse } from 'entities/connectors';
+import { connectorsEndpoint, ConnectorsResponse } from 'endpoints/connectors';
 import { useAsync } from 'hooks/useAsync';
 import { useEffect } from 'react';
 

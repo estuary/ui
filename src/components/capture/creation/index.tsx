@@ -15,10 +15,10 @@ import {
     useTheme,
 } from '@mui/material';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
+import { discoveryEndpoint } from 'endpoints/discovery';
 import { MouseEvent, useReducer, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
-import axiosInstance from 'services/axios';
 import useChangeSetStore, { CaptureState, Entity } from 'stores/ChangeSetStore';
 import useSchemaEditorStore, {
     SchemaEditorState,
@@ -67,7 +67,7 @@ function NewCaptureModal() {
         message: string;
         errors: any[];
     } | null>(null);
-    const [catalogResponse, setCatalogResponse] = useState(null);
+    const [catalogResponse, setCatalogResponse] = useState<object | null>(null);
     const [activeStep, setActiveStep] = useState<Steps>(Steps.DETAILS_AND_SPEC);
 
     // Form Event Handlers
@@ -127,10 +127,11 @@ function NewCaptureModal() {
                 setFormSubmitting(true);
                 setFormSubmitError(null);
                 setActiveStep(Steps.WAITING_FOR_DISCOVER);
-                axiosInstance
-                    .post(links.discovery, spec.data)
+
+                discoveryEndpoint
+                    .create(links.discovery, spec.data)
                     .then((response) => {
-                        setCatalogResponse(response.data.data.attributes);
+                        setCatalogResponse(response.data.attributes);
                         setActiveStep(Steps.REVIEW_SCHEMA_IN_EDITOR);
                     })
                     .catch((error) => {

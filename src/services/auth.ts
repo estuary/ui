@@ -1,5 +1,5 @@
-import { accountEndpoint, AccountResponse } from 'entities/account';
-import { sessionEndpoints, type SessionLocalResponse } from 'entities/session';
+import { accountEndpoint, AccountResponse } from 'endpoints/account';
+import { sessionEndpoints, type SessionLocalResponse } from 'endpoints/session';
 
 export interface AuthDetails {
     session: SessionLocalResponse['data']['attributes'];

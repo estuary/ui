@@ -1,7 +1,7 @@
 import {
     ConnectorImagesSpecResponse,
     connectorsEndpoint,
-} from 'entities/connectors';
+} from 'endpoints/connectors';
 import { useAsync } from 'hooks/useAsync';
 import JsonRefs from 'json-refs';
 import { useEffect } from 'react';

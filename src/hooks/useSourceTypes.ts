@@ -1,4 +1,4 @@
-import { sourcesEndpoint, SourcesResponse } from 'entities/sources';
+import { sourcesEndpoint, SourcesResponse } from 'endpoints/sources';
 import { useAsync } from 'hooks/useAsync';
 import { useEffect } from 'react';
 
