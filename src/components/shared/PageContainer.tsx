@@ -53,9 +53,11 @@ function PageContainer(props: PageContainerProp) {
 
     const handlers = {
         transitionExited: () => {
-            setDisplayAlert(true);
-
             if (notification) {
+                if (alertTransitionRef.current) {
+                    setDisplayAlert(true);
+                }
+
                 updateNotificationHistory(notification);
                 hideNotification();
             }
