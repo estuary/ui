@@ -4,7 +4,7 @@ import { Suspense, useState } from 'react';
 import { Outlet } from 'react-router';
 import Navigation from './components/navigation/Navigation';
 
-enum Widths {
+export enum Widths {
     RAIL = 63,
     FULL = 225,
 }

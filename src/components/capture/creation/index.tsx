@@ -20,6 +20,10 @@ import { MouseEvent, useReducer, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import useChangeSetStore, { CaptureState, Entity } from 'stores/ChangeSetStore';
+import useNotificationStore, {
+    Notification,
+    NotificationState,
+} from 'stores/NotificationStore';
 import useSchemaEditorStore, {
     SchemaEditorState,
 } from 'stores/SchemaEditorStore';
@@ -37,10 +41,12 @@ enum Steps {
     REVIEW_SCHEMA_IN_EDITOR = 'Allow custom to edit YAML',
 }
 
-const schemaSelector = (state: SchemaEditorState) => state.schema;
-const removeSchemaSelector = (state: SchemaEditorState) => state.removeSchema;
-
-const addCaptureSelector = (state: CaptureState) => state.addCapture;
+const selectors = {
+    addCapture: (state: CaptureState) => state.addCapture,
+    removeSchema: (state: SchemaEditorState) => state.removeSchema,
+    schema: (state: SchemaEditorState) => state.schema,
+    showNotification: (state: NotificationState) => state.showNotification,
+};
 
 function NewCaptureModal() {
     const theme = useTheme();
@@ -48,11 +54,14 @@ function NewCaptureModal() {
     const navigate = useNavigate();
 
     // Schema editor store
-    const schemaFromEditor = useSchemaEditorStore(schemaSelector);
-    const removeSchema = useSchemaEditorStore(removeSchemaSelector);
+    const schemaFromEditor = useSchemaEditorStore(selectors.schema);
+    const removeSchema = useSchemaEditorStore(selectors.removeSchema);
 
     // Change set store
-    const addCaptureToChangeSet = useChangeSetStore(addCaptureSelector);
+    const addCaptureToChangeSet = useChangeSetStore(selectors.addCapture);
+
+    // Notification store
+    const showNotification = useNotificationStore(selectors.showNotification);
 
     // Form data state
     const [state, dispatch] = useReducer(newCaptureReducer, getInitialState());
@@ -90,7 +99,14 @@ function NewCaptureModal() {
                 schema: schemaFromEditor || catalogResponse,
             };
 
+            const notification: Notification = {
+                description: 'Your changes can be viewed on the Builds page.',
+                severity: 'success',
+                title: 'New Capture Created',
+            };
+
             addCaptureToChangeSet(catalogNamespace, capture);
+            showNotification(notification);
 
             setFormSubmitting(true);
 
