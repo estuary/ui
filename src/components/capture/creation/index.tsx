@@ -43,9 +43,9 @@ enum Steps {
 
 const selectors = {
     addCapture: (state: CaptureState) => state.addCapture,
-    addNotification: (state: NotificationState) => state.addNotification,
     removeSchema: (state: SchemaEditorState) => state.removeSchema,
     schema: (state: SchemaEditorState) => state.schema,
+    showNotification: (state: NotificationState) => state.showNotification,
 };
 
 function NewCaptureModal() {
@@ -61,7 +61,7 @@ function NewCaptureModal() {
     const addCaptureToChangeSet = useChangeSetStore(selectors.addCapture);
 
     // Notification store
-    const addNotification = useNotificationStore(selectors.addNotification);
+    const showNotification = useNotificationStore(selectors.showNotification);
 
     // Form data state
     const [state, dispatch] = useReducer(newCaptureReducer, getInitialState());
@@ -106,7 +106,7 @@ function NewCaptureModal() {
             };
 
             addCaptureToChangeSet(catalogNamespace, capture);
-            addNotification(notification);
+            showNotification(notification);
 
             setFormSubmitting(true);
 
