@@ -1,5 +1,5 @@
 import CodeIcon from '@mui/icons-material/Code';
-import CompareArrows from '@mui/icons-material/CompareArrows';
+import Construction from '@mui/icons-material/Construction';
 import ExploreIcon from '@mui/icons-material/Explore';
 import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
 //TODO - These icons are not final
@@ -89,10 +89,10 @@ const Navigation = (props: PropTypes.InferProps<typeof NavigationProps>) => {
                         disabled={true}
                     />
                     <ListItemLink
-                        icon={<CompareArrows />}
-                        title="Change Set"
-                        link="/app/change-set"
-                        key="ChangeSet"
+                        icon={<Construction />}
+                        title="Builds"
+                        link="/app/builds"
+                        key="Builds"
                         menuWidth={width}
                         badgeContent={newChangeCount}
                     />

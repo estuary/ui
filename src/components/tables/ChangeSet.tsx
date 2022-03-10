@@ -69,10 +69,6 @@ function ChangeSetTable() {
             headerIntlKey: 'changeSet.data.entity',
         },
         {
-            field: 'user',
-            headerIntlKey: 'changeSet.data.user',
-        },
-        {
             field: 'changeType',
             headerIntlKey: 'changeSet.data.details',
         },
@@ -120,7 +116,6 @@ function ChangeSetTable() {
                                             name,
                                             entityType,
                                             catalogNamespace,
-                                            user,
                                             changeType,
                                         },
                                         index
@@ -146,7 +141,6 @@ function ChangeSetTable() {
                                                 </Tooltip>
                                                 <span>{name}</span>
                                             </TableCell>
-                                            <TableCell>{user}</TableCell>
                                             <TableCell>{changeType}</TableCell>
                                         </TableRow>
                                     )

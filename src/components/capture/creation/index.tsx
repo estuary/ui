@@ -84,7 +84,6 @@ function NewCaptureModal() {
 
             const catalogNamespace: string = details.data.name;
 
-            // TODO: Get user identifier from authentication-related application state.
             const capture: Entity = {
                 metadata: {
                     catalogNamespace,
@@ -94,7 +93,6 @@ function NewCaptureModal() {
                         catalogNamespace.lastIndexOf('/') + 1,
                         catalogNamespace.length
                     ),
-                    user: 'temp@gmail.com',
                 },
                 schema: schemaFromEditor || catalogResponse,
             };
