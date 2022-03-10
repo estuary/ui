@@ -58,7 +58,7 @@ function ChangeSetTable() {
             headerIntlKey: 'changeSet.data.entity',
         },
         {
-            field: 'dateUpdated',
+            field: 'dateCreated',
             headerIntlKey: 'changeSet.data.lastUpdated',
         },
         {
@@ -122,7 +122,7 @@ function ChangeSetTable() {
                                             name,
                                             entityType,
                                             catalogNamespace,
-                                            dateUpdated,
+                                            dateCreated: dateUpdated,
                                             changeType,
                                         },
                                         index

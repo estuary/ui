@@ -8,7 +8,7 @@ export interface EntityMetadata {
     entityType: EntityType;
     name: string;
     catalogNamespace: string;
-    dateUpdated: string;
+    dateCreated: string;
     changeType: ChangeType;
 }
 
@@ -23,8 +23,8 @@ interface EntityDictionary<T = any> {
 
 // TODO: Create a distinct capture state slice that is spread into the change set store.
 export interface CaptureState<T = any> {
-    addCapture: (key: string, newCapture: Entity<T>) => void;
     captures: EntityDictionary;
+    addCapture: (key: string, newCapture: Entity<T>) => void;
     // TODO: Move the following properties into the overarching state.
     newChangeCount: number;
     resetNewChangeCount: () => void;
