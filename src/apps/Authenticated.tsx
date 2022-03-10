@@ -17,7 +17,7 @@ const NewMaterialization = lazy(
 
 const Collections = lazy(() => import('../pages/Collections'));
 
-const ChangeSet = lazy(() => import('../pages/ChangeSet'));
+const Builds = lazy(() => import('../pages/Builds'));
 
 const Users = lazy(() => import('../pages/Users'));
 
@@ -47,7 +47,7 @@ const Authenticated = () => {
                                 element={<NewMaterialization />}
                             />
                         </Route>
-                        <Route path="change-set" element={<ChangeSet />} />
+                        <Route path="builds" element={<Builds />} />
                         <Route path="admin/*" element={<Admin />}>
                             <Route path="logs" element={<Logs />} />
                             <Route path="alerts" element={<Alerts />} />

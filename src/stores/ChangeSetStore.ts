@@ -9,7 +9,6 @@ export interface EntityMetadata {
     entityType: EntityType;
     name: string;
     catalogNamespace: string;
-    user: string;
 }
 
 export interface Entity<T = any> {
