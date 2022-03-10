@@ -29,45 +29,50 @@ const defaultAjv = createAjv({ useDefaults: true });
 function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
     const { state, dispatch, endpoint, readonly, displayValidation } = props;
 
+    const { isIdle, isLoading, isSuccess, error, data } =
+        useConnectorImageSpec(endpoint);
+
     const {
-        loading,
-        error,
-        data: {
-            specSchema,
-            links: { discovery, documentation },
-        },
-    } = useConnectorImageSpec(endpoint);
+        links: { discovery, documentation },
+        endpointSchema,
+    } = data;
 
     useEffect(() => {
-        dispatch({
-            payload: discovery,
-            type: ActionType.NEW_DISCOVERY_LINK,
-        });
+        if (discovery.length > 0) {
+            dispatch({
+                payload: discovery,
+                type: ActionType.NEW_DISCOVERY_LINK,
+            });
+        }
     }, [discovery, dispatch]);
 
     useEffect(() => {
-        dispatch({
-            payload: documentation,
-            type: ActionType.NEW_DOCS_LINK,
-        });
+        if (documentation.length > 0) {
+            dispatch({
+                payload: documentation,
+                type: ActionType.NEW_DOCS_LINK,
+            });
+        }
     }, [documentation, dispatch]);
 
     // This will hydrate the default values for us as we don't want JSONForms to
     //  directly update the state object as it caused issues when switching connectors.
     useEffect(() => {
-        const hydrateAndValidate = defaultAjv.compile(specSchema);
-        const defaultValues = {};
-        hydrateAndValidate(defaultValues);
+        if (isSuccess) {
+            const hydrateAndValidate = defaultAjv.compile(endpointSchema);
+            const defaultValues = {};
+            hydrateAndValidate(defaultValues);
 
-        dispatch({
-            payload: {
-                data: defaultValues,
-            },
-            type: ActionType.CAPTURE_SPEC_CHANGED,
-        });
-    }, [specSchema, dispatch]);
+            dispatch({
+                payload: {
+                    data: defaultValues,
+                },
+                type: ActionType.CAPTURE_SPEC_CHANGED,
+            });
+        }
+    }, [dispatch, endpointSchema, isSuccess]);
 
-    if (loading) {
+    if (isIdle || isLoading) {
         return <FormLoading />;
     } else if (error) {
         return (
@@ -78,28 +83,32 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
                 {error}
             </Alert>
         );
-    } else if (specSchema.type) {
-        const uiSchema = generateCustomUISchema(specSchema);
+    } else if (endpointSchema.type) {
+        const uiSchema = generateCustomUISchema(endpointSchema);
+        const showValidationVal = showValidation(displayValidation);
+        const handlers = {
+            onChange: (form: any) => {
+                if (!isEmpty(form.data)) {
+                    dispatch({
+                        payload: form,
+                        type: ActionType.CAPTURE_SPEC_CHANGED,
+                    });
+                }
+            },
+        };
 
         return (
             <StyledEngineProvider injectFirst>
                 <JsonForms
-                    schema={specSchema}
+                    schema={endpointSchema}
                     uischema={uiSchema}
                     data={state}
                     renderers={defaultRenderers}
                     cells={materialCells}
                     config={defaultOptions}
                     readonly={readonly}
-                    validationMode={showValidation(displayValidation)}
-                    onChange={(form) => {
-                        if (!isEmpty(form.data)) {
-                            dispatch({
-                                payload: form,
-                                type: ActionType.CAPTURE_SPEC_CHANGED,
-                            });
-                        }
-                    }}
+                    validationMode={showValidationVal}
+                    onChange={handlers.onChange}
                 />
             </StyledEngineProvider>
         );

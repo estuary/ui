@@ -1,42 +1,16 @@
-import axios, { AxiosResponse } from 'axios';
-import { useCallback, useEffect, useState } from 'react';
-import { withAxios } from '../services/axios';
-import { AccountsResponse, BaseHook } from '../types';
-
-interface AccountsService extends BaseHook {
-    data: {
-        accounts: AccountsResponse['data'];
-    };
-}
+import { accountsEndpoint, AccountsResponse } from 'endpoints/accounts';
+import { useAsync } from 'hooks/useAsync';
+import { useEffect } from 'react';
 
 function useAccounts() {
-    const [accounts, setAccounts] = useState<
-        AccountsService['data']['accounts']
-    >([]);
-    const [error, setError] = useState<string | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
-
-    const fetchConnectors = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-        withAxios(axios.get('/accounts'), setError, setLoading)
-            .then((response: AxiosResponse<AccountsResponse>) => {
-                setAccounts(response.data.data);
-            })
-            .catch(() => {});
-    }, []);
+    const response = useAsync<AccountsResponse>();
+    const { run } = response;
 
     useEffect(() => {
-        void (async () => {
-            await fetchConnectors();
-        })();
-    }, [fetchConnectors]);
+        run(accountsEndpoint.read());
+    }, [run]);
 
-    return {
-        data: { accounts },
-        error,
-        loading,
-    };
+    return response;
 }
 
 export default useAccounts;

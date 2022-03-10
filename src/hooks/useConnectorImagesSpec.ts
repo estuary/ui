@@ -1,57 +1,61 @@
-import { type NewCaptureState } from 'components/capture/creation/Reducer';
+import {
+    ConnectorImagesSpecResponse,
+    connectorsEndpoint,
+} from 'endpoints/connectors';
+import { useAsync } from 'hooks/useAsync';
 import JsonRefs from 'json-refs';
-import { useEffect, useState } from 'react';
-import axios, { withAxios } from 'services/axios';
-import { type BaseHook } from 'types';
+import { useEffect } from 'react';
 
-interface ConnectorImagesService extends BaseHook {
-    data: {
-        specSchema: any;
-        links: Pick<NewCaptureState['links'], 'discovery' | 'documentation'>;
+interface Data {
+    endpointSchema: ConnectorImagesSpecResponse['data']['attributes']['endpointSpecSchema'];
+    links: {
+        discovery: ConnectorImagesSpecResponse['data']['links']['discovery'];
+        documentation: ConnectorImagesSpecResponse['data']['attributes']['documentationURL'];
     };
 }
 
-const useConnectorImageSpec = (specURL: string): ConnectorImagesService => {
-    const [schema, setSchema] = useState<object>({});
-    const [error, setError] = useState<string | null>(null);
-    const [discovery, setDiscovery] = useState<string>('');
-    const [docs, setDocs] = useState<string>('');
-    const [loading, setLoading] = useState<boolean>(true);
+const defaultData: Data = {
+    endpointSchema: {},
+    links: {
+        discovery: '',
+        documentation: '',
+    },
+};
+
+const generateResponse = async (
+    endpointResponse: ConnectorImagesSpecResponse
+) => {
+    const { data } = endpointResponse;
+    const derefSchema = await JsonRefs.resolveRefs(
+        data.attributes.endpointSpecSchema
+    );
+
+    return new Promise<Data>((resolve) => {
+        resolve({
+            endpointSchema: derefSchema.resolved,
+            links: {
+                discovery: data.links.discovery,
+                documentation: data.attributes.documentationURL,
+            },
+        });
+    });
+};
+
+const useConnectorImageSpec = (specURL: string) => {
+    const response = useAsync<Data>(defaultData);
+    const { run, setError } = response;
 
     useEffect(() => {
-        if (specURL) {
-            setLoading(true);
-            setError(null);
-            withAxios(axios.get(specURL), setError, setLoading)
-                .then((specResponse: any) => {
-                    const { data } = specResponse.data;
-                    JsonRefs.resolveRefs(data.attributes.endpointSpecSchema)
-                        .then((derefSchema) => {
-                            setSchema(derefSchema.resolved);
-                        })
-                        .catch((resolveRefError) => {
-                            setSchema({});
-                            setError(resolveRefError.message);
-                        });
-
-                    setDiscovery(data.links.discovery);
-                    setDocs(data.attributes.documentationURL);
-                })
-                .catch(() => {});
+        if (specURL.length > 0) {
+            run(
+                connectorsEndpoint.images.spec
+                    .read(specURL)
+                    .then(generateResponse)
+            );
         }
-    }, [specURL]);
+    }, [run, setError, specURL]);
 
-    return {
-        data: {
-            links: {
-                discovery,
-                documentation: docs,
-            },
-            specSchema: schema,
-        },
-        error,
-        loading,
-    };
+    return response;
 };
 
 export default useConnectorImageSpec;

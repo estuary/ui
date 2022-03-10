@@ -1,13 +1,15 @@
-export interface BaseHook {
+export interface BaseHook<T> {
+    idle?: boolean;
     loading: boolean;
     error: string | null;
-    data: any;
+    data: T;
 }
 
 export type BaseData = {
     id: string;
     type: string;
     attributes: any;
+    links?: any;
 };
 
 export type BaseError = {
@@ -18,69 +20,5 @@ export type BaseError = {
 export interface BaseResponse {
     data: BaseData | BaseData[];
     errors?: BaseError[];
-    links: any;
-}
-
-export interface ConnectorsResponse extends BaseResponse {
-    data: {
-        id: string;
-        type: string;
-        attributes: {
-            created_at: string;
-            description: string;
-            id: string;
-            name: string;
-            maintainer: string;
-            type: string;
-            updated_at: string;
-        };
-        links: {
-            images: string;
-            self: string;
-        };
-    }[];
-    links: {
-        self: string;
-    };
-}
-
-export interface AuthLocalResponse extends BaseResponse {
-    data: {
-        id: string;
-        type: string;
-        attributes: {
-            account_id: string;
-            expires_at: string;
-            token: string;
-        };
-        links: {
-            account: string;
-        };
-    };
-}
-
-export interface AccountResponse extends BaseResponse {
-    data: {
-        id: string;
-        type: string;
-        attributes: {
-            created_at: string;
-            display_name: string;
-            email: string;
-            id: string;
-            name: string;
-            norm_name: string;
-            updated_at: string;
-        };
-        links: {
-            self: string;
-        };
-    };
-}
-
-export interface AccountsResponse extends BaseResponse {
-    data: AccountResponse['data'][];
-    links: {
-        self: string;
-    };
+    links?: any;
 }

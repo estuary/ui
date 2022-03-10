@@ -27,7 +27,7 @@ const loginAsUser = (username: string) => {
             email: `${username}@${username}`,
             id: '',
             name: username,
-            norm_name: username,
+            unique_name: username,
             updated_at: '',
         },
     };

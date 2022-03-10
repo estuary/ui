@@ -1,9 +1,8 @@
-import { AxiosResponse } from 'axios';
-import { AccountResponse, AuthLocalResponse } from '../types';
-import axios from './axios';
+import { accountEndpoint, AccountResponse } from 'endpoints/account';
+import { sessionEndpoints, type SessionLocalResponse } from 'endpoints/session';
 
 export interface AuthDetails {
-    session: AuthLocalResponse['data']['attributes'];
+    session: SessionLocalResponse['data']['attributes'];
     user?: AccountResponse['data']['attributes'];
 }
 
@@ -13,11 +12,11 @@ export const userStorageKey = '__auth_user__';
 export const auth = {
     getAccountDetails(path: string) {
         return new Promise<AccountResponse['data']['attributes']>(
-            (resolve: any, reject: any) => {
-                return axios
-                    .get(path)
-                    .then((response: AxiosResponse<AccountResponse>) => {
-                        resolve(response.data.data.attributes);
+            (resolve, reject) => {
+                return accountEndpoint
+                    .read(path)
+                    .then((response) => {
+                        resolve(response.data.attributes);
                     })
                     .catch((error) => {
                         reject(error);
@@ -41,6 +40,20 @@ export const auth = {
 
         return response;
     },
+    getAuthHeader() {
+        const authDetails = auth.getAuthDetails();
+        let response;
+
+        if (authDetails?.session) {
+            const token = window.btoa(
+                `${authDetails.session.account_id}:${authDetails.session.token}`
+            );
+
+            response = `Basic ${token}`;
+        }
+
+        return response;
+    },
     removeAuthDetails() {
         window.localStorage.removeItem(sessionStorageKey);
         window.localStorage.removeItem(userStorageKey);
@@ -53,21 +66,13 @@ export const auth = {
     },
     signin(username: string) {
         return new Promise<
-            AxiosResponse<
-                AccountResponse['data']['attributes']['display_name'],
-                any
-            >
-        >((resolve: any, reject: any) => {
-            return axios
-                .post('/sessions/local', {
-                    auth_token: username,
-                })
-                .then((sessionResponse: AxiosResponse<AuthLocalResponse>) => {
-                    auth.saveSession(sessionResponse.data.data.attributes);
-
-                    auth.getAccountDetails(
-                        sessionResponse.data.data.links.account
-                    )
+            AccountResponse['data']['attributes']['display_name']
+        >((resolve, reject) => {
+            return sessionEndpoints
+                .create(username)
+                .then((sessionResponse) => {
+                    auth.saveSession(sessionResponse.data.attributes);
+                    auth.getAccountDetails(sessionResponse.data.links.account)
                         .then((accountDetails) => {
                             auth.saveUser(accountDetails);
                             resolve(accountDetails.display_name);

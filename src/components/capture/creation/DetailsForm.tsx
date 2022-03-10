@@ -22,12 +22,9 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
     const intl = useIntl();
     const { state, dispatch, readonly, displayValidation } = props;
 
-    const {
-        data: { connectors },
-        loading,
-        error,
-    } = useConnectors();
+    const { data: connectorsData, isError, isSuccess, error } = useConnectors();
 
+    const [isPostProcessingDone, setPostProcessingDone] = useState(false);
     const [schema, setSchema] = useState({
         properties: {
             image: {
@@ -76,21 +73,26 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
     };
 
     useEffect(() => {
-        if (connectors.length > 0) {
-            setSchema((previous: typeof schema) => {
-                previous.properties.image.oneOf = connectors.map(
-                    (connector) => {
-                        return {
-                            const: connector.links.images,
-                            title: connector.attributes.name,
-                        };
-                    }
-                );
+        if (isSuccess) {
+            if (connectorsData && connectorsData.data.length > 0) {
+                setSchema((previous: typeof schema) => {
+                    const listOfConnectors = connectorsData.data.map(
+                        (connector) => {
+                            return {
+                                const: connector.links.images,
+                                title: connector.attributes.name,
+                            };
+                        }
+                    );
+                    previous.properties.image.oneOf = listOfConnectors;
 
-                return previous;
-            });
+                    return previous;
+                });
+            }
+
+            setPostProcessingDone(true);
         }
-    }, [connectors]);
+    }, [connectorsData, isSuccess]);
 
     return (
         <>
@@ -99,22 +101,7 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
             </DialogContentText>
 
             <Stack direction="row" spacing={2}>
-                {error ? (
-                    error
-                ) : loading ? (
-                    <>
-                        <Skeleton
-                            variant="rectangular"
-                            height={40}
-                            width="50%"
-                        />
-                        <Skeleton
-                            variant="rectangular"
-                            height={40}
-                            width="50%"
-                        />
-                    </>
-                ) : connectors.length > 0 ? (
+                {isPostProcessingDone ? (
                     <JsonForms
                         schema={schema}
                         uischema={uiSchema}
@@ -138,10 +125,26 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
                             }
                         }}
                     />
-                ) : (
+                ) : isError ? (
+                    error
+                ) : schema.properties.image.oneOf.length < 0 ? (
                     <Alert severity="warning">
                         <FormattedMessage id="captureCreation.missingConnectors" />
+                        {schema.properties.image.oneOf.length}
                     </Alert>
+                ) : (
+                    <>
+                        <Skeleton
+                            variant="rectangular"
+                            height={40}
+                            width="50%"
+                        />
+                        <Skeleton
+                            variant="rectangular"
+                            height={40}
+                            width="50%"
+                        />
+                    </>
                 )}
             </Stack>
         </>

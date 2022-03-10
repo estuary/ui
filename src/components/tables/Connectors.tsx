@@ -12,19 +12,10 @@ import useConnectors from 'hooks/useConnectors';
 import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
 
 function ConnectorsTable() {
-    const {
-        data: { connectors },
-        loading,
-        error,
-    } = useConnectors();
+    const { data: connectorsData, isLoading, error } = useConnectors();
 
     const intl = useIntl();
 
-    const columnStyling = {
-        maxWidth: '20%',
-        textOverflow: 'ellipsis',
-        width: '20%',
-    };
     const columns = [
         {
             field: 'attributes.name',
@@ -47,6 +38,11 @@ function ConnectorsTable() {
             headerIntlKey: 'data.updated_at',
         },
     ];
+    const columnStyling = {
+        maxWidth: '20%',
+        textOverflow: 'ellipsis',
+        width: '20%',
+    };
 
     return (
         <Box>
@@ -83,24 +79,20 @@ function ConnectorsTable() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {loading ? (
+                        {isLoading ? (
                             <TableRow>
                                 <TableCell colSpan={columns.length}>
                                     <FormattedMessage id="common.loading" />
                                 </TableCell>
                             </TableRow>
-                        ) : null}
-
-                        {error ? (
+                        ) : error ? (
                             <TableRow>
                                 <TableCell colSpan={columns.length}>
                                     {error}
                                 </TableCell>
                             </TableRow>
-                        ) : null}
-
-                        {connectors.length > 0 ? (
-                            connectors.map((row, index) => (
+                        ) : connectorsData && connectorsData.data.length > 0 ? (
+                            connectorsData.data.map((row: any, index: any) => (
                                 <TableRow
                                     key={`Connector-${row.attributes.name}-${index}`}
                                 >

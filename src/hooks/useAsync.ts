@@ -7,13 +7,7 @@ enum States {
     SUCCESS = 3,
 }
 
-export interface DefaultState {
-    data: any;
-    error?: any;
-    status?: States;
-}
-
-const defaultInitialState: DefaultState = {
+const defaultInitialState = {
     data: null,
     error: null,
     status: States.IDLE,
@@ -33,10 +27,28 @@ const useSafeDispatch = (dispatch: any) => {
     );
 };
 
-const useAsync = (initialState?: any) => {
+export interface UseAsyncResponse<T, U> {
+    data: U extends undefined ? T | null : T;
+    error: any;
+    isError: boolean;
+    isIdle: boolean;
+    isLoading: boolean;
+    isSuccess: boolean;
+    reset: () => any;
+    run: (promise: Promise<any>, dataFetcher?: Function | undefined) => any;
+    setData: (setDataResponse: T) => void;
+    setError: (setErrorResponse: any) => any;
+    status: States;
+}
+
+function useAsync<T>(): UseAsyncResponse<T, undefined>;
+function useAsync<T>(initialData: T): UseAsyncResponse<T, T>;
+function useAsync<T>(initialData?: T): UseAsyncResponse<T, undefined> {
     const initialStateRef = useRef({
         ...defaultInitialState,
-        ...initialState,
+        ...{
+            data: initialData ? initialData : null,
+        },
     });
     const [{ status, data, error }, setState] = useReducer(
         (s: any, a: any) => ({ ...s, ...a }),
@@ -62,17 +74,12 @@ const useAsync = (initialState?: any) => {
     );
 
     const run = useCallback(
-        (promise) => {
-            if (!promise || !promise.then) {
-                throw new Error(
-                    `The argument passed to useAsync().run must be a promise. Maybe a function that's passed isn't returning anything?`
-                );
-            }
+        (promise: Promise<T>) => {
             safeSetState({ status: States.LOADING });
             return promise.then(
-                (runResponseData: any) => {
-                    setData(runResponseData);
-                    return runResponseData;
+                (runResponse) => {
+                    setData(runResponse);
+                    return runResponse;
                 },
                 (runResponseError: any) => {
                     setError(runResponseError);
@@ -96,6 +103,6 @@ const useAsync = (initialState?: any) => {
         setError,
         status,
     };
-};
+}
 
 export { useAsync };
