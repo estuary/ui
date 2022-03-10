@@ -1,14 +1,15 @@
 import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
-type ChangeType = 'New Entity' | 'Update';
 type EntityType = 'Capture';
+type ChangeType = 'New Entity' | 'Update';
 
 export interface EntityMetadata {
-    changeType: ChangeType;
     entityType: EntityType;
     name: string;
     catalogNamespace: string;
+    dateUpdated: string;
+    changeType: ChangeType;
 }
 
 export interface Entity<T = any> {

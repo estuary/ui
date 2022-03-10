@@ -98,6 +98,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
 
     'changeSet.data.entityType': `Entity Type`,
     'changeSet.data.entity': `Entity`,
+    'changeSet.data.lastUpdated': `Last Updated`,
     'changeSet.data.details': `Details`,
 };
 
