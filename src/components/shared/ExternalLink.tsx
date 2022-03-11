@@ -1,15 +1,13 @@
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { Button } from '@mui/material';
-import PropTypes from 'prop-types';
+import { ReactNode } from 'react';
 
-ExternalLink.propTypes = {
-    children: PropTypes.any.isRequired,
-    link: PropTypes.string.isRequired,
-};
+interface ExternalLink {
+    children: ReactNode;
+    link: string;
+}
 
-function ExternalLink(
-    props: PropTypes.InferProps<typeof ExternalLink.propTypes>
-) {
+function ExternalLink(props: ExternalLink) {
     const { children, link } = props;
 
     return (

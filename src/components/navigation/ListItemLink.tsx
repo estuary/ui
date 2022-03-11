@@ -7,24 +7,21 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
-import PropTypes from 'prop-types';
-import { forwardRef } from 'react';
+import { forwardRef, ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Widths } from '../../AppLayout';
 
-const ListItemLinkProps = {
-    badgeContent: PropTypes.number,
-    disabled: PropTypes.bool,
-    icon: PropTypes.element,
-    isOpen: PropTypes.bool,
-    link: PropTypes.string.isRequired,
-    menuWidth: PropTypes.number,
-    title: PropTypes.string.isRequired,
-};
+interface ListItemLinkProps {
+    badgeContent?: number;
+    disabled?: boolean;
+    icon: ReactNode;
+    isOpen?: boolean;
+    link: string;
+    menuWidth?: number;
+    title: string;
+}
 
-const ListItemLink = (
-    props: PropTypes.InferProps<typeof ListItemLinkProps>
-) => {
+const ListItemLink = (props: ListItemLinkProps) => {
     const { icon, title, link, disabled, isOpen, badgeContent, menuWidth } =
         props;
 
