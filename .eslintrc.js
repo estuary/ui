@@ -9,7 +9,6 @@ module.exports = {
         project: './tsconfig.json',
         tsconfigRootDir: __dirname,
     },
-    plugins: ['sort-keys-fix'],
     rules: {
         // Only turning off right now to see more actual issues
         '@typescript-eslint/no-explicit-any': 'off',
@@ -28,12 +27,5 @@ module.exports = {
 
         // We're using a new React so I think this is safe
         'react/react-in-jsx-scope': 'off',
-
-        // Misc
-        'sort-keys-fix/sort-keys-fix': [
-            'error',
-            'asc',
-            { caseSensitive: true, natural: true },
-        ],
     },
 };
