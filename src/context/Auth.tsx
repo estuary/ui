@@ -8,7 +8,7 @@ import { auth } from '../services/auth';
 export interface AuthContextType {
     login: (username: string) => Promise<void>;
     logout: () => Promise<void>;
-    user: any;
+    user: string | null;
 }
 
 export async function bootstrapUser() {

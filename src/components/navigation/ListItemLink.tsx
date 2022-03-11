@@ -8,7 +8,7 @@ import {
     useTheme,
 } from '@mui/material';
 import { forwardRef, ReactNode } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, NavLinkProps } from 'react-router-dom';
 import { Widths } from '../../AppLayout';
 
 interface ListItemLinkProps {
@@ -28,32 +28,31 @@ const ListItemLink = (props: ListItemLinkProps) => {
     const theme = useTheme();
     const isBelowMd = useMediaQuery(theme.breakpoints.down('md'));
 
-    const RouterLink = forwardRef<JSX.Element>(function NavLinkRef(
-        refProps: any,
-        ref: any
-    ) {
-        const activeClassName = 'Mui-selected';
-        const disabledClassName = 'Mui-disabled';
+    const RouterLink = forwardRef<HTMLAnchorElement, Omit<NavLinkProps, 'to'>>(
+        function NavLinkRef(refProps, ref) {
+            const activeClassName = 'Mui-selected';
+            const disabledClassName = 'Mui-disabled';
 
-        return (
-            <NavLink
-                to={link}
-                ref={ref}
-                {...refProps}
-                className={({ isActive }) => {
-                    const classList = [refProps.className];
+            return (
+                <NavLink
+                    to={link}
+                    ref={ref}
+                    {...refProps}
+                    className={({ isActive }) => {
+                        const classList = [refProps.className];
 
-                    if (disabled) {
-                        classList.push(disabledClassName);
-                    } else if (isActive) {
-                        classList.push(activeClassName);
-                    }
+                        if (disabled) {
+                            classList.push(disabledClassName);
+                        } else if (isActive) {
+                            classList.push(activeClassName);
+                        }
 
-                    return classList.filter(Boolean).join(' ');
-                }}
-            />
-        );
-    });
+                        return classList.filter(Boolean).join(' ');
+                    }}
+                />
+            );
+        }
+    );
 
     return (
         <li>
