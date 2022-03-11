@@ -13,7 +13,7 @@ const defaultInitialState = {
     status: States.IDLE,
 };
 
-const useSafeDispatch = (dispatch: any) => {
+const useSafeDispatch = (dispatch: Function) => {
     const mounted = useRef(false);
     useLayoutEffect(() => {
         mounted.current = true;

@@ -1,5 +1,4 @@
 import { Container, Toolbar } from '@mui/material';
-import SortableTable from '../components/table/SortableTable';
 
 const Collections: React.FC = () => {
     return (
@@ -9,7 +8,6 @@ const Collections: React.FC = () => {
             }}
         >
             <Toolbar />
-            <SortableTable rows={[]} headers={[]} />
         </Container>
     );
 };
