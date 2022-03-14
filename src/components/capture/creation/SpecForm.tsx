@@ -33,18 +33,18 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
         useConnectorImageSpec(endpoint);
 
     const {
-        links: { discovery, documentation },
+        links: { discovered_catalog, documentation },
         endpointSchema,
     } = data;
 
     useEffect(() => {
-        if (discovery.length > 0) {
+        if (discovered_catalog.length > 0) {
             dispatch({
-                payload: discovery,
+                payload: discovered_catalog,
                 type: ActionType.NEW_DISCOVERY_LINK,
             });
         }
-    }, [discovery, dispatch]);
+    }, [discovered_catalog, dispatch]);
 
     useEffect(() => {
         if (documentation.length > 0) {

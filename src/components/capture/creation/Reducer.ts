@@ -15,7 +15,7 @@ export interface NewCaptureState {
     details: Pick<JsonFormsCore, 'data' | 'errors'>;
     links: {
         connectorImage: string;
-        discovery: string;
+        discovered_catalog: string;
         documentation: string;
         spec: string;
     };
@@ -29,7 +29,7 @@ export type Action =
       }
     | {
           type: ActionType.NEW_DISCOVERY_LINK;
-          payload: NewCaptureState['links']['discovery'];
+          payload: NewCaptureState['links']['discovered_catalog'];
       }
     | {
           type: ActionType.NEW_CONNECTOR_LINK;
@@ -60,7 +60,7 @@ export const getInitialState = (): NewCaptureState => {
         },
         links: {
             connectorImage: '',
-            discovery: '',
+            discovered_catalog: '',
             documentation: '',
             spec: '',
         },
@@ -76,7 +76,7 @@ export const newCaptureReducer = (state: NewCaptureState, action: Action) => {
         switch (action.type) {
             // Links
             case ActionType.NEW_DISCOVERY_LINK:
-                draft.links.discovery = action.payload;
+                draft.links.discovered_catalog = action.payload;
                 break;
 
             case ActionType.NEW_SPEC_LINK:

@@ -15,7 +15,7 @@ import {
     useTheme,
 } from '@mui/material';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import { discoveryEndpoint } from 'endpoints/discovery';
+import { discoveredCatalogEndpoint } from 'endpoints/discoveredCatalog';
 import { MouseEvent, useReducer, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
@@ -140,8 +140,11 @@ function NewCaptureModal() {
                 setFormSubmitError(null);
                 setActiveStep(Steps.WAITING_FOR_DISCOVER);
 
-                discoveryEndpoint
-                    .create(links.discovery, spec.data)
+                discoveredCatalogEndpoint
+                    .create(links.discovered_catalog, {
+                        name: details.data.name,
+                        config: spec.data,
+                    })
                     .then((response) => {
                         setCatalogResponse(response.data.attributes);
                         setActiveStep(Steps.REVIEW_SCHEMA_IN_EDITOR);

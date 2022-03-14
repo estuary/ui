@@ -8,18 +8,14 @@ function useConnectors(type?: string) {
 
     useEffect(() => {
         run(
-            connectorsEndpoint.read().then((serverResponse) => {
-                if (type) {
-                    const filteredResponse = serverResponse.data.filter(
-                        (connector) => {
-                            return connector.type === type;
-                        }
-                    );
-
-                    return Promise.resolve(filteredResponse);
-                } else {
-                    return Promise.resolve(serverResponse.data);
-                }
+            connectorsEndpoint.read().then(({ data }) => {
+                return Promise.resolve(
+                    type
+                        ? data.filter(
+                              (connector) => connector.attributes.type === type
+                          )
+                        : data
+                );
             })
         );
     }, [run, type]);

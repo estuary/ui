@@ -13,12 +13,15 @@ export interface DiscoveredCatalog {
     };
 }
 
-export interface DiscoveryResponse extends BaseResponse {
+export interface DiscoveredCatalogResponse extends BaseResponse {
     data: DiscoveredCatalog;
 }
 
-export const discoveryEndpoint = {
-    create: (endpoint: ConnectorImagesSpecLinks['discovery'], data: any) => {
-        return client<DiscoveryResponse>(endpoint, { data });
+export const discoveredCatalogEndpoint = {
+    create: (
+        endpoint: ConnectorImagesSpecLinks['discovered_catalog'],
+        data: any
+    ) => {
+        return client<DiscoveredCatalogResponse>(endpoint, { data });
     },
 };

@@ -1,4 +1,6 @@
 import {
+    ConnectorImagesSpecAttributes,
+    ConnectorImagesSpecLinks,
     ConnectorImagesSpecResponse,
     connectorsEndpoint,
 } from 'endpoints/connectors';
@@ -7,17 +9,17 @@ import JsonRefs from 'json-refs';
 import { useEffect } from 'react';
 
 interface Data {
-    endpointSchema: ConnectorImagesSpecResponse['data']['attributes']['endpointSpecSchema'];
+    endpointSchema: ConnectorImagesSpecAttributes['endpointSpecSchema'];
     links: {
-        discovery: ConnectorImagesSpecResponse['data']['links']['discovery'];
-        documentation: ConnectorImagesSpecResponse['data']['attributes']['documentationURL'];
+        discovered_catalog: ConnectorImagesSpecLinks['discovered_catalog'];
+        documentation: ConnectorImagesSpecAttributes['documentationURL'];
     };
 }
 
 const defaultData: Data = {
     endpointSchema: {},
     links: {
-        discovery: '',
+        discovered_catalog: '',
         documentation: '',
     },
 };
@@ -34,7 +36,7 @@ const generateResponse = async (
         resolve({
             endpointSchema: derefSchema.resolved,
             links: {
-                discovery: data.links.discovery,
+                discovered_catalog: data.links.discovered_catalog,
                 documentation: data.attributes.documentationURL,
             },
         });

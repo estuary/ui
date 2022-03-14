@@ -1,6 +1,7 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Alert, DialogContentText, Skeleton, Stack } from '@mui/material';
+import { ConnectorTypes } from 'endpoints/connectors';
 import useConnectors from 'hooks/useConnectors';
 import { Dispatch, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -22,7 +23,12 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
     const intl = useIntl();
     const { state, dispatch, readonly, displayValidation } = props;
 
-    const { data: connectorsData, isError, isSuccess, error } = useConnectors();
+    const {
+        data: connectorsData,
+        isError,
+        isSuccess,
+        error,
+    } = useConnectors(ConnectorTypes.SOURCE);
 
     const [isPostProcessingDone, setPostProcessingDone] = useState(false);
     const [schema, setSchema] = useState({
