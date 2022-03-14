@@ -38,6 +38,17 @@ function NewCaptureEditor(props: NewCaptureEditorProps) {
     const [currentFileName, setCurrentFileName] = useState('');
     const [currentFile, setCurrentFile] = useState({});
 
+    const formatJSON = (val = {}) => {
+        try {
+            return JSON.stringify(val, null, 2);
+        } catch {
+            const errorJson = {
+                error: 'There was an issue parsing the JSON',
+            };
+            return JSON.stringify(errorJson, null, 2);
+        }
+    };
+
     const handlers = {
         fileList: {
             click: (resourceName: string) => {
@@ -55,10 +66,10 @@ function NewCaptureEditor(props: NewCaptureEditorProps) {
 
             handlers.fileList.click(resourceList[0]);
 
-            const handler = editor.onDidChangeModelDecorations(() => {
-                handler.dispose();
-                void editor.getAction('editor.action.formatDocument').run();
-            });
+            // const handler = editor.onDidChangeModelDecorations(() => {
+            //     handler.dispose();
+            //     void editor.getAction('editor.action.formatDocument').run();
+            // });
         },
     };
 
@@ -117,7 +128,7 @@ function NewCaptureEditor(props: NewCaptureEditorProps) {
                                         ? 'vs'
                                         : 'vs-dark'
                                 }
-                                defaultValue={JSON.stringify(currentFile)}
+                                defaultValue={formatJSON(currentFile)}
                                 path={currentFileName}
                                 onMount={handlers.mount}
                                 onChange={handlers.change}
