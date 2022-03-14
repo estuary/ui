@@ -2,12 +2,24 @@ import { ConnectorImagesSpecLinks } from 'endpoints/connectors';
 import { client } from 'services/client';
 import { BaseResponse } from 'types';
 
+export interface DiscoveredCatalogImport {
+    contentType: string;
+    url: string;
+}
+
+export interface DiscoveredCatalogResources {
+    [k: string]: any;
+}
+
+export interface DiscoveredCatalogAttributes {
+    resources: DiscoveredCatalogResources;
+    import: DiscoveredCatalogImport[];
+}
+
 export interface DiscoveredCatalog {
     id: string;
     type: string;
-    attributes: {
-        bindings: any[];
-    };
+    attributes: DiscoveredCatalogAttributes;
     links: {
         image: string;
     };

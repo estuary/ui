@@ -15,7 +15,10 @@ import {
     useTheme,
 } from '@mui/material';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import { discoveredCatalogEndpoint } from 'endpoints/discoveredCatalog';
+import {
+    DiscoveredCatalog,
+    discoveredCatalogEndpoint,
+} from 'endpoints/discoveredCatalog';
 import { MouseEvent, useReducer, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
@@ -74,7 +77,8 @@ function NewCaptureModal() {
         message: string;
         errors: any[];
     } | null>(null);
-    const [catalogResponse, setCatalogResponse] = useState<object | null>(null);
+    const [catalogResponse, setCatalogResponse] =
+        useState<DiscoveredCatalog | null>(null);
     const [activeStep, setActiveStep] = useState<Steps>(Steps.DETAILS_AND_SPEC);
 
     // Form Event Handlers
@@ -146,7 +150,7 @@ function NewCaptureModal() {
                         config: spec.data,
                     })
                     .then((response) => {
-                        setCatalogResponse(response.data.attributes);
+                        setCatalogResponse(response.data);
                         setActiveStep(Steps.REVIEW_SCHEMA_IN_EDITOR);
                     })
                     .catch((error) => {
@@ -253,7 +257,7 @@ function NewCaptureModal() {
                     </Box>
                 ) : null}
                 {activeStep === Steps.REVIEW_SCHEMA_IN_EDITOR ? (
-                    <NewCaptureEditor data={catalogResponse} />
+                    <NewCaptureEditor data={catalogResponse?.attributes} />
                 ) : null}
             </DialogContent>
 
