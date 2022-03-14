@@ -4,13 +4,14 @@ import {
     Grid,
     List,
     ListItem,
+    ListItemButton,
     ListItemText,
     Paper,
     useTheme,
 } from '@mui/material';
 import { DiscoveredCatalogAttributes } from 'endpoints/discoveredCatalog';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import useSchemaEditorStore, {
     SchemaEditorState,
@@ -33,14 +34,26 @@ function NewCaptureEditor(props: NewCaptureEditorProps) {
         null
     );
 
+    const resourceList = data ? Object.keys(data.resources) : [];
+    const [currentFileName, setCurrentFileName] = useState('');
+    const [currentFile, setCurrentFile] = useState({});
+
     const handlers = {
-        onChange: () => {
+        fileList: {
+            click: (resourceName: string) => {
+                setCurrentFileName(resourceName);
+                setCurrentFile(data?.resources[resourceName]);
+            },
+        },
+        change: () => {
             if (editorRef.current) {
                 setSchema(editorRef.current.getValue());
             }
         },
-        onMount: (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
+        mount: (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
             editorRef.current = editor;
+
+            handlers.fileList.click(resourceList[0]);
 
             const handler = editor.onDidChangeModelDecorations(() => {
                 handler.dispose();
@@ -57,26 +70,45 @@ function NewCaptureEditor(props: NewCaptureEditorProps) {
             <Paper variant="outlined">
                 {data ? (
                     <Grid container>
-                        <Grid item xs={2}>
+                        <Grid
+                            item
+                            xs={3}
+                            sx={{
+                                overflow: 'auto',
+                            }}
+                        >
                             <List dense>
-                                {Object.keys(data.resources).map(
+                                {resourceList.map(
                                     (resourceName: any, index: number) => (
                                         <ListItem
                                             key={`FileSelector-${resourceName}-${index}`}
                                         >
-                                            <ListItemText
-                                                primary={resourceName}
-                                                secondary={
-                                                    data.resources[resourceName]
-                                                        .contentType
+                                            <ListItemButton
+                                                selected={
+                                                    resourceName ===
+                                                    currentFileName
                                                 }
-                                            />
+                                                onClick={() => {
+                                                    handlers.fileList.click(
+                                                        resourceName
+                                                    );
+                                                }}
+                                            >
+                                                <ListItemText
+                                                    primary={resourceName}
+                                                    secondary={
+                                                        data.resources[
+                                                            resourceName
+                                                        ].contentType
+                                                    }
+                                                />
+                                            </ListItemButton>
                                         </ListItem>
                                     )
                                 )}
                             </List>
                         </Grid>
-                        <Grid item xs={10}>
+                        <Grid item xs={9}>
                             <Editor
                                 height="350px"
                                 defaultLanguage="json"
@@ -85,9 +117,10 @@ function NewCaptureEditor(props: NewCaptureEditorProps) {
                                         ? 'vs'
                                         : 'vs-dark'
                                 }
-                                defaultValue={JSON.stringify(data)}
-                                onMount={handlers.onMount}
-                                onChange={handlers.onChange}
+                                defaultValue={JSON.stringify(currentFile)}
+                                path={currentFileName}
+                                onMount={handlers.mount}
+                                onChange={handlers.change}
                             />
                         </Grid>
                     </Grid>
