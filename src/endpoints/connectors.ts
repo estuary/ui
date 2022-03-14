@@ -16,7 +16,7 @@ interface ConnectorLinks {
     self: string;
 }
 
-interface Connector {
+export interface Connector {
     id: string;
     type: string;
     attributes: ConnectorAttributes;

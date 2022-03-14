@@ -86,8 +86,8 @@ function ConnectorsTable() {
                                     {error}
                                 </TableCell>
                             </TableRow>
-                        ) : connectorsData && connectorsData.data.length > 0 ? (
-                            connectorsData.data.map((row, index) => (
+                        ) : connectorsData && connectorsData.length > 0 ? (
+                            connectorsData.map((row, index) => (
                                 <TableRow
                                     key={`Connector-${row.attributes.name}-${index}`}
                                 >

@@ -74,16 +74,14 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
 
     useEffect(() => {
         if (isSuccess) {
-            if (connectorsData && connectorsData.data.length > 0) {
+            if (connectorsData && connectorsData.length > 0) {
                 setSchema((previous: typeof schema) => {
-                    const listOfConnectors = connectorsData.data.map(
-                        (connector) => {
-                            return {
-                                const: connector.links.images,
-                                title: connector.attributes.name,
-                            };
-                        }
-                    );
+                    const listOfConnectors = connectorsData.map((connector) => {
+                        return {
+                            const: connector.links.images,
+                            title: connector.attributes.name,
+                        };
+                    });
                     previous.properties.image.oneOf = listOfConnectors;
 
                     return previous;
