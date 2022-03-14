@@ -16,7 +16,11 @@ const userMissing = 'No User Found';
 const FakeComponent = () => {
     const { user } = useAuth();
 
-    return user ? user : userMissing;
+    if (user) {
+        return <>Your name is {user}</>;
+    } else {
+        return <>You have no name because {userMissing}</>;
+    }
 };
 
 const setExpiresAt = (expires: string) => {
@@ -54,7 +58,9 @@ describe('if there is a user', () => {
         );
 
         await waitFor(() => {
-            expect(screen.getByText(fakeUser)).toBeInTheDocument();
+            expect(
+                screen.getByText(fakeUser, { exact: false })
+            ).toBeInTheDocument();
         });
     });
 
@@ -74,7 +80,9 @@ describe('if there is a user', () => {
         );
 
         await waitFor(() => {
-            expect(screen.getByText(userMissing)).toBeInTheDocument();
+            expect(
+                screen.getByText(userMissing, { exact: false })
+            ).toBeInTheDocument();
         });
     });
 });

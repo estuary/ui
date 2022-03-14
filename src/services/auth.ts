@@ -1,9 +1,9 @@
-import { accountEndpoint, AccountResponse } from 'endpoints/account';
-import { sessionEndpoints, type SessionLocalResponse } from 'endpoints/session';
+import { AccountAttributes, accountEndpoint } from 'endpoints/account';
+import { sessionEndpoints, SessionLocalAttributes } from 'endpoints/session';
 
 export interface AuthDetails {
-    session: SessionLocalResponse['data']['attributes'];
-    user?: AccountResponse['data']['attributes'];
+    session: SessionLocalAttributes;
+    user?: AccountAttributes;
 }
 
 export const sessionStorageKey = '__auth_session__';
@@ -11,18 +11,16 @@ export const userStorageKey = '__auth_user__';
 
 export const auth = {
     getAccountDetails(path: string) {
-        return new Promise<AccountResponse['data']['attributes']>(
-            (resolve, reject) => {
-                return accountEndpoint
-                    .read(path)
-                    .then((response) => {
-                        resolve(response.data.attributes);
-                    })
-                    .catch((error) => {
-                        reject(error);
-                    });
-            }
-        );
+        return new Promise<AccountAttributes>((resolve, reject) => {
+            return accountEndpoint
+                .read(path)
+                .then((response) => {
+                    resolve(response.data.attributes);
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+        });
     },
     getAuthDetails() {
         const session = window.localStorage.getItem(sessionStorageKey);
@@ -65,26 +63,28 @@ export const auth = {
         window.localStorage.setItem(userStorageKey, JSON.stringify(user));
     },
     signin(username: string) {
-        return new Promise<
-            AccountResponse['data']['attributes']['display_name']
-        >((resolve, reject) => {
-            return sessionEndpoints
-                .create(username)
-                .then((sessionResponse) => {
-                    auth.saveSession(sessionResponse.data.attributes);
-                    auth.getAccountDetails(sessionResponse.data.links.account)
-                        .then((accountDetails) => {
-                            auth.saveUser(accountDetails);
-                            resolve(accountDetails.display_name);
-                        })
-                        .catch((accountError) => {
-                            reject(accountError);
-                        });
-                })
-                .catch((error) => {
-                    reject(error);
-                });
-        });
+        return new Promise<AccountAttributes['display_name']>(
+            (resolve, reject) => {
+                return sessionEndpoints
+                    .create(username)
+                    .then((sessionResponse) => {
+                        auth.saveSession(sessionResponse.data.attributes);
+                        auth.getAccountDetails(
+                            sessionResponse.data.links.account
+                        )
+                            .then((accountDetails) => {
+                                auth.saveUser(accountDetails);
+                                resolve(accountDetails.display_name);
+                            })
+                            .catch((accountError) => {
+                                reject(accountError);
+                            });
+                    })
+                    .catch((error) => {
+                        reject(error);
+                    });
+            }
+        );
     },
     async signout(callback?: VoidFunction) {
         auth.removeAuthDetails();

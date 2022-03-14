@@ -59,7 +59,7 @@ const waitForLoading = async () => {
 //  account bootstrapping.
 interface MockAuthProps {
     children: JSX.Element;
-    username?: string;
+    username: string | null;
 }
 const MockAuthProvider = ({ children, username }: MockAuthProps) => {
     const value = {
@@ -94,7 +94,7 @@ const customRender = async (
 
     const view = rtlRender(
         <AppContent>
-            <MockAuthProvider username={user}>
+            <MockAuthProvider username={user ?? null}>
                 <AppTheme>
                     <AppRouter>{ui}</AppRouter>
                 </AppTheme>

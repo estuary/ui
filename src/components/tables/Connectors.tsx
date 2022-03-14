@@ -58,12 +58,7 @@ function ConnectorsTable() {
                     })}
                 >
                     <TableHead>
-                        <TableRow
-                            sx={{
-                                background: (theme) =>
-                                    theme.palette.background.default,
-                            }}
-                        >
+                        <TableRow>
                             {columns.map((column, index) => {
                                 return (
                                     <TableCell
@@ -92,7 +87,7 @@ function ConnectorsTable() {
                                 </TableCell>
                             </TableRow>
                         ) : connectorsData && connectorsData.data.length > 0 ? (
-                            connectorsData.data.map((row: any, index: any) => (
+                            connectorsData.data.map((row, index) => (
                                 <TableRow
                                     key={`Connector-${row.attributes.name}-${index}`}
                                 >

@@ -1,9 +1,9 @@
-import { ConnectorImageData, connectorsEndpoint } from 'endpoints/connectors';
+import { ConnectorImage, connectorsEndpoint } from 'endpoints/connectors';
 import { useAsync } from 'hooks/useAsync';
 import { useEffect } from 'react';
 
-const useConnectorImages = (imagesURL: string, whichOne: number = 0) => {
-    const response = useAsync<ConnectorImageData>();
+const useConnectorImages = (imagesURL: string, index: number = 0) => {
+    const response = useAsync<ConnectorImage>();
     const { run } = response;
 
     useEffect(() => {
@@ -12,13 +12,13 @@ const useConnectorImages = (imagesURL: string, whichOne: number = 0) => {
                 connectorsEndpoint.images
                     .read(imagesURL)
                     .then((serverResponse) => {
-                        const newestImage = serverResponse.data[whichOne];
+                        const newestImage = serverResponse.data[index];
 
                         return Promise.resolve(newestImage);
                     })
             );
         }
-    }, [imagesURL, run, whichOne]);
+    }, [imagesURL, run, index]);
 
     return response;
 };

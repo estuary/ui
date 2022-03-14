@@ -8,21 +8,22 @@ import {
     IconButton,
     Paper,
 } from '@mui/material';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FormattedMessage } from 'react-intl';
 
-type ErrorBoundryWrapperProps = {
+interface ErrorBoundryWrapperProps {
+    children: ReactNode;
     handleReset?: any; //fn
-};
+}
 
 function ErrorFallback({
     error,
     resetErrorBoundary,
 }: {
-    error: any;
+    error: Error;
     resetErrorBoundary: any;
-}): any {
+}): JSX.Element {
     const [expanded, setExpanded] = React.useState(false);
 
     const handleExpandClick = () => {
@@ -62,7 +63,7 @@ function ErrorFallback({
     );
 }
 
-const ErrorBoundryWrapper: React.FC<ErrorBoundryWrapperProps> = (props) => {
+const ErrorBoundryWrapper = (props: ErrorBoundryWrapperProps) => {
     const { handleReset, children } = props;
 
     return (

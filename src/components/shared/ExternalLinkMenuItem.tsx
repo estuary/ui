@@ -1,15 +1,13 @@
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { Link, MenuItem } from '@mui/material';
-import PropTypes from 'prop-types';
+import { ReactNode } from 'react';
 
-ExternalLinkMenuItem.propTypes = {
-    children: PropTypes.any.isRequired,
-    link: PropTypes.string.isRequired,
-};
+interface ExternalLinkMenuItemProps {
+    children: ReactNode;
+    link: string;
+}
 
-function ExternalLinkMenuItem(
-    props: PropTypes.InferProps<typeof ExternalLinkMenuItem.propTypes>
-) {
+function ExternalLinkMenuItem(props: ExternalLinkMenuItemProps) {
     const { children, link } = props;
     return (
         <MenuItem

@@ -1,17 +1,12 @@
 import { Alert, Container, Paper, Snackbar, Toolbar } from '@mui/material';
-import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import useNotificationStore, {
     NotificationState,
 } from 'stores/NotificationStore';
 
-const PageContainerPropTypes = {
-    children: PropTypes.oneOfType([
-        PropTypes.arrayOf(PropTypes.node),
-        PropTypes.node,
-    ]).isRequired,
-};
-type PageContainerProp = PropTypes.InferProps<typeof PageContainerPropTypes>;
+interface PageContainerProps {
+    children: ReactNode;
+}
 
 const selectors = {
     hideNotification: (state: NotificationState) => state.hideNotification,
@@ -20,7 +15,7 @@ const selectors = {
         state.updateNotificationHistory,
 };
 
-function PageContainer(props: PageContainerProp) {
+function PageContainer(props: PageContainerProps) {
     const notification = useNotificationStore(selectors.notification);
 
     const updateNotificationHistory = useNotificationStore(

@@ -8,7 +8,7 @@ import { auth } from '../services/auth';
 export interface AuthContextType {
     login: (username: string) => Promise<void>;
     logout: () => Promise<void>;
-    user: any;
+    user: string | null;
 }
 
 export async function bootstrapUser() {
@@ -53,20 +53,16 @@ export const AuthProvider = (props: any) => {
         (newUser: string) => {
             return auth
                 .signin(newUser)
-                .then((response: any) => {
+                .then((response) => {
                     setData(response);
                 })
-                .catch((signinError: any) => {
-                    if (signinError.response?.data?.errors) {
-                        setError(signinError.response.data.errors);
-                    } else {
-                        setError([
-                            {
-                                detail: 'There was an issue reaching the server',
-                                title: signinError.message,
-                            },
-                        ]);
-                    }
+                .catch((signinError: Error) => {
+                    setError([
+                        {
+                            detail: 'There was an issue signing in',
+                            title: signinError.message,
+                        },
+                    ]);
                 });
         },
         [setData, setError]

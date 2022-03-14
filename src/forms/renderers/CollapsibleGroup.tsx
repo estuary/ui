@@ -1,4 +1,11 @@
-import { RankedTester, rankWith, uiTypeIs } from '@jsonforms/core';
+import {
+    GroupLayout,
+    LabelElement,
+    LayoutProps,
+    RankedTester,
+    rankWith,
+    uiTypeIs,
+} from '@jsonforms/core';
 import {
     MaterialLayoutRenderer,
     MaterialLayoutRendererProps,
@@ -13,19 +20,26 @@ import {
     Typography,
 } from '@mui/material';
 
+export const CollapsibleGroupType = 'CollapsibleGroup';
+
 export const collapsibleGroupTester: RankedTester = rankWith(
     999,
-    uiTypeIs('CollapsibleGroup')
+    uiTypeIs(CollapsibleGroupType)
 );
 
-const CollapsibleGroupRenderer = (props: any) => {
-    const { uischema, schema, path, visible, renderers } = props;
-
-    const labelElement = uischema.elements.shift();
+const CollapsibleGroupRenderer = ({
+    uischema,
+    schema,
+    path,
+    visible,
+    renderers,
+}: LayoutProps) => {
+    const groupLayout = uischema as GroupLayout;
+    const labelElement = groupLayout.elements.shift() as LabelElement;
 
     const layoutProps = {
         direction: 'column' as MaterialLayoutRendererProps['direction'],
-        elements: uischema.elements,
+        elements: groupLayout.elements,
         path,
         renderers,
         schema,

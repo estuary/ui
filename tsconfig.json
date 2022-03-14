@@ -30,8 +30,8 @@
         "strictNullChecks": true,
         "skipLibCheck": true,
         "resolveJsonModule": true,
-        "typeRoots": ["./src/types", "node_modules/@types"]
+        "typeRoots": ["src/types", "node_modules/@types", "flow_deps"]
     },
-    "include": ["./src"],
-    "exclude": ["./node_modules", "./build", "./scripts"]
+    "include": ["src", "flow_deps"],
+    "exclude": ["node_modules", "build", "scripts"]
 }

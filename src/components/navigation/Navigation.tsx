@@ -7,21 +7,20 @@ import InputIcon from '@mui/icons-material/Input';
 import StorageIcon from '@mui/icons-material/Storage';
 import { Box, List, Toolbar, useMediaQuery, useTheme } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
-import PropTypes from 'prop-types';
 import useChangeSetStore, { CaptureState } from 'stores/ChangeSetStore';
 import ListItemLink from './ListItemLink';
 
-const NavigationProps = {
-    onNavigationToggle: PropTypes.func.isRequired,
-    open: PropTypes.bool.isRequired,
-    width: PropTypes.number.isRequired,
-};
+interface NavigationProps {
+    onNavigationToggle: Function;
+    open: boolean;
+    width: number;
+}
 
 const selectors = {
     newChangeCount: (state: CaptureState) => state.newChangeCount,
 };
 
-const Navigation = (props: PropTypes.InferProps<typeof NavigationProps>) => {
+const Navigation = (props: NavigationProps) => {
     const { onNavigationToggle, open, width } = props;
 
     const newChangeCount = useChangeSetStore(selectors.newChangeCount);

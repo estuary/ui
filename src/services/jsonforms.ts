@@ -15,6 +15,7 @@ import { materialRenderers } from '@jsonforms/material-renderers';
 import {
     CollapsibleGroup,
     collapsibleGroupTester,
+    CollapsibleGroupType,
 } from 'forms/renderers/CollapsibleGroup';
 import { NullType, nullTypeTester } from 'forms/renderers/NullType';
 import isEmpty from 'lodash/isEmpty';
@@ -160,12 +161,12 @@ const generateUISchema = (
         (currentRef === '#' && types[0] === 'object') ||
         jsonSchema.properties !== undefined
     ) {
-        let layout: Layout | GroupLayout | any;
+        let layout: Layout | GroupLayout;
 
         if (currentRef === '#') {
             layout = createLayout(layoutType);
         } else {
-            layout = createLayout('CollapsibleGroup') as any;
+            layout = createLayout(CollapsibleGroupType) as GroupLayout;
             addLabel(layout, schemaName);
         }
 

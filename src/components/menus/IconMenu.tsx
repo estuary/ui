@@ -1,5 +1,5 @@
 /* eslint-disable react/destructuring-assignment */
-import { IconButton, Menu, Tooltip } from '@mui/material';
+import { IconButton, Menu, PopoverProps, Tooltip } from '@mui/material';
 import React, { ReactNode } from 'react';
 
 type IconMenuProps = {
@@ -11,9 +11,12 @@ type IconMenuProps = {
 };
 
 const IconMenu = (props: IconMenuProps) => {
-    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [anchorEl, setAnchorEl] =
+        React.useState<PopoverProps['anchorEl']>(null);
     const open = Boolean(anchorEl);
-    const handleClick = (event: any) => {
+    const handleClick = (
+        event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    ) => {
         setAnchorEl(event.currentTarget);
     };
     const handleClose = () => {
