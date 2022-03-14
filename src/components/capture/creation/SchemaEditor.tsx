@@ -38,22 +38,11 @@ function NewCaptureEditor(props: NewCaptureEditorProps) {
     const [currentFileName, setCurrentFileName] = useState('');
     const [currentFile, setCurrentFile] = useState({});
 
-    const formatJSON = (val = {}) => {
-        try {
-            return JSON.stringify(val, null, 2);
-        } catch {
-            const errorJson = {
-                error: 'There was an issue parsing the JSON',
-            };
-            return JSON.stringify(errorJson, null, 2);
-        }
-    };
-
     const handlers = {
         fileList: {
             click: (resourceName: string) => {
                 setCurrentFileName(resourceName);
-                setCurrentFile(data?.resources[resourceName]);
+                setCurrentFile(data?.resources[resourceName].content);
             },
         },
         change: () => {
@@ -66,6 +55,7 @@ function NewCaptureEditor(props: NewCaptureEditorProps) {
 
             handlers.fileList.click(resourceList[0]);
 
+            // Commented out as it stands as the main example of how to handle "events"
             // const handler = editor.onDidChangeModelDecorations(() => {
             //     handler.dispose();
             //     void editor.getAction('editor.action.formatDocument').run();
@@ -128,7 +118,11 @@ function NewCaptureEditor(props: NewCaptureEditorProps) {
                                         ? 'vs'
                                         : 'vs-dark'
                                 }
-                                defaultValue={formatJSON(currentFile)}
+                                defaultValue={JSON.stringify(
+                                    currentFile,
+                                    null,
+                                    2
+                                )}
                                 path={currentFileName}
                                 onMount={handlers.mount}
                                 onChange={handlers.change}
