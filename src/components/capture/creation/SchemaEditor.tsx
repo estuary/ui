@@ -1,7 +1,7 @@
 import Editor from '@monaco-editor/react';
 import {
+    Box,
     DialogContentText,
-    Grid,
     List,
     ListItemButton,
     ListItemText,
@@ -69,62 +69,54 @@ function NewCaptureEditor(props: NewCaptureEditorProps) {
             </DialogContentText>
             <Paper variant="outlined">
                 {data ? (
-                    <Grid container>
-                        <Grid
-                            item
-                            xs={3}
-                            spacing={0}
-                            sx={{
-                                overflow: 'auto',
-                            }}
-                        >
-                            <List dense disablePadding>
-                                {resourceList.map(
-                                    (resourceName: any, index: number) => (
-                                        <ListItemButton
-                                            key={`FileSelector-${resourceName}-${index}`}
-                                            dense
-                                            selected={
-                                                resourceName === currentFileName
+                    <Box
+                        sx={{
+                            flexGrow: 1,
+                            bgcolor: 'background.paper',
+                            display: 'flex',
+                            height: 300,
+                        }}
+                    >
+                        <List dense disablePadding>
+                            {resourceList.map(
+                                (resourceName: any, index: number) => (
+                                    <ListItemButton
+                                        key={`FileSelector-${resourceName}-${index}`}
+                                        dense
+                                        selected={
+                                            resourceName === currentFileName
+                                        }
+                                        onClick={() => {
+                                            handlers.fileList.click(
+                                                resourceName
+                                            );
+                                        }}
+                                    >
+                                        <ListItemText
+                                            primary={resourceName}
+                                            secondary={
+                                                data.resources[resourceName]
+                                                    .contentType
                                             }
-                                            onClick={() => {
-                                                handlers.fileList.click(
-                                                    resourceName
-                                                );
-                                            }}
-                                        >
-                                            <ListItemText
-                                                primary={resourceName}
-                                                secondary={
-                                                    data.resources[resourceName]
-                                                        .contentType
-                                                }
-                                            />
-                                        </ListItemButton>
-                                    )
-                                )}
-                            </List>
-                        </Grid>
-                        <Grid item xs={9}>
-                            <Editor
-                                height="300px"
-                                defaultLanguage="json"
-                                theme={
-                                    theme.palette.mode === 'light'
-                                        ? 'vs'
-                                        : 'vs-dark'
-                                }
-                                defaultValue={JSON.stringify(
-                                    currentFile,
-                                    null,
-                                    2
-                                )}
-                                path={currentFileName}
-                                onMount={handlers.mount}
-                                onChange={handlers.change}
-                            />
-                        </Grid>
-                    </Grid>
+                                        />
+                                    </ListItemButton>
+                                )
+                            )}
+                        </List>
+                        <Editor
+                            height="300px"
+                            defaultLanguage="json"
+                            theme={
+                                theme.palette.mode === 'light'
+                                    ? 'vs'
+                                    : 'vs-dark'
+                            }
+                            defaultValue={JSON.stringify(currentFile, null, 2)}
+                            path={currentFileName}
+                            onMount={handlers.mount}
+                            onChange={handlers.change}
+                        />
+                    </Box>
                 ) : (
                     <FormattedMessage id="common.loading" />
                 )}
