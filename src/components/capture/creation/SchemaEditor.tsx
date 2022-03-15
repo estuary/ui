@@ -3,7 +3,6 @@ import {
     DialogContentText,
     Grid,
     List,
-    ListItem,
     ListItemButton,
     ListItemText,
     Paper,
@@ -74,44 +73,41 @@ function NewCaptureEditor(props: NewCaptureEditorProps) {
                         <Grid
                             item
                             xs={3}
+                            spacing={0}
                             sx={{
                                 overflow: 'auto',
                             }}
                         >
-                            <List dense>
+                            <List dense disablePadding>
                                 {resourceList.map(
                                     (resourceName: any, index: number) => (
-                                        <ListItem
+                                        <ListItemButton
                                             key={`FileSelector-${resourceName}-${index}`}
+                                            dense
+                                            selected={
+                                                resourceName === currentFileName
+                                            }
+                                            onClick={() => {
+                                                handlers.fileList.click(
+                                                    resourceName
+                                                );
+                                            }}
                                         >
-                                            <ListItemButton
-                                                selected={
-                                                    resourceName ===
-                                                    currentFileName
+                                            <ListItemText
+                                                primary={resourceName}
+                                                secondary={
+                                                    data.resources[resourceName]
+                                                        .contentType
                                                 }
-                                                onClick={() => {
-                                                    handlers.fileList.click(
-                                                        resourceName
-                                                    );
-                                                }}
-                                            >
-                                                <ListItemText
-                                                    primary={resourceName}
-                                                    secondary={
-                                                        data.resources[
-                                                            resourceName
-                                                        ].contentType
-                                                    }
-                                                />
-                                            </ListItemButton>
-                                        </ListItem>
+                                            />
+                                        </ListItemButton>
                                     )
                                 )}
                             </List>
                         </Grid>
                         <Grid item xs={9}>
                             <Editor
-                                height="350px"
+                                height="300px"
                                 defaultLanguage="json"
                                 theme={
                                     theme.palette.mode === 'light'
