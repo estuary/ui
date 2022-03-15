@@ -7,7 +7,7 @@ const useConnectorImages = (imagesURL: string, index: number = 0) => {
     const { run } = response;
 
     useEffect(() => {
-        if (imagesURL) {
+        if (imagesURL.length > 0) {
             run(
                 connectorsEndpoint.images
                     .read(imagesURL)

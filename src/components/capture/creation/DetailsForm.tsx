@@ -3,25 +3,25 @@ import { JsonForms } from '@jsonforms/react';
 import { Alert, DialogContentText, Skeleton, Stack } from '@mui/material';
 import { ConnectorTypes } from 'endpoints/connectors';
 import useConnectors from 'hooks/useConnectors';
-import { Dispatch, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
     defaultOptions,
     defaultRenderers,
     showValidation,
 } from 'services/jsonforms';
-import { Action, ActionType, NewCaptureState } from './Reducer';
+import useCaptureCreationStore from 'stores/CaptureCreationStore';
 
 type NewCaptureDetailsProps = {
     displayValidation: boolean;
     readonly: boolean;
-    state: NewCaptureState['details'];
-    dispatch: Dispatch<Action>;
 };
 
 function NewCaptureDetails(props: NewCaptureDetailsProps) {
     const intl = useIntl();
-    const { state, dispatch, readonly, displayValidation } = props;
+    const { readonly, displayValidation } = props;
+
+    const store = useCaptureCreationStore();
 
     const {
         data: connectorsData,
@@ -109,25 +109,13 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
                     <JsonForms
                         schema={schema}
                         uischema={uiSchema}
-                        data={state.data}
+                        data={store.details.data}
                         renderers={defaultRenderers}
                         cells={materialCells}
                         config={defaultOptions}
                         readonly={readonly}
                         validationMode={showValidation(displayValidation)}
-                        onChange={(form) => {
-                            if (state.data.image === form.data.image) {
-                                dispatch({
-                                    payload: form,
-                                    type: ActionType.DETAILS_CHANGED,
-                                });
-                            } else {
-                                dispatch({
-                                    payload: form.data.image as string,
-                                    type: ActionType.CONNECTOR_CHANGED,
-                                });
-                            }
-                        }}
+                        onChange={store.setDetails}
                     />
                 ) : isError ? (
                     error

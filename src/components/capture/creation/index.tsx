@@ -224,20 +224,11 @@ function NewCaptureModal() {
                             <NewCaptureDetails
                                 displayValidation={showValidation}
                                 readonly={formSubmitting}
-                                state={details}
-                                dispatch={dispatch}
                             />
-                            {links.connectorImage ? (
-                                <Paper
-                                    sx={{ width: '100%' }}
-                                    variant="outlined"
-                                >
-                                    <NewCaptureSpecFormHeader
-                                        dispatch={dispatch}
-                                        endpoint={links.connectorImage}
-                                        docs={links.documentation}
-                                    />
-                                    <Divider />
+                            <Paper sx={{ width: '100%' }} variant="outlined">
+                                <NewCaptureSpecFormHeader />
+                                <Divider />
+                                {links.connectorImage ? (
                                     <NewCaptureSpecForm
                                         displayValidation={showValidation}
                                         readonly={formSubmitting}
@@ -245,8 +236,8 @@ function NewCaptureModal() {
                                         dispatch={dispatch}
                                         endpoint={links.spec}
                                     />
-                                </Paper>
-                            ) : null}
+                                ) : null}
+                            </Paper>
                         </form>
                     </ErrorBoundryWrapper>
                 ) : null}

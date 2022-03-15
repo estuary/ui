@@ -1,28 +1,32 @@
 import { Alert, AlertTitle, AppBar, Toolbar, Typography } from '@mui/material';
 import useConnectorImages from 'hooks/useConnectorImages';
-import { Dispatch, useEffect } from 'react';
+import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { Action, ActionType, NewCaptureState } from './Reducer';
+import useCaptureCreationStore, {
+    CaptureCreationState,
+} from 'stores/CaptureCreationStore';
+import shallow from 'zustand/shallow';
 
-type NewCaptureSpecFormHeaderProps = {
-    dispatch: Dispatch<Action>;
-    endpoint: NewCaptureState['links']['connectorImage'];
-    docs: NewCaptureState['links']['documentation'];
-};
+const linksSelector = (state: CaptureCreationState) => [
+    state.links.connectorImage,
+    state.links.documentation,
+];
+const setLinkSelector = (state: CaptureCreationState) => state.setLink;
+function NewCaptureSpecFormHeader() {
+    const setLink = useCaptureCreationStore(setLinkSelector, shallow);
 
-function NewCaptureSpecFormHeader(props: NewCaptureSpecFormHeaderProps) {
-    const { endpoint, dispatch, docs } = props;
-
+    const [endpoint, docs] = useCaptureCreationStore(linksSelector, shallow);
     const { data, error } = useConnectorImages(endpoint);
 
     useEffect(() => {
-        if (data?.links.spec && data.links.spec.length > 0) {
-            dispatch({
-                payload: data.links.spec,
-                type: ActionType.NEW_SPEC_LINK,
-            });
+        if (
+            endpoint.length > 0 &&
+            data?.links.spec &&
+            data.links.spec.length > 0
+        ) {
+            setLink('spec', data.links.spec);
         }
-    }, [data, dispatch]);
+    }, [endpoint, data, setLink]);
 
     if (error) {
         return (
