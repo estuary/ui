@@ -228,15 +228,12 @@ function NewCaptureModal() {
                             <Paper sx={{ width: '100%' }} variant="outlined">
                                 <NewCaptureSpecFormHeader />
                                 <Divider />
-                                {links.connectorImage ? (
-                                    <NewCaptureSpecForm
-                                        displayValidation={showValidation}
-                                        readonly={formSubmitting}
-                                        state={spec.data}
-                                        dispatch={dispatch}
-                                        endpoint={links.spec}
-                                    />
-                                ) : null}
+                                <NewCaptureSpecForm
+                                    displayValidation={showValidation}
+                                    readonly={formSubmitting}
+                                    state={spec.data}
+                                    dispatch={dispatch}
+                                />
                             </Paper>
                         </form>
                     </ErrorBoundryWrapper>

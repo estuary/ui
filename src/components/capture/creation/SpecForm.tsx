@@ -13,6 +13,10 @@ import {
     generateCustomUISchema,
     showValidation,
 } from 'services/jsonforms';
+import useCaptureCreationStore, {
+    CaptureCreationState,
+} from 'stores/CaptureCreationStore';
+import shallow from 'zustand/shallow';
 import { Action, ActionType, NewCaptureState } from './Reducer';
 
 type NewCaptureSpecFormProps = {
@@ -21,13 +25,16 @@ type NewCaptureSpecFormProps = {
 
     state: NewCaptureState['spec'];
     dispatch: Dispatch<Action>;
-    endpoint: string;
 };
 
 const defaultAjv = createAjv({ useDefaults: true });
 
+const linksSelector = (state: CaptureCreationState) => [state.links.spec];
+
 function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
-    const { state, dispatch, endpoint, readonly, displayValidation } = props;
+    const { state, dispatch, readonly, displayValidation } = props;
+
+    const [endpoint] = useCaptureCreationStore(linksSelector, shallow);
 
     const { isIdle, isLoading, isSuccess, error, data } =
         useConnectorImageSpec(endpoint);

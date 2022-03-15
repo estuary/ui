@@ -12,6 +12,7 @@ const linksSelector = (state: CaptureCreationState) => [
     state.links.documentation,
 ];
 const setLinkSelector = (state: CaptureCreationState) => state.setLink;
+
 function NewCaptureSpecFormHeader() {
     const setLink = useCaptureCreationStore(setLinkSelector, shallow);
 
@@ -19,11 +20,7 @@ function NewCaptureSpecFormHeader() {
     const { data, error } = useConnectorImages(endpoint);
 
     useEffect(() => {
-        if (
-            endpoint.length > 0 &&
-            data?.links.spec &&
-            data.links.spec.length > 0
-        ) {
+        if (data?.links.spec && data.links.spec.length > 0) {
             setLink('spec', data.links.spec);
         }
     }, [endpoint, data, setLink]);
