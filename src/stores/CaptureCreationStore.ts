@@ -3,30 +3,6 @@ import produce from 'immer';
 import create from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-interface CaptureCreationStateLinks {
-    connectorImage: string;
-    discovered_catalog: string;
-    documentation: string;
-    spec: string;
-}
-
-export interface CaptureCreationState {
-    //Details
-    details: Pick<JsonFormsCore, 'data' | 'errors'>;
-    setDetails: (details: Pick<JsonFormsCore, 'data' | 'errors'>) => void;
-    removeDetails: () => void;
-
-    //Links
-    links: CaptureCreationStateLinks;
-    setLink: (link: keyof CaptureCreationStateLinks, value: string) => void;
-    removeLinks: () => void;
-
-    //Spec
-    spec: Pick<JsonFormsCore, 'data' | 'errors'>;
-    setSpec: (spec: Pick<JsonFormsCore, 'data' | 'errors'>) => void;
-    removeSpec: () => void;
-}
-
 enum EventNames {
     DETAILS_CHANGED = 'Details Changed',
     DETAILS_REMOVED = 'Details Removed',
@@ -36,25 +12,70 @@ enum EventNames {
     SPEC_REMOVED = 'Spec Removed',
 }
 
-const detailsInitialState = {
-    details: { data: { image: '', name: '' } },
-    errors: [],
-    links: {
-        connectorImage: '',
-        discovered_catalog: '',
-        documentation: '',
-        spec: '',
-    },
-    spec: {
-        data: {},
-        errors: [],
-    },
+interface CaptureCreationStateLinks {
+    connectorImage: string;
+    discovered_catalog: string;
+    documentation: string;
+    spec: string;
+}
+
+interface CaptureCreationDetails
+    extends Pick<JsonFormsCore, 'data' | 'errors'> {
+    data: {
+        name: string;
+        image: string;
+    };
+}
+
+interface CaptureCreationSpec extends Pick<JsonFormsCore, 'data' | 'errors'> {
+    data: {
+        [key: string]: any;
+    };
+}
+
+export interface CaptureCreationState {
+    //Details
+    details: CaptureCreationDetails;
+    setDetails: (details: CaptureCreationDetails) => void;
+    removeDetails: () => void;
+
+    //Links
+    links: CaptureCreationStateLinks;
+    setLink: (link: keyof CaptureCreationStateLinks, value: string) => void;
+    removeLinks: () => void;
+
+    //Spec
+    spec: CaptureCreationSpec;
+    setSpec: (spec: CaptureCreationSpec) => void;
+    removeSpec: () => void;
+}
+
+const getInitialStateData = (): Pick<
+    CaptureCreationState,
+    'details' | 'links' | 'spec'
+> => {
+    return {
+        details: {
+            data: { image: '', name: '' },
+            errors: [],
+        },
+        links: {
+            connectorImage: '',
+            discovered_catalog: '',
+            documentation: '',
+            spec: '',
+        },
+        spec: {
+            data: {},
+            errors: [],
+        },
+    };
 };
 
 const useCaptureCreationStore = create<CaptureCreationState>(
     devtools(
         (set) => ({
-            ...detailsInitialState,
+            ...getInitialStateData(),
             setDetails: (details) => {
                 set(
                     produce((state) => {
@@ -71,7 +92,7 @@ const useCaptureCreationStore = create<CaptureCreationState>(
             removeDetails: () => {
                 set(
                     produce((state) => {
-                        state.details = detailsInitialState.details;
+                        state.details = getInitialStateData().details;
                     }),
                     false,
                     EventNames.DETAILS_REMOVED
@@ -90,7 +111,7 @@ const useCaptureCreationStore = create<CaptureCreationState>(
             removeLinks: () => {
                 set(
                     produce((state) => {
-                        state.links = detailsInitialState.links;
+                        state.links = getInitialStateData().links;
                     }),
                     false,
                     EventNames.LINKS_REMOVED
@@ -109,7 +130,7 @@ const useCaptureCreationStore = create<CaptureCreationState>(
             removeSpec: () => {
                 set(
                     produce((state) => {
-                        state.spec = detailsInitialState.spec;
+                        state.spec = getInitialStateData().spec;
                     }),
                     false,
                     EventNames.SPEC_REMOVED

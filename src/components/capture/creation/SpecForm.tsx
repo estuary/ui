@@ -73,7 +73,9 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
         }
     }, [endpointSchema, isSuccess, setSpec]);
 
-    if (isIdle || isLoading) {
+    if (endpoint.length === 0) {
+        return null;
+    } else if (isIdle || isLoading) {
         return <FormLoading />;
     } else if (error) {
         return (
@@ -100,7 +102,7 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
                 <JsonForms
                     schema={endpointSchema}
                     uischema={uiSchema}
-                    data={formData.data}
+                    data={formData}
                     renderers={defaultRenderers}
                     cells={materialCells}
                     config={defaultOptions}
