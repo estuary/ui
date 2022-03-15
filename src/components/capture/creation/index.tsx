@@ -105,7 +105,7 @@ function NewCaptureModal() {
         addToChangeSet: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
-            const catalogNamespace: string = captureName;
+            const catalogNamespace = captureName;
 
             const capture: Entity = {
                 metadata: {
