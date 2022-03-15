@@ -41,6 +41,7 @@ const FORM_ID = 'newCaptureForm';
 enum Steps {
     DETAILS_AND_SPEC = 'Getting basic connection details',
     WAITING_FOR_DISCOVER = 'Waiting for discovery call to server',
+    CHOOSE_COLLECTIONS = 'Allow customer to choose what schemas they want',
     REVIEW_SCHEMA_IN_EDITOR = 'Allow custom to edit YAML',
 }
 
@@ -80,6 +81,9 @@ function NewCaptureModal() {
     const [catalogResponse, setCatalogResponse] =
         useState<DiscoveredCatalog | null>(null);
     const [activeStep, setActiveStep] = useState<Steps>(Steps.DETAILS_AND_SPEC);
+
+    // TODO Schema Editor
+    //const [availableSchemas, setAvailableSchemas] = useState<any[]>([]);
 
     // Form Event Handlers
     const handlers = {
@@ -150,7 +154,15 @@ function NewCaptureModal() {
                         config: spec.data,
                     })
                     .then((response) => {
+                        // TODO Schema Editor
+                        // const possibleSchemas =
+                        //     discoveredCatalogEndpoint.helpers.getFlowSchema(
+                        //         response.data.attributes
+                        //     );
+                        // setAvailableSchemas(possibleSchemas);
+
                         setCatalogResponse(response.data);
+
                         setActiveStep(Steps.REVIEW_SCHEMA_IN_EDITOR);
                     })
                     .catch((error) => {
@@ -256,6 +268,21 @@ function NewCaptureModal() {
                         </Typography>
                     </Box>
                 ) : null}
+
+                {
+                    // TODO Schema Editor
+                    // activeStep === Steps.CHOOSE_COLLECTIONS
+                    //     ? Object.keys(availableSchemas).map((key: any) => (
+                    //           <FormControlLabel
+                    //               key={`SchemaSelector-${key}`}
+                    //               control={<Checkbox name={key} />}
+                    //               label={key}
+                    //               checked
+                    //           />
+                    //       ))
+                    //     : null
+                }
+
                 {activeStep === Steps.REVIEW_SCHEMA_IN_EDITOR ? (
                     <NewCaptureEditor data={catalogResponse?.attributes} />
                 ) : null}

@@ -36,4 +36,19 @@ export const discoveredCatalogEndpoint = {
     ) => {
         return client<DiscoveredCatalogResponse>(endpoint, { data });
     },
+    helpers: {
+        getFlowSchema: (response?: DiscoveredCatalogAttributes) => {
+            if (response) {
+                const flowIndex = Object.keys(response.resources).find((e) =>
+                    e.endsWith('.flow.json')
+                );
+
+                if (flowIndex) {
+                    return response.resources[flowIndex].content.collections;
+                }
+            }
+
+            return null;
+        },
+    },
 };
