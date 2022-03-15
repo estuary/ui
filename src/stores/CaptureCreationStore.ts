@@ -11,15 +11,20 @@ interface CaptureCreationStateLinks {
 }
 
 export interface CaptureCreationState {
+    //Details
     details: Pick<JsonFormsCore, 'data' | 'errors'>;
-    setDetails: any;
-    removeDetails: any;
+    setDetails: (details: Pick<JsonFormsCore, 'data' | 'errors'>) => void;
+    removeDetails: () => void;
+
+    //Links
     links: CaptureCreationStateLinks;
     setLink: (link: keyof CaptureCreationStateLinks, value: string) => void;
-    removeLinks: any;
-    // spec: Pick<JsonFormsCore, 'data' | 'errors'>;
-    // setSpec: any;
-    // removeSpec: any;
+    removeLinks: () => void;
+
+    //Spec
+    spec: Pick<JsonFormsCore, 'data' | 'errors'>;
+    setSpec: (spec: Pick<JsonFormsCore, 'data' | 'errors'>) => void;
+    removeSpec: () => void;
 }
 
 enum EventNames {
@@ -27,6 +32,8 @@ enum EventNames {
     DETAILS_REMOVED = 'Details Removed',
     LINKS_CHANGED = 'Links Changed',
     LINKS_REMOVED = 'Links Removed',
+    SPEC_CHANGED = 'Spec Changed',
+    SPEC_REMOVED = 'Spec Removed',
 }
 
 const detailsInitialState = {
@@ -38,13 +45,17 @@ const detailsInitialState = {
         documentation: '',
         spec: '',
     },
+    spec: {
+        data: {},
+        errors: [],
+    },
 };
 
 const useCaptureCreationStore = create<CaptureCreationState>(
     devtools(
         (set) => ({
             ...detailsInitialState,
-            setDetails: (details: any) => {
+            setDetails: (details) => {
                 set(
                     produce((state) => {
                         if (state.details.image !== details.data.image) {
@@ -83,6 +94,25 @@ const useCaptureCreationStore = create<CaptureCreationState>(
                     }),
                     false,
                     EventNames.LINKS_REMOVED
+                );
+            },
+
+            setSpec: (spec) => {
+                set(
+                    produce((state) => {
+                        state.spec = spec;
+                    }),
+                    false,
+                    EventNames.SPEC_CHANGED
+                );
+            },
+            removeSpec: () => {
+                set(
+                    produce((state) => {
+                        state.spec = detailsInitialState.spec;
+                    }),
+                    false,
+                    EventNames.SPEC_REMOVED
                 );
             },
         }),

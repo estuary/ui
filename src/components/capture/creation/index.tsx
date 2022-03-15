@@ -19,9 +19,12 @@ import {
     DiscoveredCatalog,
     discoveredCatalogEndpoint,
 } from 'endpoints/discoveredCatalog';
-import { MouseEvent, useReducer, useState } from 'react';
+import { MouseEvent, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
+import useCaptureCreationStore, {
+    CaptureCreationState,
+} from 'stores/CaptureCreationStore';
 import useChangeSetStore, { CaptureState, Entity } from 'stores/ChangeSetStore';
 import useNotificationStore, {
     Notification,
@@ -32,7 +35,6 @@ import useSchemaEditorStore, {
 } from 'stores/SchemaEditorStore';
 import NewCaptureDetails from './DetailsForm';
 import NewCaptureError from './Error';
-import { getInitialState, newCaptureReducer } from './Reducer';
 import NewCaptureEditor from './SchemaEditor';
 import NewCaptureSpecForm from './SpecForm';
 import NewCaptureSpecFormHeader from './SpecFormHeader';
@@ -50,6 +52,15 @@ const selectors = {
     removeSchema: (state: SchemaEditorState) => state.removeSchema,
     schema: (state: SchemaEditorState) => state.schema,
     showNotification: (state: NotificationState) => state.showNotification,
+    captureName: (state: CaptureCreationState) => state.details.data.name,
+    setDetails: (state: CaptureCreationState) => state.setDetails,
+    errors: (state: CaptureCreationState) => [
+        state.details.errors,
+        state.spec.errors,
+    ],
+    specFormData: (state: CaptureCreationState) => state.spec.data,
+    disoverLink: (state: CaptureCreationState) =>
+        state.links.discovered_catalog,
 };
 
 function NewCaptureModal() {
@@ -67,9 +78,13 @@ function NewCaptureModal() {
     // Notification store
     const showNotification = useNotificationStore(selectors.showNotification);
 
-    // Form data state
-    const [state, dispatch] = useReducer(newCaptureReducer, getInitialState());
-    const { details, spec, links } = state;
+    // Form store
+    const captureName = useCaptureCreationStore(selectors.captureName);
+    const [detailErrors, specErrors] = useCaptureCreationStore(
+        selectors.errors
+    );
+    const specFormData = useCaptureCreationStore(selectors.specFormData);
+    const disoverLink = useCaptureCreationStore(selectors.disoverLink);
 
     // Form props
     const [showValidation, setShowValidation] = useState(false);
@@ -90,7 +105,7 @@ function NewCaptureModal() {
         addToChangeSet: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
-            const catalogNamespace: string = details.data.name;
+            const catalogNamespace: string = captureName;
 
             const capture: Entity = {
                 metadata: {
@@ -132,14 +147,9 @@ function NewCaptureModal() {
             let detailHasErrors = false;
             let specHasErrors = false;
 
-            // TODO - this was to make TS/Ling happy
-            if (details.errors) {
-                detailHasErrors = details.errors.length > 0;
-            }
-
-            if (spec.errors) {
-                specHasErrors = spec.errors.length > 0;
-            }
+            // TODO - this was to make TS/Linting happy
+            detailHasErrors = detailErrors ? detailErrors.length > 0 : false;
+            specHasErrors = specErrors ? specErrors.length > 0 : false;
 
             if (detailHasErrors || specHasErrors) {
                 setShowValidation(true);
@@ -149,9 +159,9 @@ function NewCaptureModal() {
                 setActiveStep(Steps.WAITING_FOR_DISCOVER);
 
                 discoveredCatalogEndpoint
-                    .create(links.discovered_catalog, {
-                        name: details.data.name,
-                        config: spec.data,
+                    .create(disoverLink, {
+                        name: captureName,
+                        config: specFormData,
                     })
                     .then((response) => {
                         // TODO Schema Editor
@@ -231,8 +241,6 @@ function NewCaptureModal() {
                                 <NewCaptureSpecForm
                                     displayValidation={showValidation}
                                     readonly={formSubmitting}
-                                    state={spec.data}
-                                    dispatch={dispatch}
                                 />
                             </Paper>
                         </form>

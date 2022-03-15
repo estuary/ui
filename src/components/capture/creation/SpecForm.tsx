@@ -5,7 +5,7 @@ import { Alert, AlertTitle, StyledEngineProvider } from '@mui/material';
 import FormLoading from 'components/shared/FormLoading';
 import useConnectorImageSpec from 'hooks/useConnectorImagesSpec';
 import { isEmpty } from 'lodash';
-import { Dispatch, useEffect } from 'react';
+import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     defaultOptions,
@@ -17,24 +17,27 @@ import useCaptureCreationStore, {
     CaptureCreationState,
 } from 'stores/CaptureCreationStore';
 import shallow from 'zustand/shallow';
-import { Action, ActionType, NewCaptureState } from './Reducer';
 
 type NewCaptureSpecFormProps = {
     displayValidation: boolean;
     readonly: boolean;
-
-    state: NewCaptureState['spec'];
-    dispatch: Dispatch<Action>;
 };
 
 const defaultAjv = createAjv({ useDefaults: true });
 
-const linksSelector = (state: CaptureCreationState) => [state.links.spec];
-
+const stateSelectors = {
+    specLink: (state: CaptureCreationState) => state.links.spec,
+    formData: (state: CaptureCreationState) => state.spec.data,
+    setLink: (state: CaptureCreationState) => state.setLink,
+    setSpec: (state: CaptureCreationState) => state.setSpec,
+};
 function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
-    const { state, dispatch, readonly, displayValidation } = props;
+    const { readonly, displayValidation } = props;
 
-    const [endpoint] = useCaptureCreationStore(linksSelector, shallow);
+    const endpoint = useCaptureCreationStore(stateSelectors.specLink, shallow);
+    const setLink = useCaptureCreationStore(stateSelectors.setLink);
+    const setSpec = useCaptureCreationStore(stateSelectors.setSpec);
+    const formData = useCaptureCreationStore(stateSelectors.formData);
 
     const { isIdle, isLoading, isSuccess, error, data } =
         useConnectorImageSpec(endpoint);
@@ -46,21 +49,15 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
 
     useEffect(() => {
         if (discovered_catalog.length > 0) {
-            dispatch({
-                payload: discovered_catalog,
-                type: ActionType.NEW_DISCOVERY_LINK,
-            });
+            setLink('discovered_catalog', discovered_catalog);
         }
-    }, [discovered_catalog, dispatch]);
+    }, [discovered_catalog, setLink]);
 
     useEffect(() => {
         if (documentation.length > 0) {
-            dispatch({
-                payload: documentation,
-                type: ActionType.NEW_DOCS_LINK,
-            });
+            setLink('documentation', documentation);
         }
-    }, [documentation, dispatch]);
+    }, [documentation, setLink]);
 
     // This will hydrate the default values for us as we don't want JSONForms to
     //  directly update the state object as it caused issues when switching connectors.
@@ -70,14 +67,11 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
             const defaultValues = {};
             hydrateAndValidate(defaultValues);
 
-            dispatch({
-                payload: {
-                    data: defaultValues,
-                },
-                type: ActionType.CAPTURE_SPEC_CHANGED,
+            setSpec({
+                data: defaultValues,
             });
         }
-    }, [dispatch, endpointSchema, isSuccess]);
+    }, [endpointSchema, isSuccess, setSpec]);
 
     if (isIdle || isLoading) {
         return <FormLoading />;
@@ -96,10 +90,7 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
         const handlers = {
             onChange: (form: any) => {
                 if (!isEmpty(form.data)) {
-                    dispatch({
-                        payload: form,
-                        type: ActionType.CAPTURE_SPEC_CHANGED,
-                    });
+                    setSpec(form);
                 }
             },
         };
@@ -109,7 +100,7 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
                 <JsonForms
                     schema={endpointSchema}
                     uischema={uiSchema}
-                    data={state}
+                    data={formData.data}
                     renderers={defaultRenderers}
                     cells={materialCells}
                     config={defaultOptions}

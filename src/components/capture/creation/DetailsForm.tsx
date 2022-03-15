@@ -10,18 +10,26 @@ import {
     defaultRenderers,
     showValidation,
 } from 'services/jsonforms';
-import useCaptureCreationStore from 'stores/CaptureCreationStore';
+import useCaptureCreationStore, {
+    CaptureCreationState,
+} from 'stores/CaptureCreationStore';
 
 type NewCaptureDetailsProps = {
     displayValidation: boolean;
     readonly: boolean;
 };
 
+const stateSelectors = {
+    formData: (state: CaptureCreationState) => state.details.data,
+    setDetails: (state: CaptureCreationState) => state.setDetails,
+};
+
 function NewCaptureDetails(props: NewCaptureDetailsProps) {
     const intl = useIntl();
     const { readonly, displayValidation } = props;
 
-    const store = useCaptureCreationStore();
+    const formData = useCaptureCreationStore(stateSelectors.formData);
+    const setDetails = useCaptureCreationStore(stateSelectors.setDetails);
 
     const {
         data: connectorsData,
@@ -109,13 +117,13 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
                     <JsonForms
                         schema={schema}
                         uischema={uiSchema}
-                        data={store.details.data}
+                        data={formData}
                         renderers={defaultRenderers}
                         cells={materialCells}
                         config={defaultOptions}
                         readonly={readonly}
                         validationMode={showValidation(displayValidation)}
-                        onChange={store.setDetails}
+                        onChange={setDetails}
                     />
                 ) : isError ? (
                     error
