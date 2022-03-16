@@ -1,5 +1,6 @@
 import { JsonFormsCore } from '@jsonforms/core';
 import produce from 'immer';
+import { isEqual } from 'lodash';
 import create from 'zustand';
 import { devtools } from 'zustand/middleware';
 
@@ -51,6 +52,7 @@ export interface CaptureCreationState {
 
     //Misc
     cleanUp: () => void;
+    hasChanges: () => boolean;
 }
 
 const getInitialStateData = (): Pick<
@@ -77,7 +79,7 @@ const getInitialStateData = (): Pick<
 
 const useCaptureCreationStore = create<CaptureCreationState>(
     devtools(
-        (set) => ({
+        (set, get) => ({
             ...getInitialStateData(),
             setDetails: (details) => {
                 set(
@@ -142,6 +144,22 @@ const useCaptureCreationStore = create<CaptureCreationState>(
 
             cleanUp: () => {
                 set(getInitialStateData(), false);
+            },
+            hasChanges: () => {
+                const { details, spec } = get();
+                const { details: initialDetails, spec: initialSpec } =
+                    getInitialStateData();
+
+                return !isEqual(
+                    {
+                        details: details.data,
+                        spec: spec.data,
+                    },
+                    {
+                        details: initialDetails.data,
+                        spec: initialSpec.data,
+                    }
+                );
             },
         }),
         { name: 'capture-creation-state' }

@@ -55,6 +55,7 @@ const selectors = {
     captureName: (state: CaptureCreationState) => state.details.data.name,
     setDetails: (state: CaptureCreationState) => state.setDetails,
     cleanUp: (state: CaptureCreationState) => state.cleanUp,
+    hasChanges: (state: CaptureCreationState) => state.hasChanges,
     errors: (state: CaptureCreationState) => [
         state.details.errors,
         state.spec.errors,
@@ -87,6 +88,7 @@ function NewCaptureModal() {
     const specFormData = useCaptureCreationStore(selectors.specFormData);
     const disoverLink = useCaptureCreationStore(selectors.disoverLink);
     const cleanUp = useCaptureCreationStore(selectors.cleanUp);
+    const hasChanges = useCaptureCreationStore(selectors.hasChanges);
 
     // Form props
     const [showValidation, setShowValidation] = useState(false);
@@ -138,13 +140,17 @@ function NewCaptureModal() {
         },
 
         close: () => {
-            if (schemaFromEditor) {
-                removeSchema();
+            if (hasChanges()) {
+                console.log('uh oh');
+            } else {
+                if (schemaFromEditor) {
+                    removeSchema();
+                }
+
+                cleanUp();
+
+                navigate('..');
             }
-
-            cleanUp();
-
-            navigate('..'); //This is assuming this is a child of the /captures route.
         },
 
         test: (event: MouseEvent<HTMLElement>) => {
