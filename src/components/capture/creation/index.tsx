@@ -88,6 +88,7 @@ function NewCaptureModal() {
                 metadata: {
                     catalogNamespace,
                     changeType: 'New Entity',
+                    dateCreated: Date(),
                     entityType: 'Capture',
                     name: catalogNamespace.substring(
                         catalogNamespace.lastIndexOf('/') + 1,
