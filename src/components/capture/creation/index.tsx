@@ -205,7 +205,7 @@ function NewCaptureModal() {
             scroll="paper"
             fullScreen={fullScreen}
             fullWidth={!fullScreen}
-            maxWidth="lg"
+            maxWidth="md"
             disableEscapeKeyDown
             sx={{
                 '.MuiDialog-container': {

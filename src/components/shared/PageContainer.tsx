@@ -59,7 +59,13 @@ function PageContainer(props: PageContainerProps) {
                 </Snackbar>
             ) : null}
 
-            <Paper sx={{ width: '100%' }} variant="outlined">
+            <Paper
+                sx={{
+                    padding: 2,
+                    width: '100%',
+                }}
+                variant="outlined"
+            >
                 {children}
             </Paper>
         </Container>

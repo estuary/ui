@@ -7,8 +7,8 @@ import Error from '../pages/Error';
 
 const Admin = lazy(() => import('../pages/Admin'));
 
-const Capture = lazy(() => import('../pages/Captures'));
-const NewCaptureModal = lazy(() => import('components/capture/creation/index'));
+const Captures = lazy(() => import('../pages/Captures'));
+const CaptureCreation = lazy(() => import('components/capture/creation/index'));
 
 const Materializations = lazy(() => import('../pages/Materializations'));
 const NewMaterialization = lazy(
@@ -34,8 +34,8 @@ const Authenticated = () => {
                     <Route path="/dashboard" element={<Home />} />
                     <Route path="/app">
                         <Route path="collections" element={<Collections />} />
-                        <Route path="captures" element={<Capture />}>
-                            <Route path="new" element={<NewCaptureModal />} />
+                        <Route path="captures" element={<Captures />}>
+                            <Route path="new" element={<CaptureCreation />} />
                         </Route>
                         <Route path="derivations" element={<Error />} />
                         <Route

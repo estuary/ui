@@ -240,7 +240,7 @@ const generateUISchema = (
  */
 export const generateCustomUISchema = (
     jsonSchema: JsonSchema,
-    layoutType = 'VerticalLayout',
+    layoutType = 'HorizontalLayout',
     prefix = '#',
     rootSchema = jsonSchema
 ): UISchemaElement | Layout =>
