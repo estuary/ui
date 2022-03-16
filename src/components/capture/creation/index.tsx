@@ -54,6 +54,7 @@ const selectors = {
     showNotification: (state: NotificationState) => state.showNotification,
     captureName: (state: CaptureCreationState) => state.details.data.name,
     setDetails: (state: CaptureCreationState) => state.setDetails,
+    cleanUp: (state: CaptureCreationState) => state.cleanUp,
     errors: (state: CaptureCreationState) => [
         state.details.errors,
         state.spec.errors,
@@ -85,6 +86,7 @@ function NewCaptureModal() {
     );
     const specFormData = useCaptureCreationStore(selectors.specFormData);
     const disoverLink = useCaptureCreationStore(selectors.disoverLink);
+    const cleanUp = useCaptureCreationStore(selectors.cleanUp);
 
     // Form props
     const [showValidation, setShowValidation] = useState(false);
@@ -138,6 +140,8 @@ function NewCaptureModal() {
             if (schemaFromEditor) {
                 removeSchema();
             }
+
+            cleanUp();
 
             navigate('..'); //This is assuming this is a child of the /captures route.
         },
@@ -201,6 +205,7 @@ function NewCaptureModal() {
             fullScreen={fullScreen}
             fullWidth={!fullScreen}
             maxWidth="lg"
+            disableEscapeKeyDown
             sx={{
                 '.MuiDialog-container': {
                     alignItems: 'flex-start',

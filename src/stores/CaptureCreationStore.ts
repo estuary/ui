@@ -48,6 +48,9 @@ export interface CaptureCreationState {
     spec: CaptureCreationSpec;
     setSpec: (spec: CaptureCreationSpec) => void;
     removeSpec: () => void;
+
+    //Misc
+    cleanUp: () => void;
 }
 
 const getInitialStateData = (): Pick<
@@ -135,6 +138,10 @@ const useCaptureCreationStore = create<CaptureCreationState>(
                     false,
                     EventNames.SPEC_REMOVED
                 );
+            },
+
+            cleanUp: () => {
+                set(getInitialStateData(), false);
             },
         }),
         { name: 'capture-creation-state' }
