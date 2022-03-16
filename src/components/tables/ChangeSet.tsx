@@ -12,6 +12,7 @@ import {
     TableRow,
     Tooltip,
 } from '@mui/material';
+import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import { MouseEvent, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useChangeSetStore, {
@@ -28,25 +29,13 @@ const selectors = {
 function ChangeSetTable() {
     const [page, setPage] = useState(0);
     const rowsPerPage = 10;
-
-    const handleChangePage = (
-        event: MouseEvent<HTMLButtonElement> | null,
-        newPage: number
-    ) => {
-        setPage(newPage);
-    };
+    const rowHeight = 57;
 
     const newChangeCount = useChangeSetStore(selectors.newChangeCount);
     const resetNewChangeCount = useChangeSetStore(
         selectors.resetNewChangeCount
     );
     const captureState = useChangeSetStore(selectors.captures);
-
-    useEffect(() => {
-        if (newChangeCount > 0) {
-            resetNewChangeCount();
-        }
-    }, [newChangeCount, resetNewChangeCount]);
 
     const captures = Object.values(captureState);
     const captureDetails: EntityMetadata[] = captures.map(
@@ -69,10 +58,27 @@ function ChangeSetTable() {
             headerIntlKey: 'changeSet.data.entity',
         },
         {
+            field: 'dateCreated',
+            headerIntlKey: 'changeSet.data.lastUpdated',
+        },
+        {
             field: 'changeType',
             headerIntlKey: 'changeSet.data.details',
         },
     ];
+
+    const handleChangePage = (
+        event: MouseEvent<HTMLButtonElement> | null,
+        newPage: number
+    ) => {
+        setPage(newPage);
+    };
+
+    useEffect(() => {
+        if (newChangeCount > 0) {
+            resetNewChangeCount();
+        }
+    }, [newChangeCount, resetNewChangeCount]);
 
     return (
         <Box sx={{ mb: 2, mx: 2 }}>
@@ -116,6 +122,7 @@ function ChangeSetTable() {
                                             name,
                                             entityType,
                                             catalogNamespace,
+                                            dateCreated: dateUpdated,
                                             changeType,
                                         },
                                         index
@@ -141,6 +148,12 @@ function ChangeSetTable() {
                                                 </Tooltip>
                                                 <span>{name}</span>
                                             </TableCell>
+                                            <TableCell>
+                                                {formatDistanceToNow(
+                                                    new Date(dateUpdated),
+                                                    { addSuffix: true }
+                                                )}
+                                            </TableCell>
                                             <TableCell>{changeType}</TableCell>
                                         </TableRow>
                                     )
@@ -149,7 +162,7 @@ function ChangeSetTable() {
                                 <TableRow>
                                     <TableCell
                                         colSpan={4}
-                                        sx={{ height: 57 * emptyRows }}
+                                        sx={{ height: rowHeight * emptyRows }}
                                     />
                                 </TableRow>
                             )}
