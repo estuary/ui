@@ -14,9 +14,15 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
+import useCaptureCreationStore, {
+    CaptureCreationState,
+} from 'components/capture/creation/Store';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import { discoveryEndpoint } from 'endpoints/discovery';
-import { MouseEvent, useReducer, useState } from 'react';
+import {
+    DiscoveredCatalog,
+    discoveredCatalogEndpoint,
+} from 'endpoints/discoveredCatalog';
+import { MouseEvent, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import useChangeSetStore, { CaptureState, Entity } from 'stores/ChangeSetStore';
@@ -29,7 +35,6 @@ import useSchemaEditorStore, {
 } from 'stores/SchemaEditorStore';
 import NewCaptureDetails from './DetailsForm';
 import NewCaptureError from './Error';
-import { getInitialState, newCaptureReducer } from './Reducer';
 import NewCaptureEditor from './SchemaEditor';
 import NewCaptureSpecForm from './SpecForm';
 import NewCaptureSpecFormHeader from './SpecFormHeader';
@@ -38,6 +43,7 @@ const FORM_ID = 'newCaptureForm';
 enum Steps {
     DETAILS_AND_SPEC = 'Getting basic connection details',
     WAITING_FOR_DISCOVER = 'Waiting for discovery call to server',
+    CHOOSE_COLLECTIONS = 'Allow customer to choose what schemas they want',
     REVIEW_SCHEMA_IN_EDITOR = 'Allow custom to edit YAML',
 }
 
@@ -46,6 +52,17 @@ const selectors = {
     removeSchema: (state: SchemaEditorState) => state.removeSchema,
     schema: (state: SchemaEditorState) => state.schema,
     showNotification: (state: NotificationState) => state.showNotification,
+    captureName: (state: CaptureCreationState) => state.details.data.name,
+    setDetails: (state: CaptureCreationState) => state.setDetails,
+    resetState: (state: CaptureCreationState) => state.resetState,
+    hasChanges: (state: CaptureCreationState) => state.hasChanges,
+    errors: (state: CaptureCreationState) => [
+        state.details.errors,
+        state.spec.errors,
+    ],
+    specFormData: (state: CaptureCreationState) => state.spec.data,
+    disoverLink: (state: CaptureCreationState) =>
+        state.links.discovered_catalog,
 };
 
 function NewCaptureModal() {
@@ -63,9 +80,15 @@ function NewCaptureModal() {
     // Notification store
     const showNotification = useNotificationStore(selectors.showNotification);
 
-    // Form data state
-    const [state, dispatch] = useReducer(newCaptureReducer, getInitialState());
-    const { details, spec, links } = state;
+    // Form store
+    const captureName = useCaptureCreationStore(selectors.captureName);
+    const [detailErrors, specErrors] = useCaptureCreationStore(
+        selectors.errors
+    );
+    const specFormData = useCaptureCreationStore(selectors.specFormData);
+    const disoverLink = useCaptureCreationStore(selectors.disoverLink);
+    const cleanUp = useCaptureCreationStore(selectors.resetState);
+    const hasChanges = useCaptureCreationStore(selectors.hasChanges);
 
     // Form props
     const [showValidation, setShowValidation] = useState(false);
@@ -74,15 +97,19 @@ function NewCaptureModal() {
         message: string;
         errors: any[];
     } | null>(null);
-    const [catalogResponse, setCatalogResponse] = useState<object | null>(null);
+    const [catalogResponse, setCatalogResponse] =
+        useState<DiscoveredCatalog | null>(null);
     const [activeStep, setActiveStep] = useState<Steps>(Steps.DETAILS_AND_SPEC);
+
+    // TODO Schema Editor
+    //const [availableSchemas, setAvailableSchemas] = useState<any[]>([]);
 
     // Form Event Handlers
     const handlers = {
         addToChangeSet: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
-            const catalogNamespace: string = details.data.name;
+            const catalogNamespace = captureName;
 
             const capture: Entity = {
                 metadata: {
@@ -113,11 +140,17 @@ function NewCaptureModal() {
         },
 
         close: () => {
-            if (schemaFromEditor) {
-                removeSchema();
-            }
+            if (hasChanges()) {
+                console.log('uh oh');
+            } else {
+                if (schemaFromEditor) {
+                    removeSchema();
+                }
 
-            navigate('..'); //This is assuming this is a child of the /captures route.
+                cleanUp();
+
+                navigate('..');
+            }
         },
 
         test: (event: MouseEvent<HTMLElement>) => {
@@ -125,14 +158,9 @@ function NewCaptureModal() {
             let detailHasErrors = false;
             let specHasErrors = false;
 
-            // TODO - this was to make TS/Ling happy
-            if (details.errors) {
-                detailHasErrors = details.errors.length > 0;
-            }
-
-            if (spec.errors) {
-                specHasErrors = spec.errors.length > 0;
-            }
+            // TODO - this was to make TS/Linting happy
+            detailHasErrors = detailErrors ? detailErrors.length > 0 : false;
+            specHasErrors = specErrors ? specErrors.length > 0 : false;
 
             if (detailHasErrors || specHasErrors) {
                 setShowValidation(true);
@@ -141,10 +169,21 @@ function NewCaptureModal() {
                 setFormSubmitError(null);
                 setActiveStep(Steps.WAITING_FOR_DISCOVER);
 
-                discoveryEndpoint
-                    .create(links.discovery, spec.data)
+                discoveredCatalogEndpoint
+                    .create(disoverLink, {
+                        name: captureName,
+                        config: specFormData,
+                    })
                     .then((response) => {
-                        setCatalogResponse(response.data.attributes);
+                        // TODO Schema Editor
+                        // const possibleSchemas =
+                        //     discoveredCatalogEndpoint.helpers.getFlowSchema(
+                        //         response.data.attributes
+                        //     );
+                        // setAvailableSchemas(possibleSchemas);
+
+                        setCatalogResponse(response.data);
+
                         setActiveStep(Steps.REVIEW_SCHEMA_IN_EDITOR);
                     })
                     .catch((error) => {
@@ -172,7 +211,8 @@ function NewCaptureModal() {
             scroll="paper"
             fullScreen={fullScreen}
             fullWidth={!fullScreen}
-            maxWidth="lg"
+            maxWidth="md"
+            disableEscapeKeyDown
             sx={{
                 '.MuiDialog-container': {
                     alignItems: 'flex-start',
@@ -206,29 +246,15 @@ function NewCaptureModal() {
                             <NewCaptureDetails
                                 displayValidation={showValidation}
                                 readonly={formSubmitting}
-                                state={details}
-                                dispatch={dispatch}
                             />
-                            {links.connectorImage ? (
-                                <Paper
-                                    sx={{ width: '100%' }}
-                                    variant="outlined"
-                                >
-                                    <NewCaptureSpecFormHeader
-                                        dispatch={dispatch}
-                                        endpoint={links.connectorImage}
-                                        docs={links.documentation}
-                                    />
-                                    <Divider />
-                                    <NewCaptureSpecForm
-                                        displayValidation={showValidation}
-                                        readonly={formSubmitting}
-                                        state={spec.data}
-                                        dispatch={dispatch}
-                                        endpoint={links.spec}
-                                    />
-                                </Paper>
-                            ) : null}
+                            <Paper sx={{ width: '100%' }} variant="outlined">
+                                <NewCaptureSpecFormHeader />
+                                <Divider />
+                                <NewCaptureSpecForm
+                                    displayValidation={showValidation}
+                                    readonly={formSubmitting}
+                                />
+                            </Paper>
                         </form>
                     </ErrorBoundryWrapper>
                 ) : null}
@@ -250,8 +276,23 @@ function NewCaptureModal() {
                         </Typography>
                     </Box>
                 ) : null}
+
+                {
+                    // TODO Schema Editor
+                    // activeStep === Steps.CHOOSE_COLLECTIONS
+                    //     ? Object.keys(availableSchemas).map((key: any) => (
+                    //           <FormControlLabel
+                    //               key={`SchemaSelector-${key}`}
+                    //               control={<Checkbox name={key} />}
+                    //               label={key}
+                    //               checked
+                    //           />
+                    //       ))
+                    //     : null
+                }
+
                 {activeStep === Steps.REVIEW_SCHEMA_IN_EDITOR ? (
-                    <NewCaptureEditor data={catalogResponse} />
+                    <NewCaptureEditor data={catalogResponse?.attributes} />
                 ) : null}
             </DialogContent>
 

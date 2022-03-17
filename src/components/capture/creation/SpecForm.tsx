@@ -2,10 +2,13 @@ import { createAjv } from '@jsonforms/core';
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Alert, AlertTitle, StyledEngineProvider } from '@mui/material';
+import useCaptureCreationStore, {
+    CaptureCreationState,
+} from 'components/capture/creation/Store';
 import FormLoading from 'components/shared/FormLoading';
 import useConnectorImageSpec from 'hooks/useConnectorImagesSpec';
 import { isEmpty } from 'lodash';
-import { Dispatch, useEffect } from 'react';
+import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     defaultOptions,
@@ -13,47 +16,48 @@ import {
     generateCustomUISchema,
     showValidation,
 } from 'services/jsonforms';
-import { Action, ActionType, NewCaptureState } from './Reducer';
+import shallow from 'zustand/shallow';
 
 type NewCaptureSpecFormProps = {
     displayValidation: boolean;
     readonly: boolean;
-
-    state: NewCaptureState['spec'];
-    dispatch: Dispatch<Action>;
-    endpoint: string;
 };
 
 const defaultAjv = createAjv({ useDefaults: true });
 
+const stateSelectors = {
+    specLink: (state: CaptureCreationState) => state.links.spec,
+    formData: (state: CaptureCreationState) => state.spec.data,
+    setLink: (state: CaptureCreationState) => state.setLink,
+    setSpec: (state: CaptureCreationState) => state.setSpec,
+};
 function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
-    const { state, dispatch, endpoint, readonly, displayValidation } = props;
+    const { readonly, displayValidation } = props;
+
+    const endpoint = useCaptureCreationStore(stateSelectors.specLink, shallow);
+    const setLink = useCaptureCreationStore(stateSelectors.setLink);
+    const setSpec = useCaptureCreationStore(stateSelectors.setSpec);
+    const formData = useCaptureCreationStore(stateSelectors.formData);
 
     const { isIdle, isLoading, isSuccess, error, data } =
         useConnectorImageSpec(endpoint);
 
     const {
-        links: { discovery, documentation },
+        links: { discovered_catalog, documentation },
         endpointSchema,
     } = data;
 
     useEffect(() => {
-        if (discovery.length > 0) {
-            dispatch({
-                payload: discovery,
-                type: ActionType.NEW_DISCOVERY_LINK,
-            });
+        if (discovered_catalog.length > 0) {
+            setLink('discovered_catalog', discovered_catalog);
         }
-    }, [discovery, dispatch]);
+    }, [discovered_catalog, setLink]);
 
     useEffect(() => {
         if (documentation.length > 0) {
-            dispatch({
-                payload: documentation,
-                type: ActionType.NEW_DOCS_LINK,
-            });
+            setLink('documentation', documentation);
         }
-    }, [documentation, dispatch]);
+    }, [documentation, setLink]);
 
     // This will hydrate the default values for us as we don't want JSONForms to
     //  directly update the state object as it caused issues when switching connectors.
@@ -63,16 +67,15 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
             const defaultValues = {};
             hydrateAndValidate(defaultValues);
 
-            dispatch({
-                payload: {
-                    data: defaultValues,
-                },
-                type: ActionType.CAPTURE_SPEC_CHANGED,
+            setSpec({
+                data: defaultValues,
             });
         }
-    }, [dispatch, endpointSchema, isSuccess]);
+    }, [endpointSchema, isSuccess, setSpec]);
 
-    if (isIdle || isLoading) {
+    if (endpoint.length === 0) {
+        return null;
+    } else if (isIdle || isLoading) {
         return <FormLoading />;
     } else if (error) {
         return (
@@ -89,10 +92,7 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
         const handlers = {
             onChange: (form: any) => {
                 if (!isEmpty(form.data)) {
-                    dispatch({
-                        payload: form,
-                        type: ActionType.CAPTURE_SPEC_CHANGED,
-                    });
+                    setSpec(form);
                 }
             },
         };
@@ -102,7 +102,7 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
                 <JsonForms
                     schema={endpointSchema}
                     uischema={uiSchema}
-                    data={state}
+                    data={formData}
                     renderers={defaultRenderers}
                     cells={materialCells}
                     config={defaultOptions}

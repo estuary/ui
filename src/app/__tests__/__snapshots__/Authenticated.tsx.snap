@@ -380,7 +380,7 @@ exports[`Authenticated app renders correctly 1`] = `
           class="MuiToolbar-root MuiToolbar-gutters MuiToolbar-regular css-pqgv1q-MuiToolbar-root"
         />
         <div
-          class="MuiPaper-root MuiPaper-outlined MuiPaper-rounded css-1hizfiu-MuiPaper-root"
+          class="MuiPaper-root MuiPaper-outlined MuiPaper-rounded css-lzviej-MuiPaper-root"
         >
           <div
             class="MuiToolbar-root MuiToolbar-gutters MuiToolbar-regular css-18qsmgm-MuiToolbar-root"

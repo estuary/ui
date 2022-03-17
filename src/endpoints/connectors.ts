@@ -1,6 +1,11 @@
 import { client } from 'services/client';
 import { BaseResponse } from 'types';
 
+export enum ConnectorTypes {
+    SOURCE = 'source',
+    MATERIALIZATION = 'materialization',
+}
+
 interface ConnectorAttributes {
     created_at: string;
     description: string;
@@ -16,7 +21,7 @@ interface ConnectorLinks {
     self: string;
 }
 
-interface Connector {
+export interface Connector {
     id: string;
     type: string;
     attributes: ConnectorAttributes;
@@ -69,7 +74,7 @@ export interface ConnectorImagesSpecAttributes {
 
 export interface ConnectorImagesSpecLinks {
     connector: string;
-    discovery: string;
+    discovered_catalog: string;
     image: string;
     self: string;
 }

@@ -1,5 +1,5 @@
 ### What is this folder?
-This folder houses the files we pull in from the Estuary/flow project. 
+This folder houses the files we pull in from the [estuary/flow](https://github.com/estuary/flow/) project. 
 
 The types should be used along with the server responses.
 
@@ -10,4 +10,4 @@ For this you'll need `flowctl` installed and the Flow project pulled locally. In
 After that you need to copy the `flow.d.ts` file into the `flow_deps` folder.
 
 ### How often do we update these files?
-This is not totally decided yet. Probably whenever the folks that "own" this tell us we need to update. This should not happen _all_ the time... but will be frequent enough we'll want to automate this. 
+It is still undecided. Probably whenever the folks that "own" Flow tell us we need to update. This should not happen _all_ the time, but will be frequent enough we'll want to automate this. 

@@ -1,14 +1,23 @@
 import Editor from '@monaco-editor/react';
-import { DialogContentText, Paper, useTheme } from '@mui/material';
+import {
+    Box,
+    DialogContentText,
+    List,
+    ListItemButton,
+    ListItemText,
+    Paper,
+    useTheme,
+} from '@mui/material';
+import { DiscoveredCatalogAttributes } from 'endpoints/discoveredCatalog';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import useSchemaEditorStore, {
     SchemaEditorState,
 } from 'stores/SchemaEditorStore';
 
 type NewCaptureEditorProps = {
-    data: object | null;
+    data?: DiscoveredCatalogAttributes;
 };
 
 const setSchemaSelector = (state: SchemaEditorState) => state.setSchema;
@@ -24,19 +33,32 @@ function NewCaptureEditor(props: NewCaptureEditorProps) {
         null
     );
 
+    const resourceList = data ? Object.keys(data.resources) : [];
+    const [currentFileName, setCurrentFileName] = useState('');
+    const [currentFile, setCurrentFile] = useState({});
+
     const handlers = {
-        onChange: () => {
+        fileList: {
+            click: (resourceName: string) => {
+                setCurrentFileName(resourceName);
+                setCurrentFile(data?.resources[resourceName].content);
+            },
+        },
+        change: () => {
             if (editorRef.current) {
                 setSchema(editorRef.current.getValue());
             }
         },
-        onMount: (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
+        mount: (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
             editorRef.current = editor;
 
-            const handler = editor.onDidChangeModelDecorations(() => {
-                handler.dispose();
-                void editor.getAction('editor.action.formatDocument').run();
-            });
+            handlers.fileList.click(resourceList[0]);
+
+            // Commented out as it stands as the main example of how to handle "events"
+            // const handler = editor.onDidChangeModelDecorations(() => {
+            //     handler.dispose();
+            //     void editor.getAction('editor.action.formatDocument').run();
+            // });
         },
     };
 
@@ -47,16 +69,54 @@ function NewCaptureEditor(props: NewCaptureEditorProps) {
             </DialogContentText>
             <Paper variant="outlined">
                 {data ? (
-                    <Editor
-                        height="350px"
-                        defaultLanguage="json"
-                        theme={
-                            theme.palette.mode === 'light' ? 'vs' : 'vs-dark'
-                        }
-                        defaultValue={JSON.stringify(data)}
-                        onMount={handlers.onMount}
-                        onChange={handlers.onChange}
-                    />
+                    <Box
+                        sx={{
+                            flexGrow: 1,
+                            bgcolor: 'background.paper',
+                            display: 'flex',
+                            height: 300,
+                        }}
+                    >
+                        <List dense disablePadding>
+                            {resourceList.map(
+                                (resourceName: any, index: number) => (
+                                    <ListItemButton
+                                        key={`FileSelector-${resourceName}-${index}`}
+                                        dense
+                                        selected={
+                                            resourceName === currentFileName
+                                        }
+                                        onClick={() => {
+                                            handlers.fileList.click(
+                                                resourceName
+                                            );
+                                        }}
+                                    >
+                                        <ListItemText
+                                            primary={resourceName}
+                                            secondary={
+                                                data.resources[resourceName]
+                                                    .contentType
+                                            }
+                                        />
+                                    </ListItemButton>
+                                )
+                            )}
+                        </List>
+                        <Editor
+                            height="300px"
+                            defaultLanguage="json"
+                            theme={
+                                theme.palette.mode === 'light'
+                                    ? 'vs'
+                                    : 'vs-dark'
+                            }
+                            defaultValue={JSON.stringify(currentFile, null, 2)}
+                            path={currentFileName}
+                            onMount={handlers.mount}
+                            onChange={handlers.change}
+                        />
+                    </Box>
                 ) : (
                     <FormattedMessage id="common.loading" />
                 )}
