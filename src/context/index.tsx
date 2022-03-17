@@ -1,3 +1,4 @@
+import ConfirmationModalContextProvider from 'context/Confirmation';
 import { AuthProvider } from './Auth';
 import AppContent from './Content';
 import AppRouter from './Router';
@@ -8,7 +9,11 @@ const AppProviders: React.FC = ({ children }) => {
         <AppContent>
             <AuthProvider>
                 <AppTheme>
-                    <AppRouter>{children}</AppRouter>
+                    <AppRouter>
+                        <ConfirmationModalContextProvider>
+                            {children}
+                        </ConfirmationModalContextProvider>
+                    </AppRouter>
                 </AppTheme>
             </AuthProvider>
         </AppContent>
