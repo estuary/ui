@@ -227,7 +227,6 @@ function NewCaptureModal() {
             fullScreen={fullScreen}
             fullWidth={!fullScreen}
             maxWidth="md"
-            disableEscapeKeyDown
             sx={{
                 '.MuiDialog-container': {
                     alignItems: 'flex-start',
