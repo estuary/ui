@@ -38,20 +38,17 @@ export interface CaptureCreationState {
     //Details
     details: CaptureCreationDetails;
     setDetails: (details: CaptureCreationDetails) => void;
-    removeDetails: () => void;
 
     //Links
     links: CaptureCreationStateLinks;
     setLink: (link: keyof CaptureCreationStateLinks, value: string) => void;
-    removeLinks: () => void;
 
     //Spec
     spec: CaptureCreationSpec;
     setSpec: (spec: CaptureCreationSpec) => void;
-    removeSpec: () => void;
 
     //Misc
-    cleanUp: () => void;
+    resetState: () => void;
     hasChanges: () => boolean;
 }
 
@@ -94,15 +91,6 @@ const useCaptureCreationStore = create<CaptureCreationState>(
                     EventNames.DETAILS_CHANGED
                 );
             },
-            removeDetails: () => {
-                set(
-                    produce((state) => {
-                        state.details = getInitialStateData().details;
-                    }),
-                    false,
-                    EventNames.DETAILS_REMOVED
-                );
-            },
 
             setLink: (key, value) => {
                 set(
@@ -111,15 +99,6 @@ const useCaptureCreationStore = create<CaptureCreationState>(
                     }),
                     false,
                     EventNames.LINKS_CHANGED
-                );
-            },
-            removeLinks: () => {
-                set(
-                    produce((state) => {
-                        state.links = getInitialStateData().links;
-                    }),
-                    false,
-                    EventNames.LINKS_REMOVED
                 );
             },
 
@@ -132,17 +111,8 @@ const useCaptureCreationStore = create<CaptureCreationState>(
                     EventNames.SPEC_CHANGED
                 );
             },
-            removeSpec: () => {
-                set(
-                    produce((state) => {
-                        state.spec = getInitialStateData().spec;
-                    }),
-                    false,
-                    EventNames.SPEC_REMOVED
-                );
-            },
 
-            cleanUp: () => {
+            resetState: () => {
                 set(getInitialStateData(), false);
             },
             hasChanges: () => {

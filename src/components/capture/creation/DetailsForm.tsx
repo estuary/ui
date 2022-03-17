@@ -1,6 +1,9 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Alert, DialogContentText, Skeleton, Stack } from '@mui/material';
+import useCaptureCreationStore, {
+    CaptureCreationState,
+} from 'components/capture/creation/Store';
 import { ConnectorTypes } from 'endpoints/connectors';
 import useConnectors from 'hooks/useConnectors';
 import { useEffect, useState } from 'react';
@@ -10,9 +13,6 @@ import {
     defaultRenderers,
     showValidation,
 } from 'services/jsonforms';
-import useCaptureCreationStore, {
-    CaptureCreationState,
-} from 'stores/CaptureCreationStore';
 
 type NewCaptureDetailsProps = {
     displayValidation: boolean;

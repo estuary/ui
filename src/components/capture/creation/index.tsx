@@ -14,6 +14,9 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
+import useCaptureCreationStore, {
+    CaptureCreationState,
+} from 'components/capture/creation/Store';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import {
     DiscoveredCatalog,
@@ -22,9 +25,6 @@ import {
 import { MouseEvent, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
-import useCaptureCreationStore, {
-    CaptureCreationState,
-} from 'stores/CaptureCreationStore';
 import useChangeSetStore, { CaptureState, Entity } from 'stores/ChangeSetStore';
 import useNotificationStore, {
     Notification,
@@ -54,7 +54,7 @@ const selectors = {
     showNotification: (state: NotificationState) => state.showNotification,
     captureName: (state: CaptureCreationState) => state.details.data.name,
     setDetails: (state: CaptureCreationState) => state.setDetails,
-    cleanUp: (state: CaptureCreationState) => state.cleanUp,
+    resetState: (state: CaptureCreationState) => state.resetState,
     hasChanges: (state: CaptureCreationState) => state.hasChanges,
     errors: (state: CaptureCreationState) => [
         state.details.errors,
@@ -87,7 +87,7 @@ function NewCaptureModal() {
     );
     const specFormData = useCaptureCreationStore(selectors.specFormData);
     const disoverLink = useCaptureCreationStore(selectors.disoverLink);
-    const cleanUp = useCaptureCreationStore(selectors.cleanUp);
+    const cleanUp = useCaptureCreationStore(selectors.resetState);
     const hasChanges = useCaptureCreationStore(selectors.hasChanges);
 
     // Form props

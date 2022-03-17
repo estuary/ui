@@ -2,6 +2,9 @@ import { createAjv } from '@jsonforms/core';
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Alert, AlertTitle, StyledEngineProvider } from '@mui/material';
+import useCaptureCreationStore, {
+    CaptureCreationState,
+} from 'components/capture/creation/Store';
 import FormLoading from 'components/shared/FormLoading';
 import useConnectorImageSpec from 'hooks/useConnectorImagesSpec';
 import { isEmpty } from 'lodash';
@@ -13,9 +16,6 @@ import {
     generateCustomUISchema,
     showValidation,
 } from 'services/jsonforms';
-import useCaptureCreationStore, {
-    CaptureCreationState,
-} from 'stores/CaptureCreationStore';
 import shallow from 'zustand/shallow';
 
 type NewCaptureSpecFormProps = {

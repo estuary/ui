@@ -1,10 +1,10 @@
 import { Alert, AlertTitle, AppBar, Toolbar, Typography } from '@mui/material';
+import useCaptureCreationStore, {
+    CaptureCreationState,
+} from 'components/capture/creation/Store';
 import useConnectorImages from 'hooks/useConnectorImages';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
-import useCaptureCreationStore, {
-    CaptureCreationState,
-} from 'stores/CaptureCreationStore';
 import shallow from 'zustand/shallow';
 
 const linksSelector = (state: CaptureCreationState) => [
