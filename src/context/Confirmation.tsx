@@ -7,10 +7,11 @@ import {
     DialogTitle,
 } from '@mui/material';
 import React, { createContext, useContext, useRef, useState } from 'react';
+import { FormattedMessage } from 'react-intl';
 
 export interface IConfirmationModalOptions {
-    confirmButton?: string;
-    cancelButton?: string;
+    confirmText?: string;
+    cancelText?: string;
     title?: string;
     message: string;
 }
@@ -19,17 +20,17 @@ interface IConfirmationModalContext {
     showConfirmation: ({
         title,
         message,
-        confirmButton,
-        cancelButton,
+        confirmText,
+        cancelText,
     }: IConfirmationModalOptions) => Promise<any>;
 }
 
 const getDefaultSettings = (): IConfirmationModalOptions => {
     return {
-        title: 'Are you sure?',
+        title: 'confirm.title',
         message: '',
-        confirmButton: 'Yes',
-        cancelButton: 'No',
+        confirmText: 'cta.continue',
+        cancelText: 'cta.cancel',
     };
 };
 
@@ -78,20 +79,16 @@ const ConfirmationModalContextProvider: React.FC = ({ children }) => {
                 aria-describedby="alert-dialog-description"
             >
                 <DialogTitle id="alert-dialog-title">
-                    {settings.title}
+                    <FormattedMessage id={settings.title} />
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        {settings.message}
+                        <FormattedMessage id={settings.message} />
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button
-                        color="error"
-                        variant="contained"
-                        onClick={handlers.dismiss}
-                    >
-                        {settings.cancelButton}
+                    <Button color="error" onClick={handlers.dismiss}>
+                        <FormattedMessage id={settings.cancelText} />
                     </Button>
                     <Button
                         color="success"
@@ -99,7 +96,7 @@ const ConfirmationModalContextProvider: React.FC = ({ children }) => {
                         onClick={handlers.confirm}
                         autoFocus
                     >
-                        {settings.confirmButton}
+                        <FormattedMessage id={settings.confirmText} />
                     </Button>
                 </DialogActions>
             </Dialog>
