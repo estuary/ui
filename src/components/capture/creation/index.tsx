@@ -155,7 +155,7 @@ function NewCaptureModal() {
             if (hasChanges()) {
                 confirmationModalContext
                     ?.showConfirmation({
-                        message: 'You will lose unsaved work if you exit now.',
+                        message: 'confirm.loseData',
                     })
                     .then((confirmed) => {
                         if (confirmed) {
