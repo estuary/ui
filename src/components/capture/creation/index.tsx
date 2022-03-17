@@ -142,15 +142,14 @@ function NewCaptureModal() {
         close: () => {
             if (hasChanges()) {
                 console.log('uh oh');
-            } else {
-                if (schemaFromEditor) {
-                    removeSchema();
-                }
-
-                cleanUp();
-
-                navigate('..');
             }
+            if (schemaFromEditor) {
+                removeSchema();
+            }
+
+            cleanUp();
+
+            navigate('..');
         },
 
         test: (event: MouseEvent<HTMLElement>) => {
