@@ -17,6 +17,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     // CTA
     'cta.addToChangeSet': `Add to Change Set`,
     'cta.cancel': `Cancel`,
+    'cta.continue': `Continue`,
     'cta.delete': `Delete`,
     'cta.download': `Download`,
     'cta.login': `Login`,
@@ -35,6 +36,10 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     'data.updated_at': `Updated`,
     'data.email': `Email`,
     'data.display_name': `User Name`,
+
+    // Confirmations
+    'confirm.title': `Are you sure?`,
+    'confirm.loseData': `You have unsaved worked. If you continue you will lose your changes.`,
 
     // Full Page
     'fullpage.error': `Major Error`,

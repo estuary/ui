@@ -18,6 +18,7 @@ import useCaptureCreationStore, {
     CaptureCreationState,
 } from 'components/capture/creation/Store';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
+import { useConfirmationModalContext } from 'context/Confirmation';
 import {
     DiscoveredCatalog,
     discoveredCatalogEndpoint,
@@ -69,6 +70,7 @@ function NewCaptureModal() {
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
     const navigate = useNavigate();
+    const confirmationModalContext = useConfirmationModalContext();
 
     // Schema editor store
     const schemaFromEditor = useSchemaEditorStore(selectors.schema);
@@ -104,6 +106,16 @@ function NewCaptureModal() {
     // TODO Schema Editor
     //const [availableSchemas, setAvailableSchemas] = useState<any[]>([]);
 
+    const exitModal = () => {
+        if (schemaFromEditor) {
+            removeSchema();
+        }
+
+        cleanUp();
+
+        navigate('..');
+    };
+
     // Form Event Handlers
     const handlers = {
         addToChangeSet: (event: MouseEvent<HTMLElement>) => {
@@ -136,20 +148,24 @@ function NewCaptureModal() {
 
             setFormSubmitting(true);
 
-            handlers.close();
+            exitModal();
         },
 
         close: () => {
             if (hasChanges()) {
-                console.log('uh oh');
+                confirmationModalContext
+                    ?.showConfirmation({
+                        message: 'confirm.loseData',
+                    })
+                    .then((confirmed) => {
+                        if (confirmed) {
+                            exitModal();
+                        }
+                    })
+                    .catch(() => {});
+            } else {
+                exitModal();
             }
-            if (schemaFromEditor) {
-                removeSchema();
-            }
-
-            cleanUp();
-
-            navigate('..');
         },
 
         test: (event: MouseEvent<HTMLElement>) => {
@@ -211,7 +227,6 @@ function NewCaptureModal() {
             fullScreen={fullScreen}
             fullWidth={!fullScreen}
             maxWidth="md"
-            disableEscapeKeyDown
             sx={{
                 '.MuiDialog-container': {
                     alignItems: 'flex-start',
