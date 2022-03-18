@@ -137,7 +137,7 @@ function NewCaptureModal() {
                         catalogNamespace.length
                     ),
                 },
-                schema:
+                resources:
                     Object.keys(resourcesFromEditor).length > 0
                         ? resourcesFromEditor
                         : catalogResponse,

@@ -14,7 +14,7 @@ export interface EntityMetadata {
 
 export interface Entity<T = any> {
     metadata: EntityMetadata;
-    schema: T;
+    resources: T;
 }
 
 interface EntityDictionary<T = any> {
