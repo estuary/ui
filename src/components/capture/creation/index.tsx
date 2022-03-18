@@ -12,16 +12,16 @@ import {
     Paper,
     Typography,
     useMediaQuery,
-    useTheme,
+    useTheme
 } from '@mui/material';
 import useCaptureCreationStore, {
-    CaptureCreationState,
+    CaptureCreationState
 } from 'components/capture/creation/Store';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { useConfirmationModalContext } from 'context/Confirmation';
 import {
     DiscoveredCatalog,
-    discoveredCatalogEndpoint,
+    discoveredCatalogEndpoint
 } from 'endpoints/discoveredCatalog';
 import { MouseEvent, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -29,10 +29,10 @@ import { useNavigate } from 'react-router-dom';
 import useChangeSetStore, { CaptureState, Entity } from 'stores/ChangeSetStore';
 import useNotificationStore, {
     Notification,
-    NotificationState,
+    NotificationState
 } from 'stores/NotificationStore';
 import useSchemaEditorStore, {
-    SchemaEditorState,
+    SchemaEditorState
 } from 'stores/SchemaEditorStore';
 import NewCaptureDetails from './DetailsForm';
 import NewCaptureError from './Error';
@@ -50,8 +50,8 @@ enum Steps {
 
 const selectors = {
     addCapture: (state: CaptureState) => state.addCapture,
-    removeSchema: (state: SchemaEditorState) => state.removeSchema,
-    schema: (state: SchemaEditorState) => state.schema,
+    clearResources: (state: SchemaEditorState) => state.clearResources,
+    resources: (state: SchemaEditorState) => state.resources,
     showNotification: (state: NotificationState) => state.showNotification,
     captureName: (state: CaptureCreationState) => state.details.data.name,
     setDetails: (state: CaptureCreationState) => state.setDetails,
@@ -73,8 +73,8 @@ function NewCaptureModal() {
     const confirmationModalContext = useConfirmationModalContext();
 
     // Schema editor store
-    const schemaFromEditor = useSchemaEditorStore(selectors.schema);
-    const removeSchema = useSchemaEditorStore(selectors.removeSchema);
+    const resourcesFromEditor = useSchemaEditorStore(selectors.resources);
+    const clearResources = useSchemaEditorStore(selectors.clearResources);
 
     // Change set store
     const addCaptureToChangeSet = useChangeSetStore(selectors.addCapture);
@@ -107,8 +107,8 @@ function NewCaptureModal() {
     //const [availableSchemas, setAvailableSchemas] = useState<any[]>([]);
 
     const exitModal = () => {
-        if (schemaFromEditor) {
-            removeSchema();
+        if (Object.keys(resourcesFromEditor).length > 0) {
+            clearResources();
         }
 
         cleanUp();
@@ -134,7 +134,10 @@ function NewCaptureModal() {
                         catalogNamespace.length
                     ),
                 },
-                schema: schemaFromEditor || catalogResponse,
+                schema:
+                    Object.keys(resourcesFromEditor).length > 0
+                        ? resourcesFromEditor
+                        : catalogResponse,
             };
 
             const notification: Notification = {
