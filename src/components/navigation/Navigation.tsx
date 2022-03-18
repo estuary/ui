@@ -7,7 +7,7 @@ import InputIcon from '@mui/icons-material/Input';
 import StorageIcon from '@mui/icons-material/Storage';
 import { Box, List, Toolbar, useMediaQuery, useTheme } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
-import useChangeSetStore, { CaptureState } from 'stores/ChangeSetStore';
+import useChangeSetStore, { ChangeSetState } from 'stores/ChangeSetStore';
 import ListItemLink from './ListItemLink';
 
 interface NavigationProps {
@@ -17,7 +17,7 @@ interface NavigationProps {
 }
 
 const selectors = {
-    newChangeCount: (state: CaptureState) => state.newChangeCount,
+    newChangeCount: (state: ChangeSetState) => state.newChangeCount,
 };
 
 const Navigation = (props: NavigationProps) => {

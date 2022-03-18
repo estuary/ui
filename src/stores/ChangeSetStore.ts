@@ -21,8 +21,7 @@ interface EntityDictionary<T = any> {
     [key: string]: Entity<T>;
 }
 
-// TODO: Create a distinct capture state slice that is spread into the change set store.
-export interface CaptureState<T = any> {
+export interface ChangeSetState<T = any> {
     captures: EntityDictionary;
     addCapture: (key: string, newCapture: Entity<T>) => void;
     // TODO: Move the following properties into the overarching state.
@@ -33,7 +32,7 @@ export interface CaptureState<T = any> {
 const name = 'change-set-state';
 
 // TODO: Look into a better way to hydrate the state.
-const useChangeSetStore = create<CaptureState>(
+const useChangeSetStore = create<ChangeSetState>(
     devtools(
         persist(
             (set) => ({
