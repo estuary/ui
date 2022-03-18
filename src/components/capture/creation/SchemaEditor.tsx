@@ -20,10 +20,14 @@ type NewCaptureEditorProps = {
     data?: DiscoveredCatalogAttributes;
 };
 
-const setSchemaSelector = (state: SchemaEditorState) => state.setSchema;
+const selectors = {
+    loadResource: (state: SchemaEditorState) => state.loadResource,
+    updateResource: (state: SchemaEditorState) => state.updateResource,
+};
 
 function NewCaptureEditor(props: NewCaptureEditorProps) {
-    const setSchema = useSchemaEditorStore(setSchemaSelector);
+    const loadResource = useSchemaEditorStore(selectors.loadResource);
+    const updateResource = useSchemaEditorStore(selectors.updateResource);
 
     const { data } = props;
 
@@ -46,13 +50,19 @@ function NewCaptureEditor(props: NewCaptureEditorProps) {
         },
         change: () => {
             if (editorRef.current) {
-                setSchema(editorRef.current.getValue());
+                updateResource(currentFileName, editorRef.current.getValue());
             }
         },
         mount: (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
             editorRef.current = editor;
 
             handlers.fileList.click(resourceList[0]);
+
+            if (resourceList.length > 0) {
+                resourceList.forEach((name) => {
+                    loadResource(name, data?.resources[name].content);
+                });
+            }
 
             // Commented out as it stands as the main example of how to handle "events"
             // const handler = editor.onDidChangeModelDecorations(() => {
