@@ -77,7 +77,9 @@ function NewCaptureModal() {
 
     // Schema editor store
     const resourcesFromEditor = useSchemaEditorStore(selectors.resources);
-    const clearResources = useSchemaEditorStore(selectors.clearResources);
+    const clearResourcesFromEditor = useSchemaEditorStore(
+        selectors.clearResources
+    );
 
     // Change set store
     const addCaptureToChangeSet = useChangeSetStore(selectors.addCapture);
@@ -111,7 +113,7 @@ function NewCaptureModal() {
 
     const exitModal = () => {
         if (Object.keys(resourcesFromEditor).length > 0) {
-            clearResources();
+            clearResourcesFromEditor();
         }
 
         cleanUp();
