@@ -24,7 +24,6 @@ interface EntityDictionary<T = any> {
 export interface ChangeSetState<T = any> {
     captures: EntityDictionary;
     addCapture: (key: string, newCapture: Entity<T>) => void;
-    // TODO: Move the following properties into the overarching state.
     newChangeCount: number;
     resetNewChangeCount: () => void;
 }
@@ -36,6 +35,7 @@ const useChangeSetStore = create<ChangeSetState>(
     devtools(
         persist(
             (set) => ({
+                captures: {},
                 addCapture: (key, newCapture) =>
                     set(
                         (state) => ({
@@ -45,7 +45,6 @@ const useChangeSetStore = create<ChangeSetState>(
                         false,
                         'New Capture Added'
                     ),
-                captures: {},
                 newChangeCount: 0,
                 resetNewChangeCount: () =>
                     set(
