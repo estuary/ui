@@ -16,12 +16,14 @@ interface Data {
     };
 }
 
-const defaultData: Data = {
-    endpointSchema: {},
-    links: {
-        discovered_catalog: '',
-        documentation: '',
-    },
+const getDefaultData = (): Data => {
+    return {
+        endpointSchema: {},
+        links: {
+            discovered_catalog: '',
+            documentation: '',
+        },
+    };
 };
 
 const generateResponse = async (
@@ -44,7 +46,7 @@ const generateResponse = async (
 };
 
 const useConnectorImageSpec = (specURL: string) => {
-    const response = useAsync<Data>(defaultData);
+    const response = useAsync<Data>(getDefaultData());
     const { run, setError } = response;
 
     useEffect(() => {
