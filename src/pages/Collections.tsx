@@ -1,6 +1,6 @@
 import { Container, Toolbar } from '@mui/material';
 
-const Collections: React.FC = () => {
+const Collections = () => {
     return (
         <Container
             sx={{

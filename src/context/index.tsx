@@ -1,10 +1,11 @@
 import ConfirmationModalContextProvider from 'context/Confirmation';
+import { BaseComponentProps } from 'types';
 import { AuthProvider } from './Auth';
 import AppContent from './Content';
 import AppRouter from './Router';
 import AppTheme from './Theme';
 
-const AppProviders: React.FC = ({ children }) => {
+const AppProviders = ({ children }: BaseComponentProps) => {
     return (
         <AppContent>
             <AuthProvider>

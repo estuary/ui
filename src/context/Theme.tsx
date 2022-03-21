@@ -7,6 +7,7 @@ import {
 } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import React from 'react';
+import { BaseComponentProps } from 'types';
 
 // Colors
 const primary = '#5660BD';
@@ -135,7 +136,7 @@ const themeSettings = createTheme({
     },
 } as ThemeOptions);
 
-const AppTheme: React.FC = ({ children }) => {
+const AppTheme = ({ children }: BaseComponentProps) => {
     const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
     const generatedTheme = React.useMemo(() => {

@@ -1,7 +1,7 @@
 import { Alert, AlertTitle } from '@mui/material';
 import PageContainer from 'components/shared/PageContainer';
 
-const Error: React.FC = () => {
+const Error = () => {
     return (
         <PageContainer>
             <Alert severity="error">

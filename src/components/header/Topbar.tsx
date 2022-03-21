@@ -4,16 +4,17 @@ import MuiAppBar from '@mui/material/AppBar';
 import { useTheme } from '@mui/material/styles';
 import UserMenu from 'components/menus/UserMenu';
 import { useIntl } from 'react-intl';
+import { BaseComponentProps } from 'types';
 import { useAuth } from '../../context/Auth';
 import HelpMenu from '../menus/HelpMenu';
 import Logo from '../navigation/Logo';
 
-type TopbarProps = {
+interface TopbarProps extends BaseComponentProps {
     isNavigationOpen: boolean;
     onNavigationToggle?: Function;
-};
+}
 
-const Topbar: React.FC<TopbarProps> = (props: TopbarProps) => {
+const Topbar = (props: TopbarProps) => {
     const { onNavigationToggle } = props;
     const intl = useIntl();
     const theme = useTheme();

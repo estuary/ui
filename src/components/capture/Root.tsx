@@ -4,7 +4,7 @@ import CatalogList from 'components/CatalogList';
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
-const CaptureRoot: React.FC = () => {
+const CaptureRoot = () => {
     const [captureList] = useState([]);
     const [isLoading] = useState(false);
 

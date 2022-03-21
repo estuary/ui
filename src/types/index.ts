@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 export interface BaseHook<T> {
     idle?: boolean;
     loading: boolean;
@@ -25,4 +27,8 @@ export interface BaseResponse {
     data: BaseData | BaseData[];
     errors?: BaseError[];
     links?: any;
+}
+
+export interface BaseComponentProps {
+    children?: ReactNode;
 }

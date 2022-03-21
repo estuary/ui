@@ -12,7 +12,7 @@ import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useAuth } from '../context/Auth';
 
-const Login: React.FC = () => {
+const Login = () => {
     const [userName, setUserName] = useState('');
     const intl = useIntl();
     const { login } = useAuth();
