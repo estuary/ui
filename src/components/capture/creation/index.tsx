@@ -89,7 +89,7 @@ function NewCaptureModal() {
     );
     const specFormData = useCaptureCreationStore(selectors.specFormData);
     const disoverLink = useCaptureCreationStore(selectors.disoverLink);
-    const cleanUp = useCaptureCreationStore(selectors.resetState);
+    const resetState = useCaptureCreationStore(selectors.resetState);
     const hasChanges = useCaptureCreationStore(selectors.hasChanges);
 
     // Form props
@@ -111,7 +111,7 @@ function NewCaptureModal() {
             removeSchema();
         }
 
-        cleanUp();
+        resetState();
 
         navigate('..');
     };
