@@ -1,24 +1,44 @@
 import create from 'zustand';
 import { devtools } from 'zustand/middleware';
 
+type GenericSchema = string | JSON;
+
 export interface SchemaEditorState {
-    schema: string;
-    setSchema: (schema: string) => void;
-    removeSchema: () => void;
+    resources: { [name: string]: GenericSchema };
+    loadResource: (name: string, schema: GenericSchema) => void;
+    updateResource: (name: string, schema: GenericSchema) => void;
+    clearResources: () => void;
 }
 
 const useSchemaEditorStore = create<SchemaEditorState>(
     devtools(
         (set) => ({
-            removeSchema: () =>
-                set(() => ({ schema: '' }), false, 'Schema Removed'),
-            schema: '',
-            setSchema: (schema) =>
+            resources: {},
+            loadResource: (name, schema) =>
                 set(
-                    () => ({ schema: JSON.parse(schema) }),
+                    (state) => ({
+                        resources: { ...state.resources, [name]: schema },
+                    }),
                     false,
-                    'Schema Set'
+                    `Resource Loaded: ${name}`
                 ),
+            // TODO: Add error handling for JSON.parse().
+            updateResource: (name, schema) =>
+                set(
+                    (state) => ({
+                        resources: {
+                            ...state.resources,
+                            [name]:
+                                typeof schema === 'string'
+                                    ? JSON.parse(schema)
+                                    : schema,
+                        },
+                    }),
+                    false,
+                    `Resource Updated: ${name}`
+                ),
+            clearResources: () =>
+                set(() => ({ resources: {} }), false, 'Resources Cleared'),
         }),
         { name: 'schema-editor-state' }
     )

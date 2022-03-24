@@ -26,7 +26,10 @@ import {
 import { MouseEvent, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
-import useChangeSetStore, { CaptureState, Entity } from 'stores/ChangeSetStore';
+import useChangeSetStore, {
+    ChangeSetState,
+    Entity,
+} from 'stores/ChangeSetStore';
 import useNotificationStore, {
     Notification,
     NotificationState,
@@ -49,9 +52,9 @@ enum Steps {
 }
 
 const selectors = {
-    addCapture: (state: CaptureState) => state.addCapture,
-    removeSchema: (state: SchemaEditorState) => state.removeSchema,
-    schema: (state: SchemaEditorState) => state.schema,
+    addCapture: (state: ChangeSetState) => state.addCapture,
+    clearResources: (state: SchemaEditorState) => state.clearResources,
+    resources: (state: SchemaEditorState) => state.resources,
     showNotification: (state: NotificationState) => state.showNotification,
     captureName: (state: CaptureCreationState) => state.details.data.name,
     setDetails: (state: CaptureCreationState) => state.setDetails,
@@ -73,8 +76,10 @@ function NewCaptureModal() {
     const confirmationModalContext = useConfirmationModalContext();
 
     // Schema editor store
-    const schemaFromEditor = useSchemaEditorStore(selectors.schema);
-    const removeSchema = useSchemaEditorStore(selectors.removeSchema);
+    const resourcesFromEditor = useSchemaEditorStore(selectors.resources);
+    const clearResourcesFromEditor = useSchemaEditorStore(
+        selectors.clearResources
+    );
 
     // Change set store
     const addCaptureToChangeSet = useChangeSetStore(selectors.addCapture);
@@ -107,8 +112,8 @@ function NewCaptureModal() {
     //const [availableSchemas, setAvailableSchemas] = useState<any[]>([]);
 
     const exitModal = () => {
-        if (schemaFromEditor) {
-            removeSchema();
+        if (Object.keys(resourcesFromEditor).length > 0) {
+            clearResourcesFromEditor();
         }
 
         resetState();
@@ -134,7 +139,10 @@ function NewCaptureModal() {
                         catalogNamespace.length
                     ),
                 },
-                schema: schemaFromEditor || catalogResponse,
+                resources:
+                    Object.keys(resourcesFromEditor).length > 0
+                        ? resourcesFromEditor
+                        : catalogResponse,
             };
 
             const notification: Notification = {

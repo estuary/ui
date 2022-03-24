@@ -16,14 +16,14 @@ import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import { MouseEvent, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useChangeSetStore, {
-    CaptureState,
+    ChangeSetState,
     EntityMetadata,
 } from 'stores/ChangeSetStore';
 
 const selectors = {
-    captures: (state: CaptureState) => state.captures,
-    newChangeCount: (state: CaptureState) => state.newChangeCount,
-    resetNewChangeCount: (state: CaptureState) => state.resetNewChangeCount,
+    captures: (state: ChangeSetState) => state.captures,
+    newChangeCount: (state: ChangeSetState) => state.newChangeCount,
+    resetNewChangeCount: (state: ChangeSetState) => state.resetNewChangeCount,
 };
 
 function ChangeSetTable() {
