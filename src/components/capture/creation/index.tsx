@@ -328,7 +328,7 @@ function NewCaptureModal() {
                 ) : (
                     <Button
                         onClick={handlers.test}
-                        disabled={false}
+                        disabled={formSubmitting}
                         form={FORM_ID}
                         size="large"
                         type="submit"
