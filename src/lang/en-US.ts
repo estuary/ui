@@ -71,9 +71,6 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'captures.main.message2.docLink': `catalog spec`,
     'captures.main.message2.docPath': `https://docs.estuary.dev/concepts/#catalogs`,
 
-    // Materialization creation modal
-    'materializationCreation.heading': `New Materialization`,
-
     // Landing page content
     'home.main.header': `Welcome to Control Plane!`,
     'home.main.description': `Click the Capture link over on the side navigation to get started.`,
@@ -93,7 +90,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'changeSet.data.details': `Details`,
 };
 
-const CaptureCreation: ResolvedIntlConfig['messages'] = {
+const Capture_Create: ResolvedIntlConfig['messages'] = {
     'captureCreation.ctas.discover': `Discover Capture Catalog`,
     'captureCreation.heading': `New Capture`,
     'captureCreation.instructions': `To get started please provide a unique name and the source type of the Capture you want to create. Once you've filled out the source details you can click "Test Capture" down below to test the connection.`,
@@ -110,9 +107,15 @@ const CaptureCreation: ResolvedIntlConfig['messages'] = {
     'captureCreation.finalReview.instructions': `Look over the catalog configuration that was generated. If you want to edit anything you can do that directly in the editor. Once you're ready you can download the file for your local.`,
 };
 
+const Materialization_Create: ResolvedIntlConfig['messages'] = {
+    'materializationCreation.heading': `New Materialization`,
+    'materializationCreation.instructions': `To get started please provide a unique name, select an endpoint type, and select the Collections you want to Materialize. After that you can review the YAML before saving.`,
+};
+
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
-    ...CaptureCreation,
+    ...Capture_Create,
+    ...Materialization_Create,
 };
 
 export default enUSMessages;

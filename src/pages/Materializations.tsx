@@ -13,7 +13,7 @@ const Materializations = () => {
                     justifyContent: 'space-between',
                 }}
             >
-                <NavLink to="new">
+                <NavLink to="/materialization/create">
                     <Button
                         variant="contained"
                         size="large"

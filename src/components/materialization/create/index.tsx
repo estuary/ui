@@ -1,58 +1,49 @@
-import CloseIcon from '@mui/icons-material/Close';
-import {
-    Dialog,
-    DialogContent,
-    DialogTitle,
-    IconButton,
-    useMediaQuery,
-    useTheme,
-} from '@mui/material';
+import { Button, Stack, Toolbar, Typography } from '@mui/material';
+import PageContainer from 'components/shared/PageContainer';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 
 function NewMaterialization() {
-    const theme = useTheme();
-    const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
     const navigate = useNavigate();
 
     const handlers = {
         close: () => {
-            navigate('..'); //This is assuming this is a child of the /captures route.
+            navigate('/materializations');
         },
     };
 
     return (
-        <Dialog
-            open
-            onClose={handlers.close}
-            scroll="paper"
-            fullScreen={fullScreen}
-            fullWidth={!fullScreen}
-            maxWidth="lg"
-            sx={{
-                '.MuiDialog-container': {
-                    alignItems: 'flex-start',
-                },
-            }}
-            aria-labelledby="new-materialization-dialog-title"
-        >
-            <DialogTitle id="new-materialization-dialog-title">
-                <FormattedMessage id="materializationCreation.heading" />
-                <IconButton
-                    aria-label="close"
-                    onClick={handlers.close}
+        <PageContainer>
+            <Toolbar>
+                <Typography variant="h6" noWrap>
+                    <FormattedMessage id="materializationCreation.heading" />
+                </Typography>
+
+                <Stack
+                    direction="row"
+                    spacing={0}
+                    alignItems="center"
                     sx={{
-                        color: (buttonTheme) => buttonTheme.palette.grey[500],
-                        position: 'absolute',
-                        right: 0,
+                        ml: 'auto',
                     }}
                 >
-                    <CloseIcon />
-                </IconButton>
-            </DialogTitle>
+                    <Button onClick={handlers.close} color="error">
+                        <FormattedMessage id="cta.cancel" />
+                    </Button>
 
-            <DialogContent dividers>Under Development</DialogContent>
-        </Dialog>
+                    <Button
+                        onClick={handlers.close}
+                        color="success"
+                        variant="contained"
+                        disableElevation
+                        disabled
+                    >
+                        <FormattedMessage id="cta.saveEntity" />
+                    </Button>
+                </Stack>
+            </Toolbar>
+            Under Development
+        </PageContainer>
     );
 }
 
