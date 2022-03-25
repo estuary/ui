@@ -72,8 +72,16 @@ const useCaptureCreationStore = create<CaptureCreationState>(
             setDetails: (details) => {
                 set(
                     produce((state) => {
-                        if (state.details.image !== details.data.image) {
+                        if (
+                            details.data.image.length > 0 &&
+                            state.details.data.image !== details.data.image
+                        ) {
+                            const initState = getInitialStateData();
+
+                            state.links = initState.links;
                             state.links.connectorImage = details.data.image;
+
+                            state.spec = initState.spec;
                         }
 
                         state.details = details;

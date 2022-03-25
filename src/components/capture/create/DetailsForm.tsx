@@ -121,7 +121,11 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
                         config={defaultOptions}
                         readonly={readonly}
                         validationMode={showValidation(displayValidation)}
-                        onChange={setDetails}
+                        onChange={(state) => {
+                            console.log('form changed', [state]);
+
+                            setDetails(state);
+                        }}
                     />
                 ) : isError ? (
                     error
