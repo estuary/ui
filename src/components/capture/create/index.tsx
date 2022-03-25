@@ -30,9 +30,9 @@ import useNotificationStore, {
 import useSchemaEditorStore, {
     SchemaEditorState,
 } from 'stores/SchemaEditorStore';
+import NewCaptureEditor from './CatalogEditor';
 import NewCaptureDetails from './DetailsForm';
 import NewCaptureError from './Error';
-import NewCaptureEditor from './SchemaEditor';
 import NewCaptureSpecForm from './SpecForm';
 import NewCaptureSpecFormHeader from './SpecFormHeader';
 
