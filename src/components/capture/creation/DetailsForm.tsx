@@ -1,6 +1,6 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
-import { Alert, DialogContentText, Skeleton, Stack } from '@mui/material';
+import { Alert, Skeleton, Stack } from '@mui/material';
 import useCaptureCreationStore, {
     CaptureCreationState,
 } from 'components/capture/creation/Store';
@@ -108,9 +108,7 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
 
     return (
         <>
-            <DialogContentText>
-                <FormattedMessage id="captureCreation.instructions" />
-            </DialogContentText>
+            <FormattedMessage id="captureCreation.instructions" />
 
             <Stack direction="row" spacing={2}>
                 {isPostProcessingDone ? (

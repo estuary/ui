@@ -60,7 +60,7 @@ const Navigation = (props: NavigationProps) => {
                     <ListItemLink
                         icon={<ExploreIcon />}
                         title="Collections"
-                        link="/app/collections"
+                        link="/collections"
                         key="Collections"
                         isOpen={open}
                         disabled={true}
@@ -68,13 +68,13 @@ const Navigation = (props: NavigationProps) => {
                     <ListItemLink
                         icon={<InputIcon />}
                         title="Captures"
-                        link="/app/captures"
+                        link="/captures"
                         key="Capture"
                     />
                     <ListItemLink
                         icon={<StorageIcon />}
                         title="Materializations"
-                        link="/app/materializations"
+                        link="/materializations"
                         key="Materializations"
                         isOpen={open}
                         disabled={true}
@@ -82,7 +82,7 @@ const Navigation = (props: NavigationProps) => {
                     <ListItemLink
                         icon={<CodeIcon />}
                         title="Derivations"
-                        link="/app/derivations"
+                        link="/derivations"
                         key="Derivations"
                         isOpen={open}
                         disabled={true}
@@ -90,7 +90,7 @@ const Navigation = (props: NavigationProps) => {
                     <ListItemLink
                         icon={<Construction />}
                         title="Builds"
-                        link="/app/builds"
+                        link="/builds"
                         key="Builds"
                         menuWidth={width}
                         badgeContent={newChangeCount}
@@ -98,7 +98,7 @@ const Navigation = (props: NavigationProps) => {
                     <ListItemLink
                         icon={<HomeRepairServiceIcon />}
                         title="Administration"
-                        link="/app/admin"
+                        link="/admin"
                         key="Administration"
                         isOpen={open}
                     />

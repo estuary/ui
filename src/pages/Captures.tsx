@@ -1,12 +1,35 @@
-import CaptureRoot from 'components/capture/Root';
+import AddIcon from '@mui/icons-material/Add';
+import { Button, Toolbar } from '@mui/material';
+import CatalogList from 'components/CatalogList';
 import PageContainer from 'components/shared/PageContainer';
-import { Outlet } from 'react-router-dom';
+import { useState } from 'react';
+import { NavLink } from 'react-router-dom';
 
 const Capture = () => {
+    const [captureList] = useState([]);
+    const [isLoading] = useState(false);
+
     return (
         <PageContainer>
-            <CaptureRoot />
-            <Outlet />
+            <Toolbar
+                sx={{
+                    alignItems: 'center',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                }}
+            >
+                <NavLink to="/capture/create">
+                    <Button
+                        variant="contained"
+                        size="large"
+                        color="success"
+                        startIcon={<AddIcon />}
+                    >
+                        New Capture
+                    </Button>
+                </NavLink>
+            </Toolbar>
+            <CatalogList captures={captureList} isLoading={isLoading} />
         </PageContainer>
     );
 };

@@ -5,7 +5,7 @@ import useNotificationStore, {
 } from 'stores/NotificationStore';
 
 interface PageContainerProps {
-    children: ReactNode;
+    children: ReactNode | ReactNode[];
 }
 
 const selectors = {

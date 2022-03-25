@@ -17,14 +17,6 @@ const NewMaterialization = lazy(
 
 const Collections = lazy(() => import('../pages/Collections'));
 
-const Builds = lazy(() => import('../pages/Builds'));
-
-const Users = lazy(() => import('../pages/Users'));
-
-const Alerts = lazy(() => import('../pages/Alerts'));
-
-const Logs = lazy(() => import('../pages/Logs'));
-
 const Authenticated = () => {
     return (
         <Suspense fallback={<Skeleton animation="wave" />}>
@@ -32,28 +24,19 @@ const Authenticated = () => {
                 <Route element={<AppLayout />}>
                     <Route path="/" element={<Home />} />
                     <Route path="/dashboard" element={<Home />} />
-                    <Route path="/app">
-                        <Route path="collections" element={<Collections />} />
-                        <Route path="captures" element={<Captures />}>
-                            <Route path="new" element={<CaptureCreation />} />
-                        </Route>
-                        <Route path="derivations" element={<Error />} />
-                        <Route
-                            path="materializations"
-                            element={<Materializations />}
-                        >
-                            <Route
-                                path="new"
-                                element={<NewMaterialization />}
-                            />
-                        </Route>
-                        <Route path="builds" element={<Builds />} />
-                        <Route path="admin/*" element={<Admin />}>
-                            <Route path="logs" element={<Logs />} />
-                            <Route path="alerts" element={<Alerts />} />
-                            <Route path="users" element={<Users />} />
-                        </Route>
+                    <Route path="collections" element={<Collections />} />
+                    <Route path="captures" element={<Captures />} />
+                    <Route path="capture">
+                        <Route path="create" element={<CaptureCreation />} />
                     </Route>
+
+                    <Route
+                        path="materializations"
+                        element={<Materializations />}
+                    >
+                        <Route path="create" element={<NewMaterialization />} />
+                    </Route>
+                    <Route path="admin/*" element={<Admin />} />
                 </Route>
                 <Route path="*" element={<Error />} />
             </Routes>

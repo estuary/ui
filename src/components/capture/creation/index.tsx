@@ -1,23 +1,16 @@
-import CloseIcon from '@mui/icons-material/Close';
 import {
-    Box,
     Button,
-    CircularProgress,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
     Divider,
-    IconButton,
     Paper,
+    Stack,
+    Toolbar,
     Typography,
-    useMediaQuery,
-    useTheme,
 } from '@mui/material';
 import useCaptureCreationStore, {
     CaptureCreationState,
 } from 'components/capture/creation/Store';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
+import PageContainer from 'components/shared/PageContainer';
 import { useConfirmationModalContext } from 'context/Confirmation';
 import {
     DiscoveredCatalog,
@@ -44,12 +37,6 @@ import NewCaptureSpecForm from './SpecForm';
 import NewCaptureSpecFormHeader from './SpecFormHeader';
 
 const FORM_ID = 'newCaptureForm';
-enum Steps {
-    DETAILS_AND_SPEC = 'Getting basic connection details',
-    WAITING_FOR_DISCOVER = 'Waiting for discovery call to server',
-    CHOOSE_COLLECTIONS = 'Allow customer to choose what schemas they want',
-    REVIEW_SCHEMA_IN_EDITOR = 'Allow custom to edit YAML',
-}
 
 const selectors = {
     addCapture: (state: ChangeSetState) => state.addCapture,
@@ -70,8 +57,6 @@ const selectors = {
 };
 
 function NewCaptureModal() {
-    const theme = useTheme();
-    const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
     const navigate = useNavigate();
     const confirmationModalContext = useConfirmationModalContext();
 
@@ -106,19 +91,15 @@ function NewCaptureModal() {
     } | null>(null);
     const [catalogResponse, setCatalogResponse] =
         useState<DiscoveredCatalog | null>(null);
-    const [activeStep, setActiveStep] = useState<Steps>(Steps.DETAILS_AND_SPEC);
 
-    // TODO Schema Editor
-    //const [availableSchemas, setAvailableSchemas] = useState<any[]>([]);
-
-    const exitModal = () => {
+    const exit = () => {
         if (Object.keys(resourcesFromEditor).length > 0) {
             clearResourcesFromEditor();
         }
 
         resetState();
 
-        navigate('..');
+        navigate('/captures');
     };
 
     // Form Event Handlers
@@ -156,7 +137,7 @@ function NewCaptureModal() {
 
             setFormSubmitting(true);
 
-            exitModal();
+            exit();
         },
 
         close: () => {
@@ -167,12 +148,12 @@ function NewCaptureModal() {
                     })
                     .then((confirmed) => {
                         if (confirmed) {
-                            exitModal();
+                            exit();
                         }
                     })
                     .catch(() => {});
             } else {
-                exitModal();
+                exit();
             }
         },
 
@@ -190,7 +171,6 @@ function NewCaptureModal() {
             } else {
                 setFormSubmitting(true);
                 setFormSubmitError(null);
-                setActiveStep(Steps.WAITING_FOR_DISCOVER);
 
                 discoveredCatalogEndpoint
                     .create(disoverLink, {
@@ -198,16 +178,7 @@ function NewCaptureModal() {
                         config: specFormData,
                     })
                     .then((response) => {
-                        // TODO Schema Editor
-                        // const possibleSchemas =
-                        //     discoveredCatalogEndpoint.helpers.getFlowSchema(
-                        //         response.data.attributes
-                        //     );
-                        // setAvailableSchemas(possibleSchemas);
-
                         setCatalogResponse(response.data);
-
-                        setActiveStep(Steps.REVIEW_SCHEMA_IN_EDITOR);
                     })
                     .catch((error) => {
                         if (error.errors) {
@@ -218,7 +189,6 @@ function NewCaptureModal() {
                         } else {
                             setFormSubmitError(error.message);
                         }
-                        setActiveStep(Steps.DETAILS_AND_SPEC);
                     })
                     .finally(() => {
                         setFormSubmitting(false);
@@ -228,127 +198,73 @@ function NewCaptureModal() {
     };
 
     return (
-        <Dialog
-            open
-            onClose={handlers.close}
-            scroll="paper"
-            fullScreen={fullScreen}
-            fullWidth={!fullScreen}
-            maxWidth="md"
-            sx={{
-                '.MuiDialog-container': {
-                    alignItems: 'flex-start',
-                },
-            }}
-            aria-labelledby="new-capture-dialog-title"
-        >
-            <DialogTitle id="new-capture-dialog-title">
-                <FormattedMessage id="captureCreation.heading" />
-                <IconButton
-                    aria-label="close"
-                    onClick={handlers.close}
+        <PageContainer>
+            <Toolbar>
+                <Typography variant="h6" noWrap>
+                    <FormattedMessage id="captureCreation.heading" />
+                </Typography>
+
+                <Stack
+                    direction="row"
+                    spacing={0}
+                    alignItems="center"
                     sx={{
-                        color: (buttonTheme) => buttonTheme.palette.grey[500],
-                        position: 'absolute',
-                        right: 0,
+                        ml: 'auto',
                     }}
                 >
-                    <CloseIcon />
-                </IconButton>
-            </DialogTitle>
+                    <Button onClick={handlers.close} color="error">
+                        <FormattedMessage id="cta.cancel" />
+                    </Button>
+
+                    <Button
+                        onClick={handlers.addToChangeSet}
+                        color="success"
+                        variant="contained"
+                        disableElevation
+                    >
+                        <FormattedMessage id="cta.saveEntity" />
+                    </Button>
+                </Stack>
+            </Toolbar>
 
             {formSubmitError && (
                 <NewCaptureError title={formSubmitError.message} errors={[]} />
             )}
 
-            <DialogContent dividers>
-                {activeStep === Steps.DETAILS_AND_SPEC ? (
-                    <ErrorBoundryWrapper>
-                        <form id={FORM_ID}>
-                            <NewCaptureDetails
-                                displayValidation={showValidation}
-                                readonly={formSubmitting}
-                            />
-                            <Paper sx={{ width: '100%' }} variant="outlined">
-                                <NewCaptureSpecFormHeader />
-                                <Divider />
-                                <NewCaptureSpecForm
-                                    displayValidation={showValidation}
-                                    readonly={formSubmitting}
-                                />
-                            </Paper>
-                        </form>
-                    </ErrorBoundryWrapper>
-                ) : null}
-                {activeStep === Steps.WAITING_FOR_DISCOVER ? (
-                    <Box
-                        sx={{
-                            alignItems: 'center',
-                            display: 'flex',
-                        }}
-                    >
-                        <CircularProgress />
-                        <Typography
-                            variant="caption"
-                            sx={{
-                                ml: 2,
-                            }}
-                        >
-                            <FormattedMessage id="captureCreation.config.testing" />
-                        </Typography>
-                    </Box>
-                ) : null}
+            <ErrorBoundryWrapper>
+                <form id={FORM_ID}>
+                    <NewCaptureDetails
+                        displayValidation={showValidation}
+                        readonly={formSubmitting}
+                    />
+                    <Paper sx={{ width: '100%' }} variant="outlined">
+                        <NewCaptureSpecFormHeader />
+                        <Divider />
+                        <NewCaptureSpecForm
+                            displayValidation={showValidation}
+                            readonly={formSubmitting}
+                        />
+                    </Paper>
+                </form>
+            </ErrorBoundryWrapper>
 
-                {
-                    // TODO Schema Editor
-                    // activeStep === Steps.CHOOSE_COLLECTIONS
-                    //     ? Object.keys(availableSchemas).map((key: any) => (
-                    //           <FormControlLabel
-                    //               key={`SchemaSelector-${key}`}
-                    //               control={<Checkbox name={key} />}
-                    //               label={key}
-                    //               checked
-                    //           />
-                    //       ))
-                    //     : null
-                }
+            <Button
+                onClick={handlers.test}
+                disabled={formSubmitting}
+                form={FORM_ID}
+                size="large"
+                type="submit"
+                color="success"
+                variant="contained"
+                disableElevation
+            >
+                <FormattedMessage id="captureCreation.ctas.discover" />
+            </Button>
 
-                {activeStep === Steps.REVIEW_SCHEMA_IN_EDITOR ? (
-                    <NewCaptureEditor data={catalogResponse?.attributes} />
-                ) : null}
-            </DialogContent>
-
-            <DialogActions>
-                <Button onClick={handlers.close} size="large" color="error">
-                    <FormattedMessage id="cta.cancel" />
-                </Button>
-
-                {activeStep === Steps.REVIEW_SCHEMA_IN_EDITOR ? (
-                    <Button
-                        onClick={handlers.addToChangeSet}
-                        size="large"
-                        color="success"
-                        variant="contained"
-                        disableElevation
-                    >
-                        <FormattedMessage id="cta.addToChangeSet" />
-                    </Button>
-                ) : (
-                    <Button
-                        onClick={handlers.test}
-                        disabled={formSubmitting}
-                        form={FORM_ID}
-                        size="large"
-                        type="submit"
-                        color="success"
-                        variant="contained"
-                        disableElevation
-                    >
-                        <FormattedMessage id="captureCreation.ctas.test.config" />
-                    </Button>
-                )}
-            </DialogActions>
-        </Dialog>
+            {catalogResponse ? (
+                <NewCaptureEditor data={catalogResponse.attributes} />
+            ) : null}
+        </PageContainer>
     );
 }
 
