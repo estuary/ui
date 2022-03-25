@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 
-const Logs: React.FC = () => {
+const Logs = () => {
     return (
         <Box>
             <FormattedMessage id="logs.main.message" />

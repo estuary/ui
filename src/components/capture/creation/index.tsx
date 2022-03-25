@@ -94,7 +94,7 @@ function NewCaptureModal() {
     );
     const specFormData = useCaptureCreationStore(selectors.specFormData);
     const disoverLink = useCaptureCreationStore(selectors.disoverLink);
-    const cleanUp = useCaptureCreationStore(selectors.resetState);
+    const resetState = useCaptureCreationStore(selectors.resetState);
     const hasChanges = useCaptureCreationStore(selectors.hasChanges);
 
     // Form props
@@ -116,7 +116,7 @@ function NewCaptureModal() {
             clearResourcesFromEditor();
         }
 
-        cleanUp();
+        resetState();
 
         navigate('..');
     };
@@ -336,7 +336,7 @@ function NewCaptureModal() {
                 ) : (
                     <Button
                         onClick={handlers.test}
-                        disabled={false}
+                        disabled={formSubmitting}
                         form={FORM_ID}
                         size="large"
                         type="submit"

@@ -2,7 +2,7 @@ import { Box, Toolbar, Typography } from '@mui/material';
 import PageContainer from 'components/shared/PageContainer';
 import { FormattedMessage } from 'react-intl';
 
-const Home: React.FC = () => {
+const Home = () => {
     return (
         <PageContainer>
             <Toolbar

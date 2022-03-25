@@ -6,8 +6,9 @@ import {
     DialogContentText,
     DialogTitle,
 } from '@mui/material';
-import React, { createContext, useContext, useRef, useState } from 'react';
+import { createContext, useContext, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { BaseComponentProps } from 'types';
 
 export interface IConfirmationModalOptions {
     confirmText?: string;
@@ -37,7 +38,7 @@ const getDefaultSettings = (): IConfirmationModalOptions => {
 const ConfirmationModalContext =
     createContext<IConfirmationModalContext | null>(null);
 
-const ConfirmationModalContextProvider: React.FC = ({ children }) => {
+const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
     const [settings, setSettings] = useState<IConfirmationModalOptions>(
         getDefaultSettings()
     );

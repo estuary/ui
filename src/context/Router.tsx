@@ -1,6 +1,7 @@
 import { BrowserRouter } from 'react-router-dom';
+import { BaseComponentProps } from 'types';
 
-const AppRouter: React.FC = ({ children }) => {
+const AppRouter = ({ children }: BaseComponentProps) => {
     return <BrowserRouter>{children}</BrowserRouter>;
 };
 

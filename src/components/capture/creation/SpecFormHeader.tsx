@@ -20,7 +20,7 @@ function NewCaptureSpecFormHeader() {
     const { data, error } = useConnectorImages(endpoint);
 
     useEffect(() => {
-        if (data?.links.spec && data.links.spec.length > 0) {
+        if (endpoint && data?.links.spec && data.links.spec.length > 0) {
             setLink('spec', data.links.spec);
         }
     }, [endpoint, data, setLink]);

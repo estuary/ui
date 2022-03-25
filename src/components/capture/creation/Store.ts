@@ -4,15 +4,6 @@ import { isEqual } from 'lodash';
 import create from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-enum EventNames {
-    DETAILS_CHANGED = 'Details Changed',
-    DETAILS_REMOVED = 'Details Removed',
-    LINKS_CHANGED = 'Links Changed',
-    LINKS_REMOVED = 'Links Removed',
-    SPEC_CHANGED = 'Spec Changed',
-    SPEC_REMOVED = 'Spec Removed',
-}
-
 interface CaptureCreationStateLinks {
     connectorImage: string;
     discovered_catalog: string;
@@ -88,7 +79,7 @@ const useCaptureCreationStore = create<CaptureCreationState>(
                         state.details = details;
                     }),
                     false,
-                    EventNames.DETAILS_CHANGED
+                    'Details changed'
                 );
             },
 
@@ -98,7 +89,7 @@ const useCaptureCreationStore = create<CaptureCreationState>(
                         state.links[key] = value;
                     }),
                     false,
-                    EventNames.LINKS_CHANGED
+                    `${key} link updated`
                 );
             },
 
@@ -108,13 +99,10 @@ const useCaptureCreationStore = create<CaptureCreationState>(
                         state.spec = spec;
                     }),
                     false,
-                    EventNames.SPEC_CHANGED
+                    'Spec changed'
                 );
             },
 
-            resetState: () => {
-                set(getInitialStateData(), false);
-            },
             hasChanges: () => {
                 const { details, spec } = get();
                 const { details: initialDetails, spec: initialSpec } =
@@ -130,6 +118,9 @@ const useCaptureCreationStore = create<CaptureCreationState>(
                         spec: initialSpec.data,
                     }
                 );
+            },
+            resetState: () => {
+                set(getInitialStateData(), false, 'Resetting State');
             },
         }),
         { name: 'capture-creation-state' }
