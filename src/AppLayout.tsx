@@ -50,7 +50,7 @@ function AppLayout() {
                     width={isBelowMd ? Widths.FULL : navWidth}
                 />
             </Box>
-            <Box sx={{ gridArea: 'main', overflow: 'auto' }}>
+            <Box sx={{ gridArea: 'main' }}>
                 <Outlet />
             </Box>
         </Box>
