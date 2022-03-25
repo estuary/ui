@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import useCaptureCreationStore, {
     CaptureCreationState,
-} from 'components/capture/creation/Store';
+} from 'components/capture/create/Store';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
 import { useConfirmationModalContext } from 'context/Confirmation';
@@ -56,7 +56,7 @@ const selectors = {
         state.links.discovered_catalog,
 };
 
-function NewCaptureModal() {
+function CaptureCreation() {
     const navigate = useNavigate();
     const confirmationModalContext = useConfirmationModalContext();
 
@@ -268,4 +268,4 @@ function NewCaptureModal() {
     );
 }
 
-export default NewCaptureModal;
+export default CaptureCreation;

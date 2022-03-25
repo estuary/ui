@@ -8,11 +8,11 @@ import Error from '../pages/Error';
 const Admin = lazy(() => import('../pages/Admin'));
 
 const Captures = lazy(() => import('../pages/Captures'));
-const CaptureCreation = lazy(() => import('components/capture/creation/index'));
+const CaptureCreate = lazy(() => import('components/capture/create/index'));
 
 const Materializations = lazy(() => import('../pages/Materializations'));
-const NewMaterialization = lazy(
-    () => import('../components/materialization/creation')
+const MaterializationCreate = lazy(
+    () => import('../components/materialization/create')
 );
 
 const Collections = lazy(() => import('../pages/Collections'));
@@ -27,14 +27,18 @@ const Authenticated = () => {
                     <Route path="collections" element={<Collections />} />
                     <Route path="captures" element={<Captures />} />
                     <Route path="capture">
-                        <Route path="create" element={<CaptureCreation />} />
+                        <Route path="create" element={<CaptureCreate />} />
                     </Route>
 
                     <Route
                         path="materializations"
                         element={<Materializations />}
-                    >
-                        <Route path="create" element={<NewMaterialization />} />
+                    />
+                    <Route path="materialization">
+                        <Route
+                            path="create"
+                            element={<MaterializationCreate />}
+                        />
                     </Route>
                     <Route path="admin/*" element={<Admin />} />
                 </Route>

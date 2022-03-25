@@ -4,7 +4,7 @@ import { JsonForms } from '@jsonforms/react';
 import { Alert, AlertTitle, StyledEngineProvider } from '@mui/material';
 import useCaptureCreationStore, {
     CaptureCreationState,
-} from 'components/capture/creation/Store';
+} from 'components/capture/create/Store';
 import FormLoading from 'components/shared/FormLoading';
 import useConnectorImageSpec from 'hooks/useConnectorImagesSpec';
 import { isEmpty } from 'lodash';

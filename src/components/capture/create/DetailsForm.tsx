@@ -3,7 +3,7 @@ import { JsonForms } from '@jsonforms/react';
 import { Alert, Skeleton, Stack } from '@mui/material';
 import useCaptureCreationStore, {
     CaptureCreationState,
-} from 'components/capture/creation/Store';
+} from 'components/capture/create/Store';
 import { ConnectorTypes } from 'endpoints/connectors';
 import useConnectors from 'hooks/useConnectors';
 import { useEffect, useState } from 'react';
