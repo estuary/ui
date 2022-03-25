@@ -1,35 +1,42 @@
-import { Box, Skeleton, styled } from '@mui/material';
+import { Box, useMediaQuery, useTheme } from '@mui/material';
 import Topbar from 'components/header/Topbar';
-import { Suspense, useState } from 'react';
+import { useState } from 'react';
 import { Outlet } from 'react-router';
 import Navigation from './components/navigation/Navigation';
 
 export enum Widths {
+    MOBILE = 0,
     RAIL = 63,
     FULL = 225,
 }
 
 function AppLayout() {
+    const theme = useTheme();
+    const isBelowMd = useMediaQuery(theme.breakpoints.down('md'));
+
     const [navigationOpen, setNavigationOpen] = useState(false);
     const [navWidth, setNavigationWidth] = useState<Widths>(Widths.RAIL);
 
     const toggleNavigationDrawer = () => {
-        setNavigationWidth(navigationOpen ? Widths.RAIL : Widths.FULL);
+        if (!isBelowMd) {
+            setNavigationWidth(navigationOpen ? Widths.RAIL : Widths.FULL);
+        }
+
         setNavigationOpen(!navigationOpen);
     };
 
-    const Root = styled(Box)(({ theme }) => ({
-        [theme.breakpoints.up('md')]: {
-            display: 'grid',
-            gridTemplateAreas: `"header header"
-            "nav main"`,
-            gridTemplateColumns: `${navWidth}px auto`,
-            gridTemplateRows: 'auto 1fr',
-        },
-    }));
-
     return (
-        <Root>
+        <Box
+            sx={{
+                display: 'grid',
+                gridTemplateAreas: `"header header"
+                "nav main"`,
+                gridTemplateColumns: `${
+                    isBelowMd ? Widths.MOBILE : navWidth
+                }px auto`,
+                gridTemplateRows: 'auto 1fr',
+            }}
+        >
             <Box sx={{ gridArea: 'header' }}>
                 <Topbar
                     isNavigationOpen={navigationOpen}
@@ -40,15 +47,13 @@ function AppLayout() {
                 <Navigation
                     open={navigationOpen}
                     onNavigationToggle={toggleNavigationDrawer}
-                    width={navWidth}
+                    width={isBelowMd ? Widths.FULL : navWidth}
                 />
             </Box>
             <Box sx={{ gridArea: 'main', overflow: 'auto' }}>
-                <Suspense fallback={<Skeleton animation="wave" />}>
-                    <Outlet />
-                </Suspense>
+                <Outlet />
             </Box>
-        </Root>
+        </Box>
     );
 }
 
