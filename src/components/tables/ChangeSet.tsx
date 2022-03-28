@@ -1,5 +1,6 @@
 import {
     Box,
+    Button,
     Table,
     TableBody,
     TableCell,
@@ -61,8 +62,8 @@ function ChangeSetTable() {
             headerIntlKey: 'changeSet.data.lastUpdated',
         },
         {
-            field: 'changeType',
-            headerIntlKey: 'changeSet.data.details',
+            field: null,
+            headerIntlKey: 'changeSet.data.actions',
         },
     ];
 
@@ -131,10 +132,9 @@ function ChangeSetTable() {
                                         {
                                             deploymentStatus,
                                             name,
-                                            connectorType,
                                             catalogNamespace,
+                                            connectorType,
                                             dateCreated: dateUpdated,
-                                            changeType,
                                         },
                                         index
                                     ) => (
@@ -180,7 +180,15 @@ function ChangeSetTable() {
                                                     { addSuffix: true }
                                                 )}
                                             </TableCell>
-                                            <TableCell>{changeType}</TableCell>
+                                            <TableCell>
+                                                <Button
+                                                    variant="contained"
+                                                    size="small"
+                                                    disableElevation
+                                                >
+                                                    Edit
+                                                </Button>
+                                            </TableCell>
                                         </TableRow>
                                     )
                                 )}

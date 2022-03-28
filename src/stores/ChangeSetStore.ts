@@ -3,15 +3,13 @@ import { devtools, persist } from 'zustand/middleware';
 
 export type DeploymentStatus = 'ACTIVE' | 'INACTIVE';
 type ConnectorType = 'Hello World' | 'Postgres';
-type ChangeType = 'New Entity' | 'Update';
 
 export interface EntityMetadata {
     deploymentStatus: DeploymentStatus;
-    connectorType: ConnectorType;
     name: string;
     catalogNamespace: string;
+    connectorType: ConnectorType;
     dateCreated: string;
-    changeType: ChangeType;
 }
 
 export interface Entity<T = any> {

@@ -132,7 +132,6 @@ function NewCaptureModal() {
             const capture: Entity = {
                 metadata: {
                     catalogNamespace,
-                    changeType: 'New Entity',
                     dateCreated: Date(),
                     deploymentStatus: 'ACTIVE',
                     connectorType: 'Hello World',

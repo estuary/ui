@@ -104,7 +104,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     'changeSet.data.entity': `Entity`,
     'changeSet.data.connectorType': `Type`,
     'changeSet.data.lastUpdated': `Last Updated`,
-    'changeSet.data.details': `Details`,
+    'changeSet.data.actions': `Actions`,
 };
 
 export default enUSMessages;
