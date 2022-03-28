@@ -68,8 +68,8 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     // Captures main page
     'captures.main.message1': `Click the "New Capture" button up above to get started.`,
     'captures.main.message2': `It will guide you through generating and downloading a valid {docLink}.`,
-    'captures.main.message2.docLink': `catalog spec`,
-    'captures.main.message2.docPath': `https://docs.estuary.dev/concepts/#catalogs`,
+    'captures.main.message2.docLink': `capture spec`,
+    'captures.main.message2.docPath': `https://docs.estuary.dev/concepts/#captures`,
 
     // Landing page content
     'home.main.header': `Welcome to Control Plane!`,
@@ -91,7 +91,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
 };
 
 const Capture_Create: ResolvedIntlConfig['messages'] = {
-    'captureCreation.ctas.discover': `Discover Capture Catalog`,
+    'captureCreation.ctas.discover': `Test Config`,
     'captureCreation.heading': `New Capture`,
     'captureCreation.instructions': `To get started please provide a unique name and the source type of the Capture you want to create. Once you've filled out the source details you can click "Test Capture" down below to test the connection.`,
     'captureCreation.missingConnectors': `No connectors installed. You must install a source connector before being able to create a capture.`,
@@ -101,8 +101,7 @@ const Capture_Create: ResolvedIntlConfig['messages'] = {
     'captureCreation.image.label': `Source`,
     'captureCreation.image.description': `The connector you want to use to connect to your endpoint.`,
     'captureCreation.config.source.doclink': `Connector Docs`,
-    'captureCreation.config.testing': `Testing configuration...`,
-    'captureCreation.config.testing.failed': `Capture test failed`,
+    'captureCreation.save.failed': `Capture creation failed. Please see below for details:`,
     'captureCreation.editor.default': `Before you can edit the Capture Catalog you need to fill out the connection config section and click Discover`,
     'captureCreation.finalReview.instructions': `Look over the catalog configuration that was generated. If you want to edit anything you can do that directly in the editor. Once you're ready you can download the file for your local.`,
 };

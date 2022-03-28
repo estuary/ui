@@ -181,14 +181,7 @@ function CaptureCreation() {
                         setCatalogResponse(response.data);
                     })
                     .catch((error) => {
-                        if (error.errors) {
-                            setFormSubmitError({
-                                errors: error.errors,
-                                message: 'title',
-                            });
-                        } else {
-                            setFormSubmitError(error.message);
-                        }
+                        setFormSubmitError(error);
                     })
                     .finally(() => {
                         setFormSubmitting(false);
@@ -217,7 +210,20 @@ function CaptureCreation() {
                     </Button>
 
                     <Button
+                        onClick={handlers.test}
+                        disabled={formSubmitting}
+                        form={FORM_ID}
+                        type="submit"
+                        color="success"
+                        variant="contained"
+                        disableElevation
+                    >
+                        <FormattedMessage id="captureCreation.ctas.discover" />
+                    </Button>
+
+                    <Button
                         onClick={handlers.addToChangeSet}
+                        disabled={!catalogResponse || formSubmitting}
                         color="success"
                         variant="contained"
                         disableElevation
@@ -228,7 +234,10 @@ function CaptureCreation() {
             </Toolbar>
 
             {formSubmitError && (
-                <NewCaptureError title={formSubmitError.message} errors={[]} />
+                <NewCaptureError
+                    title="captureCreation.save.failed"
+                    errors={formSubmitError.errors}
+                />
             )}
 
             <ErrorBoundryWrapper>
@@ -247,19 +256,6 @@ function CaptureCreation() {
                     </Paper>
                 </form>
             </ErrorBoundryWrapper>
-
-            <Button
-                onClick={handlers.test}
-                disabled={formSubmitting}
-                form={FORM_ID}
-                size="large"
-                type="submit"
-                color="success"
-                variant="contained"
-                disableElevation
-            >
-                <FormattedMessage id="captureCreation.ctas.discover" />
-            </Button>
 
             {catalogResponse ? (
                 <NewCaptureEditor data={catalogResponse.attributes} />

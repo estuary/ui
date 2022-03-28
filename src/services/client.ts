@@ -41,12 +41,15 @@ export const client = <Response, Request = {}>(
             } else if (response.ok) {
                 return response.json();
             } else {
-                const errorMessage = await response.text();
-                return Promise.reject(new Error(errorMessage));
+                const errorBody = await response.json();
+                return Promise.reject(errorBody);
             }
         })
         .catch((error) => {
-            console.log('Failed client call', error);
+            return Promise.reject({
+                message: 'Server Error',
+                ...error,
+            });
         });
 
     return fetchPromise;
