@@ -199,7 +199,6 @@ function CaptureCreation() {
 
                 <Stack
                     direction="row"
-                    spacing={0}
                     alignItems="center"
                     sx={{
                         ml: 'auto',
@@ -242,10 +241,12 @@ function CaptureCreation() {
 
             <ErrorBoundryWrapper>
                 <form id={FORM_ID}>
+                    <Typography variant="h5">Capture Details</Typography>
                     <NewCaptureDetails
                         displayValidation={showValidation}
                         readonly={formSubmitting}
                     />
+                    <Typography variant="h5">Connection Config</Typography>
                     <Paper sx={{ width: '100%' }} variant="outlined">
                         <NewCaptureSpecFormHeader />
                         <Divider />
@@ -258,7 +259,10 @@ function CaptureCreation() {
             </ErrorBoundryWrapper>
 
             {catalogResponse ? (
-                <NewCaptureEditor data={catalogResponse.attributes} />
+                <>
+                    <Typography variant="h5">Catalog Editor</Typography>
+                    <NewCaptureEditor data={catalogResponse.attributes} />
+                </>
             ) : null}
         </PageContainer>
     );
