@@ -142,33 +142,36 @@ function ChangeSetTable() {
                                             key={`Entity-${name}-${index}`}
                                         >
                                             <TableCell sx={{ minWidth: 216 }}>
-                                                <span
-                                                    style={{
-                                                        height: 20,
-                                                        width: 20,
-                                                        backgroundColor:
-                                                            getDeploymentStatusHexCode(
-                                                                deploymentStatus
-                                                            ),
-                                                        borderRadius: 50,
-                                                        display: 'inline-block',
-                                                        verticalAlign: 'middle',
-                                                        marginRight: 16,
-                                                    }}
-                                                />
-
                                                 <Tooltip
                                                     title={catalogNamespace}
                                                     placement="bottom-start"
                                                 >
-                                                    <span
-                                                        style={{
-                                                            verticalAlign:
-                                                                'middle',
-                                                        }}
-                                                    >
-                                                        {name}
-                                                    </span>
+                                                    <Box>
+                                                        <span
+                                                            style={{
+                                                                height: 20,
+                                                                width: 20,
+                                                                backgroundColor:
+                                                                    getDeploymentStatusHexCode(
+                                                                        deploymentStatus
+                                                                    ),
+                                                                borderRadius: 50,
+                                                                display:
+                                                                    'inline-block',
+                                                                verticalAlign:
+                                                                    'middle',
+                                                                marginRight: 16,
+                                                            }}
+                                                        />
+                                                        <span
+                                                            style={{
+                                                                verticalAlign:
+                                                                    'middle',
+                                                            }}
+                                                        >
+                                                            {name}
+                                                        </span>
+                                                    </Box>
                                                 </Tooltip>
                                             </TableCell>
                                             <TableCell>
