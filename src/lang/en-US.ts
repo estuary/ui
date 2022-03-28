@@ -101,8 +101,8 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     'changeSet.header': `Unsaved Changes`,
     'changeSet.title': `Unsaved Changes Table`,
 
-    'changeSet.data.entityType': `Entity Type`,
     'changeSet.data.entity': `Entity`,
+    'changeSet.data.connectorType': `Type`,
     'changeSet.data.lastUpdated': `Last Updated`,
     'changeSet.data.details': `Details`,
 };

@@ -53,8 +53,8 @@ function ChangeSetTable() {
             headerIntlKey: 'changeSet.data.entity',
         },
         {
-            field: 'entityType',
-            headerIntlKey: 'changeSet.data.entityType',
+            field: 'connectorType',
+            headerIntlKey: 'changeSet.data.connectorType',
         },
         {
             field: 'dateCreated',
@@ -131,7 +131,7 @@ function ChangeSetTable() {
                                         {
                                             deploymentStatus,
                                             name,
-                                            entityType,
+                                            connectorType,
                                             catalogNamespace,
                                             dateCreated: dateUpdated,
                                             changeType,
@@ -171,7 +171,9 @@ function ChangeSetTable() {
                                                     </span>
                                                 </Tooltip>
                                             </TableCell>
-                                            <TableCell>{entityType}</TableCell>
+                                            <TableCell>
+                                                {connectorType}
+                                            </TableCell>
                                             <TableCell>
                                                 {formatDistanceToNow(
                                                     new Date(dateUpdated),

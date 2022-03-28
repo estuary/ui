@@ -2,12 +2,12 @@ import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
 export type DeploymentStatus = 'ACTIVE' | 'INACTIVE';
-type EntityType = 'Capture';
+type ConnectorType = 'Hello World' | 'Postgres';
 type ChangeType = 'New Entity' | 'Update';
 
 export interface EntityMetadata {
     deploymentStatus: DeploymentStatus;
-    entityType: EntityType;
+    connectorType: ConnectorType;
     name: string;
     catalogNamespace: string;
     dateCreated: string;
