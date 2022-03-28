@@ -133,6 +133,7 @@ function NewCaptureModal() {
                     catalogNamespace,
                     changeType: 'New Entity',
                     dateCreated: Date(),
+                    deploymentStatus: 'ACTIVE',
                     entityType: 'Capture',
                     name: catalogNamespace.substring(
                         catalogNamespace.lastIndexOf('/') + 1,

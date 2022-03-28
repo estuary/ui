@@ -1,10 +1,12 @@
 import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
+export type DeploymentStatus = 'ACTIVE' | 'INACTIVE';
 type EntityType = 'Capture';
 type ChangeType = 'New Entity' | 'Update';
 
 export interface EntityMetadata {
+    deploymentStatus: DeploymentStatus;
     entityType: EntityType;
     name: string;
     catalogNamespace: string;

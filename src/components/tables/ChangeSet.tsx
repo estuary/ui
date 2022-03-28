@@ -17,6 +17,7 @@ import { MouseEvent, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useChangeSetStore, {
     ChangeSetState,
+    DeploymentStatus,
     EntityMetadata,
 } from 'stores/ChangeSetStore';
 
@@ -50,12 +51,16 @@ function ChangeSetTable() {
     const intl = useIntl();
     const columns = [
         {
-            field: 'entityType',
-            headerIntlKey: 'changeSet.data.entityType',
+            field: 'deploymentStatus',
+            headerIntlKey: 'changeSet.data.deploymentStatus',
         },
         {
             field: 'name',
             headerIntlKey: 'changeSet.data.entity',
+        },
+        {
+            field: 'entityType',
+            headerIntlKey: 'changeSet.data.entityType',
         },
         {
             field: 'dateCreated',
@@ -66,6 +71,17 @@ function ChangeSetTable() {
             headerIntlKey: 'changeSet.data.details',
         },
     ];
+
+    const getDeploymentStatusHexCode = (status: DeploymentStatus): string => {
+        switch (status) {
+            case 'ACTIVE':
+                return '#40B763';
+            case 'INACTIVE':
+                return '#C9393E';
+            default:
+                return '#000000';
+        }
+    };
 
     const handleChangePage = (
         event: MouseEvent<HTMLButtonElement> | null,
@@ -119,6 +135,7 @@ function ChangeSetTable() {
                                 .map(
                                     (
                                         {
+                                            deploymentStatus,
                                             name,
                                             entityType,
                                             catalogNamespace,
@@ -130,7 +147,24 @@ function ChangeSetTable() {
                                         <TableRow
                                             key={`Entity-${name}-${index}`}
                                         >
-                                            <TableCell>{entityType}</TableCell>
+                                            <TableCell
+                                                align="center"
+                                                sx={{ width: 77 }}
+                                            >
+                                                <span
+                                                    style={{
+                                                        height: 20,
+                                                        width: 20,
+                                                        backgroundColor:
+                                                            getDeploymentStatusHexCode(
+                                                                deploymentStatus
+                                                            ),
+                                                        borderRadius: 50,
+                                                        display: 'inline-block',
+                                                        verticalAlign: 'middle',
+                                                    }}
+                                                />
+                                            </TableCell>
                                             <TableCell sx={{ minWidth: 216 }}>
                                                 <Tooltip
                                                     title={catalogNamespace}
@@ -148,6 +182,7 @@ function ChangeSetTable() {
                                                 </Tooltip>
                                                 <span>{name}</span>
                                             </TableCell>
+                                            <TableCell>{entityType}</TableCell>
                                             <TableCell>
                                                 {formatDistanceToNow(
                                                     new Date(dateUpdated),
