@@ -1,7 +1,5 @@
-import InfoIcon from '@mui/icons-material/Info';
 import {
     Box,
-    IconButton,
     Table,
     TableBody,
     TableCell,
@@ -50,10 +48,6 @@ function ChangeSetTable() {
 
     const intl = useIntl();
     const columns = [
-        {
-            field: 'deploymentStatus',
-            headerIntlKey: 'changeSet.data.deploymentStatus',
-        },
         {
             field: 'name',
             headerIntlKey: 'changeSet.data.entity',
@@ -147,10 +141,7 @@ function ChangeSetTable() {
                                         <TableRow
                                             key={`Entity-${name}-${index}`}
                                         >
-                                            <TableCell
-                                                align="center"
-                                                sx={{ width: 77 }}
-                                            >
+                                            <TableCell sx={{ minWidth: 216 }}>
                                                 <span
                                                     style={{
                                                         height: 20,
@@ -162,25 +153,23 @@ function ChangeSetTable() {
                                                         borderRadius: 50,
                                                         display: 'inline-block',
                                                         verticalAlign: 'middle',
+                                                        marginRight: 16,
                                                     }}
                                                 />
-                                            </TableCell>
-                                            <TableCell sx={{ minWidth: 216 }}>
+
                                                 <Tooltip
                                                     title={catalogNamespace}
                                                     placement="bottom-start"
                                                 >
-                                                    <IconButton
-                                                        sx={{ mr: 0.5, p: 0.5 }}
+                                                    <span
+                                                        style={{
+                                                            verticalAlign:
+                                                                'middle',
+                                                        }}
                                                     >
-                                                        <InfoIcon
-                                                            sx={{
-                                                                fontSize: 16,
-                                                            }}
-                                                        />
-                                                    </IconButton>
+                                                        {name}
+                                                    </span>
                                                 </Tooltip>
-                                                <span>{name}</span>
                                             </TableCell>
                                             <TableCell>{entityType}</TableCell>
                                             <TableCell>
