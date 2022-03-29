@@ -27,10 +27,15 @@ export const client = <Response, Request = {}>(
 
     config.headers = headersInit;
 
+    // TODO: probably need to remove this for production
+    const API_ENDPOINT = window.Estuary?.api_endpoint
+        ? window.Estuary.api_endpoint
+        : process.env.REACT_APP_API_BASE_URL;
+
     // TODO Sometimes rest returns the full path so handling that here for now
     const fullEndpoint = /^(http)s?:\/\//i.test(endpoint)
         ? endpoint
-        : `${process.env.REACT_APP_API_BASE_URL}/${endpoint}`;
+        : `${API_ENDPOINT}/${endpoint}`;
 
     const fetchPromise = window
         .fetch(fullEndpoint, config)
