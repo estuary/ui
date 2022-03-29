@@ -1,34 +1,104 @@
-import { Box, Button, Toolbar, Typography } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
+import { Box, Button, TextField, Toolbar, Typography } from '@mui/material';
 import PageContainer from 'components/shared/PageContainer';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+import useChangeSetStore, {
+    ChangeSetState,
+    Entity,
+} from 'stores/ChangeSetStore';
 import ChangeSetTable from '../components/tables/ChangeSet';
 
+const selectors = {
+    captures: (state: ChangeSetState) => state.captures,
+    newChangeCount: (state: ChangeSetState) => state.newChangeCount,
+    resetNewChangeCount: (state: ChangeSetState) => state.resetNewChangeCount,
+};
+
 const Builds = () => {
+    const [filteredCaptures, setFilteredCaptures] = useState<Entity[] | null>(
+        null
+    );
+
+    const newChangeCount = useChangeSetStore(selectors.newChangeCount);
+    const resetNewChangeCount = useChangeSetStore(
+        selectors.resetNewChangeCount
+    );
+    const captureState = useChangeSetStore(selectors.captures);
+
+    const captures = Object.values(captureState);
+
+    const handlers = {
+        change: (
+            event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        ) => {
+            const query = event.target.value;
+
+            if (query === '') {
+                setFilteredCaptures(null);
+            } else {
+                const queriedCatalogNamespaces = Object.keys(
+                    captureState
+                ).filter((catalogNamespace) =>
+                    catalogNamespace.includes(query)
+                );
+
+                const queriedCaptures: Entity[] = queriedCatalogNamespaces.map(
+                    (key) => captureState[key]
+                );
+
+                setFilteredCaptures(queriedCaptures);
+            }
+        },
+    };
+
+    useEffect(() => {
+        if (newChangeCount > 0) {
+            resetNewChangeCount();
+        }
+    }, [newChangeCount, resetNewChangeCount]);
+
     return (
         <PageContainer>
-            <Toolbar sx={{ justifyContent: 'space-between' }}>
-                <Typography>
-                    <FormattedMessage id="changeSet.header" />
+            <Box sx={{ mx: 2 }}>
+                <Typography variant="h6" sx={{ my: 2 }}>
+                    <FormattedMessage id="entityTable.header" />
                 </Typography>
 
-                <Box>
-                    <Button
-                        /* TODO: Differentiate bkg color of delete button */
-                        variant="contained"
-                        disabled
+                <Toolbar
+                    disableGutters
+                    sx={{ mb: 2, justifyContent: 'space-between' }}
+                >
+                    <Box
+                        margin={0}
+                        sx={{ display: 'flex', alignItems: 'flex-end' }}
                     >
-                        Delete
-                    </Button>
+                        <SearchIcon sx={{ mb: 0.9, mr: 0.5, fontSize: 18 }} />
+                        <TextField
+                            id="capture-search-box"
+                            label="Filter Namespaces"
+                            variant="standard"
+                            onChange={handlers.change}
+                        />
+                    </Box>
 
-                    <Button sx={{ ml: 2 }} variant="contained" disabled>
-                        Build
-                    </Button>
-                </Box>
-            </Toolbar>
+                    <Box marginTop={2}>
+                        <Button
+                            /* TODO: Differentiate bkg color of delete button */
+                            variant="contained"
+                            disabled
+                        >
+                            Delete
+                        </Button>
 
-            <Box>
-                <ChangeSetTable />
+                        <Button sx={{ ml: 2 }} variant="contained" disabled>
+                            Build
+                        </Button>
+                    </Box>
+                </Toolbar>
             </Box>
+
+            <ChangeSetTable entities={filteredCaptures ?? captures} />
         </PageContainer>
     );
 };

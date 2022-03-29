@@ -12,58 +12,51 @@ import {
     Tooltip,
 } from '@mui/material';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
-import { MouseEvent, useEffect, useState } from 'react';
+import { MouseEvent, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import useChangeSetStore, {
-    ChangeSetState,
+import {
     DeploymentStatus,
+    Entity,
     EntityMetadata,
 } from 'stores/ChangeSetStore';
 
-const selectors = {
-    captures: (state: ChangeSetState) => state.captures,
-    newChangeCount: (state: ChangeSetState) => state.newChangeCount,
-    resetNewChangeCount: (state: ChangeSetState) => state.resetNewChangeCount,
-};
+interface EntityTableProps {
+    entities: Entity[];
+}
 
-function ChangeSetTable() {
+function ChangeSetTable(props: EntityTableProps) {
+    const { entities } = props;
+
     const [page, setPage] = useState(0);
     const rowsPerPage = 10;
     const rowHeight = 57;
 
-    const newChangeCount = useChangeSetStore(selectors.newChangeCount);
-    const resetNewChangeCount = useChangeSetStore(
-        selectors.resetNewChangeCount
-    );
-    const captureState = useChangeSetStore(selectors.captures);
-
-    const captures = Object.values(captureState);
-    const captureDetails: EntityMetadata[] = captures.map(
-        (capture) => capture.metadata
+    const entityDetails: EntityMetadata[] = entities.map(
+        (entity) => entity.metadata
     );
 
     const emptyRows =
         page > 0
-            ? Math.max(0, (1 + page) * rowsPerPage - captureDetails.length)
+            ? Math.max(0, (1 + page) * rowsPerPage - entityDetails.length)
             : 0;
 
     const intl = useIntl();
     const columns = [
         {
             field: 'name',
-            headerIntlKey: 'changeSet.data.entity',
+            headerIntlKey: 'entityTable.data.entity',
         },
         {
             field: 'connectorType',
-            headerIntlKey: 'changeSet.data.connectorType',
+            headerIntlKey: 'entityTable.data.connectorType',
         },
         {
             field: 'dateCreated',
-            headerIntlKey: 'changeSet.data.lastUpdated',
+            headerIntlKey: 'entityTable.data.lastUpdated',
         },
         {
             field: null,
-            headerIntlKey: 'changeSet.data.actions',
+            headerIntlKey: 'entityTable.data.actions',
         },
     ];
 
@@ -85,20 +78,14 @@ function ChangeSetTable() {
         setPage(newPage);
     };
 
-    useEffect(() => {
-        if (newChangeCount > 0) {
-            resetNewChangeCount();
-        }
-    }, [newChangeCount, resetNewChangeCount]);
-
     return (
         <Box sx={{ mb: 2, mx: 2 }}>
-            {captures.length > 0 ? (
+            {entities.length > 0 ? (
                 <TableContainer component={Box}>
                     <Table
                         sx={{ minWidth: 350 }}
                         aria-label={intl.formatMessage({
-                            id: 'changeSet.title',
+                            id: 'entityTable.title',
                         })}
                     >
                         <TableHead>
@@ -122,7 +109,7 @@ function ChangeSetTable() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {captureDetails
+                            {entityDetails
                                 .slice(
                                     page * rowsPerPage,
                                     page * rowsPerPage + rowsPerPage
@@ -149,8 +136,8 @@ function ChangeSetTable() {
                                                     <Box>
                                                         <span
                                                             style={{
-                                                                height: 20,
-                                                                width: 20,
+                                                                height: 16,
+                                                                width: 16,
                                                                 backgroundColor:
                                                                     getDeploymentStatusHexCode(
                                                                         deploymentStatus
@@ -160,7 +147,7 @@ function ChangeSetTable() {
                                                                     'inline-block',
                                                                 verticalAlign:
                                                                     'middle',
-                                                                marginRight: 16,
+                                                                marginRight: 12,
                                                             }}
                                                         />
                                                         <span
@@ -208,7 +195,7 @@ function ChangeSetTable() {
                             <TableRow>
                                 <TablePagination
                                     rowsPerPageOptions={[rowsPerPage]}
-                                    count={captures.length}
+                                    count={entities.length}
                                     rowsPerPage={rowsPerPage}
                                     page={page}
                                     onPageChange={handleChangePage}
