@@ -1,8 +1,8 @@
 import { JsonFormsCore } from '@jsonforms/core';
 import produce from 'immer';
 import { isEqual } from 'lodash';
+import { devtoolsInNonProd } from 'utils/store-utils';
 import create from 'zustand';
-import { devtools } from 'zustand/middleware';
 
 interface CaptureCreationStateLinks {
     connectorImage: string;
@@ -66,7 +66,7 @@ const getInitialStateData = (): Pick<
 };
 
 const useCaptureCreationStore = create<CaptureCreationState>(
-    devtools(
+    devtoolsInNonProd(
         (set, get) => ({
             ...getInitialStateData(),
             setDetails: (details) => {
