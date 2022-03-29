@@ -54,6 +54,7 @@ const selectors = {
     specFormData: (state: CaptureCreationState) => state.spec.data,
     disoverLink: (state: CaptureCreationState) =>
         state.links.discovered_catalog,
+    hasConnectors: (state: CaptureCreationState) => state.hasConnectors,
 };
 
 function CaptureCreation() {
@@ -81,6 +82,7 @@ function CaptureCreation() {
     const disoverLink = useCaptureCreationStore(selectors.disoverLink);
     const resetState = useCaptureCreationStore(selectors.resetState);
     const hasChanges = useCaptureCreationStore(selectors.hasChanges);
+    const hasConnectors = useCaptureCreationStore(selectors.hasConnectors);
 
     // Form props
     const [showValidation, setShowValidation] = useState(false);
@@ -210,7 +212,7 @@ function CaptureCreation() {
 
                     <Button
                         onClick={handlers.test}
-                        disabled={formSubmitting}
+                        disabled={formSubmitting || !hasConnectors}
                         form={FORM_ID}
                         type="submit"
                         color="success"

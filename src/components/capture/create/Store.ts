@@ -39,13 +39,15 @@ export interface CaptureCreationState {
     setSpec: (spec: CaptureCreationSpec) => void;
 
     //Misc
+    hasConnectors: boolean;
+    setHasConnectors: (val: boolean) => void;
     resetState: () => void;
     hasChanges: () => boolean;
 }
 
 const getInitialStateData = (): Pick<
     CaptureCreationState,
-    'details' | 'links' | 'spec'
+    'details' | 'links' | 'spec' | 'hasConnectors'
 > => {
     return {
         details: {
@@ -62,6 +64,7 @@ const getInitialStateData = (): Pick<
             data: {},
             errors: [],
         },
+        hasConnectors: false,
     };
 };
 
@@ -125,6 +128,15 @@ const useCaptureCreationStore = create<CaptureCreationState>(
                         details: initialDetails.data,
                         spec: initialSpec.data,
                     }
+                );
+            },
+            setHasConnectors: (val) => {
+                set(
+                    produce((state) => {
+                        state.hasConnectors = val;
+                    }),
+                    false,
+                    'Form has connectors'
                 );
             },
             resetState: () => {
