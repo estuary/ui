@@ -171,13 +171,37 @@ function ChangeSetTable(props: EntityTableProps) {
                                                 )}
                                             </TableCell>
                                             <TableCell>
-                                                <Button
-                                                    variant="contained"
-                                                    size="small"
-                                                    disableElevation
-                                                >
-                                                    Edit
-                                                </Button>
+                                                <Box sx={{ display: 'flex' }}>
+                                                    <Button
+                                                        variant="contained"
+                                                        size="small"
+                                                        disableElevation
+                                                        sx={{ mr: 1 }}
+                                                    >
+                                                        Edit
+                                                    </Button>
+
+                                                    {deploymentStatus ===
+                                                    'ACTIVE' ? (
+                                                        <Button
+                                                            variant="contained"
+                                                            size="small"
+                                                            color="error"
+                                                            disableElevation
+                                                        >
+                                                            Stop
+                                                        </Button>
+                                                    ) : (
+                                                        <Button
+                                                            variant="contained"
+                                                            size="small"
+                                                            color="success"
+                                                            disableElevation
+                                                        >
+                                                            Run
+                                                        </Button>
+                                                    )}
+                                                </Box>
                                             </TableCell>
                                         </TableRow>
                                     )

@@ -1,5 +1,5 @@
 import SearchIcon from '@mui/icons-material/Search';
-import { Box, Button, TextField, Toolbar, Typography } from '@mui/material';
+import { Box, TextField, Toolbar, Typography } from '@mui/material';
 import PageContainer from 'components/shared/PageContainer';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -80,20 +80,6 @@ const Builds = () => {
                             variant="standard"
                             onChange={handlers.change}
                         />
-                    </Box>
-
-                    <Box marginTop={2}>
-                        <Button
-                            /* TODO: Differentiate bkg color of delete button */
-                            variant="contained"
-                            disabled
-                        >
-                            Delete
-                        </Button>
-
-                        <Button sx={{ ml: 2 }} variant="contained" disabled>
-                            Build
-                        </Button>
                     </Box>
                 </Toolbar>
             </Box>
