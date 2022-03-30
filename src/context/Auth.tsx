@@ -29,8 +29,6 @@ export function checkTokens(tokens: AuthTokenResponseReduced) {
 export async function bootstrapUser() {
     let user = null;
 
-    console.log('Bootstrapping user here');
-
     const tokens = auth.getToken();
 
     if (isEmpty(tokens)) {

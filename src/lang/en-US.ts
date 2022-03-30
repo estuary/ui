@@ -85,7 +85,6 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
 };
 
 const Login_Page: ResolvedIntlConfig['messages'] = {
-    'login.local.message': `When running locally you can login with whatever name you want.`,
     'login.oidc.message': `Please use one of the providrs below to continue.`,
 };
 

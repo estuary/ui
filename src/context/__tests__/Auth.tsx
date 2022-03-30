@@ -1,9 +1,8 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import { sub } from 'date-fns';
+import { getUnixTime, sub } from 'date-fns';
 import add from 'date-fns/add';
-import formatISO from 'date-fns/formatISO';
 import { type ReactElement } from 'react';
-import { tokenStorageKey, userStorageKey } from 'services/auth';
+import { loginAsUser, updateAuthToken } from 'utils/test-utils';
 import { AuthProvider, useAuth } from '../Auth';
 import AppContent from '../Content';
 
@@ -23,33 +22,19 @@ const FakeComponent = () => {
     }
 };
 
-const setExpiresAt = (expires: string) => {
-    window.localStorage.setItem(
-        tokenStorageKey,
-        JSON.stringify({
-            expires,
-        })
-    );
-};
-
 describe('if there is a user', () => {
     beforeAll(() => {
-        window.localStorage.setItem(
-            userStorageKey,
-            JSON.stringify({
-                display_name: fakeUser,
-            })
-        );
+        loginAsUser(fakeUser);
     });
 
     test('and the session isnt expired we use it', async () => {
-        setExpiresAt(
-            formatISO(
+        updateAuthToken({
+            expires: getUnixTime(
                 add(new Date(), {
                     years: 1,
                 })
-            )
-        );
+            ),
+        });
 
         renderAuth(
             <AuthProvider>
@@ -65,13 +50,13 @@ describe('if there is a user', () => {
     });
 
     test('and the session is expired we ignore it', async () => {
-        setExpiresAt(
-            formatISO(
+        updateAuthToken({
+            expires: getUnixTime(
                 sub(new Date(), {
                     years: 1,
                 })
-            )
-        );
+            ),
+        });
 
         renderAuth(
             <AuthProvider>

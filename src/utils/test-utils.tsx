@@ -7,8 +7,10 @@ import AppContent from 'context/Content';
 import AppRouter from 'context/Router';
 import AppTheme from 'context/Theme';
 import { add, getUnixTime } from 'date-fns';
+import { AuthTokenResponseReduced } from 'endpoints/auth';
+import produce from 'immer';
 import { ReactElement } from 'react';
-import { auth } from 'services/auth';
+import { auth, tokenStorageKey } from 'services/auth';
 
 const getMockTokenReduced = (username: string) => {
     return {
@@ -52,6 +54,38 @@ const goTo = (route?: string, name?: string) => {
     );
 };
 
+const updateAuthToken = (settings: Partial<AuthTokenResponseReduced>) => {
+    window.localStorage.setItem(
+        tokenStorageKey,
+        JSON.stringify(
+            produce(auth.getToken(), (draft) => {
+                return {
+                    ...draft,
+                    ...settings,
+                };
+            })
+        )
+    );
+};
+
+const updateAuthTokenExt = (
+    settings: Partial<AuthTokenResponseReduced['ext']>
+) => {
+    window.localStorage.setItem(
+        tokenStorageKey,
+        JSON.stringify(
+            produce(auth.getToken(), (draft) => {
+                draft.ext = {
+                    ...draft.ext,
+                    ...settings,
+                };
+
+                return draft;
+            })
+        )
+    );
+};
+
 const waitForLoading = async () => {
     return Promise.resolve();
 };
@@ -63,7 +97,7 @@ const waitForLoading = async () => {
 //  account bootstrapping.
 interface MockAuthProps {
     children: JSX.Element;
-    username: string | null;
+    username?: string;
 }
 const MockAuthProvider = ({ children, username }: MockAuthProps) => {
     const value = {
@@ -89,16 +123,16 @@ const customRender = async (
     ui: ReactElement,
     options: Omit<RenderOptions, 'wrapper'> & {
         route?: string;
-        user?: string;
+        username?: string;
     }
 ) => {
-    const { route, user } = options;
+    const { route, username } = options;
 
     goTo(route, 'Test Page');
 
     const view = rtlRender(
         <AppContent>
-            <MockAuthProvider username={user ?? null}>
+            <MockAuthProvider username={username}>
                 <AppTheme>
                     <AppRouter>{ui}</AppRouter>
                 </AppTheme>
@@ -115,4 +149,12 @@ const customRender = async (
 };
 
 export * from '@testing-library/react';
-export { goTo, loginAsUser, logoutUser, customRender, waitForLoading };
+export {
+    goTo,
+    loginAsUser,
+    logoutUser,
+    customRender,
+    waitForLoading,
+    updateAuthToken,
+    updateAuthTokenExt,
+};

@@ -5,14 +5,12 @@ import App from '..';
 
 test('Unauthenticated app renders when no user is present', async () => {
     await customRender(<App />, {
-        user: undefined,
+        username: undefined,
     });
 
     await waitFor(() => {
         expect(
-            screen.getByText(
-                'When running locally you can login with whatever name you want.'
-            )
+            screen.getByText('Please use one of the providrs below to continue')
         ).toBeInTheDocument();
     });
 });
@@ -22,13 +20,13 @@ describe('When there is a user', () => {
 
     test('Authenticated renders', async () => {
         await customRender(<App />, {
-            user: fakeUserName,
+            username: fakeUserName,
         });
 
         await waitFor(() => {
             expect(
                 screen.getByRole('heading', {
-                    name: /Welcome to Control Plane/i,
+                    name: /Welcome to Flow/i,
                 })
             ).toBeInTheDocument();
         });
@@ -36,13 +34,13 @@ describe('When there is a user', () => {
 
     test('Unauthenticated renders when they are logged out', async () => {
         await customRender(<App />, {
-            user: fakeUserName,
+            username: fakeUserName,
         });
 
         await waitFor(() => {
             expect(
                 screen.getByRole('heading', {
-                    name: /Welcome to Control Plane/i,
+                    name: /Welcome to Flow/i,
                 })
             ).toBeInTheDocument();
         });
@@ -50,13 +48,13 @@ describe('When there is a user', () => {
         // Passing undefined below DOES NOT log the user out
         logoutUser();
         await customRender(<App />, {
-            user: undefined,
+            username: undefined,
         });
 
         await waitFor(() => {
             expect(
                 screen.getByText(
-                    'When running locally you can login with whatever name you want.'
+                    'Please use one of the providrs below to continue.'
                 )
             ).toBeInTheDocument();
         });
