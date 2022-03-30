@@ -61,14 +61,14 @@ const Builds = () => {
     return (
         <PageContainer>
             <Box sx={{ mx: 2 }}>
-                <Typography variant="h6" sx={{ my: 2 }}>
-                    <FormattedMessage id="entityTable.header" />
-                </Typography>
-
                 <Toolbar
                     disableGutters
                     sx={{ mb: 2, justifyContent: 'space-between' }}
                 >
+                    <Typography variant="h6">
+                        <FormattedMessage id="captureTable.header" />
+                    </Typography>
+
                     <Box
                         margin={0}
                         sx={{ display: 'flex', alignItems: 'flex-end' }}
