@@ -12,7 +12,6 @@ export const client = <Response, Request = {}>(
     const config: NonNullable<RequestInit> = {
         body: data ? JSON.stringify(data) : undefined,
         method: data ? 'POST' : 'GET',
-        mode: 'no-cors', // TODO - Just get CORS working
         ...customConfig,
     };
 
