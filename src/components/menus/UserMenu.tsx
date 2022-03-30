@@ -1,6 +1,7 @@
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import EmailIcon from '@mui/icons-material/Email';
 import Logout from '@mui/icons-material/Logout';
+import WorkIcon from '@mui/icons-material/Work';
 import { Avatar } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -12,6 +13,7 @@ const UserMenu = () => {
     const { logout, user } = useAuth();
     const userName = user?.ext.displayName;
     const email = user?.ext.email;
+    const orgs = user?.ext.orgs;
 
     const handleClick = () => {
         void logout();
@@ -37,6 +39,15 @@ const UserMenu = () => {
                     </ListItemIcon>
                     {email}
                 </MenuItem>
+                {orgs && orgs.length > 0 ? (
+                    <MenuItem>
+                        <ListItemIcon>
+                            <WorkIcon fontSize="small" />
+                        </ListItemIcon>
+                        {orgs}
+                    </MenuItem>
+                ) : null}
+
                 <Divider />
                 <MenuItem
                     onClick={() => {
