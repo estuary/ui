@@ -1,7 +1,7 @@
 import { authEndpoints, AuthTokenResponseReduced } from 'endpoints/auth';
 import { isEmpty } from 'lodash';
 
-export const tokenStorageKey = '__auth_tokens__';
+export const tokenStorageKey = '__auth_token__';
 
 export const auth = {
     getAuthHeader() {
@@ -21,8 +21,14 @@ export const auth = {
             return authEndpoints.session.tokens
                 .read()
                 .then((tokenResponse) => {
-                    auth.saveToken(tokenResponse);
-                    resolve(tokenResponse);
+                    const tokenResponseReduced = {
+                        accessToken: tokenResponse.accessToken,
+                        ext: tokenResponse.credential.ext,
+                        expires: tokenResponse.expires,
+                        IDToken: tokenResponse.IDToken,
+                    };
+                    auth.saveToken(tokenResponseReduced);
+                    resolve(tokenResponseReduced);
                 })
                 .catch(async (error) => {
                     await auth.signout();

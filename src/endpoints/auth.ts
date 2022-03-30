@@ -35,17 +35,26 @@ export const authEndpoints = {
     session: {
         tokens: {
             read: () => {
-                return new Promise<AuthTokenResponseReduced>((resolve) => {
+                return new Promise<AuthTokenResponse>((resolve) => {
                     resolve({
                         accessToken: 'access_token_value',
-                        ext: {
-                            avatarURL: 'http://example.org',
-                            displayName: 'Firstname Lastname',
-                            email: 'userName@example.org',
-                            firstName: 'Firstname',
-                            lastName: 'Lastname',
-                            locale: 'en',
-                            orgs: ['example.org'],
+                        credential: {
+                            iss: 'iss_value',
+                            sub: 'sub_value',
+                            exp: getUnixTime(
+                                add(new Date(), {
+                                    years: 1,
+                                })
+                            ),
+                            ext: {
+                                avatarURL: 'http://example.org',
+                                displayName: 'Firstname Lastname',
+                                email: 'userName@example.org',
+                                firstName: 'Firstname',
+                                lastName: 'Lastname',
+                                locale: 'en',
+                                orgs: ['example.org'],
+                            },
                         },
                         expires: getUnixTime(
                             add(new Date(), {
@@ -53,6 +62,8 @@ export const authEndpoints = {
                             })
                         ),
                         IDToken: 'id_token_value',
+                        role: 'rule_value',
+                        sub: 'sub_value',
                     });
                 });
                 // return client<AuthTokenResponse>(

@@ -14,27 +14,23 @@ export interface AuthContextType {
     user: AuthTokenResponseReduced | null;
 }
 
+export function isTokenExpired(expires: AuthTokenResponseReduced['expires']) {
+    return isFuture(fromUnixTime(expires));
+}
+
 export function checkTokens(tokens: AuthTokenResponseReduced) {
-    let response;
-
-    if (isFuture(fromUnixTime(tokens.expires))) {
-        response = tokens;
-    } else {
-        response = null;
-    }
-
-    return response;
+    return isTokenExpired(tokens.expires) ? tokens : null;
 }
 
 export async function bootstrapUser() {
     let user = null;
 
-    const tokens = auth.getToken();
+    const token = auth.getToken();
 
-    if (isEmpty(tokens)) {
+    if (isEmpty(token)) {
         user = checkTokens(await auth.fetchToken());
-    } else if (isFuture(new Date(fromUnixTime(tokens.expires)))) {
-        user = tokens;
+    } else if (isTokenExpired(token.expires)) {
+        user = token;
     } else {
         user = null;
     }
