@@ -21,6 +21,8 @@ const Login = () => {
     const { login } = useAuth();
 
     const AUTH_URL = getAuthPath();
+    const GOOGLE_LOGIN_URL = `${AUTH_URL}/auth/google`;
+    const nextPath = `?next=${window.location.href}`;
 
     const handlers = {
         change: (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,7 +93,7 @@ const Login = () => {
                             <CardActions sx={{ justifyContent: 'center' }}>
                                 {showGoogle ? (
                                     <Button
-                                        href={`${AUTH_URL}/auth/google?next=${window.location.href}`}
+                                        href={`${GOOGLE_LOGIN_URL}${nextPath}`}
                                         variant="contained"
                                         color="success"
                                     >

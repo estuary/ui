@@ -1,6 +1,9 @@
 import FullPageSpinner from 'components/fullPage/Spinner';
+import { fromUnixTime } from 'date-fns';
 import isFuture from 'date-fns/isFuture';
+import { AuthTokenResponse } from 'endpoints/auth';
 import { useAsync } from 'hooks/useAsync';
+import { isEmpty } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 import FullPageError from '../components/fullPage/Error';
 import { auth } from '../services/auth';
@@ -11,24 +14,32 @@ export interface AuthContextType {
     user: string | null;
 }
 
+export function checkTokens(tokens: AuthTokenResponse) {
+    let response;
+
+    if (isFuture(fromUnixTime(tokens.expires))) {
+        response = tokens.credential.ext.displayName;
+    } else {
+        response = null;
+    }
+
+    return response;
+}
+
 export async function bootstrapUser() {
     let user = null;
 
     console.log('Bootstrapping user here');
 
-    const authDetails = auth.getAuthDetails();
+    const tokens = auth.getTokens();
 
-    if (authDetails?.session) {
-        if (isFuture(new Date(authDetails.session.expires_at))) {
-            user = authDetails.user?.display_name;
-        } else {
-            user = null;
-        }
+    if (isEmpty(tokens)) {
+        user = checkTokens(await auth.fetchTokens());
+    } else if (isFuture(new Date(fromUnixTime(tokens.expires)))) {
+        user = tokens.credential.ext.displayName;
+    } else {
+        user = null;
     }
-
-    // const foo = await auth.fetchAuthTokens();
-
-    // console.log('Fetched tokens', foo);
 
     return user;
 }

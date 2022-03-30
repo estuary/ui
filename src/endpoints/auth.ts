@@ -1,6 +1,3 @@
-import { client } from 'services/client';
-import { getAuthPath } from 'utils/env-utils';
-
 export interface AuthTokenResponse {
     accessToken: string;
     credential: Credential;
@@ -31,9 +28,32 @@ export const authEndpoints = {
     session: {
         tokens: {
             read: () => {
-                return client<AuthTokenResponse>(
-                    `${getAuthPath()}/session/tokens`
-                );
+                return new Promise<AuthTokenResponse>((resolve) => {
+                    resolve({
+                        accessToken: 'access_token_value',
+                        credential: {
+                            iss: 'issuer_name',
+                            sub: 'sub_number',
+                            exp: 1648666124,
+                            ext: {
+                                avatarURL: 'http://example.org',
+                                displayName: 'Firstname Lastname',
+                                email: 'userName@example.org',
+                                firstName: 'Firstname',
+                                lastName: 'Lastname',
+                                locale: 'en',
+                                orgs: ['example.org'],
+                            },
+                        },
+                        expires: 1648666124,
+                        IDToken: 'id_token_value',
+                        role: 'api_user',
+                        sub: 'issuer_value|sub_value',
+                    });
+                });
+                // return client<AuthTokenResponse>(
+                //     `${getAuthPath()}/session/tokens`
+                // );
             },
         },
     },

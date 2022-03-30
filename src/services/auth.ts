@@ -9,6 +9,7 @@ export interface AuthDetails {
 
 export const sessionStorageKey = '__auth_session__';
 export const userStorageKey = '__auth_user__';
+export const tokenStorageKey = '__auth_tokens__';
 
 export const auth = {
     getAccountDetails(path: string) {
@@ -23,12 +24,12 @@ export const auth = {
                 });
         });
     },
-    fetchAuthTokens() {
+    fetchTokens() {
         return new Promise<AuthTokenResponse>((resolve, reject) => {
             return authEndpoints.session.tokens
                 .read()
                 .then((tokenResponse) => {
-                    console.log(':)', tokenResponse);
+                    auth.saveTokens(tokenResponse);
                     resolve(tokenResponse);
                 })
                 .catch((error) => {
@@ -70,6 +71,15 @@ export const auth = {
     removeAuthDetails() {
         window.localStorage.removeItem(sessionStorageKey);
         window.localStorage.removeItem(userStorageKey);
+        window.localStorage.removeItem(tokenStorageKey);
+    },
+    getTokens(): AuthTokenResponse {
+        const tokens = window.localStorage.getItem(tokenStorageKey);
+
+        return JSON.parse(tokens ? tokens : '{}');
+    },
+    saveTokens(tokens: AuthTokenResponse) {
+        window.localStorage.setItem(tokenStorageKey, JSON.stringify(tokens));
     },
     saveSession(session: AuthDetails['session']) {
         window.localStorage.setItem(sessionStorageKey, JSON.stringify(session));
