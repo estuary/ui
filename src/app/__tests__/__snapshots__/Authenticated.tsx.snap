@@ -304,7 +304,7 @@ exports[`Authenticated app renders correctly 1`] = `
             <h3
               class="MuiTypography-root MuiTypography-h3 css-1l7gydo-MuiTypography-root"
             >
-              Welcome to Control Plane!
+              Welcome to Flow!
             </h3>
           </div>
           <div
