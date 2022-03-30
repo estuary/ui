@@ -21,6 +21,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'cta.delete': `Delete`,
     'cta.download': `Download`,
     'cta.login': `Login`,
+    'cta.oidc.google': `Login with Google`,
     'cta.clickHere': `click here`,
     'cta.moreDetails': `More Details`,
     'cta.saveEntity': `Save and ACTIONWORD`,
@@ -62,9 +63,6 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'capturesource.fetch.failed': `Failed to fetch source types`,
     'username.label': `User Name`,
 
-    // Login Page Stuff
-    'login.main.message': `When running locally you can login with whatever name you want.`,
-
     // Captures main page
     'captures.main.message1': `Click the "New Capture" button up above to get started.`,
     'captures.main.message2': `It will guide you through generating and downloading a valid {docLink}.`,
@@ -90,6 +88,11 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'changeSet.data.details': `Details`,
 };
 
+const Login_Page: ResolvedIntlConfig['messages'] = {
+    'login.local.message': `When running locally you can login with whatever name you want.`,
+    'login.oidc.message': `Please use one of the providrs below to continue.`,
+};
+
 const Capture_Create: ResolvedIntlConfig['messages'] = {
     'captureCreation.ctas.discover': `Test Config`,
     'captureCreation.heading': `New Capture`,
@@ -113,6 +116,7 @@ const Materialization_Create: ResolvedIntlConfig['messages'] = {
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
+    ...Login_Page,
     ...Capture_Create,
     ...Materialization_Create,
 };

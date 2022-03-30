@@ -14,6 +14,8 @@ export interface AuthContextType {
 export async function bootstrapUser() {
     let user = null;
 
+    console.log('Bootstrapping user here');
+
     const authDetails = auth.getAuthDetails();
 
     if (authDetails?.session) {

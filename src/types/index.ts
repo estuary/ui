@@ -4,6 +4,7 @@ declare global {
     interface Window {
         Estuary: {
             api_endpoint: string | null;
+            auth_url: string | null;
         } | null;
     }
 }
