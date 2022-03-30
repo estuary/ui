@@ -28,7 +28,6 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
 
     // Terms
     'terms.connectors': `Connectors`,
-    'terms.accounts': `Accounts`,
 
     // Data
     'data.name': `Name`,
@@ -49,9 +48,6 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     // Connectors table
     'connectors.title': `All installed connectors`,
 
-    // Accounts table
-    'accounts.title': `All existing accounts`,
-
     // Error Boundry
     'errorBoundry.title': `Error`,
     'errorBoundry.message1': `Sorry - there was an unexpected error in some UI code. `,
@@ -70,7 +66,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'captures.main.message2.docPath': `https://docs.estuary.dev/concepts/#captures`,
 
     // Landing page content
-    'home.main.header': `Welcome to Control Plane!`,
+    'home.main.header': `Welcome to Flow!`,
     'home.main.description': `Click the Capture link over on the side navigation to get started.`,
 
     //Rest of the pages go down here. They don't have real pages right now.

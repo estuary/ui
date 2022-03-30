@@ -6,7 +6,6 @@ import {
     type Theme,
 } from '@mui/material';
 import PageContainer from 'components/shared/PageContainer';
-import AccountsTable from 'components/tables/Accounts';
 import ConnectorsTable from 'components/tables/Connectors';
 import { FormattedMessage } from 'react-intl';
 
@@ -26,10 +25,6 @@ const Admin = () => {
 
             <Box sx={boxStyling}>
                 <ConnectorsTable />
-            </Box>
-
-            <Box sx={boxStyling}>
-                <AccountsTable />
             </Box>
         </PageContainer>
     );

@@ -4,36 +4,18 @@ import {
     CardActions,
     CardContent,
     Grid,
-    TextField,
     Typography,
 } from '@mui/material';
 import Topbar from 'components/header/Topbar';
-import { useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import { getAuthPath, getLoginSettings } from 'utils/env-utils';
-import { useAuth } from '../context/Auth';
 
-const { showLocal, showOIDC, showGoogle } = getLoginSettings();
+const { showOIDC, showGoogle } = getLoginSettings();
 
 const Login = () => {
-    const [userName, setUserName] = useState('');
-    const intl = useIntl();
-    const { login } = useAuth();
-
     const AUTH_URL = getAuthPath();
     const GOOGLE_LOGIN_URL = `${AUTH_URL}/auth/google`;
     const nextPath = `?next=${window.location.href}`;
-
-    const handlers = {
-        change: (event: React.ChangeEvent<HTMLInputElement>) => {
-            setUserName(event.target.value);
-        },
-        submit: async (event: React.FormEvent<HTMLFormElement>) => {
-            event.preventDefault();
-
-            await login(userName);
-        },
-    };
 
     return (
         <Grid
@@ -59,31 +41,6 @@ const Login = () => {
                             <FormattedMessage id="productName" />
                         </Typography>
                     </CardContent>
-
-                    {showLocal ? (
-                        <>
-                            <CardContent>
-                                <FormattedMessage id="login.local.message" />
-                            </CardContent>
-                            <CardActions sx={{ justifyContent: 'center' }}>
-                                <form onSubmit={handlers.submit}>
-                                    <TextField
-                                        id="userName"
-                                        label={intl.formatMessage({
-                                            id: 'username.label',
-                                        })}
-                                        required
-                                        fullWidth
-                                        value={userName}
-                                        onChange={handlers.change}
-                                    />
-                                    <Button variant="contained" type="submit">
-                                        <FormattedMessage id="cta.login" />
-                                    </Button>
-                                </form>
-                            </CardActions>
-                        </>
-                    ) : null}
 
                     {showOIDC ? (
                         <>

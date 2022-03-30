@@ -3,7 +3,7 @@ import { sub } from 'date-fns';
 import add from 'date-fns/add';
 import formatISO from 'date-fns/formatISO';
 import { type ReactElement } from 'react';
-import { sessionStorageKey, userStorageKey } from 'services/auth';
+import { tokenStorageKey, userStorageKey } from 'services/auth';
 import { AuthProvider, useAuth } from '../Auth';
 import AppContent from '../Content';
 
@@ -17,7 +17,7 @@ const FakeComponent = () => {
     const { user } = useAuth();
 
     if (user) {
-        return <>Your name is {user}</>;
+        return <>Your name is {user.ext.displayName}</>;
     } else {
         return <>You have no name because {userMissing}</>;
     }
@@ -25,9 +25,9 @@ const FakeComponent = () => {
 
 const setExpiresAt = (expires: string) => {
     window.localStorage.setItem(
-        sessionStorageKey,
+        tokenStorageKey,
         JSON.stringify({
-            expires_at: expires,
+            expires,
         })
     );
 };

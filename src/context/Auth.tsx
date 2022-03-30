@@ -1,7 +1,7 @@
 import FullPageSpinner from 'components/fullPage/Spinner';
 import { fromUnixTime } from 'date-fns';
 import isFuture from 'date-fns/isFuture';
-import { AuthTokenResponse } from 'endpoints/auth';
+import { AuthTokenResponseReduced } from 'endpoints/auth';
 import { useAsync } from 'hooks/useAsync';
 import { isEmpty } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
@@ -11,14 +11,14 @@ import { auth } from '../services/auth';
 export interface AuthContextType {
     login: (username: string) => Promise<void>;
     logout: () => Promise<void>;
-    user: string | null;
+    user: AuthTokenResponseReduced | null;
 }
 
-export function checkTokens(tokens: AuthTokenResponse) {
+export function checkTokens(tokens: AuthTokenResponseReduced) {
     let response;
 
     if (isFuture(fromUnixTime(tokens.expires))) {
-        response = tokens.credential.ext.displayName;
+        response = tokens;
     } else {
         response = null;
     }
@@ -31,12 +31,12 @@ export async function bootstrapUser() {
 
     console.log('Bootstrapping user here');
 
-    const tokens = auth.getTokens();
+    const tokens = auth.getToken();
 
     if (isEmpty(tokens)) {
-        user = checkTokens(await auth.fetchTokens());
+        user = checkTokens(await auth.fetchToken());
     } else if (isFuture(new Date(fromUnixTime(tokens.expires)))) {
-        user = tokens.credential.ext.displayName;
+        user = tokens;
     } else {
         user = null;
     }
@@ -55,35 +55,15 @@ export const AuthProvider = (props: any) => {
         isIdle,
         isLoading,
         isSuccess,
-        run,
         setData,
-        setError,
+        run,
         status,
-    } = useAsync<string | null>();
+    } = useAsync<AuthTokenResponseReduced | null>();
 
     React.useEffect(() => {
         const appDataPromise = bootstrapUser();
         run(appDataPromise);
     }, [run]);
-
-    const login = useCallback(
-        (newUser: string) => {
-            return auth
-                .signin(newUser)
-                .then((response) => {
-                    setData(response);
-                })
-                .catch((signinError: Error) => {
-                    setError([
-                        {
-                            detail: 'There was an issue signing in',
-                            title: signinError.message,
-                        },
-                    ]);
-                });
-        },
-        [setData, setError]
-    );
 
     const logout = useCallback(() => {
         return auth.signout(() => {
@@ -91,10 +71,7 @@ export const AuthProvider = (props: any) => {
         });
     }, [setData]);
 
-    const value = useMemo(
-        () => ({ login, logout, user }),
-        [login, logout, user]
-    );
+    const value = useMemo(() => ({ logout, user }), [logout, user]);
 
     if (isLoading || isIdle) {
         return <FullPageSpinner />;

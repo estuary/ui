@@ -20,12 +20,10 @@ export const getAPIPath = () => {
 };
 
 export const getLoginSettings = () => {
-    const showLocal = process.env.REACT_APP_SHOW_LOCAL_LOGIN === 'true';
     const showOIDC = process.env.REACT_APP_SHOW_OIDC_LOGIN === 'true';
     const showGoogle = process.env.REACT_APP_SHOW_OIDC_LOGIN_GOOGLE === 'true';
 
     return {
-        showLocal,
         showOIDC,
         showGoogle,
     };

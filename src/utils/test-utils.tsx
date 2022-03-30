@@ -6,8 +6,30 @@ import { AuthContext } from 'context/Auth';
 import AppContent from 'context/Content';
 import AppRouter from 'context/Router';
 import AppTheme from 'context/Theme';
+import { add, getUnixTime } from 'date-fns';
 import { ReactElement } from 'react';
-import { auth, AuthDetails } from 'services/auth';
+import { auth } from 'services/auth';
+
+const getMockTokenReduced = (username: string) => {
+    return {
+        accessToken: 'access_token_value',
+        ext: {
+            avatarURL: 'http://example.org',
+            displayName: username,
+            email: 'userName@example.org',
+            firstName: 'Firstname',
+            lastName: 'Lastname',
+            locale: 'en',
+            orgs: ['example.org'],
+        },
+        expires: getUnixTime(
+            add(new Date(), {
+                years: 1,
+            })
+        ),
+        IDToken: 'id_token_value',
+    };
+};
 
 // TODO - this does not really do anything because we hardcode
 //   the username down below on the MockAuthProvider. However,
@@ -15,29 +37,11 @@ import { auth, AuthDetails } from 'services/auth';
 //   so we can leverage this when wanting to test the "on load auth"
 //   functionality
 const loginAsUser = (username: string) => {
-    const mockAuthDetails: AuthDetails = {
-        session: {
-            account_id: '',
-            expires_at: '',
-            token: '',
-        },
-        user: {
-            created_at: '',
-            display_name: username,
-            email: `${username}@${username}`,
-            id: '',
-            name: username,
-            unique_name: username,
-            updated_at: '',
-        },
-    };
-
-    auth.saveSession(mockAuthDetails.session);
-    auth.saveUser(mockAuthDetails.user);
+    auth.saveToken(getMockTokenReduced(username));
 };
 
 const logoutUser = () => {
-    auth.removeAuthDetails();
+    auth.removeToken();
 };
 
 const goTo = (route?: string, name?: string) => {
@@ -73,7 +77,7 @@ const MockAuthProvider = ({ children, username }: MockAuthProps) => {
             logoutUser();
             return Promise.resolve();
         }),
-        user: username,
+        user: username ? getMockTokenReduced(username) : null,
     };
 
     return (
