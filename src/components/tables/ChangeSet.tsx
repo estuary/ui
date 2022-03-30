@@ -21,12 +21,23 @@ import {
     EntityMetadata,
 } from 'stores/ChangeSetStore';
 
+type SortDirection = 'asc' | 'desc';
+
 interface EntityTableProps {
     entities: Entity[];
 }
 
+interface TableColumn {
+    field: keyof EntityMetadata | null;
+    headerIntlKey: string;
+}
+
 function ChangeSetTable(props: EntityTableProps) {
     const { entities } = props;
+
+    const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+    const [columnToSort, setColumnToSort] =
+        useState<keyof EntityMetadata>('dateCreated');
 
     const [page, setPage] = useState(0);
     const rowsPerPage = 10;
@@ -42,7 +53,7 @@ function ChangeSetTable(props: EntityTableProps) {
             : 0;
 
     const intl = useIntl();
-    const columns = [
+    const columns: TableColumn[] = [
         {
             field: 'name',
             headerIntlKey: 'entityTable.data.entity',
@@ -61,6 +72,48 @@ function ChangeSetTable(props: EntityTableProps) {
         },
     ];
 
+    function descendingComparator<T>(a: T, b: T, selectedColumn: keyof T) {
+        if (b[selectedColumn] < a[selectedColumn]) {
+            return -1;
+        }
+        if (b[selectedColumn] > a[selectedColumn]) {
+            return 1;
+        }
+        return 0;
+    }
+
+    function getComparator<Key extends keyof any>(
+        direction: SortDirection,
+        selectedColumn: Key
+    ): (
+        a: { [key in Key]: number | string },
+        b: { [key in Key]: number | string }
+    ) => number {
+        return direction === 'desc'
+            ? (a, b) => descendingComparator(a, b, selectedColumn)
+            : (a, b) => -descendingComparator(a, b, selectedColumn);
+    }
+
+    // This method is created for cross-browser compatibility, if you don't
+    // need to support IE11, you can use Array.prototype.sort() directly.
+    function stableSort<T>(
+        array: readonly T[],
+        comparator: (a: T, b: T) => number
+    ) {
+        const stabilizedArray = array.map(
+            (el, index) => [el, index] as [T, number]
+        );
+        stabilizedArray.sort((a, b) => {
+            const order = comparator(a[0], b[0]);
+
+            if (order !== 0) {
+                return order;
+            }
+            return a[1] - b[1];
+        });
+        return stabilizedArray.map((el) => el[0]);
+    }
+
     const getDeploymentStatusHexCode = (status: DeploymentStatus): string => {
         switch (status) {
             case 'ACTIVE':
@@ -72,11 +125,27 @@ function ChangeSetTable(props: EntityTableProps) {
         }
     };
 
-    const handleChangePage = (
-        event: MouseEvent<HTMLButtonElement> | null,
-        newPage: number
-    ) => {
-        setPage(newPage);
+    const handlers = {
+        sortRequest: (
+            event: React.MouseEvent<unknown>,
+            column: keyof EntityMetadata
+        ) => {
+            const isAsc = columnToSort === column && sortDirection === 'asc';
+
+            setSortDirection(isAsc ? 'desc' : 'asc');
+            setColumnToSort(column);
+        },
+        sort:
+            (column: keyof EntityMetadata) =>
+            (event: React.MouseEvent<unknown>) => {
+                handlers.sortRequest(event, column);
+            },
+        pageChange: (
+            event: MouseEvent<HTMLButtonElement> | null,
+            newPage: number
+        ) => {
+            setPage(newPage);
+        },
     };
 
     return (
@@ -100,19 +169,49 @@ function ChangeSetTable(props: EntityTableProps) {
                                     return (
                                         <TableCell
                                             key={`${column.field}-${index}`}
+                                            sortDirection={
+                                                columnToSort === column.field
+                                                    ? sortDirection
+                                                    : false
+                                            }
                                         >
-                                            <TableSortLabel>
+                                            {column.field ? (
+                                                <TableSortLabel
+                                                    active={
+                                                        columnToSort ===
+                                                        column.field
+                                                    }
+                                                    direction={
+                                                        columnToSort ===
+                                                        column.field
+                                                            ? sortDirection
+                                                            : 'asc'
+                                                    }
+                                                    onClick={handlers.sort(
+                                                        column.field
+                                                    )}
+                                                >
+                                                    <FormattedMessage
+                                                        id={
+                                                            column.headerIntlKey
+                                                        }
+                                                    />
+                                                </TableSortLabel>
+                                            ) : (
                                                 <FormattedMessage
                                                     id={column.headerIntlKey}
                                                 />
-                                            </TableSortLabel>
+                                            )}
                                         </TableCell>
                                     );
                                 })}
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {entityDetails
+                            {stableSort(
+                                entityDetails,
+                                getComparator(sortDirection, columnToSort)
+                            )
                                 .slice(
                                     page * rowsPerPage,
                                     page * rowsPerPage + rowsPerPage
@@ -225,7 +324,7 @@ function ChangeSetTable(props: EntityTableProps) {
                                     count={entities.length}
                                     rowsPerPage={rowsPerPage}
                                     page={page}
-                                    onPageChange={handleChangePage}
+                                    onPageChange={handlers.pageChange}
                                 />
                             </TableRow>
                         </TableFooter>
