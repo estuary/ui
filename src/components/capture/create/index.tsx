@@ -111,12 +111,13 @@ function CaptureCreation() {
 
             const catalogNamespace = captureName;
 
+            // TODO: Get connector type value from store.
             const capture: Entity = {
                 metadata: {
                     catalogNamespace,
-                    changeType: 'New Entity',
                     dateCreated: Date(),
-                    entityType: 'Capture',
+                    deploymentStatus: 'ACTIVE',
+                    connectorType: 'Hello World',
                     name: catalogNamespace.substring(
                         catalogNamespace.lastIndexOf('/') + 1,
                         catalogNamespace.length
