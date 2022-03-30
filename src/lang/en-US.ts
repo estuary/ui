@@ -85,7 +85,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
 };
 
 const Login_Page: ResolvedIntlConfig['messages'] = {
-    'login.oidc.message': `Please use one of the providrs below to continue.`,
+    'login.oidc.message': `Please use one of the providers below to continue.`,
 };
 
 const Capture_Create: ResolvedIntlConfig['messages'] = {

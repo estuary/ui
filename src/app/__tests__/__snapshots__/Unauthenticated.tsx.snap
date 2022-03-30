@@ -70,7 +70,7 @@ exports[`Unauthenticated app renders correctly 1`] = `
         <div
           class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
         >
-          Please use one of the providrs below to continue.
+          Please use one of the providers below to continue.
         </div>
         <div
           class="MuiCardActions-root MuiCardActions-spacing css-10r5to9-MuiCardActions-root"

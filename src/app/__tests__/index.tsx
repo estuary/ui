@@ -10,7 +10,9 @@ test('Unauthenticated app renders when no user is present', async () => {
 
     await waitFor(() => {
         expect(
-            screen.getByText('Please use one of the providrs below to continue')
+            screen.getByText(
+                'Please use one of the providers below to continue.'
+            )
         ).toBeInTheDocument();
     });
 });
@@ -54,7 +56,7 @@ describe('When there is a user', () => {
         await waitFor(() => {
             expect(
                 screen.getByText(
-                    'Please use one of the providrs below to continue.'
+                    'Please use one of the providers below to continue.'
                 )
             ).toBeInTheDocument();
         });
