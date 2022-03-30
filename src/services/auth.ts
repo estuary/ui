@@ -1,4 +1,5 @@
 import { AccountAttributes, accountEndpoint } from 'endpoints/account';
+import { authEndpoints, type AuthTokenResponse } from 'endpoints/auth';
 import { sessionEndpoints, SessionLocalAttributes } from 'endpoints/session';
 
 export interface AuthDetails {
@@ -18,6 +19,20 @@ export const auth = {
                     resolve(response.data.attributes);
                 })
                 .catch((error) => {
+                    reject(error);
+                });
+        });
+    },
+    fetchAuthTokens() {
+        return new Promise<AuthTokenResponse>((resolve, reject) => {
+            return authEndpoints.session.tokens
+                .read()
+                .then((tokenResponse) => {
+                    console.log(':)', tokenResponse);
+                    resolve(tokenResponse);
+                })
+                .catch((error) => {
+                    console.log(':(', error);
                     reject(error);
                 });
         });

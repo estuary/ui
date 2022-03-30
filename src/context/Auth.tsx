@@ -26,6 +26,10 @@ export async function bootstrapUser() {
         }
     }
 
+    // const foo = await auth.fetchAuthTokens();
+
+    // console.log('Fetched tokens', foo);
+
     return user;
 }
 
