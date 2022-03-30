@@ -98,13 +98,13 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     'logs.main.message': `This is where we will show the logs for the system.`,
     'users.main.message': `This is where you will be able to manage your users... basically a little User CRUD UI.`,
 
-    'changeSet.header': `Unsaved Changes`,
-    'changeSet.title': `Unsaved Changes Table`,
+    'captureTable.header': `Published Captures`,
+    'entityTable.title': `Entity Table`,
 
-    'changeSet.data.entityType': `Entity Type`,
-    'changeSet.data.entity': `Entity`,
-    'changeSet.data.lastUpdated': `Last Updated`,
-    'changeSet.data.details': `Details`,
+    'entityTable.data.entity': `Name`,
+    'entityTable.data.connectorType': `Type`,
+    'entityTable.data.lastUpdated': `Last Updated`,
+    'entityTable.data.actions': `Actions`,
 };
 
 export default enUSMessages;
