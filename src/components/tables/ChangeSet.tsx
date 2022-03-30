@@ -9,6 +9,7 @@ import {
     TableHead,
     TablePagination,
     TableRow,
+    TableSortLabel,
     Tooltip,
 } from '@mui/material';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
@@ -100,9 +101,11 @@ function ChangeSetTable(props: EntityTableProps) {
                                         <TableCell
                                             key={`${column.field}-${index}`}
                                         >
-                                            <FormattedMessage
-                                                id={column.headerIntlKey}
-                                            />
+                                            <TableSortLabel>
+                                                <FormattedMessage
+                                                    id={column.headerIntlKey}
+                                                />
+                                            </TableSortLabel>
                                         </TableCell>
                                     );
                                 })}
