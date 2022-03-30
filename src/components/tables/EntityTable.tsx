@@ -25,6 +25,10 @@ type SortDirection = 'asc' | 'desc';
 
 interface EntityTableProps {
     entities: Entity[];
+    updateDeploymentStatus: (
+        key: string,
+        deploymentStatus: DeploymentStatus
+    ) => void;
 }
 
 interface TableColumn {
@@ -33,7 +37,7 @@ interface TableColumn {
 }
 
 function EntityTable(props: EntityTableProps) {
-    const { entities } = props;
+    const { entities, updateDeploymentStatus } = props;
 
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
     const [columnToSort, setColumnToSort] =
@@ -146,6 +150,11 @@ function EntityTable(props: EntityTableProps) {
         ) => {
             setPage(newPage);
         },
+        deploymentStatusUpdate:
+            (catalogNamespace: string, deploymentStatus: DeploymentStatus) =>
+            () => {
+                updateDeploymentStatus(catalogNamespace, deploymentStatus);
+            },
     };
 
     return (
@@ -290,6 +299,10 @@ function EntityTable(props: EntityTableProps) {
                                                             size="small"
                                                             color="error"
                                                             disableElevation
+                                                            onClick={handlers.deploymentStatusUpdate(
+                                                                catalogNamespace,
+                                                                'INACTIVE'
+                                                            )}
                                                         >
                                                             Stop
                                                         </Button>
@@ -299,6 +312,10 @@ function EntityTable(props: EntityTableProps) {
                                                             size="small"
                                                             color="success"
                                                             disableElevation
+                                                            onClick={handlers.deploymentStatusUpdate(
+                                                                catalogNamespace,
+                                                                'ACTIVE'
+                                                            )}
                                                         >
                                                             Run
                                                         </Button>

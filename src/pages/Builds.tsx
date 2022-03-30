@@ -11,6 +11,8 @@ import EntityTable from '../components/tables/EntityTable';
 
 const selectors = {
     captures: (state: ChangeSetState) => state.captures,
+    updateDeploymentStatus: (state: ChangeSetState) =>
+        state.updateDeploymentStatus,
     newChangeCount: (state: ChangeSetState) => state.newChangeCount,
     resetNewChangeCount: (state: ChangeSetState) => state.resetNewChangeCount,
 };
@@ -20,6 +22,9 @@ const Builds = () => {
         null
     );
 
+    const updateCaptureDeploymentStatus = useChangeSetStore(
+        selectors.updateDeploymentStatus
+    );
     const newChangeCount = useChangeSetStore(selectors.newChangeCount);
     const resetNewChangeCount = useChangeSetStore(
         selectors.resetNewChangeCount
@@ -84,7 +89,10 @@ const Builds = () => {
                 </Toolbar>
             </Box>
 
-            <EntityTable entities={filteredCaptures ?? captures} />
+            <EntityTable
+                entities={filteredCaptures ?? captures}
+                updateDeploymentStatus={updateCaptureDeploymentStatus}
+            />
         </PageContainer>
     );
 };
