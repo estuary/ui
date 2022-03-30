@@ -7,7 +7,7 @@ import useChangeSetStore, {
     ChangeSetState,
     Entity,
 } from 'stores/ChangeSetStore';
-import ChangeSetTable from '../components/tables/ChangeSet';
+import EntityTable from '../components/tables/EntityTable';
 
 const selectors = {
     captures: (state: ChangeSetState) => state.captures,
@@ -84,7 +84,7 @@ const Builds = () => {
                 </Toolbar>
             </Box>
 
-            <ChangeSetTable entities={filteredCaptures ?? captures} />
+            <EntityTable entities={filteredCaptures ?? captures} />
         </PageContainer>
     );
 };

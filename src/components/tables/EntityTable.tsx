@@ -32,7 +32,7 @@ interface TableColumn {
     headerIntlKey: string;
 }
 
-function ChangeSetTable(props: EntityTableProps) {
+function EntityTable(props: EntityTableProps) {
     const { entities } = props;
 
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
@@ -335,4 +335,4 @@ function ChangeSetTable(props: EntityTableProps) {
     );
 }
 
-export default ChangeSetTable;
+export default EntityTable;
