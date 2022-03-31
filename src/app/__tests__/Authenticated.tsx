@@ -4,7 +4,7 @@ import Authenticated from '../Authenticated';
 
 test('Authenticated app renders correctly', async () => {
     const { container } = await customRender(<Authenticated />, {
-        user: 'FooBar123',
+        username: 'FooBar123',
     });
 
     expect(container).toMatchSnapshot();
