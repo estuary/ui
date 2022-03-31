@@ -1,4 +1,5 @@
-import { add, getUnixTime } from 'date-fns';
+import { client } from 'services/client';
+import { getAuthPath } from 'utils/env-utils';
 
 export interface AuthTokenResponse {
     accessToken: string;
@@ -35,40 +36,9 @@ export const authEndpoints = {
     session: {
         tokens: {
             read: () => {
-                return new Promise<AuthTokenResponse>((resolve) => {
-                    resolve({
-                        accessToken: 'access_token_value',
-                        credential: {
-                            iss: 'iss_value',
-                            sub: 'sub_value',
-                            exp: getUnixTime(
-                                add(new Date(), {
-                                    years: 1,
-                                })
-                            ),
-                            ext: {
-                                avatarURL: 'http://example.org',
-                                displayName: 'Firstname Lastname',
-                                email: 'userName@example.org',
-                                firstName: 'Firstname',
-                                lastName: 'Lastname',
-                                locale: 'en',
-                                orgs: ['example.org'],
-                            },
-                        },
-                        expires: getUnixTime(
-                            add(new Date(), {
-                                years: 1,
-                            })
-                        ),
-                        IDToken: 'id_token_value',
-                        role: 'rule_value',
-                        sub: 'sub_value',
-                    });
-                });
-                // return client<AuthTokenResponse>(
-                //     `${getAuthPath()}/session/tokens`
-                // );
+                return client<AuthTokenResponse>(
+                    `${getAuthPath()}/session/tokens`
+                );
             },
         },
     },

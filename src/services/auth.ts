@@ -8,7 +8,7 @@ export const auth = {
         const token = auth.getToken();
         let response;
 
-        if (isEmpty(token)) {
+        if (!isEmpty(token)) {
             const authHeader = window.btoa(`${token.accessToken}`);
 
             response = `Bearer ${authHeader}`;

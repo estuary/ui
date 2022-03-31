@@ -23,19 +23,23 @@ export function checkTokens(tokens: AuthTokenResponseReduced) {
 }
 
 export async function bootstrapUser() {
-    let user = null;
-
     const token = auth.getToken();
 
-    if (isEmpty(token)) {
-        user = checkTokens(await auth.fetchToken());
-    } else if (isTokenExpired(token.expires)) {
-        user = token;
-    } else {
-        user = null;
-    }
-
-    return user;
+    return new Promise<AuthContextType['user']>((resolve) => {
+        if (isEmpty(token)) {
+            auth.fetchToken()
+                .then((tokenResponse) => {
+                    resolve(checkTokens(tokenResponse));
+                })
+                .catch(() => {
+                    resolve(null);
+                });
+        } else if (isTokenExpired(token.expires)) {
+            resolve(token);
+        } else {
+            resolve(null);
+        }
+    });
 }
 
 export const AuthContext = React.createContext<AuthContextType | null>(null);
@@ -52,7 +56,7 @@ export const AuthProvider = (props: any) => {
         setData,
         run,
         status,
-    } = useAsync<AuthTokenResponseReduced | null>();
+    } = useAsync<AuthContextType['user']>();
 
     React.useEffect(() => {
         const appDataPromise = bootstrapUser();
