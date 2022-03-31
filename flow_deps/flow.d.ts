@@ -1,4 +1,4 @@
-export type catalog = /* Catalog Each catalog source defines a portion of a Flow Catalog, by defining collections, derivations, tests, and materializations of the Catalog. Catalog sources may reference and import other sources, in order to collections and other entities that source defines. */ {
+export type Catalog = /* Catalog Each catalog source defines a portion of a Flow Catalog, by defining collections, derivations, tests, and materializations of the Catalog. Catalog sources may reference and import other sources, in order to collections and other entities that source defines. */ {
     "$schema"?: /* JSON-Schema against which the Catalog is validated. */ string | null;
     captures?: /* Captures of this Catalog. */ {
         [k: string]: CaptureDef;
