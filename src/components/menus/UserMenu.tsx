@@ -1,29 +1,34 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import EmailIcon from '@mui/icons-material/Email';
 import Logout from '@mui/icons-material/Logout';
-import WorkIcon from '@mui/icons-material/Work';
 import { Avatar } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import MenuItem from '@mui/material/MenuItem';
-import { useAuth } from '../../context/Auth';
+import { supabase } from 'services/supabase';
 import IconMenu from './IconMenu';
 
 const UserMenu = () => {
-    const { logout, user } = useAuth();
-    const userName = user?.ext.displayName;
-    const email = user?.ext.email;
-    const orgs = user?.ext.orgs;
+    const user = supabase.auth.user();
 
-    const handleClick = () => {
-        void logout();
+    console.log(user);
+
+    const userName = user?.user_metadata.full_name;
+    const email = user?.user_metadata.email;
+    const avatar = user?.user_metadata.avatar_url;
+
+    const handleClick = async () => {
+        const { error } = await supabase.auth.signOut();
+
+        console.log('error logging out', error);
     };
 
     if (userName && email) {
         return (
             <IconMenu
                 ariaLabel="Open account menu"
-                icon={<Avatar>{userName.charAt(0)}</Avatar>}
+                icon={<Avatar src={avatar ?? ''}>{userName.charAt(0)}</Avatar>}
                 identifier="account-menu"
                 tooltip="Account Settings"
             >
@@ -39,14 +44,6 @@ const UserMenu = () => {
                     </ListItemIcon>
                     {email}
                 </MenuItem>
-                {orgs && orgs.length > 0 ? (
-                    <MenuItem>
-                        <ListItemIcon>
-                            <WorkIcon fontSize="small" />
-                        </ListItemIcon>
-                        {orgs}
-                    </MenuItem>
-                ) : null}
 
                 <Divider />
                 <MenuItem

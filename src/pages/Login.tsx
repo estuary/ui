@@ -6,16 +6,19 @@ import {
     Grid,
     Typography,
 } from '@mui/material';
+import { Provider } from '@supabase/supabase-js';
 import Topbar from 'components/header/Topbar';
 import { FormattedMessage } from 'react-intl';
-import { getAuthPath, getLoginSettings } from 'utils/env-utils';
+import { supabase } from 'services/supabase';
+import { getLoginSettings } from 'utils/env-utils';
 
-const { showOIDC, showGoogle } = getLoginSettings();
+const { showGoogle } = getLoginSettings();
 
 const Login = () => {
-    const AUTH_URL = getAuthPath();
-    const GOOGLE_LOGIN_URL = `${AUTH_URL}/auth/google`;
-    const nextPath = `?next=${window.location.href}`;
+    const handleOAuthLogin = async (provider: Provider) => {
+        const { error } = await supabase.auth.signIn({ provider });
+        if (error) console.log('Error: ', error.message);
+    };
 
     return (
         <Grid
@@ -42,24 +45,20 @@ const Login = () => {
                         </Typography>
                     </CardContent>
 
-                    {showOIDC ? (
-                        <>
-                            <CardContent>
-                                <FormattedMessage id="login.oidc.message" />
-                            </CardContent>
-                            <CardActions sx={{ justifyContent: 'center' }}>
-                                {showGoogle ? (
-                                    <Button
-                                        href={`${GOOGLE_LOGIN_URL}${nextPath}`}
-                                        variant="contained"
-                                        color="success"
-                                    >
-                                        <FormattedMessage id="cta.oidc.google" />
-                                    </Button>
-                                ) : null}
-                            </CardActions>
-                        </>
-                    ) : null}
+                    <CardContent>
+                        <FormattedMessage id="login.oidc.message" />
+                    </CardContent>
+                    <CardActions sx={{ justifyContent: 'center' }}>
+                        {showGoogle ? (
+                            <Button
+                                onClick={() => handleOAuthLogin('google')}
+                                variant="contained"
+                                color="success"
+                            >
+                                <FormattedMessage id="cta.oidc.google" />
+                            </Button>
+                        ) : null}
+                    </CardActions>
                 </Card>
             </Grid>
         </Grid>

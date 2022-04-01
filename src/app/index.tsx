@@ -1,5 +1,5 @@
+import { Auth } from '@supabase/ui';
 import FullPageSpinner from 'components/fullPage/Spinner';
-import { useAuth } from 'context/Auth';
 import * as React from 'react';
 
 const AuthenticatedApp = React.lazy(
@@ -8,7 +8,8 @@ const AuthenticatedApp = React.lazy(
 const UnauthenticatedApp = React.lazy(() => import('./Unauthenticated'));
 
 function App() {
-    const { user } = useAuth();
+    const { user } = Auth.useUser();
+
     return (
         <React.Suspense fallback={<FullPageSpinner />}>
             {user ? <AuthenticatedApp /> : <UnauthenticatedApp />}

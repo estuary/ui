@@ -2,7 +2,6 @@
 // https://testing-library.com/docs/react-testing-library/setup#custom-render
 
 import { render as rtlRender, RenderOptions } from '@testing-library/react';
-import { AuthContext } from 'context/Auth';
 import AppContent from 'context/Content';
 import AppRouter from 'context/Router';
 import AppTheme from 'context/Theme';
@@ -100,22 +99,10 @@ interface MockAuthProps {
     username?: string;
 }
 const MockAuthProvider = ({ children, username }: MockAuthProps) => {
-    const value = {
-        login: jest.fn(() => {
-            if (username) {
-                loginAsUser(username);
-            }
-            return Promise.resolve();
-        }),
-        logout: jest.fn(() => {
-            logoutUser();
-            return Promise.resolve();
-        }),
-        user: username ? getMockTokenReduced(username) : null,
-    };
-
     return (
-        <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+        <>
+            Your user name is {username} and {children}
+        </>
     );
 };
 
