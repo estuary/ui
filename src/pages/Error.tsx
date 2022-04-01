@@ -1,5 +1,12 @@
 import { ArrowForward } from '@mui/icons-material';
-import { Box, IconButton, InputBase, Paper, Typography } from '@mui/material';
+import {
+    Box,
+    IconButton,
+    InputBase,
+    Link,
+    Paper,
+    Typography,
+} from '@mui/material';
 import Topbar from 'components/header/Topbar';
 import PageContainer from 'components/shared/PageContainer';
 
@@ -11,9 +18,13 @@ const Error = () => {
                 Sorry, that page cannot be found.
             </Typography>
 
-            {/* TODO: Add in-line button that routes to the dashboard page. */}
+            {/* TODO: Consider adjusting the focus-visible state of the dashboard link. */}
             <Typography align="center" sx={{ mb: 7 }}>
-                Try searching for a page below or go directly to your dashboard.
+                Try searching for a page below or go directly to your{' '}
+                <Link href="/" underline="none">
+                    dashboard
+                </Link>
+                .
             </Typography>
 
             <Box
