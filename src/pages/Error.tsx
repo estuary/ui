@@ -1,5 +1,7 @@
 import { ArrowForward } from '@mui/icons-material';
 import {
+    Autocomplete,
+    AutocompleteInputChangeReason,
     Box,
     IconButton,
     InputBase,
@@ -9,14 +11,36 @@ import {
 } from '@mui/material';
 import Topbar from 'components/header/Topbar';
 import PageContainer from 'components/shared/PageContainer';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Error = () => {
     const navigate = useNavigate();
 
+    const [route, setRoute] = useState<string>('');
+
+    const pages: { name: string; route: string }[] = [
+        { name: 'Dashboard', route: '/' },
+        { name: 'Captures', route: '/app/captures' },
+        { name: 'Materializations', route: '/app/materializations' },
+        { name: 'Admin', route: '/app/admin' },
+    ];
+
     const handlers = {
+        routeSelected: (
+            event: React.SyntheticEvent,
+            value: string,
+            reason: AutocompleteInputChangeReason
+        ) => {
+            if (reason === 'reset') {
+                const selectedRoute =
+                    pages.find(({ name }) => name === value)?.route ?? '/';
+
+                setRoute(selectedRoute);
+            }
+        },
         requestNavigation: () => {
-            navigate('/');
+            navigate(route);
         },
     };
 
@@ -48,29 +72,36 @@ const Error = () => {
                 <Paper
                     variant="outlined"
                     sx={{
-                        'width': 394,
-                        'display': 'flex',
-                        'borderRadius': 5,
-                        '&:focus': {
-                            outlineWidth: 2,
-                            outlineColor: '#000000',
-                            outlineStyle: 'solid',
-                        },
+                        width: 394,
+                        display: 'flex',
+                        borderRadius: 5,
                     }}
                 >
-                    {/* TODO: Add autocomplete functionality to the custom search navigation bar. */}
-                    <InputBase
-                        placeholder="Search Navigation Menu"
-                        size="medium"
+                    {/* TODO: Update and add error handling to the autocomplete functionality. */}
+                    <Autocomplete
+                        options={pages.map((page) => page.name)}
                         fullWidth
-                        sx={{
-                            '.MuiInputBase-input': {
-                                'px': 1.75,
-                                'py': 1.0625,
-                                '&:focus-visible, &:hover': {
-                                    color: '#5660BD',
-                                },
-                            },
+                        onInputChange={handlers.routeSelected}
+                        renderInput={(params) => {
+                            const { InputLabelProps, InputProps, ...rest } =
+                                params;
+
+                            return (
+                                <InputBase
+                                    {...InputProps}
+                                    {...rest}
+                                    placeholder="Search Navigation Menu"
+                                    sx={{
+                                        '.MuiInputBase-input': {
+                                            'px': 1.75,
+                                            'py': 1.0625,
+                                            '&:focus-visible, &:hover': {
+                                                color: '#5660BD',
+                                            },
+                                        },
+                                    }}
+                                />
+                            );
                         }}
                     />
 
@@ -86,6 +117,22 @@ const Error = () => {
                         <ArrowForward />
                     </IconButton>
                 </Paper>
+
+                {/* <InputBase
+                    placeholder="Search Navigation Menu"
+                    size="medium"
+                    fullWidth
+                    type="search"
+                    sx={{
+                        '.MuiInputBase-input': {
+                            'px': 1.75,
+                            'py': 1.0625,
+                            '&:focus-visible, &:hover': {
+                                color: '#5660BD',
+                            },
+                        },
+                    }}
+                /> */}
             </Box>
         </PageContainer>
     );
