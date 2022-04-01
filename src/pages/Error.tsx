@@ -9,8 +9,17 @@ import {
 } from '@mui/material';
 import Topbar from 'components/header/Topbar';
 import PageContainer from 'components/shared/PageContainer';
+import { useNavigate } from 'react-router-dom';
 
 const Error = () => {
+    const navigate = useNavigate();
+
+    const handlers = {
+        requestNavigation: () => {
+            navigate('/');
+        },
+    };
+
     return (
         <PageContainer>
             <Topbar isNavigationOpen={false} hideNavigationMenu />
@@ -39,23 +48,34 @@ const Error = () => {
                 <Paper
                     variant="outlined"
                     sx={{
-                        width: 394,
-                        display: 'flex',
-                        borderRadius: 5,
+                        'width': 394,
+                        'display': 'flex',
+                        'borderRadius': 5,
+                        '&:focus': {
+                            outlineWidth: 2,
+                            outlineColor: '#000000',
+                            outlineStyle: 'solid',
+                        },
                     }}
                 >
+                    {/* TODO: Add autocomplete functionality to the custom search navigation bar. */}
                     <InputBase
                         placeholder="Search Navigation Menu"
                         size="medium"
                         fullWidth
                         sx={{
                             '.MuiInputBase-input': {
-                                px: 1.75,
-                                py: 1.0625,
+                                'px': 1.75,
+                                'py': 1.0625,
+                                '&:focus-visible, &:hover': {
+                                    color: '#5660BD',
+                                },
                             },
                         }}
                     />
+
                     <IconButton
+                        onClick={handlers.requestNavigation}
                         sx={{
                             borderTopLeftRadius: 0,
                             borderTopRightRadius: 9,
