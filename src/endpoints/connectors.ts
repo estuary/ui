@@ -1,8 +1,7 @@
-import { client } from 'services/client';
 import { BaseResponse } from 'types';
 
-export enum ConnectorTypes {
-    SOURCE = 'source',
+export enum ConnectorProtocols {
+    CAPTURE = 'capture',
     MATERIALIZATION = 'materialization',
 }
 

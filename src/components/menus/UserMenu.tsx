@@ -6,18 +6,14 @@ import { Avatar } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import MenuItem from '@mui/material/MenuItem';
-import { useAuth } from '../../context/Auth';
+import { supaClient } from 'services/supabase';
 import IconMenu from './IconMenu';
 
 const UserMenu = () => {
-    const { logout, user } = useAuth();
-    const userName = user?.ext.displayName;
-    const email = user?.ext.email;
-    const orgs = user?.ext.orgs;
-
-    const handleClick = () => {
-        void logout();
-    };
+    const session = supaClient.auth.session();
+    const userName = JSON.stringify(session?.user?.user_metadata);
+    const email = session?.user?.email;
+    const orgs: string[] = []; // TODO.
 
     if (userName && email) {
         return (
@@ -50,8 +46,8 @@ const UserMenu = () => {
 
                 <Divider />
                 <MenuItem
-                    onClick={() => {
-                        handleClick();
+                    onClick={async () => {
+                        supaClient.auth.signOut();
                     }}
                 >
                     <ListItemIcon>

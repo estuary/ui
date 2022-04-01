@@ -1,5 +1,3 @@
-import { ConnectorImagesSpecLinks } from 'endpoints/connectors';
-import { client } from 'services/client';
 import { BaseResponse } from 'types';
 
 export interface DiscoveredCatalogImport {
@@ -29,7 +27,7 @@ export interface DiscoveredCatalogResponse extends BaseResponse {
     data: DiscoveredCatalog;
 }
 
-export const discoveredCatalogEndpoint = {
+export const discoversEndpoint = {
     create: (
         endpoint: ConnectorImagesSpecLinks['discovered_catalog'],
         data: any

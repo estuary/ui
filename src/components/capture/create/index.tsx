@@ -4,31 +4,31 @@ import {
     Paper,
     Stack,
     Toolbar,
-    Typography,
+    Typography
 } from '@mui/material';
 import useCaptureCreationStore, {
-    CaptureCreationState,
+    CaptureCreationState
 } from 'components/capture/create/Store';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
 import { useConfirmationModalContext } from 'context/Confirmation';
 import {
     DiscoveredCatalog,
-    discoveredCatalogEndpoint,
-} from 'endpoints/discoveredCatalog';
+    discoversEndpoint
+} from 'endpoints/discovers';
 import { MouseEvent, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import useChangeSetStore, {
     ChangeSetState,
-    Entity,
+    Entity
 } from 'stores/ChangeSetStore';
 import useNotificationStore, {
     Notification,
-    NotificationState,
+    NotificationState
 } from 'stores/NotificationStore';
 import useSchemaEditorStore, {
-    SchemaEditorState,
+    SchemaEditorState
 } from 'stores/SchemaEditorStore';
 import NewCaptureEditor from './CatalogEditor';
 import NewCaptureDetails from './DetailsForm';
@@ -154,7 +154,7 @@ function CaptureCreation() {
                             exit();
                         }
                     })
-                    .catch(() => {});
+                    .catch(() => { });
             } else {
                 exit();
             }

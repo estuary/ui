@@ -2,16 +2,16 @@ import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Alert, Skeleton, Stack } from '@mui/material';
 import useCaptureCreationStore, {
-    CaptureCreationState,
+    CaptureCreationState
 } from 'components/capture/create/Store';
-import { ConnectorTypes } from 'endpoints/connectors';
+import { ConnectorProtocols } from 'endpoints/connectors';
 import useConnectors from 'hooks/useConnectors';
 import { useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
     defaultOptions,
     defaultRenderers,
-    showValidation,
+    showValidation
 } from 'services/jsonforms';
 
 type NewCaptureDetailsProps = {
@@ -40,7 +40,7 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
         isError,
         isSuccess,
         error,
-    } = useConnectors(ConnectorTypes.SOURCE);
+    } = useConnectors(ConnectorProtocols.CAPTURE);
 
     const [isPostProcessingDone, setPostProcessingDone] = useState(false);
     const [schema, setSchema] = useState({
