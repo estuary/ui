@@ -7,6 +7,8 @@ import Error from '../pages/Error';
 
 const Admin = lazy(() => import('../pages/Admin'));
 
+const Builds = lazy(() => import('../pages/Builds'));
+
 const Captures = lazy(() => import('../pages/Captures'));
 const CaptureCreate = lazy(() => import('components/capture/create/index'));
 
@@ -41,6 +43,7 @@ const Authenticated = () => {
                         />
                     </Route>
                     <Route path="admin/*" element={<Admin />} />
+                    <Route path="builds" element={<Builds />} />
                 </Route>
                 <Route path="*" element={<Error />} />
             </Routes>
