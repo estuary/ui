@@ -117,22 +117,6 @@ const Error = () => {
                         <ArrowForward />
                     </IconButton>
                 </Paper>
-
-                {/* <InputBase
-                    placeholder="Search Navigation Menu"
-                    size="medium"
-                    fullWidth
-                    type="search"
-                    sx={{
-                        '.MuiInputBase-input': {
-                            'px': 1.75,
-                            'py': 1.0625,
-                            '&:focus-visible, &:hover': {
-                                color: '#5660BD',
-                            },
-                        },
-                    }}
-                /> */}
             </Box>
         </PageContainer>
     );
