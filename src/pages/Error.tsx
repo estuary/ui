@@ -6,8 +6,7 @@ import PageContainer from 'components/shared/PageContainer';
 const Error = () => {
     return (
         <PageContainer>
-            {/* TODO: Remove menu icon from this instance of the header component. */}
-            <Topbar isNavigationOpen={false} />
+            <Topbar isNavigationOpen={false} hideNavigationMenu />
             <Typography variant="h5" align="center" sx={{ mb: 2 }}>
                 Sorry, that page cannot be found.
             </Typography>
