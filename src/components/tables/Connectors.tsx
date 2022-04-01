@@ -9,10 +9,10 @@ import {
     Typography,
 } from '@mui/material';
 import useConnectors from 'hooks/useConnectors';
-import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 function ConnectorsTable() {
-    const { data: connectorsData, isLoading, error } = useConnectors();
+    const { data, isLoading, error } = useConnectors();
 
     const intl = useIntl();
 
@@ -86,33 +86,8 @@ function ConnectorsTable() {
                                     {error}
                                 </TableCell>
                             </TableRow>
-                        ) : connectorsData && connectorsData.length > 0 ? (
-                            connectorsData.map((row, index) => (
-                                <TableRow
-                                    key={`Connector-${row.attributes.name}-${index}`}
-                                >
-                                    <TableCell style={columnStyling}>
-                                        {row.attributes.name}
-                                    </TableCell>
-                                    <TableCell style={columnStyling}>
-                                        {row.attributes.description}
-                                    </TableCell>
-                                    <TableCell style={columnStyling}>
-                                        {row.attributes.type}
-                                    </TableCell>
-                                    <TableCell style={columnStyling}>
-                                        {row.attributes.maintainer}
-                                    </TableCell>
-                                    <TableCell style={columnStyling}>
-                                        <FormattedDate
-                                            day="numeric"
-                                            month="long"
-                                            year="numeric"
-                                            value={row.attributes.updated_at}
-                                        />
-                                    </TableCell>
-                                </TableRow>
-                            ))
+                        ) : data ? (
+                            <code>{JSON.stringify(data)}</code>
                         ) : (
                             <TableRow>
                                 <TableCell

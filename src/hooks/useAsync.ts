@@ -74,7 +74,7 @@ function useAsync<T>(initialData?: T): UseAsyncResponse<T, undefined> {
     );
 
     const run = useCallback(
-        (promise: Promise<T>) => {
+        (promise: Promise<T> | PromiseLike<T>) => {
             safeSetState({ status: States.LOADING });
             return promise.then(
                 (runResponse) => {

@@ -9,13 +9,7 @@ function useConnectors(type?: string) {
     useEffect(() => {
         run(
             connectorsEndpoint.read().then(({ data }) => {
-                return Promise.resolve(
-                    type
-                        ? data.filter(
-                              (connector) => connector.attributes.type === type
-                          )
-                        : data
-                );
+                return Promise.resolve(data);
             })
         );
     }, [run, type]);

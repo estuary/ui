@@ -20,10 +20,12 @@ export const getAPIPath = () => {
 };
 
 export const getLoginSettings = () => {
+    const showEmail = process.env.REACT_APP_SHOW_EMAIL_LOGIN === 'true';
     const showOIDC = process.env.REACT_APP_SHOW_OIDC_LOGIN === 'true';
     const showGoogle = process.env.REACT_APP_SHOW_OIDC_LOGIN_GOOGLE === 'true';
 
     return {
+        showEmail,
         showOIDC,
         showGoogle,
     };

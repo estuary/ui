@@ -2,7 +2,7 @@
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import EmailIcon from '@mui/icons-material/Email';
 import Logout from '@mui/icons-material/Logout';
-import { Avatar } from '@mui/material';
+import { Avatar, Stack, Typography } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import MenuItem from '@mui/material/MenuItem';
@@ -16,6 +16,7 @@ const UserMenu = () => {
 
     const userName = user?.user_metadata.full_name;
     const email = user?.user_metadata.email;
+    const emailVerified = user?.user_metadata.email_verified;
     const avatar = user?.user_metadata.avatar_url;
 
     const handleClick = async () => {
@@ -42,13 +43,19 @@ const UserMenu = () => {
                     <ListItemIcon>
                         <EmailIcon fontSize="small" />
                     </ListItemIcon>
-                    {email}
+
+                    <Stack spacing={0}>
+                        <Typography>{email}</Typography>
+                        {emailVerified ? (
+                            <Typography variant="caption">verified</Typography>
+                        ) : null}
+                    </Stack>
                 </MenuItem>
 
                 <Divider />
                 <MenuItem
                     onClick={() => {
-                        handleClick();
+                        void handleClick();
                     }}
                 >
                     <ListItemIcon>
