@@ -2,15 +2,15 @@ import { devtoolsInNonProd } from 'utils/store-utils';
 import create from 'zustand';
 import { persist } from 'zustand/middleware';
 
-type EntityType = 'Capture';
-type ChangeType = 'New Entity' | 'Update';
+export type DeploymentStatus = 'ACTIVE' | 'INACTIVE';
+type ConnectorType = 'Hello World' | 'Postgres';
 
 export interface EntityMetadata {
-    entityType: EntityType;
+    deploymentStatus: DeploymentStatus;
     name: string;
     catalogNamespace: string;
+    connectorType: ConnectorType;
     dateCreated: string;
-    changeType: ChangeType;
 }
 
 export interface Entity<T = any> {
@@ -25,6 +25,10 @@ interface EntityDictionary<T = any> {
 export interface ChangeSetState<T = any> {
     captures: EntityDictionary;
     addCapture: (key: string, newCapture: Entity<T>) => void;
+    updateDeploymentStatus: (
+        key: string,
+        deploymentStatus: DeploymentStatus
+    ) => void;
     newChangeCount: number;
     resetNewChangeCount: () => void;
 }
@@ -45,6 +49,19 @@ const useChangeSetStore = create<ChangeSetState>(
                         }),
                         false,
                         'New Capture Added'
+                    ),
+                updateDeploymentStatus: (key, deploymentStatus) =>
+                    set(
+                        (state) => {
+                            const capture = state.captures[key];
+
+                            capture.metadata.deploymentStatus =
+                                deploymentStatus;
+
+                            return { captures: { ...state.captures } };
+                        },
+                        false,
+                        'Deployment Status Updated'
                     ),
                 newChangeCount: 0,
                 resetNewChangeCount: () =>
