@@ -3,7 +3,7 @@ import { callSupabase, supabase } from 'services/supabase';
 import { BaseResponse } from 'types';
 
 export enum ConnectorTypes {
-    SOURCE = 'source',
+    CAPTURE = 'capture',
     MATERIALIZATION = 'materialization',
 }
 
@@ -100,7 +100,7 @@ export const connectorsEndpoint = {
             },
         },
     },
-    read: async () => {
+    read: () => {
         return callSupabase(
             supabase
                 .from('connectors')

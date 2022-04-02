@@ -35,7 +35,10 @@ export interface UseAsyncResponse<T, U> {
     isLoading: boolean;
     isSuccess: boolean;
     reset: () => any;
-    run: (promise: Promise<any>, dataFetcher?: Function | undefined) => any;
+    run: (
+        promise: Promise<any> | PromiseLike<any>,
+        dataFetcher?: Function | undefined
+    ) => any;
     setData: (setDataResponse: T) => void;
     setError: (setErrorResponse: any) => any;
     status: States;
@@ -75,6 +78,7 @@ function useAsync<T>(initialData?: T): UseAsyncResponse<T, undefined> {
 
     const run = useCallback(
         (promise: Promise<T> | PromiseLike<T>) => {
+            console.log('Inside run callback');
             safeSetState({ status: States.LOADING });
             return promise.then(
                 (runResponse) => {
