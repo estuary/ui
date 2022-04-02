@@ -10,10 +10,7 @@ import { MouseEvent, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from 'services/supabase';
-import useChangeSetStore, {
-    ChangeSetState,
-    Entity,
-} from 'stores/ChangeSetStore';
+import { ChangeSetState } from 'stores/ChangeSetStore';
 import useNotificationStore, {
     Notification,
     NotificationState,
@@ -55,9 +52,6 @@ function CaptureCreation() {
         selectors.clearResources
     );
 
-    // Change set store
-    const addCaptureToChangeSet = useChangeSetStore(selectors.addCapture);
-
     // Notification store
     const showNotification = useNotificationStore(selectors.showNotification);
 
@@ -94,41 +88,51 @@ function CaptureCreation() {
 
     // Form Event Handlers
     const handlers = {
-        addToChangeSet: (event: MouseEvent<HTMLElement>) => {
+        saveAndPublish: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
-
-            const catalogNamespace = captureName;
-
-            // TODO: Get connector type value from store.
-            const capture: Entity = {
-                metadata: {
-                    catalogNamespace,
-                    dateCreated: Date(),
-                    deploymentStatus: 'ACTIVE',
-                    connectorType: 'Hello World',
-                    name: catalogNamespace.substring(
-                        catalogNamespace.lastIndexOf('/') + 1,
-                        catalogNamespace.length
-                    ),
-                },
-                resources:
-                    Object.keys(resourcesFromEditor).length > 0
-                        ? resourcesFromEditor
-                        : catalogResponse,
-            };
-
-            const notification: Notification = {
-                description: 'Your changes can be viewed on the Builds page.',
-                severity: 'success',
-                title: 'New Capture Created',
-            };
-
-            addCaptureToChangeSet(catalogNamespace, capture);
-            showNotification(notification);
-
             setFormSubmitting(true);
 
-            exit();
+            const draftStatus = supabase
+                .from(`drafts`)
+                .on('UPDATE', async (payload) => {
+                    console.log('draft update received', payload);
+                    const notification: Notification = {
+                        description:
+                            'Your new capture is published and ready to be used.',
+                        severity: 'success',
+                        title: 'New Capture Created',
+                    };
+                    showNotification(notification);
+
+                    await supabase.removeSubscription(draftStatus);
+
+                    exit();
+                })
+                .subscribe();
+
+            supabase
+                .from('drafts')
+                .insert([
+                    {
+                        catalog_spec: catalogResponse,
+                    },
+                ])
+                .then(
+                    (response) => {
+                        if (response.data) {
+                            console.log('drafts returned', response);
+                        } else {
+                            // setFormSubmitError({
+                            //     message: 'Failed to create your discover',
+                            // });
+                            setFormSubmitting(false);
+                        }
+                    },
+                    (error) => {
+                        setFormSubmitError(error);
+                        setFormSubmitting(false);
+                    }
+                );
         },
 
         close: () => {
@@ -234,7 +238,7 @@ function CaptureCreation() {
                     </Button>
 
                     <Button
-                        onClick={handlers.addToChangeSet}
+                        onClick={handlers.saveAndPublish}
                         disabled={!catalogResponse || formSubmitting}
                         color="success"
                         variant="contained"

@@ -24,7 +24,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'cta.oidc.google': `Login with Google`,
     'cta.clickHere': `click here`,
     'cta.moreDetails': `More Details`,
-    'cta.saveEntity': `Save and ACTIONWORD`,
+    'cta.saveEntity': `Save and Publish`,
 
     // Terms
     'terms.connectors': `Connectors`,
