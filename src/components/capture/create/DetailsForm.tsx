@@ -4,7 +4,6 @@ import { Alert, Skeleton, Stack } from '@mui/material';
 import useCaptureCreationStore, {
     CaptureCreationState,
 } from 'components/capture/create/Store';
-import { ConnectorTypes } from 'endpoints/connectors';
 import useConnectors from 'hooks/useConnectors';
 import { useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -40,7 +39,7 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
         isError,
         isSuccess,
         error,
-    } = useConnectors(ConnectorTypes.SOURCE);
+    } = useConnectors(/*ConnectorTypes.SOURCE*/);
 
     const [isPostProcessingDone, setPostProcessingDone] = useState(false);
     const [schema, setSchema] = useState({

@@ -8,6 +8,7 @@ import {
     TableRow,
     Typography,
 } from '@mui/material';
+import Error from 'components/shared/Error';
 import useConnectors from 'hooks/useConnectors';
 import { FormattedMessage, useIntl } from 'react-intl';
 
@@ -18,20 +19,12 @@ function ConnectorsTable() {
 
     const columns = [
         {
-            field: 'attributes.name',
+            field: 'attributes.image_name',
             headerIntlKey: 'data.name',
         },
         {
-            field: 'attributes.description',
+            field: 'attributes.detail',
             headerIntlKey: 'data.description',
-        },
-        {
-            field: 'attributes.type',
-            headerIntlKey: 'data.type',
-        },
-        {
-            field: 'attributes.maintainer',
-            headerIntlKey: 'data.maintainer',
         },
         {
             field: 'attributes.updated_at',
@@ -47,14 +40,14 @@ function ConnectorsTable() {
     return (
         <Box>
             <Typography>
-                <FormattedMessage id="terms.connectors" />
+                <FormattedMessage id="connectorTable.title" />
             </Typography>
             <TableContainer component={Box}>
                 <Table
                     size="small"
                     sx={{ minWidth: 350 }}
                     aria-label={intl.formatMessage({
-                        id: 'connectors.title',
+                        id: 'connectorTable.title.aria',
                     })}
                 >
                     <TableHead>
@@ -83,7 +76,7 @@ function ConnectorsTable() {
                         ) : error ? (
                             <TableRow>
                                 <TableCell colSpan={columns.length}>
-                                    {error}
+                                    <Error error={error} />
                                 </TableCell>
                             </TableRow>
                         ) : data ? (

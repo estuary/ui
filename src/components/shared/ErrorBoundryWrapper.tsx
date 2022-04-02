@@ -39,9 +39,11 @@ function ErrorFallback({
             <FormattedMessage id="errorBoundry.message2" />
 
             <Divider />
-            <Button variant="contained" onClick={resetErrorBoundary}>
-                Try again
-            </Button>
+            {resetErrorBoundary ? (
+                <Button variant="contained" onClick={resetErrorBoundary}>
+                    Try again
+                </Button>
+            ) : null}
             <IconButton
                 onClick={handleExpandClick}
                 aria-expanded={expanded}

@@ -45,9 +45,6 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     // Full Page
     'fullpage.error': `Major Error`,
 
-    // Connectors table
-    'connectors.title': `All installed connectors`,
-
     // Error Boundry
     'errorBoundry.title': `Error`,
     'errorBoundry.message1': `Sorry - there was an unexpected error in some UI code. `,
@@ -84,11 +81,25 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'entityTable.data.actions': `Actions`,
 };
 
-const Login_Page: ResolvedIntlConfig['messages'] = {
+const Error: ResolvedIntlConfig['messages'] = {
+    'error.title': `Error`,
+    'error.message': `There was a technical issue fetching data`,
+    'error.codeLabel': `Code:`,
+    'error.messageLabel': `Message:`,
+    'error.detailsLabel': `Details:`,
+    'error.hintLabel': `Hint:`,
+};
+
+const AdminPage: ResolvedIntlConfig['messages'] = {
+    'connectorTable.title': `Installed ${CommonMessages['terms.connectors']}`,
+    'connectorTable.title.aria': `Table of all installed ${CommonMessages['terms.connectors']}`,
+};
+
+const LoginPage: ResolvedIntlConfig['messages'] = {
     'login.oidc.message': `Please use one of the providers below to continue.`,
 };
 
-const Capture_Create: ResolvedIntlConfig['messages'] = {
+const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreation.ctas.discover': `Test Config`,
     'captureCreation.heading': `New Capture`,
     'captureCreation.instructions': `To get started please provide a unique name and the source type of the Capture you want to create. Once you've filled out the source details you can click "Test Capture" down below to test the connection.`,
@@ -104,16 +115,18 @@ const Capture_Create: ResolvedIntlConfig['messages'] = {
     'captureCreation.finalReview.instructions': `Look over the catalog configuration that was generated. If you want to edit anything you can do that directly in the editor. Once you're ready you can download the file for your local.`,
 };
 
-const Materialization_Create: ResolvedIntlConfig['messages'] = {
+const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreation.heading': `New Materialization`,
     'materializationCreation.instructions': `To get started please provide a unique name, select an endpoint type, and select the Collections you want to Materialize. After that you can review the YAML before saving.`,
 };
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
-    ...Login_Page,
-    ...Capture_Create,
-    ...Materialization_Create,
+    ...AdminPage,
+    ...Error,
+    ...LoginPage,
+    ...CaptureCreate,
+    ...MaterializationCreate,
 };
 
 export default enUSMessages;

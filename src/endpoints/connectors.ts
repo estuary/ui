@@ -1,5 +1,5 @@
 import { client } from 'services/client';
-import { supabase } from 'services/supabase';
+import { callSupabase, supabase } from 'services/supabase';
 import { BaseResponse } from 'types';
 
 export enum ConnectorTypes {
@@ -101,11 +101,13 @@ export const connectorsEndpoint = {
         },
     },
     read: async () => {
-        const response = await supabase
-            .from('connector_tags')
-            .select(`name, detail, id, connector_id`)
-            .order('updated_at', { ascending: false });
-
-        return response;
+        return callSupabase(
+            supabase
+                .from('connector')
+                .select(`detail, image_name, updated_at, id`)
+                .order('updated_at', {
+                    ascending: false,
+                })
+        );
     },
 };
