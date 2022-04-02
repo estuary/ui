@@ -38,14 +38,11 @@ function Error(props: ErrorProps) {
                 <FormattedMessage id="error.message" tagName={Box} />
 
                 <Box>
-                    <FormattedMessage id="error.messageLabel" /> {error.message}
+                    <FormattedMessage id="error.messageLabel" tagName="b" />{' '}
+                    {error.message}
                 </Box>
 
-                <Divider
-                    sx={{
-                        width: '100%',
-                    }}
-                />
+                <Divider />
                 <IconButton
                     onClick={handleExpandClick}
                     aria-expanded={expanded}

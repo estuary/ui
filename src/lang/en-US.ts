@@ -83,7 +83,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
 
 const Error: ResolvedIntlConfig['messages'] = {
     'error.title': `Error`,
-    'error.message': `There was a technical issue fetching data`,
+    'error.message': `This is not something you did wrong. There was a technical issue fetching data. Please contact support.`,
     'error.codeLabel': `Code:`,
     'error.messageLabel': `Message:`,
     'error.detailsLabel': `Details:`,

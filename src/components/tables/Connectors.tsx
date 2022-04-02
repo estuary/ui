@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import Error from 'components/shared/Error';
 import useConnectors from 'hooks/useConnectors';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
 
 function ConnectorsTable() {
     const { data, isLoading, error } = useConnectors();
@@ -80,7 +80,24 @@ function ConnectorsTable() {
                                 </TableCell>
                             </TableRow>
                         ) : data ? (
-                            <code>{JSON.stringify(data)}</code>
+                            data.map((row, index) => (
+                                <TableRow key={`Connector-${row.id}-${index}`}>
+                                    <TableCell style={columnStyling}>
+                                        {row.image_name}
+                                    </TableCell>
+                                    <TableCell style={columnStyling}>
+                                        {row.detail}
+                                    </TableCell>
+                                    <TableCell style={columnStyling}>
+                                        <FormattedDate
+                                            day="numeric"
+                                            month="long"
+                                            year="numeric"
+                                            value={row.updated_at}
+                                        />
+                                    </TableCell>
+                                </TableRow>
+                            ))
                         ) : (
                             <TableRow>
                                 <TableCell

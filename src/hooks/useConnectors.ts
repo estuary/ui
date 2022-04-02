@@ -1,9 +1,9 @@
-import { Connector, connectorsEndpoint } from 'endpoints/connectors';
+import { connectorsEndpoint } from 'endpoints/connectors';
 import { useAsync } from 'hooks/useAsync';
 import { useEffect } from 'react';
 
 function useConnectors() {
-    const response = useAsync<Connector[]>();
+    const response = useAsync<any[]>();
     const { run } = response;
 
     useEffect(() => {

@@ -103,7 +103,7 @@ export const connectorsEndpoint = {
     read: async () => {
         return callSupabase(
             supabase
-                .from('connector')
+                .from('connectors')
                 .select(`detail, image_name, updated_at, id`)
                 .order('updated_at', {
                     ascending: false,
