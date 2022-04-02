@@ -1,40 +1,15 @@
-import { Alert, AlertTitle, AppBar, Toolbar, Typography } from '@mui/material';
-import useCaptureCreationStore, {
-    CaptureCreationState,
-} from 'components/capture/create/Store';
-import useConnectorImages from 'hooks/useConnectorImages';
-import { useEffect } from 'react';
-import { FormattedMessage } from 'react-intl';
-import shallow from 'zustand/shallow';
+import { AppBar, Toolbar, Typography } from '@mui/material';
+import ExternalLink from 'components/shared/ExternalLink';
 
-const linksSelector = (state: CaptureCreationState) => [
-    state.links.connectorImage,
-    state.links.documentation,
-];
-const setLinkSelector = (state: CaptureCreationState) => state.setLink;
+interface Props {
+    name: string;
+    docsPath?: string;
+}
 
-function NewCaptureSpecFormHeader() {
-    const setLink = useCaptureCreationStore(setLinkSelector, shallow);
+function NewCaptureSpecFormHeader(props: Props) {
+    const { name, docsPath } = props;
 
-    const [endpoint, docs] = useCaptureCreationStore(linksSelector, shallow);
-    const { data, error } = useConnectorImages(endpoint);
-
-    useEffect(() => {
-        if (endpoint && data?.links.spec && data.links.spec.length > 0) {
-            setLink('spec', data.links.spec);
-        }
-    }, [endpoint, data, setLink]);
-
-    if (error) {
-        return (
-            <Alert severity="error">
-                <AlertTitle>
-                    <FormattedMessage id="common.errors.heading" />
-                </AlertTitle>
-                {error}
-            </Alert>
-        );
-    } else if (data?.attributes) {
+    if (name) {
         return (
             <AppBar position="relative" elevation={0} color="default">
                 <Toolbar
@@ -44,9 +19,12 @@ function NewCaptureSpecFormHeader() {
                     }}
                 >
                     <Typography variant="h5" color="initial">
-                        {data.attributes.name}
+                        {name}
                     </Typography>
-                    {docs.length > 0 ? { docs } : null}
+
+                    {docsPath && docsPath.length > 0 ? (
+                        <ExternalLink link={docsPath}>Docs</ExternalLink>
+                    ) : null}
                 </Toolbar>
             </AppBar>
         );

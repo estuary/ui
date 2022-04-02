@@ -1,11 +1,5 @@
-import {
-    Button,
-    Divider,
-    Paper,
-    Stack,
-    Toolbar,
-    Typography,
-} from '@mui/material';
+import { Button, Paper, Stack, Toolbar, Typography } from '@mui/material';
+import NewCaptureSpec from 'components/capture/create/Spec';
 import useCaptureCreationStore, {
     CaptureCreationState,
 } from 'components/capture/create/Store';
@@ -33,8 +27,6 @@ import useSchemaEditorStore, {
 import NewCaptureEditor from './CatalogEditor';
 import NewCaptureDetails from './DetailsForm';
 import NewCaptureError from './Error';
-import NewCaptureSpecForm from './SpecForm';
-import NewCaptureSpecFormHeader from './SpecFormHeader';
 
 const FORM_ID = 'newCaptureForm';
 
@@ -52,9 +44,7 @@ const selectors = {
         state.spec.errors,
     ],
     specFormData: (state: CaptureCreationState) => state.spec.data,
-    disoverLink: (state: CaptureCreationState) =>
-        state.links.discovered_catalog,
-    hasConnectors: (state: CaptureCreationState) => state.hasConnectors,
+    connectors: (state: CaptureCreationState) => state.connectors,
 };
 
 function CaptureCreation() {
@@ -79,10 +69,10 @@ function CaptureCreation() {
         selectors.errors
     );
     const specFormData = useCaptureCreationStore(selectors.specFormData);
-    const disoverLink = useCaptureCreationStore(selectors.disoverLink);
     const resetState = useCaptureCreationStore(selectors.resetState);
     const hasChanges = useCaptureCreationStore(selectors.hasChanges);
-    const hasConnectors = useCaptureCreationStore(selectors.hasConnectors);
+    const connectors = useCaptureCreationStore(selectors.connectors);
+    const hasConnectors = connectors.length > 0;
 
     // Form props
     const [showValidation, setShowValidation] = useState(false);
@@ -176,7 +166,7 @@ function CaptureCreation() {
                 setFormSubmitError(null);
 
                 discoveredCatalogEndpoint
-                    .create(disoverLink, {
+                    .create('', {
                         name: captureName,
                         config: specFormData,
                     })
@@ -251,9 +241,7 @@ function CaptureCreation() {
                     />
                     <Typography variant="h5">Connection Config</Typography>
                     <Paper sx={{ width: '100%' }} variant="outlined">
-                        <NewCaptureSpecFormHeader />
-                        <Divider />
-                        <NewCaptureSpecForm
+                        <NewCaptureSpec
                             displayValidation={showValidation}
                             readonly={formSubmitting}
                         />

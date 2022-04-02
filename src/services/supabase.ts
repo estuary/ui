@@ -15,9 +15,9 @@ export const supabase = createClient(
 );
 
 export const callSupabase = (
-    supabaseQuery: SupabaseQueryBuilder<any> | PostgrestFilterBuilder<any>
+    supabaseQuery: SupabaseQueryBuilder<any> | PostgrestFilterBuilder<any> | any
 ) => {
-    return supabaseQuery.then(async (response) => {
+    return supabaseQuery.then(async (response: any) => {
         if (response.status === 401) {
             await auth.signout();
             return Promise.reject({ message: 'common.loggedOut' });

@@ -1,30 +1,36 @@
-import { useAsync } from 'hooks/useAsync';
+import { useAsync } from 'hooks/useAsyncHandler';
 import { isEmpty } from 'lodash';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { supabase } from 'services/supabase';
 
-function useSupabase(queryToRun: () => any) {
-    const asyncParams = useAsync<any[]>();
+function useSupabase(query: (params?: any) => any, queryParams?: any) {
+    const asyncParams = useAsync<any[] | any>();
     const { run } = asyncParams;
 
-    console.log('useSupabase');
-
-    useEffect(() => {
-        run(
-            queryToRun().then(async (response: any) => {
-                console.log('useSupabase then');
-
+    const runner = useCallback(() => {
+        return query(queryParams).then(
+            async (response: any) => {
                 if (response.status === 401) {
                     await supabase.auth.signOut();
-                    return Promise.reject({ message: 'common.loggedOut' });
+                    return Promise.reject({
+                        message: 'common.loggedOut',
+                    });
                 } else if (!isEmpty(response.error)) {
                     return Promise.reject(response.error);
                 } else {
                     return Promise.resolve(response.data);
                 }
-            })
+            },
+            (error: any) => {
+                console.log('Supabase call failed!!!', error);
+                return Promise.reject(error);
+            }
         );
-    }, [queryToRun, run]);
+    }, [query, queryParams]);
+
+    useEffect(() => {
+        run(runner());
+    }, [run, runner]);
 
     return asyncParams;
 }

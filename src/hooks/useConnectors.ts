@@ -1,6 +1,6 @@
-import { connectorsEndpoint } from 'endpoints/connectors';
-import { useAsync } from 'hooks/useAsync';
+import { useAsync } from 'hooks/useAsyncHandler';
 import { useEffect } from 'react';
+import { callSupabase, supabase } from 'services/supabase';
 
 function useConnectors() {
     const response = useAsync<any[]>();
@@ -8,7 +8,14 @@ function useConnectors() {
 
     useEffect(() => {
         run(
-            connectorsEndpoint.read().then(({ data }) => {
+            callSupabase(
+                supabase
+                    .from('connectors')
+                    .select(`detail, image_name, updated_at, id`)
+                    .order('updated_at', {
+                        ascending: false,
+                    })
+            ).then(({ data }: { data: any }) => {
                 return Promise.resolve(data);
             })
         );

@@ -22,15 +22,13 @@ type NewCaptureDetailsProps = {
 const stateSelectors = {
     formData: (state: CaptureCreationState) => state.details.data,
     setDetails: (state: CaptureCreationState) => state.setDetails,
-    setHasConnectors: (state: CaptureCreationState) => state.setHasConnectors,
+    setConnectors: (state: CaptureCreationState) => state.setConnectors,
 };
 
 const connectorsQuery = () => {
     return supabase
         .from('connector_tags')
-        .select(
-            `endpoint_spec_schema, documentation_url, id, image_tag, connectors(id,image_name)`
-        )
+        .select(`id, image_tag, connectors(image_name)`)
         .eq('protocol', 'capture');
 
     // TODO (supabase) - how do we order by the image name here?
@@ -42,9 +40,7 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
 
     const formData = useCaptureCreationStore(stateSelectors.formData);
     const setDetails = useCaptureCreationStore(stateSelectors.setDetails);
-    const setHasConnectors = useCaptureCreationStore(
-        stateSelectors.setHasConnectors
-    );
+    const setConnectors = useCaptureCreationStore(stateSelectors.setConnectors);
 
     const {
         data: connectorsData,
@@ -52,13 +48,6 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
         isSuccess,
         error,
     } = useSupabase(connectorsQuery);
-
-    console.log('supabase stuff', {
-        connectorsData,
-        isError,
-        isSuccess,
-        error,
-    });
 
     const [isPostProcessingDone, setPostProcessingDone] = useState(false);
     const [schema, setSchema] = useState({
@@ -112,22 +101,25 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
         if (isSuccess) {
             if (connectorsData && connectorsData.length > 0) {
                 setSchema((previous: typeof schema) => {
-                    const listOfConnectors = connectorsData.map((connector) => {
-                        return {
-                            const: connector.id,
-                            title: connector.connectors.image_name,
-                        };
-                    });
+                    const listOfConnectors = connectorsData.map(
+                        (connector: any) => {
+                            return {
+                                const: connector.id,
+                                title: connector.connectors.image_name,
+                            };
+                        }
+                    );
                     previous.properties.image.oneOf = listOfConnectors;
 
                     return previous;
                 });
-                setHasConnectors(true);
+
+                setConnectors(connectorsData);
             }
 
             setPostProcessingDone(true);
         }
-    }, [connectorsData, isSuccess, setHasConnectors, setPostProcessingDone]);
+    }, [connectorsData, isSuccess, setConnectors, setPostProcessingDone]);
 
     return (
         <>

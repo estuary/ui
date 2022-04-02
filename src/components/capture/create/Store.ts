@@ -4,13 +4,6 @@ import { isEqual } from 'lodash';
 import { devtoolsInNonProd } from 'utils/store-utils';
 import create from 'zustand';
 
-interface CaptureCreationStateLinks {
-    connectorImage: string;
-    discovered_catalog: string;
-    documentation: string;
-    spec: string;
-}
-
 interface CaptureCreationDetails
     extends Pick<JsonFormsCore, 'data' | 'errors'> {
     data: {
@@ -30,41 +23,31 @@ export interface CaptureCreationState {
     details: CaptureCreationDetails;
     setDetails: (details: CaptureCreationDetails) => void;
 
-    //Links
-    links: CaptureCreationStateLinks;
-    setLink: (link: keyof CaptureCreationStateLinks, value: string) => void;
-
     //Spec
     spec: CaptureCreationSpec;
     setSpec: (spec: CaptureCreationSpec) => void;
 
     //Misc
-    hasConnectors: boolean;
-    setHasConnectors: (val: boolean) => void;
+    connectors: { [key: string]: any }[];
+    setConnectors: (val: { [key: string]: any }[]) => void;
     resetState: () => void;
     hasChanges: () => boolean;
 }
 
 const getInitialStateData = (): Pick<
     CaptureCreationState,
-    'details' | 'links' | 'spec' | 'hasConnectors'
+    'details' | 'spec' | 'connectors'
 > => {
     return {
         details: {
             data: { image: '', name: '' },
             errors: [],
         },
-        links: {
-            connectorImage: '',
-            discovered_catalog: '',
-            documentation: '',
-            spec: '',
-        },
         spec: {
             data: {},
             errors: [],
         },
-        hasConnectors: false,
+        connectors: [],
     };
 };
 
@@ -80,10 +63,6 @@ const useCaptureCreationStore = create<CaptureCreationState>(
                             state.details.data.image !== details.data.image
                         ) {
                             const initState = getInitialStateData();
-
-                            state.links = initState.links;
-                            state.links.connectorImage = details.data.image;
-
                             state.spec = initState.spec;
                         }
 
@@ -91,16 +70,6 @@ const useCaptureCreationStore = create<CaptureCreationState>(
                     }),
                     false,
                     'Details changed'
-                );
-            },
-
-            setLink: (key, value) => {
-                set(
-                    produce((state) => {
-                        state.links[key] = value;
-                    }),
-                    false,
-                    `${key} link updated`
                 );
             },
 
@@ -130,13 +99,13 @@ const useCaptureCreationStore = create<CaptureCreationState>(
                     }
                 );
             },
-            setHasConnectors: (val) => {
+            setConnectors: (val) => {
                 set(
                     produce((state) => {
-                        state.hasConnectors = val;
+                        state.connectors = val;
                     }),
                     false,
-                    'Form has connectors'
+                    'Caching connectors response'
                 );
             },
             resetState: () => {
