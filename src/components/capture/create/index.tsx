@@ -6,13 +6,10 @@ import useCaptureCreationStore, {
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
 import { useConfirmationModalContext } from 'context/Confirmation';
-import {
-    DiscoveredCatalog,
-    discoveredCatalogEndpoint,
-} from 'endpoints/discoveredCatalog';
 import { MouseEvent, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from 'services/supabase';
 import useChangeSetStore, {
     ChangeSetState,
     Entity,
@@ -36,6 +33,7 @@ const selectors = {
     resources: (state: SchemaEditorState) => state.resources,
     showNotification: (state: NotificationState) => state.showNotification,
     captureName: (state: CaptureCreationState) => state.details.data.name,
+    captureImage: (state: CaptureCreationState) => state.details.data.image,
     setDetails: (state: CaptureCreationState) => state.setDetails,
     resetState: (state: CaptureCreationState) => state.resetState,
     hasChanges: (state: CaptureCreationState) => state.hasChanges,
@@ -65,6 +63,7 @@ function CaptureCreation() {
 
     // Form store
     const captureName = useCaptureCreationStore(selectors.captureName);
+    const captureImage = useCaptureCreationStore(selectors.captureImage);
     const [detailErrors, specErrors] = useCaptureCreationStore(
         selectors.errors
     );
@@ -81,8 +80,7 @@ function CaptureCreation() {
         message: string;
         errors: any[];
     } | null>(null);
-    const [catalogResponse, setCatalogResponse] =
-        useState<DiscoveredCatalog | null>(null);
+    const [catalogResponse, setCatalogResponse] = useState<any | null>(null);
 
     const exit = () => {
         if (Object.keys(resourcesFromEditor).length > 0) {
@@ -165,20 +163,42 @@ function CaptureCreation() {
                 setFormSubmitting(true);
                 setFormSubmitError(null);
 
-                discoveredCatalogEndpoint
-                    .create('', {
-                        name: captureName,
-                        config: specFormData,
-                    })
-                    .then((response) => {
-                        setCatalogResponse(response.data);
-                    })
-                    .catch((error) => {
-                        setFormSubmitError(error);
-                    })
-                    .finally(() => {
+                // TODO (supabase) - `discovers:id=eq.${response.data[0].id}` was not working
+                const discoverStatus = supabase
+                    .from(`discovers`)
+                    .on('UPDATE', async (payload) => {
+                        console.log('Change received!', payload);
+                        setCatalogResponse(payload.new.catalog_spec);
                         setFormSubmitting(false);
-                    });
+                        await supabase.removeSubscription(discoverStatus);
+                    })
+                    .subscribe();
+
+                supabase
+                    .from('discovers')
+                    .insert([
+                        {
+                            capture_name: captureName,
+                            endpoint_config: specFormData,
+                            connector_tag_id: captureImage,
+                        },
+                    ])
+                    .then(
+                        (response) => {
+                            if (response.data) {
+                                console.log('discover returned', response);
+                            } else {
+                                // setFormSubmitError({
+                                //     message: 'Failed to create your discover',
+                                // });
+                                setFormSubmitting(false);
+                            }
+                        },
+                        (error) => {
+                            setFormSubmitError(error);
+                            setFormSubmitting(false);
+                        }
+                    );
             }
         },
     };
@@ -252,7 +272,7 @@ function CaptureCreation() {
             {catalogResponse ? (
                 <>
                     <Typography variant="h5">Catalog Editor</Typography>
-                    <NewCaptureEditor data={catalogResponse.attributes} />
+                    <NewCaptureEditor data={catalogResponse} />
                 </>
             ) : null}
         </PageContainer>
