@@ -1,4 +1,12 @@
-import { Button, Paper, Stack, Toolbar, Typography } from '@mui/material';
+import {
+    Backdrop,
+    Button,
+    Paper,
+    Stack,
+    Toolbar,
+    Typography,
+} from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
 import NewCaptureSpec from 'components/capture/create/Spec';
 import useCaptureCreationStore, {
     CaptureCreationState,
@@ -70,6 +78,8 @@ function CaptureCreation() {
     // Form props
     const [showValidation, setShowValidation] = useState(false);
     const [formSubmitting, setFormSubmitting] = useState(false);
+    const [formSaving, setFormSaving] = useState(false);
+
     const [formSubmitError, setFormSubmitError] = useState<{
         message: string;
         errors: any[];
@@ -91,11 +101,13 @@ function CaptureCreation() {
         saveAndPublish: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
             setFormSubmitting(true);
+            setFormSaving(true);
 
+            // // TODO (supabase) - subscribing before running the insert seems to be most consistent.
             const draftStatus = supabase
                 .from(`drafts`)
-                .on('UPDATE', async (payload) => {
-                    console.log('draft update received', payload);
+                .on('UPDATE', async () => {
+                    setFormSaving(false);
                     const notification: Notification = {
                         description:
                             'Your new capture is published and ready to be used.',
@@ -120,6 +132,7 @@ function CaptureCreation() {
                 .then(
                     (response) => {
                         if (response.data) {
+                            // TODO Need to use this response as part of the subscribe somehow?
                             console.log('drafts returned', response);
                         } else {
                             // setFormSubmitError({
@@ -209,6 +222,29 @@ function CaptureCreation() {
 
     return (
         <PageContainer>
+            <Backdrop
+                sx={{
+                    color: '#fff',
+                    zIndex: (theme) => theme.zIndex.drawer + 1,
+                }}
+                open={formSaving}
+            >
+                <Stack>
+                    <Typography
+                        variant="h3"
+                        sx={{
+                            textAlign: 'center',
+                        }}
+                    >
+                        <FormattedMessage id="captureCreation.save.waitMessage" />
+                    </Typography>
+                    <CircularProgress
+                        color="success"
+                        size={100}
+                        sx={{ alignSelf: 'center' }}
+                    />
+                </Stack>
+            </Backdrop>
             <Toolbar>
                 <Typography variant="h6" noWrap>
                     <FormattedMessage id="captureCreation.heading" />

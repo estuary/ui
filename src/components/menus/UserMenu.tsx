@@ -6,13 +6,12 @@ import { Avatar, Stack, Typography } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import MenuItem from '@mui/material/MenuItem';
+import { Auth } from '@supabase/ui';
 import { supabase } from 'services/supabase';
 import IconMenu from './IconMenu';
 
 const UserMenu = () => {
-    const user = supabase.auth.user();
-
-    console.log(user);
+    const { user } = Auth.useUser();
 
     const userName = user?.user_metadata.full_name;
     const email = user?.user_metadata.email;
