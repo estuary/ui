@@ -1,5 +1,6 @@
+import { devtoolsInNonProd } from 'utils/store-utils';
 import create from 'zustand';
-import { devtools, persist } from 'zustand/middleware';
+import { persist } from 'zustand/middleware';
 
 export type DeploymentStatus = 'ACTIVE' | 'INACTIVE';
 type ConnectorType = 'Hello World' | 'Postgres';
@@ -36,7 +37,7 @@ const name = 'change-set-state';
 
 // TODO: Look into a better way to hydrate the state.
 const useChangeSetStore = create<ChangeSetState>(
-    devtools(
+    devtoolsInNonProd(
         persist(
             (set) => ({
                 captures: {},

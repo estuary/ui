@@ -146,10 +146,9 @@ const generateUISchema = (
     }
 
     const types = deriveTypes(jsonSchema);
-    if (types.length === 0) {
-        // TODO - this was returning null initially but the compiler complained so I put this in here to make it be nice.
-        return { type: 'Type Missing on UI Schema' };
-    }
+    // if (types.length === 0) {
+    //   return null;
+    // }
 
     if (types.length > 1) {
         const controlObject: ControlElement = createControlElement(currentRef);

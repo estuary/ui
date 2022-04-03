@@ -7,23 +7,17 @@ import Error from '../pages/Error';
 
 const Admin = lazy(() => import('../pages/Admin'));
 
+const Builds = lazy(() => import('../pages/Builds'));
+
 const Captures = lazy(() => import('../pages/Captures'));
-const CaptureCreation = lazy(() => import('components/capture/creation/index'));
+const CaptureCreate = lazy(() => import('components/capture/create/index'));
 
 const Materializations = lazy(() => import('../pages/Materializations'));
-const NewMaterialization = lazy(
-    () => import('../components/materialization/creation')
+const MaterializationCreate = lazy(
+    () => import('../components/materialization/create')
 );
 
 const Collections = lazy(() => import('../pages/Collections'));
-
-const Builds = lazy(() => import('../pages/Builds'));
-
-const Users = lazy(() => import('../pages/Users'));
-
-const Alerts = lazy(() => import('../pages/Alerts'));
-
-const Logs = lazy(() => import('../pages/Logs'));
 
 const Authenticated = () => {
     return (
@@ -32,28 +26,24 @@ const Authenticated = () => {
                 <Route element={<AppLayout />}>
                     <Route path="/" element={<Home />} />
                     <Route path="/dashboard" element={<Home />} />
-                    <Route path="/app">
-                        <Route path="collections" element={<Collections />} />
-                        <Route path="captures" element={<Captures />}>
-                            <Route path="new" element={<CaptureCreation />} />
-                        </Route>
-                        <Route path="derivations" element={<Error />} />
-                        <Route
-                            path="materializations"
-                            element={<Materializations />}
-                        >
-                            <Route
-                                path="new"
-                                element={<NewMaterialization />}
-                            />
-                        </Route>
-                        <Route path="builds" element={<Builds />} />
-                        <Route path="admin/*" element={<Admin />}>
-                            <Route path="logs" element={<Logs />} />
-                            <Route path="alerts" element={<Alerts />} />
-                            <Route path="users" element={<Users />} />
-                        </Route>
+                    <Route path="collections" element={<Collections />} />
+                    <Route path="captures" element={<Captures />} />
+                    <Route path="capture">
+                        <Route path="create" element={<CaptureCreate />} />
                     </Route>
+
+                    <Route
+                        path="materializations"
+                        element={<Materializations />}
+                    />
+                    <Route path="materialization">
+                        <Route
+                            path="create"
+                            element={<MaterializationCreate />}
+                        />
+                    </Route>
+                    <Route path="admin/*" element={<Admin />} />
+                    <Route path="builds" element={<Builds />} />
                 </Route>
                 <Route path="*" element={<Error />} />
             </Routes>

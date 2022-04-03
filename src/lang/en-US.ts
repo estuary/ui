@@ -1,7 +1,7 @@
 // We DO NOT need this file sorted as it makes it easier for folks to update/see changes
 import { ResolvedIntlConfig } from 'react-intl/src/types';
 
-const enUSMessages: ResolvedIntlConfig['messages'] = {
+const CommonMessages: ResolvedIntlConfig['messages'] = {
     // Common stuff
     'company': `Estuary`,
     'productName': `Control Plane`,
@@ -23,6 +23,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     'cta.login': `Login`,
     'cta.clickHere': `click here`,
     'cta.moreDetails': `More Details`,
+    'cta.saveEntity': `Save and ACTIONWORD`,
 
     // Terms
     'terms.connectors': `Connectors`,
@@ -64,29 +65,11 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     // Login Page Stuff
     'login.main.message': `When running locally you can login with whatever name you want.`,
 
-    // Capture creation modal
-    'captureCreation.ctas.test.config': `Test Capture`,
-    'captureCreation.heading': `New Capture`,
-    'captureCreation.instructions': `To get started please provide a unique name and the source type of the Capture you want to create. Once you've filled out the source details you can click "Test Capture" down below to test the connection.`,
-    'captureCreation.missingConnectors': `No connectors installed. You must install a source connector before being able to create a capture.`,
-    'captureCreation.tenant.label': `Tenant`,
-    'captureCreation.name.label': `Name`,
-    'captureCreation.name.description': `Name of the capture - must be unique. (ex: acemCo/marketing_data)`,
-    'captureCreation.image.label': `Source`,
-    'captureCreation.image.description': `The connector you want to use to connect to your endpoint.`,
-    'captureCreation.config.source.doclink': `Connector Docs`,
-    'captureCreation.config.testing': `Testing configuration...`,
-    'captureCreation.config.testing.failed': `Capture test failed`,
-    'captureCreation.finalReview.instructions': `Look over the catalog configuration that was generated. If you want to edit anything you can do that directly in the editor. Once you're ready you can download the file for your local.`,
-
     // Captures main page
     'captures.main.message1': `Click the "New Capture" button up above to get started.`,
     'captures.main.message2': `It will guide you through generating and downloading a valid {docLink}.`,
-    'captures.main.message2.docLink': `catalog spec`,
-    'captures.main.message2.docPath': `https://docs.estuary.dev/concepts/#catalogs`,
-
-    // Materialization creation modal
-    'materializationCreation.heading': `New Materialization`,
+    'captures.main.message2.docLink': `capture spec`,
+    'captures.main.message2.docPath': `https://docs.estuary.dev/concepts/#captures`,
 
     // Landing page content
     'home.main.header': `Welcome to Control Plane!`,
@@ -105,6 +88,33 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     'entityTable.data.connectorType': `Type`,
     'entityTable.data.lastUpdated': `Last Updated`,
     'entityTable.data.actions': `Actions`,
+};
+
+const Capture_Create: ResolvedIntlConfig['messages'] = {
+    'captureCreation.ctas.discover': `Test Config`,
+    'captureCreation.heading': `New Capture`,
+    'captureCreation.instructions': `To get started please provide a unique name and the source type of the Capture you want to create. Once you've filled out the source details you can click "Test Capture" down below to test the connection.`,
+    'captureCreation.missingConnectors': `No connectors installed. You must install a source connector before being able to create a capture.`,
+    'captureCreation.tenant.label': `Tenant`,
+    'captureCreation.name.label': `Name`,
+    'captureCreation.name.description': `Name of the capture - must be unique. (ex: acemCo/marketing_data)`,
+    'captureCreation.image.label': `Source`,
+    'captureCreation.image.description': `The connector you want to use to connect to your endpoint.`,
+    'captureCreation.config.source.doclink': `Connector Docs`,
+    'captureCreation.save.failed': `Capture creation failed. Please see below for details:`,
+    'captureCreation.editor.default': `Before you can edit the Capture Catalog you need to fill out the connection config section and click Discover`,
+    'captureCreation.finalReview.instructions': `Look over the catalog configuration that was generated. If you want to edit anything you can do that directly in the editor. Once you're ready you can download the file for your local.`,
+};
+
+const Materialization_Create: ResolvedIntlConfig['messages'] = {
+    'materializationCreation.heading': `New Materialization`,
+    'materializationCreation.instructions': `To get started please provide a unique name, select an endpoint type, and select the Collections you want to Materialize. After that you can review the YAML before saving.`,
+};
+
+const enUSMessages: ResolvedIntlConfig['messages'] = {
+    ...CommonMessages,
+    ...Capture_Create,
+    ...Materialization_Create,
 };
 
 export default enUSMessages;

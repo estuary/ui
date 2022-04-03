@@ -3,7 +3,7 @@
 exports[`Authenticated app renders correctly 1`] = `
 <div>
   <div
-    class="MuiBox-root css-lglgsn"
+    class="MuiBox-root css-xlbctp"
   >
     <div
       class="MuiBox-root css-175rvmj"
@@ -115,10 +115,10 @@ exports[`Authenticated app renders correctly 1`] = `
             >
               <li>
                 <a
-                  aria-label="Collections"
-                  class="MuiListItemButton-root MuiListItemButton-gutters MuiButtonBase-root  css-gjl4xh-MuiButtonBase-root-MuiListItemButton-root Mui-disabled"
+                  aria-label="Dashboard"
+                  class="MuiListItemButton-root MuiListItemButton-gutters MuiButtonBase-root  css-gjl4xh-MuiButtonBase-root-MuiListItemButton-root"
                   data-mui-internal-clone-element="true"
-                  href="/app/collections"
+                  href="/dashboard"
                   role="button"
                   tabindex="0"
                 >
@@ -150,7 +150,7 @@ exports[`Authenticated app renders correctly 1`] = `
                     <span
                       class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-1ler6va-MuiTypography-root"
                     >
-                      Collections
+                      Dashboard
                     </span>
                   </div>
                 </a>
@@ -160,7 +160,7 @@ exports[`Authenticated app renders correctly 1`] = `
                   aria-label="Captures"
                   class="MuiListItemButton-root MuiListItemButton-gutters MuiButtonBase-root  css-gjl4xh-MuiButtonBase-root-MuiListItemButton-root"
                   data-mui-internal-clone-element="true"
-                  href="/app/captures"
+                  href="/captures"
                   role="button"
                   tabindex="0"
                 >
@@ -200,9 +200,9 @@ exports[`Authenticated app renders correctly 1`] = `
               <li>
                 <a
                   aria-label="Materializations"
-                  class="MuiListItemButton-root MuiListItemButton-gutters MuiButtonBase-root  css-gjl4xh-MuiButtonBase-root-MuiListItemButton-root Mui-disabled"
+                  class="MuiListItemButton-root MuiListItemButton-gutters MuiButtonBase-root  css-gjl4xh-MuiButtonBase-root-MuiListItemButton-root"
                   data-mui-internal-clone-element="true"
-                  href="/app/materializations"
+                  href="/materializations"
                   role="button"
                   tabindex="0"
                 >
@@ -241,94 +241,10 @@ exports[`Authenticated app renders correctly 1`] = `
               </li>
               <li>
                 <a
-                  aria-label="Derivations"
-                  class="MuiListItemButton-root MuiListItemButton-gutters MuiButtonBase-root  css-gjl4xh-MuiButtonBase-root-MuiListItemButton-root Mui-disabled"
-                  data-mui-internal-clone-element="true"
-                  href="/app/derivations"
-                  role="button"
-                  tabindex="0"
-                >
-                  <div
-                    class="MuiListItemIcon-root css-cveggr-MuiListItemIcon-root"
-                  >
-                    <span
-                      class="MuiBadge-root css-1c32n2y-MuiBadge-root"
-                    >
-                      <svg
-                        aria-hidden="true"
-                        class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
-                        data-testid="CodeIcon"
-                        focusable="false"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          d="M9.4 16.6 4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0 4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"
-                        />
-                      </svg>
-                      <span
-                        class="MuiBadge-anchorOriginTopRightRectangular MuiBadge-overlapRectangular MuiBadge-colorInfo MuiBadge-badge MuiBadge-standard MuiBadge-anchorOriginTopRight MuiBadge-invisible css-1cegho1-MuiBadge-badge"
-                      />
-                    </span>
-                  </div>
-                  <div
-                    class="MuiListItemText-root css-tlelie-MuiListItemText-root"
-                  >
-                    <span
-                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-1ler6va-MuiTypography-root"
-                    >
-                      Derivations
-                    </span>
-                  </div>
-                </a>
-              </li>
-              <li>
-                <a
-                  aria-label="Builds"
-                  class="MuiListItemButton-root MuiListItemButton-gutters MuiButtonBase-root  css-gjl4xh-MuiButtonBase-root-MuiListItemButton-root"
-                  data-mui-internal-clone-element="true"
-                  href="/app/builds"
-                  role="button"
-                  tabindex="0"
-                >
-                  <div
-                    class="MuiListItemIcon-root css-cveggr-MuiListItemIcon-root"
-                  >
-                    <span
-                      class="MuiBadge-root css-1c32n2y-MuiBadge-root"
-                    >
-                      <svg
-                        aria-hidden="true"
-                        class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
-                        data-testid="ConstructionIcon"
-                        focusable="false"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          d="m13.7826 15.1719 2.1213-2.1213 5.9963 5.9962-2.1213 2.1213zM17.5 10c1.93 0 3.5-1.57 3.5-3.5 0-.58-.16-1.12-.41-1.6l-2.7 2.7-1.49-1.49 2.7-2.7c-.48-.25-1.02-.41-1.6-.41C15.57 3 14 4.57 14 6.5c0 .41.08.8.21 1.16l-1.85 1.85-1.78-1.78.71-.71-1.41-1.41L12 3.49c-1.17-1.17-3.07-1.17-4.24 0L4.22 7.03l1.41 1.41H2.81l-.71.71 3.54 3.54.71-.71V9.15l1.41 1.41.71-.71 1.78 1.78-7.41 7.41 2.12 2.12L16.34 9.79c.36.13.75.21 1.16.21z"
-                        />
-                      </svg>
-                      <span
-                        class="MuiBadge-anchorOriginTopRightRectangular MuiBadge-overlapRectangular MuiBadge-colorInfo MuiBadge-badge MuiBadge-standard MuiBadge-anchorOriginTopRight MuiBadge-invisible css-1cegho1-MuiBadge-badge"
-                      />
-                    </span>
-                  </div>
-                  <div
-                    class="MuiListItemText-root css-tlelie-MuiListItemText-root"
-                  >
-                    <span
-                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-1ler6va-MuiTypography-root"
-                    >
-                      Builds
-                    </span>
-                  </div>
-                </a>
-              </li>
-              <li>
-                <a
                   aria-label="Administration"
                   class="MuiListItemButton-root MuiListItemButton-gutters MuiButtonBase-root  css-gjl4xh-MuiButtonBase-root-MuiListItemButton-root"
                   data-mui-internal-clone-element="true"
-                  href="/app/admin"
+                  href="/admin"
                   role="button"
                   tabindex="0"
                 >
@@ -371,7 +287,7 @@ exports[`Authenticated app renders correctly 1`] = `
       </div>
     </div>
     <div
-      class="MuiBox-root css-b8j5vm"
+      class="MuiBox-root css-n7iznt"
     >
       <div
         class="MuiContainer-root css-u86gcf-MuiContainer-root"

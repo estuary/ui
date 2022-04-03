@@ -1,5 +1,5 @@
+import { devtoolsInNonProd } from 'utils/store-utils';
 import create from 'zustand';
-import { devtools } from 'zustand/middleware';
 
 type GenericSchema = string | JSON;
 
@@ -11,7 +11,7 @@ export interface SchemaEditorState {
 }
 
 const useSchemaEditorStore = create<SchemaEditorState>(
-    devtools(
+    devtoolsInNonProd(
         (set) => ({
             resources: {},
             loadResource: (name, schema) =>

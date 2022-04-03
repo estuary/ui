@@ -1,9 +1,9 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
-import { Alert, DialogContentText, Skeleton, Stack } from '@mui/material';
+import { Alert, Skeleton, Stack } from '@mui/material';
 import useCaptureCreationStore, {
     CaptureCreationState,
-} from 'components/capture/creation/Store';
+} from 'components/capture/create/Store';
 import { ConnectorTypes } from 'endpoints/connectors';
 import useConnectors from 'hooks/useConnectors';
 import { useEffect, useState } from 'react';
@@ -22,6 +22,7 @@ type NewCaptureDetailsProps = {
 const stateSelectors = {
     formData: (state: CaptureCreationState) => state.details.data,
     setDetails: (state: CaptureCreationState) => state.setDetails,
+    setHasConnectors: (state: CaptureCreationState) => state.setHasConnectors,
 };
 
 function NewCaptureDetails(props: NewCaptureDetailsProps) {
@@ -30,6 +31,9 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
 
     const formData = useCaptureCreationStore(stateSelectors.formData);
     const setDetails = useCaptureCreationStore(stateSelectors.setDetails);
+    const setHasConnectors = useCaptureCreationStore(
+        stateSelectors.setHasConnectors
+    );
 
     const {
         data: connectorsData,
@@ -100,38 +104,39 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
 
                     return previous;
                 });
+                setHasConnectors(true);
             }
 
             setPostProcessingDone(true);
         }
-    }, [connectorsData, isSuccess]);
+    }, [connectorsData, isSuccess, setHasConnectors]);
 
     return (
         <>
-            <DialogContentText>
-                <FormattedMessage id="captureCreation.instructions" />
-            </DialogContentText>
+            <FormattedMessage id="captureCreation.instructions" />
 
             <Stack direction="row" spacing={2}>
                 {isPostProcessingDone ? (
-                    <JsonForms
-                        schema={schema}
-                        uischema={uiSchema}
-                        data={formData}
-                        renderers={defaultRenderers}
-                        cells={materialCells}
-                        config={defaultOptions}
-                        readonly={readonly}
-                        validationMode={showValidation(displayValidation)}
-                        onChange={setDetails}
-                    />
+                    schema.properties.image.oneOf.length > 0 ? (
+                        <JsonForms
+                            schema={schema}
+                            uischema={uiSchema}
+                            data={formData}
+                            renderers={defaultRenderers}
+                            cells={materialCells}
+                            config={defaultOptions}
+                            readonly={readonly}
+                            validationMode={showValidation(displayValidation)}
+                            onChange={setDetails}
+                        />
+                    ) : (
+                        <Alert severity="warning">
+                            <FormattedMessage id="captureCreation.missingConnectors" />
+                            {schema.properties.image.oneOf.length}
+                        </Alert>
+                    )
                 ) : isError ? (
                     error
-                ) : schema.properties.image.oneOf.length < 0 ? (
-                    <Alert severity="warning">
-                        <FormattedMessage id="captureCreation.missingConnectors" />
-                        {schema.properties.image.oneOf.length}
-                    </Alert>
                 ) : (
                     <>
                         <Skeleton

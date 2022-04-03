@@ -1,8 +1,8 @@
 import { JsonFormsCore } from '@jsonforms/core';
 import produce from 'immer';
 import { isEqual } from 'lodash';
+import { devtoolsInNonProd } from 'utils/store-utils';
 import create from 'zustand';
-import { devtools } from 'zustand/middleware';
 
 interface CaptureCreationStateLinks {
     connectorImage: string;
@@ -39,13 +39,15 @@ export interface CaptureCreationState {
     setSpec: (spec: CaptureCreationSpec) => void;
 
     //Misc
+    hasConnectors: boolean;
+    setHasConnectors: (val: boolean) => void;
     resetState: () => void;
     hasChanges: () => boolean;
 }
 
 const getInitialStateData = (): Pick<
     CaptureCreationState,
-    'details' | 'links' | 'spec'
+    'details' | 'links' | 'spec' | 'hasConnectors'
 > => {
     return {
         details: {
@@ -62,18 +64,27 @@ const getInitialStateData = (): Pick<
             data: {},
             errors: [],
         },
+        hasConnectors: false,
     };
 };
 
 const useCaptureCreationStore = create<CaptureCreationState>(
-    devtools(
+    devtoolsInNonProd(
         (set, get) => ({
             ...getInitialStateData(),
             setDetails: (details) => {
                 set(
                     produce((state) => {
-                        if (state.details.image !== details.data.image) {
+                        if (
+                            details.data.image.length > 0 &&
+                            state.details.data.image !== details.data.image
+                        ) {
+                            const initState = getInitialStateData();
+
+                            state.links = initState.links;
                             state.links.connectorImage = details.data.image;
+
+                            state.spec = initState.spec;
                         }
 
                         state.details = details;
@@ -117,6 +128,15 @@ const useCaptureCreationStore = create<CaptureCreationState>(
                         details: initialDetails.data,
                         spec: initialSpec.data,
                     }
+                );
+            },
+            setHasConnectors: (val) => {
+                set(
+                    produce((state) => {
+                        state.hasConnectors = val;
+                    }),
+                    false,
+                    'Form has connectors'
                 );
             },
             resetState: () => {

@@ -1,5 +1,3 @@
-import CodeIcon from '@mui/icons-material/Code';
-import Construction from '@mui/icons-material/Construction';
 import ExploreIcon from '@mui/icons-material/Explore';
 import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
 //TODO - These icons are not final
@@ -7,7 +5,6 @@ import InputIcon from '@mui/icons-material/Input';
 import StorageIcon from '@mui/icons-material/Storage';
 import { Box, List, Toolbar, useMediaQuery, useTheme } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
-import useChangeSetStore, { ChangeSetState } from 'stores/ChangeSetStore';
 import ListItemLink from './ListItemLink';
 
 interface NavigationProps {
@@ -16,14 +13,8 @@ interface NavigationProps {
     width: number;
 }
 
-const selectors = {
-    newChangeCount: (state: ChangeSetState) => state.newChangeCount,
-};
-
 const Navigation = (props: NavigationProps) => {
     const { onNavigationToggle, open, width } = props;
-
-    const newChangeCount = useChangeSetStore(selectors.newChangeCount);
 
     const theme = useTheme();
     const isBelowMd = useMediaQuery(theme.breakpoints.down('md'));
@@ -59,46 +50,26 @@ const Navigation = (props: NavigationProps) => {
                 <List aria-label="main application navigation">
                     <ListItemLink
                         icon={<ExploreIcon />}
-                        title="Collections"
-                        link="/app/collections"
-                        key="Collections"
-                        isOpen={open}
-                        disabled={true}
+                        title="Dashboard"
+                        link="/dashboard"
+                        key="Dashboard"
                     />
                     <ListItemLink
                         icon={<InputIcon />}
                         title="Captures"
-                        link="/app/captures"
+                        link="/captures"
                         key="Capture"
                     />
                     <ListItemLink
                         icon={<StorageIcon />}
                         title="Materializations"
-                        link="/app/materializations"
+                        link="/materializations"
                         key="Materializations"
-                        isOpen={open}
-                        disabled={true}
-                    />
-                    <ListItemLink
-                        icon={<CodeIcon />}
-                        title="Derivations"
-                        link="/app/derivations"
-                        key="Derivations"
-                        isOpen={open}
-                        disabled={true}
-                    />
-                    <ListItemLink
-                        icon={<Construction />}
-                        title="Builds"
-                        link="/app/builds"
-                        key="Builds"
-                        menuWidth={width}
-                        badgeContent={newChangeCount}
                     />
                     <ListItemLink
                         icon={<HomeRepairServiceIcon />}
                         title="Administration"
-                        link="/app/admin"
+                        link="/admin"
                         key="Administration"
                         isOpen={open}
                     />

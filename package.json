@@ -5,18 +5,17 @@
     "main": "index.js",
     "private": true,
     "scripts": {
-        "server": "cd temp-test-server && npm start",
-        "start-all": "npm run server & npm start",
         "start": "set WDS_SOCKET_PORT=0 && react-app-rewired start",
         "build": "react-app-rewired build",
         "test": "react-app-rewired test",
         "prepare": "husky install",
-        "format": "prettier --write '**/*.{js,jsx,ts,tsx}'",
+        "format": "prettier --check '**/*.{js,jsx,ts,tsx}'",
         "lint": "eslint --ext js,jsx,ts,tsx .",
         "lint:fix": "eslint --fix --ext js,jsx,ts,tsx .",
         "lint-staged": "lint-staged --config .lint-staged.js",
         "typecheck": "tsc",
-        "generate-flow-types": "cd flow_deps && ./fetch-flow.sh && ./flow-bin/flowctl json-schema | ./flow-bin/flowctl schemalate typescript --name Catalog --hoist-definitions > flow.d.ts"
+        "generate-flow-types": "cd flow_deps && ./fetch-flow.sh && ./flow-bin/flowctl json-schema | ./flow-bin/flowctl schemalate typescript --name Catalog --hoist-definitions > flow.d.ts",
+        "__build_deploy__": "npm run build; serve -s build"
     },
     "dependencies": {
         "@emotion/react": "^11.7.1",
@@ -41,6 +40,7 @@
         "react-router": "^6.2.1",
         "react-router-dom": "6.2.1",
         "react-use": "^17.3.2",
+        "serve": "^13.0.2",
         "use-immer": "^0.6.0",
         "zustand": "^3.7.0"
     },

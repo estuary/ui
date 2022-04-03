@@ -4,11 +4,11 @@ import { JsonForms } from '@jsonforms/react';
 import { Alert, AlertTitle, StyledEngineProvider } from '@mui/material';
 import useCaptureCreationStore, {
     CaptureCreationState,
-} from 'components/capture/creation/Store';
+} from 'components/capture/create/Store';
 import FormLoading from 'components/shared/FormLoading';
 import useConnectorImageSpec from 'hooks/useConnectorImagesSpec';
 import { isEmpty } from 'lodash';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     defaultOptions,
@@ -53,16 +53,6 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
         }
     }, [discovered_catalog, setLink]);
 
-    const uiSchema = useMemo(() => {
-        let response = null;
-
-        if (endpointSchema.type) {
-            response = generateCustomUISchema(endpointSchema);
-        }
-
-        return response;
-    }, [endpointSchema]);
-
     useEffect(() => {
         if (documentation.length > 0) {
             setLink('documentation', documentation);
@@ -96,7 +86,8 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
                 {error}
             </Alert>
         );
-    } else if (uiSchema) {
+    } else if (endpointSchema.type) {
+        const uiSchema = generateCustomUISchema(endpointSchema);
         const showValidationVal = showValidation(displayValidation);
         const handlers = {
             onChange: (form: any) => {
