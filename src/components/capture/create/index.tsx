@@ -78,11 +78,8 @@ function CaptureCreation() {
         },
         []
     );
-    const {
-        data: connectorsData,
-        // error,
-        // isValidating,
-    } = useSelect(tagsQuery, {});
+    const { data: connectorTags } = useSelect(tagsQuery, {});
+    const hasConnectors = connectorTags && connectorTags.data.length > 0;
 
     // Schema editor store
     const resourcesFromEditor = useSchemaEditorStore(selectors.resources);
@@ -102,7 +99,6 @@ function CaptureCreation() {
     const specFormData = useCaptureCreationStore(selectors.specFormData);
     const resetState = useCaptureCreationStore(selectors.resetState);
     const hasChanges = useCaptureCreationStore(selectors.hasChanges);
-    const hasConnectors = connectorsData && connectorsData.data.length > 0;
 
     // Form props
     const [showValidation, setShowValidation] = useState(false);
@@ -324,17 +320,23 @@ function CaptureCreation() {
             <ErrorBoundryWrapper>
                 <form id={FORM_ID}>
                     <Typography variant="h5">Capture Details</Typography>
-                    <NewCaptureDetails
-                        displayValidation={showValidation}
-                        readonly={formSubmitting}
-                        connectorTags={[]}
-                    />
-                    <Typography variant="h5">Connection Config</Typography>
-                    <Paper sx={{ width: '100%' }} variant="outlined">
-                        <NewCaptureSpec
+                    {connectorTags ? (
+                        <NewCaptureDetails
                             displayValidation={showValidation}
                             readonly={formSubmitting}
+                            connectorTags={connectorTags.data}
                         />
+                    ) : null}
+
+                    <Typography variant="h5">Connection Config</Typography>
+                    <Paper sx={{ width: '100%' }} variant="outlined">
+                        {captureImage ? (
+                            <NewCaptureSpec
+                                displayValidation={showValidation}
+                                readonly={formSubmitting}
+                                connectorImage={captureImage}
+                            />
+                        ) : null}
                     </Paper>
                 </form>
             </ErrorBoundryWrapper>

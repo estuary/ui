@@ -109,7 +109,6 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
                 ) : (
                     <Alert severity="warning">
                         <FormattedMessage id="captureCreation.missingConnectors" />
-                        {schema.properties.image.oneOf.length}
                     </Alert>
                 )}
             </Stack>

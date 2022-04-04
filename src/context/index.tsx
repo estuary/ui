@@ -1,8 +1,8 @@
 import ConfirmationModalContextProvider from 'context/Confirmation';
-import AppData from 'context/Data';
 import { BaseComponentProps } from 'types';
 import { AuthProvider } from './Auth';
 import AppContent from './Content';
+import AppData from './Data';
 import AppRouter from './Router';
 import AppTheme from './Theme';
 
