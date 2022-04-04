@@ -21,9 +21,9 @@ const Error = () => {
 
     const pages: { name: string; route: string }[] = [
         { name: 'Dashboard', route: '/' },
-        { name: 'Captures', route: '/app/captures' },
-        { name: 'Materializations', route: '/app/materializations' },
-        { name: 'Admin', route: '/app/admin' },
+        { name: 'Captures', route: '/captures' },
+        { name: 'Materializations', route: '/materializations' },
+        { name: 'Admin', route: '/admin' },
     ];
 
     const handlers = {
