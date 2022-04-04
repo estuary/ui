@@ -1,12 +1,14 @@
 import {
-    Backdrop,
     Button,
+    Dialog,
+    DialogContent,
+    DialogTitle,
     Paper,
     Stack,
     Toolbar,
     Typography,
 } from '@mui/material';
-import CircularProgress from '@mui/material/CircularProgress';
+import { RealtimeSubscription } from '@supabase/supabase-js';
 import NewCaptureSpec from 'components/capture/create/Spec';
 import useCaptureCreationStore, {
     CaptureCreationState,
@@ -16,7 +18,9 @@ import PageContainer from 'components/shared/PageContainer';
 import { useConfirmationModalContext } from 'context/Confirmation';
 import { MouseEvent, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { LazyLog } from 'react-lazylog';
 import { useNavigate } from 'react-router-dom';
+import { useInterval } from 'react-use';
 import { supabase, Tables } from 'services/supabase';
 import { ChangeSetState } from 'stores/ChangeSetStore';
 import useNotificationStore, {
@@ -104,6 +108,10 @@ function CaptureCreation() {
     const [showValidation, setShowValidation] = useState(false);
     const [formSubmitting, setFormSubmitting] = useState(false);
     const [formSaving, setFormSaving] = useState(false);
+    const [saveLogs, setSaveLogs] = useState([
+        'waiting for logs...',
+        '-------------------',
+    ]);
 
     const [formSubmitError, setFormSubmitError] = useState<{
         message: string;
@@ -121,15 +129,20 @@ function CaptureCreation() {
         navigate('/captures');
     };
 
-    // Form Event Handlers
-    const handlers = {
-        saveAndPublish: (event: MouseEvent<HTMLElement>) => {
-            event.preventDefault();
-            setFormSubmitting(true);
-            setFormSaving(true);
-
-            // // TODO (supabase) - subscribing before running the insert seems to be most consistent.
-            const draftStatus = supabase
+    const [logToken, setLogToken] = useState<boolean | null>(null);
+    const [logOffset, setLogOffset] = useState<number>(0);
+    const drafts = {
+        done: (draftsSubscription: RealtimeSubscription) => {
+            return supabase
+                .removeSubscription(draftsSubscription)
+                .then(() => {
+                    setLogToken(null);
+                    setFormSubmitting(false);
+                })
+                .catch(() => {});
+        },
+        waitForFinish: () => {
+            const draftsSubscription = supabase
                 .from(`drafts`)
                 .on('UPDATE', async () => {
                     setFormSaving(false);
@@ -141,11 +154,46 @@ function CaptureCreation() {
                     };
                     showNotification(notification);
 
-                    await supabase.removeSubscription(draftStatus);
-
-                    exit();
+                    drafts
+                        .done(draftsSubscription)
+                        .then(() => {
+                            exit();
+                        })
+                        .catch(() => {});
                 })
                 .subscribe();
+
+            return draftsSubscription;
+        },
+    };
+
+    useInterval(
+        async () => {
+            const { data } = await supabase
+                .rpc('view_logs', {
+                    bearer_token: logToken,
+                })
+                .range(logOffset, logOffset + 5);
+
+            if (data && data.length > 0) {
+                const logsReduced = data.map((logData) => {
+                    return logData.log_line;
+                });
+                console.log('logsReduced', logsReduced);
+
+                setLogOffset(data.length);
+                setSaveLogs(saveLogs.concat(logsReduced));
+            }
+        },
+        logToken ? 1000 : null
+    );
+
+    // Form Event Handlers
+    const handlers = {
+        saveAndPublish: (event: MouseEvent<HTMLElement>) => {
+            event.preventDefault();
+            setFormSubmitting(true);
+            setFormSaving(true);
 
             supabase
                 .from('drafts')
@@ -155,15 +203,24 @@ function CaptureCreation() {
                     },
                 ])
                 .then(
-                    (response) => {
+                    async (response) => {
+                        const draftsSubscription = drafts.waitForFinish();
+
                         if (response.data) {
                             // TODO Need to use this response as part of the subscribe somehow?
-                            console.log('drafts returned', response);
+                            if (response.data.length > 0) {
+                                setLogToken(response.data[0].logs_token);
+                            }
                         } else {
                             // setFormSubmitError({
                             //     message: 'Failed to create your discover',
                             // });
-                            setFormSubmitting(false);
+                            drafts
+                                .done(draftsSubscription)
+                                .then(() => {
+                                    setFormSubmitting(false);
+                                })
+                                .catch(() => {});
                         }
                     },
                     (draftsError) => {
@@ -247,29 +304,30 @@ function CaptureCreation() {
 
     return (
         <PageContainer>
-            <Backdrop
-                sx={{
-                    color: '#fff',
-                    zIndex: (theme) => theme.zIndex.drawer + 1,
-                }}
+            <Dialog
                 open={formSaving}
+                maxWidth="lg"
+                fullWidth
+                aria-labelledby="new-capture-saving-title"
             >
-                <Stack>
-                    <Typography
-                        variant="h3"
-                        sx={{
-                            textAlign: 'center',
-                        }}
-                    >
-                        <FormattedMessage id="captureCreation.save.waitMessage" />
-                    </Typography>
-                    <CircularProgress
-                        color="success"
-                        size={100}
-                        sx={{ alignSelf: 'center' }}
+                <DialogTitle id="new-capture-saving-title">
+                    <FormattedMessage id="captureCreation.save.waitMessage" />
+                </DialogTitle>
+                <DialogContent
+                    sx={{
+                        height: 300,
+                    }}
+                >
+                    <LazyLog
+                        extraLines={1}
+                        stream={true}
+                        text={saveLogs.join('\r\n')}
+                        caseInsensitive
+                        follow={true}
                     />
-                </Stack>
-            </Backdrop>
+                </DialogContent>
+            </Dialog>
+
             <Toolbar>
                 <Typography variant="h6" noWrap>
                     <FormattedMessage id="captureCreation.heading" />
