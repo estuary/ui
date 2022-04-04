@@ -319,25 +319,33 @@ function CaptureCreation() {
 
             <ErrorBoundryWrapper>
                 <form id={FORM_ID}>
-                    <Typography variant="h5">Capture Details</Typography>
                     {connectorTags ? (
-                        <NewCaptureDetails
-                            displayValidation={showValidation}
-                            readonly={formSubmitting}
-                            connectorTags={connectorTags.data}
-                        />
-                    ) : null}
-
-                    <Typography variant="h5">Connection Config</Typography>
-                    <Paper sx={{ width: '100%' }} variant="outlined">
-                        {captureImage ? (
-                            <NewCaptureSpec
+                        <>
+                            <Typography variant="h5">
+                                Capture Details
+                            </Typography>
+                            <NewCaptureDetails
                                 displayValidation={showValidation}
                                 readonly={formSubmitting}
-                                connectorImage={captureImage}
+                                connectorTags={connectorTags.data}
                             />
-                        ) : null}
-                    </Paper>
+                        </>
+                    ) : null}
+
+                    {captureImage ? (
+                        <>
+                            <Typography variant="h5">
+                                Connection Config
+                            </Typography>
+                            <Paper sx={{ width: '100%' }}>
+                                <NewCaptureSpec
+                                    displayValidation={showValidation}
+                                    readonly={formSubmitting}
+                                    connectorImage={captureImage}
+                                />
+                            </Paper>
+                        </>
+                    ) : null}
                 </form>
             </ErrorBoundryWrapper>
 

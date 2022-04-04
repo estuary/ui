@@ -5,8 +5,9 @@ import { StyledEngineProvider } from '@mui/material';
 import useCaptureCreationStore, {
     CaptureCreationState,
 } from 'components/capture/create/Store';
+import JsonRefs from 'json-refs';
 import { isEmpty } from 'lodash';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
     defaultOptions,
     defaultRenderers,
@@ -32,20 +33,33 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
     const setSpec = useCaptureCreationStore(stateSelectors.setSpec);
     const formData = useCaptureCreationStore(stateSelectors.formData);
 
-    // This will hydrate the default values for us as we don't want JSONForms to
+    const [dereffedSchema, setDereffedSchema] = useState<any | null>(null);
+
+    // Resolve Refs & Hydrate the object
+    //  This will hydrate the default values for us as we don't want JSONForms to
     //  directly update the state object as it caused issues when switching connectors.
     useEffect(() => {
-        const hydrateAndValidate = defaultAjv.compile(endpointSchema);
-        const defaultValues = {};
-        hydrateAndValidate(defaultValues);
+        async function resolveSchemaRefs(endpointResponse: any) {
+            const processedSchema = await JsonRefs.resolveRefs(
+                endpointResponse
+            );
+            const hydrateAndValidate = defaultAjv.compile(
+                processedSchema.resolved
+            );
+            const defaultValues = {};
+            hydrateAndValidate(defaultValues);
 
-        setSpec({
-            data: defaultValues,
-        });
-    }, [endpointSchema, setSpec]);
+            setDereffedSchema(processedSchema.resolved);
+            setSpec({
+                data: defaultValues,
+            });
+        }
 
-    if (endpointSchema.type) {
-        const uiSchema = generateCustomUISchema(endpointSchema);
+        void resolveSchemaRefs(endpointSchema);
+    }, [endpointSchema, setSpec, setDereffedSchema]);
+
+    if (dereffedSchema) {
+        const uiSchema = generateCustomUISchema(dereffedSchema);
         const showValidationVal = showValidation(displayValidation);
         const handlers = {
             onChange: (form: any) => {
@@ -58,7 +72,7 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
         return (
             <StyledEngineProvider injectFirst>
                 <JsonForms
-                    schema={endpointSchema}
+                    schema={dereffedSchema}
                     uischema={uiSchema}
                     data={formData}
                     renderers={defaultRenderers}

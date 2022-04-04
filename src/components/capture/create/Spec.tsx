@@ -14,13 +14,13 @@ interface ConnectorTag {
     documentation_url: string;
 }
 
-function NewCaptureSpec(props: {
+interface Props {
     connectorImage: string;
     displayValidation: boolean;
     readonly: boolean;
-}) {
+}
+function NewCaptureSpec(props: Props) {
     const { connectorImage, readonly, displayValidation } = props;
-
     const tagsQuery = useQuery<ConnectorTag>(
         Tables.CONNECTOR_TAGS,
         {
@@ -35,7 +35,7 @@ function NewCaptureSpec(props: {
             filter: (query) => query.eq('id', connectorImage),
             count: 'exact',
         },
-        []
+        [connectorImage]
     );
     const { data: connector, error } = useSelectSingle(tagsQuery, {});
 
