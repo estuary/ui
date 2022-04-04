@@ -1,10 +1,10 @@
-import { useAsync } from 'hooks/useAsyncHandler';
+import { useAsyncHandler } from 'hooks/useAsyncHandler';
 import { isEmpty } from 'lodash';
 import { useCallback, useEffect } from 'react';
 import { supabase } from 'services/supabase';
 
 function useSupabase(query: (params?: any) => any, queryParams?: any) {
-    const asyncParams = useAsync<any[] | any>();
+    const asyncParams = useAsyncHandler<any[] | any>();
     const { run } = asyncParams;
 
     const runner = useCallback(() => {

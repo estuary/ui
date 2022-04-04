@@ -1,9 +1,9 @@
-import { useAsync } from 'hooks/useAsyncHandler';
+import { useAsyncHandler } from 'hooks/useAsyncHandler';
 import { useEffect } from 'react';
 import { callSupabase, supabase } from 'services/supabase';
 
 function useConnectors() {
-    const response = useAsync<any[]>();
+    const response = useAsyncHandler<any[]>();
     const { run } = response;
 
     useEffect(() => {

@@ -10,33 +10,35 @@ import {
 } from '@mui/material';
 import Error from 'components/shared/Error';
 import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
+import { Tables } from 'services/supabase';
 import { useQuery, useSelect } from 'supabase-swr';
 
+interface ConnectorTag {
+    connectors: {
+        detail: string;
+        image_name: string;
+    };
+    id: string;
+    image_tag: string;
+    protocol: string;
+    updated_at: string;
+}
+
 function ConnectorsTable() {
-    interface ConnectorTag {
-        connectors: {
-            detail: string;
-            image_name: string;
-        };
-        id: string;
-        image_tag: string;
-        protocol: string;
-        updated_at: string;
-    }
     const tagsQuery = useQuery<ConnectorTag>(
-        'connector_tags',
+        Tables.CONNECTOR_TAGS,
         {
             columns: `
-            connectors(
-                detail,
-                image_name
-            ),
-            id,
-            image_tag,
-            protocol,
-            updated_at
+                connectors(
+                    detail,
+                    image_name
+                ),
+                id,
+                image_tag,
+                protocol,
+                updated_at
             `,
-            filter: (q) => q.order('updated_at', { ascending: false }),
+            filter: (query) => query.order('updated_at', { ascending: false }),
         },
         []
     );
@@ -46,19 +48,15 @@ function ConnectorsTable() {
 
     const columns = [
         {
-            field: 'attributes.image_name',
             headerIntlKey: 'data.name',
         },
         {
-            field: 'attributes.detail',
             headerIntlKey: 'data.description',
         },
         {
-            field: 'attributes.protocol',
             headerIntlKey: 'data.type',
         },
         {
-            field: 'attributes.updated_at',
             headerIntlKey: 'data.updated_at',
         },
     ];
@@ -86,7 +84,7 @@ function ConnectorsTable() {
                             {columns.map((column, index) => {
                                 return (
                                     <TableCell
-                                        key={`${column.field}-${index}`}
+                                        key={`${column.headerIntlKey}-${index}`}
                                         style={columnStyling}
                                     >
                                         <FormattedMessage

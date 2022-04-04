@@ -108,4 +108,4 @@ function useAsyncHandler<T>(initialData?: T): Response<T, undefined> {
     };
 }
 
-export { useAsyncHandler as useAsync };
+export { useAsyncHandler };

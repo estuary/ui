@@ -17,7 +17,7 @@ import { useConfirmationModalContext } from 'context/Confirmation';
 import { MouseEvent, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from 'services/supabase';
+import { supabase, Tables } from 'services/supabase';
 import { ChangeSetState } from 'stores/ChangeSetStore';
 import useNotificationStore, {
     Notification,
@@ -26,6 +26,7 @@ import useNotificationStore, {
 import useSchemaEditorStore, {
     SchemaEditorState,
 } from 'stores/SchemaEditorStore';
+import { useQuery, useSelect } from 'supabase-swr';
 import NewCaptureEditor from './CatalogEditor';
 import NewCaptureDetails from './DetailsForm';
 import NewCaptureError from './Error';
@@ -50,9 +51,38 @@ const selectors = {
     connectors: (state: CaptureCreationState) => state.connectors,
 };
 
+interface ConnectorTag {
+    connectors: {
+        detail: string;
+        image_name: string;
+    };
+    id: string;
+    image_tag: string;
+    protocol: string;
+}
+
 function CaptureCreation() {
     const navigate = useNavigate();
     const confirmationModalContext = useConfirmationModalContext();
+
+    const tagsQuery = useQuery<ConnectorTag>(
+        Tables.CONNECTOR_TAGS,
+        {
+            columns: `
+                id, 
+                image_tag,
+                protocol,
+                connectors(detail, image_name)
+            `,
+            filter: (query) => query.eq('protocol', 'capture'),
+        },
+        []
+    );
+    const {
+        data: connectorsData,
+        // error,
+        // isValidating,
+    } = useSelect(tagsQuery, {});
 
     // Schema editor store
     const resourcesFromEditor = useSchemaEditorStore(selectors.resources);
@@ -72,8 +102,7 @@ function CaptureCreation() {
     const specFormData = useCaptureCreationStore(selectors.specFormData);
     const resetState = useCaptureCreationStore(selectors.resetState);
     const hasChanges = useCaptureCreationStore(selectors.hasChanges);
-    const connectors = useCaptureCreationStore(selectors.connectors);
-    const hasConnectors = connectors.length > 0;
+    const hasConnectors = connectorsData && connectorsData.data.length > 0;
 
     // Form props
     const [showValidation, setShowValidation] = useState(false);
@@ -141,8 +170,8 @@ function CaptureCreation() {
                             setFormSubmitting(false);
                         }
                     },
-                    (error) => {
-                        setFormSubmitError(error);
+                    (draftsError) => {
+                        setFormSubmitError(draftsError);
                         setFormSubmitting(false);
                     }
                 );
@@ -211,8 +240,8 @@ function CaptureCreation() {
                                 setFormSubmitting(false);
                             }
                         },
-                        (error) => {
-                            setFormSubmitError(error);
+                        (discoversError) => {
+                            setFormSubmitError(discoversError);
                             setFormSubmitting(false);
                         }
                     );
@@ -298,6 +327,7 @@ function CaptureCreation() {
                     <NewCaptureDetails
                         displayValidation={showValidation}
                         readonly={formSubmitting}
+                        connectorTags={[]}
                     />
                     <Typography variant="h5">Connection Config</Typography>
                     <Paper sx={{ width: '100%' }} variant="outlined">

@@ -77,7 +77,7 @@ function Error(props: ErrorProps) {
                                 {error.hint}
                             </ListItem>
                         </List>
-                    </Paper>{' '}
+                    </Paper>
                 </Collapse>
             </Alert>
         </Box>

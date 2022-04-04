@@ -1,4 +1,4 @@
-import { useAsync } from 'hooks/useAsyncHandler';
+import { useAsyncHandler } from 'hooks/useAsyncHandler';
 import JsonRefs from 'json-refs';
 import { useEffect } from 'react';
 import { callSupabase, supabase } from 'services/supabase';
@@ -15,7 +15,7 @@ const generateResponse = async (endpointResponse: any) => {
 };
 
 function useConnectorTags(imageId?: string) {
-    const response = useAsync<any>();
+    const response = useAsyncHandler<any>();
     const { run } = response;
 
     useEffect(() => {

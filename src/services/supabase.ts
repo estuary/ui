@@ -9,6 +9,14 @@ const supabaseSettings = {
     anonKey: process.env.REACT_APP_SUPABASE_ANON_KEY ?? '',
 };
 
+export enum Tables {
+    CONNECTOR_TAGS = 'connector_tags',
+    CONNECTORS = 'connectors',
+    DISCOVERS = 'discovers',
+    DRAFTS = 'drafts',
+    PROFILES = 'profiles',
+}
+
 export const supabase = createClient(
     supabaseSettings.url,
     supabaseSettings.anonKey

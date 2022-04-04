@@ -1,4 +1,5 @@
 import ConfirmationModalContextProvider from 'context/Confirmation';
+import AppData from 'context/Data';
 import { BaseComponentProps } from 'types';
 import { AuthProvider } from './Auth';
 import AppContent from './Content';
@@ -9,13 +10,15 @@ const AppProviders = ({ children }: BaseComponentProps) => {
     return (
         <AppContent>
             <AuthProvider>
-                <AppTheme>
-                    <AppRouter>
-                        <ConfirmationModalContextProvider>
-                            {children}
-                        </ConfirmationModalContextProvider>
-                    </AppRouter>
-                </AppTheme>
+                <AppData>
+                    <AppTheme>
+                        <AppRouter>
+                            <ConfirmationModalContextProvider>
+                                {children}
+                            </ConfirmationModalContextProvider>
+                        </AppRouter>
+                    </AppTheme>
+                </AppData>
             </AuthProvider>
         </AppContent>
     );
