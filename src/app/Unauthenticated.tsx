@@ -38,11 +38,11 @@ const Unauthenticated = () => {
                     </CardContent>
                     <CardContent>
                         <Auth
-                            providers={['google', 'github']}
+                            providers={['google']}
                             supabaseClient={supabase}
                             socialColors={true}
                             onlyThirdPartyProviders={!loginSettings.showEmail}
-                            redirectTo={window.location.href}
+                            redirectTo={window.location.origin}
                         />
                     </CardContent>
                 </Card>
