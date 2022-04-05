@@ -14,6 +14,7 @@
         "lint:fix": "eslint --fix --ext js,jsx,ts,tsx .",
         "lint-staged": "lint-staged --config .lint-staged.js",
         "typecheck": "tsc",
+        "generate-flow-types": "cd flow_deps && ./fetch-flow.sh && ./flow-bin/flowctl json-schema | ./flow-bin/flowctl schemalate typescript --name Catalog --hoist-definitions > flow.d.ts",
         "__build_deploy__": "npm run build; serve -s build"
     },
     "dependencies": {

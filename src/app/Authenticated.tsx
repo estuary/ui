@@ -44,6 +44,7 @@ const Authenticated = () => {
                         />
                     </Route>
                     <Route path="admin/*" element={<Admin />} />
+                    <Route path="builds" element={<Builds />} />
                 </Route>
                 <Route path="*" element={<Error />} />
             </Routes>

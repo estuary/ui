@@ -1,29 +1,28 @@
 import {
     Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
+    Divider,
     Paper,
     Stack,
     Toolbar,
     Typography,
 } from '@mui/material';
-import { RealtimeSubscription } from '@supabase/supabase-js';
-import NewCaptureSpec from 'components/capture/create/Spec';
 import useCaptureCreationStore, {
     CaptureCreationState,
 } from 'components/capture/create/Store';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
 import { useConfirmationModalContext } from 'context/Confirmation';
+import {
+    DiscoveredCatalog,
+    discoveredCatalogEndpoint,
+} from 'endpoints/discoveredCatalog';
 import { MouseEvent, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { LazyLog } from 'react-lazylog';
 import { useNavigate } from 'react-router-dom';
-import { useInterval } from 'react-use';
-import { DEFAULT_INTERVAL, supabase, Tables } from 'services/supabase';
-import { ChangeSetState } from 'stores/ChangeSetStore';
+import useChangeSetStore, {
+    ChangeSetState,
+    Entity,
+} from 'stores/ChangeSetStore';
 import useNotificationStore, {
     Notification,
     NotificationState,
@@ -31,10 +30,11 @@ import useNotificationStore, {
 import useSchemaEditorStore, {
     SchemaEditorState,
 } from 'stores/SchemaEditorStore';
-import { useQuery, useSelect } from 'supabase-swr';
 import NewCaptureEditor from './CatalogEditor';
 import NewCaptureDetails from './DetailsForm';
 import NewCaptureError from './Error';
+import NewCaptureSpecForm from './SpecForm';
+import NewCaptureSpecFormHeader from './SpecFormHeader';
 
 const FORM_ID = 'newCaptureForm';
 
@@ -44,7 +44,6 @@ const selectors = {
     resources: (state: SchemaEditorState) => state.resources,
     showNotification: (state: NotificationState) => state.showNotification,
     captureName: (state: CaptureCreationState) => state.details.data.name,
-    captureImage: (state: CaptureCreationState) => state.details.data.image,
     setDetails: (state: CaptureCreationState) => state.setDetails,
     resetState: (state: CaptureCreationState) => state.resetState,
     hasChanges: (state: CaptureCreationState) => state.hasChanges,
@@ -53,38 +52,14 @@ const selectors = {
         state.spec.errors,
     ],
     specFormData: (state: CaptureCreationState) => state.spec.data,
-    connectors: (state: CaptureCreationState) => state.connectors,
+    disoverLink: (state: CaptureCreationState) =>
+        state.links.discovered_catalog,
+    hasConnectors: (state: CaptureCreationState) => state.hasConnectors,
 };
-
-interface ConnectorTag {
-    connectors: {
-        detail: string;
-        image_name: string;
-    };
-    id: string;
-    image_tag: string;
-    protocol: string;
-}
 
 function CaptureCreation() {
     const navigate = useNavigate();
     const confirmationModalContext = useConfirmationModalContext();
-
-    const tagsQuery = useQuery<ConnectorTag>(
-        Tables.CONNECTOR_TAGS,
-        {
-            columns: `
-                id, 
-                image_tag,
-                protocol,
-                connectors(detail, image_name)
-            `,
-            filter: (query) => query.eq('protocol', 'capture'),
-        },
-        []
-    );
-    const { data: connectorTags } = useSelect(tagsQuery, {});
-    const hasConnectors = connectorTags && connectorTags.data.length > 0;
 
     // Schema editor store
     const resourcesFromEditor = useSchemaEditorStore(selectors.resources);
@@ -92,34 +67,32 @@ function CaptureCreation() {
         selectors.clearResources
     );
 
+    // Change set store
+    const addCaptureToChangeSet = useChangeSetStore(selectors.addCapture);
+
     // Notification store
     const showNotification = useNotificationStore(selectors.showNotification);
 
     // Form store
     const captureName = useCaptureCreationStore(selectors.captureName);
-    const captureImage = useCaptureCreationStore(selectors.captureImage);
     const [detailErrors, specErrors] = useCaptureCreationStore(
         selectors.errors
     );
     const specFormData = useCaptureCreationStore(selectors.specFormData);
+    const disoverLink = useCaptureCreationStore(selectors.disoverLink);
     const resetState = useCaptureCreationStore(selectors.resetState);
     const hasChanges = useCaptureCreationStore(selectors.hasChanges);
+    const hasConnectors = useCaptureCreationStore(selectors.hasConnectors);
 
     // Form props
     const [showValidation, setShowValidation] = useState(false);
     const [formSubmitting, setFormSubmitting] = useState(false);
-    const [formSaving, setFormSaving] = useState(false);
-    const [showLogs, setShowLogs] = useState(false);
-    const [saveLogs, setSaveLogs] = useState([
-        'waiting for logs...',
-        '...................',
-    ]);
-
     const [formSubmitError, setFormSubmitError] = useState<{
         message: string;
         errors: any[];
     } | null>(null);
-    const [catalogResponse, setCatalogResponse] = useState<any | null>(null);
+    const [catalogResponse, setCatalogResponse] =
+        useState<DiscoveredCatalog | null>(null);
 
     const exit = () => {
         if (Object.keys(resourcesFromEditor).length > 0) {
@@ -131,120 +104,43 @@ function CaptureCreation() {
         navigate('/captures');
     };
 
-    const [logToken, setLogToken] = useState<boolean | null>(null);
-    const [logOffset, setLogOffset] = useState<number>(0);
-
-    const discovers = {
-        done: (discoversSubscription: RealtimeSubscription) => {
-            setFormSubmitting(false);
-            return supabase
-                .removeSubscription(discoversSubscription)
-                .then(() => {})
-                .catch(() => {});
-        },
-        waitForFinish: () => {
-            const discoverStatus = supabase
-                .from(`discovers`)
-                .on('UPDATE', async (payload) => {
-                    setCatalogResponse(payload.new.catalog_spec);
-                    await discovers.done(discoverStatus);
-                })
-                .subscribe();
-
-            return discoverStatus;
-        },
-    };
-
-    const drafts = {
-        done: (draftsSubscription: RealtimeSubscription) => {
-            return supabase
-                .removeSubscription(draftsSubscription)
-                .then(() => {
-                    setLogToken(null);
-                    setFormSubmitting(false);
-                })
-                .catch(() => {});
-        },
-        waitForFinish: () => {
-            const draftsSubscription = supabase
-                .from(`drafts`)
-                .on('UPDATE', async () => {
-                    setFormSaving(false);
-                    const notification: Notification = {
-                        description:
-                            'Your new capture is published and ready to be used.',
-                        severity: 'success',
-                        title: 'New Capture Created',
-                    };
-                    showNotification(notification);
-
-                    await drafts.done(draftsSubscription);
-                })
-                .subscribe();
-
-            return draftsSubscription;
-        },
-    };
-
-    useInterval(
-        async () => {
-            const { data } = await supabase
-                .rpc('view_logs', {
-                    bearer_token: logToken,
-                })
-                .range(logOffset, logOffset + 10);
-
-            if (data && data.length > 0) {
-                const logsReduced = data.map((logData) => {
-                    return logData.log_line;
-                });
-                setLogOffset(logOffset + data.length);
-                setSaveLogs(saveLogs.concat(logsReduced));
-            }
-        },
-        logToken ? DEFAULT_INTERVAL : null
-    );
-
     // Form Event Handlers
     const handlers = {
-        saveAndPublish: (event: MouseEvent<HTMLElement>) => {
+        addToChangeSet: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
-            setFormSubmitting(true);
-            setFormSaving(true);
 
-            const draftsSubscription = drafts.waitForFinish();
-            supabase
-                .from('drafts')
-                .insert([
-                    {
-                        catalog_spec: catalogResponse,
-                    },
-                ])
-                .then(
-                    async (response) => {
-                        if (response.data) {
-                            // TODO Need to use this response as part of the subscribe somehow?
-                            if (response.data.length > 0) {
-                                setShowLogs(true);
-                                setLogToken(response.data[0].logs_token);
-                            }
-                        } else {
-                            // setFormSubmitError({
-                            //     message: 'Failed to create your discover',
-                            // });
-                            drafts
-                                .done(draftsSubscription)
-                                .then(() => {
-                                    setFormSubmitting(false);
-                                })
-                                .catch(() => {});
-                        }
-                    },
-                    (draftsError) => {
-                        setFormSubmitError(draftsError);
-                        setFormSubmitting(false);
-                    }
-                );
+            const catalogNamespace = captureName;
+
+            // TODO: Get connector type value from store.
+            const capture: Entity = {
+                metadata: {
+                    catalogNamespace,
+                    dateCreated: Date(),
+                    deploymentStatus: 'ACTIVE',
+                    connectorType: 'Hello World',
+                    name: catalogNamespace.substring(
+                        catalogNamespace.lastIndexOf('/') + 1,
+                        catalogNamespace.length
+                    ),
+                },
+                resources:
+                    Object.keys(resourcesFromEditor).length > 0
+                        ? resourcesFromEditor
+                        : catalogResponse,
+            };
+
+            const notification: Notification = {
+                description: 'Your changes can be viewed on the Builds page.',
+                severity: 'success',
+                title: 'New Capture Created',
+            };
+
+            addCaptureToChangeSet(catalogNamespace, capture);
+            showNotification(notification);
+
+            setFormSubmitting(true);
+
+            exit();
         },
 
         close: () => {
@@ -279,71 +175,26 @@ function CaptureCreation() {
                 setFormSubmitting(true);
                 setFormSubmitError(null);
 
-                // TODO (supabase) - `discovers:id=eq.${response.data[0].id}` was not working
-                const discoversSubscription = discovers.waitForFinish();
-                supabase
-                    .from('discovers')
-                    .insert([
-                        {
-                            capture_name: captureName,
-                            endpoint_config: specFormData,
-                            connector_tag_id: captureImage,
-                        },
-                    ])
-                    .then(
-                        (response) => {
-                            if (response.data) {
-                                console.log(response.data[0].logs_token);
-                            } else {
-                                discovers
-                                    .done(discoversSubscription)
-                                    .then(() => {
-                                        setFormSubmitting(false);
-                                    })
-                                    .catch(() => {});
-                            }
-                        },
-                        (discoversError) => {
-                            setFormSubmitError(discoversError);
-                            setFormSubmitting(false);
-                        }
-                    );
+                discoveredCatalogEndpoint
+                    .create(disoverLink, {
+                        name: captureName,
+                        config: specFormData,
+                    })
+                    .then((response) => {
+                        setCatalogResponse(response.data);
+                    })
+                    .catch((error) => {
+                        setFormSubmitError(error);
+                    })
+                    .finally(() => {
+                        setFormSubmitting(false);
+                    });
             }
         },
     };
 
     return (
         <PageContainer>
-            <Dialog
-                open={showLogs}
-                maxWidth="lg"
-                fullWidth
-                aria-labelledby="new-capture-saving-title"
-            >
-                <DialogTitle id="new-capture-saving-title">
-                    <FormattedMessage id="captureCreation.save.waitMessage" />
-                </DialogTitle>
-                <DialogContent
-                    sx={{
-                        height: 300,
-                    }}
-                >
-                    <LazyLog
-                        extraLines={1}
-                        stream={true}
-                        text={saveLogs.join('\r\n')}
-                        caseInsensitive
-                        enableSearch
-                        follow={true}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button disabled={formSaving} onClick={exit}>
-                        Close
-                    </Button>
-                </DialogActions>
-            </Dialog>
-
             <Toolbar>
                 <Typography variant="h6" noWrap>
                     <FormattedMessage id="captureCreation.heading" />
@@ -373,7 +224,7 @@ function CaptureCreation() {
                     </Button>
 
                     <Button
-                        onClick={handlers.saveAndPublish}
+                        onClick={handlers.addToChangeSet}
                         disabled={!catalogResponse || formSubmitting}
                         color="success"
                         variant="contained"
@@ -393,40 +244,27 @@ function CaptureCreation() {
 
             <ErrorBoundryWrapper>
                 <form id={FORM_ID}>
-                    {connectorTags ? (
-                        <>
-                            <Typography variant="h5">
-                                Capture Details
-                            </Typography>
-                            <NewCaptureDetails
-                                displayValidation={showValidation}
-                                readonly={formSubmitting}
-                                connectorTags={connectorTags.data}
-                            />
-                        </>
-                    ) : null}
-
-                    {captureImage ? (
-                        <>
-                            <Typography variant="h5">
-                                Connection Config
-                            </Typography>
-                            <Paper sx={{ width: '100%' }}>
-                                <NewCaptureSpec
-                                    displayValidation={showValidation}
-                                    readonly={formSubmitting}
-                                    connectorImage={captureImage}
-                                />
-                            </Paper>
-                        </>
-                    ) : null}
+                    <Typography variant="h5">Capture Details</Typography>
+                    <NewCaptureDetails
+                        displayValidation={showValidation}
+                        readonly={formSubmitting}
+                    />
+                    <Typography variant="h5">Connection Config</Typography>
+                    <Paper sx={{ width: '100%' }} variant="outlined">
+                        <NewCaptureSpecFormHeader />
+                        <Divider />
+                        <NewCaptureSpecForm
+                            displayValidation={showValidation}
+                            readonly={formSubmitting}
+                        />
+                    </Paper>
                 </form>
             </ErrorBoundryWrapper>
 
             {catalogResponse ? (
                 <>
                     <Typography variant="h5">Catalog Editor</Typography>
-                    <NewCaptureEditor data={catalogResponse} />
+                    <NewCaptureEditor data={catalogResponse.attributes} />
                 </>
             ) : null}
         </PageContainer>
