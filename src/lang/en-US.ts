@@ -91,6 +91,10 @@ const Error: ResolvedIntlConfig['messages'] = {
     'error.hintLabel': `Hint:`,
 };
 
+const LogsDialog: ResolvedIntlConfig['messages'] = {
+    'logs.default': `waiting for logs...`,
+};
+
 const AdminPage: ResolvedIntlConfig['messages'] = {
     'connectorTable.title': `Installed ${CommonMessages['terms.connectors']}`,
     'connectorTable.title.aria': `Table of all installed ${CommonMessages['terms.connectors']}`,
@@ -129,6 +133,7 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
+    ...LogsDialog,
     ...AdminPage,
     ...Error,
     ...LoginPage,

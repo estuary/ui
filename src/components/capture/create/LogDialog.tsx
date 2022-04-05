@@ -5,7 +5,7 @@ import {
     DialogTitle,
 } from '@mui/material';
 import { ReactNode, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { LazyLog } from 'react-lazylog';
 import { useInterval } from 'react-use';
 import { DEFAULT_INTERVAL, Rpcs, supabase } from 'services/supabase';
@@ -13,15 +13,22 @@ import { DEFAULT_INTERVAL, Rpcs, supabase } from 'services/supabase';
 interface Props {
     open: boolean;
     token: string | null;
+    title: string;
     defaultMessage?: string;
     actionComponent: ReactNode;
 }
 
 function LogDialog(props: Props) {
     const { open, token, defaultMessage, actionComponent } = props;
+    const intl = useIntl();
 
     const [offset, setOffset] = useState(0);
-    const [logs, setLogs] = useState([defaultMessage ?? 'waiting for logs...']);
+    const [logs, setLogs] = useState([
+        defaultMessage ??
+            intl.formatMessage({
+                id: 'logs.default',
+            }),
+    ]);
 
     useInterval(
         async () => {
@@ -47,9 +54,9 @@ function LogDialog(props: Props) {
             open={open}
             maxWidth="lg"
             fullWidth
-            aria-labelledby="new-capture-saving-title"
+            aria-labelledby="logs-dialog-title"
         >
-            <DialogTitle id="new-capture-saving-title">
+            <DialogTitle id="logs-dialog-title">
                 <FormattedMessage id="captureCreation.save.waitMessage" />
             </DialogTitle>
             <DialogContent

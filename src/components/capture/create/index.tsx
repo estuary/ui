@@ -1,5 +1,6 @@
-import { Button, Stack, Toolbar, Typography } from '@mui/material';
+import { Button } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
+import NewCaptureHeader from 'components/capture/create/Header';
 import LogDialog from 'components/capture/create/LogDialog';
 import NewCaptureSpec from 'components/capture/create/Spec';
 import useCaptureCreationStore, {
@@ -9,7 +10,7 @@ import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
 import { useConfirmationModalContext } from 'context/Confirmation';
 import { MouseEvent, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { supabase, Tables } from 'services/supabase';
 import { ChangeSetState } from 'stores/ChangeSetStore';
@@ -56,6 +57,7 @@ interface ConnectorTag {
 }
 
 function CaptureCreation() {
+    const intl = useIntl();
     const navigate = useNavigate();
     const confirmationModalContext = useConfirmationModalContext();
 
@@ -285,6 +287,9 @@ function CaptureCreation() {
             <LogDialog
                 open={showLogs}
                 token={logToken}
+                title={intl.formatMessage({
+                    id: 'captureCreation.save.waitMessage',
+                })}
                 actionComponent={
                     <>
                         {saveStatus}
@@ -294,45 +299,15 @@ function CaptureCreation() {
                     </>
                 }
             />
-            <Toolbar>
-                <Typography variant="h6" noWrap>
-                    <FormattedMessage id="captureCreation.heading" />
-                </Typography>
 
-                <Stack
-                    direction="row"
-                    alignItems="center"
-                    sx={{
-                        ml: 'auto',
-                    }}
-                >
-                    <Button onClick={handlers.close} color="error">
-                        <FormattedMessage id="cta.cancel" />
-                    </Button>
-
-                    <Button
-                        onClick={handlers.test}
-                        disabled={formSubmitting || !hasConnectors}
-                        form={FORM_ID}
-                        type="submit"
-                        color="success"
-                        variant="contained"
-                        disableElevation
-                    >
-                        <FormattedMessage id="captureCreation.ctas.discover" />
-                    </Button>
-
-                    <Button
-                        onClick={handlers.saveAndPublish}
-                        disabled={!catalogResponse || formSubmitting}
-                        color="success"
-                        variant="contained"
-                        disableElevation
-                    >
-                        <FormattedMessage id="cta.saveEntity" />
-                    </Button>
-                </Stack>
-            </Toolbar>
+            <NewCaptureHeader
+                close={handlers.close}
+                test={handlers.test}
+                testDisabled={formSubmitting || !hasConnectors}
+                save={handlers.saveAndPublish}
+                saveDisabled={!catalogResponse || formSubmitting}
+                formId={FORM_ID}
+            />
 
             {formSubmitError && (
                 <NewCaptureError
