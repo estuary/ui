@@ -169,7 +169,9 @@ const Registration = () => {
 
                             <Typography sx={{ mb: 2 }}>
                                 Already have an account?{' '}
-                                <Link underline="hover">Sign In</Link>
+                                <Link href="/" underline="hover">
+                                    Sign In
+                                </Link>
                             </Typography>
 
                             <Button
