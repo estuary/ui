@@ -11,9 +11,9 @@ import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
 import { useConfirmationModalContext } from 'context/Confirmation';
 import { MouseEvent, useState } from 'react';
-import { useIntl } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
-import { supabase, Tables } from 'services/supabase';
+import { supabase, TABLES } from 'services/supabase';
 import { ChangeSetState } from 'stores/ChangeSetStore';
 import useNotificationStore, {
     Notification,
@@ -62,6 +62,12 @@ interface ConnectorTag {
     image_tag: string;
     protocol: string;
 }
+const connectorTagQuery = `
+    id, 
+    image_tag,
+    protocol,
+    connectors(detail, image_name)
+`;
 
 function CaptureCreation() {
     const intl = useIntl();
@@ -69,14 +75,9 @@ function CaptureCreation() {
     const confirmationModalContext = useConfirmationModalContext();
 
     const tagsQuery = useQuery<ConnectorTag>(
-        Tables.CONNECTOR_TAGS,
+        TABLES.CONNECTOR_TAGS,
         {
-            columns: `
-                id, 
-                image_tag,
-                protocol,
-                connectors(detail, image_name)
-            `,
+            columns: connectorTagQuery,
             filter: (query) => query.eq('protocol', 'capture'),
         },
         []
@@ -169,7 +170,9 @@ function CaptureCreation() {
                 .on('UPDATE', async () => {
                     setFormState({
                         status: CaptureCreationFormStatus.IDLE,
-                        saveStatus: 'Success!',
+                        saveStatus: intl.formatMessage({
+                            id: 'captureCreation.status.success',
+                        }),
                     });
                     const notification: Notification = {
                         description:
@@ -193,12 +196,14 @@ function CaptureCreation() {
             event.preventDefault();
             setFormState({
                 status: CaptureCreationFormStatus.SAVING,
-                saveStatus: 'running...',
+                saveStatus: intl.formatMessage({
+                    id: 'captureCreation.status.running',
+                }),
             });
 
             const draftsSubscription = drafts.waitForFinish();
             supabase
-                .from('drafts')
+                .from(TABLES.DRAFTS)
                 .insert([
                     {
                         catalog_spec: catalogResponse,
@@ -223,7 +228,9 @@ function CaptureCreation() {
                                 .then(() => {
                                     setFormState({
                                         status: CaptureCreationFormStatus.IDLE,
-                                        saveStatus: 'Failed',
+                                        saveStatus: intl.formatMessage({
+                                            id: 'captureCreation.status.failed',
+                                        }),
                                     });
                                 })
                                 .catch(() => {});
@@ -233,7 +240,9 @@ function CaptureCreation() {
                         setFormSubmitError(draftsError);
                         setFormState({
                             status: CaptureCreationFormStatus.IDLE,
-                            saveStatus: 'Failed',
+                            saveStatus: intl.formatMessage({
+                                id: 'captureCreation.status.failed',
+                            }),
                         });
                     }
                 );
@@ -272,13 +281,15 @@ function CaptureCreation() {
             } else {
                 setFormState({
                     status: CaptureCreationFormStatus.TESTING,
-                    saveStatus: 'testing...',
+                    saveStatus: intl.formatMessage({
+                        id: 'captureCreation.status.running',
+                    }),
                 });
 
                 // TODO (supabase) - `discovers:id=eq.${response.data[0].id}` was not working
                 const discoversSubscription = discovers.waitForFinish();
                 supabase
-                    .from('discovers')
+                    .from(TABLES.DISCOVERS)
                     .insert([
                         {
                             capture_name: captureName,
@@ -324,7 +335,7 @@ function CaptureCreation() {
                             disabled={status !== CaptureCreationFormStatus.IDLE}
                             onClick={exit}
                         >
-                            Close
+                            <FormattedMessage id="cta.close" />
                         </Button>
                     </>
                 }
@@ -363,9 +374,11 @@ function CaptureCreation() {
                 </form>
             </ErrorBoundryWrapper>
 
-            {catalogResponse ? (
-                <NewCaptureEditor data={catalogResponse} />
-            ) : null}
+            <ErrorBoundryWrapper>
+                {catalogResponse ? (
+                    <NewCaptureEditor data={catalogResponse} />
+                ) : null}
+            </ErrorBoundryWrapper>
         </PageContainer>
     );
 }

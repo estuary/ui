@@ -9,7 +9,7 @@ const supabaseSettings = {
     anonKey: process.env.REACT_APP_SUPABASE_ANON_KEY ?? '',
 };
 
-export enum Tables {
+export enum TABLES {
     CONNECTOR_TAGS = 'connector_tags',
     CONNECTORS = 'connectors',
     DISCOVERS = 'discovers',
@@ -17,7 +17,7 @@ export enum Tables {
     PROFILES = 'profiles',
 }
 
-export enum Rpcs {
+export enum RPCS {
     VIEW_LOGS = 'view_logs',
 }
 

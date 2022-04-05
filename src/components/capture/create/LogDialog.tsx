@@ -8,7 +8,7 @@ import { ReactNode, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { LazyLog } from 'react-lazylog';
 import { useInterval } from 'react-use';
-import { DEFAULT_INTERVAL, Rpcs, supabase } from 'services/supabase';
+import { DEFAULT_INTERVAL, RPCS, supabase } from 'services/supabase';
 
 interface Props {
     open: boolean;
@@ -33,7 +33,7 @@ function LogDialog(props: Props) {
     useInterval(
         async () => {
             const { data: viewLogsResponse } = await supabase
-                .rpc(Rpcs.VIEW_LOGS, {
+                .rpc(RPCS.VIEW_LOGS, {
                     bearer_token: token,
                 })
                 .range(offset, offset + 10);

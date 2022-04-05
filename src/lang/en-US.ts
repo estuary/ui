@@ -17,6 +17,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     // CTA
     'cta.addToChangeSet': `Add to Change Set`,
     'cta.cancel': `Cancel`,
+    'cta.close': `Close`,
     'cta.continue': `Continue`,
     'cta.delete': `Delete`,
     'cta.download': `Download`,
@@ -120,6 +121,9 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreation.finalReview.instructions': `Look over the catalog configuration that was generated. If you want to edit anything you can do that directly in the editor. Once you're ready you can download the file for your local.`,
     'captureCreation.test.waitMessage': `Please wait while we try to connect to this endpoint.`,
     'captureCreation.save.waitMessage': `Please wait while we test, save, and publish your capture.`,
+    'captureCreation.status.running': `running...`,
+    'captureCreation.status.failed': `Failed`,
+    'captureCreation.status.success': `Success!`,
 };
 
 const Captures: ResolvedIntlConfig['messages'] = {

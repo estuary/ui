@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import Error from 'components/shared/Error';
 import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
-import { Tables } from 'services/supabase';
+import { TABLES } from 'services/supabase';
 import { useQuery, useSelect } from 'supabase-swr';
 
 interface ConnectorTag {
@@ -26,7 +26,7 @@ interface ConnectorTag {
 
 function ConnectorsTable() {
     const tagsQuery = useQuery<ConnectorTag>(
-        Tables.CONNECTOR_TAGS,
+        TABLES.CONNECTOR_TAGS,
         {
             columns: `
                 connectors(

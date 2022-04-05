@@ -2,7 +2,7 @@ import { Divider, Paper, Typography } from '@mui/material';
 import NewCaptureSpecForm from 'components/capture/create/SpecForm';
 import NewCaptureSpecFormHeader from 'components/capture/create/SpecFormHeader';
 import Error from 'components/shared/Error';
-import { Tables } from 'services/supabase';
+import { TABLES } from 'services/supabase';
 import { useQuery, useSelectSingle } from 'supabase-swr';
 
 interface ConnectorTag {
@@ -20,7 +20,7 @@ interface Props {
 function NewCaptureSpec(props: Props) {
     const { connectorImage } = props;
     const tagsQuery = useQuery<ConnectorTag>(
-        Tables.CONNECTOR_TAGS,
+        TABLES.CONNECTOR_TAGS,
         {
             columns: `
                 connectors(
