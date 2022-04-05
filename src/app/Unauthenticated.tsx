@@ -1,11 +1,16 @@
 import { Card, CardContent, Grid, Typography } from '@mui/material';
 import { Auth } from '@supabase/ui';
 import Topbar from 'components/header/Topbar';
+import { lazy } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { Route, Routes } from 'react-router';
 import { supabase } from 'services/supabase';
 import { getLoginSettings } from 'utils/env-utils';
 
-const Unauthenticated = () => {
+// const Login = lazy(() => import('../pages/Login'));
+const Registration = lazy(() => import('../pages/Registration'));
+
+export const MainUnauthenticated = () => {
     const loginSettings = getLoginSettings();
 
     return (
@@ -48,6 +53,15 @@ const Unauthenticated = () => {
                 </Card>
             </Grid>
         </Grid>
+    );
+}
+
+const Unauthenticated = () => {
+    return (
+        <Routes>
+            <Route path="register" element={<Registration />} />
+            <Route path="*" element={<Registration />} />
+        </Routes>
     );
 };
 
