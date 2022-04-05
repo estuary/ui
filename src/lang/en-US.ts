@@ -23,6 +23,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'cta.download': `Download`,
     'cta.login': `Login`,
     'cta.oidc.google': `Login with Google`,
+    'cta.register': `Sign Up`,
     'cta.clickHere': `click here`,
     'cta.moreDetails': `More Details`,
     'cta.saveEntity': `Save and Publish`,
@@ -32,6 +33,8 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
 
     // Data
     'data.name': `Name`,
+    'data.firstName': `First name`,
+    'data.lastName': `Last name`,
     'data.description': `Description`,
     'data.status': `Status`,
     'data.type': `Type`,
@@ -39,6 +42,8 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'data.updated_at': `Updated`,
     'data.email': `Email`,
     'data.display_name': `User Name`,
+    'data.company': `Company`,
+    'data.register.intendedUse': `Describe your use case`,
 
     // Confirmations
     'confirm.title': `Are you sure?`,
@@ -57,6 +62,15 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'capturesource.label': `Source type`,
     'capturesource.fetch.failed': `Failed to fetch source types`,
     'username.label': `User Name`,
+
+    // Login Page Stuff
+    'login.main.message': `When running locally you can login with whatever name you want.`,
+
+    // Registration Page
+    'register.heading': `We're currently accepting Beta partners.`,
+    'register.main.message': `Please enter your information and our team will approve your account.`,
+    'register.documentAcknowledgement': `Accept our Terms of Service and Privacy Policy`,
+    'register.existingAccount': `Already have an account? `,
 
     // Captures main page
     'captures.main.message1': `Click the "New Capture" button up above to get started.`,

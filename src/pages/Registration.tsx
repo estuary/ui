@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import Topbar from 'components/header/Topbar';
 import { useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 interface RegistrationRequest {
     firstName: string;
@@ -23,6 +24,8 @@ interface RegistrationRequest {
 }
 
 const Registration = () => {
+    const intl = useIntl();
+
     const [firstName, setFirstName] = useState<string>('');
     const [lastName, setLastName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
@@ -88,16 +91,13 @@ const Registration = () => {
                         <Typography
                             variant="h6"
                             align="center"
-                            sx={{ mb: 1 }}
-                        >{`We're currently accepting Beta partners.`}</Typography>
-
-                        <Typography sx={{ mb: 3 }}>
-                            Please enter your information and our team will
-                            approve your account.
+                            sx={{ mb: 1.5 }}
+                        >
+                            <FormattedMessage id="register.heading" />
                         </Typography>
 
-                        <Typography align="center" sx={{ mb: 1 }}>
-                            Optional: Johnny invited you to join Estuary
+                        <Typography sx={{ mb: 1 }}>
+                            <FormattedMessage id="register.main.message" />
                         </Typography>
                     </CardContent>
 
@@ -114,7 +114,9 @@ const Registration = () => {
                         >
                             <TextField
                                 id="first-name"
-                                label="First name"
+                                label={intl.formatMessage({
+                                    id: 'data.firstName',
+                                })}
                                 value={firstName}
                                 required
                                 onChange={handlers.updateFirstName}
@@ -123,7 +125,9 @@ const Registration = () => {
 
                             <TextField
                                 id="last-name"
-                                label="Last name"
+                                label={intl.formatMessage({
+                                    id: 'data.lastName',
+                                })}
                                 value={lastName}
                                 required
                                 onChange={handlers.updateLastName}
@@ -132,7 +136,9 @@ const Registration = () => {
 
                             <TextField
                                 id="email"
-                                label="Email"
+                                label={intl.formatMessage({
+                                    id: 'data.email',
+                                })}
                                 value={email}
                                 required
                                 onChange={handlers.updateEmail}
@@ -141,7 +147,9 @@ const Registration = () => {
 
                             <TextField
                                 id="company"
-                                label="Company"
+                                label={intl.formatMessage({
+                                    id: 'data.company',
+                                })}
                                 value={company}
                                 required
                                 onChange={handlers.updateCompany}
@@ -150,7 +158,9 @@ const Registration = () => {
 
                             <TextField
                                 id="describe-intended-use"
-                                label="Describe your use case"
+                                label={intl.formatMessage({
+                                    id: 'data.register.intendedUse',
+                                })}
                                 value={useCase}
                                 required
                                 multiline
@@ -160,7 +170,9 @@ const Registration = () => {
 
                             <FormControlLabel
                                 control={<Checkbox required />}
-                                label="Accept our Terms of Service and Privacy Policy"
+                                label={intl.formatMessage({
+                                    id: 'register.documentAcknowledgement',
+                                })}
                                 onChange={
                                     handlers.updateDocumentAcknowledgement
                                 }
@@ -168,7 +180,7 @@ const Registration = () => {
                             />
 
                             <Typography sx={{ mb: 2 }}>
-                                Already have an account?{' '}
+                                <FormattedMessage id="register.existingAccount" />
                                 <Link href="/" underline="hover">
                                     Sign In
                                 </Link>
@@ -179,7 +191,7 @@ const Registration = () => {
                                 type="submit"
                                 disableElevation
                             >
-                                Sign Up
+                                <FormattedMessage id="cta.register" />
                             </Button>
                         </form>
                     </CardActions>
