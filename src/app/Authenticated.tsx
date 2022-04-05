@@ -25,6 +25,7 @@ const Authenticated = () => {
             <Routes>
                 <Route element={<AppLayout />}>
                     <Route path="/" element={<Home />} />
+                    <Route path="/test/builds" element={<Builds />} />
                     <Route path="/dashboard" element={<Home />} />
                     <Route path="collections" element={<Collections />} />
                     <Route path="captures" element={<Captures />} />

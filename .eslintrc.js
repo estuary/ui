@@ -27,5 +27,8 @@ module.exports = {
 
         // We're using a new React so I think this is safe
         'react/react-in-jsx-scope': 'off',
+
+        // Just do not agree with this one
+        'no-negated-condition': 'off',
     },
 };

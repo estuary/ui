@@ -27,7 +27,7 @@ const useSafeDispatch = (dispatch: Function) => {
     );
 };
 
-export interface UseAsyncResponse<T, U> {
+export interface Response<T, U> {
     data: U extends undefined ? T | null : T;
     error: any;
     isError: boolean;
@@ -35,15 +35,18 @@ export interface UseAsyncResponse<T, U> {
     isLoading: boolean;
     isSuccess: boolean;
     reset: () => any;
-    run: (promise: Promise<any>, dataFetcher?: Function | undefined) => any;
+    run: (
+        promise: Promise<any> | PromiseLike<any>,
+        dataFetcher?: Function | undefined
+    ) => any;
     setData: (setDataResponse: T) => void;
     setError: (setErrorResponse: any) => any;
     status: States;
 }
 
-function useAsync<T>(): UseAsyncResponse<T, undefined>;
-function useAsync<T>(initialData: T): UseAsyncResponse<T, T>;
-function useAsync<T>(initialData?: T): UseAsyncResponse<T, undefined> {
+function useAsyncHandler<T>(): Response<T, undefined>;
+function useAsyncHandler<T>(initialData: T): Response<T, T>;
+function useAsyncHandler<T>(initialData?: T): Response<T, undefined> {
     const initialStateRef = useRef({
         ...defaultInitialState,
         ...{
@@ -74,7 +77,7 @@ function useAsync<T>(initialData?: T): UseAsyncResponse<T, undefined> {
     );
 
     const run = useCallback(
-        (promise: Promise<T>) => {
+        (promise: Promise<T> | PromiseLike<T>) => {
             safeSetState({ status: States.LOADING });
             return promise.then(
                 (runResponse) => {
@@ -105,4 +108,4 @@ function useAsync<T>(initialData?: T): UseAsyncResponse<T, undefined> {
     };
 }
 
-export { useAsync };
+export { useAsyncHandler };

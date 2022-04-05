@@ -1,93 +1,54 @@
-import { AccountAttributes, accountEndpoint } from 'endpoints/account';
-import { sessionEndpoints, SessionLocalAttributes } from 'endpoints/session';
+import { authEndpoints, AuthTokenResponseReduced } from 'endpoints/auth';
+import { isEmpty } from 'lodash';
 
-export interface AuthDetails {
-    session: SessionLocalAttributes;
-    user?: AccountAttributes;
-}
-
-export const sessionStorageKey = '__auth_session__';
-export const userStorageKey = '__auth_user__';
+export const tokenStorageKey = '__auth_token__';
 
 export const auth = {
-    getAccountDetails(path: string) {
-        return new Promise<AccountAttributes>((resolve, reject) => {
-            return accountEndpoint
-                .read(path)
-                .then((response) => {
-                    resolve(response.data.attributes);
+    getAuthHeader() {
+        const token = auth.getToken();
+        let response;
+
+        if (!isEmpty(token)) {
+            const authHeader = window.btoa(`${token.accessToken}`);
+
+            response = `Bearer ${authHeader}`;
+        }
+
+        return response;
+    },
+    fetchToken() {
+        return new Promise<AuthTokenResponseReduced>((resolve, reject) => {
+            return authEndpoints.session.tokens
+                .read()
+                .then((tokenResponse) => {
+                    const tokenResponseReduced = {
+                        accessToken: tokenResponse.accessToken,
+                        ext: tokenResponse.credential.ext,
+                        expires: tokenResponse.expires,
+                        IDToken: tokenResponse.IDToken,
+                    };
+                    auth.saveToken(tokenResponseReduced);
+                    resolve(tokenResponseReduced);
                 })
-                .catch((error) => {
+                .catch(async (error) => {
+                    await auth.signout();
                     reject(error);
                 });
         });
     },
-    getAuthDetails() {
-        const session = window.localStorage.getItem(sessionStorageKey);
-        let response: AuthDetails | null = null;
+    getToken(): AuthTokenResponseReduced {
+        const tokens = window.localStorage.getItem(tokenStorageKey);
 
-        if (session) {
-            const user = window.localStorage.getItem(userStorageKey);
-
-            response = { session: JSON.parse(session) };
-
-            if (user) {
-                response.user = JSON.parse(user);
-            }
-        }
-
-        return response;
+        return JSON.parse(tokens ? tokens : '{}');
     },
-    getAuthHeader() {
-        const authDetails = auth.getAuthDetails();
-        let response;
-
-        if (authDetails?.session) {
-            const token = window.btoa(
-                `${authDetails.session.account_id}:${authDetails.session.token}`
-            );
-
-            response = `Basic ${token}`;
-        }
-
-        return response;
+    saveToken(tokens: AuthTokenResponseReduced) {
+        window.localStorage.setItem(tokenStorageKey, JSON.stringify(tokens));
     },
-    removeAuthDetails() {
-        window.localStorage.removeItem(sessionStorageKey);
-        window.localStorage.removeItem(userStorageKey);
-    },
-    saveSession(session: AuthDetails['session']) {
-        window.localStorage.setItem(sessionStorageKey, JSON.stringify(session));
-    },
-    saveUser(user: AuthDetails['user']) {
-        window.localStorage.setItem(userStorageKey, JSON.stringify(user));
-    },
-    signin(username: string) {
-        return new Promise<AccountAttributes['display_name']>(
-            (resolve, reject) => {
-                return sessionEndpoints
-                    .create(username)
-                    .then((sessionResponse) => {
-                        auth.saveSession(sessionResponse.data.attributes);
-                        auth.getAccountDetails(
-                            sessionResponse.data.links.account
-                        )
-                            .then((accountDetails) => {
-                                auth.saveUser(accountDetails);
-                                resolve(accountDetails.display_name);
-                            })
-                            .catch((accountError) => {
-                                reject(accountError);
-                            });
-                    })
-                    .catch((error) => {
-                        reject(error);
-                    });
-            }
-        );
+    removeToken() {
+        window.localStorage.removeItem(tokenStorageKey);
     },
     async signout(callback?: VoidFunction) {
-        auth.removeAuthDetails();
+        auth.removeToken();
         callback?.();
     },
 };

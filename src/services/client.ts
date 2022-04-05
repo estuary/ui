@@ -1,3 +1,4 @@
+import { getAPIPath } from 'utils/env-utils';
 import { auth } from './auth';
 
 export interface ClientConfig<T> extends RequestInit {
@@ -11,6 +12,7 @@ export const client = <Response, Request = {}>(
     const config: NonNullable<RequestInit> = {
         body: data ? JSON.stringify(data) : undefined,
         method: data ? 'POST' : 'GET',
+        credentials: 'include',
         ...customConfig,
     };
 
@@ -28,9 +30,7 @@ export const client = <Response, Request = {}>(
     config.headers = headersInit;
 
     // TODO: probably need to remove this for production
-    const API_ENDPOINT = window.Estuary?.api_endpoint
-        ? window.Estuary.api_endpoint
-        : process.env.REACT_APP_API_BASE_URL;
+    const API_ENDPOINT = getAPIPath();
 
     // TODO Sometimes rest returns the full path so handling that here for now
     const fullEndpoint = /^(http)s?:\/\//i.test(endpoint)

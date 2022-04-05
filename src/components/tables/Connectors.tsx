@@ -8,33 +8,55 @@ import {
     TableRow,
     Typography,
 } from '@mui/material';
-import useConnectors from 'hooks/useConnectors';
+import Error from 'components/shared/Error';
 import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
+import { Tables } from 'services/supabase';
+import { useQuery, useSelect } from 'supabase-swr';
+
+interface ConnectorTag {
+    connectors: {
+        detail: string;
+        image_name: string;
+    };
+    id: string;
+    image_tag: string;
+    protocol: string;
+    updated_at: string;
+}
 
 function ConnectorsTable() {
-    const { data: connectorsData, isLoading, error } = useConnectors();
+    const tagsQuery = useQuery<ConnectorTag>(
+        Tables.CONNECTOR_TAGS,
+        {
+            columns: `
+                connectors(
+                    detail,
+                    image_name
+                ),
+                id,
+                image_tag,
+                protocol,
+                updated_at
+            `,
+            filter: (query) => query.order('updated_at', { ascending: false }),
+        },
+        []
+    );
+    const { data: tags, error, isValidating } = useSelect(tagsQuery, {});
 
     const intl = useIntl();
 
     const columns = [
         {
-            field: 'attributes.name',
             headerIntlKey: 'data.name',
         },
         {
-            field: 'attributes.description',
             headerIntlKey: 'data.description',
         },
         {
-            field: 'attributes.type',
             headerIntlKey: 'data.type',
         },
         {
-            field: 'attributes.maintainer',
-            headerIntlKey: 'data.maintainer',
-        },
-        {
-            field: 'attributes.updated_at',
             headerIntlKey: 'data.updated_at',
         },
     ];
@@ -47,14 +69,14 @@ function ConnectorsTable() {
     return (
         <Box>
             <Typography>
-                <FormattedMessage id="terms.connectors" />
+                <FormattedMessage id="connectorTable.title" />
             </Typography>
             <TableContainer component={Box}>
                 <Table
                     size="small"
                     sx={{ minWidth: 350 }}
                     aria-label={intl.formatMessage({
-                        id: 'connectors.title',
+                        id: 'connectorTable.title.aria',
                     })}
                 >
                     <TableHead>
@@ -62,7 +84,7 @@ function ConnectorsTable() {
                             {columns.map((column, index) => {
                                 return (
                                     <TableCell
-                                        key={`${column.field}-${index}`}
+                                        key={`${column.headerIntlKey}-${index}`}
                                         style={columnStyling}
                                     >
                                         <FormattedMessage
@@ -74,7 +96,7 @@ function ConnectorsTable() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {isLoading ? (
+                        {isValidating ? (
                             <TableRow>
                                 <TableCell colSpan={columns.length}>
                                     <FormattedMessage id="common.loading" />
@@ -83,32 +105,28 @@ function ConnectorsTable() {
                         ) : error ? (
                             <TableRow>
                                 <TableCell colSpan={columns.length}>
-                                    {error}
+                                    <Error error={error} />
                                 </TableCell>
                             </TableRow>
-                        ) : connectorsData && connectorsData.length > 0 ? (
-                            connectorsData.map((row, index) => (
-                                <TableRow
-                                    key={`Connector-${row.attributes.name}-${index}`}
-                                >
+                        ) : tags?.data ? (
+                            tags.data.map((row, index) => (
+                                <TableRow key={`Connector-${row.id}-${index}`}>
                                     <TableCell style={columnStyling}>
-                                        {row.attributes.name}
+                                        {row.connectors.image_name}
+                                        {row.image_tag}
                                     </TableCell>
                                     <TableCell style={columnStyling}>
-                                        {row.attributes.description}
+                                        {row.connectors.detail}
                                     </TableCell>
                                     <TableCell style={columnStyling}>
-                                        {row.attributes.type}
-                                    </TableCell>
-                                    <TableCell style={columnStyling}>
-                                        {row.attributes.maintainer}
+                                        {row.protocol}
                                     </TableCell>
                                     <TableCell style={columnStyling}>
                                         <FormattedDate
                                             day="numeric"
                                             month="long"
                                             year="numeric"
-                                            value={row.attributes.updated_at}
+                                            value={row.updated_at}
                                         />
                                     </TableCell>
                                 </TableRow>

@@ -2,12 +2,35 @@
 // https://testing-library.com/docs/react-testing-library/setup#custom-render
 
 import { render as rtlRender, RenderOptions } from '@testing-library/react';
-import { AuthContext } from 'context/Auth';
 import AppContent from 'context/Content';
 import AppRouter from 'context/Router';
 import AppTheme from 'context/Theme';
+import { add, getUnixTime } from 'date-fns';
+import { AuthTokenResponseReduced } from 'endpoints/auth';
+import produce from 'immer';
 import { ReactElement } from 'react';
-import { auth, AuthDetails } from 'services/auth';
+import { auth, tokenStorageKey } from 'services/auth';
+
+const getMockTokenReduced = (username: string) => {
+    return {
+        accessToken: 'access_token_value',
+        ext: {
+            avatarURL: 'http://example.org',
+            displayName: username,
+            email: 'userName@example.org',
+            firstName: 'Firstname',
+            lastName: 'Lastname',
+            locale: 'en',
+            orgs: ['example.org'],
+        },
+        expires: getUnixTime(
+            add(new Date(), {
+                years: 1,
+            })
+        ),
+        IDToken: 'id_token_value',
+    };
+};
 
 // TODO - this does not really do anything because we hardcode
 //   the username down below on the MockAuthProvider. However,
@@ -15,29 +38,11 @@ import { auth, AuthDetails } from 'services/auth';
 //   so we can leverage this when wanting to test the "on load auth"
 //   functionality
 const loginAsUser = (username: string) => {
-    const mockAuthDetails: AuthDetails = {
-        session: {
-            account_id: '',
-            expires_at: '',
-            token: '',
-        },
-        user: {
-            created_at: '',
-            display_name: username,
-            email: `${username}@${username}`,
-            id: '',
-            name: username,
-            unique_name: username,
-            updated_at: '',
-        },
-    };
-
-    auth.saveSession(mockAuthDetails.session);
-    auth.saveUser(mockAuthDetails.user);
+    auth.saveToken(getMockTokenReduced(username));
 };
 
 const logoutUser = () => {
-    auth.removeAuthDetails();
+    auth.removeToken();
 };
 
 const goTo = (route?: string, name?: string) => {
@@ -45,6 +50,38 @@ const goTo = (route?: string, name?: string) => {
         {},
         name ? name : 'Test page',
         route ? route : '/'
+    );
+};
+
+const updateAuthToken = (settings: Partial<AuthTokenResponseReduced>) => {
+    window.localStorage.setItem(
+        tokenStorageKey,
+        JSON.stringify(
+            produce(auth.getToken(), (draft) => {
+                return {
+                    ...draft,
+                    ...settings,
+                };
+            })
+        )
+    );
+};
+
+const updateAuthTokenExt = (
+    settings: Partial<AuthTokenResponseReduced['ext']>
+) => {
+    window.localStorage.setItem(
+        tokenStorageKey,
+        JSON.stringify(
+            produce(auth.getToken(), (draft) => {
+                draft.ext = {
+                    ...draft.ext,
+                    ...settings,
+                };
+
+                return draft;
+            })
+        )
     );
 };
 
@@ -59,25 +96,13 @@ const waitForLoading = async () => {
 //  account bootstrapping.
 interface MockAuthProps {
     children: JSX.Element;
-    username: string | null;
+    username?: string;
 }
 const MockAuthProvider = ({ children, username }: MockAuthProps) => {
-    const value = {
-        login: jest.fn(() => {
-            if (username) {
-                loginAsUser(username);
-            }
-            return Promise.resolve();
-        }),
-        logout: jest.fn(() => {
-            logoutUser();
-            return Promise.resolve();
-        }),
-        user: username,
-    };
-
     return (
-        <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+        <>
+            Your user name is {username} and {children}
+        </>
     );
 };
 
@@ -85,16 +110,16 @@ const customRender = async (
     ui: ReactElement,
     options: Omit<RenderOptions, 'wrapper'> & {
         route?: string;
-        user?: string;
+        username?: string;
     }
 ) => {
-    const { route, user } = options;
+    const { route, username } = options;
 
     goTo(route, 'Test Page');
 
     const view = rtlRender(
         <AppContent>
-            <MockAuthProvider username={user ?? null}>
+            <MockAuthProvider username={username}>
                 <AppTheme>
                     <AppRouter>{ui}</AppRouter>
                 </AppTheme>
@@ -111,4 +136,12 @@ const customRender = async (
 };
 
 export * from '@testing-library/react';
-export { goTo, loginAsUser, logoutUser, customRender, waitForLoading };
+export {
+    goTo,
+    loginAsUser,
+    logoutUser,
+    customRender,
+    waitForLoading,
+    updateAuthToken,
+    updateAuthTokenExt,
+};

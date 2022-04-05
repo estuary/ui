@@ -16,6 +16,9 @@ function HelpMenu() {
             <ExternalLinkMenuItem link="https://join.slack.com/t/estuary-dev/shared_invite/zt-86nal6yr-VPbv~YfZE9Q~6Zl~gmZdFQ">
                 Estuary&apos;s Slack
             </ExternalLinkMenuItem>
+            <ExternalLinkMenuItem link="mailto: flow-support@estuary.dev">
+                Email Support
+            </ExternalLinkMenuItem>
             <ExternalLinkMenuItem link="https://www.estuary.dev/#get-in-touch">
                 Contact Us
             </ExternalLinkMenuItem>

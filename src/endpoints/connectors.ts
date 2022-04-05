@@ -1,8 +1,9 @@
 import { client } from 'services/client';
+import { callSupabase, supabase } from 'services/supabase';
 import { BaseResponse } from 'types';
 
 export enum ConnectorTypes {
-    SOURCE = 'source',
+    CAPTURE = 'capture',
     MATERIALIZATION = 'materialization',
 }
 
@@ -100,6 +101,13 @@ export const connectorsEndpoint = {
         },
     },
     read: () => {
-        return client<ConnectorsResponse>('connectors');
+        return callSupabase(
+            supabase
+                .from('connectors')
+                .select(`detail, image_name, updated_at, id`)
+                .order('updated_at', {
+                    ascending: false,
+                })
+        );
     },
 };

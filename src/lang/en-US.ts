@@ -21,17 +21,18 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'cta.delete': `Delete`,
     'cta.download': `Download`,
     'cta.login': `Login`,
+    'cta.oidc.google': `Login with Google`,
     'cta.clickHere': `click here`,
     'cta.moreDetails': `More Details`,
-    'cta.saveEntity': `Save and ACTIONWORD`,
+    'cta.saveEntity': `Save and Publish`,
 
     // Terms
     'terms.connectors': `Connectors`,
-    'terms.accounts': `Accounts`,
 
     // Data
     'data.name': `Name`,
     'data.description': `Description`,
+    'data.status': `Status`,
     'data.type': `Type`,
     'data.maintainer': `Maintainer`,
     'data.updated_at': `Updated`,
@@ -45,12 +46,6 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     // Full Page
     'fullpage.error': `Major Error`,
 
-    // Connectors table
-    'connectors.title': `All installed connectors`,
-
-    // Accounts table
-    'accounts.title': `All existing accounts`,
-
     // Error Boundry
     'errorBoundry.title': `Error`,
     'errorBoundry.message1': `Sorry - there was an unexpected error in some UI code. `,
@@ -62,9 +57,6 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'capturesource.fetch.failed': `Failed to fetch source types`,
     'username.label': `User Name`,
 
-    // Login Page Stuff
-    'login.main.message': `When running locally you can login with whatever name you want.`,
-
     // Captures main page
     'captures.main.message1': `Click the "New Capture" button up above to get started.`,
     'captures.main.message2': `It will guide you through generating and downloading a valid {docLink}.`,
@@ -72,7 +64,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'captures.main.message2.docPath': `https://docs.estuary.dev/concepts/#captures`,
 
     // Landing page content
-    'home.main.header': `Welcome to Control Plane!`,
+    'home.main.header': `Welcome to Flow!`,
     'home.main.description': `Click the Capture link over on the side navigation to get started.`,
 
     //Rest of the pages go down here. They don't have real pages right now.
@@ -90,7 +82,25 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'entityTable.data.actions': `Actions`,
 };
 
-const Capture_Create: ResolvedIntlConfig['messages'] = {
+const Error: ResolvedIntlConfig['messages'] = {
+    'error.title': `Error`,
+    'error.message': `This is not something you did wrong. There was a technical issue fetching data. Please contact support.`,
+    'error.codeLabel': `Code:`,
+    'error.messageLabel': `Message:`,
+    'error.detailsLabel': `Details:`,
+    'error.hintLabel': `Hint:`,
+};
+
+const AdminPage: ResolvedIntlConfig['messages'] = {
+    'connectorTable.title': `Installed ${CommonMessages['terms.connectors']}`,
+    'connectorTable.title.aria': `Table of all installed ${CommonMessages['terms.connectors']}`,
+};
+
+const LoginPage: ResolvedIntlConfig['messages'] = {
+    'login.oidc.message': `Please use one of the providers below to continue.`,
+};
+
+const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreation.ctas.discover': `Test Config`,
     'captureCreation.heading': `New Capture`,
     'captureCreation.instructions': `To get started please provide a unique name and the source type of the Capture you want to create. Once you've filled out the source details you can click "Test Capture" down below to test the connection.`,
@@ -104,17 +114,27 @@ const Capture_Create: ResolvedIntlConfig['messages'] = {
     'captureCreation.save.failed': `Capture creation failed. Please see below for details:`,
     'captureCreation.editor.default': `Before you can edit the Capture Catalog you need to fill out the connection config section and click Discover`,
     'captureCreation.finalReview.instructions': `Look over the catalog configuration that was generated. If you want to edit anything you can do that directly in the editor. Once you're ready you can download the file for your local.`,
+    'captureCreation.test.waitMessage': `Please wait while we try to connect to this endpoint.`,
+    'captureCreation.save.waitMessage': `Please wait while we test, save, and publish your capture.`,
 };
 
-const Materialization_Create: ResolvedIntlConfig['messages'] = {
+const Captures: ResolvedIntlConfig['messages'] = {
+    'capturesTable.title': `Your Captures`,
+};
+
+const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreation.heading': `New Materialization`,
     'materializationCreation.instructions': `To get started please provide a unique name, select an endpoint type, and select the Collections you want to Materialize. After that you can review the YAML before saving.`,
 };
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
-    ...Capture_Create,
-    ...Materialization_Create,
+    ...AdminPage,
+    ...Error,
+    ...LoginPage,
+    ...Captures,
+    ...CaptureCreate,
+    ...MaterializationCreate,
 };
 
 export default enUSMessages;

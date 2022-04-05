@@ -2,10 +2,10 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { Box, IconButton, Stack, Toolbar } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
 import { useTheme } from '@mui/material/styles';
+import { Auth } from '@supabase/ui';
 import UserMenu from 'components/menus/UserMenu';
 import { useIntl } from 'react-intl';
 import { BaseComponentProps } from 'types';
-import { useAuth } from '../../context/Auth';
 import HelpMenu from '../menus/HelpMenu';
 import Logo from '../navigation/Logo';
 
@@ -18,7 +18,7 @@ const Topbar = (props: TopbarProps) => {
     const { onNavigationToggle } = props;
     const intl = useIntl();
     const theme = useTheme();
-    const { user } = useAuth();
+    const { user } = Auth.useUser();
 
     const openNavigation = () => {
         onNavigationToggle?.(true);

@@ -1,14 +1,15 @@
 import AddIcon from '@mui/icons-material/Add';
-import { Button, Toolbar } from '@mui/material';
-import CatalogList from 'components/CatalogList';
+import { Box, Button, SxProps, Theme, Toolbar } from '@mui/material';
 import PageContainer from 'components/shared/PageContainer';
-import { useState } from 'react';
+import CapturesTable from 'components/tables/Captures';
 import { NavLink } from 'react-router-dom';
 
-const Capture = () => {
-    const [captureList] = useState([]);
-    const [isLoading] = useState(false);
+const boxStyling: SxProps<Theme> = {
+    marginBottom: 2,
+    padding: 2,
+};
 
+const Capture = () => {
     return (
         <PageContainer>
             <Toolbar
@@ -29,7 +30,9 @@ const Capture = () => {
                     </Button>
                 </NavLink>
             </Toolbar>
-            <CatalogList captures={captureList} isLoading={isLoading} />
+            <Box sx={boxStyling}>
+                <CapturesTable />
+            </Box>
         </PageContainer>
     );
 };

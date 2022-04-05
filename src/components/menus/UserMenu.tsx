@@ -1,23 +1,34 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import EmailIcon from '@mui/icons-material/Email';
 import Logout from '@mui/icons-material/Logout';
-import { Avatar } from '@mui/material';
+import { Avatar, Stack, Typography } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import MenuItem from '@mui/material/MenuItem';
-import { useAuth } from '../../context/Auth';
+import { Auth } from '@supabase/ui';
+import { supabase } from 'services/supabase';
 import IconMenu from './IconMenu';
 
 const UserMenu = () => {
-    const { logout, user } = useAuth();
-    const handleClick = () => {
-        void logout();
+    const { user } = Auth.useUser();
+
+    const userName = user?.user_metadata.full_name;
+    const email = user?.user_metadata.email;
+    const emailVerified = user?.user_metadata.email_verified;
+    const avatar = user?.user_metadata.avatar_url;
+
+    const handleClick = async () => {
+        const { error } = await supabase.auth.signOut();
+
+        console.log('error logging out', error);
     };
 
-    if (user) {
+    if (userName && email) {
         return (
             <IconMenu
                 ariaLabel="Open account menu"
-                icon={<Avatar>{user.charAt(0)}</Avatar>}
+                icon={<Avatar src={avatar ?? ''}>{userName.charAt(0)}</Avatar>}
                 identifier="account-menu"
                 tooltip="Account Settings"
             >
@@ -25,12 +36,25 @@ const UserMenu = () => {
                     <ListItemIcon>
                         <AccountCircleIcon fontSize="small" />
                     </ListItemIcon>
-                    {user}
+                    {userName}
                 </MenuItem>
+                <MenuItem>
+                    <ListItemIcon>
+                        <EmailIcon fontSize="small" />
+                    </ListItemIcon>
+
+                    <Stack spacing={0}>
+                        <Typography>{email}</Typography>
+                        {emailVerified ? (
+                            <Typography variant="caption">verified</Typography>
+                        ) : null}
+                    </Stack>
+                </MenuItem>
+
                 <Divider />
                 <MenuItem
                     onClick={() => {
-                        handleClick();
+                        void handleClick();
                     }}
                 >
                     <ListItemIcon>
