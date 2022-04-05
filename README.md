@@ -6,7 +6,7 @@ The web UI for Estuary Flow.
 
 You'll need to make sure the UI ahas the depencies installed. For the UI this should be straight forward and running `npm install` in the UI root directory.
 
-You'll also need to make sure you're running the [Control Plane](https://github.com/estuary/flow/crates/control) locally. This should be running on port `3009` (for right now... we'll make it a variable soon);
+You'll also need internet connectivity so you can reach our Supabase API.
 
 # How do I run the UI?
 
