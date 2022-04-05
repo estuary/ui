@@ -42,6 +42,7 @@ const Unauthenticated = () => {
                             supabaseClient={supabase}
                             socialColors={true}
                             onlyThirdPartyProviders={!loginSettings.showEmail}
+                            redirectTo={window.location.origin}
                         />
                     </CardContent>
                 </Card>
