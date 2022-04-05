@@ -136,22 +136,39 @@ const themeSettings = createTheme({
     },
 } as ThemeOptions);
 
+const ColorModeContext = React.createContext({
+    toggleColorMode: () => {},
+});
 const AppTheme = ({ children }: BaseComponentProps) => {
     const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+    const [mode, setMode] = React.useState<PaletteOptions>(
+        prefersDarkMode ? darkMode : lightMode
+    );
+    const toggler = React.useMemo(() => {
+        return () => {
+            setMode((prevMode: any) =>
+                prevMode === lightMode ? darkMode : lightMode
+            );
+        };
+    }, []);
 
     const generatedTheme = React.useMemo(() => {
         return createTheme({
             ...themeSettings,
-            palette: prefersDarkMode ? darkMode : lightMode,
+            palette: mode,
         });
-    }, [prefersDarkMode]);
+    }, [mode]);
 
     return (
-        <ThemeProvider theme={generatedTheme}>
-            <CssBaseline />
-            {children}
-        </ThemeProvider>
+        <ColorModeContext.Provider value={{ toggleColorMode: toggler }}>
+            <ThemeProvider theme={generatedTheme}>
+                <CssBaseline />
+                {children}
+            </ThemeProvider>
+        </ColorModeContext.Provider>
     );
 };
+
+export const useColorMode = () => React.useContext(ColorModeContext);
 
 export default AppTheme;
