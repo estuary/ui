@@ -24,20 +24,22 @@ interface ConnectorTag {
     updated_at: string;
 }
 
+const CONNECTOR_TAGS_QUERY = `
+    connectors(
+        detail,
+        image_name
+    ),
+    id,
+    image_tag,
+    protocol,
+    updated_at
+`;
+
 function ConnectorsTable() {
     const tagsQuery = useQuery<ConnectorTag>(
         TABLES.CONNECTOR_TAGS,
         {
-            columns: `
-                connectors(
-                    detail,
-                    image_name
-                ),
-                id,
-                image_tag,
-                protocol,
-                updated_at
-            `,
+            columns: CONNECTOR_TAGS_QUERY,
             filter: (query) => query.order('updated_at', { ascending: false }),
         },
         []
