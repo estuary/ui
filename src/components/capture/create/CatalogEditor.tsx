@@ -1,11 +1,11 @@
 import Editor from '@monaco-editor/react';
 import {
     Box,
-    DialogContentText,
     List,
     ListItemButton,
     ListItemText,
     Paper,
+    Typography,
     useTheme,
 } from '@mui/material';
 import { DiscoveredCatalogAttributes } from 'endpoints/discoveredCatalog';
@@ -74,9 +74,10 @@ function NewCaptureEditor(props: NewCaptureEditorProps) {
 
     return (
         <>
-            <DialogContentText>
+            <Typography variant="h5">Catalog Editor</Typography>
+            <Typography>
                 <FormattedMessage id="captureCreation.finalReview.instructions" />
-            </DialogContentText>
+            </Typography>
             <Paper variant="outlined">
                 {data ? (
                     <Box

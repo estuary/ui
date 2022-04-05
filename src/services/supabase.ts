@@ -17,6 +17,10 @@ export enum Tables {
     PROFILES = 'profiles',
 }
 
+export enum Rpcs {
+    VIEW_LOGS = 'view_logs',
+}
+
 export const supabase = createClient(
     supabaseSettings.url,
     supabaseSettings.anonKey

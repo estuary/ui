@@ -1,4 +1,4 @@
-import { Divider, Paper } from '@mui/material';
+import { Divider, Paper, Typography } from '@mui/material';
 import NewCaptureSpecForm from 'components/capture/create/SpecForm';
 import NewCaptureSpecFormHeader from 'components/capture/create/SpecFormHeader';
 import Error from 'components/shared/Error';
@@ -43,18 +43,21 @@ function NewCaptureSpec(props: Props) {
         return <Error error={error} />;
     } else if (connector?.data) {
         return (
-            <Paper sx={{ width: '100%' }} variant="outlined">
-                <NewCaptureSpecFormHeader
-                    name={connector.data.connectors.image_name}
-                    docsPath={connector.data.documentation_url}
-                />
-                <Divider />
-                <NewCaptureSpecForm
-                    endpointSchema={connector.data.endpoint_spec_schema}
-                    displayValidation={displayValidation}
-                    readonly={readonly}
-                />
-            </Paper>
+            <>
+                <Typography variant="h5">Connection Config</Typography>
+                <Paper sx={{ width: '100%' }} variant="outlined">
+                    <NewCaptureSpecFormHeader
+                        name={connector.data.connectors.image_name}
+                        docsPath={connector.data.documentation_url}
+                    />
+                    <Divider />
+                    <NewCaptureSpecForm
+                        endpointSchema={connector.data.endpoint_spec_schema}
+                        displayValidation={displayValidation}
+                        readonly={readonly}
+                    />
+                </Paper>
+            </>
         );
     } else {
         return null;

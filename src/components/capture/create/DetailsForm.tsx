@@ -1,6 +1,6 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
-import { Alert, Stack } from '@mui/material';
+import { Alert, Stack, Typography } from '@mui/material';
 import useCaptureCreationStore, {
     CaptureCreationState,
 } from 'components/capture/create/Store';
@@ -91,6 +91,8 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
 
     return (
         <>
+            <Typography variant="h5">Capture Details</Typography>
+
             <FormattedMessage id="captureCreation.instructions" />
 
             <Stack direction="row" spacing={2}>

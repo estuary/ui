@@ -1,15 +1,6 @@
-import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Paper,
-    Stack,
-    Toolbar,
-    Typography,
-} from '@mui/material';
+import { Button, Stack, Toolbar, Typography } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
+import LogDialog from 'components/capture/create/LogDialog';
 import NewCaptureSpec from 'components/capture/create/Spec';
 import useCaptureCreationStore, {
     CaptureCreationState,
@@ -19,10 +10,8 @@ import PageContainer from 'components/shared/PageContainer';
 import { useConfirmationModalContext } from 'context/Confirmation';
 import { MouseEvent, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { LazyLog } from 'react-lazylog';
 import { useNavigate } from 'react-router-dom';
-import { useInterval } from 'react-use';
-import { DEFAULT_INTERVAL, supabase, Tables } from 'services/supabase';
+import { supabase, Tables } from 'services/supabase';
 import { ChangeSetState } from 'stores/ChangeSetStore';
 import useNotificationStore, {
     Notification,
@@ -110,10 +99,6 @@ function CaptureCreation() {
     const [formSubmitting, setFormSubmitting] = useState(false);
     const [formSaving, setFormSaving] = useState(false);
     const [showLogs, setShowLogs] = useState(false);
-    const [saveLogs, setSaveLogs] = useState([
-        'waiting for logs...',
-        '...................',
-    ]);
     const [saveStatus, setSaveStatus] = useState<string | null>(null);
 
     const [formSubmitError, setFormSubmitError] = useState<{
@@ -132,8 +117,7 @@ function CaptureCreation() {
         navigate('/captures');
     };
 
-    const [logToken, setLogToken] = useState<boolean | null>(null);
-    const [logOffset, setLogOffset] = useState<number>(0);
+    const [logToken, setLogToken] = useState<string | null>(null);
 
     const discovers = {
         done: (discoversSubscription: RealtimeSubscription) => {
@@ -187,25 +171,6 @@ function CaptureCreation() {
             return draftsSubscription;
         },
     };
-
-    useInterval(
-        async () => {
-            const { data } = await supabase
-                .rpc('view_logs', {
-                    bearer_token: logToken,
-                })
-                .range(logOffset, logOffset + 10);
-
-            if (data && data.length > 0) {
-                const logsReduced = data.map((logData) => {
-                    return logData.log_line;
-                });
-                setLogOffset(logOffset + data.length);
-                setSaveLogs(saveLogs.concat(logsReduced));
-            }
-        },
-        logToken ? DEFAULT_INTERVAL : null
-    );
 
     // Form Event Handlers
     const handlers = {
@@ -317,37 +282,18 @@ function CaptureCreation() {
 
     return (
         <PageContainer>
-            <Dialog
+            <LogDialog
                 open={showLogs}
-                maxWidth="lg"
-                fullWidth
-                aria-labelledby="new-capture-saving-title"
-            >
-                <DialogTitle id="new-capture-saving-title">
-                    <FormattedMessage id="captureCreation.save.waitMessage" />
-                </DialogTitle>
-                <DialogContent
-                    sx={{
-                        height: 300,
-                    }}
-                >
-                    <LazyLog
-                        extraLines={1}
-                        stream={true}
-                        text={saveLogs.join('\r\n')}
-                        caseInsensitive
-                        enableSearch
-                        follow={true}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    {saveStatus}
-                    <Button disabled={formSaving} onClick={exit}>
-                        Close
-                    </Button>
-                </DialogActions>
-            </Dialog>
-
+                token={logToken}
+                actionComponent={
+                    <>
+                        {saveStatus}
+                        <Button disabled={formSaving} onClick={exit}>
+                            Close
+                        </Button>
+                    </>
+                }
+            />
             <Toolbar>
                 <Typography variant="h6" noWrap>
                     <FormattedMessage id="captureCreation.heading" />
@@ -398,40 +344,25 @@ function CaptureCreation() {
             <ErrorBoundryWrapper>
                 <form id={FORM_ID}>
                     {connectorTags ? (
-                        <>
-                            <Typography variant="h5">
-                                Capture Details
-                            </Typography>
-                            <NewCaptureDetails
-                                displayValidation={showValidation}
-                                readonly={formSubmitting}
-                                connectorTags={connectorTags.data}
-                            />
-                        </>
+                        <NewCaptureDetails
+                            displayValidation={showValidation}
+                            readonly={formSubmitting}
+                            connectorTags={connectorTags.data}
+                        />
                     ) : null}
 
                     {captureImage ? (
-                        <>
-                            <Typography variant="h5">
-                                Connection Config
-                            </Typography>
-                            <Paper sx={{ width: '100%' }}>
-                                <NewCaptureSpec
-                                    displayValidation={showValidation}
-                                    readonly={formSubmitting}
-                                    connectorImage={captureImage}
-                                />
-                            </Paper>
-                        </>
+                        <NewCaptureSpec
+                            displayValidation={showValidation}
+                            readonly={formSubmitting}
+                            connectorImage={captureImage}
+                        />
                     ) : null}
                 </form>
             </ErrorBoundryWrapper>
 
             {catalogResponse ? (
-                <>
-                    <Typography variant="h5">Catalog Editor</Typography>
-                    <NewCaptureEditor data={catalogResponse} />
-                </>
+                <NewCaptureEditor data={catalogResponse} />
             ) : null}
         </PageContainer>
     );
