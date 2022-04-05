@@ -4,6 +4,7 @@ import {
     CardActions,
     CardContent,
     Checkbox,
+    FormControl,
     FormControlLabel,
     Grid,
     Link,
@@ -23,6 +24,15 @@ interface RegistrationRequest {
     acknowledgedDocuments: boolean;
 }
 
+interface Errors {
+    firstName: boolean;
+    lastName: boolean;
+    email: boolean;
+    company: boolean;
+    useCase: boolean;
+    acknowledgedDocuments: boolean;
+}
+
 const Registration = () => {
     const intl = useIntl();
 
@@ -33,6 +43,15 @@ const Registration = () => {
     const [useCase, setUseCase] = useState<string>('');
     const [acknowledgedDocuments, setAcknowledgedDocuments] =
         useState<boolean>(false);
+
+    const [errors, setErrors] = useState<Errors>({
+        firstName: false,
+        lastName: false,
+        email: false,
+        company: false,
+        useCase: false,
+        acknowledgedDocuments: false,
+    });
 
     const handlers = {
         updateFirstName: (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,6 +74,37 @@ const Registration = () => {
             checked: boolean
         ) => {
             setAcknowledgedDocuments(checked);
+        },
+        validateFirstName: () => {
+            setErrors({ ...errors, firstName: !firstName });
+        },
+        validateLastName: () => {
+            setErrors({ ...errors, lastName: !lastName });
+        },
+        validateEmail: () => {
+            setErrors({ ...errors, email: !email });
+        },
+        validateCompany: () => {
+            setErrors({ ...errors, company: !company });
+        },
+        validateUseCase: () => {
+            setErrors({ ...errors, useCase: !useCase });
+        },
+        validateDocumentAcknowledgement: () => {
+            setErrors({
+                ...errors,
+                acknowledgedDocuments: !acknowledgedDocuments,
+            });
+        },
+        signUp: () => {
+            setErrors({
+                firstName: !firstName,
+                lastName: !lastName,
+                email: !email,
+                company: !company,
+                useCase: !useCase,
+                acknowledgedDocuments: !acknowledgedDocuments,
+            });
         },
         submit: (event: React.FormEvent<HTMLFormElement>) => {
             event.preventDefault();
@@ -118,8 +168,10 @@ const Registration = () => {
                                     id: 'data.firstName',
                                 })}
                                 value={firstName}
+                                error={errors.firstName}
                                 required
                                 onChange={handlers.updateFirstName}
+                                onBlur={handlers.validateFirstName}
                                 sx={{ width: 250, mb: 3 }}
                             />
 
@@ -129,8 +181,10 @@ const Registration = () => {
                                     id: 'data.lastName',
                                 })}
                                 value={lastName}
+                                error={errors.lastName}
                                 required
                                 onChange={handlers.updateLastName}
+                                onBlur={handlers.validateLastName}
                                 sx={{ width: 250, mb: 3 }}
                             />
 
@@ -140,8 +194,10 @@ const Registration = () => {
                                     id: 'data.email',
                                 })}
                                 value={email}
+                                error={errors.email}
                                 required
                                 onChange={handlers.updateEmail}
+                                onBlur={handlers.validateEmail}
                                 sx={{ width: 250, mb: 3 }}
                             />
 
@@ -151,8 +207,10 @@ const Registration = () => {
                                     id: 'data.company',
                                 })}
                                 value={company}
+                                error={errors.company}
                                 required
                                 onChange={handlers.updateCompany}
+                                onBlur={handlers.validateCompany}
                                 sx={{ width: 250, mb: 3 }}
                             />
 
@@ -162,22 +220,36 @@ const Registration = () => {
                                     id: 'data.register.intendedUse',
                                 })}
                                 value={useCase}
+                                error={errors.useCase}
                                 required
                                 multiline
                                 onChange={handlers.updateUseCase}
+                                onBlur={handlers.validateUseCase}
                                 sx={{ width: 250, mb: 3 }}
                             />
 
-                            <FormControlLabel
-                                control={<Checkbox required />}
-                                label={intl.formatMessage({
-                                    id: 'register.documentAcknowledgement',
-                                })}
-                                onChange={
-                                    handlers.updateDocumentAcknowledgement
-                                }
+                            <FormControl
+                                error={errors.acknowledgedDocuments}
                                 sx={{ mb: 4, mx: 0 }}
-                            />
+                            >
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            value={acknowledgedDocuments}
+                                            required
+                                        />
+                                    }
+                                    label={intl.formatMessage({
+                                        id: 'register.documentAcknowledgement',
+                                    })}
+                                    onChange={
+                                        handlers.updateDocumentAcknowledgement
+                                    }
+                                    onBlur={
+                                        handlers.validateDocumentAcknowledgement
+                                    }
+                                />
+                            </FormControl>
 
                             <Typography sx={{ mb: 2 }}>
                                 <FormattedMessage id="register.existingAccount" />
@@ -190,6 +262,7 @@ const Registration = () => {
                                 variant="contained"
                                 type="submit"
                                 disableElevation
+                                onClick={handlers.signUp}
                             >
                                 <FormattedMessage id="cta.register" />
                             </Button>
