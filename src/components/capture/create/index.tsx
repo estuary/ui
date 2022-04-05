@@ -114,6 +114,7 @@ function CaptureCreation() {
         'waiting for logs...',
         '...................',
     ]);
+    const [saveStatus, setSaveStatus] = useState<string | null>(null);
 
     const [formSubmitError, setFormSubmitError] = useState<{
         message: string;
@@ -169,6 +170,7 @@ function CaptureCreation() {
             const draftsSubscription = supabase
                 .from(`drafts`)
                 .on('UPDATE', async () => {
+                    setSaveStatus('Success!');
                     setFormSaving(false);
                     const notification: Notification = {
                         description:
@@ -211,6 +213,7 @@ function CaptureCreation() {
             event.preventDefault();
             setFormSubmitting(true);
             setFormSaving(true);
+            setSaveStatus('running...');
 
             const draftsSubscription = drafts.waitForFinish();
             supabase
@@ -338,6 +341,7 @@ function CaptureCreation() {
                     />
                 </DialogContent>
                 <DialogActions>
+                    {saveStatus}
                     <Button disabled={formSaving} onClick={exit}>
                         Close
                     </Button>
