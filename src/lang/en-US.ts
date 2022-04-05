@@ -114,6 +114,7 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreation.save.failed': `Capture creation failed. Please see below for details:`,
     'captureCreation.editor.default': `Before you can edit the Capture Catalog you need to fill out the connection config section and click Discover`,
     'captureCreation.finalReview.instructions': `Look over the catalog configuration that was generated. If you want to edit anything you can do that directly in the editor. Once you're ready you can download the file for your local.`,
+    'captureCreation.test.waitMessage': `Please wait while we try to connect to this endpoint.`,
     'captureCreation.save.waitMessage': `Please wait while we test, save, and publish your capture.`,
 };
 

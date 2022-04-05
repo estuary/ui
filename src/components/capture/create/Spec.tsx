@@ -1,44 +1,56 @@
-import { Divider, Paper, Skeleton } from '@mui/material';
+import { Divider, Paper } from '@mui/material';
 import NewCaptureSpecForm from 'components/capture/create/SpecForm';
 import NewCaptureSpecFormHeader from 'components/capture/create/SpecFormHeader';
-import useCaptureCreationStore, {
-    CaptureCreationState,
-} from 'components/capture/create/Store';
 import Error from 'components/shared/Error';
-import useConnectorTags from 'hooks/useConnectorTags';
+import { Tables } from 'services/supabase';
+import { useQuery, useSelectSingle } from 'supabase-swr';
 
-const selectors = {
-    captureImage: (state: CaptureCreationState) => state.details.data.image,
-};
+interface ConnectorTag {
+    connectors: {
+        image_name: string;
+    };
+    id: string;
+    endpoint_spec_schema: string;
+    documentation_url: string;
+}
 
-function NewCaptureSpec(props: {
+interface Props {
+    connectorImage: string;
     displayValidation: boolean;
     readonly: boolean;
-}) {
-    const { readonly, displayValidation } = props;
-    const captureImage = useCaptureCreationStore(selectors.captureImage);
-    const {
-        data: connector,
-        isError,
-        isSuccess,
-        isLoading,
-        error,
-    } = useConnectorTags(captureImage);
+}
+function NewCaptureSpec(props: Props) {
+    const { connectorImage, readonly, displayValidation } = props;
+    const tagsQuery = useQuery<ConnectorTag>(
+        Tables.CONNECTOR_TAGS,
+        {
+            columns: `
+                connectors(
+                    image_name
+                ),
+                id,
+                endpoint_spec_schema, 
+                documentation_url
+            `,
+            filter: (query) => query.eq('id', connectorImage),
+            count: 'exact',
+        },
+        [connectorImage]
+    );
+    const { data: connector, error } = useSelectSingle(tagsQuery, {});
 
-    if (isError) {
+    if (error) {
         return <Error error={error} />;
-    } else if (isLoading) {
-        return <Skeleton variant="rectangular" height={40} width="50%" />;
-    } else if (isSuccess && connector) {
+    } else if (connector?.data) {
         return (
             <Paper sx={{ width: '100%' }} variant="outlined">
                 <NewCaptureSpecFormHeader
-                    name={connector.image_name}
-                    docsPath={connector.documentation_url}
+                    name={connector.data.connectors.image_name}
+                    docsPath={connector.data.documentation_url}
                 />
                 <Divider />
                 <NewCaptureSpecForm
-                    endpointSchema={connector.endpoint_spec_schema}
+                    endpointSchema={connector.data.endpoint_spec_schema}
                     displayValidation={displayValidation}
                     readonly={readonly}
                 />

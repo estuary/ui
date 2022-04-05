@@ -1,23 +1,22 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
-import { Alert, Skeleton, Stack } from '@mui/material';
+import { Alert, Stack } from '@mui/material';
 import useCaptureCreationStore, {
     CaptureCreationState,
 } from 'components/capture/create/Store';
-import useSupabase from 'hooks/useSupabase';
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
     defaultOptions,
     defaultRenderers,
     showValidation,
 } from 'services/jsonforms';
-import { supabase } from 'services/supabase';
 
-type NewCaptureDetailsProps = {
+interface NewCaptureDetailsProps {
     displayValidation: boolean;
     readonly: boolean;
-};
+    connectorTags: any[];
+}
 
 const stateSelectors = {
     formData: (state: CaptureCreationState) => state.details.data,
@@ -25,53 +24,46 @@ const stateSelectors = {
     setConnectors: (state: CaptureCreationState) => state.setConnectors,
 };
 
-const connectorsQuery = () => {
-    return supabase
-        .from('connector_tags')
-        .select(`id, image_tag, connectors(image_name)`)
-        .eq('protocol', 'capture');
-
-    // TODO (supabase) - how do we order by the image name here?
-};
-
 function NewCaptureDetails(props: NewCaptureDetailsProps) {
-    const intl = useIntl();
-    const { readonly, displayValidation } = props;
+    const { readonly, displayValidation, connectorTags } = props;
 
+    const intl = useIntl();
     const formData = useCaptureCreationStore(stateSelectors.formData);
     const setDetails = useCaptureCreationStore(stateSelectors.setDetails);
-    const setConnectors = useCaptureCreationStore(stateSelectors.setConnectors);
 
-    const {
-        data: connectorsData,
-        isError,
-        isSuccess,
-        error,
-    } = useSupabase(connectorsQuery);
+    const schema = useMemo(() => {
+        return {
+            properties: {
+                image: {
+                    description: intl.formatMessage({
+                        id: 'captureCreation.image.description',
+                    }),
+                    oneOf:
+                        connectorTags.length > 0
+                            ? connectorTags.map((connector: any) => {
+                                  return {
+                                      const: connector.id,
+                                      title: connector.connectors.image_name,
+                                  };
+                              })
+                            : ([] as { title: string; const: string }[]),
+                    type: 'string',
+                },
+                name: {
+                    description: intl.formatMessage({
+                        id: 'captureCreation.name.description',
+                    }),
+                    maxLength: 1000,
+                    minLength: 3,
+                    pattern: '^[a-zA-Z0-9_.-]*/[a-zA-Z0-9_.-]+$',
+                    type: 'string',
+                },
+            },
+            required: ['name', 'image'],
+            type: 'object',
+        };
+    }, [connectorTags, intl]);
 
-    const [isPostProcessingDone, setPostProcessingDone] = useState(false);
-    const [schema, setSchema] = useState({
-        properties: {
-            image: {
-                description: intl.formatMessage({
-                    id: 'captureCreation.image.description',
-                }),
-                oneOf: [] as { title: string; const: string }[],
-                type: 'string',
-            },
-            name: {
-                description: intl.formatMessage({
-                    id: 'captureCreation.name.description',
-                }),
-                maxLength: 1000,
-                minLength: 3,
-                pattern: '^[a-zA-Z0-9_.-]*/[a-zA-Z0-9_.-]+$',
-                type: 'string',
-            },
-        },
-        required: ['name', 'image'],
-        type: 'object',
-    });
     const uiSchema = {
         elements: [
             {
@@ -97,69 +89,27 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
         type: 'VerticalLayout',
     };
 
-    useEffect(() => {
-        if (isSuccess) {
-            if (connectorsData && connectorsData.length > 0) {
-                setSchema((previous: typeof schema) => {
-                    const listOfConnectors = connectorsData.map(
-                        (connector: any) => {
-                            return {
-                                const: connector.id,
-                                title: connector.connectors.image_name,
-                            };
-                        }
-                    );
-                    previous.properties.image.oneOf = listOfConnectors;
-
-                    return previous;
-                });
-
-                setConnectors(connectorsData);
-            }
-
-            setPostProcessingDone(true);
-        }
-    }, [connectorsData, isSuccess, setConnectors, setPostProcessingDone]);
-
     return (
         <>
             <FormattedMessage id="captureCreation.instructions" />
 
             <Stack direction="row" spacing={2}>
-                {isPostProcessingDone ? (
-                    schema.properties.image.oneOf.length > 0 ? (
-                        <JsonForms
-                            schema={schema}
-                            uischema={uiSchema}
-                            data={formData}
-                            renderers={defaultRenderers}
-                            cells={materialCells}
-                            config={defaultOptions}
-                            readonly={readonly}
-                            validationMode={showValidation(displayValidation)}
-                            onChange={setDetails}
-                        />
-                    ) : (
-                        <Alert severity="warning">
-                            <FormattedMessage id="captureCreation.missingConnectors" />
-                            {schema.properties.image.oneOf.length}
-                        </Alert>
-                    )
-                ) : isError ? (
-                    error
+                {schema.properties.image.oneOf.length > 0 ? (
+                    <JsonForms
+                        schema={schema}
+                        uischema={uiSchema}
+                        data={formData}
+                        renderers={defaultRenderers}
+                        cells={materialCells}
+                        config={defaultOptions}
+                        readonly={readonly}
+                        validationMode={showValidation(displayValidation)}
+                        onChange={setDetails}
+                    />
                 ) : (
-                    <>
-                        <Skeleton
-                            variant="rectangular"
-                            height={40}
-                            width="50%"
-                        />
-                        <Skeleton
-                            variant="rectangular"
-                            height={40}
-                            width="50%"
-                        />
-                    </>
+                    <Alert severity="warning">
+                        <FormattedMessage id="captureCreation.missingConnectors" />
+                    </Alert>
                 )}
             </Stack>
         </>

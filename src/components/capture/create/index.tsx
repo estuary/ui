@@ -1,12 +1,15 @@
 import {
-    Backdrop,
     Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
     Paper,
     Stack,
     Toolbar,
     Typography,
 } from '@mui/material';
-import CircularProgress from '@mui/material/CircularProgress';
+import { RealtimeSubscription } from '@supabase/supabase-js';
 import NewCaptureSpec from 'components/capture/create/Spec';
 import useCaptureCreationStore, {
     CaptureCreationState,
@@ -16,8 +19,10 @@ import PageContainer from 'components/shared/PageContainer';
 import { useConfirmationModalContext } from 'context/Confirmation';
 import { MouseEvent, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { LazyLog } from 'react-lazylog';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from 'services/supabase';
+import { useInterval } from 'react-use';
+import { DEFAULT_INTERVAL, supabase, Tables } from 'services/supabase';
 import { ChangeSetState } from 'stores/ChangeSetStore';
 import useNotificationStore, {
     Notification,
@@ -26,6 +31,7 @@ import useNotificationStore, {
 import useSchemaEditorStore, {
     SchemaEditorState,
 } from 'stores/SchemaEditorStore';
+import { useQuery, useSelect } from 'supabase-swr';
 import NewCaptureEditor from './CatalogEditor';
 import NewCaptureDetails from './DetailsForm';
 import NewCaptureError from './Error';
@@ -50,9 +56,35 @@ const selectors = {
     connectors: (state: CaptureCreationState) => state.connectors,
 };
 
+interface ConnectorTag {
+    connectors: {
+        detail: string;
+        image_name: string;
+    };
+    id: string;
+    image_tag: string;
+    protocol: string;
+}
+
 function CaptureCreation() {
     const navigate = useNavigate();
     const confirmationModalContext = useConfirmationModalContext();
+
+    const tagsQuery = useQuery<ConnectorTag>(
+        Tables.CONNECTOR_TAGS,
+        {
+            columns: `
+                id, 
+                image_tag,
+                protocol,
+                connectors(detail, image_name)
+            `,
+            filter: (query) => query.eq('protocol', 'capture'),
+        },
+        []
+    );
+    const { data: connectorTags } = useSelect(tagsQuery, {});
+    const hasConnectors = connectorTags && connectorTags.data.length > 0;
 
     // Schema editor store
     const resourcesFromEditor = useSchemaEditorStore(selectors.resources);
@@ -72,13 +104,16 @@ function CaptureCreation() {
     const specFormData = useCaptureCreationStore(selectors.specFormData);
     const resetState = useCaptureCreationStore(selectors.resetState);
     const hasChanges = useCaptureCreationStore(selectors.hasChanges);
-    const connectors = useCaptureCreationStore(selectors.connectors);
-    const hasConnectors = connectors.length > 0;
 
     // Form props
     const [showValidation, setShowValidation] = useState(false);
     const [formSubmitting, setFormSubmitting] = useState(false);
     const [formSaving, setFormSaving] = useState(false);
+    const [showLogs, setShowLogs] = useState(false);
+    const [saveLogs, setSaveLogs] = useState([
+        'waiting for logs...',
+        '...................',
+    ]);
 
     const [formSubmitError, setFormSubmitError] = useState<{
         message: string;
@@ -96,15 +131,42 @@ function CaptureCreation() {
         navigate('/captures');
     };
 
-    // Form Event Handlers
-    const handlers = {
-        saveAndPublish: (event: MouseEvent<HTMLElement>) => {
-            event.preventDefault();
-            setFormSubmitting(true);
-            setFormSaving(true);
+    const [logToken, setLogToken] = useState<boolean | null>(null);
+    const [logOffset, setLogOffset] = useState<number>(0);
 
-            // // TODO (supabase) - subscribing before running the insert seems to be most consistent.
-            const draftStatus = supabase
+    const discovers = {
+        done: (discoversSubscription: RealtimeSubscription) => {
+            setFormSubmitting(false);
+            return supabase
+                .removeSubscription(discoversSubscription)
+                .then(() => {})
+                .catch(() => {});
+        },
+        waitForFinish: () => {
+            const discoverStatus = supabase
+                .from(`discovers`)
+                .on('UPDATE', async (payload) => {
+                    setCatalogResponse(payload.new.catalog_spec);
+                    await discovers.done(discoverStatus);
+                })
+                .subscribe();
+
+            return discoverStatus;
+        },
+    };
+
+    const drafts = {
+        done: (draftsSubscription: RealtimeSubscription) => {
+            return supabase
+                .removeSubscription(draftsSubscription)
+                .then(() => {
+                    setLogToken(null);
+                    setFormSubmitting(false);
+                })
+                .catch(() => {});
+        },
+        waitForFinish: () => {
+            const draftsSubscription = supabase
                 .from(`drafts`)
                 .on('UPDATE', async () => {
                     setFormSaving(false);
@@ -116,12 +178,41 @@ function CaptureCreation() {
                     };
                     showNotification(notification);
 
-                    await supabase.removeSubscription(draftStatus);
-
-                    exit();
+                    await drafts.done(draftsSubscription);
                 })
                 .subscribe();
 
+            return draftsSubscription;
+        },
+    };
+
+    useInterval(
+        async () => {
+            const { data } = await supabase
+                .rpc('view_logs', {
+                    bearer_token: logToken,
+                })
+                .range(logOffset, logOffset + 10);
+
+            if (data && data.length > 0) {
+                const logsReduced = data.map((logData) => {
+                    return logData.log_line;
+                });
+                setLogOffset(logOffset + data.length);
+                setSaveLogs(saveLogs.concat(logsReduced));
+            }
+        },
+        logToken ? DEFAULT_INTERVAL : null
+    );
+
+    // Form Event Handlers
+    const handlers = {
+        saveAndPublish: (event: MouseEvent<HTMLElement>) => {
+            event.preventDefault();
+            setFormSubmitting(true);
+            setFormSaving(true);
+
+            const draftsSubscription = drafts.waitForFinish();
             supabase
                 .from('drafts')
                 .insert([
@@ -130,19 +221,27 @@ function CaptureCreation() {
                     },
                 ])
                 .then(
-                    (response) => {
+                    async (response) => {
                         if (response.data) {
                             // TODO Need to use this response as part of the subscribe somehow?
-                            console.log('drafts returned', response);
+                            if (response.data.length > 0) {
+                                setShowLogs(true);
+                                setLogToken(response.data[0].logs_token);
+                            }
                         } else {
                             // setFormSubmitError({
                             //     message: 'Failed to create your discover',
                             // });
-                            setFormSubmitting(false);
+                            drafts
+                                .done(draftsSubscription)
+                                .then(() => {
+                                    setFormSubmitting(false);
+                                })
+                                .catch(() => {});
                         }
                     },
-                    (error) => {
-                        setFormSubmitError(error);
+                    (draftsError) => {
+                        setFormSubmitError(draftsError);
                         setFormSubmitting(false);
                     }
                 );
@@ -181,16 +280,7 @@ function CaptureCreation() {
                 setFormSubmitError(null);
 
                 // TODO (supabase) - `discovers:id=eq.${response.data[0].id}` was not working
-                const discoverStatus = supabase
-                    .from(`discovers`)
-                    .on('UPDATE', async (payload) => {
-                        console.log('Change received!', payload);
-                        setCatalogResponse(payload.new.catalog_spec);
-                        setFormSubmitting(false);
-                        await supabase.removeSubscription(discoverStatus);
-                    })
-                    .subscribe();
-
+                const discoversSubscription = discovers.waitForFinish();
                 supabase
                     .from('discovers')
                     .insert([
@@ -203,16 +293,18 @@ function CaptureCreation() {
                     .then(
                         (response) => {
                             if (response.data) {
-                                console.log('discover returned', response);
+                                console.log(response.data[0].logs_token);
                             } else {
-                                // setFormSubmitError({
-                                //     message: 'Failed to create your discover',
-                                // });
-                                setFormSubmitting(false);
+                                discovers
+                                    .done(discoversSubscription)
+                                    .then(() => {
+                                        setFormSubmitting(false);
+                                    })
+                                    .catch(() => {});
                             }
                         },
-                        (error) => {
-                            setFormSubmitError(error);
+                        (discoversError) => {
+                            setFormSubmitError(discoversError);
                             setFormSubmitting(false);
                         }
                     );
@@ -222,29 +314,36 @@ function CaptureCreation() {
 
     return (
         <PageContainer>
-            <Backdrop
-                sx={{
-                    color: '#fff',
-                    zIndex: (theme) => theme.zIndex.drawer + 1,
-                }}
-                open={formSaving}
+            <Dialog
+                open={showLogs}
+                maxWidth="lg"
+                fullWidth
+                aria-labelledby="new-capture-saving-title"
             >
-                <Stack>
-                    <Typography
-                        variant="h3"
-                        sx={{
-                            textAlign: 'center',
-                        }}
-                    >
-                        <FormattedMessage id="captureCreation.save.waitMessage" />
-                    </Typography>
-                    <CircularProgress
-                        color="success"
-                        size={100}
-                        sx={{ alignSelf: 'center' }}
+                <DialogTitle id="new-capture-saving-title">
+                    <FormattedMessage id="captureCreation.save.waitMessage" />
+                </DialogTitle>
+                <DialogContent
+                    sx={{
+                        height: 300,
+                    }}
+                >
+                    <LazyLog
+                        extraLines={1}
+                        stream={true}
+                        text={saveLogs.join('\r\n')}
+                        caseInsensitive
+                        enableSearch
+                        follow={true}
                     />
-                </Stack>
-            </Backdrop>
+                </DialogContent>
+                <DialogActions>
+                    <Button disabled={formSaving} onClick={exit}>
+                        Close
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
             <Toolbar>
                 <Typography variant="h6" noWrap>
                     <FormattedMessage id="captureCreation.heading" />
@@ -294,18 +393,33 @@ function CaptureCreation() {
 
             <ErrorBoundryWrapper>
                 <form id={FORM_ID}>
-                    <Typography variant="h5">Capture Details</Typography>
-                    <NewCaptureDetails
-                        displayValidation={showValidation}
-                        readonly={formSubmitting}
-                    />
-                    <Typography variant="h5">Connection Config</Typography>
-                    <Paper sx={{ width: '100%' }} variant="outlined">
-                        <NewCaptureSpec
-                            displayValidation={showValidation}
-                            readonly={formSubmitting}
-                        />
-                    </Paper>
+                    {connectorTags ? (
+                        <>
+                            <Typography variant="h5">
+                                Capture Details
+                            </Typography>
+                            <NewCaptureDetails
+                                displayValidation={showValidation}
+                                readonly={formSubmitting}
+                                connectorTags={connectorTags.data}
+                            />
+                        </>
+                    ) : null}
+
+                    {captureImage ? (
+                        <>
+                            <Typography variant="h5">
+                                Connection Config
+                            </Typography>
+                            <Paper sx={{ width: '100%' }}>
+                                <NewCaptureSpec
+                                    displayValidation={showValidation}
+                                    readonly={formSubmitting}
+                                    connectorImage={captureImage}
+                                />
+                            </Paper>
+                        </>
+                    ) : null}
                 </form>
             </ErrorBoundryWrapper>
 

@@ -2,6 +2,8 @@
 
 exports[`Unauthenticated app renders correctly 1`] = `
 <div>
+  Your user name is 
+   and 
   <div
     class="MuiGrid-root MuiGrid-container MuiGrid-direction-xs-column css-zyhqkc-MuiGrid-root"
   >
@@ -73,15 +75,62 @@ exports[`Unauthenticated app renders correctly 1`] = `
           Please use one of the providers below to continue.
         </div>
         <div
-          class="MuiCardActions-root MuiCardActions-spacing css-10r5to9-MuiCardActions-root"
+          class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
         >
-          <a
-            class="MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButtonBase-root  css-1dsuog8-MuiButtonBase-root-MuiButton-root"
-            href="https://auth.estuary.dev/auth/google?next=http://localhost/login"
-            tabindex="0"
+          <div
+            class="sbui-auth"
           >
-            Login with Google
-          </a>
+            <div
+              class="sbui-space-col sbui-space-y-8"
+            >
+              <div
+                class="sbui-space-col sbui-space-y-8"
+              >
+                <div
+                  class="sbui-space-col sbui-space-y-4"
+                >
+                  <span
+                    class="sbui-typography-text sbui-auth-label sbui-typography-text-secondary"
+                  >
+                    Sign in with
+                  </span>
+                  <div
+                    class="sbui-space-col sbui-space-y-2"
+                  >
+                    <div>
+                      <span
+                        class="sbui-btn-container sbui-btn--w-full"
+                      >
+                        <button
+                          class="sbui-btn sbui-btn-default sbui-btn--w-full sbui-btn-container--shadow sbui-btn--medium flex items-center sbui-btn--text-align-center"
+                          style="background-color: rgb(206, 68, 48); color: white;"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            data-icon="google"
+                            data-prefix="fab"
+                            focusable="false"
+                            role="img"
+                            viewBox="0 0 488 512"
+                            width="21"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"
+                              fill="currentColor"
+                            />
+                          </svg>
+                          <span>
+                            Sign up with google
+                          </span>
+                        </button>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
