@@ -1,6 +1,7 @@
 import {
     Button,
     Dialog,
+    DialogActions,
     DialogContent,
     DialogTitle,
     Paper,
@@ -21,7 +22,7 @@ import { FormattedMessage } from 'react-intl';
 import { LazyLog } from 'react-lazylog';
 import { useNavigate } from 'react-router-dom';
 import { useInterval } from 'react-use';
-import { supabase, Tables } from 'services/supabase';
+import { DEFAULT_INTERVAL, supabase, Tables } from 'services/supabase';
 import { ChangeSetState } from 'stores/ChangeSetStore';
 import useNotificationStore, {
     Notification,
@@ -108,9 +109,10 @@ function CaptureCreation() {
     const [showValidation, setShowValidation] = useState(false);
     const [formSubmitting, setFormSubmitting] = useState(false);
     const [formSaving, setFormSaving] = useState(false);
+    const [showLogs, setShowLogs] = useState(false);
     const [saveLogs, setSaveLogs] = useState([
         'waiting for logs...',
-        '-------------------',
+        '...................',
     ]);
 
     const [formSubmitError, setFormSubmitError] = useState<{
@@ -131,6 +133,28 @@ function CaptureCreation() {
 
     const [logToken, setLogToken] = useState<boolean | null>(null);
     const [logOffset, setLogOffset] = useState<number>(0);
+
+    const discovers = {
+        done: (discoversSubscription: RealtimeSubscription) => {
+            setFormSubmitting(false);
+            return supabase
+                .removeSubscription(discoversSubscription)
+                .then(() => {})
+                .catch(() => {});
+        },
+        waitForFinish: () => {
+            const discoverStatus = supabase
+                .from(`discovers`)
+                .on('UPDATE', async (payload) => {
+                    setCatalogResponse(payload.new.catalog_spec);
+                    await discovers.done(discoverStatus);
+                })
+                .subscribe();
+
+            return discoverStatus;
+        },
+    };
+
     const drafts = {
         done: (draftsSubscription: RealtimeSubscription) => {
             return supabase
@@ -154,12 +178,7 @@ function CaptureCreation() {
                     };
                     showNotification(notification);
 
-                    drafts
-                        .done(draftsSubscription)
-                        .then(() => {
-                            exit();
-                        })
-                        .catch(() => {});
+                    await drafts.done(draftsSubscription);
                 })
                 .subscribe();
 
@@ -173,19 +192,17 @@ function CaptureCreation() {
                 .rpc('view_logs', {
                     bearer_token: logToken,
                 })
-                .range(logOffset, logOffset + 5);
+                .range(logOffset, logOffset + 10);
 
             if (data && data.length > 0) {
                 const logsReduced = data.map((logData) => {
                     return logData.log_line;
                 });
-                console.log('logsReduced', logsReduced);
-
-                setLogOffset(data.length);
+                setLogOffset(logOffset + data.length);
                 setSaveLogs(saveLogs.concat(logsReduced));
             }
         },
-        logToken ? 1000 : null
+        logToken ? DEFAULT_INTERVAL : null
     );
 
     // Form Event Handlers
@@ -195,6 +212,7 @@ function CaptureCreation() {
             setFormSubmitting(true);
             setFormSaving(true);
 
+            const draftsSubscription = drafts.waitForFinish();
             supabase
                 .from('drafts')
                 .insert([
@@ -204,11 +222,10 @@ function CaptureCreation() {
                 ])
                 .then(
                     async (response) => {
-                        const draftsSubscription = drafts.waitForFinish();
-
                         if (response.data) {
                             // TODO Need to use this response as part of the subscribe somehow?
                             if (response.data.length > 0) {
+                                setShowLogs(true);
                                 setLogToken(response.data[0].logs_token);
                             }
                         } else {
@@ -263,16 +280,7 @@ function CaptureCreation() {
                 setFormSubmitError(null);
 
                 // TODO (supabase) - `discovers:id=eq.${response.data[0].id}` was not working
-                const discoverStatus = supabase
-                    .from(`discovers`)
-                    .on('UPDATE', async (payload) => {
-                        console.log('Change received!', payload);
-                        setCatalogResponse(payload.new.catalog_spec);
-                        setFormSubmitting(false);
-                        await supabase.removeSubscription(discoverStatus);
-                    })
-                    .subscribe();
-
+                const discoversSubscription = discovers.waitForFinish();
                 supabase
                     .from('discovers')
                     .insert([
@@ -285,12 +293,14 @@ function CaptureCreation() {
                     .then(
                         (response) => {
                             if (response.data) {
-                                console.log('discover returned', response);
+                                console.log(response.data[0].logs_token);
                             } else {
-                                // setFormSubmitError({
-                                //     message: 'Failed to create your discover',
-                                // });
-                                setFormSubmitting(false);
+                                discovers
+                                    .done(discoversSubscription)
+                                    .then(() => {
+                                        setFormSubmitting(false);
+                                    })
+                                    .catch(() => {});
                             }
                         },
                         (discoversError) => {
@@ -305,7 +315,7 @@ function CaptureCreation() {
     return (
         <PageContainer>
             <Dialog
-                open={formSaving}
+                open={showLogs}
                 maxWidth="lg"
                 fullWidth
                 aria-labelledby="new-capture-saving-title"
@@ -323,9 +333,15 @@ function CaptureCreation() {
                         stream={true}
                         text={saveLogs.join('\r\n')}
                         caseInsensitive
+                        enableSearch
                         follow={true}
                     />
                 </DialogContent>
+                <DialogActions>
+                    <Button disabled={formSaving} onClick={exit}>
+                        Close
+                    </Button>
+                </DialogActions>
             </Dialog>
 
             <Toolbar>

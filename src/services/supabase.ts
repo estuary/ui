@@ -22,6 +22,8 @@ export const supabase = createClient(
     supabaseSettings.anonKey
 );
 
+export const DEFAULT_INTERVAL = 500;
+
 export const callSupabase = (
     supabaseQuery: SupabaseQueryBuilder<any> | PostgrestFilterBuilder<any> | any
 ) => {
