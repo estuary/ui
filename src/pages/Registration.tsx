@@ -125,6 +125,7 @@ const Registration = () => {
     return (
         <Grid
             container
+            direction="column"
             sx={{
                 height: '100vh',
                 alignItems: 'center',
@@ -135,8 +136,8 @@ const Registration = () => {
                 <Topbar isNavigationOpen={false} />
             </Grid>
 
-            <Grid item xs={8}>
-                <Card sx={{ minHeight: 350, p: 2 }}>
+            <Grid item xs={5}>
+                <Card sx={{ minWidth: 400, minHeight: 300, p: 2 }}>
                     <CardContent>
                         <Typography
                             variant="h6"
