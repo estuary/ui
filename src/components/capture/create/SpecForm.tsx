@@ -15,6 +15,7 @@ import {
     generateCustomUISchema,
     showValidation,
 } from 'services/jsonforms';
+import { StoreSelector } from 'types';
 
 type NewCaptureSpecFormProps = {
     endpointSchema: any;
@@ -22,12 +23,11 @@ type NewCaptureSpecFormProps = {
 
 const defaultAjv = createAjv({ useDefaults: true });
 
-const stateSelectors = {
-    formData: (state: CaptureCreationState) => state.spec.data,
-    setSpec: (state: CaptureCreationState) => state.setSpec,
-    showValidation: (state: CaptureCreationState) =>
-        state.formState.showValidation,
-    status: (state: CaptureCreationState) => state.formState.status,
+const stateSelectors: StoreSelector<CaptureCreationState> = {
+    formData: (state) => state.spec.data,
+    setSpec: (state) => state.setSpec,
+    showValidation: (state) => state.formState.showValidation,
+    status: (state) => state.formState.status,
 };
 function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
     const { endpointSchema } = props;

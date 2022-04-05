@@ -12,18 +12,18 @@ import {
     defaultRenderers,
     showValidation,
 } from 'services/jsonforms';
+import { StoreSelector } from 'types';
 
 interface NewCaptureDetailsProps {
     connectorTags: any[];
 }
 
-const stateSelectors = {
-    formData: (state: CaptureCreationState) => state.details.data,
-    setDetails: (state: CaptureCreationState) => state.setDetails,
-    setConnectors: (state: CaptureCreationState) => state.setConnectors,
-    showValidation: (state: CaptureCreationState) =>
-        state.formState.showValidation,
-    status: (state: CaptureCreationState) => state.formState.status,
+const stateSelectors: StoreSelector<CaptureCreationState> = {
+    formData: (state) => state.details.data,
+    setDetails: (state) => state.setDetails,
+    setConnectors: (state) => state.setConnectors,
+    showValidation: (state) => state.formState.showValidation,
+    status: (state) => state.formState.status,
 };
 
 function NewCaptureDetails(props: NewCaptureDetailsProps) {

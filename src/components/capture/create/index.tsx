@@ -27,32 +27,6 @@ import NewCaptureEditor from './CatalogEditor';
 import NewCaptureDetails from './DetailsForm';
 import NewCaptureError from './Error';
 
-const FORM_ID = 'newCaptureForm';
-
-const selectors = {
-    addCapture: (state: ChangeSetState) => state.addCapture,
-    clearResources: (state: SchemaEditorState) => state.clearResources,
-    resources: (state: SchemaEditorState) => state.resources,
-    showNotification: (state: NotificationState) => state.showNotification,
-    captureName: (state: CaptureCreationState) => state.details.data.name,
-    captureImage: (state: CaptureCreationState) => state.details.data.image,
-    setDetails: (state: CaptureCreationState) => state.setDetails,
-    resetState: (state: CaptureCreationState) => state.resetState,
-    hasChanges: (state: CaptureCreationState) => state.hasChanges,
-    errors: (state: CaptureCreationState) => [
-        state.details.errors,
-        state.spec.errors,
-    ],
-    specFormData: (state: CaptureCreationState) => state.spec.data,
-    connectors: (state: CaptureCreationState) => state.connectors,
-    formState: {
-        set: (state: CaptureCreationState) => state.setFormState,
-        saveStatus: (state: CaptureCreationState) => state.formState.saveStatus,
-        status: (state: CaptureCreationState) => state.formState.status,
-        showLogs: (state: CaptureCreationState) => state.formState.showLogs,
-    },
-};
-
 interface ConnectorTag {
     connectors: {
         detail: string;
@@ -62,12 +36,46 @@ interface ConnectorTag {
     image_tag: string;
     protocol: string;
 }
-const connectorTagQuery = `
+const CONNECTOR_TAG_QUERY = `
     id, 
     image_tag,
     protocol,
     connectors(detail, image_name)
 `;
+const FORM_ID = 'newCaptureForm';
+
+// TODO - need to get this styping to work... too many repeated types
+const selectors = {
+    page: {
+        captureName: (state: CaptureCreationState) => state.details.data.name,
+        captureImage: (state: CaptureCreationState) => state.details.data.image,
+        setDetails: (state: CaptureCreationState) => state.setDetails,
+        resetState: (state: CaptureCreationState) => state.resetState,
+        hasChanges: (state: CaptureCreationState) => state.hasChanges,
+        errors: (state: CaptureCreationState) => [
+            state.details.errors,
+            state.spec.errors,
+        ],
+        specFormData: (state: CaptureCreationState) => state.spec.data,
+        connectors: (state: CaptureCreationState) => state.connectors,
+    },
+    form: {
+        set: (state: CaptureCreationState) => state.setFormState,
+        saveStatus: (state: CaptureCreationState) => state.formState.saveStatus,
+        status: (state: CaptureCreationState) => state.formState.status,
+        showLogs: (state: CaptureCreationState) => state.formState.showLogs,
+    },
+    changeSet: {
+        addCapture: (state: ChangeSetState) => state.addCapture,
+    },
+    schema: {
+        clearResources: (state: SchemaEditorState) => state.clearResources,
+        resources: (state: SchemaEditorState) => state.resources,
+    },
+    notifications: {
+        showNotification: (state: NotificationState) => state.showNotification,
+    },
+};
 
 function CaptureCreation() {
     const intl = useIntl();
@@ -77,7 +85,7 @@ function CaptureCreation() {
     const tagsQuery = useQuery<ConnectorTag>(
         TABLES.CONNECTOR_TAGS,
         {
-            columns: connectorTagQuery,
+            columns: CONNECTOR_TAG_QUERY,
             filter: (query) => query.eq('protocol', 'capture'),
         },
         []
@@ -86,29 +94,33 @@ function CaptureCreation() {
     const hasConnectors = connectorTags && connectorTags.data.length > 0;
 
     // Schema editor store
-    const resourcesFromEditor = useSchemaEditorStore(selectors.resources);
+    const resourcesFromEditor = useSchemaEditorStore(
+        selectors.schema.resources
+    );
     const clearResourcesFromEditor = useSchemaEditorStore(
-        selectors.clearResources
+        selectors.schema.clearResources
     );
 
     // Notification store
-    const showNotification = useNotificationStore(selectors.showNotification);
+    const showNotification = useNotificationStore(
+        selectors.notifications.showNotification
+    );
 
     // Form store
-    const captureName = useCaptureCreationStore(selectors.captureName);
-    const captureImage = useCaptureCreationStore(selectors.captureImage);
+    const captureName = useCaptureCreationStore(selectors.page.captureName);
+    const captureImage = useCaptureCreationStore(selectors.page.captureImage);
     const [detailErrors, specErrors] = useCaptureCreationStore(
-        selectors.errors
+        selectors.page.errors
     );
-    const specFormData = useCaptureCreationStore(selectors.specFormData);
-    const resetState = useCaptureCreationStore(selectors.resetState);
-    const hasChanges = useCaptureCreationStore(selectors.hasChanges);
+    const specFormData = useCaptureCreationStore(selectors.page.specFormData);
+    const resetState = useCaptureCreationStore(selectors.page.resetState);
+    const hasChanges = useCaptureCreationStore(selectors.page.hasChanges);
 
     // Form State
-    const setFormState = useCaptureCreationStore(selectors.formState.set);
-    const status = useCaptureCreationStore(selectors.formState.status);
-    const showLogs = useCaptureCreationStore(selectors.formState.showLogs);
-    const saveStatus = useCaptureCreationStore(selectors.formState.saveStatus);
+    const setFormState = useCaptureCreationStore(selectors.form.set);
+    const status = useCaptureCreationStore(selectors.form.status);
+    const showLogs = useCaptureCreationStore(selectors.form.showLogs);
+    const saveStatus = useCaptureCreationStore(selectors.form.saveStatus);
 
     const [formSubmitError, setFormSubmitError] = useState<{
         message: string;

@@ -17,19 +17,21 @@ interface ConnectorTag {
 interface Props {
     connectorImage: string;
 }
+const CONNECTOR_TAGS_QUERY = `
+    connectors(
+        image_name
+    ),
+    id,
+    endpoint_spec_schema, 
+    documentation_url
+`;
+
 function NewCaptureSpec(props: Props) {
     const { connectorImage } = props;
     const tagsQuery = useQuery<ConnectorTag>(
         TABLES.CONNECTOR_TAGS,
         {
-            columns: `
-                connectors(
-                    image_name
-                ),
-                id,
-                endpoint_spec_schema, 
-                documentation_url
-            `,
+            columns: CONNECTOR_TAGS_QUERY,
             filter: (query) => query.eq('id', connectorImage),
             count: 'exact',
         },
