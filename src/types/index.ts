@@ -1,13 +1,5 @@
 import { ReactNode } from 'react';
 
-declare global {
-    interface Window {
-        Estuary: {
-            api_endpoint: string | null;
-        } | null;
-    }
-}
-
 export interface BaseHook<T> {
     idle?: boolean;
     loading: boolean;
