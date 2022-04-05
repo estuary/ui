@@ -4,6 +4,7 @@ import NewCaptureHeader from 'components/capture/create/Header';
 import LogDialog from 'components/capture/create/LogDialog';
 import NewCaptureSpec from 'components/capture/create/Spec';
 import useCaptureCreationStore, {
+    CaptureCreationFormStatus,
     CaptureCreationState,
 } from 'components/capture/create/Store';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
@@ -45,11 +46,10 @@ const selectors = {
     specFormData: (state: CaptureCreationState) => state.spec.data,
     connectors: (state: CaptureCreationState) => state.connectors,
     formState: {
-        saveStatus: (state: CaptureCreationState) => state.formState.saveStatus,
-        saving: (state: CaptureCreationState) => state.formState.saving,
-        testing: (state: CaptureCreationState) => state.formState.testing,
-        showLogs: (state: CaptureCreationState) => state.formState.showLogs,
         set: (state: CaptureCreationState) => state.setFormState,
+        saveStatus: (state: CaptureCreationState) => state.formState.saveStatus,
+        status: (state: CaptureCreationState) => state.formState.status,
+        showLogs: (state: CaptureCreationState) => state.formState.showLogs,
     },
 };
 
@@ -105,8 +105,7 @@ function CaptureCreation() {
 
     // Form State
     const setFormState = useCaptureCreationStore(selectors.formState.set);
-    const saving = useCaptureCreationStore(selectors.formState.saving);
-    const testing = useCaptureCreationStore(selectors.formState.testing);
+    const status = useCaptureCreationStore(selectors.formState.status);
     const showLogs = useCaptureCreationStore(selectors.formState.showLogs);
     const saveStatus = useCaptureCreationStore(selectors.formState.saveStatus);
 
@@ -134,7 +133,7 @@ function CaptureCreation() {
                 .removeSubscription(discoversSubscription)
                 .then(() => {
                     setFormState({
-                        testing: false,
+                        status: CaptureCreationFormStatus.IDLE,
                     });
                 })
                 .catch(() => {});
@@ -159,8 +158,7 @@ function CaptureCreation() {
                 .then(() => {
                     setLogToken(null);
                     setFormState({
-                        testing: false,
-                        saving: false,
+                        status: CaptureCreationFormStatus.IDLE,
                     });
                 })
                 .catch(() => {});
@@ -170,7 +168,7 @@ function CaptureCreation() {
                 .from(`drafts`)
                 .on('UPDATE', async () => {
                     setFormState({
-                        saving: false,
+                        status: CaptureCreationFormStatus.IDLE,
                         saveStatus: 'Success!',
                     });
                     const notification: Notification = {
@@ -194,8 +192,7 @@ function CaptureCreation() {
         saveAndPublish: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
             setFormState({
-                testing: true,
-                saving: true,
+                status: CaptureCreationFormStatus.SAVING,
                 saveStatus: 'running...',
             });
 
@@ -225,8 +222,7 @@ function CaptureCreation() {
                                 .done(draftsSubscription)
                                 .then(() => {
                                     setFormState({
-                                        testing: false,
-                                        saving: false,
+                                        status: CaptureCreationFormStatus.IDLE,
                                         saveStatus: 'Failed',
                                     });
                                 })
@@ -236,8 +232,7 @@ function CaptureCreation() {
                     (draftsError) => {
                         setFormSubmitError(draftsError);
                         setFormState({
-                            testing: false,
-                            saving: false,
+                            status: CaptureCreationFormStatus.IDLE,
                             saveStatus: 'Failed',
                         });
                     }
@@ -276,8 +271,7 @@ function CaptureCreation() {
                 });
             } else {
                 setFormState({
-                    testing: true,
-                    saving: false,
+                    status: CaptureCreationFormStatus.TESTING,
                     saveStatus: 'testing...',
                 });
 
@@ -326,7 +320,10 @@ function CaptureCreation() {
                 actionComponent={
                     <>
                         {saveStatus}
-                        <Button disabled={saving || testing} onClick={exit}>
+                        <Button
+                            disabled={status !== CaptureCreationFormStatus.IDLE}
+                            onClick={exit}
+                        >
                             Close
                         </Button>
                     </>
@@ -336,9 +333,14 @@ function CaptureCreation() {
             <NewCaptureHeader
                 close={handlers.close}
                 test={handlers.test}
-                testDisabled={saving || testing || !hasConnectors}
+                testDisabled={
+                    status !== CaptureCreationFormStatus.IDLE || !hasConnectors
+                }
                 save={handlers.saveAndPublish}
-                saveDisabled={!catalogResponse || saving || testing}
+                saveDisabled={
+                    status !== CaptureCreationFormStatus.IDLE ||
+                    !catalogResponse
+                }
                 formId={FORM_ID}
             />
 

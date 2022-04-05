@@ -2,6 +2,7 @@ import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Alert, Stack, Typography } from '@mui/material';
 import useCaptureCreationStore, {
+    CaptureCreationFormStatus,
     CaptureCreationState,
 } from 'components/capture/create/Store';
 import { useMemo } from 'react';
@@ -22,8 +23,7 @@ const stateSelectors = {
     setConnectors: (state: CaptureCreationState) => state.setConnectors,
     showValidation: (state: CaptureCreationState) =>
         state.formState.showValidation,
-    saving: (state: CaptureCreationState) => state.formState.saving,
-    testing: (state: CaptureCreationState) => state.formState.testing,
+    status: (state: CaptureCreationState) => state.formState.status,
 };
 
 function NewCaptureDetails(props: NewCaptureDetailsProps) {
@@ -35,8 +35,7 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
     const displayValidation = useCaptureCreationStore(
         stateSelectors.showValidation
     );
-    const saving = useCaptureCreationStore(stateSelectors.saving);
-    const testing = useCaptureCreationStore(stateSelectors.testing);
+    const status = useCaptureCreationStore(stateSelectors.status);
 
     const schema = useMemo(() => {
         return {
@@ -111,7 +110,7 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
                         renderers={defaultRenderers}
                         cells={materialCells}
                         config={defaultOptions}
-                        readonly={saving || testing}
+                        readonly={status !== CaptureCreationFormStatus.IDLE}
                         validationMode={showValidation(displayValidation)}
                         onChange={setDetails}
                     />

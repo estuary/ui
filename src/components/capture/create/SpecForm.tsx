@@ -3,6 +3,7 @@ import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { StyledEngineProvider } from '@mui/material';
 import useCaptureCreationStore, {
+    CaptureCreationFormStatus,
     CaptureCreationState,
 } from 'components/capture/create/Store';
 import JsonRefs from 'json-refs';
@@ -26,8 +27,7 @@ const stateSelectors = {
     setSpec: (state: CaptureCreationState) => state.setSpec,
     showValidation: (state: CaptureCreationState) =>
         state.formState.showValidation,
-    saving: (state: CaptureCreationState) => state.formState.saving,
-    testing: (state: CaptureCreationState) => state.formState.testing,
+    status: (state: CaptureCreationState) => state.formState.status,
 };
 function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
     const { endpointSchema } = props;
@@ -37,8 +37,7 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
     const displayValidation = useCaptureCreationStore(
         stateSelectors.showValidation
     );
-    const saving = useCaptureCreationStore(stateSelectors.saving);
-    const testing = useCaptureCreationStore(stateSelectors.testing);
+    const status = useCaptureCreationStore(stateSelectors.status);
 
     const [dereffedSchema, setDereffedSchema] = useState<any | null>(null);
 
@@ -85,7 +84,7 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
                     renderers={defaultRenderers}
                     cells={materialCells}
                     config={defaultOptions}
-                    readonly={saving || testing}
+                    readonly={status !== CaptureCreationFormStatus.IDLE}
                     validationMode={showValidationVal}
                     onChange={handlers.onChange}
                 />

@@ -18,10 +18,15 @@ interface CaptureCreationSpec extends Pick<JsonFormsCore, 'data' | 'errors'> {
     };
 }
 
+export enum CaptureCreationFormStatus {
+    SAVING = 'saving',
+    TESTING = 'testing',
+    IDLE = 'idle',
+}
+
 interface CaptureCreationFormState {
     showValidation: boolean;
-    testing: boolean;
-    saving: boolean;
+    status: CaptureCreationFormStatus;
     showLogs: boolean;
     saveStatus: string;
 }
@@ -61,8 +66,7 @@ const getInitialStateData = (): Pick<
         connectors: [],
         formState: {
             showValidation: false,
-            testing: false,
-            saving: false,
+            status: CaptureCreationFormStatus.IDLE,
             showLogs: false,
             saveStatus: 'running...',
         },
