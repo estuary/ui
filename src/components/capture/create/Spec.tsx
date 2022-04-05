@@ -16,11 +16,9 @@ interface ConnectorTag {
 
 interface Props {
     connectorImage: string;
-    displayValidation: boolean;
-    readonly: boolean;
 }
 function NewCaptureSpec(props: Props) {
-    const { connectorImage, readonly, displayValidation } = props;
+    const { connectorImage } = props;
     const tagsQuery = useQuery<ConnectorTag>(
         Tables.CONNECTOR_TAGS,
         {
@@ -53,8 +51,6 @@ function NewCaptureSpec(props: Props) {
                     <Divider />
                     <NewCaptureSpecForm
                         endpointSchema={connector.data.endpoint_spec_schema}
-                        displayValidation={displayValidation}
-                        readonly={readonly}
                     />
                 </Paper>
             </>

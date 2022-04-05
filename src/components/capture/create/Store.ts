@@ -18,6 +18,14 @@ interface CaptureCreationSpec extends Pick<JsonFormsCore, 'data' | 'errors'> {
     };
 }
 
+interface CaptureCreationFormState {
+    showValidation: boolean;
+    testing: boolean;
+    saving: boolean;
+    showLogs: boolean;
+    saveStatus: string;
+}
+
 export interface CaptureCreationState {
     //Details
     details: CaptureCreationDetails;
@@ -26,6 +34,9 @@ export interface CaptureCreationState {
     //Spec
     spec: CaptureCreationSpec;
     setSpec: (spec: CaptureCreationSpec) => void;
+
+    formState: CaptureCreationFormState;
+    setFormState: (data: Partial<CaptureCreationFormState>) => void;
 
     //Misc
     connectors: { [key: string]: any }[];
@@ -36,7 +47,7 @@ export interface CaptureCreationState {
 
 const getInitialStateData = (): Pick<
     CaptureCreationState,
-    'details' | 'spec' | 'connectors'
+    'details' | 'spec' | 'connectors' | 'formState'
 > => {
     return {
         details: {
@@ -48,6 +59,13 @@ const getInitialStateData = (): Pick<
             errors: [],
         },
         connectors: [],
+        formState: {
+            showValidation: false,
+            testing: false,
+            saving: false,
+            showLogs: false,
+            saveStatus: 'running...',
+        },
     };
 };
 
@@ -80,6 +98,20 @@ const useCaptureCreationStore = create<CaptureCreationState>(
                     }),
                     false,
                     'Spec changed'
+                );
+            },
+
+            setFormState: (newState) => {
+                set(
+                    produce((state) => {
+                        const { formState } = get();
+                        state.formState = {
+                            ...formState,
+                            ...newState,
+                        };
+                    }),
+                    false,
+                    'Form State changed'
                 );
             },
 

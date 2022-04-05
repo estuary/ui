@@ -44,6 +44,13 @@ const selectors = {
     ],
     specFormData: (state: CaptureCreationState) => state.spec.data,
     connectors: (state: CaptureCreationState) => state.connectors,
+    formState: {
+        saveStatus: (state: CaptureCreationState) => state.formState.saveStatus,
+        saving: (state: CaptureCreationState) => state.formState.saving,
+        testing: (state: CaptureCreationState) => state.formState.testing,
+        showLogs: (state: CaptureCreationState) => state.formState.showLogs,
+        set: (state: CaptureCreationState) => state.setFormState,
+    },
 };
 
 interface ConnectorTag {
@@ -96,12 +103,12 @@ function CaptureCreation() {
     const resetState = useCaptureCreationStore(selectors.resetState);
     const hasChanges = useCaptureCreationStore(selectors.hasChanges);
 
-    // Form props
-    const [showValidation, setShowValidation] = useState(false);
-    const [formSubmitting, setFormSubmitting] = useState(false);
-    const [formSaving, setFormSaving] = useState(false);
-    const [showLogs, setShowLogs] = useState(false);
-    const [saveStatus, setSaveStatus] = useState<string | null>(null);
+    // Form State
+    const setFormState = useCaptureCreationStore(selectors.formState.set);
+    const saving = useCaptureCreationStore(selectors.formState.saving);
+    const testing = useCaptureCreationStore(selectors.formState.testing);
+    const showLogs = useCaptureCreationStore(selectors.formState.showLogs);
+    const saveStatus = useCaptureCreationStore(selectors.formState.saveStatus);
 
     const [formSubmitError, setFormSubmitError] = useState<{
         message: string;
@@ -123,10 +130,13 @@ function CaptureCreation() {
 
     const discovers = {
         done: (discoversSubscription: RealtimeSubscription) => {
-            setFormSubmitting(false);
             return supabase
                 .removeSubscription(discoversSubscription)
-                .then(() => {})
+                .then(() => {
+                    setFormState({
+                        testing: false,
+                    });
+                })
                 .catch(() => {});
         },
         waitForFinish: () => {
@@ -148,7 +158,10 @@ function CaptureCreation() {
                 .removeSubscription(draftsSubscription)
                 .then(() => {
                     setLogToken(null);
-                    setFormSubmitting(false);
+                    setFormState({
+                        testing: false,
+                        saving: false,
+                    });
                 })
                 .catch(() => {});
         },
@@ -156,8 +169,10 @@ function CaptureCreation() {
             const draftsSubscription = supabase
                 .from(`drafts`)
                 .on('UPDATE', async () => {
-                    setSaveStatus('Success!');
-                    setFormSaving(false);
+                    setFormState({
+                        saving: false,
+                        saveStatus: 'Success!',
+                    });
                     const notification: Notification = {
                         description:
                             'Your new capture is published and ready to be used.',
@@ -178,9 +193,11 @@ function CaptureCreation() {
     const handlers = {
         saveAndPublish: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
-            setFormSubmitting(true);
-            setFormSaving(true);
-            setSaveStatus('running...');
+            setFormState({
+                testing: true,
+                saving: true,
+                saveStatus: 'running...',
+            });
 
             const draftsSubscription = drafts.waitForFinish();
             supabase
@@ -195,7 +212,9 @@ function CaptureCreation() {
                         if (response.data) {
                             // TODO Need to use this response as part of the subscribe somehow?
                             if (response.data.length > 0) {
-                                setShowLogs(true);
+                                setFormState({
+                                    showLogs: true,
+                                });
                                 setLogToken(response.data[0].logs_token);
                             }
                         } else {
@@ -205,14 +224,22 @@ function CaptureCreation() {
                             drafts
                                 .done(draftsSubscription)
                                 .then(() => {
-                                    setFormSubmitting(false);
+                                    setFormState({
+                                        testing: false,
+                                        saving: false,
+                                        saveStatus: 'Failed',
+                                    });
                                 })
                                 .catch(() => {});
                         }
                     },
                     (draftsError) => {
                         setFormSubmitError(draftsError);
-                        setFormSubmitting(false);
+                        setFormState({
+                            testing: false,
+                            saving: false,
+                            saveStatus: 'Failed',
+                        });
                     }
                 );
         },
@@ -244,10 +271,15 @@ function CaptureCreation() {
             specHasErrors = specErrors ? specErrors.length > 0 : false;
 
             if (detailHasErrors || specHasErrors) {
-                setShowValidation(true);
+                setFormState({
+                    showValidation: true,
+                });
             } else {
-                setFormSubmitting(true);
-                setFormSubmitError(null);
+                setFormState({
+                    testing: true,
+                    saving: false,
+                    saveStatus: 'testing...',
+                });
 
                 // TODO (supabase) - `discovers:id=eq.${response.data[0].id}` was not working
                 const discoversSubscription = discovers.waitForFinish();
@@ -267,15 +299,16 @@ function CaptureCreation() {
                             } else {
                                 discovers
                                     .done(discoversSubscription)
-                                    .then(() => {
-                                        setFormSubmitting(false);
-                                    })
+                                    .then(() => {})
                                     .catch(() => {});
                             }
                         },
                         (discoversError) => {
                             setFormSubmitError(discoversError);
-                            setFormSubmitting(false);
+                            discovers
+                                .done(discoversSubscription)
+                                .then(() => {})
+                                .catch(() => {});
                         }
                     );
             }
@@ -293,7 +326,7 @@ function CaptureCreation() {
                 actionComponent={
                     <>
                         {saveStatus}
-                        <Button disabled={formSaving} onClick={exit}>
+                        <Button disabled={saving || testing} onClick={exit}>
                             Close
                         </Button>
                     </>
@@ -303,9 +336,9 @@ function CaptureCreation() {
             <NewCaptureHeader
                 close={handlers.close}
                 test={handlers.test}
-                testDisabled={formSubmitting || !hasConnectors}
+                testDisabled={saving || testing || !hasConnectors}
                 save={handlers.saveAndPublish}
-                saveDisabled={!catalogResponse || formSubmitting}
+                saveDisabled={!catalogResponse || saving || testing}
                 formId={FORM_ID}
             />
 
@@ -319,19 +352,11 @@ function CaptureCreation() {
             <ErrorBoundryWrapper>
                 <form id={FORM_ID}>
                     {connectorTags ? (
-                        <NewCaptureDetails
-                            displayValidation={showValidation}
-                            readonly={formSubmitting}
-                            connectorTags={connectorTags.data}
-                        />
+                        <NewCaptureDetails connectorTags={connectorTags.data} />
                     ) : null}
 
                     {captureImage ? (
-                        <NewCaptureSpec
-                            displayValidation={showValidation}
-                            readonly={formSubmitting}
-                            connectorImage={captureImage}
-                        />
+                        <NewCaptureSpec connectorImage={captureImage} />
                     ) : null}
                 </form>
             </ErrorBoundryWrapper>

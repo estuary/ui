@@ -13,8 +13,6 @@ import {
 } from 'services/jsonforms';
 
 interface NewCaptureDetailsProps {
-    displayValidation: boolean;
-    readonly: boolean;
     connectorTags: any[];
 }
 
@@ -22,14 +20,23 @@ const stateSelectors = {
     formData: (state: CaptureCreationState) => state.details.data,
     setDetails: (state: CaptureCreationState) => state.setDetails,
     setConnectors: (state: CaptureCreationState) => state.setConnectors,
+    showValidation: (state: CaptureCreationState) =>
+        state.formState.showValidation,
+    saving: (state: CaptureCreationState) => state.formState.saving,
+    testing: (state: CaptureCreationState) => state.formState.testing,
 };
 
 function NewCaptureDetails(props: NewCaptureDetailsProps) {
-    const { readonly, displayValidation, connectorTags } = props;
+    const { connectorTags } = props;
 
     const intl = useIntl();
     const formData = useCaptureCreationStore(stateSelectors.formData);
     const setDetails = useCaptureCreationStore(stateSelectors.setDetails);
+    const displayValidation = useCaptureCreationStore(
+        stateSelectors.showValidation
+    );
+    const saving = useCaptureCreationStore(stateSelectors.saving);
+    const testing = useCaptureCreationStore(stateSelectors.testing);
 
     const schema = useMemo(() => {
         return {
@@ -104,7 +111,7 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
                         renderers={defaultRenderers}
                         cells={materialCells}
                         config={defaultOptions}
-                        readonly={readonly}
+                        readonly={saving || testing}
                         validationMode={showValidation(displayValidation)}
                         onChange={setDetails}
                     />

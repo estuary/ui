@@ -16,8 +16,6 @@ import {
 } from 'services/jsonforms';
 
 type NewCaptureSpecFormProps = {
-    displayValidation: boolean;
-    readonly: boolean;
     endpointSchema: any;
 };
 
@@ -26,12 +24,21 @@ const defaultAjv = createAjv({ useDefaults: true });
 const stateSelectors = {
     formData: (state: CaptureCreationState) => state.spec.data,
     setSpec: (state: CaptureCreationState) => state.setSpec,
+    showValidation: (state: CaptureCreationState) =>
+        state.formState.showValidation,
+    saving: (state: CaptureCreationState) => state.formState.saving,
+    testing: (state: CaptureCreationState) => state.formState.testing,
 };
 function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
-    const { readonly, displayValidation, endpointSchema } = props;
+    const { endpointSchema } = props;
 
     const setSpec = useCaptureCreationStore(stateSelectors.setSpec);
     const formData = useCaptureCreationStore(stateSelectors.formData);
+    const displayValidation = useCaptureCreationStore(
+        stateSelectors.showValidation
+    );
+    const saving = useCaptureCreationStore(stateSelectors.saving);
+    const testing = useCaptureCreationStore(stateSelectors.testing);
 
     const [dereffedSchema, setDereffedSchema] = useState<any | null>(null);
 
@@ -78,7 +85,7 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
                     renderers={defaultRenderers}
                     cells={materialCells}
                     config={defaultOptions}
-                    readonly={readonly}
+                    readonly={saving || testing}
                     validationMode={showValidationVal}
                     onChange={handlers.onChange}
                 />
