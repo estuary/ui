@@ -8,20 +8,12 @@ function ModeSwitch() {
     const colorMode = useColorMode();
 
     return (
-        <Box
-            sx={{
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'text.primary',
-                borderRadius: 1,
-                p: 3,
-            }}
-        >
+        <Box>
             <IconButton onClick={colorMode.toggleColorMode} color="inherit">
                 {theme.palette.mode === 'dark' ? (
-                    <WbSunnyIcon />
-                ) : (
                     <ModeNightIcon />
+                ) : (
+                    <WbSunnyIcon />
                 )}
             </IconButton>
         </Box>
