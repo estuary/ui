@@ -136,10 +136,14 @@ function CaptureCreation() {
     // Local state
     const [catalogResponse, setCatalogResponse] = useState<any | null>(null);
 
-    const exit = () => {
+    const cleanUpEditor = () => {
         if (Object.keys(resourcesFromEditor).length > 0) {
             clearResourcesFromEditor();
         }
+    };
+
+    const exit = () => {
+        cleanUpEditor();
 
         resetState();
 
@@ -158,6 +162,7 @@ function CaptureCreation() {
                 .catch(() => {});
         },
         waitForFinish: () => {
+            cleanUpEditor();
             resetFormState(CaptureCreationFormStatus.TESTING);
             const discoverStatus = supabase
                 .from(TABLES.DISCOVERS)
@@ -197,6 +202,7 @@ function CaptureCreation() {
                 .catch(() => {});
         },
         waitForFinish: () => {
+            cleanUpEditor();
             resetFormState(CaptureCreationFormStatus.SAVING);
             const draftsSubscription = supabase
                 .from(TABLES.DRAFTS)
