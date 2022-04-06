@@ -17,10 +17,11 @@ import { FormattedMessage } from 'react-intl';
 
 type ErrorProps = {
     error: PostgrestError;
+    hideTitle?: boolean;
 };
 
 function Error(props: ErrorProps) {
-    const { error } = props;
+    const { error, hideTitle } = props;
 
     const [expanded, setExpanded] = React.useState(false);
 
@@ -30,10 +31,12 @@ function Error(props: ErrorProps) {
 
     return (
         <Box sx={{ width: '100%' }}>
-            <Alert severity="error">
-                <AlertTitle>
-                    <FormattedMessage id="error.title" />
-                </AlertTitle>
+            <Alert severity="error" icon={!hideTitle}>
+                {!hideTitle ? (
+                    <AlertTitle>
+                        <FormattedMessage id="error.title" />
+                    </AlertTitle>
+                ) : null}
 
                 <FormattedMessage id="error.message" tagName={Box} />
 

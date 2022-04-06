@@ -67,7 +67,7 @@ const selectors = {
         showLogs: (state: CaptureCreationState) => state.formState.showLogs,
         logToken: (state: CaptureCreationState) => state.formState.logToken,
         error: (state: CaptureCreationState) => state.formState.error,
-        exitOfLogsClose: (state: CaptureCreationState) =>
+        exitWhenLogsClose: (state: CaptureCreationState) =>
             state.formState.exitWhenLogsClose,
     },
     changeSet: {
@@ -130,7 +130,7 @@ function CaptureCreation() {
     const formSubmitError = useCaptureCreationStore(selectors.form.error);
     const saveStatus = useCaptureCreationStore(selectors.form.saveStatus);
     const exitWhenLogsClose = useCaptureCreationStore(
-        selectors.form.exitOfLogsClose
+        selectors.form.exitWhenLogsClose
     );
 
     // Local state
@@ -162,13 +162,12 @@ function CaptureCreation() {
             const discoverStatus = supabase
                 .from(TABLES.DISCOVERS)
                 .on('*', async (payload) => {
-                    console.log('discovers came back');
                     if (payload.new.job_status.type === 'success') {
                         setCatalogResponse(payload.new.catalog_spec);
                     } else {
                         setFormState({
                             error: {
-                                title: 'captureCreation.test.failedMessage',
+                                title: 'captureCreation.test.failedErrorTitle',
                             },
                         });
                     }
@@ -223,6 +222,33 @@ function CaptureCreation() {
 
     // Form Event Handlers
     const handlers = {
+        cancel: () => {
+            if (hasChanges()) {
+                confirmationModalContext
+                    ?.showConfirmation({
+                        message: 'confirm.loseData',
+                    })
+                    .then((confirmed) => {
+                        if (confirmed) {
+                            exit();
+                        }
+                    })
+                    .catch(() => {});
+            } else {
+                exit();
+            }
+        },
+
+        closeLogs: () => {
+            setFormState({
+                showLogs: false,
+            });
+
+            if (exitWhenLogsClose) {
+                exit();
+            }
+        },
+
         saveAndPublish: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
@@ -250,6 +276,11 @@ function CaptureCreation() {
                                 .then(() => {
                                     setFormState({
                                         status: CaptureCreationFormStatus.IDLE,
+                                        exitWhenLogsClose: false,
+                                        error: {
+                                            title: 'captureCreation.save.failedErrorTitle',
+                                            error: response.error,
+                                        },
                                         saveStatus: intl.formatMessage({
                                             id: 'captureCreation.status.failed',
                                         }),
@@ -265,38 +296,11 @@ function CaptureCreation() {
                                 id: 'captureCreation.status.failed',
                             }),
                             error: {
-                                title: 'captureCreation.save.failedMessage',
+                                title: 'captureCreation.save.failedErrorTitle',
                             },
                         });
                     }
                 );
-        },
-
-        cancel: () => {
-            if (hasChanges()) {
-                confirmationModalContext
-                    ?.showConfirmation({
-                        message: 'confirm.loseData',
-                    })
-                    .then((confirmed) => {
-                        if (confirmed) {
-                            exit();
-                        }
-                    })
-                    .catch(() => {});
-            } else {
-                exit();
-            }
-        },
-
-        closeLogs: () => {
-            setFormState({
-                showLogs: false,
-            });
-
-            if (exitWhenLogsClose) {
-                exit();
-            }
         },
 
         test: (event: MouseEvent<HTMLElement>) => {
@@ -333,14 +337,26 @@ function CaptureCreation() {
                             } else {
                                 discovers
                                     .done(discoversSubscription)
-                                    .then(() => {})
+                                    .then(() => {
+                                        setFormState({
+                                            status: CaptureCreationFormStatus.IDLE,
+                                            exitWhenLogsClose: false,
+                                            error: {
+                                                title: 'captureCreation.test.failedErrorTitle',
+                                                error: response.error,
+                                            },
+                                            saveStatus: intl.formatMessage({
+                                                id: 'captureCreation.status.failed',
+                                            }),
+                                        });
+                                    })
                                     .catch(() => {});
                             }
                         },
                         () => {
                             setFormState({
                                 error: {
-                                    title: 'captureCreation.test.failedMessage',
+                                    title: 'captureCreation.test.failedErrorTitle',
                                 },
                             });
                             discovers
@@ -391,8 +407,8 @@ function CaptureCreation() {
             <Collapse in={formSubmitError !== null}>
                 {formSubmitError && (
                     <NewCaptureError
-                        title="captureCreation.save.failed"
-                        errors={formSubmitError.errors}
+                        title={formSubmitError.title}
+                        error={formSubmitError.error}
                         logToken={logToken}
                     />
                 )}

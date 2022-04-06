@@ -1,23 +1,18 @@
-import {
-    Alert,
-    AlertTitle,
-    Box,
-    List,
-    ListItem,
-    Typography,
-} from '@mui/material';
+import { Alert, AlertTitle, Box } from '@mui/material';
+import { PostgrestError } from '@supabase/postgrest-js';
 import Logs from 'components/Logs';
+import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { FormattedMessage } from 'react-intl';
 
 type NewCaptureErrorProps = {
     title: string;
-    errors?: string[];
+    error?: PostgrestError;
     logToken?: string | null;
 };
 
 function NewCaptureError(props: NewCaptureErrorProps) {
-    const { logToken, errors, title } = props;
+    const { logToken, error, title } = props;
 
     return (
         <Box sx={{ width: '100%' }}>
@@ -31,25 +26,7 @@ function NewCaptureError(props: NewCaptureErrorProps) {
                 <AlertTitle>
                     <FormattedMessage id={title} />
                 </AlertTitle>
-                {errors && errors.length > 0 && (
-                    <List dense>
-                        {errors.map((error: any, index: number) => {
-                            return (
-                                <ListItem key={`ErrorMessage_${index}`}>
-                                    <Typography
-                                        sx={{
-                                            fontWeight: 'bold',
-                                            textTransform: 'capitalize',
-                                        }}
-                                    >
-                                        {error.title}
-                                    </Typography>
-                                    : {error.detail}
-                                </ListItem>
-                            );
-                        })}
-                    </List>
-                )}
+                {error ? <Error error={error} hideTitle={true} /> : null}
                 {logToken ? (
                     <Box
                         sx={{

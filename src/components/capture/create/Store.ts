@@ -1,4 +1,5 @@
 import { JsonFormsCore } from '@jsonforms/core';
+import { PostgrestError } from '@supabase/postgrest-js';
 import produce from 'immer';
 import { isEqual } from 'lodash';
 import { devtoolsInNonProd } from 'utils/store-utils';
@@ -33,7 +34,7 @@ interface CaptureCreationFormState {
     logToken: string | null;
     error: {
         title: string;
-        errors?: any[];
+        error?: PostgrestError;
     } | null;
 }
 
