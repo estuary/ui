@@ -28,7 +28,7 @@ import NewCaptureEditor from './CatalogEditor';
 import NewCaptureDetails from './DetailsForm';
 import NewCaptureError from './Error';
 
-interface ConnectorTag {
+export interface ConnectorTag {
     connectors: {
         detail: string;
         image_name: string;

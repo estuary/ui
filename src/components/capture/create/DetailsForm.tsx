@@ -1,6 +1,7 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Alert, Stack, Typography } from '@mui/material';
+import { ConnectorTag } from 'components/capture/create';
 import useCaptureCreationStore, {
     CaptureCreationFormStatus,
     CaptureCreationState,
@@ -15,7 +16,7 @@ import {
 import { StoreSelector } from 'types';
 
 interface NewCaptureDetailsProps {
-    connectorTags: any[];
+    connectorTags: ConnectorTag[];
 }
 
 const stateSelectors: StoreSelector<CaptureCreationState> = {
@@ -49,7 +50,7 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
                             ? connectorTags.map((connector: any) => {
                                   return {
                                       const: connector.id,
-                                      title: connector.connectors.image_name,
+                                      title: connector.connectors.detail,
                                   };
                               })
                             : ([] as { title: string; const: string }[]),
