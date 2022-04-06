@@ -97,6 +97,7 @@ const useCaptureCreationStore = create<CaptureCreationState>(
                         ) {
                             const initState = getInitialStateData();
                             state.spec = initState.spec;
+                            state.formState = initState.formState;
                         }
 
                         state.details = details;
