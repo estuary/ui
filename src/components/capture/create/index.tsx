@@ -10,6 +10,7 @@ import useCaptureCreationStore, {
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
 import { useConfirmationModalContext } from 'context/Confirmation';
+import produce from 'immer';
 import { MouseEvent, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
@@ -243,6 +244,20 @@ function CaptureCreation() {
         },
     };
 
+    const prepareCatalogForSaving = () => {
+        const editorKeys = Object.keys(resourcesFromEditor);
+
+        if (editorKeys.length > 0) {
+            return produce(catalogResponse, (draft: any) => {
+                editorKeys.forEach((key) => {
+                    draft.resources[key].content = resourcesFromEditor[key];
+                });
+            });
+        } else {
+            return catalogResponse;
+        }
+    };
+
     // Form Event Handlers
     const handlers = {
         cancel: () => {
@@ -280,10 +295,7 @@ function CaptureCreation() {
                 .from(TABLES.DRAFTS)
                 .insert([
                     {
-                        catalog_spec:
-                            Object.keys(resourcesFromEditor).length > 0
-                                ? resourcesFromEditor
-                                : catalogResponse,
+                        catalog_spec: prepareCatalogForSaving(),
                     },
                 ])
                 .then(
