@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import { Button, Collapse } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import NewCaptureHeader from 'components/capture/create/Header';
 import LogDialog from 'components/capture/create/LogDialog';
@@ -61,9 +61,14 @@ const selectors = {
     },
     form: {
         set: (state: CaptureCreationState) => state.setFormState,
+        reset: (state: CaptureCreationState) => state.resetFormState,
         saveStatus: (state: CaptureCreationState) => state.formState.saveStatus,
         status: (state: CaptureCreationState) => state.formState.status,
         showLogs: (state: CaptureCreationState) => state.formState.showLogs,
+        logToken: (state: CaptureCreationState) => state.formState.logToken,
+        error: (state: CaptureCreationState) => state.formState.error,
+        exitOfLogsClose: (state: CaptureCreationState) =>
+            state.formState.exitWhenLogsClose,
     },
     changeSet: {
         addCapture: (state: ChangeSetState) => state.addCapture,
@@ -118,14 +123,17 @@ function CaptureCreation() {
 
     // Form State
     const setFormState = useCaptureCreationStore(selectors.form.set);
+    const resetFormState = useCaptureCreationStore(selectors.form.reset);
     const status = useCaptureCreationStore(selectors.form.status);
     const showLogs = useCaptureCreationStore(selectors.form.showLogs);
+    const logToken = useCaptureCreationStore(selectors.form.logToken);
+    const formSubmitError = useCaptureCreationStore(selectors.form.error);
     const saveStatus = useCaptureCreationStore(selectors.form.saveStatus);
+    const exitWhenLogsClose = useCaptureCreationStore(
+        selectors.form.exitOfLogsClose
+    );
 
-    const [formSubmitError, setFormSubmitError] = useState<{
-        message: string;
-        errors: any[];
-    } | null>(null);
+    // Local state
     const [catalogResponse, setCatalogResponse] = useState<any | null>(null);
 
     const exit = () => {
@@ -137,8 +145,6 @@ function CaptureCreation() {
 
         navigate('/captures');
     };
-
-    const [logToken, setLogToken] = useState<string | null>(null);
 
     const discovers = {
         done: (discoversSubscription: RealtimeSubscription) => {
@@ -152,10 +158,21 @@ function CaptureCreation() {
                 .catch(() => {});
         },
         waitForFinish: () => {
+            resetFormState(CaptureCreationFormStatus.TESTING);
             const discoverStatus = supabase
-                .from(`discovers`)
-                .on('UPDATE', async (payload) => {
-                    setCatalogResponse(payload.new.catalog_spec);
+                .from(TABLES.DISCOVERS)
+                .on('*', async (payload) => {
+                    console.log('discovers came back');
+                    if (payload.new.job_status.type === 'success') {
+                        setCatalogResponse(payload.new.catalog_spec);
+                    } else {
+                        setFormState({
+                            error: {
+                                title: 'captureCreation.test.failedMessage',
+                            },
+                        });
+                    }
+
                     await discovers.done(discoverStatus);
                 })
                 .subscribe();
@@ -169,19 +186,21 @@ function CaptureCreation() {
             return supabase
                 .removeSubscription(draftsSubscription)
                 .then(() => {
-                    setLogToken(null);
                     setFormState({
+                        logToken: null,
                         status: CaptureCreationFormStatus.IDLE,
                     });
                 })
                 .catch(() => {});
         },
         waitForFinish: () => {
+            resetFormState(CaptureCreationFormStatus.SAVING);
             const draftsSubscription = supabase
-                .from(`drafts`)
-                .on('UPDATE', async () => {
+                .from(TABLES.DRAFTS)
+                .on('*', async () => {
                     setFormState({
                         status: CaptureCreationFormStatus.IDLE,
+                        exitWhenLogsClose: true,
                         saveStatus: intl.formatMessage({
                             id: 'captureCreation.status.success',
                         }),
@@ -206,12 +225,6 @@ function CaptureCreation() {
     const handlers = {
         saveAndPublish: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
-            setFormState({
-                status: CaptureCreationFormStatus.SAVING,
-                saveStatus: intl.formatMessage({
-                    id: 'captureCreation.status.running',
-                }),
-            });
 
             const draftsSubscription = drafts.waitForFinish();
             supabase
@@ -224,17 +237,14 @@ function CaptureCreation() {
                 .then(
                     async (response) => {
                         if (response.data) {
-                            // TODO Need to use this response as part of the subscribe somehow?
+                            // TODO Need to use this response as part of the subscribe somehow
                             if (response.data.length > 0) {
                                 setFormState({
+                                    logToken: response.data[0].logs_token,
                                     showLogs: true,
                                 });
-                                setLogToken(response.data[0].logs_token);
                             }
                         } else {
-                            // setFormSubmitError({
-                            //     message: 'Failed to create your discover',
-                            // });
                             drafts
                                 .done(draftsSubscription)
                                 .then(() => {
@@ -248,19 +258,21 @@ function CaptureCreation() {
                                 .catch(() => {});
                         }
                     },
-                    (draftsError) => {
-                        setFormSubmitError(draftsError);
+                    () => {
                         setFormState({
                             status: CaptureCreationFormStatus.IDLE,
                             saveStatus: intl.formatMessage({
                                 id: 'captureCreation.status.failed',
                             }),
+                            error: {
+                                title: 'captureCreation.save.failedMessage',
+                            },
                         });
                     }
                 );
         },
 
-        close: () => {
+        cancel: () => {
             if (hasChanges()) {
                 confirmationModalContext
                     ?.showConfirmation({
@@ -273,6 +285,16 @@ function CaptureCreation() {
                     })
                     .catch(() => {});
             } else {
+                exit();
+            }
+        },
+
+        closeLogs: () => {
+            setFormState({
+                showLogs: false,
+            });
+
+            if (exitWhenLogsClose) {
                 exit();
             }
         },
@@ -291,13 +313,6 @@ function CaptureCreation() {
                     showValidation: true,
                 });
             } else {
-                setFormState({
-                    status: CaptureCreationFormStatus.TESTING,
-                    saveStatus: intl.formatMessage({
-                        id: 'captureCreation.status.running',
-                    }),
-                });
-
                 // TODO (supabase) - `discovers:id=eq.${response.data[0].id}` was not working
                 const discoversSubscription = discovers.waitForFinish();
                 supabase
@@ -312,7 +327,9 @@ function CaptureCreation() {
                     .then(
                         (response) => {
                             if (response.data) {
-                                console.log(response.data[0].logs_token);
+                                setFormState({
+                                    logToken: response.data[0].logs_token,
+                                });
                             } else {
                                 discovers
                                     .done(discoversSubscription)
@@ -320,8 +337,12 @@ function CaptureCreation() {
                                     .catch(() => {});
                             }
                         },
-                        (discoversError) => {
-                            setFormSubmitError(discoversError);
+                        () => {
+                            setFormState({
+                                error: {
+                                    title: 'captureCreation.test.failedMessage',
+                                },
+                            });
                             discovers
                                 .done(discoversSubscription)
                                 .then(() => {})
@@ -345,7 +366,7 @@ function CaptureCreation() {
                         {saveStatus}
                         <Button
                             disabled={status !== CaptureCreationFormStatus.IDLE}
-                            onClick={exit}
+                            onClick={handlers.closeLogs}
                         >
                             <FormattedMessage id="cta.close" />
                         </Button>
@@ -354,7 +375,7 @@ function CaptureCreation() {
             />
 
             <NewCaptureHeader
-                close={handlers.close}
+                close={handlers.cancel}
                 test={handlers.test}
                 testDisabled={
                     status !== CaptureCreationFormStatus.IDLE || !hasConnectors
@@ -367,24 +388,29 @@ function CaptureCreation() {
                 formId={FORM_ID}
             />
 
-            {formSubmitError && (
-                <NewCaptureError
-                    title="captureCreation.save.failed"
-                    errors={formSubmitError.errors}
-                />
-            )}
+            <Collapse in={formSubmitError !== null}>
+                {formSubmitError && (
+                    <NewCaptureError
+                        title="captureCreation.save.failed"
+                        errors={formSubmitError.errors}
+                        logToken={logToken}
+                    />
+                )}
+            </Collapse>
 
-            <ErrorBoundryWrapper>
-                <form id={FORM_ID}>
-                    {connectorTags ? (
+            <form id={FORM_ID}>
+                {connectorTags ? (
+                    <ErrorBoundryWrapper>
                         <NewCaptureDetails connectorTags={connectorTags.data} />
-                    ) : null}
+                    </ErrorBoundryWrapper>
+                ) : null}
 
-                    {captureImage ? (
+                {captureImage ? (
+                    <ErrorBoundryWrapper>
                         <NewCaptureSpec connectorImage={captureImage} />
-                    ) : null}
-                </form>
-            </ErrorBoundryWrapper>
+                    </ErrorBoundryWrapper>
+                ) : null}
+            </form>
 
             <ErrorBoundryWrapper>
                 {catalogResponse ? (

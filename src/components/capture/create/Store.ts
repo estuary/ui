@@ -29,6 +29,12 @@ interface CaptureCreationFormState {
     status: CaptureCreationFormStatus;
     showLogs: boolean;
     saveStatus: string;
+    exitWhenLogsClose: boolean;
+    logToken: string | null;
+    error: {
+        title: string;
+        errors?: any[];
+    } | null;
 }
 
 export interface CaptureCreationState {
@@ -42,6 +48,7 @@ export interface CaptureCreationState {
 
     formState: CaptureCreationFormState;
     setFormState: (data: Partial<CaptureCreationFormState>) => void;
+    resetFormState: (status: CaptureCreationFormStatus) => void;
 
     //Misc
     connectors: { [key: string]: any }[];
@@ -68,7 +75,10 @@ const getInitialStateData = (): Pick<
             showValidation: false,
             status: CaptureCreationFormStatus.IDLE,
             showLogs: false,
+            exitWhenLogsClose: false,
+            logToken: null,
             saveStatus: 'running...',
+            error: null,
         },
     };
 };
@@ -116,6 +126,18 @@ const useCaptureCreationStore = create<CaptureCreationState>(
                     }),
                     false,
                     'Form State changed'
+                );
+            },
+
+            resetFormState: (status) => {
+                set(
+                    produce((state) => {
+                        const { formState } = getInitialStateData();
+                        state.formState = formState;
+                        state.formState.status = status;
+                    }),
+                    false,
+                    'Form State Reset'
                 );
             },
 

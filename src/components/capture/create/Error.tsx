@@ -6,23 +6,32 @@ import {
     ListItem,
     Typography,
 } from '@mui/material';
+import Logs from 'components/Logs';
+import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { FormattedMessage } from 'react-intl';
 
 type NewCaptureErrorProps = {
     title: string;
-    errors: string[];
+    errors?: string[];
+    logToken?: string | null;
 };
 
 function NewCaptureError(props: NewCaptureErrorProps) {
-    const { errors, title } = props;
+    const { logToken, errors, title } = props;
 
     return (
         <Box sx={{ width: '100%' }}>
-            <Alert severity="error">
+            <Alert
+                sx={{
+                    'width': '100%',
+                    '& .MuiAlert-message': { width: '100%' },
+                }}
+                severity="error"
+            >
                 <AlertTitle>
                     <FormattedMessage id={title} />
                 </AlertTitle>
-                {errors.length > 0 && (
+                {errors && errors.length > 0 && (
                     <List dense>
                         {errors.map((error: any, index: number) => {
                             return (
@@ -41,6 +50,18 @@ function NewCaptureError(props: NewCaptureErrorProps) {
                         })}
                     </List>
                 )}
+                {logToken ? (
+                    <Box
+                        sx={{
+                            width: '100%',
+                            height: 250,
+                        }}
+                    >
+                        <ErrorBoundryWrapper>
+                            <Logs token={logToken} />
+                        </ErrorBoundryWrapper>
+                    </Box>
+                ) : null}
             </Alert>
         </Box>
     );
