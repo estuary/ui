@@ -162,17 +162,22 @@ function CaptureCreation() {
             const discoverStatus = supabase
                 .from(TABLES.DISCOVERS)
                 .on('*', async (payload) => {
-                    if (payload.new.job_status.type === 'success') {
-                        setCatalogResponse(payload.new.catalog_spec);
-                    } else {
-                        setFormState({
-                            error: {
-                                title: 'captureCreation.test.failedErrorTitle',
-                            },
-                        });
-                    }
+                    if (payload.new.job_status.type !== 'queued') {
+                        if (payload.new.job_status.type === 'success') {
+                            setCatalogResponse(payload.new.catalog_spec);
+                        } else {
+                            setFormState({
+                                error: {
+                                    title: 'captureCreation.test.failedErrorTitle',
+                                },
+                                saveStatus: intl.formatMessage({
+                                    id: 'captureCreation.status.failed',
+                                }),
+                            });
+                        }
 
-                    await discovers.done(discoverStatus);
+                        await discovers.done(discoverStatus);
+                    }
                 })
                 .subscribe();
 
@@ -186,7 +191,6 @@ function CaptureCreation() {
                 .removeSubscription(draftsSubscription)
                 .then(() => {
                     setFormState({
-                        logToken: null,
                         status: CaptureCreationFormStatus.IDLE,
                     });
                 })
@@ -196,23 +200,36 @@ function CaptureCreation() {
             resetFormState(CaptureCreationFormStatus.SAVING);
             const draftsSubscription = supabase
                 .from(TABLES.DRAFTS)
-                .on('*', async () => {
-                    setFormState({
-                        status: CaptureCreationFormStatus.IDLE,
-                        exitWhenLogsClose: true,
-                        saveStatus: intl.formatMessage({
-                            id: 'captureCreation.status.success',
-                        }),
-                    });
-                    const notification: Notification = {
-                        description:
-                            'Your new capture is published and ready to be used.',
-                        severity: 'success',
-                        title: 'New Capture Created',
-                    };
-                    showNotification(notification);
+                .on('*', async (payload) => {
+                    if (payload.new.job_status.type !== 'queued') {
+                        if (payload.new.job_status.type === 'success') {
+                            setFormState({
+                                status: CaptureCreationFormStatus.IDLE,
+                                exitWhenLogsClose: true,
+                                saveStatus: intl.formatMessage({
+                                    id: 'captureCreation.status.success',
+                                }),
+                            });
+                            const notification: Notification = {
+                                description:
+                                    'Your new capture is published and ready to be used.',
+                                severity: 'success',
+                                title: 'New Capture Created',
+                            };
+                            showNotification(notification);
+                        } else {
+                            setFormState({
+                                error: {
+                                    title: 'captureCreation.save.failedErrorTitle',
+                                },
+                                saveStatus: intl.formatMessage({
+                                    id: 'captureCreation.status.failed',
+                                }),
+                            });
+                        }
 
-                    await drafts.done(draftsSubscription);
+                        await drafts.done(draftsSubscription);
+                    }
                 })
                 .subscribe();
 
@@ -257,7 +274,10 @@ function CaptureCreation() {
                 .from(TABLES.DRAFTS)
                 .insert([
                     {
-                        catalog_spec: catalogResponse,
+                        catalog_spec:
+                            Object.keys(resourcesFromEditor).length > 0
+                                ? resourcesFromEditor
+                                : catalogResponse,
                     },
                 ])
                 .then(
