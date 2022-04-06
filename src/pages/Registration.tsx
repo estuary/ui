@@ -55,7 +55,7 @@ const Registration = () => {
 
     const numericAndSpecialRegExp: RegExp = /[0-9&^*|":<>{}`();@$#%+=?/[\]\\]/;
 
-    // TODO: Consolidate update and validate form control function handlers.
+    // TODO: Consolidate update form control function handlers.
     const handlers = {
         updateFirstName: (event: React.ChangeEvent<HTMLInputElement>) => {
             event.target.value = event.target.value.trimStart();
@@ -98,51 +98,21 @@ const Registration = () => {
         ) => {
             setAcknowledgedDocuments(checked);
         },
-        validateFirstName: (
-            event?: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
-        ) => {
-            if (event?.target.value) {
-                setFirstName(event.target.value.trimEnd());
-            }
+        validateTextInput:
+            (
+                controlName: keyof Errors,
+                controlValue: string,
+                setControl: (value: React.SetStateAction<string>) => void
+            ) =>
+            (
+                event?: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
+            ) => {
+                if (event?.target.value) {
+                    setControl(event.target.value.trimEnd());
+                }
 
-            setErrors({ ...errors, firstName: !firstName });
-        },
-        validateLastName: (
-            event?: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
-        ) => {
-            if (event?.target.value) {
-                setLastName(event.target.value.trimEnd());
-            }
-
-            setErrors({ ...errors, lastName: !lastName });
-        },
-        validateEmail: (
-            event?: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
-        ) => {
-            if (event?.target.value) {
-                setEmail(event.target.value.trimEnd());
-            }
-
-            setErrors({ ...errors, email: !email });
-        },
-        validateCompany: (
-            event?: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
-        ) => {
-            if (event?.target.value) {
-                setCompany(event.target.value.trimEnd());
-            }
-
-            setErrors({ ...errors, company: !company });
-        },
-        validateUseCase: (
-            event?: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
-        ) => {
-            if (event?.target.value) {
-                setUseCase(event.target.value.trimEnd());
-            }
-
-            setErrors({ ...errors, useCase: !useCase });
-        },
+                setErrors({ ...errors, [`${controlName}`]: !controlValue });
+            },
         validateDocumentAcknowledgement: () => {
             setErrors({
                 ...errors,
@@ -225,7 +195,11 @@ const Registration = () => {
                                 error={errors.firstName}
                                 required
                                 onChange={handlers.updateFirstName}
-                                onBlur={handlers.validateFirstName}
+                                onBlur={handlers.validateTextInput(
+                                    'firstName',
+                                    firstName,
+                                    setFirstName
+                                )}
                                 sx={{ width: 250, mb: 3 }}
                             />
 
@@ -238,7 +212,11 @@ const Registration = () => {
                                 error={errors.lastName}
                                 required
                                 onChange={handlers.updateLastName}
-                                onBlur={handlers.validateLastName}
+                                onBlur={handlers.validateTextInput(
+                                    'lastName',
+                                    lastName,
+                                    setLastName
+                                )}
                                 sx={{ width: 250, mb: 3 }}
                             />
 
@@ -251,7 +229,11 @@ const Registration = () => {
                                 error={errors.email}
                                 required
                                 onChange={handlers.updateEmail}
-                                onBlur={handlers.validateEmail}
+                                onBlur={handlers.validateTextInput(
+                                    'email',
+                                    email,
+                                    setEmail
+                                )}
                                 sx={{ width: 250, mb: 3 }}
                             />
 
@@ -264,7 +246,11 @@ const Registration = () => {
                                 error={errors.company}
                                 required
                                 onChange={handlers.updateCompany}
-                                onBlur={handlers.validateCompany}
+                                onBlur={handlers.validateTextInput(
+                                    'company',
+                                    company,
+                                    setCompany
+                                )}
                                 sx={{ width: 250, mb: 3 }}
                             />
 
@@ -278,7 +264,11 @@ const Registration = () => {
                                 required
                                 multiline
                                 onChange={handlers.updateUseCase}
-                                onBlur={handlers.validateUseCase}
+                                onBlur={handlers.validateTextInput(
+                                    'useCase',
+                                    useCase,
+                                    setUseCase
+                                )}
                                 sx={{ width: 250, mb: 3 }}
                             />
 
