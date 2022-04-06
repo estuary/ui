@@ -3,6 +3,7 @@ import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { StyledEngineProvider } from '@mui/material';
 import useCaptureCreationStore, {
+    CaptureCreationFormStatus,
     CaptureCreationState,
 } from 'components/capture/create/Store';
 import JsonRefs from 'json-refs';
@@ -14,24 +15,29 @@ import {
     generateCustomUISchema,
     showValidation,
 } from 'services/jsonforms';
+import { StoreSelector } from 'types';
 
 type NewCaptureSpecFormProps = {
-    displayValidation: boolean;
-    readonly: boolean;
     endpointSchema: any;
 };
 
 const defaultAjv = createAjv({ useDefaults: true });
 
-const stateSelectors = {
-    formData: (state: CaptureCreationState) => state.spec.data,
-    setSpec: (state: CaptureCreationState) => state.setSpec,
+const stateSelectors: StoreSelector<CaptureCreationState> = {
+    formData: (state) => state.spec.data,
+    setSpec: (state) => state.setSpec,
+    showValidation: (state) => state.formState.showValidation,
+    status: (state) => state.formState.status,
 };
 function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
-    const { readonly, displayValidation, endpointSchema } = props;
+    const { endpointSchema } = props;
 
     const setSpec = useCaptureCreationStore(stateSelectors.setSpec);
     const formData = useCaptureCreationStore(stateSelectors.formData);
+    const displayValidation = useCaptureCreationStore(
+        stateSelectors.showValidation
+    );
+    const status = useCaptureCreationStore(stateSelectors.status);
 
     const [dereffedSchema, setDereffedSchema] = useState<any | null>(null);
 
@@ -78,7 +84,7 @@ function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
                     renderers={defaultRenderers}
                     cells={materialCells}
                     config={defaultOptions}
-                    readonly={readonly}
+                    readonly={status !== CaptureCreationFormStatus.IDLE}
                     validationMode={showValidationVal}
                     onChange={handlers.onChange}
                 />

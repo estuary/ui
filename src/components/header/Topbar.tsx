@@ -3,6 +3,7 @@ import { Box, IconButton, Stack, Toolbar } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
 import { useTheme } from '@mui/material/styles';
 import { Auth } from '@supabase/ui';
+import ModeSwitch from 'components/header/ModeSwitch';
 import UserMenu from 'components/menus/UserMenu';
 import { useIntl } from 'react-intl';
 import { BaseComponentProps } from 'types';
@@ -77,6 +78,7 @@ const Topbar = (props: TopbarProps) => {
                         ml: 'auto',
                     }}
                 >
+                    <ModeSwitch />
                     <HelpMenu />
                     <UserMenu />
                 </Stack>

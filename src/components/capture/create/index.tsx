@@ -1,28 +1,19 @@
-import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Paper,
-    Stack,
-    Toolbar,
-    Typography,
-} from '@mui/material';
+import { Button, Collapse } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
+import NewCaptureHeader from 'components/capture/create/Header';
+import LogDialog from 'components/capture/create/LogDialog';
 import NewCaptureSpec from 'components/capture/create/Spec';
 import useCaptureCreationStore, {
+    CaptureCreationFormStatus,
     CaptureCreationState,
 } from 'components/capture/create/Store';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
 import { useConfirmationModalContext } from 'context/Confirmation';
 import { MouseEvent, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { LazyLog } from 'react-lazylog';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
-import { useInterval } from 'react-use';
-import { DEFAULT_INTERVAL, supabase, Tables } from 'services/supabase';
+import { supabase, TABLES } from 'services/supabase';
 import { ChangeSetState } from 'stores/ChangeSetStore';
 import useNotificationStore, {
     Notification,
@@ -36,26 +27,6 @@ import NewCaptureEditor from './CatalogEditor';
 import NewCaptureDetails from './DetailsForm';
 import NewCaptureError from './Error';
 
-const FORM_ID = 'newCaptureForm';
-
-const selectors = {
-    addCapture: (state: ChangeSetState) => state.addCapture,
-    clearResources: (state: SchemaEditorState) => state.clearResources,
-    resources: (state: SchemaEditorState) => state.resources,
-    showNotification: (state: NotificationState) => state.showNotification,
-    captureName: (state: CaptureCreationState) => state.details.data.name,
-    captureImage: (state: CaptureCreationState) => state.details.data.image,
-    setDetails: (state: CaptureCreationState) => state.setDetails,
-    resetState: (state: CaptureCreationState) => state.resetState,
-    hasChanges: (state: CaptureCreationState) => state.hasChanges,
-    errors: (state: CaptureCreationState) => [
-        state.details.errors,
-        state.spec.errors,
-    ],
-    specFormData: (state: CaptureCreationState) => state.spec.data,
-    connectors: (state: CaptureCreationState) => state.connectors,
-};
-
 interface ConnectorTag {
     connectors: {
         detail: string;
@@ -65,20 +36,61 @@ interface ConnectorTag {
     image_tag: string;
     protocol: string;
 }
+const CONNECTOR_TAG_QUERY = `
+    id, 
+    image_tag,
+    protocol,
+    connectors(detail, image_name)
+`;
+const FORM_ID = 'newCaptureForm';
+
+// TODO - need to get this styping to work... too many repeated types
+const selectors = {
+    page: {
+        captureName: (state: CaptureCreationState) => state.details.data.name,
+        captureImage: (state: CaptureCreationState) => state.details.data.image,
+        setDetails: (state: CaptureCreationState) => state.setDetails,
+        resetState: (state: CaptureCreationState) => state.resetState,
+        hasChanges: (state: CaptureCreationState) => state.hasChanges,
+        errors: (state: CaptureCreationState) => [
+            state.details.errors,
+            state.spec.errors,
+        ],
+        specFormData: (state: CaptureCreationState) => state.spec.data,
+        connectors: (state: CaptureCreationState) => state.connectors,
+    },
+    form: {
+        set: (state: CaptureCreationState) => state.setFormState,
+        reset: (state: CaptureCreationState) => state.resetFormState,
+        saveStatus: (state: CaptureCreationState) => state.formState.saveStatus,
+        status: (state: CaptureCreationState) => state.formState.status,
+        showLogs: (state: CaptureCreationState) => state.formState.showLogs,
+        logToken: (state: CaptureCreationState) => state.formState.logToken,
+        error: (state: CaptureCreationState) => state.formState.error,
+        exitWhenLogsClose: (state: CaptureCreationState) =>
+            state.formState.exitWhenLogsClose,
+    },
+    changeSet: {
+        addCapture: (state: ChangeSetState) => state.addCapture,
+    },
+    schema: {
+        clearResources: (state: SchemaEditorState) => state.clearResources,
+        resources: (state: SchemaEditorState) => state.resources,
+    },
+    notifications: {
+        showNotification: (state: NotificationState) => state.showNotification,
+    },
+};
 
 function CaptureCreation() {
+    const intl = useIntl();
     const navigate = useNavigate();
     const confirmationModalContext = useConfirmationModalContext();
 
     const tagsQuery = useQuery<ConnectorTag>(
-        Tables.CONNECTOR_TAGS,
+        TABLES.CONNECTOR_TAGS,
         {
-            columns: `
-                id, 
-                image_tag,
-                protocol,
-                connectors(detail, image_name)
-            `,
+            columns: CONNECTOR_TAG_QUERY,
             filter: (query) => query.eq('protocol', 'capture'),
         },
         []
@@ -87,39 +99,41 @@ function CaptureCreation() {
     const hasConnectors = connectorTags && connectorTags.data.length > 0;
 
     // Schema editor store
-    const resourcesFromEditor = useSchemaEditorStore(selectors.resources);
+    const resourcesFromEditor = useSchemaEditorStore(
+        selectors.schema.resources
+    );
     const clearResourcesFromEditor = useSchemaEditorStore(
-        selectors.clearResources
+        selectors.schema.clearResources
     );
 
     // Notification store
-    const showNotification = useNotificationStore(selectors.showNotification);
+    const showNotification = useNotificationStore(
+        selectors.notifications.showNotification
+    );
 
     // Form store
-    const captureName = useCaptureCreationStore(selectors.captureName);
-    const captureImage = useCaptureCreationStore(selectors.captureImage);
+    const captureName = useCaptureCreationStore(selectors.page.captureName);
+    const captureImage = useCaptureCreationStore(selectors.page.captureImage);
     const [detailErrors, specErrors] = useCaptureCreationStore(
-        selectors.errors
+        selectors.page.errors
     );
-    const specFormData = useCaptureCreationStore(selectors.specFormData);
-    const resetState = useCaptureCreationStore(selectors.resetState);
-    const hasChanges = useCaptureCreationStore(selectors.hasChanges);
+    const specFormData = useCaptureCreationStore(selectors.page.specFormData);
+    const resetState = useCaptureCreationStore(selectors.page.resetState);
+    const hasChanges = useCaptureCreationStore(selectors.page.hasChanges);
 
-    // Form props
-    const [showValidation, setShowValidation] = useState(false);
-    const [formSubmitting, setFormSubmitting] = useState(false);
-    const [formSaving, setFormSaving] = useState(false);
-    const [showLogs, setShowLogs] = useState(false);
-    const [saveLogs, setSaveLogs] = useState([
-        'waiting for logs...',
-        '...................',
-    ]);
-    const [saveStatus, setSaveStatus] = useState<string | null>(null);
+    // Form State
+    const setFormState = useCaptureCreationStore(selectors.form.set);
+    const resetFormState = useCaptureCreationStore(selectors.form.reset);
+    const status = useCaptureCreationStore(selectors.form.status);
+    const showLogs = useCaptureCreationStore(selectors.form.showLogs);
+    const logToken = useCaptureCreationStore(selectors.form.logToken);
+    const formSubmitError = useCaptureCreationStore(selectors.form.error);
+    const saveStatus = useCaptureCreationStore(selectors.form.saveStatus);
+    const exitWhenLogsClose = useCaptureCreationStore(
+        selectors.form.exitWhenLogsClose
+    );
 
-    const [formSubmitError, setFormSubmitError] = useState<{
-        message: string;
-        errors: any[];
-    } | null>(null);
+    // Local state
     const [catalogResponse, setCatalogResponse] = useState<any | null>(null);
 
     const exit = () => {
@@ -132,23 +146,38 @@ function CaptureCreation() {
         navigate('/captures');
     };
 
-    const [logToken, setLogToken] = useState<boolean | null>(null);
-    const [logOffset, setLogOffset] = useState<number>(0);
-
     const discovers = {
         done: (discoversSubscription: RealtimeSubscription) => {
-            setFormSubmitting(false);
             return supabase
                 .removeSubscription(discoversSubscription)
-                .then(() => {})
+                .then(() => {
+                    setFormState({
+                        status: CaptureCreationFormStatus.IDLE,
+                    });
+                })
                 .catch(() => {});
         },
         waitForFinish: () => {
+            resetFormState(CaptureCreationFormStatus.TESTING);
             const discoverStatus = supabase
-                .from(`discovers`)
-                .on('UPDATE', async (payload) => {
-                    setCatalogResponse(payload.new.catalog_spec);
-                    await discovers.done(discoverStatus);
+                .from(TABLES.DISCOVERS)
+                .on('*', async (payload) => {
+                    if (payload.new.job_status.type !== 'queued') {
+                        if (payload.new.job_status.type === 'success') {
+                            setCatalogResponse(payload.new.catalog_spec);
+                        } else {
+                            setFormState({
+                                error: {
+                                    title: 'captureCreation.test.failedErrorTitle',
+                                },
+                                saveStatus: intl.formatMessage({
+                                    id: 'captureCreation.status.failed',
+                                }),
+                            });
+                        }
+
+                        await discovers.done(discoverStatus);
+                    }
                 })
                 .subscribe();
 
@@ -161,26 +190,46 @@ function CaptureCreation() {
             return supabase
                 .removeSubscription(draftsSubscription)
                 .then(() => {
-                    setLogToken(null);
-                    setFormSubmitting(false);
+                    setFormState({
+                        status: CaptureCreationFormStatus.IDLE,
+                    });
                 })
                 .catch(() => {});
         },
         waitForFinish: () => {
+            resetFormState(CaptureCreationFormStatus.SAVING);
             const draftsSubscription = supabase
-                .from(`drafts`)
-                .on('UPDATE', async () => {
-                    setSaveStatus('Success!');
-                    setFormSaving(false);
-                    const notification: Notification = {
-                        description:
-                            'Your new capture is published and ready to be used.',
-                        severity: 'success',
-                        title: 'New Capture Created',
-                    };
-                    showNotification(notification);
+                .from(TABLES.DRAFTS)
+                .on('*', async (payload) => {
+                    if (payload.new.job_status.type !== 'queued') {
+                        if (payload.new.job_status.type === 'success') {
+                            setFormState({
+                                status: CaptureCreationFormStatus.IDLE,
+                                exitWhenLogsClose: true,
+                                saveStatus: intl.formatMessage({
+                                    id: 'captureCreation.status.success',
+                                }),
+                            });
+                            const notification: Notification = {
+                                description:
+                                    'Your new capture is published and ready to be used.',
+                                severity: 'success',
+                                title: 'New Capture Created',
+                            };
+                            showNotification(notification);
+                        } else {
+                            setFormState({
+                                error: {
+                                    title: 'captureCreation.save.failedErrorTitle',
+                                },
+                                saveStatus: intl.formatMessage({
+                                    id: 'captureCreation.status.failed',
+                                }),
+                            });
+                        }
 
-                    await drafts.done(draftsSubscription);
+                        await drafts.done(draftsSubscription);
+                    }
                 })
                 .subscribe();
 
@@ -188,69 +237,9 @@ function CaptureCreation() {
         },
     };
 
-    useInterval(
-        async () => {
-            const { data } = await supabase
-                .rpc('view_logs', {
-                    bearer_token: logToken,
-                })
-                .range(logOffset, logOffset + 10);
-
-            if (data && data.length > 0) {
-                const logsReduced = data.map((logData) => {
-                    return logData.log_line;
-                });
-                setLogOffset(logOffset + data.length);
-                setSaveLogs(saveLogs.concat(logsReduced));
-            }
-        },
-        logToken ? DEFAULT_INTERVAL : null
-    );
-
     // Form Event Handlers
     const handlers = {
-        saveAndPublish: (event: MouseEvent<HTMLElement>) => {
-            event.preventDefault();
-            setFormSubmitting(true);
-            setFormSaving(true);
-            setSaveStatus('running...');
-
-            const draftsSubscription = drafts.waitForFinish();
-            supabase
-                .from('drafts')
-                .insert([
-                    {
-                        catalog_spec: catalogResponse,
-                    },
-                ])
-                .then(
-                    async (response) => {
-                        if (response.data) {
-                            // TODO Need to use this response as part of the subscribe somehow?
-                            if (response.data.length > 0) {
-                                setShowLogs(true);
-                                setLogToken(response.data[0].logs_token);
-                            }
-                        } else {
-                            // setFormSubmitError({
-                            //     message: 'Failed to create your discover',
-                            // });
-                            drafts
-                                .done(draftsSubscription)
-                                .then(() => {
-                                    setFormSubmitting(false);
-                                })
-                                .catch(() => {});
-                        }
-                    },
-                    (draftsError) => {
-                        setFormSubmitError(draftsError);
-                        setFormSubmitting(false);
-                    }
-                );
-        },
-
-        close: () => {
+        cancel: () => {
             if (hasChanges()) {
                 confirmationModalContext
                     ?.showConfirmation({
@@ -267,6 +256,73 @@ function CaptureCreation() {
             }
         },
 
+        closeLogs: () => {
+            setFormState({
+                showLogs: false,
+            });
+
+            if (exitWhenLogsClose) {
+                exit();
+            }
+        },
+
+        saveAndPublish: (event: MouseEvent<HTMLElement>) => {
+            event.preventDefault();
+
+            const draftsSubscription = drafts.waitForFinish();
+            supabase
+                .from(TABLES.DRAFTS)
+                .insert([
+                    {
+                        catalog_spec:
+                            Object.keys(resourcesFromEditor).length > 0
+                                ? resourcesFromEditor
+                                : catalogResponse,
+                    },
+                ])
+                .then(
+                    async (response) => {
+                        if (response.data) {
+                            // TODO Need to use this response as part of the subscribe somehow
+                            if (response.data.length > 0) {
+                                setFormState({
+                                    logToken: response.data[0].logs_token,
+                                    showLogs: true,
+                                });
+                            }
+                        } else {
+                            drafts
+                                .done(draftsSubscription)
+                                .then(() => {
+                                    setFormState({
+                                        status: CaptureCreationFormStatus.IDLE,
+                                        exitWhenLogsClose: false,
+                                        error: {
+                                            title: 'captureCreation.save.failedErrorTitle',
+                                            error: response.error,
+                                        },
+                                        saveStatus: intl.formatMessage({
+                                            id: 'captureCreation.status.failed',
+                                        }),
+                                    });
+                                })
+                                .catch(() => {});
+                        }
+                    },
+                    () => {
+                        setFormState({
+                            status: CaptureCreationFormStatus.IDLE,
+                            saveStatus: intl.formatMessage({
+                                id: 'captureCreation.status.failed',
+                            }),
+                            error: {
+                                title: 'captureCreation.save.failedErrorTitle',
+                            },
+                        });
+                    }
+                );
+        },
+
         test: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
             let detailHasErrors = false;
@@ -277,15 +333,14 @@ function CaptureCreation() {
             specHasErrors = specErrors ? specErrors.length > 0 : false;
 
             if (detailHasErrors || specHasErrors) {
-                setShowValidation(true);
+                setFormState({
+                    showValidation: true,
+                });
             } else {
-                setFormSubmitting(true);
-                setFormSubmitError(null);
-
                 // TODO (supabase) - `discovers:id=eq.${response.data[0].id}` was not working
                 const discoversSubscription = discovers.waitForFinish();
                 supabase
-                    .from('discovers')
+                    .from(TABLES.DISCOVERS)
                     .insert([
                         {
                             capture_name: captureName,
@@ -296,19 +351,38 @@ function CaptureCreation() {
                     .then(
                         (response) => {
                             if (response.data) {
-                                console.log(response.data[0].logs_token);
+                                setFormState({
+                                    logToken: response.data[0].logs_token,
+                                });
                             } else {
                                 discovers
                                     .done(discoversSubscription)
                                     .then(() => {
-                                        setFormSubmitting(false);
+                                        setFormState({
+                                            status: CaptureCreationFormStatus.IDLE,
+                                            exitWhenLogsClose: false,
+                                            error: {
+                                                title: 'captureCreation.test.failedErrorTitle',
+                                                error: response.error,
+                                            },
+                                            saveStatus: intl.formatMessage({
+                                                id: 'captureCreation.status.failed',
+                                            }),
+                                        });
                                     })
                                     .catch(() => {});
                             }
                         },
-                        (discoversError) => {
-                            setFormSubmitError(discoversError);
-                            setFormSubmitting(false);
+                        () => {
+                            setFormState({
+                                error: {
+                                    title: 'captureCreation.test.failedErrorTitle',
+                                },
+                            });
+                            discovers
+                                .done(discoversSubscription)
+                                .then(() => {})
+                                .catch(() => {});
                         }
                     );
             }
@@ -317,122 +391,68 @@ function CaptureCreation() {
 
     return (
         <PageContainer>
-            <Dialog
+            <LogDialog
                 open={showLogs}
-                maxWidth="lg"
-                fullWidth
-                aria-labelledby="new-capture-saving-title"
-            >
-                <DialogTitle id="new-capture-saving-title">
-                    <FormattedMessage id="captureCreation.save.waitMessage" />
-                </DialogTitle>
-                <DialogContent
-                    sx={{
-                        height: 300,
-                    }}
-                >
-                    <LazyLog
-                        extraLines={1}
-                        stream={true}
-                        text={saveLogs.join('\r\n')}
-                        caseInsensitive
-                        enableSearch
-                        follow={true}
+                token={logToken}
+                title={intl.formatMessage({
+                    id: 'captureCreation.save.waitMessage',
+                })}
+                actionComponent={
+                    <>
+                        {saveStatus}
+                        <Button
+                            disabled={status !== CaptureCreationFormStatus.IDLE}
+                            onClick={handlers.closeLogs}
+                        >
+                            <FormattedMessage id="cta.close" />
+                        </Button>
+                    </>
+                }
+            />
+
+            <NewCaptureHeader
+                close={handlers.cancel}
+                test={handlers.test}
+                testDisabled={
+                    status !== CaptureCreationFormStatus.IDLE || !hasConnectors
+                }
+                save={handlers.saveAndPublish}
+                saveDisabled={
+                    status !== CaptureCreationFormStatus.IDLE ||
+                    !catalogResponse
+                }
+                formId={FORM_ID}
+            />
+
+            <Collapse in={formSubmitError !== null}>
+                {formSubmitError && (
+                    <NewCaptureError
+                        title={formSubmitError.title}
+                        error={formSubmitError.error}
+                        logToken={logToken}
                     />
-                </DialogContent>
-                <DialogActions>
-                    {saveStatus}
-                    <Button disabled={formSaving} onClick={exit}>
-                        Close
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                )}
+            </Collapse>
 
-            <Toolbar>
-                <Typography variant="h6" noWrap>
-                    <FormattedMessage id="captureCreation.heading" />
-                </Typography>
+            <form id={FORM_ID}>
+                {connectorTags ? (
+                    <ErrorBoundryWrapper>
+                        <NewCaptureDetails connectorTags={connectorTags.data} />
+                    </ErrorBoundryWrapper>
+                ) : null}
 
-                <Stack
-                    direction="row"
-                    alignItems="center"
-                    sx={{
-                        ml: 'auto',
-                    }}
-                >
-                    <Button onClick={handlers.close} color="error">
-                        <FormattedMessage id="cta.cancel" />
-                    </Button>
-
-                    <Button
-                        onClick={handlers.test}
-                        disabled={formSubmitting || !hasConnectors}
-                        form={FORM_ID}
-                        type="submit"
-                        color="success"
-                        variant="contained"
-                        disableElevation
-                    >
-                        <FormattedMessage id="captureCreation.ctas.discover" />
-                    </Button>
-
-                    <Button
-                        onClick={handlers.saveAndPublish}
-                        disabled={!catalogResponse || formSubmitting}
-                        color="success"
-                        variant="contained"
-                        disableElevation
-                    >
-                        <FormattedMessage id="cta.saveEntity" />
-                    </Button>
-                </Stack>
-            </Toolbar>
-
-            {formSubmitError && (
-                <NewCaptureError
-                    title="captureCreation.save.failed"
-                    errors={formSubmitError.errors}
-                />
-            )}
+                {captureImage ? (
+                    <ErrorBoundryWrapper>
+                        <NewCaptureSpec connectorImage={captureImage} />
+                    </ErrorBoundryWrapper>
+                ) : null}
+            </form>
 
             <ErrorBoundryWrapper>
-                <form id={FORM_ID}>
-                    {connectorTags ? (
-                        <>
-                            <Typography variant="h5">
-                                Capture Details
-                            </Typography>
-                            <NewCaptureDetails
-                                displayValidation={showValidation}
-                                readonly={formSubmitting}
-                                connectorTags={connectorTags.data}
-                            />
-                        </>
-                    ) : null}
-
-                    {captureImage ? (
-                        <>
-                            <Typography variant="h5">
-                                Connection Config
-                            </Typography>
-                            <Paper sx={{ width: '100%' }}>
-                                <NewCaptureSpec
-                                    displayValidation={showValidation}
-                                    readonly={formSubmitting}
-                                    connectorImage={captureImage}
-                                />
-                            </Paper>
-                        </>
-                    ) : null}
-                </form>
-            </ErrorBoundryWrapper>
-
-            {catalogResponse ? (
-                <>
-                    <Typography variant="h5">Catalog Editor</Typography>
+                {catalogResponse ? (
                     <NewCaptureEditor data={catalogResponse} />
-                </>
-            ) : null}
+                ) : null}
+            </ErrorBoundryWrapper>
         </PageContainer>
     );
 }

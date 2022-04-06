@@ -17,6 +17,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     // CTA
     'cta.addToChangeSet': `Add to Change Set`,
     'cta.cancel': `Cancel`,
+    'cta.close': `Close`,
     'cta.continue': `Continue`,
     'cta.delete': `Delete`,
     'cta.download': `Download`,
@@ -91,6 +92,10 @@ const Error: ResolvedIntlConfig['messages'] = {
     'error.hintLabel': `Hint:`,
 };
 
+const LogsDialog: ResolvedIntlConfig['messages'] = {
+    'logs.default': `waiting for logs...`,
+};
+
 const AdminPage: ResolvedIntlConfig['messages'] = {
     'connectorTable.title': `Installed ${CommonMessages['terms.connectors']}`,
     'connectorTable.title.aria': `Table of all installed ${CommonMessages['terms.connectors']}`,
@@ -115,7 +120,12 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreation.editor.default': `Before you can edit the Capture Catalog you need to fill out the connection config section and click Discover`,
     'captureCreation.finalReview.instructions': `Look over the catalog configuration that was generated. If you want to edit anything you can do that directly in the editor. Once you're ready you can download the file for your local.`,
     'captureCreation.test.waitMessage': `Please wait while we try to connect to this endpoint.`,
+    'captureCreation.test.failedErrorTitle': `Config Test Failed`,
+    'captureCreation.save.failedErrorTitle': `Capture Save Failed`,
     'captureCreation.save.waitMessage': `Please wait while we test, save, and publish your capture.`,
+    'captureCreation.status.running': `running...`,
+    'captureCreation.status.failed': `Failed`,
+    'captureCreation.status.success': `Success!`,
 };
 
 const Captures: ResolvedIntlConfig['messages'] = {
@@ -129,6 +139,7 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
+    ...LogsDialog,
     ...AdminPage,
     ...Error,
     ...LoginPage,

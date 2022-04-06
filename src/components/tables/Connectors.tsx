@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import Error from 'components/shared/Error';
 import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
-import { Tables } from 'services/supabase';
+import { TABLES } from 'services/supabase';
 import { useQuery, useSelect } from 'supabase-swr';
 
 interface ConnectorTag {
@@ -24,20 +24,22 @@ interface ConnectorTag {
     updated_at: string;
 }
 
+const CONNECTOR_TAGS_QUERY = `
+    connectors(
+        detail,
+        image_name
+    ),
+    id,
+    image_tag,
+    protocol,
+    updated_at
+`;
+
 function ConnectorsTable() {
     const tagsQuery = useQuery<ConnectorTag>(
-        Tables.CONNECTOR_TAGS,
+        TABLES.CONNECTOR_TAGS,
         {
-            columns: `
-                connectors(
-                    detail,
-                    image_name
-                ),
-                id,
-                image_tag,
-                protocol,
-                updated_at
-            `,
+            columns: CONNECTOR_TAGS_QUERY,
             filter: (query) => query.order('updated_at', { ascending: false }),
         },
         []

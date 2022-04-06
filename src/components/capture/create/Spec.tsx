@@ -1,8 +1,8 @@
-import { Divider, Paper } from '@mui/material';
+import { Divider, Paper, Typography } from '@mui/material';
 import NewCaptureSpecForm from 'components/capture/create/SpecForm';
 import NewCaptureSpecFormHeader from 'components/capture/create/SpecFormHeader';
 import Error from 'components/shared/Error';
-import { Tables } from 'services/supabase';
+import { TABLES } from 'services/supabase';
 import { useQuery, useSelectSingle } from 'supabase-swr';
 
 interface ConnectorTag {
@@ -16,22 +16,22 @@ interface ConnectorTag {
 
 interface Props {
     connectorImage: string;
-    displayValidation: boolean;
-    readonly: boolean;
 }
+const CONNECTOR_TAGS_QUERY = `
+    connectors(
+        image_name
+    ),
+    id,
+    endpoint_spec_schema, 
+    documentation_url
+`;
+
 function NewCaptureSpec(props: Props) {
-    const { connectorImage, readonly, displayValidation } = props;
+    const { connectorImage } = props;
     const tagsQuery = useQuery<ConnectorTag>(
-        Tables.CONNECTOR_TAGS,
+        TABLES.CONNECTOR_TAGS,
         {
-            columns: `
-                connectors(
-                    image_name
-                ),
-                id,
-                endpoint_spec_schema, 
-                documentation_url
-            `,
+            columns: CONNECTOR_TAGS_QUERY,
             filter: (query) => query.eq('id', connectorImage),
             count: 'exact',
         },
@@ -43,18 +43,19 @@ function NewCaptureSpec(props: Props) {
         return <Error error={error} />;
     } else if (connector?.data) {
         return (
-            <Paper sx={{ width: '100%' }} variant="outlined">
-                <NewCaptureSpecFormHeader
-                    name={connector.data.connectors.image_name}
-                    docsPath={connector.data.documentation_url}
-                />
-                <Divider />
-                <NewCaptureSpecForm
-                    endpointSchema={connector.data.endpoint_spec_schema}
-                    displayValidation={displayValidation}
-                    readonly={readonly}
-                />
-            </Paper>
+            <>
+                <Typography variant="h5">Connection Config</Typography>
+                <Paper sx={{ width: '100%' }} variant="outlined">
+                    <NewCaptureSpecFormHeader
+                        name={connector.data.connectors.image_name}
+                        docsPath={connector.data.documentation_url}
+                    />
+                    <Divider />
+                    <NewCaptureSpecForm
+                        endpointSchema={connector.data.endpoint_spec_schema}
+                    />
+                </Paper>
+            </>
         );
     } else {
         return null;

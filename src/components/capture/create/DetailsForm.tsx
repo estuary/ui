@@ -1,7 +1,8 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
-import { Alert, Stack } from '@mui/material';
+import { Alert, Stack, Typography } from '@mui/material';
 import useCaptureCreationStore, {
+    CaptureCreationFormStatus,
     CaptureCreationState,
 } from 'components/capture/create/Store';
 import { useMemo } from 'react';
@@ -11,25 +12,30 @@ import {
     defaultRenderers,
     showValidation,
 } from 'services/jsonforms';
+import { StoreSelector } from 'types';
 
 interface NewCaptureDetailsProps {
-    displayValidation: boolean;
-    readonly: boolean;
     connectorTags: any[];
 }
 
-const stateSelectors = {
-    formData: (state: CaptureCreationState) => state.details.data,
-    setDetails: (state: CaptureCreationState) => state.setDetails,
-    setConnectors: (state: CaptureCreationState) => state.setConnectors,
+const stateSelectors: StoreSelector<CaptureCreationState> = {
+    formData: (state) => state.details.data,
+    setDetails: (state) => state.setDetails,
+    setConnectors: (state) => state.setConnectors,
+    showValidation: (state) => state.formState.showValidation,
+    status: (state) => state.formState.status,
 };
 
 function NewCaptureDetails(props: NewCaptureDetailsProps) {
-    const { readonly, displayValidation, connectorTags } = props;
+    const { connectorTags } = props;
 
     const intl = useIntl();
     const formData = useCaptureCreationStore(stateSelectors.formData);
     const setDetails = useCaptureCreationStore(stateSelectors.setDetails);
+    const displayValidation = useCaptureCreationStore(
+        stateSelectors.showValidation
+    );
+    const status = useCaptureCreationStore(stateSelectors.status);
 
     const schema = useMemo(() => {
         return {
@@ -91,6 +97,8 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
 
     return (
         <>
+            <Typography variant="h5">Capture Details</Typography>
+
             <FormattedMessage id="captureCreation.instructions" />
 
             <Stack direction="row" spacing={2}>
@@ -102,7 +110,7 @@ function NewCaptureDetails(props: NewCaptureDetailsProps) {
                         renderers={defaultRenderers}
                         cells={materialCells}
                         config={defaultOptions}
-                        readonly={readonly}
+                        readonly={status !== CaptureCreationFormStatus.IDLE}
                         validationMode={showValidation(displayValidation)}
                         onChange={setDetails}
                     />

@@ -1,5 +1,7 @@
 import { ReactNode } from 'react';
 
+export type StoreSelector<T> = Record<string, (state: T) => any>;
+
 export interface BaseHook<T> {
     idle?: boolean;
     loading: boolean;
