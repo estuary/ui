@@ -42,8 +42,6 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'data.updated_at': `Updated`,
     'data.email': `Email`,
     'data.display_name': `User Name`,
-    'data.company': `Company`,
-    'data.register.intendedUse': `Describe your use case`,
 
     // Confirmations
     'confirm.title': `Are you sure?`,
@@ -69,8 +67,13 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     // Registration Page
     'register.heading': `We're currently accepting Beta partners.`,
     'register.main.message': `Please enter your information and our team will approve your account.`,
-    'register.documentAcknowledgement': `Accept our Terms of Service and Privacy Policy`,
-    'register.existingAccount': `Already have an account? `,
+    'register.label.firstName': `First Name`,
+    'register.label.lastName': `Last Name`,
+    'register.label.email': `Email`,
+    'register.label.company': `Company`,
+    'register.label.intendedUse': `Describe your use case`,
+    'register.label.documentAcknowledgement': `Accept our Terms of Service and Privacy Policy`,
+    'register.existingAccount': `Already have an account?`,
 
     // Captures main page
     'captures.main.message1': `Click the "New Capture" button up above to get started.`,

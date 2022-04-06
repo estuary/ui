@@ -170,7 +170,7 @@ const Registration = () => {
                             <TextField
                                 id="first-name"
                                 label={intl.formatMessage({
-                                    id: 'data.firstName',
+                                    id: 'register.label.firstName',
                                 })}
                                 value={firstName}
                                 error={errors.firstName}
@@ -190,7 +190,7 @@ const Registration = () => {
                             <TextField
                                 id="last-name"
                                 label={intl.formatMessage({
-                                    id: 'data.lastName',
+                                    id: 'register.label.lastName',
                                 })}
                                 value={lastName}
                                 error={errors.lastName}
@@ -210,7 +210,7 @@ const Registration = () => {
                             <TextField
                                 id="email"
                                 label={intl.formatMessage({
-                                    id: 'data.email',
+                                    id: 'register.label.email',
                                 })}
                                 value={email}
                                 error={errors.email}
@@ -230,7 +230,7 @@ const Registration = () => {
                             <TextField
                                 id="company"
                                 label={intl.formatMessage({
-                                    id: 'data.company',
+                                    id: 'register.label.company',
                                 })}
                                 value={company}
                                 error={errors.company}
@@ -250,7 +250,7 @@ const Registration = () => {
                             <TextField
                                 id="describe-intended-use"
                                 label={intl.formatMessage({
-                                    id: 'data.register.intendedUse',
+                                    id: 'register.label.intendedUse',
                                 })}
                                 value={useCase}
                                 error={errors.useCase}
@@ -280,7 +280,7 @@ const Registration = () => {
                                         />
                                     }
                                     label={intl.formatMessage({
-                                        id: 'register.documentAcknowledgement',
+                                        id: 'register.label.documentAcknowledgement',
                                     })}
                                     onChange={
                                         handlers.updateDocumentAcknowledgement
@@ -292,7 +292,7 @@ const Registration = () => {
                             </FormControl>
 
                             <Typography sx={{ mb: 2 }}>
-                                <FormattedMessage id="register.existingAccount" />
+                                <FormattedMessage id="register.existingAccount" />{' '}
                                 <Link href="/" underline="hover">
                                     Sign In
                                 </Link>
