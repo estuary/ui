@@ -1,8 +1,8 @@
 import { Skeleton } from '@mui/material';
+import Login from 'pages/Login';
 import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router';
 
-const Login = lazy(() => import('../pages/Login'));
 const Registration = lazy(() => import('../pages/Registration'));
 
 const Unauthenticated = () => {
