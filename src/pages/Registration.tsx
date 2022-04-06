@@ -53,45 +53,26 @@ const Registration = () => {
         acknowledgedDocuments: false,
     });
 
-    const numericAndSpecialRegExp: RegExp = /[0-9&^*|":<>{}`();@$#%+=?/[\]\\]/;
-
-    // TODO: Consolidate update form control function handlers.
     const handlers = {
-        updateFirstName: (event: React.ChangeEvent<HTMLInputElement>) => {
-            event.target.value = event.target.value.trimStart();
+        updateTextInput:
+            (
+                controlName: keyof RegistrationRequest,
+                setControl: (value: React.SetStateAction<string>) => void
+            ) =>
+            (
+                event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+            ) => {
+                event.target.value = event.target.value.trimStart();
 
-            event.target.value = event.target.value.replace(
-                numericAndSpecialRegExp,
-                ''
-            );
+                if (controlName === 'firstName' || controlName === 'lastName') {
+                    event.target.value = event.target.value.replace(
+                        /[0-9&^*|":<>{}`();@$#%+=?/[\]\\]/,
+                        ''
+                    );
+                }
 
-            setFirstName(event.target.value);
-        },
-        updateLastName: (event: React.ChangeEvent<HTMLInputElement>) => {
-            event.target.value = event.target.value.trimStart();
-
-            event.target.value = event.target.value.replace(
-                numericAndSpecialRegExp,
-                ''
-            );
-
-            setLastName(event.target.value);
-        },
-        updateEmail: (event: React.ChangeEvent<HTMLInputElement>) => {
-            event.target.value = event.target.value.trimStart();
-
-            setEmail(event.target.value);
-        },
-        updateCompany: (event: React.ChangeEvent<HTMLInputElement>) => {
-            event.target.value = event.target.value.trimStart();
-
-            setCompany(event.target.value);
-        },
-        updateUseCase: (event: React.ChangeEvent<HTMLInputElement>) => {
-            event.target.value = event.target.value.trimStart();
-
-            setUseCase(event.target.value);
-        },
+                setControl(event.target.value);
+            },
         updateDocumentAcknowledgement: (
             event: React.SyntheticEvent,
             checked: boolean
@@ -194,7 +175,10 @@ const Registration = () => {
                                 value={firstName}
                                 error={errors.firstName}
                                 required
-                                onChange={handlers.updateFirstName}
+                                onChange={handlers.updateTextInput(
+                                    'firstName',
+                                    setFirstName
+                                )}
                                 onBlur={handlers.validateTextInput(
                                     'firstName',
                                     firstName,
@@ -211,7 +195,10 @@ const Registration = () => {
                                 value={lastName}
                                 error={errors.lastName}
                                 required
-                                onChange={handlers.updateLastName}
+                                onChange={handlers.updateTextInput(
+                                    'lastName',
+                                    setLastName
+                                )}
                                 onBlur={handlers.validateTextInput(
                                     'lastName',
                                     lastName,
@@ -228,7 +215,10 @@ const Registration = () => {
                                 value={email}
                                 error={errors.email}
                                 required
-                                onChange={handlers.updateEmail}
+                                onChange={handlers.updateTextInput(
+                                    'email',
+                                    setEmail
+                                )}
                                 onBlur={handlers.validateTextInput(
                                     'email',
                                     email,
@@ -245,7 +235,10 @@ const Registration = () => {
                                 value={company}
                                 error={errors.company}
                                 required
-                                onChange={handlers.updateCompany}
+                                onChange={handlers.updateTextInput(
+                                    'company',
+                                    setCompany
+                                )}
                                 onBlur={handlers.validateTextInput(
                                     'company',
                                     company,
@@ -263,7 +256,10 @@ const Registration = () => {
                                 error={errors.useCase}
                                 required
                                 multiline
-                                onChange={handlers.updateUseCase}
+                                onChange={handlers.updateTextInput(
+                                    'useCase',
+                                    setUseCase
+                                )}
                                 onBlur={handlers.validateTextInput(
                                     'useCase',
                                     useCase,
