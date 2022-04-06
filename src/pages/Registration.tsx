@@ -65,8 +65,11 @@ const Registration = () => {
                 event.target.value = event.target.value.trimStart();
 
                 if (controlName === 'firstName' || controlName === 'lastName') {
+                    const numericAndSpecialRegExp: RegExp =
+                        /[0-9&^*|":<>{}`();@$#%+=?/[\]\\]/;
+
                     event.target.value = event.target.value.replace(
-                        /[0-9&^*|":<>{}`();@$#%+=?/[\]\\]/,
+                        numericAndSpecialRegExp,
                         ''
                     );
                 }
