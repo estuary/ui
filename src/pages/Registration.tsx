@@ -12,7 +12,7 @@ import {
     Typography,
 } from '@mui/material';
 import Topbar from 'components/header/Topbar';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 interface RegistrationRequest {
@@ -53,20 +53,43 @@ const Registration = () => {
         acknowledgedDocuments: false,
     });
 
+    const numericAndSpecialRegExp: RegExp = /[0-9&^*|":<>{}`();@$#%+=?/[\]\\]/;
+
+    // TODO: Consolidate update and validate form control function handlers.
     const handlers = {
         updateFirstName: (event: React.ChangeEvent<HTMLInputElement>) => {
+            event.target.value = event.target.value.trimStart();
+
+            event.target.value = event.target.value.replace(
+                numericAndSpecialRegExp,
+                ''
+            );
+
             setFirstName(event.target.value);
         },
         updateLastName: (event: React.ChangeEvent<HTMLInputElement>) => {
+            event.target.value = event.target.value.trimStart();
+
+            event.target.value = event.target.value.replace(
+                numericAndSpecialRegExp,
+                ''
+            );
+
             setLastName(event.target.value);
         },
         updateEmail: (event: React.ChangeEvent<HTMLInputElement>) => {
+            event.target.value = event.target.value.trimStart();
+
             setEmail(event.target.value);
         },
         updateCompany: (event: React.ChangeEvent<HTMLInputElement>) => {
+            event.target.value = event.target.value.trimStart();
+
             setCompany(event.target.value);
         },
         updateUseCase: (event: React.ChangeEvent<HTMLInputElement>) => {
+            event.target.value = event.target.value.trimStart();
+
             setUseCase(event.target.value);
         },
         updateDocumentAcknowledgement: (
@@ -75,19 +98,49 @@ const Registration = () => {
         ) => {
             setAcknowledgedDocuments(checked);
         },
-        validateFirstName: () => {
+        validateFirstName: (
+            event?: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
+        ) => {
+            if (event?.target.value) {
+                setFirstName(event.target.value.trimEnd());
+            }
+
             setErrors({ ...errors, firstName: !firstName });
         },
-        validateLastName: () => {
+        validateLastName: (
+            event?: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
+        ) => {
+            if (event?.target.value) {
+                setLastName(event.target.value.trimEnd());
+            }
+
             setErrors({ ...errors, lastName: !lastName });
         },
-        validateEmail: () => {
+        validateEmail: (
+            event?: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
+        ) => {
+            if (event?.target.value) {
+                setEmail(event.target.value.trimEnd());
+            }
+
             setErrors({ ...errors, email: !email });
         },
-        validateCompany: () => {
+        validateCompany: (
+            event?: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
+        ) => {
+            if (event?.target.value) {
+                setCompany(event.target.value.trimEnd());
+            }
+
             setErrors({ ...errors, company: !company });
         },
-        validateUseCase: () => {
+        validateUseCase: (
+            event?: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
+        ) => {
+            if (event?.target.value) {
+                setUseCase(event.target.value.trimEnd());
+            }
+
             setErrors({ ...errors, useCase: !useCase });
         },
         validateDocumentAcknowledgement: () => {
