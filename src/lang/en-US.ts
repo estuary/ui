@@ -42,8 +42,6 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'data.updated_at': `Updated`,
     'data.email': `Email`,
     'data.display_name': `User Name`,
-    'data.company': `Company`,
-    'data.register.intendedUse': `Describe your use case`,
 
     // Confirmations
     'confirm.title': `Are you sure?`,
