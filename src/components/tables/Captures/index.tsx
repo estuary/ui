@@ -10,7 +10,8 @@ import {
 } from '@mui/material';
 import Error from 'components/shared/Error';
 import Empty from 'components/tables/Captures/Empty';
-import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
+import Rows from 'components/tables/Captures/Rows';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { TABLES } from 'services/supabase';
 import { useQuery, useSelect } from 'supabase-swr';
 
@@ -79,28 +80,10 @@ function CapturesTable() {
                     <TableBody>
                         {discovers ? (
                             discovers.data.length > 0 ? (
-                                discovers.data.map(
-                                    (row: any, index: number) => (
-                                        <TableRow
-                                            key={`Capture-${row.id}-${index}`}
-                                        >
-                                            <TableCell style={columnStyling}>
-                                                {row.capture_name}
-                                            </TableCell>
-                                            <TableCell style={columnStyling}>
-                                                {row.type}
-                                            </TableCell>
-                                            <TableCell style={columnStyling}>
-                                                <FormattedDate
-                                                    day="numeric"
-                                                    month="long"
-                                                    year="numeric"
-                                                    value={row.updated_at}
-                                                />
-                                            </TableCell>
-                                        </TableRow>
-                                    )
-                                )
+                                <Rows
+                                    discovers={discovers.data}
+                                    styling={columnStyling}
+                                />
                             ) : (
                                 <TableRow>
                                     <TableCell
