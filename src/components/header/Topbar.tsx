@@ -13,10 +13,11 @@ import Logo from '../navigation/Logo';
 interface TopbarProps extends BaseComponentProps {
     isNavigationOpen: boolean;
     onNavigationToggle?: Function;
+    hideNavigationMenu?: true;
 }
 
 const Topbar = (props: TopbarProps) => {
-    const { onNavigationToggle } = props;
+    const { onNavigationToggle, hideNavigationMenu } = props;
     const intl = useIntl();
     const theme = useTheme();
     const { user } = Auth.useUser();
@@ -44,7 +45,7 @@ const Topbar = (props: TopbarProps) => {
                     px: 1,
                 }}
             >
-                {user ? (
+                {hideNavigationMenu || !user ? null : (
                     <Box
                         sx={{
                             mr: 1,
@@ -60,7 +61,7 @@ const Topbar = (props: TopbarProps) => {
                             <MenuIcon />
                         </IconButton>
                     </Box>
-                ) : null}
+                )}
 
                 <Box
                     sx={{
