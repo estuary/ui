@@ -12,6 +12,7 @@ import {
 import Topbar from 'components/header/Topbar';
 import PageContainer from 'components/shared/PageContainer';
 import { useState } from 'react';
+import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 
 const PageNotFound = () => {
@@ -47,17 +48,23 @@ const PageNotFound = () => {
     return (
         <PageContainer>
             <Topbar isNavigationOpen={false} hideNavigationMenu />
+
             <Typography variant="h5" align="center" sx={{ mb: 2 }}>
-                Sorry, that page cannot be found.
+                <FormattedMessage id="pageNotFound.heading" />
             </Typography>
 
             {/* TODO: Consider adjusting the focus-visible state of the dashboard link. */}
             <Typography align="center" sx={{ mb: 7 }}>
-                Try searching for a page below or go directly to your{' '}
-                <Link href="/" underline="none">
-                    dashboard
-                </Link>
-                .
+                <FormattedMessage
+                    id="pageNotFound.message"
+                    values={{
+                        dashboard: (
+                            <Link href="/" underline="none">
+                                dashboard
+                            </Link>
+                        ),
+                    }}
+                />
             </Typography>
 
             <Box

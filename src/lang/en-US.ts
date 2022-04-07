@@ -85,6 +85,10 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'home.main.header': `Welcome to Flow!`,
     'home.main.description': `Click the Capture link over on the side navigation to get started.`,
 
+    // Error Page - Page Not Found
+    'pageNotFound.heading': `Sorry, that page cannot be found.`,
+    'pageNotFound.message': `Try searching for a page below or go directly to your {dashboard}.`,
+
     //Rest of the pages go down here. They don't have real pages right now.
     'admin.header': `Administration`,
 
