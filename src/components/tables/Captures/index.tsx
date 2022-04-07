@@ -88,7 +88,7 @@ function CapturesTable() {
                                                 {row.capture_name}
                                             </TableCell>
                                             <TableCell style={columnStyling}>
-                                                {row.job_status}
+                                                {row.type}
                                             </TableCell>
                                             <TableCell style={columnStyling}>
                                                 <FormattedDate
