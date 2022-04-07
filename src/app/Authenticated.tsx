@@ -1,9 +1,9 @@
 import { Skeleton } from '@mui/material';
 import AppLayout from 'AppLayout';
+import PageNotFound from 'pages/error/PageNotFound';
 import Home from 'pages/Home';
 import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router';
-import Error from '../pages/Error';
 
 const Admin = lazy(() => import('../pages/Admin'));
 
@@ -46,7 +46,7 @@ const Authenticated = () => {
                     <Route path="admin/*" element={<Admin />} />
                     <Route path="builds" element={<Builds />} />
                 </Route>
-                <Route path="*" element={<Error />} />
+                <Route path="*" element={<PageNotFound />} />
             </Routes>
         </Suspense>
     );
