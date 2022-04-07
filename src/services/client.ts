@@ -1,5 +1,4 @@
 import { getAPIPath } from 'utils/env-utils';
-import { auth } from './auth';
 
 export interface ClientConfig<T> extends RequestInit {
     data?: T;
@@ -18,10 +17,12 @@ export const client = <Response, Request = {}>(
 
     // Setup the headers
     const headersInit: HeadersInit = {};
-    const authHeader = auth.getAuthHeader();
-    if (authHeader) {
-        headersInit.Authorization = authHeader;
-    }
+
+    // TODO - we'll eventually need this client again. We'll need to pull the auth headers from Supabase-SWR some how.
+    // const authHeader = auth.getAuthHeader();
+    // if (authHeader) {
+    //     headersInit.Authorization = authHeader;
+    // }
 
     if (data) {
         headersInit['Content-Type'] = 'application/json';
@@ -41,7 +42,7 @@ export const client = <Response, Request = {}>(
         .fetch(fullEndpoint, config)
         .then(async (response) => {
             if (response.status === 401) {
-                await auth.signout();
+                // await auth.signout();
                 return Promise.reject({ message: 'common.loggedOut' });
             } else if (response.ok) {
                 return response.json();

@@ -4,7 +4,7 @@ import { BaseComponentProps } from 'types';
 
 // TODO - Don't hard hardcode to EN
 //    When we do we need to pass locale to MUI https://mui.com/guides/localization/
-const AppContent = ({ children }: BaseComponentProps) => {
+const ContentProvider = ({ children }: BaseComponentProps) => {
     return (
         <IntlProvider
             messages={enUSMessages}
@@ -16,4 +16,4 @@ const AppContent = ({ children }: BaseComponentProps) => {
     );
 };
 
-export default AppContent;
+export default ContentProvider;

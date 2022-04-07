@@ -1,49 +1,12 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 // https://testing-library.com/docs/react-testing-library/setup#custom-render
 
+import { createClient } from '@supabase/supabase-js';
 import { render as rtlRender, RenderOptions } from '@testing-library/react';
 import AppContent from 'context/Content';
 import AppRouter from 'context/Router';
-import AppTheme from 'context/Theme';
-import { add, getUnixTime } from 'date-fns';
-import { AuthTokenResponseReduced } from 'endpoints/auth';
-import produce from 'immer';
-import { ReactElement } from 'react';
-import { auth, tokenStorageKey } from 'services/auth';
-
-const getMockTokenReduced = (username: string) => {
-    return {
-        accessToken: 'access_token_value',
-        ext: {
-            avatarURL: 'http://example.org',
-            displayName: username,
-            email: 'userName@example.org',
-            firstName: 'Firstname',
-            lastName: 'Lastname',
-            locale: 'en',
-            orgs: ['example.org'],
-        },
-        expires: getUnixTime(
-            add(new Date(), {
-                years: 1,
-            })
-        ),
-        IDToken: 'id_token_value',
-    };
-};
-
-// TODO - this does not really do anything because we hardcode
-//   the username down below on the MockAuthProvider. However,
-//   this will be needed in the future so leaving the work so far
-//   so we can leverage this when wanting to test the "on load auth"
-//   functionality
-const loginAsUser = (username: string) => {
-    auth.saveToken(getMockTokenReduced(username));
-};
-
-const logoutUser = () => {
-    auth.removeToken();
-};
+import ThemeProvider from 'context/Theme';
+import { createContext, ReactElement } from 'react';
 
 const goTo = (route?: string, name?: string) => {
     window.history.pushState(
@@ -53,56 +16,31 @@ const goTo = (route?: string, name?: string) => {
     );
 };
 
-const updateAuthToken = (settings: Partial<AuthTokenResponseReduced>) => {
-    window.localStorage.setItem(
-        tokenStorageKey,
-        JSON.stringify(
-            produce(auth.getToken(), (draft) => {
-                return {
-                    ...draft,
-                    ...settings,
-                };
-            })
-        )
-    );
-};
-
-const updateAuthTokenExt = (
-    settings: Partial<AuthTokenResponseReduced['ext']>
-) => {
-    window.localStorage.setItem(
-        tokenStorageKey,
-        JSON.stringify(
-            produce(auth.getToken(), (draft) => {
-                draft.ext = {
-                    ...draft.ext,
-                    ...settings,
-                };
-
-                return draft;
-            })
-        )
-    );
-};
-
 const waitForLoading = async () => {
     return Promise.resolve();
 };
 
-// Mocking AuthContext out basically skips all the loading screen and boostrapping
-//  stuff that happens on load. This should be fine for unit testing as it
-//  can help speed up tests a bit and makes things easier to deal with. This
-//  does mean that we need to eventually write a basic test that handles the
-//  account bootstrapping.
-interface MockAuthProps {
-    children: JSX.Element;
-    username?: string;
-}
-const MockAuthProvider = ({ children, username }: MockAuthProps) => {
+const MockUserProvider = ({ children, username }: any) => {
     return (
         <>
             Your user name is {username} and {children}
         </>
+    );
+};
+
+const MockClientProvider = ({ children }: any) => {
+    const mockClient = createClient('http://mock.url', 'MockSupabaseAnonKey');
+
+    const MockClient = createContext({});
+
+    return (
+        <MockClient.Provider
+            value={{
+                useClient: () => mockClient,
+            }}
+        >
+            {children}
+        </MockClient.Provider>
     );
 };
 
@@ -119,11 +57,13 @@ const customRender = async (
 
     const view = rtlRender(
         <AppContent>
-            <MockAuthProvider username={username}>
-                <AppTheme>
-                    <AppRouter>{ui}</AppRouter>
-                </AppTheme>
-            </MockAuthProvider>
+            <MockClientProvider>
+                <MockUserProvider username={username}>
+                    <ThemeProvider>
+                        <AppRouter>{ui}</AppRouter>
+                    </ThemeProvider>
+                </MockUserProvider>
+            </MockClientProvider>
         </AppContent>,
         {
             ...options,
@@ -136,12 +76,4 @@ const customRender = async (
 };
 
 export * from '@testing-library/react';
-export {
-    goTo,
-    loginAsUser,
-    logoutUser,
-    customRender,
-    waitForLoading,
-    updateAuthToken,
-    updateAuthTokenExt,
-};
+export { goTo, customRender, waitForLoading };

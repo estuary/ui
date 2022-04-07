@@ -1,26 +1,26 @@
 import ConfirmationModalContextProvider from 'context/Confirmation';
 import { BaseComponentProps } from 'types';
-import { AuthProvider } from './Auth';
-import AppContent from './Content';
-import AppData from './Data';
+import ClientProvider from './Client';
+import ContentProvider from './Content';
 import AppRouter from './Router';
-import AppTheme from './Theme';
+import ThemeProvider from './Theme';
+import { UserProvider } from './User';
 
 const AppProviders = ({ children }: BaseComponentProps) => {
     return (
-        <AppContent>
-            <AppData>
-                <AuthProvider>
-                    <AppTheme>
+        <ContentProvider>
+            <ClientProvider>
+                <UserProvider>
+                    <ThemeProvider>
                         <AppRouter>
                             <ConfirmationModalContextProvider>
                                 {children}
                             </ConfirmationModalContextProvider>
                         </AppRouter>
-                    </AppTheme>
-                </AuthProvider>
-            </AppData>
-        </AppContent>
+                    </ThemeProvider>
+                </UserProvider>
+            </ClientProvider>
+        </ContentProvider>
     );
 };
 
