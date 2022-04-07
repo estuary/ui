@@ -1,53 +1,18 @@
-import { Card, CardContent, Grid, Typography } from '@mui/material';
-import { Auth } from '@supabase/ui';
-import Topbar from 'components/header/Topbar';
-import { FormattedMessage } from 'react-intl';
-import { supabase } from 'services/supabase';
-import { getLoginSettings } from 'utils/env-utils';
+import { Skeleton } from '@mui/material';
+import Login from 'pages/Login';
+import { lazy, Suspense } from 'react';
+import { Route, Routes } from 'react-router';
+
+const Registration = lazy(() => import('../pages/Registration'));
 
 const Unauthenticated = () => {
-    const loginSettings = getLoginSettings();
-
     return (
-        <Grid
-            container
-            spacing={0}
-            direction="column"
-            sx={{
-                alignItems: 'center',
-                height: '100vh',
-                justifyContent: 'center',
-            }}
-        >
-            <Topbar isNavigationOpen={false} />
-            <Grid item xs={3}>
-                <Card elevation={24} sx={{ maxWidth: 400, minHeight: 300 }}>
-                    <CardContent>
-                        <Typography
-                            gutterBottom
-                            variant="h6"
-                            component="h2"
-                            sx={{ paddingTop: '1rem', textAlign: 'center' }}
-                        >
-                            <FormattedMessage id="productName" />
-                        </Typography>
-                    </CardContent>
-
-                    <CardContent>
-                        <FormattedMessage id="login.oidc.message" />
-                    </CardContent>
-                    <CardContent>
-                        <Auth
-                            providers={['google']}
-                            supabaseClient={supabase}
-                            socialColors={true}
-                            onlyThirdPartyProviders={!loginSettings.showEmail}
-                            redirectTo={window.location.origin}
-                        />
-                    </CardContent>
-                </Card>
-            </Grid>
-        </Grid>
+        <Suspense fallback={<Skeleton animation="wave" />}>
+            <Routes>
+                <Route path="register" element={<Registration />} />
+                <Route path="*" element={<Login />} />
+            </Routes>
+        </Suspense>
     );
 };
 
