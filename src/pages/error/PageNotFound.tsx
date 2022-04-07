@@ -90,7 +90,7 @@ const PageNotFound = () => {
                                 <InputBase
                                     {...InputProps}
                                     {...rest}
-                                    placeholder="Search Navigation Menu"
+                                    placeholder="Search Navigation Options"
                                     sx={{
                                         '.MuiInputBase-input': {
                                             'px': 1.75,
