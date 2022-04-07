@@ -14,7 +14,7 @@ import produce from 'immer';
 import { MouseEvent, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
-import { supabase, TABLES } from 'services/supabase';
+import { TABLES } from 'services/supabase';
 import { ChangeSetState } from 'stores/ChangeSetStore';
 import useNotificationStore, {
     Notification,
@@ -23,12 +23,12 @@ import useNotificationStore, {
 import useSchemaEditorStore, {
     SchemaEditorState,
 } from 'stores/SchemaEditorStore';
-import { useQuery, useSelect } from 'supabase-swr';
+import { useClient, useQuery, useSelect } from 'supabase-swr';
 import NewCaptureEditor from './CatalogEditor';
 import NewCaptureDetails from './DetailsForm';
 import NewCaptureError from './Error';
 
-interface ConnectorTag {
+export interface ConnectorTag {
     connectors: {
         detail: string;
         image_name: string;
@@ -84,6 +84,7 @@ const selectors = {
 };
 
 function CaptureCreation() {
+    const supabaseClient = useClient();
     const intl = useIntl();
     const navigate = useNavigate();
     const confirmationModalContext = useConfirmationModalContext();
@@ -153,7 +154,7 @@ function CaptureCreation() {
 
     const discovers = {
         done: (discoversSubscription: RealtimeSubscription) => {
-            return supabase
+            return supabaseClient
                 .removeSubscription(discoversSubscription)
                 .then(() => {
                     setFormState({
@@ -165,7 +166,7 @@ function CaptureCreation() {
         waitForFinish: () => {
             cleanUpEditor();
             resetFormState(CaptureCreationFormStatus.TESTING);
-            const discoverStatus = supabase
+            const discoverStatus = supabaseClient
                 .from(TABLES.DISCOVERS)
                 .on('*', async (payload) => {
                     if (payload.new.job_status.type !== 'queued') {
@@ -193,7 +194,7 @@ function CaptureCreation() {
 
     const drafts = {
         done: (draftsSubscription: RealtimeSubscription) => {
-            return supabase
+            return supabaseClient
                 .removeSubscription(draftsSubscription)
                 .then(() => {
                     setFormState({
@@ -205,7 +206,7 @@ function CaptureCreation() {
         waitForFinish: () => {
             cleanUpEditor();
             resetFormState(CaptureCreationFormStatus.SAVING);
-            const draftsSubscription = supabase
+            const draftsSubscription = supabaseClient
                 .from(TABLES.DRAFTS)
                 .on('*', async (payload) => {
                     if (payload.new.job_status.type !== 'queued') {
@@ -291,7 +292,7 @@ function CaptureCreation() {
             event.preventDefault();
 
             const draftsSubscription = drafts.waitForFinish();
-            supabase
+            supabaseClient
                 .from(TABLES.DRAFTS)
                 .insert([
                     {
@@ -357,7 +358,7 @@ function CaptureCreation() {
             } else {
                 // TODO (supabase) - `discovers:id=eq.${response.data[0].id}` was not working
                 const discoversSubscription = discovers.waitForFinish();
-                supabase
+                supabaseClient
                     .from(TABLES.DISCOVERS)
                     .insert([
                         {

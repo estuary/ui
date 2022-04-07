@@ -10,9 +10,14 @@ interface Props {
     formId: string;
 }
 
-function NewCaptureHeader(props: Props) {
-    const { close, test, testDisabled, save, saveDisabled, formId } = props;
-
+function NewCaptureHeader({
+    close,
+    test,
+    testDisabled,
+    save,
+    saveDisabled,
+    formId,
+}: Props) {
     return (
         <Toolbar>
             <Typography variant="h6" noWrap>

@@ -4,12 +4,11 @@ import { useIntl } from 'react-intl';
 import logoDark from '../../images/dark/logo-estuary.png';
 import logoLight from '../../images/light/logo-estuary.png';
 
-type LogoProps = {
+type Props = {
     width: number;
 };
 
-const Logo = (props: LogoProps) => {
-    const { width } = props;
+const Logo = ({ width }: Props) => {
     const intl = useIntl();
     const theme = useTheme();
 

@@ -2,7 +2,7 @@ import {
     createTheme,
     PaletteOptions,
     ThemeOptions,
-    ThemeProvider,
+    ThemeProvider as MUIThemeProvider,
     useMediaQuery,
 } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -139,7 +139,7 @@ const themeSettings = createTheme({
 const ColorModeContext = React.createContext({
     toggleColorMode: () => {},
 });
-const AppTheme = ({ children }: BaseComponentProps) => {
+const ThemeProvider = ({ children }: BaseComponentProps) => {
     const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
     const [mode, setMode] = React.useState<PaletteOptions>(
         prefersDarkMode ? darkMode : lightMode
@@ -161,14 +161,14 @@ const AppTheme = ({ children }: BaseComponentProps) => {
 
     return (
         <ColorModeContext.Provider value={{ toggleColorMode: toggler }}>
-            <ThemeProvider theme={generatedTheme}>
+            <MUIThemeProvider theme={generatedTheme}>
                 <CssBaseline />
                 {children}
-            </ThemeProvider>
+            </MUIThemeProvider>
         </ColorModeContext.Provider>
     );
 };
 
 export const useColorMode = () => React.useContext(ColorModeContext);
 
-export default AppTheme;
+export default ThemeProvider;

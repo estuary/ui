@@ -8,7 +8,6 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import { DiscoveredCatalogAttributes } from 'endpoints/discoveredCatalog';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -16,8 +15,8 @@ import useSchemaEditorStore, {
     SchemaEditorState,
 } from 'stores/SchemaEditorStore';
 
-type NewCaptureEditorProps = {
-    data?: DiscoveredCatalogAttributes;
+type Props = {
+    data?: any;
 };
 
 const selectors = {
@@ -25,11 +24,9 @@ const selectors = {
     updateResource: (state: SchemaEditorState) => state.updateResource,
 };
 
-function NewCaptureEditor(props: NewCaptureEditorProps) {
+function NewCaptureEditor({ data }: Props) {
     const loadResource = useSchemaEditorStore(selectors.loadResource);
     const updateResource = useSchemaEditorStore(selectors.updateResource);
-
-    const { data } = props;
 
     const theme = useTheme();
 

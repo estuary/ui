@@ -11,7 +11,7 @@ import React, { ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FormattedMessage } from 'react-intl';
 
-interface ErrorBoundryWrapperProps {
+interface Props {
     children: ReactNode;
 }
 
@@ -53,9 +53,7 @@ function ErrorFallback({ error }: { error: Error }): JSX.Element {
     );
 }
 
-const ErrorBoundryWrapper = (props: ErrorBoundryWrapperProps) => {
-    const { children } = props;
-
+const ErrorBoundryWrapper = ({ children }: Props) => {
     return (
         <ErrorBoundary FallbackComponent={ErrorFallback}>
             {children}

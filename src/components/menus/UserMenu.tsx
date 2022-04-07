@@ -7,19 +7,19 @@ import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import MenuItem from '@mui/material/MenuItem';
 import { Auth } from '@supabase/ui';
-import { supabase } from 'services/supabase';
+import { useClient } from 'supabase-swr';
 import IconMenu from './IconMenu';
 
 const UserMenu = () => {
+    const supabaseClient = useClient();
     const { user } = Auth.useUser();
-
     const userName = user?.user_metadata.full_name;
     const email = user?.user_metadata.email;
     const emailVerified = user?.user_metadata.email_verified;
     const avatar = user?.user_metadata.avatar_url;
 
     const handleClick = async () => {
-        const { error } = await supabase.auth.signOut();
+        const { error } = await supabaseClient.auth.signOut();
 
         console.log('error logging out', error);
     };

@@ -6,9 +6,7 @@ interface Props {
     docsPath?: string;
 }
 
-function NewCaptureSpecFormHeader(props: Props) {
-    const { name, docsPath } = props;
-
+function NewCaptureSpecFormHeader({ name, docsPath }: Props) {
     if (name) {
         return (
             <AppBar position="relative" elevation={0} color="default">

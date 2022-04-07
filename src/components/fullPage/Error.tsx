@@ -9,10 +9,10 @@ import {
 import { FormattedMessage } from 'react-intl';
 import { BaseError } from 'types';
 
-interface FullPageErrorProps {
+interface Props {
     errors: BaseError[];
 }
-function FullPageError({ errors }: FullPageErrorProps) {
+function FullPageError({ errors }: Props) {
     return (
         <Backdrop
             sx={{ color: 'error', zIndex: (theme) => theme.zIndex.drawer + 1 }}

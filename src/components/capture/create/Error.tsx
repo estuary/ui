@@ -5,15 +5,13 @@ import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { FormattedMessage } from 'react-intl';
 
-type NewCaptureErrorProps = {
+type Props = {
     title: string;
     error?: PostgrestError;
     logToken?: string | null;
 };
 
-function NewCaptureError(props: NewCaptureErrorProps) {
-    const { logToken, error, title } = props;
-
+function NewCaptureError({ logToken, error, title }: Props) {
     return (
         <Box sx={{ width: '100%' }}>
             <Alert

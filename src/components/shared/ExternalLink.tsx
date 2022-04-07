@@ -2,14 +2,12 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { Button } from '@mui/material';
 import { ReactNode } from 'react';
 
-interface ExternalLink {
+interface Props {
     children: ReactNode;
     link: string;
 }
 
-function ExternalLink(props: ExternalLink) {
-    const { children, link } = props;
-
+const ExternalLink = ({ children, link }: Props) => {
     return (
         <Button
             variant="text"
@@ -25,6 +23,6 @@ function ExternalLink(props: ExternalLink) {
             {children}
         </Button>
     );
-}
+};
 
 export default ExternalLink;

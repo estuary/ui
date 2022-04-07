@@ -2,13 +2,12 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { Link, MenuItem } from '@mui/material';
 import { ReactNode } from 'react';
 
-interface ExternalLinkMenuItemProps {
+interface Props {
     children: ReactNode;
     link: string;
 }
 
-function ExternalLinkMenuItem(props: ExternalLinkMenuItemProps) {
-    const { children, link } = props;
+function ExternalLinkMenuItem({ children, link }: Props) {
     return (
         <MenuItem
             component={Link}

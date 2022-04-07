@@ -4,7 +4,7 @@ import useNotificationStore, {
     NotificationState,
 } from 'stores/NotificationStore';
 
-interface PageContainerProps {
+interface Props {
     children: ReactNode | ReactNode[];
 }
 
@@ -15,7 +15,7 @@ const selectors = {
         state.updateNotificationHistory,
 };
 
-function PageContainer(props: PageContainerProps) {
+function PageContainer({ children }: Props) {
     const notification = useNotificationStore(selectors.notification);
 
     const updateNotificationHistory = useNotificationStore(
@@ -24,8 +24,6 @@ function PageContainer(props: PageContainerProps) {
     const hideNotification = useNotificationStore(selectors.hideNotification);
 
     const [displayAlert, setDisplayAlert] = useState(false);
-
-    const { children } = props;
 
     useEffect(() => setDisplayAlert(!!notification), [notification]);
 

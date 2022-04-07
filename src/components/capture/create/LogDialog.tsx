@@ -16,9 +16,7 @@ interface Props {
     actionComponent: ReactNode;
 }
 
-function LogDialog(props: Props) {
-    const { open, token, defaultMessage, actionComponent } = props;
-
+function LogDialog({ open, token, defaultMessage, actionComponent }: Props) {
     return (
         <Dialog
             open={open}
