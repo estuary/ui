@@ -11,7 +11,7 @@ import { forwardRef, ReactNode } from 'react';
 import { NavLink, NavLinkProps } from 'react-router-dom';
 import { Widths } from '../../AppLayout';
 
-interface ListItemLinkProps {
+interface Props {
     badgeContent?: number;
     disabled?: boolean;
     icon: ReactNode;
@@ -21,10 +21,15 @@ interface ListItemLinkProps {
     title: string;
 }
 
-const ListItemLink = (props: ListItemLinkProps) => {
-    const { icon, title, link, disabled, isOpen, badgeContent, menuWidth } =
-        props;
-
+const ListItemLink = ({
+    icon,
+    title,
+    link,
+    disabled,
+    isOpen,
+    badgeContent,
+    menuWidth,
+}: Props) => {
     const theme = useTheme();
     const isBelowMd = useMediaQuery(theme.breakpoints.down('md'));
 

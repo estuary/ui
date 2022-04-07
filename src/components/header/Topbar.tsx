@@ -10,13 +10,13 @@ import { BaseComponentProps } from 'types';
 import HelpMenu from '../menus/HelpMenu';
 import Logo from '../navigation/Logo';
 
-interface TopbarProps extends BaseComponentProps {
+interface Props extends BaseComponentProps {
     isNavigationOpen: boolean;
     onNavigationToggle?: Function;
     hideNavigationMenu?: true;
 }
 
-const Topbar = (props: TopbarProps) => {
+const Topbar = (props: Props) => {
     const { onNavigationToggle, hideNavigationMenu } = props;
     const intl = useIntl();
     const theme = useTheme();

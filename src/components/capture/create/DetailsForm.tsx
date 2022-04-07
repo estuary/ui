@@ -15,7 +15,7 @@ import {
 } from 'services/jsonforms';
 import { StoreSelector } from 'types';
 
-interface NewCaptureDetailsProps {
+interface Props {
     connectorTags: ConnectorTag[];
 }
 
@@ -27,9 +27,7 @@ const stateSelectors: StoreSelector<CaptureCreationState> = {
     status: (state) => state.formState.status,
 };
 
-function NewCaptureDetails(props: NewCaptureDetailsProps) {
-    const { connectorTags } = props;
-
+function NewCaptureDetails({ connectorTags }: Props) {
     const intl = useIntl();
     const formData = useCaptureCreationStore(stateSelectors.formData);
     const setDetails = useCaptureCreationStore(stateSelectors.setDetails);

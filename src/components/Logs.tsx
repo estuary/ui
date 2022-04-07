@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { LazyLog } from 'react-lazylog';
 import { useInterval } from 'react-use';
-import { DEFAULT_INTERVAL, RPCS, supabase } from 'services/supabase';
+import { DEFAULT_POLLING_INTERVAL, RPCS } from 'services/supabase';
+import { useClient } from 'supabase-swr';
 
 interface Props {
     token: string | null;
@@ -11,8 +12,8 @@ interface Props {
 
 const NEW_LINE = '\r\n';
 
-function Logs(props: Props) {
-    const { token, defaultMessage } = props;
+function Logs({ token, defaultMessage }: Props) {
+    const supabaseClient = useClient();
     const intl = useIntl();
 
     const [offset, setOffset] = useState(0);
@@ -26,7 +27,7 @@ function Logs(props: Props) {
 
     useInterval(
         async () => {
-            const { data: viewLogsResponse } = await supabase
+            const { data: viewLogsResponse } = await supabaseClient
                 .rpc(RPCS.VIEW_LOGS, {
                     bearer_token: token,
                 })
@@ -40,7 +41,7 @@ function Logs(props: Props) {
                 setLogs(logs.concat(logsReduced));
             }
         },
-        token ? DEFAULT_INTERVAL : null
+        token ? DEFAULT_POLLING_INTERVAL : null
     );
 
     return (

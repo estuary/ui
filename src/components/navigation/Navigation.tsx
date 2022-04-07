@@ -7,15 +7,13 @@ import { Box, List, Toolbar, useMediaQuery, useTheme } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
 import ListItemLink from './ListItemLink';
 
-interface NavigationProps {
+interface Props {
     onNavigationToggle: Function;
     open: boolean;
     width: number;
 }
 
-const Navigation = (props: NavigationProps) => {
-    const { onNavigationToggle, open, width } = props;
-
+const Navigation = ({ onNavigationToggle, open, width }: Props) => {
     const theme = useTheme();
     const isBelowMd = useMediaQuery(theme.breakpoints.down('md'));
 

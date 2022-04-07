@@ -2,10 +2,11 @@ import { Card, CardContent, Grid, Typography } from '@mui/material';
 import { Auth } from '@supabase/ui';
 import Topbar from 'components/header/Topbar';
 import { FormattedMessage } from 'react-intl';
-import { supabase } from 'services/supabase';
+import { useClient } from 'supabase-swr';
 import { getLoginSettings } from 'utils/env-utils';
 
 const Login = () => {
+    const supabaseClient = useClient();
     const loginSettings = getLoginSettings();
 
     return (
@@ -39,7 +40,7 @@ const Login = () => {
                     <CardContent>
                         <Auth
                             providers={['google']}
-                            supabaseClient={supabase}
+                            supabaseClient={supabaseClient}
                             socialColors={true}
                             onlyThirdPartyProviders={!loginSettings.showEmail}
                             redirectTo={window.location.origin}

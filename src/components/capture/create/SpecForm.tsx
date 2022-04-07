@@ -17,7 +17,7 @@ import {
 } from 'services/jsonforms';
 import { StoreSelector } from 'types';
 
-type NewCaptureSpecFormProps = {
+type Props = {
     endpointSchema: any;
 };
 
@@ -29,9 +29,7 @@ const stateSelectors: StoreSelector<CaptureCreationState> = {
     showValidation: (state) => state.formState.showValidation,
     status: (state) => state.formState.status,
 };
-function NewCaptureSpecForm(props: NewCaptureSpecFormProps) {
-    const { endpointSchema } = props;
-
+function NewCaptureSpecForm({ endpointSchema }: Props) {
     const setSpec = useCaptureCreationStore(stateSelectors.setSpec);
     const formData = useCaptureCreationStore(stateSelectors.formData);
     const displayValidation = useCaptureCreationStore(

@@ -26,8 +26,7 @@ const CONNECTOR_TAGS_QUERY = `
     documentation_url
 `;
 
-function NewCaptureSpec(props: Props) {
-    const { connectorImage } = props;
+function NewCaptureSpec({ connectorImage }: Props) {
     const tagsQuery = useQuery<ConnectorTag>(
         TABLES.CONNECTOR_TAGS,
         {

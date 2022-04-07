@@ -15,14 +15,12 @@ import { PostgrestError } from '@supabase/postgrest-js';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 
-type ErrorProps = {
+type Props = {
     error: PostgrestError;
     hideTitle?: boolean;
 };
 
-function Error(props: ErrorProps) {
-    const { error, hideTitle } = props;
-
+function Error({ error, hideTitle }: Props) {
     const [expanded, setExpanded] = React.useState(false);
 
     const handleExpandClick = () => {

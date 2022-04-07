@@ -9,8 +9,8 @@ import AppTheme from './Theme';
 const AppProviders = ({ children }: BaseComponentProps) => {
     return (
         <AppContent>
-            <AuthProvider>
-                <AppData>
+            <AppData>
+                <AuthProvider>
                     <AppTheme>
                         <AppRouter>
                             <ConfirmationModalContextProvider>
@@ -18,8 +18,8 @@ const AppProviders = ({ children }: BaseComponentProps) => {
                             </ConfirmationModalContextProvider>
                         </AppRouter>
                     </AppTheme>
-                </AppData>
-            </AuthProvider>
+                </AuthProvider>
+            </AppData>
         </AppContent>
     );
 };

@@ -1,10 +1,10 @@
-import { supabase } from 'services/supabase';
+import { supabaseClient } from 'services/supabase';
 import { SwrSupabaseContext } from 'supabase-swr';
 import { BaseComponentProps } from 'types';
 
 const AppData = ({ children }: BaseComponentProps) => {
     return (
-        <SwrSupabaseContext.Provider value={supabase}>
+        <SwrSupabaseContext.Provider value={supabaseClient}>
             {children}
         </SwrSupabaseContext.Provider>
     );

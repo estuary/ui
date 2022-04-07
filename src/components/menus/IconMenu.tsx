@@ -2,7 +2,7 @@
 import { IconButton, Menu, PopoverProps, Tooltip } from '@mui/material';
 import React, { ReactNode } from 'react';
 
-type IconMenuProps = {
+type Props = {
     ariaLabel: string;
     icon: ReactNode;
     identifier: string;
@@ -10,7 +10,13 @@ type IconMenuProps = {
     tooltip: string;
 };
 
-const IconMenu = (props: IconMenuProps) => {
+const IconMenu = ({
+    identifier,
+    tooltip,
+    ariaLabel,
+    icon,
+    children,
+}: Props) => {
     const [anchorEl, setAnchorEl] =
         React.useState<PopoverProps['anchorEl']>(null);
     const open = Boolean(anchorEl);
@@ -23,21 +29,21 @@ const IconMenu = (props: IconMenuProps) => {
         setAnchorEl(null);
     };
 
-    const id = `${props.identifier}-button`;
-    const controls = `${props.identifier}-menu`;
+    const id = `${identifier}-button`;
+    const controls = `${identifier}-menu`;
 
     return (
         <>
-            <Tooltip title={props.tooltip}>
+            <Tooltip title={tooltip}>
                 <IconButton
-                    aria-label={props.ariaLabel}
+                    aria-label={ariaLabel}
                     id={id}
                     aria-controls={controls}
                     aria-haspopup="true"
                     aria-expanded={open ? 'true' : undefined}
                     onClick={handleClick}
                 >
-                    {props.icon}
+                    {icon}
                 </IconButton>
             </Tooltip>
             <Menu
@@ -76,7 +82,7 @@ const IconMenu = (props: IconMenuProps) => {
                     },
                 }}
             >
-                {props.children}
+                {children}
             </Menu>
         </>
     );

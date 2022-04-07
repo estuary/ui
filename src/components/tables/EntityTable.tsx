@@ -23,7 +23,7 @@ import {
 
 type SortDirection = 'asc' | 'desc';
 
-interface EntityTableProps {
+interface Props {
     entities: Entity[];
     updateDeploymentStatus: (
         key: string,
@@ -36,9 +36,7 @@ interface TableColumn {
     headerIntlKey: string;
 }
 
-function EntityTable(props: EntityTableProps) {
-    const { entities, updateDeploymentStatus } = props;
-
+function EntityTable({ entities, updateDeploymentStatus }: Props) {
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
     const [columnToSort, setColumnToSort] =
         useState<keyof EntityMetadata>('dateCreated');
