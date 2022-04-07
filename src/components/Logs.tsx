@@ -15,7 +15,6 @@ function Logs(props: Props) {
     const { token, defaultMessage } = props;
     const intl = useIntl();
 
-    const [noDataCounter, setNoDataCounter] = useState(0);
     const [offset, setOffset] = useState(0);
     const [logs, setLogs] = useState([
         defaultMessage ??
@@ -39,11 +38,9 @@ function Logs(props: Props) {
                 });
                 setOffset(offset + viewLogsResponse.length);
                 setLogs(logs.concat(logsReduced));
-            } else {
-                setNoDataCounter(noDataCounter + 1);
             }
         },
-        token && noDataCounter < 10 ? DEFAULT_INTERVAL : null
+        token ? DEFAULT_INTERVAL : null
     );
 
     return (
