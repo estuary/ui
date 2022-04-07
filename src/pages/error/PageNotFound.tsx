@@ -14,7 +14,7 @@ import PageContainer from 'components/shared/PageContainer';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const Error = () => {
+const PageNotFound = () => {
     const navigate = useNavigate();
 
     const [route, setRoute] = useState<string>('');
@@ -122,4 +122,4 @@ const Error = () => {
     );
 };
 
-export default Error;
+export default PageNotFound;
