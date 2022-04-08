@@ -16,6 +16,8 @@ interface Props {
     actionComponent: ReactNode;
 }
 
+const logHeight = 200;
+
 function LogDialog({ open, token, defaultMessage, actionComponent }: Props) {
     return (
         <Dialog
@@ -29,10 +31,14 @@ function LogDialog({ open, token, defaultMessage, actionComponent }: Props) {
             </DialogTitle>
             <DialogContent
                 sx={{
-                    height: 300,
+                    height: logHeight + 25,
                 }}
             >
-                <Logs token={token} defaultMessage={defaultMessage} />
+                <Logs
+                    token={token}
+                    defaultMessage={defaultMessage}
+                    height={logHeight}
+                />
             </DialogContent>
             <DialogActions>{actionComponent}</DialogActions>
         </Dialog>
