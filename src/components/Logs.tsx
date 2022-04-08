@@ -85,6 +85,9 @@ function Logs({ token, defaultMessage, height }: Props) {
                 lineNumbers: 'off',
                 readOnly: true,
                 scrollBeyondLastLine: false,
+                minimap: {
+                    enabled: false,
+                },
             }}
             onChange={handlers.change}
             onMount={handlers.mount}
