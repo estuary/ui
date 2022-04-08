@@ -1,29 +1,61 @@
-import { useState } from 'react';
+import Editor from '@monaco-editor/react';
+import { useTheme } from '@mui/material';
+import { parse } from 'ansicolor';
+import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
+import { useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { LazyLog } from 'react-lazylog';
 import { useInterval } from 'react-use';
 import { DEFAULT_POLLING_INTERVAL, RPCS } from 'services/supabase';
 import { useClient } from 'supabase-swr';
 
 interface Props {
     token: string | null;
+    height?: number;
     defaultMessage?: string;
 }
 
 const NEW_LINE = '\r\n';
 
-function Logs({ token, defaultMessage }: Props) {
+const generateLogLine = (logData: any) => {
+    const parsedText = parse(logData.log_line);
+    const mergedText = parsedText.spans
+        .map((span) => {
+            return span.text;
+        })
+        .join('');
+
+    return mergedText;
+};
+
+function Logs({ token, defaultMessage, height }: Props) {
+    const theme = useTheme();
     const supabaseClient = useClient();
     const intl = useIntl();
 
+    const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(
+        null
+    );
+
     const [offset, setOffset] = useState(0);
-    const [logs, setLogs] = useState([
+    const [logs, setLogs] = useState<string[]>([
         defaultMessage ??
             intl.formatMessage({
                 id: 'logs.default',
             }),
-        '...',
     ]);
+
+    const handlers = {
+        change: () => {
+            if (editorRef.current) {
+                const lineCount =
+                    editorRef.current.getModel()?.getLineCount() ?? 0;
+                editorRef.current.revealLine(lineCount);
+            }
+        },
+        mount: (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
+            editorRef.current = editor;
+        },
+    };
 
     useInterval(
         async () => {
@@ -35,7 +67,7 @@ function Logs({ token, defaultMessage }: Props) {
 
             if (viewLogsResponse && viewLogsResponse.length > 0) {
                 const logsReduced = viewLogsResponse.map((logData) => {
-                    return logData.log_line;
+                    return generateLogLine(logData);
                 });
                 setOffset(offset + viewLogsResponse.length);
                 setLogs(logs.concat(logsReduced));
@@ -45,17 +77,25 @@ function Logs({ token, defaultMessage }: Props) {
     );
 
     return (
-        <LazyLog
-            extraLines={1}
-            stream={true}
-            text={logs
+        <Editor
+            height={`${height ?? 200}px`}
+            defaultLanguage=""
+            theme={theme.palette.mode === 'light' ? 'vs' : 'vs-dark'}
+            options={{
+                lineNumbers: 'off',
+                readOnly: true,
+                scrollBeyondLastLine: false,
+                minimap: {
+                    enabled: false,
+                },
+            }}
+            onChange={handlers.change}
+            onMount={handlers.mount}
+            value={logs
                 .join(NEW_LINE)
                 .split(/\\n/)
                 .join(NEW_LINE)
                 .replaceAll(/\\"/g, '"')}
-            caseInsensitive
-            enableSearch
-            follow={true}
         />
     );
 }

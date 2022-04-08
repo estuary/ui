@@ -7,16 +7,28 @@ import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import MenuItem from '@mui/material/MenuItem';
 import { Auth } from '@supabase/ui';
+import { isEmpty } from 'lodash';
 import { useClient } from 'supabase-swr';
 import IconMenu from './IconMenu';
 
 const UserMenu = () => {
     const supabaseClient = useClient();
     const { user } = Auth.useUser();
-    const userName = user?.user_metadata.full_name;
-    const email = user?.user_metadata.email;
-    const emailVerified = user?.user_metadata.email_verified;
-    const avatar = user?.user_metadata.avatar_url;
+
+    let userName, email, emailVerified, avatar;
+
+    if (user) {
+        if (!isEmpty(user.user_metadata)) {
+            userName = user.user_metadata.full_name;
+            email = user.user_metadata.email;
+            emailVerified = user.user_metadata.email_verified;
+            avatar = user.user_metadata.avatar_url;
+        } else {
+            userName = user.email;
+            email = user.email;
+            emailVerified = false;
+        }
+    }
 
     const handleClick = async () => {
         const { error } = await supabaseClient.auth.signOut();
