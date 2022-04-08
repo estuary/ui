@@ -22,7 +22,7 @@ interface EntityDictionary<T = any> {
     [key: string]: Entity<T>;
 }
 
-export interface ChangeSetState<T = any> {
+export interface PublicationState<T = any> {
     captures: EntityDictionary;
     addCapture: (key: string, newCapture: Entity<T>) => void;
     updateDeploymentStatus: (
@@ -33,10 +33,10 @@ export interface ChangeSetState<T = any> {
     resetNewChangeCount: () => void;
 }
 
-const name = 'change-set-state';
+const name = 'publication-state';
 
 // TODO: Look into a better way to hydrate the state.
-const useChangeSetStore = create<ChangeSetState>(
+const usePublicationStore = create<PublicationState>(
     devtoolsInNonProd(
         persist(
             (set) => ({
@@ -68,7 +68,7 @@ const useChangeSetStore = create<ChangeSetState>(
                     set(
                         () => ({ newChangeCount: 0 }),
                         false,
-                        'Change Set Viewed'
+                        'Publications Viewed'
                     ),
             }),
             { name }
@@ -77,4 +77,4 @@ const useChangeSetStore = create<ChangeSetState>(
     )
 );
 
-export default useChangeSetStore;
+export default usePublicationStore;

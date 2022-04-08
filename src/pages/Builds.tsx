@@ -1,20 +1,20 @@
 import SearchIcon from '@mui/icons-material/Search';
 import { Box, TextField, Toolbar, Typography } from '@mui/material';
 import PageContainer from 'components/shared/PageContainer';
+import EntityTable from 'components/tables/EntityTable';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import useChangeSetStore, {
-    ChangeSetState,
+import usePublicationStore, {
     Entity,
-} from 'stores/ChangeSetStore';
-import EntityTable from '../components/tables/EntityTable';
+    PublicationState,
+} from 'stores/PublicationStore';
 
 const selectors = {
-    captures: (state: ChangeSetState) => state.captures,
-    updateDeploymentStatus: (state: ChangeSetState) =>
+    captures: (state: PublicationState) => state.captures,
+    updateDeploymentStatus: (state: PublicationState) =>
         state.updateDeploymentStatus,
-    newChangeCount: (state: ChangeSetState) => state.newChangeCount,
-    resetNewChangeCount: (state: ChangeSetState) => state.resetNewChangeCount,
+    newChangeCount: (state: PublicationState) => state.newChangeCount,
+    resetNewChangeCount: (state: PublicationState) => state.resetNewChangeCount,
 };
 
 const Builds = () => {
@@ -22,14 +22,14 @@ const Builds = () => {
         null
     );
 
-    const updateCaptureDeploymentStatus = useChangeSetStore(
+    const updateCaptureDeploymentStatus = usePublicationStore(
         selectors.updateDeploymentStatus
     );
-    const newChangeCount = useChangeSetStore(selectors.newChangeCount);
-    const resetNewChangeCount = useChangeSetStore(
+    const newChangeCount = usePublicationStore(selectors.newChangeCount);
+    const resetNewChangeCount = usePublicationStore(
         selectors.resetNewChangeCount
     );
-    const captureState = useChangeSetStore(selectors.captures);
+    const captureState = usePublicationStore(selectors.captures);
 
     const captures = Object.values(captureState);
 

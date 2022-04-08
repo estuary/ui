@@ -5,10 +5,10 @@ import LogDialog from 'components/capture/create/LogDialog';
 import NewCaptureSpec from 'components/capture/create/Spec';
 import useCaptureCreationStore, {
     CaptureCreationFormStatus,
-    CaptureCreationState,
+    CaptureCreationState
 } from 'components/capture/create/Store';
 import useEditorStore, {
-    editorStoreSelectors,
+    editorStoreSelectors
 } from 'components/draft/editor/Store';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
@@ -18,10 +18,9 @@ import { MouseEvent } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { TABLES } from 'services/supabase';
-import { ChangeSetState } from 'stores/ChangeSetStore';
 import useNotificationStore, {
     Notification,
-    NotificationState,
+    NotificationState
 } from 'stores/NotificationStore';
 import { useClient, useQuery, useSelect } from 'supabase-swr';
 import NewCaptureEditor from './CatalogEditor';
@@ -70,9 +69,6 @@ const selectors = {
         error: (state: CaptureCreationState) => state.formState.error,
         exitWhenLogsClose: (state: CaptureCreationState) =>
             state.formState.exitWhenLogsClose,
-    },
-    changeSet: {
-        addCapture: (state: ChangeSetState) => state.addCapture,
     },
     notifications: {
         showNotification: (state: NotificationState) => state.showNotification,

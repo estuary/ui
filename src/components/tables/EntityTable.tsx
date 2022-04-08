@@ -19,7 +19,7 @@ import {
     DeploymentStatus,
     Entity,
     EntityMetadata,
-} from 'stores/ChangeSetStore';
+} from 'stores/PublicationStore';
 
 type SortDirection = 'asc' | 'desc';
 
