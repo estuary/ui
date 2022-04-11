@@ -33,6 +33,8 @@ interface TableColumn {
 }
 
 function EntityTable({ entities }: Props) {
+    const intl = useIntl();
+
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
     const [columnToSort, setColumnToSort] =
         useState<keyof EntityMetadata>('dateCreated');
@@ -50,7 +52,6 @@ function EntityTable({ entities }: Props) {
             ? Math.max(0, (1 + page) * rowsPerPage - entityDetails.length)
             : 0;
 
-    const intl = useIntl();
     const columns: TableColumn[] = [
         {
             field: 'name',
@@ -119,7 +120,7 @@ function EntityTable({ entities }: Props) {
             case 'INACTIVE':
                 return '#C9393E';
             default:
-                return '#000000';
+                return '#F7F7F7';
         }
     };
 
@@ -138,20 +139,12 @@ function EntityTable({ entities }: Props) {
             (event: React.MouseEvent<unknown>) => {
                 handlers.sortRequest(event, column);
             },
-        pageChange: (
+        changePage: (
             event: MouseEvent<HTMLButtonElement> | null,
             newPage: number
         ) => {
             setPage(newPage);
         },
-        deploymentStatusUpdate:
-            (catalogNamespace: string, deploymentStatus: DeploymentStatus) =>
-            () => {
-                // TODO: Change the deployment status of the entity.
-                console.log(
-                    `Set the deployment status of ${catalogNamespace} to ${deploymentStatus}`
-                );
-            },
     };
 
     return (
@@ -284,39 +277,29 @@ function EntityTable({ entities }: Props) {
                                                         variant="contained"
                                                         size="small"
                                                         disableElevation
+                                                        disabled
                                                         sx={{ mr: 1 }}
                                                     >
                                                         Edit
                                                     </Button>
 
-                                                    {deploymentStatus ===
-                                                    'ACTIVE' ? (
-                                                        <Button
-                                                            variant="contained"
-                                                            size="small"
-                                                            color="error"
-                                                            disableElevation
-                                                            onClick={handlers.deploymentStatusUpdate(
-                                                                catalogNamespace,
-                                                                'INACTIVE'
-                                                            )}
-                                                        >
-                                                            Stop
-                                                        </Button>
-                                                    ) : (
-                                                        <Button
-                                                            variant="contained"
-                                                            size="small"
-                                                            color="success"
-                                                            disableElevation
-                                                            onClick={handlers.deploymentStatusUpdate(
-                                                                catalogNamespace,
-                                                                'ACTIVE'
-                                                            )}
-                                                        >
-                                                            Run
-                                                        </Button>
-                                                    )}
+                                                    <Button
+                                                        variant="contained"
+                                                        size="small"
+                                                        color={
+                                                            deploymentStatus ===
+                                                            'ACTIVE'
+                                                                ? 'error'
+                                                                : 'success'
+                                                        }
+                                                        disableElevation
+                                                        disabled
+                                                    >
+                                                        {deploymentStatus ===
+                                                        'ACTIVE'
+                                                            ? 'Stop'
+                                                            : 'Run'}
+                                                    </Button>
                                                 </Box>
                                             </TableCell>
                                         </TableRow>
@@ -338,7 +321,7 @@ function EntityTable({ entities }: Props) {
                                     count={entities.length}
                                     rowsPerPage={rowsPerPage}
                                     page={page}
-                                    onPageChange={handlers.pageChange}
+                                    onPageChange={handlers.changePage}
                                 />
                             </TableRow>
                         </TableFooter>
