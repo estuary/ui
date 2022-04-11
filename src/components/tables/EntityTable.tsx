@@ -236,7 +236,7 @@ function EntityTable({ entities }: Props) {
                                         <TableRow
                                             key={`Entity-${name}-${index}`}
                                         >
-                                            <TableCell sx={{ minWidth: 216 }}>
+                                            <TableCell sx={{ minWidth: 256 }}>
                                                 <Tooltip
                                                     title={catalogNamespace}
                                                     placement="bottom-start"
@@ -269,7 +269,7 @@ function EntityTable({ entities }: Props) {
                                                     </Box>
                                                 </Tooltip>
                                             </TableCell>
-                                            <TableCell>
+                                            <TableCell sx={{ minWidth: 256 }}>
                                                 {connectorType}
                                             </TableCell>
                                             <TableCell>

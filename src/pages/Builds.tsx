@@ -8,17 +8,32 @@ import { TABLES } from 'services/supabase';
 import { Entity } from 'stores/PublicationStore';
 import { useQuery, useSelect } from 'supabase-swr';
 
+interface ConnectorInfo {
+    detail: string;
+    image_name: string;
+}
+
 const DISCOVERS_QUERY = `
     capture_name, 
     updated_at, 
     job_status->>type, 
+    catalog_spec, 
     id
 `;
+
+const CONNECTORS_QUERY = `detail, image_name`;
 
 const Builds = () => {
     const [filteredCaptures, setFilteredCaptures] = useState<Entity[] | null>(
         null
     );
+
+    const connectorsQuery = useQuery<any>(
+        TABLES.CONNECTORS,
+        { columns: CONNECTORS_QUERY },
+        []
+    );
+    const { data: connectors } = useSelect(connectorsQuery, {});
 
     const tagsQuery = useQuery<any>(
         TABLES.DISCOVERS,
@@ -32,11 +47,28 @@ const Builds = () => {
 
     let captures: Entity[] = [];
 
-    if (discovers) {
+    if (discovers && connectors) {
         captures = discovers.data.map((discover) => {
             const catalogNamespace: string = discover.capture_name;
-
             const dateCreated: string = discover.updated_at;
+            const catalogResources = discover.catalog_spec.resources;
+
+            // TODO: Improve logic used to retrieve the endpoint description.
+            const resourceKey = Object.keys(catalogResources).find((fileUrl) =>
+                fileUrl.includes('.flow.json')
+            );
+
+            const rawConnectorImg: string =
+                catalogResources[`${resourceKey}`].content.captures[
+                    `${catalogNamespace}`
+                ].endpoint.connector.image;
+
+            const [connectorImg]: string[] = rawConnectorImg.split(':', 1);
+
+            const connectorInfo: ConnectorInfo | undefined =
+                connectors.data.find(
+                    (connector) => connector.image_name === connectorImg
+                );
 
             return {
                 metadata: {
@@ -47,7 +79,9 @@ const Builds = () => {
                         catalogNamespace.length
                     ),
                     catalogNamespace,
-                    connectorType: 'Hello World',
+                    connectorType: connectorInfo
+                        ? connectorInfo.detail
+                        : 'Unknown',
                     dateCreated,
                 },
                 resources: {},

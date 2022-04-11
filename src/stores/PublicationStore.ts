@@ -3,13 +3,12 @@ import create from 'zustand';
 import { persist } from 'zustand/middleware';
 
 export type DeploymentStatus = 'ACTIVE' | 'INACTIVE';
-type ConnectorType = 'Hello World' | 'Postgres';
 
 export interface EntityMetadata {
     deploymentStatus: DeploymentStatus;
     name: string;
     catalogNamespace: string;
-    connectorType: ConnectorType;
+    connectorType: string;
     dateCreated: string;
 }
 
