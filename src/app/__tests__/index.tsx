@@ -4,9 +4,15 @@ import { customRender, screen, waitFor } from 'utils/test-utils';
 
 describe('When there is no user', () => {
     test('the login page is displayed', async () => {
-        const view = await customRender(<App />, {});
+        await customRender(<App />, {});
 
-        expect(view).toMatchSnapshot();
+        await waitFor(() => {
+            expect(
+                screen.getByText(
+                    'Please use one of the providers below to continue.'
+                )
+            ).toBeInTheDocument();
+        });
     });
 });
 

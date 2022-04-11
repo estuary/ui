@@ -5,6 +5,7 @@ import { createClient, User } from '@supabase/supabase-js';
 import { Auth } from '@supabase/ui';
 import { AuthSession } from '@supabase/ui/dist/cjs/components/Auth/UserContext';
 import { render as rtlRender, RenderOptions } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import AppContent from 'context/Content';
 import AppRouter from 'context/Router';
 import ThemeProvider from 'context/Theme';
@@ -19,10 +20,6 @@ const goTo = (route?: string, name?: string) => {
         name ? name : 'Test page',
         route ? route : '/'
     );
-};
-
-const waitForLoading = async () => {
-    return Promise.resolve();
 };
 
 // TODO - We use immer here but don't need it. The user metadata is currently just
@@ -73,8 +70,6 @@ const customRender = async (
 ) => {
     const { route, username } = options;
 
-    goTo(route, 'Test Page');
-
     const view = rtlRender(
         <AppContent>
             <MockProviders username={username}>
@@ -88,10 +83,13 @@ const customRender = async (
         }
     );
 
-    await waitForLoading();
+    goTo(route, 'Test Page');
 
-    return view;
+    return {
+        user: userEvent.setup(),
+        view,
+    };
 };
 
 export * from '@testing-library/react';
-export { generateMockUserMetadata, goTo, customRender, waitForLoading };
+export { generateMockUserMetadata, goTo, customRender };
