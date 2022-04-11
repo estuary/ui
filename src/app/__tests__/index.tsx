@@ -1,11 +1,29 @@
 import '@testing-library/jest-dom';
 import App from 'app';
-import { customRender } from 'utils/test-utils';
+import { customRender, screen, waitFor } from 'utils/test-utils';
 
 describe('When there is no user', () => {
     test('the login page is displayed', async () => {
         const view = await customRender(<App />, {});
 
         expect(view).toMatchSnapshot();
+    });
+});
+
+describe('When there is a user', () => {
+    let username: string;
+
+    beforeEach(() => {
+        username = 'foo123';
+    });
+
+    test('the authorized app is logged into', async () => {
+        await customRender(<App />, {
+            username,
+        });
+
+        await waitFor(() => {
+            expect(screen.getByText('Welcome to Flow!')).toBeInTheDocument();
+        });
     });
 });

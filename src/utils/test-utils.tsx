@@ -8,7 +8,8 @@ import { render as rtlRender, RenderOptions } from '@testing-library/react';
 import AppContent from 'context/Content';
 import AppRouter from 'context/Router';
 import ThemeProvider from 'context/Theme';
-import { mock } from 'jest-mock-extended';
+import produce from 'immer';
+import { mockDeep } from 'jest-mock-extended';
 import { ReactElement } from 'react';
 import { SwrSupabaseContext } from 'supabase-swr';
 
@@ -24,13 +25,33 @@ const waitForLoading = async () => {
     return Promise.resolve();
 };
 
+// TODO - We use immer here but don't need it. The user metadata is currently just
+//  any number of keys (according to the types). Hoping that changes in the future.
+const generateMockUserMetadata = (username: string) => {
+    return produce(mockDeep<User['user_metadata']>(), (draft) => {
+        draft.avatar_url = `https://example.org/avatar/${username}`;
+        draft.email = `${username}@example.org`;
+        draft.email_verified = true;
+        draft.full_name = `Full ${username}`;
+        draft.iss = 'https://api.example.org';
+        draft.name = username;
+        draft.picture = `https://example.org/picture/${username}`;
+        draft.preferred_username = username;
+        draft.provider_id = '102885624013818367764';
+        draft.sub = '102885624013818367764';
+        draft.user_name = username;
+
+        return draft;
+    });
+};
+
 const MockProviders = ({ children, username }: any) => {
     const mockClient = createClient('http://mock.url', 'MockSupabaseAnonKey');
-    const mockAuthSession = mock<AuthSession>();
+    const mockAuthSession = mockDeep<AuthSession>();
 
     if (username) {
-        mockAuthSession.user = mock<User>();
-        mockAuthSession.user.user_metadata.full_name = username;
+        mockAuthSession.user = mockDeep<User>();
+        mockAuthSession.user.user_metadata = generateMockUserMetadata(username);
         Auth.useUser = () => mockAuthSession;
     }
 
@@ -73,4 +94,4 @@ const customRender = async (
 };
 
 export * from '@testing-library/react';
-export { goTo, customRender, waitForLoading };
+export { generateMockUserMetadata, goTo, customRender, waitForLoading };
