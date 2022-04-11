@@ -2,36 +2,58 @@ import SearchIcon from '@mui/icons-material/Search';
 import { Box, TextField, Toolbar, Typography } from '@mui/material';
 import PageContainer from 'components/shared/PageContainer';
 import EntityTable from 'components/tables/EntityTable';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import usePublicationStore, {
-    Entity,
-    PublicationState,
-} from 'stores/PublicationStore';
+import { TABLES } from 'services/supabase';
+import { Entity } from 'stores/PublicationStore';
+import { useQuery, useSelect } from 'supabase-swr';
 
-const selectors = {
-    captures: (state: PublicationState) => state.captures,
-    updateDeploymentStatus: (state: PublicationState) =>
-        state.updateDeploymentStatus,
-    newChangeCount: (state: PublicationState) => state.newChangeCount,
-    resetNewChangeCount: (state: PublicationState) => state.resetNewChangeCount,
-};
+const DISCOVERS_QUERY = `
+    capture_name, 
+    updated_at, 
+    job_status->>type, 
+    id
+`;
 
 const Builds = () => {
     const [filteredCaptures, setFilteredCaptures] = useState<Entity[] | null>(
         null
     );
 
-    const updateCaptureDeploymentStatus = usePublicationStore(
-        selectors.updateDeploymentStatus
+    const tagsQuery = useQuery<any>(
+        TABLES.DISCOVERS,
+        {
+            columns: DISCOVERS_QUERY,
+            filter: (query) => query.eq('job_status->>type', 'success'),
+        },
+        []
     );
-    const newChangeCount = usePublicationStore(selectors.newChangeCount);
-    const resetNewChangeCount = usePublicationStore(
-        selectors.resetNewChangeCount
-    );
-    const captureState = usePublicationStore(selectors.captures);
+    const { data: discovers } = useSelect(tagsQuery, {});
 
-    const captures = Object.values(captureState);
+    let captures: Entity[] = [];
+
+    if (discovers) {
+        captures = discovers.data.map((discover) => {
+            const catalogNamespace: string = discover.capture_name;
+
+            const dateCreated: string = discover.updated_at;
+
+            return {
+                metadata: {
+                    deploymentStatus:
+                        discover.type === 'success' ? 'ACTIVE' : 'INACTIVE',
+                    name: catalogNamespace.substring(
+                        catalogNamespace.lastIndexOf('/') + 1,
+                        catalogNamespace.length
+                    ),
+                    catalogNamespace,
+                    connectorType: 'Hello World',
+                    dateCreated,
+                },
+                resources: {},
+            };
+        });
+    }
 
     const handlers = {
         change: (
@@ -42,26 +64,15 @@ const Builds = () => {
             if (query === '') {
                 setFilteredCaptures(null);
             } else {
-                const queriedCatalogNamespaces = Object.keys(
-                    captureState
-                ).filter((catalogNamespace) =>
-                    catalogNamespace.includes(query)
-                );
-
-                const queriedCaptures: Entity[] = queriedCatalogNamespaces.map(
-                    (key) => captureState[key]
+                const queriedCaptures: Entity[] = captures.filter(
+                    ({ metadata: { catalogNamespace } }) =>
+                        catalogNamespace.includes(query)
                 );
 
                 setFilteredCaptures(queriedCaptures);
             }
         },
     };
-
-    useEffect(() => {
-        if (newChangeCount > 0) {
-            resetNewChangeCount();
-        }
-    }, [newChangeCount, resetNewChangeCount]);
 
     return (
         <PageContainer>
@@ -89,10 +100,7 @@ const Builds = () => {
                 </Toolbar>
             </Box>
 
-            <EntityTable
-                entities={filteredCaptures ?? captures}
-                updateDeploymentStatus={updateCaptureDeploymentStatus}
-            />
+            <EntityTable entities={filteredCaptures ?? captures} />
         </PageContainer>
     );
 };

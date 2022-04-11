@@ -25,10 +25,6 @@ type SortDirection = 'asc' | 'desc';
 
 interface Props {
     entities: Entity[];
-    updateDeploymentStatus: (
-        key: string,
-        deploymentStatus: DeploymentStatus
-    ) => void;
 }
 
 interface TableColumn {
@@ -36,7 +32,7 @@ interface TableColumn {
     headerIntlKey: string;
 }
 
-function EntityTable({ entities, updateDeploymentStatus }: Props) {
+function EntityTable({ entities }: Props) {
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
     const [columnToSort, setColumnToSort] =
         useState<keyof EntityMetadata>('dateCreated');
@@ -151,7 +147,10 @@ function EntityTable({ entities, updateDeploymentStatus }: Props) {
         deploymentStatusUpdate:
             (catalogNamespace: string, deploymentStatus: DeploymentStatus) =>
             () => {
-                updateDeploymentStatus(catalogNamespace, deploymentStatus);
+                // TODO: Change the deployment status of the entity.
+                console.log(
+                    `Set the deployment status of ${catalogNamespace} to ${deploymentStatus}`
+                );
             },
     };
 
