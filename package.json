@@ -63,6 +63,7 @@
         "eslint-plugin-react": "^7.28.0",
         "husky": "^7.0.0",
         "jest-localstorage-mock": "^2.4.19",
+        "jest-mock-extended": "^2.0.5",
         "lint-staged": "^12.3.7",
         "node-polyfill-webpack-plugin": "^1.1.4",
         "prettier": "^2.4.1",
@@ -93,7 +94,10 @@
         "flow_deps"
     ],
     "jest": {
-        "resetMocks": false
+        "resetMocks": false,
+        "moduleNameMapper": {
+            "supabase-swr": "<rootDir>/node_modules/supabase-swr/dist/index.umd.js"
+        }
     },
     "repository": {
         "type": "git",

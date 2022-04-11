@@ -1,12 +1,16 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 // https://testing-library.com/docs/react-testing-library/setup#custom-render
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient, User } from '@supabase/supabase-js';
+import { Auth } from '@supabase/ui';
+import { AuthSession } from '@supabase/ui/dist/cjs/components/Auth/UserContext';
 import { render as rtlRender, RenderOptions } from '@testing-library/react';
 import AppContent from 'context/Content';
 import AppRouter from 'context/Router';
 import ThemeProvider from 'context/Theme';
-import { createContext, ReactElement } from 'react';
+import { mock } from 'jest-mock-extended';
+import { ReactElement } from 'react';
+import { SwrSupabaseContext } from 'supabase-swr';
 
 const goTo = (route?: string, name?: string) => {
     window.history.pushState(
@@ -20,27 +24,22 @@ const waitForLoading = async () => {
     return Promise.resolve();
 };
 
-const MockUserProvider = ({ children, username }: any) => {
-    return (
-        <>
-            Your user name is {username} and {children}
-        </>
-    );
-};
-
-const MockClientProvider = ({ children }: any) => {
+const MockProviders = ({ children, username }: any) => {
     const mockClient = createClient('http://mock.url', 'MockSupabaseAnonKey');
+    const mockAuthSession = mock<AuthSession>();
 
-    const MockClient = createContext({});
+    if (username) {
+        mockAuthSession.user = mock<User>();
+        mockAuthSession.user.user_metadata.full_name = username;
+        Auth.useUser = () => mockAuthSession;
+    }
 
     return (
-        <MockClient.Provider
-            value={{
-                useClient: () => mockClient,
-            }}
-        >
-            {children}
-        </MockClient.Provider>
+        <SwrSupabaseContext.Provider value={mockClient}>
+            <Auth.UserContextProvider supabaseClient={mockClient}>
+                {children}
+            </Auth.UserContextProvider>
+        </SwrSupabaseContext.Provider>
     );
 };
 
@@ -57,13 +56,11 @@ const customRender = async (
 
     const view = rtlRender(
         <AppContent>
-            <MockClientProvider>
-                <MockUserProvider username={username}>
-                    <ThemeProvider>
-                        <AppRouter>{ui}</AppRouter>
-                    </ThemeProvider>
-                </MockUserProvider>
-            </MockClientProvider>
+            <MockProviders username={username}>
+                <ThemeProvider>
+                    <AppRouter>{ui}</AppRouter>
+                </ThemeProvider>
+            </MockProviders>
         </AppContent>,
         {
             ...options,

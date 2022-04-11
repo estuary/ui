@@ -1,5 +1,11 @@
 import '@testing-library/jest-dom';
+import App from 'app';
+import { customRender } from 'utils/test-utils';
 
-test('No tests are actually running', async () => {
-    expect(null).toBeNull();
+describe('When there is no user', () => {
+    test('the login page is displayed', async () => {
+        const view = await customRender(<App />, {});
+
+        expect(view).toMatchSnapshot();
+    });
 });
