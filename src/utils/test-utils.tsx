@@ -34,8 +34,8 @@ const generateMockUserMetadata = (username: string) => {
         draft.name = username;
         draft.picture = `https://example.org/picture/${username}`;
         draft.preferred_username = username;
-        draft.provider_id = '102885624013818367764';
-        draft.sub = '102885624013818367764';
+        draft.provider_id = '00000000000000000000_provider';
+        draft.sub = '00000000000000000000_sub';
         draft.user_name = username;
 
         return draft;
