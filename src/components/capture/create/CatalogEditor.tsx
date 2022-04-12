@@ -11,22 +11,49 @@ import {
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { TABLES } from 'services/supabase';
 import useSchemaEditorStore, {
     SchemaEditorState,
 } from 'stores/SchemaEditorStore';
+import { useQuery, useSelect } from 'supabase-swr';
 
 type Props = {
-    data?: any;
+    draftId: string;
 };
+
+interface DraftSpec {
+    catalog_name: string;
+    spec_type: string;
+    spec_patch: string;
+    draft_id: string;
+}
+
+const CONNECTOR_TAGS_QUERY = `
+    catalog_name,
+    spec_type,
+    spec_patch,
+    draft_id
+`;
 
 const selectors = {
     loadResource: (state: SchemaEditorState) => state.loadResource,
     updateResource: (state: SchemaEditorState) => state.updateResource,
 };
 
-function NewCaptureEditor({ data }: Props) {
+function NewCaptureEditor({ draftId }: Props) {
     const loadResource = useSchemaEditorStore(selectors.loadResource);
     const updateResource = useSchemaEditorStore(selectors.updateResource);
+
+    const draftSpecQuery = useQuery<DraftSpec>(
+        TABLES.DRAFT_SPECS,
+        {
+            columns: CONNECTOR_TAGS_QUERY,
+            filter: (query) => query.eq('draft_id', draftId),
+        },
+        []
+    );
+    const { data } = useSelect(draftSpecQuery, {});
+    const tags: DraftSpec[] = data ? data.data : [];
 
     const theme = useTheme();
 
@@ -34,30 +61,30 @@ function NewCaptureEditor({ data }: Props) {
         null
     );
 
-    const resourceList = data ? Object.keys(data.resources) : [];
-    const [currentFileName, setCurrentFileName] = useState('');
-    const [currentFile, setCurrentFile] = useState({});
+    const [currentFileIndex, setCurrentFileIndex] = useState(0);
 
     const handlers = {
         fileList: {
-            click: (resourceName: string) => {
-                setCurrentFileName(resourceName);
-                setCurrentFile(data?.resources[resourceName].content);
+            click: (tagInex: number) => {
+                setCurrentFileIndex(tagInex);
             },
         },
         change: () => {
             if (editorRef.current) {
-                updateResource(currentFileName, editorRef.current.getValue());
+                updateResource(
+                    tags[currentFileIndex].catalog_name,
+                    editorRef.current.getValue()
+                );
             }
         },
         mount: (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
             editorRef.current = editor;
 
-            handlers.fileList.click(resourceList[0]);
+            handlers.fileList.click(0);
 
-            if (resourceList.length > 0) {
-                resourceList.forEach((name) => {
-                    loadResource(name, data?.resources[name].content);
+            if (tags.length > 0) {
+                tags.forEach((tag) => {
+                    loadResource(tag.catalog_name, tag.spec_patch);
                 });
             }
 
@@ -76,7 +103,7 @@ function NewCaptureEditor({ data }: Props) {
                 <FormattedMessage id="captureCreation.finalReview.instructions" />
             </Typography>
             <Paper variant="outlined">
-                {data ? (
+                {tags.length > 0 ? (
                     <Box
                         sx={{
                             flexGrow: 1,
@@ -86,30 +113,21 @@ function NewCaptureEditor({ data }: Props) {
                         }}
                     >
                         <List dense disablePadding>
-                            {resourceList.map(
-                                (resourceName: any, index: number) => (
-                                    <ListItemButton
-                                        key={`FileSelector-${resourceName}-${index}`}
-                                        dense
-                                        selected={
-                                            resourceName === currentFileName
-                                        }
-                                        onClick={() => {
-                                            handlers.fileList.click(
-                                                resourceName
-                                            );
-                                        }}
-                                    >
-                                        <ListItemText
-                                            primary={resourceName}
-                                            secondary={
-                                                data.resources[resourceName]
-                                                    .contentType
-                                            }
-                                        />
-                                    </ListItemButton>
-                                )
-                            )}
+                            {tags.map((tag: any, index: number) => (
+                                <ListItemButton
+                                    key={`FileSelector-${tag.catalog_name}`}
+                                    dense
+                                    selected={index === currentFileIndex}
+                                    onClick={() => {
+                                        handlers.fileList.click(index);
+                                    }}
+                                >
+                                    <ListItemText
+                                        primary={tag.catalog_name}
+                                        secondary={tag.spec_type}
+                                    />
+                                </ListItemButton>
+                            ))}
                         </List>
                         <Editor
                             height="300px"
@@ -119,8 +137,12 @@ function NewCaptureEditor({ data }: Props) {
                                     ? 'vs'
                                     : 'vs-dark'
                             }
-                            defaultValue={JSON.stringify(currentFile, null, 2)}
-                            path={currentFileName}
+                            defaultValue={JSON.stringify(
+                                tags[currentFileIndex],
+                                null,
+                                2
+                            )}
+                            path={tags[currentFileIndex].catalog_name}
                             onMount={handlers.mount}
                             onChange={handlers.change}
                         />

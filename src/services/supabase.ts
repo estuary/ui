@@ -18,8 +18,13 @@ export enum TABLES {
     CONNECTOR_TAGS = 'connector_tags',
     CONNECTORS = 'connectors',
     DISCOVERS = 'discovers',
+    DRAFT_ERRORS = 'draft_errors',
+    DRAFT_SPECS = 'draft_specs',
+    DRAFT_SPECS_EXT = 'draft_specs_ext',
     DRAFTS = 'drafts',
-    PROFILES = 'profiles',
+    LIVE_SPECS = 'live_specs',
+    PUBLICATION_SPECS = 'publication_specs',
+    PUBLICATIONS = 'publications',
 }
 
 export enum RPCS {
