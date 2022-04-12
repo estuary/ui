@@ -16,8 +16,9 @@ import {
     Tooltip,
     Typography,
 } from '@mui/material';
+import { RealtimeSubscription, SupabaseClient } from '@supabase/supabase-js';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
-import { ChangeEvent, MouseEvent, useState } from 'react';
+import { ChangeEvent, MouseEvent, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { TABLES } from 'services/supabase';
 import {
@@ -25,7 +26,7 @@ import {
     Entity,
     EntityMetadata,
 } from 'stores/PublicationStore';
-import { useQuery, useSelect } from 'supabase-swr';
+import { useClient } from 'supabase-swr';
 
 type SortDirection = 'asc' | 'desc';
 
@@ -50,11 +51,17 @@ const DISCOVERS_QUERY = `
 const CONNECTORS_QUERY = `detail, image_name`;
 
 function EntityTable() {
+    const supabaseClient: SupabaseClient = useClient();
     const intl = useIntl();
 
-    const [filteredEntities, setFilteredEntities] = useState<Entity[] | null>(
-        null
-    );
+    const [connectors, setConnectors] = useState<any[] | null>(null);
+    const [discovery, setDiscovery] = useState<any[] | null>(null);
+    const [discoverySubscription, setDiscoverySubscription] =
+        useState<RealtimeSubscription | null>(null);
+
+    const [filteredEntities, setFilteredEntities] = useState<
+        Entity[] | undefined
+    >([]);
 
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
     const [columnToSort, setColumnToSort] =
@@ -64,27 +71,53 @@ function EntityTable() {
     const rowsPerPage = 10;
     const rowHeight = 57;
 
-    const connectorsQuery = useQuery<any>(
-        TABLES.CONNECTORS,
-        { columns: CONNECTORS_QUERY },
-        []
-    );
-    const { data: connectors } = useSelect(connectorsQuery, {});
+    // TODO: Remove calls to console.log().
+    const getConnectors = async () => {
+        try {
+            const { data } = await supabaseClient
+                .from(TABLES.CONNECTORS)
+                .select(CONNECTORS_QUERY);
 
-    const tagsQuery = useQuery<any>(
-        TABLES.DISCOVERS,
-        {
-            columns: DISCOVERS_QUERY,
-            filter: (query) => query.eq('job_status->>type', 'success'),
-        },
-        []
-    );
-    const { data: discovers } = useSelect(tagsQuery, {});
+            setConnectors(data);
+            console.log('connectors');
+        } catch (error: unknown) {
+            console.log('We have a connector error');
+        }
+    };
 
-    let unfilteredEntities: Entity[] = [];
+    // TODO: Remove calls to console.log().
+    const getInitialDiscovery = async () => {
+        try {
+            const { data } = await supabaseClient
+                .from(TABLES.DISCOVERS)
+                .select(DISCOVERS_QUERY)
+                .eq('job_status->>type', 'success');
 
-    if (discovers && connectors) {
-        unfilteredEntities = discovers.data.map((discover) => {
+            setDiscovery(data);
+
+            console.log('discovery');
+        } catch (error: unknown) {
+            console.log('We have a discover error');
+        }
+    };
+
+    const createDiscoverySubscription = () => {
+        const subscription = supabaseClient
+            .from(TABLES.DISCOVERS)
+            .on('*', async (payload) => {
+                if (payload.new.job_status.type === 'success') {
+                    if (discovery) {
+                        setDiscovery([...discovery, payload.new]);
+                    }
+                }
+            })
+            .subscribe();
+
+        setDiscoverySubscription(subscription);
+    };
+
+    const formatDiscovery = (): Entity[] | undefined => {
+        return discovery?.map((discover) => {
             const catalogNamespace: string = discover.capture_name;
             const dateCreated: string = discover.updated_at;
             const catalogResources = discover.catalog_spec.resources;
@@ -101,10 +134,9 @@ function EntityTable() {
 
             const [connectorImg]: string[] = rawConnectorImg.split(':', 1);
 
-            const connectorInfo: ConnectorInfo | undefined =
-                connectors.data.find(
-                    (connector) => connector.image_name === connectorImg
-                );
+            const connectorInfo: ConnectorInfo | undefined = connectors?.find(
+                (connector) => connector.image_name === connectorImg
+            );
 
             return {
                 metadata: {
@@ -123,16 +155,48 @@ function EntityTable() {
                 resources: {},
             };
         });
-    }
+    };
 
-    const entities = filteredEntities ?? unfilteredEntities;
+    useEffect(() => {
+        getConnectors().catch(() => {});
+        getInitialDiscovery().catch(() => {});
 
-    const entityDetails: EntityMetadata[] = entities.map(
+        createDiscoverySubscription();
+    }, []);
+
+    // TODO: Manage entities state in the component and update it either in an effect
+    // or in a function handler.
+
+    // TODO: Remove calls to console.log().
+    useEffect(() => {
+        return () => {
+            console.log('Will unmount');
+
+            if (discoverySubscription) {
+                supabaseClient
+                    .removeSubscription(discoverySubscription)
+                    .catch(() => {});
+            }
+        };
+    }, []);
+
+    // TODO: Remove calls to console.log().
+    console.log('We here');
+
+    const unfilteredEntities: Entity[] | undefined =
+        discovery && connectors ? formatDiscovery() : [];
+
+    const entities =
+        filteredEntities && filteredEntities.length > 0
+            ? filteredEntities
+            : unfilteredEntities;
+
+    const entityDetails: EntityMetadata[] | undefined = entities?.map(
         (entity) => entity.metadata
     );
 
     const emptyRows =
-        page > 0
+        entityDetails && page > 0
             ? Math.max(0, (1 + page) * rowsPerPage - entityDetails.length)
             : 0;
 
@@ -215,12 +279,13 @@ function EntityTable() {
             const query = event.target.value;
 
             if (query === '') {
-                setFilteredEntities(null);
+                setFilteredEntities([]);
             } else {
-                const queriedEntities: Entity[] = unfilteredEntities.filter(
-                    ({ metadata: { catalogNamespace } }) =>
-                        catalogNamespace.includes(query)
-                );
+                const queriedEntities: Entity[] | undefined =
+                    unfilteredEntities?.filter(
+                        ({ metadata: { catalogNamespace } }) =>
+                            catalogNamespace.includes(query)
+                    );
 
                 setFilteredEntities(queriedEntities);
             }
@@ -274,7 +339,7 @@ function EntityTable() {
             </Box>
 
             <Box sx={{ mb: 2, mx: 2 }}>
-                {entities.length > 0 ? (
+                {entities && entities.length > 0 ? (
                     <TableContainer component={Box}>
                         <Table
                             sx={{ minWidth: 350 }}
@@ -335,110 +400,125 @@ function EntityTable() {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {stableSort(
-                                    entityDetails,
-                                    getComparator(sortDirection, columnToSort)
-                                )
-                                    .slice(
-                                        page * rowsPerPage,
-                                        page * rowsPerPage + rowsPerPage
-                                    )
-                                    .map(
-                                        (
-                                            {
-                                                deploymentStatus,
-                                                name,
-                                                catalogNamespace,
-                                                connectorType,
-                                                dateCreated: dateUpdated,
-                                            },
-                                            index
-                                        ) => (
-                                            <TableRow
-                                                key={`Entity-${name}-${index}`}
-                                            >
-                                                <TableCell
-                                                    sx={{ minWidth: 256 }}
-                                                >
-                                                    <Tooltip
-                                                        title={catalogNamespace}
-                                                        placement="bottom-start"
-                                                    >
-                                                        <Box>
-                                                            <span
-                                                                style={{
-                                                                    height: 16,
-                                                                    width: 16,
-                                                                    backgroundColor:
-                                                                        getDeploymentStatusHexCode(
-                                                                            deploymentStatus
-                                                                        ),
-                                                                    borderRadius: 50,
-                                                                    display:
-                                                                        'inline-block',
-                                                                    verticalAlign:
-                                                                        'middle',
-                                                                    marginRight: 12,
-                                                                }}
-                                                            />
-                                                            <span
-                                                                style={{
-                                                                    verticalAlign:
-                                                                        'middle',
-                                                                }}
-                                                            >
-                                                                {name}
-                                                            </span>
-                                                        </Box>
-                                                    </Tooltip>
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{ minWidth: 256 }}
-                                                >
-                                                    {connectorType}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {formatDistanceToNow(
-                                                        new Date(dateUpdated),
-                                                        { addSuffix: true }
-                                                    )}
-                                                </TableCell>
-                                                <TableCell>
-                                                    <Box
-                                                        sx={{ display: 'flex' }}
-                                                    >
-                                                        <Button
-                                                            variant="contained"
-                                                            size="small"
-                                                            disableElevation
-                                                            disabled
-                                                            sx={{ mr: 1 }}
-                                                        >
-                                                            Edit
-                                                        </Button>
+                                {entityDetails
+                                    ? stableSort(
+                                          entityDetails,
+                                          getComparator(
+                                              sortDirection,
+                                              columnToSort
+                                          )
+                                      )
+                                          .slice(
+                                              page * rowsPerPage,
+                                              page * rowsPerPage + rowsPerPage
+                                          )
+                                          .map(
+                                              (
+                                                  {
+                                                      deploymentStatus,
+                                                      name,
+                                                      catalogNamespace,
+                                                      connectorType,
+                                                      dateCreated: dateUpdated,
+                                                  },
+                                                  index
+                                              ) => (
+                                                  <TableRow
+                                                      key={`Entity-${name}-${index}`}
+                                                  >
+                                                      <TableCell
+                                                          sx={{ minWidth: 256 }}
+                                                      >
+                                                          <Tooltip
+                                                              title={
+                                                                  catalogNamespace
+                                                              }
+                                                              placement="bottom-start"
+                                                          >
+                                                              <Box>
+                                                                  <span
+                                                                      style={{
+                                                                          height: 16,
+                                                                          width: 16,
+                                                                          backgroundColor:
+                                                                              getDeploymentStatusHexCode(
+                                                                                  deploymentStatus
+                                                                              ),
+                                                                          borderRadius: 50,
+                                                                          display:
+                                                                              'inline-block',
+                                                                          verticalAlign:
+                                                                              'middle',
+                                                                          marginRight: 12,
+                                                                      }}
+                                                                  />
+                                                                  <span
+                                                                      style={{
+                                                                          verticalAlign:
+                                                                              'middle',
+                                                                      }}
+                                                                  >
+                                                                      {name}
+                                                                  </span>
+                                                              </Box>
+                                                          </Tooltip>
+                                                      </TableCell>
+                                                      <TableCell
+                                                          sx={{ minWidth: 256 }}
+                                                      >
+                                                          {connectorType}
+                                                      </TableCell>
+                                                      <TableCell>
+                                                          {formatDistanceToNow(
+                                                              new Date(
+                                                                  dateUpdated
+                                                              ),
+                                                              {
+                                                                  addSuffix:
+                                                                      true,
+                                                              }
+                                                          )}
+                                                      </TableCell>
+                                                      <TableCell>
+                                                          <Box
+                                                              sx={{
+                                                                  display:
+                                                                      'flex',
+                                                              }}
+                                                          >
+                                                              <Button
+                                                                  variant="contained"
+                                                                  size="small"
+                                                                  disableElevation
+                                                                  disabled
+                                                                  sx={{ mr: 1 }}
+                                                              >
+                                                                  Edit
+                                                              </Button>
 
-                                                        <Button
-                                                            variant="contained"
-                                                            size="small"
-                                                            color={
-                                                                deploymentStatus ===
-                                                                'ACTIVE'
-                                                                    ? 'error'
-                                                                    : 'success'
-                                                            }
-                                                            disableElevation
-                                                            disabled
-                                                        >
-                                                            {deploymentStatus ===
-                                                            'ACTIVE'
-                                                                ? 'Stop'
-                                                                : 'Run'}
-                                                        </Button>
-                                                    </Box>
-                                                </TableCell>
-                                            </TableRow>
-                                        )
-                                    )}
+                                                              <Button
+                                                                  variant="contained"
+                                                                  size="small"
+                                                                  color={
+                                                                      deploymentStatus ===
+                                                                      'ACTIVE'
+                                                                          ? 'error'
+                                                                          : 'success'
+                                                                  }
+                                                                  disableElevation
+                                                                  disabled
+                                                              >
+                                                                  {deploymentStatus ===
+                                                                  'ACTIVE'
+                                                                      ? 'Stop'
+                                                                      : 'Run'}
+                                                              </Button>
+                                                          </Box>
+                                                      </TableCell>
+                                                  </TableRow>
+                                              )
+                                          )
+                                    : null}
                                 {emptyRows > 0 && (
                                     <TableRow>
                                         <TableCell
