@@ -1,12 +1,18 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 // https://testing-library.com/docs/react-testing-library/setup#custom-render
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient, User } from '@supabase/supabase-js';
+import { Auth } from '@supabase/ui';
+import { AuthSession } from '@supabase/ui/dist/cjs/components/Auth/UserContext';
 import { render as rtlRender, RenderOptions } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import AppContent from 'context/Content';
 import AppRouter from 'context/Router';
 import ThemeProvider from 'context/Theme';
-import { createContext, ReactElement } from 'react';
+import produce from 'immer';
+import { mockDeep } from 'jest-mock-extended';
+import { ReactElement } from 'react';
+import { SwrSupabaseContext } from 'supabase-swr';
 
 const goTo = (route?: string, name?: string) => {
     window.history.pushState(
@@ -16,31 +22,42 @@ const goTo = (route?: string, name?: string) => {
     );
 };
 
-const waitForLoading = async () => {
-    return Promise.resolve();
+// TODO - We use immer here but don't need it. The user metadata is currently just
+//  any number of keys (according to the types). Hoping that changes in the future.
+const generateMockUserMetadata = (username: string) => {
+    return produce(mockDeep<User['user_metadata']>(), (draft) => {
+        draft.avatar_url = `https://example.org/avatar/${username}`;
+        draft.email = `${username}@example.org`;
+        draft.email_verified = true;
+        draft.full_name = `Full ${username}`;
+        draft.iss = 'https://api.example.org';
+        draft.name = username;
+        draft.picture = `https://example.org/picture/${username}`;
+        draft.preferred_username = username;
+        draft.provider_id = '00000000000000000000_provider';
+        draft.sub = '00000000000000000000_sub';
+        draft.user_name = username;
+
+        return draft;
+    });
 };
 
-const MockUserProvider = ({ children, username }: any) => {
-    return (
-        <>
-            Your user name is {username} and {children}
-        </>
-    );
-};
-
-const MockClientProvider = ({ children }: any) => {
+const MockProviders = ({ children, username }: any) => {
     const mockClient = createClient('http://mock.url', 'MockSupabaseAnonKey');
+    const mockAuthSession = mockDeep<AuthSession>();
 
-    const MockClient = createContext({});
+    if (username) {
+        mockAuthSession.user = mockDeep<User>();
+        mockAuthSession.user.user_metadata = generateMockUserMetadata(username);
+        Auth.useUser = () => mockAuthSession;
+    }
 
     return (
-        <MockClient.Provider
-            value={{
-                useClient: () => mockClient,
-            }}
-        >
-            {children}
-        </MockClient.Provider>
+        <SwrSupabaseContext.Provider value={mockClient}>
+            <Auth.UserContextProvider supabaseClient={mockClient}>
+                {children}
+            </Auth.UserContextProvider>
+        </SwrSupabaseContext.Provider>
     );
 };
 
@@ -53,27 +70,26 @@ const customRender = async (
 ) => {
     const { route, username } = options;
 
-    goTo(route, 'Test Page');
-
     const view = rtlRender(
         <AppContent>
-            <MockClientProvider>
-                <MockUserProvider username={username}>
-                    <ThemeProvider>
-                        <AppRouter>{ui}</AppRouter>
-                    </ThemeProvider>
-                </MockUserProvider>
-            </MockClientProvider>
+            <MockProviders username={username}>
+                <ThemeProvider>
+                    <AppRouter>{ui}</AppRouter>
+                </ThemeProvider>
+            </MockProviders>
         </AppContent>,
         {
             ...options,
         }
     );
 
-    await waitForLoading();
+    goTo(route, 'Test Page');
 
-    return view;
+    return {
+        user: userEvent.setup(),
+        view,
+    };
 };
 
 export * from '@testing-library/react';
-export { goTo, customRender, waitForLoading };
+export { generateMockUserMetadata, goTo, customRender };
