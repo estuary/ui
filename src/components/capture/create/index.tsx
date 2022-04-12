@@ -200,58 +200,52 @@ function CaptureCreation() {
         },
     };
 
-    const waitForDiscoversToFinish = () => {
-        helpers.cleanUpEditor();
-        resetFormState(CaptureCreationFormStatus.TESTING);
-        const discoverStatus = supabaseClient
-            .from(TABLES.DISCOVERS)
-            .on('*', async (payload) => {
-                if (payload.new.job_status.type !== 'queued') {
-                    if (payload.new.job_status.type === 'success') {
-                        setDraftId(payload.new.draft_id);
-                    } else {
-                        helpers.jobFailed(
-                            'captureCreation.test.failedErrorTitle'
-                        );
+    const waitFor = {
+        base: (query: any, success: Function, failureTitle: string) => {
+            helpers.cleanUpEditor();
+            resetFormState(CaptureCreationFormStatus.TESTING);
+            const subscription = query
+                .on('*', async (payload: any) => {
+                    if (payload.new.job_status.type !== 'queued') {
+                        if (payload.new.job_status.type === 'success') {
+                            success(payload);
+                        } else {
+                            helpers.jobFailed(failureTitle);
+                        }
+
+                        await helpers.doneSubscribing(subscription);
                     }
+                })
+                .subscribe();
 
-                    await helpers.doneSubscribing(discoverStatus);
-                }
-            })
-            .subscribe();
+            return subscription;
+        },
+        discovers: () => {
+            return waitFor.base(
+                supabaseClient.from(TABLES.DISCOVERS),
+                (payload: any) => {
+                    setDraftId(payload.new.draft_id);
+                },
+                'captureCreation.test.failedErrorTitle'
+            );
+        },
+        publications: () => {
+            return waitFor.base(
+                supabaseClient.from(TABLES.PUBLICATIONS),
+                () => {
+                    setFormState({
+                        status: CaptureCreationFormStatus.IDLE,
+                        exitWhenLogsClose: true,
+                        saveStatus: intl.formatMessage({
+                            id: 'captureCreation.status.success',
+                        }),
+                    });
 
-        return discoverStatus;
-    };
-
-    const waitForPublicationsToFinish = () => {
-        helpers.cleanUpEditor();
-        resetFormState(CaptureCreationFormStatus.SAVING);
-        const publicationsStatus = supabaseClient
-            .from(TABLES.PUBLICATIONS)
-            .on('*', async (payload) => {
-                if (payload.new.job_status.type !== 'queued') {
-                    if (payload.new.job_status.type === 'success') {
-                        setFormState({
-                            status: CaptureCreationFormStatus.IDLE,
-                            exitWhenLogsClose: true,
-                            saveStatus: intl.formatMessage({
-                                id: 'captureCreation.status.success',
-                            }),
-                        });
-
-                        showNotification(notification);
-                    } else {
-                        helpers.jobFailed(
-                            'captureCreation.save.failedErrorTitle'
-                        );
-                    }
-
-                    await helpers.doneSubscribing(publicationsStatus);
-                }
-            })
-            .subscribe();
-
-        return publicationsStatus;
+                    showNotification(notification);
+                },
+                'captureCreation.save.failedErrorTitle'
+            );
+        },
     };
 
     // Form Event Handlers
@@ -286,7 +280,7 @@ function CaptureCreation() {
         saveAndPublish: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
-            const publicationsSubscription = waitForPublicationsToFinish();
+            const publicationsSubscription = waitFor.publications();
             supabaseClient
                 .from(TABLES.PUBLICATIONS)
                 .insert([
@@ -358,7 +352,7 @@ function CaptureCreation() {
                                 draftsResponse.data.length > 0
                             ) {
                                 const discoversSubscription =
-                                    waitForDiscoversToFinish();
+                                    waitFor.discovers();
                                 supabaseClient
                                     .from(TABLES.DISCOVERS)
                                     .insert([
