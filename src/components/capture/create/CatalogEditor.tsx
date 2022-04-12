@@ -53,7 +53,7 @@ function NewCaptureEditor({ draftId }: Props) {
         []
     );
     const { data } = useSelect(draftSpecQuery, {});
-    const draftSpecs: DraftSpec[] = data ? data.data : [];
+    const tags: DraftSpec[] = data ? data.data : [];
 
     const theme = useTheme();
 
@@ -72,7 +72,7 @@ function NewCaptureEditor({ draftId }: Props) {
         change: () => {
             if (editorRef.current) {
                 updateResource(
-                    draftSpecs[currentFileIndex].catalog_name,
+                    tags[currentFileIndex].catalog_name,
                     editorRef.current.getValue()
                 );
             }
@@ -82,8 +82,8 @@ function NewCaptureEditor({ draftId }: Props) {
 
             handlers.fileList.click(0);
 
-            if (draftSpecs.length > 0) {
-                draftSpecs.forEach((tag) => {
+            if (tags.length > 0) {
+                tags.forEach((tag) => {
                     loadResource(tag.catalog_name, tag.spec_patch);
                 });
             }
@@ -103,7 +103,7 @@ function NewCaptureEditor({ draftId }: Props) {
                 <FormattedMessage id="captureCreation.finalReview.instructions" />
             </Typography>
             <Paper variant="outlined">
-                {draftSpecs.length > 0 ? (
+                {tags.length > 0 ? (
                     <Box
                         sx={{
                             flexGrow: 1,
@@ -113,7 +113,7 @@ function NewCaptureEditor({ draftId }: Props) {
                         }}
                     >
                         <List dense disablePadding>
-                            {draftSpecs.map((tag: any, index: number) => (
+                            {tags.map((tag: any, index: number) => (
                                 <ListItemButton
                                     key={`FileSelector-${tag.catalog_name}`}
                                     dense
@@ -138,11 +138,11 @@ function NewCaptureEditor({ draftId }: Props) {
                                     : 'vs-dark'
                             }
                             defaultValue={JSON.stringify(
-                                draftSpecs[currentFileIndex],
+                                tags[currentFileIndex],
                                 null,
                                 2
                             )}
-                            path={draftSpecs[currentFileIndex].catalog_name}
+                            path={tags[currentFileIndex].catalog_name}
                             onMount={handlers.mount}
                             onChange={handlers.change}
                         />

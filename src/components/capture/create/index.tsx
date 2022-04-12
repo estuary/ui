@@ -150,10 +150,31 @@ function CaptureCreation() {
         navigate('/captures');
     };
 
-    const discovers = {
-        done: (discoversSubscription: RealtimeSubscription) => {
+    const helpers = {
+        callFailed: (
+            error: any,
+            subscription: RealtimeSubscription,
+            callback?: Function
+        ) => {
+            helpers
+                .doneSubscribing(subscription)
+                .then(() => {
+                    setFormState({
+                        status: CaptureCreationFormStatus.IDLE,
+                        exitWhenLogsClose: false,
+                        error,
+                        saveStatus: intl.formatMessage({
+                            id: 'captureCreation.status.failed',
+                        }),
+                    });
+
+                    callback ? callback() : null;
+                })
+                .catch(() => {});
+        },
+        doneSubscribing: (subscription: RealtimeSubscription) => {
             return supabaseClient
-                .removeSubscription(discoversSubscription)
+                .removeSubscription(subscription)
                 .then(() => {
                     setFormState({
                         status: CaptureCreationFormStatus.IDLE,
@@ -161,6 +182,9 @@ function CaptureCreation() {
                 })
                 .catch(() => {});
         },
+    };
+
+    const discovers = {
         waitForFinish: () => {
             cleanUpEditor();
             resetFormState(CaptureCreationFormStatus.TESTING);
@@ -181,7 +205,7 @@ function CaptureCreation() {
                             });
                         }
 
-                        await discovers.done(discoverStatus);
+                        await helpers.doneSubscribing(discoverStatus);
                     }
                 })
                 .subscribe();
@@ -191,16 +215,6 @@ function CaptureCreation() {
     };
 
     const publications = {
-        done: (publicationsSubscription: RealtimeSubscription) => {
-            return supabaseClient
-                .removeSubscription(publicationsSubscription)
-                .then(() => {
-                    setFormState({
-                        status: CaptureCreationFormStatus.IDLE,
-                    });
-                })
-                .catch(() => {});
-        },
         waitForFinish: () => {
             cleanUpEditor();
             resetFormState(CaptureCreationFormStatus.SAVING);
@@ -292,34 +306,29 @@ function CaptureCreation() {
                                 });
                             }
                         } else {
-                            publications
-                                .done(publicationsSubscription)
-                                .then(() => {
-                                    setFormState({
-                                        status: CaptureCreationFormStatus.IDLE,
-                                        exitWhenLogsClose: false,
-                                        error: {
-                                            title: 'captureCreation.save.failedErrorTitle',
-                                            error: response.error,
-                                        },
-                                        saveStatus: intl.formatMessage({
-                                            id: 'captureCreation.status.failed',
-                                        }),
-                                    });
-                                })
-                                .catch(() => {});
+                            helpers.callFailed(
+                                {
+                                    title: 'captureCreation.save.failedErrorTitle',
+                                    error: response.error,
+                                },
+                                publicationsSubscription
+                            );
                         }
                     },
                     () => {
-                        setFormState({
-                            status: CaptureCreationFormStatus.IDLE,
-                            saveStatus: intl.formatMessage({
-                                id: 'captureCreation.status.failed',
-                            }),
-                            error: {
-                                title: 'captureCreation.save.failedErrorTitle',
+                        helpers.callFailed(
+                            {
+                                title: 'captureCreation.save.serverUnreachable',
                             },
-                        });
+                            publicationsSubscription,
+                            () => {
+                                setFormState({
+                                    saveStatus: intl.formatMessage({
+                                        id: 'captureCreation.status.failed',
+                                    }),
+                                });
+                            }
+                        );
                     }
                 );
         },
@@ -370,38 +379,22 @@ function CaptureCreation() {
                                                             .logs_token,
                                                 });
                                             } else {
-                                                discovers
-                                                    .done(discoversSubscription)
-                                                    .then(() => {
-                                                        setFormState({
-                                                            status: CaptureCreationFormStatus.IDLE,
-                                                            exitWhenLogsClose:
-                                                                false,
-                                                            error: {
-                                                                title: 'captureCreation.test.failedErrorTitle',
-                                                                error: response.error,
-                                                            },
-                                                            saveStatus:
-                                                                intl.formatMessage(
-                                                                    {
-                                                                        id: 'captureCreation.status.failed',
-                                                                    }
-                                                                ),
-                                                        });
-                                                    })
-                                                    .catch(() => {});
+                                                helpers.callFailed(
+                                                    {
+                                                        title: 'captureCreation.test.failedErrorTitle',
+                                                        error: response.error,
+                                                    },
+                                                    discoversSubscription
+                                                );
                                             }
                                         },
                                         () => {
-                                            setFormState({
-                                                error: {
-                                                    title: 'captureCreation.test.failedErrorTitle',
+                                            helpers.callFailed(
+                                                {
+                                                    title: 'captureCreation.test.serverUnreachable',
                                                 },
-                                            });
-                                            discovers
-                                                .done(discoversSubscription)
-                                                .then(() => {})
-                                                .catch(() => {});
+                                                discoversSubscription
+                                            );
                                         }
                                     );
                             } else {
