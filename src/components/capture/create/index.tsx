@@ -203,34 +203,36 @@ function CaptureCreation() {
         },
         waitForFinish: () => {
             cleanUpEditor();
-            resetFormState(CaptureCreationFormStatus.TESTING);
+            resetFormState(CaptureCreationFormStatus.SAVING);
             const publicationsStatus = supabaseClient
                 .from(TABLES.PUBLICATIONS)
                 .on('*', async (payload) => {
-                    if (payload.new.job_status.type === 'success') {
-                        setFormState({
-                            status: CaptureCreationFormStatus.IDLE,
-                            exitWhenLogsClose: true,
-                            saveStatus: intl.formatMessage({
-                                id: 'captureCreation.status.success',
-                            }),
-                        });
-                        const notification: Notification = {
-                            description:
-                                'Your new capture is published and ready to be used.',
-                            severity: 'success',
-                            title: 'New Capture Created',
-                        };
-                        showNotification(notification);
-                    } else {
-                        setFormState({
-                            error: {
-                                title: 'captureCreation.save.failedErrorTitle',
-                            },
-                            saveStatus: intl.formatMessage({
-                                id: 'captureCreation.status.failed',
-                            }),
-                        });
+                    if (payload.new.job_status.type !== 'queued') {
+                        if (payload.new.job_status.type === 'success') {
+                            setFormState({
+                                status: CaptureCreationFormStatus.IDLE,
+                                exitWhenLogsClose: true,
+                                saveStatus: intl.formatMessage({
+                                    id: 'captureCreation.status.success',
+                                }),
+                            });
+                            const notification: Notification = {
+                                description:
+                                    'Your new capture is published and ready to be used.',
+                                severity: 'success',
+                                title: 'New Capture Created',
+                            };
+                            showNotification(notification);
+                        } else {
+                            setFormState({
+                                error: {
+                                    title: 'captureCreation.save.failedErrorTitle',
+                                },
+                                saveStatus: intl.formatMessage({
+                                    id: 'captureCreation.status.failed',
+                                }),
+                            });
+                        }
                     }
                 })
                 .subscribe();
@@ -277,13 +279,12 @@ function CaptureCreation() {
                 .insert([
                     {
                         draft_id: draftId,
-                        dry_run: true,
+                        dry_run: false,
                     },
                 ])
                 .then(
                     async (response) => {
                         if (response.data) {
-                            // TODO Need to use this response as part of the subscribe somehow
                             if (response.data.length > 0) {
                                 setFormState({
                                     logToken: response.data[0].logs_token,
