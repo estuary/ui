@@ -1,6 +1,7 @@
 import { Box } from '@mui/material';
 import EditorFileSelector from 'components/draft/editor/FileSelector';
 import MonacoEditor from 'components/draft/editor/MonacoEditor';
+import { FormattedMessage } from 'react-intl';
 
 type Props = {
     currentCatalog: string | null;
@@ -25,7 +26,9 @@ function DraftEditor({ currentCatalog, draftId }: Props) {
                             draftId={draftId}
                             currentCatalog={currentCatalog}
                         />
-                    ) : null}
+                    ) : (
+                        <FormattedMessage id="captureCreation.editor.empty" />
+                    )}
                 </>
             ) : null}
         </Box>
