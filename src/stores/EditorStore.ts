@@ -3,14 +3,14 @@ import create from 'zustand';
 
 type GenericSchema = string | JSON;
 
-export interface SchemaEditorState {
+export interface EditorState {
     resources: { [name: string]: GenericSchema };
     loadResource: (name: string, schema: GenericSchema) => void;
     updateResource: (name: string, schema: GenericSchema) => void;
     clearResources: () => void;
 }
 
-const useSchemaEditorStore = create<SchemaEditorState>(
+const useEditorStore = create<EditorState>(
     devtoolsInNonProd(
         (set) => ({
             resources: {},
@@ -40,8 +40,8 @@ const useSchemaEditorStore = create<SchemaEditorState>(
             clearResources: () =>
                 set(() => ({ resources: {} }), false, 'Resources Cleared'),
         }),
-        { name: 'schema-editor-state' }
+        { name: 'editor-state' }
     )
 );
 
-export default useSchemaEditorStore;
+export default useEditorStore;

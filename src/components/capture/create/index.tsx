@@ -16,13 +16,11 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { TABLES } from 'services/supabase';
 import { ChangeSetState } from 'stores/ChangeSetStore';
+import useEditorStore, { EditorState } from 'stores/EditorStore';
 import useNotificationStore, {
     Notification,
     NotificationState,
 } from 'stores/NotificationStore';
-import useSchemaEditorStore, {
-    SchemaEditorState,
-} from 'stores/SchemaEditorStore';
 import { useClient, useQuery, useSelect } from 'supabase-swr';
 import NewCaptureEditor from './CatalogEditor';
 import NewCaptureDetails from './DetailsForm';
@@ -75,8 +73,8 @@ const selectors = {
         addCapture: (state: ChangeSetState) => state.addCapture,
     },
     schema: {
-        clearResources: (state: SchemaEditorState) => state.clearResources,
-        resources: (state: SchemaEditorState) => state.resources,
+        clearResources: (state: EditorState) => state.clearResources,
+        resources: (state: EditorState) => state.resources,
     },
     notifications: {
         showNotification: (state: NotificationState) => state.showNotification,
@@ -112,10 +110,8 @@ function CaptureCreation() {
     const hasConnectors = connectorTags && connectorTags.data.length > 0;
 
     // Schema editor store
-    const resourcesFromEditor = useSchemaEditorStore(
-        selectors.schema.resources
-    );
-    const clearResourcesFromEditor = useSchemaEditorStore(
+    const resourcesFromEditor = useEditorStore(selectors.schema.resources);
+    const clearResourcesFromEditor = useEditorStore(
         selectors.schema.clearResources
     );
 

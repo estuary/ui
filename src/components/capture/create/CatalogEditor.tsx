@@ -12,9 +12,7 @@ import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { TABLES } from 'services/supabase';
-import useSchemaEditorStore, {
-    SchemaEditorState,
-} from 'stores/SchemaEditorStore';
+import useEditorStore, { EditorState } from 'stores/EditorStore';
 import { useQuery, useSelect } from 'supabase-swr';
 
 type Props = {
@@ -36,13 +34,13 @@ const CONNECTOR_TAGS_QUERY = `
 `;
 
 const selectors = {
-    loadResource: (state: SchemaEditorState) => state.loadResource,
-    updateResource: (state: SchemaEditorState) => state.updateResource,
+    loadResource: (state: EditorState) => state.loadResource,
+    updateResource: (state: EditorState) => state.updateResource,
 };
 
 function NewCaptureEditor({ draftId }: Props) {
-    const loadResource = useSchemaEditorStore(selectors.loadResource);
-    const updateResource = useSchemaEditorStore(selectors.updateResource);
+    const loadResource = useEditorStore(selectors.loadResource);
+    const updateResource = useEditorStore(selectors.updateResource);
 
     const draftSpecQuery = useQuery<DraftSpec>(
         TABLES.DRAFT_SPECS,
