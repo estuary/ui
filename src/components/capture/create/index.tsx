@@ -7,16 +7,18 @@ import useCaptureCreationStore, {
     CaptureCreationFormStatus,
     CaptureCreationState,
 } from 'components/capture/create/Store';
+import useEditorStore, {
+    editorStoreSelectors,
+} from 'components/draft/editor/Store';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
 import { useConfirmationModalContext } from 'context/Confirmation';
-import { MouseEvent, useState } from 'react';
+import { MouseEvent } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { TABLES } from 'services/supabase';
 import { ChangeSetState } from 'stores/ChangeSetStore';
-import useEditorStore, { EditorState } from 'stores/EditorStore';
 import useNotificationStore, {
     Notification,
     NotificationState,
@@ -72,10 +74,6 @@ const selectors = {
     changeSet: {
         addCapture: (state: ChangeSetState) => state.addCapture,
     },
-    schema: {
-        clearResources: (state: EditorState) => state.clearResources,
-        resources: (state: EditorState) => state.resources,
-    },
     notifications: {
         showNotification: (state: NotificationState) => state.showNotification,
     },
@@ -109,12 +107,6 @@ function CaptureCreation() {
     );
     const hasConnectors = connectorTags && connectorTags.data.length > 0;
 
-    // Schema editor store
-    const resourcesFromEditor = useEditorStore(selectors.schema.resources);
-    const clearResourcesFromEditor = useEditorStore(
-        selectors.schema.clearResources
-    );
-
     // Notification store
     const showNotification = useNotificationStore(
         selectors.notifications.showNotification
@@ -142,7 +134,9 @@ function CaptureCreation() {
         selectors.form.exitWhenLogsClose
     );
 
-    const [draftId, setDraftId] = useState<string | null>(null);
+    //Editor state
+    const draftId = useEditorStore(editorStoreSelectors.draftId);
+    const setDraftId = useEditorStore(editorStoreSelectors.setDraftId);
 
     const helpers = {
         callFailed: (formState: any, subscription?: RealtimeSubscription) => {
@@ -167,11 +161,6 @@ function CaptureCreation() {
                 foo();
             }
         },
-        cleanUpEditor: () => {
-            if (Object.keys(resourcesFromEditor).length > 0) {
-                clearResourcesFromEditor();
-            }
-        },
         doneSubscribing: (subscription: RealtimeSubscription) => {
             return supabaseClient
                 .removeSubscription(subscription)
@@ -183,8 +172,6 @@ function CaptureCreation() {
                 .catch(() => {});
         },
         exit: () => {
-            helpers.cleanUpEditor();
-
             resetState();
 
             navigate('/captures');
@@ -203,7 +190,7 @@ function CaptureCreation() {
 
     const waitFor = {
         base: (query: any, success: Function, failureTitle: string) => {
-            helpers.cleanUpEditor();
+            setDraftId(null);
             resetFormState(CaptureCreationFormStatus.TESTING);
             const subscription = query
                 .on('*', async (payload: any) => {
@@ -481,9 +468,7 @@ function CaptureCreation() {
                     </form>
 
                     <ErrorBoundryWrapper>
-                        {draftId ? (
-                            <NewCaptureEditor draftId={draftId} />
-                        ) : null}
+                        <NewCaptureEditor />
                     </ErrorBoundryWrapper>
                 </>
             )}
