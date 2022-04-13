@@ -140,7 +140,7 @@ function CaptureCreation() {
 
     const helpers = {
         callFailed: (formState: any, subscription?: RealtimeSubscription) => {
-            const foo = () => {
+            const setFailureState = () => {
                 setFormState({
                     status: CaptureCreationFormStatus.IDLE,
                     exitWhenLogsClose: false,
@@ -154,11 +154,11 @@ function CaptureCreation() {
                 helpers
                     .doneSubscribing(subscription)
                     .then(() => {
-                        foo();
+                        setFailureState();
                     })
                     .catch(() => {});
             } else {
-                foo();
+                setFailureState();
             }
         },
         doneSubscribing: (subscription: RealtimeSubscription) => {
