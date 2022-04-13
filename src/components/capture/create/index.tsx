@@ -145,26 +145,27 @@ function CaptureCreation() {
     const [draftId, setDraftId] = useState<string | null>(null);
 
     const helpers = {
-        callFailed: (
-            error: any,
-            subscription: RealtimeSubscription,
-            callback?: Function
-        ) => {
-            helpers
-                .doneSubscribing(subscription)
-                .then(() => {
-                    setFormState({
-                        status: CaptureCreationFormStatus.IDLE,
-                        exitWhenLogsClose: false,
-                        error,
-                        saveStatus: intl.formatMessage({
-                            id: 'captureCreation.status.failed',
-                        }),
-                    });
-
-                    callback ? callback() : null;
-                })
-                .catch(() => {});
+        callFailed: (formState: any, subscription?: RealtimeSubscription) => {
+            const foo = () => {
+                setFormState({
+                    status: CaptureCreationFormStatus.IDLE,
+                    exitWhenLogsClose: false,
+                    saveStatus: intl.formatMessage({
+                        id: 'captureCreation.status.failed',
+                    }),
+                    ...formState,
+                });
+            };
+            if (subscription) {
+                helpers
+                    .doneSubscribing(subscription)
+                    .then(() => {
+                        foo();
+                    })
+                    .catch(() => {});
+            } else {
+                foo();
+            }
         },
         cleanUpEditor: () => {
             if (Object.keys(resourcesFromEditor).length > 0) {
@@ -301,8 +302,10 @@ function CaptureCreation() {
                         } else {
                             helpers.callFailed(
                                 {
-                                    title: 'captureCreation.save.failedErrorTitle',
-                                    error: response.error,
+                                    error: {
+                                        title: 'captureCreation.save.failedErrorTitle',
+                                        error: response.error,
+                                    },
                                 },
                                 publicationsSubscription
                             );
@@ -311,16 +314,14 @@ function CaptureCreation() {
                     () => {
                         helpers.callFailed(
                             {
-                                title: 'captureCreation.save.serverUnreachable',
+                                error: {
+                                    title: 'captureCreation.save.serverUnreachable',
+                                },
+                                saveStatus: intl.formatMessage({
+                                    id: 'captureCreation.status.failed',
+                                }),
                             },
-                            publicationsSubscription,
-                            () => {
-                                setFormState({
-                                    saveStatus: intl.formatMessage({
-                                        id: 'captureCreation.status.failed',
-                                    }),
-                                });
-                            }
+                            publicationsSubscription
                         );
                     }
                 );
@@ -374,8 +375,10 @@ function CaptureCreation() {
                                             } else {
                                                 helpers.callFailed(
                                                     {
-                                                        title: 'captureCreation.test.failedErrorTitle',
-                                                        error: response.error,
+                                                        error: {
+                                                            title: 'captureCreation.test.failedErrorTitle',
+                                                            error: response.error,
+                                                        },
                                                     },
                                                     discoversSubscription
                                                 );
@@ -384,19 +387,21 @@ function CaptureCreation() {
                                         () => {
                                             helpers.callFailed(
                                                 {
-                                                    title: 'captureCreation.test.serverUnreachable',
+                                                    error: {
+                                                        title: 'captureCreation.test.serverUnreachable',
+                                                    },
                                                 },
                                                 discoversSubscription
                                             );
                                         }
                                     );
                             } else {
-                                console.log(
-                                    'draft call failed',
-                                    draftsResponse
-                                );
+                                helpers.callFailed({
+                                    error: {
+                                        title: 'captureCreation.test.failedErrorTitle',
+                                    },
+                                });
                             }
-                            console.log('draftsResponse', draftsResponse);
                         },
                         () => {
                             console.log('error calling drafts');
