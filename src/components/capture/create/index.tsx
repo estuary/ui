@@ -7,6 +7,7 @@ import useCaptureCreationStore, {
     CaptureCreationFormStatus,
     CaptureCreationState,
 } from 'components/capture/create/Store';
+import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
 import { useConfirmationModalContext } from 'context/Confirmation';
@@ -104,7 +105,10 @@ function CaptureCreation() {
         },
         []
     );
-    const { data: connectorTags } = useSelect(tagsQuery, {});
+    const { data: connectorTags, error: connectorTagsError } = useSelect(
+        tagsQuery,
+        {}
+    );
     const hasConnectors = connectorTags && connectorTags.data.length > 0;
 
     // Schema editor store
@@ -395,16 +399,21 @@ function CaptureCreation() {
                                             );
                                         }
                                     );
-                            } else {
+                            } else if (draftsResponse.error) {
                                 helpers.callFailed({
                                     error: {
                                         title: 'captureCreation.test.failedErrorTitle',
+                                        error: draftsResponse.error,
                                     },
                                 });
                             }
                         },
                         () => {
-                            console.log('error calling drafts');
+                            helpers.callFailed({
+                                error: {
+                                    title: 'captureCreation.test.serverUnreachable',
+                                },
+                            });
                         }
                     );
             }
@@ -445,33 +454,43 @@ function CaptureCreation() {
                 formId={FORM_ID}
             />
 
-            <Collapse in={formSubmitError !== null}>
-                {formSubmitError && (
-                    <NewCaptureError
-                        title={formSubmitError.title}
-                        error={formSubmitError.error}
-                        logToken={logToken}
-                    />
-                )}
-            </Collapse>
+            {connectorTagsError ? (
+                <Error error={connectorTagsError} />
+            ) : (
+                <>
+                    <Collapse in={formSubmitError !== null}>
+                        {formSubmitError && (
+                            <NewCaptureError
+                                title={formSubmitError.title}
+                                error={formSubmitError.error}
+                                logToken={logToken}
+                            />
+                        )}
+                    </Collapse>
 
-            <form id={FORM_ID}>
-                {connectorTags ? (
+                    <form id={FORM_ID}>
+                        {connectorTags ? (
+                            <ErrorBoundryWrapper>
+                                <NewCaptureDetails
+                                    connectorTags={connectorTags.data}
+                                />
+                            </ErrorBoundryWrapper>
+                        ) : null}
+
+                        {captureImage ? (
+                            <ErrorBoundryWrapper>
+                                <NewCaptureSpec connectorImage={captureImage} />
+                            </ErrorBoundryWrapper>
+                        ) : null}
+                    </form>
+
                     <ErrorBoundryWrapper>
-                        <NewCaptureDetails connectorTags={connectorTags.data} />
+                        {draftId ? (
+                            <NewCaptureEditor draftId={draftId} />
+                        ) : null}
                     </ErrorBoundryWrapper>
-                ) : null}
-
-                {captureImage ? (
-                    <ErrorBoundryWrapper>
-                        <NewCaptureSpec connectorImage={captureImage} />
-                    </ErrorBoundryWrapper>
-                ) : null}
-            </form>
-
-            <ErrorBoundryWrapper>
-                {draftId ? <NewCaptureEditor draftId={draftId} /> : null}
-            </ErrorBoundryWrapper>
+                </>
+            )}
         </PageContainer>
     );
 }
