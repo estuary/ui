@@ -419,121 +419,138 @@ function EntityTable() {
                         </TableHead>
 
                         <TableBody>
-                            {entityDetails
-                                ? stableSort(
-                                      entityDetails,
-                                      getComparator(sortDirection, columnToSort)
-                                  )
-                                      .slice(
-                                          page * rowsPerPage,
-                                          page * rowsPerPage + rowsPerPage
-                                      )
-                                      .map(
-                                          (
-                                              {
-                                                  deploymentStatus,
-                                                  name,
-                                                  catalogNamespace,
-                                                  connectorType,
-                                                  dateCreated: dateUpdated,
-                                              },
-                                              index
-                                          ) => (
-                                              <TableRow
-                                                  key={`Entity-${name}-${index}`}
-                                              >
-                                                  <TableCell
-                                                      sx={{ minWidth: 256 }}
-                                                  >
-                                                      <Tooltip
-                                                          title={
-                                                              catalogNamespace
-                                                          }
-                                                          placement="bottom-start"
-                                                      >
-                                                          <Box>
-                                                              <span
-                                                                  style={{
-                                                                      height: 16,
-                                                                      width: 16,
-                                                                      backgroundColor:
-                                                                          getDeploymentStatusHexCode(
-                                                                              deploymentStatus
-                                                                          ),
-                                                                      borderRadius: 50,
-                                                                      display:
-                                                                          'inline-block',
-                                                                      verticalAlign:
-                                                                          'middle',
-                                                                      marginRight: 12,
-                                                                  }}
-                                                              />
-                                                              <span
-                                                                  style={{
-                                                                      verticalAlign:
-                                                                          'middle',
-                                                                  }}
-                                                              >
-                                                                  {name}
-                                                              </span>
-                                                          </Box>
-                                                      </Tooltip>
-                                                  </TableCell>
+                            {entityDetails ? (
+                                stableSort(
+                                    entityDetails,
+                                    getComparator(sortDirection, columnToSort)
+                                )
+                                    .slice(
+                                        page * rowsPerPage,
+                                        page * rowsPerPage + rowsPerPage
+                                    )
+                                    .map(
+                                        (
+                                            {
+                                                deploymentStatus,
+                                                name,
+                                                catalogNamespace,
+                                                connectorType,
+                                                dateCreated: dateUpdated,
+                                            },
+                                            index
+                                        ) => (
+                                            <TableRow
+                                                key={`Entity-${name}-${index}`}
+                                            >
+                                                <TableCell
+                                                    sx={{ minWidth: 256 }}
+                                                >
+                                                    <Tooltip
+                                                        title={catalogNamespace}
+                                                        placement="bottom-start"
+                                                    >
+                                                        <Box>
+                                                            <span
+                                                                style={{
+                                                                    height: 16,
+                                                                    width: 16,
+                                                                    backgroundColor:
+                                                                        getDeploymentStatusHexCode(
+                                                                            deploymentStatus
+                                                                        ),
+                                                                    borderRadius: 50,
+                                                                    display:
+                                                                        'inline-block',
+                                                                    verticalAlign:
+                                                                        'middle',
+                                                                    marginRight: 12,
+                                                                }}
+                                                            />
+                                                            <span
+                                                                style={{
+                                                                    verticalAlign:
+                                                                        'middle',
+                                                                }}
+                                                            >
+                                                                {name}
+                                                            </span>
+                                                        </Box>
+                                                    </Tooltip>
+                                                </TableCell>
 
-                                                  <TableCell
-                                                      sx={{ minWidth: 256 }}
-                                                  >
-                                                      {connectorType}
-                                                  </TableCell>
+                                                <TableCell
+                                                    sx={{ minWidth: 256 }}
+                                                >
+                                                    {connectorType}
+                                                </TableCell>
 
-                                                  <TableCell>
-                                                      {formatDistanceToNow(
-                                                          new Date(dateUpdated),
-                                                          {
-                                                              addSuffix: true,
-                                                          }
-                                                      )}
-                                                  </TableCell>
+                                                <TableCell>
+                                                    {formatDistanceToNow(
+                                                        new Date(dateUpdated),
+                                                        {
+                                                            addSuffix: true,
+                                                        }
+                                                    )}
+                                                </TableCell>
 
-                                                  <TableCell>
-                                                      <Box
-                                                          sx={{
-                                                              display: 'flex',
-                                                          }}
-                                                      >
-                                                          <Button
-                                                              variant="contained"
-                                                              size="small"
-                                                              disableElevation
-                                                              disabled
-                                                              sx={{ mr: 1 }}
-                                                          >
-                                                              Edit
-                                                          </Button>
+                                                <TableCell>
+                                                    <Box
+                                                        sx={{
+                                                            display: 'flex',
+                                                        }}
+                                                    >
+                                                        <Button
+                                                            variant="contained"
+                                                            size="small"
+                                                            disableElevation
+                                                            disabled
+                                                            sx={{ mr: 1 }}
+                                                        >
+                                                            Edit
+                                                        </Button>
 
-                                                          <Button
-                                                              variant="contained"
-                                                              size="small"
-                                                              color={
-                                                                  deploymentStatus ===
-                                                                  'ACTIVE'
-                                                                      ? 'error'
-                                                                      : 'success'
-                                                              }
-                                                              disableElevation
-                                                              disabled
-                                                          >
-                                                              {deploymentStatus ===
-                                                              'ACTIVE'
-                                                                  ? 'Stop'
-                                                                  : 'Run'}
-                                                          </Button>
-                                                      </Box>
-                                                  </TableCell>
-                                              </TableRow>
-                                          )
-                                      )
-                                : null}
+                                                        <Button
+                                                            variant="contained"
+                                                            size="small"
+                                                            color={
+                                                                deploymentStatus ===
+                                                                'ACTIVE'
+                                                                    ? 'error'
+                                                                    : 'success'
+                                                            }
+                                                            disableElevation
+                                                            disabled
+                                                        >
+                                                            {deploymentStatus ===
+                                                            'ACTIVE'
+                                                                ? 'Stop'
+                                                                : 'Run'}
+                                                        </Button>
+                                                    </Box>
+                                                </TableCell>
+                                            </TableRow>
+                                        )
+                                    )
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={4} sx={{ py: 4 }}>
+                                        <Typography
+                                            variant="h6"
+                                            align="center"
+                                            sx={{ mb: 2 }}
+                                        >
+                                            No data found.
+                                        </Typography>
+
+                                        <Typography align="center">
+                                            We could not find any data matching
+                                            that filter. Try applying a
+                                            different filter or using an
+                                            alternative query option.
+                                        </Typography>
+                                    </TableCell>
+                                </TableRow>
+                            )}
                             {emptyRows > 0 && (
                                 <TableRow>
                                     <TableCell
