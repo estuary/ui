@@ -8,21 +8,21 @@ import { FormattedMessage } from 'react-intl';
 function NewCaptureEditor() {
     const draftId = useEditorStore(editorStoreSelectors.draftId);
 
-    return (
-        <>
-            <Typography variant="h5">Catalog Editor</Typography>
-            <Typography>
-                {draftId ? (
+    if (draftId) {
+        return (
+            <>
+                <Typography variant="h5">Catalog Editor</Typography>
+                <Typography>
                     <FormattedMessage id="captureCreation.finalReview.instructions" />
-                ) : (
-                    <FormattedMessage id="captureCreation.editor.default" />
-                )}
-            </Typography>
-            <Paper variant="outlined">
-                <DraftEditor />
-            </Paper>
-        </>
-    );
+                </Typography>
+                <Paper variant="outlined">
+                    <DraftEditor />
+                </Paper>
+            </>
+        );
+    } else {
+        return null;
+    }
 }
 
 export default NewCaptureEditor;
