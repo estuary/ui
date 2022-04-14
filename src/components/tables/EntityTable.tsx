@@ -17,6 +17,7 @@ import {
     Typography,
 } from '@mui/material';
 import { RealtimeSubscription, SupabaseClient } from '@supabase/supabase-js';
+import ExternalLink from 'components/shared/ExternalLink';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import { ChangeEvent, MouseEvent, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -28,11 +29,22 @@ import {
 } from 'stores/PublicationStore';
 import { PostgrestError, useClient } from 'supabase-swr';
 
+enum Statuses {
+    INIT = 'INIT',
+    SUCCESS = 'SUCCESS',
+    TECHNICAL_DIFFICULTIES = 'TECHNICAL_DIFFICULTIES',
+    UNMATCHED_FILTER = 'UNMATCHED_FILTER',
+}
+
 type SortDirection = 'asc' | 'desc';
 
-type Status = 'INITIALIZING' | 'SUCCESS' | 'DATA_FETCH_ERROR' | 'FILTER_ERROR';
+type Status =
+    | Statuses.INIT
+    | Statuses.SUCCESS
+    | Statuses.TECHNICAL_DIFFICULTIES
+    | Statuses.UNMATCHED_FILTER;
 
-interface TableStatus {
+interface TableState {
     status: Status;
     error?: PostgrestError;
 }
@@ -61,8 +73,8 @@ function EntityTable() {
     const supabaseClient: SupabaseClient = useClient();
     const intl = useIntl();
 
-    const [status, setStatus] = useState<TableStatus>({
-        status: 'INITIALIZING',
+    const [tableState, setTableState] = useState<TableState>({
+        status: Statuses.INIT,
     });
 
     const [connectors, setConnectors] = useState<any[] | null>(null);
@@ -93,7 +105,7 @@ function EntityTable() {
             .select(CONNECTORS_QUERY);
 
         if (error) {
-            setStatus({ status: 'DATA_FETCH_ERROR', error });
+            setTableState({ status: Statuses.TECHNICAL_DIFFICULTIES, error });
             console.log('Connector error caught');
         } else {
             setConnectors(data);
@@ -110,7 +122,7 @@ function EntityTable() {
             .eq('job_status->>type', 'success');
 
         if (error) {
-            setStatus({ status: 'DATA_FETCH_ERROR', error });
+            setTableState({ status: Statuses.TECHNICAL_DIFFICULTIES, error });
             console.log('Discovery error caught');
         } else {
             setDiscovery(data);
@@ -210,7 +222,7 @@ function EntityTable() {
 
     // TODO: Remove calls to console.log().
     console.log('We here');
-    console.log(status);
+    console.log(tableState);
 
     const entityDetails: EntityMetadata[] | null = entities
         ? entities.map((entity) => entity.metadata)
@@ -295,6 +307,47 @@ function EntityTable() {
         }
     };
 
+    const getEmptyTableHeader = (tableStatus: Statuses): string => {
+        switch (tableStatus) {
+            case Statuses.TECHNICAL_DIFFICULTIES:
+                return 'entityTable.technicalDifficulties.header';
+            case Statuses.UNMATCHED_FILTER:
+                return 'entityTable.unmatchedFilter.header';
+            default:
+                return 'captures.main.message1';
+        }
+    };
+
+    const getEmptyTableMessage = (tableStatus: Statuses): JSX.Element => {
+        switch (tableStatus) {
+            case Statuses.TECHNICAL_DIFFICULTIES:
+                return (
+                    <FormattedMessage id="entityTable.technicalDifficulties.message" />
+                );
+            case Statuses.UNMATCHED_FILTER:
+                return (
+                    <FormattedMessage id="entityTable.unmatchedFilter.message" />
+                );
+            default:
+                return (
+                    <FormattedMessage
+                        id="captures.main.message2"
+                        values={{
+                            docLink: (
+                                <ExternalLink
+                                    link={intl.formatMessage({
+                                        id: 'captures.main.message2.docPath',
+                                    })}
+                                >
+                                    <FormattedMessage id="captures.main.message2.docLink" />
+                                </ExternalLink>
+                            ),
+                        }}
+                    />
+                );
+        }
+    };
+
     const handlers = {
         filterTable: (
             event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -310,6 +363,10 @@ function EntityTable() {
                 );
 
                 setFilteredEntities(queriedEntities);
+
+                if (queriedEntities.length === 0) {
+                    setTableState({ status: Statuses.UNMATCHED_FILTER });
+                }
             }
         },
         sortRequest: (
@@ -547,11 +604,17 @@ function EntityTable() {
                                                     align="center"
                                                     sx={{ mb: 2 }}
                                                 >
-                                                    <FormattedMessage id="entityTable.empty.queryHeader" />
+                                                    <FormattedMessage
+                                                        id={getEmptyTableHeader(
+                                                            tableState.status
+                                                        )}
+                                                    />
                                                 </Typography>
 
                                                 <Typography>
-                                                    <FormattedMessage id="entityTable.empty.noQueryMatches" />
+                                                    {getEmptyTableMessage(
+                                                        tableState.status
+                                                    )}
                                                 </Typography>
                                             </Box>
                                         </Box>

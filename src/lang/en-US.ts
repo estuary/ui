@@ -103,8 +103,11 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'entityTable.data.lastUpdated': `Last Updated`,
     'entityTable.data.actions': `Actions`,
 
-    'entityTable.empty.queryHeader': `Sorry, no result found.`,
-    'entityTable.empty.noQueryMatches': `We could not find any data matching that filter. Try applying a different filter or using an alternative query option.`,
+    'entityTable.unmatchedFilter.header': `Sorry, no result found.`,
+    'entityTable.unmatchedFilter.message': `We could not find any data matching that filter. Try applying a different filter or using an alternative query option.`,
+
+    'entityTable.technicalDifficulties.header': `Sorry, there was an issue getting your data.`,
+    'entityTable.technicalDifficulties.message': `We apologize for the inconvenience. A message describing the issue can be found at the top of the page.`,
 };
 
 const Error: ResolvedIntlConfig['messages'] = {
