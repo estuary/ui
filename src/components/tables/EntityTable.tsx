@@ -37,13 +37,13 @@ enum Statuses {
     UNMATCHED_FILTER = 'UNMATCHED_FILTER',
 }
 
-type SortDirection = 'asc' | 'desc';
-
 type Status =
     | Statuses.LOADING
     | Statuses.DATA_FETCHED
     | Statuses.TECHNICAL_DIFFICULTIES
     | Statuses.UNMATCHED_FILTER;
+
+type SortDirection = 'asc' | 'desc';
 
 interface Props {
     noExistingDataContentIds: {
