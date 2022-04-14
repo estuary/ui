@@ -102,6 +102,9 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'entityTable.data.connectorType': `Type`,
     'entityTable.data.lastUpdated': `Last Updated`,
     'entityTable.data.actions': `Actions`,
+
+    'entityTable.empty.queryHeader': `Sorry, no result found.`,
+    'entityTable.empty.noQueryMatches': `We could not find any data matching that filter. Try applying a different filter or using an alternative query option.`,
 };
 
 const Error: ResolvedIntlConfig['messages'] = {

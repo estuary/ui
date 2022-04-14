@@ -533,21 +533,28 @@ function EntityTable() {
                                     )
                             ) : (
                                 <TableRow>
-                                    <TableCell colSpan={4} sx={{ py: 4 }}>
-                                        <Typography
-                                            variant="h6"
-                                            align="center"
-                                            sx={{ mb: 2 }}
+                                    <TableCell colSpan={4}>
+                                        <Box
+                                            sx={{
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                                py: 4,
+                                            }}
                                         >
-                                            No data found.
-                                        </Typography>
+                                            <Box width={485}>
+                                                <Typography
+                                                    variant="h6"
+                                                    align="center"
+                                                    sx={{ mb: 2 }}
+                                                >
+                                                    <FormattedMessage id="entityTable.empty.queryHeader" />
+                                                </Typography>
 
-                                        <Typography align="center">
-                                            We could not find any data matching
-                                            that filter. Try applying a
-                                            different filter or using an
-                                            alternative query option.
-                                        </Typography>
+                                                <Typography>
+                                                    <FormattedMessage id="entityTable.empty.noQueryMatches" />
+                                                </Typography>
+                                            </Box>
+                                        </Box>
                                     </TableCell>
                                 </TableRow>
                             )}
