@@ -7,7 +7,6 @@ import { FormattedMessage } from 'react-intl';
 
 function NewCaptureEditor() {
     const draftId = useEditorStore(editorStoreSelectors.draftId);
-    const currentCatalog = useEditorStore(editorStoreSelectors.currentCatalog);
 
     if (draftId) {
         return (
@@ -17,10 +16,7 @@ function NewCaptureEditor() {
                     <FormattedMessage id="captureCreation.finalReview.instructions" />
                 </Typography>
                 <Paper variant="outlined">
-                    <DraftEditor
-                        currentCatalog={currentCatalog}
-                        draftId={draftId}
-                    />
+                    <DraftEditor />
                 </Paper>
             </>
         );

@@ -6,13 +6,13 @@ interface EditorStorState {
     draftId: string | null;
     setDraftId: (newVal: EditorStorState['draftId']) => void;
 
-    currentCatalog: string | null;
+    currentCatalog: number;
     setCurrentCatalog: (newVal: EditorStorState['currentCatalog']) => void;
 }
 
 const getInitialStateData = () => {
     return {
-        currentCatalog: null,
+        currentCatalog: 0,
         draftId: null,
     };
 };

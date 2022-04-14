@@ -1,14 +1,8 @@
 import { Box } from '@mui/material';
 import EditorFileSelector from 'components/draft/editor/FileSelector';
 import MonacoEditor from 'components/draft/editor/MonacoEditor';
-import { FormattedMessage } from 'react-intl';
 
-type Props = {
-    currentCatalog: string | null;
-    draftId: string | null;
-};
-
-function DraftEditor({ currentCatalog, draftId }: Props) {
+function DraftEditor() {
     return (
         <Box
             sx={{
@@ -18,19 +12,8 @@ function DraftEditor({ currentCatalog, draftId }: Props) {
                 height: 300,
             }}
         >
-            {draftId ? (
-                <>
-                    <EditorFileSelector draftId={draftId} />
-                    {currentCatalog ? (
-                        <MonacoEditor
-                            draftId={draftId}
-                            currentCatalog={currentCatalog}
-                        />
-                    ) : (
-                        <FormattedMessage id="captureCreation.editor.empty" />
-                    )}
-                </>
-            ) : null}
+            <EditorFileSelector />
+            <MonacoEditor />
         </Box>
     );
 }
