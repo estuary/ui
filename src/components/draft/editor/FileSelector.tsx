@@ -15,7 +15,7 @@ function EditorFileSelector() {
 
     return (
         <List dense disablePadding>
-            {draftSpecs.length > 0 ? (
+            {!draftId ? null : draftSpecs.length > 0 ? (
                 draftSpecs.map((tag: any, index: number) => (
                     <ListItemButton
                         key={`FileSelector-${tag.catalog_name}`}

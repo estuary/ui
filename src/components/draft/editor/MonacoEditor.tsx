@@ -65,6 +65,8 @@ function MonacoEditor() {
                 onChange={handlers.change}
             />
         );
+    } else if (!draftId) {
+        return null;
     } else {
         return <FormattedMessage id="common.loading" />;
     }
