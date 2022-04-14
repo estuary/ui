@@ -2,6 +2,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import {
     Box,
     Button,
+    LinearProgress,
     Table,
     TableBody,
     TableCell,
@@ -30,8 +31,8 @@ import {
 import { PostgrestError, useClient } from 'supabase-swr';
 
 enum Statuses {
-    INIT = 'INIT',
-    SUCCESS = 'SUCCESS',
+    LOADING = 'LOADING',
+    DATA_FETCHED = 'DATA_FETCHED',
     TECHNICAL_DIFFICULTIES = 'TECHNICAL_DIFFICULTIES',
     UNMATCHED_FILTER = 'UNMATCHED_FILTER',
 }
@@ -39,8 +40,8 @@ enum Statuses {
 type SortDirection = 'asc' | 'desc';
 
 type Status =
-    | Statuses.INIT
-    | Statuses.SUCCESS
+    | Statuses.LOADING
+    | Statuses.DATA_FETCHED
     | Statuses.TECHNICAL_DIFFICULTIES
     | Statuses.UNMATCHED_FILTER;
 
@@ -83,7 +84,7 @@ function EntityTable({ noExistingDataContentIds }: Props) {
     const intl = useIntl();
 
     const [tableState, setTableState] = useState<TableState>({
-        status: Statuses.INIT,
+        status: Statuses.LOADING,
     });
 
     const [connectors, setConnectors] = useState<any[] | null>(null);
@@ -205,6 +206,7 @@ function EntityTable({ noExistingDataContentIds }: Props) {
             });
 
             setUnfilteredEntities(formattedDiscovery);
+            setTableState({ status: Statuses.DATA_FETCHED });
         }
     }, [discovery, connectors]);
 
@@ -609,23 +611,31 @@ function EntityTable({ noExistingDataContentIds }: Props) {
                                             }}
                                         >
                                             <Box width={485}>
-                                                <Typography
-                                                    variant="h6"
-                                                    align="center"
-                                                    sx={{ mb: 2 }}
-                                                >
-                                                    <FormattedMessage
-                                                        id={getEmptyTableHeader(
-                                                            tableState.status
-                                                        )}
-                                                    />
-                                                </Typography>
-
-                                                <Typography>
-                                                    {getEmptyTableMessage(
-                                                        tableState.status
-                                                    )}
-                                                </Typography>
+                                                {tableState.status ===
+                                                Statuses.LOADING ? (
+                                                    <Box>
+                                                        <LinearProgress />
+                                                    </Box>
+                                                ) : (
+                                                    <>
+                                                        <Typography
+                                                            variant="h6"
+                                                            align="center"
+                                                            sx={{ mb: 2 }}
+                                                        >
+                                                            <FormattedMessage
+                                                                id={getEmptyTableHeader(
+                                                                    tableState.status
+                                                                )}
+                                                            />
+                                                        </Typography>
+                                                        <Typography>
+                                                            {getEmptyTableMessage(
+                                                                tableState.status
+                                                            )}
+                                                        </Typography>{' '}
+                                                    </>
+                                                )}
                                             </Box>
                                         </Box>
                                     </TableCell>
