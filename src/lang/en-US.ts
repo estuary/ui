@@ -128,6 +128,7 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
 
 const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreation.ctas.discover': `Test Config`,
+    'captureCreation.ctas.discoverAgain': `Regenerate Catalog`,
     'captureCreation.heading': `New Capture`,
     'captureCreation.instructions': `To get started please provide a unique name and the source type of the Capture you want to create. Once you've filled out the source details you can click "Test Capture" down below to test the connection.`,
     'captureCreation.missingConnectors': `No connectors installed. You must install a source connector before being able to create a capture.`,
@@ -139,7 +140,6 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreation.config.source.doclink': `Connector Docs`,
     'captureCreation.save.failed': `Capture creation failed. Please see below for details:`,
     'captureCreation.editor.default': `Before you can edit the Capture Catalog you need to fill out the connection config section and click Discover`,
-    'captureCreation.editor.empty': `Please select a file from the left to review/change it. (This will default to the first file eventually - TJ)`,
     'captureCreation.finalReview.instructions': `Look over the catalog configuration that was generated. If you want to edit anything you can do that directly in the editor. Once you're ready you can download the file for your local.`,
     'captureCreation.test.waitMessage': `Please wait while we try to connect to this endpoint.`,
     'captureCreation.test.failedErrorTitle': `Config Test Failed`,
