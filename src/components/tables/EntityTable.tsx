@@ -44,6 +44,15 @@ type Status =
     | Statuses.TECHNICAL_DIFFICULTIES
     | Statuses.UNMATCHED_FILTER;
 
+interface Props {
+    noExistingDataContentIds: {
+        header: string;
+        message: string;
+        docLink: string;
+        docPath: string;
+    };
+}
+
 interface TableState {
     status: Status;
     error?: PostgrestError;
@@ -69,7 +78,7 @@ const DISCOVERS_QUERY = `
 
 const CONNECTORS_QUERY = `detail, image_name`;
 
-function EntityTable() {
+function EntityTable({ noExistingDataContentIds }: Props) {
     const supabaseClient: SupabaseClient = useClient();
     const intl = useIntl();
 
@@ -314,7 +323,7 @@ function EntityTable() {
             case Statuses.UNMATCHED_FILTER:
                 return 'entityTable.unmatchedFilter.header';
             default:
-                return 'captures.main.message1';
+                return noExistingDataContentIds.header;
         }
     };
 
@@ -328,23 +337,24 @@ function EntityTable() {
                 return (
                     <FormattedMessage id="entityTable.unmatchedFilter.message" />
                 );
-            default:
+            default: {
+                const { message, docLink, docPath } = noExistingDataContentIds;
+
                 return (
                     <FormattedMessage
-                        id="captures.main.message2"
+                        id={message}
                         values={{
                             docLink: (
                                 <ExternalLink
-                                    link={intl.formatMessage({
-                                        id: 'captures.main.message2.docPath',
-                                    })}
+                                    link={intl.formatMessage({ id: docPath })}
                                 >
-                                    <FormattedMessage id="captures.main.message2.docLink" />
+                                    <FormattedMessage id={docLink} />
                                 </ExternalLink>
                             ),
                         }}
                     />
                 );
+            }
         }
     };
 

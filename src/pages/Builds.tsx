@@ -4,7 +4,14 @@ import EntityTable from 'components/tables/EntityTable';
 const Builds = () => {
     return (
         <PageContainer>
-            <EntityTable />
+            <EntityTable
+                noExistingDataContentIds={{
+                    header: 'captures.main.message1',
+                    message: 'captures.main.message2',
+                    docLink: 'captures.main.message2.docLink',
+                    docPath: 'captures.main.message2.docPath',
+                }}
+            />
         </PageContainer>
     );
 };
