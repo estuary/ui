@@ -1,4 +1,7 @@
 import { Button, Stack, Toolbar, Typography } from '@mui/material';
+import useEditorStore, {
+    editorStoreSelectors,
+} from 'components/draft/editor/Store';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
@@ -18,6 +21,8 @@ function NewCaptureHeader({
     saveDisabled,
     formId,
 }: Props) {
+    const draftId = useEditorStore(editorStoreSelectors.draftId);
+
     return (
         <Toolbar>
             <Typography variant="h6" noWrap>
@@ -43,7 +48,13 @@ function NewCaptureHeader({
                     variant="contained"
                     disableElevation
                 >
-                    <FormattedMessage id="captureCreation.ctas.discover" />
+                    <FormattedMessage
+                        id={
+                            draftId
+                                ? 'captureCreation.ctas.discoverAgain'
+                                : 'captureCreation.ctas.discover'
+                        }
+                    />
                 </Button>
 
                 <Button

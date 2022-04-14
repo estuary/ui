@@ -7,11 +7,14 @@ import useCaptureCreationStore, {
     CaptureCreationFormStatus,
     CaptureCreationState,
 } from 'components/capture/create/Store';
+import useEditorStore, {
+    editorStoreSelectors,
+} from 'components/draft/editor/Store';
+import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
 import { useConfirmationModalContext } from 'context/Confirmation';
-import produce from 'immer';
-import { MouseEvent, useState } from 'react';
+import { MouseEvent } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { TABLES } from 'services/supabase';
@@ -20,9 +23,6 @@ import useNotificationStore, {
     Notification,
     NotificationState,
 } from 'stores/NotificationStore';
-import useSchemaEditorStore, {
-    SchemaEditorState,
-} from 'stores/SchemaEditorStore';
 import { useClient, useQuery, useSelect } from 'supabase-swr';
 import NewCaptureEditor from './CatalogEditor';
 import NewCaptureDetails from './DetailsForm';
@@ -74,21 +74,25 @@ const selectors = {
     changeSet: {
         addCapture: (state: ChangeSetState) => state.addCapture,
     },
-    schema: {
-        clearResources: (state: SchemaEditorState) => state.clearResources,
-        resources: (state: SchemaEditorState) => state.resources,
-    },
     notifications: {
         showNotification: (state: NotificationState) => state.showNotification,
     },
 };
 
+const notification: Notification = {
+    description: 'Your new capture is published and ready to be used.',
+    severity: 'success',
+    title: 'New Capture Created',
+};
+
 function CaptureCreation() {
-    const supabaseClient = useClient();
+    // misc hooks
     const intl = useIntl();
     const navigate = useNavigate();
     const confirmationModalContext = useConfirmationModalContext();
 
+    // Supabase stuff
+    const supabaseClient = useClient();
     const tagsQuery = useQuery<ConnectorTag>(
         TABLES.CONNECTOR_TAGS,
         {
@@ -97,16 +101,11 @@ function CaptureCreation() {
         },
         []
     );
-    const { data: connectorTags } = useSelect(tagsQuery, {});
+    const { data: connectorTags, error: connectorTagsError } = useSelect(
+        tagsQuery,
+        {}
+    );
     const hasConnectors = connectorTags && connectorTags.data.length > 0;
-
-    // Schema editor store
-    const resourcesFromEditor = useSchemaEditorStore(
-        selectors.schema.resources
-    );
-    const clearResourcesFromEditor = useSchemaEditorStore(
-        selectors.schema.clearResources
-    );
 
     // Notification store
     const showNotification = useNotificationStore(
@@ -135,128 +134,106 @@ function CaptureCreation() {
         selectors.form.exitWhenLogsClose
     );
 
-    // Local state
-    const [catalogResponse, setCatalogResponse] = useState<any | null>(null);
+    //Editor state
+    const draftId = useEditorStore(editorStoreSelectors.draftId);
+    const setDraftId = useEditorStore(editorStoreSelectors.setDraftId);
 
-    const cleanUpEditor = () => {
-        if (Object.keys(resourcesFromEditor).length > 0) {
-            clearResourcesFromEditor();
-        }
-    };
-
-    const exit = () => {
-        cleanUpEditor();
-
-        resetState();
-
-        navigate('/captures');
-    };
-
-    const discovers = {
-        done: (discoversSubscription: RealtimeSubscription) => {
-            return supabaseClient
-                .removeSubscription(discoversSubscription)
-                .then(() => {
-                    setFormState({
-                        status: CaptureCreationFormStatus.IDLE,
-                    });
-                })
-                .catch(() => {});
-        },
-        waitForFinish: () => {
-            cleanUpEditor();
-            resetFormState(CaptureCreationFormStatus.TESTING);
-            const discoverStatus = supabaseClient
-                .from(TABLES.DISCOVERS)
-                .on('*', async (payload) => {
-                    if (payload.new.job_status.type !== 'queued') {
-                        if (payload.new.job_status.type === 'success') {
-                            setCatalogResponse(payload.new.catalog_spec);
-                        } else {
-                            setFormState({
-                                error: {
-                                    title: 'captureCreation.test.failedErrorTitle',
-                                },
-                                saveStatus: intl.formatMessage({
-                                    id: 'captureCreation.status.failed',
-                                }),
-                            });
-                        }
-
-                        await discovers.done(discoverStatus);
-                    }
-                })
-                .subscribe();
-
-            return discoverStatus;
-        },
-    };
-
-    const drafts = {
-        done: (draftsSubscription: RealtimeSubscription) => {
-            return supabaseClient
-                .removeSubscription(draftsSubscription)
-                .then(() => {
-                    setFormState({
-                        status: CaptureCreationFormStatus.IDLE,
-                    });
-                })
-                .catch(() => {});
-        },
-        waitForFinish: () => {
-            cleanUpEditor();
-            resetFormState(CaptureCreationFormStatus.SAVING);
-            const draftsSubscription = supabaseClient
-                .from(TABLES.DRAFTS)
-                .on('*', async (payload) => {
-                    if (payload.new.job_status.type !== 'queued') {
-                        if (payload.new.job_status.type === 'success') {
-                            setFormState({
-                                status: CaptureCreationFormStatus.IDLE,
-                                exitWhenLogsClose: true,
-                                saveStatus: intl.formatMessage({
-                                    id: 'captureCreation.status.success',
-                                }),
-                            });
-                            const notification: Notification = {
-                                description:
-                                    'Your new capture is published and ready to be used.',
-                                severity: 'success',
-                                title: 'New Capture Created',
-                            };
-                            showNotification(notification);
-                        } else {
-                            setFormState({
-                                error: {
-                                    title: 'captureCreation.save.failedErrorTitle',
-                                },
-                                saveStatus: intl.formatMessage({
-                                    id: 'captureCreation.status.failed',
-                                }),
-                            });
-                        }
-
-                        await drafts.done(draftsSubscription);
-                    }
-                })
-                .subscribe();
-
-            return draftsSubscription;
-        },
-    };
-
-    const prepareCatalogForSaving = () => {
-        const editorKeys = Object.keys(resourcesFromEditor);
-
-        if (editorKeys.length > 0) {
-            return produce(catalogResponse, (draft: any) => {
-                editorKeys.forEach((key) => {
-                    draft.resources[key].content = resourcesFromEditor[key];
+    const helpers = {
+        callFailed: (formState: any, subscription?: RealtimeSubscription) => {
+            const setFailureState = () => {
+                setFormState({
+                    status: CaptureCreationFormStatus.IDLE,
+                    exitWhenLogsClose: false,
+                    saveStatus: intl.formatMessage({
+                        id: 'captureCreation.status.failed',
+                    }),
+                    ...formState,
                 });
+            };
+            if (subscription) {
+                helpers
+                    .doneSubscribing(subscription)
+                    .then(() => {
+                        setFailureState();
+                    })
+                    .catch(() => {});
+            } else {
+                setFailureState();
+            }
+        },
+        doneSubscribing: (subscription: RealtimeSubscription) => {
+            return supabaseClient
+                .removeSubscription(subscription)
+                .then(() => {
+                    setFormState({
+                        status: CaptureCreationFormStatus.IDLE,
+                    });
+                })
+                .catch(() => {});
+        },
+        exit: () => {
+            resetState();
+
+            navigate('/captures');
+        },
+        jobFailed: (errorTitle: string) => {
+            setFormState({
+                error: {
+                    title: errorTitle,
+                },
+                saveStatus: intl.formatMessage({
+                    id: 'captureCreation.status.failed',
+                }),
             });
-        } else {
-            return catalogResponse;
-        }
+        },
+    };
+
+    const waitFor = {
+        base: (query: any, success: Function, failureTitle: string) => {
+            setDraftId(null);
+            resetFormState(CaptureCreationFormStatus.TESTING);
+            const subscription = query
+                .on('*', async (payload: any) => {
+                    if (payload.new.job_status.type !== 'queued') {
+                        if (payload.new.job_status.type === 'success') {
+                            success(payload);
+                        } else {
+                            helpers.jobFailed(failureTitle);
+                        }
+
+                        await helpers.doneSubscribing(subscription);
+                    }
+                })
+                .subscribe();
+
+            return subscription;
+        },
+        discovers: () => {
+            return waitFor.base(
+                supabaseClient.from(TABLES.DISCOVERS),
+                (payload: any) => {
+                    setDraftId(payload.new.draft_id);
+                },
+                'captureCreation.test.failedErrorTitle'
+            );
+        },
+        publications: () => {
+            return waitFor.base(
+                supabaseClient.from(TABLES.PUBLICATIONS),
+                () => {
+                    setFormState({
+                        status: CaptureCreationFormStatus.IDLE,
+                        exitWhenLogsClose: true,
+                        saveStatus: intl.formatMessage({
+                            id: 'captureCreation.status.success',
+                        }),
+                    });
+
+                    showNotification(notification);
+                },
+                'captureCreation.save.failedErrorTitle'
+            );
+        },
     };
 
     // Form Event Handlers
@@ -269,12 +246,12 @@ function CaptureCreation() {
                     })
                     .then((confirmed) => {
                         if (confirmed) {
-                            exit();
+                            helpers.exit();
                         }
                     })
                     .catch(() => {});
             } else {
-                exit();
+                helpers.exit();
             }
         },
 
@@ -284,25 +261,25 @@ function CaptureCreation() {
             });
 
             if (exitWhenLogsClose) {
-                exit();
+                helpers.exit();
             }
         },
 
         saveAndPublish: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
-            const draftsSubscription = drafts.waitForFinish();
+            const publicationsSubscription = waitFor.publications();
             supabaseClient
-                .from(TABLES.DRAFTS)
+                .from(TABLES.PUBLICATIONS)
                 .insert([
                     {
-                        catalog_spec: prepareCatalogForSaving(),
+                        draft_id: draftId,
+                        dry_run: false,
                     },
                 ])
                 .then(
                     async (response) => {
                         if (response.data) {
-                            // TODO Need to use this response as part of the subscribe somehow
                             if (response.data.length > 0) {
                                 setFormState({
                                     logToken: response.data[0].logs_token,
@@ -310,34 +287,29 @@ function CaptureCreation() {
                                 });
                             }
                         } else {
-                            drafts
-                                .done(draftsSubscription)
-                                .then(() => {
-                                    setFormState({
-                                        status: CaptureCreationFormStatus.IDLE,
-                                        exitWhenLogsClose: false,
-                                        error: {
-                                            title: 'captureCreation.save.failedErrorTitle',
-                                            error: response.error,
-                                        },
-                                        saveStatus: intl.formatMessage({
-                                            id: 'captureCreation.status.failed',
-                                        }),
-                                    });
-                                })
-                                .catch(() => {});
+                            helpers.callFailed(
+                                {
+                                    error: {
+                                        title: 'captureCreation.save.failedErrorTitle',
+                                        error: response.error,
+                                    },
+                                },
+                                publicationsSubscription
+                            );
                         }
                     },
                     () => {
-                        setFormState({
-                            status: CaptureCreationFormStatus.IDLE,
-                            saveStatus: intl.formatMessage({
-                                id: 'captureCreation.status.failed',
-                            }),
-                            error: {
-                                title: 'captureCreation.save.failedErrorTitle',
+                        helpers.callFailed(
+                            {
+                                error: {
+                                    title: 'captureCreation.save.serverUnreachable',
+                                },
+                                saveStatus: intl.formatMessage({
+                                    id: 'captureCreation.status.failed',
+                                }),
                             },
-                        });
+                            publicationsSubscription
+                        );
                     }
                 );
         },
@@ -356,52 +328,75 @@ function CaptureCreation() {
                     showValidation: true,
                 });
             } else {
-                // TODO (supabase) - `discovers:id=eq.${response.data[0].id}` was not working
-                const discoversSubscription = discovers.waitForFinish();
                 supabaseClient
-                    .from(TABLES.DISCOVERS)
-                    .insert([
-                        {
-                            capture_name: captureName,
-                            endpoint_config: specFormData,
-                            connector_tag_id: captureImage,
-                        },
-                    ])
+                    .from(TABLES.DRAFTS)
+                    .insert({
+                        detail: captureName,
+                    })
                     .then(
-                        (response) => {
-                            if (response.data) {
-                                setFormState({
-                                    logToken: response.data[0].logs_token,
+                        (draftsResponse) => {
+                            if (
+                                draftsResponse.data &&
+                                draftsResponse.data.length > 0
+                            ) {
+                                const discoversSubscription =
+                                    waitFor.discovers();
+                                supabaseClient
+                                    .from(TABLES.DISCOVERS)
+                                    .insert([
+                                        {
+                                            capture_name: captureName,
+                                            endpoint_config: specFormData,
+                                            connector_tag_id: captureImage,
+                                            draft_id: draftsResponse.data[0].id,
+                                        },
+                                    ])
+                                    .then(
+                                        (response) => {
+                                            if (response.data) {
+                                                setFormState({
+                                                    logToken:
+                                                        response.data[0]
+                                                            .logs_token,
+                                                });
+                                            } else {
+                                                helpers.callFailed(
+                                                    {
+                                                        error: {
+                                                            title: 'captureCreation.test.failedErrorTitle',
+                                                            error: response.error,
+                                                        },
+                                                    },
+                                                    discoversSubscription
+                                                );
+                                            }
+                                        },
+                                        () => {
+                                            helpers.callFailed(
+                                                {
+                                                    error: {
+                                                        title: 'captureCreation.test.serverUnreachable',
+                                                    },
+                                                },
+                                                discoversSubscription
+                                            );
+                                        }
+                                    );
+                            } else if (draftsResponse.error) {
+                                helpers.callFailed({
+                                    error: {
+                                        title: 'captureCreation.test.failedErrorTitle',
+                                        error: draftsResponse.error,
+                                    },
                                 });
-                            } else {
-                                discovers
-                                    .done(discoversSubscription)
-                                    .then(() => {
-                                        setFormState({
-                                            status: CaptureCreationFormStatus.IDLE,
-                                            exitWhenLogsClose: false,
-                                            error: {
-                                                title: 'captureCreation.test.failedErrorTitle',
-                                                error: response.error,
-                                            },
-                                            saveStatus: intl.formatMessage({
-                                                id: 'captureCreation.status.failed',
-                                            }),
-                                        });
-                                    })
-                                    .catch(() => {});
                             }
                         },
                         () => {
-                            setFormState({
+                            helpers.callFailed({
                                 error: {
-                                    title: 'captureCreation.test.failedErrorTitle',
+                                    title: 'captureCreation.test.serverUnreachable',
                                 },
                             });
-                            discovers
-                                .done(discoversSubscription)
-                                .then(() => {})
-                                .catch(() => {});
                         }
                     );
             }
@@ -437,41 +432,46 @@ function CaptureCreation() {
                 }
                 save={handlers.saveAndPublish}
                 saveDisabled={
-                    status !== CaptureCreationFormStatus.IDLE ||
-                    !catalogResponse
+                    status !== CaptureCreationFormStatus.IDLE || !draftId
                 }
                 formId={FORM_ID}
             />
 
-            <Collapse in={formSubmitError !== null}>
-                {formSubmitError && (
-                    <NewCaptureError
-                        title={formSubmitError.title}
-                        error={formSubmitError.error}
-                        logToken={logToken}
-                    />
-                )}
-            </Collapse>
+            {connectorTagsError ? (
+                <Error error={connectorTagsError} />
+            ) : (
+                <>
+                    <Collapse in={formSubmitError !== null}>
+                        {formSubmitError && (
+                            <NewCaptureError
+                                title={formSubmitError.title}
+                                error={formSubmitError.error}
+                                logToken={logToken}
+                            />
+                        )}
+                    </Collapse>
 
-            <form id={FORM_ID}>
-                {connectorTags ? (
+                    <form id={FORM_ID}>
+                        {connectorTags ? (
+                            <ErrorBoundryWrapper>
+                                <NewCaptureDetails
+                                    connectorTags={connectorTags.data}
+                                />
+                            </ErrorBoundryWrapper>
+                        ) : null}
+
+                        {captureImage ? (
+                            <ErrorBoundryWrapper>
+                                <NewCaptureSpec connectorImage={captureImage} />
+                            </ErrorBoundryWrapper>
+                        ) : null}
+                    </form>
+
                     <ErrorBoundryWrapper>
-                        <NewCaptureDetails connectorTags={connectorTags.data} />
+                        <NewCaptureEditor />
                     </ErrorBoundryWrapper>
-                ) : null}
-
-                {captureImage ? (
-                    <ErrorBoundryWrapper>
-                        <NewCaptureSpec connectorImage={captureImage} />
-                    </ErrorBoundryWrapper>
-                ) : null}
-            </form>
-
-            <ErrorBoundryWrapper>
-                {catalogResponse ? (
-                    <NewCaptureEditor data={catalogResponse} />
-                ) : null}
-            </ErrorBoundryWrapper>
+                </>
+            )}
         </PageContainer>
     );
 }
