@@ -23,11 +23,6 @@ import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import { ChangeEvent, MouseEvent, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { TABLES } from 'services/supabase';
-import {
-    DeploymentStatus,
-    Entity,
-    EntityMetadata,
-} from 'stores/PublicationStore';
 import { PostgrestError, useClient } from 'supabase-swr';
 
 enum Statuses {
@@ -37,6 +32,8 @@ enum Statuses {
     TECHNICAL_DIFFICULTIES = 'TECHNICAL_DIFFICULTIES',
     UNMATCHED_FILTER = 'UNMATCHED_FILTER',
 }
+
+type DeploymentStatus = 'ACTIVE' | 'INACTIVE';
 
 type Status =
     | Statuses.LOADING
@@ -56,13 +53,21 @@ interface Props {
     };
 }
 
+interface Entity {
+    deploymentStatus: DeploymentStatus;
+    name: string;
+    catalogNamespace: string;
+    connectorType: string;
+    dateCreated: string;
+}
+
 interface TableState {
     status: Status;
     error?: PostgrestError;
 }
 
 interface TableColumn {
-    field: keyof EntityMetadata | null;
+    field: keyof Entity | null;
     headerIntlKey: string;
 }
 
@@ -100,7 +105,7 @@ function EntityTable({ noExistingDataContentIds }: Props) {
 
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
     const [columnToSort, setColumnToSort] =
-        useState<keyof EntityMetadata>('dateCreated');
+        useState<keyof Entity>('dateCreated');
 
     const [page, setPage] = useState(0);
     const rowsPerPage = 10;
@@ -159,19 +164,16 @@ function EntityTable({ noExistingDataContentIds }: Props) {
                             );
 
                         return {
-                            metadata: {
-                                deploymentStatus: 'ACTIVE',
-                                name: catalogNamespace.substring(
-                                    catalogNamespace.lastIndexOf('/') + 1,
-                                    catalogNamespace.length
-                                ),
-                                catalogNamespace,
-                                connectorType: connectorInfo
-                                    ? connectorInfo.detail
-                                    : 'Unknown',
-                                dateCreated,
-                            },
-                            resources: {},
+                            deploymentStatus: 'ACTIVE',
+                            name: catalogNamespace.substring(
+                                catalogNamespace.lastIndexOf('/') + 1,
+                                catalogNamespace.length
+                            ),
+                            catalogNamespace,
+                            connectorType: connectorInfo
+                                ? connectorInfo.detail
+                                : 'Unknown',
+                            dateCreated,
                         };
                     }
                 );
@@ -215,13 +217,9 @@ function EntityTable({ noExistingDataContentIds }: Props) {
     // TODO: Remove calls to console.log().
     console.log('We here');
 
-    const entityDetails: EntityMetadata[] | null = entities
-        ? entities.map((entity) => entity.metadata)
-        : null;
-
     const emptyRows =
-        entityDetails && page > 0
-            ? Math.max(0, (1 + page) * rowsPerPage - entityDetails.length)
+        entities && page > 0
+            ? Math.max(0, (1 + page) * rowsPerPage - entities.length)
             : 0;
 
     const columns: TableColumn[] = [
@@ -350,8 +348,7 @@ function EntityTable({ noExistingDataContentIds }: Props) {
                 setFilteredEntities(null);
             } else if (unfilteredEntities) {
                 const queriedEntities: Entity[] = unfilteredEntities.filter(
-                    ({ metadata: { catalogNamespace } }) =>
-                        catalogNamespace.includes(query)
+                    ({ catalogNamespace }) => catalogNamespace.includes(query)
                 );
 
                 setFilteredEntities(queriedEntities);
@@ -363,18 +360,16 @@ function EntityTable({ noExistingDataContentIds }: Props) {
         },
         sortRequest: (
             event: React.MouseEvent<unknown>,
-            column: keyof EntityMetadata
+            column: keyof Entity
         ) => {
             const isAsc = columnToSort === column && sortDirection === 'asc';
 
             setSortDirection(isAsc ? 'desc' : 'asc');
             setColumnToSort(column);
         },
-        sort:
-            (column: keyof EntityMetadata) =>
-            (event: React.MouseEvent<unknown>) => {
-                handlers.sortRequest(event, column);
-            },
+        sort: (column: keyof Entity) => (event: React.MouseEvent<unknown>) => {
+            handlers.sortRequest(event, column);
+        },
         changePage: (
             event: MouseEvent<HTMLButtonElement> | null,
             newPage: number
@@ -468,9 +463,9 @@ function EntityTable({ noExistingDataContentIds }: Props) {
                         </TableHead>
 
                         <TableBody>
-                            {entityDetails ? (
+                            {entities ? (
                                 stableSort(
-                                    entityDetails,
+                                    entities,
                                     getComparator(sortDirection, columnToSort)
                                 )
                                     .slice(
