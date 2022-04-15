@@ -33,6 +33,7 @@ import { PostgrestError, useClient } from 'supabase-swr';
 enum Statuses {
     LOADING = 'LOADING',
     DATA_FETCHED = 'DATA_FETCHED',
+    NO_EXISTING_DATA = 'NO_EXISTING_DATA',
     TECHNICAL_DIFFICULTIES = 'TECHNICAL_DIFFICULTIES',
     UNMATCHED_FILTER = 'UNMATCHED_FILTER',
 }
@@ -40,6 +41,7 @@ enum Statuses {
 type Status =
     | Statuses.LOADING
     | Statuses.DATA_FETCHED
+    | Statuses.NO_EXISTING_DATA
     | Statuses.TECHNICAL_DIFFICULTIES
     | Statuses.UNMATCHED_FILTER;
 
@@ -64,20 +66,9 @@ interface TableColumn {
     headerIntlKey: string;
 }
 
-interface ConnectorInfo {
-    detail: string;
-    image_name: string;
-}
-
-const DISCOVERS_QUERY = `
-    capture_name, 
-    updated_at, 
-    job_status->>type, 
-    catalog_spec, 
-    id
-`;
-
 const CONNECTORS_QUERY = `detail, image_name`;
+
+const LIVE_SPECS_QUERY = `spec_type, catalog_name, updated_at, connector_image_name, detail`;
 
 function EntityTable({ noExistingDataContentIds }: Props) {
     const supabaseClient: SupabaseClient = useClient();
@@ -88,8 +79,8 @@ function EntityTable({ noExistingDataContentIds }: Props) {
     });
 
     const [connectors, setConnectors] = useState<any[] | null>(null);
-    const [discovery, setDiscovery] = useState<any[] | null>(null);
-    const [discoverySubscription, setDiscoverySubscription] =
+    const [publications, setPublications] = useState<any[] | null>(null);
+    const [publicationsSubscription, setPublicationsSubscription] =
         useState<RealtimeSubscription | null>(null);
 
     const [unfilteredEntities, setUnfilteredEntities] = useState<
@@ -116,8 +107,7 @@ function EntityTable({ noExistingDataContentIds }: Props) {
 
         if (error) {
             setTableState({ status: Statuses.TECHNICAL_DIFFICULTIES, error });
-            console.log('Connector error caught');
-        } else {
+        } else if (data && data.length > 0) {
             setConnectors(data);
         }
 
@@ -125,93 +115,76 @@ function EntityTable({ noExistingDataContentIds }: Props) {
     };
 
     // TODO: Remove calls to console.log().
-    const getInitialDiscovery = async () => {
+    const getInitialPublications = async () => {
         const { data, error } = await supabaseClient
-            .from(TABLES.DISCOVERS)
-            .select(DISCOVERS_QUERY)
-            .eq('job_status->>type', 'success');
+            .from(TABLES.LIVE_SPECS)
+            .select(LIVE_SPECS_QUERY);
 
         if (error) {
             setTableState({ status: Statuses.TECHNICAL_DIFFICULTIES, error });
-            console.log('Discovery error caught');
-        } else {
-            setDiscovery(data);
+        } else if (data && data.length > 0) {
+            setPublications(data);
         }
 
-        console.log('discovery');
+        console.log('live specs');
     };
 
-    const createDiscoverySubscription = () => {
+    const createPublicationSubscription = () => {
         const subscription = supabaseClient
-            .from(TABLES.DISCOVERS)
+            .from(TABLES.LIVE_SPECS)
             .on('*', async (payload) => {
-                if (payload.new.job_status.type === 'success') {
-                    if (discovery) {
-                        setDiscovery([...discovery, payload.new]);
+                if (payload.new.spec_type === 'capture') {
+                    if (publications) {
+                        setPublications([...publications, payload.new]);
                     }
                 }
             })
             .subscribe();
 
-        setDiscoverySubscription(subscription);
+        setPublicationsSubscription(subscription);
     };
 
     useEffect(() => {
         getConnectors().catch(() => {});
-        getInitialDiscovery().catch(() => {});
+        getInitialPublications().catch(() => {});
 
-        createDiscoverySubscription();
+        createPublicationSubscription();
     }, []);
 
     useEffect(() => {
-        if (discovery && connectors) {
-            const formattedDiscovery: Entity[] = discovery.map((discover) => {
-                const catalogNamespace: string = discover.capture_name;
-                const dateCreated: string = discover.updated_at;
-                const catalogResources = discover.catalog_spec.resources;
+        if (publications && connectors) {
+            const formattedPublication: Entity[] = publications.map(
+                (publication) => {
+                    const catalogNamespace: string = publication.catalog_name;
+                    const dateCreated: string = publication.updated_at;
+                    const connectorImage: string =
+                        publication.connector_image_name;
 
-                // TODO: Improve logic used to retrieve the endpoint description.
-                const resourceKey = Object.keys(catalogResources).find(
-                    (fileUrl) => fileUrl.includes('.flow.json')
-                );
+                    return {
+                        metadata: {
+                            deploymentStatus: 'ACTIVE',
+                            name: catalogNamespace.substring(
+                                catalogNamespace.lastIndexOf('/') + 1,
+                                catalogNamespace.length
+                            ),
+                            catalogNamespace,
+                            connectorType: connectorImage
+                                ? connectorImage
+                                : 'Unknown',
+                            dateCreated,
+                        },
+                        resources: {},
+                    };
+                }
+            );
 
-                const rawConnectorImg: string =
-                    catalogResources[`${resourceKey}`].content.captures[
-                        `${catalogNamespace}`
-                    ].endpoint.connector.image;
-
-                const [connectorImg]: string[] = rawConnectorImg.split(':', 1);
-
-                const connectorInfo: ConnectorInfo | undefined =
-                    connectors.find(
-                        (connector) => connector.image_name === connectorImg
-                    );
-
-                return {
-                    metadata: {
-                        deploymentStatus:
-                            discover.type === 'success' ? 'ACTIVE' : 'INACTIVE',
-                        name: catalogNamespace.substring(
-                            catalogNamespace.lastIndexOf('/') + 1,
-                            catalogNamespace.length
-                        ),
-                        catalogNamespace,
-                        connectorType: connectorInfo
-                            ? connectorInfo.detail
-                            : 'Unknown',
-                        dateCreated,
-                    },
-                    resources: {},
-                };
-            });
-
-            setUnfilteredEntities(formattedDiscovery);
+            setUnfilteredEntities(formattedPublication);
             setTableState({ status: Statuses.DATA_FETCHED });
+        } else {
+            setTableState({ status: Statuses.NO_EXISTING_DATA });
         }
-    }, [discovery, connectors]);
+    }, [publications, connectors]);
 
-    // TODO: Manage entities state in the component and update it either in an effect
-    // or in a function handler.
     useEffect(() => {
         if (filteredEntities || unfilteredEntities) {
             setEntities(filteredEntities ?? unfilteredEntities);
@@ -223,9 +196,9 @@ function EntityTable({ noExistingDataContentIds }: Props) {
         return () => {
             console.log('Will unmount');
 
-            if (discoverySubscription) {
+            if (publicationsSubscription) {
                 supabaseClient
-                    .removeSubscription(discoverySubscription)
+                    .removeSubscription(publicationsSubscription)
                     .catch(() => {});
             }
         };
