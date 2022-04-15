@@ -17,7 +17,7 @@ import {
     Tooltip,
     Typography,
 } from '@mui/material';
-import { RealtimeSubscription, SupabaseClient } from '@supabase/supabase-js';
+import { SupabaseClient } from '@supabase/supabase-js';
 import ExternalLink from 'components/shared/ExternalLink';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import { ChangeEvent, MouseEvent, useEffect, useState } from 'react';
@@ -78,10 +78,12 @@ function EntityTable({ noExistingDataContentIds }: Props) {
         status: Statuses.LOADING,
     });
 
-    const [connectors, setConnectors] = useState<any[] | null>(null);
-    const [publications, setPublications] = useState<any[] | null>(null);
-    const [publicationsSubscription, setPublicationsSubscription] =
-        useState<RealtimeSubscription | null>(null);
+    const [connectors, setConnectors] = useState<any[] | undefined | null>(
+        null
+    );
+    const [publications, setPublications] = useState<any[] | undefined | null>(
+        null
+    );
 
     const [unfilteredEntities, setUnfilteredEntities] = useState<
         Entity[] | null
@@ -99,94 +101,99 @@ function EntityTable({ noExistingDataContentIds }: Props) {
     const rowsPerPage = 10;
     const rowHeight = 57;
 
-    // TODO: Remove calls to console.log().
-    const getConnectors = async () => {
-        const { data, error } = await supabaseClient
-            .from(TABLES.CONNECTORS)
-            .select(CONNECTORS_QUERY);
+    useEffect(() => {
+        console.log('Mounting...');
 
-        if (error) {
-            setTableState({ status: Statuses.TECHNICAL_DIFFICULTIES, error });
-        } else if (data && data.length > 0) {
-            setConnectors(data);
+        (async () => {
+            const { data, error } = await supabaseClient
+                .from(TABLES.CONNECTORS)
+                .select(CONNECTORS_QUERY);
+
+            if (error) {
+                setTableState({
+                    status: Statuses.TECHNICAL_DIFFICULTIES,
+                    error,
+                });
+            } else {
+                setConnectors(data);
+            }
+        })().catch(() => {});
+
+        (async () => {
+            const { data, error } = await supabaseClient
+                .from(TABLES.LIVE_SPECS)
+                .select(LIVE_SPECS_QUERY)
+                .eq('spec_type', 'capture');
+
+            if (error) {
+                setTableState({
+                    status: Statuses.TECHNICAL_DIFFICULTIES,
+                    error,
+                });
+            } else {
+                setPublications(data);
+            }
+        })().catch(() => {});
+    }, [supabaseClient]);
+
+    useEffect(() => {
+        if (publications && connectors) {
+            if (publications.length > 0 && connectors.length > 0) {
+                const formattedPublication: Entity[] = publications.map(
+                    (publication) => {
+                        const catalogNamespace: string =
+                            publication.catalog_name;
+                        const dateCreated: string = publication.updated_at;
+                        const connectorImage: string =
+                            publication.connector_image_name;
+
+                        return {
+                            metadata: {
+                                deploymentStatus: 'ACTIVE',
+                                name: catalogNamespace.substring(
+                                    catalogNamespace.lastIndexOf('/') + 1,
+                                    catalogNamespace.length
+                                ),
+                                catalogNamespace,
+                                connectorType: connectorImage
+                                    ? connectorImage
+                                    : 'Unknown',
+                                dateCreated,
+                            },
+                            resources: {},
+                        };
+                    }
+                );
+
+                setUnfilteredEntities(formattedPublication);
+                setTableState({ status: Statuses.DATA_FETCHED });
+            } else {
+                setTableState({ status: Statuses.NO_EXISTING_DATA });
+            }
         }
-
-        console.log('connectors');
-    };
+    }, [publications, connectors]);
 
     // TODO: Remove calls to console.log().
-    const getInitialPublications = async () => {
-        const { data, error } = await supabaseClient
-            .from(TABLES.LIVE_SPECS)
-            .select(LIVE_SPECS_QUERY)
-            .eq('spec_type', 'capture');
-
-        console.log(data);
-
-        if (error) {
-            setTableState({ status: Statuses.TECHNICAL_DIFFICULTIES, error });
-        } else if (data && data.length > 0) {
-            setPublications(data);
-        }
-
-        console.log('live specs');
-    };
-
-    const createPublicationSubscription = () => {
+    useEffect(() => {
         const subscription = supabaseClient
             .from(TABLES.LIVE_SPECS)
             .on('*', async (payload) => {
                 if (payload.new.spec_type === 'capture') {
-                    if (publications) {
-                        setPublications([...publications, payload.new]);
-                    }
+                    setPublications((_publications) =>
+                        _publications
+                            ? [..._publications, payload.new]
+                            : [payload.new]
+                    );
                 }
             })
             .subscribe();
 
-        setPublicationsSubscription(subscription);
-    };
+        return () => {
+            console.log('Will unmount');
 
-    useEffect(() => {
-        getConnectors().catch(() => {});
-        getInitialPublications().catch(() => {});
-
-        createPublicationSubscription();
-    }, []);
-
-    useEffect(() => {
-        if (publications && connectors) {
-            const formattedPublication: Entity[] = publications.map(
-                (publication) => {
-                    const catalogNamespace: string = publication.catalog_name;
-                    const dateCreated: string = publication.updated_at;
-                    const connectorImage: string =
-                        publication.connector_image_name;
-
-                    return {
-                        metadata: {
-                            deploymentStatus: 'ACTIVE',
-                            name: catalogNamespace.substring(
-                                catalogNamespace.lastIndexOf('/') + 1,
-                                catalogNamespace.length
-                            ),
-                            catalogNamespace,
-                            connectorType: connectorImage
-                                ? connectorImage
-                                : 'Unknown',
-                            dateCreated,
-                        },
-                        resources: {},
-                    };
-                }
-            );
-
-            setUnfilteredEntities(formattedPublication);
-            setTableState({ status: Statuses.DATA_FETCHED });
-        } else {
-            setTableState({ status: Statuses.NO_EXISTING_DATA });
-        }
-    }, [publications, connectors]);
+            supabaseClient.removeSubscription(subscription).catch(() => {});
+        };
+    }, [supabaseClient]);
 
     useEffect(() => {
         if (filteredEntities || unfilteredEntities) {
@@ -195,21 +202,7 @@ function EntityTable({ noExistingDataContentIds }: Props) {
     }, [filteredEntities, unfilteredEntities]);
 
     // TODO: Remove calls to console.log().
-    useEffect(() => {
-        return () => {
-            console.log('Will unmount');
-
-            if (publicationsSubscription) {
-                supabaseClient
-                    .removeSubscription(publicationsSubscription)
-                    .catch(() => {});
-            }
-        };
-    }, []);
-
-    // TODO: Remove calls to console.log().
     console.log('We here');
-    console.log(tableState);
 
     const entityDetails: EntityMetadata[] | null = entities
         ? entities.map((entity) => entity.metadata)
