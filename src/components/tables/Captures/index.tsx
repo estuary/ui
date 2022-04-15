@@ -22,14 +22,14 @@ interface Discovers {
     'id': string;
 }
 
-const DISCOVERS_QUERY = `
-    capture_name, 
-    updated_at, 
-    job_status->>type, 
-    id
-`;
+const DISCOVERS_COLUMNS = [
+    'capture_name',
+    'updated_at',
+    'job_status->>type',
+    'id',
+];
 
-const columns = ['data.name', 'data.status', 'data.updated_at'];
+const tableColumns = ['data.name', 'data.status', 'data.updated_at'];
 
 const columnStyling = {
     maxWidth: '20%',
@@ -41,14 +41,12 @@ function CapturesTable() {
     const tagsQuery = useQuery<Discovers>(
         TABLES.DISCOVERS,
         {
-            columns: DISCOVERS_QUERY,
+            columns: DISCOVERS_COLUMNS,
             filter: (query) => query.eq('job_status->>type', 'success'),
         },
         []
     );
     const { data: discovers, error } = useSelect(tagsQuery, {});
-
-    console.log('capture table', discovers);
 
     const intl = useIntl();
 
@@ -67,7 +65,7 @@ function CapturesTable() {
                 >
                     <TableHead>
                         <TableRow>
-                            {columns.map((column, index) => {
+                            {tableColumns.map((column, index) => {
                                 return (
                                     <TableCell
                                         key={`${column}-${index}`}
@@ -89,7 +87,7 @@ function CapturesTable() {
                             ) : (
                                 <TableRow>
                                     <TableCell
-                                        colSpan={columns.length}
+                                        colSpan={tableColumns.length}
                                         align="center"
                                     >
                                         <Empty />
@@ -98,13 +96,13 @@ function CapturesTable() {
                             )
                         ) : error ? (
                             <TableRow>
-                                <TableCell colSpan={columns.length}>
+                                <TableCell colSpan={tableColumns.length}>
                                     <Error error={error} />
                                 </TableCell>
                             </TableRow>
                         ) : (
                             <TableRow>
-                                <TableCell colSpan={columns.length}>
+                                <TableCell colSpan={tableColumns.length}>
                                     <FormattedMessage id="common.loading" />
                                 </TableCell>
                             </TableRow>

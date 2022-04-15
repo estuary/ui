@@ -1,7 +1,7 @@
 import { Count, Filter } from './types';
 
 export type QueryConfig<Data> = {
-    columns?: string;
+    columns?: string | string[];
     filter?: Filter<Data>;
     count?: Count;
     head?: boolean;

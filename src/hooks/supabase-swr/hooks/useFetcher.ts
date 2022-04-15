@@ -28,22 +28,26 @@ function createFetcher<Data>(
     client: SupabaseClient,
     type: FetcherType.MAYBE_SINGLE
 ): FetcherSingle<Data | null>;
-
 function createFetcher<Data>(
     client: SupabaseClient,
     type: FetcherType.SINGLE | FetcherType.CSV
 ): FetcherSingle<Data>;
-
 function createFetcher<Data>(
     client: SupabaseClient,
     type: FetcherType.MULTIPLE
 ): Fetcher<Data>;
-
 function createFetcher(client: SupabaseClient, type: FetcherType) {
-    console.log('createFetcher');
     return async (table: string, config: QueryConfig<any>) => {
-        console.log('createFetcher async');
-        const select = client.from(table).select(config.columns, {
+        let cols;
+
+        if (config.columns) {
+            cols =
+                typeof config.columns === 'string'
+                    ? config.columns
+                    : config.columns.join(', ');
+        }
+
+        const select = client.from(table).select(cols, {
             count: config.count,
             head: config.head,
         });
@@ -54,16 +58,16 @@ function createFetcher(client: SupabaseClient, type: FetcherType) {
                 : select;
 
         switch (type) {
-            case 'multiple':
+            case FetcherType.MULTIPLE:
                 return query.throwOnError();
-            case 'single':
+            case FetcherType.SINGLE:
                 return query.throwOnError().single();
-            case 'maybeSingle':
+            case FetcherType.MAYBE_SINGLE:
                 return query.throwOnError().maybeSingle();
-            case 'csv':
+            case FetcherType.CSV:
                 return query.throwOnError().csv();
             default:
-                return query.throwOnError();
+                throw new Error('Unsupported type used in fetcher');
         }
     };
 }
@@ -74,15 +78,9 @@ function useFetcher<Data>(
     type: FetcherType.MAYBE_SINGLE
 ): FetcherSingle<Data | null>;
 function useFetcher(type: FetcherType.CSV): FetcherSingle<string>;
-
 function useFetcher(type: FetcherType) {
     const client = useClient();
-    console.log('useFetcher', {
-        client,
-        type,
-    });
     return useMemo(() => {
-        console.log('useFetcher memo');
         return createFetcher(client, type as any);
     }, [client, type]) as any;
 }

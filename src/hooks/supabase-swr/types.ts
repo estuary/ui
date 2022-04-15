@@ -3,6 +3,7 @@ import {
     PostgrestResponse,
 } from '@supabase/postgrest-js';
 
+// from @supabase/postgrest-js/src/lib/PostgrestQueryBuilder.ts
 export type Count = 'exact' | 'planned' | 'estimated';
 export type Returning = 'minimal' | 'representation';
 
