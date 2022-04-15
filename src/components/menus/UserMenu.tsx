@@ -7,8 +7,8 @@ import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import MenuItem from '@mui/material/MenuItem';
 import { Auth } from '@supabase/ui';
+import { useClient } from 'hooks/supabase-swr';
 import { isEmpty } from 'lodash';
-import { useClient } from 'supabase-swr';
 import IconMenu from './IconMenu';
 
 const UserMenu = () => {

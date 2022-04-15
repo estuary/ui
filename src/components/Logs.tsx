@@ -1,12 +1,12 @@
 import Editor from '@monaco-editor/react';
 import { useTheme } from '@mui/material';
 import { parse } from 'ansicolor';
+import { useClient } from 'hooks/supabase-swr';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useInterval } from 'react-use';
 import { DEFAULT_POLLING_INTERVAL, RPCS } from 'services/supabase';
-import { useClient } from 'supabase-swr';
 
 interface Props {
     token: string | null;

@@ -11,9 +11,9 @@ import {
 import Error from 'components/shared/Error';
 import Empty from 'components/tables/Captures/Empty';
 import Rows from 'components/tables/Captures/Rows';
+import { useQuery, useSelect } from 'hooks/supabase-swr';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { TABLES } from 'services/supabase';
-import { useQuery, useSelect } from 'supabase-swr';
 
 interface Discovers {
     'capture_name': string;
@@ -48,6 +48,8 @@ function CapturesTable() {
     );
     const { data: discovers, error } = useSelect(tagsQuery, {});
 
+    console.log('capture table', discovers);
+
     const intl = useIntl();
 
     return (
@@ -78,7 +80,7 @@ function CapturesTable() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {discovers ? (
+                        {discovers?.data ? (
                             discovers.data.length > 0 ? (
                                 <Rows
                                     discovers={discovers.data}

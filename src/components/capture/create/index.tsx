@@ -14,6 +14,7 @@ import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
 import { useConfirmationModalContext } from 'context/Confirmation';
+import { useClient, useQuery, useSelect } from 'hooks/supabase-swr';
 import { MouseEvent } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
@@ -23,7 +24,6 @@ import useNotificationStore, {
     Notification,
     NotificationState,
 } from 'stores/NotificationStore';
-import { useClient, useQuery, useSelect } from 'supabase-swr';
 import NewCaptureEditor from './CatalogEditor';
 import NewCaptureDetails from './DetailsForm';
 import NewCaptureError from './Error';

@@ -1,8 +1,8 @@
 import { Card, CardContent, Grid, Typography } from '@mui/material';
 import { Auth } from '@supabase/ui';
 import Topbar from 'components/header/Topbar';
+import { useClient } from 'hooks/supabase-swr';
 import { FormattedMessage } from 'react-intl';
-import { useClient } from 'supabase-swr';
 import { getLoginSettings } from 'utils/env-utils';
 
 const Login = () => {
