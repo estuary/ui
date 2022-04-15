@@ -26,15 +26,9 @@ function useDraftSpecs(draftId: string | null) {
         {}
     );
 
-    console.log('useDraftSpecs', {
-        draftId,
-        data,
-    });
-
     return {
         draftSpecs: data ? data.data : [],
         error,
-        isLoading: !error && !data?.data,
         mutate,
     };
 }
