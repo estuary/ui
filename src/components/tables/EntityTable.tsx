@@ -112,8 +112,6 @@ function EntityTable({ noExistingDataContentIds }: Props) {
     const rowHeight = 57;
 
     useEffect(() => {
-        console.log('Mounting...');
-
         (async () => {
             const { data, error } = await supabaseClient
                 .from(TABLES.CONNECTORS)
@@ -186,7 +184,6 @@ function EntityTable({ noExistingDataContentIds }: Props) {
         }
     }, [publications, connectors]);
 
-    // TODO: Remove calls to console.log().
     useEffect(() => {
         const subscription = supabaseClient
             .from(TABLES.LIVE_SPECS)
@@ -202,8 +199,6 @@ function EntityTable({ noExistingDataContentIds }: Props) {
             .subscribe();
 
         return () => {
-            console.log('Will unmount');
-
             supabaseClient.removeSubscription(subscription).catch(() => {});
         };
     }, [supabaseClient]);
@@ -213,9 +208,6 @@ function EntityTable({ noExistingDataContentIds }: Props) {
             setEntities(filteredEntities ?? unfilteredEntities);
         }
     }, [filteredEntities, unfilteredEntities]);
-
-    // TODO: Remove calls to console.log().
-    console.log('We here');
 
     const emptyRows =
         entities && page > 0
