@@ -5,10 +5,10 @@ import LogDialog from 'components/capture/create/LogDialog';
 import NewCaptureSpec from 'components/capture/create/Spec';
 import useCaptureCreationStore, {
     CaptureCreationFormStatus,
-    CaptureCreationState
+    CaptureCreationState,
 } from 'components/capture/create/Store';
 import useEditorStore, {
-    editorStoreSelectors
+    editorStoreSelectors,
 } from 'components/draft/editor/Store';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
@@ -20,7 +20,7 @@ import { useNavigate } from 'react-router-dom';
 import { TABLES } from 'services/supabase';
 import useNotificationStore, {
     Notification,
-    NotificationState
+    NotificationState,
 } from 'stores/NotificationStore';
 import { useClient, useQuery, useSelect } from 'supabase-swr';
 import NewCaptureEditor from './CatalogEditor';
@@ -44,7 +44,7 @@ const CONNECTOR_TAG_QUERY = `
 `;
 const FORM_ID = 'newCaptureForm';
 
-// TODO - need to get this styping to work... too many repeated types
+// TODO - need to get this typing to work... too many repeated types
 const selectors = {
     page: {
         captureName: (state: CaptureCreationState) => state.details.data.name,
