@@ -66,6 +66,11 @@ interface TableColumn {
     headerIntlKey: string;
 }
 
+interface ConnectorInfo {
+    detail: string;
+    image_name: string;
+}
+
 const CONNECTORS_QUERY = `detail, image_name`;
 
 const LIVE_SPECS_QUERY = `spec_type, catalog_name, updated_at, connector_image_name, id`;
@@ -143,9 +148,15 @@ function EntityTable({ noExistingDataContentIds }: Props) {
                     (publication) => {
                         const catalogNamespace: string =
                             publication.catalog_name;
+
                         const dateCreated: string = publication.updated_at;
-                        const connectorImage: string =
-                            publication.connector_image_name;
+
+                        const connectorInfo: ConnectorInfo | undefined =
+                            connectors.find(
+                                (connector) =>
+                                    connector.image_name ===
+                                    publication.connector_image_name
+                            );
 
                         return {
                             metadata: {
@@ -155,8 +166,8 @@ function EntityTable({ noExistingDataContentIds }: Props) {
                                     catalogNamespace.length
                                 ),
                                 catalogNamespace,
-                                connectorType: connectorImage
-                                    ? connectorImage
+                                connectorType: connectorInfo
+                                    ? connectorInfo.detail
                                     : 'Unknown',
                                 dateCreated,
                             },
