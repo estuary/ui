@@ -25,7 +25,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { TABLES } from 'services/supabase';
 import { PostgrestError, useClient } from 'supabase-swr';
 
-enum Statuses {
+enum TableStatuses {
     LOADING = 'LOADING',
     DATA_FETCHED = 'DATA_FETCHED',
     NO_EXISTING_DATA = 'NO_EXISTING_DATA',
@@ -33,14 +33,14 @@ enum Statuses {
     UNMATCHED_FILTER = 'UNMATCHED_FILTER',
 }
 
-type DeploymentStatus = 'ACTIVE' | 'INACTIVE';
+type TableStatus =
+    | TableStatuses.LOADING
+    | TableStatuses.DATA_FETCHED
+    | TableStatuses.NO_EXISTING_DATA
+    | TableStatuses.TECHNICAL_DIFFICULTIES
+    | TableStatuses.UNMATCHED_FILTER;
 
-type Status =
-    | Statuses.LOADING
-    | Statuses.DATA_FETCHED
-    | Statuses.NO_EXISTING_DATA
-    | Statuses.TECHNICAL_DIFFICULTIES
-    | Statuses.UNMATCHED_FILTER;
+type DeploymentStatus = 'ACTIVE' | 'INACTIVE';
 
 type SortDirection = 'asc' | 'desc';
 
@@ -62,7 +62,7 @@ interface Entity {
 }
 
 interface TableState {
-    status: Status;
+    status: TableStatus;
     error?: PostgrestError;
 }
 
@@ -85,7 +85,7 @@ function EntityTable({ noExistingDataContentIds }: Props) {
     const intl = useIntl();
 
     const [tableState, setTableState] = useState<TableState>({
-        status: Statuses.LOADING,
+        status: TableStatuses.LOADING,
     });
 
     const [connectors, setConnectors] = useState<any[] | undefined | null>(
@@ -121,7 +121,7 @@ function EntityTable({ noExistingDataContentIds }: Props) {
 
             if (error) {
                 setTableState({
-                    status: Statuses.TECHNICAL_DIFFICULTIES,
+                    status: TableStatuses.TECHNICAL_DIFFICULTIES,
                     error,
                 });
             } else {
@@ -137,7 +137,7 @@ function EntityTable({ noExistingDataContentIds }: Props) {
 
             if (error) {
                 setTableState({
-                    status: Statuses.TECHNICAL_DIFFICULTIES,
+                    status: TableStatuses.TECHNICAL_DIFFICULTIES,
                     error,
                 });
             } else {
@@ -179,9 +179,9 @@ function EntityTable({ noExistingDataContentIds }: Props) {
                 );
 
                 setUnfilteredEntities(formattedPublication);
-                setTableState({ status: Statuses.DATA_FETCHED });
+                setTableState({ status: TableStatuses.DATA_FETCHED });
             } else {
-                setTableState({ status: Statuses.NO_EXISTING_DATA });
+                setTableState({ status: TableStatuses.NO_EXISTING_DATA });
             }
         }
     }, [publications, connectors]);
@@ -296,24 +296,24 @@ function EntityTable({ noExistingDataContentIds }: Props) {
         }
     };
 
-    const getEmptyTableHeader = (tableStatus: Statuses): string => {
+    const getEmptyTableHeader = (tableStatus: TableStatuses): string => {
         switch (tableStatus) {
-            case Statuses.TECHNICAL_DIFFICULTIES:
+            case TableStatuses.TECHNICAL_DIFFICULTIES:
                 return 'entityTable.technicalDifficulties.header';
-            case Statuses.UNMATCHED_FILTER:
+            case TableStatuses.UNMATCHED_FILTER:
                 return 'entityTable.unmatchedFilter.header';
             default:
                 return noExistingDataContentIds.header;
         }
     };
 
-    const getEmptyTableMessage = (tableStatus: Statuses): JSX.Element => {
+    const getEmptyTableMessage = (tableStatus: TableStatuses): JSX.Element => {
         switch (tableStatus) {
-            case Statuses.TECHNICAL_DIFFICULTIES:
+            case TableStatuses.TECHNICAL_DIFFICULTIES:
                 return (
                     <FormattedMessage id="entityTable.technicalDifficulties.message" />
                 );
-            case Statuses.UNMATCHED_FILTER:
+            case TableStatuses.UNMATCHED_FILTER:
                 return (
                     <FormattedMessage id="entityTable.unmatchedFilter.message" />
                 );
@@ -354,7 +354,7 @@ function EntityTable({ noExistingDataContentIds }: Props) {
                 setFilteredEntities(queriedEntities);
 
                 if (queriedEntities.length === 0) {
-                    setTableState({ status: Statuses.UNMATCHED_FILTER });
+                    setTableState({ status: TableStatuses.UNMATCHED_FILTER });
                 }
             }
         },
@@ -587,7 +587,7 @@ function EntityTable({ noExistingDataContentIds }: Props) {
                                         >
                                             <Box width={485}>
                                                 {tableState.status ===
-                                                Statuses.LOADING ? (
+                                                TableStatuses.LOADING ? (
                                                     <Box>
                                                         <LinearProgress />
                                                     </Box>
