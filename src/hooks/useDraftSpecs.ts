@@ -16,15 +16,13 @@ function useDraftSpecs(draftId: string | null) {
         TABLES.DRAFT_SPECS,
         {
             columns: DRAFT_SPEC_QUERY,
-            filter: (query) => query.eq('draft_id', draftId as string),
+            filter: (query) =>
+                query.eq('draft_id', draftId ? draftId : '_unknown_'),
         },
         [draftId]
     );
 
-    const { data, error, mutate } = useSelect(
-        draftId ? draftSpecQuery : null,
-        {}
-    );
+    const { data, error, mutate } = useSelect(draftSpecQuery, {});
 
     return {
         draftSpecs: data ? data.data : [],

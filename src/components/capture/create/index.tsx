@@ -19,7 +19,6 @@ import { MouseEvent } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { TABLES } from 'services/supabase';
-import { ChangeSetState } from 'stores/ChangeSetStore';
 import useNotificationStore, {
     Notification,
     NotificationState,
@@ -45,7 +44,7 @@ const CONNECTOR_TAG_QUERY = `
 `;
 const FORM_ID = 'newCaptureForm';
 
-// TODO - need to get this styping to work... too many repeated types
+// TODO - need to get this typing to work... too many repeated types
 const selectors = {
     page: {
         captureName: (state: CaptureCreationState) => state.details.data.name,
@@ -70,9 +69,6 @@ const selectors = {
         error: (state: CaptureCreationState) => state.formState.error,
         exitWhenLogsClose: (state: CaptureCreationState) =>
             state.formState.exitWhenLogsClose,
-    },
-    changeSet: {
-        addCapture: (state: ChangeSetState) => state.addCapture,
     },
     notifications: {
         showNotification: (state: NotificationState) => state.showNotification,

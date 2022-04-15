@@ -1,6 +1,8 @@
+import SearchIcon from '@mui/icons-material/Search';
 import {
     Box,
     Button,
+    LinearProgress,
     Table,
     TableBody,
     TableCell,
@@ -10,51 +12,208 @@ import {
     TablePagination,
     TableRow,
     TableSortLabel,
+    TextField,
+    Toolbar,
     Tooltip,
+    Typography,
 } from '@mui/material';
+import { SupabaseClient } from '@supabase/supabase-js';
+import ExternalLink from 'components/shared/ExternalLink';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
-import { MouseEvent, useState } from 'react';
+import { ChangeEvent, MouseEvent, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import {
-    DeploymentStatus,
-    Entity,
-    EntityMetadata,
-} from 'stores/ChangeSetStore';
+import { TABLES } from 'services/supabase';
+import { PostgrestError, useClient } from 'supabase-swr';
+
+enum TableStatuses {
+    LOADING = 'LOADING',
+    DATA_FETCHED = 'DATA_FETCHED',
+    NO_EXISTING_DATA = 'NO_EXISTING_DATA',
+    TECHNICAL_DIFFICULTIES = 'TECHNICAL_DIFFICULTIES',
+    UNMATCHED_FILTER = 'UNMATCHED_FILTER',
+}
+
+type TableStatus =
+    | TableStatuses.LOADING
+    | TableStatuses.DATA_FETCHED
+    | TableStatuses.NO_EXISTING_DATA
+    | TableStatuses.TECHNICAL_DIFFICULTIES
+    | TableStatuses.UNMATCHED_FILTER;
+
+type DeploymentStatus = 'ACTIVE' | 'INACTIVE';
 
 type SortDirection = 'asc' | 'desc';
 
 interface Props {
-    entities: Entity[];
-    updateDeploymentStatus: (
-        key: string,
-        deploymentStatus: DeploymentStatus
-    ) => void;
+    noExistingDataContentIds: {
+        header: string;
+        message: string;
+        docLink: string;
+        docPath: string;
+    };
+}
+
+interface Entity {
+    deploymentStatus: DeploymentStatus;
+    name: string;
+    catalogNamespace: string;
+    connectorType: string;
+    dateCreated: string;
+}
+
+interface TableState {
+    status: TableStatus;
+    error?: PostgrestError;
 }
 
 interface TableColumn {
-    field: keyof EntityMetadata | null;
+    field: keyof Entity | null;
     headerIntlKey: string;
 }
 
-function EntityTable({ entities, updateDeploymentStatus }: Props) {
+interface ConnectorInfo {
+    detail: string;
+    image_name: string;
+}
+
+const CONNECTORS_QUERY = `detail, image_name`;
+
+const LIVE_SPECS_QUERY = `spec_type, catalog_name, updated_at, connector_image_name, id`;
+
+function EntityTable({ noExistingDataContentIds }: Props) {
+    const supabaseClient: SupabaseClient = useClient();
+    const intl = useIntl();
+
+    const [tableState, setTableState] = useState<TableState>({
+        status: TableStatuses.LOADING,
+    });
+
+    const [connectors, setConnectors] = useState<any[] | undefined | null>(
+        null
+    );
+    const [publications, setPublications] = useState<any[] | undefined | null>(
+        null
+    );
+
+    const [unfilteredEntities, setUnfilteredEntities] = useState<
+        Entity[] | null
+    >(null);
+    const [filteredEntities, setFilteredEntities] = useState<Entity[] | null>(
+        null
+    );
+    const [entities, setEntities] = useState<Entity[] | null>(null);
+
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
     const [columnToSort, setColumnToSort] =
-        useState<keyof EntityMetadata>('dateCreated');
+        useState<keyof Entity>('dateCreated');
 
     const [page, setPage] = useState(0);
     const rowsPerPage = 10;
     const rowHeight = 57;
 
-    const entityDetails: EntityMetadata[] = entities.map(
-        (entity) => entity.metadata
-    );
+    useEffect(() => {
+        (async () => {
+            const { data, error } = await supabaseClient
+                .from(TABLES.CONNECTORS)
+                .select(CONNECTORS_QUERY);
+
+            if (error) {
+                setTableState({
+                    status: TableStatuses.TECHNICAL_DIFFICULTIES,
+                    error,
+                });
+            } else {
+                setConnectors(data);
+            }
+        })().catch(() => {});
+
+        (async () => {
+            const { data, error } = await supabaseClient
+                .from(TABLES.LIVE_SPECS)
+                .select(LIVE_SPECS_QUERY)
+                .eq('spec_type', 'capture');
+
+            if (error) {
+                setTableState({
+                    status: TableStatuses.TECHNICAL_DIFFICULTIES,
+                    error,
+                });
+            } else {
+                setPublications(data);
+            }
+        })().catch(() => {});
+    }, [supabaseClient]);
+
+    useEffect(() => {
+        if (publications && connectors) {
+            if (publications.length > 0 && connectors.length > 0) {
+                const formattedPublication: Entity[] = publications.map(
+                    (publication) => {
+                        const catalogNamespace: string =
+                            publication.catalog_name;
+
+                        const dateCreated: string = publication.updated_at;
+
+                        const connectorInfo: ConnectorInfo | undefined =
+                            connectors.find(
+                                (connector) =>
+                                    connector.image_name ===
+                                    publication.connector_image_name
+                            );
+
+                        return {
+                            deploymentStatus: 'ACTIVE',
+                            name: catalogNamespace.substring(
+                                catalogNamespace.lastIndexOf('/') + 1,
+                                catalogNamespace.length
+                            ),
+                            catalogNamespace,
+                            connectorType: connectorInfo
+                                ? connectorInfo.detail
+                                : 'Unknown',
+                            dateCreated,
+                        };
+                    }
+                );
+
+                setUnfilteredEntities(formattedPublication);
+                setTableState({ status: TableStatuses.DATA_FETCHED });
+            } else {
+                setTableState({ status: TableStatuses.NO_EXISTING_DATA });
+            }
+        }
+    }, [publications, connectors]);
+
+    useEffect(() => {
+        const subscription = supabaseClient
+            .from(TABLES.LIVE_SPECS)
+            .on('*', async (payload) => {
+                if (payload.new.spec_type === 'capture') {
+                    setPublications((_publications) =>
+                        _publications
+                            ? [..._publications, payload.new]
+                            : [payload.new]
+                    );
+                }
+            })
+            .subscribe();
+
+        return () => {
+            supabaseClient.removeSubscription(subscription).catch(() => {});
+        };
+    }, [supabaseClient]);
+
+    useEffect(() => {
+        if (filteredEntities || unfilteredEntities) {
+            setEntities(filteredEntities ?? unfilteredEntities);
+        }
+    }, [filteredEntities, unfilteredEntities]);
 
     const emptyRows =
-        page > 0
-            ? Math.max(0, (1 + page) * rowsPerPage - entityDetails.length)
+        entities && page > 0
+            ? Math.max(0, (1 + page) * rowsPerPage - entities.length)
             : 0;
 
-    const intl = useIntl();
     const columns: TableColumn[] = [
         {
             field: 'name',
@@ -116,48 +275,128 @@ function EntityTable({ entities, updateDeploymentStatus }: Props) {
         return stabilizedArray.map((el) => el[0]);
     }
 
-    const getDeploymentStatusHexCode = (status: DeploymentStatus): string => {
-        switch (status) {
+    const getDeploymentStatusHexCode = (
+        deploymentStatus: DeploymentStatus
+    ): string => {
+        switch (deploymentStatus) {
             case 'ACTIVE':
                 return '#40B763';
             case 'INACTIVE':
                 return '#C9393E';
             default:
-                return '#000000';
+                return '#F7F7F7';
+        }
+    };
+
+    const getEmptyTableHeader = (tableStatus: TableStatuses): string => {
+        switch (tableStatus) {
+            case TableStatuses.TECHNICAL_DIFFICULTIES:
+                return 'entityTable.technicalDifficulties.header';
+            case TableStatuses.UNMATCHED_FILTER:
+                return 'entityTable.unmatchedFilter.header';
+            default:
+                return noExistingDataContentIds.header;
+        }
+    };
+
+    const getEmptyTableMessage = (tableStatus: TableStatuses): JSX.Element => {
+        switch (tableStatus) {
+            case TableStatuses.TECHNICAL_DIFFICULTIES:
+                return (
+                    <FormattedMessage id="entityTable.technicalDifficulties.message" />
+                );
+            case TableStatuses.UNMATCHED_FILTER:
+                return (
+                    <FormattedMessage id="entityTable.unmatchedFilter.message" />
+                );
+            default: {
+                const { message, docLink, docPath } = noExistingDataContentIds;
+
+                return (
+                    <FormattedMessage
+                        id={message}
+                        values={{
+                            docLink: (
+                                <ExternalLink
+                                    link={intl.formatMessage({ id: docPath })}
+                                >
+                                    <FormattedMessage id={docLink} />
+                                </ExternalLink>
+                            ),
+                        }}
+                    />
+                );
+            }
         }
     };
 
     const handlers = {
+        filterTable: (
+            event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        ) => {
+            const query = event.target.value;
+
+            if (query === '') {
+                setFilteredEntities(null);
+            } else if (unfilteredEntities) {
+                const queriedEntities: Entity[] = unfilteredEntities.filter(
+                    ({ catalogNamespace }) => catalogNamespace.includes(query)
+                );
+
+                setFilteredEntities(queriedEntities);
+
+                if (queriedEntities.length === 0) {
+                    setTableState({ status: TableStatuses.UNMATCHED_FILTER });
+                }
+            }
+        },
         sortRequest: (
             event: React.MouseEvent<unknown>,
-            column: keyof EntityMetadata
+            column: keyof Entity
         ) => {
             const isAsc = columnToSort === column && sortDirection === 'asc';
 
             setSortDirection(isAsc ? 'desc' : 'asc');
             setColumnToSort(column);
         },
-        sort:
-            (column: keyof EntityMetadata) =>
-            (event: React.MouseEvent<unknown>) => {
-                handlers.sortRequest(event, column);
-            },
-        pageChange: (
+        sort: (column: keyof Entity) => (event: React.MouseEvent<unknown>) => {
+            handlers.sortRequest(event, column);
+        },
+        changePage: (
             event: MouseEvent<HTMLButtonElement> | null,
             newPage: number
         ) => {
             setPage(newPage);
         },
-        deploymentStatusUpdate:
-            (catalogNamespace: string, deploymentStatus: DeploymentStatus) =>
-            () => {
-                updateDeploymentStatus(catalogNamespace, deploymentStatus);
-            },
     };
 
     return (
-        <Box sx={{ mb: 2, mx: 2 }}>
-            {entities.length > 0 ? (
+        <Box>
+            <Box sx={{ mx: 2 }}>
+                <Toolbar
+                    disableGutters
+                    sx={{ mb: 2, justifyContent: 'space-between' }}
+                >
+                    <Typography variant="h6">
+                        <FormattedMessage id="captureTable.header" />
+                    </Typography>
+
+                    <Box
+                        margin={0}
+                        sx={{ display: 'flex', alignItems: 'flex-end' }}
+                    >
+                        <SearchIcon sx={{ mb: 0.9, mr: 0.5, fontSize: 18 }} />
+                        <TextField
+                            id="capture-search-box"
+                            label="Filter Namespaces"
+                            variant="standard"
+                            onChange={handlers.filterTable}
+                        />
+                    </Box>
+                </Toolbar>
+            </Box>
+
+            <Box sx={{ mb: 2, mx: 2 }}>
                 <TableContainer component={Box}>
                     <Table
                         sx={{ minWidth: 350 }}
@@ -182,7 +421,7 @@ function EntityTable({ entities, updateDeploymentStatus }: Props) {
                                                     : false
                                             }
                                         >
-                                            {column.field ? (
+                                            {entities && column.field ? (
                                                 <TableSortLabel
                                                     active={
                                                         columnToSort ===
@@ -214,138 +453,189 @@ function EntityTable({ entities, updateDeploymentStatus }: Props) {
                                 })}
                             </TableRow>
                         </TableHead>
-                        <TableBody>
-                            {stableSort(
-                                entityDetails,
-                                getComparator(sortDirection, columnToSort)
-                            )
-                                .slice(
-                                    page * rowsPerPage,
-                                    page * rowsPerPage + rowsPerPage
-                                )
-                                .map(
-                                    (
-                                        {
-                                            deploymentStatus,
-                                            name,
-                                            catalogNamespace,
-                                            connectorType,
-                                            dateCreated: dateUpdated,
-                                        },
-                                        index
-                                    ) => (
-                                        <TableRow
-                                            key={`Entity-${name}-${index}`}
-                                        >
-                                            <TableCell sx={{ minWidth: 216 }}>
-                                                <Tooltip
-                                                    title={catalogNamespace}
-                                                    placement="bottom-start"
-                                                >
-                                                    <Box>
-                                                        <span
-                                                            style={{
-                                                                height: 16,
-                                                                width: 16,
-                                                                backgroundColor:
-                                                                    getDeploymentStatusHexCode(
-                                                                        deploymentStatus
-                                                                    ),
-                                                                borderRadius: 50,
-                                                                display:
-                                                                    'inline-block',
-                                                                verticalAlign:
-                                                                    'middle',
-                                                                marginRight: 12,
-                                                            }}
-                                                        />
-                                                        <span
-                                                            style={{
-                                                                verticalAlign:
-                                                                    'middle',
-                                                            }}
-                                                        >
-                                                            {name}
-                                                        </span>
-                                                    </Box>
-                                                </Tooltip>
-                                            </TableCell>
-                                            <TableCell>
-                                                {connectorType}
-                                            </TableCell>
-                                            <TableCell>
-                                                {formatDistanceToNow(
-                                                    new Date(dateUpdated),
-                                                    { addSuffix: true }
-                                                )}
-                                            </TableCell>
-                                            <TableCell>
-                                                <Box sx={{ display: 'flex' }}>
-                                                    <Button
-                                                        variant="contained"
-                                                        size="small"
-                                                        disableElevation
-                                                        sx={{ mr: 1 }}
-                                                    >
-                                                        Edit
-                                                    </Button>
 
-                                                    {deploymentStatus ===
-                                                    'ACTIVE' ? (
-                                                        <Button
-                                                            variant="contained"
-                                                            size="small"
-                                                            color="error"
-                                                            disableElevation
-                                                            onClick={handlers.deploymentStatusUpdate(
-                                                                catalogNamespace,
-                                                                'INACTIVE'
-                                                            )}
-                                                        >
-                                                            Stop
-                                                        </Button>
-                                                    ) : (
-                                                        <Button
-                                                            variant="contained"
-                                                            size="small"
-                                                            color="success"
-                                                            disableElevation
-                                                            onClick={handlers.deploymentStatusUpdate(
-                                                                catalogNamespace,
-                                                                'ACTIVE'
-                                                            )}
-                                                        >
-                                                            Run
-                                                        </Button>
-                                                    )}
-                                                </Box>
-                                            </TableCell>
-                                        </TableRow>
+                        <TableBody>
+                            {entities ? (
+                                stableSort(
+                                    entities,
+                                    getComparator(sortDirection, columnToSort)
+                                )
+                                    .slice(
+                                        page * rowsPerPage,
+                                        page * rowsPerPage + rowsPerPage
                                     )
-                                )}
+                                    .map(
+                                        (
+                                            {
+                                                deploymentStatus,
+                                                name,
+                                                catalogNamespace,
+                                                connectorType,
+                                                dateCreated: dateUpdated,
+                                            },
+                                            index
+                                        ) => (
+                                            <TableRow
+                                                key={`Entity-${name}-${index}`}
+                                            >
+                                                <TableCell
+                                                    sx={{ minWidth: 256 }}
+                                                >
+                                                    <Tooltip
+                                                        title={catalogNamespace}
+                                                        placement="bottom-start"
+                                                    >
+                                                        <Box>
+                                                            <span
+                                                                style={{
+                                                                    height: 16,
+                                                                    width: 16,
+                                                                    backgroundColor:
+                                                                        getDeploymentStatusHexCode(
+                                                                            deploymentStatus
+                                                                        ),
+                                                                    borderRadius: 50,
+                                                                    display:
+                                                                        'inline-block',
+                                                                    verticalAlign:
+                                                                        'middle',
+                                                                    marginRight: 12,
+                                                                }}
+                                                            />
+                                                            <span
+                                                                style={{
+                                                                    verticalAlign:
+                                                                        'middle',
+                                                                }}
+                                                            >
+                                                                {name}
+                                                            </span>
+                                                        </Box>
+                                                    </Tooltip>
+                                                </TableCell>
+
+                                                <TableCell
+                                                    sx={{ minWidth: 256 }}
+                                                >
+                                                    {connectorType}
+                                                </TableCell>
+
+                                                <TableCell>
+                                                    {formatDistanceToNow(
+                                                        new Date(dateUpdated),
+                                                        {
+                                                            addSuffix: true,
+                                                        }
+                                                    )}
+                                                </TableCell>
+
+                                                <TableCell>
+                                                    <Box
+                                                        sx={{
+                                                            display: 'flex',
+                                                        }}
+                                                    >
+                                                        <Button
+                                                            variant="contained"
+                                                            size="small"
+                                                            disableElevation
+                                                            disabled
+                                                            sx={{ mr: 1 }}
+                                                        >
+                                                            Edit
+                                                        </Button>
+
+                                                        <Button
+                                                            variant="contained"
+                                                            size="small"
+                                                            color={
+                                                                deploymentStatus ===
+                                                                'ACTIVE'
+                                                                    ? 'error'
+                                                                    : 'success'
+                                                            }
+                                                            disableElevation
+                                                            disabled
+                                                        >
+                                                            {deploymentStatus ===
+                                                            'ACTIVE'
+                                                                ? 'Stop'
+                                                                : 'Run'}
+                                                        </Button>
+                                                    </Box>
+                                                </TableCell>
+                                            </TableRow>
+                                        )
+                                    )
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={4}>
+                                        <Box
+                                            sx={{
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                                py: 4,
+                                            }}
+                                        >
+                                            <Box width={485}>
+                                                {tableState.status ===
+                                                TableStatuses.LOADING ? (
+                                                    <Box>
+                                                        <LinearProgress />
+                                                    </Box>
+                                                ) : (
+                                                    <>
+                                                        <Typography
+                                                            variant="h6"
+                                                            align="center"
+                                                            sx={{ mb: 2 }}
+                                                        >
+                                                            <FormattedMessage
+                                                                id={getEmptyTableHeader(
+                                                                    tableState.status
+                                                                )}
+                                                            />
+                                                        </Typography>
+                                                        <Typography>
+                                                            {getEmptyTableMessage(
+                                                                tableState.status
+                                                            )}
+                                                        </Typography>{' '}
+                                                    </>
+                                                )}
+                                            </Box>
+                                        </Box>
+                                    </TableCell>
+                                </TableRow>
+                            )}
                             {emptyRows > 0 && (
                                 <TableRow>
                                     <TableCell
                                         colSpan={4}
-                                        sx={{ height: rowHeight * emptyRows }}
+                                        sx={{
+                                            height: rowHeight * emptyRows,
+                                        }}
                                     />
                                 </TableRow>
                             )}
                         </TableBody>
-                        <TableFooter>
-                            <TableRow>
-                                <TablePagination
-                                    rowsPerPageOptions={[rowsPerPage]}
-                                    count={entities.length}
-                                    rowsPerPage={rowsPerPage}
-                                    page={page}
-                                    onPageChange={handlers.pageChange}
-                                />
-                            </TableRow>
-                        </TableFooter>
+
+                        {entities && (
+                            <TableFooter>
+                                <TableRow>
+                                    <TablePagination
+                                        rowsPerPageOptions={[rowsPerPage]}
+                                        count={entities.length}
+                                        rowsPerPage={rowsPerPage}
+                                        page={page}
+                                        onPageChange={handlers.changePage}
+                                    />
+                                </TableRow>
+                            </TableFooter>
+                        )}
                     </Table>
                 </TableContainer>
-            ) : null}
+            </Box>
         </Box>
     );
 }
