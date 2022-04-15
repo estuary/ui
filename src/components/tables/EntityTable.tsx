@@ -68,7 +68,7 @@ interface TableColumn {
 
 const CONNECTORS_QUERY = `detail, image_name`;
 
-const LIVE_SPECS_QUERY = `spec_type, catalog_name, updated_at, connector_image_name, detail`;
+const LIVE_SPECS_QUERY = `spec_type, catalog_name, updated_at, connector_image_name, id`;
 
 function EntityTable({ noExistingDataContentIds }: Props) {
     const supabaseClient: SupabaseClient = useClient();
@@ -118,7 +118,10 @@ function EntityTable({ noExistingDataContentIds }: Props) {
     const getInitialPublications = async () => {
         const { data, error } = await supabaseClient
             .from(TABLES.LIVE_SPECS)
-            .select(LIVE_SPECS_QUERY);
+            .select(LIVE_SPECS_QUERY)
+            .eq('spec_type', 'capture');
+
+        console.log(data);
 
         if (error) {
             setTableState({ status: Statuses.TECHNICAL_DIFFICULTIES, error });
