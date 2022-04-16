@@ -95,8 +95,7 @@
         "flow_deps"
     ],
     "jest": {
-        "resetMocks": false,
-        "testTimeout": 3000
+        "resetMocks": false
     },
     "repository": {
         "type": "git",
