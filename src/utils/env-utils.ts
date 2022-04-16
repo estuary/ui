@@ -30,3 +30,13 @@ export const getLoginSettings = () => {
         showGoogle,
     };
 };
+
+export const getSWRSettings = () => {
+    const logCache = process.env.REACT_APP_SWR_LOG_CACHE === 'true';
+    const logRequests = process.env.REACT_APP_SWR_LOG_REQUESTS === 'true';
+
+    return {
+        logCache,
+        logRequests,
+    };
+};

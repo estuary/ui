@@ -1,5 +1,8 @@
 import { SWRConfig } from 'swr';
 import { BaseComponentProps } from 'types';
+import { getSWRSettings } from 'utils/env-utils';
+
+const swrSettings = getSWRSettings();
 
 const middleware = {
     cache: () => {
@@ -49,7 +52,7 @@ const middleware = {
     logger:
         process.env.NODE_ENV === 'production'
             ? (fn: any) => fn
-            : process.env.REACT_APP_SWR_LOG_REQUESTS === 'true'
+            : swrSettings.logRequests
             ? (useSWRNext: any) => {
                   return (key: any, fetcher: any, config: any) => {
                       // Add logger to the original fetcher.
@@ -70,7 +73,7 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
         provider:
             process.env.NODE_ENV === 'production'
                 ? undefined
-                : process.env.REACT_APP_SWR_LOG_CACHE === 'true'
+                : swrSettings.logCache
                 ? middleware.cache
                 : undefined,
         use: [middleware.logger],
