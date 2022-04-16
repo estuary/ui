@@ -23,7 +23,7 @@ import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import { useQuery, useSelect } from 'hooks/supabase-swr';
 import { debounce } from 'lodash';
 import { ChangeEvent, MouseEvent, useEffect, useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
 import { TABLES } from 'services/supabase';
 
 enum TableStatuses {
@@ -391,14 +391,33 @@ function EntityTable({ noExistingDataContentIds }: Props) {
                                         </TableCell>
 
                                         <TableCell>
-                                            {formatDistanceToNow(
-                                                new Date(
-                                                    publication.updated_at
-                                                ),
-                                                {
-                                                    addSuffix: true,
+                                            <Tooltip
+                                                title={
+                                                    <FormattedDate
+                                                        day="numeric"
+                                                        month="long"
+                                                        year="numeric"
+                                                        hour="2-digit"
+                                                        minute="2-digit"
+                                                        second="2-digit"
+                                                        value={
+                                                            publication.updated_at
+                                                        }
+                                                    />
                                                 }
-                                            )}
+                                                placement="bottom-start"
+                                            >
+                                                <Box>
+                                                    {formatDistanceToNow(
+                                                        new Date(
+                                                            publication.updated_at
+                                                        ),
+                                                        {
+                                                            addSuffix: true,
+                                                        }
+                                                    )}
+                                                </Box>
+                                            </Tooltip>
                                         </TableCell>
 
                                         <TableCell>
