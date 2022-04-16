@@ -397,9 +397,10 @@ function EntityTable({ noExistingDataContentIds }: Props) {
                                                         day="numeric"
                                                         month="long"
                                                         year="numeric"
-                                                        hour="2-digit"
-                                                        minute="2-digit"
-                                                        second="2-digit"
+                                                        hour="numeric"
+                                                        minute="numeric"
+                                                        second="numeric"
+                                                        timeZoneName="short"
                                                         value={
                                                             publication.updated_at
                                                         }
