@@ -96,10 +96,7 @@
     ],
     "jest": {
         "resetMocks": false,
-        "testTimeout": 10000,
-        "moduleNameMapper": {
-            "supabase-swr": "<rootDir>/node_modules/supabase-swr/dist/index.umd.js"
-        }
+        "testTimeout": 3000
     },
     "repository": {
         "type": "git",
