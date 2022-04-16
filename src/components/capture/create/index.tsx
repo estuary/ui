@@ -97,10 +97,8 @@ function CaptureCreation() {
         },
         []
     );
-    const { data: connectorTags, error: connectorTagsError } = useSelect(
-        tagsQuery,
-        {}
-    );
+    const { data: connectorTags, error: connectorTagsError } =
+        useSelect(tagsQuery);
     const hasConnectors = connectorTags && connectorTags.data.length > 0;
 
     // Notification store

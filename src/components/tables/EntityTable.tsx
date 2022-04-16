@@ -79,7 +79,7 @@ const LIVE_SPECS_QUERY = `
     connector_image_name, 
     id`;
 
-const rowsPerPage = 10;
+const rowsPerPage = 5;
 const rowHeight = 57;
 
 const stripPathing = (stringVal: string) => {
@@ -89,6 +89,14 @@ const stripPathing = (stringVal: string) => {
     );
 };
 
+const getPagination = (currPage: number, size: number) => {
+    const limit = size;
+    const from = currPage ? currPage * limit : 0;
+    const to = currPage ? from + size : size - 1;
+
+    return { from, to };
+};
+
 function EntityTable({ noExistingDataContentIds }: Props) {
     const [searchQuery, setSearchQuery] = useState<string | null>(null);
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
@@ -96,21 +104,19 @@ function EntityTable({ noExistingDataContentIds }: Props) {
         useState<keyof LiveSpecQuery>('updated_at');
 
     const [page, setPage] = useState(0);
+    const [pagination, setPagination] = useState<{ from: number; to: number }>(
+        getPagination(page, rowsPerPage)
+    );
 
     const liveSpecQuery = useQuery<LiveSpecQuery>(
         TABLES.LIVE_SPECS,
         {
             columns: LIVE_SPECS_QUERY,
+            count: 'exact',
             filter: (query) => {
                 let queryBuilder = query;
 
-                console.log('filtering', {
-                    searchQuery,
-                    columnToSort,
-                    sortDirection,
-                });
-
-                // TODO:supabase Change to text search? https://supabase.com/docs/reference/javascript/textsearch
+                // TODO (supabase) Change to text search? https://supabase.com/docs/reference/javascript/textsearch
                 if (searchQuery) {
                     queryBuilder = queryBuilder.like(
                         'catalog_name',
@@ -122,12 +128,13 @@ function EntityTable({ noExistingDataContentIds }: Props) {
                     .order(columnToSort, {
                         ascending: sortDirection === 'asc',
                     })
+                    .range(pagination.from, pagination.to)
                     .eq('spec_type', 'capture');
             },
         },
-        [sortDirection, columnToSort, searchQuery]
+        [sortDirection, columnToSort, searchQuery, rowsPerPage, pagination]
     );
-    const { data: liveSpecs, isValidating } = useSelect(liveSpecQuery, {});
+    const { data: liveSpecs, isValidating } = useSelect(liveSpecQuery);
     const publications = liveSpecs ? liveSpecs.data : null;
 
     const intl = useIntl();
@@ -144,10 +151,9 @@ function EntityTable({ noExistingDataContentIds }: Props) {
         }
     }, [publications, isValidating]);
 
-    const emptyRows =
-        publications && page > 0
-            ? Math.max(0, (1 + page) * rowsPerPage - publications.length)
-            : 0;
+    const emptyRows = publications
+        ? Math.max(0, (1 + page) * rowsPerPage - publications.length)
+        : rowsPerPage;
 
     const columns: TableColumn[] = [
         {
@@ -249,6 +255,7 @@ function EntityTable({ noExistingDataContentIds }: Props) {
             event: MouseEvent<HTMLButtonElement> | null,
             newPage: number
         ) => {
+            setPagination(getPagination(newPage, rowsPerPage));
             setPage(newPage);
         },
     };
@@ -477,12 +484,12 @@ function EntityTable({ noExistingDataContentIds }: Props) {
                             )}
                         </TableBody>
 
-                        {publications && (
+                        {publications && liveSpecs?.count && (
                             <TableFooter>
                                 <TableRow>
                                     <TablePagination
                                         rowsPerPageOptions={[rowsPerPage]}
-                                        count={publications.length}
+                                        count={liveSpecs.count}
                                         rowsPerPage={rowsPerPage}
                                         page={page}
                                         onPageChange={handlers.changePage}

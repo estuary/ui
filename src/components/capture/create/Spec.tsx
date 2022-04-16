@@ -36,7 +36,7 @@ function NewCaptureSpec({ connectorImage }: Props) {
         },
         [connectorImage]
     );
-    const { data: connector, error } = useSelectSingle(tagsQuery, {});
+    const { data: connector, error } = useSelectSingle(tagsQuery);
 
     if (error) {
         return <Error error={error} />;

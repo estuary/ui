@@ -44,7 +44,7 @@ function ConnectorsTable() {
         },
         []
     );
-    const { data: tags, error, isValidating } = useSelect(tagsQuery, {});
+    const { data: tags, error, isValidating } = useSelect(tagsQuery);
 
     const intl = useIntl();
 
