@@ -1,5 +1,5 @@
+import { SwrSupabaseContext } from 'hooks/supabase-swr';
 import { supabaseClient } from 'services/supabase';
-import { SwrSupabaseContext } from 'supabase-swr';
 import { BaseComponentProps } from 'types';
 
 const ClientProvider = ({ children }: BaseComponentProps) => {

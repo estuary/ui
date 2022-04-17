@@ -46,7 +46,7 @@
         "react-router-dom": "^6.3.0",
         "react-use": "^17.3.2",
         "serve": "^13.0.2",
-        "supabase-swr": "^1.0.0-alpha.4",
+        "swr": "^1.3.0",
         "use-immer": "^0.6.0",
         "zustand": "^3.7.0"
     },
@@ -95,11 +95,7 @@
         "flow_deps"
     ],
     "jest": {
-        "resetMocks": false,
-        "testTimeout": 10000,
-        "moduleNameMapper": {
-            "supabase-swr": "<rootDir>/node_modules/supabase-swr/dist/index.umd.js"
-        }
+        "resetMocks": false
     },
     "repository": {
         "type": "git",

@@ -2,8 +2,8 @@ import { Divider, Paper, Typography } from '@mui/material';
 import NewCaptureSpecForm from 'components/capture/create/SpecForm';
 import NewCaptureSpecFormHeader from 'components/capture/create/SpecFormHeader';
 import Error from 'components/shared/Error';
+import { useQuery, useSelectSingle } from 'hooks/supabase-swr';
 import { TABLES } from 'services/supabase';
-import { useQuery, useSelectSingle } from 'supabase-swr';
 
 interface ConnectorTag {
     connectors: {
@@ -36,7 +36,7 @@ function NewCaptureSpec({ connectorImage }: Props) {
         },
         [connectorImage]
     );
-    const { data: connector, error } = useSelectSingle(tagsQuery, {});
+    const { data: connector, error } = useSelectSingle(tagsQuery);
 
     if (error) {
         return <Error error={error} />;

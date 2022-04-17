@@ -17,13 +17,14 @@ import {
     Tooltip,
     Typography,
 } from '@mui/material';
-import { SupabaseClient } from '@supabase/supabase-js';
+import { PostgrestError } from '@supabase/supabase-js';
 import ExternalLink from 'components/shared/ExternalLink';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
+import { useQuery, useSelect } from 'hooks/supabase-swr';
+import { debounce } from 'lodash';
 import { ChangeEvent, MouseEvent, useEffect, useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
 import { TABLES } from 'services/supabase';
-import { PostgrestError, useClient } from 'supabase-swr';
 
 enum TableStatuses {
     LOADING = 'LOADING',
@@ -53,178 +54,118 @@ interface Props {
     };
 }
 
-interface Entity {
-    deploymentStatus: DeploymentStatus;
-    name: string;
-    catalogNamespace: string;
-    connectorType: string;
-    dateCreated: string;
-}
-
 interface TableState {
     status: TableStatus;
     error?: PostgrestError;
 }
 
+interface LiveSpecQuery {
+    spec_type: string;
+    catalog_name: string;
+    updated_at: string;
+    connector_image_name: string;
+    id: string;
+}
+
 interface TableColumn {
-    field: keyof Entity | null;
+    field: keyof LiveSpecQuery | null;
     headerIntlKey: string;
 }
 
-interface ConnectorInfo {
-    detail: string;
-    image_name: string;
-}
+const LIVE_SPECS_QUERY = `
+    spec_type, 
+    catalog_name, 
+    updated_at, 
+    connector_image_name, 
+    id`;
 
-const CONNECTORS_QUERY = `detail, image_name`;
+const rowsPerPage = 5;
+const rowHeight = 57;
 
-const LIVE_SPECS_QUERY = `spec_type, catalog_name, updated_at, connector_image_name, id`;
+const stripPathing = (stringVal: string) => {
+    return stringVal.substring(
+        stringVal.lastIndexOf('/') + 1,
+        stringVal.length
+    );
+};
+
+const getPagination = (currPage: number, size: number) => {
+    const limit = size;
+    const from = currPage ? currPage * limit : 0;
+    const to = currPage ? from + size : size - 1;
+
+    return { from, to };
+};
 
 function EntityTable({ noExistingDataContentIds }: Props) {
-    const supabaseClient: SupabaseClient = useClient();
+    const [searchQuery, setSearchQuery] = useState<string | null>(null);
+    const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+    const [columnToSort, setColumnToSort] =
+        useState<keyof LiveSpecQuery>('updated_at');
+
+    const [page, setPage] = useState(0);
+    const [pagination, setPagination] = useState<{ from: number; to: number }>(
+        getPagination(page, rowsPerPage)
+    );
+
+    const liveSpecQuery = useQuery<LiveSpecQuery>(
+        TABLES.LIVE_SPECS,
+        {
+            columns: LIVE_SPECS_QUERY,
+            count: 'exact',
+            filter: (query) => {
+                let queryBuilder = query;
+
+                // TODO (supabase) Change to text search? https://supabase.com/docs/reference/javascript/textsearch
+                if (searchQuery) {
+                    queryBuilder = queryBuilder.like(
+                        'catalog_name',
+                        `%${searchQuery}%`
+                    );
+                }
+
+                return queryBuilder
+                    .order(columnToSort, {
+                        ascending: sortDirection === 'asc',
+                    })
+                    .range(pagination.from, pagination.to)
+                    .eq('spec_type', 'capture');
+            },
+        },
+        [sortDirection, columnToSort, searchQuery, rowsPerPage, pagination]
+    );
+    const { data: liveSpecs, isValidating } = useSelect(liveSpecQuery);
+    const publications = liveSpecs ? liveSpecs.data : null;
+
     const intl = useIntl();
 
     const [tableState, setTableState] = useState<TableState>({
         status: TableStatuses.LOADING,
     });
 
-    const [connectors, setConnectors] = useState<any[] | undefined | null>(
-        null
-    );
-    const [publications, setPublications] = useState<any[] | undefined | null>(
-        null
-    );
-
-    const [unfilteredEntities, setUnfilteredEntities] = useState<
-        Entity[] | null
-    >(null);
-    const [filteredEntities, setFilteredEntities] = useState<Entity[] | null>(
-        null
-    );
-    const [entities, setEntities] = useState<Entity[] | null>(null);
-
-    const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
-    const [columnToSort, setColumnToSort] =
-        useState<keyof Entity>('dateCreated');
-
-    const [page, setPage] = useState(0);
-    const rowsPerPage = 10;
-    const rowHeight = 57;
-
     useEffect(() => {
-        (async () => {
-            const { data, error } = await supabaseClient
-                .from(TABLES.CONNECTORS)
-                .select(CONNECTORS_QUERY);
-
-            if (error) {
-                setTableState({
-                    status: TableStatuses.TECHNICAL_DIFFICULTIES,
-                    error,
-                });
-            } else {
-                setConnectors(data);
-            }
-        })().catch(() => {});
-
-        (async () => {
-            const { data, error } = await supabaseClient
-                .from(TABLES.LIVE_SPECS)
-                .select(LIVE_SPECS_QUERY)
-                .eq('spec_type', 'capture');
-
-            if (error) {
-                setTableState({
-                    status: TableStatuses.TECHNICAL_DIFFICULTIES,
-                    error,
-                });
-            } else {
-                setPublications(data);
-            }
-        })().catch(() => {});
-    }, [supabaseClient]);
-
-    useEffect(() => {
-        if (publications && connectors) {
-            if (publications.length > 0 && connectors.length > 0) {
-                const formattedPublication: Entity[] = publications.map(
-                    (publication) => {
-                        const catalogNamespace: string =
-                            publication.catalog_name;
-
-                        const dateCreated: string = publication.updated_at;
-
-                        const connectorInfo: ConnectorInfo | undefined =
-                            connectors.find(
-                                (connector) =>
-                                    connector.image_name ===
-                                    publication.connector_image_name
-                            );
-
-                        return {
-                            deploymentStatus: 'ACTIVE',
-                            name: catalogNamespace.substring(
-                                catalogNamespace.lastIndexOf('/') + 1,
-                                catalogNamespace.length
-                            ),
-                            catalogNamespace,
-                            connectorType: connectorInfo
-                                ? connectorInfo.detail
-                                : 'Unknown',
-                            dateCreated,
-                        };
-                    }
-                );
-
-                setUnfilteredEntities(formattedPublication);
-                setTableState({ status: TableStatuses.DATA_FETCHED });
-            } else {
-                setTableState({ status: TableStatuses.NO_EXISTING_DATA });
-            }
+        if (publications && publications.length > 0) {
+            setTableState({ status: TableStatuses.DATA_FETCHED });
+        } else {
+            setTableState({ status: TableStatuses.NO_EXISTING_DATA });
         }
-    }, [publications, connectors]);
+    }, [publications, isValidating]);
 
-    useEffect(() => {
-        const subscription = supabaseClient
-            .from(TABLES.LIVE_SPECS)
-            .on('*', async (payload) => {
-                if (payload.new.spec_type === 'capture') {
-                    setPublications((_publications) =>
-                        _publications
-                            ? [..._publications, payload.new]
-                            : [payload.new]
-                    );
-                }
-            })
-            .subscribe();
-
-        return () => {
-            supabaseClient.removeSubscription(subscription).catch(() => {});
-        };
-    }, [supabaseClient]);
-
-    useEffect(() => {
-        if (filteredEntities || unfilteredEntities) {
-            setEntities(filteredEntities ?? unfilteredEntities);
-        }
-    }, [filteredEntities, unfilteredEntities]);
-
-    const emptyRows =
-        entities && page > 0
-            ? Math.max(0, (1 + page) * rowsPerPage - entities.length)
-            : 0;
+    const emptyRows = publications
+        ? Math.max(0, (1 + page) * rowsPerPage - publications.length)
+        : rowsPerPage;
 
     const columns: TableColumn[] = [
         {
-            field: 'name',
+            field: 'catalog_name',
             headerIntlKey: 'entityTable.data.entity',
         },
         {
-            field: 'connectorType',
+            field: 'connector_image_name',
             headerIntlKey: 'entityTable.data.connectorType',
         },
         {
-            field: 'dateCreated',
+            field: 'updated_at',
             headerIntlKey: 'entityTable.data.lastUpdated',
         },
         {
@@ -232,48 +173,6 @@ function EntityTable({ noExistingDataContentIds }: Props) {
             headerIntlKey: 'entityTable.data.actions',
         },
     ];
-
-    function descendingComparator<T>(a: T, b: T, selectedColumn: keyof T) {
-        if (b[selectedColumn] < a[selectedColumn]) {
-            return -1;
-        }
-        if (b[selectedColumn] > a[selectedColumn]) {
-            return 1;
-        }
-        return 0;
-    }
-
-    function getComparator<Key extends keyof any>(
-        direction: SortDirection,
-        selectedColumn: Key
-    ): (
-        a: { [key in Key]: number | string },
-        b: { [key in Key]: number | string }
-    ) => number {
-        return direction === 'desc'
-            ? (a, b) => descendingComparator(a, b, selectedColumn)
-            : (a, b) => -descendingComparator(a, b, selectedColumn);
-    }
-
-    // This method is created for cross-browser compatibility, if you don't
-    // need to support IE11, you can use Array.prototype.sort() directly.
-    function stableSort<T>(
-        array: readonly T[],
-        comparator: (a: T, b: T) => number
-    ) {
-        const stabilizedArray = array.map(
-            (el, index) => [el, index] as [T, number]
-        );
-        stabilizedArray.sort((a, b) => {
-            const order = comparator(a[0], b[0]);
-
-            if (order !== 0) {
-                return order;
-            }
-            return a[1] - b[1];
-        });
-        return stabilizedArray.map((el) => el[0]);
-    }
 
     const getDeploymentStatusHexCode = (
         deploymentStatus: DeploymentStatus
@@ -331,41 +230,32 @@ function EntityTable({ noExistingDataContentIds }: Props) {
     };
 
     const handlers = {
-        filterTable: (
-            event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-        ) => {
-            const query = event.target.value;
-
-            if (query === '') {
-                setFilteredEntities(null);
-            } else if (unfilteredEntities) {
-                const queriedEntities: Entity[] = unfilteredEntities.filter(
-                    ({ catalogNamespace }) => catalogNamespace.includes(query)
-                );
-
-                setFilteredEntities(queriedEntities);
-
-                if (queriedEntities.length === 0) {
-                    setTableState({ status: TableStatuses.UNMATCHED_FILTER });
-                }
-            }
-        },
+        filterTable: debounce(
+            (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+                const query = event.target.value;
+                setSearchQuery(query && query.length > 0 ? query : null);
+            },
+            750
+        ),
         sortRequest: (
             event: React.MouseEvent<unknown>,
-            column: keyof Entity
+            column: keyof LiveSpecQuery
         ) => {
             const isAsc = columnToSort === column && sortDirection === 'asc';
 
             setSortDirection(isAsc ? 'desc' : 'asc');
             setColumnToSort(column);
         },
-        sort: (column: keyof Entity) => (event: React.MouseEvent<unknown>) => {
-            handlers.sortRequest(event, column);
-        },
+        sort:
+            (column: keyof LiveSpecQuery) =>
+            (event: React.MouseEvent<unknown>) => {
+                handlers.sortRequest(event, column);
+            },
         changePage: (
             event: MouseEvent<HTMLButtonElement> | null,
             newPage: number
         ) => {
+            setPagination(getPagination(newPage, rowsPerPage));
             setPage(newPage);
         },
     };
@@ -421,7 +311,7 @@ function EntityTable({ noExistingDataContentIds }: Props) {
                                                     : false
                                             }
                                         >
-                                            {entities && column.field ? (
+                                            {publications && column.field ? (
                                                 <TableSortLabel
                                                     active={
                                                         columnToSort ===
@@ -455,118 +345,111 @@ function EntityTable({ noExistingDataContentIds }: Props) {
                         </TableHead>
 
                         <TableBody>
-                            {entities ? (
-                                stableSort(
-                                    entities,
-                                    getComparator(sortDirection, columnToSort)
-                                )
-                                    .slice(
-                                        page * rowsPerPage,
-                                        page * rowsPerPage + rowsPerPage
-                                    )
-                                    .map(
-                                        (
-                                            {
-                                                deploymentStatus,
-                                                name,
-                                                catalogNamespace,
-                                                connectorType,
-                                                dateCreated: dateUpdated,
-                                            },
-                                            index
-                                        ) => (
-                                            <TableRow
-                                                key={`Entity-${name}-${index}`}
+                            {publications ? (
+                                publications.map((publication) => (
+                                    <TableRow key={`Entity-${publication.id}`}>
+                                        <TableCell sx={{ minWidth: 256 }}>
+                                            <Tooltip
+                                                title={publication.catalog_name}
+                                                placement="bottom-start"
                                             >
-                                                <TableCell
-                                                    sx={{ minWidth: 256 }}
-                                                >
-                                                    <Tooltip
-                                                        title={catalogNamespace}
-                                                        placement="bottom-start"
+                                                <Box>
+                                                    <span
+                                                        style={{
+                                                            height: 16,
+                                                            width: 16,
+                                                            backgroundColor:
+                                                                getDeploymentStatusHexCode(
+                                                                    'ACTIVE'
+                                                                ),
+                                                            borderRadius: 50,
+                                                            display:
+                                                                'inline-block',
+                                                            verticalAlign:
+                                                                'middle',
+                                                            marginRight: 12,
+                                                        }}
+                                                    />
+                                                    <span
+                                                        style={{
+                                                            verticalAlign:
+                                                                'middle',
+                                                        }}
                                                     >
-                                                        <Box>
-                                                            <span
-                                                                style={{
-                                                                    height: 16,
-                                                                    width: 16,
-                                                                    backgroundColor:
-                                                                        getDeploymentStatusHexCode(
-                                                                            deploymentStatus
-                                                                        ),
-                                                                    borderRadius: 50,
-                                                                    display:
-                                                                        'inline-block',
-                                                                    verticalAlign:
-                                                                        'middle',
-                                                                    marginRight: 12,
-                                                                }}
-                                                            />
-                                                            <span
-                                                                style={{
-                                                                    verticalAlign:
-                                                                        'middle',
-                                                                }}
-                                                            >
-                                                                {name}
-                                                            </span>
-                                                        </Box>
-                                                    </Tooltip>
-                                                </TableCell>
+                                                        {stripPathing(
+                                                            publication.catalog_name
+                                                        )}
+                                                    </span>
+                                                </Box>
+                                            </Tooltip>
+                                        </TableCell>
 
-                                                <TableCell
-                                                    sx={{ minWidth: 256 }}
-                                                >
-                                                    {connectorType}
-                                                </TableCell>
+                                        <TableCell sx={{ minWidth: 256 }}>
+                                            {stripPathing(
+                                                publication.connector_image_name
+                                            )}
+                                        </TableCell>
 
-                                                <TableCell>
+                                        <TableCell>
+                                            <Tooltip
+                                                title={
+                                                    <FormattedDate
+                                                        day="numeric"
+                                                        month="long"
+                                                        year="numeric"
+                                                        hour="numeric"
+                                                        minute="numeric"
+                                                        second="numeric"
+                                                        timeZoneName="short"
+                                                        value={
+                                                            publication.updated_at
+                                                        }
+                                                    />
+                                                }
+                                                placement="bottom-start"
+                                            >
+                                                <Box>
                                                     {formatDistanceToNow(
-                                                        new Date(dateUpdated),
+                                                        new Date(
+                                                            publication.updated_at
+                                                        ),
                                                         {
                                                             addSuffix: true,
                                                         }
                                                     )}
-                                                </TableCell>
+                                                </Box>
+                                            </Tooltip>
+                                        </TableCell>
 
-                                                <TableCell>
-                                                    <Box
-                                                        sx={{
-                                                            display: 'flex',
-                                                        }}
-                                                    >
-                                                        <Button
-                                                            variant="contained"
-                                                            size="small"
-                                                            disableElevation
-                                                            disabled
-                                                            sx={{ mr: 1 }}
-                                                        >
-                                                            Edit
-                                                        </Button>
+                                        <TableCell>
+                                            <Box
+                                                sx={{
+                                                    display: 'flex',
+                                                }}
+                                            >
+                                                <Button
+                                                    variant="contained"
+                                                    size="small"
+                                                    disableElevation
+                                                    disabled
+                                                    sx={{ mr: 1 }}
+                                                >
+                                                    Edit
+                                                </Button>
 
-                                                        <Button
-                                                            variant="contained"
-                                                            size="small"
-                                                            color={
-                                                                deploymentStatus ===
-                                                                'ACTIVE'
-                                                                    ? 'error'
-                                                                    : 'success'
-                                                            }
-                                                            disableElevation
-                                                            disabled
-                                                        >
-                                                            {deploymentStatus ===
-                                                            'ACTIVE'
-                                                                ? 'Stop'
-                                                                : 'Run'}
-                                                        </Button>
-                                                    </Box>
-                                                </TableCell>
-                                            </TableRow>
-                                        )
-                                    )
+                                                <Button
+                                                    variant="contained"
+                                                    size="small"
+                                                    color="success"
+                                                    disableElevation
+                                                    disabled
+                                                >
+                                                    Stop
+                                                </Button>
+                                            </Box>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
                             ) : (
                                 <TableRow>
                                     <TableCell colSpan={4}>
@@ -578,8 +461,9 @@ function EntityTable({ noExistingDataContentIds }: Props) {
                                             }}
                                         >
                                             <Box width={485}>
-                                                {tableState.status ===
-                                                TableStatuses.LOADING ? (
+                                                {isValidating ||
+                                                tableState.status ===
+                                                    TableStatuses.LOADING ? (
                                                     <Box>
                                                         <LinearProgress />
                                                     </Box>
@@ -620,12 +504,12 @@ function EntityTable({ noExistingDataContentIds }: Props) {
                             )}
                         </TableBody>
 
-                        {entities && (
+                        {publications && liveSpecs?.count && (
                             <TableFooter>
                                 <TableRow>
                                     <TablePagination
                                         rowsPerPageOptions={[rowsPerPage]}
-                                        count={entities.length}
+                                        count={liveSpecs.count}
                                         rowsPerPage={rowsPerPage}
                                         page={page}
                                         onPageChange={handlers.changePage}

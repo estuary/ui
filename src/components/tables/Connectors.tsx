@@ -9,9 +9,9 @@ import {
     Typography,
 } from '@mui/material';
 import Error from 'components/shared/Error';
+import { useQuery, useSelect } from 'hooks/supabase-swr';
 import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
 import { TABLES } from 'services/supabase';
-import { useQuery, useSelect } from 'supabase-swr';
 
 interface ConnectorTag {
     connectors: {
@@ -44,7 +44,7 @@ function ConnectorsTable() {
         },
         []
     );
-    const { data: tags, error, isValidating } = useSelect(tagsQuery, {});
+    const { data: tags, error, isValidating } = useSelect(tagsQuery);
 
     const intl = useIntl();
 

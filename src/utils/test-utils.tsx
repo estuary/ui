@@ -9,10 +9,10 @@ import userEvent from '@testing-library/user-event';
 import AppContent from 'context/Content';
 import AppRouter from 'context/Router';
 import ThemeProvider from 'context/Theme';
+import { SwrSupabaseContext } from 'hooks/supabase-swr';
 import produce from 'immer';
 import { mockDeep } from 'jest-mock-extended';
 import { ReactElement } from 'react';
-import { SwrSupabaseContext } from 'supabase-swr';
 
 const goTo = (route?: string, name?: string) => {
     window.history.pushState(

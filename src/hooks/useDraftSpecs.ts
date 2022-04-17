@@ -1,5 +1,5 @@
 import { TABLES } from 'services/supabase';
-import { useQuery, useSelect } from 'supabase-swr';
+import { useQuery, useSelect } from './supabase-swr/';
 
 interface DraftSpecQuery {
     catalog_name: string;
@@ -22,12 +22,11 @@ function useDraftSpecs(draftId: string | null) {
         [draftId]
     );
 
-    const { data, error, mutate } = useSelect(draftSpecQuery, {});
+    const { data, error, mutate } = useSelect(draftSpecQuery);
 
     return {
         draftSpecs: data ? data.data : [],
         error,
-        isLoading: !error && !data?.data,
         mutate,
     };
 }
