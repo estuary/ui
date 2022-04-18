@@ -119,6 +119,7 @@ const Titles: ResolvedIntlConfig['messages'] = {
     'title.captureEdit': `${CommonMessages['common.title']} Create Edit`,
     'title.captures': `${CommonMessages['common.title']} Captures`,
     'title.collections': `${CommonMessages['common.title']} Collections`,
+    'title.error.pageNotFound': `${CommonMessages['common.title']} Page Not Found`,
     'title.login': `${CommonMessages['common.title']} Login`,
     'title.loginLoading': `${CommonMessages['common.title']} Checking Credentials`,
     'title.materializationCreate': `${CommonMessages['common.title']} Materialization Capture`,

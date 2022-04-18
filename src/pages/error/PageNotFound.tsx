@@ -12,10 +12,18 @@ import {
 import Topbar from 'components/header/Topbar';
 import PageContainer from 'components/shared/PageContainer';
 import { useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
+import { useTitle } from 'react-use';
 
 const PageNotFound = () => {
+    const intl = useIntl();
+    useTitle(
+        intl.formatMessage({
+            id: 'title.error.pageNotFound',
+        })
+    );
+
     const navigate = useNavigate();
 
     const [route, setRoute] = useState<string>('');
