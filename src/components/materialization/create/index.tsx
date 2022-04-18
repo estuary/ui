@@ -4,7 +4,7 @@ import PageContainer from 'components/shared/PageContainer';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 
-function NewMaterialization() {
+function MaterializationCreate() {
     const navigate = useNavigate();
 
     const handlers = {
@@ -41,4 +41,4 @@ function NewMaterialization() {
     );
 }
 
-export default NewMaterialization;
+export default MaterializationCreate;
