@@ -15,29 +15,22 @@ function NewMaterialization() {
 
     return (
         <PageContainer>
-            <Toolbar>
+            <Toolbar sx={{ justifyContent: 'space-between' }}>
                 <Typography variant="h6" noWrap>
                     <FormattedMessage id="materializationCreation.heading" />
                 </Typography>
 
-                <Stack
-                    direction="row"
-                    spacing={0}
-                    alignItems="center"
-                    sx={{
-                        ml: 'auto',
-                    }}
-                >
-                    <Button onClick={handlers.close} color="error">
+                <Stack direction="row" alignItems="center" spacing={1}>
+                    <Button color="error" onClick={handlers.close}>
                         <FormattedMessage id="cta.cancel" />
                     </Button>
 
                     <Button
-                        onClick={handlers.close}
                         color="success"
                         variant="contained"
                         disableElevation
                         disabled
+                        onClick={handlers.close}
                     >
                         <FormattedMessage id="cta.saveEntity" />
                     </Button>
