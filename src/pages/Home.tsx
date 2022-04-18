@@ -1,8 +1,16 @@
 import { Box, Toolbar, Typography } from '@mui/material';
 import PageContainer from 'components/shared/PageContainer';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
+import { useTitle } from 'react-use';
 
 const Home = () => {
+    const intl = useIntl();
+    useTitle(
+        intl.formatMessage({
+            id: 'title.dashboard',
+        })
+    );
+
     return (
         <PageContainer>
             <Toolbar

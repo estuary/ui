@@ -5,6 +5,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     // Common stuff
     'company': `Estuary`,
     'productName': `Control Plane`,
+    'common.title': `Estuary Flow`,
     'common.loading': `Loading...`,
     'common.errors.heading': `Error`,
     'common.optionsMissing': `No options`,
@@ -110,6 +111,22 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'entityTable.technicalDifficulties.message': `We apologize for the inconvenience. A message describing the issue can be found at the top of the page.`,
 };
 
+const Titles: ResolvedIntlConfig['messages'] = {
+    'title.dashboard': `${CommonMessages['common.title']} Dashboard`,
+    'title.admin': `${CommonMessages['common.title']} Admin`,
+    'title.builds': `${CommonMessages['common.title']} Builds - NOT USED RIGHT NOW`,
+    'title.captureCreate': `${CommonMessages['common.title']} Create Capture`,
+    'title.captureEdit': `${CommonMessages['common.title']} Create Edit`,
+    'title.captures': `${CommonMessages['common.title']} Captures`,
+    'title.collections': `${CommonMessages['common.title']} Collections`,
+    'title.login': `${CommonMessages['common.title']} Login`,
+    'title.loginLoading': `${CommonMessages['common.title']} Checking Credentials`,
+    'title.materializationCreate': `${CommonMessages['common.title']} Materialization Capture`,
+    'title.materializationEdit': `${CommonMessages['common.title']} Materialization Edit`,
+    'title.materializations': `${CommonMessages['common.title']} Materializations`,
+    'title.registration': `${CommonMessages['common.title']} Registration - NOT USED RIGHT NOW`,
+};
+
 const Error: ResolvedIntlConfig['messages'] = {
     'error.title': `Error`,
     'error.message': `This is not something you did wrong. There was a technical issue fetching data. Please contact support.`,
@@ -169,6 +186,7 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
+    ...Titles,
     ...LogsDialog,
     ...AdminPage,
     ...Error,

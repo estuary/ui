@@ -18,6 +18,7 @@ import { useClient, useQuery, useSelect } from 'hooks/supabase-swr';
 import { MouseEvent } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
+import { useTitle } from 'react-use';
 import { TABLES } from 'services/supabase';
 import useNotificationStore, {
     Notification,
@@ -86,6 +87,11 @@ function CaptureCreation() {
     const intl = useIntl();
     const navigate = useNavigate();
     const confirmationModalContext = useConfirmationModalContext();
+    useTitle(
+        intl.formatMessage({
+            id: 'title.captureCreate',
+        })
+    );
 
     // Supabase stuff
     const supabaseClient = useClient();

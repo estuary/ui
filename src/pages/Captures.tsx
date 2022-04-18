@@ -2,7 +2,9 @@ import AddIcon from '@mui/icons-material/Add';
 import { Box, Button, SxProps, Theme, Toolbar } from '@mui/material';
 import PageContainer from 'components/shared/PageContainer';
 import CapturesTable from 'components/tables/Captures';
+import { useIntl } from 'react-intl';
 import { NavLink } from 'react-router-dom';
+import { useTitle } from 'react-use';
 
 const boxStyling: SxProps<Theme> = {
     marginBottom: 2,
@@ -10,6 +12,13 @@ const boxStyling: SxProps<Theme> = {
 };
 
 const Capture = () => {
+    const intl = useIntl();
+    useTitle(
+        intl.formatMessage({
+            id: 'title.captures',
+        })
+    );
+
     return (
         <PageContainer>
             <Toolbar

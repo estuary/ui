@@ -7,7 +7,8 @@ import {
 } from '@mui/material';
 import PageContainer from 'components/shared/PageContainer';
 import ConnectorsTable from 'components/tables/Connectors';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
+import { useTitle } from 'react-use';
 
 const boxStyling: SxProps<Theme> = {
     marginBottom: 2,
@@ -15,6 +16,13 @@ const boxStyling: SxProps<Theme> = {
 };
 
 const Admin = () => {
+    const intl = useIntl();
+    useTitle(
+        intl.formatMessage({
+            id: 'title.admin',
+        })
+    );
+
     return (
         <PageContainer>
             <Toolbar>

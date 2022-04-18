@@ -1,7 +1,16 @@
 import PageContainer from 'components/shared/PageContainer';
 import EntityTable from 'components/tables/EntityTable';
+import { useIntl } from 'react-intl';
+import { useTitle } from 'react-use';
 
 const Builds = () => {
+    const intl = useIntl();
+    useTitle(
+        intl.formatMessage({
+            id: 'title.builds',
+        })
+    );
+
     return (
         <PageContainer>
             <EntityTable
