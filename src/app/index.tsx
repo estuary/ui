@@ -13,7 +13,7 @@ function App() {
     const intl = useIntl();
     useTitle(
         intl.formatMessage({
-            id: 'title.loginLoading',
+            id: 'routeTitle.loginLoading',
         })
     );
 

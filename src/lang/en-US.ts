@@ -5,7 +5,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     // Common stuff
     'company': `Estuary`,
     'productName': `Control Plane`,
-    'common.title': `Estuary Flow`,
+    'common.browserTitle': `Estuary Flow`,
     'common.loading': `Loading...`,
     'common.errors.heading': `Error`,
     'common.optionsMissing': `No options`,
@@ -111,21 +111,38 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'entityTable.technicalDifficulties.message': `We apologize for the inconvenience. A message describing the issue can be found at the top of the page.`,
 };
 
-const Titles: ResolvedIntlConfig['messages'] = {
-    'title.dashboard': `${CommonMessages['common.title']} Dashboard`,
-    'title.admin': `${CommonMessages['common.title']} Admin`,
-    'title.builds': `${CommonMessages['common.title']} Builds - NOT USED RIGHT NOW`,
-    'title.captureCreate': `${CommonMessages['common.title']} Create Capture`,
-    'title.captureEdit': `${CommonMessages['common.title']} Create Edit`,
-    'title.captures': `${CommonMessages['common.title']} Captures`,
-    'title.collections': `${CommonMessages['common.title']} Collections`,
-    'title.error.pageNotFound': `${CommonMessages['common.title']} Page Not Found`,
-    'title.login': `${CommonMessages['common.title']} Login`,
-    'title.loginLoading': `${CommonMessages['common.title']} Checking Credentials`,
-    'title.materializationCreate': `${CommonMessages['common.title']} Materialization Capture`,
-    'title.materializationEdit': `${CommonMessages['common.title']} Materialization Edit`,
-    'title.materializations': `${CommonMessages['common.title']} Materializations`,
-    'title.registration': `${CommonMessages['common.title']} Registration - NOT USED RIGHT NOW`,
+const RouteTitles: ResolvedIntlConfig['messages'] = {
+    'routeTitle.dashboard': `Dashboard`,
+    'routeTitle.admin': `Admin`,
+    'routeTitle.builds': `Builds - NOT USED RIGHT NOW`,
+    'routeTitle.captureCreate': `Create Capture`,
+    'routeTitle.captureEdit': `Create Edit`,
+    'routeTitle.captures': `Captures`,
+    'routeTitle.collections': `Collections`,
+    'routeTitle.error.pageNotFound': `Page Not Found`,
+    'routeTitle.login': `Login`,
+    'routeTitle.loginLoading': `Checking Credentials`,
+    'routeTitle.materializationCreate': `Materialization Capture`,
+    'routeTitle.materializationEdit': `Materialization Edit`,
+    'routeTitle.materializations': `Materializations`,
+    'routeTitle.registration': `Registration - NOT USED RIGHT NOW`,
+};
+
+const BrowserTitles: ResolvedIntlConfig['messages'] = {
+    'browserTitle.dashboard': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.dashboard']}`,
+    'browserTitle.admin': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.admin']}`,
+    'browserTitle.builds': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.builds']}`,
+    'browserTitle.captureCreate': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.captureCreate']}`,
+    'browserTitle.captureEdit': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.captureEdit']}`,
+    'browserTitle.captures': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.captures']}`,
+    'browserTitle.collections': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.collections']}`,
+    'browserTitle.error.pageNotFound': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.error.pageNotFound']}`,
+    'browserTitle.login': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.login']}`,
+    'browserTitle.loginLoading': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.loginLoading']}`,
+    'browserTitle.materializationCreate': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.materializationCreate']}`,
+    'browserTitle.materializationEdit': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.materializationEdit']}`,
+    'browserTitle.materializations': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.materializations']}`,
+    'browserTitle.registration': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.registration']}`,
 };
 
 const Error: ResolvedIntlConfig['messages'] = {
@@ -187,7 +204,8 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
-    ...Titles,
+    ...BrowserTitles,
+    ...RouteTitles,
     ...LogsDialog,
     ...AdminPage,
     ...Error,

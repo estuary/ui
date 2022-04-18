@@ -89,7 +89,7 @@ function CaptureCreation() {
     const confirmationModalContext = useConfirmationModalContext();
     useTitle(
         intl.formatMessage({
-            id: 'title.captureCreate',
+            id: 'browserTitle.captureCreate',
         })
     );
 

@@ -5,6 +5,13 @@ import InputIcon from '@mui/icons-material/Input';
 import StorageIcon from '@mui/icons-material/Storage';
 import { Box, List, Toolbar, useMediaQuery, useTheme } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
+import {
+    adminRoute,
+    capturesRoute,
+    homeRoute,
+    materializationsRoute,
+} from 'app/Authenticated';
+import { useIntl } from 'react-intl';
 import ListItemLink from './ListItemLink';
 
 interface Props {
@@ -14,6 +21,7 @@ interface Props {
 }
 
 const Navigation = ({ onNavigationToggle, open, width }: Props) => {
+    const intl = useIntl();
     const theme = useTheme();
     const isBelowMd = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -48,28 +56,31 @@ const Navigation = ({ onNavigationToggle, open, width }: Props) => {
                 <List aria-label="main application navigation">
                     <ListItemLink
                         icon={<ExploreIcon />}
-                        title="Dashboard"
-                        link="/dashboard"
-                        key="Dashboard"
+                        title={intl.formatMessage({ id: homeRoute.title })}
+                        link={homeRoute.path}
+                        key={intl.formatMessage({ id: homeRoute.title })}
                     />
                     <ListItemLink
                         icon={<InputIcon />}
-                        title="Captures"
-                        link="/captures"
-                        key="Capture"
+                        title={intl.formatMessage({ id: capturesRoute.title })}
+                        link={capturesRoute.path}
+                        key={intl.formatMessage({ id: capturesRoute.title })}
                     />
                     <ListItemLink
                         icon={<StorageIcon />}
-                        title="Materializations"
-                        link="/materializations"
-                        key="Materializations"
+                        title={intl.formatMessage({
+                            id: materializationsRoute.title,
+                        })}
+                        link={materializationsRoute.path}
+                        key={intl.formatMessage({
+                            id: materializationsRoute.title,
+                        })}
                     />
                     <ListItemLink
                         icon={<HomeRepairServiceIcon />}
-                        title="Administration"
-                        link="/admin"
-                        key="Administration"
-                        isOpen={open}
+                        title={intl.formatMessage({ id: adminRoute.title })}
+                        link={adminRoute.path}
+                        key={intl.formatMessage({ id: adminRoute.title })}
                     />
                 </List>
             </Box>

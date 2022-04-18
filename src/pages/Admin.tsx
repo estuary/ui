@@ -19,7 +19,7 @@ const Admin = () => {
     const intl = useIntl();
     useTitle(
         intl.formatMessage({
-            id: 'title.admin',
+            id: 'browserTitle.admin',
         })
     );
 

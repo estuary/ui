@@ -9,7 +9,6 @@ import {
     Paper,
     Typography,
 } from '@mui/material';
-import Topbar from 'components/header/Topbar';
 import PageContainer from 'components/shared/PageContainer';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -20,7 +19,7 @@ const PageNotFound = () => {
     const intl = useIntl();
     useTitle(
         intl.formatMessage({
-            id: 'title.error.pageNotFound',
+            id: 'browserTitle.error.pageNotFound',
         })
     );
 
@@ -55,8 +54,6 @@ const PageNotFound = () => {
 
     return (
         <PageContainer>
-            <Topbar isNavigationOpen={false} hideNavigationMenu />
-
             <Typography variant="h5" align="center" sx={{ mb: 2 }}>
                 <FormattedMessage id="pageNotFound.heading" />
             </Typography>

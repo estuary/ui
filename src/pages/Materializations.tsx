@@ -9,7 +9,7 @@ const Materializations = () => {
     const intl = useIntl();
     useTitle(
         intl.formatMessage({
-            id: 'title.materializations',
+            id: 'browserTitle.materializations',
         })
     );
 

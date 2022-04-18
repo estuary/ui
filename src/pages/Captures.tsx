@@ -15,7 +15,7 @@ const Capture = () => {
     const intl = useIntl();
     useTitle(
         intl.formatMessage({
-            id: 'title.captures',
+            id: 'browserTitle.captures',
         })
     );
 

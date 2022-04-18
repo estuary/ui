@@ -10,7 +10,7 @@ const Login = () => {
     const intl = useIntl();
     useTitle(
         intl.formatMessage({
-            id: 'title.login',
+            id: 'browserTitle.login',
         })
     );
 

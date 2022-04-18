@@ -7,7 +7,7 @@ const Builds = () => {
     const intl = useIntl();
     useTitle(
         intl.formatMessage({
-            id: 'title.builds',
+            id: 'browserTitle.builds',
         })
     );
 

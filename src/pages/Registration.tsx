@@ -38,7 +38,7 @@ const Registration = () => {
     const intl = useIntl();
     useTitle(
         intl.formatMessage({
-            id: 'title.registration',
+            id: 'browserTitle.registration',
         })
     );
 
