@@ -5,7 +5,7 @@ import { StyledEngineProvider } from '@mui/material';
 import useCaptureCreationStore, {
     CaptureCreationFormStatus,
     CaptureCreationState,
-} from 'components/capture/create/Store';
+} from 'components/capture/Store';
 import JsonRefs from 'json-refs';
 import { isEmpty } from 'lodash';
 import { useEffect, useState } from 'react';

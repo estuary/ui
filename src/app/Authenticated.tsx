@@ -11,6 +11,7 @@ const Builds = lazy(() => import('../pages/Builds'));
 
 const Captures = lazy(() => import('../pages/Captures'));
 const CaptureCreate = lazy(() => import('components/capture/create/index'));
+const CaptureEdit = lazy(() => import('components/capture/edit/index'));
 
 const Materializations = lazy(() => import('../pages/Materializations'));
 const MaterializationCreate = lazy(
@@ -31,6 +32,7 @@ const Authenticated = () => {
                     <Route path="captures" element={<Captures />} />
                     <Route path="capture">
                         <Route path="create" element={<CaptureCreate />} />
+                        <Route path="edit" element={<CaptureEdit />} />
                     </Route>
 
                     <Route

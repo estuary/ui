@@ -5,7 +5,7 @@ import { ConnectorTag } from 'components/capture/create';
 import useCaptureCreationStore, {
     CaptureCreationFormStatus,
     CaptureCreationState,
-} from 'components/capture/create/Store';
+} from 'components/capture/Store';
 import { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {

@@ -1,5 +1,7 @@
 import { Button, Collapse } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
+import NewCaptureDetails from 'components/capture/DetailsForm';
+import NewCaptureError from 'components/capture/Error';
 import NewCaptureHeader from 'components/capture/Header';
 import LogDialog from 'components/capture/LogDialog';
 import NewCaptureSpec from 'components/capture/Spec';
@@ -24,8 +26,6 @@ import useNotificationStore, {
     NotificationState,
 } from 'stores/NotificationStore';
 import NewCaptureEditor from '../CatalogEditor';
-import NewCaptureDetails from '../DetailsForm';
-import NewCaptureError from '../Error';
 
 export interface ConnectorTag {
     connectors: {
