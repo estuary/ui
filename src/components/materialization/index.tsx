@@ -15,6 +15,7 @@ function MaterializationCreate() {
 
     return (
         <PageContainer>
+            {/* This toolbar is akin to ./capture/Header.tsx */}
             <Toolbar sx={{ justifyContent: 'space-between' }}>
                 <Typography variant="h6" noWrap>
                     <FormattedMessage id="materializationCreation.heading" />

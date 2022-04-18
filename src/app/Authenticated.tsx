@@ -52,6 +52,7 @@ export const routeDetails = {
         create: {
             title: 'routeTitle.materializationCreate',
             path: 'create',
+            fullPath: '/materialization/create'
         },
     },
     materializations: {
