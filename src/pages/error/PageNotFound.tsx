@@ -33,9 +33,24 @@ const PageNotFound = () => {
             name: intl.formatMessage({ id: routeDetails.home.title }),
             route: routeDetails.home.path,
         },
-        { name: 'Captures', route: '/captures' },
-        { name: 'Materializations', route: '/materializations' },
-        { name: 'Admin', route: '/admin' },
+        {
+            name: intl.formatMessage({ id: routeDetails.captures.title }),
+            route: routeDetails.captures.path,
+        },
+        {
+            name: intl.formatMessage({ id: routeDetails.capture.create.title }),
+            route: routeDetails.capture.create.fullPath,
+        },
+        {
+            name: intl.formatMessage({
+                id: routeDetails.materializations.title,
+            }),
+            route: routeDetails.materializations.path,
+        },
+        {
+            name: intl.formatMessage({ id: routeDetails.admin.title }),
+            route: routeDetails.admin.path,
+        },
     ];
 
     const handlers = {
