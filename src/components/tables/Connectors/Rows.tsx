@@ -52,19 +52,36 @@ function Rows({ data }: Props) {
                                 display: 'flex',
                             }}
                         >
-                            <Button
-                                variant="contained"
-                                size="small"
-                                color="success"
-                                disableElevation
-                                onClick={() => {
-                                    navigate(
-                                        `/capture/create?connectorID=${row.connector_tags[0].id}`
-                                    );
-                                }}
-                            >
-                                <FormattedMessage id="connectorTable.actionsCta.newCapture" />
-                            </Button>
+                            {row.connector_tags[0].protocol === 'capture' ? (
+                                <Button
+                                    variant="contained"
+                                    size="small"
+                                    color="success"
+                                    disableElevation
+                                    onClick={() => {
+                                        navigate(
+                                            `/capture/create?connectorID=${row.connector_tags[0].id}`
+                                        );
+                                    }}
+                                >
+                                    <FormattedMessage id="connectorTable.actionsCta.capture" />
+                                </Button>
+                            ) : (
+                                <Button
+                                    variant="contained"
+                                    size="small"
+                                    color="success"
+                                    disableElevation
+                                    disabled
+                                    onClick={() => {
+                                        navigate(
+                                            `/materialization/create?connectorID=${row.connector_tags[0].id}`
+                                        );
+                                    }}
+                                >
+                                    <FormattedMessage id="connectorTable.actionsCta.materialization" />
+                                </Button>
+                            )}
                         </Box>
                     </TableCell>
                 </TableRow>

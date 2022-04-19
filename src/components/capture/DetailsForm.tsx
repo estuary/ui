@@ -6,8 +6,9 @@ import useCaptureCreationStore, {
     CaptureCreationFormStatus,
     CaptureCreationState,
 } from 'components/capture/Store';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { useSearchParams } from 'react-router-dom';
 import {
     defaultOptions,
     defaultRenderers,
@@ -29,12 +30,26 @@ const stateSelectors: StoreSelector<CaptureCreationState> = {
 
 function NewCaptureDetails({ connectorTags }: Props) {
     const intl = useIntl();
+    const [searchParams] = useSearchParams();
+    const connectorID = searchParams.get('connectorID');
+
     const formData = useCaptureCreationStore(stateSelectors.formData);
     const setDetails = useCaptureCreationStore(stateSelectors.setDetails);
     const displayValidation = useCaptureCreationStore(
         stateSelectors.showValidation
     );
     const status = useCaptureCreationStore(stateSelectors.status);
+
+    useEffect(() => {
+        if (connectorID) {
+            setDetails({
+                data: {
+                    name: '',
+                    image: connectorID,
+                },
+            });
+        }
+    }, [connectorID, setDetails]);
 
     const schema = useMemo(() => {
         return {
