@@ -6,7 +6,7 @@ import EntityTable, {
 } from 'components/tables/EntityTable';
 import { useQuery } from 'hooks/supabase-swr';
 import { useState } from 'react';
-import { TABLES } from 'services/supabase';
+import { defaultTableFilter, TABLES } from 'services/supabase';
 
 interface LiveSpecQuery {
     spec_type: string;
@@ -58,22 +58,14 @@ function CapturesTable() {
             columns: queryColumns,
             count: 'exact',
             filter: (query) => {
-                let queryBuilder = query;
-
-                // // TODO (supabase) Change to text search? https://supabase.com/docs/reference/javascript/textsearch
-                if (searchQuery) {
-                    queryBuilder = queryBuilder.ilike(
-                        'catalog_name',
-                        `%${searchQuery}%`
-                    );
-                }
-
-                return queryBuilder
-                    .order(columnToSort, {
-                        ascending: sortDirection === 'asc',
-                    })
-                    .range(pagination.from, pagination.to)
-                    .eq('spec_type', 'capture');
+                return defaultTableFilter(
+                    query,
+                    'catalog_name',
+                    searchQuery,
+                    columnToSort,
+                    sortDirection,
+                    pagination
+                ).eq('spec_type', 'capture');
             },
         },
         [pagination, searchQuery, columnToSort, sortDirection]

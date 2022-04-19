@@ -1,3 +1,4 @@
+import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import { createClient } from '@supabase/supabase-js';
 
 if (
@@ -37,3 +38,25 @@ export const supabaseClient = createClient(
 );
 
 export const DEFAULT_POLLING_INTERVAL = 500;
+
+export const defaultTableFilter = (
+    query: PostgrestFilterBuilder<any>,
+    searchParam: string,
+    searchQuery: string | null,
+    columnToSort: string,
+    sortDirection: string,
+    pagination: { from: number; to: number }
+) => {
+    let queryBuilder = query;
+
+    // // TODO (supabase) Change to text search? https://supabase.com/docs/reference/javascript/textsearch
+    if (searchQuery) {
+        queryBuilder = queryBuilder.ilike(searchParam, `%${searchQuery}%`);
+    }
+
+    return queryBuilder
+        .order(columnToSort, {
+            ascending: sortDirection === 'asc',
+        })
+        .range(pagination.from, pagination.to);
+};

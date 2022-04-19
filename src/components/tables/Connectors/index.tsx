@@ -6,7 +6,7 @@ import EntityTable, {
 } from 'components/tables/EntityTable';
 import { useQuery } from 'hooks/supabase-swr';
 import { useState } from 'react';
-import { TABLES } from 'services/supabase';
+import { defaultTableFilter, TABLES } from 'services/supabase';
 
 const tableColumns = [
     {
@@ -75,23 +75,14 @@ function ConnectorsTable() {
         {
             columns: CONNECTOR_QUERY,
             filter: (query) => {
-                console.log('query here');
-
-                let queryBuilder = query;
-
-                // // TODO (supabase) Change to text search? https://supabase.com/docs/reference/javascript/textsearch
-                if (searchQuery) {
-                    queryBuilder = queryBuilder.ilike(
-                        'image_name',
-                        `%${searchQuery}%`
-                    );
-                }
-
-                return queryBuilder
-                    .order(columnToSort, {
-                        ascending: sortDirection === 'asc',
-                    })
-                    .range(pagination.from, pagination.to);
+                return defaultTableFilter(
+                    query,
+                    'image_name',
+                    searchQuery,
+                    columnToSort,
+                    sortDirection,
+                    pagination
+                );
             },
         },
         [pagination, searchQuery, columnToSort, sortDirection]
