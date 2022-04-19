@@ -116,7 +116,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.admin': `Admin`,
     'routeTitle.builds': `Builds - NOT USED RIGHT NOW`,
     'routeTitle.captureCreate': `Create Capture`,
-    'routeTitle.captureEdit': `Create Edit`,
+    'routeTitle.captureEdit': `Edit Capture`,
     'routeTitle.captures': `Captures`,
     'routeTitle.collections': `Collections`,
     'routeTitle.error.pageNotFound': `Page Not Found`,
@@ -170,7 +170,7 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
 const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreation.ctas.discover': `Test Config`,
     'captureCreation.ctas.discoverAgain': `Regenerate Catalog`,
-    'captureCreation.heading': `New Capture`,
+    'captureCreation.heading': `${RouteTitles['routeTitle.captureCreate']}`,
     'captureCreation.instructions': `To get started please provide a unique name and the source type of the Capture you want to create. Once you've filled out the source details you can click "Test Capture" down below to test the connection.`,
     'captureCreation.missingConnectors': `No connectors installed. You must install a source connector before being able to create a capture.`,
     'captureCreation.tenant.label': `Tenant`,
