@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import Rows from 'components/tables/Captures/Rows';
+import Rows from 'components/tables/Connectors/Rows';
 import EntityTable, {
     getPagination,
     SortDirection,
@@ -10,43 +10,53 @@ import { TABLES } from 'services/supabase';
 
 const tableColumns = [
     {
-        field: 'catalog_name',
-        headerIntlKey: 'entityTable.data.entity',
+        field: 'image_name',
+        headerIntlKey: 'connectorTable.data.image_name',
     },
     {
-        field: 'connector_image_name',
-        headerIntlKey: 'entityTable.data.connectorType',
+        field: 'detail',
+        headerIntlKey: 'connectorTable.data.detail',
+    },
+    {
+        field: 'connector_tags.protocol',
+        headerIntlKey: 'connectorTable.data.protocol',
     },
     {
         field: 'updated_at',
-        headerIntlKey: 'entityTable.data.lastUpdated',
+        headerIntlKey: 'connectorTable.data.updated_at',
     },
     {
         field: null,
-        headerIntlKey: 'entityTable.data.actions',
+        headerIntlKey: 'connectorTable.data.documentation_url',
+    },
+    {
+        field: null,
+        headerIntlKey: 'connectorTable.data.actions',
     },
 ];
 
-interface ConnectorTag {
-    connectors: {
-        detail: string;
-        image_name: string;
-    };
+export interface Connector {
+    connector_tags: {
+        documentation_url: string;
+        protocol: string;
+        image_tag: string;
+    }[];
     id: string;
-    image_tag: string;
-    protocol: string;
+    detail: string;
     updated_at: string;
+    image_name: string;
 }
 
-const CONNECTOR_TAGS_QUERY = `
-    connectors(
-        detail,
-        image_name
-    ),
+const CONNECTOR_QUERY = `
     id,
-    image_tag,
-    protocol,
-    updated_at
+    detail,
+    updated_at,
+    image_name,
+    connector_tags (
+        documentation_url,
+        protocol,
+        image_tag
+    )
 `;
 
 function ConnectorsTable() {
@@ -58,17 +68,19 @@ function ConnectorsTable() {
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
     const [columnToSort, setColumnToSort] = useState<any>('updated_at');
 
-    const liveSpecQuery = useQuery<ConnectorTag>(
-        TABLES.CONNECTOR_TAGS,
+    const liveSpecQuery = useQuery<Connector>(
+        TABLES.CONNECTORS,
         {
-            columns: CONNECTOR_TAGS_QUERY,
+            columns: CONNECTOR_QUERY,
             filter: (query) => {
+                console.log('query here');
+
                 let queryBuilder = query;
 
                 // // TODO (supabase) Change to text search? https://supabase.com/docs/reference/javascript/textsearch
                 if (searchQuery) {
-                    queryBuilder = queryBuilder.like(
-                        'protocol',
+                    queryBuilder = queryBuilder.ilike(
+                        'image_name',
                         `%${searchQuery}%`
                     );
                 }
@@ -80,7 +92,7 @@ function ConnectorsTable() {
                     .range(pagination.from, pagination.to);
             },
         },
-        []
+        [pagination, searchQuery, columnToSort, sortDirection]
     );
 
     return (

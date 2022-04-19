@@ -126,6 +126,13 @@ const LogsDialog: ResolvedIntlConfig['messages'] = {
 const AdminPage: ResolvedIntlConfig['messages'] = {
     'connectorTable.title': `Installed ${CommonMessages['terms.connectors']}`,
     'connectorTable.title.aria': `Table of all installed ${CommonMessages['terms.connectors']}`,
+    'connectorTable.data.image_name': `Image`,
+    'connectorTable.data.detail': `Details`,
+    'connectorTable.data.protocol': `Protocol`,
+    'connectorTable.data.updated_at': `Last Changed`,
+    'connectorTable.data.documentation_url': `Documentation`,
+    'connectorTable.data.actions': `Actions`,
+    'connectorTable.actionsCta.newCapture': `Create Capture`,
     'admin.connectors.main.message1': `There are no connectors currently ready to be used.`,
     'admin.connectors.main.message2': `Please contact support to get help setting up a {docLink}.`,
     'admin.connectors.main.message2.docLink': `connector`,

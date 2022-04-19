@@ -62,7 +62,7 @@ function CapturesTable() {
 
                 // // TODO (supabase) Change to text search? https://supabase.com/docs/reference/javascript/textsearch
                 if (searchQuery) {
-                    queryBuilder = queryBuilder.like(
+                    queryBuilder = queryBuilder.ilike(
                         'catalog_name',
                         `%${searchQuery}%`
                     );
