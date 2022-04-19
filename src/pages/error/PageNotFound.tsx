@@ -9,6 +9,7 @@ import {
     Paper,
     Typography,
 } from '@mui/material';
+import { routeDetails } from 'app/Authenticated';
 import PageContainer from 'components/shared/PageContainer';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -28,7 +29,10 @@ const PageNotFound = () => {
     const [route, setRoute] = useState<string>('');
 
     const pages: { name: string; route: string }[] = [
-        { name: 'Dashboard', route: '/' },
+        {
+            name: intl.formatMessage({ id: routeDetails.home.title }),
+            route: routeDetails.home.path,
+        },
         { name: 'Captures', route: '/captures' },
         { name: 'Materializations', route: '/materializations' },
         { name: 'Admin', route: '/admin' },

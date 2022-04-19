@@ -5,12 +5,7 @@ import InputIcon from '@mui/icons-material/Input';
 import StorageIcon from '@mui/icons-material/Storage';
 import { Box, List, Toolbar, useMediaQuery, useTheme } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
-import {
-    adminRoute,
-    capturesRoute,
-    homeRoute,
-    materializationsRoute,
-} from 'app/Authenticated';
+import { routeDetails } from 'app/Authenticated';
 import { useIntl } from 'react-intl';
 import ListItemLink from './ListItemLink';
 
@@ -56,31 +51,43 @@ const Navigation = ({ onNavigationToggle, open, width }: Props) => {
                 <List aria-label="main application navigation">
                     <ListItemLink
                         icon={<ExploreIcon />}
-                        title={intl.formatMessage({ id: homeRoute.title })}
-                        link={homeRoute.path}
-                        key={intl.formatMessage({ id: homeRoute.title })}
+                        title={intl.formatMessage({
+                            id: routeDetails.home.title,
+                        })}
+                        link={routeDetails.home.path}
+                        key={intl.formatMessage({
+                            id: routeDetails.home.title,
+                        })}
                     />
                     <ListItemLink
                         icon={<InputIcon />}
-                        title={intl.formatMessage({ id: capturesRoute.title })}
-                        link={capturesRoute.path}
-                        key={intl.formatMessage({ id: capturesRoute.title })}
+                        title={intl.formatMessage({
+                            id: routeDetails.captures.title,
+                        })}
+                        link={routeDetails.captures.path}
+                        key={intl.formatMessage({
+                            id: routeDetails.captures.title,
+                        })}
                     />
                     <ListItemLink
                         icon={<StorageIcon />}
                         title={intl.formatMessage({
-                            id: materializationsRoute.title,
+                            id: routeDetails.materializations.title,
                         })}
-                        link={materializationsRoute.path}
+                        link={routeDetails.materializations.path}
                         key={intl.formatMessage({
-                            id: materializationsRoute.title,
+                            id: routeDetails.materializations.title,
                         })}
                     />
                     <ListItemLink
                         icon={<HomeRepairServiceIcon />}
-                        title={intl.formatMessage({ id: adminRoute.title })}
-                        link={adminRoute.path}
-                        key={intl.formatMessage({ id: adminRoute.title })}
+                        title={intl.formatMessage({
+                            id: routeDetails.admin.title,
+                        })}
+                        link={routeDetails.admin.path}
+                        key={intl.formatMessage({
+                            id: routeDetails.admin.title,
+                        })}
                     />
                 </List>
             </Box>

@@ -1,6 +1,6 @@
 import AddIcon from '@mui/icons-material/Add';
 import { Box, Button, SxProps, Theme, Toolbar } from '@mui/material';
-import { captureRoute } from 'app/Authenticated';
+import { routeDetails } from 'app/Authenticated';
 import PageContainer from 'components/shared/PageContainer';
 import CapturesTable from 'components/tables/Captures';
 import { useIntl } from 'react-intl';
@@ -29,7 +29,7 @@ const Capture = () => {
                     justifyContent: 'space-between',
                 }}
             >
-                <NavLink to={captureRoute.create.path}>
+                <NavLink to={routeDetails.capture.create.fullPath}>
                     <Button
                         variant="contained"
                         size="large"
