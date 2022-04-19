@@ -81,7 +81,7 @@ const notification: Notification = {
     title: 'New Capture Created',
 };
 
-function CaptureCreation() {
+function CaptureEdit() {
     // misc hooks
     const intl = useIntl();
     const navigate = useNavigate();
@@ -470,4 +470,4 @@ function CaptureCreation() {
     );
 }
 
-export default CaptureCreation;
+export default CaptureEdit;

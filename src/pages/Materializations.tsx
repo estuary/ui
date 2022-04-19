@@ -1,5 +1,6 @@
 import AddIcon from '@mui/icons-material/Add';
 import { Button, Toolbar } from '@mui/material';
+import { materializationRoute } from 'app/Authenticated';
 import PageContainer from 'components/shared/PageContainer';
 import { useIntl } from 'react-intl';
 import { NavLink, Outlet } from 'react-router-dom';
@@ -22,7 +23,7 @@ const Materializations = () => {
                     justifyContent: 'space-between',
                 }}
             >
-                <NavLink to="/materialization/create">
+                <NavLink to={materializationRoute.create.path}>
                     <Button
                         variant="contained"
                         size="large"

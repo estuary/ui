@@ -1,8 +1,16 @@
+import { Collections } from '@mui/icons-material';
 import { Skeleton } from '@mui/material';
 import AppLayout from 'AppLayout';
+import CaptureCreate from 'components/capture/create';
+import CaptureEdit from 'components/capture/edit';
+import NewMaterialization from 'components/materialization/create';
+import Admin from 'pages/Admin';
+import Builds from 'pages/Builds';
+import Captures from 'pages/Captures';
 import PageNotFound from 'pages/error/PageNotFound';
 import Home from 'pages/Home';
-import { lazy, Suspense } from 'react';
+import Materializations from 'pages/Materializations';
+import { Suspense } from 'react';
 import { Route, Routes } from 'react-router';
 
 export const homeRoute = {
@@ -15,47 +23,38 @@ export const pageNotFoundRoute = {
     path: '*',
 };
 
-const Admin = lazy(() => import('../pages/Admin'));
 export const adminRoute = {
     title: 'routeTitle.admin',
     path: '/admin',
 };
 
-const Builds = lazy(() => import('../pages/Builds'));
 export const buildsRoute = {
     title: 'routeTitle.builds',
     path: '/test/builds',
 };
 
-const CaptureCreate = lazy(() => import('components/capture/create/index'));
-const CaptureEdit = lazy(() => import('components/capture/edit/index'));
 export const captureRoute = {
     root: '/capture',
     create: {
         title: 'routeTitle.captureCreate',
-        path: 'create',
+        path: `/capture/create`,
     },
     edit: {
         title: 'routeTitle.captureEdit',
-        path: 'edit',
+        path: '/capture/edit',
     },
 };
 
-const Captures = lazy(() => import('../pages/Captures'));
 export const capturesRoute = {
     title: 'routeTitle.captures',
     path: '/captures',
 };
 
-const Collections = lazy(() => import('../pages/Collections'));
 export const collectionsRoute = {
     title: 'routeTitle.collections',
     path: '/collections',
 };
 
-const MaterializationCreate = lazy(
-    () => import('../components/materialization/create')
-);
 export const materializationRoute = {
     root: '/materialization',
     create: {
@@ -64,7 +63,6 @@ export const materializationRoute = {
     },
 };
 
-const Materializations = lazy(() => import('../pages/Materializations'));
 export const materializationsRoute = {
     title: 'routeTitle.materializations',
     path: '/materializations',
@@ -101,7 +99,7 @@ const Authenticated = () => {
                     <Route path={materializationRoute.root}>
                         <Route
                             path={materializationRoute.create.path}
-                            element={<MaterializationCreate />}
+                            element={<NewMaterialization />}
                         />
                     </Route>
 
