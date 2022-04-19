@@ -1,7 +1,6 @@
 import SearchIcon from '@mui/icons-material/Search';
 import {
     Box,
-    Button,
     LinearProgress,
     Table,
     TableBody,
@@ -14,17 +13,14 @@ import {
     TableSortLabel,
     TextField,
     Toolbar,
-    Tooltip,
     Typography,
 } from '@mui/material';
 import { PostgrestError } from '@supabase/supabase-js';
 import ExternalLink from 'components/shared/ExternalLink';
-import formatDistanceToNow from 'date-fns/formatDistanceToNow';
-import { useQuery, useSelect } from 'hooks/supabase-swr';
+import { Query, useSelect } from 'hooks/supabase-swr';
 import { debounce } from 'lodash';
-import { ChangeEvent, MouseEvent, useEffect, useState } from 'react';
-import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
-import { TABLES } from 'services/supabase';
+import { ChangeEvent, MouseEvent, ReactNode, useEffect, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 enum TableStatuses {
     LOADING = 'LOADING',
@@ -41,11 +37,22 @@ type TableStatus =
     | TableStatuses.TECHNICAL_DIFFICULTIES
     | TableStatuses.UNMATCHED_FILTER;
 
-type DeploymentStatus = 'ACTIVE' | 'INACTIVE';
-
-type SortDirection = 'asc' | 'desc';
+export type SortDirection = 'asc' | 'desc';
 
 interface Props {
+    columns: {
+        field: string | null;
+        headerIntlKey: string;
+    }[];
+    query: Query<any>;
+    renderTableRows: (data: any) => ReactNode;
+    setPagination: (data: any) => void;
+    setSearchQuery: (data: any) => void;
+    sortDirection: SortDirection;
+    setSortDirection: (data: any) => void;
+    columnToSort: string;
+    setColumnToSort: (data: any) => void;
+    rowsPerPage: number;
     noExistingDataContentIds: {
         header: string;
         message: string;
@@ -59,37 +66,9 @@ interface TableState {
     error?: PostgrestError;
 }
 
-interface LiveSpecQuery {
-    spec_type: string;
-    catalog_name: string;
-    updated_at: string;
-    connector_image_name: string;
-    id: string;
-}
-
-interface TableColumn {
-    field: keyof LiveSpecQuery | null;
-    headerIntlKey: string;
-}
-
-const LIVE_SPECS_QUERY = `
-    spec_type, 
-    catalog_name, 
-    updated_at, 
-    connector_image_name, 
-    id`;
-
-const rowsPerPage = 5;
 const rowHeight = 57;
 
-const stripPathing = (stringVal: string) => {
-    return stringVal.substring(
-        stringVal.lastIndexOf('/') + 1,
-        stringVal.length
-    );
-};
-
-const getPagination = (currPage: number, size: number) => {
+export const getPagination = (currPage: number, size: number) => {
     const limit = size;
     const from = currPage ? currPage * limit : 0;
     const to = currPage ? from + size : size - 1;
@@ -97,45 +76,23 @@ const getPagination = (currPage: number, size: number) => {
     return { from, to };
 };
 
-function EntityTable({ noExistingDataContentIds }: Props) {
-    const [searchQuery, setSearchQuery] = useState<string | null>(null);
-    const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
-    const [columnToSort, setColumnToSort] =
-        useState<keyof LiveSpecQuery>('updated_at');
-
+function EntityTable({
+    columns,
+    noExistingDataContentIds,
+    query,
+    renderTableRows,
+    rowsPerPage,
+    setPagination,
+    setSearchQuery,
+    sortDirection,
+    setSortDirection,
+    columnToSort,
+    setColumnToSort,
+}: Props) {
     const [page, setPage] = useState(0);
-    const [pagination, setPagination] = useState<{ from: number; to: number }>(
-        getPagination(page, rowsPerPage)
-    );
 
-    const liveSpecQuery = useQuery<LiveSpecQuery>(
-        TABLES.LIVE_SPECS,
-        {
-            columns: LIVE_SPECS_QUERY,
-            count: 'exact',
-            filter: (query) => {
-                let queryBuilder = query;
-
-                // TODO (supabase) Change to text search? https://supabase.com/docs/reference/javascript/textsearch
-                if (searchQuery) {
-                    queryBuilder = queryBuilder.like(
-                        'catalog_name',
-                        `%${searchQuery}%`
-                    );
-                }
-
-                return queryBuilder
-                    .order(columnToSort, {
-                        ascending: sortDirection === 'asc',
-                    })
-                    .range(pagination.from, pagination.to)
-                    .eq('spec_type', 'capture');
-            },
-        },
-        [sortDirection, columnToSort, searchQuery, rowsPerPage, pagination]
-    );
-    const { data: liveSpecs, isValidating } = useSelect(liveSpecQuery);
-    const publications = liveSpecs ? liveSpecs.data : null;
+    const { data: useSelectResponse, isValidating } = useSelect(query);
+    const selectData = useSelectResponse ? useSelectResponse.data : null;
 
     const intl = useIntl();
 
@@ -144,48 +101,16 @@ function EntityTable({ noExistingDataContentIds }: Props) {
     });
 
     useEffect(() => {
-        if (publications && publications.length > 0) {
+        if (selectData && selectData.length > 0) {
             setTableState({ status: TableStatuses.DATA_FETCHED });
         } else {
             setTableState({ status: TableStatuses.NO_EXISTING_DATA });
         }
-    }, [publications, isValidating]);
+    }, [selectData, isValidating]);
 
-    const emptyRows = publications
-        ? Math.max(0, (1 + page) * rowsPerPage - publications.length)
+    const emptyRows = selectData
+        ? Math.max(0, (1 + page) * rowsPerPage - selectData.length)
         : rowsPerPage;
-
-    const columns: TableColumn[] = [
-        {
-            field: 'catalog_name',
-            headerIntlKey: 'entityTable.data.entity',
-        },
-        {
-            field: 'connector_image_name',
-            headerIntlKey: 'entityTable.data.connectorType',
-        },
-        {
-            field: 'updated_at',
-            headerIntlKey: 'entityTable.data.lastUpdated',
-        },
-        {
-            field: null,
-            headerIntlKey: 'entityTable.data.actions',
-        },
-    ];
-
-    const getDeploymentStatusHexCode = (
-        deploymentStatus: DeploymentStatus
-    ): string => {
-        switch (deploymentStatus) {
-            case 'ACTIVE':
-                return '#40B763';
-            case 'INACTIVE':
-                return '#C9393E';
-            default:
-                return '#F7F7F7';
-        }
-    };
 
     const getEmptyTableHeader = (tableStatus: TableStatuses): string => {
         switch (tableStatus) {
@@ -232,25 +157,22 @@ function EntityTable({ noExistingDataContentIds }: Props) {
     const handlers = {
         filterTable: debounce(
             (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-                const query = event.target.value;
-                setSearchQuery(query && query.length > 0 ? query : null);
+                const filterQuery = event.target.value;
+                setSearchQuery(
+                    filterQuery && filterQuery.length > 0 ? filterQuery : null
+                );
             },
             750
         ),
-        sortRequest: (
-            event: React.MouseEvent<unknown>,
-            column: keyof LiveSpecQuery
-        ) => {
+        sortRequest: (event: React.MouseEvent<unknown>, column: any) => {
             const isAsc = columnToSort === column && sortDirection === 'asc';
 
             setSortDirection(isAsc ? 'desc' : 'asc');
             setColumnToSort(column);
         },
-        sort:
-            (column: keyof LiveSpecQuery) =>
-            (event: React.MouseEvent<unknown>) => {
-                handlers.sortRequest(event, column);
-            },
+        sort: (column: any) => (event: React.MouseEvent<unknown>) => {
+            handlers.sortRequest(event, column);
+        },
         changePage: (
             event: MouseEvent<HTMLButtonElement> | null,
             newPage: number
@@ -311,7 +233,7 @@ function EntityTable({ noExistingDataContentIds }: Props) {
                                                     : false
                                             }
                                         >
-                                            {publications && column.field ? (
+                                            {selectData && column.field ? (
                                                 <TableSortLabel
                                                     active={
                                                         columnToSort ===
@@ -345,111 +267,8 @@ function EntityTable({ noExistingDataContentIds }: Props) {
                         </TableHead>
 
                         <TableBody>
-                            {publications ? (
-                                publications.map((publication) => (
-                                    <TableRow key={`Entity-${publication.id}`}>
-                                        <TableCell sx={{ minWidth: 256 }}>
-                                            <Tooltip
-                                                title={publication.catalog_name}
-                                                placement="bottom-start"
-                                            >
-                                                <Box>
-                                                    <span
-                                                        style={{
-                                                            height: 16,
-                                                            width: 16,
-                                                            backgroundColor:
-                                                                getDeploymentStatusHexCode(
-                                                                    'ACTIVE'
-                                                                ),
-                                                            borderRadius: 50,
-                                                            display:
-                                                                'inline-block',
-                                                            verticalAlign:
-                                                                'middle',
-                                                            marginRight: 12,
-                                                        }}
-                                                    />
-                                                    <span
-                                                        style={{
-                                                            verticalAlign:
-                                                                'middle',
-                                                        }}
-                                                    >
-                                                        {stripPathing(
-                                                            publication.catalog_name
-                                                        )}
-                                                    </span>
-                                                </Box>
-                                            </Tooltip>
-                                        </TableCell>
-
-                                        <TableCell sx={{ minWidth: 256 }}>
-                                            {stripPathing(
-                                                publication.connector_image_name
-                                            )}
-                                        </TableCell>
-
-                                        <TableCell>
-                                            <Tooltip
-                                                title={
-                                                    <FormattedDate
-                                                        day="numeric"
-                                                        month="long"
-                                                        year="numeric"
-                                                        hour="numeric"
-                                                        minute="numeric"
-                                                        second="numeric"
-                                                        timeZoneName="short"
-                                                        value={
-                                                            publication.updated_at
-                                                        }
-                                                    />
-                                                }
-                                                placement="bottom-start"
-                                            >
-                                                <Box>
-                                                    {formatDistanceToNow(
-                                                        new Date(
-                                                            publication.updated_at
-                                                        ),
-                                                        {
-                                                            addSuffix: true,
-                                                        }
-                                                    )}
-                                                </Box>
-                                            </Tooltip>
-                                        </TableCell>
-
-                                        <TableCell>
-                                            <Box
-                                                sx={{
-                                                    display: 'flex',
-                                                }}
-                                            >
-                                                <Button
-                                                    variant="contained"
-                                                    size="small"
-                                                    disableElevation
-                                                    disabled
-                                                    sx={{ mr: 1 }}
-                                                >
-                                                    Edit
-                                                </Button>
-
-                                                <Button
-                                                    variant="contained"
-                                                    size="small"
-                                                    color="success"
-                                                    disableElevation
-                                                    disabled
-                                                >
-                                                    Stop
-                                                </Button>
-                                            </Box>
-                                        </TableCell>
-                                    </TableRow>
-                                ))
+                            {selectData ? (
+                                renderTableRows(selectData)
                             ) : (
                                 <TableRow>
                                     <TableCell colSpan={4}>
@@ -504,12 +323,12 @@ function EntityTable({ noExistingDataContentIds }: Props) {
                             )}
                         </TableBody>
 
-                        {publications && liveSpecs?.count && (
+                        {selectData && useSelectResponse?.count && (
                             <TableFooter>
                                 <TableRow>
                                     <TablePagination
                                         rowsPerPageOptions={[rowsPerPage]}
-                                        count={liveSpecs.count}
+                                        count={useSelectResponse.count}
                                         rowsPerPage={rowsPerPage}
                                         page={page}
                                         onPageChange={handlers.changePage}

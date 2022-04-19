@@ -126,6 +126,10 @@ const LogsDialog: ResolvedIntlConfig['messages'] = {
 const AdminPage: ResolvedIntlConfig['messages'] = {
     'connectorTable.title': `Installed ${CommonMessages['terms.connectors']}`,
     'connectorTable.title.aria': `Table of all installed ${CommonMessages['terms.connectors']}`,
+    'admin.connectors.main.message1': `There are no connectors currently ready to be used.`,
+    'admin.connectors.main.message2': `Please contact support to get help setting up a {docLink}.`,
+    'admin.connectors.main.message2.docLink': `connector`,
+    'admin.connectors.main.message2.docPath': `https://docs.estuary.dev/concepts/#connectors`,
 };
 
 const LoginPage: ResolvedIntlConfig['messages'] = {

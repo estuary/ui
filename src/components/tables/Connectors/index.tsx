@@ -8,14 +8,6 @@ import { useQuery } from 'hooks/supabase-swr';
 import { useState } from 'react';
 import { TABLES } from 'services/supabase';
 
-interface LiveSpecQuery {
-    spec_type: string;
-    catalog_name: string;
-    updated_at: string;
-    connector_image_name: string;
-    id: string;
-}
-
 const tableColumns = [
     {
         field: 'catalog_name',
@@ -35,15 +27,29 @@ const tableColumns = [
     },
 ];
 
-const queryColumns = [
-    'spec_type',
-    'catalog_name',
-    'updated_at',
-    'connector_image_name',
-    'id',
-];
+interface ConnectorTag {
+    connectors: {
+        detail: string;
+        image_name: string;
+    };
+    id: string;
+    image_tag: string;
+    protocol: string;
+    updated_at: string;
+}
 
-function CapturesTable() {
+const CONNECTOR_TAGS_QUERY = `
+    connectors(
+        detail,
+        image_name
+    ),
+    id,
+    image_tag,
+    protocol,
+    updated_at
+`;
+
+function ConnectorsTable() {
     const rowsPerPage = 10;
     const [pagination, setPagination] = useState<{ from: number; to: number }>(
         getPagination(0, rowsPerPage)
@@ -52,18 +58,17 @@ function CapturesTable() {
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
     const [columnToSort, setColumnToSort] = useState<any>('updated_at');
 
-    const liveSpecQuery = useQuery<LiveSpecQuery>(
-        TABLES.LIVE_SPECS,
+    const liveSpecQuery = useQuery<ConnectorTag>(
+        TABLES.CONNECTOR_TAGS,
         {
-            columns: queryColumns,
-            count: 'exact',
+            columns: CONNECTOR_TAGS_QUERY,
             filter: (query) => {
                 let queryBuilder = query;
 
                 // // TODO (supabase) Change to text search? https://supabase.com/docs/reference/javascript/textsearch
                 if (searchQuery) {
                     queryBuilder = queryBuilder.like(
-                        'catalog_name',
+                        'protocol',
                         `%${searchQuery}%`
                     );
                 }
@@ -72,21 +77,20 @@ function CapturesTable() {
                     .order(columnToSort, {
                         ascending: sortDirection === 'asc',
                     })
-                    .range(pagination.from, pagination.to)
-                    .eq('spec_type', 'capture');
+                    .range(pagination.from, pagination.to);
             },
         },
-        [pagination, searchQuery, columnToSort, sortDirection]
+        []
     );
 
     return (
         <Box>
             <EntityTable
                 noExistingDataContentIds={{
-                    header: 'captures.main.message1',
-                    message: 'captures.main.message2',
-                    docLink: 'captures.main.message2.docLink',
-                    docPath: 'captures.main.message2.docPath',
+                    header: 'admin.connectors.main.message1',
+                    message: 'admin.connectors.main.message2',
+                    docLink: 'admin.connectors.main.message2.docLink',
+                    docPath: 'admin.connectors.main.message2.docPath',
                 }}
                 columns={tableColumns}
                 query={liveSpecQuery}
@@ -103,4 +107,4 @@ function CapturesTable() {
     );
 }
 
-export default CapturesTable;
+export default ConnectorsTable;
