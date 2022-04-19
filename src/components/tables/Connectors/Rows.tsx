@@ -41,10 +41,10 @@ function Rows({ data }: Props) {
                             <ExternalLink
                                 link={row.connector_tags[0].documentation_url}
                             >
-                                Docs
+                                <FormattedMessage id="captureCreation.config.source.doclink" />
                             </ExternalLink>
                         ) : (
-                            <>N/A</>
+                            <FormattedMessage id="common.missing" />
                         )}
                     </TableCell>
                     <TableCell>

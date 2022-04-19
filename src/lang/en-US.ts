@@ -11,6 +11,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.optionsMissing': `No options`,
     'common.noData': `No data to display`,
     'common.loggedOut': `You have been logged out. Please log back in.`,
+    'common.missing': `N/A`,
 
     // Header
     'header.navigationMenu.aria.label': `Expand Navigation`,
