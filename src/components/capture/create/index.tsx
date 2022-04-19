@@ -15,9 +15,9 @@ import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
 import { useConfirmationModalContext } from 'context/Confirmation';
 import { useClient, useQuery, useSelect } from 'hooks/supabase-swr';
-import { MouseEvent } from 'react';
+import { MouseEvent, useEffect } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { TABLES } from 'services/supabase';
 import useNotificationStore, {
     Notification,
@@ -86,6 +86,8 @@ function CaptureCreation() {
     const intl = useIntl();
     const navigate = useNavigate();
     const confirmationModalContext = useConfirmationModalContext();
+    const [searchParams] = useSearchParams();
+    const connectorID = searchParams.get('connectorID');
 
     // Supabase stuff
     const supabaseClient = useClient();
@@ -115,6 +117,18 @@ function CaptureCreation() {
     const specFormData = useCaptureCreationStore(selectors.page.specFormData);
     const resetState = useCaptureCreationStore(selectors.page.resetState);
     const hasChanges = useCaptureCreationStore(selectors.page.hasChanges);
+    const setDetails = useCaptureCreationStore(selectors.page.setDetails);
+
+    useEffect(() => {
+        if (connectorID) {
+            setDetails({
+                data: {
+                    name: '',
+                    image: connectorID,
+                },
+            });
+        }
+    });
 
     // Form State
     const setFormState = useCaptureCreationStore(selectors.form.set);

@@ -31,7 +31,12 @@ const Authenticated = () => {
                     <Route path="collections" element={<Collections />} />
                     <Route path="captures" element={<Captures />} />
                     <Route path="capture">
-                        <Route path="create" element={<CaptureCreate />} />
+                        <Route path="create" element={<CaptureCreate />}>
+                            <Route
+                                path=":connectorID"
+                                element={<CaptureCreate />}
+                            />
+                        </Route>
                         <Route path="edit" element={<CaptureEdit />} />
                     </Route>
 

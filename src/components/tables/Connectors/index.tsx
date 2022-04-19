@@ -40,6 +40,7 @@ export interface Connector {
         documentation_url: string;
         protocol: string;
         image_tag: string;
+        id: string;
     }[];
     id: string;
     detail: string;
@@ -55,7 +56,8 @@ const CONNECTOR_QUERY = `
     connector_tags (
         documentation_url,
         protocol,
-        image_tag
+        image_tag,
+        id
     )
 `;
 

@@ -2,6 +2,7 @@ import { Box, Button, TableCell, TableRow } from '@mui/material';
 import ExternalLink from 'components/shared/ExternalLink';
 import { Connector } from 'components/tables/Connectors';
 import { FormattedDate, FormattedMessage } from 'react-intl';
+import { useNavigate } from 'react-router';
 
 interface Props {
     data: Connector[];
@@ -13,7 +14,7 @@ const columnStyling = {
 };
 
 function Rows({ data }: Props) {
-    console.log('here', data);
+    const navigate = useNavigate();
 
     return (
         <>
@@ -56,7 +57,11 @@ function Rows({ data }: Props) {
                                 size="small"
                                 color="success"
                                 disableElevation
-                                disabled
+                                onClick={() => {
+                                    navigate(
+                                        `/capture/create?connectorID=${row.connector_tags[0].id}`
+                                    );
+                                }}
                             >
                                 <FormattedMessage id="connectorTable.actionsCta.newCapture" />
                             </Button>
