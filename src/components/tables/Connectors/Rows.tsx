@@ -53,31 +53,32 @@ function Rows({ data }: Props) {
                                 display: 'flex',
                             }}
                         >
-                            {row.connector_tags[0].protocol === 'capture' ? (
-                                <Button
-                                    variant="contained"
-                                    size="small"
-                                    color="success"
-                                    disableElevation
-                                    onClick={() => {
+                            <Button
+                                variant="contained"
+                                size="small"
+                                color="success"
+                                disableElevation
+                                disabled={
+                                    row.connector_tags[0].protocol !== 'capture'
+                                }
+                                onClick={() => {
+                                    if (
+                                        row.connector_tags[0].protocol ===
+                                        'capture'
+                                    ) {
                                         navigate(
                                             `${routeDetails.capture.create.fullPath}?${routeDetails.capture.create.params.connectorID}=${row.connector_tags[0].id}`
                                         );
-                                    }}
-                                >
+                                    }
+                                }}
+                            >
+                                {row.connector_tags[0].protocol ===
+                                'capture' ? (
                                     <FormattedMessage id="connectorTable.actionsCta.capture" />
-                                </Button>
-                            ) : (
-                                <Button
-                                    variant="contained"
-                                    size="small"
-                                    color="success"
-                                    disableElevation
-                                    disabled
-                                >
+                                ) : (
                                     <FormattedMessage id="connectorTable.actionsCta.materialization" />
-                                </Button>
-                            )}
+                                )}
+                            </Button>
                         </Box>
                     </TableCell>
                 </TableRow>
