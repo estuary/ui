@@ -89,8 +89,6 @@ const useCaptureCreationStore = create<CaptureCreationState>(
         (set, get) => ({
             ...getInitialStateData(),
             setDetails: (details) => {
-                console.log('sup');
-
                 set(
                     produce((state) => {
                         if (
