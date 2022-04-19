@@ -1,4 +1,5 @@
 import { Box, Button, TableCell, TableRow } from '@mui/material';
+import { routeDetails } from 'app/Authenticated';
 import ExternalLink from 'components/shared/ExternalLink';
 import { Connector } from 'components/tables/Connectors';
 import { FormattedDate, FormattedMessage } from 'react-intl';
@@ -60,7 +61,7 @@ function Rows({ data }: Props) {
                                     disableElevation
                                     onClick={() => {
                                         navigate(
-                                            `/capture/create?connectorID=${row.connector_tags[0].id}`
+                                            `${routeDetails.capture.create.fullPath}?${routeDetails.capture.create.params.connectorID}=${row.connector_tags[0].id}`
                                         );
                                     }}
                                 >
@@ -73,11 +74,6 @@ function Rows({ data }: Props) {
                                     color="success"
                                     disableElevation
                                     disabled
-                                    onClick={() => {
-                                        navigate(
-                                            `/materialization/create?connectorID=${row.connector_tags[0].id}`
-                                        );
-                                    }}
                                 >
                                     <FormattedMessage id="connectorTable.actionsCta.materialization" />
                                 </Button>

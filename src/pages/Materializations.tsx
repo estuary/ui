@@ -1,9 +1,19 @@
 import AddIcon from '@mui/icons-material/Add';
 import { Button, Toolbar } from '@mui/material';
+import { routeDetails } from 'app/Authenticated';
 import PageContainer from 'components/shared/PageContainer';
+import { useIntl } from 'react-intl';
 import { NavLink, Outlet } from 'react-router-dom';
+import { useTitle } from 'react-use';
 
 const Materializations = () => {
+    const intl = useIntl();
+    useTitle(
+        intl.formatMessage({
+            id: 'browserTitle.materializations',
+        })
+    );
+
     return (
         <PageContainer>
             <Toolbar
@@ -13,7 +23,7 @@ const Materializations = () => {
                     justifyContent: 'space-between',
                 }}
             >
-                <NavLink to="/materialization/create">
+                <NavLink to={routeDetails.materialization.create.path}>
                     <Button
                         variant="contained"
                         size="large"

@@ -1,6 +1,7 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Alert, Stack, Typography } from '@mui/material';
+import { routeDetails } from 'app/Authenticated';
 import { ConnectorTag } from 'components/capture/create';
 import useCaptureCreationStore, {
     CaptureCreationFormStatus,
@@ -31,7 +32,9 @@ const stateSelectors: StoreSelector<CaptureCreationState> = {
 function NewCaptureDetails({ connectorTags }: Props) {
     const intl = useIntl();
     const [searchParams] = useSearchParams();
-    const connectorID = searchParams.get('connectorID');
+    const connectorID = searchParams.get(
+        routeDetails.capture.create.params.connectorID
+    );
 
     const formData = useCaptureCreationStore(stateSelectors.formData);
     const setDetails = useCaptureCreationStore(stateSelectors.setDetails);

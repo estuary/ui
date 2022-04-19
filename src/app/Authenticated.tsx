@@ -1,61 +1,114 @@
-import { Skeleton } from '@mui/material';
+import { Collections } from '@mui/icons-material';
 import AppLayout from 'AppLayout';
+import CaptureCreate from 'components/capture/create';
+import CaptureEdit from 'components/capture/edit';
+import NewMaterialization from 'components/materialization/create';
+import Admin from 'pages/Admin';
+import Builds from 'pages/Builds';
+import Captures from 'pages/Captures';
 import PageNotFound from 'pages/error/PageNotFound';
 import Home from 'pages/Home';
-import { lazy, Suspense } from 'react';
+import Materializations from 'pages/Materializations';
 import { Route, Routes } from 'react-router';
 
-const Admin = lazy(() => import('../pages/Admin'));
-
-const Builds = lazy(() => import('../pages/Builds'));
-
-const Captures = lazy(() => import('../pages/Captures'));
-const CaptureCreate = lazy(() => import('components/capture/create/index'));
-const CaptureEdit = lazy(() => import('components/capture/edit/index'));
-
-const Materializations = lazy(() => import('../pages/Materializations'));
-const MaterializationCreate = lazy(
-    () => import('../components/materialization/create')
-);
-
-const Collections = lazy(() => import('../pages/Collections'));
+export const routeDetails = {
+    admin: {
+        title: 'routeTitle.admin',
+        path: '/admin',
+    },
+    builds: {
+        title: 'routeTitle.builds',
+        path: '/test/builds',
+    },
+    capture: {
+        root: '/capture',
+        create: {
+            title: 'routeTitle.captureCreate',
+            path: `create`,
+            fullPath: '/capture/create',
+            params: {
+                connectorID: 'connectorID',
+            },
+        },
+        edit: {
+            title: 'routeTitle.captureEdit',
+            path: 'edit',
+            fullPath: '/capture/edit',
+        },
+    },
+    captures: {
+        title: 'routeTitle.captures',
+        path: '/captures',
+    },
+    collections: {
+        title: 'routeTitle.collections',
+        path: '/collections',
+    },
+    home: {
+        title: 'routeTitle.dashboard',
+        path: '/',
+    },
+    materialization: {
+        root: '/materialization',
+        create: {
+            title: 'routeTitle.materializationCreate',
+            path: 'create',
+        },
+    },
+    materializations: {
+        title: 'routeTitle.materializations',
+        path: '/materializations',
+    },
+    pageNotFound: {
+        title: 'routeTitle.error.pageNotFound',
+        path: '*',
+    },
+};
 
 const Authenticated = () => {
     return (
-        <Suspense fallback={<Skeleton animation="wave" />}>
-            <Routes>
-                <Route element={<AppLayout />}>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/test/builds" element={<Builds />} />
-                    <Route path="/dashboard" element={<Home />} />
-                    <Route path="collections" element={<Collections />} />
-                    <Route path="captures" element={<Captures />} />
-                    <Route path="capture">
-                        <Route path="create" element={<CaptureCreate />}>
-                            <Route
-                                path=":connectorID"
-                                element={<CaptureCreate />}
-                            />
-                        </Route>
-                        <Route path="edit" element={<CaptureEdit />} />
-                    </Route>
+        <Routes>
+            <Route element={<AppLayout />}>
+                <Route path={routeDetails.home.path} element={<Home />} />
+                <Route path={routeDetails.builds.path} element={<Builds />} />
+                <Route
+                    path={routeDetails.collections.path}
+                    element={<Collections />}
+                />
 
+                <Route
+                    path={routeDetails.captures.path}
+                    element={<Captures />}
+                />
+                <Route path={routeDetails.capture.root}>
                     <Route
-                        path="materializations"
-                        element={<Materializations />}
+                        path={routeDetails.capture.create.path}
+                        element={<CaptureCreate />}
                     />
-                    <Route path="materialization">
-                        <Route
-                            path="create"
-                            element={<MaterializationCreate />}
-                        />
-                    </Route>
-                    <Route path="admin/*" element={<Admin />} />
-                    <Route path="builds" element={<Builds />} />
+                    <Route
+                        path={routeDetails.capture.edit.path}
+                        element={<CaptureEdit />}
+                    />
                 </Route>
-                <Route path="*" element={<PageNotFound />} />
-            </Routes>
-        </Suspense>
+
+                <Route
+                    path={routeDetails.materializations.path}
+                    element={<Materializations />}
+                />
+                <Route path={routeDetails.materialization.root}>
+                    <Route
+                        path={routeDetails.materialization.create.path}
+                        element={<NewMaterialization />}
+                    />
+                </Route>
+
+                <Route path={routeDetails.admin.path} element={<Admin />} />
+                <Route
+                    path={routeDetails.pageNotFound.path}
+                    element={<PageNotFound />}
+                />
+            </Route>
+        </Routes>
     );
 };
 
