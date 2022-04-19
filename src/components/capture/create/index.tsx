@@ -1,5 +1,6 @@
 import { Button, Collapse } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
+import { routeDetails } from 'app/Authenticated';
 import NewCaptureHeader from 'components/capture/Header';
 import LogDialog from 'components/capture/LogDialog';
 import NewCaptureSpec from 'components/capture/Spec';
@@ -174,7 +175,7 @@ function CaptureCreate() {
         exit: () => {
             resetState();
 
-            navigate('/captures');
+            navigate(routeDetails.captures.path);
         },
         jobFailed: (errorTitle: string) => {
             setFormState({

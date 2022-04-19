@@ -1,5 +1,6 @@
 import { Button, Collapse } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
+import { routeDetails } from 'app/Authenticated';
 import NewCaptureDetails from 'components/capture/DetailsForm';
 import NewCaptureError from 'components/capture/Error';
 import NewCaptureHeader from 'components/capture/Header';
@@ -168,7 +169,7 @@ function CaptureEdit() {
         exit: () => {
             resetState();
 
-            navigate('/captures');
+            navigate(routeDetails.captures.path);
         },
         jobFailed: (errorTitle: string) => {
             setFormState({
