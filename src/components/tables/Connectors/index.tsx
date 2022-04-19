@@ -116,6 +116,7 @@ function ConnectorsTable() {
                 setSortDirection={setSortDirection}
                 columnToSort={columnToSort}
                 setColumnToSort={setColumnToSort}
+                header="connectorTable.title"
             />
         </Box>
     );

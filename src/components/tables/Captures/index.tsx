@@ -98,6 +98,7 @@ function CapturesTable() {
                 setSortDirection={setSortDirection}
                 columnToSort={columnToSort}
                 setColumnToSort={setColumnToSort}
+                header="captureTable.header"
             />
         </Box>
     );

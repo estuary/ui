@@ -53,6 +53,7 @@ interface Props {
     columnToSort: string;
     setColumnToSort: (data: any) => void;
     rowsPerPage: number;
+    header: string;
     noExistingDataContentIds: {
         header: string;
         message: string;
@@ -89,6 +90,7 @@ function EntityTable({
     setSortDirection,
     columnToSort,
     setColumnToSort,
+    header,
 }: Props) {
     const [page, setPage] = useState(0);
 
@@ -191,7 +193,7 @@ function EntityTable({
                     sx={{ mb: 2, justifyContent: 'space-between' }}
                 >
                     <Typography variant="h6">
-                        <FormattedMessage id="captureTable.header" />
+                        <FormattedMessage id={header} />
                     </Typography>
 
                     <Box
