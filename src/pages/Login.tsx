@@ -2,10 +2,18 @@ import { Card, CardContent, Grid, Typography } from '@mui/material';
 import { Auth } from '@supabase/ui';
 import Topbar from 'components/header/Topbar';
 import { useClient } from 'hooks/supabase-swr';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
+import { useTitle } from 'react-use';
 import { getLoginSettings } from 'utils/env-utils';
 
 const Login = () => {
+    const intl = useIntl();
+    useTitle(
+        intl.formatMessage({
+            id: 'browserTitle.login',
+        })
+    );
+
     const supabaseClient = useClient();
     const loginSettings = getLoginSettings();
 

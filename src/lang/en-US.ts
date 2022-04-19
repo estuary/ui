@@ -5,6 +5,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     // Common stuff
     'company': `Estuary`,
     'productName': `Control Plane`,
+    'common.browserTitle': `Estuary Flow`,
     'common.loading': `Loading...`,
     'common.errors.heading': `Error`,
     'common.optionsMissing': `No options`,
@@ -110,6 +111,40 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'entityTable.technicalDifficulties.message': `We apologize for the inconvenience. A message describing the issue can be found at the top of the page.`,
 };
 
+const RouteTitles: ResolvedIntlConfig['messages'] = {
+    'routeTitle.dashboard': `Dashboard`,
+    'routeTitle.admin': `Admin`,
+    'routeTitle.builds': `Builds - NOT USED RIGHT NOW`,
+    'routeTitle.captureCreate': `Create Capture`,
+    'routeTitle.captureEdit': `Edit Capture`,
+    'routeTitle.captures': `Captures`,
+    'routeTitle.collections': `Collections`,
+    'routeTitle.error.pageNotFound': `Page Not Found`,
+    'routeTitle.login': `Login`,
+    'routeTitle.loginLoading': `Checking Credentials`,
+    'routeTitle.materializationCreate': `Materialization Capture`,
+    'routeTitle.materializationEdit': `Materialization Edit`,
+    'routeTitle.materializations': `Materializations`,
+    'routeTitle.registration': `Registration - NOT USED RIGHT NOW`,
+};
+
+const BrowserTitles: ResolvedIntlConfig['messages'] = {
+    'browserTitle.dashboard': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.dashboard']}`,
+    'browserTitle.admin': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.admin']}`,
+    'browserTitle.builds': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.builds']}`,
+    'browserTitle.captureCreate': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.captureCreate']}`,
+    'browserTitle.captureEdit': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.captureEdit']}`,
+    'browserTitle.captures': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.captures']}`,
+    'browserTitle.collections': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.collections']}`,
+    'browserTitle.error.pageNotFound': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.error.pageNotFound']}`,
+    'browserTitle.login': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.login']}`,
+    'browserTitle.loginLoading': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.loginLoading']}`,
+    'browserTitle.materializationCreate': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.materializationCreate']}`,
+    'browserTitle.materializationEdit': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.materializationEdit']}`,
+    'browserTitle.materializations': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.materializations']}`,
+    'browserTitle.registration': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.registration']}`,
+};
+
 const Error: ResolvedIntlConfig['messages'] = {
     'error.title': `Error`,
     'error.message': `This is not something you did wrong. There was a technical issue fetching data. Please contact support.`,
@@ -135,7 +170,7 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
 const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreation.ctas.discover': `Test Config`,
     'captureCreation.ctas.discoverAgain': `Regenerate Catalog`,
-    'captureCreation.heading': `New Capture`,
+    'captureCreation.heading': `${RouteTitles['routeTitle.captureCreate']}`,
     'captureCreation.instructions': `To get started please provide a unique name and the source type of the Capture you want to create. Once you've filled out the source details you can click "Test Capture" down below to test the connection.`,
     'captureCreation.missingConnectors': `No connectors installed. You must install a source connector before being able to create a capture.`,
     'captureCreation.tenant.label': `Tenant`,
@@ -169,6 +204,8 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
+    ...BrowserTitles,
+    ...RouteTitles,
     ...LogsDialog,
     ...AdminPage,
     ...Error,

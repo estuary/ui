@@ -1,4 +1,5 @@
 import { Button, Stack, Toolbar, Typography } from '@mui/material';
+import { routeDetails } from 'app/Authenticated';
 import PageContainer from 'components/shared/PageContainer';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
@@ -8,7 +9,7 @@ function NewMaterialization() {
 
     const handlers = {
         close: () => {
-            navigate('/materializations');
+            navigate(routeDetails.materializations.path);
         },
     };
 

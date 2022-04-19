@@ -1,5 +1,6 @@
 import { Button, Collapse } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
+import { routeDetails } from 'app/Authenticated';
 import NewCaptureDetails from 'components/capture/DetailsForm';
 import NewCaptureError from 'components/capture/Error';
 import NewCaptureHeader from 'components/capture/Header';
@@ -81,7 +82,7 @@ const notification: Notification = {
     title: 'New Capture Created',
 };
 
-function CaptureCreation() {
+function CaptureEdit() {
     // misc hooks
     const intl = useIntl();
     const navigate = useNavigate();
@@ -168,7 +169,7 @@ function CaptureCreation() {
         exit: () => {
             resetState();
 
-            navigate('/captures');
+            navigate(routeDetails.captures.path);
         },
         jobFailed: (errorTitle: string) => {
             setFormState({
@@ -470,4 +471,4 @@ function CaptureCreation() {
     );
 }
 
-export default CaptureCreation;
+export default CaptureEdit;

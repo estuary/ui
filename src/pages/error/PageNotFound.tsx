@@ -9,22 +9,48 @@ import {
     Paper,
     Typography,
 } from '@mui/material';
-import Topbar from 'components/header/Topbar';
+import { routeDetails } from 'app/Authenticated';
 import PageContainer from 'components/shared/PageContainer';
 import { useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
+import { useTitle } from 'react-use';
 
 const PageNotFound = () => {
+    const intl = useIntl();
+    useTitle(
+        intl.formatMessage({
+            id: 'browserTitle.error.pageNotFound',
+        })
+    );
+
     const navigate = useNavigate();
 
     const [route, setRoute] = useState<string>('');
 
     const pages: { name: string; route: string }[] = [
-        { name: 'Dashboard', route: '/' },
-        { name: 'Captures', route: '/captures' },
-        { name: 'Materializations', route: '/materializations' },
-        { name: 'Admin', route: '/admin' },
+        {
+            name: intl.formatMessage({ id: routeDetails.home.title }),
+            route: routeDetails.home.path,
+        },
+        {
+            name: intl.formatMessage({ id: routeDetails.captures.title }),
+            route: routeDetails.captures.path,
+        },
+        {
+            name: intl.formatMessage({ id: routeDetails.capture.create.title }),
+            route: routeDetails.capture.create.fullPath,
+        },
+        {
+            name: intl.formatMessage({
+                id: routeDetails.materializations.title,
+            }),
+            route: routeDetails.materializations.path,
+        },
+        {
+            name: intl.formatMessage({ id: routeDetails.admin.title }),
+            route: routeDetails.admin.path,
+        },
     ];
 
     const handlers = {
@@ -47,8 +73,6 @@ const PageNotFound = () => {
 
     return (
         <PageContainer>
-            <Topbar isNavigationOpen={false} hideNavigationMenu />
-
             <Typography variant="h5" align="center" sx={{ mb: 2 }}>
                 <FormattedMessage id="pageNotFound.heading" />
             </Typography>

@@ -1,5 +1,6 @@
 import { Button, Collapse } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
+import { routeDetails } from 'app/Authenticated';
 import NewCaptureHeader from 'components/capture/Header';
 import LogDialog from 'components/capture/LogDialog';
 import NewCaptureSpec from 'components/capture/Spec';
@@ -18,6 +19,7 @@ import { useClient, useQuery, useSelect } from 'hooks/supabase-swr';
 import { MouseEvent } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
+import { useTitle } from 'react-use';
 import { TABLES } from 'services/supabase';
 import useNotificationStore, {
     Notification,
@@ -81,11 +83,16 @@ const notification: Notification = {
     title: 'New Capture Created',
 };
 
-function CaptureCreation() {
+function CaptureCreate() {
     // misc hooks
     const intl = useIntl();
     const navigate = useNavigate();
     const confirmationModalContext = useConfirmationModalContext();
+    useTitle(
+        intl.formatMessage({
+            id: 'browserTitle.captureCreate',
+        })
+    );
 
     // Supabase stuff
     const supabaseClient = useClient();
@@ -168,7 +175,7 @@ function CaptureCreation() {
         exit: () => {
             resetState();
 
-            navigate('/captures');
+            navigate(routeDetails.captures.path);
         },
         jobFailed: (errorTitle: string) => {
             setFormState({
@@ -470,4 +477,4 @@ function CaptureCreation() {
     );
 }
 
-export default CaptureCreation;
+export default CaptureCreate;

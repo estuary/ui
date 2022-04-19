@@ -14,6 +14,7 @@ import {
 import Topbar from 'components/header/Topbar';
 import React, { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { useTitle } from 'react-use';
 
 interface RegistrationRequest {
     firstName: string;
@@ -35,6 +36,11 @@ interface Errors {
 
 const Registration = () => {
     const intl = useIntl();
+    useTitle(
+        intl.formatMessage({
+            id: 'browserTitle.registration',
+        })
+    );
 
     const [firstName, setFirstName] = useState<string>('');
     const [lastName, setLastName] = useState<string>('');
