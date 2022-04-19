@@ -76,6 +76,7 @@ export const getPagination = (currPage: number, size: number) => {
     return { from, to };
 };
 
+// TODO (tables) I think we should switch this to React Table soon
 function EntityTable({
     columns,
     noExistingDataContentIds,
