@@ -20,7 +20,6 @@ describe('When there is user metadata', () => {
         test('full name', async () => {
             const { user } = await customRender(<UserMenu />, {
                 username,
-                returnUser: true,
             });
 
             await waitFor(async () => {
@@ -34,7 +33,6 @@ describe('When there is user metadata', () => {
         test('email', async () => {
             const { user } = await customRender(<UserMenu />, {
                 username,
-                returnUser: true,
             });
 
             await waitFor(async () => {
