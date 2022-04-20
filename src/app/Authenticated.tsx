@@ -4,7 +4,6 @@ import CaptureCreate from 'components/capture/create';
 import CaptureEdit from 'components/capture/edit';
 import NewMaterialization from 'components/materialization/create';
 import Admin from 'pages/Admin';
-import Builds from 'pages/Builds';
 import Captures from 'pages/Captures';
 import PageNotFound from 'pages/error/PageNotFound';
 import Home from 'pages/Home';
@@ -15,10 +14,6 @@ export const routeDetails = {
     admin: {
         title: 'routeTitle.admin',
         path: '/admin',
-    },
-    builds: {
-        title: 'routeTitle.builds',
-        path: '/test/builds',
     },
     capture: {
         root: '/capture',
@@ -70,7 +65,6 @@ const Authenticated = () => {
         <Routes>
             <Route element={<AppLayout />}>
                 <Route path={routeDetails.home.path} element={<Home />} />
-                <Route path={routeDetails.builds.path} element={<Builds />} />
                 <Route
                     path={routeDetails.collections.path}
                     element={<Collections />}

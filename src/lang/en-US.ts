@@ -115,7 +115,6 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
 const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.dashboard': `Dashboard`,
     'routeTitle.admin': `Admin`,
-    'routeTitle.builds': `Builds - NOT USED RIGHT NOW`,
     'routeTitle.captureCreate': `Create Capture`,
     'routeTitle.captureEdit': `Edit Capture`,
     'routeTitle.captures': `Captures`,
@@ -132,7 +131,6 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
 const BrowserTitles: ResolvedIntlConfig['messages'] = {
     'browserTitle.dashboard': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.dashboard']}`,
     'browserTitle.admin': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.admin']}`,
-    'browserTitle.builds': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.builds']}`,
     'browserTitle.captureCreate': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.captureCreate']}`,
     'browserTitle.captureEdit': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.captureEdit']}`,
     'browserTitle.captures': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.captures']}`,
