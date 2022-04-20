@@ -8,12 +8,13 @@ import { useQuery } from 'hooks/supabase-swr';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
 
-interface LiveSpecQuery {
+export interface LiveSpecQuery {
     spec_type: string;
     catalog_name: string;
     updated_at: string;
     connector_image_name: string;
     id: string;
+    last_pub_id: string;
 }
 
 const tableColumns = [
@@ -41,6 +42,7 @@ const queryColumns = [
     'updated_at',
     'connector_image_name',
     'id',
+    'last_pub_id',
 ];
 
 function CapturesTable() {

@@ -1,7 +1,7 @@
 import { Collections } from '@mui/icons-material';
 import AppLayout from 'AppLayout';
 import CaptureCreate from 'components/capture/create';
-import CaptureEdit from 'components/capture/edit';
+import CaptureDetails from 'components/capture/details';
 import NewMaterialization from 'components/materialization/create';
 import Admin from 'pages/Admin';
 import Captures from 'pages/Captures';
@@ -25,10 +25,13 @@ export const routeDetails = {
                 connectorID: 'connectorID',
             },
         },
-        edit: {
+        details: {
             title: 'routeTitle.captureEdit',
-            path: 'edit',
-            fullPath: '/capture/edit',
+            path: 'details',
+            fullPath: '/capture/details',
+            params: {
+                pubID: 'pubID',
+            },
         },
     },
     captures: {
@@ -80,8 +83,8 @@ const Authenticated = () => {
                         element={<CaptureCreate />}
                     />
                     <Route
-                        path={routeDetails.capture.edit.path}
-                        element={<CaptureEdit />}
+                        path={routeDetails.capture.details.path}
+                        element={<CaptureDetails />}
                     />
                 </Route>
 

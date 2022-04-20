@@ -1,20 +1,25 @@
 import { Box, Button, TableCell, TableRow, Tooltip } from '@mui/material';
+import { routeDetails } from 'app/Authenticated';
+import { LiveSpecQuery } from 'components/tables/Captures';
 import { formatDistanceToNow } from 'date-fns';
-import { FormattedDate } from 'react-intl';
+import { FormattedDate, FormattedMessage } from 'react-intl';
+import { useNavigate } from 'react-router';
 import { getDeploymentStatusHexCode, stripPathing } from 'utils/misc-utils';
 
 interface Props {
-    data: any[];
+    data: LiveSpecQuery[];
 }
 
 function Rows({ data }: Props) {
+    const navigate = useNavigate();
+
     return (
         <>
-            {data.map((publication: any) => (
-                <TableRow key={`Entity-${publication.id}`}>
+            {data.map((row) => (
+                <TableRow key={`Entity-${row.id}`}>
                     <TableCell sx={{ minWidth: 256 }}>
                         <Tooltip
-                            title={publication.catalog_name}
+                            title={row.catalog_name}
                             placement="bottom-start"
                         >
                             <Box>
@@ -37,14 +42,14 @@ function Rows({ data }: Props) {
                                         verticalAlign: 'middle',
                                     }}
                                 >
-                                    {stripPathing(publication.catalog_name)}
+                                    {stripPathing(row.catalog_name)}
                                 </span>
                             </Box>
                         </Tooltip>
                     </TableCell>
 
                     <TableCell sx={{ minWidth: 256 }}>
-                        {stripPathing(publication.connector_image_name)}
+                        {stripPathing(row.connector_image_name)}
                     </TableCell>
 
                     <TableCell>
@@ -58,18 +63,15 @@ function Rows({ data }: Props) {
                                     minute="numeric"
                                     second="numeric"
                                     timeZoneName="short"
-                                    value={publication.updated_at}
+                                    value={row.updated_at}
                                 />
                             }
                             placement="bottom-start"
                         >
                             <Box>
-                                {formatDistanceToNow(
-                                    new Date(publication.updated_at),
-                                    {
-                                        addSuffix: true,
-                                    }
-                                )}
+                                {formatDistanceToNow(new Date(row.updated_at), {
+                                    addSuffix: true,
+                                })}
                             </Box>
                         </Tooltip>
                     </TableCell>
@@ -84,20 +86,14 @@ function Rows({ data }: Props) {
                                 variant="contained"
                                 size="small"
                                 disableElevation
-                                disabled
                                 sx={{ mr: 1 }}
+                                onClick={() => {
+                                    navigate(
+                                        `${routeDetails.capture.details.fullPath}?${routeDetails.capture.details.params.pubID}=${row.last_pub_id}`
+                                    );
+                                }}
                             >
-                                Edit
-                            </Button>
-
-                            <Button
-                                variant="contained"
-                                size="small"
-                                color="success"
-                                disableElevation
-                                disabled
-                            >
-                                Stop
+                                <FormattedMessage id="capturesTable.detailsCTA" />
                             </Button>
                         </Box>
                     </TableCell>

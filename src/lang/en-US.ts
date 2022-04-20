@@ -116,7 +116,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.dashboard': `Dashboard`,
     'routeTitle.admin': `Admin`,
     'routeTitle.captureCreate': `Create Capture`,
-    'routeTitle.captureEdit': `Edit Capture`,
+    'routeTitle.captureDetails': `Capture Details`,
     'routeTitle.captures': `Captures`,
     'routeTitle.collections': `Collections`,
     'routeTitle.error.pageNotFound': `Page Not Found`,
@@ -132,7 +132,7 @@ const BrowserTitles: ResolvedIntlConfig['messages'] = {
     'browserTitle.dashboard': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.dashboard']}`,
     'browserTitle.admin': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.admin']}`,
     'browserTitle.captureCreate': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.captureCreate']}`,
-    'browserTitle.captureEdit': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.captureEdit']}`,
+    'browserTitle.captureDetails': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.captureDetails']}`,
     'browserTitle.captures': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.captures']}`,
     'browserTitle.collections': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.collections']}`,
     'browserTitle.error.pageNotFound': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.error.pageNotFound']}`,
@@ -206,6 +206,7 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
 
 const Captures: ResolvedIntlConfig['messages'] = {
     'capturesTable.title': `Your Captures`,
+    'capturesTable.detailsCTA': `Details`,
 };
 
 const MaterializationCreate: ResolvedIntlConfig['messages'] = {
