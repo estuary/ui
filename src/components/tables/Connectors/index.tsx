@@ -75,9 +75,9 @@ function ConnectorsTable() {
         {
             columns: CONNECTOR_QUERY,
             filter: (query) => {
-                return defaultTableFilter(
+                return defaultTableFilter<Connector>(
                     query,
-                    'image_name',
+                    ['image_name', 'detail'],
                     searchQuery,
                     columnToSort,
                     sortDirection,

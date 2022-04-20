@@ -58,9 +58,9 @@ function CapturesTable() {
             columns: queryColumns,
             count: 'exact',
             filter: (query) => {
-                return defaultTableFilter(
+                return defaultTableFilter<LiveSpecQuery>(
                     query,
-                    'catalog_name',
+                    ['catalog_name'],
                     searchQuery,
                     columnToSort,
                     sortDirection,

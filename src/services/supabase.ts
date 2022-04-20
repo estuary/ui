@@ -39,19 +39,24 @@ export const supabaseClient = createClient(
 
 export const DEFAULT_POLLING_INTERVAL = 500;
 
-export const defaultTableFilter = (
-    query: PostgrestFilterBuilder<any>,
-    searchParam: string,
+export const defaultTableFilter = <Data>(
+    query: PostgrestFilterBuilder<Data>,
+    searchParam: Array<keyof Data>,
     searchQuery: string | null,
-    columnToSort: string,
+    columnToSort: keyof Data,
     sortDirection: string,
     pagination: { from: number; to: number }
 ) => {
     let queryBuilder = query;
 
-    // // TODO (supabase) Change to text search? https://supabase.com/docs/reference/javascript/textsearch
     if (searchQuery) {
-        queryBuilder = queryBuilder.ilike(searchParam, `%${searchQuery}%`);
+        queryBuilder = queryBuilder.or(
+            searchParam
+                .map((param) => {
+                    return `${param}.ilike.*${searchQuery}*`;
+                })
+                .join(',')
+        );
     }
 
     return queryBuilder
