@@ -1,12 +1,10 @@
 import { Paper, Typography } from '@mui/material';
-import DraftEditor from 'components/draft/editor';
-import useEditorStore, {
-    editorStoreSelectors,
-} from 'components/draft/editor/Store';
+import DraftEditor from 'components/editor';
+import { editorStoreSelectors, useEditorStore } from 'components/editor/Store';
 import { FormattedMessage } from 'react-intl';
 
 function NewCaptureEditor() {
-    const draftId = useEditorStore(editorStoreSelectors.draftId);
+    const draftId = useEditorStore(editorStoreSelectors.id);
 
     if (draftId) {
         return (

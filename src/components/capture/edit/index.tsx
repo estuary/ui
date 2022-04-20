@@ -10,9 +10,10 @@ import useCaptureCreationStore, {
     CaptureCreationFormStatus,
     CaptureCreationState,
 } from 'components/capture/Store';
-import useEditorStore, {
+import {
+    createEditorStore,
     editorStoreSelectors,
-} from 'components/draft/editor/Store';
+} from 'components/editor/Store';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
@@ -130,8 +131,9 @@ function CaptureEdit() {
     );
 
     //Editor state
-    const draftId = useEditorStore(editorStoreSelectors.draftId);
-    const setDraftId = useEditorStore(editorStoreSelectors.setDraftId);
+    const useEditorStore = createEditorStore('draftSpecEditor');
+    const draftId = useEditorStore(editorStoreSelectors.id);
+    const setDraftId = useEditorStore(editorStoreSelectors.setId);
 
     const helpers = {
         callFailed: (formState: any, subscription?: RealtimeSubscription) => {

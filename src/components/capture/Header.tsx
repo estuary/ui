@@ -1,7 +1,5 @@
 import { Button, Stack, Toolbar, Typography } from '@mui/material';
-import useEditorStore, {
-    editorStoreSelectors,
-} from 'components/draft/editor/Store';
+import { editorStoreSelectors, useEditorStore } from 'components/editor/Store';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
@@ -21,7 +19,8 @@ function NewCaptureHeader({
     saveDisabled,
     formId,
 }: Props) {
-    const draftId = useEditorStore(editorStoreSelectors.draftId);
+    const draftId = useEditorStore(editorStoreSelectors.id);
+    console.log('header', draftId);
 
     return (
         <Toolbar>

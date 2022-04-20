@@ -8,9 +8,11 @@ import useCaptureCreationStore, {
     CaptureCreationFormStatus,
     CaptureCreationState,
 } from 'components/capture/Store';
-import useEditorStore, {
+import {
+    createEditorStore,
+    EditorStoreProvider,
     editorStoreSelectors,
-} from 'components/draft/editor/Store';
+} from 'components/editor/Store';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
@@ -94,6 +96,8 @@ function CaptureCreate() {
         })
     );
 
+    const useEditorStore = createEditorStore('draftSpecEditor');
+
     // Supabase stuff
     const supabaseClient = useClient();
     const tagsQuery = useQuery<ConnectorTag>(
@@ -136,8 +140,8 @@ function CaptureCreate() {
     );
 
     //Editor state
-    const draftId = useEditorStore(editorStoreSelectors.draftId);
-    const setDraftId = useEditorStore(editorStoreSelectors.setDraftId);
+    const draftId = useEditorStore(editorStoreSelectors.id);
+    const setDraftId = useEditorStore(editorStoreSelectors.setId);
 
     const helpers = {
         callFailed: (formState: any, subscription?: RealtimeSubscription) => {
@@ -213,6 +217,8 @@ function CaptureCreate() {
             return waitFor.base(
                 supabaseClient.from(TABLES.DISCOVERS),
                 (payload: any) => {
+                    console.log('setting draft id', payload.new.draft_id);
+
                     setDraftId(payload.new.draft_id);
                 },
                 'captureCreation.test.failedErrorTitle'
@@ -425,54 +431,59 @@ function CaptureCreate() {
                 }
             />
 
-            <NewCaptureHeader
-                close={handlers.cancel}
-                test={handlers.test}
-                testDisabled={
-                    status !== CaptureCreationFormStatus.IDLE || !hasConnectors
-                }
-                save={handlers.saveAndPublish}
-                saveDisabled={
-                    status !== CaptureCreationFormStatus.IDLE || !draftId
-                }
-                formId={FORM_ID}
-            />
+            <EditorStoreProvider createStore={() => useEditorStore}>
+                <NewCaptureHeader
+                    close={handlers.cancel}
+                    test={handlers.test}
+                    testDisabled={
+                        status !== CaptureCreationFormStatus.IDLE ||
+                        !hasConnectors
+                    }
+                    save={handlers.saveAndPublish}
+                    saveDisabled={
+                        status !== CaptureCreationFormStatus.IDLE || !draftId
+                    }
+                    formId={FORM_ID}
+                />
 
-            {connectorTagsError ? (
-                <Error error={connectorTagsError} />
-            ) : (
-                <>
-                    <Collapse in={formSubmitError !== null}>
-                        {formSubmitError && (
-                            <NewCaptureError
-                                title={formSubmitError.title}
-                                error={formSubmitError.error}
-                                logToken={logToken}
-                            />
-                        )}
-                    </Collapse>
-
-                    <form id={FORM_ID}>
-                        {connectorTags ? (
-                            <ErrorBoundryWrapper>
-                                <NewCaptureDetails
-                                    connectorTags={connectorTags.data}
+                {connectorTagsError ? (
+                    <Error error={connectorTagsError} />
+                ) : (
+                    <>
+                        <Collapse in={formSubmitError !== null}>
+                            {formSubmitError && (
+                                <NewCaptureError
+                                    title={formSubmitError.title}
+                                    error={formSubmitError.error}
+                                    logToken={logToken}
                                 />
-                            </ErrorBoundryWrapper>
-                        ) : null}
+                            )}
+                        </Collapse>
 
-                        {captureImage ? (
-                            <ErrorBoundryWrapper>
-                                <NewCaptureSpec connectorImage={captureImage} />
-                            </ErrorBoundryWrapper>
-                        ) : null}
-                    </form>
+                        <form id={FORM_ID}>
+                            {connectorTags ? (
+                                <ErrorBoundryWrapper>
+                                    <NewCaptureDetails
+                                        connectorTags={connectorTags.data}
+                                    />
+                                </ErrorBoundryWrapper>
+                            ) : null}
 
-                    <ErrorBoundryWrapper>
-                        <NewCaptureEditor />
-                    </ErrorBoundryWrapper>
-                </>
-            )}
+                            {captureImage ? (
+                                <ErrorBoundryWrapper>
+                                    <NewCaptureSpec
+                                        connectorImage={captureImage}
+                                    />
+                                </ErrorBoundryWrapper>
+                            ) : null}
+                        </form>
+
+                        <ErrorBoundryWrapper>
+                            <NewCaptureEditor />
+                        </ErrorBoundryWrapper>
+                    </>
+                )}
+            </EditorStoreProvider>
         </PageContainer>
     );
 }

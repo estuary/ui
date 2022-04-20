@@ -1,7 +1,5 @@
 import { List, ListItemButton, ListItemText } from '@mui/material';
-import useEditorStore, {
-    editorStoreSelectors,
-} from 'components/draft/editor/Store';
+import { editorStoreSelectors, useEditorStore } from 'components/editor/Store';
 import { FormattedMessage } from 'react-intl';
 
 function EditorFileSelector() {
@@ -9,12 +7,12 @@ function EditorFileSelector() {
         editorStoreSelectors.setCurrentCatalog
     );
     const currentCatalog = useEditorStore(editorStoreSelectors.currentCatalog);
-    const draftId = useEditorStore(editorStoreSelectors.draftId);
+    const id = useEditorStore(editorStoreSelectors.id);
     const draftSpecs = useEditorStore(editorStoreSelectors.specs);
 
     return (
         <List dense disablePadding>
-            {!draftId ? null : draftSpecs && draftSpecs.length > 0 ? (
+            {!id ? null : draftSpecs && draftSpecs.length > 0 ? (
                 draftSpecs.map((tag: any, index: number) => (
                     <ListItemButton
                         key={`FileSelector-${tag.catalog_name}`}

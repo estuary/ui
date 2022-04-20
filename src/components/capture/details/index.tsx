@@ -1,7 +1,13 @@
-import { TextareaAutosize } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
+import LiveSpecEditor from 'components/editor/LiveSpec';
+import {
+    createEditorStore,
+    EditorStoreProvider,
+    editorStoreSelectors,
+} from 'components/editor/Store';
 import PageContainer from 'components/shared/PageContainer';
 import { useQuery, useSelect } from 'hooks/supabase-swr';
+import { useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
 import { useTitle } from 'react-use';
@@ -41,6 +47,10 @@ function CaptureDetails() {
     const [searchParams] = useSearchParams();
     const pubID = searchParams.get(routeDetails.capture.details.params.pubID);
 
+    const useLiveStore = createEditorStore('liveSpecEditor');
+    const setSpecs = useLiveStore(editorStoreSelectors.setSpecs);
+    const setId = useLiveStore(editorStoreSelectors.setId);
+
     // Supabase stuff
     const liveSpecQuery = useQuery<LiveSpecs>(
         TABLES.LIVE_SPECS,
@@ -51,11 +61,23 @@ function CaptureDetails() {
         },
         []
     );
-    const { data } = useSelect(liveSpecQuery);
+    const { data: liveSpecs } = useSelect(liveSpecQuery);
+
+    useEffect(() => {
+        setId(pubID);
+    }, [pubID, setId]);
+
+    useEffect(() => {
+        if (liveSpecs?.data) {
+            setSpecs(liveSpecs.data);
+        }
+    }, [liveSpecs, setSpecs]);
 
     return (
         <PageContainer>
-            <TextareaAutosize value={JSON.stringify(data)} />
+            <EditorStoreProvider createStore={() => useLiveStore}>
+                <LiveSpecEditor />
+            </EditorStoreProvider>
         </PageContainer>
     );
 }
