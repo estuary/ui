@@ -1,142 +1,139 @@
 name: UI Quality Check
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
 
 jobs:
-  prettier:
-    name: Prettier
+    prettier:
+        name: Prettier
 
-    runs-on: ubuntu-latest
-    steps:
-      - name: Stop previous
-        uses: styfle/cancel-workflow-action@0.9.1
+        runs-on: ubuntu-latest
+        steps:
+            - name: Stop previous
+              uses: styfle/cancel-workflow-action@0.9.1
 
-      - name: Checkout
-        uses: actions/checkout@v2
+            - name: Checkout
+              uses: actions/checkout@v2
 
-      - name: Setup Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16
+            - name: Setup Node
+              uses: actions/setup-node@v2
+              with:
+                  node-version: 16
 
-      - name: Get Deps
-        uses: bahmutov/npm-install@v1
+            - name: Get Deps
+              uses: bahmutov/npm-install@v1
 
-      # TODO(johnny): Should this build step be verifying that the repo
-      # isn't dirty? Seems like this is just writing out formatted results
-      # which are then ignored?
-      - name: Prettier...ing
-        run: npm run format
+            - name: Prettier...ing
+              run: npm run format
 
-  lint:
-    name: ESLint
+    lint:
+        name: ESLint
 
-    runs-on: ubuntu-latest
-    steps:
-      - name: Stop previous
-        uses: styfle/cancel-workflow-action@0.9.1
+        runs-on: ubuntu-latest
+        steps:
+            - name: Stop previous
+              uses: styfle/cancel-workflow-action@0.9.1
 
-      - name: Checkout
-        uses: actions/checkout@v2
+            - name: Checkout
+              uses: actions/checkout@v2
 
-      - name: Setup Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16
+            - name: Setup Node
+              uses: actions/setup-node@v2
+              with:
+                  node-version: 16
 
-      - name: Get Deps
-        uses: bahmutov/npm-install@v1
+            - name: Get Deps
+              uses: bahmutov/npm-install@v1
 
-      - name: Linting
-        run: npm run lint
+            - name: Linting
+              run: npm run lint
 
-  typecheck:
-    name: TypeScript
+    typecheck:
+        name: TypeScript
 
-    runs-on: ubuntu-latest
-    steps:
-      - name: Stop previous
-        uses: styfle/cancel-workflow-action@0.9.1
+        runs-on: ubuntu-latest
+        steps:
+            - name: Stop previous
+              uses: styfle/cancel-workflow-action@0.9.1
 
-      - name: Checkout
-        uses: actions/checkout@v2
+            - name: Checkout
+              uses: actions/checkout@v2
 
-      - name: Setup Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16
+            - name: Setup Node
+              uses: actions/setup-node@v2
+              with:
+                  node-version: 16
 
-      - name: Get Deps
-        uses: bahmutov/npm-install@v1
+            - name: Get Deps
+              uses: bahmutov/npm-install@v1
 
-      - name: Type Checking
-        run: npm run typecheck
+            - name: Type Checking
+              run: npm run typecheck
 
-  test:
-    name: Tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Stop previous
-        uses: styfle/cancel-workflow-action@0.9.1
+    test:
+        name: Tests
+        runs-on: ubuntu-latest
+        steps:
+            - name: Stop previous
+              uses: styfle/cancel-workflow-action@0.9.1
 
-      - name: Checkout
-        uses: actions/checkout@v2
+            - name: Checkout
+              uses: actions/checkout@v2
 
-      - name: Setup Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16
+            - name: Setup Node
+              uses: actions/setup-node@v2
+              with:
+                  node-version: 16
 
-      - name: Get Deps
-        uses: bahmutov/npm-install@v1
+            - name: Get Deps
+              uses: bahmutov/npm-install@v1
 
-      - name: Run jest
-        run: npm run test
+            - name: Run jest
+              run: npm run test
 
-  # Deployment steps undertaken on a merge to `main`.
-  deploy:
-    name: Deploy
-    runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/main' }}
+    # Deployment steps undertaken on a merge to `main`.
+    deploy:
+        name: Deploy
+        runs-on: ubuntu-latest
+        if: ${{ github.ref == 'refs/heads/main' }}
 
-    # Ask github to inject an ID token with sufficient claims
-    # for GCP workload identity federation.
-    permissions:
-      contents: read
-      id-token: write
+        # Ask github to inject an ID token with sufficient claims
+        # for GCP workload identity federation.
+        permissions:
+            contents: read
+            id-token: write
 
-    steps:
-      - name: Stop previous
-        uses: styfle/cancel-workflow-action@0.9.1
+        steps:
+            - name: Stop previous
+              uses: styfle/cancel-workflow-action@0.9.1
 
-      - name: Checkout
-        uses: actions/checkout@v2
+            - name: Checkout
+              uses: actions/checkout@v2
 
-      - name: Setup Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16
+            - name: Setup Node
+              uses: actions/setup-node@v2
+              with:
+                  node-version: 16
 
-      - name: Get Deps
-        uses: bahmutov/npm-install@v1
+            - name: Get Deps
+              uses: bahmutov/npm-install@v1
 
-      - name: Create a release build
-        run: npm run build
+            - name: Create a release build
+              run: npm run build
 
-      # This was generated via `setup-workload-ident.sh` in the ops repo.
-      - name: Set up Google Cloud SDK
-        uses: google-github-actions/auth@v0
-        with:
-          service_account: cd-github-ui@estuary-control.iam.gserviceaccount.com
-          workload_identity_provider: projects/1084703453822/locations/global/workloadIdentityPools/github-actions/providers/github-actions-provider
+            # This was generated via `setup-workload-ident.sh` in the ops repo.
+            - name: Set up Google Cloud SDK
+              uses: google-github-actions/auth@v0
+              with:
+                  service_account: cd-github-ui@estuary-control.iam.gserviceaccount.com
+                  workload_identity_provider: projects/1084703453822/locations/global/workloadIdentityPools/github-actions/providers/github-actions-provider
 
-      - name: Update Dashboard Deployment
-        run: |
-          gcloud run deploy dashboard \
-            --project estuary-control \
-            --region us-central1 \
-            --source ./build/
+            - name: Update Dashboard Deployment
+              run: |
+                  gcloud run deploy dashboard \
+                    --project estuary-control \
+                    --region us-central1 \
+                    --source ./build/

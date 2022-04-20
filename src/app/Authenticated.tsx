@@ -1,10 +1,9 @@
 import { Collections } from '@mui/icons-material';
 import AppLayout from 'AppLayout';
 import CaptureCreate from 'components/capture/create';
-import CaptureEdit from 'components/capture/edit';
+import CaptureDetails from 'components/capture/details';
 import NewMaterialization from 'components/materialization/create';
 import Admin from 'pages/Admin';
-import Builds from 'pages/Builds';
 import Captures from 'pages/Captures';
 import PageNotFound from 'pages/error/PageNotFound';
 import Home from 'pages/Home';
@@ -16,21 +15,23 @@ export const routeDetails = {
         title: 'routeTitle.admin',
         path: '/admin',
     },
-    builds: {
-        title: 'routeTitle.builds',
-        path: '/test/builds',
-    },
     capture: {
         root: '/capture',
         create: {
             title: 'routeTitle.captureCreate',
             path: `create`,
             fullPath: '/capture/create',
+            params: {
+                connectorID: 'connectorID',
+            },
         },
-        edit: {
+        details: {
             title: 'routeTitle.captureEdit',
-            path: 'edit',
-            fullPath: '/capture/edit',
+            path: 'details',
+            fullPath: '/capture/details',
+            params: {
+                pubID: 'pubID',
+            },
         },
     },
     captures: {
@@ -67,7 +68,6 @@ const Authenticated = () => {
         <Routes>
             <Route element={<AppLayout />}>
                 <Route path={routeDetails.home.path} element={<Home />} />
-                <Route path={routeDetails.builds.path} element={<Builds />} />
                 <Route
                     path={routeDetails.collections.path}
                     element={<Collections />}
@@ -83,8 +83,8 @@ const Authenticated = () => {
                         element={<CaptureCreate />}
                     />
                     <Route
-                        path={routeDetails.capture.edit.path}
-                        element={<CaptureEdit />}
+                        path={routeDetails.capture.details.path}
+                        element={<CaptureDetails />}
                     />
                 </Route>
 

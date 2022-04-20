@@ -4,6 +4,7 @@ import { devtools } from 'zustand/middleware';
 // https://github.com/pmndrs/zustand#middleware
 // https://github.com/pmndrs/zustand/blob/main/tests/middlewareTypes.test.tsx
 
-export const devtoolsInNonProd = (process.env.NODE_ENV === 'production'
+export const devtoolsInNonProd = (process.env.NODE_ENV === 'production' ||
+process.env.NODE_ENV === 'test'
     ? (fn: any) => fn
     : devtools) as unknown as typeof devtools;

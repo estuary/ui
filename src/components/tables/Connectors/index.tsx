@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import Rows from 'components/tables/Captures/Rows';
+import Rows from 'components/tables/Connectors/Rows';
 import EntityTable, {
     getPagination,
     SortDirection,
@@ -8,44 +8,60 @@ import { useQuery } from 'hooks/supabase-swr';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
 
-export interface LiveSpecQuery {
-    spec_type: string;
-    catalog_name: string;
-    updated_at: string;
-    connector_image_name: string;
-    id: string;
-    last_pub_id: string;
-}
-
 const tableColumns = [
     {
-        field: 'catalog_name',
-        headerIntlKey: 'entityTable.data.entity',
+        field: 'image_name',
+        headerIntlKey: 'connectorTable.data.image_name',
     },
     {
-        field: 'connector_image_name',
-        headerIntlKey: 'entityTable.data.connectorType',
+        field: 'detail',
+        headerIntlKey: 'connectorTable.data.detail',
+    },
+    {
+        field: 'connector_tags.protocol',
+        headerIntlKey: 'connectorTable.data.protocol',
     },
     {
         field: 'updated_at',
-        headerIntlKey: 'entityTable.data.lastUpdated',
+        headerIntlKey: 'connectorTable.data.updated_at',
     },
     {
         field: null,
-        headerIntlKey: 'entityTable.data.actions',
+        headerIntlKey: 'connectorTable.data.documentation_url',
+    },
+    {
+        field: null,
+        headerIntlKey: 'connectorTable.data.actions',
     },
 ];
 
-const queryColumns = [
-    'spec_type',
-    'catalog_name',
-    'updated_at',
-    'connector_image_name',
-    'id',
-    'last_pub_id',
-];
+export interface Connector {
+    connector_tags: {
+        documentation_url: string;
+        protocol: string;
+        image_tag: string;
+        id: string;
+    }[];
+    id: string;
+    detail: string;
+    updated_at: string;
+    image_name: string;
+}
 
-function CapturesTable() {
+const CONNECTOR_QUERY = `
+    id,
+    detail,
+    updated_at,
+    image_name,
+    connector_tags (
+        documentation_url,
+        protocol,
+        image_tag,
+        id
+    )
+`;
+
+function ConnectorsTable() {
     const rowsPerPage = 10;
     const [pagination, setPagination] = useState<{ from: number; to: number }>(
         getPagination(0, rowsPerPage)
@@ -54,20 +70,19 @@ function CapturesTable() {
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
     const [columnToSort, setColumnToSort] = useState<any>('updated_at');
 
-    const liveSpecQuery = useQuery<LiveSpecQuery>(
-        TABLES.LIVE_SPECS,
+    const liveSpecQuery = useQuery<Connector>(
+        TABLES.CONNECTORS,
         {
-            columns: queryColumns,
-            count: 'exact',
+            columns: CONNECTOR_QUERY,
             filter: (query) => {
-                return defaultTableFilter<LiveSpecQuery>(
+                return defaultTableFilter<Connector>(
                     query,
-                    ['catalog_name'],
+                    ['image_name', 'detail'],
                     searchQuery,
                     columnToSort,
                     sortDirection,
                     pagination
-                ).eq('spec_type', 'capture');
+                );
             },
         },
         [pagination, searchQuery, columnToSort, sortDirection]
@@ -77,10 +92,10 @@ function CapturesTable() {
         <Box>
             <EntityTable
                 noExistingDataContentIds={{
-                    header: 'captures.main.message1',
-                    message: 'captures.main.message2',
-                    docLink: 'captures.main.message2.docLink',
-                    docPath: 'captures.main.message2.docPath',
+                    header: 'admin.connectors.main.message1',
+                    message: 'admin.connectors.main.message2',
+                    docLink: 'admin.connectors.main.message2.docLink',
+                    docPath: 'admin.connectors.main.message2.docPath',
                 }}
                 columns={tableColumns}
                 query={liveSpecQuery}
@@ -92,10 +107,10 @@ function CapturesTable() {
                 setSortDirection={setSortDirection}
                 columnToSort={columnToSort}
                 setColumnToSort={setColumnToSort}
-                header="captureTable.header"
+                header="connectorTable.title"
             />
         </Box>
     );
 }
 
-export default CapturesTable;
+export default ConnectorsTable;

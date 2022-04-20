@@ -11,6 +11,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.optionsMissing': `No options`,
     'common.noData': `No data to display`,
     'common.loggedOut': `You have been logged out. Please log back in.`,
+    'common.missing': `N/A`,
 
     // Header
     'header.navigationMenu.aria.label': `Expand Navigation`,
@@ -114,9 +115,8 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
 const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.dashboard': `Dashboard`,
     'routeTitle.admin': `Admin`,
-    'routeTitle.builds': `Builds - NOT USED RIGHT NOW`,
     'routeTitle.captureCreate': `Create Capture`,
-    'routeTitle.captureEdit': `Edit Capture`,
+    'routeTitle.captureDetails': `Capture Details`,
     'routeTitle.captures': `Captures`,
     'routeTitle.collections': `Collections`,
     'routeTitle.error.pageNotFound': `Page Not Found`,
@@ -131,9 +131,8 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
 const BrowserTitles: ResolvedIntlConfig['messages'] = {
     'browserTitle.dashboard': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.dashboard']}`,
     'browserTitle.admin': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.admin']}`,
-    'browserTitle.builds': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.builds']}`,
     'browserTitle.captureCreate': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.captureCreate']}`,
-    'browserTitle.captureEdit': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.captureEdit']}`,
+    'browserTitle.captureDetails': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.captureDetails']}`,
     'browserTitle.captures': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.captures']}`,
     'browserTitle.collections': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.collections']}`,
     'browserTitle.error.pageNotFound': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.error.pageNotFound']}`,
@@ -161,6 +160,18 @@ const LogsDialog: ResolvedIntlConfig['messages'] = {
 const AdminPage: ResolvedIntlConfig['messages'] = {
     'connectorTable.title': `Installed ${CommonMessages['terms.connectors']}`,
     'connectorTable.title.aria': `Table of all installed ${CommonMessages['terms.connectors']}`,
+    'connectorTable.data.image_name': `Image`,
+    'connectorTable.data.detail': `Details`,
+    'connectorTable.data.protocol': `Protocol`,
+    'connectorTable.data.updated_at': `Last Changed`,
+    'connectorTable.data.documentation_url': `Documentation`,
+    'connectorTable.data.actions': `Actions`,
+    'connectorTable.actionsCta.capture': `Capture`,
+    'connectorTable.actionsCta.materialization': `Materialization`,
+    'admin.connectors.main.message1': `There are no connectors currently ready to be used.`,
+    'admin.connectors.main.message2': `Please contact support to get help setting up a {docLink}.`,
+    'admin.connectors.main.message2.docLink': `connector`,
+    'admin.connectors.main.message2.docPath': `https://docs.estuary.dev/concepts/#connectors`,
 };
 
 const LoginPage: ResolvedIntlConfig['messages'] = {
@@ -195,6 +206,7 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
 
 const Captures: ResolvedIntlConfig['messages'] = {
     'capturesTable.title': `Your Captures`,
+    'capturesTable.detailsCTA': `Details`,
 };
 
 const MaterializationCreate: ResolvedIntlConfig['messages'] = {

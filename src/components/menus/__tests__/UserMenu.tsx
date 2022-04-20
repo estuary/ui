@@ -43,13 +43,4 @@ describe('When there is user metadata', () => {
             });
         });
     });
-
-    it('the menu should look right', async () => {
-        const { user, view } = await customRender(<UserMenu />, {
-            username,
-        });
-
-        await openMenu(user);
-        expect(view).toMatchSnapshot();
-    });
 });

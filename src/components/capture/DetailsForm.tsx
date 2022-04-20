@@ -1,13 +1,15 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Alert, Stack, Typography } from '@mui/material';
+import { routeDetails } from 'app/Authenticated';
 import { ConnectorTag } from 'components/capture/create';
 import useCaptureCreationStore, {
     CaptureCreationFormStatus,
     CaptureCreationState,
 } from 'components/capture/Store';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { useSearchParams } from 'react-router-dom';
 import {
     defaultOptions,
     defaultRenderers,
@@ -29,12 +31,28 @@ const stateSelectors: StoreSelector<CaptureCreationState> = {
 
 function NewCaptureDetails({ connectorTags }: Props) {
     const intl = useIntl();
+    const [searchParams] = useSearchParams();
+    const connectorID = searchParams.get(
+        routeDetails.capture.create.params.connectorID
+    );
+
     const formData = useCaptureCreationStore(stateSelectors.formData);
     const setDetails = useCaptureCreationStore(stateSelectors.setDetails);
     const displayValidation = useCaptureCreationStore(
         stateSelectors.showValidation
     );
     const status = useCaptureCreationStore(stateSelectors.status);
+
+    useEffect(() => {
+        if (connectorID) {
+            setDetails({
+                data: {
+                    name: '',
+                    image: connectorID,
+                },
+            });
+        }
+    }, [connectorID, setDetails]);
 
     const schema = useMemo(() => {
         return {

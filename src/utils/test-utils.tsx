@@ -85,8 +85,10 @@ const customRender = async (
 
     goTo(route, 'Test Page');
 
+    const user = userEvent.setup();
+
     return {
-        user: userEvent.setup(),
+        user,
         view,
     };
 };
