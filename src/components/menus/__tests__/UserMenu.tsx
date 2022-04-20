@@ -20,6 +20,7 @@ describe('When there is user metadata', () => {
         test('full name', async () => {
             const { user } = await customRender(<UserMenu />, {
                 username,
+                returnUser: true,
             });
 
             await waitFor(async () => {
@@ -33,6 +34,7 @@ describe('When there is user metadata', () => {
         test('email', async () => {
             const { user } = await customRender(<UserMenu />, {
                 username,
+                returnUser: true,
             });
 
             await waitFor(async () => {
@@ -42,14 +44,5 @@ describe('When there is user metadata', () => {
                 ).toBeInTheDocument();
             });
         });
-    });
-
-    it('the menu should look right', async () => {
-        const { user, view } = await customRender(<UserMenu />, {
-            username,
-        });
-
-        await openMenu(user);
-        expect(view).toMatchSnapshot();
     });
 });

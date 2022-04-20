@@ -66,9 +66,10 @@ const customRender = async (
     options: Omit<RenderOptions, 'wrapper'> & {
         route?: string;
         username?: string;
+        returnUser?: boolean;
     }
 ) => {
-    const { route, username } = options;
+    const { returnUser, route, username } = options;
 
     const view = rtlRender(
         <AppContent>
@@ -85,8 +86,13 @@ const customRender = async (
 
     goTo(route, 'Test Page');
 
+    let user;
+    if (returnUser) {
+        user = userEvent.setup();
+    }
+
     return {
-        user: userEvent.setup(),
+        user,
         view,
     };
 };

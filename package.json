@@ -96,6 +96,7 @@
     ],
     "jest": {
         "resetMocks": false,
+        "verbose": true,
         "testTimeout": 10000
     },
     "repository": {
