@@ -2,7 +2,9 @@ import { TextareaAutosize } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
 import PageContainer from 'components/shared/PageContainer';
 import { useQuery, useSelect } from 'hooks/supabase-swr';
+import { useIntl } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
+import { useTitle } from 'react-use';
 import { TABLES } from 'services/supabase';
 
 export interface LiveSpecs {
@@ -29,6 +31,13 @@ const LIVE_SPECS_QUERY = `
 `;
 
 function CaptureDetails() {
+    const intl = useIntl();
+    useTitle(
+        intl.formatMessage({
+            id: 'browserTitle.captureDetails',
+        })
+    );
+
     const [searchParams] = useSearchParams();
     const pubID = searchParams.get(routeDetails.capture.details.params.pubID);
 

@@ -1,7 +1,7 @@
 import { TABLES } from 'services/supabase';
 import { useQuery, useSelect } from './supabase-swr/';
 
-interface DraftSpecQuery {
+export interface DraftSpecQuery {
     catalog_name: string;
     spec_type: string;
     spec_patch: object;
