@@ -1,16 +1,13 @@
 import { Box } from '@mui/material';
 import EditorFileSelector from 'components/editor/FileSelector';
 import MonacoEditor from 'components/editor/MonacoEditor';
-import { editorStoreSelectors, useEditorStore } from 'components/editor/Store';
+import { useZustandStore } from 'components/editor/Store';
 import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useEffect, useState } from 'react';
 import { supabaseClient, TABLES } from 'services/supabase';
 
-function DraftEditor() {
-    const currentCatalog = useEditorStore(editorStoreSelectors.currentCatalog);
-    const setSpecs = useEditorStore(editorStoreSelectors.setSpecs);
-    const id = useEditorStore(editorStoreSelectors.id);
-
+function DraftSpecEditor() {
+    const { currentCatalog, setSpecs, id } = useZustandStore<DraftSpecQuery>();
     const { draftSpecs, mutate } = useDraftSpecs(id);
     const [draftSpec, setDraftSpec] = useState<DraftSpecQuery | null>(null);
 
@@ -74,4 +71,4 @@ function DraftEditor() {
     }
 }
 
-export default DraftEditor;
+export default DraftSpecEditor;

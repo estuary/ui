@@ -3,6 +3,7 @@ import { useTheme } from '@mui/material';
 import { debounce } from 'lodash';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useRef } from 'react';
+import { useIntl } from 'react-intl';
 
 interface Props {
     disabled?: boolean;
@@ -12,6 +13,7 @@ interface Props {
 }
 
 function MonacoEditor({ disabled, value, path, onChange }: Props) {
+    const intl = useIntl();
     const theme = useTheme();
     const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(
         null
@@ -34,7 +36,8 @@ function MonacoEditor({ disabled, value, path, onChange }: Props) {
                 height="300px"
                 defaultLanguage="json"
                 theme={theme.palette.mode === 'light' ? 'vs' : 'vs-dark'}
-                defaultValue={JSON.stringify(value, null, 2)}
+                defaultValue={intl.formatMessage({ id: 'common.loading' })}
+                value={JSON.stringify(value, null, 2)}
                 path={path}
                 options={{ readOnly: disabled ? disabled : false }}
                 onMount={handlers.mount}
