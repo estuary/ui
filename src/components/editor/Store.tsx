@@ -86,6 +86,8 @@ export const ZustandProvider = ({
     );
 };
 
+// TODO (typing) This is brute forcing the types basically and force the functions using this
+//  To be WAY too verbose than need be.
 export const useZustandStore = <S extends Object, U>(
     selector: StateSelector<S, U>,
     equalityFn?: any
