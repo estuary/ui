@@ -10,6 +10,29 @@ interface Props {
     data: LiveSpecQuery[];
 }
 
+export const tableColumns = [
+    {
+        field: 'catalog_name',
+        headerIntlKey: 'entityTable.data.entity',
+    },
+    {
+        field: 'connector_image_name',
+        headerIntlKey: 'entityTable.data.connectorType',
+    },
+    {
+        field: null,
+        headerIntlKey: 'entityTable.data.writesTo',
+    },
+    {
+        field: 'updated_at',
+        headerIntlKey: 'entityTable.data.lastUpdated',
+    },
+    {
+        field: null,
+        headerIntlKey: 'entityTable.data.actions',
+    },
+];
+
 function Rows({ data }: Props) {
     const navigate = useNavigate();
 
@@ -48,9 +71,11 @@ function Rows({ data }: Props) {
                         </Tooltip>
                     </TableCell>
 
-                    <TableCell sx={{ minWidth: 256 }}>
+                    <TableCell sx={{ minWidth: 100 }}>
                         {stripPathing(row.connector_image_name)}
                     </TableCell>
+
+                    <TableCell>{row.writes_to}</TableCell>
 
                     <TableCell>
                         <Tooltip
