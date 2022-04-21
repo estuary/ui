@@ -25,8 +25,6 @@ function NewCaptureHeader({
         EditorStoreState<DraftSpecQuery>['id']
     >((state) => state.id);
 
-    console.log('header', id);
-
     return (
         <Toolbar>
             <Typography variant="h6" noWrap>
