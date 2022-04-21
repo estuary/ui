@@ -215,8 +215,6 @@ function CaptureCreate() {
             return waitFor.base(
                 supabaseClient.from(TABLES.DISCOVERS),
                 (payload: any) => {
-                    console.log('setting draft id', payload.new.draft_id);
-
                     setId(payload.new.draft_id);
                 },
                 'captureCreation.test.failedErrorTitle'
