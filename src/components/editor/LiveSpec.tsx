@@ -1,52 +1,11 @@
 import { Box } from '@mui/material';
-import { routeDetails } from 'app/Authenticated';
+import { LiveSpecQuery } from 'components/capture/details';
 import EditorFileSelector from 'components/editor/FileSelector';
 import MonacoEditor from 'components/editor/MonacoEditor';
 import { EditorStoreState, useZustandStore } from 'components/editor/Store';
-import { useQuery, useSelect } from 'hooks/supabase-swr';
 import { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { TABLES } from 'services/supabase';
-
-export interface LiveSpecQuery {
-    id: string;
-    catalog_name: string;
-    last_pub_id: string;
-    spec: string;
-    spec_type: string;
-    reads_from: string;
-    writes_to: string;
-    connector_image_name: string;
-    connector_image_tag: string;
-}
-const LIVE_SPECS_QUERY = `
-    id, 
-    catalog_name,
-    last_pub_id,
-    spec,
-    spec_type,
-    reads_from,
-    writes_to,
-    connector_image_name,
-    connector_image_tag
-`;
 
 function LiveSpecEditor() {
-    const navigate = useNavigate();
-    const [searchParams] = useSearchParams();
-    const pubID = searchParams.get(routeDetails.capture.details.params.pubID);
-    if (!pubID) navigate(routeDetails.home.path);
-
-    const setSpecs = useZustandStore<
-        EditorStoreState<LiveSpecQuery>,
-        EditorStoreState<LiveSpecQuery>['setSpecs']
-    >((state) => state.setSpecs);
-
-    const setId = useZustandStore<
-        EditorStoreState<LiveSpecQuery>,
-        EditorStoreState<LiveSpecQuery>['setId']
-    >((state) => state.setId);
-
     const currentCatalog = useZustandStore<
         EditorStoreState<LiveSpecQuery>,
         EditorStoreState<LiveSpecQuery>['currentCatalog']
@@ -61,32 +20,7 @@ function LiveSpecEditor() {
         null
     );
 
-    // Supabase stuff
-    const liveSpecQuery = useQuery<LiveSpecQuery>(
-        TABLES.LIVE_SPECS,
-        {
-            columns: LIVE_SPECS_QUERY,
-            filter: (query) => query.eq('last_pub_id', pubID as string),
-        },
-        []
-    );
-    const { data: liveSpecs } = useSelect(liveSpecQuery);
-
     useEffect(() => {
-        setId(pubID);
-    }, [pubID, setId]);
-
-    useEffect(() => {
-        if (liveSpecs?.data) {
-            setSpecs(liveSpecs.data);
-        }
-    }, [liveSpecs, setSpecs]);
-
-    useEffect(() => {
-        console.log('current catalog ueh', {
-            currentCatalog,
-            specs,
-        });
         if (specs) {
             setLiveSpec(specs[currentCatalog].spec);
         }

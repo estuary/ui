@@ -12,9 +12,9 @@ import {
     Typography,
 } from '@mui/material';
 import Topbar from 'components/header/Topbar';
+import useBrowserTitle from 'hooks/useBrowserTitle';
 import React, { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useTitle } from 'react-use';
 
 interface RegistrationRequest {
     firstName: string;
@@ -35,12 +35,9 @@ interface Errors {
 }
 
 const Registration = () => {
+    useBrowserTitle('browserTitle.registration');
+
     const intl = useIntl();
-    useTitle(
-        intl.formatMessage({
-            id: 'browserTitle.registration',
-        })
-    );
 
     const [firstName, setFirstName] = useState<string>('');
     const [lastName, setLastName] = useState<string>('');

@@ -11,27 +11,22 @@ import {
 } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
 import PageContainer from 'components/shared/PageContainer';
+import useBrowserTitle from 'hooks/useBrowserTitle';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
-import { useTitle } from 'react-use';
 
 const PageNotFound = () => {
+    useBrowserTitle('browserTitle.error.pageNotFound');
+
     const intl = useIntl();
-    useTitle(
-        intl.formatMessage({
-            id: 'browserTitle.error.pageNotFound',
-        })
-    );
-
     const navigate = useNavigate();
-
     const [route, setRoute] = useState<string>('');
 
     const pages: { name: string; route: string }[] = [
         {
-            name: intl.formatMessage({ id: routeDetails.home.title }),
-            route: routeDetails.home.path,
+            name: intl.formatMessage({ id: routeDetails.dashboard.title }),
+            route: routeDetails.dashboard.path,
         },
         {
             name: intl.formatMessage({ id: routeDetails.captures.title }),

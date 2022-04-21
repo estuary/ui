@@ -2,17 +2,11 @@ import AddIcon from '@mui/icons-material/Add';
 import { Button, Toolbar } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
 import PageContainer from 'components/shared/PageContainer';
-import { useIntl } from 'react-intl';
+import useBrowserTitle from 'hooks/useBrowserTitle';
 import { NavLink, Outlet } from 'react-router-dom';
-import { useTitle } from 'react-use';
 
 const Materializations = () => {
-    const intl = useIntl();
-    useTitle(
-        intl.formatMessage({
-            id: 'browserTitle.materializations',
-        })
-    );
+    useBrowserTitle('browserTitle.materializations');
 
     return (
         <PageContainer>

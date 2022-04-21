@@ -7,8 +7,8 @@ import {
 } from '@mui/material';
 import PageContainer from 'components/shared/PageContainer';
 import ConnectorsTable from 'components/tables/Connectors';
-import { FormattedMessage, useIntl } from 'react-intl';
-import { useTitle } from 'react-use';
+import useBrowserTitle from 'hooks/useBrowserTitle';
+import { FormattedMessage } from 'react-intl';
 
 const boxStyling: SxProps<Theme> = {
     marginBottom: 2,
@@ -16,12 +16,7 @@ const boxStyling: SxProps<Theme> = {
 };
 
 const Admin = () => {
-    const intl = useIntl();
-    useTitle(
-        intl.formatMessage({
-            id: 'browserTitle.admin',
-        })
-    );
+    useBrowserTitle('browserTitle.admin');
 
     return (
         <PageContainer>

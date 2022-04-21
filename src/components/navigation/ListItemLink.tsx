@@ -8,6 +8,7 @@ import {
     useTheme,
 } from '@mui/material';
 import { forwardRef, ReactNode } from 'react';
+import { useIntl } from 'react-intl';
 import { NavLink, NavLinkProps } from 'react-router-dom';
 import { Widths } from '../../AppLayout';
 
@@ -30,6 +31,7 @@ const ListItemLink = ({
     badgeContent,
     menuWidth,
 }: Props) => {
+    const intl = useIntl();
     const theme = useTheme();
     const isBelowMd = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -59,10 +61,14 @@ const ListItemLink = ({
         }
     );
 
+    const translatedTitle = intl.formatMessage({
+        id: title,
+    });
+
     return (
         <li>
             <Tooltip
-                title={!isBelowMd && !isOpen ? title : ''}
+                title={!isBelowMd && !isOpen ? translatedTitle : ''}
                 placement="right-end"
             >
                 {menuWidth === Widths.FULL ? (
@@ -73,7 +79,7 @@ const ListItemLink = ({
                         }}
                     >
                         {icon ? <ListItemIcon>{icon}</ListItemIcon> : null}
-                        <ListItemText primary={title} />
+                        <ListItemText primary={translatedTitle} />
                         <Badge badgeContent={badgeContent} />
                     </ListItemButton>
                 ) : (
@@ -90,7 +96,7 @@ const ListItemLink = ({
                                 </Badge>
                             </ListItemIcon>
                         ) : null}
-                        <ListItemText primary={title} />
+                        <ListItemText primary={translatedTitle} />
                     </ListItemButton>
                 )}
             </Tooltip>

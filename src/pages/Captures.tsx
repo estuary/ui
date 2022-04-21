@@ -3,9 +3,8 @@ import { Box, Button, SxProps, Theme, Toolbar } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
 import PageContainer from 'components/shared/PageContainer';
 import CapturesTable from 'components/tables/Captures';
-import { useIntl } from 'react-intl';
+import useBrowserTitle from 'hooks/useBrowserTitle';
 import { NavLink } from 'react-router-dom';
-import { useTitle } from 'react-use';
 
 const boxStyling: SxProps<Theme> = {
     marginBottom: 2,
@@ -13,12 +12,7 @@ const boxStyling: SxProps<Theme> = {
 };
 
 const Capture = () => {
-    const intl = useIntl();
-    useTitle(
-        intl.formatMessage({
-            id: 'browserTitle.captures',
-        })
-    );
+    useBrowserTitle('browserTitle.captures');
 
     return (
         <PageContainer>

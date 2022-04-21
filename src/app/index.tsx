@@ -1,8 +1,7 @@
 import { Auth } from '@supabase/ui';
 import FullPageSpinner from 'components/fullPage/Spinner';
+import useBrowserTitle from 'hooks/useBrowserTitle';
 import * as React from 'react';
-import { useIntl } from 'react-intl';
-import { useTitle } from 'react-use';
 
 const AuthenticatedApp = React.lazy(
     () => import(/* webpackPrefetch: true */ './Authenticated')
@@ -10,12 +9,7 @@ const AuthenticatedApp = React.lazy(
 const UnauthenticatedApp = React.lazy(() => import('./Unauthenticated'));
 
 function App() {
-    const intl = useIntl();
-    useTitle(
-        intl.formatMessage({
-            id: 'routeTitle.loginLoading',
-        })
-    );
+    useBrowserTitle('browserTitle.loginLoading');
 
     const { user } = Auth.useUser();
 

@@ -1,5 +1,5 @@
 import { List, ListItemButton, ListItemText } from '@mui/material';
-import { LiveSpecQuery } from 'components/editor/LiveSpec';
+import { LiveSpecQuery } from 'components/capture/details';
 import { EditorStoreState, useZustandStore } from 'components/editor/Store';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { FormattedMessage } from 'react-intl';

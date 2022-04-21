@@ -1,13 +1,13 @@
 import { Box, Button, TableCell, TableRow, Tooltip } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
-import { LiveSpecQuery } from 'components/tables/Captures';
+import { LiveSpecsQuery } from 'components/tables/Captures';
 import { formatDistanceToNow } from 'date-fns';
 import { FormattedDate, FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router';
 import { getDeploymentStatusHexCode, stripPathing } from 'utils/misc-utils';
 
 interface Props {
-    data: LiveSpecQuery[];
+    data: LiveSpecsQuery[];
 }
 
 export const tableColumns = [

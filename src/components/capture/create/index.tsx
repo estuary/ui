@@ -14,11 +14,11 @@ import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
 import { useConfirmationModalContext } from 'context/Confirmation';
 import { useClient, useQuery, useSelect } from 'hooks/supabase-swr';
+import useBrowserTitle from 'hooks/useBrowserTitle';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { MouseEvent } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
-import { useTitle } from 'react-use';
 import { TABLES } from 'services/supabase';
 import useNotificationStore, {
     Notification,
@@ -83,15 +83,11 @@ const notification: Notification = {
 };
 
 function CaptureCreate() {
+    useBrowserTitle('browserTitle.captureCreate');
     // misc hooks
     const intl = useIntl();
     const navigate = useNavigate();
     const confirmationModalContext = useConfirmationModalContext();
-    useTitle(
-        intl.formatMessage({
-            id: 'browserTitle.captureCreate',
-        })
-    );
 
     // Supabase stuff
     const supabaseClient = useClient();
