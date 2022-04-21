@@ -7,7 +7,6 @@ import {
 import useConstant from 'use-constant';
 import { devtoolsOptions } from 'utils/store-utils';
 import create, { StoreApi, useStore } from 'zustand';
-import createContext from 'zustand/context';
 import { devtools, NamedSet } from 'zustand/middleware';
 
 export interface EditorStoreState<T> {
@@ -63,7 +62,7 @@ const getInitialState = <T,>(
     };
 };
 
-export const createEditorStore = <T,>(key: string) => {
+const createEditorStore = <T,>(key: string) => {
     return create<EditorStoreState<T>>()(
         devtools((set) => getInitialState<T>(set), devtoolsOptions(key))
     );
@@ -91,9 +90,6 @@ export const useZustandStore = <T,>() => {
     const store = useContext(ZustandContext);
     return useStore<StoreApi<EditorStoreState<T>>>(store);
 };
-
-export const { Provider: EditorStoreProvider, useStore: useEditorStore } =
-    createContext<StoreApi<EditorStoreState<any>>>();
 
 export const editorStoreSelectors = {
     id: (state: EditorStoreState<any>) => state.id,
