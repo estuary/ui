@@ -27,6 +27,7 @@ import useNotificationStore, {
     Notification,
     NotificationState,
 } from 'stores/NotificationStore';
+import { MaterializationDef } from '../../../../flow_deps/flow';
 
 export interface ConnectorTag {
     connectors: {
@@ -48,9 +49,8 @@ const FORM_ID = 'newMaterializationForm';
 // TODO - need to get this typing to work... too many repeated types
 const selectors = {
     page: {
-        materializationName: (state: CreationState) => state.details.data.name,
-        materializationImage: (state: CreationState) =>
-            state.details.data.image,
+        catalogNamespace: (state: CreationState) => state.details.data.name,
+        imageTagId: (state: CreationState) => state.details.data.image,
         setDetails: (state: CreationState) => state.setDetails,
         resetState: (state: CreationState) => state.resetState,
         hasChanges: (state: CreationState) => state.hasChanges,
@@ -60,6 +60,7 @@ const selectors = {
         ],
         specFormData: (state: CreationState) => state.spec.data,
         connectors: (state: CreationState) => state.connectors,
+        collections: (state: CreationState) => state.collections,
     },
     form: {
         set: (state: CreationState) => state.setFormState,
@@ -110,12 +111,10 @@ function MaterializationCreate() {
     );
 
     // Form store
-    const materializationName = useCreationStore(
-        selectors.page.materializationName
-    );
-    const materializationImage = useCreationStore(
-        selectors.page.materializationImage
-    );
+    const catalogNamespace = useCreationStore(selectors.page.catalogNamespace);
+    const imageTagId = useCreationStore(selectors.page.imageTagId);
+    const collections = useCreationStore(selectors.page.collections);
+    const endpointConfig = useCreationStore(selectors.page.specFormData);
     const [detailErrors, specErrors] = useCreationStore(selectors.page.errors);
     const resetState = useCreationStore(selectors.page.resetState);
     const hasChanges = useCreationStore(selectors.page.hasChanges);
@@ -266,13 +265,39 @@ function MaterializationCreate() {
             detailHasErrors = detailErrors ? detailErrors.length > 0 : false;
             specHasErrors = specErrors ? specErrors.length > 0 : false;
 
+            const connectorInfo = connectorTags?.data.find(
+                ({ id }) => id === imageTagId
+            );
+
             if (detailHasErrors || specHasErrors) {
                 setFormState({ showValidation: true });
+            } else if (collections.length === 0) {
+                // TODO: Handle the scenario where no collections are present.
+            } else if (!connectorInfo) {
+                // TODO: Handle the highly unlikely scenario where the connector tag id could not be found.
             } else {
+                const {
+                    connectors: { image_name },
+                    image_tag,
+                } = connectorInfo;
+
+                const draftSpecPatch: MaterializationDef = {
+                    bindings: collections.map((source) => ({
+                        resource: {},
+                        source,
+                    })),
+                    endpoint: {
+                        connector: {
+                            config: endpointConfig,
+                            image: `${image_name}${image_tag}`,
+                        },
+                    },
+                };
+
                 supabaseClient
                     .from(TABLES.DRAFTS)
                     .insert({
-                        detail: materializationName,
+                        detail: catalogNamespace,
                     })
                     .then(
                         (draftsResponse) => {
@@ -285,9 +310,9 @@ function MaterializationCreate() {
                                     .insert([
                                         {
                                             draft_id: draftsResponse.data[0].id,
-                                            catalog_name: materializationName,
+                                            catalog_name: catalogNamespace,
                                             spec_type: 'materialization',
-                                            spec_patch: {},
+                                            spec_patch: draftSpecPatch,
                                         },
                                     ])
                                     .then(
@@ -454,7 +479,6 @@ function MaterializationCreate() {
                 }
                 save={handlers.saveAndPublish}
                 saveDisabled={status !== CreationFormStatus.IDLE || !draftId}
-                formId={FORM_ID}
             />
 
             {connectorTagsError ? (
@@ -472,24 +496,26 @@ function MaterializationCreate() {
                     </Collapse>
 
                     <form id={FORM_ID}>
-                        {connectorTags ? (
+                        {connectorTags && (
                             <ErrorBoundryWrapper>
                                 <NewMaterializationDetails
                                     connectorTags={connectorTags.data}
                                 />
                             </ErrorBoundryWrapper>
-                        ) : null}
+                        )}
 
-                        {materializationImage ? (
+                        {imageTagId && (
                             <ErrorBoundryWrapper>
                                 <NewMaterializationSpec
-                                    connectorImage={materializationImage}
+                                    connectorImage={imageTagId}
+                                />
+
+                                <CollectionSelector
+                                    preview={handlers.preview}
                                 />
                             </ErrorBoundryWrapper>
-                        ) : null}
+                        )}
                     </form>
-
-                    <CollectionSelector preview={handlers.preview} />
                 </>
             )}
         </PageContainer>

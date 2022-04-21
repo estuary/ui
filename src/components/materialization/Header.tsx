@@ -8,7 +8,6 @@ interface Props {
     save: EventHandler<any>;
     testDisabled: boolean;
     saveDisabled: boolean;
-    formId: string;
 }
 
 function NewMaterializationHeader({
@@ -17,7 +16,6 @@ function NewMaterializationHeader({
     save,
     testDisabled,
     saveDisabled,
-    formId,
 }: Props) {
     return (
         <Toolbar sx={{ justifyContent: 'space-between' }}>
@@ -31,8 +29,6 @@ function NewMaterializationHeader({
                 </Button>
 
                 <Button
-                    form={formId}
-                    type="submit"
                     color="success"
                     variant="contained"
                     disableElevation

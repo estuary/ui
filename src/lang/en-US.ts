@@ -224,7 +224,7 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreation.heading': `New Materialization`,
     'materializationCreation.image.description': `The connector you want to use to connect to your endpoint.`,
     'materializationCreation.image.label': `Source`,
-    'materializationCreation.instructions': `To get started please provide a unique name, select an endpoint type, and select the Collections you want to Materialize. The generated YAML can be reviewed before saving.`,
+    'materializationCreation.instructions': `To get started, please provide a unique name and select an endpoint. Next, configure your endpoint and choose the collections you want to materialize. The generated YAML can be reviewed before saving.`,
     'materializationCreation.missingConnectors': `No connectors installed. A source connector must be installed before a materialization can be created.`,
     'materializationCreation.name.description': `Name of the materialization - must be unique. (ex: acemCo/marketing_data)`,
     'materializationCreation.name.label': `Name`,

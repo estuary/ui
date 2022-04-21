@@ -50,6 +50,10 @@ export interface CreationState {
     setFormState: (data: Partial<CreationFormState>) => void;
     resetFormState: (status: CreationFormStatus) => void;
 
+    //Collection Selector
+    collections: string[];
+    setCollections: (collections: string[]) => void;
+
     //Misc
     connectors: { [key: string]: any }[];
     setConnectors: (val: { [key: string]: any }[]) => void;
@@ -59,7 +63,7 @@ export interface CreationState {
 
 const getInitialStateData = (): Pick<
     CreationState,
-    'details' | 'spec' | 'connectors' | 'formState'
+    'details' | 'spec' | 'connectors' | 'collections' | 'formState'
 > => {
     return {
         details: {
@@ -71,6 +75,7 @@ const getInitialStateData = (): Pick<
             errors: [],
         },
         connectors: [],
+        collections: [],
         formState: {
             showValidation: false,
             status: CreationFormStatus.IDLE,
@@ -113,6 +118,16 @@ const useMaterializationCreationStore = create<CreationState>(
                     }),
                     false,
                     'Spec Changed'
+                );
+            },
+
+            setCollections: (collections) => {
+                set(
+                    produce((state) => {
+                        state.collections = collections;
+                    }),
+                    false,
+                    'Collections Changed'
                 );
             },
 

@@ -1,12 +1,16 @@
 import {
     Autocomplete,
+    AutocompleteValue,
     Box,
     Button,
     TextField,
     Typography,
 } from '@mui/material';
+import useCreationStore, {
+    CreationState,
+} from 'components/materialization/Store';
 import { useQuery, useSelect } from 'hooks/supabase-swr/';
-import { EventHandler } from 'react';
+import { EventHandler, MouseEvent, useState } from 'react';
 import { TABLES } from 'services/supabase';
 
 interface Props {
@@ -21,7 +25,14 @@ interface LiveSpecsQuery {
 
 const columnsToQuery: (keyof LiveSpecsQuery)[] = ['catalog_name', 'spec_type'];
 
+const selectors = {
+    collections: (state: CreationState) => state.collections,
+    setCollection: (state: CreationState) => state.setCollections,
+};
+
 function CollectionSelector({ preview }: Props) {
+    const [missingInput, setMissingInput] = useState(false);
+
     const liveSpecsQuery = useQuery<LiveSpecsQuery>(
         TABLES.LIVE_SPECS,
         {
@@ -30,9 +41,31 @@ function CollectionSelector({ preview }: Props) {
         },
         []
     );
-    const { data: collections, error } = useSelect(liveSpecsQuery);
+    const { data: collectionData, error } = useSelect(liveSpecsQuery);
 
-    return collections && !error ? (
+    const collections = useCreationStore(selectors.collections);
+    const setCollections = useCreationStore(selectors.setCollection);
+
+    const handlers = {
+        submit: (event: MouseEvent<HTMLElement>) => {
+            event.preventDefault();
+
+            setMissingInput(collections.length === 0);
+
+            preview(event);
+        },
+        updateCollections: (
+            event: React.SyntheticEvent,
+            value: AutocompleteValue<string, true, false, false>
+        ) => {
+            setCollections(value);
+        },
+        validateSelection: () => {
+            setMissingInput(collections.length === 0);
+        },
+    };
+
+    return collectionData && !error ? (
         <Box sx={{ mb: 5 }}>
             <Typography variant="h5" sx={{ mb: 1 }}>
                 Collection Selector
@@ -45,20 +78,29 @@ function CollectionSelector({ preview }: Props) {
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Autocomplete
                     multiple
-                    options={collections.data}
-                    getOptionLabel={(collection) => collection.catalog_name}
+                    options={collectionData.data.map(
+                        ({ catalog_name }) => catalog_name
+                    )}
                     size="small"
                     filterSelectedOptions
                     fullWidth
+                    onChange={handlers.updateCollections}
                     renderInput={(params) => (
-                        <TextField {...params} label="Collections" />
+                        <TextField
+                            {...params}
+                            label="Collections"
+                            required
+                            error={missingInput}
+                            onBlur={handlers.validateSelection}
+                        />
                     )}
                 />
 
                 <Button
+                    type="submit"
                     variant="contained"
                     disableElevation
-                    onClick={preview}
+                    onClick={handlers.submit}
                     sx={{ minWidth: 175, ml: 2 }}
                 >
                     Preview Catalog
