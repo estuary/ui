@@ -68,6 +68,8 @@ const createEditorStore = <T,>(key: string) => {
     );
 };
 
+// TODO (zustand) this needs broken into a stand alone file.
+
 interface ZustandProviderProps {
     stateKey: string;
     children: ReactNode;
