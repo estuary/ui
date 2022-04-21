@@ -1,7 +1,4 @@
 import { Button, Stack, Toolbar, Typography } from '@mui/material';
-import useEditorStore, {
-    editorStoreSelectors,
-} from 'components/draft/editor/Store';
 import { EventHandler } from 'react';
 import { FormattedMessage } from 'react-intl';
 
@@ -22,8 +19,6 @@ function NewMaterializationHeader({
     saveDisabled,
     formId,
 }: Props) {
-    const draftId = useEditorStore(editorStoreSelectors.draftId);
-
     return (
         <Toolbar sx={{ justifyContent: 'space-between' }}>
             <Typography variant="h6" noWrap>
@@ -44,13 +39,7 @@ function NewMaterializationHeader({
                     disabled={testDisabled}
                     onClick={test}
                 >
-                    <FormattedMessage
-                        id={
-                            draftId
-                                ? 'captureCreation.ctas.discoverAgain'
-                                : 'captureCreation.ctas.discover'
-                        }
-                    />
+                    <FormattedMessage id="materializationCreation.cta.test" />
                 </Button>
 
                 <Button

@@ -140,7 +140,7 @@ function MaterializationCreate() {
                     status: CreationFormStatus.IDLE,
                     exitWhenLogsClose: false,
                     saveStatus: intl.formatMessage({
-                        id: 'captureCreation.status.failed',
+                        id: 'materializationCreation.status.failure',
                     }),
                     ...formState,
                 });
@@ -177,7 +177,7 @@ function MaterializationCreate() {
                     title: errorTitle,
                 },
                 saveStatus: intl.formatMessage({
-                    id: 'captureCreation.status.failed',
+                    id: 'materializationCreation.status.failure',
                 }),
             });
         },
@@ -212,13 +212,13 @@ function MaterializationCreate() {
                         status: CreationFormStatus.IDLE,
                         exitWhenLogsClose: true,
                         saveStatus: intl.formatMessage({
-                            id: 'captureCreation.status.success',
+                            id: 'materializationCreation.status.success',
                         }),
                     });
 
                     showNotification(notification);
                 },
-                'captureCreation.save.failedErrorTitle'
+                'materializationCreation.save.failure.errorTitle'
             );
         },
     };
@@ -276,7 +276,7 @@ function MaterializationCreate() {
                             if (draftsResponse.error) {
                                 helpers.callFailed({
                                     error: {
-                                        title: 'captureCreation.test.failedErrorTitle',
+                                        title: 'materializationCreation.test.failure.errorTitle',
                                         error: draftsResponse.error,
                                     },
                                 });
@@ -285,7 +285,7 @@ function MaterializationCreate() {
                         () => {
                             helpers.callFailed({
                                 error: {
-                                    title: 'captureCreation.test.serverUnreachable',
+                                    title: 'materializationCreation.test.serverUnreachable',
                                 },
                             });
                         }
@@ -318,7 +318,7 @@ function MaterializationCreate() {
                             helpers.callFailed(
                                 {
                                     error: {
-                                        title: 'captureCreation.save.failedErrorTitle',
+                                        title: 'materializationCreation.save.failure.errorTitle',
                                         error: response.error,
                                     },
                                 },
@@ -330,10 +330,10 @@ function MaterializationCreate() {
                         helpers.callFailed(
                             {
                                 error: {
-                                    title: 'captureCreation.save.serverUnreachable',
+                                    title: 'materializationCreation.save.serverUnreachable',
                                 },
                                 saveStatus: intl.formatMessage({
-                                    id: 'captureCreation.status.failed',
+                                    id: 'materializationCreation.status.failure',
                                 }),
                             },
                             publicationsSubscription
@@ -349,7 +349,7 @@ function MaterializationCreate() {
                 open={showLogs}
                 token={logToken}
                 title={intl.formatMessage({
-                    id: 'captureCreation.save.waitMessage',
+                    id: 'materializationCreation.save.inProgress',
                 })}
                 actionComponent={
                     <>

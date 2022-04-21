@@ -27,7 +27,7 @@ function LogDialog({ open, token, defaultMessage, actionComponent }: Props) {
             aria-labelledby="logs-dialog-title"
         >
             <DialogTitle id="logs-dialog-title">
-                <FormattedMessage id="captureCreation.save.waitMessage" />
+                <FormattedMessage id="materializationCreation.save.inProgress" />
             </DialogTitle>
 
             <DialogContent

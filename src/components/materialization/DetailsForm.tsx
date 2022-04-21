@@ -43,7 +43,7 @@ function NewMaterializationDetails({ connectorTags }: Props) {
             properties: {
                 image: {
                     description: intl.formatMessage({
-                        id: 'captureCreation.image.description',
+                        id: 'materializationCreation.image.description',
                     }),
                     oneOf:
                         connectorTags.length > 0
@@ -58,7 +58,7 @@ function NewMaterializationDetails({ connectorTags }: Props) {
                 },
                 name: {
                     description: intl.formatMessage({
-                        id: 'captureCreation.name.description',
+                        id: 'materializationCreation.name.description',
                     }),
                     maxLength: 1000,
                     minLength: 3,
@@ -77,14 +77,14 @@ function NewMaterializationDetails({ connectorTags }: Props) {
                 elements: [
                     {
                         label: intl.formatMessage({
-                            id: 'captureCreation.name.label',
+                            id: 'materializationCreation.name.label',
                         }),
                         scope: '#/properties/name',
                         type: 'Control',
                     },
                     {
                         label: intl.formatMessage({
-                            id: 'captureCreation.image.label',
+                            id: 'materializationCreation.image.label',
                         }),
                         scope: '#/properties/image',
                         type: 'Control',
@@ -100,7 +100,7 @@ function NewMaterializationDetails({ connectorTags }: Props) {
         <>
             <Typography variant="h5">Materialization Details</Typography>
 
-            <FormattedMessage id="captureCreation.instructions" />
+            <FormattedMessage id="materializationCreation.instructions" />
 
             <Stack direction="row" spacing={2}>
                 {schema.properties.image.oneOf.length > 0 ? (
@@ -117,7 +117,7 @@ function NewMaterializationDetails({ connectorTags }: Props) {
                     />
                 ) : (
                     <Alert severity="warning">
-                        <FormattedMessage id="captureCreation.missingConnectors" />
+                        <FormattedMessage id="materializationCreation.missingConnectors" />
                     </Alert>
                 )}
             </Stack>
