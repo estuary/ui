@@ -1,19 +1,34 @@
 import { List, ListItemButton, ListItemText } from '@mui/material';
-import { useZustandStore } from 'components/editor/Store';
+import { LiveSpecQuery } from 'components/editor/LiveSpec';
+import { EditorStoreState, useZustandStore } from 'components/editor/Store';
+import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { FormattedMessage } from 'react-intl';
 
 function EditorFileSelector() {
-    const {
-        currentCatalog,
-        setCurrentCatalog,
-        id,
-        specs: draftSpecs,
-    } = useZustandStore();
+    const currentCatalog = useZustandStore<
+        EditorStoreState<LiveSpecQuery | DraftSpecQuery>,
+        EditorStoreState<LiveSpecQuery | DraftSpecQuery>['currentCatalog']
+    >((state) => state.currentCatalog);
+
+    const setCurrentCatalog = useZustandStore<
+        EditorStoreState<LiveSpecQuery | DraftSpecQuery>,
+        EditorStoreState<LiveSpecQuery | DraftSpecQuery>['setCurrentCatalog']
+    >((state) => state.setCurrentCatalog);
+
+    const id = useZustandStore<
+        EditorStoreState<LiveSpecQuery | DraftSpecQuery>,
+        EditorStoreState<LiveSpecQuery | DraftSpecQuery>['id']
+    >((state) => state.id);
+
+    const specs = useZustandStore<
+        EditorStoreState<LiveSpecQuery | DraftSpecQuery>,
+        EditorStoreState<LiveSpecQuery | DraftSpecQuery>['specs']
+    >((state) => state.specs);
 
     return (
         <List dense disablePadding>
-            {!id ? null : draftSpecs && draftSpecs.length > 0 ? (
-                draftSpecs.map((tag: any, index: number) => (
+            {!id ? null : specs && specs.length > 0 ? (
+                specs.map((tag: any, index: number) => (
                     <ListItemButton
                         key={`FileSelector-${tag.catalog_name}`}
                         dense

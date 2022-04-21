@@ -6,7 +6,7 @@ import {
 } from 'react';
 import useConstant from 'use-constant';
 import { devtoolsOptions } from 'utils/store-utils';
-import create, { StoreApi, useStore } from 'zustand';
+import create, { StateSelector, StoreApi, useStore } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 
 export interface EditorStoreState<T> {
@@ -17,7 +17,7 @@ export interface EditorStoreState<T> {
     setCurrentCatalog: (newVal: EditorStoreState<T>['currentCatalog']) => void;
 
     specs: T[] | null;
-    setSpecs: (newVal: any) => void;
+    setSpecs: (newVal: EditorStoreState<T>['specs']) => void;
 }
 
 const getInitialStateData = () => {
@@ -86,17 +86,15 @@ export const ZustandProvider = ({
     );
 };
 
-export const useZustandStore = <T,>() => {
+export const useZustandStore = <S extends Object, U>(
+    selector: StateSelector<S, U>,
+    equalityFn?: any
+) => {
     const store = useContext(ZustandContext);
-    return useStore<StoreApi<EditorStoreState<T>>>(store);
+    return useStore<StoreApi<S>, U>(store, selector, equalityFn);
 };
 
-export const editorStoreSelectors = {
-    id: (state: EditorStoreState<any>) => state.id,
-    setId: (state: EditorStoreState<any>) => state.setId,
-    currentCatalog: (state: EditorStoreState<any>) => state.currentCatalog,
-    setCurrentCatalog: (state: EditorStoreState<any>) =>
-        state.setCurrentCatalog,
-    specs: (state: EditorStoreState<any>) => state.specs,
-    setSpecs: (state: EditorStoreState<any>) => state.setSpecs,
+export const useZustandStoreNoType = (selector: any, equalityFn?: any) => {
+    const store = useContext(ZustandContext);
+    return useStore(store, selector, equalityFn);
 };

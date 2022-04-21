@@ -1,5 +1,6 @@
 import { Button, Stack, Toolbar, Typography } from '@mui/material';
-import { useZustandStore } from 'components/editor/Store';
+import { EditorStoreState, useZustandStore } from 'components/editor/Store';
+import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
@@ -19,8 +20,12 @@ function NewCaptureHeader({
     saveDisabled,
     formId,
 }: Props) {
-    const { id: draftId } = useZustandStore();
-    console.log('header', draftId);
+    const id = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['id']
+    >((state) => state.id);
+
+    console.log('header', id);
 
     return (
         <Toolbar>
@@ -49,7 +54,7 @@ function NewCaptureHeader({
                 >
                     <FormattedMessage
                         id={
-                            draftId
+                            id
                                 ? 'captureCreation.ctas.discoverAgain'
                                 : 'captureCreation.ctas.discover'
                         }

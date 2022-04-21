@@ -2,13 +2,13 @@ import { Box } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
 import EditorFileSelector from 'components/editor/FileSelector';
 import MonacoEditor from 'components/editor/MonacoEditor';
-import { useZustandStore } from 'components/editor/Store';
+import { EditorStoreState, useZustandStore } from 'components/editor/Store';
 import { useQuery, useSelect } from 'hooks/supabase-swr';
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { TABLES } from 'services/supabase';
 
-export interface LiveSpec {
+export interface LiveSpecQuery {
     id: string;
     catalog_name: string;
     last_pub_id: string;
@@ -37,12 +37,32 @@ function LiveSpecEditor() {
     const pubID = searchParams.get(routeDetails.capture.details.params.pubID);
     if (!pubID) navigate(routeDetails.home.path);
 
-    const { setSpecs, setId, currentCatalog, specs } =
-        useZustandStore<LiveSpec>();
-    const [liveSpec, setLiveSpec] = useState<LiveSpec['spec'] | null>(null);
+    const setSpecs = useZustandStore<
+        EditorStoreState<LiveSpecQuery>,
+        EditorStoreState<LiveSpecQuery>['setSpecs']
+    >((state) => state.setSpecs);
+
+    const setId = useZustandStore<
+        EditorStoreState<LiveSpecQuery>,
+        EditorStoreState<LiveSpecQuery>['setId']
+    >((state) => state.setId);
+
+    const currentCatalog = useZustandStore<
+        EditorStoreState<LiveSpecQuery>,
+        EditorStoreState<LiveSpecQuery>['currentCatalog']
+    >((state) => state.currentCatalog);
+
+    const specs = useZustandStore<
+        EditorStoreState<LiveSpecQuery>,
+        EditorStoreState<LiveSpecQuery>['specs']
+    >((state) => state.specs);
+
+    const [liveSpec, setLiveSpec] = useState<LiveSpecQuery['spec'] | null>(
+        null
+    );
 
     // Supabase stuff
-    const liveSpecQuery = useQuery<LiveSpec>(
+    const liveSpecQuery = useQuery<LiveSpecQuery>(
         TABLES.LIVE_SPECS,
         {
             columns: LIVE_SPECS_QUERY,

@@ -1,13 +1,27 @@
 import { Box } from '@mui/material';
 import EditorFileSelector from 'components/editor/FileSelector';
 import MonacoEditor from 'components/editor/MonacoEditor';
-import { useZustandStore } from 'components/editor/Store';
+import { EditorStoreState, useZustandStore } from 'components/editor/Store';
 import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useEffect, useState } from 'react';
 import { supabaseClient, TABLES } from 'services/supabase';
 
 function DraftSpecEditor() {
-    const { currentCatalog, setSpecs, id } = useZustandStore<DraftSpecQuery>();
+    const currentCatalog = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['currentCatalog']
+    >((state) => state.currentCatalog);
+
+    const setSpecs = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['setSpecs']
+    >((state) => state.setSpecs);
+
+    const id = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['id']
+    >((state) => state.id);
+
     const { draftSpecs, mutate } = useDraftSpecs(id);
     const [draftSpec, setDraftSpec] = useState<DraftSpecQuery | null>(null);
 

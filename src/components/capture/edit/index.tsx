@@ -10,12 +10,13 @@ import useCaptureCreationStore, {
     CaptureCreationFormStatus,
     CaptureCreationState,
 } from 'components/capture/Store';
-import { useZustandStore } from 'components/editor/Store';
+import { EditorStoreState, useZustandStore } from 'components/editor/Store';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
 import { useConfirmationModalContext } from 'context/Confirmation';
 import { useClient, useQuery, useSelect } from 'hooks/supabase-swr';
+import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { MouseEvent } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
@@ -128,7 +129,15 @@ function CaptureEdit() {
     );
 
     //Editor state
-    const { id: draftId, setId: setDraftId } = useZustandStore();
+    const setId = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['setId']
+    >((state) => state.setId);
+
+    const id = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['id']
+    >((state) => state.id);
 
     const helpers = {
         callFailed: (formState: any, subscription?: RealtimeSubscription) => {
@@ -182,7 +191,7 @@ function CaptureEdit() {
 
     const waitFor = {
         base: (query: any, success: Function, failureTitle: string) => {
-            setDraftId(null);
+            setId(null);
             resetFormState(CaptureCreationFormStatus.TESTING);
             const subscription = query
                 .on('*', async (payload: any) => {
@@ -204,7 +213,7 @@ function CaptureEdit() {
             return waitFor.base(
                 supabaseClient.from(TABLES.DISCOVERS),
                 (payload: any) => {
-                    setDraftId(payload.new.draft_id);
+                    setId(payload.new.draft_id);
                 },
                 'captureCreation.test.failedErrorTitle'
             );
@@ -265,7 +274,7 @@ function CaptureEdit() {
                 .from(TABLES.PUBLICATIONS)
                 .insert([
                     {
-                        draft_id: draftId,
+                        draft_id: id,
                         dry_run: false,
                     },
                 ])
@@ -423,9 +432,7 @@ function CaptureEdit() {
                     status !== CaptureCreationFormStatus.IDLE || !hasConnectors
                 }
                 save={handlers.saveAndPublish}
-                saveDisabled={
-                    status !== CaptureCreationFormStatus.IDLE || !draftId
-                }
+                saveDisabled={status !== CaptureCreationFormStatus.IDLE || !id}
                 formId={FORM_ID}
             />
 
