@@ -4,6 +4,7 @@ import { routeDetails } from 'app/Authenticated';
 import useEditorStore, {
     editorStoreSelectors,
 } from 'components/draft/editor/Store';
+import CollectionSelector from 'components/materialization/CollectionSelector';
 import NewMaterializationDetails from 'components/materialization/DetailsForm';
 import NewMaterializationError from 'components/materialization/Error';
 import NewMaterializationHeader from 'components/materialization/Header';
@@ -83,12 +84,12 @@ const notification: Notification = {
 };
 
 function MaterializationCreate() {
-    // misc hooks
+    // Misc. hooks
     const intl = useIntl();
     const navigate = useNavigate();
     const confirmationModalContext = useConfirmationModalContext();
 
-    // Supabase stuff
+    // Supabase
     const supabaseClient = useClient();
     const tagsQuery = useQuery<ConnectorTag>(
         TABLES.CONNECTOR_TAGS,
@@ -100,6 +101,7 @@ function MaterializationCreate() {
     );
     const { data: connectorTags, error: connectorTagsError } =
         useSelect(tagsQuery);
+
     const hasConnectors = connectorTags && connectorTags.data.length > 0;
 
     // Notification store
@@ -130,7 +132,7 @@ function MaterializationCreate() {
         selectors.form.exitWhenLogsClose
     );
 
-    //Editor state
+    // Editor state
     const draftId = useEditorStore(editorStoreSelectors.draftId);
     const setDraftId = useEditorStore(editorStoreSelectors.setDraftId);
 
@@ -253,8 +255,10 @@ function MaterializationCreate() {
             }
         },
 
-        test: (event: MouseEvent<HTMLElement>) => {
+        // TODO: Add preview-specific content to language file and replace the test-specific content in this function.
+        preview: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
+
             let detailHasErrors = false;
             let specHasErrors = false;
 
@@ -263,9 +267,7 @@ function MaterializationCreate() {
             specHasErrors = specErrors ? specErrors.length > 0 : false;
 
             if (detailHasErrors || specHasErrors) {
-                setFormState({
-                    showValidation: true,
-                });
+                setFormState({ showValidation: true });
             } else {
                 supabaseClient
                     .from(TABLES.DRAFTS)
@@ -274,7 +276,40 @@ function MaterializationCreate() {
                     })
                     .then(
                         (draftsResponse) => {
-                            if (draftsResponse.error) {
+                            if (
+                                draftsResponse.data &&
+                                draftsResponse.data.length > 0
+                            ) {
+                                supabaseClient
+                                    .from(TABLES.DRAFT_SPECS)
+                                    .insert([
+                                        {
+                                            draft_id: draftsResponse.data[0].id,
+                                            catalog_name: materializationName,
+                                            spec_type: 'materialization',
+                                            spec_patch: {},
+                                        },
+                                    ])
+                                    .then(
+                                        (draftSpecsResponse) => {
+                                            if (draftSpecsResponse.error) {
+                                                helpers.callFailed({
+                                                    error: {
+                                                        title: 'materializationCreation.test.failure.errorTitle',
+                                                        error: draftSpecsResponse.error,
+                                                    },
+                                                });
+                                            }
+                                        },
+                                        () => {
+                                            helpers.callFailed({
+                                                error: {
+                                                    title: 'materializationCreation.test.serverUnreachable',
+                                                },
+                                            });
+                                        }
+                                    );
+                            } else if (draftsResponse.error) {
                                 helpers.callFailed({
                                     error: {
                                         title: 'materializationCreation.test.failure.errorTitle',
@@ -292,6 +327,52 @@ function MaterializationCreate() {
                         }
                     );
             }
+        },
+
+        test: (event: MouseEvent<HTMLElement>) => {
+            event.preventDefault();
+
+            const publicationsSubscription = waitFor.publications();
+            supabaseClient
+                .from(TABLES.PUBLICATIONS)
+                .insert([
+                    {
+                        draft_id: draftId,
+                        dry_run: true,
+                    },
+                ])
+                .then(
+                    async (response) => {
+                        if (response.data) {
+                            if (response.data.length > 0) {
+                                setFormState({
+                                    logToken: response.data[0].logs_token,
+                                    showLogs: true,
+                                });
+                            }
+                        } else {
+                            helpers.callFailed(
+                                {
+                                    error: {
+                                        title: 'materializationCreation.test.failure.errorTitle',
+                                        error: response.error,
+                                    },
+                                },
+                                publicationsSubscription
+                            );
+                        }
+                    },
+                    () => {
+                        helpers.callFailed(
+                            {
+                                error: {
+                                    title: 'materializationCreation.test.serverUnreachable',
+                                },
+                            },
+                            publicationsSubscription
+                        );
+                    }
+                );
         },
 
         saveAndPublish: (event: MouseEvent<HTMLElement>) => {
@@ -407,6 +488,8 @@ function MaterializationCreate() {
                             </ErrorBoundryWrapper>
                         ) : null}
                     </form>
+
+                    <CollectionSelector preview={handlers.preview} />
                 </>
             )}
         </PageContainer>

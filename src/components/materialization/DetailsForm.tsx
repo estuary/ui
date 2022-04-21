@@ -1,6 +1,6 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
-import { Alert, Stack, Typography } from '@mui/material';
+import { Alert, Box, Stack, Typography } from '@mui/material';
 import { ConnectorTag } from 'components/capture/create';
 import useMaterializationCreationStore, {
     CreationFormStatus,
@@ -97,10 +97,14 @@ function NewMaterializationDetails({ connectorTags }: Props) {
     };
 
     return (
-        <>
-            <Typography variant="h5">Materialization Details</Typography>
+        <Box sx={{ mb: 4 }}>
+            <Typography variant="h5" sx={{ mb: 1 }}>
+                Materialization Details
+            </Typography>
 
-            <FormattedMessage id="materializationCreation.instructions" />
+            <Typography sx={{ mb: 2 }}>
+                <FormattedMessage id="materializationCreation.instructions" />
+            </Typography>
 
             <Stack direction="row" spacing={2}>
                 {schema.properties.image.oneOf.length > 0 ? (
@@ -121,7 +125,7 @@ function NewMaterializationDetails({ connectorTags }: Props) {
                     </Alert>
                 )}
             </Stack>
-        </>
+        </Box>
     );
 }
 

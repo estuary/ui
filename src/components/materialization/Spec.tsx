@@ -1,4 +1,4 @@
-import { Divider, Paper, Typography } from '@mui/material';
+import { Box, Divider, Paper, Typography } from '@mui/material';
 import SpecForm from 'components/materialization/SpecForm';
 import SpecFormHeader from 'components/materialization/SpecFormHeader';
 import Error from 'components/shared/Error';
@@ -43,10 +43,12 @@ function NewMaterializationSpec({ connectorImage }: Props) {
         return <Error error={error} />;
     } else if (connector?.data) {
         return (
-            <>
-                <Typography variant="h5">Connection Config</Typography>
+            <Box sx={{ mb: 5 }}>
+                <Typography variant="h5" sx={{ mb: 2 }}>
+                    Connection Config
+                </Typography>
 
-                <Paper sx={{ width: '100%' }} variant="outlined">
+                <Paper variant="outlined" sx={{ width: '100%' }}>
                     <SpecFormHeader
                         name={connector.data.connectors.image_name}
                         docsPath={connector.data.documentation_url}
@@ -58,7 +60,7 @@ function NewMaterializationSpec({ connectorImage }: Props) {
                         endpointSchema={connector.data.endpoint_spec_schema}
                     />
                 </Paper>
-            </>
+            </Box>
         );
     } else {
         return null;
