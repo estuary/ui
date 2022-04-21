@@ -1,5 +1,6 @@
 import { Button, Collapse } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
+import { routeDetails } from 'app/Authenticated';
 import useEditorStore, {
     editorStoreSelectors,
 } from 'components/draft/editor/Store';
@@ -169,7 +170,7 @@ function MaterializationCreate() {
         exit: () => {
             resetState();
 
-            navigate('/materializations');
+            navigate(routeDetails.materializations.path);
         },
         jobFailed: (errorTitle: string) => {
             setFormState({
