@@ -197,7 +197,6 @@ function CaptureCreate() {
 
     const waitFor = {
         base: (query: any, success: Function, failureTitle: string) => {
-            setId(null);
             resetFormState(CaptureCreationFormStatus.TESTING);
             const subscription = query
                 .on('*', async (payload: any) => {
@@ -216,6 +215,7 @@ function CaptureCreate() {
             return subscription;
         },
         discovers: () => {
+            setId(null);
             return waitFor.base(
                 supabaseClient.from(TABLES.DISCOVERS),
                 (payload: any) => {
