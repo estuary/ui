@@ -14,6 +14,10 @@ const tableColumns = [
         headerIntlKey: 'connectorTable.data.image_name',
     },
     {
+        field: null,
+        headerIntlKey: 'connectorTable.data.title',
+    },
+    {
         field: 'detail',
         headerIntlKey: 'connectorTable.data.detail',
     },
@@ -41,6 +45,7 @@ export interface Connector {
         protocol: string;
         image_tag: string;
         id: string;
+        title: string;
     }[];
     id: string;
     detail: string;
@@ -57,7 +62,8 @@ const CONNECTOR_QUERY = `
         documentation_url,
         protocol,
         image_tag,
-        id
+        id,
+        endpoint_spec_schema->>title
     )
 `;
 

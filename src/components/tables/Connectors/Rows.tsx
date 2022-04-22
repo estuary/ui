@@ -24,6 +24,9 @@ function Rows({ data }: Props) {
                     <TableCell style={columnStyling}>
                         {row.image_name}
                     </TableCell>
+                    <TableCell style={columnStyling}>
+                        {row.connector_tags[0].title}
+                    </TableCell>
                     <TableCell style={columnStyling}>{row.detail}</TableCell>
                     <TableCell style={columnStyling}>
                         {row.connector_tags[0].protocol}
