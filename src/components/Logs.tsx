@@ -62,8 +62,6 @@ function Logs({ token, defaultMessage, height }: Props) {
         },
     };
 
-    console.log('logs', emptyResponses);
-
     useInterval(
         async () => {
             const { data: viewLogsResponse } = await supabaseClient
@@ -105,7 +103,7 @@ function Logs({ token, defaultMessage, height }: Props) {
                         }}
                         onClick={handlers.reset}
                     >
-                        <FormattedMessage id="cta.refresh" />
+                        <FormattedMessage id="cta.restart" />
                     </Button>
                 </Paper>
             </Collapse>
