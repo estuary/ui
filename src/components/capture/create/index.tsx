@@ -105,8 +105,6 @@ function CaptureCreate() {
         useSelect(tagsQuery);
     const hasConnectors = connectorTags && connectorTags.data.length > 0;
 
-    console.log('c', connectorTags);
-
     // Notification store
     const showNotification = useNotificationStore(
         selectors.notifications.showNotification
