@@ -29,6 +29,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'cta.clickHere': `click here`,
     'cta.moreDetails': `More Details`,
     'cta.saveEntity': `Save and Publish`,
+    'cta.restart': `Restart`,
 
     // Terms
     'terms.connectors': `Connectors`,
@@ -104,6 +105,8 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'entityTable.data.connectorType': `Type`,
     'entityTable.data.lastUpdated': `Last Updated`,
     'entityTable.data.actions': `Actions`,
+    'entityTable.data.readsFrom': `Reads From`,
+    'entityTable.data.writesTo': `Writes To`,
 
     'entityTable.unmatchedFilter.header': `Sorry, no result found.`,
     'entityTable.unmatchedFilter.message': `We could not find any data matching that filter. Try applying a different filter or using an alternative query option.`,
@@ -155,6 +158,7 @@ const Error: ResolvedIntlConfig['messages'] = {
 
 const LogsDialog: ResolvedIntlConfig['messages'] = {
     'logs.default': `waiting for logs...`,
+    'logs.toManyEmpty': `Logs may have ended. To restart fetching click ${CommonMessages['cta.restart']}.`,
 };
 
 const AdminPage: ResolvedIntlConfig['messages'] = {

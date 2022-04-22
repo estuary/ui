@@ -1,15 +1,10 @@
 import { Box, Toolbar, Typography } from '@mui/material';
 import PageContainer from 'components/shared/PageContainer';
-import { FormattedMessage, useIntl } from 'react-intl';
-import { useTitle } from 'react-use';
+import useBrowserTitle from 'hooks/useBrowserTitle';
+import { FormattedMessage } from 'react-intl';
 
-const Home = () => {
-    const intl = useIntl();
-    useTitle(
-        intl.formatMessage({
-            id: 'browserTitle.dashboard',
-        })
-    );
+const Dashboard = () => {
+    useBrowserTitle('browserTitle.dashboard');
 
     return (
         <PageContainer>
@@ -38,4 +33,4 @@ const Home = () => {
     );
 };
 
-export default Home;
+export default Dashboard;

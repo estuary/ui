@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import Rows from 'components/tables/Captures/Rows';
+import Rows, { tableColumns } from 'components/tables/Captures/Rows';
 import EntityTable, {
     getPagination,
     SortDirection,
@@ -8,33 +8,15 @@ import { useQuery } from 'hooks/supabase-swr';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
 
-export interface LiveSpecQuery {
+export interface LiveSpecsQuery {
     spec_type: string;
     catalog_name: string;
     updated_at: string;
     connector_image_name: string;
     id: string;
     last_pub_id: string;
+    writes_to: string[];
 }
-
-const tableColumns = [
-    {
-        field: 'catalog_name',
-        headerIntlKey: 'entityTable.data.entity',
-    },
-    {
-        field: 'connector_image_name',
-        headerIntlKey: 'entityTable.data.connectorType',
-    },
-    {
-        field: 'updated_at',
-        headerIntlKey: 'entityTable.data.lastUpdated',
-    },
-    {
-        field: null,
-        headerIntlKey: 'entityTable.data.actions',
-    },
-];
 
 const queryColumns = [
     'spec_type',
@@ -43,6 +25,7 @@ const queryColumns = [
     'connector_image_name',
     'id',
     'last_pub_id',
+    'writes_to',
 ];
 
 function CapturesTable() {
@@ -54,13 +37,13 @@ function CapturesTable() {
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
     const [columnToSort, setColumnToSort] = useState<any>('updated_at');
 
-    const liveSpecQuery = useQuery<LiveSpecQuery>(
+    const liveSpecQuery = useQuery<LiveSpecsQuery>(
         TABLES.LIVE_SPECS,
         {
             columns: queryColumns,
             count: 'exact',
             filter: (query) => {
-                return defaultTableFilter<LiveSpecQuery>(
+                return defaultTableFilter<LiveSpecsQuery>(
                     query,
                     ['catalog_name'],
                     searchQuery,

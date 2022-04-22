@@ -1,13 +1,15 @@
-import { TextareaAutosize } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
+import LiveSpecEditor from 'components/editor/LiveSpec';
+import { EditorStoreState, useZustandStore } from 'components/editor/Store';
 import PageContainer from 'components/shared/PageContainer';
 import { useQuery, useSelect } from 'hooks/supabase-swr';
-import { useIntl } from 'react-intl';
+import useBrowserTitle from 'hooks/useBrowserTitle';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
-import { useTitle } from 'react-use';
 import { TABLES } from 'services/supabase';
 
-export interface LiveSpecs {
+export interface LiveSpecQuery {
     id: string;
     catalog_name: string;
     last_pub_id: string;
@@ -18,6 +20,7 @@ export interface LiveSpecs {
     connector_image_name: string;
     connector_image_tag: string;
 }
+
 const LIVE_SPECS_QUERY = `
     id, 
     catalog_name,
@@ -31,31 +34,47 @@ const LIVE_SPECS_QUERY = `
 `;
 
 function CaptureDetails() {
-    const intl = useIntl();
-    useTitle(
-        intl.formatMessage({
-            id: 'browserTitle.captureDetails',
-        })
-    );
+    useBrowserTitle('browserTitle.captureDetails');
 
+    const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const pubID = searchParams.get(routeDetails.capture.details.params.pubID);
+    if (!pubID) navigate(routeDetails.dashboard.path);
 
     // Supabase stuff
-    const liveSpecQuery = useQuery<LiveSpecs>(
+    const liveSpecQuery = useQuery<LiveSpecQuery>(
         TABLES.LIVE_SPECS,
         {
             columns: LIVE_SPECS_QUERY,
-            filter: (query) =>
-                query.eq('last_pub_id', pubID ? pubID : '--missing-pub_id--'),
+            filter: (query) => query.eq('last_pub_id', pubID as string),
         },
         []
     );
-    const { data } = useSelect(liveSpecQuery);
+    const { data: liveSpecs } = useSelect(liveSpecQuery);
+
+    const setSpecs = useZustandStore<
+        EditorStoreState<LiveSpecQuery>,
+        EditorStoreState<LiveSpecQuery>['setSpecs']
+    >((state) => state.setSpecs);
+
+    const setId = useZustandStore<
+        EditorStoreState<LiveSpecQuery>,
+        EditorStoreState<LiveSpecQuery>['setId']
+    >((state) => state.setId);
+
+    useEffect(() => {
+        setId(pubID);
+    }, [pubID, setId]);
+
+    useEffect(() => {
+        if (liveSpecs?.data) {
+            setSpecs(liveSpecs.data);
+        }
+    }, [liveSpecs, setSpecs]);
 
     return (
         <PageContainer>
-            <TextareaAutosize value={JSON.stringify(data)} />
+            <LiveSpecEditor />
         </PageContainer>
     );
 }

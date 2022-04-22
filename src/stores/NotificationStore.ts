@@ -1,6 +1,7 @@
 import { AlertColor } from '@mui/material';
-import { devtoolsInNonProd } from 'utils/store-utils';
+import { devtoolsOptions } from 'utils/store-utils';
 import create from 'zustand';
+import { devtools } from 'zustand/middleware';
 
 export interface Notification {
     title: string;
@@ -17,8 +18,8 @@ export interface NotificationState {
     clearNotificationHistory: () => void;
 }
 
-const useNotificationStore = create<NotificationState>(
-    devtoolsInNonProd(
+export const useNotificationStore = create<NotificationState>()(
+    devtools(
         (set) => ({
             clearNotificationHistory: () =>
                 set(
@@ -48,7 +49,7 @@ const useNotificationStore = create<NotificationState>(
                     'Notification History Updated'
                 ),
         }),
-        { name: 'notification-state' }
+        devtoolsOptions('notification-state')
     )
 );
 

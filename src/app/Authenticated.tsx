@@ -2,11 +2,12 @@ import { Collections } from '@mui/icons-material';
 import AppLayout from 'AppLayout';
 import CaptureCreate from 'components/capture/create';
 import CaptureDetails from 'components/capture/details';
+import { ZustandProvider } from 'components/editor/Store';
 import NewMaterialization from 'components/materialization/create';
 import Admin from 'pages/Admin';
 import Captures from 'pages/Captures';
+import Dashboard from 'pages/Dashboard';
 import PageNotFound from 'pages/error/PageNotFound';
-import Home from 'pages/Home';
 import Materializations from 'pages/Materializations';
 import { Route, Routes } from 'react-router';
 
@@ -42,7 +43,7 @@ export const routeDetails = {
         title: 'routeTitle.collections',
         path: '/collections',
     },
-    home: {
+    dashboard: {
         title: 'routeTitle.dashboard',
         path: '/',
     },
@@ -67,7 +68,10 @@ const Authenticated = () => {
     return (
         <Routes>
             <Route element={<AppLayout />}>
-                <Route path={routeDetails.home.path} element={<Home />} />
+                <Route
+                    path={routeDetails.dashboard.path}
+                    element={<Dashboard />}
+                />
                 <Route
                     path={routeDetails.collections.path}
                     element={<Collections />}
@@ -80,11 +84,19 @@ const Authenticated = () => {
                 <Route path={routeDetails.capture.root}>
                     <Route
                         path={routeDetails.capture.create.path}
-                        element={<CaptureCreate />}
+                        element={
+                            <ZustandProvider stateKey="draftSpecEditor">
+                                <CaptureCreate />
+                            </ZustandProvider>
+                        }
                     />
                     <Route
                         path={routeDetails.capture.details.path}
-                        element={<CaptureDetails />}
+                        element={
+                            <ZustandProvider stateKey="liveSpecEditor">
+                                <CaptureDetails />
+                            </ZustandProvider>
+                        }
                     />
                 </Route>
 

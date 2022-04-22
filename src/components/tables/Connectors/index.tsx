@@ -18,7 +18,7 @@ const tableColumns = [
         headerIntlKey: 'connectorTable.data.detail',
     },
     {
-        field: 'connector_tags.protocol',
+        field: null,
         headerIntlKey: 'connectorTable.data.protocol',
     },
     {

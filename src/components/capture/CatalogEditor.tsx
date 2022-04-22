@@ -1,14 +1,16 @@
 import { Paper, Typography } from '@mui/material';
-import DraftEditor from 'components/draft/editor';
-import useEditorStore, {
-    editorStoreSelectors,
-} from 'components/draft/editor/Store';
+import DraftSpecEditor from 'components/editor/DraftSpec';
+import { EditorStoreState, useZustandStore } from 'components/editor/Store';
+import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { FormattedMessage } from 'react-intl';
 
 function NewCaptureEditor() {
-    const draftId = useEditorStore(editorStoreSelectors.draftId);
+    const id = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['id']
+    >((state) => state.id);
 
-    if (draftId) {
+    if (id) {
         return (
             <>
                 <Typography variant="h5">Catalog Editor</Typography>
@@ -16,7 +18,7 @@ function NewCaptureEditor() {
                     <FormattedMessage id="captureCreation.finalReview.instructions" />
                 </Typography>
                 <Paper variant="outlined">
-                    <DraftEditor />
+                    <DraftSpecEditor />
                 </Paper>
             </>
         );

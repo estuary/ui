@@ -1,14 +1,8 @@
 import { Container, Toolbar } from '@mui/material';
-import { useIntl } from 'react-intl';
-import { useTitle } from 'react-use';
+import useBrowserTitle from 'hooks/useBrowserTitle';
 
 const Collections = () => {
-    const intl = useIntl();
-    useTitle(
-        intl.formatMessage({
-            id: 'browserTitle.collections',
-        })
-    );
+    useBrowserTitle('browserTitle.collections');
 
     return (
         <Container
