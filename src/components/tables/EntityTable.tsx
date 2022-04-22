@@ -54,6 +54,7 @@ interface Props {
     setColumnToSort: (data: any) => void;
     rowsPerPage: number;
     header: string;
+    filterLabel: string;
     noExistingDataContentIds: {
         header: string;
         message: string;
@@ -91,6 +92,7 @@ function EntityTable({
     columnToSort,
     setColumnToSort,
     header,
+    filterLabel,
 }: Props) {
     const [page, setPage] = useState(0);
 
@@ -203,7 +205,9 @@ function EntityTable({
                         <SearchIcon sx={{ mb: 0.9, mr: 0.5, fontSize: 18 }} />
                         <TextField
                             id="capture-search-box"
-                            label="Filter Namespaces"
+                            label={intl.formatMessage({
+                                id: filterLabel,
+                            })}
                             variant="standard"
                             onChange={handlers.filterTable}
                         />
