@@ -184,44 +184,36 @@ function MaterializationCreate() {
         },
     };
 
-    const waitFor = {
-        base: (query: any, success: Function, failureTitle: string) => {
-            setDraftId(null);
-            resetFormState(CreationFormStatus.TESTING);
+    const createPublicationsSubscription = (): RealtimeSubscription => {
+        setDraftId(null);
+        resetFormState(CreationFormStatus.TESTING);
 
-            const subscription = query
-                .on('*', async (payload: any) => {
-                    if (payload.new.job_status.type !== 'queued') {
-                        if (payload.new.job_status.type === 'success') {
-                            success(payload);
-                        } else {
-                            helpers.jobFailed(failureTitle);
-                        }
+        const subscription = supabaseClient
+            .from(TABLES.PUBLICATIONS)
+            .on('*', async (payload: any) => {
+                if (payload.new.job_status.type !== 'queued') {
+                    if (payload.new.job_status.type === 'success') {
+                        setFormState({
+                            status: CreationFormStatus.IDLE,
+                            exitWhenLogsClose: true,
+                            saveStatus: intl.formatMessage({
+                                id: 'materializationCreation.status.success',
+                            }),
+                        });
 
-                        await helpers.doneSubscribing(subscription);
+                        showNotification(notification);
+                    } else {
+                        helpers.jobFailed(
+                            'materializationCreation.save.failure.errorTitle'
+                        );
                     }
-                })
-                .subscribe();
 
-            return subscription;
-        },
-        publications: () => {
-            return waitFor.base(
-                supabaseClient.from(TABLES.PUBLICATIONS),
-                () => {
-                    setFormState({
-                        status: CreationFormStatus.IDLE,
-                        exitWhenLogsClose: true,
-                        saveStatus: intl.formatMessage({
-                            id: 'materializationCreation.status.success',
-                        }),
-                    });
+                    await helpers.doneSubscribing(subscription);
+                }
+            })
+            .subscribe();
 
-                    showNotification(notification);
-                },
-                'materializationCreation.save.failure.errorTitle'
-            );
-        },
+        return subscription;
     };
 
     // Form Event Handlers
@@ -358,7 +350,8 @@ function MaterializationCreate() {
         test: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
-            const publicationsSubscription = waitFor.publications();
+            const publicationsSubscription = createPublicationsSubscription();
+
             supabaseClient
                 .from(TABLES.PUBLICATIONS)
                 .insert([
@@ -404,7 +397,8 @@ function MaterializationCreate() {
         saveAndPublish: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
-            const publicationsSubscription = waitFor.publications();
+            const publicationsSubscription = createPublicationsSubscription();
+
             supabaseClient
                 .from(TABLES.PUBLICATIONS)
                 .insert([
