@@ -4,6 +4,7 @@ import { routeDetails } from 'app/Authenticated';
 import useEditorStore, {
     editorStoreSelectors,
 } from 'components/draft/editor/Store';
+import CatalogEditor from 'components/materialization/CatalogEditor';
 import CollectionSelector from 'components/materialization/CollectionSelector';
 import NewMaterializationDetails from 'components/materialization/DetailsForm';
 import NewMaterializationError from 'components/materialization/Error';
@@ -303,6 +304,8 @@ function MaterializationCreate() {
                                 draftsResponse.data &&
                                 draftsResponse.data.length > 0
                             ) {
+                                setDraftId(draftsResponse.data[0].id);
+
                                 supabaseClient
                                     .from(TABLES.DRAFT_SPECS)
                                     .insert([
@@ -514,6 +517,10 @@ function MaterializationCreate() {
                             </ErrorBoundryWrapper>
                         )}
                     </form>
+
+                    <ErrorBoundryWrapper>
+                        <CatalogEditor />
+                    </ErrorBoundryWrapper>
                 </>
             )}
         </PageContainer>
