@@ -45,7 +45,6 @@ const CONNECTOR_TAG_QUERY = `
     protocol,
     connectors(detail, image_name)
 `;
-const FORM_ID = 'newMaterializationForm';
 
 // TODO - need to get this typing to work... too many repeated types
 const selectors = {
@@ -490,7 +489,7 @@ function MaterializationCreate() {
                         )}
                     </Collapse>
 
-                    <form id={FORM_ID}>
+                    <form>
                         {connectorTags && (
                             <ErrorBoundryWrapper>
                                 <NewMaterializationDetails
