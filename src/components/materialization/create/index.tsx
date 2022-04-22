@@ -50,28 +50,26 @@ const FORM_ID = 'newMaterializationForm';
 const selectors = {
     page: {
         catalogNamespace: (state: CreationState) => state.details.data.name,
-        imageTagId: (state: CreationState) => state.details.data.image,
-        setDetails: (state: CreationState) => state.setDetails,
-        resetState: (state: CreationState) => state.resetState,
-        hasChanges: (state: CreationState) => state.hasChanges,
+        collections: (state: CreationState) => state.collections,
         errors: (state: CreationState) => [
             state.details.errors,
             state.spec.errors,
         ],
         specFormData: (state: CreationState) => state.spec.data,
-        connectors: (state: CreationState) => state.connectors,
-        collections: (state: CreationState) => state.collections,
+        imageTagId: (state: CreationState) => state.details.data.image,
+        hasChanges: (state: CreationState) => state.hasChanges,
+        resetState: (state: CreationState) => state.resetState,
     },
     form: {
-        set: (state: CreationState) => state.setFormState,
-        reset: (state: CreationState) => state.resetFormState,
-        saveStatus: (state: CreationState) => state.formState.saveStatus,
-        status: (state: CreationState) => state.formState.status,
-        showLogs: (state: CreationState) => state.formState.showLogs,
-        logToken: (state: CreationState) => state.formState.logToken,
         error: (state: CreationState) => state.formState.error,
         exitWhenLogsClose: (state: CreationState) =>
             state.formState.exitWhenLogsClose,
+        logToken: (state: CreationState) => state.formState.logToken,
+        saveStatus: (state: CreationState) => state.formState.saveStatus,
+        showLogs: (state: CreationState) => state.formState.showLogs,
+        status: (state: CreationState) => state.formState.status,
+        set: (state: CreationState) => state.setFormState,
+        reset: (state: CreationState) => state.resetFormState,
     },
     notifications: {
         showNotification: (state: NotificationState) => state.showNotification,
@@ -112,24 +110,24 @@ function MaterializationCreate() {
 
     // Form store
     const catalogNamespace = useCreationStore(selectors.page.catalogNamespace);
-    const imageTagId = useCreationStore(selectors.page.imageTagId);
     const collections = useCreationStore(selectors.page.collections);
     const endpointConfig = useCreationStore(selectors.page.specFormData);
+    const imageTagId = useCreationStore(selectors.page.imageTagId);
     const [detailErrors, specErrors] = useCreationStore(selectors.page.errors);
     const resetState = useCreationStore(selectors.page.resetState);
     const hasChanges = useCreationStore(selectors.page.hasChanges);
 
     // Form State
-    const setFormState = useCreationStore(selectors.form.set);
-    const resetFormState = useCreationStore(selectors.form.reset);
-    const status = useCreationStore(selectors.form.status);
-    const showLogs = useCreationStore(selectors.form.showLogs);
     const logToken = useCreationStore(selectors.form.logToken);
-    const formSubmitError = useCreationStore(selectors.form.error);
     const saveStatus = useCreationStore(selectors.form.saveStatus);
+    const showLogs = useCreationStore(selectors.form.showLogs);
+    const status = useCreationStore(selectors.form.status);
     const exitWhenLogsClose = useCreationStore(
         selectors.form.exitWhenLogsClose
     );
+    const formSubmitError = useCreationStore(selectors.form.error);
+    const setFormState = useCreationStore(selectors.form.set);
+    const resetFormState = useCreationStore(selectors.form.reset);
 
     // Editor state
     const draftId = useEditorStore(editorStoreSelectors.draftId);
