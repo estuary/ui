@@ -72,8 +72,6 @@ const wrapInLayoutIfNecessary = (
     uischema: UISchemaElement,
     layoutType: string
 ): Layout => {
-    console.log('wrap in layout');
-
     if (!isEmpty(uischema) && !isLayout(uischema)) {
         const verticalLayout: Layout = createLayout(layoutType);
         verticalLayout.elements.push(uischema);
@@ -113,7 +111,6 @@ const addLabel = (layout: Layout, labelName: string) => {
  *      the schema to check
  */
 const isCombinator = (jsonSchema: JsonSchema): boolean => {
-    console.log('isCombinator');
     return (
         !isEmpty(jsonSchema) &&
         (!isEmpty(jsonSchema.oneOf) ||
@@ -131,7 +128,6 @@ const generateUISchema = (
     layoutType: string,
     rootSchema: JsonSchema
 ): UISchemaElement => {
-    console.log('generate schema');
     if (!isEmpty(jsonSchema) && jsonSchema.$ref !== undefined) {
         return generateUISchema(
             resolveSchema(rootSchema, jsonSchema.$ref),
