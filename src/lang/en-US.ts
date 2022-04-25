@@ -101,6 +101,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'captureTable.header': `Published Captures`,
     'entityTable.title': `Entity Table`,
 
+    'entityTable.filterLabel': `Filter Namespaces`,
     'entityTable.data.entity': `Name`,
     'entityTable.data.connectorType': `Type`,
     'entityTable.data.lastUpdated': `Last Updated`,
@@ -164,6 +165,8 @@ const LogsDialog: ResolvedIntlConfig['messages'] = {
 const AdminPage: ResolvedIntlConfig['messages'] = {
     'connectorTable.title': `Installed ${CommonMessages['terms.connectors']}`,
     'connectorTable.title.aria': `Table of all installed ${CommonMessages['terms.connectors']}`,
+    'connectorTable.filterLabel': `Filter Name or Detail`,
+    'connectorTable.data.title': `Name`,
     'connectorTable.data.image_name': `Image`,
     'connectorTable.data.detail': `Details`,
     'connectorTable.data.protocol': `Protocol`,

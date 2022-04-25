@@ -76,6 +76,7 @@ function CapturesTable() {
                 columnToSort={columnToSort}
                 setColumnToSort={setColumnToSort}
                 header="captureTable.header"
+                filterLabel="entityTable.filterLabel"
             />
         </Box>
     );

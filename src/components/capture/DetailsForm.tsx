@@ -16,6 +16,7 @@ import {
     showValidation,
 } from 'services/jsonforms';
 import { StoreSelector } from 'types';
+import { getConnectorName } from 'utils/misc-utils';
 
 interface Props {
     connectorTags: ConnectorTag[];
@@ -63,10 +64,10 @@ function NewCaptureDetails({ connectorTags }: Props) {
                     }),
                     oneOf:
                         connectorTags.length > 0
-                            ? connectorTags.map((connector: any) => {
+                            ? connectorTags.map((connector) => {
                                   return {
                                       const: connector.id,
-                                      title: connector.connectors.detail,
+                                      title: getConnectorName(connector),
                                   };
                               })
                             : ([] as { title: string; const: string }[]),

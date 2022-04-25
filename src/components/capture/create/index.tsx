@@ -36,11 +36,13 @@ export interface ConnectorTag {
     id: string;
     image_tag: string;
     protocol: string;
+    title: string;
 }
 const CONNECTOR_TAG_QUERY = `
     id, 
     image_tag,
     protocol,
+    endpoint_spec_schema->>title,
     connectors(detail, image_name)
 `;
 const FORM_ID = 'newCaptureForm';
