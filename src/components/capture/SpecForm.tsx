@@ -1,4 +1,4 @@
-import { createAjv } from '@jsonforms/core';
+import { createAjv, getUiSchema } from '@jsonforms/core';
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { StyledEngineProvider } from '@mui/material';
@@ -72,6 +72,12 @@ function NewCaptureSpecForm({ endpointSchema }: Props) {
                 }
             },
         };
+
+        const foo = getUiSchema();
+
+        console.log(foo);
+
+        console.log('SpecForm', { uiSchema, dereffedSchema });
 
         return (
             <StyledEngineProvider injectFirst>

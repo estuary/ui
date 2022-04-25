@@ -1,6 +1,7 @@
 import {
     ControlElement,
     deriveTypes,
+    Generate,
     GroupLayout,
     isGroup,
     isLayout,
@@ -71,6 +72,8 @@ const wrapInLayoutIfNecessary = (
     uischema: UISchemaElement,
     layoutType: string
 ): Layout => {
+    console.log('wrap in layout');
+
     if (!isEmpty(uischema) && !isLayout(uischema)) {
         const verticalLayout: Layout = createLayout(layoutType);
         verticalLayout.elements.push(uischema);
@@ -110,6 +113,7 @@ const addLabel = (layout: Layout, labelName: string) => {
  *      the schema to check
  */
 const isCombinator = (jsonSchema: JsonSchema): boolean => {
+    console.log('isCombinator');
     return (
         !isEmpty(jsonSchema) &&
         (!isEmpty(jsonSchema.oneOf) ||
@@ -127,6 +131,7 @@ const generateUISchema = (
     layoutType: string,
     rootSchema: JsonSchema
 ): UISchemaElement => {
+    console.log('generate schema');
     if (!isEmpty(jsonSchema) && jsonSchema.$ref !== undefined) {
         return generateUISchema(
             resolveSchema(rootSchema, jsonSchema.$ref),
@@ -146,9 +151,13 @@ const generateUISchema = (
     }
 
     const types = deriveTypes(jsonSchema);
-    // if (types.length === 0) {
-    //   return null;
-    // }
+    if (types.length === 0) {
+        // TODO (jsonforms)
+        // This happens when there is a type "null" INSIDE of a combinator
+        // need more work but this keeps the form from blowing up at least.
+        // @ts-expect-error see above
+        return null;
+    }
 
     if (types.length > 1) {
         const controlObject: ControlElement = createControlElement(currentRef);
@@ -247,3 +256,5 @@ export const generateCustomUISchema = (
         generateUISchema(jsonSchema, [], prefix, '', layoutType, rootSchema),
         layoutType
     );
+
+Generate.uiSchema = generateCustomUISchema;
