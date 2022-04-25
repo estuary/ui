@@ -1,6 +1,7 @@
 import {
     ControlElement,
     deriveTypes,
+    Generate,
     GroupLayout,
     isGroup,
     isLayout,
@@ -146,9 +147,13 @@ const generateUISchema = (
     }
 
     const types = deriveTypes(jsonSchema);
-    // if (types.length === 0) {
-    //   return null;
-    // }
+    if (types.length === 0) {
+        // TODO (jsonforms)
+        // This happens when there is a type "null" INSIDE of a combinator
+        // need more work but this keeps the form from blowing up at least.
+        // @ts-expect-error see above
+        return null;
+    }
 
     if (types.length > 1) {
         const controlObject: ControlElement = createControlElement(currentRef);
@@ -247,3 +252,5 @@ export const generateCustomUISchema = (
         generateUISchema(jsonSchema, [], prefix, '', layoutType, rootSchema),
         layoutType
     );
+
+Generate.uiSchema = generateCustomUISchema;
