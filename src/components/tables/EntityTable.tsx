@@ -278,7 +278,7 @@ function EntityTable({
                                 renderTableRows(selectData)
                             ) : (
                                 <TableRow>
-                                    <TableCell colSpan={4}>
+                                    <TableCell colSpan={columns.length}>
                                         <Box
                                             sx={{
                                                 display: 'flex',
@@ -321,7 +321,7 @@ function EntityTable({
                             {emptyRows > 0 && (
                                 <TableRow>
                                     <TableCell
-                                        colSpan={4}
+                                        colSpan={columns.length}
                                         sx={{
                                             height: rowHeight * emptyRows,
                                         }}
