@@ -72,7 +72,7 @@ const PageNotFound = () => {
                 <FormattedMessage id="pageNotFound.heading" />
             </Typography>
 
-            {/* TODO: Consider adjusting the focus-visible state of the dashboard link. */}
+            {/* TODO (UI / UX) : Consider adjusting the focus-visible state of the dashboard link. */}
             <Typography align="center" sx={{ mb: 7 }}>
                 <FormattedMessage
                     id="pageNotFound.message"
@@ -94,7 +94,7 @@ const PageNotFound = () => {
                     borderRadius: 5,
                 }}
             >
-                {/* TODO: Extend functionality and styling of custom search navigation bar. */}
+                {/* TODO (UI / UX) : Extend functionality and styling of custom search navigation bar. */}
                 <Paper
                     variant="outlined"
                     sx={{
@@ -103,7 +103,7 @@ const PageNotFound = () => {
                         borderRadius: 5,
                     }}
                 >
-                    {/* TODO: Update and add error handling to the autocomplete functionality. */}
+                    {/* TODO (errors) : Update and add error handling to the autocomplete functionality. */}
                     <Autocomplete
                         options={pages.map((page) => page.name)}
                         fullWidth

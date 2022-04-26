@@ -184,10 +184,10 @@ const generateUISchema = (
             // traverse properties
             const nextRef: string = `${currentRef}/properties`;
 
-            // TODO this is a dumb check since above it was already done
+            // TODO (linting) this is a dumb check since above it was already done
             if (jsonSchema.properties !== undefined) {
                 Object.keys(jsonSchema.properties).map((propName) => {
-                    // TODO like above this is safe but TS complained
+                    // TODO (linting) like above this is safe but TS complained
                     let value;
                     if (jsonSchema.properties) {
                         value = jsonSchema.properties[propName];

@@ -22,7 +22,7 @@ const goTo = (route?: string, name?: string) => {
     );
 };
 
-// TODO - We use immer here but don't need it. The user metadata is currently just
+// TODO (testing) - We use immer here but don't need it. The user metadata is currently just
 //  any number of keys (according to the types). Hoping that changes in the future.
 const generateMockUserMetadata = (username: string) => {
     return produce(mockDeep<User['user_metadata']>(), (draft) => {

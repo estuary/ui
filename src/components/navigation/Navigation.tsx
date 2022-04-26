@@ -1,6 +1,6 @@
 import ExploreIcon from '@mui/icons-material/Explore';
 import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
-//TODO - These icons are not final
+//TODO (UI / UX) - These icons are not final
 import InputIcon from '@mui/icons-material/Input';
 import StorageIcon from '@mui/icons-material/Storage';
 import { Box, List, Toolbar, useMediaQuery, useTheme } from '@mui/material';

@@ -47,7 +47,7 @@ const CONNECTOR_TAG_QUERY = `
 `;
 const FORM_ID = 'newCaptureForm';
 
-// TODO - need to get this typing to work... too many repeated types
+// TODO (zustand) - need to get this typing to work... too many repeated types
 const selectors = {
     page: {
         captureName: (state: CaptureCreationState) => state.details.data.name,
@@ -324,7 +324,7 @@ function CaptureCreate() {
             let detailHasErrors = false;
             let specHasErrors = false;
 
-            // TODO - this was to make TS/Linting happy
+            // TODO (linting) - this was to make TS/Linting happy
             detailHasErrors = detailErrors ? detailErrors.length > 0 : false;
             specHasErrors = specErrors ? specErrors.length > 0 : false;
 
