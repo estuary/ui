@@ -80,6 +80,7 @@ function ConnectorsTable() {
         TABLES.CONNECTORS,
         {
             columns: CONNECTOR_QUERY,
+            count: 'exact',
             filter: (query) => {
                 return defaultTableFilter<Connector>(
                     query,
