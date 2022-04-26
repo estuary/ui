@@ -20,7 +20,7 @@ import { useConfirmationModalContext } from 'context/Confirmation';
 import { useClient, useQuery, useSelect } from 'hooks/supabase-swr';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { MouseEvent } from 'react';
+import { useEffect, MouseEvent } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { TABLES } from 'services/supabase';
@@ -138,10 +138,18 @@ function MaterializationCreate() {
         EditorStoreState<DraftSpecQuery>['id']
     >((state) => state.id);
 
+    const editorSpecs = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['specs']
+    >((state) => state.specs);
+
     const setDraftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setId']
     >((state) => state.setId);
+
+    useEffect(() => {});
+    const editorContainsSpecs = editorSpecs && editorSpecs.length > 0;
 
     const helpers = {
         callFailed: (formState: any, subscription?: RealtimeSubscription) => {
@@ -329,6 +337,10 @@ function MaterializationCreate() {
                                     ])
                                     .then(
                                         (draftSpecsResponse) => {
+                                            setFormState({
+                                                status: CreationFormStatuses.IDLE,
+                                            });
+
                                             if (draftSpecsResponse.error) {
                                                 helpers.callFailed({
                                                     error: {
@@ -495,13 +507,13 @@ function MaterializationCreate() {
                 testDisabled={
                     status !== CreationFormStatuses.IDLE ||
                     !hasConnectors ||
-                    collections.length === 0
+                    !editorContainsSpecs
                 }
                 save={handlers.saveAndPublish}
                 saveDisabled={
                     status !== CreationFormStatuses.IDLE ||
-                    collections.length === 0 ||
-                    !draftId
+                    !draftId ||
+                    !editorContainsSpecs
                 }
             />
 
