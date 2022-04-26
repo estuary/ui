@@ -2,8 +2,9 @@ import { JsonFormsCore } from '@jsonforms/core';
 import { PostgrestError } from '@supabase/postgrest-js';
 import produce from 'immer';
 import { isEqual } from 'lodash';
-import { devtoolsInNonProd } from 'utils/store-utils';
+import { devtoolsOptions } from 'utils/store-utils';
 import create from 'zustand';
+import { devtools } from 'zustand/middleware';
 
 interface CreationDetails extends Pick<JsonFormsCore, 'data' | 'errors'> {
     data: {
@@ -89,8 +90,8 @@ const getInitialStateData = (): Pick<
     };
 };
 
-const useMaterializationCreationStore = create<CreationState>(
-    devtoolsInNonProd(
+const useMaterializationCreationStore = create<CreationState>()(
+    devtools(
         (set, get) => ({
             ...getInitialStateData(),
             setDetails: (details) => {
@@ -190,7 +191,7 @@ const useMaterializationCreationStore = create<CreationState>(
                 set(getInitialStateData(), false, 'State Reset');
             },
         }),
-        { name: 'materialization-creation-state' }
+        devtoolsOptions('materialization-creation-state')
     )
 );
 

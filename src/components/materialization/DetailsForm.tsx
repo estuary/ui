@@ -1,7 +1,7 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Alert, Box, Stack, Typography } from '@mui/material';
-import { ConnectorTag } from 'components/capture/create';
+import { ConnectorTag } from 'components/materialization/create';
 import useMaterializationCreationStore, {
     CreationFormStatuses,
     CreationState,

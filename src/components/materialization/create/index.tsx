@@ -1,9 +1,7 @@
 import { Button, Collapse } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { routeDetails } from 'app/Authenticated';
-import useEditorStore, {
-    editorStoreSelectors,
-} from 'components/draft/editor/Store';
+import { EditorStoreState, useZustandStore } from 'components/editor/Store';
 import CatalogEditor from 'components/materialization/CatalogEditor';
 import CollectionSelector from 'components/materialization/CollectionSelector';
 import NewMaterializationDetails from 'components/materialization/DetailsForm';
@@ -20,6 +18,8 @@ import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
 import { useConfirmationModalContext } from 'context/Confirmation';
 import { useClient, useQuery, useSelect } from 'hooks/supabase-swr';
+import useBrowserTitle from 'hooks/useBrowserTitle';
+import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { MouseEvent } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
@@ -39,6 +39,7 @@ export interface ConnectorTag {
     image_tag: string;
     protocol: string;
 }
+
 const CONNECTOR_TAG_QUERY = `
     id, 
     image_tag,
@@ -83,6 +84,8 @@ const notification: Notification = {
 };
 
 function MaterializationCreate() {
+    useBrowserTitle('browserTitle.materializationCreate');
+
     // Misc. hooks
     const intl = useIntl();
     const navigate = useNavigate();
@@ -130,8 +133,15 @@ function MaterializationCreate() {
     const resetFormState = useCreationStore(selectors.form.reset);
 
     // Editor state
-    const draftId = useEditorStore(editorStoreSelectors.draftId);
-    const setDraftId = useEditorStore(editorStoreSelectors.setDraftId);
+    const draftId = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['id']
+    >((state) => state.id);
+
+    const setDraftId = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['setId']
+    >((state) => state.setId);
 
     const helpers = {
         callFailed: (formState: any, subscription?: RealtimeSubscription) => {
@@ -273,6 +283,8 @@ function MaterializationCreate() {
                     status: CreationFormStatuses.GENERATING_PREVIEW,
                 });
 
+                // TODO: Use connector_tags.resource_spec_schema as the value of bindings.resource when the
+                // connector_tags schema is updated.
                 const {
                     connectors: { image_name },
                     image_tag,
@@ -304,6 +316,7 @@ function MaterializationCreate() {
                             ) {
                                 setDraftId(draftsResponse.data[0].id);
 
+                                // TODO: Update spec_patch to spec when the draft_spec schema changes.
                                 supabaseClient
                                     .from(TABLES.DRAFT_SPECS)
                                     .insert([
