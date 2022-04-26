@@ -52,7 +52,6 @@ interface Props {
     setSortDirection: (data: any) => void;
     columnToSort: string;
     setColumnToSort: (data: any) => void;
-    rowsPerPage: number;
     header: string;
     filterLabel: string;
     noExistingDataContentIds: {
@@ -68,8 +67,6 @@ interface TableState {
     error?: PostgrestError;
 }
 
-const rowHeight = 57;
-
 export const getPagination = (currPage: number, size: number) => {
     const limit = size;
     const from = currPage ? currPage * limit : 0;
@@ -78,13 +75,14 @@ export const getPagination = (currPage: number, size: number) => {
     return { from, to };
 };
 
+const rowsPerPageOptions = [10, 25, 50];
+
 // TODO (tables) I think we should switch this to React Table soon
 function EntityTable({
     columns,
     noExistingDataContentIds,
     query,
     renderTableRows,
-    rowsPerPage,
     setPagination,
     setSearchQuery,
     sortDirection,
@@ -101,6 +99,7 @@ function EntityTable({
 
     const intl = useIntl();
 
+    const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
     const [tableState, setTableState] = useState<TableState>({
         status: TableStatuses.LOADING,
     });
@@ -112,10 +111,6 @@ function EntityTable({
             setTableState({ status: TableStatuses.NO_EXISTING_DATA });
         }
     }, [selectData, isValidating]);
-
-    const emptyRows = selectData
-        ? Math.max(0, (1 + page) * rowsPerPage - selectData.length)
-        : rowsPerPage;
 
     const getEmptyTableHeader = (tableStatus: TableStatuses): string => {
         switch (tableStatus) {
@@ -184,6 +179,12 @@ function EntityTable({
         ) => {
             setPagination(getPagination(newPage, rowsPerPage));
             setPage(newPage);
+        },
+        changeRowsPerPage: (event: ChangeEvent<HTMLInputElement>) => {
+            const newLimit = parseInt(event.target.value, 10);
+            setRowsPerPage(newLimit);
+            setPagination(getPagination(0, newLimit));
+            setPage(0);
         },
     };
 
@@ -318,27 +319,20 @@ function EntityTable({
                                     </TableCell>
                                 </TableRow>
                             )}
-                            {emptyRows > 0 && (
-                                <TableRow>
-                                    <TableCell
-                                        colSpan={columns.length}
-                                        sx={{
-                                            height: rowHeight * emptyRows,
-                                        }}
-                                    />
-                                </TableRow>
-                            )}
                         </TableBody>
 
                         {selectData && useSelectResponse?.count && (
                             <TableFooter>
                                 <TableRow>
                                     <TablePagination
-                                        rowsPerPageOptions={[rowsPerPage]}
+                                        rowsPerPageOptions={rowsPerPageOptions}
                                         count={useSelectResponse.count}
                                         rowsPerPage={rowsPerPage}
                                         page={page}
                                         onPageChange={handlers.changePage}
+                                        onRowsPerPageChange={
+                                            handlers.changeRowsPerPage
+                                        }
                                     />
                                 </TableRow>
                             </TableFooter>

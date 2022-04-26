@@ -109,7 +109,6 @@ function ConnectorsTable() {
                 renderTableRows={(data) => <Rows data={data} />}
                 setPagination={setPagination}
                 setSearchQuery={setSearchQuery}
-                rowsPerPage={rowsPerPage}
                 sortDirection={sortDirection}
                 setSortDirection={setSortDirection}
                 columnToSort={columnToSort}
