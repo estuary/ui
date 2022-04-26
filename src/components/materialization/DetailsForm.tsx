@@ -3,7 +3,7 @@ import { JsonForms } from '@jsonforms/react';
 import { Alert, Box, Stack, Typography } from '@mui/material';
 import { ConnectorTag } from 'components/capture/create';
 import useMaterializationCreationStore, {
-    CreationFormStatus,
+    CreationFormStatuses,
     CreationState,
 } from 'components/materialization/Store';
 import { useMemo } from 'react';
@@ -115,7 +115,7 @@ function NewMaterializationDetails({ connectorTags }: Props) {
                         renderers={defaultRenderers}
                         cells={materialCells}
                         config={defaultOptions}
-                        readonly={status !== CreationFormStatus.IDLE}
+                        readonly={status !== CreationFormStatuses.IDLE}
                         validationMode={showValidation(displayValidation)}
                         onChange={setDetails}
                     />

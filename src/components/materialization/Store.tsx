@@ -18,15 +18,16 @@ interface CreationSpec extends Pick<JsonFormsCore, 'data' | 'errors'> {
     };
 }
 
-export enum CreationFormStatus {
-    SAVING = 'saving',
-    TESTING = 'testing',
-    IDLE = 'idle',
+export enum CreationFormStatuses {
+    IDLE = 'Idle',
+    GENERATING_PREVIEW = 'Generating Preview',
+    TESTING = 'Testing',
+    SAVING = 'Saving',
 }
 
 interface CreationFormState {
     showValidation: boolean;
-    status: CreationFormStatus;
+    status: CreationFormStatuses;
     showLogs: boolean;
     saveStatus: string;
     exitWhenLogsClose: boolean;
@@ -38,23 +39,23 @@ interface CreationFormState {
 }
 
 export interface CreationState {
-    //Details
+    // Details
     details: CreationDetails;
     setDetails: (details: CreationDetails) => void;
 
-    //Spec
+    // Endpoint Config
     spec: CreationSpec;
     setSpec: (spec: CreationSpec) => void;
 
     formState: CreationFormState;
     setFormState: (data: Partial<CreationFormState>) => void;
-    resetFormState: (status: CreationFormStatus) => void;
+    resetFormState: (status: CreationFormStatuses) => void;
 
-    //Collection Selector
+    // Collection Selector
     collections: string[];
     setCollections: (collections: string[]) => void;
 
-    //Misc
+    // Misc.
     connectors: { [key: string]: any }[];
     setConnectors: (val: { [key: string]: any }[]) => void;
     resetState: () => void;
@@ -78,7 +79,7 @@ const getInitialStateData = (): Pick<
         collections: [],
         formState: {
             showValidation: false,
-            status: CreationFormStatus.IDLE,
+            status: CreationFormStatuses.IDLE,
             showLogs: false,
             exitWhenLogsClose: false,
             logToken: null,
@@ -100,6 +101,7 @@ const useMaterializationCreationStore = create<CreationState>(
                             state.details.data.image !== details.data.image
                         ) {
                             const initState = getInitialStateData();
+
                             state.spec = initState.spec;
                             state.formState = initState.formState;
                         }
@@ -135,6 +137,7 @@ const useMaterializationCreationStore = create<CreationState>(
                 set(
                     produce((state) => {
                         const { formState } = get();
+
                         state.formState = {
                             ...formState,
                             ...newState,
@@ -149,6 +152,7 @@ const useMaterializationCreationStore = create<CreationState>(
                 set(
                     produce((state) => {
                         const { formState } = getInitialStateData();
+
                         state.formState = formState;
                         state.formState.status = status;
                     }),

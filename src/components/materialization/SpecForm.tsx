@@ -3,7 +3,7 @@ import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { StyledEngineProvider } from '@mui/material';
 import useMaterializationCreationStore, {
-    CreationFormStatus,
+    CreationFormStatuses,
     CreationState,
 } from 'components/materialization/Store';
 import JsonRefs from 'json-refs';
@@ -48,10 +48,12 @@ function NewMaterializationSpecForm({ endpointSchema }: Props) {
             const processedSchema = await JsonRefs.resolveRefs(
                 endpointResponse
             );
+
             const hydrateAndValidate = defaultAjv.compile(
                 processedSchema.resolved
             );
             const defaultValues = {};
+
             hydrateAndValidate(defaultValues);
 
             setDeReffedSchema(processedSchema.resolved);
@@ -84,7 +86,7 @@ function NewMaterializationSpecForm({ endpointSchema }: Props) {
                     renderers={defaultRenderers}
                     cells={materialCells}
                     config={defaultOptions}
-                    readonly={status !== CreationFormStatus.IDLE}
+                    readonly={status !== CreationFormStatuses.IDLE}
                     validationMode={showValidationVal}
                     onChange={handlers.onChange}
                 />

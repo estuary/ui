@@ -12,7 +12,7 @@ import NewMaterializationHeader from 'components/materialization/Header';
 import LogDialog from 'components/materialization/LogDialog';
 import NewMaterializationSpec from 'components/materialization/Spec';
 import useCreationStore, {
-    CreationFormStatus,
+    CreationFormStatuses,
     CreationState,
 } from 'components/materialization/Store';
 import Error from 'components/shared/Error';
@@ -137,7 +137,7 @@ function MaterializationCreate() {
         callFailed: (formState: any, subscription?: RealtimeSubscription) => {
             const setFailureState = () => {
                 setFormState({
-                    status: CreationFormStatus.IDLE,
+                    status: CreationFormStatuses.IDLE,
                     exitWhenLogsClose: false,
                     saveStatus: intl.formatMessage({
                         id: 'materializationCreation.status.failure',
@@ -145,6 +145,7 @@ function MaterializationCreate() {
                     ...formState,
                 });
             };
+
             if (subscription) {
                 helpers
                     .doneSubscribing(subscription)
@@ -161,7 +162,7 @@ function MaterializationCreate() {
                 .removeSubscription(subscription)
                 .then(() => {
                     setFormState({
-                        status: CreationFormStatus.IDLE,
+                        status: CreationFormStatuses.IDLE,
                     });
                 })
                 .catch(() => {});
@@ -183,9 +184,11 @@ function MaterializationCreate() {
         },
     };
 
-    const createPublicationsSubscription = (): RealtimeSubscription => {
+    const createPublicationsSubscription = (
+        formStatus: CreationFormStatuses
+    ): RealtimeSubscription => {
         setDraftId(null);
-        resetFormState(CreationFormStatus.TESTING);
+        resetFormState(formStatus);
 
         const subscription = supabaseClient
             .from(TABLES.PUBLICATIONS)
@@ -193,7 +196,7 @@ function MaterializationCreate() {
                 if (payload.new.job_status.type !== 'queued') {
                     if (payload.new.job_status.type === 'success') {
                         setFormState({
-                            status: CreationFormStatus.IDLE,
+                            status: CreationFormStatuses.IDLE,
                             exitWhenLogsClose: true,
                             saveStatus: intl.formatMessage({
                                 id: 'materializationCreation.status.success',
@@ -266,6 +269,10 @@ function MaterializationCreate() {
             } else if (!connectorInfo) {
                 // TODO: Handle the highly unlikely scenario where the connector tag id could not be found.
             } else {
+                setFormState({
+                    status: CreationFormStatuses.GENERATING_PREVIEW,
+                });
+
                 const {
                     connectors: { image_name },
                     image_tag,
@@ -349,7 +356,9 @@ function MaterializationCreate() {
         test: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
-            const publicationsSubscription = createPublicationsSubscription();
+            const publicationsSubscription = createPublicationsSubscription(
+                CreationFormStatuses.TESTING
+            );
 
             supabaseClient
                 .from(TABLES.PUBLICATIONS)
@@ -396,7 +405,9 @@ function MaterializationCreate() {
         saveAndPublish: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
-            const publicationsSubscription = createPublicationsSubscription();
+            const publicationsSubscription = createPublicationsSubscription(
+                CreationFormStatuses.SAVING
+            );
 
             supabaseClient
                 .from(TABLES.PUBLICATIONS)
@@ -456,7 +467,7 @@ function MaterializationCreate() {
                     <>
                         {saveStatus}
                         <Button
-                            disabled={status !== CreationFormStatus.IDLE}
+                            disabled={status !== CreationFormStatuses.IDLE}
                             onClick={handlers.closeLogs}
                         >
                             <FormattedMessage id="cta.close" />
@@ -469,10 +480,16 @@ function MaterializationCreate() {
                 close={handlers.cancel}
                 test={handlers.test}
                 testDisabled={
-                    status !== CreationFormStatus.IDLE || !hasConnectors
+                    status !== CreationFormStatuses.IDLE ||
+                    !hasConnectors ||
+                    collections.length === 0
                 }
                 save={handlers.saveAndPublish}
-                saveDisabled={status !== CreationFormStatus.IDLE || !draftId}
+                saveDisabled={
+                    status !== CreationFormStatuses.IDLE ||
+                    collections.length === 0 ||
+                    !draftId
+                }
             />
 
             {connectorTagsError ? (
