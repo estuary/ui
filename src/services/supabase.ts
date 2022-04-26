@@ -45,7 +45,7 @@ export const defaultTableFilter = <Data>(
     searchQuery: string | null,
     columnToSort: keyof Data,
     sortDirection: string,
-    pagination: { from: number; to: number }
+    pagination?: { from: number; to: number }
 ) => {
     let queryBuilder = query;
 
@@ -59,9 +59,13 @@ export const defaultTableFilter = <Data>(
         );
     }
 
-    return queryBuilder
-        .order(columnToSort, {
-            ascending: sortDirection === 'asc',
-        })
-        .range(pagination.from, pagination.to);
+    queryBuilder = queryBuilder.order(columnToSort, {
+        ascending: sortDirection === 'asc',
+    });
+
+    if (pagination) {
+        queryBuilder = queryBuilder.range(pagination.from, pagination.to);
+    }
+
+    return queryBuilder;
 };

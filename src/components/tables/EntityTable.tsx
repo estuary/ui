@@ -78,6 +78,7 @@ export const getPagination = (currPage: number, size: number) => {
 const rowsPerPageOptions = [10, 25, 50];
 
 // TODO (tables) I think we should switch this to React Table soon
+//   Also - you MUST include a count with your query or else pagination breaks
 function EntityTable({
     columns,
     noExistingDataContentIds,
