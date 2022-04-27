@@ -26,9 +26,11 @@ import { EnumCellProps, EnumOption, WithClassname } from '@jsonforms/core';
 import {
     Autocomplete,
     AutocompleteRenderOptionState,
+    Box,
     FilterOptionsState,
     Input,
 } from '@mui/material';
+import ConnectorName from 'components/ConnectorName';
 import merge from 'lodash/merge';
 import React, { ReactNode } from 'react';
 
@@ -61,7 +63,6 @@ export const ConnectorAutoComplete = (
         options,
         config,
         getOptionLabel,
-        renderOption,
         filterOptions,
     } = props;
 
@@ -92,17 +93,48 @@ export const ConnectorAutoComplete = (
                 marginTop: 2,
                 borderColor: errors.length > 0 ? 'red' : null,
             }}
-            renderInput={(params) => (
-                <Input
-                    style={{ width: '100%' }}
-                    type="text"
-                    inputProps={params.inputProps}
-                    inputRef={params.InputProps.ref}
-                    autoFocus={appliedUiSchemaOptions.focus}
-                    disabled={!enabled}
-                />
-            )}
-            renderOption={renderOption}
+            renderInput={(params) => {
+                return (
+                    <>
+                        <Box
+                            sx={{
+                                position: 'absolute',
+                                left: 0,
+                                top: 26,
+                            }}
+                        >
+                            <ConnectorName
+                                path="https://wiki.postgresql.org/images/a/a4/PostgreSQL_logo.3colors.svg"
+                                connector=""
+                            />
+                        </Box>
+
+                        <Input
+                            sx={{
+                                '& > input': {
+                                    textIndent: '20px',
+                                },
+                            }}
+                            style={{ width: '100%' }}
+                            type="text"
+                            inputProps={params.inputProps}
+                            inputRef={params.InputProps.ref}
+                            autoFocus={appliedUiSchemaOptions.focus}
+                            disabled={!enabled}
+                        />
+                    </>
+                );
+            }}
+            renderOption={(renderOptionProps: any, option) => {
+                return (
+                    <Box component="li" {...renderOptionProps}>
+                        <ConnectorName
+                            path="https://wiki.postgresql.org/images/a/a4/PostgreSQL_logo.3colors.svg"
+                            connector={option.label}
+                        />
+                    </Box>
+                );
+            }}
             filterOptions={filterOptions}
         />
     );
