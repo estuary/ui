@@ -217,8 +217,28 @@ const Captures: ResolvedIntlConfig['messages'] = {
 };
 
 const MaterializationCreate: ResolvedIntlConfig['messages'] = {
+    'materializationCreation.config.source.doclink': `Connector Docs`,
+    'materializationCreation.cta.test': `Test Config`,
+    'materializationCreation.editor.default': `Before you can edit the Materialization Catalog you need to fill out the connection config section`,
+    'materializationCreation.finalReview.instructions': `Look over the catalog configuration that was generated. If you want to edit anything, you can do that directly in the editor. You can download the file for your local machine when you're ready.`,
     'materializationCreation.heading': `New Materialization`,
-    'materializationCreation.instructions': `To get started please provide a unique name, select an endpoint type, and select the Collections you want to Materialize. After that you can review the YAML before saving.`,
+    'materializationCreation.image.description': `The connector you want to use to connect to your endpoint.`,
+    'materializationCreation.image.label': `Source`,
+    'materializationCreation.instructions': `To get started, please provide a unique name and select an endpoint. Next, configure your endpoint and choose the collections you want to materialize. The generated YAML can be reviewed before saving.`,
+    'materializationCreation.missingConnectors': `No connectors installed. A source connector must be installed before a materialization can be created.`,
+    'materializationCreation.name.description': `Name of the materialization - must be unique. (ex: acemCo/marketing_data)`,
+    'materializationCreation.name.label': `Name`,
+    'materializationCreation.save.failure': `Materialization creation failed. Please see below for details:`,
+    'materializationCreation.save.failure.errorTitle': `Materialization Save Failed`,
+    'materializationCreation.save.inProgress': `Please wait while we test, save, and publish your materialization.`,
+    'materializationCreation.save.serverUnreachable': `Config Save was unable to reach server`,
+    'materializationCreation.status.failure': `Failed`,
+    'materializationCreation.status.running': `running...`,
+    'materializationCreation.status.success': `Success!`,
+    'materializationCreation.tenant.label': `Tenant`,
+    'materializationCreation.test.failure.errorTitle': `Config Test Failed`,
+    'materializationCreation.test.serverUnreachable': `Config Test was unable to reach server`,
+    'materializationCreation.test.inProgress': `Please wait while we try to connect to this endpoint.`,
 };
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {

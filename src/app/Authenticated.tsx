@@ -52,6 +52,7 @@ export const routeDetails = {
         create: {
             title: 'routeTitle.materializationCreate',
             path: 'create',
+            fullPath: '/materialization/create',
         },
     },
     materializations: {
@@ -107,7 +108,11 @@ const Authenticated = () => {
                 <Route path={routeDetails.materialization.root}>
                     <Route
                         path={routeDetails.materialization.create.path}
-                        element={<NewMaterialization />}
+                        element={
+                            <ZustandProvider stateKey="draftSpecEditor">
+                                <NewMaterialization />
+                            </ZustandProvider>
+                        }
                     />
                 </Route>
 
