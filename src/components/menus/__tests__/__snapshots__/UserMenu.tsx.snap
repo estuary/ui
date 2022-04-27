@@ -1,0 +1,146 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`When there is user metadata the menu displays snapshot 1`] = `
+<body
+  style="padding-right: 1024px; overflow: hidden;"
+>
+  <div
+    aria-hidden="true"
+  >
+    <button
+      aria-controls="account-menu-menu"
+      aria-expanded="true"
+      aria-haspopup="true"
+      aria-label="Open account menu"
+      class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-j8rmhe-MuiButtonBase-root-MuiIconButton-root"
+      data-mui-internal-clone-element="true"
+      id="account-menu-button"
+      tabindex="0"
+      type="button"
+    >
+      <div
+        class="MuiAvatar-root MuiAvatar-circular css-10zwf3c-MuiAvatar-root"
+      >
+        <img
+          class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+          src="https://example.org/avatar/foo123"
+        />
+      </div>
+    </button>
+  </div>
+  <div
+    aria-labelledby="account-menu-button"
+    class="MuiModal-root MuiPopover-root MuiMenu-root css-10nakn3-MuiModal-root-MuiPopover-root-MuiMenu-root"
+    id="account-menu-menu"
+    role="presentation"
+  >
+    <div
+      aria-hidden="true"
+      class="MuiBackdrop-root MuiBackdrop-invisible css-g3hgs1-MuiBackdrop-root-MuiModal-backdrop"
+      style="opacity: 1; webkit-transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"
+    />
+    <div
+      data-test="sentinelStart"
+      tabindex="0"
+    />
+    <div
+      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiMenu-paper MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 MuiPopover-paper css-mz8czf-MuiPaper-root-MuiMenu-paper-MuiPaper-root-MuiPopover-paper"
+      style="opacity: 1; transform: none; transition: opacity 0ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 0ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; top: 16px; left: 16px; transform-origin: -16px -16px;"
+      tabindex="-1"
+    >
+      <ul
+        class="MuiList-root MuiList-padding MuiMenu-list css-6hp17o-MuiList-root-MuiMenu-list"
+        role="menu"
+        tabindex="-1"
+      >
+        <li
+          class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1qldtwa-MuiButtonBase-root-MuiMenuItem-root"
+          role="menuitem"
+          tabindex="0"
+        >
+          <div
+            class="MuiListItemIcon-root css-cveggr-MuiListItemIcon-root"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-ptiqhd-MuiSvgIcon-root"
+              data-testid="AccountCircleIcon"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"
+              />
+            </svg>
+          </div>
+          Full foo123
+        </li>
+        <li
+          class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1qldtwa-MuiButtonBase-root-MuiMenuItem-root"
+          role="menuitem"
+          tabindex="-1"
+        >
+          <div
+            class="MuiListItemIcon-root css-cveggr-MuiListItemIcon-root"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-ptiqhd-MuiSvgIcon-root"
+              data-testid="EmailIcon"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"
+              />
+            </svg>
+          </div>
+          <div
+            class="css-nen11g-MuiStack-root"
+          >
+            <p
+              class="MuiTypography-root MuiTypography-body1 css-1q5p0sd-MuiTypography-root"
+            >
+              foo123@example.org
+            </p>
+            <span
+              class="MuiTypography-root MuiTypography-caption css-eiw59m-MuiTypography-root"
+            >
+              verified
+            </span>
+          </div>
+        </li>
+        <hr
+          class="MuiDivider-root MuiDivider-fullWidth css-9mgopn-MuiDivider-root"
+        />
+        <li
+          class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1qldtwa-MuiButtonBase-root-MuiMenuItem-root"
+          role="menuitem"
+          tabindex="-1"
+        >
+          <div
+            class="MuiListItemIcon-root css-cveggr-MuiListItemIcon-root"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-ptiqhd-MuiSvgIcon-root"
+              data-testid="LogoutIcon"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="m17 7-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"
+              />
+            </svg>
+          </div>
+          Logout
+        </li>
+      </ul>
+    </div>
+    <div
+      data-test="sentinelEnd"
+      tabindex="0"
+    />
+  </div>
+</body>
+`;
