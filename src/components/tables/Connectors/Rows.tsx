@@ -98,10 +98,6 @@ function Rows({ data }: Props) {
                                     size="small"
                                     color="success"
                                     disableElevation
-                                    disabled={
-                                        row.connector_tags[0].protocol !==
-                                        'capture'
-                                    }
                                     onClick={() => {
                                         if (
                                             row.connector_tags[0].protocol ===
@@ -109,6 +105,13 @@ function Rows({ data }: Props) {
                                         ) {
                                             navigate(
                                                 `${routeDetails.capture.create.fullPath}?${routeDetails.capture.create.params.connectorID}=${row.connector_tags[0].id}`
+                                            );
+                                        } else if (
+                                            row.connector_tags[0].protocol ===
+                                            'materialization'
+                                        ) {
+                                            navigate(
+                                                `${routeDetails.materialization.create.fullPath}?${routeDetails.materialization.create.params.connectorID}=${row.connector_tags[0].id}`
                                             );
                                         }
                                     }}

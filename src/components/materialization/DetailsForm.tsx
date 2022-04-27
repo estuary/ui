@@ -1,13 +1,15 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Alert, Box, Stack, Typography } from '@mui/material';
+import { routeDetails } from 'app/Authenticated';
 import { ConnectorTag } from 'components/materialization/create';
 import useMaterializationCreationStore, {
     CreationFormStatuses,
     CreationState,
 } from 'components/materialization/Store';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { useSearchParams } from 'react-router-dom';
 import {
     defaultOptions,
     defaultRenderers,
@@ -29,6 +31,11 @@ const stateSelectors: StoreSelector<CreationState> = {
 
 function NewMaterializationDetails({ connectorTags }: Props) {
     const intl = useIntl();
+    const [searchParams] = useSearchParams();
+    const connectorID = searchParams.get(
+        routeDetails.materialization.create.params.connectorID
+    );
+
     const formData = useMaterializationCreationStore(stateSelectors.formData);
     const setDetails = useMaterializationCreationStore(
         stateSelectors.setDetails
@@ -37,6 +44,17 @@ function NewMaterializationDetails({ connectorTags }: Props) {
         stateSelectors.showValidation
     );
     const status = useMaterializationCreationStore(stateSelectors.status);
+
+    useEffect(() => {
+        if (connectorID) {
+            setDetails({
+                data: {
+                    name: '',
+                    image: connectorID,
+                },
+            });
+        }
+    }, [connectorID, setDetails]);
 
     const schema = useMemo(() => {
         return {

@@ -53,6 +53,9 @@ export const routeDetails = {
             title: 'routeTitle.materializationCreate',
             path: 'create',
             fullPath: '/materialization/create',
+            params: {
+                connectorID: 'connectorID',
+            },
         },
     },
     materializations: {
