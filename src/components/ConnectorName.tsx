@@ -40,7 +40,12 @@ function ConnectorName({ size = defaultSize, connector, path }: Props) {
                         alt=""
                     />
                 ) : (
-                    <QuestionMarkIcon />
+                    <QuestionMarkIcon
+                        sx={{
+                            height: size,
+                            width: size,
+                        }}
+                    />
                 )}
             </div>
             {connectorName}

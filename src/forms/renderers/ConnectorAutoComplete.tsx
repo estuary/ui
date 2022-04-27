@@ -110,10 +110,7 @@ export const ConnectorAutoComplete = (
                                     top: 22,
                                 }}
                             >
-                                <ConnectorName
-                                    path="https://wiki.postgresql.org/images/a/a4/PostgreSQL_logo.3colors.svg"
-                                    connector=""
-                                />
+                                <ConnectorName path="" connector="" />
                             </Box>
                         ) : null}
 
@@ -131,10 +128,7 @@ export const ConnectorAutoComplete = (
             renderOption={(renderOptionProps: any, option) => {
                 return (
                     <Box component="li" {...renderOptionProps}>
-                        <ConnectorName
-                            path="https://wiki.postgresql.org/images/a/a4/PostgreSQL_logo.3colors.svg"
-                            connector={option.label}
-                        />
+                        <ConnectorName path="" connector={option.label} />
                     </Box>
                 );
             }}
