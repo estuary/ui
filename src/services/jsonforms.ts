@@ -18,6 +18,7 @@ import {
     collapsibleGroupTester,
     CollapsibleGroupType,
 } from 'forms/renderers/CollapsibleGroup';
+import { ConnectorType, connectorTypeTester } from 'forms/renderers/Connectors';
 import { NullType, nullTypeTester } from 'forms/renderers/NullType';
 import isEmpty from 'lodash/isEmpty';
 import keys from 'lodash/keys';
@@ -32,6 +33,7 @@ export const defaultRenderers = [
     ...materialRenderers,
     { renderer: NullType, tester: nullTypeTester },
     { renderer: CollapsibleGroup, tester: collapsibleGroupTester },
+    { renderer: ConnectorType, tester: connectorTypeTester },
 ];
 
 export const showValidation = (val: any): ValidationMode => {
@@ -184,10 +186,10 @@ const generateUISchema = (
             // traverse properties
             const nextRef: string = `${currentRef}/properties`;
 
-            // TODO this is a dumb check since above it was already done
+            // TODO (linting) this is a dumb check since above it was already done
             if (jsonSchema.properties !== undefined) {
                 Object.keys(jsonSchema.properties).map((propName) => {
-                    // TODO like above this is safe but TS complained
+                    // TODO (linting) like above this is safe but TS complained
                     let value;
                     if (jsonSchema.properties) {
                         value = jsonSchema.properties[propName];

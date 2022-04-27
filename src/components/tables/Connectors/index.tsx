@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import Rows from 'components/tables/Connectors/Rows';
+import Rows, { tableColumns } from 'components/tables/Connectors/Rows';
 import EntityTable, {
     getPagination,
     SortDirection,
@@ -7,37 +7,6 @@ import EntityTable, {
 import { useQuery } from 'hooks/supabase-swr';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
-
-const tableColumns = [
-    {
-        field: 'image_name',
-        headerIntlKey: 'connectorTable.data.image_name',
-    },
-    {
-        field: null,
-        headerIntlKey: 'connectorTable.data.title',
-    },
-    {
-        field: 'detail',
-        headerIntlKey: 'connectorTable.data.detail',
-    },
-    {
-        field: null,
-        headerIntlKey: 'connectorTable.data.protocol',
-    },
-    {
-        field: 'updated_at',
-        headerIntlKey: 'connectorTable.data.updated_at',
-    },
-    {
-        field: null,
-        headerIntlKey: 'connectorTable.data.documentation_url',
-    },
-    {
-        field: null,
-        headerIntlKey: 'connectorTable.data.actions',
-    },
-];
 
 export interface Connector {
     connector_tags: {
@@ -80,6 +49,7 @@ function ConnectorsTable() {
         TABLES.CONNECTORS,
         {
             columns: CONNECTOR_QUERY,
+            count: 'exact',
             filter: (query) => {
                 return defaultTableFilter<Connector>(
                     query,
@@ -108,7 +78,6 @@ function ConnectorsTable() {
                 renderTableRows={(data) => <Rows data={data} />}
                 setPagination={setPagination}
                 setSearchQuery={setSearchQuery}
-                rowsPerPage={rowsPerPage}
                 sortDirection={sortDirection}
                 setSortDirection={setSortDirection}
                 columnToSort={columnToSort}
