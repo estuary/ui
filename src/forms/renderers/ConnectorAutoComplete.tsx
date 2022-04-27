@@ -93,36 +93,39 @@ export const ConnectorAutoComplete = (
                 marginTop: 2,
                 borderColor: errors.length > 0 ? 'red' : null,
             }}
-            renderInput={(params) => {
+            renderInput={({ inputProps, InputProps }: any) => {
                 return (
-                    <>
-                        <Box
-                            sx={{
-                                position: 'absolute',
-                                left: 0,
-                                top: 26,
-                            }}
-                        >
-                            <ConnectorName
-                                path="https://wiki.postgresql.org/images/a/a4/PostgreSQL_logo.3colors.svg"
-                                connector=""
-                            />
-                        </Box>
+                    <Box
+                        sx={{
+                            '.MuiBox-root + .MuiInput-root > input': {
+                                textIndent: '20px',
+                            },
+                        }}
+                    >
+                        {inputProps.value !== '' ? (
+                            <Box
+                                sx={{
+                                    position: 'absolute',
+                                    left: 0,
+                                    top: 22,
+                                }}
+                            >
+                                <ConnectorName
+                                    path="https://wiki.postgresql.org/images/a/a4/PostgreSQL_logo.3colors.svg"
+                                    connector=""
+                                />
+                            </Box>
+                        ) : null}
 
                         <Input
-                            sx={{
-                                '& > input': {
-                                    textIndent: '20px',
-                                },
-                            }}
                             style={{ width: '100%' }}
                             type="text"
-                            inputProps={params.inputProps}
-                            inputRef={params.InputProps.ref}
+                            inputProps={inputProps}
+                            inputRef={InputProps.ref}
                             autoFocus={appliedUiSchemaOptions.focus}
                             disabled={!enabled}
                         />
-                    </>
+                    </Box>
                 );
             }}
             renderOption={(renderOptionProps: any, option) => {

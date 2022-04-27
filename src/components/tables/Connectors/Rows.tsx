@@ -55,7 +55,7 @@ function Rows({ data }: Props) {
                 return (
                     <TableRow key={`Connector-${row.id}`}>
                         <TableCell style={columnStyling}>
-                            <ConnectorName path="" connector={row} />
+                            <ConnectorName connector={row} />
                         </TableCell>
                         <TableCell style={columnStyling}>
                             <Stack direction="row">{row.image_name}</Stack>

@@ -1,10 +1,11 @@
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import { Stack } from '@mui/material';
 import useConstant from 'use-constant';
 import { getConnectorName } from 'utils/misc-utils';
 
 interface Props {
     size?: number;
-    path: string;
+    path?: string;
     connector: any; // TODO (typing) ConnectorTag
 }
 
@@ -23,13 +24,25 @@ function ConnectorName({ size = defaultSize, connector, path }: Props) {
             sx={{
                 'alignItems': 'center',
                 'justifyContent': 'center',
-                '& > img': {
+                '& > div    ': {
                     mr: 2,
                     flexShrink: 0,
                 },
             }}
         >
-            <img width={size} height={size} src={path} loading="lazy" alt="" />
+            <div style={{ height: size, width: size }}>
+                {path ? (
+                    <img
+                        width={size}
+                        height={size}
+                        src={path}
+                        loading="lazy"
+                        alt=""
+                    />
+                ) : (
+                    <QuestionMarkIcon />
+                )}
+            </div>
             {connectorName}
         </Stack>
     );
