@@ -18,6 +18,7 @@ import {
     collapsibleGroupTester,
     CollapsibleGroupType,
 } from 'forms/renderers/CollapsibleGroup';
+import { ConnectorType, connectorTypeTester } from 'forms/renderers/Connectors';
 import { NullType, nullTypeTester } from 'forms/renderers/NullType';
 import isEmpty from 'lodash/isEmpty';
 import keys from 'lodash/keys';
@@ -32,6 +33,7 @@ export const defaultRenderers = [
     ...materialRenderers,
     { renderer: NullType, tester: nullTypeTester },
     { renderer: CollapsibleGroup, tester: collapsibleGroupTester },
+    { renderer: ConnectorType, tester: connectorTypeTester },
 ];
 
 export const showValidation = (val: any): ValidationMode => {
