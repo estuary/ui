@@ -1,20 +1,17 @@
-import { materialCells } from '@jsonforms/material-renderers';
-import { JsonForms } from '@jsonforms/react';
-import { Alert, Stack, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
 import { ConnectorTag } from 'components/capture/create';
 import useCaptureCreationStore, {
-    CaptureCreationFormStatus,
     CaptureCreationState,
 } from 'components/capture/Store';
 import { useEffect, useMemo } from 'react';
+import {
+    FormContainer,
+    SelectElement,
+    TextFieldElement,
+} from 'react-hook-form-mui';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
-import {
-    defaultOptions,
-    defaultRenderers,
-    showValidation,
-} from 'services/jsonforms';
 import { StoreSelector } from 'types';
 import { getConnectorName } from 'utils/misc-utils';
 
@@ -37,12 +34,12 @@ function NewCaptureDetails({ connectorTags }: Props) {
         routeDetails.capture.create.params.connectorID
     );
 
-    const formData = useCaptureCreationStore(stateSelectors.formData);
+    // const formData = useCaptureCreationStore(stateSelectors.formData);
     const setDetails = useCaptureCreationStore(stateSelectors.setDetails);
-    const displayValidation = useCaptureCreationStore(
-        stateSelectors.showValidation
-    );
-    const status = useCaptureCreationStore(stateSelectors.status);
+    // const displayValidation = useCaptureCreationStore(
+    //     stateSelectors.showValidation
+    // );
+    // const status = useCaptureCreationStore(stateSelectors.status);
 
     useEffect(() => {
         if (connectorID) {
@@ -55,63 +52,90 @@ function NewCaptureDetails({ connectorTags }: Props) {
         }
     }, [connectorID, setDetails]);
 
-    const schema = useMemo(() => {
-        return {
-            properties: {
-                image: {
-                    description: intl.formatMessage({
-                        id: 'captureCreation.image.description',
-                    }),
-                    oneOf:
-                        connectorTags.length > 0
-                            ? connectorTags.map((connector) => {
-                                  return {
-                                      const: connector.id,
-                                      title: getConnectorName(connector),
-                                  };
-                              })
-                            : ([] as { title: string; const: string }[]),
-                    type: 'string',
-                },
-                name: {
-                    description: intl.formatMessage({
-                        id: 'captureCreation.name.description',
-                    }),
-                    maxLength: 1000,
-                    minLength: 3,
-                    pattern: '^[a-zA-Z0-9_.-]*/[a-zA-Z0-9_.-]+$',
-                    type: 'string',
-                },
-            },
-            required: ['name', 'image'],
-            type: 'object',
-        };
-    }, [connectorTags, intl]);
+    const connectorOptions = useMemo(() => {
+        return connectorTags.length > 0
+            ? connectorTags.map((connector) => {
+                  return {
+                      id: connector.id,
+                      title: getConnectorName(connector),
+                  };
+              })
+            : ([] as { title: string; id: string }[]);
+    }, [connectorTags]);
 
-    const uiSchema = {
-        elements: [
-            {
-                elements: [
-                    {
-                        label: intl.formatMessage({
-                            id: 'captureCreation.name.label',
-                        }),
-                        scope: '#/properties/name',
-                        type: 'Control',
-                    },
-                    {
-                        label: intl.formatMessage({
-                            id: 'captureCreation.image.label',
-                        }),
-                        scope: '#/properties/image',
-                        type: 'Control',
-                    },
-                ],
-                type: 'HorizontalLayout',
-            },
-        ],
-        type: 'VerticalLayout',
+    // const schema = useMemo(() => {
+    //     return {
+    //         properties: {
+    //             image: {
+    //                 description: intl.formatMessage({
+    //                     id: 'captureCreation.image.description',
+    //                 }),
+    //                 oneOf:
+    //                     connectorTags.length > 0
+    //                         ? connectorTags.map((connector) => {
+    //                               return {
+    //                                   const: connector.id,
+    //                                   title: getConnectorName(connector),
+    //                               };
+    //                           })
+    //                         : ([] as { title: string; const: string }[]),
+    //                 type: 'string',
+    //             },
+    //             name: {
+    //                 description: intl.formatMessage({
+    //                     id: 'captureCreation.name.description',
+    //                 }),
+    //                 maxLength: 1000,
+    //                 minLength: 3,
+    //                 pattern: '^[a-zA-Z0-9_.-]*/[a-zA-Z0-9_.-]+$',
+    //                 type: 'string',
+    //             },
+    //         },
+    //         required: ['name', 'image'],
+    //         type: 'object',
+    //     };
+    // }, [connectorTags, intl]);
+
+    // const uiSchema = {
+    //     elements: [
+    //         {
+    //             elements: [
+    //                 {
+    //                     label: intl.formatMessage({
+    //                         id: 'captureCreation.name.label',
+    //                     }),
+    //                     scope: '#/properties/name',
+    //                     type: 'Control',
+    //                 },
+    //                 {
+    //                     label: intl.formatMessage({
+    //                         id: 'captureCreation.image.label',
+    //                     }),
+    //                     scope: '#/properties/image',
+    //                     type: 'Control',
+    //                 },
+    //             ],
+    //             type: 'HorizontalLayout',
+    //         },
+    //     ],
+    //     type: 'VerticalLayout',
+    // };
+
+    const handlers = {
+        changeImage: (newVal: any) => {
+            setDetails({
+                data: {
+                    image: newVal.id,
+                    name: 'foo/foo',
+                },
+            });
+        },
+        submit: () => {
+            console.log('hey oh');
+        },
     };
+
+    const initialValue = { image: '', name: '' };
 
     return (
         <>
@@ -119,7 +143,41 @@ function NewCaptureDetails({ connectorTags }: Props) {
 
             <FormattedMessage id="captureCreation.instructions" />
 
-            <Stack direction="row" spacing={2}>
+            <FormContainer
+                defaultValues={initialValue}
+                onSuccess={(data) => {
+                    console.log(data);
+                    handlers.submit();
+                }}
+            >
+                <TextFieldElement
+                    name="name"
+                    label={intl.formatMessage({
+                        id: 'captureCreation.name.label',
+                    })}
+                    helperText={intl.formatMessage({
+                        id: 'captureCreation.name.description',
+                    })}
+                    required
+                />
+
+                <SelectElement
+                    name="image"
+                    type="string"
+                    label={intl.formatMessage({
+                        id: 'captureCreation.image.label',
+                    })}
+                    helperText={intl.formatMessage({
+                        id: 'captureCreation.image.description',
+                    })}
+                    required
+                    options={connectorOptions}
+                    objectOnChange
+                    onChange={handlers.changeImage}
+                />
+            </FormContainer>
+
+            {/* <Stack direction="row" spacing={2}>
                 {schema.properties.image.oneOf.length > 0 ? (
                     <JsonForms
                         schema={schema}
@@ -137,7 +195,7 @@ function NewCaptureDetails({ connectorTags }: Props) {
                         <FormattedMessage id="captureCreation.missingConnectors" />
                     </Alert>
                 )}
-            </Stack>
+            </Stack> */}
         </>
     );
 }

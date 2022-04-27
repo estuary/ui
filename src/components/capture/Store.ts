@@ -6,7 +6,7 @@ import { devtoolsOptions } from 'utils/store-utils';
 import create from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-interface CaptureCreationDetails
+export interface CaptureCreationDetails
     extends Pick<JsonFormsCore, 'data' | 'errors'> {
     data: {
         name: string;
