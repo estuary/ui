@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup';
 import UserMenu from 'components/menus/UserMenu';
-import { customRender, screen, waitFor } from 'utils/test-utils';
+import { act, customRender, screen, waitFor } from 'utils/test-utils';
 
 describe('When there is user metadata', () => {
     const openMenu = async (user: UserEvent) => {
@@ -22,8 +22,11 @@ describe('When there is user metadata', () => {
                 username,
             });
 
-            await waitFor(async () => {
+            await act(async () => {
                 await openMenu(user);
+            });
+
+            await waitFor(async () => {
                 expect(
                     screen.getByText(`Full ${username}`)
                 ).toBeInTheDocument();
@@ -35,12 +38,27 @@ describe('When there is user metadata', () => {
                 username,
             });
 
-            await waitFor(async () => {
+            await act(async () => {
                 await openMenu(user);
+            });
+
+            await waitFor(async () => {
                 expect(
                     screen.getByText(`${username}@example.org`)
                 ).toBeInTheDocument();
             });
+        });
+
+        test('snapshot', async () => {
+            const { user, view } = await customRender(<UserMenu />, {
+                username,
+            });
+
+            await act(async () => {
+                await openMenu(user);
+            });
+
+            expect(view.baseElement).toMatchSnapshot();
         });
     });
 });

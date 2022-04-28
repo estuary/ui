@@ -86,6 +86,7 @@ const notification: Notification = {
 
 function CaptureCreate() {
     useBrowserTitle('browserTitle.captureCreate');
+
     // misc hooks
     const intl = useIntl();
     const navigate = useNavigate();
