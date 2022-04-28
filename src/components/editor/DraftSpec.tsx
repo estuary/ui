@@ -1,6 +1,4 @@
-import { Box } from '@mui/material';
-import EditorFileSelector from 'components/editor/FileSelector';
-import MonacoEditor from 'components/editor/MonacoEditor';
+import EditorAndList from 'components/editor/EditorAndList';
 import { EditorStoreState, useZustandStore } from 'components/editor/Store';
 import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useEffect, useState } from 'react';
@@ -30,7 +28,7 @@ function DraftSpecEditor() {
             if (draftSpec) {
                 const newData = {
                     ...draftSpec,
-                    spec_patch: JSON.parse(newVal),
+                    spec: JSON.parse(newVal),
                 };
 
                 supabaseClient
@@ -64,21 +62,11 @@ function DraftSpecEditor() {
 
     if (draftSpec) {
         return (
-            <Box
-                sx={{
-                    flexGrow: 1,
-                    bgcolor: 'background.paper',
-                    display: 'flex',
-                    height: 300,
-                }}
-            >
-                <EditorFileSelector />
-                <MonacoEditor
-                    value={draftSpec.spec_patch}
-                    path={draftSpec.catalog_name}
-                    onChange={handlers.change}
-                />
-            </Box>
+            <EditorAndList
+                value={draftSpec.spec}
+                path={draftSpec.catalog_name}
+                onChange={handlers.change}
+            />
         );
     } else {
         return null;

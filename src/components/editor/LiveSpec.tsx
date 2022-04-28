@@ -1,7 +1,5 @@
-import { Box } from '@mui/material';
 import { LiveSpecQuery } from 'components/capture/details';
-import EditorFileSelector from 'components/editor/FileSelector';
-import MonacoEditor from 'components/editor/MonacoEditor';
+import EditorAndList from 'components/editor/EditorAndList';
 import { EditorStoreState, useZustandStore } from 'components/editor/Store';
 import { useEffect, useState } from 'react';
 
@@ -27,19 +25,7 @@ function LiveSpecEditor() {
     }, [currentCatalog, specs]);
 
     if (liveSpec) {
-        return (
-            <Box
-                sx={{
-                    flexGrow: 1,
-                    bgcolor: 'background.paper',
-                    display: 'flex',
-                    height: 300,
-                }}
-            >
-                <EditorFileSelector />
-                <MonacoEditor disabled={true} value={liveSpec} path="" />
-            </Box>
-        );
+        return <EditorAndList disabled={true} value={liveSpec} path="" />;
     } else {
         return null;
     }

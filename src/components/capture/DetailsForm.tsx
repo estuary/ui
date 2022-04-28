@@ -66,13 +66,7 @@ function NewCaptureDetails({ connectorTags }: Props) {
                         connectorTags.length > 0
                             ? connectorTags.map((connector) => {
                                   return {
-                                      const: {
-                                          id: connector.id,
-                                          iconPath:
-                                              connector.connectors.open_graph[
-                                                  'en-US'
-                                              ].image,
-                                      },
+                                      const: connector.id,
                                       title: getConnectorName(connector),
                                   };
                               })

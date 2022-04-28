@@ -34,6 +34,9 @@ function EditorFileSelector() {
                         dense
                         selected={index === currentCatalog}
                         onClick={() => setCurrentCatalog(index)}
+                        sx={{
+                            borderBottom: 1,
+                        }}
                     >
                         <ListItemText
                             primary={tag.catalog_name}

@@ -5,7 +5,7 @@ import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useRef } from 'react';
 import { useIntl } from 'react-intl';
 
-interface Props {
+export interface Props {
     disabled?: boolean;
     value: any;
     path: string;

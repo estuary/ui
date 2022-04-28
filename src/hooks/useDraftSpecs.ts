@@ -4,11 +4,11 @@ import { useQuery, useSelect } from './supabase-swr/';
 export interface DraftSpecQuery {
     catalog_name: string;
     spec_type: string;
-    spec_patch: object;
+    spec: object;
     draft_id: string;
 }
 
-const DRAFT_SPEC_COLS = ['catalog_name', 'spec_type', 'spec_patch', 'draft_id'];
+const DRAFT_SPEC_COLS = ['catalog_name', 'spec_type', 'spec', 'draft_id'];
 const DRAFT_SPEC_QUERY = DRAFT_SPEC_COLS.join(', ');
 
 function useDraftSpecs(draftId: string | null) {
