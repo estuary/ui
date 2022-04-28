@@ -55,12 +55,14 @@ const getInitialState = <T,>(
         setSpecs: (newVal) => {
             set(
                 produce((state) => {
-                    if (state.specs === null && newVal && newVal.length > 0) {
-                        console.log('updating current catalog');
+                    if (newVal && newVal.length > 0) {
+                        if (state.specs === null) {
+                            console.log('updating current catalog');
 
-                        state.currentCatalog = newVal[0];
+                            state.currentCatalog = newVal[0];
+                        }
+                        state.specs = newVal;
                     }
-                    state.specs = newVal;
                 }),
                 false
             );

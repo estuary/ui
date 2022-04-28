@@ -24,11 +24,10 @@ function DraftSpecEditor() {
     const [draftSpec, setDraftSpec] = useState<DraftSpecQuery | null>(null);
 
     const handlers = {
-        change: (newVal: any) => {
+        change: (newVal: any, catalogName: string) => {
             if (draftSpec) {
                 const newData = {
-                    ...draftSpec,
-                    spec: JSON.parse(newVal),
+                    spec: newVal,
                 };
 
                 supabaseClient
@@ -36,7 +35,7 @@ function DraftSpecEditor() {
                     .update(newData)
                     .match({
                         draft_id: id,
-                        catalog_name: draftSpec.catalog_name,
+                        catalog_name: catalogName,
                     })
                     .then(
                         () => {},
@@ -51,17 +50,11 @@ function DraftSpecEditor() {
     };
 
     useEffect(() => {
-        console.log('ue setSpecs', draftSpecs);
-        if (draftSpecs.length > 0) {
-            setSpecs(draftSpecs);
-        }
+        setSpecs(draftSpecs);
     }, [draftSpecs, setSpecs]);
 
     useEffect(() => {
-        console.log('ue sds', currentCatalog);
-
         if (currentCatalog) {
-            console.log('ue sds doing it');
             setDraftSpec(currentCatalog);
         }
     }, [currentCatalog]);

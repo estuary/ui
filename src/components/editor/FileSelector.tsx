@@ -11,8 +11,17 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
+const initialState = {
+    columns: {
+        columnVisibilityModel: {
+            spec_type: false,
+        },
+    },
+};
+
 const getRowId = (spec: any) => {
     let newSelectionModel;
+
     if (spec.id) {
         newSelectionModel = spec.id;
     } else if (spec.draft_id) {
@@ -21,6 +30,24 @@ const getRowId = (spec: any) => {
 
     return `${newSelectionModel}-${spec.catalog_name}`;
 };
+
+const columns: GridColDef[] = [
+    {
+        field: 'catalog_name',
+        headerName: 'Files',
+        flex: 1,
+        renderCell: (params: GridRenderCellParams<Date>) => (
+            <ListItemText
+                primary={params.row.catalog_name}
+                secondary={params.row.spec_type}
+            />
+        ),
+    },
+    {
+        field: 'spec_type',
+        headerName: 'Type',
+    },
+];
 
 function EditorFileSelector() {
     const setCurrentCatalog = useZustandStore<
@@ -32,24 +59,6 @@ function EditorFileSelector() {
         EditorStoreState<LiveSpecQuery | DraftSpecQuery>,
         EditorStoreState<LiveSpecQuery | DraftSpecQuery>['specs']
     >((state) => state.specs);
-
-    const columns: GridColDef[] = [
-        {
-            field: 'catalog_name',
-            headerName: 'Files',
-            flex: 1,
-            renderCell: (params: GridRenderCellParams<Date>) => (
-                <ListItemText
-                    primary={params.row.catalog_name}
-                    secondary={params.row.spec_type}
-                />
-            ),
-        },
-        {
-            field: 'spec_type',
-            headerName: 'Type',
-        },
-    ];
 
     const [selectionModel, setSelectionModel] = useState<GridSelectionModel>(
         []
@@ -66,24 +75,18 @@ function EditorFileSelector() {
             <DataGrid
                 rows={specs}
                 columns={columns}
+                headerHeight={40}
                 hideFooter
                 disableColumnSelector
                 onSelectionModelChange={(newSelectionModel) => {
                     setSelectionModel(newSelectionModel);
                 }}
-                getRowId={getRowId}
-                selectionModel={selectionModel}
                 onRowClick={(params: any) => {
                     setCurrentCatalog(params.row);
                 }}
-                headerHeight={40}
-                initialState={{
-                    columns: {
-                        columnVisibilityModel: {
-                            spec_type: false,
-                        },
-                    },
-                }}
+                getRowId={getRowId}
+                selectionModel={selectionModel}
+                initialState={initialState}
             />
         );
     } else {

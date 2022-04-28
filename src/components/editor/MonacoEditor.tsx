@@ -9,7 +9,7 @@ export interface Props {
     disabled?: boolean;
     value: any;
     path: string;
-    onChange?: (newVal: any) => void;
+    onChange?: (newVal: any, path: string) => void;
     height?: number;
 }
 
@@ -24,9 +24,9 @@ function MonacoEditor({ disabled, value, path, height, onChange }: Props) {
     const heightVal = height ?? DEFAULT_HEIGHT;
 
     const handlers = {
-        change: debounce(async () => {
+        change: debounce(async (val) => {
             if (editorRef.current && onChange) {
-                onChange(JSON.parse(editorRef.current.getValue()));
+                onChange(JSON.parse(val), path);
             }
         }, 1000),
         mount: (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
