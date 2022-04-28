@@ -3,8 +3,9 @@ import {
     Toolbar,
     Typography,
     type SxProps,
-    type Theme,
+    type Theme
 } from '@mui/material';
+import { Auth } from '@supabase/ui';
 import PageContainer from 'components/shared/PageContainer';
 import ConnectorsTable from 'components/tables/Connectors';
 import useBrowserTitle from 'hooks/useBrowserTitle';
@@ -18,6 +19,8 @@ const boxStyling: SxProps<Theme> = {
 const Admin = () => {
     useBrowserTitle('browserTitle.admin');
 
+    const { session } = Auth.useUser();
+
     return (
         <PageContainer>
             <Toolbar>
@@ -28,6 +31,10 @@ const Admin = () => {
 
             <Box sx={boxStyling}>
                 <ConnectorsTable />
+            </Box>
+
+            <Box sx={boxStyling}>
+                <b>Access Token:</b> <Typography>{session?.access_token}</Typography>
             </Box>
         </PageContainer>
     );
