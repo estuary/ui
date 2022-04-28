@@ -10,10 +10,7 @@ export interface CaptureCreationDetails
     extends Pick<JsonFormsCore, 'data' | 'errors'> {
     data: {
         name: string;
-        image: {
-            id: string;
-            iconPath: string;
-        };
+        image: string;
     };
 }
 
@@ -68,7 +65,7 @@ const getInitialStateData = (): Pick<
 > => {
     return {
         details: {
-            data: { image: { id: '', iconPath: '' }, name: '' },
+            data: { image: '', name: '' },
             errors: [],
         },
         spec: {
@@ -96,9 +93,8 @@ const useCaptureCreationStore = create<CaptureCreationState>()(
                 set(
                     produce((state) => {
                         if (
-                            details.data.image.id.length > 0 &&
-                            state.details.data.image.id !==
-                                details.data.image.id
+                            details.data.image.length > 0 &&
+                            state.details.data.image !== details.data.image
                         ) {
                             const initState = getInitialStateData();
                             state.spec = initState.spec;

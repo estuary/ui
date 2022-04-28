@@ -465,11 +465,9 @@ function CaptureCreate() {
                             </ErrorBoundryWrapper>
                         ) : null}
 
-                        {captureImage.id ? (
+                        {captureImage ? (
                             <ErrorBoundryWrapper>
-                                <NewCaptureSpec
-                                    connectorImage={captureImage.id}
-                                />
+                                <NewCaptureSpec connectorImage={captureImage} />
                             </ErrorBoundryWrapper>
                         ) : null}
                     </form>

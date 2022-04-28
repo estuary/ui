@@ -49,7 +49,7 @@ function NewCaptureDetails({ connectorTags }: Props) {
             setDetails({
                 data: {
                     name: '',
-                    image: { id: connectorID, iconPath: '' },
+                    image: connectorID,
                 },
             });
         }
