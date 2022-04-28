@@ -87,6 +87,11 @@ function EditorFileSelector() {
                 getRowId={getRowId}
                 selectionModel={selectionModel}
                 initialState={initialState}
+                sx={{
+                    '& .MuiDataGrid-row ': {
+                        cursor: 'pointer',
+                    },
+                }}
             />
         );
     } else {
