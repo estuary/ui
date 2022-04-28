@@ -1,9 +1,10 @@
 import {
     Box,
+    TextareaAutosize,
     Toolbar,
     Typography,
     type SxProps,
-    type Theme
+    type Theme,
 } from '@mui/material';
 import { Auth } from '@supabase/ui';
 import PageContainer from 'components/shared/PageContainer';
@@ -34,7 +35,17 @@ const Admin = () => {
             </Box>
 
             <Box sx={boxStyling}>
-                <b>Access Token:</b> <Typography>{session?.access_token}</Typography>
+                <Typography variant="h6">Access Token</Typography>
+                <Typography>
+                    If you want to use the CLI client you will need an access
+                    token. You can copy the one below to use.
+                </Typography>
+                <TextareaAutosize
+                    minRows={4}
+                    style={{ width: '100%' }}
+                    value={session?.access_token}
+                    id="accessTokenValue"
+                />
             </Box>
         </PageContainer>
     );
