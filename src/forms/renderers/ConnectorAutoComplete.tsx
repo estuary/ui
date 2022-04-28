@@ -89,6 +89,9 @@ export const ConnectorAutoComplete = (
             fullWidth
             options={options ?? []}
             getOptionLabel={getOptionLabel ?? ((option) => option.label)}
+            isOptionEqualToValue={(option: any, value: any) => {
+                return option.value.id === value.value.id;
+            }}
             sx={{
                 marginTop: 2,
                 borderColor: errors.length > 0 ? 'red' : null,
@@ -128,7 +131,10 @@ export const ConnectorAutoComplete = (
             renderOption={(renderOptionProps: any, option) => {
                 return (
                     <Box component="li" {...renderOptionProps}>
-                        <ConnectorName path="" connector={option.label} />
+                        <ConnectorName
+                            path={option.value.iconPath}
+                            connector={option.label}
+                        />
                     </Box>
                 );
             }}

@@ -1,8 +1,15 @@
-import { Box, Button, Stack, TableCell, TableRow } from '@mui/material';
+import {
+    Box,
+    Button,
+    Stack,
+    TableCell,
+    TableRow,
+    Typography,
+} from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
 import ConnectorName from 'components/ConnectorName';
-import ExternalLink from 'components/shared/ExternalLink';
 import { Connector } from 'components/tables/Connectors';
+import Link from 'components/tables/Link';
 import { FormattedDate, FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router';
 
@@ -10,9 +17,8 @@ interface Props {
     data: Connector[];
 }
 const columnStyling = {
-    maxWidth: '20%',
+    minWidth: '10%',
     textOverflow: 'ellipsis',
-    width: '20%',
 };
 
 export const tableColumns = [
@@ -42,6 +48,10 @@ export const tableColumns = [
     },
     {
         field: null,
+        headerIntlKey: 'connectorTable.data.external_url',
+    },
+    {
+        field: null,
         headerIntlKey: 'connectorTable.data.actions',
     },
 ];
@@ -54,14 +64,22 @@ function Rows({ data }: Props) {
             {data.map((row) => {
                 return (
                     <TableRow key={`Connector-${row.id}`}>
-                        <TableCell style={columnStyling}>
-                            <ConnectorName connector={row} />
+                        <TableCell align="left" style={columnStyling}>
+                            <ConnectorName
+                                path={row.open_graph['en-US'].image}
+                                connector={row}
+                            />
                         </TableCell>
                         <TableCell style={columnStyling}>
                             <Stack direction="row">{row.image_name}</Stack>
                         </TableCell>
                         <TableCell style={columnStyling}>
-                            {row.detail}
+                            <Typography variant="subtitle2">
+                                {row.detail}
+                            </Typography>
+                            <Typography>
+                                {row.open_graph['en-US'].description}
+                            </Typography>
                         </TableCell>
                         <TableCell style={columnStyling}>
                             {row.connector_tags[0].protocol}
@@ -75,17 +93,16 @@ function Rows({ data }: Props) {
                             />
                         </TableCell>
                         <TableCell style={columnStyling}>
-                            {row.connector_tags[0].documentation_url ? (
-                                <ExternalLink
-                                    link={
-                                        row.connector_tags[0].documentation_url
-                                    }
-                                >
-                                    <FormattedMessage id="captureCreation.config.source.doclink" />
-                                </ExternalLink>
-                            ) : (
-                                <FormattedMessage id="common.missing" />
-                            )}
+                            <Link
+                                path={row.connector_tags[0].documentation_url}
+                                messageId="captureCreation.config.source.doclink"
+                            />
+                        </TableCell>
+                        <TableCell style={columnStyling}>
+                            <Link
+                                path={row.external_url}
+                                messageId="captureCreation.config.source.homepage"
+                            />
                         </TableCell>
                         <TableCell>
                             <Box
