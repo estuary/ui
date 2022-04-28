@@ -10,14 +10,18 @@ export interface Props {
     value: any;
     path: string;
     onChange?: (newVal: any) => void;
+    height?: number;
 }
 
-function MonacoEditor({ disabled, value, path, onChange }: Props) {
+const DEFAULT_HEIGHT = 350;
+
+function MonacoEditor({ disabled, value, path, height, onChange }: Props) {
     const intl = useIntl();
     const theme = useTheme();
     const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(
         null
     );
+    const heightVal = height ?? DEFAULT_HEIGHT;
 
     const handlers = {
         change: debounce(async () => {
@@ -33,13 +37,15 @@ function MonacoEditor({ disabled, value, path, onChange }: Props) {
     if (value) {
         return (
             <Editor
-                height="300px"
+                height={`${heightVal}px`}
                 defaultLanguage="json"
                 theme={theme.palette.mode === 'light' ? 'vs' : 'vs-dark'}
                 defaultValue={intl.formatMessage({ id: 'common.loading' })}
                 value={JSON.stringify(value, null, 2)}
                 path={path}
-                options={{ readOnly: disabled ? disabled : false }}
+                options={{
+                    readOnly: disabled ? disabled : false,
+                }}
                 onMount={handlers.mount}
                 onChange={
                     typeof onChange === 'function' ? handlers.change : undefined

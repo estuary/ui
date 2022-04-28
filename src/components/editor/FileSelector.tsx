@@ -11,6 +11,17 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
+const getRowId = (spec: any) => {
+    let newSelectionModel;
+    if (spec.id) {
+        newSelectionModel = spec.id;
+    } else if (spec.draft_id) {
+        newSelectionModel = spec.draft_id;
+    }
+
+    return `${newSelectionModel}-${spec.catalog_name}`;
+};
+
 function EditorFileSelector() {
     const setCurrentCatalog = useZustandStore<
         EditorStoreState<LiveSpecQuery | DraftSpecQuery>,
@@ -46,7 +57,7 @@ function EditorFileSelector() {
 
     useEffect(() => {
         if (specs) {
-            setSelectionModel(specs[0].id);
+            setSelectionModel(getRowId(specs[0]) as any);
         }
     }, [specs]);
 
@@ -60,9 +71,10 @@ function EditorFileSelector() {
                 onSelectionModelChange={(newSelectionModel) => {
                     setSelectionModel(newSelectionModel);
                 }}
+                getRowId={getRowId}
                 selectionModel={selectionModel}
                 onRowClick={(params: any) => {
-                    setCurrentCatalog(params.row.spec);
+                    setCurrentCatalog(params.row);
                 }}
                 headerHeight={40}
                 initialState={{

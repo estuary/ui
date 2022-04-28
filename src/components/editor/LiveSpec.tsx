@@ -8,7 +8,14 @@ function LiveSpecEditor() {
         EditorStoreState<LiveSpecQuery>['currentCatalog']
     >((state) => state.currentCatalog);
 
-    return <EditorAndList disabled={true} value={currentCatalog} path="" />;
+    return (
+        <EditorAndList
+            height={450}
+            disabled={true}
+            value={currentCatalog ? currentCatalog.spec : {}}
+            path={currentCatalog ? currentCatalog.catalog_name : ''}
+        />
+    );
 }
 
 export default LiveSpecEditor;

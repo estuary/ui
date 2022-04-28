@@ -6,9 +6,18 @@ export interface DraftSpecQuery {
     spec_type: string;
     spec: object;
     draft_id: string;
+    drafts: {
+        id: string;
+    };
 }
 
-const DRAFT_SPEC_COLS = ['catalog_name', 'spec_type', 'spec', 'draft_id'];
+const DRAFT_SPEC_COLS = [
+    'catalog_name',
+    'spec_type',
+    'spec',
+    'draft_id',
+    'drafts(id)',
+];
 const DRAFT_SPEC_QUERY = DRAFT_SPEC_COLS.join(', ');
 
 function useDraftSpecs(draftId: string | null) {

@@ -51,14 +51,20 @@ function DraftSpecEditor() {
     };
 
     useEffect(() => {
-        setSpecs(draftSpecs);
+        console.log('ue setSpecs', draftSpecs);
+        if (draftSpecs.length > 0) {
+            setSpecs(draftSpecs);
+        }
     }, [draftSpecs, setSpecs]);
 
     useEffect(() => {
-        setDraftSpec(
-            draftSpecs[currentCatalog] ? draftSpecs[currentCatalog] : null
-        );
-    }, [currentCatalog, draftSpecs, setSpecs]);
+        console.log('ue sds', currentCatalog);
+
+        if (currentCatalog) {
+            console.log('ue sds doing it');
+            setDraftSpec(currentCatalog);
+        }
+    }, [currentCatalog]);
 
     if (draftSpec) {
         return (
