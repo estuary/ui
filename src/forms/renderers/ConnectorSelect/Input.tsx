@@ -21,7 +21,7 @@ function ConnectorInput({
         <Box
             sx={{
                 '.MuiBox-root + .MuiInput-root > input': {
-                    textIndent: '20px',
+                    textIndent: '25px',
                 },
             }}
         >
