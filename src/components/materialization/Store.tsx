@@ -13,7 +13,7 @@ interface CreationDetails extends Pick<JsonFormsCore, 'data' | 'errors'> {
     };
 }
 
-interface CreationSpec extends Pick<JsonFormsCore, 'data' | 'errors'> {
+interface CreationConfig extends Pick<JsonFormsCore, 'data' | 'errors'> {
     data: {
         [key: string]: any;
     };
@@ -45,8 +45,12 @@ export interface CreationState {
     setDetails: (details: CreationDetails) => void;
 
     // Endpoint Config
-    spec: CreationSpec;
-    setSpec: (spec: CreationSpec) => void;
+    endpointConfig: CreationConfig;
+    setEndpointConfig: (value: CreationConfig) => void;
+
+    // Resource Config
+    resourceConfig: CreationConfig;
+    setResourceConfig: (value: CreationConfig) => void;
 
     formState: CreationFormState;
     setFormState: (data: Partial<CreationFormState>) => void;
@@ -65,14 +69,23 @@ export interface CreationState {
 
 const getInitialStateData = (): Pick<
     CreationState,
-    'details' | 'spec' | 'connectors' | 'collections' | 'formState'
+    | 'details'
+    | 'endpointConfig'
+    | 'resourceConfig'
+    | 'connectors'
+    | 'collections'
+    | 'formState'
 > => {
     return {
         details: {
             data: { image: '', name: '' },
             errors: [],
         },
-        spec: {
+        endpointConfig: {
+            data: {},
+            errors: [],
+        },
+        resourceConfig: {
             data: {},
             errors: [],
         },
@@ -94,54 +107,64 @@ const useMaterializationCreationStore = create<CreationState>()(
     devtools(
         (set, get) => ({
             ...getInitialStateData(),
-            setDetails: (details) => {
+            setDetails: (value) => {
                 set(
                     produce((state) => {
                         if (
-                            details.data.image.length > 0 &&
-                            state.details.data.image !== details.data.image
+                            value.data.image.length > 0 &&
+                            state.details.data.image !== value.data.image
                         ) {
                             const initState = getInitialStateData();
 
-                            state.spec = initState.spec;
+                            state.spec = initState.endpointConfig;
                             state.formState = initState.formState;
                         }
 
-                        state.details = details;
+                        state.details = value;
                     }),
                     false,
                     'Details Changed'
                 );
             },
 
-            setSpec: (spec) => {
+            setEndpointConfig: (value) => {
                 set(
                     produce((state) => {
-                        state.spec = spec;
+                        state.endpointConfig = value;
                     }),
                     false,
-                    'Spec Changed'
+                    'Endpoint Config Changed'
                 );
             },
 
-            setCollections: (collections) => {
+            setResourceConfig: (value) => {
                 set(
                     produce((state) => {
-                        state.collections = collections;
+                        state.resourceConfig = value;
+                    }),
+                    false,
+                    'Resource Config Changed'
+                );
+            },
+
+            setCollections: (value) => {
+                set(
+                    produce((state) => {
+                        state.collections = value;
                     }),
                     false,
                     'Collections Changed'
                 );
             },
 
-            setFormState: (newState) => {
+            setFormState: (value) => {
                 set(
                     produce((state) => {
                         const { formState } = get();
 
                         state.formState = {
                             ...formState,
-                            ...newState,
+                            ...value,
                         };
                     }),
                     false,
@@ -149,13 +172,13 @@ const useMaterializationCreationStore = create<CreationState>()(
                 );
             },
 
-            resetFormState: (status) => {
+            resetFormState: (value) => {
                 set(
                     produce((state) => {
                         const { formState } = getInitialStateData();
 
                         state.formState = formState;
-                        state.formState.status = status;
+                        state.formState.status = value;
                     }),
                     false,
                     'Form State Reset'
@@ -163,30 +186,38 @@ const useMaterializationCreationStore = create<CreationState>()(
             },
 
             hasChanges: () => {
-                const { details, spec } = get();
-                const { details: initialDetails, spec: initialSpec } =
-                    getInitialStateData();
+                const { details, endpointConfig, resourceConfig } = get();
+
+                const {
+                    details: initialDetails,
+                    endpointConfig: initialEndpointConfig,
+                    resourceConfig: initialResourceConfig,
+                } = getInitialStateData();
 
                 return !isEqual(
                     {
                         details: details.data,
-                        spec: spec.data,
+                        endpointConfig: endpointConfig.data,
+                        resourceConfig: resourceConfig.data,
                     },
                     {
                         details: initialDetails.data,
-                        spec: initialSpec.data,
+                        endpointConfig: initialEndpointConfig.data,
+                        resourceConfig: initialResourceConfig.data,
                     }
                 );
             },
-            setConnectors: (val) => {
+
+            setConnectors: (value) => {
                 set(
                     produce((state) => {
-                        state.connectors = val;
+                        state.connectors = value;
                     }),
                     false,
                     'Connector Response Cached'
                 );
             },
+
             resetState: () => {
                 set(getInitialStateData(), false, 'State Reset');
             },

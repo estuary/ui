@@ -5,10 +5,11 @@ import { EditorStoreState, useZustandStore } from 'components/editor/Store';
 import CatalogEditor from 'components/materialization/CatalogEditor';
 import CollectionSelector from 'components/materialization/CollectionSelector';
 import NewMaterializationDetails from 'components/materialization/DetailsForm';
+import EndpointConfig from 'components/materialization/EndpointConfig';
 import NewMaterializationError from 'components/materialization/Error';
 import NewMaterializationHeader from 'components/materialization/Header';
 import LogDialog from 'components/materialization/LogDialog';
-import NewMaterializationSpec from 'components/materialization/Spec';
+import ResourceConfig from 'components/materialization/ResourceConfig';
 import useCreationStore, {
     CreationFormStatuses,
     CreationState,
@@ -38,7 +39,6 @@ export interface ConnectorTag {
     id: string;
     image_tag: string;
     protocol: string;
-    resource_spec_schema: object;
 }
 
 const CONNECTOR_TAG_QUERY = `
@@ -56,9 +56,10 @@ const selectors = {
         collections: (state: CreationState) => state.collections,
         errors: (state: CreationState) => [
             state.details.errors,
-            state.spec.errors,
+            state.endpointConfig.errors,
         ],
-        specFormData: (state: CreationState) => state.spec.data,
+        endpointConfigData: (state: CreationState) => state.endpointConfig.data,
+        resourceConfigData: (state: CreationState) => state.resourceConfig.data,
         imageTagId: (state: CreationState) => state.details.data.image,
         hasChanges: (state: CreationState) => state.hasChanges,
         resetState: (state: CreationState) => state.resetState,
@@ -116,7 +117,8 @@ function MaterializationCreate() {
     // Form store
     const catalogNamespace = useCreationStore(selectors.page.catalogNamespace);
     const collections = useCreationStore(selectors.page.collections);
-    const endpointConfig = useCreationStore(selectors.page.specFormData);
+    const endpointConfig = useCreationStore(selectors.page.endpointConfigData);
+    const resourceConfig = useCreationStore(selectors.page.resourceConfigData);
     const imageTagId = useCreationStore(selectors.page.imageTagId);
     const [detailErrors, specErrors] = useCreationStore(selectors.page.errors);
     const resetState = useCreationStore(selectors.page.resetState);
@@ -293,12 +295,11 @@ function MaterializationCreate() {
                 const {
                     connectors: { image_name },
                     image_tag,
-                    resource_spec_schema,
                 } = connectorInfo;
 
                 const draftSpec: MaterializationDef = {
                     bindings: collections.map((source) => ({
-                        resource: { ...resource_spec_schema },
+                        resource: resourceConfig,
                         source,
                     })),
                     endpoint: {
@@ -540,9 +541,9 @@ function MaterializationCreate() {
 
                         {imageTagId && (
                             <ErrorBoundryWrapper>
-                                <NewMaterializationSpec
-                                    connectorImage={imageTagId}
-                                />
+                                <EndpointConfig connectorImage={imageTagId} />
+
+                                <ResourceConfig connectorImage={imageTagId} />
 
                                 <CollectionSelector
                                     preview={handlers.preview}
