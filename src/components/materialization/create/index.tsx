@@ -204,12 +204,7 @@ function MaterializationCreate() {
         },
     };
 
-    const createPublicationsSubscription = (
-        formStatus: CreationFormStatuses
-    ): RealtimeSubscription => {
-        setDraftId(null);
-        resetFormState(formStatus);
-
+    const createPublicationsSubscription = (): RealtimeSubscription => {
         const subscription = supabaseClient
             .from(TABLES.PUBLICATIONS)
             .on('*', async (payload: any) => {
@@ -383,9 +378,9 @@ function MaterializationCreate() {
         test: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
-            const publicationsSubscription = createPublicationsSubscription(
-                CreationFormStatuses.TESTING
-            );
+            resetFormState(CreationFormStatuses.TESTING);
+
+            const publicationsSubscription = createPublicationsSubscription();
 
             supabaseClient
                 .from(TABLES.PUBLICATIONS)
@@ -432,9 +427,10 @@ function MaterializationCreate() {
         saveAndPublish: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
-            const publicationsSubscription = createPublicationsSubscription(
-                CreationFormStatuses.SAVING
-            );
+            setDraftId(null);
+            resetFormState(CreationFormStatuses.SAVING);
+
+            const publicationsSubscription = createPublicationsSubscription();
 
             supabaseClient
                 .from(TABLES.PUBLICATIONS)
