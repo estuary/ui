@@ -15,8 +15,6 @@ export interface LiveSpecQuery {
     last_pub_id: string;
     spec: string;
     spec_type: string;
-    reads_from: string;
-    writes_to: string;
     connector_image_name: string;
     connector_image_tag: string;
 }
@@ -27,8 +25,6 @@ const LIVE_SPECS_QUERY = `
     last_pub_id,
     spec,
     spec_type,
-    reads_from,
-    writes_to,
     connector_image_name,
     connector_image_tag
 `;

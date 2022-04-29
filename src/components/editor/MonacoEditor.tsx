@@ -5,24 +5,28 @@ import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useRef } from 'react';
 import { useIntl } from 'react-intl';
 
-interface Props {
+export interface Props {
     disabled?: boolean;
     value: any;
     path: string;
-    onChange?: (newVal: any) => void;
+    onChange?: (newVal: any, path: string) => void;
+    height?: number;
 }
 
-function MonacoEditor({ disabled, value, path, onChange }: Props) {
+const DEFAULT_HEIGHT = 350;
+
+function MonacoEditor({ disabled, value, path, height, onChange }: Props) {
     const intl = useIntl();
     const theme = useTheme();
     const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(
         null
     );
+    const heightVal = height ?? DEFAULT_HEIGHT;
 
     const handlers = {
-        change: debounce(async () => {
+        change: debounce(async (val) => {
             if (editorRef.current && onChange) {
-                onChange(JSON.parse(editorRef.current.getValue()));
+                onChange(JSON.parse(val), path);
             }
         }, 1000),
         mount: (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
@@ -33,13 +37,15 @@ function MonacoEditor({ disabled, value, path, onChange }: Props) {
     if (value) {
         return (
             <Editor
-                height="300px"
+                height={`${heightVal}px`}
                 defaultLanguage="json"
                 theme={theme.palette.mode === 'light' ? 'vs' : 'vs-dark'}
                 defaultValue={intl.formatMessage({ id: 'common.loading' })}
                 value={JSON.stringify(value, null, 2)}
                 path={path}
-                options={{ readOnly: disabled ? disabled : false }}
+                options={{
+                    readOnly: disabled ? disabled : false,
+                }}
                 onMount={handlers.mount}
                 onChange={
                     typeof onChange === 'function' ? handlers.change : undefined

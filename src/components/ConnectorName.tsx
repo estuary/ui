@@ -9,7 +9,7 @@ interface Props {
     connector: any; // TODO (typing) ConnectorTag
 }
 
-const defaultSize = 15;
+const defaultSize = 20;
 
 function ConnectorName({ size = defaultSize, connector, path }: Props) {
     const connectorName = useConstant(() =>
@@ -23,7 +23,7 @@ function ConnectorName({ size = defaultSize, connector, path }: Props) {
             direction="row"
             sx={{
                 'alignItems': 'center',
-                'justifyContent': 'center',
+                'justifyContent': 'flex-start',
                 '& > div    ': {
                     mr: 2,
                     flexShrink: 0,

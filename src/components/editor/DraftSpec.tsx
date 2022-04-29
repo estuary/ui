@@ -1,6 +1,4 @@
-import { Box } from '@mui/material';
-import EditorFileSelector from 'components/editor/FileSelector';
-import MonacoEditor from 'components/editor/MonacoEditor';
+import EditorAndList from 'components/editor/EditorAndList';
 import { EditorStoreState, useZustandStore } from 'components/editor/Store';
 import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useEffect, useState } from 'react';
@@ -26,11 +24,10 @@ function DraftSpecEditor() {
     const [draftSpec, setDraftSpec] = useState<DraftSpecQuery | null>(null);
 
     const handlers = {
-        change: (newVal: any) => {
+        change: (newVal: any, catalogName: string) => {
             if (draftSpec) {
                 const newData = {
-                    ...draftSpec,
-                    spec_patch: JSON.parse(newVal),
+                    spec: newVal,
                 };
 
                 supabaseClient
@@ -38,7 +35,7 @@ function DraftSpecEditor() {
                     .update(newData)
                     .match({
                         draft_id: id,
-                        catalog_name: draftSpec.catalog_name,
+                        catalog_name: catalogName,
                     })
                     .then(
                         () => {},
@@ -57,28 +54,18 @@ function DraftSpecEditor() {
     }, [draftSpecs, setSpecs]);
 
     useEffect(() => {
-        setDraftSpec(
-            draftSpecs[currentCatalog] ? draftSpecs[currentCatalog] : null
-        );
-    }, [currentCatalog, draftSpecs, setSpecs]);
+        if (currentCatalog) {
+            setDraftSpec(currentCatalog);
+        }
+    }, [currentCatalog]);
 
     if (draftSpec) {
         return (
-            <Box
-                sx={{
-                    flexGrow: 1,
-                    bgcolor: 'background.paper',
-                    display: 'flex',
-                    height: 300,
-                }}
-            >
-                <EditorFileSelector />
-                <MonacoEditor
-                    value={draftSpec.spec_patch}
-                    path={draftSpec.catalog_name}
-                    onChange={handlers.change}
-                />
-            </Box>
+            <EditorAndList
+                value={draftSpec.spec}
+                path={draftSpec.catalog_name}
+                onChange={handlers.change}
+            />
         );
     } else {
         return null;

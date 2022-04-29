@@ -25,7 +25,6 @@ export const setupTests = () => {
         Intl.DateTimeFormat.format = new Intl.DateTimeFormat('pt').format;
     } else {
         global.Intl = () => {
-            console.log('hey');
             return 'hey';
         };
     }
