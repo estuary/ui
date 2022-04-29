@@ -175,12 +175,7 @@ const generateUISchema = (
         if (currentRef === '#') {
             layout = createLayout(layoutType);
         } else {
-            console.log('Creating group layout', {
-                currentRef,
-                schemaName,
-            });
-
-            layout = createLayout(CollapsibleGroupType) as GroupLayout;
+            layout = createLayout('Group');
             addLabel(layout, schemaName);
         }
 
