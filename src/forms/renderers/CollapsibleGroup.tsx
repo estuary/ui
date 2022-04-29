@@ -20,6 +20,8 @@ export const collapsibleGroupTester: RankedTester = rankWith(
     uiTypeIs('Group')
 );
 
+// TODO (typing) Just used any here as it makes things easier.
+//  previous versions had more typing but the typing wasn't 100% correct
 const CollapsibleGroupRenderer = ({
     uischema,
     schema,
