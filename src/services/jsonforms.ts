@@ -16,7 +16,6 @@ import { materialRenderers } from '@jsonforms/material-renderers';
 import {
     CollapsibleGroup,
     collapsibleGroupTester,
-    CollapsibleGroupType,
 } from 'forms/renderers/CollapsibleGroup';
 import { ConnectorType, connectorTypeTester } from 'forms/renderers/Connectors';
 import { NullType, nullTypeTester } from 'forms/renderers/NullType';
@@ -92,10 +91,7 @@ const wrapInLayoutIfNecessary = (
  *      The name of the schema
  */
 const addLabel = (layout: Layout, labelName: string) => {
-    console.log('addlabel', labelName);
-
     if (!isEmpty(labelName)) {
-        console.log('label empty');
         const fixedLabel = startCase(labelName);
         if (isGroup(layout)) {
             layout.label = fixedLabel;
@@ -181,11 +177,7 @@ const generateUISchema = (
 
         schemaElements.push(layout);
 
-        if (
-            layout.type !== CollapsibleGroupType &&
-            jsonSchema.properties &&
-            keys(jsonSchema.properties).length > 1
-        ) {
+        if (jsonSchema.properties && keys(jsonSchema.properties).length > 1) {
             addLabel(layout, schemaName);
         }
 
@@ -218,8 +210,6 @@ const generateUISchema = (
                 });
             }
         }
-
-        console.log('returning layout', layout);
 
         return layout;
     }
