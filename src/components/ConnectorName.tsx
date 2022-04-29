@@ -1,17 +1,14 @@
-import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import { Stack } from '@mui/material';
+import ConnectorIcon from 'components/ConnectorIcon';
 import useConstant from 'use-constant';
 import { getConnectorName } from 'utils/misc-utils';
 
 interface Props {
-    size?: number;
-    path?: string;
+    iconPath?: string;
     connector: any; // TODO (typing) ConnectorTag
 }
 
-const defaultSize = 20;
-
-function ConnectorName({ size = defaultSize, connector, path }: Props) {
+function ConnectorName({ connector, iconPath }: Props) {
     const connectorName = useConstant(() =>
         typeof connector === 'string'
             ? connector
@@ -30,24 +27,7 @@ function ConnectorName({ size = defaultSize, connector, path }: Props) {
                 },
             }}
         >
-            <div style={{ height: size, width: size }}>
-                {path ? (
-                    <img
-                        width={size}
-                        height={size}
-                        src={path}
-                        loading="lazy"
-                        alt=""
-                    />
-                ) : (
-                    <QuestionMarkIcon
-                        sx={{
-                            height: size,
-                            width: size,
-                        }}
-                    />
-                )}
-            </div>
+            <ConnectorIcon iconPath={iconPath} />
             {connectorName}
         </Stack>
     );

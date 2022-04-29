@@ -66,7 +66,7 @@ function Rows({ data }: Props) {
                     <TableRow key={`Connector-${row.id}`}>
                         <TableCell align="left" style={columnStyling}>
                             <ConnectorName
-                                path={row.open_graph['en-US'].image}
+                                iconPath={row.open_graph['en-US'].image}
                                 connector={row}
                             />
                         </TableCell>

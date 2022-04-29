@@ -35,12 +35,14 @@ export interface ConnectorTag {
         open_graph: object;
     };
     id: string;
+    connector_id: string;
     image_tag: string;
     protocol: string;
     title: string;
 }
 const CONNECTOR_TAG_QUERY = `
-    id, 
+    id,
+    connector_id,
     image_tag,
     protocol,
     endpoint_spec_schema->>title,
@@ -465,9 +467,11 @@ function CaptureCreate() {
                             </ErrorBoundryWrapper>
                         ) : null}
 
-                        {captureImage ? (
+                        {captureImage?.id ? (
                             <ErrorBoundryWrapper>
-                                <NewCaptureSpec connectorImage={captureImage} />
+                                <NewCaptureSpec
+                                    connectorImage={captureImage.id}
+                                />
                             </ErrorBoundryWrapper>
                         ) : null}
                     </form>
