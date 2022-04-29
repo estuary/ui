@@ -97,8 +97,6 @@ function NewCaptureDetails({ connectorTags }: Props) {
         };
     }, [connectorTags, intl]);
 
-    console.log('>', schema);
-
     const uiSchema = {
         elements: [
             {

@@ -35,8 +35,7 @@ const CollapsibleGroupRenderer = ({
     renderers,
 }: LayoutProps) => {
     const groupLayout = uischema as GroupLayout;
-    const labelElement = groupLayout.elements.shift() as LabelElement;
-
+    const labelElement = groupLayout.elements[0] as LabelElement;
     const layoutProps = {
         direction: 'column' as MaterialLayoutRendererProps['direction'],
         elements: groupLayout.elements,
@@ -46,6 +45,7 @@ const CollapsibleGroupRenderer = ({
         uischema,
         visible,
     };
+
     return (
         <Hidden xsUp={!visible}>
             <Accordion>

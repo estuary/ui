@@ -92,7 +92,10 @@ const wrapInLayoutIfNecessary = (
  *      The name of the schema
  */
 const addLabel = (layout: Layout, labelName: string) => {
+    console.log('addlabel', labelName);
+
     if (!isEmpty(labelName)) {
+        console.log('label empty');
         const fixedLabel = startCase(labelName);
         if (isGroup(layout)) {
             layout.label = fixedLabel;
@@ -172,13 +175,22 @@ const generateUISchema = (
         if (currentRef === '#') {
             layout = createLayout(layoutType);
         } else {
+            console.log('Creating group layout', {
+                currentRef,
+                schemaName,
+            });
+
             layout = createLayout(CollapsibleGroupType) as GroupLayout;
             addLabel(layout, schemaName);
         }
 
         schemaElements.push(layout);
 
-        if (jsonSchema.properties && keys(jsonSchema.properties).length > 1) {
+        if (
+            layout.type !== CollapsibleGroupType &&
+            jsonSchema.properties &&
+            keys(jsonSchema.properties).length > 1
+        ) {
             addLabel(layout, schemaName);
         }
 
@@ -211,6 +223,8 @@ const generateUISchema = (
                 });
             }
         }
+
+        console.log('returning layout', layout);
 
         return layout;
     }
