@@ -345,6 +345,7 @@ function CaptureCreate() {
                     .then(
                         (draftsResponse) => {
                             if (
+                                captureImage &&
                                 draftsResponse.data &&
                                 draftsResponse.data.length > 0
                             ) {
@@ -356,7 +357,7 @@ function CaptureCreate() {
                                         {
                                             capture_name: captureName,
                                             endpoint_config: specFormData,
-                                            connector_tag_id: captureImage,
+                                            connector_tag_id: captureImage.id,
                                             draft_id: draftsResponse.data[0].id,
                                         },
                                     ])

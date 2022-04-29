@@ -80,7 +80,7 @@ function NewCaptureDetails({ connectorTags }: Props) {
                                   };
                               })
                             : ([] as { title: string; const: string }[]),
-                    type: 'string',
+                    type: 'object',
                 },
                 name: {
                     description: intl.formatMessage({
