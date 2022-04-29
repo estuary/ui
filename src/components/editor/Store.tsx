@@ -13,16 +13,17 @@ export interface EditorStoreState<T> {
     id: string | null;
     setId: (newVal: EditorStoreState<T>['id']) => void;
 
-    currentCatalog: number;
+    currentCatalog: any;
     setCurrentCatalog: (newVal: EditorStoreState<T>['currentCatalog']) => void;
 
-    specs: T[] | null;
+    // TODO (typing) : This needs typed. Using the T here made the checks in setSpecs break
+    specs: any[] | null;
     setSpecs: (newVal: EditorStoreState<T>['specs']) => void;
 }
 
 const getInitialStateData = () => {
     return {
-        currentCatalog: 0,
+        currentCatalog: null,
         id: null,
         specs: null,
     };
@@ -54,7 +55,14 @@ const getInitialState = <T,>(
         setSpecs: (newVal) => {
             set(
                 produce((state) => {
-                    state.specs = newVal;
+                    if (newVal && newVal.length > 0) {
+                        if (state.specs === null) {
+                            console.log('updating current catalog');
+
+                            state.currentCatalog = newVal[0];
+                        }
+                        state.specs = newVal;
+                    }
                 }),
                 false
             );

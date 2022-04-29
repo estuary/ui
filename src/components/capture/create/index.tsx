@@ -32,6 +32,7 @@ export interface ConnectorTag {
     connectors: {
         detail: string;
         image_name: string;
+        open_graph: object;
     };
     id: string;
     image_tag: string;
@@ -43,7 +44,7 @@ const CONNECTOR_TAG_QUERY = `
     image_tag,
     protocol,
     endpoint_spec_schema->>title,
-    connectors(detail, image_name)
+    connectors(detail, image_name, open_graph)
 `;
 const FORM_ID = 'newCaptureForm';
 

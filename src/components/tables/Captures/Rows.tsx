@@ -20,10 +20,6 @@ export const tableColumns = [
         headerIntlKey: 'entityTable.data.connectorType',
     },
     {
-        field: null,
-        headerIntlKey: 'entityTable.data.writesTo',
-    },
-    {
         field: 'updated_at',
         headerIntlKey: 'entityTable.data.lastUpdated',
     },
@@ -74,8 +70,6 @@ function Rows({ data }: Props) {
                     <TableCell sx={{ minWidth: 100 }}>
                         {stripPathing(row.connector_image_name)}
                     </TableCell>
-
-                    <TableCell>{row.writes_to}</TableCell>
 
                     <TableCell>
                         <Tooltip

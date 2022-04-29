@@ -1,51 +1,102 @@
-import { List, ListItemButton, ListItemText } from '@mui/material';
+import { ListItemText } from '@mui/material';
+import {
+    DataGrid,
+    GridColDef,
+    GridRenderCellParams,
+    GridSelectionModel,
+} from '@mui/x-data-grid';
 import { LiveSpecQuery } from 'components/capture/details';
 import { EditorStoreState, useZustandStore } from 'components/editor/Store';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
-function EditorFileSelector() {
-    const currentCatalog = useZustandStore<
-        EditorStoreState<LiveSpecQuery | DraftSpecQuery>,
-        EditorStoreState<LiveSpecQuery | DraftSpecQuery>['currentCatalog']
-    >((state) => state.currentCatalog);
+const initialState = {
+    columns: {
+        columnVisibilityModel: {
+            spec_type: false,
+        },
+    },
+};
 
+const getRowId = (spec: any) => {
+    let newSelectionModel;
+
+    if (spec.id) {
+        newSelectionModel = spec.id;
+    } else if (spec.draft_id) {
+        newSelectionModel = spec.draft_id;
+    }
+
+    return `${newSelectionModel}-${spec.catalog_name}`;
+};
+
+const columns: GridColDef[] = [
+    {
+        field: 'catalog_name',
+        headerName: 'Files',
+        flex: 1,
+        renderCell: (params: GridRenderCellParams<Date>) => (
+            <ListItemText
+                primary={params.row.catalog_name}
+                secondary={params.row.spec_type}
+            />
+        ),
+    },
+    {
+        field: 'spec_type',
+        headerName: 'Type',
+    },
+];
+
+function EditorFileSelector() {
     const setCurrentCatalog = useZustandStore<
         EditorStoreState<LiveSpecQuery | DraftSpecQuery>,
         EditorStoreState<LiveSpecQuery | DraftSpecQuery>['setCurrentCatalog']
     >((state) => state.setCurrentCatalog);
-
-    const id = useZustandStore<
-        EditorStoreState<LiveSpecQuery | DraftSpecQuery>,
-        EditorStoreState<LiveSpecQuery | DraftSpecQuery>['id']
-    >((state) => state.id);
 
     const specs = useZustandStore<
         EditorStoreState<LiveSpecQuery | DraftSpecQuery>,
         EditorStoreState<LiveSpecQuery | DraftSpecQuery>['specs']
     >((state) => state.specs);
 
-    return (
-        <List dense disablePadding>
-            {!id ? null : specs && specs.length > 0 ? (
-                specs.map((tag: any, index: number) => (
-                    <ListItemButton
-                        key={`FileSelector-${tag.catalog_name}`}
-                        dense
-                        selected={index === currentCatalog}
-                        onClick={() => setCurrentCatalog(index)}
-                    >
-                        <ListItemText
-                            primary={tag.catalog_name}
-                            secondary={tag.spec_type}
-                        />
-                    </ListItemButton>
-                ))
-            ) : (
-                <FormattedMessage id="common.loading" />
-            )}
-        </List>
+    const [selectionModel, setSelectionModel] = useState<GridSelectionModel>(
+        []
     );
+
+    useEffect(() => {
+        if (specs) {
+            setSelectionModel(getRowId(specs[0]) as any);
+        }
+    }, [specs]);
+
+    if (specs && specs.length > 0) {
+        return (
+            <DataGrid
+                rows={specs}
+                columns={columns}
+                headerHeight={40}
+                hideFooter
+                disableColumnSelector
+                onSelectionModelChange={(newSelectionModel) => {
+                    setSelectionModel(newSelectionModel);
+                }}
+                onRowClick={(params: any) => {
+                    setCurrentCatalog(params.row);
+                }}
+                getRowId={getRowId}
+                selectionModel={selectionModel}
+                initialState={initialState}
+                sx={{
+                    '& .MuiDataGrid-row ': {
+                        cursor: 'pointer',
+                    },
+                }}
+            />
+        );
+    } else {
+        return <FormattedMessage id="common.loading" />;
+    }
 }
 
 export default EditorFileSelector;
