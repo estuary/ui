@@ -38,12 +38,14 @@ export interface ConnectorTag {
     id: string;
     image_tag: string;
     protocol: string;
+    resource_spec_schema: object;
 }
 
 const CONNECTOR_TAG_QUERY = `
     id, 
     image_tag,
     protocol,
+    resource_spec_schema,
     connectors(detail, image_name)
 `;
 
@@ -296,11 +298,12 @@ function MaterializationCreate() {
                 const {
                     connectors: { image_name },
                     image_tag,
+                    resource_spec_schema,
                 } = connectorInfo;
 
-                const draftSpecPatch: MaterializationDef = {
+                const draftSpec: MaterializationDef = {
                     bindings: collections.map((source) => ({
-                        resource: {},
+                        resource: { ...resource_spec_schema },
                         source,
                     })),
                     endpoint: {
@@ -324,7 +327,6 @@ function MaterializationCreate() {
                             ) {
                                 setDraftId(draftsResponse.data[0].id);
 
-                                // TODO: Update spec_patch to spec when the draft_spec schema changes.
                                 supabaseClient
                                     .from(TABLES.DRAFT_SPECS)
                                     .insert([
@@ -332,7 +334,7 @@ function MaterializationCreate() {
                                             draft_id: draftsResponse.data[0].id,
                                             catalog_name: catalogNamespace,
                                             spec_type: 'materialization',
-                                            spec: draftSpecPatch,
+                                            spec: draftSpec,
                                         },
                                     ])
                                     .then(
