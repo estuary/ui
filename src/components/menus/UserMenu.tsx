@@ -8,27 +8,14 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import MenuItem from '@mui/material/MenuItem';
 import { Auth } from '@supabase/ui';
 import { useClient } from 'hooks/supabase-swr';
-import { isEmpty } from 'lodash';
+import { getUserDetails } from 'services/supabase';
 import IconMenu from './IconMenu';
 
 const UserMenu = () => {
     const supabaseClient = useClient();
     const { user } = Auth.useUser();
 
-    let userName, email, emailVerified, avatar;
-
-    if (user) {
-        if (!isEmpty(user.user_metadata)) {
-            userName = user.user_metadata.full_name;
-            email = user.user_metadata.email;
-            emailVerified = user.user_metadata.email_verified;
-            avatar = user.user_metadata.avatar_url;
-        } else {
-            userName = user.email;
-            email = user.email;
-            emailVerified = false;
-        }
-    }
+    const { userName, email, emailVerified, avatar } = getUserDetails(user);
 
     const handleClick = async () => {
         const { error } = await supabaseClient.auth.signOut();

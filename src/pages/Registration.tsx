@@ -11,14 +11,17 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
+import { Auth } from '@supabase/ui';
 import Topbar from 'components/header/Topbar';
+import ExternalLink from 'components/shared/ExternalLink';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import React, { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { getUserDetails } from 'services/supabase';
+import { getUrls } from 'utils/env-utils';
 
 interface RegistrationRequest {
-    firstName: string;
-    lastName: string;
+    fullName: string;
     email: string;
     company: string;
     useCase: string;
@@ -26,33 +29,35 @@ interface RegistrationRequest {
 }
 
 interface Errors {
-    firstName: boolean;
-    lastName: boolean;
+    fullName: boolean;
     email: boolean;
     company: boolean;
-    useCase: boolean;
     acknowledgedDocuments: boolean;
 }
+
+const urls = getUrls();
 
 const Registration = () => {
     useBrowserTitle('browserTitle.registration');
 
     const intl = useIntl();
+    const { user } = Auth.useUser();
 
-    const [firstName, setFirstName] = useState<string>('');
-    const [lastName, setLastName] = useState<string>('');
-    const [email, setEmail] = useState<string>('');
+    console.log('user', user);
+
+    const { email: authEmail, userName: authUserName } = getUserDetails(user);
+
+    const [fullName, setFullName] = useState<string>(authUserName);
+    const [email, setEmail] = useState<string>(authEmail);
     const [company, setCompany] = useState<string>('');
     const [useCase, setUseCase] = useState<string>('');
     const [acknowledgedDocuments, setAcknowledgedDocuments] =
         useState<boolean>(false);
 
     const [errors, setErrors] = useState<Errors>({
-        firstName: false,
-        lastName: false,
+        fullName: false,
         email: false,
         company: false,
-        useCase: false,
         acknowledgedDocuments: false,
     });
 
@@ -67,7 +72,7 @@ const Registration = () => {
             ) => {
                 event.target.value = event.target.value.trimStart();
 
-                if (controlName === 'firstName' || controlName === 'lastName') {
+                if (controlName === 'fullName') {
                     const numericAndSpecialRegExp: RegExp =
                         /[0-9&^*|":<>{}`();@$#%+=?/[\]\\]/;
 
@@ -108,11 +113,9 @@ const Registration = () => {
         },
         signUp: () => {
             setErrors({
-                firstName: !firstName,
-                lastName: !lastName,
+                fullName: !fullName,
                 email: !email,
                 company: !company,
-                useCase: !useCase,
                 acknowledgedDocuments: !acknowledgedDocuments,
             });
         },
@@ -120,8 +123,7 @@ const Registration = () => {
             event.preventDefault();
 
             const registrationRequest: RegistrationRequest = {
-                firstName,
-                lastName,
+                fullName,
                 email,
                 company,
                 useCase,
@@ -143,7 +145,11 @@ const Registration = () => {
             }}
         >
             <Grid item>
-                <Topbar isNavigationOpen={false} />
+                <Topbar
+                    isNavigationOpen={false}
+                    hideNavigationMenu
+                    hideUserMenu
+                />
             </Grid>
 
             <Grid item xs={5}>
@@ -174,41 +180,21 @@ const Registration = () => {
                             }}
                         >
                             <TextField
-                                id="first-name"
+                                id="full-name"
                                 label={intl.formatMessage({
-                                    id: 'register.label.firstName',
+                                    id: 'register.label.fullName',
                                 })}
-                                value={firstName}
-                                error={errors.firstName}
+                                value={fullName}
+                                error={errors.fullName}
                                 required
                                 onChange={handlers.updateTextInput(
-                                    'firstName',
-                                    setFirstName
+                                    'fullName',
+                                    setFullName
                                 )}
                                 onBlur={handlers.validateTextInput(
-                                    'firstName',
-                                    firstName,
-                                    setFirstName
-                                )}
-                                sx={{ width: 250, mb: 3 }}
-                            />
-
-                            <TextField
-                                id="last-name"
-                                label={intl.formatMessage({
-                                    id: 'register.label.lastName',
-                                })}
-                                value={lastName}
-                                error={errors.lastName}
-                                required
-                                onChange={handlers.updateTextInput(
-                                    'lastName',
-                                    setLastName
-                                )}
-                                onBlur={handlers.validateTextInput(
-                                    'lastName',
-                                    lastName,
-                                    setLastName
+                                    'fullName',
+                                    fullName,
+                                    setFullName
                                 )}
                                 sx={{ width: 250, mb: 3 }}
                             />
@@ -259,16 +245,10 @@ const Registration = () => {
                                     id: 'register.label.intendedUse',
                                 })}
                                 value={useCase}
-                                error={errors.useCase}
-                                required
                                 multiline
+                                minRows={3}
                                 onChange={handlers.updateTextInput(
                                     'useCase',
-                                    setUseCase
-                                )}
-                                onBlur={handlers.validateTextInput(
-                                    'useCase',
-                                    useCase,
                                     setUseCase
                                 )}
                                 sx={{ width: 250, mb: 3 }}
@@ -285,14 +265,50 @@ const Registration = () => {
                                             required
                                         />
                                     }
-                                    label={intl.formatMessage({
-                                        id: 'register.label.documentAcknowledgement',
-                                    })}
                                     onChange={
                                         handlers.updateDocumentAcknowledgement
                                     }
                                     onBlur={
                                         handlers.validateDocumentAcknowledgement
+                                    }
+                                    label={
+                                        <FormattedMessage
+                                            id="register.label.documentAcknowledgement"
+                                            values={{
+                                                privacy: (
+                                                    <ExternalLink
+                                                        hideIcon
+                                                        link={
+                                                            urls.privacyPolicy
+                                                        }
+                                                    >
+                                                        <FormattedMessage
+                                                            id={intl.formatMessage(
+                                                                {
+                                                                    id: 'register.label.documentAcknowledgement.privacy',
+                                                                }
+                                                            )}
+                                                        />
+                                                    </ExternalLink>
+                                                ),
+                                                terms: (
+                                                    <ExternalLink
+                                                        hideIcon
+                                                        link={
+                                                            urls.termsOfService
+                                                        }
+                                                    >
+                                                        <FormattedMessage
+                                                            id={intl.formatMessage(
+                                                                {
+                                                                    id: 'register.label.documentAcknowledgement.terms',
+                                                                }
+                                                            )}
+                                                        />
+                                                    </ExternalLink>
+                                                ),
+                                            }}
+                                        />
                                     }
                                 />
                             </FormControl>

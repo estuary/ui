@@ -36,8 +36,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
 
     // Data
     'data.name': `Name`,
-    'data.firstName': `First name`,
-    'data.lastName': `Last name`,
+    'data.fullName': `Full Name`,
     'data.description': `Description`,
     'data.status': `Status`,
     'data.type': `Type`,
@@ -70,12 +69,13 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     // Registration Page
     'register.heading': `We're currently accepting Beta partners.`,
     'register.main.message': `Please enter your information and our team will approve your account.`,
-    'register.label.firstName': `First Name`,
-    'register.label.lastName': `Last Name`,
+    'register.label.fullName': `Full Name`,
     'register.label.email': `Email`,
     'register.label.company': `Company`,
     'register.label.intendedUse': `Describe your use case`,
-    'register.label.documentAcknowledgement': `Accept our Terms of Service and Privacy Policy`,
+    'register.label.documentAcknowledgement': `Accept our {terms} and {privacy}`,
+    'register.label.documentAcknowledgement.terms': `Terms of Service`,
+    'register.label.documentAcknowledgement.privacy': `Privacy Policy`,
     'register.existingAccount': `Already have an account?`,
 
     // Captures main page
@@ -127,7 +127,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.materializationCreate': `Materialization Capture`,
     'routeTitle.materializationEdit': `Materialization Edit`,
     'routeTitle.materializations': `Materializations`,
-    'routeTitle.registration': `Registration - NOT USED RIGHT NOW`,
+    'routeTitle.registration': `Registration`,
 };
 
 const BrowserTitles: ResolvedIntlConfig['messages'] = {

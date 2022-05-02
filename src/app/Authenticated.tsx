@@ -9,6 +9,7 @@ import Captures from 'pages/Captures';
 import Dashboard from 'pages/Dashboard';
 import PageNotFound from 'pages/error/PageNotFound';
 import Materializations from 'pages/Materializations';
+import Registration from 'pages/Registration';
 import { Route, Routes } from 'react-router';
 
 export const routeDetails = {
@@ -62,6 +63,10 @@ export const routeDetails = {
         title: 'routeTitle.materializations',
         path: '/materializations',
     },
+    registration: {
+        title: 'routeTitle.registration',
+        path: '/register',
+    },
     pageNotFound: {
         title: 'routeTitle.error.pageNotFound',
         path: '*',
@@ -71,6 +76,10 @@ export const routeDetails = {
 const Authenticated = () => {
     return (
         <Routes>
+            <Route
+                path={routeDetails.registration.path}
+                element={<Registration />}
+            />
             <Route element={<AppLayout />}>
                 <Route
                     path={routeDetails.dashboard.path}

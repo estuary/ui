@@ -31,6 +31,20 @@ export const getLoginSettings = () => {
     };
 };
 
+export const getUrls = () => {
+    const privacyPolicy = process.env.REACT_APP_URLS_PRIVACY_POLICY;
+    const termsOfService = process.env.REACT_APP_URLS_TERMS_OF_SERVICE;
+
+    if (privacyPolicy && termsOfService) {
+        return {
+            privacyPolicy,
+            termsOfService,
+        };
+    } else {
+        throw new Error('Missing Privacy or TOS environmental settings.');
+    }
+};
+
 export const getSWRSettings = () => {
     const logCache = process.env.REACT_APP_SWR_LOG_CACHE === 'true';
     const logRequests = process.env.REACT_APP_SWR_LOG_REQUESTS === 'true';
