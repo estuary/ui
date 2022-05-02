@@ -18,20 +18,20 @@ import {
 import { StoreSelector } from 'types';
 
 type Props = {
-    endpointSchema: any;
+    resourceSchema: any;
 };
 
 const defaultAjv = createAjv({ useDefaults: true });
 
 const stateSelectors: StoreSelector<CreationState> = {
-    formData: (state) => state.spec.data,
-    setSpec: (state) => state.setSpec,
+    formData: (state) => state.resourceConfig.data,
+    setConfig: (state) => state.setResourceConfig,
     showValidation: (state) => state.formState.showValidation,
     status: (state) => state.formState.status,
 };
 
-function NewMaterializationSpecForm({ endpointSchema }: Props) {
-    const setSpec = useMaterializationCreationStore(stateSelectors.setSpec);
+function NewMaterializationResourceConfigForm({ resourceSchema }: Props) {
+    const setConfig = useMaterializationCreationStore(stateSelectors.setConfig);
     const formData = useMaterializationCreationStore(stateSelectors.formData);
     const displayValidation = useMaterializationCreationStore(
         stateSelectors.showValidation
@@ -57,13 +57,13 @@ function NewMaterializationSpecForm({ endpointSchema }: Props) {
             hydrateAndValidate(defaultValues);
 
             setDeReffedSchema(processedSchema.resolved);
-            setSpec({
+            setConfig({
                 data: defaultValues,
             });
         }
 
-        void resolveSchemaRefs(endpointSchema);
-    }, [endpointSchema, setSpec, setDeReffedSchema]);
+        void resolveSchemaRefs(resourceSchema);
+    }, [resourceSchema, setConfig, setDeReffedSchema]);
 
     if (deReffedSchema) {
         const uiSchema = generateCustomUISchema(deReffedSchema);
@@ -72,7 +72,7 @@ function NewMaterializationSpecForm({ endpointSchema }: Props) {
         const handlers = {
             onChange: (form: any) => {
                 if (!isEmpty(form.data)) {
-                    setSpec(form);
+                    setConfig(form);
                 }
             },
         };
@@ -97,4 +97,4 @@ function NewMaterializationSpecForm({ endpointSchema }: Props) {
     }
 }
 
-export default NewMaterializationSpecForm;
+export default NewMaterializationResourceConfigForm;

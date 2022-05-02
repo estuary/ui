@@ -1,6 +1,5 @@
-import { Box, Divider, Paper, Typography } from '@mui/material';
-import SpecForm from 'components/materialization/SpecForm';
-import SpecFormHeader from 'components/materialization/SpecFormHeader';
+import { Box, Paper, Typography } from '@mui/material';
+import ResourceConfigForm from 'components/materialization/ResourceConfigForm';
 import Error from 'components/shared/Error';
 import { useQuery, useSelectSingle } from 'hooks/supabase-swr';
 import { TABLES } from 'services/supabase';
@@ -10,7 +9,7 @@ interface ConnectorTag {
         image_name: string;
     };
     id: string;
-    endpoint_spec_schema: string;
+    resource_spec_schema: string;
     documentation_url: string;
 }
 
@@ -23,11 +22,11 @@ const CONNECTOR_TAGS_QUERY = `
         image_name
     ),
     id,
-    endpoint_spec_schema, 
+    resource_spec_schema, 
     documentation_url
 `;
 
-function NewMaterializationSpec({ connectorImage }: Props) {
+function NewMaterializationResourceConfig({ connectorImage }: Props) {
     const tagsQuery = useQuery<ConnectorTag>(
         TABLES.CONNECTOR_TAGS,
         {
@@ -45,19 +44,12 @@ function NewMaterializationSpec({ connectorImage }: Props) {
         return (
             <Box sx={{ mb: 5 }}>
                 <Typography variant="h5" sx={{ mb: 2 }}>
-                    Connection Config
+                    Resource Config
                 </Typography>
 
                 <Paper variant="outlined" sx={{ width: '100%' }}>
-                    <SpecFormHeader
-                        name={connector.data.connectors.image_name}
-                        docsPath={connector.data.documentation_url}
-                    />
-
-                    <Divider />
-
-                    <SpecForm
-                        endpointSchema={connector.data.endpoint_spec_schema}
+                    <ResourceConfigForm
+                        resourceSchema={connector.data.resource_spec_schema}
                     />
                 </Paper>
             </Box>
@@ -67,4 +59,4 @@ function NewMaterializationSpec({ connectorImage }: Props) {
     }
 }
 
-export default NewMaterializationSpec;
+export default NewMaterializationResourceConfig;
