@@ -25,7 +25,7 @@ import { useConfirmationModalContext } from 'context/Confirmation';
 import { useClient, useQuery, useSelect } from 'hooks/supabase-swr';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { MouseEvent } from 'react';
+import { MouseEvent, useEffect } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { TABLES } from 'services/supabase';
@@ -457,6 +457,15 @@ function MaterializationCreate() {
                 );
         },
     };
+
+    useEffect(() => {
+        return () => {
+            resetState();
+        };
+        // TODO (stores) : get create to use the context stores
+        // We basically want an "unmount" here.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
         <PageContainer>

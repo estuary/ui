@@ -18,6 +18,7 @@ import useFooStore, {
 import PageContainer from 'components/shared/PageContainer';
 import { useConfirmationModalContext } from 'context/Confirmation';
 import { useClient, useQuery, useSelect } from 'hooks/supabase-swr';
+import { usePrompt } from 'hooks/useBlocker';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { MouseEvent } from 'react';
@@ -71,11 +72,11 @@ function CaptureCreate() {
     );
 
     // Form store
+    const resetState = useFooStore(fooSelectors.resetState);
     const captureName = useFooStore(fooSelectors.entityName);
     const captureImage = useFooStore(fooSelectors.connectorTag);
     const [detailErrors, specErrors] = useFooStore(fooSelectors.errors);
     const specFormData = useFooStore(fooSelectors.endpointConfig);
-    const resetState = useFooStore(fooSelectors.resetState);
     const hasChanges = useFooStore(fooSelectors.hasChanges);
 
     // Form State
@@ -364,6 +365,8 @@ function CaptureCreate() {
             }
         },
     };
+
+    usePrompt('confirm.loseData', hasChanges());
 
     return (
         <PageContainer>
