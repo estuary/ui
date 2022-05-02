@@ -109,17 +109,18 @@ function MaterializationCreate() {
         EditorStoreState<DraftSpecQuery>['id']
     >((state) => state.id);
 
-    const editorSpecs = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['specs']
-    >((state) => state.specs);
-
     const setDraftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setId']
     >((state) => state.setId);
 
-    const editorContainsSpecs = editorSpecs && editorSpecs.length > 0;
+    // TODO (materializations) : get this working again
+    // const editorSpecs = useZustandStore<
+    //     EditorStoreState<DraftSpecQuery>,
+    //     EditorStoreState<DraftSpecQuery>['specs']
+    // >((state) => state.specs);
+
+    // const editorContainsSpecs = editorSpecs && editorSpecs.length > 0;
 
     const helpers = {
         callFailed: (formState: any, subscription?: RealtimeSubscription) => {
@@ -344,51 +345,63 @@ function MaterializationCreate() {
 
         test: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
+            let detailHasErrors = false;
+            let specHasErrors = false;
 
-            resetFormState(FormStatus.TESTING);
+            // TODO (linting) - this was to make TS/Linting happy
+            detailHasErrors = detailErrors ? detailErrors.length > 0 : false;
+            specHasErrors = specErrors ? specErrors.length > 0 : false;
 
-            const publicationsSubscription = createPublicationsSubscription();
+            if (detailHasErrors || specHasErrors) {
+                setFormState({
+                    displayValidation: true,
+                });
+            } else {
+                resetFormState(FormStatus.TESTING);
+                const publicationsSubscription =
+                    createPublicationsSubscription();
 
-            supabaseClient
-                .from(TABLES.PUBLICATIONS)
-                .insert([
-                    {
-                        draft_id: draftId,
-                        dry_run: true,
-                    },
-                ])
-                .then(
-                    async (response) => {
-                        if (response.data) {
-                            if (response.data.length > 0) {
-                                setFormState({
-                                    logToken: response.data[0].logs_token,
-                                    showLogs: true,
-                                });
+                supabaseClient
+                    .from(TABLES.PUBLICATIONS)
+                    .insert([
+                        {
+                            draft_id: draftId,
+                            dry_run: true,
+                        },
+                    ])
+                    .then(
+                        async (response) => {
+                            if (response.data) {
+                                if (response.data.length > 0) {
+                                    setFormState({
+                                        logToken: response.data[0].logs_token,
+                                        showLogs: true,
+                                    });
+                                }
+                            } else {
+                                helpers.callFailed(
+                                    {
+                                        error: {
+                                            title: 'materializationCreation.test.failure.errorTitle',
+                                            error: response.error,
+                                        },
+                                    },
+                                    publicationsSubscription
+                                );
                             }
-                        } else {
+                        },
+                        () => {
                             helpers.callFailed(
                                 {
                                     error: {
-                                        title: 'materializationCreation.test.failure.errorTitle',
-                                        error: response.error,
+                                        title: 'materializationCreation.test.serverUnreachable',
                                     },
                                 },
                                 publicationsSubscription
                             );
                         }
-                    },
-                    () => {
-                        helpers.callFailed(
-                            {
-                                error: {
-                                    title: 'materializationCreation.test.serverUnreachable',
-                                },
-                            },
-                            publicationsSubscription
-                        );
-                    }
-                );
+                    );
+            }
         },
 
         saveAndPublish: (event: MouseEvent<HTMLElement>) => {
@@ -445,12 +458,6 @@ function MaterializationCreate() {
         },
     };
 
-    console.log('mat', {
-        formStateStatus,
-        hasConnectors,
-        editorContainsSpecs,
-    });
-
     return (
         <PageContainer>
             <LogDialog
@@ -476,16 +483,10 @@ function MaterializationCreate() {
                 close={handlers.cancel}
                 test={handlers.test}
                 testDisabled={
-                    formStateStatus !== FormStatus.IDLE ||
-                    !hasConnectors ||
-                    !editorContainsSpecs
+                    formStateStatus !== FormStatus.IDLE || !hasConnectors
                 }
                 save={handlers.saveAndPublish}
-                saveDisabled={
-                    formStateStatus !== FormStatus.IDLE ||
-                    !draftId ||
-                    !editorContainsSpecs
-                }
+                saveDisabled={formStateStatus !== FormStatus.IDLE || !draftId}
                 formId={FORM_ID}
                 heading={<FormattedMessage id="captureCreation.heading" />}
             />
