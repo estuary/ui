@@ -51,7 +51,7 @@ export function useBlocker(blocker: Blocker, when = true) {
 /**
  * @source https://github.com/remix-run/react-router/issues/8139#issuecomment-1021457943
  */
-export function usePrompt(message: string, when = true) {
+export function usePrompt(message: string, when = true, callback?: Function) {
     const confirmationModalContext = useConfirmationModalContext();
     const blocker = useCallback(
         async (tx: Transition) => {
@@ -61,6 +61,7 @@ export function usePrompt(message: string, when = true) {
                 })
                 .then((confirmed) => {
                     if (confirmed) {
+                        if (callback) callback();
                         tx.retry();
                     }
                 })
@@ -68,7 +69,7 @@ export function usePrompt(message: string, when = true) {
                     console.log('hey');
                 });
         },
-        [confirmationModalContext, message]
+        [message, callback, confirmationModalContext]
     );
     return useBlocker(blocker, when);
 }

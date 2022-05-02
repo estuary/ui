@@ -366,7 +366,9 @@ function CaptureCreate() {
         },
     };
 
-    usePrompt('confirm.loseData', hasChanges());
+    usePrompt('confirm.loseData', hasChanges(), () => {
+        resetState();
+    });
 
     return (
         <PageContainer>
