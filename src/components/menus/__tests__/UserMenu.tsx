@@ -48,17 +48,5 @@ describe('When there is user metadata', () => {
                 ).toBeInTheDocument();
             });
         });
-
-        test('snapshot', async () => {
-            const { user, view } = await customRender(<UserMenu />, {
-                username,
-            });
-
-            await act(async () => {
-                await openMenu(user);
-            });
-
-            expect(view.baseElement).toMatchSnapshot();
-        });
     });
 });
