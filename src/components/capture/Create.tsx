@@ -71,10 +71,10 @@ function CaptureCreate() {
     );
 
     // Form store
-    const captureName = useFooStore(fooSelectors.captureName);
-    const captureImage = useFooStore(fooSelectors.captureImage);
+    const captureName = useFooStore(fooSelectors.entityName);
+    const captureImage = useFooStore(fooSelectors.connectorTag);
     const [detailErrors, specErrors] = useFooStore(fooSelectors.errors);
-    const specFormData = useFooStore(fooSelectors.specFormData);
+    const specFormData = useFooStore(fooSelectors.endpointConfig);
     const resetState = useFooStore(fooSelectors.resetState);
     const hasChanges = useFooStore(fooSelectors.hasChanges);
 
@@ -286,7 +286,7 @@ function CaptureCreate() {
 
             if (detailHasErrors || specHasErrors) {
                 setFormState({
-                    showValidation: true,
+                    displayValidation: true,
                 });
             } else {
                 supabaseClient

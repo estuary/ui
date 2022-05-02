@@ -2,10 +2,13 @@ import { createAjv } from '@jsonforms/core';
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { StyledEngineProvider } from '@mui/material';
-import useMaterializationCreationStore, {
-    CreationFormStatuses,
+import useCreationStore, {
     CreationState,
 } from 'components/materialization/Store';
+import useFooStore, {
+    fooSelectors,
+    FormStatus,
+} from 'components/shared/foo/Store';
 import JsonRefs from 'json-refs';
 import { isEmpty } from 'lodash';
 import { useEffect, useState } from 'react';
@@ -26,17 +29,13 @@ const defaultAjv = createAjv({ useDefaults: true });
 const stateSelectors: StoreSelector<CreationState> = {
     formData: (state) => state.resourceConfig.data,
     setConfig: (state) => state.setResourceConfig,
-    showValidation: (state) => state.formState.showValidation,
-    status: (state) => state.formState.status,
 };
 
 function NewMaterializationResourceConfigForm({ resourceSchema }: Props) {
-    const setConfig = useMaterializationCreationStore(stateSelectors.setConfig);
-    const formData = useMaterializationCreationStore(stateSelectors.formData);
-    const displayValidation = useMaterializationCreationStore(
-        stateSelectors.showValidation
-    );
-    const status = useMaterializationCreationStore(stateSelectors.status);
+    const setConfig = useCreationStore(stateSelectors.setConfig);
+    const formData = useCreationStore(stateSelectors.formData);
+    const displayValidation = useFooStore(fooSelectors.displayValidation);
+    const status = useFooStore(fooSelectors.formStateStatus);
 
     const [deReffedSchema, setDeReffedSchema] = useState<any | null>(null);
 
@@ -86,7 +85,7 @@ function NewMaterializationResourceConfigForm({ resourceSchema }: Props) {
                     renderers={defaultRenderers}
                     cells={materialCells}
                     config={defaultOptions}
-                    readonly={status !== CreationFormStatuses.IDLE}
+                    readonly={status !== FormStatus.IDLE}
                     validationMode={showValidationVal}
                     onChange={handlers.onChange}
                 />

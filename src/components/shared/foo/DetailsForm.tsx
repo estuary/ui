@@ -106,7 +106,7 @@ function DetailsForm({ connectorTags, messagePrefix }: Props) {
                     },
                     {
                         label: intl.formatMessage({
-                            id: 'entityName.label',
+                            id: 'connector.label',
                         }),
                         scope: '#/properties/image',
                         type: 'Control',

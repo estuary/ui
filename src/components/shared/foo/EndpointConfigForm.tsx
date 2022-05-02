@@ -23,8 +23,8 @@ type Props = {
 const defaultAjv = createAjv({ useDefaults: true });
 
 function EndpointConfigForm({ endpointSchema }: Props) {
-    const setSpec = useFooStore(fooSelectors.setSpec);
-    const formData = useFooStore(fooSelectors.specFormData);
+    const setSpec = useFooStore(fooSelectors.setEndpointConfig);
+    const formData = useFooStore(fooSelectors.endpointConfig);
     const displayValidation = useFooStore(fooSelectors.displayValidation);
     const formStateStatus = useFooStore(fooSelectors.formStateStatus);
 

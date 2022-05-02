@@ -26,6 +26,7 @@ export enum FormStatus {
     SAVING = 'saving',
     TESTING = 'testing',
     IDLE = 'idle',
+    GENERATING_PREVIEW = 'Generating Preview',
 }
 
 interface FormState {
@@ -187,27 +188,24 @@ const useFooStore = create<FooState>()(
 
 export default useFooStore;
 
-type Selectors = {
-    [k: string]: (state: FooState) => any;
-};
-export const fooSelectors: Selectors = {
-    captureName: (state) => state.details.data.name,
-    captureImage: (state) => state.details.data.image,
-    setDetails: (state) => state.setDetails,
-    resetState: (state) => state.resetState,
-    hasChanges: (state) => state.hasChanges,
-    errors: (state) => [state.details.errors, state.spec.errors],
-    specFormData: (state) => state.spec.data,
-    connectors: (state) => state.connectors,
-    setFormState: (state) => state.setFormState,
-    resetFormState: (state) => state.resetFormState,
-    formStateSaveStatus: (state) => state.formState.saveStatus,
-    formStateStatus: (state) => state.formState.status,
-    showLogs: (state) => state.formState.showLogs,
-    logToken: (state) => state.formState.logToken,
-    error: (state) => state.formState.error,
-    exitWhenLogsClose: (state) => state.formState.exitWhenLogsClose,
-    setSpec: (state) => state.setSpec,
-    displayValidation: (state) => state.formState.displayValidation,
-    status: (state) => state.formState.status,
+export const fooSelectors = {
+    entityName: (state: FooState) => state.details.data.name,
+    connectorTag: (state: FooState) => state.details.data.image,
+    setDetails: (state: FooState) => state.setDetails,
+    resetState: (state: FooState) => state.resetState,
+    hasChanges: (state: FooState) => state.hasChanges,
+    errors: (state: FooState) => [state.details.errors, state.spec.errors],
+    endpointConfig: (state: FooState) => state.spec.data,
+    setEndpointConfig: (state: FooState) => state.setSpec,
+    connectors: (state: FooState) => state.connectors,
+    setFormState: (state: FooState) => state.setFormState,
+    resetFormState: (state: FooState) => state.resetFormState,
+    formStateSaveStatus: (state: FooState) => state.formState.saveStatus,
+    formStateStatus: (state: FooState) => state.formState.status,
+    showLogs: (state: FooState) => state.formState.showLogs,
+    logToken: (state: FooState) => state.formState.logToken,
+    error: (state: FooState) => state.formState.error,
+    exitWhenLogsClose: (state: FooState) => state.formState.exitWhenLogsClose,
+    displayValidation: (state: FooState) => state.formState.displayValidation,
+    status: (state: FooState) => state.formState.status,
 };

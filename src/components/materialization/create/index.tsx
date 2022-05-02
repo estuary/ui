@@ -3,25 +3,29 @@ import { RealtimeSubscription } from '@supabase/supabase-js';
 import { routeDetails } from 'app/Authenticated';
 import { EditorStoreState, useZustandStore } from 'components/editor/Store';
 import CollectionSelector from 'components/materialization/CollectionSelector';
-import NewMaterializationDetails from 'components/materialization/DetailsForm';
-import EndpointConfig from 'components/materialization/EndpointConfig';
-import NewMaterializationError from 'components/materialization/Error';
-import NewMaterializationHeader from 'components/materialization/Header';
-import LogDialog from 'components/materialization/LogDialog';
 import ResourceConfig from 'components/materialization/ResourceConfig';
 import useCreationStore, {
-    CreationFormStatuses,
     CreationState,
 } from 'components/materialization/Store';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import CatalogEditor from 'components/shared/foo/CatalogEditor';
+import DetailsForm from 'components/shared/foo/DetailsForm';
+import EndpointConfig from 'components/shared/foo/EndpointConfig';
+import FooError from 'components/shared/foo/Error';
+import FooHeader from 'components/shared/foo/Header';
+import LogDialog from 'components/shared/foo/LogDialog';
+import { ConnectorTag, CONNECTOR_TAG_QUERY } from 'components/shared/foo/query';
+import useFooStore, {
+    fooSelectors,
+    FormStatus,
+} from 'components/shared/foo/Store';
 import PageContainer from 'components/shared/PageContainer';
 import { useConfirmationModalContext } from 'context/Confirmation';
 import { useClient, useQuery, useSelect } from 'hooks/supabase-swr';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { MouseEvent, useEffect } from 'react';
+import { MouseEvent } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { TABLES } from 'services/supabase';
@@ -31,49 +35,12 @@ import useNotificationStore, {
 } from 'stores/NotificationStore';
 import { MaterializationDef } from '../../../../flow_deps/flow';
 
-export interface ConnectorTag {
-    connectors: {
-        detail: string;
-        image_name: string;
-    };
-    id: string;
-    image_tag: string;
-    protocol: string;
-}
+const FORM_ID = 'newMaterializationForm';
 
-const CONNECTOR_TAG_QUERY = `
-    id, 
-    image_tag,
-    protocol,
-    resource_spec_schema,
-    connectors(detail, image_name)
-`;
-
-// TODO - need to get this typing to work... too many repeated types
 const selectors = {
     page: {
-        catalogNamespace: (state: CreationState) => state.details.data.name,
         collections: (state: CreationState) => state.collections,
-        errors: (state: CreationState) => [
-            state.details.errors,
-            state.endpointConfig.errors,
-        ],
-        endpointConfigData: (state: CreationState) => state.endpointConfig.data,
         resourceConfigData: (state: CreationState) => state.resourceConfig.data,
-        imageTagId: (state: CreationState) => state.details.data.image,
-        hasChanges: (state: CreationState) => state.hasChanges,
-        resetState: (state: CreationState) => state.resetState,
-    },
-    form: {
-        error: (state: CreationState) => state.formState.error,
-        exitWhenLogsClose: (state: CreationState) =>
-            state.formState.exitWhenLogsClose,
-        logToken: (state: CreationState) => state.formState.logToken,
-        saveStatus: (state: CreationState) => state.formState.saveStatus,
-        showLogs: (state: CreationState) => state.formState.showLogs,
-        status: (state: CreationState) => state.formState.status,
-        set: (state: CreationState) => state.setFormState,
-        reset: (state: CreationState) => state.resetFormState,
     },
     notifications: {
         showNotification: (state: NotificationState) => state.showNotification,
@@ -114,27 +81,27 @@ function MaterializationCreate() {
         selectors.notifications.showNotification
     );
 
-    // Form store
-    const catalogNamespace = useCreationStore(selectors.page.catalogNamespace);
+    // Materializations store
     const collections = useCreationStore(selectors.page.collections);
-    const endpointConfig = useCreationStore(selectors.page.endpointConfigData);
     const resourceConfig = useCreationStore(selectors.page.resourceConfigData);
-    const imageTagId = useCreationStore(selectors.page.imageTagId);
-    const [detailErrors, specErrors] = useCreationStore(selectors.page.errors);
-    const resetState = useCreationStore(selectors.page.resetState);
-    const hasChanges = useCreationStore(selectors.page.hasChanges);
+
+    // Form Store
+    const entityName = useFooStore(fooSelectors.entityName);
+    const imageTag = useFooStore(fooSelectors.connectorTag);
+    const [detailErrors, specErrors] = useFooStore(fooSelectors.errors);
+    const resetState = useFooStore(fooSelectors.resetState);
+    const hasChanges = useFooStore(fooSelectors.hasChanges);
 
     // Form State
-    const logToken = useCreationStore(selectors.form.logToken);
-    const saveStatus = useCreationStore(selectors.form.saveStatus);
-    const showLogs = useCreationStore(selectors.form.showLogs);
-    const status = useCreationStore(selectors.form.status);
-    const exitWhenLogsClose = useCreationStore(
-        selectors.form.exitWhenLogsClose
-    );
-    const formSubmitError = useCreationStore(selectors.form.error);
-    const setFormState = useCreationStore(selectors.form.set);
-    const resetFormState = useCreationStore(selectors.form.reset);
+    const setFormState = useFooStore(fooSelectors.setFormState);
+    const resetFormState = useFooStore(fooSelectors.resetFormState);
+    const showLogs = useFooStore(fooSelectors.showLogs);
+    const logToken = useFooStore(fooSelectors.logToken);
+    const formSubmitError = useFooStore(fooSelectors.error);
+    const exitWhenLogsClose = useFooStore(fooSelectors.exitWhenLogsClose);
+    const endpointConfig = useFooStore(fooSelectors.endpointConfig);
+    const formStateSaveStatus = useFooStore(fooSelectors.formStateSaveStatus);
+    const formStateStatus = useFooStore(fooSelectors.formStateStatus);
 
     // Editor state
     const draftId = useZustandStore<
@@ -152,14 +119,13 @@ function MaterializationCreate() {
         EditorStoreState<DraftSpecQuery>['setId']
     >((state) => state.setId);
 
-    useEffect(() => {});
     const editorContainsSpecs = editorSpecs && editorSpecs.length > 0;
 
     const helpers = {
         callFailed: (formState: any, subscription?: RealtimeSubscription) => {
             const setFailureState = () => {
                 setFormState({
-                    status: CreationFormStatuses.IDLE,
+                    status: FormStatus.IDLE,
                     exitWhenLogsClose: false,
                     saveStatus: intl.formatMessage({
                         id: 'materializationCreation.status.failure',
@@ -184,7 +150,7 @@ function MaterializationCreate() {
                 .removeSubscription(subscription)
                 .then(() => {
                     setFormState({
-                        status: CreationFormStatuses.IDLE,
+                        status: FormStatus.IDLE,
                     });
                 })
                 .catch(() => {});
@@ -213,7 +179,7 @@ function MaterializationCreate() {
                 if (payload.new.job_status.type !== 'queued') {
                     if (payload.new.job_status.type === 'success') {
                         setFormState({
-                            status: CreationFormStatuses.IDLE,
+                            status: FormStatus.IDLE,
                             exitWhenLogsClose: true,
                             saveStatus: intl.formatMessage({
                                 id: 'materializationCreation.status.success',
@@ -276,18 +242,18 @@ function MaterializationCreate() {
             specHasErrors = specErrors ? specErrors.length > 0 : false;
 
             const connectorInfo = connectorTags?.data.find(
-                ({ id }) => id === imageTagId
+                ({ id }) => id === imageTag?.id
             );
 
             if (detailHasErrors || specHasErrors) {
-                setFormState({ showValidation: true });
+                setFormState({ displayValidation: true });
             } else if (collections.length === 0) {
                 // TODO: Handle the scenario where no collections are present.
             } else if (!connectorInfo) {
                 // TODO: Handle the highly unlikely scenario where the connector tag id could not be found.
             } else {
                 setFormState({
-                    status: CreationFormStatuses.GENERATING_PREVIEW,
+                    status: FormStatus.GENERATING_PREVIEW,
                 });
 
                 // TODO: Use connector_tags.resource_spec_schema as the value of bindings.resource when the
@@ -313,7 +279,7 @@ function MaterializationCreate() {
                 supabaseClient
                     .from(TABLES.DRAFTS)
                     .insert({
-                        detail: catalogNamespace,
+                        detail: entityName,
                     })
                     .then(
                         (draftsResponse) => {
@@ -328,7 +294,7 @@ function MaterializationCreate() {
                                     .insert([
                                         {
                                             draft_id: draftsResponse.data[0].id,
-                                            catalog_name: catalogNamespace,
+                                            catalog_name: entityName,
                                             spec_type: 'materialization',
                                             spec: draftSpec,
                                         },
@@ -336,7 +302,7 @@ function MaterializationCreate() {
                                     .then(
                                         (draftSpecsResponse) => {
                                             setFormState({
-                                                status: CreationFormStatuses.IDLE,
+                                                status: FormStatus.IDLE,
                                             });
 
                                             if (draftSpecsResponse.error) {
@@ -379,7 +345,7 @@ function MaterializationCreate() {
         test: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
-            resetFormState(CreationFormStatuses.TESTING);
+            resetFormState(FormStatus.TESTING);
 
             const publicationsSubscription = createPublicationsSubscription();
 
@@ -429,7 +395,7 @@ function MaterializationCreate() {
             event.preventDefault();
 
             setDraftId(null);
-            resetFormState(CreationFormStatuses.SAVING);
+            resetFormState(FormStatus.SAVING);
 
             const publicationsSubscription = createPublicationsSubscription();
 
@@ -479,19 +445,25 @@ function MaterializationCreate() {
         },
     };
 
+    console.log('mat', {
+        formStateStatus,
+        hasConnectors,
+        editorContainsSpecs,
+    });
+
     return (
         <PageContainer>
             <LogDialog
                 open={showLogs}
                 token={logToken}
-                title={intl.formatMessage({
-                    id: 'materializationCreation.save.inProgress',
-                })}
+                title={
+                    <FormattedMessage id="materializationCreation.save.inProgress" />
+                }
                 actionComponent={
                     <>
-                        {saveStatus}
+                        {formStateSaveStatus}
                         <Button
-                            disabled={status !== CreationFormStatuses.IDLE}
+                            disabled={formStateStatus !== FormStatus.IDLE}
                             onClick={handlers.closeLogs}
                         >
                             <FormattedMessage id="cta.close" />
@@ -500,20 +472,22 @@ function MaterializationCreate() {
                 }
             />
 
-            <NewMaterializationHeader
+            <FooHeader
                 close={handlers.cancel}
                 test={handlers.test}
                 testDisabled={
-                    status !== CreationFormStatuses.IDLE ||
+                    formStateStatus !== FormStatus.IDLE ||
                     !hasConnectors ||
                     !editorContainsSpecs
                 }
                 save={handlers.saveAndPublish}
                 saveDisabled={
-                    status !== CreationFormStatuses.IDLE ||
+                    formStateStatus !== FormStatus.IDLE ||
                     !draftId ||
                     !editorContainsSpecs
                 }
+                formId={FORM_ID}
+                heading={<FormattedMessage id="captureCreation.heading" />}
             />
 
             {connectorTagsError ? (
@@ -522,7 +496,7 @@ function MaterializationCreate() {
                 <>
                     <Collapse in={formSubmitError !== null}>
                         {formSubmitError && (
-                            <NewMaterializationError
+                            <FooError
                                 title={formSubmitError.title}
                                 error={formSubmitError.error}
                                 logToken={logToken}
@@ -533,22 +507,31 @@ function MaterializationCreate() {
                     <form>
                         {connectorTags && (
                             <ErrorBoundryWrapper>
-                                <NewMaterializationDetails
+                                <DetailsForm
                                     connectorTags={connectorTags.data}
+                                    messagePrefix="materializationCreation"
                                 />
                             </ErrorBoundryWrapper>
                         )}
 
-                        {imageTagId && (
-                            <ErrorBoundryWrapper>
-                                <EndpointConfig connectorImage={imageTagId} />
-
-                                <ResourceConfig connectorImage={imageTagId} />
-
-                                <CollectionSelector
-                                    preview={handlers.preview}
-                                />
-                            </ErrorBoundryWrapper>
+                        {imageTag?.id && (
+                            <>
+                                <ErrorBoundryWrapper>
+                                    <EndpointConfig
+                                        connectorImage={imageTag.id}
+                                    />
+                                </ErrorBoundryWrapper>
+                                <ErrorBoundryWrapper>
+                                    <ResourceConfig
+                                        connectorImage={imageTag.id}
+                                    />
+                                </ErrorBoundryWrapper>
+                                <ErrorBoundryWrapper>
+                                    <CollectionSelector
+                                        preview={handlers.preview}
+                                    />
+                                </ErrorBoundryWrapper>
+                            </>
                         )}
                     </form>
 
