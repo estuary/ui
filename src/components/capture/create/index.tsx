@@ -24,7 +24,7 @@ import useNotificationStore, {
     Notification,
     NotificationState,
 } from 'stores/NotificationStore';
-import NewCaptureEditor from '../CatalogEditor';
+import CatalogEditor from '../../shared/CatalogEditor';
 import NewCaptureDetails from '../DetailsForm';
 import NewCaptureError from '../Error';
 
@@ -478,7 +478,7 @@ function CaptureCreate() {
                     </form>
 
                     <ErrorBoundryWrapper>
-                        <NewCaptureEditor />
+                        <CatalogEditor messageId="captureCreation.finalReview.instructions" />
                     </ErrorBoundryWrapper>
                 </>
             )}

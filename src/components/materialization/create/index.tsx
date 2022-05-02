@@ -2,7 +2,6 @@ import { Button, Collapse } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { routeDetails } from 'app/Authenticated';
 import { EditorStoreState, useZustandStore } from 'components/editor/Store';
-import CatalogEditor from 'components/materialization/CatalogEditor';
 import CollectionSelector from 'components/materialization/CollectionSelector';
 import NewMaterializationDetails from 'components/materialization/DetailsForm';
 import EndpointConfig from 'components/materialization/EndpointConfig';
@@ -14,6 +13,7 @@ import useCreationStore, {
     CreationFormStatuses,
     CreationState,
 } from 'components/materialization/Store';
+import CatalogEditor from 'components/shared/CatalogEditor';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
@@ -553,7 +553,7 @@ function MaterializationCreate() {
                     </form>
 
                     <ErrorBoundryWrapper>
-                        <CatalogEditor />
+                        <CatalogEditor messageId="materializationCreation.finalReview.instructions" />
                     </ErrorBoundryWrapper>
                 </>
             )}
