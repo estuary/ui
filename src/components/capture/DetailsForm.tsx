@@ -49,7 +49,10 @@ function NewCaptureDetails({ connectorTags }: Props) {
             setDetails({
                 data: {
                     name: '',
-                    image: connectorID,
+                    image: {
+                        id: connectorID,
+                        path: '',
+                    },
                 },
             });
         }
@@ -66,12 +69,18 @@ function NewCaptureDetails({ connectorTags }: Props) {
                         connectorTags.length > 0
                             ? connectorTags.map((connector) => {
                                   return {
-                                      const: connector.id,
+                                      const: {
+                                          id: connector.id,
+                                          iconPath:
+                                              connector.connectors.open_graph[
+                                                  'en-US'
+                                              ].image,
+                                      },
                                       title: getConnectorName(connector),
                                   };
                               })
                             : ([] as { title: string; const: string }[]),
-                    type: 'string',
+                    type: 'object',
                 },
                 name: {
                     description: intl.formatMessage({

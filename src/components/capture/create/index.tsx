@@ -35,12 +35,14 @@ export interface ConnectorTag {
         open_graph: object;
     };
     id: string;
+    connector_id: string;
     image_tag: string;
     protocol: string;
     title: string;
 }
 const CONNECTOR_TAG_QUERY = `
-    id, 
+    id,
+    connector_id,
     image_tag,
     protocol,
     endpoint_spec_schema->>title,
@@ -343,6 +345,7 @@ function CaptureCreate() {
                     .then(
                         (draftsResponse) => {
                             if (
+                                captureImage &&
                                 draftsResponse.data &&
                                 draftsResponse.data.length > 0
                             ) {
@@ -354,7 +357,7 @@ function CaptureCreate() {
                                         {
                                             capture_name: captureName,
                                             endpoint_config: specFormData,
-                                            connector_tag_id: captureImage,
+                                            connector_tag_id: captureImage.id,
                                             draft_id: draftsResponse.data[0].id,
                                         },
                                     ])
@@ -465,9 +468,11 @@ function CaptureCreate() {
                             </ErrorBoundryWrapper>
                         ) : null}
 
-                        {captureImage ? (
+                        {captureImage?.id ? (
                             <ErrorBoundryWrapper>
-                                <NewCaptureSpec connectorImage={captureImage} />
+                                <NewCaptureSpec
+                                    connectorImage={captureImage.id}
+                                />
                             </ErrorBoundryWrapper>
                         ) : null}
                     </form>

@@ -16,7 +16,6 @@ import { materialRenderers } from '@jsonforms/material-renderers';
 import {
     CollapsibleGroup,
     collapsibleGroupTester,
-    CollapsibleGroupType,
 } from 'forms/renderers/CollapsibleGroup';
 import { ConnectorType, connectorTypeTester } from 'forms/renderers/Connectors';
 import { NullType, nullTypeTester } from 'forms/renderers/NullType';
@@ -172,7 +171,7 @@ const generateUISchema = (
         if (currentRef === '#') {
             layout = createLayout(layoutType);
         } else {
-            layout = createLayout(CollapsibleGroupType) as GroupLayout;
+            layout = createLayout('Group');
             addLabel(layout, schemaName);
         }
 

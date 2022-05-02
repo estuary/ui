@@ -1,11 +1,4 @@
-import {
-    GroupLayout,
-    LabelElement,
-    LayoutProps,
-    RankedTester,
-    rankWith,
-    uiTypeIs,
-} from '@jsonforms/core';
+import { RankedTester, rankWith, uiTypeIs } from '@jsonforms/core';
 import {
     MaterialLayoutRenderer,
     MaterialLayoutRendererProps,
@@ -24,33 +17,33 @@ export const CollapsibleGroupType = 'CollapsibleGroup';
 
 export const collapsibleGroupTester: RankedTester = rankWith(
     999,
-    uiTypeIs(CollapsibleGroupType)
+    uiTypeIs('Group')
 );
 
+// TODO (typing) Just used any here as it makes things easier.
+//  previous versions had more typing but the typing wasn't 100% correct
 const CollapsibleGroupRenderer = ({
     uischema,
     schema,
     path,
     visible,
     renderers,
-}: LayoutProps) => {
-    const groupLayout = uischema as GroupLayout;
-    const labelElement = groupLayout.elements.shift() as LabelElement;
-
+}: any) => {
     const layoutProps = {
-        direction: 'column' as MaterialLayoutRendererProps['direction'],
-        elements: groupLayout.elements,
-        path,
-        renderers,
+        elements: uischema.elements,
         schema,
-        uischema,
+        path,
+        direction: 'column' as MaterialLayoutRendererProps['direction'],
         visible,
+        uischema,
+        renderers,
     };
+
     return (
         <Hidden xsUp={!visible}>
             <Accordion>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography>{labelElement.text}</Typography>
+                    <Typography>{uischema.label}</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                     <MaterialLayoutRenderer {...layoutProps} />

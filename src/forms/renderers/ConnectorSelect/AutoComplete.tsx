@@ -26,11 +26,10 @@ import { EnumCellProps, EnumOption, WithClassname } from '@jsonforms/core';
 import {
     Autocomplete,
     AutocompleteRenderOptionState,
-    Box,
     FilterOptionsState,
-    Input,
 } from '@mui/material';
-import ConnectorName from 'components/ConnectorName';
+import ConnectorInput from 'forms/renderers/ConnectorSelect/Input';
+import ConnectorOption from 'forms/renderers/ConnectorSelect/Option';
 import merge from 'lodash/merge';
 import React, { ReactNode } from 'react';
 
@@ -47,6 +46,10 @@ export interface WithOptionLabel {
     ): EnumOption[];
 }
 
+const areOptionsEqual = (option?: any, value?: any) => {
+    return value?.id && value.id.length > 0 && option.id === value.id;
+};
+
 export const ConnectorAutoComplete = (
     props: EnumCellProps & WithClassname & WithOptionLabel
 ) => {
@@ -56,7 +59,6 @@ export const ConnectorAutoComplete = (
         className,
         id,
         enabled,
-        errors,
         uischema,
         path,
         handleChange,
@@ -67,19 +69,23 @@ export const ConnectorAutoComplete = (
     } = props;
 
     const appliedUiSchemaOptions = merge({}, config, uischema.options);
-    const [inputValue, setInputValue] = React.useState(data ?? '');
+    const [inputValue, setInputValue] = React.useState('');
+    const currentOption =
+        options?.find((option) => {
+            return areOptionsEqual(option.value, data);
+        }) ?? null;
 
-    const findOption = options?.find((o) => o.value === data) ?? null;
     return (
         <Autocomplete
             className={className}
             id={id}
             disabled={!enabled}
-            value={findOption}
+            value={currentOption}
             onChange={(_event: any, newValue: EnumOption | null) => {
                 handleChange(path, newValue?.value);
             }}
             inputValue={inputValue}
+            // isOptionEqualToValue={areOptionsEqual}
             onInputChange={(_event, newInputValue) => {
                 setInputValue(newInputValue);
             }}
@@ -91,45 +97,25 @@ export const ConnectorAutoComplete = (
             getOptionLabel={getOptionLabel ?? ((option) => option.label)}
             sx={{
                 marginTop: 2,
-                borderColor: errors.length > 0 ? 'red' : null,
             }}
-            renderInput={({ inputProps, InputProps }: any) => {
+            renderInput={({ inputProps, InputProps }) => {
                 return (
-                    <Box
-                        sx={{
-                            '.MuiBox-root + .MuiInput-root > input': {
-                                textIndent: '20px',
-                            },
-                        }}
-                    >
-                        {inputProps.value !== '' ? (
-                            <Box
-                                sx={{
-                                    position: 'absolute',
-                                    left: 0,
-                                    top: 22,
-                                }}
-                            >
-                                <ConnectorName path="" connector="" />
-                            </Box>
-                        ) : null}
-
-                        <Input
-                            style={{ width: '100%' }}
-                            type="text"
-                            inputProps={inputProps}
-                            inputRef={InputProps.ref}
-                            autoFocus={appliedUiSchemaOptions.focus}
-                            disabled={!enabled}
-                        />
-                    </Box>
+                    <ConnectorInput
+                        inputProps={inputProps}
+                        InputProps={InputProps}
+                        appliedUiSchemaOptions={appliedUiSchemaOptions}
+                        enabled={enabled}
+                        currentOption={currentOption}
+                    />
                 );
             }}
-            renderOption={(renderOptionProps: any, option) => {
+            renderOption={(renderOptionProps, option) => {
                 return (
-                    <Box component="li" {...renderOptionProps}>
-                        <ConnectorName path="" connector={option.label} />
-                    </Box>
+                    <ConnectorOption
+                        renderOptionProps={renderOptionProps}
+                        option={option}
+                        key={option.label}
+                    />
                 );
             }}
             filterOptions={filterOptions}
