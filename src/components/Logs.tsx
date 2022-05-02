@@ -48,7 +48,6 @@ function Logs({
     const [emptyResponses, setEmptyResponses] = useState(
         disableIntervalFetching ? MAX_EMPTY_CALLS : 0
     );
-    console.log(emptyResponses);
 
     const [offset, setOffset] = useState(0);
     const [logs, setLogs] = useState<string[]>([
