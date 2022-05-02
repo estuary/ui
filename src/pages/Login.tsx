@@ -1,6 +1,5 @@
 import { Card, CardContent, Grid, Typography } from '@mui/material';
 import { Auth } from '@supabase/ui';
-import { routeDetails } from 'app/Authenticated';
 import Topbar from 'components/header/Topbar';
 import { useClient } from 'hooks/supabase-swr';
 import useBrowserTitle from 'hooks/useBrowserTitle';
@@ -12,7 +11,7 @@ const Login = () => {
     useBrowserTitle('browserTitle.login');
 
     const redirectTo = useConstant(
-        () => `${window.location.origin}${routeDetails.registration.path}`
+        () => `${window.location.origin}` // `${window.location.origin}${routeDetails.registration.path}`
     );
     const supabaseClient = useClient();
     const loginSettings = getLoginSettings();
