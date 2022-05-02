@@ -1,16 +1,18 @@
 import { Button, Collapse } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { routeDetails } from 'app/Authenticated';
-import NewCaptureHeader from 'components/capture/Header';
-import LogDialog from 'components/capture/LogDialog';
-import NewCaptureSpec from 'components/capture/Spec';
-import useCaptureCreationStore, {
-    CaptureCreationFormStatus,
-    CaptureCreationState,
-} from 'components/capture/Store';
 import { EditorStoreState, useZustandStore } from 'components/editor/Store';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
+import DetailsForm from 'components/shared/foo/DetailsForm';
+import EndpointConfig from 'components/shared/foo/EndpointConfig';
+import FooError from 'components/shared/foo/Error';
+import FooHeader from 'components/shared/foo/Header';
+import LogDialog from 'components/shared/foo/LogDialog';
+import useFooStore, {
+    fooSelectors,
+    FormStatus,
+} from 'components/shared/foo/Store';
 import PageContainer from 'components/shared/PageContainer';
 import { useConfirmationModalContext } from 'context/Confirmation';
 import { useClient, useQuery, useSelect } from 'hooks/supabase-swr';
@@ -24,9 +26,7 @@ import useNotificationStore, {
     Notification,
     NotificationState,
 } from 'stores/NotificationStore';
-import CatalogEditor from '../../shared/CatalogEditor';
-import NewCaptureDetails from '../DetailsForm';
-import NewCaptureError from '../Error';
+import CatalogEditor from '../../shared/foo/CatalogEditor';
 
 export interface ConnectorTag {
     connectors: {
@@ -52,30 +52,6 @@ const FORM_ID = 'newCaptureForm';
 
 // TODO (zustand) - need to get this typing to work... too many repeated types
 const selectors = {
-    page: {
-        captureName: (state: CaptureCreationState) => state.details.data.name,
-        captureImage: (state: CaptureCreationState) => state.details.data.image,
-        setDetails: (state: CaptureCreationState) => state.setDetails,
-        resetState: (state: CaptureCreationState) => state.resetState,
-        hasChanges: (state: CaptureCreationState) => state.hasChanges,
-        errors: (state: CaptureCreationState) => [
-            state.details.errors,
-            state.spec.errors,
-        ],
-        specFormData: (state: CaptureCreationState) => state.spec.data,
-        connectors: (state: CaptureCreationState) => state.connectors,
-    },
-    form: {
-        set: (state: CaptureCreationState) => state.setFormState,
-        reset: (state: CaptureCreationState) => state.resetFormState,
-        saveStatus: (state: CaptureCreationState) => state.formState.saveStatus,
-        status: (state: CaptureCreationState) => state.formState.status,
-        showLogs: (state: CaptureCreationState) => state.formState.showLogs,
-        logToken: (state: CaptureCreationState) => state.formState.logToken,
-        error: (state: CaptureCreationState) => state.formState.error,
-        exitWhenLogsClose: (state: CaptureCreationState) =>
-            state.formState.exitWhenLogsClose,
-    },
     notifications: {
         showNotification: (state: NotificationState) => state.showNotification,
     },
@@ -115,26 +91,22 @@ function CaptureCreate() {
     );
 
     // Form store
-    const captureName = useCaptureCreationStore(selectors.page.captureName);
-    const captureImage = useCaptureCreationStore(selectors.page.captureImage);
-    const [detailErrors, specErrors] = useCaptureCreationStore(
-        selectors.page.errors
-    );
-    const specFormData = useCaptureCreationStore(selectors.page.specFormData);
-    const resetState = useCaptureCreationStore(selectors.page.resetState);
-    const hasChanges = useCaptureCreationStore(selectors.page.hasChanges);
+    const captureName = useFooStore(fooSelectors.captureName);
+    const captureImage = useFooStore(fooSelectors.captureImage);
+    const [detailErrors, specErrors] = useFooStore(fooSelectors.errors);
+    const specFormData = useFooStore(fooSelectors.specFormData);
+    const resetState = useFooStore(fooSelectors.resetState);
+    const hasChanges = useFooStore(fooSelectors.hasChanges);
 
     // Form State
-    const setFormState = useCaptureCreationStore(selectors.form.set);
-    const resetFormState = useCaptureCreationStore(selectors.form.reset);
-    const status = useCaptureCreationStore(selectors.form.status);
-    const showLogs = useCaptureCreationStore(selectors.form.showLogs);
-    const logToken = useCaptureCreationStore(selectors.form.logToken);
-    const formSubmitError = useCaptureCreationStore(selectors.form.error);
-    const saveStatus = useCaptureCreationStore(selectors.form.saveStatus);
-    const exitWhenLogsClose = useCaptureCreationStore(
-        selectors.form.exitWhenLogsClose
-    );
+    const setFormState = useFooStore(fooSelectors.setFormState);
+    const resetFormState = useFooStore(fooSelectors.resetFormState);
+    const formStateStatus = useFooStore(fooSelectors.formStateStatus);
+    const showLogs = useFooStore(fooSelectors.showLogs);
+    const logToken = useFooStore(fooSelectors.logToken);
+    const formSubmitError = useFooStore(fooSelectors.error);
+    const formStateSaveStatus = useFooStore(fooSelectors.formStateSaveStatus);
+    const exitWhenLogsClose = useFooStore(fooSelectors.exitWhenLogsClose);
 
     //Editor state
     const setId = useZustandStore<
@@ -151,7 +123,7 @@ function CaptureCreate() {
         callFailed: (formState: any, subscription?: RealtimeSubscription) => {
             const setFailureState = () => {
                 setFormState({
-                    status: CaptureCreationFormStatus.IDLE,
+                    status: FormStatus.IDLE,
                     exitWhenLogsClose: false,
                     saveStatus: intl.formatMessage({
                         id: 'captureCreation.status.failed',
@@ -175,7 +147,7 @@ function CaptureCreate() {
                 .removeSubscription(subscription)
                 .then(() => {
                     setFormState({
-                        status: CaptureCreationFormStatus.IDLE,
+                        status: FormStatus.IDLE,
                     });
                 })
                 .catch(() => {});
@@ -199,7 +171,7 @@ function CaptureCreate() {
 
     const waitFor = {
         base: (query: any, success: Function, failureTitle: string) => {
-            resetFormState(CaptureCreationFormStatus.TESTING);
+            resetFormState(FormStatus.TESTING);
             const subscription = query
                 .on('*', async (payload: any) => {
                     if (payload.new.job_status.type !== 'queued') {
@@ -231,7 +203,7 @@ function CaptureCreate() {
                 supabaseClient.from(TABLES.PUBLICATIONS),
                 () => {
                     setFormState({
-                        status: CaptureCreationFormStatus.IDLE,
+                        status: FormStatus.IDLE,
                         exitWhenLogsClose: true,
                         saveStatus: intl.formatMessage({
                             id: 'captureCreation.status.success',
@@ -418,14 +390,14 @@ function CaptureCreate() {
             <LogDialog
                 open={showLogs}
                 token={logToken}
-                title={intl.formatMessage({
-                    id: 'captureCreation.save.waitMessage',
-                })}
+                title={
+                    <FormattedMessage id="captureCreation.save.waitMessage" />
+                }
                 actionComponent={
                     <>
-                        {saveStatus}
+                        {formStateSaveStatus}
                         <Button
-                            disabled={status !== CaptureCreationFormStatus.IDLE}
+                            disabled={formStateStatus !== FormStatus.IDLE}
                             onClick={handlers.closeLogs}
                         >
                             <FormattedMessage id="cta.close" />
@@ -434,15 +406,16 @@ function CaptureCreate() {
                 }
             />
 
-            <NewCaptureHeader
+            <FooHeader
                 close={handlers.cancel}
                 test={handlers.test}
                 testDisabled={
-                    status !== CaptureCreationFormStatus.IDLE || !hasConnectors
+                    formStateStatus !== FormStatus.IDLE || !hasConnectors
                 }
                 save={handlers.saveAndPublish}
-                saveDisabled={status !== CaptureCreationFormStatus.IDLE || !id}
+                saveDisabled={formStateStatus !== FormStatus.IDLE || !id}
                 formId={FORM_ID}
+                heading={<FormattedMessage id="captureCreation.heading" />}
             />
 
             {connectorTagsError ? (
@@ -451,7 +424,7 @@ function CaptureCreate() {
                 <>
                     <Collapse in={formSubmitError !== null}>
                         {formSubmitError && (
-                            <NewCaptureError
+                            <FooError
                                 title={formSubmitError.title}
                                 error={formSubmitError.error}
                                 logToken={logToken}
@@ -462,15 +435,16 @@ function CaptureCreate() {
                     <form id={FORM_ID}>
                         {connectorTags ? (
                             <ErrorBoundryWrapper>
-                                <NewCaptureDetails
+                                <DetailsForm
                                     connectorTags={connectorTags.data}
+                                    messagePrefix="captureCreation"
                                 />
                             </ErrorBoundryWrapper>
                         ) : null}
 
                         {captureImage?.id ? (
                             <ErrorBoundryWrapper>
-                                <NewCaptureSpec
+                                <EndpointConfig
                                     connectorImage={captureImage.id}
                                 />
                             </ErrorBoundryWrapper>

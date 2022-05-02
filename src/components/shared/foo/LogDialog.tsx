@@ -6,19 +6,24 @@ import {
 } from '@mui/material';
 import Logs from 'components/Logs';
 import { ReactNode } from 'react';
-import { FormattedMessage } from 'react-intl';
 
 interface Props {
     open: boolean;
     token: string | null;
-    title: string;
+    title: ReactNode;
     defaultMessage?: string;
     actionComponent: ReactNode;
 }
 
 const logHeight = 200;
 
-function LogDialog({ open, token, defaultMessage, actionComponent }: Props) {
+function LogDialog({
+    open,
+    token,
+    defaultMessage,
+    actionComponent,
+    title,
+}: Props) {
     return (
         <Dialog
             open={open}
@@ -26,9 +31,7 @@ function LogDialog({ open, token, defaultMessage, actionComponent }: Props) {
             fullWidth
             aria-labelledby="logs-dialog-title"
         >
-            <DialogTitle id="logs-dialog-title">
-                <FormattedMessage id="captureCreation.save.waitMessage" />
-            </DialogTitle>
+            <DialogTitle id="logs-dialog-title">{title}</DialogTitle>
             <DialogContent
                 sx={{
                     height: logHeight + 25,

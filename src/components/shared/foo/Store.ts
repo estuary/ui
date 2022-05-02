@@ -6,8 +6,7 @@ import { devtoolsOptions } from 'utils/store-utils';
 import create from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-export interface CaptureCreationDetails
-    extends Pick<JsonFormsCore, 'data' | 'errors'> {
+export interface Details extends Pick<JsonFormsCore, 'data' | 'errors'> {
     data: {
         name: string;
         image?: {
@@ -17,21 +16,21 @@ export interface CaptureCreationDetails
     };
 }
 
-interface CaptureCreationSpec extends Pick<JsonFormsCore, 'data' | 'errors'> {
+interface EndpointConfig extends Pick<JsonFormsCore, 'data' | 'errors'> {
     data: {
         [key: string]: any;
     };
 }
 
-export enum CaptureCreationFormStatus {
+export enum FormStatus {
     SAVING = 'saving',
     TESTING = 'testing',
     IDLE = 'idle',
 }
 
-interface CaptureCreationFormState {
-    showValidation: boolean;
-    status: CaptureCreationFormStatus;
+interface FormState {
+    displayValidation: boolean;
+    status: FormStatus;
     showLogs: boolean;
     saveStatus: string;
     exitWhenLogsClose: boolean;
@@ -42,18 +41,18 @@ interface CaptureCreationFormState {
     } | null;
 }
 
-export interface CaptureCreationState {
+export interface FooState {
     //Details
-    details: CaptureCreationDetails;
-    setDetails: (details: CaptureCreationDetails) => void;
+    details: Details;
+    setDetails: (details: Details) => void;
 
     //Spec
-    spec: CaptureCreationSpec;
-    setSpec: (spec: CaptureCreationSpec) => void;
+    spec: EndpointConfig;
+    setSpec: (spec: EndpointConfig) => void;
 
-    formState: CaptureCreationFormState;
-    setFormState: (data: Partial<CaptureCreationFormState>) => void;
-    resetFormState: (status: CaptureCreationFormStatus) => void;
+    formState: FormState;
+    setFormState: (data: Partial<FormState>) => void;
+    resetFormState: (status: FormStatus) => void;
 
     //Misc
     connectors: { [key: string]: any }[];
@@ -63,7 +62,7 @@ export interface CaptureCreationState {
 }
 
 const getInitialStateData = (): Pick<
-    CaptureCreationState,
+    FooState,
     'details' | 'spec' | 'connectors' | 'formState'
 > => {
     return {
@@ -83,8 +82,8 @@ const getInitialStateData = (): Pick<
         },
         connectors: [],
         formState: {
-            showValidation: false,
-            status: CaptureCreationFormStatus.IDLE,
+            displayValidation: false,
+            status: FormStatus.IDLE,
             showLogs: false,
             exitWhenLogsClose: false,
             logToken: null,
@@ -94,7 +93,7 @@ const getInitialStateData = (): Pick<
     };
 };
 
-const useCaptureCreationStore = create<CaptureCreationState>()(
+const useFooStore = create<FooState>()(
     devtools(
         (set, get) => ({
             ...getInitialStateData(),
@@ -123,7 +122,7 @@ const useCaptureCreationStore = create<CaptureCreationState>()(
                         state.spec = spec;
                     }),
                     false,
-                    'Spec changed'
+                    'Endpoint config changed'
                 );
             },
 
@@ -182,8 +181,33 @@ const useCaptureCreationStore = create<CaptureCreationState>()(
                 set(getInitialStateData(), false, 'Resetting State');
             },
         }),
-        devtoolsOptions('capture-creation-state')
+        devtoolsOptions('entity-foo-state')
     )
 );
 
-export default useCaptureCreationStore;
+export default useFooStore;
+
+type Selectors = {
+    [k: string]: (state: FooState) => any;
+};
+export const fooSelectors: Selectors = {
+    captureName: (state) => state.details.data.name,
+    captureImage: (state) => state.details.data.image,
+    setDetails: (state) => state.setDetails,
+    resetState: (state) => state.resetState,
+    hasChanges: (state) => state.hasChanges,
+    errors: (state) => [state.details.errors, state.spec.errors],
+    specFormData: (state) => state.spec.data,
+    connectors: (state) => state.connectors,
+    setFormState: (state) => state.setFormState,
+    resetFormState: (state) => state.resetFormState,
+    formStateSaveStatus: (state) => state.formState.saveStatus,
+    formStateStatus: (state) => state.formState.status,
+    showLogs: (state) => state.formState.showLogs,
+    logToken: (state) => state.formState.logToken,
+    error: (state) => state.formState.error,
+    exitWhenLogsClose: (state) => state.formState.exitWhenLogsClose,
+    setSpec: (state) => state.setSpec,
+    displayValidation: (state) => state.formState.displayValidation,
+    status: (state) => state.formState.status,
+};

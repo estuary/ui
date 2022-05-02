@@ -62,6 +62,10 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'capturesource.label': `Source type`,
     'capturesource.fetch.failed': `Failed to fetch source types`,
     'username.label': `User Name`,
+    'entityName.label': `Name`,
+    'entityName.description': `Name of the entity - must be unique. (ex: acemCo/marketing_data)`,
+    'connector.label': `Name`,
+    'connector.description': `The connector you want to use to connect to your endpoint.`,
 
     // Login Page Stuff
     'login.main.message': `When running locally you can login with whatever name you want.`,
@@ -184,17 +188,16 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
     'login.oidc.message': `Please use one of the providers below to continue.`,
 };
 
+const Foo: ResolvedIntlConfig['messages'] = {
+    'foo.ctas.discover': `Test Config`,
+    'foo.ctas.discoverAgain': `Regenerate Catalog`,
+};
+
 const CaptureCreate: ResolvedIntlConfig['messages'] = {
-    'captureCreation.ctas.discover': `Test Config`,
-    'captureCreation.ctas.discoverAgain': `Regenerate Catalog`,
     'captureCreation.heading': `${RouteTitles['routeTitle.captureCreate']}`,
     'captureCreation.instructions': `To get started please provide a unique name and the source type of the Capture you want to create. Once you've filled out the source details you can click "Test Capture" down below to test the connection.`,
     'captureCreation.missingConnectors': `No connectors installed. You must install a source connector before being able to create a capture.`,
     'captureCreation.tenant.label': `Tenant`,
-    'captureCreation.name.label': `Name`,
-    'captureCreation.name.description': `Name of the capture - must be unique. (ex: acemCo/marketing_data)`,
-    'captureCreation.image.label': `Source`,
-    'captureCreation.image.description': `The connector you want to use to connect to your endpoint.`,
     'captureCreation.config.source.doclink': `Connector Docs`,
     'captureCreation.config.source.homepage': `Home Page`,
     'captureCreation.save.failed': `Capture creation failed. Please see below for details:`,
@@ -226,12 +229,8 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreation.editor.default': `Before you can edit the Materialization Catalog you need to fill out the connection config section`,
     'materializationCreation.finalReview.instructions': `Look over the catalog configuration that was generated. If you want to edit anything, you can do that directly in the editor. You can download the file for your local machine when you're ready.`,
     'materializationCreation.heading': `New Materialization`,
-    'materializationCreation.image.description': `The connector you want to use to connect to your endpoint.`,
-    'materializationCreation.image.label': `Source`,
     'materializationCreation.instructions': `To get started, please provide a unique name and select an endpoint. Next, configure your endpoint and choose the collections you want to materialize. The generated YAML can be reviewed before saving.`,
     'materializationCreation.missingConnectors': `No connectors installed. A source connector must be installed before a materialization can be created.`,
-    'materializationCreation.name.description': `Name of the materialization - must be unique. (ex: acemCo/marketing_data)`,
-    'materializationCreation.name.label': `Name`,
     'materializationCreation.save.failure': `Materialization creation failed. Please see below for details:`,
     'materializationCreation.save.failure.errorTitle': `Materialization Save Failed`,
     'materializationCreation.save.inProgress': `Please wait while we test, save, and publish your materialization.`,
@@ -253,6 +252,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...AdminPage,
     ...Error,
     ...LoginPage,
+    ...Foo,
     ...Captures,
     ...CaptureCreate,
     ...CaptureDetails,

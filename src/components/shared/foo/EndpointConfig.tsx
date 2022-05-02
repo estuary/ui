@@ -1,7 +1,7 @@
 import { Divider, Paper, Typography } from '@mui/material';
-import NewCaptureSpecForm from 'components/capture/SpecForm';
-import NewCaptureSpecFormHeader from 'components/capture/SpecFormHeader';
+import EndpointConfigHeader from 'components/materialization/EndpointConfigHeader';
 import Error from 'components/shared/Error';
+import EndpointConfigForm from 'components/shared/foo/EndpointConfigForm';
 import { useQuery, useSelectSingle } from 'hooks/supabase-swr';
 import { TABLES } from 'services/supabase';
 
@@ -26,7 +26,7 @@ const CONNECTOR_TAGS_QUERY = `
     documentation_url
 `;
 
-function NewCaptureSpec({ connectorImage }: Props) {
+function EndpointConfig({ connectorImage }: Props) {
     const tagsQuery = useQuery<ConnectorTag>(
         TABLES.CONNECTOR_TAGS,
         {
@@ -45,12 +45,12 @@ function NewCaptureSpec({ connectorImage }: Props) {
             <>
                 <Typography variant="h5">Connection Config</Typography>
                 <Paper sx={{ width: '100%' }} variant="outlined">
-                    <NewCaptureSpecFormHeader
+                    <EndpointConfigHeader
                         name={connector.data.connectors.image_name}
                         docsPath={connector.data.documentation_url}
                     />
                     <Divider />
-                    <NewCaptureSpecForm
+                    <EndpointConfigForm
                         endpointSchema={connector.data.endpoint_spec_schema}
                     />
                 </Paper>
@@ -61,4 +61,4 @@ function NewCaptureSpec({ connectorImage }: Props) {
     }
 }
 
-export default NewCaptureSpec;
+export default EndpointConfig;

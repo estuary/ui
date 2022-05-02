@@ -13,9 +13,9 @@ import useCreationStore, {
     CreationFormStatuses,
     CreationState,
 } from 'components/materialization/Store';
-import CatalogEditor from 'components/shared/CatalogEditor';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
+import CatalogEditor from 'components/shared/foo/CatalogEditor';
 import PageContainer from 'components/shared/PageContainer';
 import { useConfirmationModalContext } from 'context/Confirmation';
 import { useClient, useQuery, useSelect } from 'hooks/supabase-swr';

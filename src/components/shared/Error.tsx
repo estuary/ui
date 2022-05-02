@@ -12,7 +12,7 @@ import {
     Typography,
 } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
-import React from 'react';
+import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 type Props = {
@@ -21,7 +21,7 @@ type Props = {
 };
 
 function Error({ error, hideTitle }: Props) {
-    const [expanded, setExpanded] = React.useState(false);
+    const [expanded, setExpanded] = useState(false);
 
     const handleExpandClick = () => {
         setExpanded(!expanded);

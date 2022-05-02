@@ -1,6 +1,7 @@
 import { Button, Stack, Toolbar, Typography } from '@mui/material';
 import { EditorStoreState, useZustandStore } from 'components/editor/Store';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
@@ -10,15 +11,17 @@ interface Props {
     save: (event: any) => void;
     saveDisabled: boolean;
     formId: string;
+    heading: ReactNode;
 }
 
-function NewCaptureHeader({
+function FooHeader({
     close,
     test,
     testDisabled,
     save,
     saveDisabled,
     formId,
+    heading,
 }: Props) {
     const id = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
@@ -28,7 +31,7 @@ function NewCaptureHeader({
     return (
         <Toolbar>
             <Typography variant="h6" noWrap>
-                <FormattedMessage id="captureCreation.heading" />
+                {heading}
             </Typography>
             <Stack
                 direction="row"
@@ -51,11 +54,7 @@ function NewCaptureHeader({
                     disableElevation
                 >
                     <FormattedMessage
-                        id={
-                            id
-                                ? 'captureCreation.ctas.discoverAgain'
-                                : 'captureCreation.ctas.discover'
-                        }
+                        id={id ? 'foo.ctas.discoverAgain' : 'foo.ctas.discover'}
                     />
                 </Button>
 
@@ -73,4 +72,4 @@ function NewCaptureHeader({
     );
 }
 
-export default NewCaptureHeader;
+export default FooHeader;

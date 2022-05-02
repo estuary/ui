@@ -6,7 +6,7 @@ interface Props {
     docsPath?: string;
 }
 
-function NewCaptureSpecFormHeader({ name, docsPath }: Props) {
+function EndpointConfigHeader({ name, docsPath }: Props) {
     if (name) {
         return (
             <AppBar position="relative" elevation={0} color="default">
@@ -31,4 +31,4 @@ function NewCaptureSpecFormHeader({ name, docsPath }: Props) {
     }
 }
 
-export default NewCaptureSpecFormHeader;
+export default EndpointConfigHeader;

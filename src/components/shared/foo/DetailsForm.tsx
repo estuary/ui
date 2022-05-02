@@ -3,10 +3,7 @@ import { JsonForms } from '@jsonforms/react';
 import { Alert, Stack, Typography } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
 import { ConnectorTag } from 'components/capture/create';
-import useCaptureCreationStore, {
-    CaptureCreationFormStatus,
-    CaptureCreationState,
-} from 'components/capture/Store';
+import useFooState, { FooState, FormStatus } from 'components/shared/foo/Store';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
@@ -20,29 +17,28 @@ import { getConnectorName } from 'utils/misc-utils';
 
 interface Props {
     connectorTags: ConnectorTag[];
+    messagePrefix: 'materializationCreation' | 'captureCreation';
 }
 
-const stateSelectors: StoreSelector<CaptureCreationState> = {
+const stateSelectors: StoreSelector<FooState> = {
     formData: (state) => state.details.data,
     setDetails: (state) => state.setDetails,
     setConnectors: (state) => state.setConnectors,
-    showValidation: (state) => state.formState.showValidation,
+    showValidation: (state) => state.formState.displayValidation,
     status: (state) => state.formState.status,
 };
 
-function NewCaptureDetails({ connectorTags }: Props) {
+function DetailsForm({ connectorTags, messagePrefix }: Props) {
     const intl = useIntl();
     const [searchParams] = useSearchParams();
     const connectorID = searchParams.get(
         routeDetails.capture.create.params.connectorID
     );
 
-    const formData = useCaptureCreationStore(stateSelectors.formData);
-    const setDetails = useCaptureCreationStore(stateSelectors.setDetails);
-    const displayValidation = useCaptureCreationStore(
-        stateSelectors.showValidation
-    );
-    const status = useCaptureCreationStore(stateSelectors.status);
+    const formData = useFooState(stateSelectors.formData);
+    const setDetails = useFooState(stateSelectors.setDetails);
+    const displayValidation = useFooState(stateSelectors.showValidation);
+    const status = useFooState(stateSelectors.status);
 
     useEffect(() => {
         if (connectorID) {
@@ -63,7 +59,7 @@ function NewCaptureDetails({ connectorTags }: Props) {
             properties: {
                 image: {
                     description: intl.formatMessage({
-                        id: 'captureCreation.image.description',
+                        id: 'connector.description',
                     }),
                     oneOf:
                         connectorTags.length > 0
@@ -84,7 +80,7 @@ function NewCaptureDetails({ connectorTags }: Props) {
                 },
                 name: {
                     description: intl.formatMessage({
-                        id: 'captureCreation.name.description',
+                        id: 'entityName.description',
                     }),
                     maxLength: 1000,
                     minLength: 3,
@@ -103,14 +99,14 @@ function NewCaptureDetails({ connectorTags }: Props) {
                 elements: [
                     {
                         label: intl.formatMessage({
-                            id: 'captureCreation.name.label',
+                            id: 'entityName.label',
                         }),
                         scope: '#/properties/name',
                         type: 'Control',
                     },
                     {
                         label: intl.formatMessage({
-                            id: 'captureCreation.image.label',
+                            id: 'entityName.label',
                         }),
                         scope: '#/properties/image',
                         type: 'Control',
@@ -126,7 +122,7 @@ function NewCaptureDetails({ connectorTags }: Props) {
         <>
             <Typography variant="h5">Capture Details</Typography>
 
-            <FormattedMessage id="captureCreation.instructions" />
+            <FormattedMessage id={`${messagePrefix}.instructions`} />
 
             <Stack direction="row" spacing={2}>
                 {schema.properties.image.oneOf.length > 0 ? (
@@ -137,13 +133,15 @@ function NewCaptureDetails({ connectorTags }: Props) {
                         renderers={defaultRenderers}
                         cells={materialCells}
                         config={defaultOptions}
-                        readonly={status !== CaptureCreationFormStatus.IDLE}
+                        readonly={status !== FormStatus.IDLE}
                         validationMode={showValidation(displayValidation)}
                         onChange={setDetails}
                     />
                 ) : (
                     <Alert severity="warning">
-                        <FormattedMessage id="captureCreation.missingConnectors" />
+                        <FormattedMessage
+                            id={`${messagePrefix}.missingConnectors`}
+                        />
                     </Alert>
                 )}
             </Stack>
@@ -151,4 +149,4 @@ function NewCaptureDetails({ connectorTags }: Props) {
     );
 }
 
-export default NewCaptureDetails;
+export default DetailsForm;
