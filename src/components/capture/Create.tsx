@@ -4,11 +4,13 @@ import { routeDetails } from 'app/Authenticated';
 import { EditorStoreState, useZustandStore } from 'components/editor/Store';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
+import CatalogEditor from 'components/shared/foo/CatalogEditor';
 import DetailsForm from 'components/shared/foo/DetailsForm';
 import EndpointConfig from 'components/shared/foo/EndpointConfig';
 import FooError from 'components/shared/foo/Error';
 import FooHeader from 'components/shared/foo/Header';
 import LogDialog from 'components/shared/foo/LogDialog';
+import { ConnectorTag, CONNECTOR_TAG_QUERY } from 'components/shared/foo/query';
 import useFooStore, {
     fooSelectors,
     FormStatus,
@@ -26,31 +28,9 @@ import useNotificationStore, {
     Notification,
     NotificationState,
 } from 'stores/NotificationStore';
-import CatalogEditor from '../../shared/foo/CatalogEditor';
 
-export interface ConnectorTag {
-    connectors: {
-        detail: string;
-        image_name: string;
-        open_graph: object;
-    };
-    id: string;
-    connector_id: string;
-    image_tag: string;
-    protocol: string;
-    title: string;
-}
-const CONNECTOR_TAG_QUERY = `
-    id,
-    connector_id,
-    image_tag,
-    protocol,
-    endpoint_spec_schema->>title,
-    connectors(detail, image_name, open_graph)
-`;
 const FORM_ID = 'newCaptureForm';
 
-// TODO (zustand) - need to get this typing to work... too many repeated types
 const selectors = {
     notifications: {
         showNotification: (state: NotificationState) => state.showNotification,

@@ -1,6 +1,6 @@
 import { Collections } from '@mui/icons-material';
 import AppLayout from 'AppLayout';
-import CaptureCreate from 'components/capture/create';
+import CaptureCreate from 'components/capture/Create';
 import CaptureDetails from 'components/capture/details';
 import { ZustandProvider } from 'components/editor/Store';
 import NewMaterialization from 'components/materialization/create';

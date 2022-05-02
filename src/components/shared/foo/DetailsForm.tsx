@@ -2,7 +2,7 @@ import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Alert, Stack, Typography } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
-import { ConnectorTag } from 'components/capture/create';
+import { ConnectorTag } from 'components/shared/foo/query';
 import useFooState, { FooState, FormStatus } from 'components/shared/foo/Store';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
