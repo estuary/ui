@@ -12,6 +12,8 @@ interface Props {
     token: string | null;
     height?: number;
     defaultMessage?: string;
+    disableIntervalFetching?: boolean;
+    fetchAll?: boolean;
 }
 
 const MAX_EMPTY_CALLS = 120; // about two minutes
@@ -28,7 +30,13 @@ const generateLogLine = (logData: any) => {
     return mergedText;
 };
 
-function Logs({ token, defaultMessage, height }: Props) {
+function Logs({
+    token,
+    defaultMessage,
+    height,
+    disableIntervalFetching,
+    fetchAll,
+}: Props) {
     const theme = useTheme();
     const supabaseClient = useClient();
     const intl = useIntl();
@@ -37,7 +45,11 @@ function Logs({ token, defaultMessage, height }: Props) {
         null
     );
 
-    const [emptyResponses, setEmptyResponses] = useState(0);
+    const [emptyResponses, setEmptyResponses] = useState(
+        disableIntervalFetching ? MAX_EMPTY_CALLS : 0
+    );
+    console.log(emptyResponses);
+
     const [offset, setOffset] = useState(0);
     const [logs, setLogs] = useState<string[]>([
         defaultMessage ??
@@ -45,6 +57,19 @@ function Logs({ token, defaultMessage, height }: Props) {
                 id: 'logs.default',
             }),
     ]);
+
+    const fetchLogs = async () => {
+        const queryParams = {
+            bearer_token: token,
+        };
+        if (fetchAll) {
+            return supabaseClient.rpc(RPCS.VIEW_LOGS, queryParams);
+        } else {
+            return supabaseClient
+                .rpc(RPCS.VIEW_LOGS, queryParams)
+                .range(offset, offset + 10);
+        }
+    };
 
     const handlers = {
         change: () => {
@@ -64,11 +89,7 @@ function Logs({ token, defaultMessage, height }: Props) {
 
     useInterval(
         async () => {
-            const { data: viewLogsResponse } = await supabaseClient
-                .rpc(RPCS.VIEW_LOGS, {
-                    bearer_token: token,
-                })
-                .range(offset, offset + 10);
+            const { data: viewLogsResponse } = await fetchLogs();
 
             if (viewLogsResponse && viewLogsResponse.length > 0) {
                 const logsReduced = viewLogsResponse.map((logData) => {
@@ -76,6 +97,9 @@ function Logs({ token, defaultMessage, height }: Props) {
                 });
                 setOffset(offset + viewLogsResponse.length);
                 setLogs(logs.concat(logsReduced));
+                if (disableIntervalFetching) {
+                    setEmptyResponses(emptyResponses + 1);
+                }
             } else {
                 setEmptyResponses(emptyResponses + 1);
             }

@@ -211,6 +211,10 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreation.status.success': `Success!`,
 };
 
+const CaptureDetails: ResolvedIntlConfig['messages'] = {
+    'captureDetails.logs.title': `Logs`,
+};
+
 const Captures: ResolvedIntlConfig['messages'] = {
     'capturesTable.title': `Your Captures`,
     'capturesTable.detailsCTA': `Details`,
@@ -251,6 +255,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...LoginPage,
     ...Captures,
     ...CaptureCreate,
+    ...CaptureDetails,
     ...MaterializationCreate,
 };
 

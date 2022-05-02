@@ -1,32 +1,47 @@
+import { Typography } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
 import LiveSpecEditor from 'components/editor/LiveSpec';
 import { EditorStoreState, useZustandStore } from 'components/editor/Store';
+import Logs from 'components/Logs';
 import PageContainer from 'components/shared/PageContainer';
-import { useQuery, useSelect } from 'hooks/supabase-swr';
+import { useQuery, useSelectSingle } from 'hooks/supabase-swr';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { useEffect } from 'react';
+import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 import { TABLES } from 'services/supabase';
 
 export interface LiveSpecQuery {
     id: string;
-    catalog_name: string;
-    last_pub_id: string;
-    spec: string;
-    spec_type: string;
-    connector_image_name: string;
-    connector_image_tag: string;
+    job_status: {
+        type: string;
+    };
+    logs_token: string;
+    live_specs: {
+        id: string;
+        catalog_name: string;
+        last_pub_id: string;
+        spec: any;
+        spec_type: string;
+        connector_image_name: string;
+        connector_image_tag: string;
+    }[];
 }
 
-const LIVE_SPECS_QUERY = `
-    id, 
-    catalog_name,
-    last_pub_id,
-    spec,
-    spec_type,
-    connector_image_name,
-    connector_image_tag
+const QUERY = `
+    id,
+    job_status,
+    logs_token,
+    live_specs (
+        id, 
+        catalog_name,
+        last_pub_id,
+        spec,
+        spec_type,
+        connector_image_name,
+        connector_image_tag
+    )
 `;
 
 function CaptureDetails() {
@@ -38,15 +53,15 @@ function CaptureDetails() {
     if (!pubID) navigate(routeDetails.dashboard.path);
 
     // Supabase stuff
-    const liveSpecQuery = useQuery<LiveSpecQuery>(
-        TABLES.LIVE_SPECS,
+    const query = useQuery<LiveSpecQuery>(
+        TABLES.PUBLICATIONS,
         {
-            columns: LIVE_SPECS_QUERY,
-            filter: (query) => query.eq('last_pub_id', pubID as string),
+            columns: QUERY,
+            filter: (filterBuilder) => filterBuilder.eq('id', pubID as string),
         },
         []
     );
-    const { data: liveSpecs } = useSelect(liveSpecQuery);
+    const { data: liveSpecs } = useSelectSingle<LiveSpecQuery>(query);
 
     const setSpecs = useZustandStore<
         EditorStoreState<LiveSpecQuery>,
@@ -64,13 +79,25 @@ function CaptureDetails() {
 
     useEffect(() => {
         if (liveSpecs?.data) {
-            setSpecs(liveSpecs.data);
+            setSpecs(liveSpecs.data.live_specs);
         }
     }, [liveSpecs, setSpecs]);
 
     return (
         <PageContainer>
             <LiveSpecEditor />
+            {liveSpecs?.data.logs_token ? (
+                <>
+                    <Typography variant="h5">
+                        <FormattedMessage id="captureDetails.logs.title" />
+                    </Typography>
+                    <Logs
+                        token={liveSpecs.data.logs_token}
+                        fetchAll
+                        disableIntervalFetching
+                    />
+                </>
+            ) : null}
         </PageContainer>
     );
 }
