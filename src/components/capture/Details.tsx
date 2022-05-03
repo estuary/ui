@@ -1,15 +1,13 @@
-import { Typography } from '@mui/material';
-import { routeDetails } from 'app/Authenticated';
+import { Grid, Typography } from '@mui/material';
 import LiveSpecEditor from 'components/editor/LiveSpec';
-import { EditorStoreState, useZustandStore } from 'components/editor/Store';
+import { EditorStoreState } from 'components/editor/Store';
 import Logs from 'components/Logs';
-import PageContainer from 'components/shared/PageContainer';
+import Error from 'components/shared/Error';
 import { useQuery, useSelectSingle } from 'hooks/supabase-swr';
 import useBrowserTitle from 'hooks/useBrowserTitle';
+import { useZustandStore } from 'hooks/useZustand';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useNavigate } from 'react-router';
-import { useSearchParams } from 'react-router-dom';
 import { TABLES } from 'services/supabase';
 
 export interface LiveSpecQuery {
@@ -44,24 +42,23 @@ const QUERY = `
     )
 `;
 
-function CaptureDetails() {
-    useBrowserTitle('browserTitle.captureDetails');
+interface Props {
+    lastPubId: string;
+}
 
-    const navigate = useNavigate();
-    const [searchParams] = useSearchParams();
-    const pubID = searchParams.get(routeDetails.capture.details.params.pubID);
-    if (!pubID) navigate(routeDetails.dashboard.path);
+function CaptureDetails({ lastPubId }: Props) {
+    useBrowserTitle('browserTitle.captureDetails');
 
     // Supabase stuff
     const query = useQuery<LiveSpecQuery>(
         TABLES.PUBLICATIONS,
         {
             columns: QUERY,
-            filter: (filterBuilder) => filterBuilder.eq('id', pubID as string),
+            filter: (filterBuilder) => filterBuilder.eq('id', lastPubId),
         },
         []
     );
-    const { data: liveSpecs } = useSelectSingle<LiveSpecQuery>(query);
+    const { data: liveSpecs, error } = useSelectSingle<LiveSpecQuery>(query);
 
     const setSpecs = useZustandStore<
         EditorStoreState<LiveSpecQuery>,
@@ -74,8 +71,8 @@ function CaptureDetails() {
     >((state) => state.setId);
 
     useEffect(() => {
-        setId(pubID);
-    }, [pubID, setId]);
+        setId(lastPubId);
+    }, [lastPubId, setId]);
 
     useEffect(() => {
         if (liveSpecs?.data) {
@@ -83,23 +80,29 @@ function CaptureDetails() {
         }
     }, [liveSpecs, setSpecs]);
 
-    return (
-        <PageContainer>
-            <LiveSpecEditor />
-            {liveSpecs?.data.logs_token ? (
-                <>
-                    <Typography variant="h5">
-                        <FormattedMessage id="captureDetails.logs.title" />
-                    </Typography>
-                    <Logs
-                        token={liveSpecs.data.logs_token}
-                        fetchAll
-                        disableIntervalFetching
-                    />
-                </>
-            ) : null}
-        </PageContainer>
-    );
+    if (error) {
+        return <Error error={error} />;
+    } else {
+        return (
+            <Grid container spacing={2}>
+                <Grid item xs={6}>
+                    <LiveSpecEditor />
+                </Grid>
+                {liveSpecs?.data.logs_token ? (
+                    <Grid item xs={6}>
+                        <Typography variant="h5">
+                            <FormattedMessage id="captureDetails.logs.title" />
+                        </Typography>
+                        <Logs
+                            token={liveSpecs.data.logs_token}
+                            fetchAll
+                            disableIntervalFetching
+                        />
+                    </Grid>
+                ) : null}
+            </Grid>
+        );
+    }
 }
 
 export default CaptureDetails;

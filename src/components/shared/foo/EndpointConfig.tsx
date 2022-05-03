@@ -1,7 +1,7 @@
-import { Box, Divider, Paper, Typography } from '@mui/material';
-import EndpointConfigForm from 'components/materialization/EndpointConfigForm';
-import EndpointConfigHeader from 'components/materialization/EndpointConfigHeader';
+import { Divider, Paper, Typography } from '@mui/material';
 import Error from 'components/shared/Error';
+import EndpointConfigForm from 'components/shared/foo/EndpointConfigForm';
+import EndpointConfigHeader from 'components/shared/foo/EndpointConfigHeader';
 import { useQuery, useSelectSingle } from 'hooks/supabase-swr';
 import { TABLES } from 'services/supabase';
 
@@ -17,7 +17,6 @@ interface ConnectorTag {
 interface Props {
     connectorImage: string;
 }
-
 const CONNECTOR_TAGS_QUERY = `
     connectors(
         image_name
@@ -27,7 +26,7 @@ const CONNECTOR_TAGS_QUERY = `
     documentation_url
 `;
 
-function NewMaterializationSpec({ connectorImage }: Props) {
+function EndpointConfig({ connectorImage }: Props) {
     const tagsQuery = useQuery<ConnectorTag>(
         TABLES.CONNECTOR_TAGS,
         {
@@ -43,28 +42,23 @@ function NewMaterializationSpec({ connectorImage }: Props) {
         return <Error error={error} />;
     } else if (connector?.data) {
         return (
-            <Box sx={{ mb: 5 }}>
-                <Typography variant="h5" sx={{ mb: 2 }}>
-                    Connection Config
-                </Typography>
-
-                <Paper variant="outlined" sx={{ width: '100%' }}>
+            <>
+                <Typography variant="h5">Connection Config</Typography>
+                <Paper sx={{ width: '100%' }} variant="outlined">
                     <EndpointConfigHeader
                         name={connector.data.connectors.image_name}
                         docsPath={connector.data.documentation_url}
                     />
-
                     <Divider />
-
                     <EndpointConfigForm
                         endpointSchema={connector.data.endpoint_spec_schema}
                     />
                 </Paper>
-            </Box>
+            </>
         );
     } else {
         return null;
     }
 }
 
-export default NewMaterializationSpec;
+export default EndpointConfig;

@@ -6,8 +6,7 @@ import { devtoolsOptions } from 'utils/store-utils';
 import create from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-export interface CaptureCreationDetails
-    extends Pick<JsonFormsCore, 'data' | 'errors'> {
+export interface Details extends Pick<JsonFormsCore, 'data' | 'errors'> {
     data: {
         name: string;
         image?: {
@@ -17,21 +16,22 @@ export interface CaptureCreationDetails
     };
 }
 
-interface CaptureCreationSpec extends Pick<JsonFormsCore, 'data' | 'errors'> {
+interface EndpointConfig extends Pick<JsonFormsCore, 'data' | 'errors'> {
     data: {
         [key: string]: any;
     };
 }
 
-export enum CaptureCreationFormStatus {
+export enum FormStatus {
     SAVING = 'saving',
     TESTING = 'testing',
     IDLE = 'idle',
+    GENERATING_PREVIEW = 'Generating Preview',
 }
 
-interface CaptureCreationFormState {
-    showValidation: boolean;
-    status: CaptureCreationFormStatus;
+interface FormState {
+    displayValidation: boolean;
+    status: FormStatus;
     showLogs: boolean;
     saveStatus: string;
     exitWhenLogsClose: boolean;
@@ -42,18 +42,18 @@ interface CaptureCreationFormState {
     } | null;
 }
 
-export interface CaptureCreationState {
+export interface EntityStoreState {
     //Details
-    details: CaptureCreationDetails;
-    setDetails: (details: CaptureCreationDetails) => void;
+    details: Details;
+    setDetails: (details: Details) => void;
 
     //Spec
-    spec: CaptureCreationSpec;
-    setSpec: (spec: CaptureCreationSpec) => void;
+    spec: EndpointConfig;
+    setSpec: (spec: EndpointConfig) => void;
 
-    formState: CaptureCreationFormState;
-    setFormState: (data: Partial<CaptureCreationFormState>) => void;
-    resetFormState: (status: CaptureCreationFormStatus) => void;
+    formState: FormState;
+    setFormState: (data: Partial<FormState>) => void;
+    resetFormState: (status: FormStatus) => void;
 
     //Misc
     connectors: { [key: string]: any }[];
@@ -63,7 +63,7 @@ export interface CaptureCreationState {
 }
 
 const getInitialStateData = (): Pick<
-    CaptureCreationState,
+    EntityStoreState,
     'details' | 'spec' | 'connectors' | 'formState'
 > => {
     return {
@@ -83,8 +83,8 @@ const getInitialStateData = (): Pick<
         },
         connectors: [],
         formState: {
-            showValidation: false,
-            status: CaptureCreationFormStatus.IDLE,
+            displayValidation: false,
+            status: FormStatus.IDLE,
             showLogs: false,
             exitWhenLogsClose: false,
             logToken: null,
@@ -94,7 +94,7 @@ const getInitialStateData = (): Pick<
     };
 };
 
-const useCaptureCreationStore = create<CaptureCreationState>()(
+const useEntityStore = create<EntityStoreState>()(
     devtools(
         (set, get) => ({
             ...getInitialStateData(),
@@ -123,7 +123,7 @@ const useCaptureCreationStore = create<CaptureCreationState>()(
                         state.spec = spec;
                     }),
                     false,
-                    'Spec changed'
+                    'Endpoint config changed'
                 );
             },
 
@@ -182,8 +182,36 @@ const useCaptureCreationStore = create<CaptureCreationState>()(
                 set(getInitialStateData(), false, 'Resetting State');
             },
         }),
-        devtoolsOptions('capture-creation-state')
+        devtoolsOptions('entity-foo-state')
     )
 );
 
-export default useCaptureCreationStore;
+export default useEntityStore;
+
+export const fooSelectors = {
+    entityName: (state: EntityStoreState) => state.details.data.name,
+    connectorTag: (state: EntityStoreState) => state.details.data.image,
+    setDetails: (state: EntityStoreState) => state.setDetails,
+    resetState: (state: EntityStoreState) => state.resetState,
+    hasChanges: (state: EntityStoreState) => state.hasChanges,
+    errors: (state: EntityStoreState) => [
+        state.details.errors,
+        state.spec.errors,
+    ],
+    endpointConfig: (state: EntityStoreState) => state.spec.data,
+    setEndpointConfig: (state: EntityStoreState) => state.setSpec,
+    connectors: (state: EntityStoreState) => state.connectors,
+    setFormState: (state: EntityStoreState) => state.setFormState,
+    resetFormState: (state: EntityStoreState) => state.resetFormState,
+    formStateSaveStatus: (state: EntityStoreState) =>
+        state.formState.saveStatus,
+    formStateStatus: (state: EntityStoreState) => state.formState.status,
+    showLogs: (state: EntityStoreState) => state.formState.showLogs,
+    logToken: (state: EntityStoreState) => state.formState.logToken,
+    error: (state: EntityStoreState) => state.formState.error,
+    exitWhenLogsClose: (state: EntityStoreState) =>
+        state.formState.exitWhenLogsClose,
+    displayValidation: (state: EntityStoreState) =>
+        state.formState.displayValidation,
+    status: (state: EntityStoreState) => state.formState.status,
+};

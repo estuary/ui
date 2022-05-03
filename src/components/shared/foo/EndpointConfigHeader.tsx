@@ -1,12 +1,13 @@
 import { AppBar, Toolbar, Typography } from '@mui/material';
 import ExternalLink from 'components/shared/ExternalLink';
+import { FormattedMessage } from 'react-intl';
 
 interface Props {
     name: string;
     docsPath?: string;
 }
 
-function NewCaptureSpecFormHeader({ name, docsPath }: Props) {
+function EndpointConfigHeader({ name, docsPath }: Props) {
     if (name) {
         return (
             <AppBar position="relative" elevation={0} color="default">
@@ -21,7 +22,9 @@ function NewCaptureSpecFormHeader({ name, docsPath }: Props) {
                     </Typography>
 
                     {docsPath && docsPath.length > 0 ? (
-                        <ExternalLink link={docsPath}>Docs</ExternalLink>
+                        <ExternalLink link={docsPath}>
+                            <FormattedMessage id="foo.ctas.docs" />
+                        </ExternalLink>
                     ) : null}
                 </Toolbar>
             </AppBar>
@@ -31,4 +34,4 @@ function NewCaptureSpecFormHeader({ name, docsPath }: Props) {
     }
 }
 
-export default NewCaptureSpecFormHeader;
+export default EndpointConfigHeader;

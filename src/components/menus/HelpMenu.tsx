@@ -1,26 +1,37 @@
 import HelpIcon from '@mui/icons-material/Help';
 import ExternalLinkMenuItem from 'components/shared/ExternalLinkMenuItem';
+import { FormattedMessage, useIntl } from 'react-intl';
 import IconMenu from './IconMenu';
 
 function HelpMenu() {
+    const intl = useIntl();
+
     return (
         <IconMenu
-            ariaLabel="Open help"
+            ariaLabel={intl.formatMessage({ id: 'helpMenu.ariaLabel' })}
             icon={<HelpIcon />}
             identifier="help-menu"
-            tooltip="Help Links"
+            tooltip={intl.formatMessage({ id: 'helpMenu.tooltip' })}
         >
-            <ExternalLinkMenuItem link="https://docs.estuary.dev/">
-                Flow Docs
+            <ExternalLinkMenuItem
+                link={intl.formatMessage({ id: 'helpMenu.docs.link' })}
+            >
+                <FormattedMessage id="helpMenu.docs" />
             </ExternalLinkMenuItem>
-            <ExternalLinkMenuItem link="https://join.slack.com/t/estuary-dev/shared_invite/zt-86nal6yr-VPbv~YfZE9Q~6Zl~gmZdFQ">
-                Estuary&apos;s Slack
+            <ExternalLinkMenuItem
+                link={intl.formatMessage({ id: 'helpMenu.slack.link' })}
+            >
+                <FormattedMessage id="helpMenu.slack" />
             </ExternalLinkMenuItem>
-            <ExternalLinkMenuItem link="mailto: flow-support@estuary.dev">
-                Email Support
+            <ExternalLinkMenuItem
+                link={intl.formatMessage({ id: 'helpMenu.support.link' })}
+            >
+                <FormattedMessage id="helpMenu.support" />
             </ExternalLinkMenuItem>
-            <ExternalLinkMenuItem link="https://www.estuary.dev/#get-in-touch">
-                Contact Us
+            <ExternalLinkMenuItem
+                link={intl.formatMessage({ id: 'helpMenu.contact.link' })}
+            >
+                <FormattedMessage id="helpMenu.contact" />
             </ExternalLinkMenuItem>
         </IconMenu>
     );

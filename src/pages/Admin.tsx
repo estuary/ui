@@ -8,7 +8,6 @@ import {
 } from '@mui/material';
 import { Auth } from '@supabase/ui';
 import PageContainer from 'components/shared/PageContainer';
-import ConnectorsTable from 'components/tables/Connectors';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { FormattedMessage } from 'react-intl';
 
@@ -31,14 +30,11 @@ const Admin = () => {
             </Toolbar>
 
             <Box sx={boxStyling}>
-                <ConnectorsTable />
-            </Box>
-
-            <Box sx={boxStyling}>
-                <Typography variant="h6">Access Token</Typography>
+                <Typography variant="h6">
+                    <FormattedMessage id="admin.accessToken" />
+                </Typography>
                 <Typography>
-                    If you want to use the CLI client you will need an access
-                    token. You can copy the one below to use.
+                    <FormattedMessage id="admin.accessToken.message" />
                 </Typography>
                 <TextareaAutosize
                     minRows={4}

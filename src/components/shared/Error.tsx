@@ -12,8 +12,8 @@ import {
     Typography,
 } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
-import React from 'react';
-import { FormattedMessage } from 'react-intl';
+import { useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 type Props = {
     error: PostgrestError;
@@ -21,7 +21,9 @@ type Props = {
 };
 
 function Error({ error, hideTitle }: Props) {
-    const [expanded, setExpanded] = React.useState(false);
+    const intl = useIntl();
+
+    const [expanded, setExpanded] = useState(false);
 
     const handleExpandClick = () => {
         setExpanded(!expanded);
@@ -47,7 +49,9 @@ function Error({ error, hideTitle }: Props) {
                 <IconButton
                     onClick={handleExpandClick}
                     aria-expanded={expanded}
-                    aria-label="show more"
+                    aria-label={intl.formatMessage({
+                        id: expanded ? 'aria.closeExpand' : 'aria.openExpand',
+                    })}
                     sx={{
                         marginRight: 0,
                         transform: `rotate(${expanded ? '180' : '0'}deg)`,

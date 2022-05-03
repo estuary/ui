@@ -1,44 +1,30 @@
 import { Box } from '@mui/material';
-import Rows, { tableColumns } from 'components/tables/Connectors/Rows';
 import EntityTable, {
     getPagination,
     SortDirection,
 } from 'components/tables/EntityTable';
+import Rows, { tableColumns } from 'components/tables/Materializations/Rows';
 import { useQuery } from 'hooks/supabase-swr';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
 
-export interface Connector {
-    connector_tags: {
-        documentation_url: string;
-        protocol: string;
-        image_tag: string;
-        id: string;
-        title: string;
-    }[];
-    id: string;
-    detail: string;
+export interface LiveSpecsQuery {
+    spec_type: string;
+    catalog_name: string;
     updated_at: string;
-    image_name: string;
-    open_graph: object;
+    id: string;
+    last_pub_id: string;
 }
 
-const CONNECTOR_QUERY = `
-    id,
-    detail,
-    updated_at,
-    image_name,
-    open_graph,
-    connector_tags (
-        documentation_url,
-        protocol,
-        image_tag,
-        id,
-        endpoint_spec_schema->>title
-    )
-`;
+const queryColumns = [
+    'spec_type',
+    'catalog_name',
+    'updated_at',
+    'id',
+    'last_pub_id',
+];
 
-function ConnectorsTable() {
+function MaterializationsTable() {
     const rowsPerPage = 10;
     const [pagination, setPagination] = useState<{ from: number; to: number }>(
         getPagination(0, rowsPerPage)
@@ -47,20 +33,20 @@ function ConnectorsTable() {
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
     const [columnToSort, setColumnToSort] = useState<any>('updated_at');
 
-    const liveSpecQuery = useQuery<Connector>(
-        TABLES.CONNECTORS,
+    const liveSpecQuery = useQuery<LiveSpecsQuery>(
+        TABLES.LIVE_SPECS,
         {
-            columns: CONNECTOR_QUERY,
+            columns: queryColumns,
             count: 'exact',
             filter: (query) => {
-                return defaultTableFilter<Connector>(
+                return defaultTableFilter<LiveSpecsQuery>(
                     query,
-                    ['image_name', 'detail'],
+                    ['catalog_name'],
                     searchQuery,
                     columnToSort,
                     sortDirection,
                     pagination
-                );
+                ).eq('spec_type', 'materialization');
             },
         },
         [pagination, searchQuery, columnToSort, sortDirection]
@@ -70,10 +56,10 @@ function ConnectorsTable() {
         <Box>
             <EntityTable
                 noExistingDataContentIds={{
-                    header: 'admin.connectors.main.message1',
-                    message: 'admin.connectors.main.message2',
-                    docLink: 'admin.connectors.main.message2.docLink',
-                    docPath: 'admin.connectors.main.message2.docPath',
+                    header: 'materializations.message1',
+                    message: 'materializations.message2',
+                    docLink: 'materializations.message2.docLink',
+                    docPath: 'materializations.message2.docPath',
                 }}
                 columns={tableColumns}
                 query={liveSpecQuery}
@@ -84,11 +70,11 @@ function ConnectorsTable() {
                 setSortDirection={setSortDirection}
                 columnToSort={columnToSort}
                 setColumnToSort={setColumnToSort}
-                header="connectorTable.title"
-                filterLabel="connectorTable.filterLabel"
+                header="materializationsTable.title"
+                filterLabel="entityTable.filterLabel"
             />
         </Box>
     );
 }
 
-export default ConnectorsTable;
+export default MaterializationsTable;

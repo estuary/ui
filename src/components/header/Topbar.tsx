@@ -14,10 +14,11 @@ interface Props extends BaseComponentProps {
     isNavigationOpen: boolean;
     onNavigationToggle?: Function;
     hideNavigationMenu?: true;
+    hideUserMenu?: boolean;
 }
 
 const Topbar = (props: Props) => {
-    const { onNavigationToggle, hideNavigationMenu } = props;
+    const { onNavigationToggle, hideNavigationMenu, hideUserMenu } = props;
     const intl = useIntl();
     const theme = useTheme();
     const { user } = Auth.useUser();
@@ -53,7 +54,7 @@ const Topbar = (props: Props) => {
                     >
                         <IconButton
                             aria-label={intl.formatMessage({
-                                id: 'header.navigationMenu.aria.label',
+                                id: 'header.openNavigation.ariaLabel',
                             })}
                             onClick={openNavigation}
                             edge="start"
@@ -81,7 +82,7 @@ const Topbar = (props: Props) => {
                 >
                     <ModeSwitch />
                     <HelpMenu />
-                    <UserMenu />
+                    {!hideUserMenu ? <UserMenu /> : null}
                 </Stack>
             </Toolbar>
         </MuiAppBar>

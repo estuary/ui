@@ -1,5 +1,6 @@
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, User } from '@supabase/supabase-js';
+import { isEmpty } from 'lodash';
 
 if (
     !process.env.REACT_APP_SUPABASE_URL ||
@@ -68,4 +69,28 @@ export const defaultTableFilter = <Data>(
     }
 
     return queryBuilder;
+};
+
+export const getUserDetails = (user: User | null) => {
+    let userName, email, emailVerified, avatar;
+
+    if (user) {
+        if (!isEmpty(user.user_metadata)) {
+            userName = user.user_metadata.full_name;
+            email = user.user_metadata.email;
+            emailVerified = user.user_metadata.email_verified;
+            avatar = user.user_metadata.avatar_url;
+        } else {
+            userName = user.email;
+            email = user.email;
+            emailVerified = false;
+        }
+    }
+
+    return {
+        userName,
+        email,
+        emailVerified,
+        avatar,
+    };
 };

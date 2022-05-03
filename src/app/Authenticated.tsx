@@ -1,14 +1,16 @@
-import { Collections } from '@mui/icons-material';
 import AppLayout from 'AppLayout';
-import CaptureCreate from 'components/capture/create';
-import CaptureDetails from 'components/capture/details';
-import { ZustandProvider } from 'components/editor/Store';
+import CaptureCreate from 'components/capture/Create';
+import { createEditorStore } from 'components/editor/Store';
 import NewMaterialization from 'components/materialization/create';
+import { ZustandProvider } from 'hooks/useZustand';
 import Admin from 'pages/Admin';
 import Captures from 'pages/Captures';
-import Dashboard from 'pages/Dashboard';
+import Collections from 'pages/Collections';
+import Connectors from 'pages/Connectors';
 import PageNotFound from 'pages/error/PageNotFound';
+import Home from 'pages/Home';
 import Materializations from 'pages/Materializations';
+import Registration from 'pages/Registration';
 import { Route, Routes } from 'react-router';
 
 export const routeDetails = {
@@ -16,51 +18,45 @@ export const routeDetails = {
         title: 'routeTitle.admin',
         path: '/admin',
     },
-    capture: {
-        root: '/capture',
-        create: {
-            title: 'routeTitle.captureCreate',
-            path: `create`,
-            fullPath: '/capture/create',
-            params: {
-                connectorID: 'connectorID',
-            },
-        },
-        details: {
-            title: 'routeTitle.captureEdit',
-            path: 'details',
-            fullPath: '/capture/details',
-            params: {
-                pubID: 'pubID',
-            },
-        },
+    connectors: {
+        title: 'routeTitle.connectors',
+        path: '/connectors',
     },
     captures: {
         title: 'routeTitle.captures',
         path: '/captures',
+        create: {
+            title: 'routeTitle.captureCreate',
+            path: `create`,
+            fullPath: '/captures/create',
+            params: {
+                connectorID: 'connectorID',
+            },
+        },
     },
     collections: {
         title: 'routeTitle.collections',
         path: '/collections',
     },
-    dashboard: {
-        title: 'routeTitle.dashboard',
+    home: {
+        title: 'routeTitle.home',
         path: '/',
     },
-    materialization: {
-        root: '/materialization',
+    materializations: {
+        title: 'routeTitle.materializations',
+        path: '/materializations',
         create: {
             title: 'routeTitle.materializationCreate',
             path: 'create',
-            fullPath: '/materialization/create',
+            fullPath: '/materializations/create',
             params: {
                 connectorID: 'connectorID',
             },
         },
     },
-    materializations: {
-        title: 'routeTitle.materializations',
-        path: '/materializations',
+    registration: {
+        title: 'routeTitle.registration',
+        path: '/register',
     },
     pageNotFound: {
         title: 'routeTitle.error.pageNotFound',
@@ -71,48 +67,47 @@ export const routeDetails = {
 const Authenticated = () => {
     return (
         <Routes>
+            <Route
+                path={routeDetails.registration.path}
+                element={<Registration />}
+            />
             <Route element={<AppLayout />}>
+                <Route path={routeDetails.home.path} element={<Home />} />
+
                 <Route
-                    path={routeDetails.dashboard.path}
-                    element={<Dashboard />}
+                    path={routeDetails.connectors.path}
+                    element={<Connectors />}
                 />
+
                 <Route
                     path={routeDetails.collections.path}
                     element={<Collections />}
                 />
 
-                <Route
-                    path={routeDetails.captures.path}
-                    element={<Captures />}
-                />
-                <Route path={routeDetails.capture.root}>
+                <Route path={routeDetails.captures.path}>
+                    <Route path="" element={<Captures />} />
                     <Route
-                        path={routeDetails.capture.create.path}
+                        path={routeDetails.captures.create.path}
                         element={
-                            <ZustandProvider stateKey="draftSpecEditor">
+                            <ZustandProvider
+                                createStore={createEditorStore}
+                                key="draftSpecEditor"
+                            >
                                 <CaptureCreate />
-                            </ZustandProvider>
-                        }
-                    />
-                    <Route
-                        path={routeDetails.capture.details.path}
-                        element={
-                            <ZustandProvider stateKey="liveSpecEditor">
-                                <CaptureDetails />
                             </ZustandProvider>
                         }
                     />
                 </Route>
 
-                <Route
-                    path={routeDetails.materializations.path}
-                    element={<Materializations />}
-                />
-                <Route path={routeDetails.materialization.root}>
+                <Route path={routeDetails.materializations.path}>
+                    <Route path="" element={<Materializations />} />
                     <Route
-                        path={routeDetails.materialization.create.path}
+                        path={routeDetails.materializations.create.path}
                         element={
-                            <ZustandProvider stateKey="draftSpecEditor">
+                            <ZustandProvider
+                                createStore={createEditorStore}
+                                key="draftSpecEditor"
+                            >
                                 <NewMaterialization />
                             </ZustandProvider>
                         }

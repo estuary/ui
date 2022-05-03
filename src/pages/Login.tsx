@@ -4,11 +4,15 @@ import Topbar from 'components/header/Topbar';
 import { useClient } from 'hooks/supabase-swr';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { FormattedMessage } from 'react-intl';
+import useConstant from 'use-constant';
 import { getLoginSettings } from 'utils/env-utils';
 
 const Login = () => {
     useBrowserTitle('browserTitle.login');
 
+    const redirectTo = useConstant(
+        () => `${window.location.origin}` // `${window.location.origin}${routeDetails.registration.path}`
+    );
     const supabaseClient = useClient();
     const loginSettings = getLoginSettings();
 
@@ -46,7 +50,7 @@ const Login = () => {
                             supabaseClient={supabaseClient}
                             socialColors={true}
                             onlyThirdPartyProviders={!loginSettings.showEmail}
-                            redirectTo={window.location.origin}
+                            redirectTo={redirectTo}
                         />
                     </CardContent>
                 </Card>

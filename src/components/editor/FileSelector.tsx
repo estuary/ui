@@ -5,9 +5,10 @@ import {
     GridRenderCellParams,
     GridSelectionModel,
 } from '@mui/x-data-grid';
-import { LiveSpecQuery } from 'components/capture/details';
-import { EditorStoreState, useZustandStore } from 'components/editor/Store';
+import { LiveSpecQuery } from 'components/capture/Details';
+import { EditorStoreState } from 'components/editor/Store';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { useZustandStore } from 'hooks/useZustand';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 

@@ -11,5 +11,7 @@
     "jest.autoRun": "off",
     "jest.showCoverageOnLoad": false,
     "git.ignoreLimitWarning": true,
-    "typescript.preferences.importModuleSpecifier": "non-relative"
+    "typescript.preferences.importModuleSpecifier": "non-relative",
+    "i18n-ally.localesPaths": ["src/lang"],
+    "i18n-ally.keystyle": "nested"
 }

@@ -1,9 +1,9 @@
 import { Alert, AlertTitle, Box } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
 import Logs from 'components/Logs';
-import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { FormattedMessage } from 'react-intl';
+import Error from '../Error';
 
 type Props = {
     title: string;
@@ -11,7 +11,7 @@ type Props = {
     logToken?: string | null;
 };
 
-function NewCaptureError({ logToken, error, title }: Props) {
+function FooError({ logToken, error, title }: Props) {
     return (
         <Box sx={{ width: '100%' }}>
             <Alert
@@ -42,4 +42,4 @@ function NewCaptureError({ logToken, error, title }: Props) {
     );
 }
 
-export default NewCaptureError;
+export default FooError;

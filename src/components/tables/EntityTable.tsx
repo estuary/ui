@@ -224,7 +224,6 @@ function EntityTable({
                         aria-label={intl.formatMessage({
                             id: 'entityTable.title',
                         })}
-                        size="small"
                     >
                         <TableHead>
                             <TableRow

@@ -1,9 +1,16 @@
 import AddIcon from '@mui/icons-material/Add';
-import { Button, Toolbar } from '@mui/material';
+import { Box, Button, SxProps, Theme, Toolbar } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
 import PageContainer from 'components/shared/PageContainer';
+import MaterializationsTable from 'components/tables/Materializations';
 import useBrowserTitle from 'hooks/useBrowserTitle';
-import { NavLink, Outlet } from 'react-router-dom';
+import { FormattedMessage } from 'react-intl';
+import { NavLink } from 'react-router-dom';
+
+const boxStyling: SxProps<Theme> = {
+    marginBottom: 2,
+    padding: 2,
+};
 
 const Materializations = () => {
     useBrowserTitle('browserTitle.materializations');
@@ -17,18 +24,20 @@ const Materializations = () => {
                     justifyContent: 'space-between',
                 }}
             >
-                <NavLink to={routeDetails.materialization.create.fullPath}>
+                <NavLink to={routeDetails.materializations.create.fullPath}>
                     <Button
                         variant="contained"
                         size="large"
                         color="success"
                         startIcon={<AddIcon />}
                     >
-                        New Materialization
+                        <FormattedMessage id="materializationsTable.cta.new" />
                     </Button>
                 </NavLink>
             </Toolbar>
-            <Outlet />
+            <Box sx={boxStyling}>
+                <MaterializationsTable />
+            </Box>
         </PageContainer>
     );
 };

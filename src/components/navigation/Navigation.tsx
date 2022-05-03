@@ -1,11 +1,13 @@
-import ExploreIcon from '@mui/icons-material/Explore';
-import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import CableIcon from '@mui/icons-material/Cable';
+import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 //TODO (UI / UX) - These icons are not final
 import InputIcon from '@mui/icons-material/Input';
 import StorageIcon from '@mui/icons-material/Storage';
 import { Box, List, Toolbar, useMediaQuery, useTheme } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
 import { routeDetails } from 'app/Authenticated';
+import { useIntl } from 'react-intl';
 import ListItemLink from './ListItemLink';
 
 interface Props {
@@ -15,6 +17,7 @@ interface Props {
 }
 
 const Navigation = ({ onNavigationToggle, open, width }: Props) => {
+    const intl = useIntl();
     const theme = useTheme();
     const isBelowMd = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -46,16 +49,20 @@ const Navigation = ({ onNavigationToggle, open, width }: Props) => {
         >
             <Toolbar />
             <Box sx={{ overflowX: 'hidden' }}>
-                <List aria-label="main application navigation">
-                    <ListItemLink
-                        icon={<ExploreIcon />}
-                        title={routeDetails.dashboard.title}
-                        link={routeDetails.dashboard.path}
-                    />
+                <List
+                    aria-label={intl.formatMessage({
+                        id: 'navigation.ariaLabel',
+                    })}
+                >
                     <ListItemLink
                         icon={<InputIcon />}
                         title={routeDetails.captures.title}
                         link={routeDetails.captures.path}
+                    />
+                    <ListItemLink
+                        icon={<FormatListNumberedIcon />}
+                        title={routeDetails.collections.title}
+                        link={routeDetails.collections.path}
                     />
                     <ListItemLink
                         icon={<StorageIcon />}
@@ -63,7 +70,12 @@ const Navigation = ({ onNavigationToggle, open, width }: Props) => {
                         link={routeDetails.materializations.path}
                     />
                     <ListItemLink
-                        icon={<HomeRepairServiceIcon />}
+                        icon={<CableIcon />}
+                        title={routeDetails.connectors.title}
+                        link={routeDetails.connectors.path}
+                    />
+                    <ListItemLink
+                        icon={<AdminPanelSettingsIcon />}
                         title={routeDetails.admin.title}
                         link={routeDetails.admin.path}
                     />

@@ -1,11 +1,4 @@
-import {
-    Box,
-    Button,
-    Stack,
-    TableCell,
-    TableRow,
-    Typography,
-} from '@mui/material';
+import { Box, Button, Stack, TableCell, TableRow } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
 import ConnectorName from 'components/ConnectorName';
 import { Connector } from 'components/tables/Connectors';
@@ -31,10 +24,6 @@ export const tableColumns = [
         headerIntlKey: 'connectorTable.data.image_name',
     },
     {
-        field: 'detail',
-        headerIntlKey: 'connectorTable.data.detail',
-    },
-    {
         field: null,
         headerIntlKey: 'connectorTable.data.protocol',
     },
@@ -45,10 +34,6 @@ export const tableColumns = [
     {
         field: null,
         headerIntlKey: 'connectorTable.data.documentation_url',
-    },
-    {
-        field: null,
-        headerIntlKey: 'connectorTable.data.external_url',
     },
     {
         field: null,
@@ -67,19 +52,12 @@ function Rows({ data }: Props) {
                         <TableCell align="left" style={columnStyling}>
                             <ConnectorName
                                 iconPath={row.open_graph['en-US'].image}
+                                iconSize={40}
                                 connector={row}
                             />
                         </TableCell>
                         <TableCell style={columnStyling}>
                             <Stack direction="row">{row.image_name}</Stack>
-                        </TableCell>
-                        <TableCell style={columnStyling}>
-                            <Typography variant="subtitle2">
-                                {row.detail}
-                            </Typography>
-                            <Typography>
-                                {row.open_graph['en-US'].description}
-                            </Typography>
                         </TableCell>
                         <TableCell style={columnStyling}>
                             {row.connector_tags[0].protocol}
@@ -96,12 +74,6 @@ function Rows({ data }: Props) {
                             <Link
                                 path={row.connector_tags[0].documentation_url}
                                 messageId="captureCreation.config.source.doclink"
-                            />
-                        </TableCell>
-                        <TableCell style={columnStyling}>
-                            <Link
-                                path={row.external_url}
-                                messageId="captureCreation.config.source.homepage"
                             />
                         </TableCell>
                         <TableCell>
@@ -121,14 +93,14 @@ function Rows({ data }: Props) {
                                             'capture'
                                         ) {
                                             navigate(
-                                                `${routeDetails.capture.create.fullPath}?${routeDetails.capture.create.params.connectorID}=${row.connector_tags[0].id}`
+                                                `${routeDetails.captures.create.fullPath}?${routeDetails.captures.create.params.connectorID}=${row.connector_tags[0].id}`
                                             );
                                         } else if (
                                             row.connector_tags[0].protocol ===
                                             'materialization'
                                         ) {
                                             navigate(
-                                                `${routeDetails.materialization.create.fullPath}?${routeDetails.materialization.create.params.connectorID}=${row.connector_tags[0].id}`
+                                                `${routeDetails.materializations.create.fullPath}?${routeDetails.materializations.create.params.connectorID}=${row.connector_tags[0].id}`
                                             );
                                         }
                                     }}

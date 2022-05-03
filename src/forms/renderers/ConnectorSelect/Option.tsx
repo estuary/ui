@@ -11,7 +11,11 @@ function ConnectorOption({ renderOptionProps, option }: Props) {
 
     return (
         <Box component="li" {...renderOptionProps}>
-            <ConnectorName iconPath={value.iconPath} connector={label} />
+            <ConnectorName
+                iconPath={value.iconPath}
+                connector={label}
+                iconSize={30}
+            />
         </Box>
     );
 }

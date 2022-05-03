@@ -1,10 +1,15 @@
 import { Paper, Typography } from '@mui/material';
-import DraftEditor from 'components/editor/DraftSpec';
-import { EditorStoreState, useZustandStore } from 'components/editor/Store';
+import DraftSpecEditor from 'components/editor/DraftSpec';
+import { EditorStoreState } from 'components/editor/Store';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { useZustandStore } from 'hooks/useZustand';
 import { FormattedMessage } from 'react-intl';
 
-function NewMaterializationEditor() {
+interface Props {
+    messageId: string;
+}
+
+function CatalogEditor({ messageId }: Props) {
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
@@ -14,13 +19,11 @@ function NewMaterializationEditor() {
         return (
             <>
                 <Typography variant="h5">Catalog Editor</Typography>
-
                 <Typography>
-                    <FormattedMessage id="materializationCreation.finalReview.instructions" />
+                    <FormattedMessage id={messageId} />
                 </Typography>
-
                 <Paper variant="outlined">
-                    <DraftEditor />
+                    <DraftSpecEditor />
                 </Paper>
             </>
         );
@@ -29,4 +32,4 @@ function NewMaterializationEditor() {
     }
 }
 
-export default NewMaterializationEditor;
+export default CatalogEditor;

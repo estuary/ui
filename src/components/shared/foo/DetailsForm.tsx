@@ -1,12 +1,12 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
-import { Alert, Box, Stack, Typography } from '@mui/material';
+import { Alert, Stack, Typography } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
-import { ConnectorTag } from 'components/materialization/create';
-import useMaterializationCreationStore, {
-    CreationFormStatuses,
-    CreationState,
-} from 'components/materialization/Store';
+import { ConnectorTag } from 'components/shared/foo/query';
+import useFooState, {
+    EntityStoreState,
+    FormStatus,
+} from 'components/shared/foo/Store';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
@@ -16,41 +16,42 @@ import {
     showValidation,
 } from 'services/jsonforms';
 import { StoreSelector } from 'types';
+import { getConnectorName } from 'utils/misc-utils';
 
 interface Props {
     connectorTags: ConnectorTag[];
+    messagePrefix: 'materializationCreation' | 'captureCreation';
 }
 
-const stateSelectors: StoreSelector<CreationState> = {
+const stateSelectors: StoreSelector<EntityStoreState> = {
     formData: (state) => state.details.data,
     setDetails: (state) => state.setDetails,
     setConnectors: (state) => state.setConnectors,
-    showValidation: (state) => state.formState.showValidation,
+    showValidation: (state) => state.formState.displayValidation,
     status: (state) => state.formState.status,
 };
 
-function NewMaterializationDetails({ connectorTags }: Props) {
+function DetailsForm({ connectorTags, messagePrefix }: Props) {
     const intl = useIntl();
     const [searchParams] = useSearchParams();
     const connectorID = searchParams.get(
-        routeDetails.materialization.create.params.connectorID
+        routeDetails.captures.create.params.connectorID
     );
 
-    const formData = useMaterializationCreationStore(stateSelectors.formData);
-    const setDetails = useMaterializationCreationStore(
-        stateSelectors.setDetails
-    );
-    const displayValidation = useMaterializationCreationStore(
-        stateSelectors.showValidation
-    );
-    const status = useMaterializationCreationStore(stateSelectors.status);
+    const formData = useFooState(stateSelectors.formData);
+    const setDetails = useFooState(stateSelectors.setDetails);
+    const displayValidation = useFooState(stateSelectors.showValidation);
+    const status = useFooState(stateSelectors.status);
 
     useEffect(() => {
         if (connectorID) {
             setDetails({
                 data: {
                     name: '',
-                    image: connectorID,
+                    image: {
+                        id: connectorID,
+                        path: '',
+                    },
                 },
             });
         }
@@ -61,22 +62,28 @@ function NewMaterializationDetails({ connectorTags }: Props) {
             properties: {
                 image: {
                     description: intl.formatMessage({
-                        id: 'materializationCreation.image.description',
+                        id: 'connector.description',
                     }),
                     oneOf:
                         connectorTags.length > 0
-                            ? connectorTags.map((connector: any) => {
+                            ? connectorTags.map((connector) => {
                                   return {
-                                      const: connector.id,
-                                      title: connector.connectors.detail,
+                                      const: {
+                                          id: connector.id,
+                                          iconPath:
+                                              connector.connectors.open_graph[
+                                                  'en-US'
+                                              ].image,
+                                      },
+                                      title: getConnectorName(connector),
                                   };
                               })
                             : ([] as { title: string; const: string }[]),
-                    type: 'string',
+                    type: 'object',
                 },
                 name: {
                     description: intl.formatMessage({
-                        id: 'materializationCreation.name.description',
+                        id: 'entityName.description',
                     }),
                     maxLength: 1000,
                     minLength: 3,
@@ -95,14 +102,14 @@ function NewMaterializationDetails({ connectorTags }: Props) {
                 elements: [
                     {
                         label: intl.formatMessage({
-                            id: 'materializationCreation.name.label',
+                            id: 'entityName.label',
                         }),
                         scope: '#/properties/name',
                         type: 'Control',
                     },
                     {
                         label: intl.formatMessage({
-                            id: 'materializationCreation.image.label',
+                            id: 'connector.label',
                         }),
                         scope: '#/properties/image',
                         type: 'Control',
@@ -115,14 +122,12 @@ function NewMaterializationDetails({ connectorTags }: Props) {
     };
 
     return (
-        <Box sx={{ mb: 4 }}>
-            <Typography variant="h5" sx={{ mb: 1 }}>
-                Materialization Details
+        <>
+            <Typography variant="h5">
+                <FormattedMessage id={`${messagePrefix}.details.heading`} />
             </Typography>
 
-            <Typography sx={{ mb: 2 }}>
-                <FormattedMessage id="materializationCreation.instructions" />
-            </Typography>
+            <FormattedMessage id={`${messagePrefix}.instructions`} />
 
             <Stack direction="row" spacing={2}>
                 {schema.properties.image.oneOf.length > 0 ? (
@@ -133,18 +138,20 @@ function NewMaterializationDetails({ connectorTags }: Props) {
                         renderers={defaultRenderers}
                         cells={materialCells}
                         config={defaultOptions}
-                        readonly={status !== CreationFormStatuses.IDLE}
+                        readonly={status !== FormStatus.IDLE}
                         validationMode={showValidation(displayValidation)}
                         onChange={setDetails}
                     />
                 ) : (
                     <Alert severity="warning">
-                        <FormattedMessage id="materializationCreation.missingConnectors" />
+                        <FormattedMessage
+                            id={`${messagePrefix}.missingConnectors`}
+                        />
                     </Alert>
                 )}
             </Stack>
-        </Box>
+        </>
     );
 }
 
-export default NewMaterializationDetails;
+export default DetailsForm;

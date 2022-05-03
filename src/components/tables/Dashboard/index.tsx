@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import Rows, { tableColumns } from 'components/tables/Connectors/Rows';
+import Rows, { tableColumns } from 'components/tables/Dashboard/Rows';
 import EntityTable, {
     getPagination,
     SortDirection,
@@ -8,37 +8,16 @@ import { useQuery } from 'hooks/supabase-swr';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
 
-export interface Connector {
-    connector_tags: {
-        documentation_url: string;
-        protocol: string;
-        image_tag: string;
-        id: string;
-        title: string;
-    }[];
-    id: string;
-    detail: string;
+export interface LiveSpecsQuery {
+    spec_type: string;
+    catalog_name: string;
     updated_at: string;
-    image_name: string;
-    open_graph: object;
+    id: string;
 }
 
-const CONNECTOR_QUERY = `
-    id,
-    detail,
-    updated_at,
-    image_name,
-    open_graph,
-    connector_tags (
-        documentation_url,
-        protocol,
-        image_tag,
-        id,
-        endpoint_spec_schema->>title
-    )
-`;
+const queryColumns = ['id', 'spec_type', 'catalog_name', 'updated_at'];
 
-function ConnectorsTable() {
+function DashboardTable() {
     const rowsPerPage = 10;
     const [pagination, setPagination] = useState<{ from: number; to: number }>(
         getPagination(0, rowsPerPage)
@@ -47,20 +26,20 @@ function ConnectorsTable() {
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
     const [columnToSort, setColumnToSort] = useState<any>('updated_at');
 
-    const liveSpecQuery = useQuery<Connector>(
-        TABLES.CONNECTORS,
+    const liveSpecQuery = useQuery<LiveSpecsQuery>(
+        TABLES.LIVE_SPECS,
         {
-            columns: CONNECTOR_QUERY,
+            columns: queryColumns,
             count: 'exact',
             filter: (query) => {
-                return defaultTableFilter<Connector>(
+                return defaultTableFilter<LiveSpecsQuery>(
                     query,
-                    ['image_name', 'detail'],
+                    ['catalog_name'],
                     searchQuery,
                     columnToSort,
                     sortDirection,
                     pagination
-                );
+                ).eq('spec_type', 'collection');
             },
         },
         [pagination, searchQuery, columnToSort, sortDirection]
@@ -70,10 +49,10 @@ function ConnectorsTable() {
         <Box>
             <EntityTable
                 noExistingDataContentIds={{
-                    header: 'admin.connectors.main.message1',
-                    message: 'admin.connectors.main.message2',
-                    docLink: 'admin.connectors.main.message2.docLink',
-                    docPath: 'admin.connectors.main.message2.docPath',
+                    header: 'collections.message1',
+                    message: 'collections.message2',
+                    docLink: 'collections.message2.docLink',
+                    docPath: 'collections.message2.docPath',
                 }}
                 columns={tableColumns}
                 query={liveSpecQuery}
@@ -84,11 +63,11 @@ function ConnectorsTable() {
                 setSortDirection={setSortDirection}
                 columnToSort={columnToSort}
                 setColumnToSort={setColumnToSort}
-                header="connectorTable.title"
-                filterLabel="connectorTable.filterLabel"
+                header="collectionsTable.title"
+                filterLabel="entityTable.filterLabel"
             />
         </Box>
     );
 }
 
-export default ConnectorsTable;
+export default DashboardTable;

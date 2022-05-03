@@ -4,6 +4,7 @@ import { routeDetails } from 'app/Authenticated';
 import PageContainer from 'components/shared/PageContainer';
 import CapturesTable from 'components/tables/Captures';
 import useBrowserTitle from 'hooks/useBrowserTitle';
+import { FormattedMessage } from 'react-intl';
 import { NavLink } from 'react-router-dom';
 
 const boxStyling: SxProps<Theme> = {
@@ -23,14 +24,14 @@ const Capture = () => {
                     justifyContent: 'space-between',
                 }}
             >
-                <NavLink to={routeDetails.capture.create.fullPath}>
+                <NavLink to={routeDetails.captures.create.fullPath}>
                     <Button
                         variant="contained"
                         size="large"
                         color="success"
                         startIcon={<AddIcon />}
                     >
-                        New Capture
+                        <FormattedMessage id="capturesTable.cta.new" />
                     </Button>
                 </NavLink>
             </Toolbar>

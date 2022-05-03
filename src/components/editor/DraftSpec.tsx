@@ -1,6 +1,7 @@
 import EditorAndList from 'components/editor/EditorAndList';
-import { EditorStoreState, useZustandStore } from 'components/editor/Store';
+import { EditorStoreState } from 'components/editor/Store';
 import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { useZustandStore } from 'hooks/useZustand';
 import { useEffect, useState } from 'react';
 import { supabaseClient, TABLES } from 'services/supabase';
 

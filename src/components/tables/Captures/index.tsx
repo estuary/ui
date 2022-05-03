@@ -58,10 +58,10 @@ function CapturesTable() {
         <Box>
             <EntityTable
                 noExistingDataContentIds={{
-                    header: 'captures.main.message1',
-                    message: 'captures.main.message2',
-                    docLink: 'captures.main.message2.docLink',
-                    docPath: 'captures.main.message2.docPath',
+                    header: 'captures.message1',
+                    message: 'captures.message2',
+                    docLink: 'captures.message2.docLink',
+                    docPath: 'captures.message2.docPath',
                 }}
                 columns={tableColumns}
                 query={liveSpecQuery}

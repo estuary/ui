@@ -1,4 +1,6 @@
 export const stripPathing = (stringVal: string) => {
+    if (!stringVal) return stringVal;
+
     return stringVal.substring(
         stringVal.lastIndexOf('/') + 1,
         stringVal.length

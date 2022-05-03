@@ -5,13 +5,14 @@ import { ReactNode } from 'react';
 interface Props {
     children: ReactNode;
     link: string;
+    hideIcon?: boolean;
 }
 
-const ExternalLink = ({ children, link }: Props) => {
+const ExternalLink = ({ children, link, hideIcon }: Props) => {
     return (
         <Button
             variant="text"
-            endIcon={<OpenInNewIcon />}
+            endIcon={!hideIcon ? <OpenInNewIcon /> : null}
             href={link}
             target="_blank"
             rel="noopener"

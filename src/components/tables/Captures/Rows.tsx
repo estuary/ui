@@ -1,13 +1,27 @@
-import { Box, Button, TableCell, TableRow, Tooltip } from '@mui/material';
-import { routeDetails } from 'app/Authenticated';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import {
+    Box,
+    Button,
+    Collapse,
+    TableCell,
+    TableRow,
+    Tooltip,
+} from '@mui/material';
+import CaptureDetails from 'components/capture/Details';
+import { createEditorStore } from 'components/editor/Store';
 import { LiveSpecsQuery } from 'components/tables/Captures';
 import { formatDistanceToNow } from 'date-fns';
-import { FormattedDate, FormattedMessage } from 'react-intl';
-import { useNavigate } from 'react-router';
+import { ZustandProvider } from 'hooks/useZustand';
+import { useState } from 'react';
+import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
 import { getDeploymentStatusHexCode, stripPathing } from 'utils/misc-utils';
 
-interface Props {
+interface RowsProps {
     data: LiveSpecsQuery[];
+}
+
+interface RowProps {
+    data: LiveSpecsQuery;
 }
 
 export const tableColumns = [
@@ -29,94 +43,136 @@ export const tableColumns = [
     },
 ];
 
-function Rows({ data }: Props) {
-    const navigate = useNavigate();
+function Row({ data }: RowProps) {
+    const intl = useIntl();
+    const [detailsExpanded, setDetailsExpanded] = useState(false);
 
     return (
         <>
-            {data.map((row) => (
-                <TableRow key={`Entity-${row.id}`}>
-                    <TableCell sx={{ minWidth: 256 }}>
-                        <Tooltip
-                            title={row.catalog_name}
-                            placement="bottom-start"
-                        >
-                            <Box>
-                                <span
-                                    style={{
-                                        height: 16,
-                                        width: 16,
-                                        backgroundColor:
-                                            getDeploymentStatusHexCode(
-                                                'ACTIVE'
-                                            ),
-                                        borderRadius: 50,
-                                        display: 'inline-block',
-                                        verticalAlign: 'middle',
-                                        marginRight: 12,
-                                    }}
-                                />
-                                <span
-                                    style={{
-                                        verticalAlign: 'middle',
-                                    }}
-                                >
-                                    {stripPathing(row.catalog_name)}
-                                </span>
-                            </Box>
-                        </Tooltip>
-                    </TableCell>
-
-                    <TableCell sx={{ minWidth: 100 }}>
-                        {stripPathing(row.connector_image_name)}
-                    </TableCell>
-
-                    <TableCell>
-                        <Tooltip
-                            title={
-                                <FormattedDate
-                                    day="numeric"
-                                    month="long"
-                                    year="numeric"
-                                    hour="numeric"
-                                    minute="numeric"
-                                    second="numeric"
-                                    timeZoneName="short"
-                                    value={row.updated_at}
-                                />
-                            }
-                            placement="bottom-start"
-                        >
-                            <Box>
-                                {formatDistanceToNow(new Date(row.updated_at), {
-                                    addSuffix: true,
-                                })}
-                            </Box>
-                        </Tooltip>
-                    </TableCell>
-
-                    <TableCell>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                            }}
-                        >
-                            <Button
-                                variant="contained"
-                                size="small"
-                                disableElevation
-                                sx={{ mr: 1 }}
-                                onClick={() => {
-                                    navigate(
-                                        `${routeDetails.capture.details.fullPath}?${routeDetails.capture.details.params.pubID}=${row.last_pub_id}`
-                                    );
+            <TableRow>
+                <TableCell
+                    sx={{
+                        'minWidth': 256,
+                        '& > *': {
+                            borderBottom: 'unset',
+                        },
+                    }}
+                >
+                    <Tooltip title={data.catalog_name} placement="bottom-start">
+                        <Box>
+                            <span
+                                style={{
+                                    height: 16,
+                                    width: 16,
+                                    backgroundColor:
+                                        getDeploymentStatusHexCode('ACTIVE'),
+                                    borderRadius: 50,
+                                    display: 'inline-block',
+                                    verticalAlign: 'middle',
+                                    marginRight: 12,
+                                }}
+                            />
+                            <span
+                                style={{
+                                    verticalAlign: 'middle',
                                 }}
                             >
-                                <FormattedMessage id="capturesTable.detailsCTA" />
-                            </Button>
+                                {data.catalog_name}
+                            </span>
                         </Box>
-                    </TableCell>
-                </TableRow>
+                    </Tooltip>
+                </TableCell>
+
+                <TableCell sx={{ minWidth: 100 }}>
+                    {stripPathing(data.connector_image_name)}
+                </TableCell>
+
+                <TableCell>
+                    <Tooltip
+                        title={
+                            <FormattedDate
+                                day="numeric"
+                                month="long"
+                                year="numeric"
+                                hour="numeric"
+                                minute="numeric"
+                                second="numeric"
+                                timeZoneName="short"
+                                value={data.updated_at}
+                            />
+                        }
+                        placement="bottom-start"
+                    >
+                        <Box>
+                            {formatDistanceToNow(new Date(data.updated_at), {
+                                addSuffix: true,
+                            })}
+                        </Box>
+                    </Tooltip>
+                </TableCell>
+
+                <TableCell align="right">
+                    <Box
+                        sx={{
+                            display: 'flex',
+                        }}
+                    >
+                        <Button
+                            variant="contained"
+                            size="small"
+                            disableElevation
+                            sx={{ mr: 1 }}
+                            aria-expanded={detailsExpanded}
+                            aria-label={intl.formatMessage({
+                                id: detailsExpanded
+                                    ? 'aria.closeExpand'
+                                    : 'aria.openExpand',
+                            })}
+                            onClick={() => {
+                                setDetailsExpanded(!detailsExpanded);
+                            }}
+                            endIcon={
+                                <KeyboardArrowDownIcon
+                                    sx={{
+                                        marginRight: 0,
+                                        transform: `rotate(${
+                                            detailsExpanded ? '180' : '0'
+                                        }deg)`,
+                                        transition: 'all 250ms ease-in-out',
+                                    }}
+                                />
+                            }
+                        >
+                            <FormattedMessage id="cta.details" />
+                        </Button>
+                    </Box>
+                </TableCell>
+            </TableRow>
+
+            <TableRow>
+                <TableCell
+                    style={{ paddingBottom: 0, paddingTop: 0 }}
+                    colSpan={tableColumns.length}
+                >
+                    <Collapse in={detailsExpanded} unmountOnExit>
+                        <ZustandProvider
+                            createStore={createEditorStore}
+                            key="liveSpecEditor"
+                        >
+                            <CaptureDetails lastPubId={data.last_pub_id} />
+                        </ZustandProvider>
+                    </Collapse>
+                </TableCell>
+            </TableRow>
+        </>
+    );
+}
+
+function Rows({ data }: RowsProps) {
+    return (
+        <>
+            {data.map((row) => (
+                <Row data={row} key={row.id} />
             ))}
         </>
     );

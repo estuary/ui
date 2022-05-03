@@ -6,7 +6,7 @@ import { act, customRender, screen, waitFor } from 'utils/test-utils';
 describe('When there is user metadata', () => {
     const openMenu = async (user: UserEvent) => {
         await user.click(
-            screen.getByLabelText<HTMLImageElement>('Open account menu')
+            screen.getByLabelText<HTMLImageElement>('Open Account Menu')
         );
     };
 

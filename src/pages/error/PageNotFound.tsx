@@ -5,7 +5,6 @@ import {
     Box,
     IconButton,
     InputBase,
-    Link,
     Paper,
     Typography,
 } from '@mui/material';
@@ -25,22 +24,36 @@ const PageNotFound = () => {
 
     const pages: { name: string; route: string }[] = [
         {
-            name: intl.formatMessage({ id: routeDetails.dashboard.title }),
-            route: routeDetails.dashboard.path,
+            name: intl.formatMessage({ id: routeDetails.collections.title }),
+            route: routeDetails.collections.path,
         },
         {
             name: intl.formatMessage({ id: routeDetails.captures.title }),
             route: routeDetails.captures.path,
         },
         {
-            name: intl.formatMessage({ id: routeDetails.capture.create.title }),
-            route: routeDetails.capture.create.fullPath,
+            name: intl.formatMessage({
+                id: routeDetails.captures.create.title,
+            }),
+            route: routeDetails.captures.create.fullPath,
         },
         {
             name: intl.formatMessage({
                 id: routeDetails.materializations.title,
             }),
             route: routeDetails.materializations.path,
+        },
+        {
+            name: intl.formatMessage({
+                id: routeDetails.materializations.create.title,
+            }),
+            route: routeDetails.materializations.create.path,
+        },
+        {
+            name: intl.formatMessage({
+                id: routeDetails.connectors.title,
+            }),
+            route: routeDetails.connectors.path,
         },
         {
             name: intl.formatMessage({ id: routeDetails.admin.title }),
@@ -70,20 +83,6 @@ const PageNotFound = () => {
         <PageContainer>
             <Typography variant="h5" align="center" sx={{ mb: 2 }}>
                 <FormattedMessage id="pageNotFound.heading" />
-            </Typography>
-
-            {/* TODO (UI / UX) : Consider adjusting the focus-visible state of the dashboard link. */}
-            <Typography align="center" sx={{ mb: 7 }}>
-                <FormattedMessage
-                    id="pageNotFound.message"
-                    values={{
-                        dashboard: (
-                            <Link href="/" underline="none">
-                                dashboard
-                            </Link>
-                        ),
-                    }}
-                />
             </Typography>
 
             <Box

@@ -26,6 +26,9 @@ interface IConfirmationModalContext {
     }: IConfirmationModalOptions) => Promise<any>;
 }
 
+const LABEL_ID = 'alert-dialog-title';
+const DESCRIPTION_ID = 'alert-dialog-description';
+
 const getDefaultSettings = (): IConfirmationModalOptions => {
     return {
         title: 'confirm.title',
@@ -76,14 +79,14 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
             <Dialog
                 open={showConfirmationModal}
                 onClose={handlers.dismiss}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
+                aria-labelledby={LABEL_ID}
+                aria-describedby={DESCRIPTION_ID}
             >
-                <DialogTitle id="alert-dialog-title">
+                <DialogTitle id={LABEL_ID}>
                     <FormattedMessage id={settings.title} />
                 </DialogTitle>
                 <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
+                    <DialogContentText id={DESCRIPTION_ID}>
                         <FormattedMessage id={settings.message} />
                     </DialogContentText>
                 </DialogContent>

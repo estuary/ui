@@ -1,21 +1,27 @@
 import { Button, Collapse } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { routeDetails } from 'app/Authenticated';
-import NewCaptureHeader from 'components/capture/Header';
-import LogDialog from 'components/capture/LogDialog';
-import NewCaptureSpec from 'components/capture/Spec';
-import useCaptureCreationStore, {
-    CaptureCreationFormStatus,
-    CaptureCreationState,
-} from 'components/capture/Store';
-import { EditorStoreState, useZustandStore } from 'components/editor/Store';
+import { EditorStoreState } from 'components/editor/Store';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
+import CatalogEditor from 'components/shared/foo/CatalogEditor';
+import DetailsForm from 'components/shared/foo/DetailsForm';
+import EndpointConfig from 'components/shared/foo/EndpointConfig';
+import FooError from 'components/shared/foo/Error';
+import FooHeader from 'components/shared/foo/Header';
+import LogDialog from 'components/shared/foo/LogDialog';
+import { ConnectorTag, CONNECTOR_TAG_QUERY } from 'components/shared/foo/query';
+import useEntityStore, {
+    fooSelectors,
+    FormStatus,
+} from 'components/shared/foo/Store';
 import PageContainer from 'components/shared/PageContainer';
 import { useConfirmationModalContext } from 'context/Confirmation';
 import { useClient, useQuery, useSelect } from 'hooks/supabase-swr';
+import { usePrompt } from 'hooks/useBlocker';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { useZustandStore } from 'hooks/useZustand';
 import { MouseEvent } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
@@ -24,58 +30,10 @@ import useNotificationStore, {
     Notification,
     NotificationState,
 } from 'stores/NotificationStore';
-import NewCaptureEditor from '../CatalogEditor';
-import NewCaptureDetails from '../DetailsForm';
-import NewCaptureError from '../Error';
 
-export interface ConnectorTag {
-    connectors: {
-        detail: string;
-        image_name: string;
-        open_graph: object;
-    };
-    id: string;
-    connector_id: string;
-    image_tag: string;
-    protocol: string;
-    title: string;
-}
-const CONNECTOR_TAG_QUERY = `
-    id,
-    connector_id,
-    image_tag,
-    protocol,
-    endpoint_spec_schema->>title,
-    connectors(detail, image_name, open_graph)
-`;
 const FORM_ID = 'newCaptureForm';
 
-// TODO (zustand) - need to get this typing to work... too many repeated types
 const selectors = {
-    page: {
-        captureName: (state: CaptureCreationState) => state.details.data.name,
-        captureImage: (state: CaptureCreationState) => state.details.data.image,
-        setDetails: (state: CaptureCreationState) => state.setDetails,
-        resetState: (state: CaptureCreationState) => state.resetState,
-        hasChanges: (state: CaptureCreationState) => state.hasChanges,
-        errors: (state: CaptureCreationState) => [
-            state.details.errors,
-            state.spec.errors,
-        ],
-        specFormData: (state: CaptureCreationState) => state.spec.data,
-        connectors: (state: CaptureCreationState) => state.connectors,
-    },
-    form: {
-        set: (state: CaptureCreationState) => state.setFormState,
-        reset: (state: CaptureCreationState) => state.resetFormState,
-        saveStatus: (state: CaptureCreationState) => state.formState.saveStatus,
-        status: (state: CaptureCreationState) => state.formState.status,
-        showLogs: (state: CaptureCreationState) => state.formState.showLogs,
-        logToken: (state: CaptureCreationState) => state.formState.logToken,
-        error: (state: CaptureCreationState) => state.formState.error,
-        exitWhenLogsClose: (state: CaptureCreationState) =>
-            state.formState.exitWhenLogsClose,
-    },
     notifications: {
         showNotification: (state: NotificationState) => state.showNotification,
     },
@@ -115,26 +73,24 @@ function CaptureCreate() {
     );
 
     // Form store
-    const captureName = useCaptureCreationStore(selectors.page.captureName);
-    const captureImage = useCaptureCreationStore(selectors.page.captureImage);
-    const [detailErrors, specErrors] = useCaptureCreationStore(
-        selectors.page.errors
-    );
-    const specFormData = useCaptureCreationStore(selectors.page.specFormData);
-    const resetState = useCaptureCreationStore(selectors.page.resetState);
-    const hasChanges = useCaptureCreationStore(selectors.page.hasChanges);
+    const resetState = useEntityStore(fooSelectors.resetState);
+    const captureName = useEntityStore(fooSelectors.entityName);
+    const captureImage = useEntityStore(fooSelectors.connectorTag);
+    const [detailErrors, specErrors] = useEntityStore(fooSelectors.errors);
+    const specFormData = useEntityStore(fooSelectors.endpointConfig);
+    const hasChanges = useEntityStore(fooSelectors.hasChanges);
 
     // Form State
-    const setFormState = useCaptureCreationStore(selectors.form.set);
-    const resetFormState = useCaptureCreationStore(selectors.form.reset);
-    const status = useCaptureCreationStore(selectors.form.status);
-    const showLogs = useCaptureCreationStore(selectors.form.showLogs);
-    const logToken = useCaptureCreationStore(selectors.form.logToken);
-    const formSubmitError = useCaptureCreationStore(selectors.form.error);
-    const saveStatus = useCaptureCreationStore(selectors.form.saveStatus);
-    const exitWhenLogsClose = useCaptureCreationStore(
-        selectors.form.exitWhenLogsClose
+    const setFormState = useEntityStore(fooSelectors.setFormState);
+    const resetFormState = useEntityStore(fooSelectors.resetFormState);
+    const formStateStatus = useEntityStore(fooSelectors.formStateStatus);
+    const showLogs = useEntityStore(fooSelectors.showLogs);
+    const logToken = useEntityStore(fooSelectors.logToken);
+    const formSubmitError = useEntityStore(fooSelectors.error);
+    const formStateSaveStatus = useEntityStore(
+        fooSelectors.formStateSaveStatus
     );
+    const exitWhenLogsClose = useEntityStore(fooSelectors.exitWhenLogsClose);
 
     //Editor state
     const setId = useZustandStore<
@@ -151,10 +107,10 @@ function CaptureCreate() {
         callFailed: (formState: any, subscription?: RealtimeSubscription) => {
             const setFailureState = () => {
                 setFormState({
-                    status: CaptureCreationFormStatus.IDLE,
+                    status: FormStatus.IDLE,
                     exitWhenLogsClose: false,
                     saveStatus: intl.formatMessage({
-                        id: 'captureCreation.status.failed',
+                        id: 'common.fail',
                     }),
                     ...formState,
                 });
@@ -175,7 +131,7 @@ function CaptureCreate() {
                 .removeSubscription(subscription)
                 .then(() => {
                     setFormState({
-                        status: CaptureCreationFormStatus.IDLE,
+                        status: FormStatus.IDLE,
                     });
                 })
                 .catch(() => {});
@@ -191,7 +147,7 @@ function CaptureCreate() {
                     title: errorTitle,
                 },
                 saveStatus: intl.formatMessage({
-                    id: 'captureCreation.status.failed',
+                    id: 'common.fail',
                 }),
             });
         },
@@ -199,7 +155,7 @@ function CaptureCreate() {
 
     const waitFor = {
         base: (query: any, success: Function, failureTitle: string) => {
-            resetFormState(CaptureCreationFormStatus.TESTING);
+            resetFormState(FormStatus.TESTING);
             const subscription = query
                 .on('*', async (payload: any) => {
                     if (payload.new.job_status.type !== 'queued') {
@@ -231,7 +187,7 @@ function CaptureCreate() {
                 supabaseClient.from(TABLES.PUBLICATIONS),
                 () => {
                     setFormState({
-                        status: CaptureCreationFormStatus.IDLE,
+                        status: FormStatus.IDLE,
                         exitWhenLogsClose: true,
                         saveStatus: intl.formatMessage({
                             id: 'captureCreation.status.success',
@@ -314,7 +270,7 @@ function CaptureCreate() {
                                     title: 'captureCreation.save.serverUnreachable',
                                 },
                                 saveStatus: intl.formatMessage({
-                                    id: 'captureCreation.status.failed',
+                                    id: 'common.fail',
                                 }),
                             },
                             publicationsSubscription
@@ -334,7 +290,7 @@ function CaptureCreate() {
 
             if (detailHasErrors || specHasErrors) {
                 setFormState({
-                    showValidation: true,
+                    displayValidation: true,
                 });
             } else {
                 supabaseClient
@@ -413,19 +369,23 @@ function CaptureCreate() {
         },
     };
 
+    usePrompt('confirm.loseData', exitWhenLogsClose || hasChanges(), () => {
+        resetState();
+    });
+
     return (
         <PageContainer>
             <LogDialog
                 open={showLogs}
                 token={logToken}
-                title={intl.formatMessage({
-                    id: 'captureCreation.save.waitMessage',
-                })}
+                title={
+                    <FormattedMessage id="captureCreation.save.waitMessage" />
+                }
                 actionComponent={
                     <>
-                        {saveStatus}
+                        {formStateSaveStatus}
                         <Button
-                            disabled={status !== CaptureCreationFormStatus.IDLE}
+                            disabled={formStateStatus !== FormStatus.IDLE}
                             onClick={handlers.closeLogs}
                         >
                             <FormattedMessage id="cta.close" />
@@ -434,15 +394,16 @@ function CaptureCreate() {
                 }
             />
 
-            <NewCaptureHeader
+            <FooHeader
                 close={handlers.cancel}
                 test={handlers.test}
                 testDisabled={
-                    status !== CaptureCreationFormStatus.IDLE || !hasConnectors
+                    formStateStatus !== FormStatus.IDLE || !hasConnectors
                 }
                 save={handlers.saveAndPublish}
-                saveDisabled={status !== CaptureCreationFormStatus.IDLE || !id}
+                saveDisabled={formStateStatus !== FormStatus.IDLE || !id}
                 formId={FORM_ID}
+                heading={<FormattedMessage id="captureCreation.heading" />}
             />
 
             {connectorTagsError ? (
@@ -451,7 +412,7 @@ function CaptureCreate() {
                 <>
                     <Collapse in={formSubmitError !== null}>
                         {formSubmitError && (
-                            <NewCaptureError
+                            <FooError
                                 title={formSubmitError.title}
                                 error={formSubmitError.error}
                                 logToken={logToken}
@@ -462,15 +423,16 @@ function CaptureCreate() {
                     <form id={FORM_ID}>
                         {connectorTags ? (
                             <ErrorBoundryWrapper>
-                                <NewCaptureDetails
+                                <DetailsForm
                                     connectorTags={connectorTags.data}
+                                    messagePrefix="captureCreation"
                                 />
                             </ErrorBoundryWrapper>
                         ) : null}
 
                         {captureImage?.id ? (
                             <ErrorBoundryWrapper>
-                                <NewCaptureSpec
+                                <EndpointConfig
                                     connectorImage={captureImage.id}
                                 />
                             </ErrorBoundryWrapper>
@@ -478,7 +440,7 @@ function CaptureCreate() {
                     </form>
 
                     <ErrorBoundryWrapper>
-                        <NewCaptureEditor />
+                        <CatalogEditor messageId="captureCreation.finalReview.instructions" />
                     </ErrorBoundryWrapper>
                 </>
             )}
