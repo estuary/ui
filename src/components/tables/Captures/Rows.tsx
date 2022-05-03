@@ -8,7 +8,7 @@ import {
     TableRow,
     Tooltip,
 } from '@mui/material';
-import CaptureDetails from 'components/capture/details';
+import CaptureDetails from 'components/capture/Details';
 import { ZustandProvider } from 'components/editor/Store';
 import { LiveSpecsQuery } from 'components/tables/Captures';
 import { formatDistanceToNow } from 'date-fns';

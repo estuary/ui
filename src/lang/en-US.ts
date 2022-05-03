@@ -31,6 +31,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.delete': `Delete`,
     'cta.download': `Download`,
     'cta.login': `Login`,
+    'cta.logout': `Logout`,
     'cta.oidc.google': `Login with Google`,
     'cta.register': `Sign Up`,
     'cta.clickHere': `click here`,
@@ -77,6 +78,21 @@ const FullPage: ResolvedIntlConfig['messages'] = {
 
 const Header: ResolvedIntlConfig['messages'] = {
     'header.navigationMenu.aria.label': `Expand Navigation`,
+    'helpMenu.ariaLabel': `Open Help Menu`,
+    'helpMenu.tooltip': `Helpful Links`,
+    'helpMenu.docs': `Flow Docs`,
+    'helpMenu.docs.link': `https://docs.estuary.dev/`,
+    'helpMenu.slack': `Estuary's Slack`,
+    'helpMenu.slack.link': `https://join.slack.com/t/estuary-dev/shared_invite/zt-86nal6yr-VPbv~YfZE9Q~6Zl~gmZdFQ`,
+    'helpMenu.support': `Email Support`,
+    'helpMenu.support.link': `mailto: flow-support@estuary.dev`,
+    'helpMenu.contact': `Contact Us`,
+    'helpMenu.contact.link': `https://www.estuary.dev/#get-in-touch`,
+    'helpMenu.about': `About ${CommonMessages.productName}`,
+
+    'accountMenu.ariaLabel': `Open Account Menu`,
+    'accountMenu.tooltip': `Account Menu`,
+    'accountMenu.emailVerified': `verified`,
 };
 
 const Home: ResolvedIntlConfig['messages'] = {
@@ -119,7 +135,7 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
 };
 
 const RouteTitles: ResolvedIntlConfig['messages'] = {
-    'routeTitle.home': `home`,
+    'routeTitle.home': `Home`,
     'routeTitle.dashboard': `Dashboard`,
     'routeTitle.admin': `Admin`,
     'routeTitle.captureCreate': `Create Capture`,
@@ -137,7 +153,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
 };
 
 const BrowserTitles: ResolvedIntlConfig['messages'] = {
-    'browserTitle.home': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.home']}`,
+    'browserTitle.home': `Welcome to ${CommonMessages['common.browserTitle']}`,
     'browserTitle.dashboard': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.dashboard']}`,
     'browserTitle.admin': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.admin']}`,
     'browserTitle.captureCreate': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.captureCreate']}`,

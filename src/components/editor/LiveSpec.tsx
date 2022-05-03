@@ -1,4 +1,4 @@
-import { LiveSpecQuery } from 'components/capture/details';
+import { LiveSpecQuery } from 'components/capture/Details';
 import EditorAndList from 'components/editor/EditorAndList';
 import { EditorStoreState, useZustandStore } from 'components/editor/Store';
 
