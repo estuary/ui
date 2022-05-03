@@ -4,7 +4,7 @@ import { LiveSpecsQuery } from 'components/tables/Captures';
 import { formatDistanceToNow } from 'date-fns';
 import { FormattedDate, FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router';
-import { getDeploymentStatusHexCode, stripPathing } from 'utils/misc-utils';
+import { getDeploymentStatusHexCode } from 'utils/misc-utils';
 
 interface Props {
     data: LiveSpecsQuery[];
@@ -14,10 +14,6 @@ export const tableColumns = [
     {
         field: 'catalog_name',
         headerIntlKey: 'entityTable.data.entity',
-    },
-    {
-        field: 'connector_image_name',
-        headerIntlKey: 'entityTable.data.connectorType',
     },
     {
         field: 'updated_at',
@@ -67,10 +63,6 @@ function Rows({ data }: Props) {
                         </Tooltip>
                     </TableCell>
 
-                    <TableCell sx={{ minWidth: 100 }}>
-                        {stripPathing(row.connector_image_name)}
-                    </TableCell>
-
                     <TableCell>
                         <Tooltip
                             title={
@@ -106,13 +98,14 @@ function Rows({ data }: Props) {
                                 size="small"
                                 disableElevation
                                 sx={{ mr: 1 }}
+                                disabled
                                 onClick={() => {
                                     navigate(
                                         `${routeDetails.capture.details.fullPath}?${routeDetails.capture.details.params.pubID}=${row.last_pub_id}`
                                     );
                                 }}
                             >
-                                <FormattedMessage id="capturesTable.detailsCTA" />
+                                <FormattedMessage id="materializationsTable.detailsCTA" />
                             </Button>
                         </Box>
                     </TableCell>

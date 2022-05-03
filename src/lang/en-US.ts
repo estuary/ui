@@ -82,12 +82,6 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'register.label.documentAcknowledgement.privacy': `Privacy Policy`,
     'register.existingAccount': `Already have an account?`,
 
-    // Captures main page
-    'captures.main.message1': `Click the "New Capture" button up above to get started.`,
-    'captures.main.message2': `It will guide you through generating and downloading a valid {docLink}.`,
-    'captures.main.message2.docLink': `capture spec`,
-    'captures.main.message2.docPath': `https://docs.estuary.dev/concepts/#captures`,
-
     // Landing page content
     'home.main.header': `Welcome to Flow!`,
     'home.main.description': `Click the Capture link over on the side navigation to get started.`,
@@ -188,6 +182,24 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
     'login.oidc.message': `Please use one of the providers below to continue.`,
 };
 
+const Captures: ResolvedIntlConfig['messages'] = {
+    'capturesTable.title': `Your Captures`,
+    'capturesTable.detailsCTA': `Details`,
+    'captures.main.message1': `Click the "New Capture" button up above to get started.`,
+    'captures.main.message2': `It will guide you through generating and downloading a valid {docLink}.`,
+    'captures.main.message2.docLink': `capture spec`,
+    'captures.main.message2.docPath': `https://docs.estuary.dev/concepts/#captures`,
+};
+
+const Materializations: ResolvedIntlConfig['messages'] = {
+    'materializationsTable.title': `Your Materializations`,
+    'materializationsTable.detailsCTA': `Details`,
+    'materializations.main.message1': `Click the "New Materialization" button up above to get started.`,
+    'materializations.main.message2': `It will guide you through generating and downloading a valid {docLink}.`,
+    'materializations.main.message2.docLink': `materialization`,
+    'materializations.main.message2.docPath': `https://docs.estuary.dev/concepts/materialization/`,
+};
+
 const Foo: ResolvedIntlConfig['messages'] = {
     'foo.ctas.discover': `Test Config`,
     'foo.ctas.discoverAgain': `Regenerate Catalog`,
@@ -216,11 +228,6 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
 
 const CaptureDetails: ResolvedIntlConfig['messages'] = {
     'captureDetails.logs.title': `Logs`,
-};
-
-const Captures: ResolvedIntlConfig['messages'] = {
-    'capturesTable.title': `Your Captures`,
-    'capturesTable.detailsCTA': `Details`,
 };
 
 const MaterializationCreate: ResolvedIntlConfig['messages'] = {
@@ -252,6 +259,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...AdminPage,
     ...Error,
     ...LoginPage,
+    ...Materializations,
     ...Foo,
     ...Captures,
     ...CaptureCreate,
