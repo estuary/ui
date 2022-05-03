@@ -20,7 +20,6 @@ export interface Connector {
     detail: string;
     updated_at: string;
     image_name: string;
-    external_url: string;
     open_graph: object;
 }
 
@@ -29,7 +28,6 @@ const CONNECTOR_QUERY = `
     detail,
     updated_at,
     image_name,
-    external_url,
     open_graph,
     connector_tags (
         documentation_url,

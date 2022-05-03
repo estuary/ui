@@ -96,7 +96,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'logs.main.message': `This is where we will show the logs for the system.`,
     'users.main.message': `This is where you will be able to manage your users... basically a little User CRUD UI.`,
 
-    'captureTable.header': `Published Captures`,
+    'captureTable.header': `Captures`,
     'entityTable.title': `Entity Table`,
 
     'entityTable.filterLabel': `Filter Namespaces`,
@@ -192,7 +192,7 @@ const Captures: ResolvedIntlConfig['messages'] = {
 };
 
 const Materializations: ResolvedIntlConfig['messages'] = {
-    'materializationsTable.title': `Your Materializations`,
+    'materializationsTable.title': `Materializations`,
     'materializationsTable.detailsCTA': `Details`,
     'materializations.main.message1': `Click the "New Materialization" button up above to get started.`,
     'materializations.main.message2': `It will guide you through generating and downloading a valid {docLink}.`,
