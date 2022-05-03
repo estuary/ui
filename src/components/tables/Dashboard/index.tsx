@@ -39,7 +39,7 @@ function DashboardTable() {
                     columnToSort,
                     sortDirection,
                     pagination
-                );
+                ).eq('spec_type', 'collection');
             },
         },
         [pagination, searchQuery, columnToSort, sortDirection]
