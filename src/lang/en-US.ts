@@ -76,8 +76,12 @@ const FullPage: ResolvedIntlConfig['messages'] = {
     'fullpage.error': `Major Error`,
 };
 
+const Navigation: ResolvedIntlConfig['messages'] = {
+    'navigation.ariaLabel': `Main application navigation`,
+    'header.navigation.ariaLabel': `Expand Navigation`,
+};
+
 const Header: ResolvedIntlConfig['messages'] = {
-    'header.navigationMenu.aria.label': `Expand Navigation`,
     'helpMenu.ariaLabel': `Open Help Menu`,
     'helpMenu.tooltip': `Helpful Links`,
     'helpMenu.docs': `Flow Docs`,
@@ -295,6 +299,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...RouteTitles,
     ...FullPage,
     ...Header,
+    ...Navigation,
     ...ConfirmationDialog,
     ...LogsDialog,
     ...EntityTable,

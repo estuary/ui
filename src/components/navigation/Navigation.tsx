@@ -7,6 +7,7 @@ import StorageIcon from '@mui/icons-material/Storage';
 import { Box, List, Toolbar, useMediaQuery, useTheme } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
 import { routeDetails } from 'app/Authenticated';
+import { useIntl } from 'react-intl';
 import ListItemLink from './ListItemLink';
 
 interface Props {
@@ -16,6 +17,7 @@ interface Props {
 }
 
 const Navigation = ({ onNavigationToggle, open, width }: Props) => {
+    const intl = useIntl();
     const theme = useTheme();
     const isBelowMd = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -47,7 +49,11 @@ const Navigation = ({ onNavigationToggle, open, width }: Props) => {
         >
             <Toolbar />
             <Box sx={{ overflowX: 'hidden' }}>
-                <List aria-label="main application navigation">
+                <List
+                    aria-label={intl.formatMessage({
+                        id: 'header.navigation.ariaLabel',
+                    })}
+                >
                     <ListItemLink
                         icon={<InputIcon />}
                         title={routeDetails.captures.title}
