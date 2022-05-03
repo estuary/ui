@@ -3,7 +3,10 @@ import { JsonForms } from '@jsonforms/react';
 import { Alert, Stack, Typography } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
 import { ConnectorTag } from 'components/shared/foo/query';
-import useFooState, { FooState, FormStatus } from 'components/shared/foo/Store';
+import useFooState, {
+    EntityStoreState,
+    FormStatus,
+} from 'components/shared/foo/Store';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
@@ -20,7 +23,7 @@ interface Props {
     messagePrefix: 'materializationCreation' | 'captureCreation';
 }
 
-const stateSelectors: StoreSelector<FooState> = {
+const stateSelectors: StoreSelector<EntityStoreState> = {
     formData: (state) => state.details.data,
     setDetails: (state) => state.setDetails,
     setConnectors: (state) => state.setConnectors,

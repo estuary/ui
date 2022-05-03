@@ -1,10 +1,11 @@
 import { Grid, Typography } from '@mui/material';
 import LiveSpecEditor from 'components/editor/LiveSpec';
-import { EditorStoreState, useZustandStore } from 'components/editor/Store';
+import { EditorStoreState } from 'components/editor/Store';
 import Logs from 'components/Logs';
 import Error from 'components/shared/Error';
 import { useQuery, useSelectSingle } from 'hooks/supabase-swr';
 import useBrowserTitle from 'hooks/useBrowserTitle';
+import { useZustandStore } from 'hooks/useZustand';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { TABLES } from 'services/supabase';

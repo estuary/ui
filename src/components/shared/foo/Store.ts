@@ -42,7 +42,7 @@ interface FormState {
     } | null;
 }
 
-export interface FooState {
+export interface EntityStoreState {
     //Details
     details: Details;
     setDetails: (details: Details) => void;
@@ -63,7 +63,7 @@ export interface FooState {
 }
 
 const getInitialStateData = (): Pick<
-    FooState,
+    EntityStoreState,
     'details' | 'spec' | 'connectors' | 'formState'
 > => {
     return {
@@ -94,7 +94,7 @@ const getInitialStateData = (): Pick<
     };
 };
 
-const useFooStore = create<FooState>()(
+const useEntityStore = create<EntityStoreState>()(
     devtools(
         (set, get) => ({
             ...getInitialStateData(),
@@ -186,26 +186,32 @@ const useFooStore = create<FooState>()(
     )
 );
 
-export default useFooStore;
+export default useEntityStore;
 
 export const fooSelectors = {
-    entityName: (state: FooState) => state.details.data.name,
-    connectorTag: (state: FooState) => state.details.data.image,
-    setDetails: (state: FooState) => state.setDetails,
-    resetState: (state: FooState) => state.resetState,
-    hasChanges: (state: FooState) => state.hasChanges,
-    errors: (state: FooState) => [state.details.errors, state.spec.errors],
-    endpointConfig: (state: FooState) => state.spec.data,
-    setEndpointConfig: (state: FooState) => state.setSpec,
-    connectors: (state: FooState) => state.connectors,
-    setFormState: (state: FooState) => state.setFormState,
-    resetFormState: (state: FooState) => state.resetFormState,
-    formStateSaveStatus: (state: FooState) => state.formState.saveStatus,
-    formStateStatus: (state: FooState) => state.formState.status,
-    showLogs: (state: FooState) => state.formState.showLogs,
-    logToken: (state: FooState) => state.formState.logToken,
-    error: (state: FooState) => state.formState.error,
-    exitWhenLogsClose: (state: FooState) => state.formState.exitWhenLogsClose,
-    displayValidation: (state: FooState) => state.formState.displayValidation,
-    status: (state: FooState) => state.formState.status,
+    entityName: (state: EntityStoreState) => state.details.data.name,
+    connectorTag: (state: EntityStoreState) => state.details.data.image,
+    setDetails: (state: EntityStoreState) => state.setDetails,
+    resetState: (state: EntityStoreState) => state.resetState,
+    hasChanges: (state: EntityStoreState) => state.hasChanges,
+    errors: (state: EntityStoreState) => [
+        state.details.errors,
+        state.spec.errors,
+    ],
+    endpointConfig: (state: EntityStoreState) => state.spec.data,
+    setEndpointConfig: (state: EntityStoreState) => state.setSpec,
+    connectors: (state: EntityStoreState) => state.connectors,
+    setFormState: (state: EntityStoreState) => state.setFormState,
+    resetFormState: (state: EntityStoreState) => state.resetFormState,
+    formStateSaveStatus: (state: EntityStoreState) =>
+        state.formState.saveStatus,
+    formStateStatus: (state: EntityStoreState) => state.formState.status,
+    showLogs: (state: EntityStoreState) => state.formState.showLogs,
+    logToken: (state: EntityStoreState) => state.formState.logToken,
+    error: (state: EntityStoreState) => state.formState.error,
+    exitWhenLogsClose: (state: EntityStoreState) =>
+        state.formState.exitWhenLogsClose,
+    displayValidation: (state: EntityStoreState) =>
+        state.formState.displayValidation,
+    status: (state: EntityStoreState) => state.formState.status,
 };

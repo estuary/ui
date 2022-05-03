@@ -8,9 +8,10 @@ import {
     Tooltip,
 } from '@mui/material';
 import CaptureDetails from 'components/capture/Details';
-import { ZustandProvider } from 'components/editor/Store';
+import { createEditorStore } from 'components/editor/Store';
 import { LiveSpecsQuery } from 'components/tables/Captures';
 import { formatDistanceToNow } from 'date-fns';
+import { ZustandProvider } from 'hooks/useZustand';
 import { useState } from 'react';
 import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
 import { getDeploymentStatusHexCode, stripPathing } from 'utils/misc-utils';
@@ -154,7 +155,10 @@ function Row({ data }: RowProps) {
                     colSpan={tableColumns.length}
                 >
                     <Collapse in={detailsExpanded} unmountOnExit>
-                        <ZustandProvider stateKey="liveSpecEditor">
+                        <ZustandProvider
+                            createStore={createEditorStore}
+                            key="liveSpecEditor"
+                        >
                             <CaptureDetails lastPubId={data.last_pub_id} />
                         </ZustandProvider>
                     </Collapse>

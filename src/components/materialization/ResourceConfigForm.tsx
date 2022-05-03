@@ -5,7 +5,7 @@ import { StyledEngineProvider } from '@mui/material';
 import useCreationStore, {
     CreationState,
 } from 'components/materialization/Store';
-import useFooStore, {
+import useEntityStore, {
     fooSelectors,
     FormStatus,
 } from 'components/shared/foo/Store';
@@ -34,8 +34,8 @@ const stateSelectors: StoreSelector<CreationState> = {
 function NewMaterializationResourceConfigForm({ resourceSchema }: Props) {
     const setConfig = useCreationStore(stateSelectors.setConfig);
     const formData = useCreationStore(stateSelectors.formData);
-    const displayValidation = useFooStore(fooSelectors.displayValidation);
-    const status = useFooStore(fooSelectors.formStateStatus);
+    const displayValidation = useEntityStore(fooSelectors.displayValidation);
+    const status = useEntityStore(fooSelectors.formStateStatus);
 
     const [deReffedSchema, setDeReffedSchema] = useState<any | null>(null);
 

@@ -2,7 +2,7 @@ import { createAjv } from '@jsonforms/core';
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { StyledEngineProvider } from '@mui/material';
-import useFooStore, {
+import useEntityStore, {
     fooSelectors,
     FormStatus,
 } from 'components/shared/foo/Store';
@@ -23,10 +23,10 @@ type Props = {
 const defaultAjv = createAjv({ useDefaults: true });
 
 function EndpointConfigForm({ endpointSchema }: Props) {
-    const setSpec = useFooStore(fooSelectors.setEndpointConfig);
-    const formData = useFooStore(fooSelectors.endpointConfig);
-    const displayValidation = useFooStore(fooSelectors.displayValidation);
-    const formStateStatus = useFooStore(fooSelectors.formStateStatus);
+    const setSpec = useEntityStore(fooSelectors.setEndpointConfig);
+    const formData = useEntityStore(fooSelectors.endpointConfig);
+    const displayValidation = useEntityStore(fooSelectors.displayValidation);
+    const formStateStatus = useEntityStore(fooSelectors.formStateStatus);
 
     const [dereffedSchema, setDereffedSchema] = useState<any | null>(null);
 

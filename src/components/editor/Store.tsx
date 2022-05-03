@@ -1,12 +1,6 @@
 import produce from 'immer';
-import {
-    createContext as reactCreateContext,
-    ReactNode,
-    useContext,
-} from 'react';
-import useConstant from 'use-constant';
 import { devtoolsOptions } from 'utils/store-utils';
-import create, { StateSelector, StoreApi, useStore } from 'zustand';
+import create from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 
 export interface EditorStoreState<T> {
@@ -68,43 +62,8 @@ const getInitialState = <T,>(
     };
 };
 
-const createEditorStore = <T,>(key: string) => {
+export const createEditorStore = <T,>(key: string) => {
     return create<EditorStoreState<T>>()(
         devtools((set) => getInitialState<T>(set), devtoolsOptions(key))
     );
-};
-
-// TODO (zustand) this needs broken into a stand alone file.
-
-interface ZustandProviderProps {
-    stateKey: string;
-    children: ReactNode;
-}
-export const ZustandContext = reactCreateContext<any | null>(null);
-export const ZustandProvider = ({
-    stateKey,
-    children,
-}: ZustandProviderProps) => {
-    const store = useConstant(() => createEditorStore(stateKey));
-
-    return (
-        <ZustandContext.Provider value={store}>
-            {children}
-        </ZustandContext.Provider>
-    );
-};
-
-// TODO (zustand / typing) This is brute forcing the types basically and force the functions using this
-//  To be WAY too verbose than need be.
-export const useZustandStore = <S extends Object, U>(
-    selector: StateSelector<S, U>,
-    equalityFn?: any
-) => {
-    const store = useContext(ZustandContext);
-    return useStore<StoreApi<S>, U>(store, selector, equalityFn);
-};
-
-export const useZustandStoreNoType = (selector: any, equalityFn?: any) => {
-    const store = useContext(ZustandContext);
-    return useStore(store, selector, equalityFn);
 };

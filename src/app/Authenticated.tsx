@@ -1,7 +1,8 @@
 import AppLayout from 'AppLayout';
 import CaptureCreate from 'components/capture/Create';
-import { ZustandProvider } from 'components/editor/Store';
+import { createEditorStore } from 'components/editor/Store';
 import NewMaterialization from 'components/materialization/create';
+import { ZustandProvider } from 'hooks/useZustand';
 import Admin from 'pages/Admin';
 import Captures from 'pages/Captures';
 import Collections from 'pages/Collections';
@@ -88,7 +89,10 @@ const Authenticated = () => {
                     <Route
                         path={routeDetails.captures.create.path}
                         element={
-                            <ZustandProvider stateKey="draftSpecEditor">
+                            <ZustandProvider
+                                createStore={createEditorStore}
+                                key="draftSpecEditor"
+                            >
                                 <CaptureCreate />
                             </ZustandProvider>
                         }
@@ -100,7 +104,10 @@ const Authenticated = () => {
                     <Route
                         path={routeDetails.materializations.create.path}
                         element={
-                            <ZustandProvider stateKey="draftSpecEditor">
+                            <ZustandProvider
+                                createStore={createEditorStore}
+                                key="draftSpecEditor"
+                            >
                                 <NewMaterialization />
                             </ZustandProvider>
                         }

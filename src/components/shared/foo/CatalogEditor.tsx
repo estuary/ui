@@ -1,7 +1,8 @@
 import { Paper, Typography } from '@mui/material';
 import DraftSpecEditor from 'components/editor/DraftSpec';
-import { EditorStoreState, useZustandStore } from 'components/editor/Store';
+import { EditorStoreState } from 'components/editor/Store';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { useZustandStore } from 'hooks/useZustand';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {

@@ -1,7 +1,7 @@
 import { Button, Collapse } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { routeDetails } from 'app/Authenticated';
-import { EditorStoreState, useZustandStore } from 'components/editor/Store';
+import { EditorStoreState } from 'components/editor/Store';
 import CollectionSelector from 'components/materialization/CollectionSelector';
 import ResourceConfig from 'components/materialization/ResourceConfig';
 import useCreationStore, {
@@ -16,7 +16,7 @@ import FooError from 'components/shared/foo/Error';
 import FooHeader from 'components/shared/foo/Header';
 import LogDialog from 'components/shared/foo/LogDialog';
 import { ConnectorTag, CONNECTOR_TAG_QUERY } from 'components/shared/foo/query';
-import useFooStore, {
+import useEntityStore, {
     fooSelectors,
     FormStatus,
 } from 'components/shared/foo/Store';
@@ -25,6 +25,7 @@ import { useConfirmationModalContext } from 'context/Confirmation';
 import { useClient, useQuery, useSelect } from 'hooks/supabase-swr';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { useZustandStore } from 'hooks/useZustand';
 import { MouseEvent, useEffect } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
@@ -86,22 +87,24 @@ function MaterializationCreate() {
     const resourceConfig = useCreationStore(selectors.page.resourceConfigData);
 
     // Form Store
-    const entityName = useFooStore(fooSelectors.entityName);
-    const imageTag = useFooStore(fooSelectors.connectorTag);
-    const [detailErrors, specErrors] = useFooStore(fooSelectors.errors);
-    const resetState = useFooStore(fooSelectors.resetState);
-    const hasChanges = useFooStore(fooSelectors.hasChanges);
+    const entityName = useEntityStore(fooSelectors.entityName);
+    const imageTag = useEntityStore(fooSelectors.connectorTag);
+    const [detailErrors, specErrors] = useEntityStore(fooSelectors.errors);
+    const resetState = useEntityStore(fooSelectors.resetState);
+    const hasChanges = useEntityStore(fooSelectors.hasChanges);
 
     // Form State
-    const setFormState = useFooStore(fooSelectors.setFormState);
-    const resetFormState = useFooStore(fooSelectors.resetFormState);
-    const showLogs = useFooStore(fooSelectors.showLogs);
-    const logToken = useFooStore(fooSelectors.logToken);
-    const formSubmitError = useFooStore(fooSelectors.error);
-    const exitWhenLogsClose = useFooStore(fooSelectors.exitWhenLogsClose);
-    const endpointConfig = useFooStore(fooSelectors.endpointConfig);
-    const formStateSaveStatus = useFooStore(fooSelectors.formStateSaveStatus);
-    const formStateStatus = useFooStore(fooSelectors.formStateStatus);
+    const setFormState = useEntityStore(fooSelectors.setFormState);
+    const resetFormState = useEntityStore(fooSelectors.resetFormState);
+    const showLogs = useEntityStore(fooSelectors.showLogs);
+    const logToken = useEntityStore(fooSelectors.logToken);
+    const formSubmitError = useEntityStore(fooSelectors.error);
+    const exitWhenLogsClose = useEntityStore(fooSelectors.exitWhenLogsClose);
+    const endpointConfig = useEntityStore(fooSelectors.endpointConfig);
+    const formStateSaveStatus = useEntityStore(
+        fooSelectors.formStateSaveStatus
+    );
+    const formStateStatus = useEntityStore(fooSelectors.formStateStatus);
 
     // Editor state
     const draftId = useZustandStore<
