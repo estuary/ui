@@ -8,7 +8,6 @@ import {
 } from '@mui/material';
 import { Auth } from '@supabase/ui';
 import PageContainer from 'components/shared/PageContainer';
-import ConnectorsTable from 'components/tables/Connectors';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { FormattedMessage } from 'react-intl';
 
@@ -29,10 +28,6 @@ const Admin = () => {
                     <FormattedMessage id="admin.header" />
                 </Typography>
             </Toolbar>
-
-            <Box sx={boxStyling}>
-                <ConnectorsTable />
-            </Box>
 
             <Box sx={boxStyling}>
                 <Typography variant="h6">Access Token</Typography>

@@ -1,10 +1,11 @@
-import { Collections } from '@mui/icons-material';
 import AppLayout from 'AppLayout';
 import CaptureCreate from 'components/capture/Create';
 import { ZustandProvider } from 'components/editor/Store';
 import NewMaterialization from 'components/materialization/create';
 import Admin from 'pages/Admin';
 import Captures from 'pages/Captures';
+import Collections from 'pages/Collections';
+import Connectors from 'pages/Connectors';
 import Dashboard from 'pages/Dashboard';
 import PageNotFound from 'pages/error/PageNotFound';
 import Materializations from 'pages/Materializations';
@@ -15,6 +16,10 @@ export const routeDetails = {
     admin: {
         title: 'routeTitle.admin',
         path: '/admin',
+    },
+    connectors: {
+        title: 'routeTitle.connectors',
+        path: '/connectors',
     },
     capture: {
         root: '/capture',
@@ -84,6 +89,12 @@ const Authenticated = () => {
                     path={routeDetails.dashboard.path}
                     element={<Dashboard />}
                 />
+
+                <Route
+                    path={routeDetails.connectors.path}
+                    element={<Connectors />}
+                />
+
                 <Route
                     path={routeDetails.collections.path}
                     element={<Collections />}

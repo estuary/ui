@@ -49,10 +49,10 @@ function DashboardTable() {
         <Box>
             <EntityTable
                 noExistingDataContentIds={{
-                    header: 'captures.main.message1',
-                    message: 'captures.main.message2',
-                    docLink: 'captures.main.message2.docLink',
-                    docPath: 'captures.main.message2.docPath',
+                    header: 'collections.main.message1',
+                    message: 'collections.main.message2',
+                    docLink: 'collections.main.message2.docLink',
+                    docPath: 'collections.main.message2.docPath',
                 }}
                 columns={tableColumns}
                 query={liveSpecQuery}
@@ -63,7 +63,7 @@ function DashboardTable() {
                 setSortDirection={setSortDirection}
                 columnToSort={columnToSort}
                 setColumnToSort={setColumnToSort}
-                header="captureTable.header"
+                header="collectionsTable.title"
                 filterLabel="entityTable.filterLabel"
             />
         </Box>

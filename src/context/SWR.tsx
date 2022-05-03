@@ -1,10 +1,16 @@
-import { SWRConfig } from 'swr';
+import { Middleware, SWRConfig, SWRHook } from 'swr';
 import { BaseComponentProps } from 'types';
 import { getSWRSettings } from 'utils/env-utils';
 
 const swrSettings = getSWRSettings();
 
-const middleware = {
+interface IMiddleware {
+    cache: any;
+    logger: any;
+    errorHandler: Middleware;
+}
+
+const middleware: IMiddleware = {
     cache: () => {
         // When initializing, we restore the data from `localStorage` into a map.
         const loggingMap = {
@@ -66,6 +72,11 @@ const middleware = {
                   };
               }
             : (fn: any) => fn,
+    errorHandler: (useSWRNext: SWRHook) => (key, fetcher, config) => {
+        const swr = useSWRNext(key, fetcher, config);
+
+        return swr;
+    },
 };
 
 const SwrConfigProvider = ({ children }: BaseComponentProps) => {
@@ -78,7 +89,13 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
                 : undefined,
         use: [middleware.logger],
     };
-    return <SWRConfig value={options}>{children}</SWRConfig>;
+    return (
+        <SWRConfig value={options}>
+            <SWRConfig value={{ use: [middleware.errorHandler] }}>
+                {children}
+            </SWRConfig>
+        </SWRConfig>
+    );
 };
 
 export default SwrConfigProvider;

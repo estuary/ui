@@ -90,9 +90,6 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'pageNotFound.heading': `Sorry, that page cannot be found.`,
     'pageNotFound.message': `Try searching for a page below or go directly to your {dashboard}.`,
 
-    //Rest of the pages go down here. They don't have real pages right now.
-    'admin.header': `Administration`,
-
     'logs.main.message': `This is where we will show the logs for the system.`,
     'users.main.message': `This is where you will be able to manage your users... basically a little User CRUD UI.`,
 
@@ -119,6 +116,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.captureDetails': `Capture Details`,
     'routeTitle.captures': `Captures`,
     'routeTitle.collections': `Collections`,
+    'routeTitle.connectors': `Connectors`,
     'routeTitle.error.pageNotFound': `Page Not Found`,
     'routeTitle.login': `Login`,
     'routeTitle.loginLoading': `Checking Credentials`,
@@ -135,6 +133,7 @@ const BrowserTitles: ResolvedIntlConfig['messages'] = {
     'browserTitle.captureDetails': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.captureDetails']}`,
     'browserTitle.captures': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.captures']}`,
     'browserTitle.collections': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.collections']}`,
+    'browserTitle.connectors': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.connectors']}`,
     'browserTitle.error.pageNotFound': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.error.pageNotFound']}`,
     'browserTitle.login': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.login']}`,
     'browserTitle.loginLoading': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.loginLoading']}`,
@@ -159,6 +158,10 @@ const LogsDialog: ResolvedIntlConfig['messages'] = {
 };
 
 const AdminPage: ResolvedIntlConfig['messages'] = {
+    'admin.header': `Administration`,
+};
+
+const ConnectorsPage: ResolvedIntlConfig['messages'] = {
     'connectorTable.title': `Installed ${CommonMessages['terms.connectors']}`,
     'connectorTable.title.aria': `Table of all installed ${CommonMessages['terms.connectors']}`,
     'connectorTable.filterLabel': `Filter Name or Detail`,
@@ -172,10 +175,11 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'connectorTable.data.actions': `Actions`,
     'connectorTable.actionsCta.capture': `Capture`,
     'connectorTable.actionsCta.materialization': `Materialization`,
-    'admin.connectors.main.message1': `There are no connectors currently ready to be used.`,
-    'admin.connectors.main.message2': `Please contact support to get help setting up a {docLink}.`,
-    'admin.connectors.main.message2.docLink': `connector`,
-    'admin.connectors.main.message2.docPath': `https://docs.estuary.dev/concepts/#connectors`,
+    'connectors.header': `Connectors`,
+    'connectors.main.message1': `There are no connectors currently ready to be used.`,
+    'connectors.main.message2': `Please contact support to get help setting up a {docLink}.`,
+    'connectors.main.message2.docLink': `connector`,
+    'connectors.main.message2.docPath': `https://docs.estuary.dev/concepts/#connectors`,
 };
 
 const LoginPage: ResolvedIntlConfig['messages'] = {
@@ -198,6 +202,15 @@ const Materializations: ResolvedIntlConfig['messages'] = {
     'materializations.main.message2': `It will guide you through generating and downloading a valid {docLink}.`,
     'materializations.main.message2.docLink': `materialization`,
     'materializations.main.message2.docPath': `https://docs.estuary.dev/concepts/materialization/`,
+};
+
+const Collections: ResolvedIntlConfig['messages'] = {
+    'collectionsTable.title': `Collections`,
+    'collectionsTable.detailsCTA': `Details`,
+    'collections.main.message1': `You currently have no Collections. Click the Capture link over on the side navigation to get started.`,
+    'collections.main.message2': `Captures connect to outside systems, pull in data, and generate {docLink} within Flow.`,
+    'collections.main.message2.docLink': `collections`,
+    'collections.main.message2.docPath': `https://docs.estuary.dev/concepts/collections/`,
 };
 
 const Foo: ResolvedIntlConfig['messages'] = {
@@ -257,8 +270,10 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...RouteTitles,
     ...LogsDialog,
     ...AdminPage,
+    ...ConnectorsPage,
     ...Error,
     ...LoginPage,
+    ...Collections,
     ...Materializations,
     ...Foo,
     ...Captures,
