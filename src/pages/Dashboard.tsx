@@ -1,7 +1,13 @@
-import { Box, Toolbar, Typography } from '@mui/material';
+import { Box, SxProps, Theme, Toolbar, Typography } from '@mui/material';
 import PageContainer from 'components/shared/PageContainer';
+import DashboardTable from 'components/tables/Dashboard';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { FormattedMessage } from 'react-intl';
+
+const boxStyling: SxProps<Theme> = {
+    marginBottom: 2,
+    padding: 2,
+};
 
 const Dashboard = () => {
     useBrowserTitle('browserTitle.dashboard');
@@ -28,6 +34,9 @@ const Dashboard = () => {
                 <Typography variant="body2" color="text.secondary">
                     <FormattedMessage id="home.main.description" />
                 </Typography>
+            </Box>
+            <Box sx={boxStyling}>
+                <DashboardTable />
             </Box>
         </PageContainer>
     );
