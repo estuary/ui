@@ -51,7 +51,7 @@ const Navigation = ({ onNavigationToggle, open, width }: Props) => {
             <Box sx={{ overflowX: 'hidden' }}>
                 <List
                     aria-label={intl.formatMessage({
-                        id: 'header.navigation.ariaLabel',
+                        id: 'navigation.ariaLabel',
                     })}
                 >
                     <ListItemLink

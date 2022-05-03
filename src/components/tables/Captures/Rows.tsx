@@ -1,5 +1,4 @@
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import {
     Box,
     Button,
@@ -13,7 +12,7 @@ import { ZustandProvider } from 'components/editor/Store';
 import { LiveSpecsQuery } from 'components/tables/Captures';
 import { formatDistanceToNow } from 'date-fns';
 import { useState } from 'react';
-import { FormattedDate, FormattedMessage } from 'react-intl';
+import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
 import { getDeploymentStatusHexCode, stripPathing } from 'utils/misc-utils';
 
 interface RowsProps {
@@ -44,7 +43,8 @@ export const tableColumns = [
 ];
 
 function Row({ data }: RowProps) {
-    const [fooBar, setFooBar] = useState(false);
+    const intl = useIntl();
+    const [detailsExpanded, setDetailsExpanded] = useState(false);
 
     return (
         <>
@@ -121,15 +121,25 @@ function Row({ data }: RowProps) {
                             size="small"
                             disableElevation
                             sx={{ mr: 1 }}
+                            aria-expanded={detailsExpanded}
+                            aria-label={intl.formatMessage({
+                                id: detailsExpanded
+                                    ? 'aria.closeExpand'
+                                    : 'aria.openExpand',
+                            })}
                             onClick={() => {
-                                setFooBar(!fooBar);
+                                setDetailsExpanded(!detailsExpanded);
                             }}
                             endIcon={
-                                fooBar ? (
-                                    <KeyboardArrowUpIcon />
-                                ) : (
-                                    <KeyboardArrowDownIcon />
-                                )
+                                <KeyboardArrowDownIcon
+                                    sx={{
+                                        marginRight: 0,
+                                        transform: `rotate(${
+                                            detailsExpanded ? '180' : '0'
+                                        }deg)`,
+                                        transition: 'all 250ms ease-in-out',
+                                    }}
+                                />
                             }
                         >
                             <FormattedMessage id="capturesTable.detailsCTA" />
@@ -143,7 +153,7 @@ function Row({ data }: RowProps) {
                     style={{ paddingBottom: 0, paddingTop: 0 }}
                     colSpan={tableColumns.length}
                 >
-                    <Collapse in={fooBar} unmountOnExit>
+                    <Collapse in={detailsExpanded} unmountOnExit>
                         <ZustandProvider stateKey="liveSpecEditor">
                             <CaptureDetails lastPubId={data.last_pub_id} />
                         </ZustandProvider>

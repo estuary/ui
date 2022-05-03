@@ -16,6 +16,7 @@ interface Props {
 }
 
 const logHeight = 200;
+const TITLE_ID = 'logs-dialog-title';
 
 function LogDialog({
     open,
@@ -25,13 +26,8 @@ function LogDialog({
     title,
 }: Props) {
     return (
-        <Dialog
-            open={open}
-            maxWidth="lg"
-            fullWidth
-            aria-labelledby="logs-dialog-title"
-        >
-            <DialogTitle id="logs-dialog-title">{title}</DialogTitle>
+        <Dialog open={open} maxWidth="lg" fullWidth aria-labelledby={TITLE_ID}>
+            <DialogTitle id={TITLE_ID}>{title}</DialogTitle>
             <DialogContent
                 sx={{
                     height: logHeight + 25,

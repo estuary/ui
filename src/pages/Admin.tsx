@@ -30,10 +30,11 @@ const Admin = () => {
             </Toolbar>
 
             <Box sx={boxStyling}>
-                <Typography variant="h6">Access Token</Typography>
+                <Typography variant="h6">
+                    <FormattedMessage id="admin.accessToken" />
+                </Typography>
                 <Typography>
-                    If you want to use the CLI client you will need an access
-                    token. You can copy the one below to use.
+                    <FormattedMessage id="admin.accessToken.message" />
                 </Typography>
                 <TextareaAutosize
                     minRows={4}

@@ -9,13 +9,15 @@ import {
 } from '@mui/material';
 import React, { ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 interface Props {
     children: ReactNode;
 }
 
 function ErrorFallback({ error }: { error: Error }): JSX.Element {
+    const intl = useIntl();
+
     const [expanded, setExpanded] = React.useState(false);
 
     const handleExpandClick = () => {
@@ -35,7 +37,10 @@ function ErrorFallback({ error }: { error: Error }): JSX.Element {
             <IconButton
                 onClick={handleExpandClick}
                 aria-expanded={expanded}
-                aria-label="show more"
+                aria-label={intl.formatMessage({
+                    id: expanded ? 'aria.closeExpand' : 'aria.openExpand',
+                })}
+                // TODO (show more): The concept of "show more/show less" buttons are duplicated and this specific styling is for sure
                 sx={{
                     marginRight: 0,
                     transform: `rotate(${expanded ? '180' : '0'}deg)`,

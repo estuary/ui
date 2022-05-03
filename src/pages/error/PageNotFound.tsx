@@ -5,7 +5,6 @@ import {
     Box,
     IconButton,
     InputBase,
-    Link,
     Paper,
     Typography,
 } from '@mui/material';
@@ -84,20 +83,6 @@ const PageNotFound = () => {
         <PageContainer>
             <Typography variant="h5" align="center" sx={{ mb: 2 }}>
                 <FormattedMessage id="pageNotFound.heading" />
-            </Typography>
-
-            {/* TODO (UI / UX) : Consider adjusting the focus-visible state of the dashboard link. */}
-            <Typography align="center" sx={{ mb: 7 }}>
-                <FormattedMessage
-                    id="pageNotFound.message"
-                    values={{
-                        dashboard: (
-                            <Link href="/" underline="none">
-                                dashboard
-                            </Link>
-                        ),
-                    }}
-                />
             </Typography>
 
             <Box

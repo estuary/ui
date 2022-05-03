@@ -65,9 +65,7 @@ export function usePrompt(message: string, when = true, callback?: Function) {
                         tx.retry();
                     }
                 })
-                .catch(() => {
-                    console.log('hey');
-                });
+                .catch(() => {});
         },
         [message, callback, confirmationModalContext]
     );

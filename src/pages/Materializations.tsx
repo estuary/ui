@@ -4,6 +4,7 @@ import { routeDetails } from 'app/Authenticated';
 import PageContainer from 'components/shared/PageContainer';
 import MaterializationsTable from 'components/tables/Materializations';
 import useBrowserTitle from 'hooks/useBrowserTitle';
+import { FormattedMessage } from 'react-intl';
 import { NavLink } from 'react-router-dom';
 
 const boxStyling: SxProps<Theme> = {
@@ -30,7 +31,7 @@ const Materializations = () => {
                         color="success"
                         startIcon={<AddIcon />}
                     >
-                        New Materialization
+                        <FormattedMessage id="materializationsTable.cta.new" />
                     </Button>
                 </NavLink>
             </Toolbar>

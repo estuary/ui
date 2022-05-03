@@ -43,8 +43,6 @@ const Registration = () => {
     const intl = useIntl();
     const { user } = Auth.useUser();
 
-    console.log('user', user);
-
     const { email: authEmail, userName: authUserName } = getUserDetails(user);
 
     const [fullName, setFullName] = useState<string>(authUserName);
@@ -316,7 +314,7 @@ const Registration = () => {
                             <Typography sx={{ mb: 2 }}>
                                 <FormattedMessage id="register.existingAccount" />{' '}
                                 <Link href="/" underline="hover">
-                                    Sign In
+                                    <FormattedMessage id="cta.login" />
                                 </Link>
                             </Typography>
 

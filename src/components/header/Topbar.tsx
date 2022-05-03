@@ -54,7 +54,7 @@ const Topbar = (props: Props) => {
                     >
                         <IconButton
                             aria-label={intl.formatMessage({
-                                id: 'header.navigationMenu.aria.label',
+                                id: 'header.openNavigation.ariaLabel',
                             })}
                             onClick={openNavigation}
                             edge="start"

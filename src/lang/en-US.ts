@@ -13,6 +13,10 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.loggedOut': `You have been logged out. Please log back in.`,
     'common.missing': `N/A`,
 
+    // Aria
+    'aria.openExpand': `show more`,
+    'aria.closeExpand': `show less`,
+
     // Terms
     'terms.connectors': `Connectors`,
 
@@ -78,7 +82,7 @@ const FullPage: ResolvedIntlConfig['messages'] = {
 
 const Navigation: ResolvedIntlConfig['messages'] = {
     'navigation.ariaLabel': `Main application navigation`,
-    'header.navigation.ariaLabel': `Expand Navigation`,
+    'header.openNavigation.ariaLabel': `Expand Navigation`,
 };
 
 const Header: ResolvedIntlConfig['messages'] = {
@@ -181,6 +185,8 @@ const LogsDialog: ResolvedIntlConfig['messages'] = {
 
 const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.header': `Administration`,
+    'admin.accessToken': `Access Token`,
+    'admin.accessToken.messages': `If you want to use the CLI client you will need an access token. You can copy the one below to use.`,
 };
 
 const ConnectorsPage: ResolvedIntlConfig['messages'] = {
@@ -213,6 +219,7 @@ const Captures: ResolvedIntlConfig['messages'] = {
     'captureTable.header': `Captures`,
     'capturesTable.title': `Your Captures`,
     'capturesTable.detailsCTA': `Details`,
+    'capturesTable.cta.new': `New Capture`,
     'captures.main.message1': `Click the "New Capture" button up above to get started.`,
     'captures.main.message2': `It will guide you through generating and downloading a valid {docLink}.`,
     'captures.main.message2.docLink': `capture spec`,
@@ -222,6 +229,7 @@ const Captures: ResolvedIntlConfig['messages'] = {
 const Materializations: ResolvedIntlConfig['messages'] = {
     'materializationsTable.title': `Materializations`,
     'materializationsTable.detailsCTA': `Details`,
+    'materializationsTable.cta.new': `New Materialization`,
     'materializations.main.message1': `Click the "New Materialization" button up above to get started.`,
     'materializations.main.message2': `It will guide you through generating and downloading a valid {docLink}.`,
     'materializations.main.message2.docLink': `materialization`,
@@ -240,6 +248,7 @@ const Collections: ResolvedIntlConfig['messages'] = {
 const Foo: ResolvedIntlConfig['messages'] = {
     'foo.ctas.discover': `Test Config`,
     'foo.ctas.discoverAgain': `Regenerate Catalog`,
+    'foo.ctas.docs': `Connector Docs`,
 };
 
 const CaptureCreate: ResolvedIntlConfig['messages'] = {
