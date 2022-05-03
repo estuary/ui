@@ -142,7 +142,7 @@ function Row({ data }: RowProps) {
                                 />
                             }
                         >
-                            <FormattedMessage id="capturesTable.detailsCTA" />
+                            <FormattedMessage id="cta.details" />
                         </Button>
                     </Box>
                 </TableCell>

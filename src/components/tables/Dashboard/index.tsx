@@ -49,10 +49,10 @@ function DashboardTable() {
         <Box>
             <EntityTable
                 noExistingDataContentIds={{
-                    header: 'collections.main.message1',
-                    message: 'collections.main.message2',
-                    docLink: 'collections.main.message2.docLink',
-                    docPath: 'collections.main.message2.docPath',
+                    header: 'collections.message1',
+                    message: 'collections.message2',
+                    docLink: 'collections.message2.docLink',
+                    docPath: 'collections.message2.docPath',
                 }}
                 columns={tableColumns}
                 query={liveSpecQuery}

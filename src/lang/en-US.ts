@@ -6,7 +6,10 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'company': `Estuary`,
     'productName': `Control Plane`,
     'common.browserTitle': `Flow`,
-    'common.loading': `Loading...`,
+    'common.loading': `loading...`,
+    'common.running': `running...`,
+    'common.fail': `Failed`,
+    'common.success': `Success`,
     'common.errors.heading': `Error`,
     'common.optionsMissing': `No options`,
     'common.noData': `No data to display`,
@@ -36,10 +39,9 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.download': `Download`,
     'cta.login': `Login`,
     'cta.logout': `Logout`,
-    'cta.oidc.google': `Login with Google`,
     'cta.register': `Sign Up`,
     'cta.clickHere': `click here`,
-    'cta.moreDetails': `More Details`,
+    'cta.details': `Details`,
     'cta.saveEntity': `Save and Publish`,
     'cta.restart': `Restart`,
 };
@@ -186,7 +188,7 @@ const LogsDialog: ResolvedIntlConfig['messages'] = {
 const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.header': `Administration`,
     'admin.accessToken': `Access Token`,
-    'admin.accessToken.messages': `If you want to use the CLI client you will need an access token. You can copy the one below to use.`,
+    'admin.accessToken.message': `If you want to use the CLI client you will need an access token. You can copy the one below to use.`,
 };
 
 const ConnectorsPage: ResolvedIntlConfig['messages'] = {
@@ -218,31 +220,29 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
 const Captures: ResolvedIntlConfig['messages'] = {
     'captureTable.header': `Captures`,
     'capturesTable.title': `Your Captures`,
-    'capturesTable.detailsCTA': `Details`,
     'capturesTable.cta.new': `New Capture`,
-    'captures.main.message1': `Click the "New Capture" button up above to get started.`,
-    'captures.main.message2': `It will guide you through generating and downloading a valid {docLink}.`,
-    'captures.main.message2.docLink': `capture spec`,
-    'captures.main.message2.docPath': `https://docs.estuary.dev/concepts/#captures`,
+    'captures.message1': `Click the "New Capture" button up above to get started.`,
+    'captures.message2': `It will guide you through generating and downloading a valid {docLink}.`,
+    'captures.message2.docLink': `capture spec`,
+    'captures.message2.docPath': `https://docs.estuary.dev/concepts/#captures`,
 };
 
 const Materializations: ResolvedIntlConfig['messages'] = {
     'materializationsTable.title': `Materializations`,
-    'materializationsTable.detailsCTA': `Details`,
     'materializationsTable.cta.new': `New Materialization`,
-    'materializations.main.message1': `Click the "New Materialization" button up above to get started.`,
-    'materializations.main.message2': `It will guide you through generating and downloading a valid {docLink}.`,
-    'materializations.main.message2.docLink': `materialization`,
-    'materializations.main.message2.docPath': `https://docs.estuary.dev/concepts/materialization/`,
+    'materializations.message1': `Click the "New Materialization" button up above to get started.`,
+    'materializations.message2': `It will guide you through generating and downloading a valid {docLink}.`,
+    'materializations.message2.docLink': `materialization`,
+    'materializations.message2.docPath': `https://docs.estuary.dev/concepts/materialization/`,
 };
 
 const Collections: ResolvedIntlConfig['messages'] = {
     'collectionsTable.title': `Collections`,
     'collectionsTable.detailsCTA': `Details`,
-    'collections.main.message1': `You currently have no Collections. Click the Capture link over on the side navigation to get started.`,
-    'collections.main.message2': `Captures connect to outside systems, pull in data, and generate {docLink} within Flow.`,
-    'collections.main.message2.docLink': `collections`,
-    'collections.main.message2.docPath': `https://docs.estuary.dev/concepts/collections/`,
+    'collections.message1': `You currently have no Collections. Click the Capture link over on the side navigation to get started.`,
+    'collections.message2': `Captures connect to outside systems, pull in data, and generate {docLink} within Flow.`,
+    'collections.message2.docLink': `collections`,
+    'collections.message2.docPath': `https://docs.estuary.dev/concepts/collections/`,
 };
 
 const Foo: ResolvedIntlConfig['messages'] = {
@@ -268,9 +268,6 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreation.save.failedErrorTitle': `Capture Save Failed`,
     'captureCreation.save.serverUnreachable': `Config Save was unable to reach server`,
     'captureCreation.save.waitMessage': `Please wait while we test, save, and publish your capture.`,
-    'captureCreation.status.running': `running...`,
-    'captureCreation.status.failed': `Failed`,
-    'captureCreation.status.success': `Success!`,
 };
 
 const CaptureDetails: ResolvedIntlConfig['messages'] = {
@@ -290,9 +287,6 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreation.save.failure.errorTitle': `Materialization Save Failed`,
     'materializationCreation.save.inProgress': `Please wait while we test, save, and publish your materialization.`,
     'materializationCreation.save.serverUnreachable': `Config Save was unable to reach server`,
-    'materializationCreation.status.failure': `Failed`,
-    'materializationCreation.status.running': `running...`,
-    'materializationCreation.status.success': `Success!`,
     'materializationCreation.tenant.label': `Tenant`,
     'materializationCreation.test.failure.errorTitle': `Config Test Failed`,
     'materializationCreation.test.serverUnreachable': `Config Test was unable to reach server`,

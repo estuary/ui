@@ -107,7 +107,7 @@ function CaptureCreate() {
                     status: FormStatus.IDLE,
                     exitWhenLogsClose: false,
                     saveStatus: intl.formatMessage({
-                        id: 'captureCreation.status.failed',
+                        id: 'common.fail',
                     }),
                     ...formState,
                 });
@@ -144,7 +144,7 @@ function CaptureCreate() {
                     title: errorTitle,
                 },
                 saveStatus: intl.formatMessage({
-                    id: 'captureCreation.status.failed',
+                    id: 'common.fail',
                 }),
             });
         },
@@ -267,7 +267,7 @@ function CaptureCreate() {
                                     title: 'captureCreation.save.serverUnreachable',
                                 },
                                 saveStatus: intl.formatMessage({
-                                    id: 'captureCreation.status.failed',
+                                    id: 'common.fail',
                                 }),
                             },
                             publicationsSubscription

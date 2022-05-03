@@ -129,7 +129,7 @@ function MaterializationCreate() {
                     status: FormStatus.IDLE,
                     exitWhenLogsClose: false,
                     saveStatus: intl.formatMessage({
-                        id: 'materializationCreation.status.failure',
+                        id: 'common.fail',
                     }),
                     ...formState,
                 });
@@ -167,7 +167,7 @@ function MaterializationCreate() {
                     title: errorTitle,
                 },
                 saveStatus: intl.formatMessage({
-                    id: 'materializationCreation.status.failure',
+                    id: 'common.fail',
                 }),
             });
         },
@@ -183,7 +183,7 @@ function MaterializationCreate() {
                             status: FormStatus.IDLE,
                             exitWhenLogsClose: true,
                             saveStatus: intl.formatMessage({
-                                id: 'materializationCreation.status.success',
+                                id: 'common.success',
                             }),
                         });
 
@@ -448,7 +448,7 @@ function MaterializationCreate() {
                                     title: 'materializationCreation.save.serverUnreachable',
                                 },
                                 saveStatus: intl.formatMessage({
-                                    id: 'materializationCreation.status.failure',
+                                    id: 'common.fail',
                                 }),
                             },
                             publicationsSubscription

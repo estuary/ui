@@ -56,10 +56,10 @@ function MaterializationsTable() {
         <Box>
             <EntityTable
                 noExistingDataContentIds={{
-                    header: 'materializations.main.message1',
-                    message: 'materializations.main.message2',
-                    docLink: 'materializations.main.message2.docLink',
-                    docPath: 'materializations.main.message2.docPath',
+                    header: 'materializations.message1',
+                    message: 'materializations.message2',
+                    docLink: 'materializations.message2.docLink',
+                    docPath: 'materializations.message2.docPath',
                 }}
                 columns={tableColumns}
                 query={liveSpecQuery}

@@ -96,7 +96,7 @@ function Rows({ data }: Props) {
                                 sx={{ mr: 1 }}
                                 disabled
                             >
-                                <FormattedMessage id="materializationsTable.detailsCTA" />
+                                <FormattedMessage id="cta.details" />
                             </Button>
                         </Box>
                     </TableCell>
