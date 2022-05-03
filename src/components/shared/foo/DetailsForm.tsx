@@ -32,7 +32,7 @@ function DetailsForm({ connectorTags, messagePrefix }: Props) {
     const intl = useIntl();
     const [searchParams] = useSearchParams();
     const connectorID = searchParams.get(
-        routeDetails.capture.create.params.connectorID
+        routeDetails.captures.create.params.connectorID
     );
 
     const formData = useFooState(stateSelectors.formData);
@@ -120,7 +120,9 @@ function DetailsForm({ connectorTags, messagePrefix }: Props) {
 
     return (
         <>
-            <Typography variant="h5">Capture Details</Typography>
+            <Typography variant="h5">
+                <FormattedMessage id={`${messagePrefix}.details.heading`} />
+            </Typography>
 
             <FormattedMessage id={`${messagePrefix}.instructions`} />
 

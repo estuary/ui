@@ -497,7 +497,9 @@ function MaterializationCreate() {
                 save={handlers.saveAndPublish}
                 saveDisabled={formStateStatus !== FormStatus.IDLE || !draftId}
                 formId={FORM_ID}
-                heading={<FormattedMessage id="captureCreation.heading" />}
+                heading={
+                    <FormattedMessage id="materializationCreation.heading" />
+                }
             />
 
             {connectorTagsError ? (

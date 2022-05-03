@@ -5,7 +5,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     // Common stuff
     'company': `Estuary`,
     'productName': `Control Plane`,
-    'common.browserTitle': `Estuary Flow`,
+    'common.browserTitle': `Flow`,
     'common.loading': `Loading...`,
     'common.errors.heading': `Error`,
     'common.optionsMissing': `No options`,
@@ -121,28 +121,28 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.error.pageNotFound': `Page Not Found`,
     'routeTitle.login': `Login`,
     'routeTitle.loginLoading': `Checking Credentials`,
-    'routeTitle.materializationCreate': `Materialization Capture`,
+    'routeTitle.materializationCreate': `Materialization Create`,
     'routeTitle.materializationEdit': `Materialization Edit`,
     'routeTitle.materializations': `Materializations`,
     'routeTitle.registration': `Registration`,
 };
 
 const BrowserTitles: ResolvedIntlConfig['messages'] = {
-    'browserTitle.home': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.home']}`,
-    'browserTitle.dashboard': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.dashboard']}`,
-    'browserTitle.admin': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.admin']}`,
-    'browserTitle.captureCreate': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.captureCreate']}`,
-    'browserTitle.captureDetails': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.captureDetails']}`,
-    'browserTitle.captures': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.captures']}`,
-    'browserTitle.collections': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.collections']}`,
-    'browserTitle.connectors': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.connectors']}`,
-    'browserTitle.error.pageNotFound': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.error.pageNotFound']}`,
-    'browserTitle.login': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.login']}`,
-    'browserTitle.loginLoading': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.loginLoading']}`,
-    'browserTitle.materializationCreate': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.materializationCreate']}`,
-    'browserTitle.materializationEdit': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.materializationEdit']}`,
-    'browserTitle.materializations': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.materializations']}`,
-    'browserTitle.registration': `${CommonMessages['common.browserTitle']} ${RouteTitles['routeTitle.registration']}`,
+    'browserTitle.home': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.home']}`,
+    'browserTitle.dashboard': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.dashboard']}`,
+    'browserTitle.admin': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.admin']}`,
+    'browserTitle.captureCreate': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.captureCreate']}`,
+    'browserTitle.captureDetails': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.captureDetails']}`,
+    'browserTitle.captures': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.captures']}`,
+    'browserTitle.collections': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.collections']}`,
+    'browserTitle.connectors': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.connectors']}`,
+    'browserTitle.error.pageNotFound': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.error.pageNotFound']}`,
+    'browserTitle.login': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.login']}`,
+    'browserTitle.loginLoading': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.loginLoading']}`,
+    'browserTitle.materializationCreate': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.materializationCreate']}`,
+    'browserTitle.materializationEdit': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.materializationEdit']}`,
+    'browserTitle.materializations': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.materializations']}`,
+    'browserTitle.registration': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.registration']}`,
 };
 
 const Error: ResolvedIntlConfig['messages'] = {
@@ -222,6 +222,7 @@ const Foo: ResolvedIntlConfig['messages'] = {
 
 const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreation.heading': `${RouteTitles['routeTitle.captureCreate']}`,
+    'captureCreation.details.heading': `Capture Details`,
     'captureCreation.instructions': `To get started please provide a unique name and the source type of the Capture you want to create. Once you've filled out the source details you can click "Test Capture" down below to test the connection.`,
     'captureCreation.missingConnectors': `No connectors installed. You must install a source connector before being able to create a capture.`,
     'captureCreation.tenant.label': `Tenant`,
@@ -246,6 +247,7 @@ const CaptureDetails: ResolvedIntlConfig['messages'] = {
 };
 
 const MaterializationCreate: ResolvedIntlConfig['messages'] = {
+    'materializationCreation.details.heading': `Materialization Details`,
     'materializationCreation.config.source.doclink': `Connector Docs`,
     'materializationCreation.cta.test': `Test Config`,
     'materializationCreation.editor.default': `Before you can edit the Materialization Catalog you need to fill out the connection config section`,

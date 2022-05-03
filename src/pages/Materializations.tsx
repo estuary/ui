@@ -23,7 +23,7 @@ const Materializations = () => {
                     justifyContent: 'space-between',
                 }}
             >
-                <NavLink to={routeDetails.materialization.create.fullPath}>
+                <NavLink to={routeDetails.materializations.create.fullPath}>
                     <Button
                         variant="contained"
                         size="large"

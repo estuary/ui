@@ -93,14 +93,14 @@ function Rows({ data }: Props) {
                                             'capture'
                                         ) {
                                             navigate(
-                                                `${routeDetails.capture.create.fullPath}?${routeDetails.capture.create.params.connectorID}=${row.connector_tags[0].id}`
+                                                `${routeDetails.captures.create.fullPath}?${routeDetails.captures.create.params.connectorID}=${row.connector_tags[0].id}`
                                             );
                                         } else if (
                                             row.connector_tags[0].protocol ===
                                             'materialization'
                                         ) {
                                             navigate(
-                                                `${routeDetails.materialization.create.fullPath}?${routeDetails.materialization.create.params.connectorID}=${row.connector_tags[0].id}`
+                                                `${routeDetails.materializations.create.fullPath}?${routeDetails.materializations.create.params.connectorID}=${row.connector_tags[0].id}`
                                             );
                                         }
                                     }}

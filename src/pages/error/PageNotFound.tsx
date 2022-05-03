@@ -33,8 +33,10 @@ const PageNotFound = () => {
             route: routeDetails.captures.path,
         },
         {
-            name: intl.formatMessage({ id: routeDetails.capture.create.title }),
-            route: routeDetails.capture.create.fullPath,
+            name: intl.formatMessage({
+                id: routeDetails.captures.create.title,
+            }),
+            route: routeDetails.captures.create.fullPath,
         },
         {
             name: intl.formatMessage({
@@ -44,9 +46,9 @@ const PageNotFound = () => {
         },
         {
             name: intl.formatMessage({
-                id: routeDetails.materialization.create.title,
+                id: routeDetails.materializations.create.title,
             }),
-            route: routeDetails.materialization.create.path,
+            route: routeDetails.materializations.create.path,
         },
         {
             name: intl.formatMessage({

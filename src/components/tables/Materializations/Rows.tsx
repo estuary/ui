@@ -1,9 +1,7 @@
 import { Box, Button, TableCell, TableRow, Tooltip } from '@mui/material';
-import { routeDetails } from 'app/Authenticated';
 import { LiveSpecsQuery } from 'components/tables/Captures';
 import { formatDistanceToNow } from 'date-fns';
 import { FormattedDate, FormattedMessage } from 'react-intl';
-import { useNavigate } from 'react-router';
 import { getDeploymentStatusHexCode } from 'utils/misc-utils';
 
 interface Props {
@@ -26,8 +24,6 @@ export const tableColumns = [
 ];
 
 function Rows({ data }: Props) {
-    const navigate = useNavigate();
-
     return (
         <>
             {data.map((row) => (
@@ -99,11 +95,6 @@ function Rows({ data }: Props) {
                                 disableElevation
                                 sx={{ mr: 1 }}
                                 disabled
-                                onClick={() => {
-                                    navigate(
-                                        `${routeDetails.capture.details.fullPath}?${routeDetails.capture.details.params.pubID}=${row.last_pub_id}`
-                                    );
-                                }}
                             >
                                 <FormattedMessage id="materializationsTable.detailsCTA" />
                             </Button>

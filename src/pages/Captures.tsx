@@ -23,7 +23,7 @@ const Capture = () => {
                     justifyContent: 'space-between',
                 }}
             >
-                <NavLink to={routeDetails.capture.create.fullPath}>
+                <NavLink to={routeDetails.captures.create.fullPath}>
                     <Button
                         variant="contained"
                         size="large"
