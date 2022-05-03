@@ -52,6 +52,7 @@ function Rows({ data }: Props) {
                         <TableCell align="left" style={columnStyling}>
                             <ConnectorName
                                 iconPath={row.open_graph['en-US'].image}
+                                iconSize={40}
                                 connector={row}
                             />
                         </TableCell>

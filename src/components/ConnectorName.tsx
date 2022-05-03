@@ -5,10 +5,11 @@ import { getConnectorName } from 'utils/misc-utils';
 
 interface Props {
     iconPath?: string;
+    iconSize?: number;
     connector: any; // TODO (typing) ConnectorTag
 }
 
-function ConnectorName({ connector, iconPath }: Props) {
+function ConnectorName({ connector, iconPath, iconSize }: Props) {
     const connectorName = useConstant(() =>
         typeof connector === 'string'
             ? connector
@@ -27,7 +28,7 @@ function ConnectorName({ connector, iconPath }: Props) {
                 },
             }}
         >
-            <ConnectorIcon iconPath={iconPath} />
+            <ConnectorIcon iconPath={iconPath} size={iconSize} />
             {connectorName}
         </Stack>
     );
