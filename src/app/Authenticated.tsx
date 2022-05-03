@@ -6,8 +6,8 @@ import Admin from 'pages/Admin';
 import Captures from 'pages/Captures';
 import Collections from 'pages/Collections';
 import Connectors from 'pages/Connectors';
-import Dashboard from 'pages/Dashboard';
 import PageNotFound from 'pages/error/PageNotFound';
+import Home from 'pages/Home';
 import Materializations from 'pages/Materializations';
 import Registration from 'pages/Registration';
 import { Route, Routes } from 'react-router';
@@ -48,8 +48,8 @@ export const routeDetails = {
         title: 'routeTitle.collections',
         path: '/collections',
     },
-    dashboard: {
-        title: 'routeTitle.dashboard',
+    home: {
+        title: 'routeTitle.home',
         path: '/',
     },
     materialization: {
@@ -85,10 +85,7 @@ const Authenticated = () => {
                 element={<Registration />}
             />
             <Route element={<AppLayout />}>
-                <Route
-                    path={routeDetails.dashboard.path}
-                    element={<Dashboard />}
-                />
+                <Route path={routeDetails.home.path} element={<Home />} />
 
                 <Route
                     path={routeDetails.connectors.path}

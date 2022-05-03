@@ -25,8 +25,8 @@ const PageNotFound = () => {
 
     const pages: { name: string; route: string }[] = [
         {
-            name: intl.formatMessage({ id: routeDetails.dashboard.title }),
-            route: routeDetails.dashboard.path,
+            name: intl.formatMessage({ id: routeDetails.collections.title }),
+            route: routeDetails.collections.path,
         },
         {
             name: intl.formatMessage({ id: routeDetails.captures.title }),
@@ -41,6 +41,18 @@ const PageNotFound = () => {
                 id: routeDetails.materializations.title,
             }),
             route: routeDetails.materializations.path,
+        },
+        {
+            name: intl.formatMessage({
+                id: routeDetails.materialization.create.title,
+            }),
+            route: routeDetails.materialization.create.path,
+        },
+        {
+            name: intl.formatMessage({
+                id: routeDetails.connectors.title,
+            }),
+            route: routeDetails.connectors.path,
         },
         {
             name: intl.formatMessage({ id: routeDetails.admin.title }),

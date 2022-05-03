@@ -49,14 +49,14 @@ const Navigation = ({ onNavigationToggle, open, width }: Props) => {
             <Box sx={{ overflowX: 'hidden' }}>
                 <List aria-label="main application navigation">
                     <ListItemLink
-                        icon={<FormatListNumberedIcon />}
-                        title={routeDetails.collections.title}
-                        link={routeDetails.collections.path}
-                    />
-                    <ListItemLink
                         icon={<InputIcon />}
                         title={routeDetails.captures.title}
                         link={routeDetails.captures.path}
+                    />
+                    <ListItemLink
+                        icon={<FormatListNumberedIcon />}
+                        title={routeDetails.collections.title}
+                        link={routeDetails.collections.path}
                     />
                     <ListItemLink
                         icon={<StorageIcon />}

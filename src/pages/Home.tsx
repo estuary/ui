@@ -3,8 +3,8 @@ import PageContainer from 'components/shared/PageContainer';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { FormattedMessage } from 'react-intl';
 
-const Dashboard = () => {
-    useBrowserTitle('browserTitle.dashboard');
+const Home = () => {
+    useBrowserTitle('browserTitle.home');
 
     return (
         <PageContainer>
@@ -33,4 +33,4 @@ const Dashboard = () => {
     );
 };
 
-export default Dashboard;
+export default Home;
