@@ -1,7 +1,6 @@
 import { Collections } from '@mui/icons-material';
 import AppLayout from 'AppLayout';
 import CaptureCreate from 'components/capture/Create';
-import CaptureDetails from 'components/capture/details';
 import { ZustandProvider } from 'components/editor/Store';
 import NewMaterialization from 'components/materialization/create';
 import Admin from 'pages/Admin';
@@ -100,14 +99,6 @@ const Authenticated = () => {
                         element={
                             <ZustandProvider stateKey="draftSpecEditor">
                                 <CaptureCreate />
-                            </ZustandProvider>
-                        }
-                    />
-                    <Route
-                        path={routeDetails.capture.details.path}
-                        element={
-                            <ZustandProvider stateKey="liveSpecEditor">
-                                <CaptureDetails />
                             </ZustandProvider>
                         }
                     />
