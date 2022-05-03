@@ -2,7 +2,7 @@
 import { ResolvedIntlConfig } from 'react-intl/src/types';
 
 const CommonMessages: ResolvedIntlConfig['messages'] = {
-    // Common stuff
+    // Misc
     'company': `Estuary`,
     'productName': `Control Plane`,
     'common.browserTitle': `Flow`,
@@ -13,10 +13,17 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.loggedOut': `You have been logged out. Please log back in.`,
     'common.missing': `N/A`,
 
-    // Header
-    'header.navigationMenu.aria.label': `Expand Navigation`,
+    // Terms
+    'terms.connectors': `Connectors`,
 
-    // CTA
+    // Common fields
+    'entityName.label': `Name`,
+    'entityName.description': `Name of the entity - must be unique. (ex: acemCo/marketing_data)`,
+    'connector.label': `Connector`,
+    'connector.description': `The connector you want to use to connect to your endpoint.`,
+};
+
+const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.addToChangeSet': `Add to Change Set`,
     'cta.cancel': `Cancel`,
     'cta.close': `Close`,
@@ -30,11 +37,9 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'cta.moreDetails': `More Details`,
     'cta.saveEntity': `Save and Publish`,
     'cta.restart': `Restart`,
+};
 
-    // Terms
-    'terms.connectors': `Connectors`,
-
-    // Data
+const Data: ResolvedIntlConfig['messages'] = {
     'data.name': `Name`,
     'data.fullName': `Full Name`,
     'data.description': `Description`,
@@ -44,33 +49,47 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'data.updated_at': `Updated`,
     'data.email': `Email`,
     'data.display_name': `User Name`,
+};
 
-    // Confirmations
-    'confirm.title': `Are you sure?`,
-    'confirm.loseData': `You have unsaved worked. If you continue you will lose your changes.`,
+const Error: ResolvedIntlConfig['messages'] = {
+    'error.title': `Error`,
+    'error.message': `This is not something you did wrong. There was a technical issue fetching data. Please contact support.`,
+    'error.codeLabel': `Code:`,
+    'error.messageLabel': `Message:`,
+    'error.detailsLabel': `Details:`,
+    'error.hintLabel': `Hint:`,
+};
 
-    // Full Page
-    'fullpage.error': `Major Error`,
-
-    // Error Boundry
-    'errorBoundry.title': `Error`,
+const ErrorBoundry: ResolvedIntlConfig['messages'] = {
+    'errorBoundry.title': `${Error['error.title']}`,
     'errorBoundry.message1': `Sorry - there was an unexpected error in some UI code. `,
     'errorBoundry.message2': `Expand to see more details.`,
+};
 
-    // Common form stuff
-    'forms.validation.failure.heading': `Form failed validation`,
-    'capturesource.label': `Source type`,
-    'capturesource.fetch.failed': `Failed to fetch source types`,
-    'username.label': `User Name`,
-    'entityName.label': `Name`,
-    'entityName.description': `Name of the entity - must be unique. (ex: acemCo/marketing_data)`,
-    'connector.label': `Name`,
-    'connector.description': `The connector you want to use to connect to your endpoint.`,
+const ConfirmationDialog: ResolvedIntlConfig['messages'] = {
+    'confirm.title': `Are you sure?`,
+    'confirm.loseData': `You have unsaved worked. If you continue you will lose your changes.`,
+};
 
-    // Login Page Stuff
-    'login.main.message': `When running locally you can login with whatever name you want.`,
+const FullPage: ResolvedIntlConfig['messages'] = {
+    'fullpage.error': `Major Error`,
+};
 
-    // Registration Page
+const Header: ResolvedIntlConfig['messages'] = {
+    'header.navigationMenu.aria.label': `Expand Navigation`,
+};
+
+const Home: ResolvedIntlConfig['messages'] = {
+    'home.main.header': `Welcome to Flow!`,
+    'home.main.description': `Click the Capture link over on the side navigation to get started.`,
+};
+
+const PageNotFound: ResolvedIntlConfig['messages'] = {
+    'pageNotFound.heading': `Sorry, that page cannot be found.`,
+    'pageNotFound.message': `Try searching for a page below or go directly to your {dashboard}.`,
+};
+
+const Registration: ResolvedIntlConfig['messages'] = {
     'register.heading': `We're currently accepting Beta partners.`,
     'register.main.message': `Please enter your information and our team will approve your account.`,
     'register.label.fullName': `Full Name`,
@@ -81,19 +100,9 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'register.label.documentAcknowledgement.terms': `Terms of Service`,
     'register.label.documentAcknowledgement.privacy': `Privacy Policy`,
     'register.existingAccount': `Already have an account?`,
+};
 
-    // Landing page content
-    'home.main.header': `Welcome to Flow!`,
-    'home.main.description': `Click the Capture link over on the side navigation to get started.`,
-
-    // Error Page - Page Not Found
-    'pageNotFound.heading': `Sorry, that page cannot be found.`,
-    'pageNotFound.message': `Try searching for a page below or go directly to your {dashboard}.`,
-
-    'logs.main.message': `This is where we will show the logs for the system.`,
-    'users.main.message': `This is where you will be able to manage your users... basically a little User CRUD UI.`,
-
-    'captureTable.header': `Captures`,
+const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.title': `Entity Table`,
 
     'entityTable.filterLabel': `Filter Namespaces`,
@@ -145,15 +154,6 @@ const BrowserTitles: ResolvedIntlConfig['messages'] = {
     'browserTitle.registration': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.registration']}`,
 };
 
-const Error: ResolvedIntlConfig['messages'] = {
-    'error.title': `Error`,
-    'error.message': `This is not something you did wrong. There was a technical issue fetching data. Please contact support.`,
-    'error.codeLabel': `Code:`,
-    'error.messageLabel': `Message:`,
-    'error.detailsLabel': `Details:`,
-    'error.hintLabel': `Hint:`,
-};
-
 const LogsDialog: ResolvedIntlConfig['messages'] = {
     'logs.default': `waiting for logs...`,
     'logs.toManyEmpty': `Logs may have ended. To restart fetching click ${CommonMessages['cta.restart']}.`,
@@ -185,10 +185,12 @@ const ConnectorsPage: ResolvedIntlConfig['messages'] = {
 };
 
 const LoginPage: ResolvedIntlConfig['messages'] = {
+    'login.main.message': `When running locally you can login with whatever name you want.`,
     'login.oidc.message': `Please use one of the providers below to continue.`,
 };
 
 const Captures: ResolvedIntlConfig['messages'] = {
+    'captureTable.header': `Captures`,
     'capturesTable.title': `Your Captures`,
     'capturesTable.detailsCTA': `Details`,
     'captures.main.message1': `Click the "New Capture" button up above to get started.`,
@@ -270,9 +272,19 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
+    ...CTAs,
+    ...Data,
+    ...ErrorBoundry,
     ...BrowserTitles,
     ...RouteTitles,
+    ...FullPage,
+    ...Header,
+    ...ConfirmationDialog,
     ...LogsDialog,
+    ...EntityTable,
+    ...Home,
+    ...PageNotFound,
+    ...Registration,
     ...AdminPage,
     ...ConnectorsPage,
     ...Error,
