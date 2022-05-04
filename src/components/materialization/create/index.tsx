@@ -7,19 +7,22 @@ import ResourceConfig from 'components/materialization/ResourceConfig';
 import useCreationStore, {
     CreationState,
 } from 'components/materialization/Store';
-import Error from 'components/shared/Error';
-import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import CatalogEditor from 'components/shared/foo/CatalogEditor';
-import DetailsForm from 'components/shared/foo/DetailsForm';
-import EndpointConfig from 'components/shared/foo/EndpointConfig';
-import FooError from 'components/shared/foo/Error';
-import FooHeader from 'components/shared/foo/Header';
-import LogDialog from 'components/shared/foo/LogDialog';
-import { ConnectorTag, CONNECTOR_TAG_QUERY } from 'components/shared/foo/query';
+import CatalogEditor from 'components/shared/Entity/CatalogEditor';
+import DetailsForm from 'components/shared/Entity/DetailsForm';
+import EndpointConfig from 'components/shared/Entity/EndpointConfig';
+import FooError from 'components/shared/Entity/Error';
+import FooHeader from 'components/shared/Entity/Header';
+import LogDialog from 'components/shared/Entity/LogDialog';
+import {
+    ConnectorTag,
+    CONNECTOR_TAG_QUERY,
+} from 'components/shared/Entity/query';
 import useEntityStore, {
     fooSelectors,
     FormStatus,
-} from 'components/shared/foo/Store';
+} from 'components/shared/Entity/Store';
+import Error from 'components/shared/Error';
+import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
 import { useConfirmationModalContext } from 'context/Confirmation';
 import { useClient, useQuery, useSelect } from 'hooks/supabase-swr';

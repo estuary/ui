@@ -163,21 +163,21 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
 };
 
 const BrowserTitles: ResolvedIntlConfig['messages'] = {
-    'browserTitle.home': `Welcome to ${CommonMessages['common.browserTitle']}`,
-    'browserTitle.dashboard': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.dashboard']}`,
-    'browserTitle.admin': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.admin']}`,
-    'browserTitle.captureCreate': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.captureCreate']}`,
-    'browserTitle.captureDetails': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.captureDetails']}`,
-    'browserTitle.captures': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.captures']}`,
-    'browserTitle.collections': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.collections']}`,
-    'browserTitle.connectors': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.connectors']}`,
-    'browserTitle.error.pageNotFound': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.error.pageNotFound']}`,
-    'browserTitle.login': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.login']}`,
-    'browserTitle.loginLoading': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.loginLoading']}`,
-    'browserTitle.materializationCreate': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.materializationCreate']}`,
-    'browserTitle.materializationEdit': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.materializationEdit']}`,
-    'browserTitle.materializations': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.materializations']}`,
-    'browserTitle.registration': `${CommonMessages['common.browserTitle']}: ${RouteTitles['routeTitle.registration']}`,
+    'browserTitle.home': `${CommonMessages['common.browserTitle']} · Welcome`,
+    'browserTitle.dashboard': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.dashboard']}`,
+    'browserTitle.admin': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin']}`,
+    'browserTitle.captureCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureCreate']}`,
+    'browserTitle.captureDetails': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureDetails']}`,
+    'browserTitle.captures': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captures']}`,
+    'browserTitle.collections': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.collections']}`,
+    'browserTitle.connectors': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.connectors']}`,
+    'browserTitle.error.pageNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.pageNotFound']}`,
+    'browserTitle.login': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.login']}`,
+    'browserTitle.loginLoading': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.loginLoading']}`,
+    'browserTitle.materializationCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationCreate']}`,
+    'browserTitle.materializationEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationEdit']}`,
+    'browserTitle.materializations': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializations']}`,
+    'browserTitle.registration': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.registration']}`,
 };
 
 const LogsDialog: ResolvedIntlConfig['messages'] = {

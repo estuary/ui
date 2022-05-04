@@ -1,4 +1,4 @@
-import { Box, Button, Stack, TableCell, TableRow } from '@mui/material';
+import { Box, Button, TableCell, TableRow } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
 import ConnectorName from 'components/ConnectorName';
 import { Connector } from 'components/tables/Connectors';
@@ -53,11 +53,11 @@ function Rows({ data }: Props) {
                             <ConnectorName
                                 iconPath={row.open_graph['en-US'].image}
                                 iconSize={40}
-                                connector={row}
+                                connector={row.open_graph}
                             />
                         </TableCell>
                         <TableCell style={columnStyling}>
-                            <Stack direction="row">{row.image_name}</Stack>
+                            {row.image_name}
                         </TableCell>
                         <TableCell style={columnStyling}>
                             {row.connector_tags[0].protocol}
