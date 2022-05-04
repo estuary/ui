@@ -75,7 +75,9 @@ function DetailsForm({ connectorTags, messagePrefix }: Props) {
                                                   'en-US'
                                               ].image,
                                       },
-                                      title: getConnectorName(connector),
+                                      title: getConnectorName(
+                                          connector.connectors.open_graph
+                                      ),
                                   };
                               })
                             : ([] as { title: string; const: string }[]),

@@ -1,3 +1,5 @@
+import { OpenGraph } from 'types';
+
 export const stripPathing = (stringVal: string) => {
     if (!stringVal) return stringVal;
 
@@ -9,32 +11,13 @@ export const stripPathing = (stringVal: string) => {
 
 // TODO (typing) ConnectorTag or Connector should work here.
 export const getConnectorName = (
-    connectorObject: any,
-    defaultToTag?: boolean
+    connectorObject: OpenGraph,
+    fallback?: string
 ) => {
-    if (connectorObject.title) {
-        return connectorObject.title;
-    }
-    if (connectorObject.connector_tags) {
-        if (connectorObject.connector_tags[0]?.title) {
-            return connectorObject.connector_tags[0].title;
-        }
-    }
-    if (connectorObject.detail) {
-        return connectorObject.detail;
-    }
-    if (connectorObject.connectors?.detail) {
-        return connectorObject.connectors.detail;
-    }
-    if (connectorObject.image_name) {
-        return stripPathing(connectorObject.image_name);
-    }
-
-    if (defaultToTag === true) {
-        if (connectorObject.image_tag) {
-            return stripPathing(connectorObject.image_tag);
-        }
-        throw new Error('Could not figure out Connector Name');
+    if (connectorObject['en-US'].title) {
+        return connectorObject['en-US'].title;
+    } else {
+        return fallback;
     }
 };
 

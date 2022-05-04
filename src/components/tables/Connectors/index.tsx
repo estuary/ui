@@ -7,6 +7,7 @@ import EntityTable, {
 import { useQuery } from 'hooks/supabase-swr';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
+import { OpenGraph } from 'types';
 
 export interface Connector {
     connector_tags: {
@@ -20,7 +21,7 @@ export interface Connector {
     detail: string;
     updated_at: string;
     image_name: string;
-    open_graph: object;
+    open_graph: OpenGraph;
 }
 
 const CONNECTOR_QUERY = `

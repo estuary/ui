@@ -1,19 +1,18 @@
 import { Stack } from '@mui/material';
 import ConnectorIcon from 'components/ConnectorIcon';
+import { OpenGraph } from 'types';
 import useConstant from 'use-constant';
 import { getConnectorName } from 'utils/misc-utils';
 
 interface Props {
     iconPath?: string;
     iconSize?: number;
-    connector: any; // TODO (typing) ConnectorTag
+    connector: OpenGraph; // TODO (typing) OpenGraph object
 }
 
 function ConnectorName({ connector, iconPath, iconSize }: Props) {
     const connectorName = useConstant(() =>
-        typeof connector === 'string'
-            ? connector
-            : getConnectorName(connector, false)
+        typeof connector === 'string' ? connector : getConnectorName(connector)
     );
 
     return (
