@@ -105,6 +105,10 @@ const themeSettings = createTheme({
                         right: 0,
                         top: 0,
                         width: '100%',
+                        zIndex: 5,
+                    },
+                    '& 	.MuiChip-deleteIcon': {
+                        zIndex: 10,
                     },
                 },
             },
