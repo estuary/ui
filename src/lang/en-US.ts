@@ -163,7 +163,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
 };
 
 const BrowserTitles: ResolvedIntlConfig['messages'] = {
-    'browserTitle.home': `Welcome to ${CommonMessages['common.browserTitle']}`,
+    'browserTitle.home': `${CommonMessages['common.browserTitle']} · Welcome`,
     'browserTitle.dashboard': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.dashboard']}`,
     'browserTitle.admin': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin']}`,
     'browserTitle.captureCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureCreate']}`,
