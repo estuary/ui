@@ -1,7 +1,7 @@
 import { Divider, Paper, Typography } from '@mui/material';
+import EndpointConfigForm from 'components/shared/Entity/EndpointConfigForm';
+import EndpointConfigHeader from 'components/shared/Entity/EndpointConfigHeader';
 import Error from 'components/shared/Error';
-import EndpointConfigForm from 'components/shared/foo/EndpointConfigForm';
-import EndpointConfigHeader from 'components/shared/foo/EndpointConfigHeader';
 import { useQuery, useSelectSingle } from 'hooks/supabase-swr';
 import { TABLES } from 'services/supabase';
 

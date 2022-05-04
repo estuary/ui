@@ -1,8 +1,10 @@
+import { OpenGraph } from 'types';
+
 export interface ConnectorTag {
     connectors: {
         detail: string;
         image_name: string;
-        open_graph: object;
+        open_graph: OpenGraph;
     };
     id: string;
     connector_id: string;

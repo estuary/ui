@@ -5,7 +5,7 @@ import { StyledEngineProvider } from '@mui/material';
 import useEntityStore, {
     fooSelectors,
     FormStatus,
-} from 'components/shared/foo/Store';
+} from 'components/shared/Entity/Store';
 import JsonRefs from 'json-refs';
 import { isEmpty } from 'lodash';
 import { useEffect, useState } from 'react';

@@ -34,3 +34,10 @@ export interface BaseResponse {
 export interface BaseComponentProps {
     children?: ReactNode;
 }
+
+export interface OpenGraph {
+    'en-US': {
+        image: string;
+        title: string;
+    };
+}
