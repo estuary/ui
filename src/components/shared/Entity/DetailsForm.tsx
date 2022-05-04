@@ -2,11 +2,11 @@ import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Alert, Stack, Typography } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
-import { ConnectorTag } from 'components/shared/foo/query';
+import { ConnectorTag } from 'components/shared/Entity/query';
 import useFooState, {
     EntityStoreState,
     FormStatus,
-} from 'components/shared/foo/Store';
+} from 'components/shared/Entity/Store';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
