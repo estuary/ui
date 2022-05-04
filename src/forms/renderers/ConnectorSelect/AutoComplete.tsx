@@ -77,27 +77,28 @@ export const ConnectorAutoComplete = (
 
     return (
         <Autocomplete
+            options={options ?? []}
+            getOptionLabel={getOptionLabel ?? ((option) => option.label)}
             className={className}
             id={id}
             disabled={!enabled}
             value={currentOption}
+            inputValue={inputValue}
             onChange={(_event: any, newValue: EnumOption | null) => {
                 handleChange(path, newValue?.value);
             }}
-            inputValue={inputValue}
-            // isOptionEqualToValue={areOptionsEqual}
             onInputChange={(_event, newInputValue) => {
                 setInputValue(newInputValue);
             }}
             autoHighlight
             autoSelect
             autoComplete
+            clearOnBlur
             fullWidth
-            options={options ?? []}
-            getOptionLabel={getOptionLabel ?? ((option) => option.label)}
             sx={{
                 marginTop: 2,
             }}
+            filterOptions={filterOptions}
             renderInput={({ inputProps, InputProps }) => {
                 return (
                     <ConnectorInput
@@ -118,7 +119,6 @@ export const ConnectorAutoComplete = (
                     />
                 );
             }}
-            filterOptions={filterOptions}
         />
     );
 };
