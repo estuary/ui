@@ -7,7 +7,7 @@ import { getConnectorName } from 'utils/misc-utils';
 interface Props {
     iconPath?: string;
     iconSize?: number;
-    connector: OpenGraph; // TODO (typing) OpenGraph object
+    connector: OpenGraph | string;
 }
 
 function ConnectorName({ connector, iconPath, iconSize }: Props) {

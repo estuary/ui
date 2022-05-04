@@ -9,16 +9,9 @@ export const stripPathing = (stringVal: string) => {
     );
 };
 
-// TODO (typing) ConnectorTag or Connector should work here.
-export const getConnectorName = (
-    connectorObject: OpenGraph,
-    fallback?: string
-) => {
-    if (connectorObject['en-US'].title) {
-        return connectorObject['en-US'].title;
-    } else {
-        return fallback;
-    }
+// TODO (i18n) should support trying to grab correct locale
+export const getConnectorName = (connectorObject: OpenGraph) => {
+    return connectorObject['en-US'].title;
 };
 
 export type DeploymentStatus = 'ACTIVE' | 'INACTIVE';
