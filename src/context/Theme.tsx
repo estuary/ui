@@ -72,6 +72,10 @@ const darkMode: PaletteOptions = {
     tonalOffset,
 };
 
+export const zIndexIncrement = 5;
+const buttonHoverIndex = zIndexIncrement;
+const chipDeleteIndex = buttonHoverIndex + zIndexIncrement;
+
 const themeSettings = createTheme({
     breakpoints: {
         values: {
@@ -105,6 +109,10 @@ const themeSettings = createTheme({
                         right: 0,
                         top: 0,
                         width: '100%',
+                        zIndex: buttonHoverIndex,
+                    },
+                    '& 	.MuiChip-deleteIcon': {
+                        zIndex: chipDeleteIndex,
                     },
                 },
             },

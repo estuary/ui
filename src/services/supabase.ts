@@ -35,7 +35,12 @@ export enum RPCS {
 
 export const supabaseClient = createClient(
     supabaseSettings.url,
-    supabaseSettings.anonKey
+    supabaseSettings.anonKey,
+    {
+        // https://github.com/estuary/ui/issues/87
+        // This is not working correctly so disabling for now.
+        autoRefreshToken: false,
+    }
 );
 
 export const DEFAULT_POLLING_INTERVAL = 500;
