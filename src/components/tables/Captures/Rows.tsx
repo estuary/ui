@@ -1,20 +1,16 @@
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import {
-    Box,
-    Button,
-    Collapse,
-    TableCell,
-    TableRow,
-    Tooltip,
-} from '@mui/material';
+import { Box, Button, Collapse, TableCell, TableRow } from '@mui/material';
+import { grey } from '@mui/material/colors';
 import CaptureDetails from 'components/capture/Details';
 import { createEditorStore } from 'components/editor/Store';
 import { LiveSpecsQuery } from 'components/tables/Captures';
-import { formatDistanceToNow } from 'date-fns';
+import ChipList from 'components/tables/cells/ChipList';
+import EntityName from 'components/tables/cells/EntityName';
+import TimeStamp from 'components/tables/cells/TimeStamp';
 import { ZustandProvider } from 'hooks/useZustand';
 import { useState } from 'react';
-import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
-import { getDeploymentStatusHexCode, stripPathing } from 'utils/misc-utils';
+import { FormattedMessage, useIntl } from 'react-intl';
+import { stripPathing } from 'utils/misc-utils';
 
 interface RowsProps {
     data: LiveSpecsQuery[];
@@ -34,6 +30,10 @@ export const tableColumns = [
         headerIntlKey: 'entityTable.data.connectorType',
     },
     {
+        field: 'writes_to',
+        headerIntlKey: 'entityTable.data.writesTo',
+    },
+    {
         field: 'updated_at',
         headerIntlKey: 'entityTable.data.lastUpdated',
     },
@@ -49,67 +49,20 @@ function Row({ data }: RowProps) {
 
     return (
         <>
-            <TableRow>
-                <TableCell
-                    sx={{
-                        'minWidth': 256,
-                        '& > *': {
-                            borderBottom: 'unset',
-                        },
-                    }}
-                >
-                    <Tooltip title={data.catalog_name} placement="bottom-start">
-                        <Box>
-                            <span
-                                style={{
-                                    height: 16,
-                                    width: 16,
-                                    backgroundColor:
-                                        getDeploymentStatusHexCode('ACTIVE'),
-                                    borderRadius: 50,
-                                    display: 'inline-block',
-                                    verticalAlign: 'middle',
-                                    marginRight: 12,
-                                }}
-                            />
-                            <span
-                                style={{
-                                    verticalAlign: 'middle',
-                                }}
-                            >
-                                {data.catalog_name}
-                            </span>
-                        </Box>
-                    </Tooltip>
-                </TableCell>
+            <TableRow
+                sx={{
+                    background: detailsExpanded ? grey[50] : null,
+                }}
+            >
+                <EntityName name={data.catalog_name} />
 
                 <TableCell sx={{ minWidth: 100 }}>
                     {stripPathing(data.connector_image_name)}
                 </TableCell>
 
-                <TableCell>
-                    <Tooltip
-                        title={
-                            <FormattedDate
-                                day="numeric"
-                                month="long"
-                                year="numeric"
-                                hour="numeric"
-                                minute="numeric"
-                                second="numeric"
-                                timeZoneName="short"
-                                value={data.updated_at}
-                            />
-                        }
-                        placement="bottom-start"
-                    >
-                        <Box>
-                            {formatDistanceToNow(new Date(data.updated_at), {
-                                addSuffix: true,
-                            })}
-                        </Box>
-                    </Tooltip>
-                </TableCell>
+                <ChipList strings={data.writes_to} />
+
+                <TimeStamp time={data.updated_at} />
 
                 <TableCell align="right">
                     <Box
@@ -151,7 +104,7 @@ function Row({ data }: RowProps) {
 
             <TableRow>
                 <TableCell
-                    style={{ paddingBottom: 0, paddingTop: 0 }}
+                    sx={detailsExpanded ? null : { pb: 0, pt: 0 }}
                     colSpan={tableColumns.length}
                 >
                     <Collapse in={detailsExpanded} unmountOnExit>

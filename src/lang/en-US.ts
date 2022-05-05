@@ -22,6 +22,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
 
     // Terms
     'terms.connectors': `Connectors`,
+    'terms.permissions': `Access Grants`,
 
     // Common fields
     'entityName.label': `Name`,
@@ -136,6 +137,11 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.data.connectorType': `Type`,
     'entityTable.data.lastUpdated': `Last Updated`,
     'entityTable.data.actions': `Actions`,
+    'entityTable.data.writesTo': `Writes To`,
+    'entityTable.data.readsFrom': `Reads From`,
+    'entityTable.data.userFullName': `User`,
+    'entityTable.data.capability': `Capability`,
+    'entityTable.data.objectRole': `Object`,
 
     'entityTable.unmatchedFilter.header': `Sorry, no result found.`,
     'entityTable.unmatchedFilter.message': `We could not find any data matching that filter. Try applying a different filter or using an alternative query option.`,
@@ -187,8 +193,19 @@ const LogsDialog: ResolvedIntlConfig['messages'] = {
 
 const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.header': `Administration`,
+    'admin.roles.message': `These are all the ${CommonMessages['terms.permissions']} that are currently configured in the system. They currently cannot be edited via the UI.`,
     'admin.accessToken': `Access Token`,
     'admin.accessToken.message': `If you want to use the CLI client you will need an access token. You can copy the one below to use.`,
+};
+
+const AccessGrants: ResolvedIntlConfig['messages'] = {
+    'accessGrantsTable.header': `Captures`,
+    'accessGrantsTable.title': `${CommonMessages['terms.permissions']}`,
+    'accessGrantsTable.filterLabel': `Filter User or Object`,
+    'accessGrants.message1': `Lorem ipsum.`,
+    'accessGrants.message2': `lorem ipsum {docLink}.`,
+    'accessGrants.message2.docLink': `lorem ipsum`,
+    'accessGrants.message2.docPath': `https://docs.estuary.dev/concepts/#captures`,
 };
 
 const ConnectorsPage: ResolvedIntlConfig['messages'] = {
@@ -313,6 +330,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...ConnectorsPage,
     ...Error,
     ...LoginPage,
+    ...AccessGrants,
     ...Collections,
     ...Materializations,
     ...Foo,

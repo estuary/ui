@@ -1,8 +1,7 @@
-import { Box, TableCell, TableRow, Tooltip } from '@mui/material';
+import { TableCell, TableRow } from '@mui/material';
 import { LiveSpecsQuery } from 'components/tables/Captures';
-import { formatDistanceToNow } from 'date-fns';
-import { FormattedDate } from 'react-intl';
-import { getDeploymentStatusHexCode, stripPathing } from 'utils/misc-utils';
+import EntityName from 'components/tables/cells/EntityName';
+import TimeStamp from 'components/tables/cells/TimeStamp';
 
 interface Props {
     data: LiveSpecsQuery[];
@@ -28,64 +27,13 @@ function Rows({ data }: Props) {
         <>
             {data.map((row) => (
                 <TableRow key={`Entity-${row.id}`}>
-                    <TableCell sx={{ minWidth: 256 }}>
-                        <Tooltip
-                            title={row.catalog_name}
-                            placement="bottom-start"
-                        >
-                            <Box>
-                                <span
-                                    style={{
-                                        height: 16,
-                                        width: 16,
-                                        backgroundColor:
-                                            getDeploymentStatusHexCode(
-                                                'ACTIVE'
-                                            ),
-                                        borderRadius: 50,
-                                        display: 'inline-block',
-                                        verticalAlign: 'middle',
-                                        marginRight: 12,
-                                    }}
-                                />
-                                <span
-                                    style={{
-                                        verticalAlign: 'middle',
-                                    }}
-                                >
-                                    {row.catalog_name}
-                                </span>
-                            </Box>
-                        </Tooltip>
-                    </TableCell>
+                    <EntityName name={row.catalog_name} />
 
                     <TableCell sx={{ minWidth: 100 }}>
-                        {stripPathing(row.spec_type)}
+                        {row.spec_type}
                     </TableCell>
 
-                    <TableCell>
-                        <Tooltip
-                            title={
-                                <FormattedDate
-                                    day="numeric"
-                                    month="long"
-                                    year="numeric"
-                                    hour="numeric"
-                                    minute="numeric"
-                                    second="numeric"
-                                    timeZoneName="short"
-                                    value={row.updated_at}
-                                />
-                            }
-                            placement="bottom-start"
-                        >
-                            <Box>
-                                {formatDistanceToNow(new Date(row.updated_at), {
-                                    addSuffix: true,
-                                })}
-                            </Box>
-                        </Tooltip>
-                    </TableCell>
+                    <TimeStamp time={row.updated_at} />
                 </TableRow>
             ))}
         </>

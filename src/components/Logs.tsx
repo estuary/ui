@@ -110,7 +110,11 @@ function Logs({
 
     return (
         <Box>
-            <Collapse in={MAX_EMPTY_CALLS < emptyResponses}>
+            <Collapse
+                in={
+                    !disableIntervalFetching && MAX_EMPTY_CALLS < emptyResponses
+                }
+            >
                 <Paper
                     elevation={0}
                     sx={{

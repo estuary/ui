@@ -1,12 +1,12 @@
-import { LiveSpecQuery } from 'components/capture/Details';
+import { PubSpecQuery } from 'components/capture/Details';
 import EditorAndList from 'components/editor/EditorAndList';
 import { EditorStoreState } from 'components/editor/Store';
 import { useZustandStore } from 'hooks/useZustand';
 
 function LiveSpecEditor() {
     const currentCatalog = useZustandStore<
-        EditorStoreState<LiveSpecQuery>,
-        EditorStoreState<LiveSpecQuery>['currentCatalog']
+        EditorStoreState<PubSpecQuery>,
+        EditorStoreState<PubSpecQuery>['currentCatalog']
     >((state) => state.currentCatalog);
 
     return (

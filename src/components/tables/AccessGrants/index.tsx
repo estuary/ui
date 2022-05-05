@@ -1,54 +1,38 @@
 import { Box } from '@mui/material';
+import Rows, { tableColumns } from 'components/tables/AccessGrants/Rows';
 import EntityTable, {
     getPagination,
     SortDirection,
 } from 'components/tables/EntityTable';
-import Rows, { tableColumns } from 'components/tables/Materializations/Rows';
 import { useQuery } from 'hooks/supabase-swr';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
 
-export interface LiveSpecsQuery {
-    spec_type: string;
-    catalog_name: string;
-    updated_at: string;
-    id: string;
-    last_pub_id: string;
-    reads_from: string[];
-}
+// const queryColumns = ['id', 'spec_type', 'catalog_name', 'updated_at'];
 
-const queryColumns = [
-    'spec_type',
-    'catalog_name',
-    'updated_at',
-    'id',
-    'last_pub_id',
-    'reads_from',
-];
-
-function MaterializationsTable() {
+function AccessGrantsTable() {
     const rowsPerPage = 10;
     const [pagination, setPagination] = useState<{ from: number; to: number }>(
         getPagination(0, rowsPerPage)
     );
     const [searchQuery, setSearchQuery] = useState<string | null>(null);
-    const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
-    const [columnToSort, setColumnToSort] = useState<any>('updated_at');
+    const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+    const [columnToSort, setColumnToSort] = useState<any>('user_full_name');
 
-    const liveSpecQuery = useQuery<LiveSpecsQuery>(
-        TABLES.LIVE_SPECS,
+    const rolesQuery = useQuery<any>(
+        TABLES.COMBINED_GRANTS_EXT,
         {
-            columns: queryColumns,
+            columns: `id, subject_role, object_role, capability, user_avatar_url, user_full_name, user_email, updated_at`,
             count: 'exact',
             filter: (query) => {
-                return defaultTableFilter<LiveSpecsQuery>(
+                return defaultTableFilter<any>(
                     query,
-                    ['catalog_name'],
+                    ['user_full_name', 'subject_role', 'object_role'],
                     searchQuery,
                     columnToSort,
                     sortDirection,
                     pagination
-                ).eq('spec_type', 'materialization');
+                );
             },
         },
         [pagination, searchQuery, columnToSort, sortDirection]
@@ -58,13 +42,13 @@ function MaterializationsTable() {
         <Box>
             <EntityTable
                 noExistingDataContentIds={{
-                    header: 'materializations.message1',
-                    message: 'materializations.message2',
-                    docLink: 'materializations.message2.docLink',
-                    docPath: 'materializations.message2.docPath',
+                    header: 'accessGrants.message1',
+                    message: 'accessGrants.message2',
+                    docLink: 'accessGrants.message2.docLink',
+                    docPath: 'accessGrants.message2.docPath',
                 }}
                 columns={tableColumns}
-                query={liveSpecQuery}
+                query={rolesQuery}
                 renderTableRows={(data) => <Rows data={data} />}
                 setPagination={setPagination}
                 setSearchQuery={setSearchQuery}
@@ -72,11 +56,11 @@ function MaterializationsTable() {
                 setSortDirection={setSortDirection}
                 columnToSort={columnToSort}
                 setColumnToSort={setColumnToSort}
-                header="materializationsTable.title"
-                filterLabel="entityTable.filterLabel"
+                header="accessGrantsTable.title"
+                filterLabel="accessGrantsTable.filterLabel"
             />
         </Box>
     );
 }
 
-export default MaterializationsTable;
+export default AccessGrantsTable;

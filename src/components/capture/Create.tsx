@@ -243,6 +243,7 @@ function CaptureCreate() {
                     {
                         draft_id: id,
                         dry_run: false,
+                        detail: 'Published via UI',
                     },
                 ])
                 .then(
