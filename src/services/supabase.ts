@@ -17,6 +17,7 @@ const supabaseSettings = {
 };
 
 export enum TABLES {
+    COMBINED_GRANTS_EXT = 'combined_grants_ext',
     CONNECTOR_TAGS = 'connector_tags',
     CONNECTORS = 'connectors',
     DISCOVERS = 'discovers',
@@ -24,10 +25,15 @@ export enum TABLES {
     DRAFT_SPECS = 'draft_specs',
     DRAFT_SPECS_EXT = 'draft_specs_ext',
     DRAFTS = 'drafts',
+    DRAFTS_EXT = 'drafts_ext',
+    LIVE_SPEC_FLOW = 'live_spec_flow',
     LIVE_SPECS = 'live_specs',
+    LIVE_SPECS_EXT = 'live_specs_ext',
     PUBLICATION_SPECS = 'publication_specs',
+    PUBLICATION_SPECS_EXT = 'publication_specs_ext',
     PUBLICATIONS = 'publications',
     ROLE_GRANTS = 'role_grants',
+    USER_GRANTS = 'user_grants',
 }
 
 export enum RPCS {

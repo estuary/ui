@@ -89,7 +89,8 @@ function DetailsForm({ connectorTags, messagePrefix }: Props) {
                     }),
                     maxLength: 1000,
                     minLength: 3,
-                    pattern: '^[a-zA-Z0-9_.-/]*[^/]$',
+                    // This pattern needs to match https://github.com/estuary/animated-carnival/blob/main/supabase/migrations/03_catalog-types.sql
+                    pattern: `^([a-zA-Z0-9-_.]+/)+[a-zA-Z0-9-_.]+$`,
                     type: 'string',
                 },
             },
