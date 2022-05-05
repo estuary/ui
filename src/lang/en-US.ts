@@ -137,6 +137,7 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.data.lastUpdated': `Last Updated`,
     'entityTable.data.actions': `Actions`,
     'entityTable.data.writesTo': `Writes To`,
+    'entityTable.data.readsFrom': `Reads From`,
 
     'entityTable.unmatchedFilter.header': `Sorry, no result found.`,
     'entityTable.unmatchedFilter.message': `We could not find any data matching that filter. Try applying a different filter or using an alternative query option.`,

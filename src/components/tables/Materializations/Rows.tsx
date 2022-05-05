@@ -1,5 +1,5 @@
 import { Box, Button, TableCell, TableRow, Tooltip } from '@mui/material';
-import { LiveSpecsQuery } from 'components/tables/Captures';
+import { LiveSpecsQuery } from 'components/tables/Materializations';
 import { formatDistanceToNow } from 'date-fns';
 import { FormattedDate, FormattedMessage } from 'react-intl';
 import { getDeploymentStatusHexCode } from 'utils/misc-utils';
@@ -12,6 +12,10 @@ export const tableColumns = [
     {
         field: 'catalog_name',
         headerIntlKey: 'entityTable.data.entity',
+    },
+    {
+        field: 'reads_from',
+        headerIntlKey: 'entityTable.data.readsFrom',
     },
     {
         field: 'updated_at',
@@ -57,6 +61,12 @@ function Rows({ data }: Props) {
                                 </span>
                             </Box>
                         </Tooltip>
+                    </TableCell>
+
+                    <TableCell
+                        sx={{ minWidth: 100, maxWidth: 300, overflow: 'auto' }}
+                    >
+                        {row.reads_from}
                     </TableCell>
 
                     <TableCell>

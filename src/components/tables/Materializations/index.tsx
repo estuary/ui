@@ -14,6 +14,7 @@ export interface LiveSpecsQuery {
     updated_at: string;
     id: string;
     last_pub_id: string;
+    reads_from: string;
 }
 
 const queryColumns = [
@@ -22,6 +23,7 @@ const queryColumns = [
     'updated_at',
     'id',
     'last_pub_id',
+    'reads_from',
 ];
 
 function MaterializationsTable() {
