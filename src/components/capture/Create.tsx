@@ -374,7 +374,7 @@ function CaptureCreate() {
         },
     };
 
-    usePrompt('confirm.loseData', exitWhenLogsClose || hasChanges(), () => {
+    usePrompt('confirm.loseData', !exitWhenLogsClose && hasChanges(), () => {
         resetState();
     });
 

@@ -25,10 +25,11 @@ import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
 import { useConfirmationModalContext } from 'context/Confirmation';
 import { useClient, useQuery, useSelect } from 'hooks/supabase-swr';
+import { usePrompt } from 'hooks/useBlocker';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useZustandStore } from 'hooks/useZustand';
-import { MouseEvent, useEffect } from 'react';
+import { MouseEvent } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { TABLES } from 'services/supabase';
@@ -36,7 +37,6 @@ import useNotificationStore, {
     Notification,
     NotificationState,
 } from 'stores/NotificationStore';
-import { MaterializationDef } from '../../../../flow_deps/flow';
 
 const FORM_ID = 'newMaterializationForm';
 
@@ -86,7 +86,6 @@ function MaterializationCreate() {
 
     // Materializations store
     const collections = useCreationStore(selectors.page.collections);
-    const resourceConfig = useCreationStore(selectors.page.resourceConfigData);
 
     // Form Store
     const entityName = useEntityStore(fooSelectors.entityName);
@@ -270,10 +269,10 @@ function MaterializationCreate() {
                     image_tag,
                 } = connectorInfo;
 
-                const draftSpec: MaterializationDef = {
-                    bindings: collections.map((source) => ({
-                        resource: resourceConfig,
-                        source,
+                // TODO (typing) MaterializationDef
+                const draftSpec: any = {
+                    bindings: collections.map((collection) => ({
+                        ...collection,
                     })),
                     endpoint: {
                         connector: {
@@ -465,14 +464,9 @@ function MaterializationCreate() {
         },
     };
 
-    useEffect(() => {
-        return () => {
-            resetState();
-        };
-        // TODO (stores) : get create to use the context stores
-        // We basically want an "unmount" here.
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    usePrompt('confirm.loseData', !exitWhenLogsClose && hasChanges(), () => {
+        resetState();
+    });
 
     return (
         <PageContainer>

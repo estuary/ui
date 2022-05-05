@@ -21,7 +21,10 @@ function ExpandableResourceConfig({ collectionName, id }: Props) {
                     <Typography>{collectionName}</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <ResourceConfig connectorImage={id} />
+                    <ResourceConfig
+                        connectorImage={id}
+                        collectionName={collectionName}
+                    />
                 </AccordionDetails>
             </Accordion>
         </Paper>

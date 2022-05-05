@@ -22,6 +22,7 @@ import { StoreSelector } from 'types';
 
 type Props = {
     resourceSchema: any;
+    collectionName: string;
 };
 
 const defaultAjv = createAjv({ useDefaults: true });
@@ -31,7 +32,10 @@ const stateSelectors: StoreSelector<CreationState> = {
     setConfig: (state) => state.setResourceConfig,
 };
 
-function NewMaterializationResourceConfigForm({ resourceSchema }: Props) {
+function NewMaterializationResourceConfigForm({
+    resourceSchema,
+    collectionName,
+}: Props) {
     const setConfig = useCreationStore(stateSelectors.setConfig);
     const formData = useCreationStore(stateSelectors.formData);
     const displayValidation = useEntityStore(fooSelectors.displayValidation);
@@ -56,13 +60,13 @@ function NewMaterializationResourceConfigForm({ resourceSchema }: Props) {
             hydrateAndValidate(defaultValues);
 
             setDeReffedSchema(processedSchema.resolved);
-            setConfig({
+            setConfig(collectionName, {
                 data: defaultValues,
             });
         }
 
         void resolveSchemaRefs(resourceSchema);
-    }, [resourceSchema, setConfig, setDeReffedSchema]);
+    }, [collectionName, resourceSchema, setConfig, setDeReffedSchema]);
 
     if (deReffedSchema) {
         const uiSchema = generateCustomUISchema(deReffedSchema);
@@ -71,7 +75,7 @@ function NewMaterializationResourceConfigForm({ resourceSchema }: Props) {
         const handlers = {
             onChange: (form: any) => {
                 if (!isEmpty(form.data)) {
-                    setConfig(form);
+                    setConfig(collectionName, form);
                 }
             },
         };

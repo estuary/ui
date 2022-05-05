@@ -10,6 +10,11 @@ interface CreationConfig extends Pick<JsonFormsCore, 'data' | 'errors'> {
     };
 }
 
+interface Collections {
+    source: string;
+    resource: any; // MaterializationBinding['resource'];
+}
+
 export enum CreationFormStatuses {
     IDLE = 'Idle',
     GENERATING_PREVIEW = 'Generating Preview',
@@ -19,12 +24,14 @@ export enum CreationFormStatuses {
 
 export interface CreationState {
     // Resource Config
-    resourceConfig: CreationConfig;
-    setResourceConfig: (value: CreationConfig) => void;
+    resourceConfig: {
+        [key: string]: CreationConfig;
+    };
+    setResourceConfig: (key: string, value: CreationConfig) => void;
 
     // Collection Selector
-    collections: string[];
-    setCollections: (collections: string[]) => void;
+    collections: Collections[];
+    setCollections: (collections: Collections[]) => void;
 }
 
 const getInitialStateData = (): Pick<
@@ -32,10 +39,7 @@ const getInitialStateData = (): Pick<
     'resourceConfig' | 'collections'
 > => {
     return {
-        resourceConfig: {
-            data: {},
-            errors: [],
-        },
+        resourceConfig: {},
         collections: [],
     };
 };
@@ -44,10 +48,10 @@ const useCreationStore = create<CreationState>()(
     devtools(
         (set) => ({
             ...getInitialStateData(),
-            setResourceConfig: (value) => {
+            setResourceConfig: (key, value) => {
                 set(
                     produce((state) => {
-                        state.resourceConfig = value;
+                        state.resourceConfig[key] = value;
                     }),
                     false,
                     'Resource Config Changed'

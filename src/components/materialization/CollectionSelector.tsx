@@ -1,6 +1,5 @@
 import {
     Autocomplete,
-    AutocompleteValue,
     Box,
     Button,
     TextField,
@@ -49,10 +48,7 @@ function CollectionSelector({ preview }: Props) {
 
             preview(event);
         },
-        updateCollections: (
-            event: React.SyntheticEvent,
-            value: AutocompleteValue<string, true, false, false>
-        ) => {
+        updateCollections: (event: React.SyntheticEvent, value: any) => {
             setCollections(value);
         },
         validateSelection: () => {
