@@ -34,6 +34,7 @@ function Rows({ data }: Props) {
                         <UserName
                             name={row.user_full_name}
                             avatar={row.user_avatar_url}
+                            email={row.user_email}
                         />
                     ) : (
                         <TableCell>{row.subject_role}</TableCell>

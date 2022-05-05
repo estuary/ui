@@ -16,13 +16,13 @@ function AccessGrantsTable() {
         getPagination(0, rowsPerPage)
     );
     const [searchQuery, setSearchQuery] = useState<string | null>(null);
-    const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
-    const [columnToSort, setColumnToSort] = useState<any>('updated_at');
+    const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+    const [columnToSort, setColumnToSort] = useState<any>('user_full_name');
 
     const rolesQuery = useQuery<any>(
         TABLES.COMBINED_GRANTS_EXT,
         {
-            columns: `id, subject_role, object_role, capability, user_avatar_url, user_full_name, updated_at`,
+            columns: `id, subject_role, object_role, capability, user_avatar_url, user_full_name, user_email, updated_at`,
             count: 'exact',
             filter: (query) => {
                 return defaultTableFilter<any>(
