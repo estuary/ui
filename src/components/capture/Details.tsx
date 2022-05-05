@@ -1,21 +1,22 @@
-import { Grid, Typography } from '@mui/material';
+import { Grid } from '@mui/material';
 import LiveSpecEditor from 'components/editor/LiveSpec';
 import { EditorStoreState } from 'components/editor/Store';
-import Logs from 'components/Logs';
 import Error from 'components/shared/Error';
-import { useQuery, useSelectSingle } from 'hooks/supabase-swr';
+import { useQuery, useSelect } from 'hooks/supabase-swr';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { useZustandStore } from 'hooks/useZustand';
 import { useEffect } from 'react';
-import { FormattedMessage } from 'react-intl';
 import { TABLES } from 'services/supabase';
 
 export interface LiveSpecQuery {
-    id: string;
-    job_status: {
-        type: string;
-    };
-    logs_token: string;
+    pub_id: string;
+    live_spec_id: string;
+    published_at: string;
+    // publications: {
+    //     id: string;
+    //     job_status: JobStatus;
+    //     logs_token: string;
+    // }[];
     live_specs: {
         id: string;
         catalog_name: string;
@@ -28,9 +29,9 @@ export interface LiveSpecQuery {
 }
 
 const QUERY = `
-    id,
-    job_status,
-    logs_token,
+    pub_id,
+    live_spec_id,
+    published_at,
     live_specs (
         id, 
         catalog_name,
@@ -41,6 +42,11 @@ const QUERY = `
         connector_image_tag
     )
 `;
+// publications (
+//     id,
+//     job_status,
+//     logs_token
+// )
 
 interface Props {
     lastPubId: string;
@@ -51,14 +57,14 @@ function CaptureDetails({ lastPubId }: Props) {
 
     // Supabase stuff
     const query = useQuery<LiveSpecQuery>(
-        TABLES.PUBLICATIONS,
+        TABLES.PUBLICATION_SPECS,
         {
             columns: QUERY,
-            filter: (filterBuilder) => filterBuilder.eq('id', lastPubId),
+            filter: (filterBuilder) => filterBuilder.eq('pub_id', lastPubId),
         },
         []
     );
-    const { data: liveSpecs, error } = useSelectSingle<LiveSpecQuery>(query);
+    const { data: liveSpecs, error } = useSelect<LiveSpecQuery>(query);
 
     const setSpecs = useZustandStore<
         EditorStoreState<LiveSpecQuery>,
@@ -76,7 +82,7 @@ function CaptureDetails({ lastPubId }: Props) {
 
     useEffect(() => {
         if (liveSpecs?.data) {
-            setSpecs(liveSpecs.data.live_specs);
+            setSpecs(liveSpecs.data.map((item) => item.live_specs));
         }
     }, [liveSpecs, setSpecs]);
 
@@ -88,18 +94,18 @@ function CaptureDetails({ lastPubId }: Props) {
                 <Grid item xs={6}>
                     <LiveSpecEditor />
                 </Grid>
-                {liveSpecs?.data.logs_token ? (
+                {/* {liveSpecs?.data.publications[0].logs_token ? (
                     <Grid item xs={6}>
                         <Typography variant="h5">
                             <FormattedMessage id="captureDetails.logs.title" />
                         </Typography>
                         <Logs
-                            token={liveSpecs.data.logs_token}
+                            token={liveSpecs.data.publications[0].logs_token}
                             fetchAll
                             disableIntervalFetching
                         />
                     </Grid>
-                ) : null}
+                ) : null} */}
             </Grid>
         );
     }
