@@ -12,7 +12,7 @@ function UserName({ name, avatar, email }: Props) {
         <TableCell>
             <Stack direction="row" alignItems="center">
                 <UserAvatar userName={name} avatarUrl={avatar} />
-                <List sx={{ ml: 1 }}>
+                <List sx={{ ml: 1 }} disablePadding>
                     <ListItemText primary={name} secondary={email} />
                 </List>
             </Stack>
