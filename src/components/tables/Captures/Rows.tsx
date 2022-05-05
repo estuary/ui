@@ -34,6 +34,10 @@ export const tableColumns = [
         headerIntlKey: 'entityTable.data.connectorType',
     },
     {
+        field: 'writes_to',
+        headerIntlKey: 'entityTable.data.writesTo',
+    },
+    {
         field: 'updated_at',
         headerIntlKey: 'entityTable.data.lastUpdated',
     },
@@ -85,6 +89,12 @@ function Row({ data }: RowProps) {
 
                 <TableCell sx={{ minWidth: 100 }}>
                     {stripPathing(data.connector_image_name)}
+                </TableCell>
+
+                <TableCell
+                    sx={{ minWidth: 100, maxWidth: 300, overflow: 'auto' }}
+                >
+                    {data.writes_to}
                 </TableCell>
 
                 <TableCell>
