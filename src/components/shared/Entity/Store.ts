@@ -121,8 +121,6 @@ const useEntityStore = create<EntityStoreState>()(
             setSpec: (spec) => {
                 set(
                     produce((state) => {
-                        console.log(spec);
-
                         state.spec = spec;
                     }),
                     false,

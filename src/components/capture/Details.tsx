@@ -79,8 +79,6 @@ function CaptureDetails({ lastPubId }: Props) {
     const { data: pubs, error: pubsError } =
         useSelectSingle<PubsQuery>(pubsQuery);
 
-    console.log(pubs);
-
     const setSpecs = useZustandStore<
         EditorStoreState<PubSpecQuery>,
         EditorStoreState<PubSpecQuery>['setSpecs']
