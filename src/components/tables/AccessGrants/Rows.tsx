@@ -44,7 +44,7 @@ function Rows({ data }: Props) {
 
                     <TableCell>{row.object_role}</TableCell>
 
-                    <TimeStamp time={row.updated_at} />
+                    <TimeStamp time={row.updated_at} enableRelative />
                 </TableRow>
             ))}
         </>

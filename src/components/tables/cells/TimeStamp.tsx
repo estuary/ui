@@ -1,12 +1,13 @@
 import { Box, TableCell, Tooltip } from '@mui/material';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, formatRelative } from 'date-fns';
 import { FormattedDate } from 'react-intl';
 
 interface Props {
     time: string;
+    enableRelative?: boolean;
 }
 
-function TimeStamp({ time }: Props) {
+function TimeStamp({ enableRelative, time }: Props) {
     return (
         <TableCell>
             <Tooltip
@@ -25,9 +26,11 @@ function TimeStamp({ time }: Props) {
                 placement="bottom-start"
             >
                 <Box>
-                    {formatDistanceToNow(new Date(time), {
-                        addSuffix: true,
-                    })}
+                    {!enableRelative
+                        ? formatDistanceToNow(new Date(time), {
+                              addSuffix: true,
+                          })
+                        : formatRelative(new Date(time), new Date())}
                 </Box>
             </Tooltip>
         </TableCell>
