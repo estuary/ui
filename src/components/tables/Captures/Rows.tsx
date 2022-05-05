@@ -121,7 +121,7 @@ function Row({ row }: RowProps) {
                     <Collapse in={detailsExpanded} unmountOnExit>
                         <ZustandProvider
                             createStore={createEditorStore}
-                            key="liveSpecEditor"
+                            storeName="liveSpecEditor"
                         >
                             <CaptureDetails lastPubId={row.last_pub_id} />
                         </ZustandProvider>
