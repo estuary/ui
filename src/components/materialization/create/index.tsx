@@ -4,6 +4,7 @@ import { routeDetails } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
 import CollectionConfig from 'components/materialization/create/CollectionConfig';
 import useCreationStore, {
+    creationSelectors,
     CreationState,
 } from 'components/materialization/Store';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
@@ -29,6 +30,7 @@ import { usePrompt } from 'hooks/useBlocker';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useZustandStore } from 'hooks/useZustand';
+import { isEmpty } from 'lodash';
 import { MouseEvent } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
@@ -85,7 +87,7 @@ function MaterializationCreate() {
     );
 
     // Materializations store
-    const collections = useCreationStore(selectors.page.collections);
+    const resourceConfig = useCreationStore(creationSelectors.resourceConfig);
 
     // Form Store
     const entityName = useEntityStore(fooSelectors.entityName);
@@ -253,7 +255,7 @@ function MaterializationCreate() {
 
             if (detailHasErrors || specHasErrors) {
                 setFormState({ displayValidation: true });
-            } else if (collections.length === 0) {
+            } else if (isEmpty(resourceConfig)) {
                 // TODO: Handle the scenario where no collections are present.
             } else if (!connectorInfo) {
                 // TODO: Handle the highly unlikely scenario where the connector tag id could not be found.
@@ -271,9 +273,7 @@ function MaterializationCreate() {
 
                 // TODO (typing) MaterializationDef
                 const draftSpec: any = {
-                    bindings: collections.map((collection) => ({
-                        ...collection,
-                    })),
+                    bindings: {},
                     endpoint: {
                         connector: {
                             config: endpointConfig,
@@ -281,6 +281,14 @@ function MaterializationCreate() {
                         },
                     },
                 };
+
+                Object.keys(resourceConfig).forEach((collectionName) => {
+                    draftSpec.bindings[collectionName] = {
+                        resource: {
+                            ...resourceConfig[collectionName].data,
+                        },
+                    };
+                });
 
                 supabaseClient
                     .from(TABLES.DRAFTS)
