@@ -189,6 +189,8 @@ const LogsDialog: ResolvedIntlConfig['messages'] = {
 
 const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.header': `Administration`,
+    'admin.roles': `Your ?Roles?`,
+    'admin.roles.message': `Below is a list of all the ?roles? that you have access to.`,
     'admin.accessToken': `Access Token`,
     'admin.accessToken.message': `If you want to use the CLI client you will need an access token. You can copy the one below to use.`,
 };

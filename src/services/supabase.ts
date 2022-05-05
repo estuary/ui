@@ -27,6 +27,7 @@ export enum TABLES {
     LIVE_SPECS = 'live_specs',
     PUBLICATION_SPECS = 'publication_specs',
     PUBLICATIONS = 'publications',
+    ROLE_GRANTS = 'role_grants',
 }
 
 export enum RPCS {
