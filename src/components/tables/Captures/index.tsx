@@ -8,7 +8,7 @@ import { useQuery } from 'hooks/supabase-swr';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
 
-export interface LiveSpecsQuery {
+export interface LiveSpecsExtQuery {
     spec_type: string;
     catalog_name: string;
     updated_at: string;
@@ -16,6 +16,8 @@ export interface LiveSpecsQuery {
     id: string;
     last_pub_id: string;
     writes_to: string[];
+    last_pub_user_avatar_url: string;
+    last_pub_user_full_name: string;
 }
 
 const queryColumns = [
@@ -26,6 +28,8 @@ const queryColumns = [
     'id',
     'last_pub_id',
     'writes_to',
+    'last_pub_user_avatar_url',
+    'last_pub_user_full_name',
 ];
 
 function CapturesTable() {
@@ -37,13 +41,13 @@ function CapturesTable() {
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
     const [columnToSort, setColumnToSort] = useState<any>('updated_at');
 
-    const liveSpecQuery = useQuery<LiveSpecsQuery>(
-        TABLES.LIVE_SPECS,
+    const liveSpecQuery = useQuery<LiveSpecsExtQuery>(
+        TABLES.LIVE_SPECS_EXT,
         {
             columns: queryColumns,
             count: 'exact',
             filter: (query) => {
-                return defaultTableFilter<LiveSpecsQuery>(
+                return defaultTableFilter<LiveSpecsExtQuery>(
                     query,
                     ['catalog_name'],
                     searchQuery,

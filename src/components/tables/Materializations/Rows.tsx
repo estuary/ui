@@ -2,11 +2,16 @@ import { Box, Button, TableCell, TableRow } from '@mui/material';
 import ChipList from 'components/tables/cells/ChipList';
 import EntityName from 'components/tables/cells/EntityName';
 import TimeStamp from 'components/tables/cells/TimeStamp';
-import { LiveSpecsQuery } from 'components/tables/Materializations';
+import UserName from 'components/tables/cells/UserName';
+import { LiveSpecsExtQuery } from 'components/tables/Materializations';
 import { FormattedMessage } from 'react-intl';
 
-interface Props {
-    data: LiveSpecsQuery[];
+interface RowsProps {
+    data: LiveSpecsExtQuery[];
+}
+
+interface RowProps {
+    row: LiveSpecsExtQuery;
 }
 
 export const tableColumns = [
@@ -19,44 +24,60 @@ export const tableColumns = [
         headerIntlKey: 'entityTable.data.readsFrom',
     },
     {
-        field: 'updated_at',
-        headerIntlKey: 'entityTable.data.lastUpdated',
+        field: 'last_pub_user_full_name',
+        headerIntlKey: 'entityTable.data.lastPubUserFullName',
     },
+    {
+        field: 'updated_at',
+        headerIntlKey: 'entityTable.data.lastPublished',
+    },
+
     {
         field: null,
         headerIntlKey: 'entityTable.data.actions',
     },
 ];
 
-function Rows({ data }: Props) {
+function Row({ row }: RowProps) {
+    return (
+        <TableRow key={`Entity-${row.id}`}>
+            <EntityName name={row.catalog_name} />
+
+            <ChipList strings={row.reads_from} />
+
+            <UserName
+                avatar={row.last_pub_user_avatar_url}
+                name={row.last_pub_user_full_name}
+            />
+
+            <TimeStamp time={row.updated_at} />
+
+            <TableCell>
+                <Box
+                    sx={{
+                        display: 'flex',
+                    }}
+                >
+                    <Button
+                        variant="contained"
+                        size="small"
+                        disableElevation
+                        sx={{ mr: 1 }}
+                        disabled
+                    >
+                        <FormattedMessage id="cta.details" />
+                    </Button>
+                </Box>
+            </TableCell>
+        </TableRow>
+    );
+}
+
+function Rows({ data }: RowsProps) {
     return (
         <>
             {data.map((row) => (
-                <TableRow key={`Entity-${row.id}`}>
-                    <EntityName name={row.catalog_name} />
-
-                    <ChipList strings={row.reads_from} />
-
-                    <TimeStamp time={row.updated_at} />
-
-                    <TableCell>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                            }}
-                        >
-                            <Button
-                                variant="contained"
-                                size="small"
-                                disableElevation
-                                sx={{ mr: 1 }}
-                                disabled
-                            >
-                                <FormattedMessage id="cta.details" />
-                            </Button>
-                        </Box>
-                    </TableCell>
-                </TableRow>
+                <Row row={row} key={row.id} />
             ))}
         </>
     );

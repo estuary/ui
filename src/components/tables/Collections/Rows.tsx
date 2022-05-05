@@ -1,10 +1,10 @@
 import { TableCell, TableRow } from '@mui/material';
-import { LiveSpecsQuery } from 'components/tables/Captures';
+import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import EntityName from 'components/tables/cells/EntityName';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 
 interface Props {
-    data: LiveSpecsQuery[];
+    data: LiveSpecsExtQuery[];
 }
 
 export const tableColumns = [

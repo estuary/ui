@@ -4,7 +4,7 @@ import UserAvatar from 'components/shared/UserAvatar';
 interface Props {
     name: string;
     avatar: string;
-    email: string;
+    email?: string;
 }
 
 function UserName({ name, avatar, email }: Props) {

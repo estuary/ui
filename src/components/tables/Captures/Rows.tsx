@@ -3,21 +3,22 @@ import { Box, Button, Collapse, TableCell, TableRow } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import CaptureDetails from 'components/capture/Details';
 import { createEditorStore } from 'components/editor/Store';
-import { LiveSpecsQuery } from 'components/tables/Captures';
+import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import ChipList from 'components/tables/cells/ChipList';
 import EntityName from 'components/tables/cells/EntityName';
 import TimeStamp from 'components/tables/cells/TimeStamp';
+import UserName from 'components/tables/cells/UserName';
 import { ZustandProvider } from 'hooks/useZustand';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { stripPathing } from 'utils/misc-utils';
 
 interface RowsProps {
-    data: LiveSpecsQuery[];
+    data: LiveSpecsExtQuery[];
 }
 
 interface RowProps {
-    data: LiveSpecsQuery;
+    row: LiveSpecsExtQuery;
 }
 
 export const tableColumns = [
@@ -35,7 +36,11 @@ export const tableColumns = [
     },
     {
         field: 'updated_at',
-        headerIntlKey: 'entityTable.data.lastUpdated',
+        headerIntlKey: 'entityTable.data.lastPublished',
+    },
+    {
+        field: 'last_pub_user_full_name',
+        headerIntlKey: 'entityTable.data.lastPubUserFullName',
     },
     {
         field: null,
@@ -43,7 +48,7 @@ export const tableColumns = [
     },
 ];
 
-function Row({ data }: RowProps) {
+function Row({ row }: RowProps) {
     const intl = useIntl();
     const [detailsExpanded, setDetailsExpanded] = useState(false);
 
@@ -54,15 +59,20 @@ function Row({ data }: RowProps) {
                     background: detailsExpanded ? grey[50] : null,
                 }}
             >
-                <EntityName name={data.catalog_name} />
+                <EntityName name={row.catalog_name} />
 
                 <TableCell sx={{ minWidth: 100 }}>
-                    {stripPathing(data.connector_image_name)}
+                    {stripPathing(row.connector_image_name)}
                 </TableCell>
 
-                <ChipList strings={data.writes_to} />
+                <ChipList strings={row.writes_to} />
 
-                <TimeStamp time={data.updated_at} />
+                <TimeStamp time={row.updated_at} />
+
+                <UserName
+                    avatar={row.last_pub_user_avatar_url}
+                    name={row.last_pub_user_full_name}
+                />
 
                 <TableCell align="right">
                     <Box
@@ -112,7 +122,7 @@ function Row({ data }: RowProps) {
                             createStore={createEditorStore}
                             key="liveSpecEditor"
                         >
-                            <CaptureDetails lastPubId={data.last_pub_id} />
+                            <CaptureDetails lastPubId={row.last_pub_id} />
                         </ZustandProvider>
                     </Collapse>
                 </TableCell>
@@ -125,7 +135,7 @@ function Rows({ data }: RowsProps) {
     return (
         <>
             {data.map((row) => (
-                <Row data={row} key={row.id} />
+                <Row row={row} key={row.id} />
             ))}
         </>
     );
