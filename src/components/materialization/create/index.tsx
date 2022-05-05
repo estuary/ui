@@ -2,8 +2,7 @@ import { Button, Collapse } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { routeDetails } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
-import CollectionSelector from 'components/materialization/CollectionSelector';
-import ResourceConfig from 'components/materialization/ResourceConfig';
+import CollectionConfig from 'components/materialization/create/CollectionConfig';
 import useCreationStore, {
     CreationState,
 } from 'components/materialization/Store';
@@ -21,7 +20,6 @@ import useEntityStore, {
     fooSelectors,
     FormStatus,
 } from 'components/shared/Entity/Store';
-import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
@@ -544,20 +542,8 @@ function MaterializationCreate() {
                                 </ErrorBoundryWrapper>
 
                                 <ErrorBoundryWrapper>
-                                    <WrapperWithHeader
-                                        header={
-                                            <FormattedMessage id="materializationCreation.collections.heading" />
-                                        }
-                                        body={
-                                            <>
-                                                <CollectionSelector
-                                                    preview={handlers.preview}
-                                                />
-                                                <ResourceConfig
-                                                    connectorImage={imageTag.id}
-                                                />
-                                            </>
-                                        }
+                                    <CollectionConfig
+                                        previewHandler={handlers.preview}
                                     />
                                 </ErrorBoundryWrapper>
                             </>
