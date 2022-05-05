@@ -9,13 +9,14 @@ interface Props {
 const DEFAULT_SIZE = 25;
 
 function UserAvatar({ avatarUrl, size, userName }: Props) {
+    const avatarSize = size ?? DEFAULT_SIZE;
     return (
         <Avatar
             src={avatarUrl ?? ''}
             sx={{
-                fontSize: (size ?? DEFAULT_SIZE) / 1.5,
-                height: size ?? DEFAULT_SIZE,
-                width: size ?? DEFAULT_SIZE,
+                fontSize: avatarSize / 1.5,
+                height: avatarSize,
+                width: avatarSize,
             }}
         >
             {userName.charAt(0)}
