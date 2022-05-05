@@ -1,5 +1,9 @@
+import { List } from '@mui/material';
 import CollectionSelector from 'components/materialization/CollectionSelector';
-import ResourceConfig from 'components/materialization/ResourceConfig';
+import ExpandableResourceConfig from 'components/materialization/create/ExpandableResourceConfig';
+import useCreationStore, {
+    creationSelectors,
+} from 'components/materialization/Store';
 import useEntityStore, { fooSelectors } from 'components/shared/Entity/Store';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import { EventHandler } from 'react';
@@ -11,6 +15,7 @@ interface Props {
 
 function CollectionConfig({ previewHandler }: Props) {
     const imageTag = useEntityStore(fooSelectors.connectorTag);
+    const collections = useCreationStore(creationSelectors.collections);
 
     if (imageTag) {
         return (
@@ -21,7 +26,23 @@ function CollectionConfig({ previewHandler }: Props) {
                 body={
                     <>
                         <CollectionSelector preview={previewHandler} />
-                        <ResourceConfig connectorImage={imageTag.id} />
+                        <List
+                            sx={{
+                                width: '100%',
+                            }}
+                        >
+                            {collections.map(
+                                (collection: any, index: number) => {
+                                    return (
+                                        <ExpandableResourceConfig
+                                            collectionName={collection}
+                                            id={imageTag.id}
+                                            key={`CollectionResourceConfig-${index}`}
+                                        />
+                                    );
+                                }
+                            )}
+                        </List>
                     </>
                 }
             />

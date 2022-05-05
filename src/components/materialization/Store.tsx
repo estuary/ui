@@ -69,3 +69,8 @@ const useCreationStore = create<CreationState>()(
 );
 
 export default useCreationStore;
+
+export const creationSelectors = {
+    collections: (state: CreationState) => state.collections,
+    setCollection: (state: CreationState) => state.setCollections,
+};

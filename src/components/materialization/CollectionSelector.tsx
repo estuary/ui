@@ -7,7 +7,7 @@ import {
     Typography,
 } from '@mui/material';
 import useCreationStore, {
-    CreationState,
+    creationSelectors,
 } from 'components/materialization/Store';
 import { useQuery, useSelect } from 'hooks/supabase-swr/';
 import { EventHandler, MouseEvent, useState } from 'react';
@@ -25,11 +25,6 @@ interface LiveSpecsQuery {
 
 const columnsToQuery: (keyof LiveSpecsQuery)[] = ['catalog_name', 'spec_type'];
 
-const selectors = {
-    collections: (state: CreationState) => state.collections,
-    setCollection: (state: CreationState) => state.setCollections,
-};
-
 function CollectionSelector({ preview }: Props) {
     const [missingInput, setMissingInput] = useState(false);
 
@@ -43,8 +38,8 @@ function CollectionSelector({ preview }: Props) {
     );
     const { data: collectionData, error } = useSelect(liveSpecsQuery);
 
-    const collections = useCreationStore(selectors.collections);
-    const setCollections = useCreationStore(selectors.setCollection);
+    const collections = useCreationStore(creationSelectors.collections);
+    const setCollections = useCreationStore(creationSelectors.setCollection);
 
     const handlers = {
         submit: (event: MouseEvent<HTMLElement>) => {

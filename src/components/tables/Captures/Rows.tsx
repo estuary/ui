@@ -95,6 +95,7 @@ function Row({ row }: RowProps) {
                                 setDetailsExpanded(!detailsExpanded);
                             }}
                             endIcon={
+                                // TODO (duplication) this is copied a few times
                                 <KeyboardArrowDownIcon
                                     sx={{
                                         marginRight: 0,
