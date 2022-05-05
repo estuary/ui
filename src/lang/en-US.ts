@@ -29,6 +29,8 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'entityName.description': `Name of the entity - must be unique. (ex: acemCo/marketing_data)`,
     'connector.label': `Connector`,
     'connector.description': `The connector you want to use to connect to your endpoint.`,
+    'description.label': `Details`,
+    'description.description': `Describe your changes / why you're changing things.`,
 };
 
 const CTAs: ResolvedIntlConfig['messages'] = {

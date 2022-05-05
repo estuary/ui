@@ -79,6 +79,7 @@ function CaptureCreate() {
     const resetState = useEntityStore(fooSelectors.resetState);
     const captureName = useEntityStore(fooSelectors.entityName);
     const captureImage = useEntityStore(fooSelectors.connectorTag);
+    const captureDescription = useEntityStore(fooSelectors.description);
     const [detailErrors, specErrors] = useEntityStore(fooSelectors.errors);
     const specFormData = useEntityStore(fooSelectors.endpointConfig);
     const hasChanges = useEntityStore(fooSelectors.hasChanges);
@@ -243,7 +244,7 @@ function CaptureCreate() {
                     {
                         draft_id: id,
                         dry_run: false,
-                        detail: 'Published via UI',
+                        detail: captureDescription ?? null,
                     },
                 ])
                 .then(

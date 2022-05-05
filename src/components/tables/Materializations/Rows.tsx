@@ -31,7 +31,6 @@ export const tableColumns = [
         field: 'updated_at',
         headerIntlKey: 'entityTable.data.lastPublished',
     },
-
     {
         field: null,
         headerIntlKey: 'entityTable.data.actions',
