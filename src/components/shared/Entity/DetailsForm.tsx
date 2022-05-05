@@ -89,7 +89,7 @@ function DetailsForm({ connectorTags, messagePrefix }: Props) {
                     }),
                     maxLength: 1000,
                     minLength: 3,
-                    pattern: '^[a-zA-Z0-9_.-]*/[a-zA-Z0-9_.-]+$',
+                    pattern: '^[a-zA-Z0-9_.-/]*[^/]$',
                     type: 'string',
                 },
             },
