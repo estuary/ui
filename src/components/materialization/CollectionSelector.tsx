@@ -39,6 +39,9 @@ function CollectionSelector({ preview }: Props) {
 
     const collections = useCreationStore(creationSelectors.collections);
     const setCollections = useCreationStore(creationSelectors.setCollection);
+    const setResourceConfig = useCreationStore(
+        creationSelectors.setResourceConfig
+    );
 
     const handlers = {
         submit: (event: MouseEvent<HTMLElement>) => {
@@ -50,6 +53,7 @@ function CollectionSelector({ preview }: Props) {
         },
         updateCollections: (event: React.SyntheticEvent, value: any) => {
             setCollections(value);
+            setResourceConfig(value[value.length - 1]);
         },
         validateSelection: () => {
             setMissingInput(collections.length === 0);

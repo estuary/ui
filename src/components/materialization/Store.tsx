@@ -27,7 +27,7 @@ export interface CreationState {
     resourceConfig: {
         [key: string]: CreationConfig;
     };
-    setResourceConfig: (key: string, value: CreationConfig) => void;
+    setResourceConfig: (key: string, value?: CreationConfig) => void;
 
     // Collection Selector
     collections: Collections[];
@@ -51,7 +51,10 @@ const useCreationStore = create<CreationState>()(
             setResourceConfig: (key, value) => {
                 set(
                     produce((state) => {
-                        state.resourceConfig[key] = value;
+                        state.resourceConfig[key] = value ?? {
+                            data: {},
+                            errors: {},
+                        };
                     }),
                     false,
                     'Resource Config Changed'
@@ -77,4 +80,6 @@ export default useCreationStore;
 export const creationSelectors = {
     collections: (state: CreationState) => state.collections,
     setCollection: (state: CreationState) => state.setCollections,
+    resourceConfig: (state: CreationState) => state.resourceConfig,
+    setResourceConfig: (state: CreationState) => state.setResourceConfig,
 };

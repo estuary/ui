@@ -28,7 +28,6 @@ type Props = {
 const defaultAjv = createAjv({ useDefaults: true });
 
 const stateSelectors: StoreSelector<CreationState> = {
-    formData: (state) => state.resourceConfig.data,
     setConfig: (state) => state.setResourceConfig,
 };
 
@@ -37,7 +36,9 @@ function NewMaterializationResourceConfigForm({
     collectionName,
 }: Props) {
     const setConfig = useCreationStore(stateSelectors.setConfig);
-    const formData = useCreationStore(stateSelectors.formData);
+    const formData = useCreationStore(
+        (state) => state.resourceConfig[collectionName].data
+    );
     const displayValidation = useEntityStore(fooSelectors.displayValidation);
     const status = useEntityStore(fooSelectors.formStateStatus);
 
