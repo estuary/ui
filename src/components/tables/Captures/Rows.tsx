@@ -1,5 +1,6 @@
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { Box, Button, Collapse, TableCell, TableRow } from '@mui/material';
+import { grey } from '@mui/material/colors';
 import CaptureDetails from 'components/capture/Details';
 import { createEditorStore } from 'components/editor/Store';
 import { LiveSpecsQuery } from 'components/tables/Captures';
@@ -48,7 +49,11 @@ function Row({ data }: RowProps) {
 
     return (
         <>
-            <TableRow>
+            <TableRow
+                sx={{
+                    background: detailsExpanded ? grey[100] : null,
+                }}
+            >
                 <EntityName name={data.catalog_name} />
 
                 <TableCell sx={{ minWidth: 100 }}>
@@ -99,7 +104,7 @@ function Row({ data }: RowProps) {
 
             <TableRow>
                 <TableCell
-                    style={{ paddingBottom: 0, paddingTop: 0 }}
+                    sx={detailsExpanded ? null : { pb: 0, pt: 0 }}
                     colSpan={tableColumns.length}
                 >
                     <Collapse in={detailsExpanded} unmountOnExit>
