@@ -1,4 +1,4 @@
-import { Stack, TableCell, Typography } from '@mui/material';
+import { List, ListItemText, Stack, TableCell } from '@mui/material';
 import UserAvatar from 'components/shared/UserAvatar';
 
 interface Props {
@@ -12,10 +12,9 @@ function UserName({ name, avatar, email }: Props) {
         <TableCell>
             <Stack direction="row" alignItems="center">
                 <UserAvatar userName={name} avatarUrl={avatar} />
-                <Typography sx={{ ml: 1 }}>{name} </Typography>
-                <Typography variant="subtitle2" sx={{ ml: 1 }}>
-                    ({email})
-                </Typography>
+                <List sx={{ ml: 1 }}>
+                    <ListItemText primary={name} secondary={email} />
+                </List>
             </Stack>
         </TableCell>
     );
