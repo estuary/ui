@@ -15,7 +15,7 @@ export interface LiveSpecsQuery {
     connector_image_name: string;
     id: string;
     last_pub_id: string;
-    writes_to: string;
+    writes_to: string[];
 }
 
 const queryColumns = [

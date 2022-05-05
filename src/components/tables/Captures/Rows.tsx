@@ -10,6 +10,7 @@ import {
 import CaptureDetails from 'components/capture/Details';
 import { createEditorStore } from 'components/editor/Store';
 import { LiveSpecsQuery } from 'components/tables/Captures';
+import ChipList from 'components/tables/ChipList';
 import { formatDistanceToNow } from 'date-fns';
 import { ZustandProvider } from 'hooks/useZustand';
 import { useState } from 'react';
@@ -92,9 +93,9 @@ function Row({ data }: RowProps) {
                 </TableCell>
 
                 <TableCell
-                    sx={{ minWidth: 100, maxWidth: 300, overflow: 'auto' }}
+                    sx={{ minWidth: 100, maxHeight: 100, overflow: 'auto' }}
                 >
-                    {data.writes_to}
+                    <ChipList strings={data.writes_to} />
                 </TableCell>
 
                 <TableCell>

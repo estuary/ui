@@ -1,4 +1,5 @@
 import { Box, Button, TableCell, TableRow, Tooltip } from '@mui/material';
+import ChipList from 'components/tables/ChipList';
 import { LiveSpecsQuery } from 'components/tables/Materializations';
 import { formatDistanceToNow } from 'date-fns';
 import { FormattedDate, FormattedMessage } from 'react-intl';
@@ -66,7 +67,7 @@ function Rows({ data }: Props) {
                     <TableCell
                         sx={{ minWidth: 100, maxWidth: 300, overflow: 'auto' }}
                     >
-                        {row.reads_from}
+                        <ChipList strings={row.reads_from} />
                     </TableCell>
 
                     <TableCell>
