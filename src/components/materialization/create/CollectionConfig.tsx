@@ -1,4 +1,3 @@
-import { List } from '@mui/material';
 import CollectionSelector from 'components/materialization/CollectionSelector';
 import ExpandableResourceConfig from 'components/materialization/create/ExpandableResourceConfig';
 import useCreationStore, {
@@ -26,23 +25,15 @@ function CollectionConfig({ previewHandler }: Props) {
                 body={
                     <>
                         <CollectionSelector preview={previewHandler} />
-                        <List
-                            sx={{
-                                width: '100%',
-                            }}
-                        >
-                            {collections.map(
-                                (collection: any, index: number) => {
-                                    return (
-                                        <ExpandableResourceConfig
-                                            collectionName={collection}
-                                            id={imageTag.id}
-                                            key={`CollectionResourceConfig-${index}`}
-                                        />
-                                    );
-                                }
-                            )}
-                        </List>
+                        {collections.map((collection: any, index: number) => {
+                            return (
+                                <ExpandableResourceConfig
+                                    collectionName={collection}
+                                    id={imageTag.id}
+                                    key={`CollectionResourceConfig-${index}`}
+                                />
+                            );
+                        })}
                     </>
                 }
             />

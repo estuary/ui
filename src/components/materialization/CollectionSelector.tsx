@@ -80,6 +80,7 @@ function CollectionSelector({ preview }: Props) {
                     filterSelectedOptions
                     fullWidth
                     onChange={handlers.updateCollections}
+                    blurOnSelect={false}
                     renderInput={(params) => (
                         <TextField
                             {...params}
