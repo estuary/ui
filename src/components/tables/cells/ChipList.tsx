@@ -39,7 +39,7 @@ function ChipList({ strings }: Props) {
                                 sx={{
                                     'transition': (theme) =>
                                         `max-width ${theme.transitions.duration.standard}ms`,
-                                    'maxWidth': 175,
+                                    'maxWidth': 200,
                                     'whiteSpace': 'nowrap',
                                     'overflow': 'hidden',
                                     'textOverflow': 'ellipsis',
