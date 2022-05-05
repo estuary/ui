@@ -31,6 +31,9 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'connector.description': `The connector you want to use to connect to your endpoint.`,
     'description.label': `Details`,
     'description.description': `Describe your changes / why you're changing things.`,
+
+    // Common sections
+    'connectionConfig.header': `Connection Config`,
 };
 
 const CTAs: ResolvedIntlConfig['messages'] = {
@@ -270,6 +273,7 @@ const Foo: ResolvedIntlConfig['messages'] = {
     'foo.ctas.discover': `Test Config`,
     'foo.ctas.discoverAgain': `Regenerate Catalog`,
     'foo.ctas.docs': `Connector Docs`,
+    'foo.endpointConfig.heading': `Connection Configuration`,
 };
 
 const CaptureCreate: ResolvedIntlConfig['messages'] = {
@@ -297,6 +301,7 @@ const CaptureDetails: ResolvedIntlConfig['messages'] = {
 
 const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreation.details.heading': `Materialization Details`,
+    'materializationCreation.collections.heading': `Output Configuration`,
     'materializationCreation.config.source.doclink': `Connector Docs`,
     'materializationCreation.cta.test': `Test Config`,
     'materializationCreation.editor.default': `Before you can edit the Materialization Catalog you need to fill out the connection config section`,

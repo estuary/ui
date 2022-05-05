@@ -21,6 +21,7 @@ import useEntityStore, {
     fooSelectors,
     FormStatus,
 } from 'components/shared/Entity/Store';
+import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
@@ -541,14 +542,22 @@ function MaterializationCreate() {
                                         connectorImage={imageTag.id}
                                     />
                                 </ErrorBoundryWrapper>
+
                                 <ErrorBoundryWrapper>
-                                    <ResourceConfig
-                                        connectorImage={imageTag.id}
-                                    />
-                                </ErrorBoundryWrapper>
-                                <ErrorBoundryWrapper>
-                                    <CollectionSelector
-                                        preview={handlers.preview}
+                                    <WrapperWithHeader
+                                        header={
+                                            <FormattedMessage id="materializationCreation.collections.heading" />
+                                        }
+                                        body={
+                                            <>
+                                                <CollectionSelector
+                                                    preview={handlers.preview}
+                                                />
+                                                <ResourceConfig
+                                                    connectorImage={imageTag.id}
+                                                />
+                                            </>
+                                        }
                                     />
                                 </ErrorBoundryWrapper>
                             </>
