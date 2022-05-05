@@ -5,7 +5,7 @@ import {
     GridRenderCellParams,
     GridSelectionModel,
 } from '@mui/x-data-grid';
-import { LiveSpecQuery } from 'components/capture/Details';
+import { PubSpecQuery } from 'components/capture/Details';
 import { EditorStoreState } from 'components/editor/Store';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useZustandStore } from 'hooks/useZustand';
@@ -52,13 +52,13 @@ const columns: GridColDef[] = [
 
 function EditorFileSelector() {
     const setCurrentCatalog = useZustandStore<
-        EditorStoreState<LiveSpecQuery | DraftSpecQuery>,
-        EditorStoreState<LiveSpecQuery | DraftSpecQuery>['setCurrentCatalog']
+        EditorStoreState<PubSpecQuery | DraftSpecQuery>,
+        EditorStoreState<PubSpecQuery | DraftSpecQuery>['setCurrentCatalog']
     >((state) => state.setCurrentCatalog);
 
     const specs = useZustandStore<
-        EditorStoreState<LiveSpecQuery | DraftSpecQuery>,
-        EditorStoreState<LiveSpecQuery | DraftSpecQuery>['specs']
+        EditorStoreState<PubSpecQuery | DraftSpecQuery>,
+        EditorStoreState<PubSpecQuery | DraftSpecQuery>['specs']
     >((state) => state.specs);
 
     const [selectionModel, setSelectionModel] = useState<GridSelectionModel>(

@@ -1,22 +1,19 @@
-import { Grid } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import LiveSpecEditor from 'components/editor/LiveSpec';
 import { EditorStoreState } from 'components/editor/Store';
+import Logs from 'components/Logs';
 import Error from 'components/shared/Error';
-import { useQuery, useSelect } from 'hooks/supabase-swr';
+import { useQuery, useSelect, useSelectSingle } from 'hooks/supabase-swr';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { useZustandStore } from 'hooks/useZustand';
 import { useEffect } from 'react';
+import { FormattedMessage } from 'react-intl';
 import { TABLES } from 'services/supabase';
 
-export interface LiveSpecQuery {
+export interface PubSpecQuery {
     pub_id: string;
     live_spec_id: string;
     published_at: string;
-    // publications: {
-    //     id: string;
-    //     job_status: JobStatus;
-    //     logs_token: string;
-    // }[];
     live_specs: {
         id: string;
         catalog_name: string;
@@ -28,7 +25,7 @@ export interface LiveSpecQuery {
     }[];
 }
 
-const QUERY = `
+const PUB_SPEC_QUERY = `
     pub_id,
     live_spec_id,
     published_at,
@@ -42,11 +39,16 @@ const QUERY = `
         connector_image_tag
     )
 `;
-// publications (
-//     id,
-//     job_status,
-//     logs_token
-// )
+
+export interface PubsQuery {
+    id: string;
+    logs_token: string;
+}
+
+const PUBS_QUERY = `
+id,
+logs_token
+`;
 
 interface Props {
     lastPubId: string;
@@ -56,24 +58,37 @@ function CaptureDetails({ lastPubId }: Props) {
     useBrowserTitle('browserTitle.captureDetails');
 
     // Supabase stuff
-    const query = useQuery<LiveSpecQuery>(
+    const pubSpecQuery = useQuery<PubSpecQuery>(
         TABLES.PUBLICATION_SPECS,
         {
-            columns: QUERY,
+            columns: PUB_SPEC_QUERY,
             filter: (filterBuilder) => filterBuilder.eq('pub_id', lastPubId),
         },
         []
     );
-    const { data: liveSpecs, error } = useSelect<LiveSpecQuery>(query);
+    const pubsQuery = useQuery<PubsQuery>(
+        TABLES.PUBLICATIONS,
+        {
+            columns: PUBS_QUERY,
+            filter: (filterBuilder) => filterBuilder.eq('id', lastPubId),
+        },
+        []
+    );
+    const { data: pubSpecs, error: pubSpecsError } =
+        useSelect<PubSpecQuery>(pubSpecQuery);
+    const { data: pubs, error: pubsError } =
+        useSelectSingle<PubsQuery>(pubsQuery);
+
+    console.log(pubs);
 
     const setSpecs = useZustandStore<
-        EditorStoreState<LiveSpecQuery>,
-        EditorStoreState<LiveSpecQuery>['setSpecs']
+        EditorStoreState<PubSpecQuery>,
+        EditorStoreState<PubSpecQuery>['setSpecs']
     >((state) => state.setSpecs);
 
     const setId = useZustandStore<
-        EditorStoreState<LiveSpecQuery>,
-        EditorStoreState<LiveSpecQuery>['setId']
+        EditorStoreState<PubSpecQuery>,
+        EditorStoreState<PubSpecQuery>['setId']
     >((state) => state.setId);
 
     useEffect(() => {
@@ -81,31 +96,34 @@ function CaptureDetails({ lastPubId }: Props) {
     }, [lastPubId, setId]);
 
     useEffect(() => {
-        if (liveSpecs?.data) {
-            setSpecs(liveSpecs.data.map((item) => item.live_specs));
+        if (pubSpecs?.data) {
+            setSpecs(pubSpecs.data.map((item) => item.live_specs));
         }
-    }, [liveSpecs, setSpecs]);
+    }, [pubSpecs, setSpecs]);
 
-    if (error) {
-        return <Error error={error} />;
+    if (pubSpecsError) {
+        return <Error error={pubSpecsError} />;
     } else {
         return (
             <Grid container spacing={2}>
                 <Grid item xs={6}>
                     <LiveSpecEditor />
                 </Grid>
-                {/* {liveSpecs?.data.publications[0].logs_token ? (
+
+                {pubsError ? (
+                    <Error error={pubsError} />
+                ) : pubs?.data ? (
                     <Grid item xs={6}>
                         <Typography variant="h5">
                             <FormattedMessage id="captureDetails.logs.title" />
                         </Typography>
                         <Logs
-                            token={liveSpecs.data.publications[0].logs_token}
+                            token={pubs.data.logs_token}
                             fetchAll
                             disableIntervalFetching
                         />
                     </Grid>
-                ) : null} */}
+                ) : null}
             </Grid>
         );
     }
