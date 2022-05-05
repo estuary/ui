@@ -68,14 +68,13 @@ const Admin = () => {
                     <Typography>
                         <FormattedMessage id="admin.roles.message" />
                     </Typography>
-                    <div style={{ height: 300, width: '100%' }}>
-                        <DataGrid
-                            rows={data.data}
-                            columns={columns}
-                            disableSelectionOnClick
-                            hideFooter
-                        />
-                    </div>
+                    <DataGrid
+                        rows={data.data}
+                        columns={columns}
+                        disableSelectionOnClick
+                        hideFooter
+                        autoHeight
+                    />
                 </Box>
             ) : null}
 
