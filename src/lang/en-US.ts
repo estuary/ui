@@ -201,6 +201,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
 const AccessGrants: ResolvedIntlConfig['messages'] = {
     'accessGrantsTable.header': `Captures`,
     'accessGrantsTable.title': `${CommonMessages['terms.permissions']}`,
+    'accessGrantsTable.filter': `Filter User or Object`,
     'accessGrants.message1': `Lorem ipsum.`,
     'accessGrants.message2': `lorem ipsum {docLink}.`,
     'accessGrants.message2.docLink': `lorem ipsum`,

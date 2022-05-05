@@ -27,7 +27,7 @@ function AccessGrantsTable() {
             filter: (query) => {
                 return defaultTableFilter<any>(
                     query,
-                    ['*'],
+                    ['user_full_name', 'subject_role', 'object_role'],
                     searchQuery,
                     columnToSort,
                     sortDirection,
@@ -57,7 +57,7 @@ function AccessGrantsTable() {
                 columnToSort={columnToSort}
                 setColumnToSort={setColumnToSort}
                 header="accessGrantsTable.title"
-                filterLabel="entityTable.filterLabel"
+                filterLabel="accessGrantsTable.filterLabel"
             />
         </Box>
     );
