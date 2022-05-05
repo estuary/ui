@@ -17,6 +17,8 @@ function ChipList({ strings }: Props) {
                 listStyle: 'none',
                 p: 0,
                 m: 0,
+                overflow: 'auto',
+                maxHeight: 100,
             }}
             component="ul"
         >
