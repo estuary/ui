@@ -16,7 +16,7 @@ interface Props {
 function ExpandableResourceConfig({ collectionName, id }: Props) {
     return (
         <Paper>
-            <Accordion>
+            <Accordion defaultExpanded={true}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography>{collectionName}</Typography>
                 </AccordionSummary>
