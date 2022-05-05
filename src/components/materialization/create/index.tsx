@@ -92,6 +92,7 @@ function MaterializationCreate() {
     // Form Store
     const entityName = useEntityStore(fooSelectors.entityName);
     const imageTag = useEntityStore(fooSelectors.connectorTag);
+    const entityDescription = useEntityStore(fooSelectors.description);
     const [detailErrors, specErrors] = useEntityStore(fooSelectors.errors);
     const resetState = useEntityStore(fooSelectors.resetState);
     const hasChanges = useEntityStore(fooSelectors.hasChanges);
@@ -424,6 +425,7 @@ function MaterializationCreate() {
                     {
                         draft_id: draftId,
                         dry_run: false,
+                        detail: entityDescription ?? null,
                     },
                 ])
                 .then(
