@@ -51,7 +51,7 @@ function Row({ data }: RowProps) {
         <>
             <TableRow
                 sx={{
-                    background: detailsExpanded ? grey[100] : null,
+                    background: detailsExpanded ? grey[50] : null,
                 }}
             >
                 <EntityName name={data.catalog_name} />
