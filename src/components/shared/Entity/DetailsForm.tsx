@@ -192,19 +192,26 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
             <FormattedMessage id={`${messagePrefix}.instructions`} />
 
             <Stack direction="row" spacing={2}>
-                {schema.properties.image.oneOf.length > 0 &&
-                schema.properties.prefix.oneOf.length > 0 ? (
-                    <JsonForms
-                        schema={schema}
-                        uischema={uiSchema}
-                        data={formData}
-                        renderers={defaultRenderers}
-                        cells={materialCells}
-                        config={defaultOptions}
-                        readonly={status !== FormStatus.IDLE}
-                        validationMode={showValidation(displayValidation)}
-                        onChange={setDetails}
-                    />
+                {schema.properties.image.oneOf.length > 0 ? (
+                    schema.properties.prefix.oneOf.length > 0 ? (
+                        <JsonForms
+                            schema={schema}
+                            uischema={uiSchema}
+                            data={formData}
+                            renderers={defaultRenderers}
+                            cells={materialCells}
+                            config={defaultOptions}
+                            readonly={status !== FormStatus.IDLE}
+                            validationMode={showValidation(displayValidation)}
+                            onChange={setDetails}
+                        />
+                    ) : (
+                        <Alert severity="warning">
+                            <FormattedMessage
+                                id={`${messagePrefix}.noAccessGrants`}
+                            />
+                        </Alert>
+                    )
                 ) : (
                     <Alert severity="warning">
                         <FormattedMessage
