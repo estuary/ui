@@ -12,7 +12,7 @@ function ServerDiff({ iconSize, onMerge }: Props) {
         <>
             <FormattedMessage id="monacoEditor.serverDiff" />
             <ErrorIcon sx={{ fontSize: iconSize }} color="error" />
-            <Button onClick={() => onMerge()}>
+            <Button onClick={() => onMerge()} disabled>
                 <FormattedMessage id="monacoEditor.serverDiffCTA" />
             </Button>
         </>

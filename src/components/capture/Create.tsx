@@ -5,7 +5,7 @@ import { EditorStoreState } from 'components/editor/Store';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
-import FooError from 'components/shared/Entity/Error';
+import EntityError from 'components/shared/Entity/Error';
 import FooHeader from 'components/shared/Entity/Header';
 import LogDialog from 'components/shared/Entity/LogDialog';
 import {
@@ -417,10 +417,11 @@ function CaptureCreate() {
                 <>
                     <Collapse in={formSubmitError !== null}>
                         {formSubmitError && (
-                            <FooError
+                            <EntityError
                                 title={formSubmitError.title}
                                 error={formSubmitError.error}
                                 logToken={logToken}
+                                draftId={id}
                             />
                         )}
                     </Collapse>
