@@ -21,6 +21,10 @@ export const tableColumns = [
         headerIntlKey: 'entityTable.data.entity',
     },
     {
+        field: null,
+        headerIntlKey: 'data.type',
+    },
+    {
         field: 'reads_from',
         headerIntlKey: 'entityTable.data.readsFrom',
     },

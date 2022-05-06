@@ -27,7 +27,7 @@ export const tableColumns = [
         headerIntlKey: 'entityTable.data.entity',
     },
     {
-        field: 'connector_image_name',
+        field: null,
         headerIntlKey: 'entityTable.data.connectorType',
     },
     {
