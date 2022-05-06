@@ -8,8 +8,6 @@ interface Props {
 }
 
 function Connector({ openGraph, imageTag }: Props) {
-    console.log(imageTag);
-
     return (
         <TableCell sx={{ minWidth: 100 }}>
             <Tooltip title={imageTag} placement="bottom-start">
