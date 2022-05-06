@@ -12,7 +12,7 @@ import { BaseComponentProps } from 'types';
 // Colors
 const primary = '#5660BD';
 const secondary = '#3c5584';
-const background = '#F7F7F7';
+const background = '#04192A';
 
 // Status Colors
 const errorMain = '#f67375';
