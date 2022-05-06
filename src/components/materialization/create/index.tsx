@@ -28,6 +28,7 @@ import { useConfirmationModalContext } from 'context/Confirmation';
 import { useClient, useQuery, useSelect } from 'hooks/supabase-swr';
 import { usePrompt } from 'hooks/useBlocker';
 import useBrowserTitle from 'hooks/useBrowserTitle';
+import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useZustandStore } from 'hooks/useZustand';
 import { isEmpty } from 'lodash';
@@ -68,6 +69,9 @@ function MaterializationCreate() {
 
     // Supabase
     const supabaseClient = useClient();
+    const { combinedGrants } = useCombinedGrantsExt({
+        onlyAdmin: true,
+    });
     const tagsQuery = useQuery<ConnectorTag>(
         TABLES.CONNECTOR_TAGS,
         {
@@ -531,7 +535,7 @@ function MaterializationCreate() {
                                 <DetailsForm
                                     connectorTags={connectorTags.data}
                                     messagePrefix="materializationCreation"
-                                    accessGrants={[]}
+                                    accessGrants={combinedGrants}
                                 />
                             </ErrorBoundryWrapper>
                         )}
