@@ -1,17 +1,16 @@
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import { Box, Button, Collapse, TableCell, TableRow } from '@mui/material';
+import { Collapse, TableCell, TableRow } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import CaptureDetails from 'components/capture/Details';
 import { createEditorStore } from 'components/editor/Store';
 import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import ChipList from 'components/tables/cells/ChipList';
 import Connector from 'components/tables/cells/Connector';
+import DetailsAction from 'components/tables/cells/DetailsAction';
 import EntityName from 'components/tables/cells/EntityName';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import UserName from 'components/tables/cells/UserName';
 import { ZustandProvider } from 'hooks/useZustand';
 import { useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
 
 interface RowsProps {
     data: LiveSpecsExtQuery[];
@@ -49,7 +48,6 @@ export const tableColumns = [
 ];
 
 function Row({ row }: RowProps) {
-    const intl = useIntl();
     const [detailsExpanded, setDetailsExpanded] = useState(false);
 
     return (
@@ -75,43 +73,12 @@ function Row({ row }: RowProps) {
                     name={row.last_pub_user_full_name}
                 />
 
-                <TableCell align="right">
-                    <Box
-                        sx={{
-                            display: 'flex',
-                        }}
-                    >
-                        <Button
-                            variant="contained"
-                            size="small"
-                            disableElevation
-                            sx={{ mr: 1 }}
-                            aria-expanded={detailsExpanded}
-                            aria-label={intl.formatMessage({
-                                id: detailsExpanded
-                                    ? 'aria.closeExpand'
-                                    : 'aria.openExpand',
-                            })}
-                            onClick={() => {
-                                setDetailsExpanded(!detailsExpanded);
-                            }}
-                            endIcon={
-                                // TODO (duplication) this is copied a few times
-                                <KeyboardArrowDownIcon
-                                    sx={{
-                                        marginRight: 0,
-                                        transform: `rotate(${
-                                            detailsExpanded ? '180' : '0'
-                                        }deg)`,
-                                        transition: 'all 250ms ease-in-out',
-                                    }}
-                                />
-                            }
-                        >
-                            <FormattedMessage id="cta.details" />
-                        </Button>
-                    </Box>
-                </TableCell>
+                <DetailsAction
+                    onClick={() => {
+                        setDetailsExpanded(!detailsExpanded);
+                    }}
+                    expanded={detailsExpanded}
+                />
             </TableRow>
 
             <TableRow>

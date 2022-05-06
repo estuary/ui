@@ -1,11 +1,11 @@
-import { Box, Button, TableCell, TableRow } from '@mui/material';
+import { TableRow } from '@mui/material';
 import ChipList from 'components/tables/cells/ChipList';
 import Connector from 'components/tables/cells/Connector';
+import DetailsAction from 'components/tables/cells/DetailsAction';
 import EntityName from 'components/tables/cells/EntityName';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import UserName from 'components/tables/cells/UserName';
 import { LiveSpecsExtQuery } from 'components/tables/Materializations';
-import { FormattedMessage } from 'react-intl';
 
 interface RowsProps {
     data: LiveSpecsExtQuery[];
@@ -61,23 +61,7 @@ function Row({ row }: RowProps) {
                 name={row.last_pub_user_full_name}
             />
 
-            <TableCell>
-                <Box
-                    sx={{
-                        display: 'flex',
-                    }}
-                >
-                    <Button
-                        variant="contained"
-                        size="small"
-                        disableElevation
-                        sx={{ mr: 1 }}
-                        disabled
-                    >
-                        <FormattedMessage id="cta.details" />
-                    </Button>
-                </Box>
-            </TableCell>
+            <DetailsAction disabled={true} />
         </TableRow>
     );
 }
