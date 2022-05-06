@@ -35,8 +35,8 @@ export const defaultRenderers = [
     { renderer: ConnectorType, tester: connectorTypeTester },
 ];
 
-export const showValidation = (val: any): ValidationMode => {
-    return val ? 'ValidateAndShow' : 'ValidateAndHide';
+export const showValidation = (_val: any): ValidationMode => {
+    return 'ValidateAndShow';
 };
 
 /**
