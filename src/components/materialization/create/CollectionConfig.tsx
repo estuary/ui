@@ -5,14 +5,9 @@ import useCreationStore, {
 } from 'components/materialization/Store';
 import useEntityStore, { fooSelectors } from 'components/shared/Entity/Store';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
-import { EventHandler } from 'react';
 import { FormattedMessage } from 'react-intl';
 
-interface Props {
-    previewHandler: EventHandler<any>;
-}
-
-function CollectionConfig({ previewHandler }: Props) {
+function CollectionConfig() {
     const imageTag = useEntityStore(fooSelectors.connectorTag);
     const collections = useCreationStore(creationSelectors.collections);
 
@@ -24,7 +19,7 @@ function CollectionConfig({ previewHandler }: Props) {
                 }
                 body={
                     <>
-                        <CollectionSelector preview={previewHandler} />
+                        <CollectionSelector />
                         {collections.map((collection: any, index: number) => {
                             return (
                                 <ExpandableResourceConfig

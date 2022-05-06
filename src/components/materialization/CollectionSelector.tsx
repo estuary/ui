@@ -1,20 +1,10 @@
-import {
-    Autocomplete,
-    Box,
-    Button,
-    TextField,
-    Typography,
-} from '@mui/material';
+import { Autocomplete, Box, TextField, Typography } from '@mui/material';
 import useCreationStore, {
     creationSelectors,
 } from 'components/materialization/Store';
 import { useQuery, useSelect } from 'hooks/supabase-swr/';
-import { EventHandler, MouseEvent, useState } from 'react';
+import { useState } from 'react';
 import { TABLES } from 'services/supabase';
-
-interface Props {
-    preview: EventHandler<any>;
-}
 
 interface LiveSpecsQuery {
     catalog_name: string;
@@ -24,7 +14,7 @@ interface LiveSpecsQuery {
 
 const columnsToQuery: (keyof LiveSpecsQuery)[] = ['catalog_name', 'spec_type'];
 
-function CollectionSelector({ preview }: Props) {
+function CollectionSelector() {
     const [missingInput, setMissingInput] = useState(false);
 
     const liveSpecsQuery = useQuery<LiveSpecsQuery>(
@@ -44,13 +34,6 @@ function CollectionSelector({ preview }: Props) {
     );
 
     const handlers = {
-        submit: (event: MouseEvent<HTMLElement>) => {
-            event.preventDefault();
-
-            setMissingInput(collections.length === 0);
-
-            preview(event);
-        },
         updateCollections: (event: React.SyntheticEvent, value: any) => {
             setCollections(value);
             setResourceConfig(value[value.length - 1]);
@@ -91,16 +74,6 @@ function CollectionSelector({ preview }: Props) {
                         />
                     )}
                 />
-
-                <Button
-                    type="submit"
-                    variant="contained"
-                    disableElevation
-                    onClick={handlers.submit}
-                    sx={{ minWidth: 175, ml: 2 }}
-                >
-                    Preview Catalog
-                </Button>
             </Box>
         </Box>
     ) : null;

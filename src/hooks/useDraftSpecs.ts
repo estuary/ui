@@ -22,12 +22,13 @@ function useDraftSpecs(draftId: string | null) {
         [draftId]
     );
 
-    const { data, error, mutate } = useSelect(draftSpecQuery);
+    const { data, error, mutate, isValidating } = useSelect(draftSpecQuery);
 
     return {
         draftSpecs: data ? data.data : [],
         error,
         mutate,
+        isValidating,
     };
 }
 

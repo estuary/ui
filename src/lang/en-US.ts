@@ -8,6 +8,8 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.browserTitle': `Flow`,
     'common.loading': `loading...`,
     'common.running': `running...`,
+    'common.saving': `saving`,
+    'common.saved': `saved`,
     'common.fail': `Failed`,
     'common.success': `Success`,
     'common.errors.heading': `Error`,

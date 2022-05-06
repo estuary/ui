@@ -499,7 +499,7 @@ function MaterializationCreate() {
 
             <FooHeader
                 close={handlers.cancel}
-                test={handlers.test}
+                test={handlers.preview}
                 testDisabled={
                     formStateStatus !== FormStatus.IDLE || !hasConnectors
                 }
@@ -544,9 +544,7 @@ function MaterializationCreate() {
                                 </ErrorBoundryWrapper>
 
                                 <ErrorBoundryWrapper>
-                                    <CollectionConfig
-                                        previewHandler={handlers.preview}
-                                    />
+                                    <CollectionConfig />
                                 </ErrorBoundryWrapper>
                             </>
                         )}

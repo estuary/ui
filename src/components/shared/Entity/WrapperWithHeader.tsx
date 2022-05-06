@@ -1,4 +1,5 @@
-import { AppBar, Divider, Paper, Toolbar } from '@mui/material';
+import { Divider, Paper } from '@mui/material';
+import RelativeAppBar from 'components/shared/RelativeAppBar';
 import { ReactNode } from 'react';
 
 interface Props {
@@ -9,16 +10,7 @@ interface Props {
 function WrapperWithHeader({ header, body }: Props) {
     return (
         <Paper sx={{ width: '100%', mb: 2 }} variant="outlined">
-            <AppBar position="relative" elevation={0} color="default">
-                <Toolbar
-                    variant="dense"
-                    sx={{
-                        justifyContent: 'space-between',
-                    }}
-                >
-                    {header}
-                </Toolbar>
-            </AppBar>
+            <RelativeAppBar>{header}</RelativeAppBar>
 
             <Divider />
             {body}
