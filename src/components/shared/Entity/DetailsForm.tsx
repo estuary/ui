@@ -67,15 +67,13 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
 
         if (accessGrants.length > 0) {
             accessGrants.forEach((accessGrant) => {
-                if (accessGrant.capability === 'admin') {
-                    response.push({
-                        const: {
-                            id: accessGrant.id,
-                            title: accessGrant.object_role,
-                        },
+                response.push({
+                    const: {
+                        id: accessGrant.id,
                         title: accessGrant.object_role,
-                    });
-                }
+                    },
+                    title: accessGrant.object_role,
+                });
             });
         }
 
@@ -194,7 +192,8 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
             <FormattedMessage id={`${messagePrefix}.instructions`} />
 
             <Stack direction="row" spacing={2}>
-                {schema.properties.image.oneOf.length > 0 ? (
+                {schema.properties.image.oneOf.length > 0 &&
+                schema.properties.prefix.oneOf.length > 0 ? (
                     <JsonForms
                         schema={schema}
                         uischema={uiSchema}

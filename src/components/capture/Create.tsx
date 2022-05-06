@@ -59,7 +59,9 @@ function CaptureCreate() {
 
     // Supabase stuff
     const supabaseClient = useClient();
-    const { combinedGrants } = useCombinedGrantsExt();
+    const { combinedGrants } = useCombinedGrantsExt({
+        onlyAdmin: true,
+    });
 
     const tagsQuery = useQuery<ConnectorTag>(
         TABLES.CONNECTOR_TAGS,
