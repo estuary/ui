@@ -77,8 +77,9 @@ function CaptureCreate() {
 
     // Form store
     const resetState = useEntityStore(fooSelectors.resetState);
-    const captureName = useEntityStore(fooSelectors.entityName);
-    const captureImage = useEntityStore(fooSelectors.connectorTag);
+    const entityName = useEntityStore(fooSelectors.entityName);
+    const imageTag = useEntityStore(fooSelectors.connectorTag);
+    const entityDescription = useEntityStore(fooSelectors.description);
     const [detailErrors, specErrors] = useEntityStore(fooSelectors.errors);
     const specFormData = useEntityStore(fooSelectors.endpointConfig);
     const hasChanges = useEntityStore(fooSelectors.hasChanges);
@@ -243,7 +244,7 @@ function CaptureCreate() {
                     {
                         draft_id: id,
                         dry_run: false,
-                        detail: 'Published via UI',
+                        detail: entityDescription ?? null,
                     },
                 ])
                 .then(
@@ -300,12 +301,12 @@ function CaptureCreate() {
                 supabaseClient
                     .from(TABLES.DRAFTS)
                     .insert({
-                        detail: captureName,
+                        detail: entityName,
                     })
                     .then(
                         (draftsResponse) => {
                             if (
-                                captureImage &&
+                                imageTag &&
                                 draftsResponse.data &&
                                 draftsResponse.data.length > 0
                             ) {
@@ -315,9 +316,9 @@ function CaptureCreate() {
                                     .from(TABLES.DISCOVERS)
                                     .insert([
                                         {
-                                            capture_name: captureName,
+                                            capture_name: entityName,
                                             endpoint_config: specFormData,
-                                            connector_tag_id: captureImage.id,
+                                            connector_tag_id: imageTag.id,
                                             draft_id: draftsResponse.data[0].id,
                                         },
                                     ])
@@ -373,7 +374,7 @@ function CaptureCreate() {
         },
     };
 
-    usePrompt('confirm.loseData', exitWhenLogsClose || hasChanges(), () => {
+    usePrompt('confirm.loseData', !exitWhenLogsClose && hasChanges(), () => {
         resetState();
     });
 
@@ -434,11 +435,9 @@ function CaptureCreate() {
                             </ErrorBoundryWrapper>
                         ) : null}
 
-                        {captureImage?.id ? (
+                        {imageTag?.id ? (
                             <ErrorBoundryWrapper>
-                                <EndpointConfig
-                                    connectorImage={captureImage.id}
-                                />
+                                <EndpointConfig connectorImage={imageTag.id} />
                             </ErrorBoundryWrapper>
                         ) : null}
                     </form>

@@ -7,18 +7,18 @@ import useConstant from 'use-constant';
 import { StateSelector, StoreApi, useStore } from 'zustand';
 
 interface ZustandProviderProps {
-    createStore: (key: string) => unknown;
-    key: string;
+    createStore: (storeName: string) => unknown;
+    storeName: string;
     children: ReactNode;
 }
 
 export const ZustandContext = reactCreateContext<any | null>(null);
 export const ZustandProvider = ({
     createStore,
-    key,
+    storeName,
     children,
 }: ZustandProviderProps) => {
-    const store = useConstant(() => createStore(key));
+    const store = useConstant(() => createStore(storeName));
 
     return (
         <ZustandContext.Provider value={store}>

@@ -14,6 +14,10 @@ export const getConnectorName = (connectorObject: OpenGraph) => {
     return connectorObject['en-US'].title;
 };
 
+export const getConnectorIcon = (connectorObject: OpenGraph) => {
+    return connectorObject['en-US'].image;
+};
+
 export type DeploymentStatus = 'ACTIVE' | 'INACTIVE';
 export const getDeploymentStatusHexCode = (
     deploymentStatus: DeploymentStatus

@@ -8,6 +8,7 @@ import { devtools } from 'zustand/middleware';
 
 export interface Details extends Pick<JsonFormsCore, 'data' | 'errors'> {
     data: {
+        description?: string;
         name: string;
         image?: {
             id: string;
@@ -191,6 +192,7 @@ export default useEntityStore;
 export const fooSelectors = {
     entityName: (state: EntityStoreState) => state.details.data.name,
     connectorTag: (state: EntityStoreState) => state.details.data.image,
+    description: (state: EntityStoreState) => state.details.data.description,
     setDetails: (state: EntityStoreState) => state.setDetails,
     resetState: (state: EntityStoreState) => state.resetState,
     hasChanges: (state: EntityStoreState) => state.hasChanges,

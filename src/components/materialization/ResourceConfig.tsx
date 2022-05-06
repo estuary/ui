@@ -15,6 +15,7 @@ interface ConnectorTag {
 
 interface Props {
     connectorImage: string;
+    collectionName: string;
 }
 
 const CONNECTOR_TAGS_QUERY = `
@@ -26,7 +27,10 @@ const CONNECTOR_TAGS_QUERY = `
     documentation_url
 `;
 
-function NewMaterializationResourceConfig({ connectorImage }: Props) {
+function NewMaterializationResourceConfig({
+    connectorImage,
+    collectionName,
+}: Props) {
     const tagsQuery = useQuery<ConnectorTag>(
         TABLES.CONNECTOR_TAGS,
         {
@@ -50,6 +54,7 @@ function NewMaterializationResourceConfig({ connectorImage }: Props) {
                 <Paper variant="outlined" sx={{ width: '100%' }}>
                     <ResourceConfigForm
                         resourceSchema={connector.data.resource_spec_schema}
+                        collectionName={collectionName}
                     />
                 </Paper>
             </Box>

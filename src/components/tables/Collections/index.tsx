@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import Rows, { tableColumns } from 'components/tables/Dashboard/Rows';
+import Rows, { tableColumns } from 'components/tables/Collections/Rows';
 import EntityTable, {
     getPagination,
     SortDirection,
@@ -15,9 +15,9 @@ export interface LiveSpecsQuery {
     id: string;
 }
 
-const queryColumns = ['id', 'spec_type', 'catalog_name', 'updated_at'];
+// const queryColumns = ['id', 'spec_type', 'catalog_name', 'updated_at'];
 
-function DashboardTable() {
+function CollectionsTable() {
     const rowsPerPage = 10;
     const [pagination, setPagination] = useState<{ from: number; to: number }>(
         getPagination(0, rowsPerPage)
@@ -27,9 +27,9 @@ function DashboardTable() {
     const [columnToSort, setColumnToSort] = useState<any>('updated_at');
 
     const liveSpecQuery = useQuery<LiveSpecsQuery>(
-        TABLES.LIVE_SPECS,
+        TABLES.LIVE_SPECS_EXT,
         {
-            columns: queryColumns,
+            columns: '*',
             count: 'exact',
             filter: (query) => {
                 return defaultTableFilter<LiveSpecsQuery>(
@@ -70,4 +70,4 @@ function DashboardTable() {
     );
 }
 
-export default DashboardTable;
+export default CollectionsTable;

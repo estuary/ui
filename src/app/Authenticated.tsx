@@ -91,7 +91,7 @@ const Authenticated = () => {
                         element={
                             <ZustandProvider
                                 createStore={createEditorStore}
-                                key="draftSpecEditor"
+                                storeName="draftSpecEditor"
                             >
                                 <CaptureCreate />
                             </ZustandProvider>
@@ -106,7 +106,7 @@ const Authenticated = () => {
                         element={
                             <ZustandProvider
                                 createStore={createEditorStore}
-                                key="draftSpecEditor"
+                                storeName="draftSpecEditor"
                             >
                                 <NewMaterialization />
                             </ZustandProvider>

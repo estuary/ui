@@ -8,6 +8,8 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.browserTitle': `Flow`,
     'common.loading': `loading...`,
     'common.running': `running...`,
+    'common.saving': `saving`,
+    'common.saved': `saved`,
     'common.fail': `Failed`,
     'common.success': `Success`,
     'common.errors.heading': `Error`,
@@ -29,6 +31,11 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'entityName.description': `Name of the entity - must be unique. (ex: acemCo/marketing_data)`,
     'connector.label': `Connector`,
     'connector.description': `The connector you want to use to connect to your endpoint.`,
+    'description.label': `Details`,
+    'description.description': `Describe your changes / why you're changing things.`,
+
+    // Common sections
+    'connectionConfig.header': `Connection Config`,
 };
 
 const CTAs: ResolvedIntlConfig['messages'] = {
@@ -136,12 +143,14 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.data.entity': `Name`,
     'entityTable.data.connectorType': `Type`,
     'entityTable.data.lastUpdated': `Last Updated`,
+    'entityTable.data.lastPublished': `Published`,
     'entityTable.data.actions': `Actions`,
     'entityTable.data.writesTo': `Writes To`,
     'entityTable.data.readsFrom': `Reads From`,
     'entityTable.data.userFullName': `User`,
     'entityTable.data.capability': `Capability`,
     'entityTable.data.objectRole': `Object`,
+    'entityTable.data.lastPubUserFullName': `Published By`,
 
     'entityTable.unmatchedFilter.header': `Sorry, no result found.`,
     'entityTable.unmatchedFilter.message': `We could not find any data matching that filter. Try applying a different filter or using an alternative query option.`,
@@ -266,6 +275,12 @@ const Foo: ResolvedIntlConfig['messages'] = {
     'foo.ctas.discover': `Test Config`,
     'foo.ctas.discoverAgain': `Regenerate Catalog`,
     'foo.ctas.docs': `Connector Docs`,
+    'foo.endpointConfig.heading': `Connection Configuration`,
+};
+
+const MonacoEditor: ResolvedIntlConfig['messages'] = {
+    'monacoEditor.serverDiff': `Choose which version to take`,
+    'monacoEditor.serverDiffCTA': `See changes`,
 };
 
 const CaptureCreate: ResolvedIntlConfig['messages'] = {
@@ -289,10 +304,12 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
 
 const CaptureDetails: ResolvedIntlConfig['messages'] = {
     'captureDetails.logs.title': `Logs`,
+    'captureDetails.logs.notFound': `We were unable to find logs for this build. This may be due to you not having permissions or they may have been removed.`,
 };
 
 const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreation.details.heading': `Materialization Details`,
+    'materializationCreation.collections.heading': `Output Configuration`,
     'materializationCreation.config.source.doclink': `Connector Docs`,
     'materializationCreation.cta.test': `Test Config`,
     'materializationCreation.editor.default': `Before you can edit the Materialization Catalog you need to fill out the connection config section`,
@@ -327,6 +344,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...PageNotFound,
     ...Registration,
     ...AdminPage,
+    ...MonacoEditor,
     ...ConnectorsPage,
     ...Error,
     ...LoginPage,

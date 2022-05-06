@@ -1,12 +1,18 @@
-import { Box, Button, TableCell, TableRow } from '@mui/material';
+import { TableRow } from '@mui/material';
 import ChipList from 'components/tables/cells/ChipList';
+import Connector from 'components/tables/cells/Connector';
+import DetailsAction from 'components/tables/cells/DetailsAction';
 import EntityName from 'components/tables/cells/EntityName';
 import TimeStamp from 'components/tables/cells/TimeStamp';
-import { LiveSpecsQuery } from 'components/tables/Materializations';
-import { FormattedMessage } from 'react-intl';
+import UserName from 'components/tables/cells/UserName';
+import { LiveSpecsExtQuery } from 'components/tables/Materializations';
 
-interface Props {
-    data: LiveSpecsQuery[];
+interface RowsProps {
+    data: LiveSpecsExtQuery[];
+}
+
+interface RowProps {
+    row: LiveSpecsExtQuery;
 }
 
 export const tableColumns = [
@@ -15,12 +21,20 @@ export const tableColumns = [
         headerIntlKey: 'entityTable.data.entity',
     },
     {
+        field: null,
+        headerIntlKey: 'data.type',
+    },
+    {
         field: 'reads_from',
         headerIntlKey: 'entityTable.data.readsFrom',
     },
     {
         field: 'updated_at',
-        headerIntlKey: 'entityTable.data.lastUpdated',
+        headerIntlKey: 'entityTable.data.lastPublished',
+    },
+    {
+        field: 'last_pub_user_full_name',
+        headerIntlKey: 'entityTable.data.lastPubUserFullName',
     },
     {
         field: null,
@@ -28,35 +42,35 @@ export const tableColumns = [
     },
 ];
 
-function Rows({ data }: Props) {
+function Row({ row }: RowProps) {
+    return (
+        <TableRow key={`Entity-${row.id}`}>
+            <EntityName name={row.catalog_name} />
+
+            <Connector
+                openGraph={row.connector_open_graph}
+                imageTag={`${row.connector_image_name}${row.connector_image_tag}`}
+            />
+
+            <ChipList strings={row.reads_from} />
+
+            <TimeStamp time={row.updated_at} />
+
+            <UserName
+                avatar={row.last_pub_user_avatar_url}
+                name={row.last_pub_user_full_name}
+            />
+
+            <DetailsAction disabled={true} />
+        </TableRow>
+    );
+}
+
+function Rows({ data }: RowsProps) {
     return (
         <>
             {data.map((row) => (
-                <TableRow key={`Entity-${row.id}`}>
-                    <EntityName name={row.catalog_name} />
-
-                    <ChipList strings={row.reads_from} />
-
-                    <TimeStamp time={row.updated_at} />
-
-                    <TableCell>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                            }}
-                        >
-                            <Button
-                                variant="contained"
-                                size="small"
-                                disableElevation
-                                sx={{ mr: 1 }}
-                                disabled
-                            >
-                                <FormattedMessage id="cta.details" />
-                            </Button>
-                        </Box>
-                    </TableCell>
-                </TableRow>
+                <Row row={row} key={row.id} />
             ))}
         </>
     );

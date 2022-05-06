@@ -1,4 +1,3 @@
-import { AppBar, Toolbar, Typography } from '@mui/material';
 import ExternalLink from 'components/shared/ExternalLink';
 import { FormattedMessage } from 'react-intl';
 
@@ -10,24 +9,14 @@ interface Props {
 function EndpointConfigHeader({ name, docsPath }: Props) {
     if (name) {
         return (
-            <AppBar position="relative" elevation={0} color="default">
-                <Toolbar
-                    variant="dense"
-                    sx={{
-                        justifyContent: 'space-between',
-                    }}
-                >
-                    <Typography variant="h5" color="initial">
-                        {name}
-                    </Typography>
-
-                    {docsPath && docsPath.length > 0 ? (
-                        <ExternalLink link={docsPath}>
-                            <FormattedMessage id="foo.ctas.docs" />
-                        </ExternalLink>
-                    ) : null}
-                </Toolbar>
-            </AppBar>
+            <>
+                <FormattedMessage id="foo.endpointConfig.heading" />
+                {docsPath && docsPath.length > 0 ? (
+                    <ExternalLink link={docsPath}>
+                        <FormattedMessage id="foo.ctas.docs" />
+                    </ExternalLink>
+                ) : null}
+            </>
         );
     } else {
         return null;

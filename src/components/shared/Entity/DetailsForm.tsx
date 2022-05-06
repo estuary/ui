@@ -93,6 +93,12 @@ function DetailsForm({ connectorTags, messagePrefix }: Props) {
                     pattern: `^([a-zA-Z0-9-_.]+/)+[a-zA-Z0-9-_.]+$`,
                     type: 'string',
                 },
+                description: {
+                    description: intl.formatMessage({
+                        id: 'description.description',
+                    }),
+                    type: 'string',
+                },
             },
             required: ['name', 'image'],
             type: 'object',
@@ -115,6 +121,18 @@ function DetailsForm({ connectorTags, messagePrefix }: Props) {
                             id: 'connector.label',
                         }),
                         scope: '#/properties/image',
+                        type: 'Control',
+                    },
+                ],
+                type: 'HorizontalLayout',
+            },
+            {
+                elements: [
+                    {
+                        label: intl.formatMessage({
+                            id: 'description.label',
+                        }),
+                        scope: '#/properties/description',
                         type: 'Control',
                     },
                 ],

@@ -1,23 +1,23 @@
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import { Box, Button, Collapse, TableCell, TableRow } from '@mui/material';
+import { Collapse, TableCell, TableRow } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import CaptureDetails from 'components/capture/Details';
 import { createEditorStore } from 'components/editor/Store';
-import { LiveSpecsQuery } from 'components/tables/Captures';
+import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import ChipList from 'components/tables/cells/ChipList';
+import Connector from 'components/tables/cells/Connector';
+import DetailsAction from 'components/tables/cells/DetailsAction';
 import EntityName from 'components/tables/cells/EntityName';
 import TimeStamp from 'components/tables/cells/TimeStamp';
+import UserName from 'components/tables/cells/UserName';
 import { ZustandProvider } from 'hooks/useZustand';
 import { useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
-import { stripPathing } from 'utils/misc-utils';
 
 interface RowsProps {
-    data: LiveSpecsQuery[];
+    data: LiveSpecsExtQuery[];
 }
 
 interface RowProps {
-    data: LiveSpecsQuery;
+    row: LiveSpecsExtQuery;
 }
 
 export const tableColumns = [
@@ -26,7 +26,7 @@ export const tableColumns = [
         headerIntlKey: 'entityTable.data.entity',
     },
     {
-        field: 'connector_image_name',
+        field: null,
         headerIntlKey: 'entityTable.data.connectorType',
     },
     {
@@ -35,7 +35,11 @@ export const tableColumns = [
     },
     {
         field: 'updated_at',
-        headerIntlKey: 'entityTable.data.lastUpdated',
+        headerIntlKey: 'entityTable.data.lastPublished',
+    },
+    {
+        field: 'last_pub_user_full_name',
+        headerIntlKey: 'entityTable.data.lastPubUserFullName',
     },
     {
         field: null,
@@ -43,8 +47,7 @@ export const tableColumns = [
     },
 ];
 
-function Row({ data }: RowProps) {
-    const intl = useIntl();
+function Row({ row }: RowProps) {
     const [detailsExpanded, setDetailsExpanded] = useState(false);
 
     return (
@@ -54,52 +57,28 @@ function Row({ data }: RowProps) {
                     background: detailsExpanded ? grey[50] : null,
                 }}
             >
-                <EntityName name={data.catalog_name} />
+                <EntityName name={row.catalog_name} />
 
-                <TableCell sx={{ minWidth: 100 }}>
-                    {stripPathing(data.connector_image_name)}
-                </TableCell>
+                <Connector
+                    openGraph={row.connector_open_graph}
+                    imageTag={`${row.connector_image_name}${row.connector_image_tag}`}
+                />
 
-                <ChipList strings={data.writes_to} />
+                <ChipList strings={row.writes_to} />
 
-                <TimeStamp time={data.updated_at} />
+                <TimeStamp time={row.updated_at} />
 
-                <TableCell align="right">
-                    <Box
-                        sx={{
-                            display: 'flex',
-                        }}
-                    >
-                        <Button
-                            variant="contained"
-                            size="small"
-                            disableElevation
-                            sx={{ mr: 1 }}
-                            aria-expanded={detailsExpanded}
-                            aria-label={intl.formatMessage({
-                                id: detailsExpanded
-                                    ? 'aria.closeExpand'
-                                    : 'aria.openExpand',
-                            })}
-                            onClick={() => {
-                                setDetailsExpanded(!detailsExpanded);
-                            }}
-                            endIcon={
-                                <KeyboardArrowDownIcon
-                                    sx={{
-                                        marginRight: 0,
-                                        transform: `rotate(${
-                                            detailsExpanded ? '180' : '0'
-                                        }deg)`,
-                                        transition: 'all 250ms ease-in-out',
-                                    }}
-                                />
-                            }
-                        >
-                            <FormattedMessage id="cta.details" />
-                        </Button>
-                    </Box>
-                </TableCell>
+                <UserName
+                    avatar={row.last_pub_user_avatar_url}
+                    name={row.last_pub_user_full_name}
+                />
+
+                <DetailsAction
+                    onClick={() => {
+                        setDetailsExpanded(!detailsExpanded);
+                    }}
+                    expanded={detailsExpanded}
+                />
             </TableRow>
 
             <TableRow>
@@ -110,9 +89,9 @@ function Row({ data }: RowProps) {
                     <Collapse in={detailsExpanded} unmountOnExit>
                         <ZustandProvider
                             createStore={createEditorStore}
-                            key="liveSpecEditor"
+                            storeName="liveSpecEditor"
                         >
-                            <CaptureDetails lastPubId={data.last_pub_id} />
+                            <CaptureDetails lastPubId={row.last_pub_id} />
                         </ZustandProvider>
                     </Collapse>
                 </TableCell>
@@ -125,7 +104,7 @@ function Rows({ data }: RowsProps) {
     return (
         <>
             {data.map((row) => (
-                <Row data={row} key={row.id} />
+                <Row row={row} key={row.id} />
             ))}
         </>
     );

@@ -1,10 +1,12 @@
 import { TableCell, TableRow } from '@mui/material';
-import { LiveSpecsQuery } from 'components/tables/Captures';
+import { LiveSpecsExtQuery } from 'components/tables/Captures';
+import DetailsAction from 'components/tables/cells/DetailsAction';
 import EntityName from 'components/tables/cells/EntityName';
 import TimeStamp from 'components/tables/cells/TimeStamp';
+import UserName from 'components/tables/cells/UserName';
 
 interface Props {
-    data: LiveSpecsQuery[];
+    data: LiveSpecsExtQuery[];
 }
 
 export const tableColumns = [
@@ -18,7 +20,15 @@ export const tableColumns = [
     },
     {
         field: 'updated_at',
-        headerIntlKey: 'entityTable.data.lastUpdated',
+        headerIntlKey: 'entityTable.data.lastPublished',
+    },
+    {
+        field: 'last_pub_user_full_name',
+        headerIntlKey: 'entityTable.data.lastPubUserFullName',
+    },
+    {
+        field: null,
+        headerIntlKey: 'entityTable.data.actions',
     },
 ];
 
@@ -34,6 +44,13 @@ function Rows({ data }: Props) {
                     </TableCell>
 
                     <TimeStamp time={row.updated_at} />
+
+                    <UserName
+                        avatar={row.last_pub_user_avatar_url}
+                        name={row.last_pub_user_full_name}
+                    />
+
+                    <DetailsAction disabled={true} />
                 </TableRow>
             ))}
         </>

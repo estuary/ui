@@ -7,14 +7,20 @@ import Rows, { tableColumns } from 'components/tables/Materializations/Rows';
 import { useQuery } from 'hooks/supabase-swr';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
+import { OpenGraph } from 'types';
 
-export interface LiveSpecsQuery {
+export interface LiveSpecsExtQuery {
     spec_type: string;
     catalog_name: string;
     updated_at: string;
     id: string;
     last_pub_id: string;
     reads_from: string[];
+    last_pub_user_avatar_url: string;
+    last_pub_user_full_name: string;
+    connector_image_name: string;
+    connector_image_tag: string;
+    connector_open_graph: OpenGraph;
 }
 
 const queryColumns = [
@@ -24,6 +30,11 @@ const queryColumns = [
     'id',
     'last_pub_id',
     'reads_from',
+    'last_pub_user_avatar_url',
+    'last_pub_user_full_name',
+    'connector_image_name',
+    'connector_image_tag',
+    'connector_open_graph',
 ];
 
 function MaterializationsTable() {
@@ -35,13 +46,13 @@ function MaterializationsTable() {
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
     const [columnToSort, setColumnToSort] = useState<any>('updated_at');
 
-    const liveSpecQuery = useQuery<LiveSpecsQuery>(
-        TABLES.LIVE_SPECS,
+    const liveSpecQuery = useQuery<LiveSpecsExtQuery>(
+        TABLES.LIVE_SPECS_EXT,
         {
             columns: queryColumns,
             count: 'exact',
             filter: (query) => {
-                return defaultTableFilter<LiveSpecsQuery>(
+                return defaultTableFilter<LiveSpecsExtQuery>(
                     query,
                     ['catalog_name'],
                     searchQuery,

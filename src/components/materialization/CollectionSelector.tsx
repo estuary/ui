@@ -1,21 +1,10 @@
-import {
-    Autocomplete,
-    AutocompleteValue,
-    Box,
-    Button,
-    TextField,
-    Typography,
-} from '@mui/material';
+import { Autocomplete, Box, TextField, Typography } from '@mui/material';
 import useCreationStore, {
-    CreationState,
+    creationSelectors,
 } from 'components/materialization/Store';
 import { useQuery, useSelect } from 'hooks/supabase-swr/';
-import { EventHandler, MouseEvent, useState } from 'react';
+import { useState } from 'react';
 import { TABLES } from 'services/supabase';
-
-interface Props {
-    preview: EventHandler<any>;
-}
 
 interface LiveSpecsQuery {
     catalog_name: string;
@@ -25,12 +14,7 @@ interface LiveSpecsQuery {
 
 const columnsToQuery: (keyof LiveSpecsQuery)[] = ['catalog_name', 'spec_type'];
 
-const selectors = {
-    collections: (state: CreationState) => state.collections,
-    setCollection: (state: CreationState) => state.setCollections,
-};
-
-function CollectionSelector({ preview }: Props) {
+function CollectionSelector() {
     const [missingInput, setMissingInput] = useState(false);
 
     const liveSpecsQuery = useQuery<LiveSpecsQuery>(
@@ -43,22 +27,16 @@ function CollectionSelector({ preview }: Props) {
     );
     const { data: collectionData, error } = useSelect(liveSpecsQuery);
 
-    const collections = useCreationStore(selectors.collections);
-    const setCollections = useCreationStore(selectors.setCollection);
+    const collections = useCreationStore(creationSelectors.collections);
+    const setCollections = useCreationStore(creationSelectors.setCollection);
+    const setResourceConfig = useCreationStore(
+        creationSelectors.setResourceConfig
+    );
 
     const handlers = {
-        submit: (event: MouseEvent<HTMLElement>) => {
-            event.preventDefault();
-
-            setMissingInput(collections.length === 0);
-
-            preview(event);
-        },
-        updateCollections: (
-            event: React.SyntheticEvent,
-            value: AutocompleteValue<string, true, false, false>
-        ) => {
+        updateCollections: (event: React.SyntheticEvent, value: any) => {
             setCollections(value);
+            setResourceConfig(value[value.length - 1]);
         },
         validateSelection: () => {
             setMissingInput(collections.length === 0);
@@ -85,6 +63,7 @@ function CollectionSelector({ preview }: Props) {
                     filterSelectedOptions
                     fullWidth
                     onChange={handlers.updateCollections}
+                    blurOnSelect={false}
                     renderInput={(params) => (
                         <TextField
                             {...params}
@@ -95,16 +74,6 @@ function CollectionSelector({ preview }: Props) {
                         />
                     )}
                 />
-
-                <Button
-                    type="submit"
-                    variant="contained"
-                    disableElevation
-                    onClick={handlers.submit}
-                    sx={{ minWidth: 175, ml: 2 }}
-                >
-                    Preview Catalog
-                </Button>
             </Box>
         </Box>
     ) : null;

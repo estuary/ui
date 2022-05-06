@@ -1,6 +1,6 @@
-import { Divider, Paper, Typography } from '@mui/material';
 import EndpointConfigForm from 'components/shared/Entity/EndpointConfigForm';
 import EndpointConfigHeader from 'components/shared/Entity/EndpointConfigHeader';
+import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import Error from 'components/shared/Error';
 import { useQuery, useSelectSingle } from 'hooks/supabase-swr';
 import { TABLES } from 'services/supabase';
@@ -42,19 +42,19 @@ function EndpointConfig({ connectorImage }: Props) {
         return <Error error={error} />;
     } else if (connector?.data) {
         return (
-            <>
-                <Typography variant="h5">Connection Config</Typography>
-                <Paper sx={{ width: '100%' }} variant="outlined">
+            <WrapperWithHeader
+                header={
                     <EndpointConfigHeader
                         name={connector.data.connectors.image_name}
                         docsPath={connector.data.documentation_url}
                     />
-                    <Divider />
+                }
+                body={
                     <EndpointConfigForm
                         endpointSchema={connector.data.endpoint_spec_schema}
                     />
-                </Paper>
-            </>
+                }
+            />
         );
     } else {
         return null;

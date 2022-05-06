@@ -8,12 +8,9 @@ import useEntityStore, {
     fooSelectors,
     FormStatus,
 } from 'components/shared/Entity/Store';
-import {
-    createJSONFormDefaults,
-    setDefaultsValidator,
-} from 'components/shared/Entity/EndpointConfigForm';
 import { isEmpty } from 'lodash';
 import { useEffect } from 'react';
+import { createJSONFormDefaults, setDefaultsValidator } from 'services/ajv';
 import {
     defaultOptions,
     defaultRenderers,
@@ -24,16 +21,21 @@ import { StoreSelector } from 'types';
 
 type Props = {
     resourceSchema: any;
+    collectionName: string;
 };
 
 const stateSelectors: StoreSelector<CreationState> = {
-    formData: (state) => state.resourceConfig.data,
     setConfig: (state) => state.setResourceConfig,
 };
 
-function NewMaterializationResourceConfigForm({ resourceSchema }: Props) {
+function NewMaterializationResourceConfigForm({
+    resourceSchema,
+    collectionName,
+}: Props) {
     const setConfig = useCreationStore(stateSelectors.setConfig);
-    const formData = useCreationStore(stateSelectors.formData);
+    const formData = useCreationStore(
+        (state) => state.resourceConfig[collectionName].data
+    );
     const displayValidation = useEntityStore(fooSelectors.displayValidation);
     const status = useEntityStore(fooSelectors.formStateStatus);
 
@@ -41,10 +43,10 @@ function NewMaterializationResourceConfigForm({ resourceSchema }: Props) {
     //  This will hydrate the default values for us as we don't want JSONForms to
     //  directly update the state object as it caused issues when switching connectors.
     useEffect(() => {
-        setConfig({
+        setConfig(collectionName, {
             data: createJSONFormDefaults(resourceSchema),
         });
-    }, [resourceSchema, setConfig]);
+    }, [collectionName, resourceSchema, setConfig]);
 
     const uiSchema = generateCustomUISchema(resourceSchema);
     const showValidationVal = showValidation(displayValidation);
