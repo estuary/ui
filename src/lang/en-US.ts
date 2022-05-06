@@ -280,7 +280,7 @@ const Foo: ResolvedIntlConfig['messages'] = {
 };
 
 const MonacoEditor: ResolvedIntlConfig['messages'] = {
-    'monacoEditor.serverDiff': `Choose which version to take`,
+    'monacoEditor.serverDiff': `Your version is out of sync with the server`,
     'monacoEditor.serverDiffCTA': `See changes`,
 };
 
