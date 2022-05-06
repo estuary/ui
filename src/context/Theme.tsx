@@ -117,6 +117,11 @@ const themeSettings = createTheme({
                 },
             },
         },
+        MuiButton: {
+            defaultProps: {
+                disableElevation: true,
+            },
+        },
         MuiTabs: {
             defaultProps: {
                 indicatorColor: 'secondary',

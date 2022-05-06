@@ -321,7 +321,6 @@ const Registration = () => {
                             <Button
                                 variant="contained"
                                 type="submit"
-                                disableElevation
                                 onClick={handlers.signUp}
                             >
                                 <FormattedMessage id="cta.register" />

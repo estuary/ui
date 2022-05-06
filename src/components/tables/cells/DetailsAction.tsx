@@ -19,7 +19,6 @@ function DetailsAction({ onClick, disabled, expanded }: Props) {
                 <Button
                     variant="contained"
                     size="small"
-                    disableElevation
                     sx={{ mr: 1 }}
                     disabled={disabled}
                     onClick={onClick}

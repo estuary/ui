@@ -85,7 +85,6 @@ function Rows({ data }: Props) {
                                     variant="contained"
                                     size="small"
                                     color="success"
-                                    disableElevation
                                     onClick={() => {
                                         if (
                                             row.connector_tags[0].protocol ===

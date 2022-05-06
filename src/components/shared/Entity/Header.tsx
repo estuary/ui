@@ -52,7 +52,6 @@ function FooHeader({
                     type="submit"
                     color="success"
                     variant="contained"
-                    disableElevation
                 >
                     <FormattedMessage
                         id={id ? 'foo.ctas.discoverAgain' : 'foo.ctas.discover'}
@@ -64,7 +63,6 @@ function FooHeader({
                     disabled={saveDisabled}
                     color="success"
                     variant="contained"
-                    disableElevation
                 >
                     <FormattedMessage id="cta.saveEntity" />
                 </Button>
