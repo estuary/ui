@@ -7,6 +7,7 @@ import Rows, { tableColumns } from 'components/tables/Materializations/Rows';
 import { useQuery } from 'hooks/supabase-swr';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
+import { OpenGraph } from 'types';
 
 export interface LiveSpecsExtQuery {
     spec_type: string;
@@ -17,6 +18,7 @@ export interface LiveSpecsExtQuery {
     reads_from: string[];
     last_pub_user_avatar_url: string;
     last_pub_user_full_name: string;
+    connector_open_graph: OpenGraph;
 }
 
 const queryColumns = [
@@ -28,6 +30,7 @@ const queryColumns = [
     'reads_from',
     'last_pub_user_avatar_url',
     'last_pub_user_full_name',
+    'connector_open_graph',
 ];
 
 function MaterializationsTable() {

@@ -1,5 +1,6 @@
 import { Box, Button, TableCell, TableRow } from '@mui/material';
 import ChipList from 'components/tables/cells/ChipList';
+import Connector from 'components/tables/cells/Connector';
 import EntityName from 'components/tables/cells/EntityName';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import UserName from 'components/tables/cells/UserName';
@@ -41,6 +42,8 @@ function Row({ row }: RowProps) {
     return (
         <TableRow key={`Entity-${row.id}`}>
             <EntityName name={row.catalog_name} />
+
+            <Connector openGraph={row.connector_open_graph} />
 
             <ChipList strings={row.reads_from} />
 

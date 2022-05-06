@@ -13,6 +13,9 @@ export interface EditorStoreState<T> {
     // TODO (typing) : This needs typed. Using the T here made the checks in setSpecs break
     specs: any[] | null;
     setSpecs: (newVal: EditorStoreState<T>['specs']) => void;
+
+    serverUpdate: any | null;
+    setServerUpdate: (newVal: EditorStoreState<T>['serverUpdate']) => void;
 }
 
 const getInitialStateData = () => {
@@ -20,6 +23,7 @@ const getInitialStateData = () => {
         currentCatalog: null,
         id: null,
         specs: null,
+        serverUpdate: null,
     };
 };
 
@@ -55,6 +59,15 @@ const getInitialState = <T,>(
                         }
                         state.specs = newVal;
                     }
+                }),
+                false
+            );
+        },
+
+        setServerUpdate: (newVal) => {
+            set(
+                produce((state) => {
+                    state.serverUpdate = newVal;
                 }),
                 false
             );

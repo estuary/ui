@@ -23,6 +23,11 @@ function DraftSpecEditor() {
         EditorStoreState<DraftSpecQuery>['id']
     >((state) => state.id);
 
+    const setServerUpdates = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['setServerUpdate']
+    >((state) => state.setServerUpdate);
+
     const { draftSpecs, mutate } = useDraftSpecs(id);
     const [draftSpec, setDraftSpec] = useState<DraftSpecQuery | null>(null);
     const [subscription, setSubscription] =
@@ -72,7 +77,9 @@ function DraftSpecEditor() {
         const publicationSubscription = supabaseClient
             .from(TABLES.DRAFT_SPECS)
             .on('*', async (payload: any) => {
-                console.log('sup', payload);
+                if (payload.new.spec) {
+                    setServerUpdates(payload.new.spec);
+                }
             })
             .subscribe();
 

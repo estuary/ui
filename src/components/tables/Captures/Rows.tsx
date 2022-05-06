@@ -5,13 +5,13 @@ import CaptureDetails from 'components/capture/Details';
 import { createEditorStore } from 'components/editor/Store';
 import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import ChipList from 'components/tables/cells/ChipList';
+import Connector from 'components/tables/cells/Connector';
 import EntityName from 'components/tables/cells/EntityName';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import UserName from 'components/tables/cells/UserName';
 import { ZustandProvider } from 'hooks/useZustand';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { stripPathing } from 'utils/misc-utils';
 
 interface RowsProps {
     data: LiveSpecsExtQuery[];
@@ -61,9 +61,7 @@ function Row({ row }: RowProps) {
             >
                 <EntityName name={row.catalog_name} />
 
-                <TableCell sx={{ minWidth: 100 }}>
-                    {stripPathing(row.connector_image_name)}
-                </TableCell>
+                <Connector openGraph={row.connector_open_graph} />
 
                 <ChipList strings={row.writes_to} />
 

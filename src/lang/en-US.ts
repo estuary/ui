@@ -278,6 +278,11 @@ const Foo: ResolvedIntlConfig['messages'] = {
     'foo.endpointConfig.heading': `Connection Configuration`,
 };
 
+const MonacoEditor: ResolvedIntlConfig['messages'] = {
+    'monacoEditor.serverDiff': `Choose which version to take`,
+    'monacoEditor.serverDiffCTA': `See changes`,
+};
+
 const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreation.heading': `${RouteTitles['routeTitle.captureCreate']}`,
     'captureCreation.details.heading': `Capture Details`,
@@ -338,6 +343,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...PageNotFound,
     ...Registration,
     ...AdminPage,
+    ...MonacoEditor,
     ...ConnectorsPage,
     ...Error,
     ...LoginPage,
