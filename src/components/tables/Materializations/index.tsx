@@ -19,6 +19,7 @@ export interface LiveSpecsExtQuery {
     last_pub_user_avatar_url: string;
     last_pub_user_full_name: string;
     connector_image_name: string;
+    connector_image_tag: string;
     connector_open_graph: OpenGraph;
 }
 
@@ -32,6 +33,7 @@ const queryColumns = [
     'last_pub_user_avatar_url',
     'last_pub_user_full_name',
     'connector_image_name',
+    'connector_image_tag',
     'connector_open_graph',
 ];
 

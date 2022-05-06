@@ -61,7 +61,10 @@ function Row({ row }: RowProps) {
             >
                 <EntityName name={row.catalog_name} />
 
-                <Connector openGraph={row.connector_open_graph} />
+                <Connector
+                    openGraph={row.connector_open_graph}
+                    imageTag={`${row.connector_image_name}${row.connector_image_tag}`}
+                />
 
                 <ChipList strings={row.writes_to} />
 

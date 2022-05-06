@@ -14,6 +14,7 @@ export interface LiveSpecsExtQuery {
     catalog_name: string;
     updated_at: string;
     connector_image_name: string;
+    connector_image_tag: string;
     id: string;
     last_pub_id: string;
     writes_to: string[];
@@ -27,6 +28,7 @@ const queryColumns = [
     'catalog_name',
     'updated_at',
     'connector_image_name',
+    'connector_image_tag',
     'id',
     'last_pub_id',
     'writes_to',
