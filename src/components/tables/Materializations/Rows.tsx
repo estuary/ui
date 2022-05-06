@@ -29,12 +29,12 @@ export const tableColumns = [
         headerIntlKey: 'entityTable.data.readsFrom',
     },
     {
-        field: 'last_pub_user_full_name',
-        headerIntlKey: 'entityTable.data.lastPubUserFullName',
-    },
-    {
         field: 'updated_at',
         headerIntlKey: 'entityTable.data.lastPublished',
+    },
+    {
+        field: 'last_pub_user_full_name',
+        headerIntlKey: 'entityTable.data.lastPubUserFullName',
     },
     {
         field: null,
@@ -54,12 +54,12 @@ function Row({ row }: RowProps) {
 
             <ChipList strings={row.reads_from} />
 
+            <TimeStamp time={row.updated_at} />
+
             <UserName
                 avatar={row.last_pub_user_avatar_url}
                 name={row.last_pub_user_full_name}
             />
-
-            <TimeStamp time={row.updated_at} />
 
             <TableCell>
                 <Box
