@@ -304,6 +304,7 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
 
 const CaptureDetails: ResolvedIntlConfig['messages'] = {
     'captureDetails.logs.title': `Logs`,
+    'captureDetails.logs.notFound': `We were unable to find logs for this build. This may be due to you not having permissions or they may have been removed.`,
 };
 
 const MaterializationCreate: ResolvedIntlConfig['messages'] = {

@@ -1,4 +1,4 @@
-import { Grid, Typography } from '@mui/material';
+import { Alert, Grid, Typography } from '@mui/material';
 import LiveSpecEditor from 'components/editor/LiveSpec';
 import { EditorStoreState } from 'components/editor/Store';
 import Logs from 'components/Logs';
@@ -108,20 +108,22 @@ function CaptureDetails({ lastPubId }: Props) {
                     <LiveSpecEditor />
                 </Grid>
 
-                {pubsError ? (
-                    <Error error={pubsError} />
-                ) : pubs?.data ? (
-                    <Grid item xs={6}>
-                        <Typography variant="h5">
-                            <FormattedMessage id="captureDetails.logs.title" />
-                        </Typography>
+                <Grid item xs={6}>
+                    <Typography variant="h5">
+                        <FormattedMessage id="captureDetails.logs.title" />
+                    </Typography>
+                    {pubsError ? (
+                        <Alert variant="filled" severity="warning">
+                            <FormattedMessage id="captureDetails.logs.notFound" />
+                        </Alert>
+                    ) : pubs?.data ? (
                         <Logs
                             token={pubs.data.logs_token}
                             fetchAll
                             disableIntervalFetching
                         />
-                    </Grid>
-                ) : null}
+                    ) : null}
+                </Grid>
             </Grid>
         );
     }
