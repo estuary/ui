@@ -83,6 +83,7 @@ function CaptureCreate() {
     const entityName = useEntityStore(fooSelectors.entityName);
     const imageTag = useEntityStore(fooSelectors.connectorTag);
     const entityDescription = useEntityStore(fooSelectors.description);
+    const entityPrefix = useEntityStore(fooSelectors.prefix);
     const [detailErrors, specErrors] = useEntityStore(fooSelectors.errors);
     const specFormData = useEntityStore(fooSelectors.endpointConfig);
     const hasChanges = useEntityStore(fooSelectors.hasChanges);
@@ -304,7 +305,7 @@ function CaptureCreate() {
                 supabaseClient
                     .from(TABLES.DRAFTS)
                     .insert({
-                        detail: entityName,
+                        detail: `${entityPrefix}${entityName}`,
                     })
                     .then(
                         (draftsResponse) => {
@@ -319,7 +320,7 @@ function CaptureCreate() {
                                     .from(TABLES.DISCOVERS)
                                     .insert([
                                         {
-                                            capture_name: entityName,
+                                            capture_name: `${entityPrefix}${entityName}`,
                                             endpoint_config: specFormData,
                                             connector_tag_id: imageTag.id,
                                             draft_id: draftsResponse.data[0].id,

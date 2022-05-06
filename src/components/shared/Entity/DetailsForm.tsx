@@ -48,6 +48,10 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
         if (connectorID) {
             setDetails({
                 data: {
+                    prefix: {
+                        const: '',
+                        title: '',
+                    },
                     name: '',
                     image: {
                         id: connectorID,
@@ -115,9 +119,6 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
                     description: intl.formatMessage({
                         id: 'entityName.description',
                     }),
-
-                    maxLength: 1000,
-                    minLength: 3,
                     // This pattern needs to match https://github.com/estuary/animated-carnival/blob/main/supabase/migrations/03_catalog-types.sql
                     pattern: `^([a-zA-Z0-9-_.]+/)+[a-zA-Z0-9-_.]+$`,
                     type: 'string',
@@ -132,7 +133,7 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
             required: ['name', 'image'],
             type: 'object',
         };
-    }, [accessGrantsOneOf, connectorTags, intl]);
+    }, [accessGrantsOneOf, connectorsOneOf, intl]);
 
     const uiSchema = {
         elements: [
