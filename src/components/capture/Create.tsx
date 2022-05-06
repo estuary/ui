@@ -305,7 +305,7 @@ function CaptureCreate() {
                 supabaseClient
                     .from(TABLES.DRAFTS)
                     .insert({
-                        detail: `${entityPrefix}${entityName}`,
+                        detail: `${entityPrefix.title}${entityName}`,
                     })
                     .then(
                         (draftsResponse) => {
@@ -320,7 +320,7 @@ function CaptureCreate() {
                                     .from(TABLES.DISCOVERS)
                                     .insert([
                                         {
-                                            capture_name: `${entityPrefix}${entityName}`,
+                                            capture_name: `${entityPrefix.title}${entityName}`,
                                             endpoint_config: specFormData,
                                             connector_tag_id: imageTag.id,
                                             draft_id: draftsResponse.data[0].id,

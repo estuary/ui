@@ -51,4 +51,5 @@ export interface Grants {
     object_role: string;
     subject_role: string;
     user_id: string;
+    id: string;
 }

@@ -49,7 +49,7 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
             setDetails({
                 data: {
                     prefix: {
-                        const: '',
+                        id: '',
                         title: '',
                     },
                     name: '',
@@ -63,13 +63,16 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
     }, [connectorID, setDetails]);
 
     const accessGrantsOneOf = useMemo(() => {
-        const response = [] as { title: string; const: string }[];
+        const response = [] as { title: string; const: Object }[];
 
         if (accessGrants.length > 0) {
             accessGrants.forEach((accessGrant) => {
                 if (accessGrant.capability === 'admin') {
                     response.push({
-                        const: accessGrant.object_role,
+                        const: {
+                            id: accessGrant.id,
+                            title: accessGrant.object_role,
+                        },
                         title: accessGrant.object_role,
                     });
                 }
@@ -119,8 +122,11 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
                     description: intl.formatMessage({
                         id: 'entityName.description',
                     }),
+                    // TODO (prefix) Make prefix a part of the name field
                     // This pattern needs to match https://github.com/estuary/animated-carnival/blob/main/supabase/migrations/03_catalog-types.sql
-                    pattern: `^([a-zA-Z0-9-_.]+/)+[a-zA-Z0-9-_.]+$`,
+                    // Right now with prefix broken out it means the first part is a bit different
+                    // `^([a-zA-Z0-9-_.]+/)+[a-zA-Z0-9-_.]+$`
+                    pattern: `^[a-zA-Z0-9-_.]+$`,
                     type: 'string',
                 },
                 description: {
@@ -130,7 +136,7 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
                     type: 'string',
                 },
             },
-            required: ['name', 'image'],
+            required: ['prefix', 'name', 'image'],
             type: 'object',
         };
     }, [accessGrantsOneOf, connectorsOneOf, intl]);
