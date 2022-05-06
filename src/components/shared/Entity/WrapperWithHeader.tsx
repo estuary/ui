@@ -4,16 +4,16 @@ import { ReactNode } from 'react';
 
 interface Props {
     header: ReactNode;
-    body: ReactNode;
+    children: ReactNode;
 }
 
-function WrapperWithHeader({ header, body }: Props) {
+function WrapperWithHeader({ header, children }: Props) {
     return (
         <Paper sx={{ width: '100%', mb: 2 }} variant="outlined">
             <RelativeAppBar>{header}</RelativeAppBar>
 
             <Divider />
-            {body}
+            {children}
         </Paper>
     );
 }

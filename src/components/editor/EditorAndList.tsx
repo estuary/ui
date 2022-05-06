@@ -8,7 +8,8 @@ export interface Props extends MonacoEditorProps {
     height?: number;
 }
 
-const DEFAULT_HEIGHT = 350;
+const DEFAULT_TOOLBAR_HEIGHT = 20;
+const DEFAULT_HEIGHT = 330;
 
 function EditorAndList(props: Props) {
     const { height } = props;
@@ -17,22 +18,27 @@ function EditorAndList(props: Props) {
     return (
         <Grid
             container
-            spacing={2}
             sx={{
                 bgcolor: 'background.paper',
-                height: heightVal,
+                height: `${heightVal + DEFAULT_TOOLBAR_HEIGHT}px`,
+                mb: 2,
             }}
         >
             <Grid
                 item
                 xs={4}
                 md={3}
-                sx={{ maxHeight: heightVal, overflowY: 'auto' }}
+                sx={{
+                    overflow: 'auto',
+                }}
             >
                 <EditorFileSelector />
             </Grid>
             <Grid item xs={8} md={9}>
-                <MonacoEditor {...props} />
+                <MonacoEditor
+                    {...props}
+                    toolbarHeight={DEFAULT_TOOLBAR_HEIGHT}
+                />
             </Grid>
         </Grid>
     );

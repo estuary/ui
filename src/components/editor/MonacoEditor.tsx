@@ -17,18 +17,26 @@ export interface Props {
     path: string;
     onChange?: (newVal: any, path: string) => any;
     height?: number;
+    toolbarHeight?: number;
 }
 
-const DEFAULT_HEIGHT = 350;
+const DEFAULT_TOOLBAR_HEIGHT = 20;
+const DEFAULT_HEIGHT = 330;
 const ICON_SIZE = 15;
 
-function MonacoEditor({ disabled, value, path, height, onChange }: Props) {
+function MonacoEditor({
+    disabled,
+    value,
+    path,
+    height = DEFAULT_HEIGHT,
+    onChange,
+    toolbarHeight = DEFAULT_TOOLBAR_HEIGHT,
+}: Props) {
     const intl = useIntl();
     const theme = useTheme();
     const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(
         null
     );
-    const heightVal = height ?? DEFAULT_HEIGHT;
     const [isChanging, setIsChanging] = useState<boolean | null>(null);
     const [hasServerChanges, setHasServerChanges] = useState<any | null>(null);
     const [showServerDiff, setShowServerDiff] = useState(false);
@@ -95,7 +103,7 @@ function MonacoEditor({ disabled, value, path, height, onChange }: Props) {
             <Paper sx={{ width: '100%' }} variant="outlined">
                 <Box
                     sx={{
-                        minHeight: 20,
+                        minHeight: toolbarHeight,
                     }}
                 >
                     <Stack
@@ -120,7 +128,7 @@ function MonacoEditor({ disabled, value, path, height, onChange }: Props) {
                 <Divider />
                 {showServerDiff && serverUpdate && editorRef.current ? (
                     <DiffEditor
-                        height="400px"
+                        height={`${height}px`}
                         original={editorRef.current.getValue()}
                         modified={JSON.stringify(serverUpdate, null, 2)}
                         theme={
@@ -129,7 +137,7 @@ function MonacoEditor({ disabled, value, path, height, onChange }: Props) {
                     />
                 ) : (
                     <Editor
-                        height={`${heightVal}px`}
+                        height={`${height}px`}
                         defaultLanguage="json"
                         theme={
                             theme.palette.mode === 'light' ? 'vs' : 'vs-dark'

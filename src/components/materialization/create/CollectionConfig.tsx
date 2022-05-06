@@ -17,21 +17,20 @@ function CollectionConfig() {
                 header={
                     <FormattedMessage id="materializationCreation.collections.heading" />
                 }
-                body={
-                    <>
-                        <CollectionSelector />
-                        {collections.map((collection: any, index: number) => {
-                            return (
-                                <ExpandableResourceConfig
-                                    collectionName={collection}
-                                    id={imageTag.id}
-                                    key={`CollectionResourceConfig-${index}`}
-                                />
-                            );
-                        })}
-                    </>
-                }
-            />
+            >
+                <>
+                    <CollectionSelector />
+                    {collections.map((collection: any, index: number) => {
+                        return (
+                            <ExpandableResourceConfig
+                                collectionName={collection}
+                                id={imageTag.id}
+                                key={`CollectionResourceConfig-${index}`}
+                            />
+                        );
+                    })}
+                </>
+            </WrapperWithHeader>
         );
     } else {
         return null;

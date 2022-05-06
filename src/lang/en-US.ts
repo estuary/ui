@@ -275,6 +275,7 @@ const Foo: ResolvedIntlConfig['messages'] = {
     'foo.ctas.discover': `Test Config`,
     'foo.ctas.discoverAgain': `Regenerate Catalog`,
     'foo.ctas.docs': `Connector Docs`,
+    'foo.catalogEditor.heading': `Catalog Editor`,
     'foo.endpointConfig.heading': `Connection Configuration`,
 };
 
