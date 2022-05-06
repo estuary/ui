@@ -30,7 +30,13 @@ const UserMenu = () => {
         return (
             <IconMenu
                 ariaLabel={intl.formatMessage({ id: 'accountMenu.ariaLabel' })}
-                icon={<UserAvatar userName={userName} avatarUrl={avatar} />}
+                icon={
+                    <UserAvatar
+                        userEmail={email}
+                        userName={userName}
+                        avatarUrl={avatar}
+                    />
+                }
                 identifier="account-menu"
                 tooltip={intl.formatMessage({ id: 'accountMenu.tooltip' })}
             >
