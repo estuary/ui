@@ -41,3 +41,7 @@ export interface OpenGraph {
         title: string;
     };
 }
+
+export interface JobStatus {
+    type: string;
+}

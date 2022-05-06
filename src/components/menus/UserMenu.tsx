@@ -2,11 +2,12 @@
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import EmailIcon from '@mui/icons-material/Email';
 import Logout from '@mui/icons-material/Logout';
-import { Avatar, Stack, Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import MenuItem from '@mui/material/MenuItem';
 import { Auth } from '@supabase/ui';
+import UserAvatar from 'components/shared/UserAvatar';
 import { useClient } from 'hooks/supabase-swr';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { getUserDetails } from 'services/supabase';
@@ -29,7 +30,7 @@ const UserMenu = () => {
         return (
             <IconMenu
                 ariaLabel={intl.formatMessage({ id: 'accountMenu.ariaLabel' })}
-                icon={<Avatar src={avatar ?? ''}>{userName.charAt(0)}</Avatar>}
+                icon={<UserAvatar userName={userName} avatarUrl={avatar} />}
                 identifier="account-menu"
                 tooltip={intl.formatMessage({ id: 'accountMenu.tooltip' })}
             >

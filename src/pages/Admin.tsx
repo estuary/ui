@@ -8,6 +8,7 @@ import {
 } from '@mui/material';
 import { Auth } from '@supabase/ui';
 import PageContainer from 'components/shared/PageContainer';
+import AccessGrantsTable from 'components/tables/AccessGrants';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { FormattedMessage } from 'react-intl';
 
@@ -28,6 +29,8 @@ const Admin = () => {
                     <FormattedMessage id="admin.header" />
                 </Typography>
             </Toolbar>
+
+            <AccessGrantsTable />
 
             <Box sx={boxStyling}>
                 <Typography variant="h6">
