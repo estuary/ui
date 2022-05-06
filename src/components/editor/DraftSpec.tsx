@@ -40,7 +40,7 @@ function DraftSpecEditor() {
                     spec: newVal,
                 };
 
-                const updatePromise = supabaseClient
+                const updatedPromise = supabaseClient
                     .from(TABLES.DRAFT_SPECS)
                     .update(newData)
                     .match({
@@ -56,7 +56,7 @@ function DraftSpecEditor() {
                     .then(() => {})
                     .catch(() => {});
 
-                return updatePromise;
+                return updatedPromise;
             }
 
             return Promise.reject();

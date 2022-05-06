@@ -15,13 +15,15 @@ function ConnectorName({ connector, iconPath, iconSize }: Props) {
         typeof connector === 'string' ? connector : getConnectorName(connector)
     );
 
-    const connectorIcon = useConstant(() =>
-        typeof iconPath === 'string'
-            ? iconPath
-            : typeof connector !== 'string'
-            ? getConnectorIcon(connector)
-            : undefined
-    );
+    const connectorIcon = useConstant(() => {
+        if (typeof iconPath === 'string') {
+            return iconPath;
+        } else if (typeof connector !== 'string') {
+            return getConnectorIcon(connector);
+        } else {
+            return undefined;
+        }
+    });
 
     return (
         <Stack
