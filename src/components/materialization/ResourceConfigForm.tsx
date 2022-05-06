@@ -4,16 +4,13 @@ import { StyledEngineProvider } from '@mui/material';
 import useCreationStore, {
     CreationState,
 } from 'components/materialization/Store';
-import {
-    createJSONFormDefaults,
-    setDefaultsValidator,
-} from 'components/shared/Entity/EndpointConfigForm';
 import useEntityStore, {
     fooSelectors,
     FormStatus,
 } from 'components/shared/Entity/Store';
 import { isEmpty } from 'lodash';
 import { useEffect } from 'react';
+import { createJSONFormDefaults, setDefaultsValidator } from 'services/ajv';
 import {
     defaultOptions,
     defaultRenderers,
