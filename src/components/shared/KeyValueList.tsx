@@ -1,4 +1,4 @@
-import { List, ListItem, Typography } from '@mui/material';
+import { List, ListItemText } from '@mui/material';
 
 export type KeyValue = {
     title: string;
@@ -13,10 +13,11 @@ function KeyValueList({ data }: Props) {
     return (
         <List dense>
             {data.map(({ title, val }, index) => (
-                <ListItem key={`${title}-keyValueList-${index}`}>
-                    <Typography>{title}</Typography>
-                    {val}
-                </ListItem>
+                <ListItemText
+                    key={`${title}-keyValueList-${index}`}
+                    primary={title}
+                    secondary={val}
+                />
             ))}
         </List>
     );

@@ -15,11 +15,12 @@ import {
     defaultRenderers,
     showValidation,
 } from 'services/jsonforms';
-import { StoreSelector } from 'types';
+import { Grants, StoreSelector } from 'types';
 import { getConnectorName } from 'utils/misc-utils';
 
 interface Props {
     connectorTags: ConnectorTag[];
+    accessGrants: Grants[];
     messagePrefix: 'materializationCreation' | 'captureCreation';
 }
 
@@ -31,7 +32,7 @@ const stateSelectors: StoreSelector<EntityStoreState> = {
     status: (state) => state.formState.status,
 };
 
-function DetailsForm({ connectorTags, messagePrefix }: Props) {
+function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
     const intl = useIntl();
     const [searchParams] = useSearchParams();
     const connectorID = searchParams.get(
@@ -57,6 +58,42 @@ function DetailsForm({ connectorTags, messagePrefix }: Props) {
         }
     }, [connectorID, setDetails]);
 
+    const accessGrantsOneOf = useMemo(() => {
+        const response = [] as { title: string; const: string }[];
+
+        if (accessGrants.length > 0) {
+            accessGrants.forEach((accessGrant) => {
+                if (accessGrant.capability === 'admin') {
+                    response.push({
+                        const: accessGrant.object_role,
+                        title: accessGrant.object_role,
+                    });
+                }
+            });
+        }
+
+        return response;
+    }, [accessGrants]);
+
+    const connectorsOneOf = useMemo(() => {
+        const response = [] as { title: string; const: Object }[];
+
+        if (connectorTags.length > 0) {
+            connectorTags.forEach((connector) => {
+                response.push({
+                    const: {
+                        id: connector.id,
+                        iconPath:
+                            connector.connectors.open_graph['en-US'].image,
+                    },
+                    title: getConnectorName(connector.connectors.open_graph),
+                });
+            });
+        }
+
+        return response;
+    }, [connectorTags]);
+
     const schema = useMemo(() => {
         return {
             properties: {
@@ -64,29 +101,21 @@ function DetailsForm({ connectorTags, messagePrefix }: Props) {
                     description: intl.formatMessage({
                         id: 'connector.description',
                     }),
-                    oneOf:
-                        connectorTags.length > 0
-                            ? connectorTags.map((connector) => {
-                                  return {
-                                      const: {
-                                          id: connector.id,
-                                          iconPath:
-                                              connector.connectors.open_graph[
-                                                  'en-US'
-                                              ].image,
-                                      },
-                                      title: getConnectorName(
-                                          connector.connectors.open_graph
-                                      ),
-                                  };
-                              })
-                            : ([] as { title: string; const: string }[]),
+                    oneOf: connectorsOneOf,
+                    type: 'object',
+                },
+                prefix: {
+                    description: intl.formatMessage({
+                        id: 'entityPrefix.description',
+                    }),
+                    oneOf: accessGrantsOneOf,
                     type: 'object',
                 },
                 name: {
                     description: intl.formatMessage({
                         id: 'entityName.description',
                     }),
+
                     maxLength: 1000,
                     minLength: 3,
                     // This pattern needs to match https://github.com/estuary/animated-carnival/blob/main/supabase/migrations/03_catalog-types.sql
@@ -103,12 +132,19 @@ function DetailsForm({ connectorTags, messagePrefix }: Props) {
             required: ['name', 'image'],
             type: 'object',
         };
-    }, [connectorTags, intl]);
+    }, [accessGrantsOneOf, connectorTags, intl]);
 
     const uiSchema = {
         elements: [
             {
                 elements: [
+                    {
+                        label: intl.formatMessage({
+                            id: 'entityPrefix.label',
+                        }),
+                        scope: '#/properties/prefix',
+                        type: 'Control',
+                    },
                     {
                         label: intl.formatMessage({
                             id: 'entityName.label',

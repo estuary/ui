@@ -531,6 +531,7 @@ function MaterializationCreate() {
                                 <DetailsForm
                                     connectorTags={connectorTags.data}
                                     messagePrefix="materializationCreation"
+                                    accessGrants={[]}
                                 />
                             </ErrorBoundryWrapper>
                         )}

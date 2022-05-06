@@ -23,6 +23,7 @@ import { useConfirmationModalContext } from 'context/Confirmation';
 import { useClient, useQuery, useSelect } from 'hooks/supabase-swr';
 import { usePrompt } from 'hooks/useBlocker';
 import useBrowserTitle from 'hooks/useBrowserTitle';
+import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useZustandStore } from 'hooks/useZustand';
 import { MouseEvent } from 'react';
@@ -58,6 +59,8 @@ function CaptureCreate() {
 
     // Supabase stuff
     const supabaseClient = useClient();
+    const { combinedGrants } = useCombinedGrantsExt();
+
     const tagsQuery = useQuery<ConnectorTag>(
         TABLES.CONNECTOR_TAGS,
         {
@@ -432,6 +435,7 @@ function CaptureCreate() {
                                 <DetailsForm
                                     connectorTags={connectorTags.data}
                                     messagePrefix="captureCreation"
+                                    accessGrants={combinedGrants}
                                 />
                             </ErrorBoundryWrapper>
                         ) : null}

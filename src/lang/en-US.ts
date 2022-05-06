@@ -27,8 +27,10 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'terms.permissions': `Access Grants`,
 
     // Common fields
+    'entityPrefix.label': `Prefix`,
+    'entityPrefix.description': `Prefix for the entity name.`,
     'entityName.label': `Name`,
-    'entityName.description': `Name of the entity - must be unique. (ex: acemCo/marketing_data)`,
+    'entityName.description': `Name of the entity - must be unique. Will be combines with selected prefix. (ex: acemCo/marketing_data)`,
     'connector.label': `Connector`,
     'connector.description': `The connector you want to use to connect to your endpoint.`,
     'description.label': `Details`,
