@@ -10,31 +10,33 @@ import { defaultTableFilter, TABLES } from 'services/supabase';
 import { OpenGraph } from 'types';
 
 export interface LiveSpecsExtQuery {
-    spec_type: string;
     catalog_name: string;
-    updated_at: string;
-    id: string;
-    last_pub_id: string;
-    reads_from: string[];
-    last_pub_user_avatar_url: string;
-    last_pub_user_full_name: string;
     connector_image_name: string;
     connector_image_tag: string;
     connector_open_graph: OpenGraph;
+    id: string;
+    last_pub_id: string;
+    last_pub_user_avatar_url: string;
+    last_pub_user_email: string;
+    last_pub_user_full_name: string;
+    reads_from: string[];
+    spec_type: string;
+    updated_at: string;
 }
 
 const queryColumns = [
-    'spec_type',
     'catalog_name',
-    'updated_at',
-    'id',
-    'last_pub_id',
-    'reads_from',
-    'last_pub_user_avatar_url',
-    'last_pub_user_full_name',
     'connector_image_name',
     'connector_image_tag',
     'connector_open_graph',
+    'id',
+    'last_pub_id',
+    'last_pub_user_avatar_url',
+    'last_pub_user_email',
+    'last_pub_user_full_name',
+    'reads_from',
+    'spec_type',
+    'updated_at',
 ];
 
 function MaterializationsTable() {

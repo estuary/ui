@@ -58,6 +58,7 @@ function Row({ row }: RowProps) {
 
             <UserName
                 avatar={row.last_pub_user_avatar_url}
+                email={row.last_pub_user_email}
                 name={row.last_pub_user_full_name}
             />
 
