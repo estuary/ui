@@ -91,12 +91,15 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button color="error" onClick={handlers.dismiss}>
+                    <Button
+                        variant="text"
+                        color="error"
+                        onClick={handlers.dismiss}
+                    >
                         <FormattedMessage id={settings.cancelText} />
                     </Button>
                     <Button
                         color="success"
-                        variant="contained"
                         onClick={handlers.confirm}
                         autoFocus
                     >

@@ -318,12 +318,7 @@ const Registration = () => {
                                 </Link>
                             </Typography>
 
-                            <Button
-                                variant="contained"
-                                type="submit"
-                                disableElevation
-                                onClick={handlers.signUp}
-                            >
+                            <Button type="submit" onClick={handlers.signUp}>
                                 <FormattedMessage id="cta.register" />
                             </Button>
                         </form>

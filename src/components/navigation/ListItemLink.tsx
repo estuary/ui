@@ -79,7 +79,12 @@ const ListItemLink = ({
                         }}
                     >
                         {icon ? <ListItemIcon>{icon}</ListItemIcon> : null}
-                        <ListItemText primary={translatedTitle} />
+                        <ListItemText
+                            primaryTypographyProps={{
+                                style: { color: '#F6FAFF' },
+                            }}
+                            primary={translatedTitle}
+                        />
                         <Badge badgeContent={badgeContent} />
                     </ListItemButton>
                 ) : (
@@ -96,7 +101,12 @@ const ListItemLink = ({
                                 </Badge>
                             </ListItemIcon>
                         ) : null}
-                        <ListItemText primary={translatedTitle} />
+                        <ListItemText
+                            primaryTypographyProps={{
+                                style: { color: '#F6FAFF' },
+                            }}
+                            primary={translatedTitle}
+                        />
                     </ListItemButton>
                 )}
             </Tooltip>

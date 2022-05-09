@@ -33,6 +33,11 @@ const Navigation = ({ onNavigationToggle, open, width }: Props) => {
                     transition: (paperTheme) =>
                         `${paperTheme.transitions.duration.shortest}ms`,
                     width,
+                    background:
+                        'linear-gradient(179.6deg, rgba(99, 138, 169, 0.24) 0%, rgba(13, 43, 67, 0.2) 76.56%, rgba(13, 43, 67, 0.1) 100%)',
+                    boxShadow: '0px 4px 24px -1px rgba(0, 0, 0, 0.2)',
+                    borderRadius: '0px 10px 10px 0px',
+                    backdropFilter: 'blur(20px)',
                 },
                 'transition': (drawerTheme) =>
                     `${drawerTheme.transitions.duration.shortest}ms`,
@@ -55,27 +60,31 @@ const Navigation = ({ onNavigationToggle, open, width }: Props) => {
                     })}
                 >
                     <ListItemLink
-                        icon={<InputIcon />}
+                        icon={<InputIcon sx={{ color: '#F6FAFF' }} />}
                         title={routeDetails.captures.title}
                         link={routeDetails.captures.path}
                     />
                     <ListItemLink
-                        icon={<FormatListNumberedIcon />}
+                        icon={
+                            <FormatListNumberedIcon sx={{ color: '#F6FAFF' }} />
+                        }
                         title={routeDetails.collections.title}
                         link={routeDetails.collections.path}
                     />
                     <ListItemLink
-                        icon={<StorageIcon />}
+                        icon={<StorageIcon sx={{ color: '#F6FAFF' }} />}
                         title={routeDetails.materializations.title}
                         link={routeDetails.materializations.path}
                     />
                     <ListItemLink
-                        icon={<CableIcon />}
+                        icon={<CableIcon sx={{ color: '#F6FAFF' }} />}
                         title={routeDetails.connectors.title}
                         link={routeDetails.connectors.path}
                     />
                     <ListItemLink
-                        icon={<AdminPanelSettingsIcon />}
+                        icon={
+                            <AdminPanelSettingsIcon sx={{ color: '#F6FAFF' }} />
+                        }
                         title={routeDetails.admin.title}
                         link={routeDetails.admin.path}
                     />
