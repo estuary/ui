@@ -312,7 +312,7 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
 
 const CaptureDetails: ResolvedIntlConfig['messages'] = {
     'captureDetails.logs.title': `Logs`,
-    'captureDetails.logs.notFound': `We were unable to find logs for this build. This may be due to you not having permissions or they may have been removed.`,
+    'captureDetails.logs.notFound': `We were unable to find logs for this build. This is most likely a permissions issue. You do not have permissions to view other user's logs by default.`,
 };
 
 const MaterializationCreate: ResolvedIntlConfig['messages'] = {
