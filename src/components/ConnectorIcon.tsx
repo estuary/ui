@@ -13,7 +13,7 @@ function ConnectorIcon({ size = defaultSize, iconPath }: Props) {
         <Box style={{ height: size, width: size }}>
             {iconPath ? (
                 <Avatar
-                    variant="square"
+                    variant="rounded"
                     sx={{
                         background: 'white',
                         width: size,
