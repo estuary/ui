@@ -14,8 +14,6 @@ interface Props {
 }
 
 function EntityError({ logToken, error, title, draftId }: Props) {
-    console.log('entity error', draftId);
-
     return (
         <Box sx={{ width: '100%' }}>
             <Alert
