@@ -82,7 +82,6 @@ function Rows({ data }: Props) {
                                 }}
                             >
                                 <Button
-                                    variant="contained"
                                     size="small"
                                     color="success"
                                     onClick={() => {

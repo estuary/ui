@@ -119,6 +119,7 @@ const themeSettings = createTheme({
         },
         MuiButton: {
             defaultProps: {
+                variant: 'contained',
                 disableElevation: true,
                 sx: {
                     borderRadius: 5,

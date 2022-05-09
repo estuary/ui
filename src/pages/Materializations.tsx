@@ -26,7 +26,6 @@ const Materializations = () => {
             >
                 <NavLink to={routeDetails.materializations.create.fullPath}>
                     <Button
-                        variant="contained"
                         size="large"
                         color="success"
                         startIcon={<AddIcon />}

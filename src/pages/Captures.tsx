@@ -26,7 +26,6 @@ const Capture = () => {
             >
                 <NavLink to={routeDetails.captures.create.fullPath}>
                     <Button
-                        variant="contained"
                         size="large"
                         color="success"
                         startIcon={<AddIcon />}
