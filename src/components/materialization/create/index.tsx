@@ -10,7 +10,7 @@ import useCreationStore, {
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
-import FooError from 'components/shared/Entity/Error';
+import EntityError from 'components/shared/Entity/Error';
 import FooHeader from 'components/shared/Entity/Header';
 import LogDialog from 'components/shared/Entity/LogDialog';
 import {
@@ -28,6 +28,7 @@ import { useConfirmationModalContext } from 'context/Confirmation';
 import { useClient, useQuery, useSelect } from 'hooks/supabase-swr';
 import { usePrompt } from 'hooks/useBlocker';
 import useBrowserTitle from 'hooks/useBrowserTitle';
+import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useZustandStore } from 'hooks/useZustand';
 import { isEmpty } from 'lodash';
@@ -68,6 +69,9 @@ function MaterializationCreate() {
 
     // Supabase
     const supabaseClient = useClient();
+    const { combinedGrants } = useCombinedGrantsExt({
+        onlyAdmin: true,
+    });
     const tagsQuery = useQuery<ConnectorTag>(
         TABLES.CONNECTOR_TAGS,
         {
@@ -517,7 +521,7 @@ function MaterializationCreate() {
                 <>
                     <Collapse in={formSubmitError !== null}>
                         {formSubmitError && (
-                            <FooError
+                            <EntityError
                                 title={formSubmitError.title}
                                 error={formSubmitError.error}
                                 logToken={logToken}
@@ -531,6 +535,7 @@ function MaterializationCreate() {
                                 <DetailsForm
                                     connectorTags={connectorTags.data}
                                     messagePrefix="materializationCreation"
+                                    accessGrants={combinedGrants}
                                 />
                             </ErrorBoundryWrapper>
                         )}

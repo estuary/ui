@@ -42,7 +42,7 @@ export type SortDirection = 'asc' | 'desc';
 interface Props {
     columns: {
         field: string | null;
-        headerIntlKey: string;
+        headerIntlKey: string | null;
     }[];
     query: Query<any>;
     renderTableRows: (data: any) => ReactNode;
@@ -258,17 +258,19 @@ function EntityTable({
                                                         column.field
                                                     )}
                                                 >
-                                                    <FormattedMessage
-                                                        id={
-                                                            column.headerIntlKey
-                                                        }
-                                                    />
+                                                    {column.headerIntlKey ? (
+                                                        <FormattedMessage
+                                                            id={
+                                                                column.headerIntlKey
+                                                            }
+                                                        />
+                                                    ) : null}
                                                 </TableSortLabel>
-                                            ) : (
+                                            ) : column.headerIntlKey ? (
                                                 <FormattedMessage
                                                     id={column.headerIntlKey}
                                                 />
-                                            )}
+                                            ) : null}
                                         </TableCell>
                                     );
                                 })}

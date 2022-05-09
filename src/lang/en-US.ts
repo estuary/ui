@@ -24,11 +24,14 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
 
     // Terms
     'terms.connectors': `Connectors`,
+    'terms.collections': `Collections`,
     'terms.permissions': `Access Grants`,
 
     // Common fields
+    'entityPrefix.label': `Prefix`,
+    'entityPrefix.description': `Prefix for the entity name.`,
     'entityName.label': `Name`,
-    'entityName.description': `Name of the entity - must be unique. (ex: acemCo/marketing_data)`,
+    'entityName.description': `Name of the entity - must be unique. Will be combines with selected prefix. (ex: acemCo/marketing_data)`,
     'connector.label': `Connector`,
     'connector.description': `The connector you want to use to connect to your endpoint.`,
     'description.label': `Details`,
@@ -47,6 +50,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.download': `Download`,
     'cta.login': `Login`,
     'cta.logout': `Logout`,
+    'cta.materialize': `Materialize`,
     'cta.register': `Sign Up`,
     'cta.clickHere': `click here`,
     'cta.details': `Details`,
@@ -147,6 +151,7 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.data.actions': `Actions`,
     'entityTable.data.writesTo': `Writes To`,
     'entityTable.data.readsFrom': `Reads From`,
+    'entityTable.data.status': `Status`,
     'entityTable.data.userFullName': `User`,
     'entityTable.data.capability': `Capability`,
     'entityTable.data.objectRole': `Object`,
@@ -247,6 +252,7 @@ const Captures: ResolvedIntlConfig['messages'] = {
     'captureTable.header': `Captures`,
     'capturesTable.title': `Your Captures`,
     'capturesTable.cta.new': `New Capture`,
+    'capturesTable.cta.materialize': `${CTAs['cta.materialize']} ${CommonMessages['terms.collections']}`,
     'captures.message1': `Click the "New Capture" button up above to get started.`,
     'captures.message2': `It will guide you through generating and downloading a valid {docLink}.`,
     'captures.message2.docLink': `capture spec`,
@@ -275,11 +281,12 @@ const Foo: ResolvedIntlConfig['messages'] = {
     'foo.ctas.discover': `Test Config`,
     'foo.ctas.discoverAgain': `Regenerate Catalog`,
     'foo.ctas.docs': `Connector Docs`,
+    'foo.catalogEditor.heading': `Catalog Editor`,
     'foo.endpointConfig.heading': `Connection Configuration`,
 };
 
 const MonacoEditor: ResolvedIntlConfig['messages'] = {
-    'monacoEditor.serverDiff': `Choose which version to take`,
+    'monacoEditor.serverDiff': `Your version is out of sync with the server`,
     'monacoEditor.serverDiffCTA': `See changes`,
 };
 
@@ -288,6 +295,7 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreation.details.heading': `Capture Details`,
     'captureCreation.instructions': `To get started please provide a unique name and the source type of the Capture you want to create. Once you've filled out the source details you can click "Test Capture" down below to test the connection.`,
     'captureCreation.missingConnectors': `No connectors installed. You must install a source connector before being able to create a capture.`,
+    'captureCreation.noAccessGrants': `You do not have the necessary ${CommonMessages['terms.permissions']} to create a Capture. Please contact an administrator.`,
     'captureCreation.tenant.label': `Tenant`,
     'captureCreation.config.source.doclink': `Connector Docs`,
     'captureCreation.config.source.homepage': `Home Page`,
@@ -304,7 +312,7 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
 
 const CaptureDetails: ResolvedIntlConfig['messages'] = {
     'captureDetails.logs.title': `Logs`,
-    'captureDetails.logs.notFound': `We were unable to find logs for this build. This may be due to you not having permissions or they may have been removed.`,
+    'captureDetails.logs.notFound': `We were unable to find logs for this build. This is most likely a permissions issue. You do not have permissions to view other user's logs by default.`,
 };
 
 const MaterializationCreate: ResolvedIntlConfig['messages'] = {
@@ -317,6 +325,7 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreation.heading': `New Materialization`,
     'materializationCreation.instructions': `To get started, please provide a unique name and select an endpoint. Next, configure your endpoint and choose the collections you want to materialize. The generated YAML can be reviewed before saving.`,
     'materializationCreation.missingConnectors': `No connectors installed. A source connector must be installed before a materialization can be created.`,
+    'materializationCreation.noAccessGrants': `You do not have the necessary ${CommonMessages['terms.permissions']} to create a Materialization. Please contact an administrator.`,
     'materializationCreation.save.failure': `Materialization creation failed. Please see below for details:`,
     'materializationCreation.save.failure.errorTitle': `Materialization Save Failed`,
     'materializationCreation.save.inProgress': `Please wait while we test, save, and publish your materialization.`,

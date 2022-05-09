@@ -1,8 +1,9 @@
 import { TableRow } from '@mui/material';
+import Actions from 'components/tables/cells/Actions';
 import ChipList from 'components/tables/cells/ChipList';
 import Connector from 'components/tables/cells/Connector';
-import DetailsAction from 'components/tables/cells/DetailsAction';
 import EntityName from 'components/tables/cells/EntityName';
+import ExpandDetails from 'components/tables/cells/ExpandDetails';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import UserName from 'components/tables/cells/UserName';
 import { LiveSpecsExtQuery } from 'components/tables/Materializations';
@@ -38,7 +39,7 @@ export const tableColumns = [
     },
     {
         field: null,
-        headerIntlKey: 'entityTable.data.actions',
+        headerIntlKey: null,
     },
 ];
 
@@ -62,7 +63,9 @@ function Row({ row }: RowProps) {
                 name={row.last_pub_user_full_name}
             />
 
-            <DetailsAction disabled={true} />
+            <Actions>
+                <ExpandDetails disabled={true} />
+            </Actions>
         </TableRow>
     );
 }

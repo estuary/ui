@@ -45,16 +45,14 @@ function EndpointConfig({ connectorImage }: Props) {
             <WrapperWithHeader
                 header={
                     <EndpointConfigHeader
-                        name={connector.data.connectors.image_name}
                         docsPath={connector.data.documentation_url}
                     />
                 }
-                body={
-                    <EndpointConfigForm
-                        endpointSchema={connector.data.endpoint_spec_schema}
-                    />
-                }
-            />
+            >
+                <EndpointConfigForm
+                    endpointSchema={connector.data.endpoint_spec_schema}
+                />
+            </WrapperWithHeader>
         );
     } else {
         return null;

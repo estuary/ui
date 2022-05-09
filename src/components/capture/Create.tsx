@@ -5,7 +5,7 @@ import { EditorStoreState } from 'components/editor/Store';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
-import FooError from 'components/shared/Entity/Error';
+import EntityError from 'components/shared/Entity/Error';
 import FooHeader from 'components/shared/Entity/Header';
 import LogDialog from 'components/shared/Entity/LogDialog';
 import {
@@ -23,6 +23,7 @@ import { useConfirmationModalContext } from 'context/Confirmation';
 import { useClient, useQuery, useSelect } from 'hooks/supabase-swr';
 import { usePrompt } from 'hooks/useBlocker';
 import useBrowserTitle from 'hooks/useBrowserTitle';
+import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useZustandStore } from 'hooks/useZustand';
 import { MouseEvent } from 'react';
@@ -58,6 +59,10 @@ function CaptureCreate() {
 
     // Supabase stuff
     const supabaseClient = useClient();
+    const { combinedGrants } = useCombinedGrantsExt({
+        onlyAdmin: true,
+    });
+
     const tagsQuery = useQuery<ConnectorTag>(
         TABLES.CONNECTOR_TAGS,
         {
@@ -80,6 +85,7 @@ function CaptureCreate() {
     const entityName = useEntityStore(fooSelectors.entityName);
     const imageTag = useEntityStore(fooSelectors.connectorTag);
     const entityDescription = useEntityStore(fooSelectors.description);
+    const entityPrefix = useEntityStore(fooSelectors.prefix);
     const [detailErrors, specErrors] = useEntityStore(fooSelectors.errors);
     const specFormData = useEntityStore(fooSelectors.endpointConfig);
     const hasChanges = useEntityStore(fooSelectors.hasChanges);
@@ -301,7 +307,7 @@ function CaptureCreate() {
                 supabaseClient
                     .from(TABLES.DRAFTS)
                     .insert({
-                        detail: entityName,
+                        detail: `${entityPrefix.title}${entityName}`,
                     })
                     .then(
                         (draftsResponse) => {
@@ -316,7 +322,7 @@ function CaptureCreate() {
                                     .from(TABLES.DISCOVERS)
                                     .insert([
                                         {
-                                            capture_name: entityName,
+                                            capture_name: `${entityPrefix.title}${entityName}`,
                                             endpoint_config: specFormData,
                                             connector_tag_id: imageTag.id,
                                             draft_id: draftsResponse.data[0].id,
@@ -417,10 +423,11 @@ function CaptureCreate() {
                 <>
                     <Collapse in={formSubmitError !== null}>
                         {formSubmitError && (
-                            <FooError
+                            <EntityError
                                 title={formSubmitError.title}
                                 error={formSubmitError.error}
                                 logToken={logToken}
+                                draftId={id}
                             />
                         )}
                     </Collapse>
@@ -431,6 +438,7 @@ function CaptureCreate() {
                                 <DetailsForm
                                     connectorTags={connectorTags.data}
                                     messagePrefix="captureCreation"
+                                    accessGrants={combinedGrants}
                                 />
                             </ErrorBoundryWrapper>
                         ) : null}

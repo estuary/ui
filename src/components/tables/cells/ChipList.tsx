@@ -7,6 +7,10 @@ interface Props {
 const ListItem = styled('li')(({ theme }) => ({
     margin: theme.spacing(0.5),
 }));
+const chipListHoverStyling = {
+    cursor: 'pointer',
+    maxWidth: 1000,
+};
 
 export const chipListWrapperStyling = {
     minWidth: 100,
@@ -44,10 +48,11 @@ function ChipList({ strings }: Props) {
                                     'overflow': 'hidden',
                                     'textOverflow': 'ellipsis',
                                     '&:hover': {
-                                        transition: (theme) =>
-                                            `max-width ${theme.transitions.duration.standard}ms`,
+                                        ...chipListHoverStyling,
                                         background: (theme) =>
                                             theme.palette.background.default,
+                                        transition: (theme) =>
+                                            `max-width ${theme.transitions.duration.standard}ms`,
                                         maxWidth: 1000,
                                     },
                                 }}

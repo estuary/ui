@@ -45,3 +45,11 @@ export interface OpenGraph {
 export interface JobStatus {
     type: string;
 }
+
+export interface Grants {
+    capability: string;
+    object_role: string;
+    subject_role: string;
+    user_id: string;
+    id: string;
+}

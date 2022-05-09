@@ -15,11 +15,12 @@ import {
     defaultRenderers,
     showValidation,
 } from 'services/jsonforms';
-import { StoreSelector } from 'types';
+import { Grants, StoreSelector } from 'types';
 import { getConnectorName } from 'utils/misc-utils';
 
 interface Props {
     connectorTags: ConnectorTag[];
+    accessGrants: Grants[];
     messagePrefix: 'materializationCreation' | 'captureCreation';
 }
 
@@ -31,7 +32,7 @@ const stateSelectors: StoreSelector<EntityStoreState> = {
     status: (state) => state.formState.status,
 };
 
-function DetailsForm({ connectorTags, messagePrefix }: Props) {
+function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
     const intl = useIntl();
     const [searchParams] = useSearchParams();
     const connectorID = searchParams.get(
@@ -47,6 +48,10 @@ function DetailsForm({ connectorTags, messagePrefix }: Props) {
         if (connectorID) {
             setDetails({
                 data: {
+                    prefix: {
+                        id: '',
+                        title: '',
+                    },
                     name: '',
                     image: {
                         id: connectorID,
@@ -57,6 +62,43 @@ function DetailsForm({ connectorTags, messagePrefix }: Props) {
         }
     }, [connectorID, setDetails]);
 
+    const accessGrantsOneOf = useMemo(() => {
+        const response = [] as { title: string; const: Object }[];
+
+        if (accessGrants.length > 0) {
+            accessGrants.forEach((accessGrant) => {
+                response.push({
+                    const: {
+                        id: accessGrant.id,
+                        title: accessGrant.object_role,
+                    },
+                    title: accessGrant.object_role,
+                });
+            });
+        }
+
+        return response;
+    }, [accessGrants]);
+
+    const connectorsOneOf = useMemo(() => {
+        const response = [] as { title: string; const: Object }[];
+
+        if (connectorTags.length > 0) {
+            connectorTags.forEach((connector) => {
+                response.push({
+                    const: {
+                        id: connector.id,
+                        iconPath:
+                            connector.connectors.open_graph['en-US'].image,
+                    },
+                    title: getConnectorName(connector.connectors.open_graph),
+                });
+            });
+        }
+
+        return response;
+    }, [connectorTags]);
+
     const schema = useMemo(() => {
         return {
             properties: {
@@ -64,33 +106,25 @@ function DetailsForm({ connectorTags, messagePrefix }: Props) {
                     description: intl.formatMessage({
                         id: 'connector.description',
                     }),
-                    oneOf:
-                        connectorTags.length > 0
-                            ? connectorTags.map((connector) => {
-                                  return {
-                                      const: {
-                                          id: connector.id,
-                                          iconPath:
-                                              connector.connectors.open_graph[
-                                                  'en-US'
-                                              ].image,
-                                      },
-                                      title: getConnectorName(
-                                          connector.connectors.open_graph
-                                      ),
-                                  };
-                              })
-                            : ([] as { title: string; const: string }[]),
+                    oneOf: connectorsOneOf,
+                    type: 'object',
+                },
+                prefix: {
+                    description: intl.formatMessage({
+                        id: 'entityPrefix.description',
+                    }),
+                    oneOf: accessGrantsOneOf,
                     type: 'object',
                 },
                 name: {
                     description: intl.formatMessage({
                         id: 'entityName.description',
                     }),
-                    maxLength: 1000,
-                    minLength: 3,
+                    // TODO (prefix) Make prefix a part of the name field
                     // This pattern needs to match https://github.com/estuary/animated-carnival/blob/main/supabase/migrations/03_catalog-types.sql
-                    pattern: `^([a-zA-Z0-9-_.]+/)+[a-zA-Z0-9-_.]+$`,
+                    // Right now with prefix broken out it means the first part is a bit different
+                    // `^([a-zA-Z0-9-_.]+/)+[a-zA-Z0-9-_.]+$`
+                    pattern: `^([a-zA-Z0-9-_./])+[^/]$`,
                     type: 'string',
                 },
                 description: {
@@ -100,15 +134,22 @@ function DetailsForm({ connectorTags, messagePrefix }: Props) {
                     type: 'string',
                 },
             },
-            required: ['name', 'image'],
+            required: ['prefix', 'name', 'image'],
             type: 'object',
         };
-    }, [connectorTags, intl]);
+    }, [accessGrantsOneOf, connectorsOneOf, intl]);
 
     const uiSchema = {
         elements: [
             {
                 elements: [
+                    {
+                        label: intl.formatMessage({
+                            id: 'entityPrefix.label',
+                        }),
+                        scope: '#/properties/prefix',
+                        type: 'Control',
+                    },
                     {
                         label: intl.formatMessage({
                             id: 'entityName.label',
@@ -152,17 +193,25 @@ function DetailsForm({ connectorTags, messagePrefix }: Props) {
 
             <Stack direction="row" spacing={2}>
                 {schema.properties.image.oneOf.length > 0 ? (
-                    <JsonForms
-                        schema={schema}
-                        uischema={uiSchema}
-                        data={formData}
-                        renderers={defaultRenderers}
-                        cells={materialCells}
-                        config={defaultOptions}
-                        readonly={status !== FormStatus.IDLE}
-                        validationMode={showValidation(displayValidation)}
-                        onChange={setDetails}
-                    />
+                    schema.properties.prefix.oneOf.length > 0 ? (
+                        <JsonForms
+                            schema={schema}
+                            uischema={uiSchema}
+                            data={formData}
+                            renderers={defaultRenderers}
+                            cells={materialCells}
+                            config={defaultOptions}
+                            readonly={status !== FormStatus.IDLE}
+                            validationMode={showValidation(displayValidation)}
+                            onChange={setDetails}
+                        />
+                    ) : (
+                        <Alert severity="warning">
+                            <FormattedMessage
+                                id={`${messagePrefix}.noAccessGrants`}
+                            />
+                        </Alert>
+                    )
                 ) : (
                     <Alert severity="warning">
                         <FormattedMessage
