@@ -120,6 +120,9 @@ const themeSettings = createTheme({
         MuiButton: {
             defaultProps: {
                 disableElevation: true,
+                sx: {
+                    borderRadius: 5,
+                },
             },
         },
         MuiTabs: {
