@@ -174,7 +174,7 @@ const themeSettings = createTheme({
     },
     typography: {
         fontFamily: [
-            'Poppins',
+            'Inter',
             '-apple-system',
             'BlinkMacSystemFont',
             '"Segoe UI"',
