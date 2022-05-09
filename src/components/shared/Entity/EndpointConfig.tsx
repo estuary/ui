@@ -45,7 +45,6 @@ function EndpointConfig({ connectorImage }: Props) {
             <WrapperWithHeader
                 header={
                     <EndpointConfigHeader
-                        name={connector.data.connectors.image_name}
                         docsPath={connector.data.documentation_url}
                     />
                 }

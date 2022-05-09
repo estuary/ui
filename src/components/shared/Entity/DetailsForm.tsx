@@ -124,7 +124,7 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
                     // This pattern needs to match https://github.com/estuary/animated-carnival/blob/main/supabase/migrations/03_catalog-types.sql
                     // Right now with prefix broken out it means the first part is a bit different
                     // `^([a-zA-Z0-9-_.]+/)+[a-zA-Z0-9-_.]+$`
-                    pattern: `^[a-zA-Z0-9-_.]+$`,
+                    pattern: `^([a-zA-Z0-9-_./])+[^/]$`,
                     type: 'string',
                 },
                 description: {
