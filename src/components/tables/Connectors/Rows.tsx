@@ -83,7 +83,12 @@ function Rows({ data }: Props) {
                             >
                                 <Button
                                     size="small"
-                                    color="success"
+                                    color={
+                                        row.connector_tags[0].protocol ===
+                                        'capture'
+                                            ? 'primary'
+                                            : 'secondary'
+                                    }
                                     onClick={() => {
                                         if (
                                             row.connector_tags[0].protocol ===

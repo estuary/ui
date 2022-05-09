@@ -25,11 +25,7 @@ const Materializations = () => {
                 }}
             >
                 <NavLink to={routeDetails.materializations.create.fullPath}>
-                    <Button
-                        size="large"
-                        color="success"
-                        startIcon={<AddIcon />}
-                    >
+                    <Button size="large" startIcon={<AddIcon />}>
                         <FormattedMessage id="materializationsTable.cta.new" />
                     </Button>
                 </NavLink>

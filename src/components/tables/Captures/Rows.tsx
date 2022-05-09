@@ -1,5 +1,4 @@
 import { Collapse, TableCell, TableRow } from '@mui/material';
-import { grey } from '@mui/material/colors';
 import CaptureDetails from 'components/capture/Details';
 import { createEditorStore } from 'components/editor/Store';
 import { LiveSpecsExtQuery } from 'components/tables/Captures';
@@ -54,7 +53,7 @@ function Row({ row }: RowProps) {
         <>
             <TableRow
                 sx={{
-                    background: detailsExpanded ? grey[50] : null,
+                    background: detailsExpanded ? '#04192A' : null,
                 }}
             >
                 <EntityName name={row.catalog_name} />

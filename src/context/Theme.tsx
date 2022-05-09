@@ -10,9 +10,32 @@ import React from 'react';
 import { BaseComponentProps } from 'types';
 
 // Colors
-const primary = '#5660BD';
-const secondary = '#3c5584';
-const background = '#04192A';
+const teal = {
+    25: '#E6FFFF',
+    50: '#CDFBFB',
+    100: '#ABEDEE',
+    200: '#8BE1E2',
+    300: '#6DD4D5',
+    400: '#4DBABC',
+    500: '#32A0A3',
+    600: '#1C8789',
+    700: '#0C6E70',
+    800: '#015556',
+};
+
+const slate = {
+    15: '#F6FAFF',
+    25: '#EEF8FF',
+    50: '#D8E9F5',
+    100: '#ACC7DC',
+    200: '#85A7C2',
+    300: '#638AA9',
+    400: '#466F8F',
+    500: '#2E5676',
+    600: '#1B3F5C',
+    700: '#0D2B43',
+    800: '#04192A',
+};
 
 // Status Colors
 const errorMain = '#f67375';
@@ -38,7 +61,7 @@ const xs = 300;
 // Color Palettes
 const lightMode: PaletteOptions = {
     background: {
-        default: background,
+        default: teal[800],
     },
     contrastThreshold,
     error: {
@@ -49,13 +72,17 @@ const lightMode: PaletteOptions = {
     },
     mode: 'light',
     primary: {
-        main: primary,
+        main: teal[300],
     },
     secondary: {
-        main: secondary,
+        main: slate[50],
     },
     success: {
         main: successMain,
+    },
+    text: {
+        primary: slate[15],
+        secondary: teal[50],
     },
     tonalOffset,
     warning: {
@@ -65,10 +92,20 @@ const lightMode: PaletteOptions = {
 
 const darkMode: PaletteOptions = {
     background: {
-        default: '#363636',
+        default: slate[800],
     },
     contrastThreshold,
     mode: 'dark',
+    primary: {
+        main: teal[300],
+    },
+    secondary: {
+        main: teal[100],
+    },
+    text: {
+        primary: slate[15],
+        secondary: slate[100],
+    },
     tonalOffset,
 };
 
