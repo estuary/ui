@@ -82,10 +82,13 @@ function Rows({ data }: Props) {
                                 }}
                             >
                                 <Button
-                                    variant="contained"
                                     size="small"
-                                    color="success"
-                                    disableElevation
+                                    color={
+                                        row.connector_tags[0].protocol ===
+                                        'capture'
+                                            ? 'primary'
+                                            : 'secondary'
+                                    }
                                     onClick={() => {
                                         if (
                                             row.connector_tags[0].protocol ===

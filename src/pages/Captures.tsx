@@ -25,12 +25,7 @@ const Capture = () => {
                 }}
             >
                 <NavLink to={routeDetails.captures.create.fullPath}>
-                    <Button
-                        variant="contained"
-                        size="large"
-                        color="success"
-                        startIcon={<AddIcon />}
-                    >
+                    <Button size="large" startIcon={<AddIcon />}>
                         <FormattedMessage id="capturesTable.cta.new" />
                     </Button>
                 </NavLink>

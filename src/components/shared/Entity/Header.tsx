@@ -41,7 +41,7 @@ function FooHeader({
                     ml: 'auto',
                 }}
             >
-                <Button onClick={close} color="error">
+                <Button variant="text" onClick={close} color="error">
                     <FormattedMessage id="cta.cancel" />
                 </Button>
 
@@ -51,21 +51,13 @@ function FooHeader({
                     form={formId}
                     type="submit"
                     color="success"
-                    variant="contained"
-                    disableElevation
                 >
                     <FormattedMessage
                         id={id ? 'foo.ctas.discoverAgain' : 'foo.ctas.discover'}
                     />
                 </Button>
 
-                <Button
-                    onClick={save}
-                    disabled={saveDisabled}
-                    color="success"
-                    variant="contained"
-                    disableElevation
-                >
+                <Button onClick={save} disabled={saveDisabled} color="success">
                     <FormattedMessage id="cta.saveEntity" />
                 </Button>
             </Stack>

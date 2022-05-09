@@ -1,5 +1,4 @@
 import { Box, Chip, styled, TableCell } from '@mui/material';
-import { grey } from '@mui/material/colors';
 
 interface Props {
     strings: string[];
@@ -9,7 +8,6 @@ const ListItem = styled('li')(({ theme }) => ({
     margin: theme.spacing(0.5),
 }));
 const chipListHoverStyling = {
-    background: grey[200],
     cursor: 'pointer',
     maxWidth: 1000,
 };
@@ -51,8 +49,11 @@ function ChipList({ strings }: Props) {
                                     'textOverflow': 'ellipsis',
                                     '&:hover': {
                                         ...chipListHoverStyling,
+                                        background: (theme) =>
+                                            theme.palette.background.default,
                                         transition: (theme) =>
                                             `max-width ${theme.transitions.duration.standard}ms`,
+                                        maxWidth: 1000,
                                     },
                                 }}
                             />
