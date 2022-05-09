@@ -47,7 +47,7 @@ function Rows({ data }: Props) {
     return (
         <>
             {data.map((row) => {
-                return (
+                return row.connector_tags.length > 0 ? (
                     <TableRow key={`Connector-${row.id}`}>
                         <TableCell align="left" style={columnStyling}>
                             <ConnectorName
@@ -117,7 +117,7 @@ function Rows({ data }: Props) {
                             </Box>
                         </TableCell>
                     </TableRow>
-                );
+                ) : null;
             })}
         </>
     );
