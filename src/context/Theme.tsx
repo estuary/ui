@@ -3,7 +3,6 @@ import {
     PaletteOptions,
     ThemeOptions,
     ThemeProvider as MUIThemeProvider,
-    useMediaQuery,
 } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import React from 'react';
@@ -59,6 +58,7 @@ const sm = 600;
 const xs = 300;
 
 // Color Palettes
+// TODO: Balance the light mode color palette.
 const lightMode: PaletteOptions = {
     background: {
         default: teal[800],
@@ -193,11 +193,13 @@ const themeSettings = createTheme({
 const ColorModeContext = React.createContext({
     toggleColorMode: () => {},
 });
+
+// TODO: Enable color mode toggling once light mode colors are refined.
 const ThemeProvider = ({ children }: BaseComponentProps) => {
-    const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-    const [mode, setMode] = React.useState<PaletteOptions>(
-        prefersDarkMode ? darkMode : lightMode
-    );
+    // const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+
+    const [mode, setMode] = React.useState<PaletteOptions>(darkMode);
+
     const toggler = React.useMemo(() => {
         return () => {
             setMode((prevMode: any) =>
