@@ -8,16 +8,33 @@ interface Props {
 const ListItem = styled('li')(({ theme }) => ({
     margin: theme.spacing(0.5),
 }));
+const chipListHoverStyling = {
+    background: grey[200],
+    cursor: 'pointer',
+    maxWidth: 1000,
+};
 
 export const chipListWrapperStyling = {
-    minWidth: 100,
-    maxHeight: 100,
-    overflow: 'auto',
+    'minWidth': 100,
+    'maxHeight': 100,
+    'overflow': 'auto',
+    '&:hovera': {
+        'background': grey[50],
+        'cursor': 'pointer',
+        '& .MuiChip-root': {
+            ...chipListHoverStyling,
+        },
+    },
 };
 
 function ChipList({ strings }: Props) {
+    const handlers = {
+        onClick: () => {
+            console.log('hey there');
+        },
+    };
     return (
-        <TableCell sx={chipListWrapperStyling}>
+        <TableCell sx={chipListWrapperStyling} onClick={handlers.onClick}>
             <Box
                 sx={{
                     display: 'flex',
@@ -45,10 +62,9 @@ function ChipList({ strings }: Props) {
                                     'overflow': 'hidden',
                                     'textOverflow': 'ellipsis',
                                     '&:hover': {
+                                        ...chipListHoverStyling,
                                         transition: (theme) =>
                                             `max-width ${theme.transitions.duration.standard}ms`,
-                                        background: grey[200],
-                                        maxWidth: 1000,
                                     },
                                 }}
                             />

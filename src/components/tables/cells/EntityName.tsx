@@ -1,5 +1,5 @@
-import { Box, TableCell, Tooltip } from '@mui/material';
-import { getDeploymentStatusHexCode } from 'utils/misc-utils';
+import { TableCell } from '@mui/material';
+import EntityStatus from 'components/tables/cells/EntityStatus';
 
 interface Props {
     name: string;
@@ -9,35 +9,19 @@ function EntityName({ name }: Props) {
     return (
         <TableCell
             sx={{
-                'minWidth': 256,
-                '& > *': {
-                    borderBottom: 'unset',
-                },
+                minWidth: 256,
             }}
         >
-            <Tooltip title={name} placement="bottom-start">
-                <Box>
-                    <span
-                        style={{
-                            height: 16,
-                            width: 16,
-                            backgroundColor:
-                                getDeploymentStatusHexCode('ACTIVE'),
-                            borderRadius: 50,
-                            display: 'inline-block',
-                            verticalAlign: 'middle',
-                            marginRight: 12,
-                        }}
-                    />
-                    <span
-                        style={{
-                            verticalAlign: 'middle',
-                        }}
-                    >
-                        {name}
-                    </span>
-                </Box>
-            </Tooltip>
+            <>
+                <EntityStatus />
+                <span
+                    style={{
+                        verticalAlign: 'middle',
+                    }}
+                >
+                    {name}
+                </span>
+            </>
         </TableCell>
     );
 }

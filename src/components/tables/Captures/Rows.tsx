@@ -3,10 +3,12 @@ import { grey } from '@mui/material/colors';
 import CaptureDetails from 'components/capture/Details';
 import { createEditorStore } from 'components/editor/Store';
 import { LiveSpecsExtQuery } from 'components/tables/Captures';
+import Actions from 'components/tables/cells/Actions';
 import ChipList from 'components/tables/cells/ChipList';
 import Connector from 'components/tables/cells/Connector';
-import DetailsAction from 'components/tables/cells/DetailsAction';
 import EntityName from 'components/tables/cells/EntityName';
+import ExpandDetails from 'components/tables/cells/ExpandDetails';
+import MaterializeAction from 'components/tables/cells/MaterializeAction';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import UserName from 'components/tables/cells/UserName';
 import { ZustandProvider } from 'hooks/useZustand';
@@ -34,6 +36,10 @@ export const tableColumns = [
         headerIntlKey: 'entityTable.data.writesTo',
     },
     {
+        field: null,
+        headerIntlKey: 'entityTable.data.actions',
+    },
+    {
         field: 'updated_at',
         headerIntlKey: 'entityTable.data.lastPublished',
     },
@@ -43,7 +49,7 @@ export const tableColumns = [
     },
     {
         field: null,
-        headerIntlKey: 'entityTable.data.actions',
+        headerIntlKey: null,
     },
 ];
 
@@ -66,6 +72,10 @@ function Row({ row }: RowProps) {
 
                 <ChipList strings={row.writes_to} />
 
+                <Actions>
+                    <MaterializeAction disabled />
+                </Actions>
+
                 <TimeStamp time={row.updated_at} />
 
                 <UserName
@@ -74,12 +84,14 @@ function Row({ row }: RowProps) {
                     name={row.last_pub_user_full_name}
                 />
 
-                <DetailsAction
-                    onClick={() => {
-                        setDetailsExpanded(!detailsExpanded);
-                    }}
-                    expanded={detailsExpanded}
-                />
+                <Actions>
+                    <ExpandDetails
+                        onClick={() => {
+                            setDetailsExpanded(!detailsExpanded);
+                        }}
+                        expanded={detailsExpanded}
+                    />
+                </Actions>
             </TableRow>
 
             <TableRow>

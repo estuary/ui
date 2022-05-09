@@ -24,6 +24,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
 
     // Terms
     'terms.connectors': `Connectors`,
+    'terms.collections': `Collections`,
     'terms.permissions': `Access Grants`,
 
     // Common fields
@@ -49,6 +50,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.download': `Download`,
     'cta.login': `Login`,
     'cta.logout': `Logout`,
+    'cta.materialize': `Materialize`,
     'cta.register': `Sign Up`,
     'cta.clickHere': `click here`,
     'cta.details': `Details`,
@@ -149,6 +151,7 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.data.actions': `Actions`,
     'entityTable.data.writesTo': `Writes To`,
     'entityTable.data.readsFrom': `Reads From`,
+    'entityTable.data.status': `Status`,
     'entityTable.data.userFullName': `User`,
     'entityTable.data.capability': `Capability`,
     'entityTable.data.objectRole': `Object`,
@@ -249,6 +252,7 @@ const Captures: ResolvedIntlConfig['messages'] = {
     'captureTable.header': `Captures`,
     'capturesTable.title': `Your Captures`,
     'capturesTable.cta.new': `New Capture`,
+    'capturesTable.cta.materialize': `${CTAs['cta.materialize']} ${CommonMessages['terms.collections']}`,
     'captures.message1': `Click the "New Capture" button up above to get started.`,
     'captures.message2': `It will guide you through generating and downloading a valid {docLink}.`,
     'captures.message2.docLink': `capture spec`,
