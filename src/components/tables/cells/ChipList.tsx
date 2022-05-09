@@ -1,5 +1,4 @@
 import { Box, Chip, styled, TableCell } from '@mui/material';
-import { grey } from '@mui/material/colors';
 
 interface Props {
     strings: string[];
@@ -47,7 +46,8 @@ function ChipList({ strings }: Props) {
                                     '&:hover': {
                                         transition: (theme) =>
                                             `max-width ${theme.transitions.duration.standard}ms`,
-                                        background: grey[200],
+                                        background: (theme) =>
+                                            theme.palette.background.default,
                                         maxWidth: 1000,
                                     },
                                 }}
