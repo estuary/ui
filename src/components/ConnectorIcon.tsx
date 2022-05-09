@@ -15,7 +15,7 @@ function ConnectorIcon({ size = defaultSize, iconPath }: Props) {
                 <Avatar
                     variant="rounded"
                     sx={{
-                        background: 'white',
+                        background: 'primary',
                         width: size,
                         height: size,
                     }}
