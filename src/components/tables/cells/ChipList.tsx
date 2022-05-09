@@ -15,26 +15,14 @@ const chipListHoverStyling = {
 };
 
 export const chipListWrapperStyling = {
-    'minWidth': 100,
-    'maxHeight': 100,
-    'overflow': 'auto',
-    '&:hovera': {
-        'background': grey[50],
-        'cursor': 'pointer',
-        '& .MuiChip-root': {
-            ...chipListHoverStyling,
-        },
-    },
+    minWidth: 100,
+    maxHeight: 100,
+    overflow: 'auto',
 };
 
 function ChipList({ strings }: Props) {
-    const handlers = {
-        onClick: () => {
-            console.log('hey there');
-        },
-    };
     return (
-        <TableCell sx={chipListWrapperStyling} onClick={handlers.onClick}>
+        <TableCell sx={chipListWrapperStyling}>
             <Box
                 sx={{
                     display: 'flex',
