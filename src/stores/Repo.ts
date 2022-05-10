@@ -9,7 +9,8 @@ export enum Stores {
     MATERIALIZATION_CREATE = 'materializationCreate',
 }
 
-export const storeMap = new Map();
+// TODO (typing) : Need to get the map typed and get the selectors passing back types
+export const storeMap = new Map<Stores, any>();
 
 storeMap.set(
     Stores.CAPTURE_CREATE,
