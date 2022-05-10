@@ -4,7 +4,7 @@ import ConnectorName from 'components/ConnectorName';
 import { Connector } from 'components/tables/Connectors';
 import Link from 'components/tables/Link';
 import { FormattedDate, FormattedMessage } from 'react-intl';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
     data: Connector[];

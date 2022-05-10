@@ -1,10 +1,7 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { StyledEngineProvider } from '@mui/material';
-import useEntityStore, {
-    fooSelectors,
-    FormStatus,
-} from 'components/shared/Entity/Store';
+import { useRouteStore } from 'hooks/useRouteStore';
 import { isEmpty } from 'lodash';
 import { useEffect } from 'react';
 import { createJSONFormDefaults, setDefaultsValidator } from 'services/ajv';
@@ -14,16 +11,25 @@ import {
     generateCustomUISchema,
     showValidation,
 } from 'services/jsonforms';
+import { createStoreSelectors, FormStatus } from 'stores/Create';
+import { getStore } from 'stores/Repo';
 
 type Props = {
     endpointSchema: any;
 };
 
 function EndpointConfigForm({ endpointSchema }: Props) {
-    const setSpec = useEntityStore(fooSelectors.setEndpointConfig);
-    const formData = useEntityStore(fooSelectors.endpointConfig);
-    const displayValidation = useEntityStore(fooSelectors.displayValidation);
-    const formStateStatus = useEntityStore(fooSelectors.formStateStatus);
+    const entityCreateStore = getStore(useRouteStore());
+    const setSpec = entityCreateStore(createStoreSelectors.endpointConfig.set);
+    const formData = entityCreateStore(
+        createStoreSelectors.endpointConfig.data
+    );
+    const displayValidation = entityCreateStore(
+        createStoreSelectors.formState.displayValidation
+    );
+    const formStateStatus = entityCreateStore(
+        createStoreSelectors.formState.status
+    );
 
     useEffect(() => {
         setSpec({

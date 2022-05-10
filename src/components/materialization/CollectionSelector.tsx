@@ -59,6 +59,7 @@ function CollectionSelector() {
                     options={collectionData.data.map(
                         ({ catalog_name }) => catalog_name
                     )}
+                    value={collections}
                     size="small"
                     filterSelectedOptions
                     fullWidth
