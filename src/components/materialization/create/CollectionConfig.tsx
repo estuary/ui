@@ -3,12 +3,17 @@ import ExpandableResourceConfig from 'components/materialization/create/Expandab
 import useCreationStore, {
     creationSelectors,
 } from 'components/materialization/Store';
-import useEntityStore, { fooSelectors } from 'components/shared/Entity/Store';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
+import { useRouteStore } from 'hooks/useRouteStore';
 import { FormattedMessage } from 'react-intl';
+import { createStoreSelectors } from 'stores/Create';
+import { getStore } from 'stores/Repo';
 
 function CollectionConfig() {
-    const imageTag = useEntityStore(fooSelectors.connectorTag);
+    const entityCreateStore = getStore(useRouteStore());
+    const imageTag = entityCreateStore(
+        createStoreSelectors.details.connectorTag
+    );
     const collections = useCreationStore(creationSelectors.collections);
 
     if (imageTag) {

@@ -3,10 +3,7 @@ import { JsonForms } from '@jsonforms/react';
 import { Alert, Stack, Typography } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
 import { ConnectorTag } from 'components/shared/Entity/query';
-import useFooState, {
-    EntityStoreState,
-    FormStatus,
-} from 'components/shared/Entity/Store';
+import { useRouteStore } from 'hooks/useRouteStore';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
@@ -15,7 +12,9 @@ import {
     defaultRenderers,
     showValidation,
 } from 'services/jsonforms';
-import { Grants, StoreSelector } from 'types';
+import { createStoreSelectors, FormStatus } from 'stores/Create';
+import { getStore } from 'stores/Repo';
+import { Grants } from 'types';
 import { getConnectorName } from 'utils/misc-utils';
 
 interface Props {
@@ -24,14 +23,6 @@ interface Props {
     messagePrefix: 'materializationCreation' | 'captureCreation';
 }
 
-const stateSelectors: StoreSelector<EntityStoreState> = {
-    formData: (state) => state.details.data,
-    setDetails: (state) => state.setDetails,
-    setConnectors: (state) => state.setConnectors,
-    showValidation: (state) => state.formState.displayValidation,
-    status: (state) => state.formState.status,
-};
-
 function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
     const intl = useIntl();
     const [searchParams] = useSearchParams();
@@ -39,23 +30,26 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
         routeDetails.captures.create.params.connectorID
     );
 
-    const formData = useFooState(stateSelectors.formData);
-    const setDetails = useFooState(stateSelectors.setDetails);
-    const displayValidation = useFooState(stateSelectors.showValidation);
-    const status = useFooState(stateSelectors.status);
+    const entityCreateStore = getStore(useRouteStore());
+    const formData = entityCreateStore(createStoreSelectors.details.data);
+    const setDetails = entityCreateStore(createStoreSelectors.details.set);
+    const displayValidation = entityCreateStore(
+        createStoreSelectors.formState.displayValidation
+    );
+    const status = entityCreateStore(createStoreSelectors.formState.status);
 
     useEffect(() => {
         if (connectorID) {
             setDetails({
                 data: {
                     prefix: {
-                        id: '',
+                        const: '',
                         title: '',
                     },
                     name: '',
                     image: {
                         id: connectorID,
-                        path: '',
+                        iconPath: '',
                     },
                 },
             });
