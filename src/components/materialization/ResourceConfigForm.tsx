@@ -56,7 +56,7 @@ function NewMaterializationResourceConfigForm({
     const handlers = {
         onChange: (form: any) => {
             if (!isEmpty(form.data)) {
-                setConfig(form);
+                setConfig(collectionName, form);
             }
         },
     };
