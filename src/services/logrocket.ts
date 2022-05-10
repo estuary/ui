@@ -4,15 +4,6 @@ import setupLogRocketReact from 'logrocket-react';
 import { getUserDetails } from 'services/supabase';
 import { getLogRocketSettings } from 'utils/env-utils';
 
-if (
-    !process.env.REACT_APP_SUPABASE_URL ||
-    !process.env.REACT_APP_SUPABASE_ANON_KEY
-) {
-    throw new Error(
-        'You must set the Supabase url and anon key in the env settings.'
-    );
-}
-
 // Based on node_modules/logrocket/dist/types.d.ts
 interface IUserTraits {
     [propName: string]: string | number | boolean;
