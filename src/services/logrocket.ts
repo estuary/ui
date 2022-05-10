@@ -11,6 +11,8 @@ interface IUserTraits {
 
 const logRocketSettings = getLogRocketSettings();
 
+// More info about the dom settings
+//  https://docs.logrocket.com/reference/dom
 export const initLogRocket = () => {
     if (logRocketSettings.appID) {
         LogRocket.init(logRocketSettings.appID, {
