@@ -56,7 +56,7 @@ const Navigation = ({ onNavigationToggle, open, width }: Props) => {
             open={open}
             onClose={closeNavigation}
             onClick={isBelowMd ? closeNavigation : undefined}
-            variant={isBelowMd ? 'temporary' : 'permanent'}
+            variant="permanent"
             ModalProps={{
                 keepMounted: true,
             }}

@@ -1,4 +1,4 @@
-import { Box, useMediaQuery, useTheme } from '@mui/material';
+import { Box } from '@mui/material';
 import { useState } from 'react';
 import { Outlet } from 'react-router';
 import Navigation from './components/navigation/Navigation';
@@ -10,16 +10,11 @@ export enum Widths {
 }
 
 function AppLayout() {
-    const theme = useTheme();
-    const isBelowMd = useMediaQuery(theme.breakpoints.down('md'));
-
     const [navigationOpen, setNavigationOpen] = useState(false);
     const [navWidth, setNavigationWidth] = useState<Widths>(Widths.RAIL);
 
     const toggleNavigationDrawer = () => {
-        if (!isBelowMd) {
-            setNavigationWidth(navigationOpen ? Widths.RAIL : Widths.FULL);
-        }
+        setNavigationWidth(navigationOpen ? Widths.RAIL : Widths.FULL);
 
         setNavigationOpen(!navigationOpen);
     };
@@ -29,9 +24,7 @@ function AppLayout() {
             sx={{
                 display: 'grid',
                 gridTemplateAreas: `"nav main"`,
-                gridTemplateColumns: `${
-                    isBelowMd ? Widths.MOBILE : navWidth
-                }px auto`,
+                gridTemplateColumns: `${navWidth}px auto`,
                 gridTemplateRows: 'auto 1fr',
             }}
         >
@@ -39,7 +32,7 @@ function AppLayout() {
                 <Navigation
                     open={navigationOpen}
                     onNavigationToggle={toggleNavigationDrawer}
-                    width={isBelowMd ? Widths.FULL : navWidth}
+                    width={navWidth}
                 />
             </Box>
 
