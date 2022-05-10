@@ -17,7 +17,6 @@ function App() {
 
     useEffect(() => {
         if (user) {
-            console.log('this was called');
             identifyUser(user);
         }
     }, [user]);
