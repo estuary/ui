@@ -1,9 +1,19 @@
-import { Button, Stack, Toolbar, Typography } from '@mui/material';
+import {
+    Button,
+    Collapse,
+    LinearProgress,
+    Stack,
+    Toolbar,
+    Typography,
+} from '@mui/material';
 import { EditorStoreState } from 'components/editor/Store';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
 import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { createStoreSelectors, FormStatus } from 'stores/Create';
+import { getStore } from 'stores/Repo';
 
 interface Props {
     close: (event: any) => void;
@@ -29,39 +39,57 @@ function FooHeader({
         EditorStoreState<DraftSpecQuery>['id']
     >((state) => state.id);
 
+    const entityCreateStore = getStore(useRouteStore());
+    const formStateStatus = entityCreateStore(
+        createStoreSelectors.formState.status
+    );
+
     return (
-        <Toolbar>
-            <Typography variant="h6" noWrap>
-                {heading}
-            </Typography>
-            <Stack
-                direction="row"
-                alignItems="center"
-                sx={{
-                    ml: 'auto',
-                }}
-            >
-                <Button variant="text" onClick={close} color="error">
-                    <FormattedMessage id="cta.cancel" />
-                </Button>
-
-                <Button
-                    onClick={test}
-                    disabled={testDisabled}
-                    form={formId}
-                    type="submit"
-                    color="success"
+        <>
+            <Toolbar>
+                <Typography variant="h6" noWrap>
+                    {heading}
+                </Typography>
+                <Stack
+                    direction="row"
+                    alignItems="center"
+                    sx={{
+                        ml: 'auto',
+                    }}
                 >
-                    <FormattedMessage
-                        id={id ? 'foo.ctas.discoverAgain' : 'foo.ctas.discover'}
-                    />
-                </Button>
+                    <Button variant="text" onClick={close} color="error">
+                        <FormattedMessage id="cta.cancel" />
+                    </Button>
 
-                <Button onClick={save} disabled={saveDisabled} color="success">
-                    <FormattedMessage id="cta.saveEntity" />
-                </Button>
-            </Stack>
-        </Toolbar>
+                    <Button
+                        onClick={test}
+                        disabled={testDisabled}
+                        form={formId}
+                        type="submit"
+                        color="success"
+                    >
+                        <FormattedMessage
+                            id={
+                                id
+                                    ? 'foo.ctas.discoverAgain'
+                                    : 'foo.ctas.discover'
+                            }
+                        />
+                    </Button>
+
+                    <Button
+                        onClick={save}
+                        disabled={saveDisabled}
+                        color="success"
+                    >
+                        <FormattedMessage id="cta.saveEntity" />
+                    </Button>
+                </Stack>
+            </Toolbar>
+            <Collapse in={formStateStatus !== FormStatus.IDLE} unmountOnExit>
+                <LinearProgress />
+            </Collapse>
+        </>
     );
 }
 
