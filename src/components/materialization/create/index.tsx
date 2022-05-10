@@ -94,7 +94,7 @@ function MaterializationCreate() {
 
     // Form store
     const entityCreateStore = getStore(useRouteStore());
-    // const entityPrefix = entityCreateStore(createStoreSelectors.details.prefix);
+    const entityPrefix = entityCreateStore(createStoreSelectors.details.prefix);
     const entityName = entityCreateStore(
         createStoreSelectors.details.entityName
     );
@@ -139,8 +139,6 @@ function MaterializationCreate() {
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
     >((state) => state.id);
-
-    console.log('d', { draftId });
 
     const setDraftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
@@ -319,7 +317,7 @@ function MaterializationCreate() {
                 supabaseClient
                     .from(TABLES.DRAFTS)
                     .insert({
-                        detail: entityName,
+                        detail: `${entityPrefix.title}${entityName}`,
                     })
                     .then(
                         (draftsResponse) => {
