@@ -140,6 +140,12 @@ const Registration: ResolvedIntlConfig['messages'] = {
     'register.existingAccount': `Already have an account?`,
 };
 
+const EntityStatus: ResolvedIntlConfig['messages'] = {
+    'entityStatus.green': `Running`,
+    'entityStatus.yellow': `Alerts`,
+    'entityStatus.red': `Stopped`,
+};
+
 const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.title': `Entity Table`,
 
@@ -348,6 +354,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...Navigation,
     ...ConfirmationDialog,
     ...LogsDialog,
+    ...EntityStatus,
     ...EntityTable,
     ...Home,
     ...PageNotFound,
