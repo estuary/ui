@@ -1,5 +1,5 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
-import EditorAndList from 'components/editor/EditorAndList';
+import EditorWithFileSelector from 'components/editor/EditorWithFileSelector';
 import { EditorStoreState } from 'components/editor/Store';
 import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useZustandStore } from 'hooks/useZustand';
@@ -94,7 +94,7 @@ function DraftSpecEditor() {
 
     if (draftSpec) {
         return (
-            <EditorAndList
+            <EditorWithFileSelector
                 value={draftSpec.spec}
                 path={draftSpec.catalog_name}
                 onChange={handlers.change}
