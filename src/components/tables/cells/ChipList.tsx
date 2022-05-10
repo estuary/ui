@@ -1,4 +1,4 @@
-import { Box, Chip, styled, TableCell } from '@mui/material';
+import { Box, Chip, styled, TableCell, Tooltip } from '@mui/material';
 
 interface Props {
     strings: string[];
@@ -9,7 +9,6 @@ const ListItem = styled('li')(({ theme }) => ({
 }));
 const chipListHoverStyling = {
     cursor: 'pointer',
-    maxWidth: 1000,
 };
 
 export const chipListWrapperStyling = {
@@ -36,27 +35,25 @@ function ChipList({ strings }: Props) {
                 {strings.map((val, index) => {
                     return (
                         <ListItem key={`${val}-${index}`}>
-                            <Chip
-                                label={val}
-                                size="small"
-                                variant="outlined"
-                                sx={{
-                                    'transition': (theme) =>
-                                        `max-width ${theme.transitions.duration.standard}ms`,
-                                    'maxWidth': 200,
-                                    'whiteSpace': 'nowrap',
-                                    'overflow': 'hidden',
-                                    'textOverflow': 'ellipsis',
-                                    '&:hover': {
-                                        ...chipListHoverStyling,
-                                        background: (theme) =>
-                                            theme.palette.background.default,
-                                        transition: (theme) =>
-                                            `max-width ${theme.transitions.duration.standard}ms`,
-                                        maxWidth: 1000,
-                                    },
-                                }}
-                            />
+                            <Tooltip title={val}>
+                                <Chip
+                                    label={val}
+                                    size="small"
+                                    variant="outlined"
+                                    sx={{
+                                        'maxWidth': 200,
+                                        'whiteSpace': 'nowrap',
+                                        'overflow': 'hidden',
+                                        'textOverflow': 'ellipsis',
+                                        '&:hover': {
+                                            ...chipListHoverStyling,
+                                            background: (theme) =>
+                                                theme.palette.background
+                                                    .default,
+                                        },
+                                    }}
+                                />
+                            </Tooltip>
                         </ListItem>
                     );
                 })}

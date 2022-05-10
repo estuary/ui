@@ -12,10 +12,6 @@ import {
     ConnectorTag,
     CONNECTOR_TAG_QUERY,
 } from 'components/shared/Entity/query';
-import useEntityStore, {
-    fooSelectors,
-    FormStatus,
-} from 'components/shared/Entity/Store';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
@@ -25,15 +21,18 @@ import { usePrompt } from 'hooks/useBlocker';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
 import { MouseEvent } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { TABLES } from 'services/supabase';
+import { createStoreSelectors, FormStatus } from 'stores/Create';
 import useNotificationStore, {
     Notification,
     NotificationState,
 } from 'stores/NotificationStore';
+import { getStore } from 'stores/Repo';
 
 const FORM_ID = 'newCaptureForm';
 
@@ -81,34 +80,54 @@ function CaptureCreate() {
     );
 
     // Form store
-    const resetState = useEntityStore(fooSelectors.resetState);
-    const entityName = useEntityStore(fooSelectors.entityName);
-    const imageTag = useEntityStore(fooSelectors.connectorTag);
-    const entityDescription = useEntityStore(fooSelectors.description);
-    const entityPrefix = useEntityStore(fooSelectors.prefix);
-    const [detailErrors, specErrors] = useEntityStore(fooSelectors.errors);
-    const specFormData = useEntityStore(fooSelectors.endpointConfig);
-    const hasChanges = useEntityStore(fooSelectors.hasChanges);
+    const entityCreateStore = getStore(useRouteStore());
+    const entityPrefix = entityCreateStore(createStoreSelectors.details.prefix);
+    const entityName = entityCreateStore(
+        createStoreSelectors.details.entityName
+    );
+    const imageTag = entityCreateStore(
+        createStoreSelectors.details.connectorTag
+    );
+    const entityDescription = entityCreateStore(
+        createStoreSelectors.details.description
+    );
+    const endpointConfigData = entityCreateStore(
+        createStoreSelectors.endpointConfig.data
+    );
+    const hasChanges = entityCreateStore(createStoreSelectors.hasChanges);
+    const resetState = entityCreateStore(createStoreSelectors.resetState);
+    const [detailErrors, specErrors] = entityCreateStore(
+        createStoreSelectors.errors
+    );
+
+    const setFormState = entityCreateStore(createStoreSelectors.formState.set);
+    const resetFormState = entityCreateStore(
+        createStoreSelectors.formState.reset
+    );
 
     // Form State
-    const setFormState = useEntityStore(fooSelectors.setFormState);
-    const resetFormState = useEntityStore(fooSelectors.resetFormState);
-    const formStateStatus = useEntityStore(fooSelectors.formStateStatus);
-    const showLogs = useEntityStore(fooSelectors.showLogs);
-    const logToken = useEntityStore(fooSelectors.logToken);
-    const formSubmitError = useEntityStore(fooSelectors.error);
-    const formStateSaveStatus = useEntityStore(
-        fooSelectors.formStateSaveStatus
+    const formStateStatus = entityCreateStore(
+        createStoreSelectors.formState.status
     );
-    const exitWhenLogsClose = useEntityStore(fooSelectors.exitWhenLogsClose);
+    const showLogs = entityCreateStore(createStoreSelectors.formState.showLogs);
+    const logToken = entityCreateStore(createStoreSelectors.formState.logToken);
+    const formSubmitError = entityCreateStore(
+        createStoreSelectors.formState.error
+    );
+    const formStateSaveStatus = entityCreateStore(
+        createStoreSelectors.formState.formStateSaveStatus
+    );
+    const exitWhenLogsClose = entityCreateStore(
+        createStoreSelectors.formState.exitWhenLogsClose
+    );
 
     //Editor state
-    const setId = useZustandStore<
+    const setDraftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setId']
     >((state) => state.setId);
 
-    const id = useZustandStore<
+    const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
     >((state) => state.id);
@@ -183,11 +202,11 @@ function CaptureCreate() {
             return subscription;
         },
         discovers: () => {
-            setId(null);
+            setDraftId(null);
             return waitFor.base(
                 supabaseClient.from(TABLES.DISCOVERS),
                 (payload: any) => {
-                    setId(payload.new.draft_id);
+                    setDraftId(payload.new.draft_id);
                 },
                 'captureCreation.test.failedErrorTitle'
             );
@@ -248,7 +267,7 @@ function CaptureCreate() {
                 .from(TABLES.PUBLICATIONS)
                 .insert([
                     {
-                        draft_id: id,
+                        draft_id: draftId,
                         dry_run: false,
                         detail: entityDescription ?? null,
                     },
@@ -323,7 +342,7 @@ function CaptureCreate() {
                                     .insert([
                                         {
                                             capture_name: `${entityPrefix.title}${entityName}`,
-                                            endpoint_config: specFormData,
+                                            endpoint_config: endpointConfigData,
                                             connector_tag_id: imageTag.id,
                                             draft_id: draftsResponse.data[0].id,
                                         },
@@ -412,7 +431,7 @@ function CaptureCreate() {
                     formStateStatus !== FormStatus.IDLE || !hasConnectors
                 }
                 save={handlers.saveAndPublish}
-                saveDisabled={formStateStatus !== FormStatus.IDLE || !id}
+                saveDisabled={formStateStatus !== FormStatus.IDLE || !draftId}
                 formId={FORM_ID}
                 heading={<FormattedMessage id="captureCreation.heading" />}
             />
@@ -427,7 +446,7 @@ function CaptureCreate() {
                                 title={formSubmitError.title}
                                 error={formSubmitError.error}
                                 logToken={logToken}
-                                draftId={id}
+                                draftId={draftId}
                             />
                         )}
                     </Collapse>

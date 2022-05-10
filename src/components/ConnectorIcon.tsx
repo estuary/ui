@@ -1,5 +1,5 @@
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
-import { Box } from '@mui/material';
+import { Avatar, Box } from '@mui/material';
 
 interface Props {
     size?: number;
@@ -12,13 +12,22 @@ function ConnectorIcon({ size = defaultSize, iconPath }: Props) {
     return (
         <Box style={{ height: size, width: size }}>
             {iconPath ? (
-                <img
-                    width={size}
-                    height={size}
-                    src={iconPath}
-                    loading="lazy"
-                    alt=""
-                />
+                <Avatar
+                    variant="rounded"
+                    sx={{
+                        background: 'primary',
+                        width: size,
+                        height: size,
+                    }}
+                >
+                    <img
+                        width={size - 1}
+                        height={size - 1}
+                        src={iconPath}
+                        loading="lazy"
+                        alt=""
+                    />
+                </Avatar>
             ) : (
                 <QuestionMarkIcon
                     sx={{

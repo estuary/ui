@@ -1,7 +1,8 @@
 import AppLayout from 'AppLayout';
 import CaptureCreate from 'components/capture/Create';
-import { createEditorStore } from 'components/editor/Store';
+import { createEditorStore, DraftSpecEditorKey } from 'components/editor/Store';
 import NewMaterialization from 'components/materialization/create';
+import { RouteStoreProvider } from 'hooks/useRouteStore';
 import { ZustandProvider } from 'hooks/useZustand';
 import Admin from 'pages/Admin';
 import Captures from 'pages/Captures';
@@ -12,6 +13,7 @@ import Home from 'pages/Home';
 import Materializations from 'pages/Materializations';
 import Registration from 'pages/Registration';
 import { Route, Routes } from 'react-router';
+import { Stores } from 'stores/Repo';
 
 export const routeDetails = {
     admin: {
@@ -29,6 +31,9 @@ export const routeDetails = {
             title: 'routeTitle.captureCreate',
             path: `create`,
             fullPath: '/captures/create',
+            store: {
+                key: Stores.CAPTURE_CREATE,
+            },
             params: {
                 connectorID: 'connectorID',
             },
@@ -49,6 +54,9 @@ export const routeDetails = {
             title: 'routeTitle.materializationCreate',
             path: 'create',
             fullPath: '/materializations/create',
+            store: {
+                key: Stores.MATERIALIZATION_CREATE,
+            },
             params: {
                 connectorID: 'connectorID',
             },
@@ -89,12 +97,18 @@ const Authenticated = () => {
                     <Route
                         path={routeDetails.captures.create.path}
                         element={
-                            <ZustandProvider
-                                createStore={createEditorStore}
-                                storeName="draftSpecEditor"
+                            <RouteStoreProvider
+                                routeStoreKey={
+                                    routeDetails.captures.create.store.key
+                                }
                             >
-                                <CaptureCreate />
-                            </ZustandProvider>
+                                <ZustandProvider
+                                    createStore={createEditorStore}
+                                    storeName={DraftSpecEditorKey}
+                                >
+                                    <CaptureCreate />
+                                </ZustandProvider>
+                            </RouteStoreProvider>
                         }
                     />
                 </Route>
@@ -104,12 +118,19 @@ const Authenticated = () => {
                     <Route
                         path={routeDetails.materializations.create.path}
                         element={
-                            <ZustandProvider
-                                createStore={createEditorStore}
-                                storeName="draftSpecEditor"
+                            <RouteStoreProvider
+                                routeStoreKey={
+                                    routeDetails.materializations.create.store
+                                        .key
+                                }
                             >
-                                <NewMaterialization />
-                            </ZustandProvider>
+                                <ZustandProvider
+                                    createStore={createEditorStore}
+                                    storeName={DraftSpecEditorKey}
+                                >
+                                    <NewMaterialization />
+                                </ZustandProvider>
+                            </RouteStoreProvider>
                         }
                     />
                 </Route>

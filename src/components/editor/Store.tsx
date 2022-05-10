@@ -3,6 +3,8 @@ import { devtoolsOptions } from 'utils/store-utils';
 import create from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 
+export const DraftSpecEditorKey = 'draftSpecEditor';
+
 export interface EditorStoreState<T> {
     id: string | null;
     setId: (newVal: EditorStoreState<T>['id']) => void;
