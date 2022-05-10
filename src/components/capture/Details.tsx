@@ -1,5 +1,6 @@
-import { Alert, Grid, Typography } from '@mui/material';
+import { Alert, Grid } from '@mui/material';
 import LiveSpecEditor from 'components/editor/LiveSpec';
+import { DEFAULT_TOTAL_HEIGHT } from 'components/editor/MonacoEditor';
 import { EditorStoreState } from 'components/editor/Store';
 import Logs from 'components/Logs';
 import Error from 'components/shared/Error';
@@ -109,9 +110,6 @@ function CaptureDetails({ lastPubId }: Props) {
                 </Grid>
 
                 <Grid item xs={6}>
-                    <Typography variant="h5">
-                        <FormattedMessage id="captureDetails.logs.title" />
-                    </Typography>
                     {pubsError ? (
                         <Alert variant="filled" severity="warning">
                             <FormattedMessage id="captureDetails.logs.notFound" />
@@ -121,6 +119,7 @@ function CaptureDetails({ lastPubId }: Props) {
                             token={pubs.data.logs_token}
                             fetchAll
                             disableIntervalFetching
+                            height={DEFAULT_TOTAL_HEIGHT}
                         />
                     ) : null}
                 </Grid>
