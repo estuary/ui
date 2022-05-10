@@ -4,8 +4,6 @@ import {
     ListItemIcon,
     ListItemText,
     Tooltip,
-    useMediaQuery,
-    useTheme,
 } from '@mui/material';
 import { forwardRef, ReactNode } from 'react';
 import { useIntl } from 'react-intl';
@@ -13,13 +11,13 @@ import { NavLink, NavLinkProps } from 'react-router-dom';
 import { Widths } from '../../AppLayout';
 
 interface Props {
-    badgeContent?: number;
-    disabled?: boolean;
     icon: ReactNode;
-    isOpen?: boolean;
-    link: string;
-    menuWidth?: number;
     title: string;
+    link: string;
+    disabled?: boolean;
+    isOpen?: boolean;
+    menuWidth?: number;
+    badgeContent?: number;
 }
 
 const ListItemLink = ({
@@ -28,12 +26,10 @@ const ListItemLink = ({
     link,
     disabled,
     isOpen,
-    badgeContent,
     menuWidth,
+    badgeContent,
 }: Props) => {
     const intl = useIntl();
-    const theme = useTheme();
-    const isBelowMd = useMediaQuery(theme.breakpoints.down('md'));
 
     const RouterLink = forwardRef<HTMLAnchorElement, Omit<NavLinkProps, 'to'>>(
         function NavLinkRef(refProps, ref) {
@@ -68,7 +64,7 @@ const ListItemLink = ({
     return (
         <li>
             <Tooltip
-                title={!isBelowMd && !isOpen ? translatedTitle : ''}
+                title={!isOpen ? translatedTitle : ''}
                 placement="right-end"
             >
                 {menuWidth === Widths.FULL ? (
@@ -79,12 +75,7 @@ const ListItemLink = ({
                         }}
                     >
                         {icon ? <ListItemIcon>{icon}</ListItemIcon> : null}
-                        <ListItemText
-                            primaryTypographyProps={{
-                                style: { color: '#F6FAFF' },
-                            }}
-                            primary={translatedTitle}
-                        />
+                        <ListItemText primary={translatedTitle} />
                         <Badge badgeContent={badgeContent} />
                     </ListItemButton>
                 ) : (
@@ -101,12 +92,7 @@ const ListItemLink = ({
                                 </Badge>
                             </ListItemIcon>
                         ) : null}
-                        <ListItemText
-                            primaryTypographyProps={{
-                                style: { color: '#F6FAFF' },
-                            }}
-                            primary={translatedTitle}
-                        />
+                        <ListItemText primary={translatedTitle} />
                     </ListItemButton>
                 )}
             </Tooltip>

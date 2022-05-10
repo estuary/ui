@@ -5,7 +5,7 @@ import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 import InputIcon from '@mui/icons-material/Input';
 import MenuIcon from '@mui/icons-material/Menu';
 import StorageIcon from '@mui/icons-material/Storage';
-import { Box, IconButton, List, useMediaQuery, useTheme } from '@mui/material';
+import { Box, IconButton, List, useTheme } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
 import { routeDetails } from 'app/Authenticated';
 import UserMenu from 'components/menus/UserMenu';
@@ -15,15 +15,15 @@ import { useIntl } from 'react-intl';
 import ListItemLink from './ListItemLink';
 
 interface Props {
-    onNavigationToggle: Function;
     open: boolean;
     width: number;
+    onNavigationToggle: Function;
 }
 
-const Navigation = ({ onNavigationToggle, open, width }: Props) => {
+const Navigation = ({ open, width, onNavigationToggle }: Props) => {
     const intl = useIntl();
+
     const theme = useTheme();
-    const isBelowMd = useMediaQuery(theme.breakpoints.down('md'));
     const iconColor = theme.palette.text.primary;
 
     const openNavigation = () => {
@@ -36,6 +36,11 @@ const Navigation = ({ onNavigationToggle, open, width }: Props) => {
 
     return (
         <MuiDrawer
+            anchor="left"
+            open={open}
+            variant="permanent"
+            ModalProps={{ keepMounted: true }}
+            onClose={closeNavigation}
             sx={{
                 '& .MuiDrawer-paper': {
                     boxSizing: 'border-box',
@@ -51,14 +56,6 @@ const Navigation = ({ onNavigationToggle, open, width }: Props) => {
                 'transition': (drawerTheme) =>
                     `${drawerTheme.transitions.duration.shortest}ms`,
                 width,
-            }}
-            anchor="left"
-            open={open}
-            onClose={closeNavigation}
-            onClick={isBelowMd ? closeNavigation : undefined}
-            variant="permanent"
-            ModalProps={{
-                keepMounted: true,
             }}
         >
             <Box
