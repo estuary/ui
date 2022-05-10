@@ -2,8 +2,8 @@ import { Auth } from '@supabase/ui';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import * as React from 'react';
+import { useEffect } from 'react';
 import { identifyUser } from 'services/logrocket';
-import { getUserDetails } from 'services/supabase';
 
 const AuthenticatedApp = React.lazy(
     () => import(/* webpackPrefetch: true */ './Authenticated')
@@ -15,10 +15,12 @@ function App() {
 
     const { user } = Auth.useUser();
 
-    if (user) {
-        const userDetails = getUserDetails(user);
-        identifyUser(user.id, userDetails.userName, userDetails.email);
-    }
+    useEffect(() => {
+        if (user) {
+            console.log('this was called');
+            identifyUser(user);
+        }
+    }, [user]);
 
     return (
         <React.Suspense fallback={<FullPageSpinner />}>
