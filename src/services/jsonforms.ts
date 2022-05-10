@@ -111,6 +111,14 @@ const addLabel = (layout: Layout, labelName: string) => {
     }
 };
 
+const addOption = (elem: ControlElement, key: string, value: any) => {
+    if (!elem.options) {
+        elem.options = {};
+    }
+    console.log(`Adding {key}={value} to control element: {elem}`);
+    elem.options[key] = value;
+};
+
 /**
  * Returns whether the given {@code jsonSchema} is a combinator ({@code oneOf}, {@code anyOf}, {@code allOf}) at the root level
  * @param jsonSchema
@@ -123,6 +131,16 @@ const isCombinator = (jsonSchema: JsonSchema): boolean => {
             !isEmpty(jsonSchema.anyOf) ||
             !isEmpty(jsonSchema.allOf))
     );
+};
+
+const isMultilineText = (schema: JsonSchema): boolean => {
+    if (schema.type === 'string' && Object.hasOwn(schema, 'multiline')) {
+        console.log('schema has multiline property', schema);
+        // eslint-disable-next-line @typescript-eslint/dot-notation
+        return schema['multiline'] === true;
+    } else {
+        return false;
+    }
 };
 
 // eslint-disable-next-line complexity
@@ -219,27 +237,15 @@ const generateUISchema = (
         return layout;
     }
 
-    let controlObject: ControlElement;
-    switch (types[0]) {
-        case 'null':
-        case 'object': // object items will be handled by the object control itself
-        /* falls through */
-        case 'array': // array items will be handled by the array control itself
-        /* falls through */
-        case 'string':
-        /* falls through */
-        case 'number':
-        /* falls through */
-        case 'integer':
-        /* falls through */
-        case 'boolean':
-            controlObject = createControlElement(currentRef);
-            schemaElements.push(controlObject);
-
-            return controlObject;
-        default:
-            throw new Error(`Unknown type: ${JSON.stringify(jsonSchema)}`);
+    // If we've gotten here, then the schema appears to be for a scalar value. For most of these, we
+    // just create a default Control, but for string types, we set the `multi` option based on
+    // whether the json schema contains a `multiline` annotation.
+    const controlObject: ControlElement = createControlElement(currentRef);
+    if (isMultilineText(jsonSchema)) {
+        addOption(controlObject, 'multi', true);
     }
+    schemaElements.push(controlObject);
+    return controlObject;
 };
 
 /**
