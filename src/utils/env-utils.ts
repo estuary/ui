@@ -9,6 +9,10 @@ declare global {
 
 const ENABLED = 'true';
 
+export const getAppVersion = () => {
+    return process.env.REACT_APP_VERSION;
+};
+
 export const getAuthPath = () => {
     return window.Estuary?.auth_url
         ? window.Estuary.auth_url
