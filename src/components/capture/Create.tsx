@@ -122,12 +122,12 @@ function CaptureCreate() {
     );
 
     //Editor state
-    const setId = useZustandStore<
+    const setDraftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setId']
     >((state) => state.setId);
 
-    const id = useZustandStore<
+    const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
     >((state) => state.id);
@@ -202,11 +202,11 @@ function CaptureCreate() {
             return subscription;
         },
         discovers: () => {
-            setId(null);
+            setDraftId(null);
             return waitFor.base(
                 supabaseClient.from(TABLES.DISCOVERS),
                 (payload: any) => {
-                    setId(payload.new.draft_id);
+                    setDraftId(payload.new.draft_id);
                 },
                 'captureCreation.test.failedErrorTitle'
             );
@@ -267,7 +267,7 @@ function CaptureCreate() {
                 .from(TABLES.PUBLICATIONS)
                 .insert([
                     {
-                        draft_id: id,
+                        draft_id: draftId,
                         dry_run: false,
                         detail: entityDescription ?? null,
                     },
@@ -431,7 +431,7 @@ function CaptureCreate() {
                     formStateStatus !== FormStatus.IDLE || !hasConnectors
                 }
                 save={handlers.saveAndPublish}
-                saveDisabled={formStateStatus !== FormStatus.IDLE || !id}
+                saveDisabled={formStateStatus !== FormStatus.IDLE || !draftId}
                 formId={FORM_ID}
                 heading={<FormattedMessage id="captureCreation.heading" />}
             />
@@ -446,7 +446,7 @@ function CaptureCreate() {
                                 title={formSubmitError.title}
                                 error={formSubmitError.error}
                                 logToken={logToken}
-                                draftId={id}
+                                draftId={draftId}
                             />
                         )}
                     </Collapse>

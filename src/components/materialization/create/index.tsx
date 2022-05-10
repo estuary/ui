@@ -140,6 +140,8 @@ function MaterializationCreate() {
         EditorStoreState<DraftSpecQuery>['id']
     >((state) => state.id);
 
+    console.log('d', { draftId });
+
     const setDraftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setId']
@@ -444,7 +446,6 @@ function MaterializationCreate() {
         saveAndPublish: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
-            setDraftId(null);
             resetFormState(FormStatus.SAVING);
 
             const publicationsSubscription = createPublicationsSubscription();
@@ -545,6 +546,7 @@ function MaterializationCreate() {
                                 title={formSubmitError.title}
                                 error={formSubmitError.error}
                                 logToken={logToken}
+                                draftId={draftId}
                             />
                         )}
                     </Collapse>
