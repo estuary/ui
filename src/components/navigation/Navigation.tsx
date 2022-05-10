@@ -3,10 +3,14 @@ import CableIcon from '@mui/icons-material/Cable';
 import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 //TODO (UI / UX) - These icons are not final
 import InputIcon from '@mui/icons-material/Input';
+import MenuIcon from '@mui/icons-material/Menu';
 import StorageIcon from '@mui/icons-material/Storage';
-import { Box, List, Toolbar, useMediaQuery, useTheme } from '@mui/material';
+import { Box, IconButton, List, useMediaQuery, useTheme } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
 import { routeDetails } from 'app/Authenticated';
+import UserMenu from 'components/menus/UserMenu';
+import HelpMenu from 'components/menus/HelpMenu';
+import ModeSwitch from 'components/navigation/ModeSwitch';
 import { useIntl } from 'react-intl';
 import ListItemLink from './ListItemLink';
 
@@ -21,6 +25,10 @@ const Navigation = ({ onNavigationToggle, open, width }: Props) => {
     const theme = useTheme();
     const isBelowMd = useMediaQuery(theme.breakpoints.down('md'));
     const iconColor = theme.palette.text.primary;
+
+    const openNavigation = () => {
+        onNavigationToggle(true);
+    };
 
     const closeNavigation = () => {
         onNavigationToggle(false);
@@ -53,8 +61,30 @@ const Navigation = ({ onNavigationToggle, open, width }: Props) => {
                 keepMounted: true,
             }}
         >
-            <Toolbar />
-            <Box sx={{ overflowX: 'hidden' }}>
+            <Box
+                sx={{
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    overflowX: 'hidden',
+                }}
+            >
+                <Box sx={{ pl: 1 }}>
+                    <Box sx={{ pt: 1, pb: 0.25 }}>
+                        <IconButton
+                            aria-label={intl.formatMessage({
+                                id: 'header.openNavigation.ariaLabel',
+                            })}
+                            onClick={openNavigation}
+                        >
+                            <MenuIcon />
+                        </IconButton>
+                    </Box>
+
+                    <UserMenu />
+                </Box>
+
                 <List
                     aria-label={intl.formatMessage({
                         id: 'navigation.ariaLabel',
@@ -90,6 +120,12 @@ const Navigation = ({ onNavigationToggle, open, width }: Props) => {
                         link={routeDetails.admin.path}
                     />
                 </List>
+
+                <Box sx={{ pl: 1 }}>
+                    <HelpMenu />
+
+                    <ModeSwitch />
+                </Box>
             </Box>
         </MuiDrawer>
     );

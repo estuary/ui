@@ -1,5 +1,5 @@
 /* eslint-disable react/destructuring-assignment */
-import { IconButton, Menu, PopoverProps, Tooltip } from '@mui/material';
+import { Box, IconButton, Menu, PopoverProps, Tooltip } from '@mui/material';
 import React, { ReactNode } from 'react';
 
 type Props = {
@@ -19,40 +19,43 @@ const IconMenu = ({
 }: Props) => {
     const [anchorEl, setAnchorEl] =
         React.useState<PopoverProps['anchorEl']>(null);
+
     const open = Boolean(anchorEl);
-    const handleClick = (
-        event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-    ) => {
-        setAnchorEl(event.currentTarget);
-    };
-    const handleClose = () => {
-        setAnchorEl(null);
+
+    const handlers = {
+        click: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+            setAnchorEl(event.currentTarget);
+        },
+        close: () => {
+            setAnchorEl(null);
+        },
     };
 
     const id = `${identifier}-button`;
     const controls = `${identifier}-menu`;
 
     return (
-        <>
-            <Tooltip title={tooltip}>
+        <Box sx={{ my: 0.5 }}>
+            <Tooltip title={tooltip} placement="right-end">
                 <IconButton
                     aria-label={ariaLabel}
                     id={id}
                     aria-controls={controls}
                     aria-haspopup="true"
                     aria-expanded={open ? 'true' : undefined}
-                    onClick={handleClick}
+                    onClick={handlers.click}
                 >
                     {icon}
                 </IconButton>
             </Tooltip>
+
             <Menu
                 id={controls}
                 aria-labelledby={id}
                 anchorEl={anchorEl}
                 open={open}
-                onClose={handleClose}
-                onClick={handleClose}
+                onClose={handlers.close}
+                onClick={handlers.close}
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 PaperProps={{
@@ -84,7 +87,7 @@ const IconMenu = ({
             >
                 {children}
             </Menu>
-        </>
+        </Box>
     );
 };
 

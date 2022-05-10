@@ -1,4 +1,4 @@
-import { Alert, Container, Paper, Snackbar, Toolbar } from '@mui/material';
+import { Alert, Container, Paper, Snackbar } from '@mui/material';
 import { ReactNode, useEffect, useState } from 'react';
 import useNotificationStore, {
     NotificationState,
@@ -43,8 +43,6 @@ function PageContainer({ children }: Props) {
                 paddingTop: 2,
             }}
         >
-            <Toolbar />
-
             {notification ? (
                 <Snackbar
                     open={displayAlert}

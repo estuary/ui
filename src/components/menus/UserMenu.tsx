@@ -16,8 +16,8 @@ import IconMenu from './IconMenu';
 const UserMenu = () => {
     const intl = useIntl();
     const supabaseClient = useClient();
-    const { user } = Auth.useUser();
 
+    const { user } = Auth.useUser();
     const { userName, email, emailVerified, avatar } = getUserDetails(user);
 
     const handlers = {
