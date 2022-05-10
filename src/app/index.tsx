@@ -3,6 +3,7 @@ import FullPageSpinner from 'components/fullPage/Spinner';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import * as React from 'react';
 import { useEffect } from 'react';
+import 'react-reflex/styles.css';
 import { identifyUser } from 'services/logrocket';
 
 const AuthenticatedApp = React.lazy(

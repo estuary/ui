@@ -77,6 +77,7 @@ function EditorFileSelector() {
                 rows={specs}
                 columns={columns}
                 headerHeight={40}
+                rowCount={specs.length}
                 hideFooter
                 disableColumnSelector
                 onSelectionModelChange={(newSelectionModel) => {
@@ -91,6 +92,9 @@ function EditorFileSelector() {
                 sx={{
                     '& .MuiDataGrid-row ': {
                         cursor: 'pointer',
+                    },
+                    '& .MuiDataGrid-columnSeparator': {
+                        display: 'none',
                     },
                 }}
             />
