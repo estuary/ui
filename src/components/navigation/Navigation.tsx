@@ -20,6 +20,7 @@ const Navigation = ({ onNavigationToggle, open, width }: Props) => {
     const intl = useIntl();
     const theme = useTheme();
     const isBelowMd = useMediaQuery(theme.breakpoints.down('md'));
+    const iconColor = theme.palette.text.primary;
 
     const closeNavigation = () => {
         onNavigationToggle(false);
@@ -60,30 +61,30 @@ const Navigation = ({ onNavigationToggle, open, width }: Props) => {
                     })}
                 >
                     <ListItemLink
-                        icon={<InputIcon sx={{ color: '#F6FAFF' }} />}
+                        icon={<InputIcon sx={{ color: iconColor }} />}
                         title={routeDetails.captures.title}
                         link={routeDetails.captures.path}
                     />
                     <ListItemLink
                         icon={
-                            <FormatListNumberedIcon sx={{ color: '#F6FAFF' }} />
+                            <FormatListNumberedIcon sx={{ color: iconColor }} />
                         }
                         title={routeDetails.collections.title}
                         link={routeDetails.collections.path}
                     />
                     <ListItemLink
-                        icon={<StorageIcon sx={{ color: '#F6FAFF' }} />}
+                        icon={<StorageIcon sx={{ color: iconColor }} />}
                         title={routeDetails.materializations.title}
                         link={routeDetails.materializations.path}
                     />
                     <ListItemLink
-                        icon={<CableIcon sx={{ color: '#F6FAFF' }} />}
+                        icon={<CableIcon sx={{ color: iconColor }} />}
                         title={routeDetails.connectors.title}
                         link={routeDetails.connectors.path}
                     />
                     <ListItemLink
                         icon={
-                            <AdminPanelSettingsIcon sx={{ color: '#F6FAFF' }} />
+                            <AdminPanelSettingsIcon sx={{ color: iconColor }} />
                         }
                         title={routeDetails.admin.title}
                         link={routeDetails.admin.path}
