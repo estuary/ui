@@ -7,6 +7,12 @@ declare global {
     }
 }
 
+const ENABLED = 'true';
+
+export const getAppVersion = () => {
+    return process.env.REACT_APP_VERSION;
+};
+
 export const getAuthPath = () => {
     return window.Estuary?.auth_url
         ? window.Estuary.auth_url
@@ -20,9 +26,9 @@ export const getAPIPath = () => {
 };
 
 export const getLoginSettings = () => {
-    const showEmail = process.env.REACT_APP_SHOW_EMAIL_LOGIN === 'true';
-    const showOIDC = process.env.REACT_APP_SHOW_OIDC_LOGIN === 'true';
-    const showGoogle = process.env.REACT_APP_SHOW_OIDC_LOGIN_GOOGLE === 'true';
+    const showEmail = process.env.REACT_APP_SHOW_EMAIL_LOGIN === ENABLED;
+    const showOIDC = process.env.REACT_APP_SHOW_OIDC_LOGIN === ENABLED;
+    const showGoogle = process.env.REACT_APP_SHOW_OIDC_LOGIN_GOOGLE === ENABLED;
 
     return {
         showEmail,
@@ -46,11 +52,30 @@ export const getUrls = () => {
 };
 
 export const getSWRSettings = () => {
-    const logCache = process.env.REACT_APP_SWR_LOG_CACHE === 'true';
-    const logRequests = process.env.REACT_APP_SWR_LOG_REQUESTS === 'true';
+    const logCache = process.env.REACT_APP_SWR_LOG_CACHE === ENABLED;
+    const logRequests = process.env.REACT_APP_SWR_LOG_REQUESTS === ENABLED;
 
     return {
         logCache,
         logRequests,
+    };
+};
+
+export const getLogRocketSettings = () => {
+    return {
+        appID: process.env.REACT_APP_LOGROCKET_APP_ID ?? null,
+        idUser: {
+            enabled: process.env.REACT_APP_LOGROCKET_ID_USER,
+            includeName:
+                process.env.REACT_APP_LOGROCKET_ID_USER_INCLUDE_NAME ===
+                ENABLED,
+            includeEmail:
+                process.env.REACT_APP_LOGROCKET_ID_USER_INCLUDE_EMAIL ===
+                ENABLED,
+        },
+        sanitize: {
+            inputs: process.env.REACT_APP_LOGROCKET_SANITIZE_INPUTS === ENABLED,
+            text: process.env.REACT_APP_LOGROCKET_SANITIZE_TEXT === ENABLED,
+        },
     };
 };

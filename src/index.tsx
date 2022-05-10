@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { initLogRocket } from 'services/logrocket';
 import App from './app';
 import AppProviders from './context';
 
@@ -16,6 +17,8 @@ import AppProviders from './context';
 //     console.log('  Time > ', { actual, base, commit, start });
 //     console.log('  Deet > ', { inter, phase });
 // };
+
+initLogRocket();
 
 ReactDOM.render(
     <React.StrictMode>
