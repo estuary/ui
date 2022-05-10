@@ -1,6 +1,10 @@
 import { Collapse, TableCell, TableRow } from '@mui/material';
+import { routeDetails } from 'app/Authenticated';
 import CaptureDetails from 'components/capture/Details';
 import { createEditorStore } from 'components/editor/Store';
+import useCreationStore, {
+    creationSelectors,
+} from 'components/materialization/Store';
 import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import Actions from 'components/tables/cells/Actions';
 import ChipList from 'components/tables/cells/ChipList';
@@ -12,6 +16,7 @@ import TimeStamp from 'components/tables/cells/TimeStamp';
 import UserName from 'components/tables/cells/UserName';
 import { ZustandProvider } from 'hooks/useZustand';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface RowsProps {
     data: LiveSpecsExtQuery[];
@@ -55,6 +60,20 @@ export const tableColumns = [
 function Row({ row }: RowProps) {
     const [detailsExpanded, setDetailsExpanded] = useState(false);
 
+    const navigate = useNavigate();
+    const prefillCollections = useCreationStore(
+        creationSelectors.prefillCollections
+    );
+
+    const handlers = {
+        clickMaterialize: () => {
+            const collections = row.writes_to;
+            prefillCollections(collections);
+
+            navigate(routeDetails.materializations.create.fullPath);
+        },
+    };
+
     return (
         <>
             <TableRow
@@ -72,7 +91,7 @@ function Row({ row }: RowProps) {
                 <ChipList strings={row.writes_to} />
 
                 <Actions>
-                    <MaterializeAction disabled />
+                    <MaterializeAction onClick={handlers.clickMaterialize} />
                 </Actions>
 
                 <TimeStamp time={row.updated_at} />

@@ -22,7 +22,10 @@ storeMap.set(
 storeMap.set(
     Stores.MATERIALIZATION_CREATE,
     create<CreateEntityStore>()(
-        devtools(getInitialState, devtoolsOptions(Stores.CAPTURE_CREATE))
+        devtools(
+            getInitialState,
+            devtoolsOptions(Stores.MATERIALIZATION_CREATE)
+        )
     )
 );
 
