@@ -9,6 +9,14 @@ declare global {
 
 const ENABLED = 'true';
 
+export const isProduction = () => {
+    return process.env.NODE_ENV === 'production';
+};
+
+export const isTest = () => {
+    return process.env.NODE_ENV === 'test';
+};
+
 export const getAppVersion = () => {
     return process.env.REACT_APP_VERSION;
 };
