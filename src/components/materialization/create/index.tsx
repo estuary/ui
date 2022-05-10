@@ -297,7 +297,7 @@ function MaterializationCreate() {
 
                 // TODO (typing) MaterializationDef
                 const draftSpec: any = {
-                    bindings: {},
+                    bindings: [],
                     endpoint: {
                         connector: {
                             config: endpointConfig,
@@ -307,11 +307,12 @@ function MaterializationCreate() {
                 };
 
                 Object.keys(resourceConfig).forEach((collectionName) => {
-                    draftSpec.bindings[collectionName] = {
+                    draftSpec.bindings.push({
+                        source: collectionName,
                         resource: {
                             ...resourceConfig[collectionName].data,
                         },
-                    };
+                    });
                 });
 
                 supabaseClient

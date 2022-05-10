@@ -11,7 +11,6 @@ function LiveSpecEditor() {
 
     return (
         <EditorAndList
-            height={450}
             disabled={true}
             value={currentCatalog ? currentCatalog.spec : {}}
             path={currentCatalog ? currentCatalog.catalog_name : ''}

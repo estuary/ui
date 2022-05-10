@@ -1,46 +1,57 @@
-import { Grid } from '@mui/material';
+import Box from '@mui/material/Box';
 import EditorFileSelector from 'components/editor/FileSelector';
 import MonacoEditor, {
+    DEFAULT_HEIGHT,
+    DEFAULT_TOOLBAR_HEIGHT,
     Props as MonacoEditorProps,
 } from 'components/editor/MonacoEditor';
+import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
 
 export interface Props extends MonacoEditorProps {
     height?: number;
 }
 
-const DEFAULT_TOOLBAR_HEIGHT = 20;
-const DEFAULT_HEIGHT = 330;
+const MIN_RESIZE_WIDTH = 25;
 
 function EditorAndList(props: Props) {
     const { height } = props;
-    const heightVal = height ?? DEFAULT_HEIGHT;
+    const heightVal = (height ?? DEFAULT_HEIGHT) + DEFAULT_TOOLBAR_HEIGHT;
 
     return (
-        <Grid
-            container
+        <Box
             sx={{
                 bgcolor: 'background.paper',
-                height: `${heightVal + DEFAULT_TOOLBAR_HEIGHT}px`,
+                height: `${heightVal}px`,
+                overflow: 'hidden',
                 mb: 2,
             }}
         >
-            <Grid
-                item
-                xs={4}
-                md={3}
-                sx={{
-                    overflow: 'auto',
-                }}
-            >
-                <EditorFileSelector />
-            </Grid>
-            <Grid item xs={8} md={9}>
-                <MonacoEditor
-                    {...props}
-                    toolbarHeight={DEFAULT_TOOLBAR_HEIGHT}
+            <ReflexContainer orientation="vertical">
+                <ReflexElement className="left-pane" minSize={MIN_RESIZE_WIDTH}>
+                    <div className="pane-content" style={{ height: heightVal }}>
+                        <EditorFileSelector />
+                    </div>
+                </ReflexElement>
+
+                <ReflexSplitter
+                    style={{
+                        width: 4,
+                    }}
                 />
-            </Grid>
-        </Grid>
+
+                <ReflexElement
+                    className="right-pane"
+                    minSize={MIN_RESIZE_WIDTH}
+                    style={{
+                        overflow: 'hidden',
+                    }}
+                >
+                    <div className="pane-content">
+                        <MonacoEditor {...props} />
+                    </div>
+                </ReflexElement>
+            </ReflexContainer>
+        </Box>
     );
 }
 

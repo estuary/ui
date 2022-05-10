@@ -20,8 +20,9 @@ export interface Props {
     toolbarHeight?: number;
 }
 
-const DEFAULT_TOOLBAR_HEIGHT = 20;
-const DEFAULT_HEIGHT = 330;
+export const DEFAULT_TOOLBAR_HEIGHT = 20;
+export const DEFAULT_HEIGHT = 330;
+export const DEFAULT_TOTAL_HEIGHT = DEFAULT_TOOLBAR_HEIGHT + DEFAULT_HEIGHT;
 const ICON_SIZE = 15;
 
 function MonacoEditor({
@@ -149,6 +150,9 @@ function MonacoEditor({
                         path={path}
                         options={{
                             readOnly: disabled ? disabled : false,
+                            minimap: {
+                                enabled: false,
+                            },
                         }}
                         onMount={handlers.mount}
                         onChange={

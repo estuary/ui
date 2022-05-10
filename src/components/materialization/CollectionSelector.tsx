@@ -65,6 +65,7 @@ function CollectionSelector() {
                     fullWidth
                     onChange={handlers.updateCollections}
                     blurOnSelect={false}
+                    disableCloseOnSelect
                     renderInput={(params) => (
                         <TextField
                             {...params}
