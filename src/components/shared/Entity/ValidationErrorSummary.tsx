@@ -16,8 +16,11 @@ function ValidationErrorSummary() {
     const displayValidation = entityCreateStore(
         createStoreSelectors.formState.displayValidation
     );
+
+    const filteredDetailErrors = map(detailErrors, 'instancePath');
+    const filteredSpecErrors = map(specErrors, 'instancePath');
     const filteredErrors = uniq(
-        map(detailErrors.concat(specErrors), 'instancePath')
+        map(filteredDetailErrors.concat(filteredSpecErrors), 'instancePath')
     );
 
     const filteredErrorsList: KeyValue[] = filteredErrors.map((formError) => ({
