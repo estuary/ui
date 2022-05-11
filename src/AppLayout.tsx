@@ -20,15 +20,8 @@ function AppLayout() {
     };
 
     return (
-        <Box
-            sx={{
-                display: 'grid',
-                gridTemplateAreas: `"nav main"`,
-                gridTemplateColumns: `${navWidth}px auto`,
-                gridTemplateRows: 'auto 1fr',
-            }}
-        >
-            <Box sx={{ gridArea: 'nav' }}>
+        <Box>
+            <Box>
                 <Navigation
                     open={navigationOpen}
                     onNavigationToggle={toggleNavigationDrawer}
@@ -36,7 +29,7 @@ function AppLayout() {
                 />
             </Box>
 
-            <Box sx={{ gridArea: 'main' }}>
+            <Box>
                 <Outlet />
             </Box>
         </Box>
