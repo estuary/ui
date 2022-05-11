@@ -10,6 +10,7 @@ import useCreationStore, {
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
+import { CONFIG_EDITOR_ID } from 'components/shared/Entity/EndpointConfigForm';
 import EntityError from 'components/shared/Entity/Error';
 import FooHeader from 'components/shared/Entity/Header';
 import LogDialog from 'components/shared/Entity/LogDialog';
@@ -153,6 +154,8 @@ function MaterializationCreate() {
     // >((state) => state.specs);
 
     // const editorContainsSpecs = editorSpecs && editorSpecs.length > 0;
+
+    const configEditor = document.getElementById(CONFIG_EDITOR_ID);
 
     const helpers = {
         callFailed: (formState: any, subscription?: RealtimeSubscription) => {
@@ -328,6 +331,10 @@ function MaterializationCreate() {
                                 draftsResponse.data.length > 0
                             ) {
                                 setDraftId(draftsResponse.data[0].id);
+
+                                configEditor?.scrollIntoView({
+                                    behavior: 'smooth',
+                                });
 
                                 supabaseClient
                                     .from(TABLES.DRAFT_SPECS)

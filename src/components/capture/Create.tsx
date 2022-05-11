@@ -5,6 +5,7 @@ import { EditorStoreState } from 'components/editor/Store';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
+import { CONFIG_EDITOR_ID } from 'components/shared/Entity/EndpointConfigForm';
 import EntityError from 'components/shared/Entity/Error';
 import FooHeader from 'components/shared/Entity/Header';
 import LogDialog from 'components/shared/Entity/LogDialog';
@@ -132,6 +133,8 @@ function CaptureCreate() {
         EditorStoreState<DraftSpecQuery>['id']
     >((state) => state.id);
 
+    const configEditor = document.getElementById(CONFIG_EDITOR_ID);
+
     const helpers = {
         callFailed: (formState: any, subscription?: RealtimeSubscription) => {
             const setFailureState = () => {
@@ -207,6 +210,10 @@ function CaptureCreate() {
                 supabaseClient.from(TABLES.DISCOVERS),
                 (payload: any) => {
                     setDraftId(payload.new.draft_id);
+                    configEditor?.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'end',
+                    });
                 },
                 'captureCreation.test.failedErrorTitle'
             );
