@@ -41,11 +41,6 @@ function EndpointConfigForm({ endpointSchema }: Props) {
 
     const uiSchema = generateCustomUISchema(endpointSchema);
     const showValidationVal = showValidation(displayValidation);
-    const handlers = {
-        onChange: (form: any) => {
-            setSpec(form);
-        },
-    };
 
     return (
         <StyledEngineProvider injectFirst>
@@ -59,7 +54,7 @@ function EndpointConfigForm({ endpointSchema }: Props) {
                     config={defaultOptions}
                     readonly={formStateStatus !== FormStatus.IDLE}
                     validationMode={showValidationVal}
-                    onChange={handlers.onChange}
+                    onChange={setSpec}
                     ajv={setDefaultsValidator}
                 />
             </div>
