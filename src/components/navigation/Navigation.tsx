@@ -5,7 +5,7 @@ import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 import InputIcon from '@mui/icons-material/Input';
 import MenuIcon from '@mui/icons-material/Menu';
 import StorageIcon from '@mui/icons-material/Storage';
-import { Box, IconButton, List, useTheme } from '@mui/material';
+import { Box, IconButton, List, Typography, useTheme } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
 import { routeDetails } from 'app/Authenticated';
 import UserMenu from 'components/menus/UserMenu';
@@ -68,15 +68,32 @@ const Navigation = ({ open, width, onNavigationToggle }: Props) => {
                 }}
             >
                 <Box sx={{ pl: 1 }}>
-                    <Box sx={{ pt: 1, pb: 0.25 }}>
+                    <Box
+                        sx={{
+                            pt: 1,
+                            pb: 0.25,
+                            display: 'flex',
+                            flexGrow: 1,
+                            alignItems: 'center',
+                        }}
+                    >
                         <IconButton
                             aria-label={intl.formatMessage({
                                 id: 'header.openNavigation.ariaLabel',
                             })}
                             onClick={openNavigation}
+                            sx={{
+                                display: 'inline-flex',
+                                justifyContent: 'left',
+                                flexShrink: 0,
+                            }}
                         >
                             <MenuIcon />
                         </IconButton>
+
+                        <Typography sx={{ width: 136, ml: 2, flexShrink: 0 }}>
+                            Main Menu
+                        </Typography>
                     </Box>
 
                     <UserMenu />
@@ -121,7 +138,21 @@ const Navigation = ({ open, width, onNavigationToggle }: Props) => {
                 <Box sx={{ pl: 1 }}>
                     <HelpMenu />
 
-                    <ModeSwitch />
+                    <Box
+                        sx={{
+                            pt: 0.25,
+                            pb: 1,
+                            display: 'flex',
+                            flexGrow: 1,
+                            alignItems: 'center',
+                        }}
+                    >
+                        <ModeSwitch />
+
+                        <Typography sx={{ width: 136, ml: 2, flexShrink: 0 }}>
+                            Toggle Color Mode
+                        </Typography>
+                    </Box>
                 </Box>
             </Box>
         </MuiDrawer>

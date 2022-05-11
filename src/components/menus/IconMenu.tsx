@@ -1,5 +1,12 @@
 /* eslint-disable react/destructuring-assignment */
-import { Box, IconButton, Menu, PopoverProps, Tooltip } from '@mui/material';
+import {
+    Box,
+    IconButton,
+    Menu,
+    PopoverProps,
+    Tooltip,
+    Typography,
+} from '@mui/material';
 import React, { ReactNode } from 'react';
 
 type Props = {
@@ -39,16 +46,28 @@ const IconMenu = ({
     return (
         <Box sx={{ my: 0.5 }}>
             <Tooltip title={tooltip} placement="right-end">
-                <IconButton
-                    aria-label={ariaLabel}
-                    id={id}
-                    aria-controls={controls}
-                    aria-haspopup="true"
-                    aria-expanded={open ? 'true' : undefined}
-                    onClick={handlers.click}
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexGrow: 1,
+                        alignItems: 'center',
+                    }}
                 >
-                    {icon}
-                </IconButton>
+                    <IconButton
+                        aria-label={ariaLabel}
+                        id={id}
+                        aria-controls={controls}
+                        aria-haspopup="true"
+                        aria-expanded={open ? 'true' : undefined}
+                        onClick={handlers.click}
+                    >
+                        {icon}
+                    </IconButton>
+
+                    <Typography sx={{ width: 136, ml: 2, flexShrink: 0 }}>
+                        {tooltip}
+                    </Typography>
+                </Box>
             </Tooltip>
 
             <Menu
