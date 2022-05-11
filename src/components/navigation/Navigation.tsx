@@ -5,13 +5,21 @@ import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 import InputIcon from '@mui/icons-material/Input';
 import MenuIcon from '@mui/icons-material/Menu';
 import StorageIcon from '@mui/icons-material/Storage';
-import { Box, IconButton, List, Typography, useTheme } from '@mui/material';
+import {
+    Box,
+    IconButton,
+    List,
+    SxProps,
+    Theme,
+    Typography,
+    useTheme,
+} from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
 import { routeDetails } from 'app/Authenticated';
 import UserMenu from 'components/menus/UserMenu';
 import HelpMenu from 'components/menus/HelpMenu';
 import ModeSwitch from 'components/navigation/ModeSwitch';
-import { useIntl } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import ListItemLink from './ListItemLink';
 
 interface Props {
@@ -24,7 +32,9 @@ const Navigation = ({ open, width, onNavigationToggle }: Props) => {
     const intl = useIntl();
 
     const theme = useTheme();
-    const iconColor = theme.palette.text.primary;
+    const listItemIconSx: SxProps<Theme> = {
+        color: theme.palette.text.primary,
+    };
 
     const openNavigation = () => {
         onNavigationToggle(true);
@@ -95,7 +105,7 @@ const Navigation = ({ open, width, onNavigationToggle }: Props) => {
                             <Typography
                                 sx={{ width: 136, ml: 2, flexShrink: 0 }}
                             >
-                                Main Menu
+                                <FormattedMessage id="mainMenu.label" />
                             </Typography>
                         </Box>
 
@@ -108,34 +118,30 @@ const Navigation = ({ open, width, onNavigationToggle }: Props) => {
                         })}
                     >
                         <ListItemLink
-                            icon={<InputIcon sx={{ color: iconColor }} />}
+                            icon={<InputIcon sx={listItemIconSx} />}
                             title={routeDetails.captures.title}
                             link={routeDetails.captures.path}
                         />
                         <ListItemLink
                             icon={
-                                <FormatListNumberedIcon
-                                    sx={{ color: iconColor }}
-                                />
+                                <FormatListNumberedIcon sx={listItemIconSx} />
                             }
                             title={routeDetails.collections.title}
                             link={routeDetails.collections.path}
                         />
                         <ListItemLink
-                            icon={<StorageIcon sx={{ color: iconColor }} />}
+                            icon={<StorageIcon sx={listItemIconSx} />}
                             title={routeDetails.materializations.title}
                             link={routeDetails.materializations.path}
                         />
                         <ListItemLink
-                            icon={<CableIcon sx={{ color: iconColor }} />}
+                            icon={<CableIcon sx={listItemIconSx} />}
                             title={routeDetails.connectors.title}
                             link={routeDetails.connectors.path}
                         />
                         <ListItemLink
                             icon={
-                                <AdminPanelSettingsIcon
-                                    sx={{ color: iconColor }}
-                                />
+                                <AdminPanelSettingsIcon sx={listItemIconSx} />
                             }
                             title={routeDetails.admin.title}
                             link={routeDetails.admin.path}
@@ -158,7 +164,7 @@ const Navigation = ({ open, width, onNavigationToggle }: Props) => {
                         <ModeSwitch />
 
                         <Typography sx={{ width: 136, ml: 2, flexShrink: 0 }}>
-                            Toggle Color Mode
+                            <FormattedMessage id="modeSwitch.label" />
                         </Typography>
                     </Box>
                 </Box>

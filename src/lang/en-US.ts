@@ -100,6 +100,8 @@ const Navigation: ResolvedIntlConfig['messages'] = {
 };
 
 const Header: ResolvedIntlConfig['messages'] = {
+    'mainMenu.label': `Main Menu`,
+
     'helpMenu.ariaLabel': `Open Help Menu`,
     'helpMenu.tooltip': `Helpful Links`,
     'helpMenu.docs': `Flow Docs`,
@@ -115,6 +117,8 @@ const Header: ResolvedIntlConfig['messages'] = {
     'accountMenu.ariaLabel': `Open Account Menu`,
     'accountMenu.tooltip': `Account Menu`,
     'accountMenu.emailVerified': `verified`,
+
+    'modeSwitch.label': `Toggle Color Mode`,
 };
 
 const Home: ResolvedIntlConfig['messages'] = {
