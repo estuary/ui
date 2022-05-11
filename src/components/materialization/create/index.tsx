@@ -112,8 +112,6 @@ function MaterializationCreate() {
         createStoreSelectors.errors
     );
 
-    console.log('>>', [detailErrors, specErrors]);
-
     const setFormState = entityCreateStore(createStoreSelectors.formState.set);
     const resetFormState = entityCreateStore(
         createStoreSelectors.formState.reset
@@ -145,14 +143,6 @@ function MaterializationCreate() {
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setId']
     >((state) => state.setId);
-
-    // TODO (materializations) : get this working again
-    // const editorSpecs = useZustandStore<
-    //     EditorStoreState<DraftSpecQuery>,
-    //     EditorStoreState<DraftSpecQuery>['specs']
-    // >((state) => state.specs);
-
-    // const editorContainsSpecs = editorSpecs && editorSpecs.length > 0;
 
     const helpers = {
         callFailed: (formState: any, subscription?: RealtimeSubscription) => {
@@ -205,33 +195,42 @@ function MaterializationCreate() {
         },
     };
 
-    const createPublicationsSubscription = (): RealtimeSubscription => {
-        const subscription = supabaseClient
-            .from(TABLES.PUBLICATIONS)
-            .on('*', async (payload: any) => {
-                if (payload.new.job_status.type !== 'queued') {
-                    if (payload.new.job_status.type === 'success') {
-                        setFormState({
-                            status: FormStatus.IDLE,
-                            exitWhenLogsClose: true,
-                            saveStatus: intl.formatMessage({
-                                id: 'common.success',
-                            }),
-                        });
+    const waitFor = {
+        base: (query: any, success: Function, failureTitle: string) => {
+            resetFormState(FormStatus.SAVING);
+            const subscription = query
+                .on('*', async (payload: any) => {
+                    if (payload.new.job_status.type !== 'queued') {
+                        if (payload.new.job_status.type === 'success') {
+                            success(payload);
+                        } else {
+                            helpers.jobFailed(failureTitle);
+                        }
 
-                        showNotification(notification);
-                    } else {
-                        helpers.jobFailed(
-                            'materializationCreation.save.failure.errorTitle'
-                        );
+                        await helpers.doneSubscribing(subscription);
                     }
+                })
+                .subscribe();
 
-                    await helpers.doneSubscribing(subscription);
-                }
-            })
-            .subscribe();
+            return subscription;
+        },
+        publications: () => {
+            return waitFor.base(
+                supabaseClient.from(TABLES.PUBLICATIONS),
+                () => {
+                    setFormState({
+                        status: FormStatus.IDLE,
+                        exitWhenLogsClose: true,
+                        saveStatus: intl.formatMessage({
+                            id: 'common.success',
+                        }),
+                    });
 
-        return subscription;
+                    showNotification(notification);
+                },
+                'materializationCreation.save.failure.errorTitle'
+            );
+        },
     };
 
     // Form Event Handlers
@@ -387,9 +386,7 @@ function MaterializationCreate() {
         saveAndPublish: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
-            resetFormState(FormStatus.SAVING);
-
-            const publicationsSubscription = createPublicationsSubscription();
+            const publicationsSubscription = waitFor.publications();
 
             supabaseClient
                 .from(TABLES.PUBLICATIONS)
