@@ -1,13 +1,21 @@
 /* eslint-disable react/destructuring-assignment */
-import { IconButton, Menu, PopoverProps, Tooltip } from '@mui/material';
+import {
+    Box,
+    IconButton,
+    Menu,
+    PopoverProps,
+    Tooltip,
+    Typography,
+} from '@mui/material';
 import React, { ReactNode } from 'react';
 
 type Props = {
     ariaLabel: string;
     icon: ReactNode;
     identifier: string;
-    children: ReactNode;
     tooltip: string;
+    verticalOrigin: 'top' | 'bottom';
+    children: ReactNode;
 };
 
 const IconMenu = ({
@@ -15,46 +23,65 @@ const IconMenu = ({
     tooltip,
     ariaLabel,
     icon,
+    verticalOrigin,
     children,
 }: Props) => {
     const [anchorEl, setAnchorEl] =
         React.useState<PopoverProps['anchorEl']>(null);
+
     const open = Boolean(anchorEl);
-    const handleClick = (
-        event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-    ) => {
-        setAnchorEl(event.currentTarget);
-    };
-    const handleClose = () => {
-        setAnchorEl(null);
+
+    const handlers = {
+        click: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+            setAnchorEl(event.currentTarget);
+        },
+        close: () => {
+            setAnchorEl(null);
+        },
     };
 
     const id = `${identifier}-button`;
     const controls = `${identifier}-menu`;
 
     return (
-        <>
-            <Tooltip title={tooltip}>
-                <IconButton
-                    aria-label={ariaLabel}
-                    id={id}
-                    aria-controls={controls}
-                    aria-haspopup="true"
-                    aria-expanded={open ? 'true' : undefined}
-                    onClick={handleClick}
+        <Box sx={{ my: 0.5 }}>
+            <Tooltip title={tooltip} placement="right-end">
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexGrow: 1,
+                        alignItems: 'center',
+                    }}
                 >
-                    {icon}
-                </IconButton>
+                    <IconButton
+                        aria-label={ariaLabel}
+                        id={id}
+                        aria-controls={controls}
+                        aria-haspopup="true"
+                        aria-expanded={open ? 'true' : undefined}
+                        onClick={handlers.click}
+                    >
+                        {icon}
+                    </IconButton>
+
+                    <Typography sx={{ width: 136, ml: 2, flexShrink: 0 }}>
+                        {tooltip}
+                    </Typography>
+                </Box>
             </Tooltip>
+
             <Menu
                 id={controls}
                 aria-labelledby={id}
                 anchorEl={anchorEl}
                 open={open}
-                onClose={handleClose}
-                onClick={handleClose}
-                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                onClose={handlers.close}
+                onClick={handlers.close}
+                transformOrigin={{
+                    horizontal: 'left',
+                    vertical: verticalOrigin,
+                }}
+                anchorOrigin={{ horizontal: 'right', vertical: verticalOrigin }}
                 PaperProps={{
                     elevation: 0,
                     sx: {
@@ -65,13 +92,14 @@ const IconMenu = ({
                             width: 32,
                         },
                         '&:before': {
-                            bgcolor: 'background.paper',
+                            bgcolor: 'primary.dark',
                             content: '""',
                             display: 'block',
                             height: 10,
                             position: 'absolute',
-                            right: 14,
-                            top: 0,
+                            left: -5,
+                            top: verticalOrigin === 'top' ? '8px' : '',
+                            bottom: verticalOrigin === 'bottom' ? '22px' : '',
                             transform: 'translateY(-50%) rotate(45deg)',
                             width: 10,
                             zIndex: 0,
@@ -79,12 +107,14 @@ const IconMenu = ({
                         'filter': 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
                         'mt': 1.5,
                         'overflow': 'visible',
+                        'bgcolor': 'primary.dark',
+                        'borderRadius': '0px 10px 10px 0px',
                     },
                 }}
             >
                 {children}
             </Menu>
-        </>
+        </Box>
     );
 };
 

@@ -11,6 +11,7 @@ const DEFAULT_SIZE = 25;
 
 function UserAvatar({ avatarUrl, size, userName, userEmail }: Props) {
     const avatarSize = size ?? DEFAULT_SIZE;
+
     return (
         <Avatar
             src={avatarUrl ?? ''}

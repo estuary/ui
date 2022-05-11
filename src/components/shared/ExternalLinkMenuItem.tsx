@@ -16,7 +16,8 @@ function ExternalLinkMenuItem({ children, link }: Props) {
             rel="noopener"
             tabIndex={0}
             sx={{
-                color: '#3c5584',
+                bgcolor: 'none',
+                color: 'text.primary',
                 fontSize: 14,
                 fontWeight: 700,
                 px: 3,

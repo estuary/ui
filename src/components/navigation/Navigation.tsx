@@ -3,23 +3,42 @@ import CableIcon from '@mui/icons-material/Cable';
 import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 //TODO (UI / UX) - These icons are not final
 import InputIcon from '@mui/icons-material/Input';
+import MenuIcon from '@mui/icons-material/Menu';
 import StorageIcon from '@mui/icons-material/Storage';
-import { Box, List, Toolbar, useMediaQuery, useTheme } from '@mui/material';
+import {
+    Box,
+    IconButton,
+    List,
+    SxProps,
+    Theme,
+    Typography,
+    useTheme,
+} from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
 import { routeDetails } from 'app/Authenticated';
-import { useIntl } from 'react-intl';
+import UserMenu from 'components/menus/UserMenu';
+import HelpMenu from 'components/menus/HelpMenu';
+import ModeSwitch from 'components/navigation/ModeSwitch';
+import { FormattedMessage, useIntl } from 'react-intl';
 import ListItemLink from './ListItemLink';
 
 interface Props {
-    onNavigationToggle: Function;
     open: boolean;
     width: number;
+    onNavigationToggle: Function;
 }
 
-const Navigation = ({ onNavigationToggle, open, width }: Props) => {
+const Navigation = ({ open, width, onNavigationToggle }: Props) => {
     const intl = useIntl();
+
     const theme = useTheme();
-    const isBelowMd = useMediaQuery(theme.breakpoints.down('md'));
+    const listItemIconSx: SxProps<Theme> = {
+        color: theme.palette.text.primary,
+    };
+
+    const openNavigation = () => {
+        onNavigationToggle(true);
+    };
 
     const closeNavigation = () => {
         onNavigationToggle(false);
@@ -27,6 +46,11 @@ const Navigation = ({ onNavigationToggle, open, width }: Props) => {
 
     return (
         <MuiDrawer
+            anchor="left"
+            open={open}
+            variant="permanent"
+            ModalProps={{ keepMounted: true }}
+            onClose={closeNavigation}
             sx={{
                 '& .MuiDrawer-paper': {
                     boxSizing: 'border-box',
@@ -43,52 +67,107 @@ const Navigation = ({ onNavigationToggle, open, width }: Props) => {
                     `${drawerTheme.transitions.duration.shortest}ms`,
                 width,
             }}
-            anchor="left"
-            open={open}
-            onClose={closeNavigation}
-            onClick={isBelowMd ? closeNavigation : undefined}
-            variant={isBelowMd ? 'temporary' : 'permanent'}
-            ModalProps={{
-                keepMounted: true,
-            }}
         >
-            <Toolbar />
-            <Box sx={{ overflowX: 'hidden' }}>
-                <List
-                    aria-label={intl.formatMessage({
-                        id: 'navigation.ariaLabel',
-                    })}
-                >
-                    <ListItemLink
-                        icon={<InputIcon sx={{ color: '#F6FAFF' }} />}
-                        title={routeDetails.captures.title}
-                        link={routeDetails.captures.path}
-                    />
-                    <ListItemLink
-                        icon={
-                            <FormatListNumberedIcon sx={{ color: '#F6FAFF' }} />
-                        }
-                        title={routeDetails.collections.title}
-                        link={routeDetails.collections.path}
-                    />
-                    <ListItemLink
-                        icon={<StorageIcon sx={{ color: '#F6FAFF' }} />}
-                        title={routeDetails.materializations.title}
-                        link={routeDetails.materializations.path}
-                    />
-                    <ListItemLink
-                        icon={<CableIcon sx={{ color: '#F6FAFF' }} />}
-                        title={routeDetails.connectors.title}
-                        link={routeDetails.connectors.path}
-                    />
-                    <ListItemLink
-                        icon={
-                            <AdminPanelSettingsIcon sx={{ color: '#F6FAFF' }} />
-                        }
-                        title={routeDetails.admin.title}
-                        link={routeDetails.admin.path}
-                    />
-                </List>
+            <Box
+                sx={{
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    overflowX: 'hidden',
+                }}
+            >
+                <Box>
+                    <Box sx={{ mb: 16, pl: 1 }}>
+                        <Box
+                            sx={{
+                                pt: 1,
+                                pb: 0.25,
+                                display: 'flex',
+                                flexGrow: 1,
+                                alignItems: 'center',
+                            }}
+                        >
+                            <IconButton
+                                aria-label={intl.formatMessage({
+                                    id: 'header.openNavigation.ariaLabel',
+                                })}
+                                onClick={openNavigation}
+                                sx={{
+                                    display: 'inline-flex',
+                                    justifyContent: 'left',
+                                    flexShrink: 0,
+                                }}
+                            >
+                                <MenuIcon />
+                            </IconButton>
+
+                            <Typography
+                                sx={{ width: 136, ml: 2, flexShrink: 0 }}
+                            >
+                                <FormattedMessage id="mainMenu.label" />
+                            </Typography>
+                        </Box>
+
+                        <UserMenu />
+                    </Box>
+
+                    <List
+                        aria-label={intl.formatMessage({
+                            id: 'navigation.ariaLabel',
+                        })}
+                    >
+                        <ListItemLink
+                            icon={<InputIcon sx={listItemIconSx} />}
+                            title={routeDetails.captures.title}
+                            link={routeDetails.captures.path}
+                        />
+                        <ListItemLink
+                            icon={
+                                <FormatListNumberedIcon sx={listItemIconSx} />
+                            }
+                            title={routeDetails.collections.title}
+                            link={routeDetails.collections.path}
+                        />
+                        <ListItemLink
+                            icon={<StorageIcon sx={listItemIconSx} />}
+                            title={routeDetails.materializations.title}
+                            link={routeDetails.materializations.path}
+                        />
+                        <ListItemLink
+                            icon={<CableIcon sx={listItemIconSx} />}
+                            title={routeDetails.connectors.title}
+                            link={routeDetails.connectors.path}
+                        />
+                        <ListItemLink
+                            icon={
+                                <AdminPanelSettingsIcon sx={listItemIconSx} />
+                            }
+                            title={routeDetails.admin.title}
+                            link={routeDetails.admin.path}
+                        />
+                    </List>
+                </Box>
+
+                <Box sx={{ pl: 1 }}>
+                    <HelpMenu />
+
+                    <Box
+                        sx={{
+                            pt: 0.25,
+                            pb: 1,
+                            display: 'flex',
+                            flexGrow: 1,
+                            alignItems: 'center',
+                        }}
+                    >
+                        <ModeSwitch />
+
+                        <Typography sx={{ width: 136, ml: 2, flexShrink: 0 }}>
+                            <FormattedMessage id="modeSwitch.label" />
+                        </Typography>
+                    </Box>
+                </Box>
             </Box>
         </MuiDrawer>
     );

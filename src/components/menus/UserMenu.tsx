@@ -16,8 +16,8 @@ import IconMenu from './IconMenu';
 const UserMenu = () => {
     const intl = useIntl();
     const supabaseClient = useClient();
-    const { user } = Auth.useUser();
 
+    const { user } = Auth.useUser();
     const { userName, email, emailVerified, avatar } = getUserDetails(user);
 
     const handlers = {
@@ -39,6 +39,7 @@ const UserMenu = () => {
                 }
                 identifier="account-menu"
                 tooltip={intl.formatMessage({ id: 'accountMenu.tooltip' })}
+                verticalOrigin="top"
             >
                 <MenuItem>
                     <ListItemIcon>

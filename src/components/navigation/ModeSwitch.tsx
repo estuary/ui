@@ -1,6 +1,6 @@
 import ModeNightIcon from '@mui/icons-material/ModeNight';
 import WbSunnyIcon from '@mui/icons-material/WbSunny';
-import { Box, IconButton, useTheme } from '@mui/material';
+import { IconButton, Tooltip, useTheme } from '@mui/material';
 import { useColorMode } from 'context/Theme';
 
 // TODO: Enable color mode toggling once light mode colors are refined.
@@ -9,11 +9,11 @@ function ModeSwitch() {
     const colorMode = useColorMode();
 
     return (
-        <Box>
+        <Tooltip title="Toggle Color Mode" placement="right-end">
             <IconButton
-                onClick={colorMode.toggleColorMode}
                 color="inherit"
                 disabled
+                onClick={colorMode.toggleColorMode}
             >
                 {theme.palette.mode === 'dark' ? (
                     <ModeNightIcon />
@@ -21,7 +21,7 @@ function ModeSwitch() {
                     <WbSunnyIcon />
                 )}
             </IconButton>
-        </Box>
+        </Tooltip>
     );
 }
 
