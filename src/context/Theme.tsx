@@ -1,6 +1,8 @@
 import {
     createTheme,
     PaletteOptions,
+    SxProps,
+    Theme,
     ThemeOptions,
     ThemeProvider as MUIThemeProvider,
 } from '@mui/material';
@@ -115,6 +117,16 @@ export const zIndexIncrement = 5;
 const buttonHoverIndex = zIndexIncrement;
 const chipDeleteIndex = buttonHoverIndex + zIndexIncrement;
 
+// Styles
+export const tableBorderSx: SxProps<Theme> = {
+    borderBottom: `1px solid ${slate[200]}`,
+};
+
+export const outlineSx: SxProps<Theme> = {
+    border: `1px solid ${slate[200]}`,
+};
+
+// Theme
 const themeSettings = createTheme({
     breakpoints: {
         values: {
@@ -163,6 +175,11 @@ const themeSettings = createTheme({
                 sx: {
                     borderRadius: 5,
                 },
+            },
+        },
+        MuiTableCell: {
+            defaultProps: {
+                sx: tableBorderSx,
             },
         },
         MuiTabs: {

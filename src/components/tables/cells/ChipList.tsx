@@ -1,4 +1,5 @@
 import { Box, Chip, styled, TableCell, Tooltip } from '@mui/material';
+import { outlineSx, tableBorderSx } from 'context/Theme';
 
 interface Props {
     strings: string[];
@@ -12,6 +13,7 @@ const chipListHoverStyling = {
 };
 
 export const chipListWrapperStyling = {
+    ...tableBorderSx,
     minWidth: 100,
     maxHeight: 100,
     overflow: 'auto',
@@ -41,6 +43,7 @@ function ChipList({ strings }: Props) {
                                     size="small"
                                     variant="outlined"
                                     sx={{
+                                        ...outlineSx,
                                         'maxWidth': 200,
                                         'whiteSpace': 'nowrap',
                                         'overflow': 'hidden',
