@@ -10,7 +10,6 @@ import useCreationStore, {
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
-import { CONFIG_EDITOR_ID } from 'components/shared/Entity/EndpointConfigForm';
 import EntityError from 'components/shared/Entity/Error';
 import FooHeader from 'components/shared/Entity/Header';
 import LogDialog from 'components/shared/Entity/LogDialog';
@@ -153,8 +152,6 @@ function MaterializationCreate() {
 
     // const editorContainsSpecs = editorSpecs && editorSpecs.length > 0;
 
-    const configEditor = document.getElementById(CONFIG_EDITOR_ID);
-
     const helpers = {
         callFailed: (formState: any, subscription?: RealtimeSubscription) => {
             const setFailureState = () => {
@@ -265,7 +262,7 @@ function MaterializationCreate() {
         },
 
         // TODO: Add preview-specific content to language file and replace the test-specific content in this function.
-        preview: (event: MouseEvent<HTMLElement>) => {
+        test: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
             let detailHasErrors = false;
@@ -331,10 +328,6 @@ function MaterializationCreate() {
                                 draftsResponse.data.length > 0
                             ) {
                                 setDraftId(draftsResponse.data[0].id);
-
-                                configEditor?.scrollIntoView({
-                                    behavior: 'smooth',
-                                });
 
                                 supabaseClient
                                     .from(TABLES.DRAFT_SPECS)
@@ -470,7 +463,7 @@ function MaterializationCreate() {
 
             <FooHeader
                 close={handlers.cancel}
-                test={handlers.preview}
+                test={handlers.test}
                 testDisabled={
                     formStateStatus !== FormStatus.IDLE || !hasConnectors
                 }
