@@ -59,6 +59,7 @@ export const routeDetails = {
             },
             params: {
                 connectorID: 'connectorID',
+                draftID: 'draftID',
             },
         },
     },

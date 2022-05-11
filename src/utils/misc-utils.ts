@@ -31,3 +31,7 @@ export const getDeploymentStatusHexCode = (
             return '#F7F7F7';
     }
 };
+
+export const getPathWithParam = (path: string, param: any, val: any) => {
+    return `${path}?${param}=${val}`;
+};

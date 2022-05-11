@@ -2,6 +2,9 @@ import { Button, Collapse } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { routeDetails } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
+import useCreationStore, {
+    creationSelectors,
+} from 'components/materialization/Store';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
@@ -55,6 +58,10 @@ function CaptureCreate() {
     const intl = useIntl();
     const navigate = useNavigate();
     const confirmationModalContext = useConfirmationModalContext();
+
+    const prefillCollections = useCreationStore(
+        creationSelectors.prefillCollections
+    );
 
     // Supabase stuff
     const supabaseClient = useClient();
@@ -258,6 +265,13 @@ function CaptureCreate() {
             }
         },
 
+        materializeCollections: () => {
+            // const collections = row.writes_to;
+            prefillCollections([]);
+
+            navigate(routeDetails.materializations.create.fullPath);
+        },
+
         saveAndPublish: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
@@ -413,6 +427,12 @@ function CaptureCreate() {
                 actionComponent={
                     <>
                         {formStateSaveStatus}
+                        <Button
+                            disabled={formStateStatus !== FormStatus.IDLE}
+                            onClick={handlers.materializeCollections}
+                        >
+                            <FormattedMessage id="captureCreation.ctas.materialize" />
+                        </Button>
                         <Button
                             disabled={formStateStatus !== FormStatus.IDLE}
                             onClick={handlers.closeLogs}

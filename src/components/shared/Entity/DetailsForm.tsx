@@ -44,12 +44,8 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
         if (connectorID) {
             setDetails({
                 data: {
-                    prefix: {
-                        const: '',
-                        title: '',
-                    },
-                    name: '',
-                    image: {
+                    entityName: '',
+                    connectorImage: {
                         id: connectorID,
                         iconPath: '',
                     },

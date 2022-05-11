@@ -261,7 +261,6 @@ function MaterializationCreate() {
             }
         },
 
-        // TODO: Add preview-specific content to language file and replace the test-specific content in this function.
         test: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
 

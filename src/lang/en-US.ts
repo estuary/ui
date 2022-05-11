@@ -307,6 +307,7 @@ const MonacoEditor: ResolvedIntlConfig['messages'] = {
 const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreation.heading': `${RouteTitles['routeTitle.captureCreate']}`,
     'captureCreation.details.heading': `Capture Details`,
+    'captureCreation.ctas.materialize': `Materialize Collections`,
     'captureCreation.instructions': `To get started please provide a unique name and the source type of the Capture you want to create. Once you've filled out the source details you can click "Test Capture" down below to test the connection.`,
     'captureCreation.missingConnectors': `No connectors installed. You must install a source connector before being able to create a capture.`,
     'captureCreation.noAccessGrants': `You do not have the necessary ${CommonMessages['terms.permissions']} to create a Capture. Please contact an administrator.`,
