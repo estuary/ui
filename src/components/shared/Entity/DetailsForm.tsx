@@ -103,16 +103,16 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
                     description: intl.formatMessage({
                         id: 'entityName.description',
                     }),
-                    // TODO (prefix) Make prefix a part of the name field
+
                     // This pattern needs to match https://github.com/estuary/animated-carnival/blob/main/supabase/migrations/03_catalog-types.sql
-                    // Right now with prefix broken out it means the first part is a bit different
+                    //     as close as possible. We just alter it to handle that we know the list of allowed prefix values
+                    //     this means that it handles the first portion of the name.
                     // `^([a-zA-Z0-9-_.]+/)+[a-zA-Z0-9-_.]+$`
-                    //${accessGrantsOneOf.join('|')}
                     examples: accessGrantsOneOf,
                     type: 'string',
-                    pattern: `^${accessGrantsOneOf.join(
+                    pattern: `^(${accessGrantsOneOf.join(
                         '|'
-                    )}([a-zA-Z0-9-_./])+[^/]$`,
+                    )})([a-zA-Z0-9-_.]+/)*[a-zA-Z0-9-_.]+$`,
                 },
                 description: {
                     description: intl.formatMessage({
