@@ -37,11 +37,11 @@ import { WithOptionLabel } from '@jsonforms/material-renderers/lib/mui-controls/
 import { withJsonFormsOneOfEnumProps } from '@jsonforms/react';
 import { ConnectorAutoComplete } from 'forms/renderers/ConnectorSelect/AutoComplete';
 
-const SCOPE = 'image';
+export const CONNECTOR_IMAGE_SCOPE = 'connectorImage';
 
 export const connectorTypeTester: RankedTester = rankWith(
     10,
-    and(isOneOfEnumControl, scopeEndsWith(SCOPE))
+    and(isOneOfEnumControl, scopeEndsWith(CONNECTOR_IMAGE_SCOPE))
 );
 
 // This is blank on purpose. For right now we can just show null settings are nothing

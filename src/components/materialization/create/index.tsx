@@ -285,8 +285,10 @@ function MaterializationCreate() {
                 setFormState({ displayValidation: true });
             } else if (isEmpty(resourceConfig)) {
                 // TODO: Handle the scenario where no collections are present.
+                setFormState({ displayValidation: true });
             } else if (!connectorInfo) {
                 // TODO: Handle the highly unlikely scenario where the connector tag id could not be found.
+                setFormState({ displayValidation: true });
             } else {
                 setFormState({
                     status: FormStatus.GENERATING_PREVIEW,
@@ -384,67 +386,6 @@ function MaterializationCreate() {
                                     title: 'materializationCreation.test.serverUnreachable',
                                 },
                             });
-                        }
-                    );
-            }
-        },
-
-        test: (event: MouseEvent<HTMLElement>) => {
-            event.preventDefault();
-            let detailHasErrors = false;
-            let specHasErrors = false;
-
-            // TODO (linting) - this was to make TS/Linting happy
-            detailHasErrors = detailErrors ? detailErrors.length > 0 : false;
-            specHasErrors = specErrors ? specErrors.length > 0 : false;
-
-            if (detailHasErrors || specHasErrors) {
-                setFormState({
-                    displayValidation: true,
-                });
-            } else {
-                resetFormState(FormStatus.TESTING);
-                const publicationsSubscription =
-                    createPublicationsSubscription();
-
-                supabaseClient
-                    .from(TABLES.PUBLICATIONS)
-                    .insert([
-                        {
-                            draft_id: draftId,
-                            dry_run: true,
-                        },
-                    ])
-                    .then(
-                        async (response) => {
-                            if (response.data) {
-                                if (response.data.length > 0) {
-                                    setFormState({
-                                        logToken: response.data[0].logs_token,
-                                        showLogs: true,
-                                    });
-                                }
-                            } else {
-                                helpers.callFailed(
-                                    {
-                                        error: {
-                                            title: 'materializationCreation.test.failure.errorTitle',
-                                            error: response.error,
-                                        },
-                                    },
-                                    publicationsSubscription
-                                );
-                            }
-                        },
-                        () => {
-                            helpers.callFailed(
-                                {
-                                    error: {
-                                        title: 'materializationCreation.test.serverUnreachable',
-                                    },
-                                },
-                                publicationsSubscription
-                            );
                         }
                     );
             }
