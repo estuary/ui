@@ -1,14 +1,30 @@
-import { Card, CardContent, Grid, Typography } from '@mui/material';
+import {
+    Alert,
+    Card,
+    CardContent,
+    Grid,
+    Snackbar,
+    Typography,
+} from '@mui/material';
 import { Auth } from '@supabase/ui';
+import { logoutRoutes } from 'app/Unauthenticated';
 import Topbar from 'components/header/Topbar';
 import { useClient } from 'hooks/supabase-swr';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { FormattedMessage } from 'react-intl';
+import { useSearchParams } from 'react-router-dom';
 import useConstant from 'use-constant';
 import { getLoginSettings } from 'utils/env-utils';
 
+export enum LogoutReasons {
+    JWT = 'jwt_expired',
+}
+
 const Login = () => {
     useBrowserTitle('browserTitle.login');
+
+    const [searchParams] = useSearchParams();
+    const reason = searchParams.get(logoutRoutes.params.reason);
 
     const redirectTo = useConstant(
         () => `${window.location.origin}` // `${window.location.origin}${routeDetails.registration.path}`
@@ -27,6 +43,18 @@ const Login = () => {
                 justifyContent: 'center',
             }}
         >
+            <Snackbar
+                open={reason === LogoutReasons.JWT}
+                anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center',
+                }}
+                autoHideDuration={10000}
+            >
+                <Alert severity="error">
+                    Your JWT Token expired. Please login again.
+                </Alert>
+            </Snackbar>
             <Topbar isNavigationOpen={false} />
             <Grid item xs={3}>
                 <Card elevation={24} sx={{ maxWidth: 400, minHeight: 300 }}>
