@@ -289,6 +289,7 @@ const Foo: ResolvedIntlConfig['messages'] = {
     'foo.ctas.docs': `Connector Docs`,
     'foo.catalogEditor.heading': `Catalog Editor`,
     'foo.endpointConfig.heading': `Connection Configuration`,
+    'foo.endpointConfig.errorSummary': `Form(s) have issues and cannt be submitted.`,
 };
 
 const MonacoEditor: ResolvedIntlConfig['messages'] = {

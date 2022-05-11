@@ -7,6 +7,7 @@ import {
     Typography,
 } from '@mui/material';
 import { EditorStoreState } from 'components/editor/Store';
+import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
@@ -89,6 +90,7 @@ function FooHeader({
             <Collapse in={formStateStatus !== FormStatus.IDLE} unmountOnExit>
                 <LinearProgress />
             </Collapse>
+            <ValidationErrorSummary />
         </>
     );
 }
