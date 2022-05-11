@@ -73,6 +73,7 @@ const lightMode: PaletteOptions = {
     mode: 'light',
     primary: {
         main: teal[300],
+        dark: teal[500],
     },
     secondary: {
         main: slate[50],
@@ -98,6 +99,7 @@ const darkMode: PaletteOptions = {
     mode: 'dark',
     primary: {
         main: teal[300],
+        dark: slate[600],
     },
     secondary: {
         main: teal[100],

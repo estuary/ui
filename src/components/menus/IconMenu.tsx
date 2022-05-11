@@ -6,8 +6,9 @@ type Props = {
     ariaLabel: string;
     icon: ReactNode;
     identifier: string;
-    children: ReactNode;
     tooltip: string;
+    verticalOrigin: 'top' | 'bottom';
+    children: ReactNode;
 };
 
 const IconMenu = ({
@@ -15,6 +16,7 @@ const IconMenu = ({
     tooltip,
     ariaLabel,
     icon,
+    verticalOrigin,
     children,
 }: Props) => {
     const [anchorEl, setAnchorEl] =
@@ -56,8 +58,11 @@ const IconMenu = ({
                 open={open}
                 onClose={handlers.close}
                 onClick={handlers.close}
-                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                transformOrigin={{
+                    horizontal: 'left',
+                    vertical: verticalOrigin,
+                }}
+                anchorOrigin={{ horizontal: 'right', vertical: verticalOrigin }}
                 PaperProps={{
                     elevation: 0,
                     sx: {
@@ -68,13 +73,14 @@ const IconMenu = ({
                             width: 32,
                         },
                         '&:before': {
-                            bgcolor: 'background.paper',
+                            bgcolor: 'primary.dark',
                             content: '""',
                             display: 'block',
                             height: 10,
                             position: 'absolute',
-                            right: 14,
-                            top: 0,
+                            left: -5,
+                            top: verticalOrigin === 'top' ? '8px' : '',
+                            bottom: verticalOrigin === 'bottom' ? '22px' : '',
                             transform: 'translateY(-50%) rotate(45deg)',
                             width: 10,
                             zIndex: 0,
@@ -82,6 +88,8 @@ const IconMenu = ({
                         'filter': 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
                         'mt': 1.5,
                         'overflow': 'visible',
+                        'bgcolor': 'primary.dark',
+                        'borderRadius': '0px 10px 10px 0px',
                     },
                 }}
             >
