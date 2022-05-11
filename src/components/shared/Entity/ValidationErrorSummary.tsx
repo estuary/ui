@@ -1,14 +1,16 @@
 import { Alert, AlertTitle, Collapse } from '@mui/material';
-import { KeyValue } from 'components/shared/KeyValueList';
+import KeyValueList, { KeyValue } from 'components/shared/KeyValueList';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { map, uniq } from 'lodash';
-import { FormattedMessage } from 'react-intl';
+import { map } from 'lodash';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { createStoreSelectors } from 'stores/Create';
 import { getStore } from 'stores/Repo';
 
 // TODO : Delete this or make is useful. Right now JSON Forms is kinda hard to write custom validation
 // just so that we don't have to display validation errors right away.
 function ValidationErrorSummary() {
+    const intl = useIntl();
+
     const entityCreateStore = getStore(useRouteStore());
     const [detailErrors, specErrors] = entityCreateStore(
         createStoreSelectors.errors
@@ -19,14 +21,27 @@ function ValidationErrorSummary() {
 
     const filteredDetailErrors = map(detailErrors, 'instancePath');
     const filteredSpecErrors = map(specErrors, 'instancePath');
-    const filteredErrors = uniq(
-        map(filteredDetailErrors.concat(filteredSpecErrors), 'instancePath')
-    );
+    // const filteredErrors = uniq(
+    //     map(filteredDetailErrors.concat(filteredSpecErrors), 'instancePath')
+    // );
 
-    const filteredErrorsList: KeyValue[] = filteredErrors.map((formError) => ({
-        title: formError,
-        val: formError,
-    }));
+    const filteredErrorsList: KeyValue[] = [];
+
+    if (filteredDetailErrors.length > 0) {
+        filteredErrorsList.push({
+            title: intl.formatMessage({
+                id: 'foo.endpointConfig.detailsHaveErrors',
+            }),
+        });
+    }
+
+    if (filteredSpecErrors.length > 0) {
+        filteredErrorsList.push({
+            title: intl.formatMessage({
+                id: 'foo.endpointConfig.endpointConfigHaveErrors',
+            }),
+        });
+    }
 
     return (
         <Collapse
@@ -37,7 +52,7 @@ function ValidationErrorSummary() {
                 <AlertTitle>
                     <FormattedMessage id="foo.endpointConfig.errorSummary" />
                 </AlertTitle>
-                {/* <KeyValueList data={filteredErrorsList} /> */}
+                <KeyValueList data={filteredErrorsList} />
             </Alert>
         </Collapse>
     );
