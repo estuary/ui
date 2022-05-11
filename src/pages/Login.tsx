@@ -7,7 +7,7 @@ import { FormattedMessage } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
 import useConstant from 'use-constant';
 import { getLoginSettings } from 'utils/env-utils';
-import lightLogo from '../images/full-light/estuary-logo-light.png';
+import lightLogo from '../images/light-horizontal/estuary-logo-light.png';
 
 export enum LogoutReasons {
     JWT = 'jwt_expired',
