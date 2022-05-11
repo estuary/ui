@@ -67,73 +67,81 @@ const Navigation = ({ open, width, onNavigationToggle }: Props) => {
                     overflowX: 'hidden',
                 }}
             >
-                <Box sx={{ pl: 1 }}>
-                    <Box
-                        sx={{
-                            pt: 1,
-                            pb: 0.25,
-                            display: 'flex',
-                            flexGrow: 1,
-                            alignItems: 'center',
-                        }}
-                    >
-                        <IconButton
-                            aria-label={intl.formatMessage({
-                                id: 'header.openNavigation.ariaLabel',
-                            })}
-                            onClick={openNavigation}
+                <Box>
+                    <Box sx={{ mb: 16, pl: 1 }}>
+                        <Box
                             sx={{
-                                display: 'inline-flex',
-                                justifyContent: 'left',
-                                flexShrink: 0,
+                                pt: 1,
+                                pb: 0.25,
+                                display: 'flex',
+                                flexGrow: 1,
+                                alignItems: 'center',
                             }}
                         >
-                            <MenuIcon />
-                        </IconButton>
+                            <IconButton
+                                aria-label={intl.formatMessage({
+                                    id: 'header.openNavigation.ariaLabel',
+                                })}
+                                onClick={openNavigation}
+                                sx={{
+                                    display: 'inline-flex',
+                                    justifyContent: 'left',
+                                    flexShrink: 0,
+                                }}
+                            >
+                                <MenuIcon />
+                            </IconButton>
 
-                        <Typography sx={{ width: 136, ml: 2, flexShrink: 0 }}>
-                            Main Menu
-                        </Typography>
+                            <Typography
+                                sx={{ width: 136, ml: 2, flexShrink: 0 }}
+                            >
+                                Main Menu
+                            </Typography>
+                        </Box>
+
+                        <UserMenu />
                     </Box>
 
-                    <UserMenu />
+                    <List
+                        aria-label={intl.formatMessage({
+                            id: 'navigation.ariaLabel',
+                        })}
+                    >
+                        <ListItemLink
+                            icon={<InputIcon sx={{ color: iconColor }} />}
+                            title={routeDetails.captures.title}
+                            link={routeDetails.captures.path}
+                        />
+                        <ListItemLink
+                            icon={
+                                <FormatListNumberedIcon
+                                    sx={{ color: iconColor }}
+                                />
+                            }
+                            title={routeDetails.collections.title}
+                            link={routeDetails.collections.path}
+                        />
+                        <ListItemLink
+                            icon={<StorageIcon sx={{ color: iconColor }} />}
+                            title={routeDetails.materializations.title}
+                            link={routeDetails.materializations.path}
+                        />
+                        <ListItemLink
+                            icon={<CableIcon sx={{ color: iconColor }} />}
+                            title={routeDetails.connectors.title}
+                            link={routeDetails.connectors.path}
+                        />
+                        <ListItemLink
+                            icon={
+                                <AdminPanelSettingsIcon
+                                    sx={{ color: iconColor }}
+                                />
+                            }
+                            title={routeDetails.admin.title}
+                            link={routeDetails.admin.path}
+                        />
+                    </List>
                 </Box>
-
-                <List
-                    aria-label={intl.formatMessage({
-                        id: 'navigation.ariaLabel',
-                    })}
-                >
-                    <ListItemLink
-                        icon={<InputIcon sx={{ color: iconColor }} />}
-                        title={routeDetails.captures.title}
-                        link={routeDetails.captures.path}
-                    />
-                    <ListItemLink
-                        icon={
-                            <FormatListNumberedIcon sx={{ color: iconColor }} />
-                        }
-                        title={routeDetails.collections.title}
-                        link={routeDetails.collections.path}
-                    />
-                    <ListItemLink
-                        icon={<StorageIcon sx={{ color: iconColor }} />}
-                        title={routeDetails.materializations.title}
-                        link={routeDetails.materializations.path}
-                    />
-                    <ListItemLink
-                        icon={<CableIcon sx={{ color: iconColor }} />}
-                        title={routeDetails.connectors.title}
-                        link={routeDetails.connectors.path}
-                    />
-                    <ListItemLink
-                        icon={
-                            <AdminPanelSettingsIcon sx={{ color: iconColor }} />
-                        }
-                        title={routeDetails.admin.title}
-                        link={routeDetails.admin.path}
-                    />
-                </List>
 
                 <Box sx={{ pl: 1 }}>
                     <HelpMenu />
