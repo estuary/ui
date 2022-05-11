@@ -112,6 +112,8 @@ function MaterializationCreate() {
         createStoreSelectors.errors
     );
 
+    console.log('>>', [detailErrors, specErrors]);
+
     const setFormState = entityCreateStore(createStoreSelectors.formState.set);
     const resetFormState = entityCreateStore(
         createStoreSelectors.formState.reset
