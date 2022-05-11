@@ -29,7 +29,7 @@ function AppLayout() {
                 />
             </Box>
 
-            <Box>
+            <Box sx={{ ml: `${navWidth}px` }}>
                 <Outlet />
             </Box>
         </Box>
