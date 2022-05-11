@@ -5,6 +5,7 @@ import EntityName from 'components/tables/cells/EntityName';
 import ExpandDetails from 'components/tables/cells/ExpandDetails';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import UserName from 'components/tables/cells/UserName';
+import { tableBorderSx } from 'context/Theme';
 
 interface Props {
     data: LiveSpecsExtQuery[];
@@ -40,7 +41,7 @@ function Rows({ data }: Props) {
                 <TableRow key={`Entity-${row.id}`}>
                     <EntityName name={row.catalog_name} />
 
-                    <TableCell sx={{ minWidth: 100 }}>
+                    <TableCell sx={{ minWidth: 100, ...tableBorderSx }}>
                         {row.spec_type}
                     </TableCell>
 

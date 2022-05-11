@@ -9,12 +9,10 @@ interface Props {
 function MaterializeAction({ onClick, disabled }: Props) {
     return (
         <Button
-            variant="contained"
             size="small"
-            disableElevation
-            sx={{ mr: 1 }}
             disabled={disabled}
             onClick={onClick}
+            sx={{ mr: 1, borderRadius: 5 }}
         >
             <FormattedMessage id="capturesTable.cta.materialize" />
         </Button>
