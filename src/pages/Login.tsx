@@ -1,6 +1,7 @@
 import { Alert, Box, Paper, Snackbar, Typography } from '@mui/material';
 import { Auth } from '@supabase/ui';
 import { logoutRoutes } from 'app/Unauthenticated';
+import { slate } from 'context/Theme';
 import { useClient } from 'hooks/supabase-swr';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { FormattedMessage } from 'react-intl';
@@ -73,7 +74,7 @@ const Login = () => {
                             px: 2,
                             pt: 2,
                             pb: 3,
-                            backgroundColor: '#2E5676',
+                            backgroundColor: slate[500],
                             borderRadius: '10px 10px 0px 0px',
                         }}
                     >
