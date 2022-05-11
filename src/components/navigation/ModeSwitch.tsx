@@ -10,7 +10,11 @@ function ModeSwitch() {
 
     return (
         <Tooltip title="Toggle Color Mode" placement="right-end">
-            <IconButton onClick={colorMode.toggleColorMode} color="inherit">
+            <IconButton
+                color="inherit"
+                disabled
+                onClick={colorMode.toggleColorMode}
+            >
                 {theme.palette.mode === 'dark' ? (
                     <ModeNightIcon />
                 ) : (
