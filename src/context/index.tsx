@@ -11,17 +11,17 @@ const AppProviders = ({ children }: BaseComponentProps) => {
     return (
         <ContentProvider>
             <ClientProvider>
-                <SwrConfigProvider>
-                    <UserProvider>
-                        <ThemeProvider>
-                            <AppRouter>
+                <AppRouter>
+                    <SwrConfigProvider>
+                        <UserProvider>
+                            <ThemeProvider>
                                 <ConfirmationModalContextProvider>
                                     {children}
                                 </ConfirmationModalContextProvider>
-                            </AppRouter>
-                        </ThemeProvider>
-                    </UserProvider>
-                </SwrConfigProvider>
+                            </ThemeProvider>
+                        </UserProvider>
+                    </SwrConfigProvider>
+                </AppRouter>
             </ClientProvider>
         </ContentProvider>
     );
