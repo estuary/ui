@@ -27,14 +27,12 @@ import {
     Autocomplete,
     AutocompleteRenderOptionState,
     FilterOptionsState,
+    TextField,
 } from '@mui/material';
-import ConnectorInput from 'forms/renderers/ConnectorSelect/Input';
-import ConnectorOption from 'forms/renderers/ConnectorSelect/Option';
-import merge from 'lodash/merge';
 import React, { ReactNode } from 'react';
 
 export interface WithOptionLabel {
-    getOptionLabel?(option: EnumOption): string;
+    getOptionLabel?(option: any): string;
     renderOption?(
         props: React.HTMLAttributes<HTMLLIElement>,
         option: EnumOption,
@@ -46,51 +44,45 @@ export interface WithOptionLabel {
     ): EnumOption[];
 }
 
-const areOptionsEqual = (option?: any, value?: any) => {
-    return value?.id && value.id.length > 0 && option.id === value.id;
-};
-
-export const ConnectorAutoComplete = (
+export const CatalogNameAutoComplete = (
     props: EnumCellProps & WithClassname & WithOptionLabel
 ) => {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     const {
-        data,
+        // data,
         className,
         id,
         enabled,
-        uischema,
+        // uischema,
         path,
         handleChange,
         options,
-        config,
-        getOptionLabel,
+        // config,
+        // getOptionLabel,
         filterOptions,
     } = props;
 
-    const appliedUiSchemaOptions = merge({}, config, uischema.options);
+    // const appliedUiSchemaOptions = merge({}, config, uischema.options);
     const [inputValue, setInputValue] = React.useState('');
-    const currentOption =
-        options?.find((option) => {
-            return areOptionsEqual(option.value, data);
-        }) ?? null;
 
     return (
         <Autocomplete
             options={options ?? []}
-            getOptionLabel={getOptionLabel ?? ((option) => option.label)}
+            // getOptionLabel={getOptionLabel ?? ((option) => option)}
             className={className}
             id={id}
+            freeSolo
+            disableClearable
             disabled={!enabled}
-            value={currentOption}
             inputValue={inputValue}
-            onChange={(_event: any, newValue: EnumOption | null) => {
-                handleChange(path, newValue?.value);
+            onChange={(_event: any, newValue: string | EnumOption) => {
+                handleChange(path, newValue);
             }}
             onInputChange={(_event, newInputValue) => {
                 setInputValue(newInputValue);
             }}
             autoHighlight
+            autoSelect
             autoComplete
             clearOnBlur
             fullWidth
@@ -98,25 +90,18 @@ export const ConnectorAutoComplete = (
                 marginTop: 2,
             }}
             filterOptions={filterOptions}
-            renderInput={({ inputProps, InputProps }) => {
-                return (
-                    <ConnectorInput
-                        inputProps={inputProps}
-                        InputProps={InputProps}
-                        appliedUiSchemaOptions={appliedUiSchemaOptions}
-                        enabled={enabled}
-                        currentOption={currentOption}
-                    />
-                );
-            }}
-            renderOption={(renderOptionProps, option) => {
-                return (
-                    <ConnectorOption
-                        renderOptionProps={renderOptionProps}
-                        option={option}
-                        key={option.label}
-                    />
-                );
+            renderInput={(params) => (
+                <TextField
+                    {...params}
+                    label="Search input"
+                    InputProps={{
+                        ...params.InputProps,
+                        type: 'search',
+                    }}
+                />
+            )}
+            renderOption={() => {
+                return <>Option</>;
             }}
         />
     );

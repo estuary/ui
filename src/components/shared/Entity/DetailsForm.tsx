@@ -3,6 +3,8 @@ import { JsonForms } from '@jsonforms/react';
 import { Alert, Stack, Typography } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
 import { ConnectorTag } from 'components/shared/Entity/query';
+import { CATALOG_NAME_SCOPE } from 'forms/renderers/CatalogName';
+import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -57,17 +59,11 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
     }, [connectorID, setDetails]);
 
     const accessGrantsOneOf = useMemo(() => {
-        const response = [] as { title: string; const: Object }[];
+        const response = [] as string[];
 
         if (accessGrants.length > 0) {
             accessGrants.forEach((accessGrant) => {
-                response.push({
-                    const: {
-                        id: accessGrant.id,
-                        title: accessGrant.object_role,
-                    },
-                    title: accessGrant.object_role,
-                });
+                response.push(accessGrant.object_role);
             });
         }
 
@@ -96,7 +92,7 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
     const schema = useMemo(() => {
         return {
             properties: {
-                image: {
+                [CONNECTOR_IMAGE_SCOPE]: {
                     description: intl.formatMessage({
                         id: 'connector.description',
                     }),
@@ -107,10 +103,10 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
                     description: intl.formatMessage({
                         id: 'entityPrefix.description',
                     }),
-                    oneOf: accessGrantsOneOf,
-                    type: 'object',
+                    enum: accessGrantsOneOf,
+                    type: 'string',
                 },
-                name: {
+                [CATALOG_NAME_SCOPE]: {
                     description: intl.formatMessage({
                         id: 'entityName.description',
                     }),
@@ -118,6 +114,7 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
                     // This pattern needs to match https://github.com/estuary/animated-carnival/blob/main/supabase/migrations/03_catalog-types.sql
                     // Right now with prefix broken out it means the first part is a bit different
                     // `^([a-zA-Z0-9-_.]+/)+[a-zA-Z0-9-_.]+$`
+                    //${accessGrantsOneOf.join('|')}
                     pattern: `^([a-zA-Z0-9-_./])+[^/]$`,
                     type: 'string',
                 },
@@ -128,7 +125,7 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
                     type: 'string',
                 },
             },
-            required: ['prefix', 'name', 'image'],
+            required: ['prefix', CATALOG_NAME_SCOPE, CONNECTOR_IMAGE_SCOPE],
             type: 'object',
         };
     }, [accessGrantsOneOf, connectorsOneOf, intl]);
@@ -148,14 +145,14 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
                         label: intl.formatMessage({
                             id: 'entityName.label',
                         }),
-                        scope: '#/properties/name',
+                        scope: `#/properties/${CATALOG_NAME_SCOPE}`,
                         type: 'Control',
                     },
                     {
                         label: intl.formatMessage({
                             id: 'connector.label',
                         }),
-                        scope: '#/properties/image',
+                        scope: `#/properties/${CONNECTOR_IMAGE_SCOPE}`,
                         type: 'Control',
                     },
                 ],
@@ -186,8 +183,8 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
             <FormattedMessage id={`${messagePrefix}.instructions`} />
 
             <Stack direction="row" spacing={2}>
-                {schema.properties.image.oneOf.length > 0 ? (
-                    schema.properties.prefix.oneOf.length > 0 ? (
+                {schema.properties.connectorImage.oneOf.length > 0 ? (
+                    schema.properties.prefix.enum.length > 0 ? (
                         <JsonForms
                             schema={schema}
                             uischema={uiSchema}

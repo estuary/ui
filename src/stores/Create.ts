@@ -8,12 +8,12 @@ import { NamedSet } from 'zustand/middleware';
 export interface Details extends Pick<JsonFormsCore, 'data' | 'errors'> {
     data: {
         description?: string;
-        name: string;
+        entityName: string;
         prefix: {
             const: string;
             title: string;
         };
-        image?: {
+        connectorImage?: {
             id: string;
             iconPath: string;
         };
@@ -73,11 +73,11 @@ export const initialCreateStates = {
     details: (): Details => {
         return {
             data: {
-                image: {
+                connectorImage: {
                     id: '',
                     iconPath: '',
                 },
-                name: '',
+                entityName: '',
                 prefix: {
                     const: '',
                     title: '',
@@ -127,7 +127,8 @@ export const getInitialState = (
             set(
                 produce((state) => {
                     if (
-                        state.details.data.image?.id !== details.data.image?.id
+                        state.details.data.connectorImage?.id !==
+                        details.data.connectorImage?.id
                     ) {
                         const initState = getInitialStateData();
                         state.endpointConfig = initState.endpointConfig;
@@ -213,8 +214,9 @@ export const getInitialState = (
 export const createStoreSelectors = {
     details: {
         data: (state: CreateEntityStore) => state.details.data,
-        entityName: (state: CreateEntityStore) => state.details.data.name,
-        connectorTag: (state: CreateEntityStore) => state.details.data.image,
+        entityName: (state: CreateEntityStore) => state.details.data.entityName,
+        connectorTag: (state: CreateEntityStore) =>
+            state.details.data.connectorImage,
         description: (state: CreateEntityStore) =>
             state.details.data.description,
         prefix: (state: CreateEntityStore) => state.details.data.prefix,
