@@ -197,7 +197,6 @@ function MaterializationCreate() {
 
     const waitFor = {
         base: (query: any, success: Function, failureTitle: string) => {
-            resetFormState(FormStatus.SAVING);
             const subscription = query
                 .on('*', async (payload: any) => {
                     if (payload.new.job_status.type !== 'queued') {
@@ -386,6 +385,7 @@ function MaterializationCreate() {
         saveAndPublish: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
+            resetFormState(FormStatus.SAVING);
             const publicationsSubscription = waitFor.publications();
 
             supabaseClient
@@ -432,6 +432,66 @@ function MaterializationCreate() {
                         );
                     }
                 );
+        },
+
+        oldTest: (event: MouseEvent<HTMLElement>) => {
+            event.preventDefault();
+            let detailHasErrors = false;
+            let specHasErrors = false;
+
+            // TODO (linting) - this was to make TS/Linting happy
+            detailHasErrors = detailErrors ? detailErrors.length > 0 : false;
+            specHasErrors = specErrors ? specErrors.length > 0 : false;
+
+            if (detailHasErrors || specHasErrors) {
+                setFormState({
+                    displayValidation: true,
+                });
+            } else {
+                resetFormState(FormStatus.TESTING);
+                const publicationsSubscription = waitFor.publications();
+
+                supabaseClient
+                    .from(TABLES.PUBLICATIONS)
+                    .insert([
+                        {
+                            draft_id: draftId,
+                            dry_run: true,
+                        },
+                    ])
+                    .then(
+                        async (response) => {
+                            if (response.data) {
+                                if (response.data.length > 0) {
+                                    setFormState({
+                                        logToken: response.data[0].logs_token,
+                                        showLogs: true,
+                                    });
+                                }
+                            } else {
+                                helpers.callFailed(
+                                    {
+                                        error: {
+                                            title: 'materializationCreation.test.failure.errorTitle',
+                                            error: response.error,
+                                        },
+                                    },
+                                    publicationsSubscription
+                                );
+                            }
+                        },
+                        () => {
+                            helpers.callFailed(
+                                {
+                                    error: {
+                                        title: 'materializationCreation.test.serverUnreachable',
+                                    },
+                                },
+                                publicationsSubscription
+                            );
+                        }
+                    );
+            }
         },
     };
 
