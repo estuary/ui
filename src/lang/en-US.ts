@@ -289,7 +289,7 @@ const Foo: ResolvedIntlConfig['messages'] = {
     'foo.ctas.docs': `Connector Docs`,
     'foo.catalogEditor.heading': `Catalog Editor`,
     'foo.endpointConfig.heading': `Connection Configuration`,
-    'foo.endpointConfig.errorSummary': `Form(s) have issues and cannt be submitted.`,
+    'foo.endpointConfig.errorSummary': `You must provide valid data for all required fields before continuing.`,
 };
 
 const MonacoEditor: ResolvedIntlConfig['messages'] = {
