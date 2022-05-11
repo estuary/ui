@@ -10,6 +10,7 @@ import useCreationStore, {
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
+import { CONFIG_EDITOR_ID } from 'components/shared/Entity/EndpointConfigForm';
 import EntityError from 'components/shared/Entity/Error';
 import FooHeader from 'components/shared/Entity/Header';
 import LogDialog from 'components/shared/Entity/LogDialog';
@@ -98,6 +99,7 @@ function MaterializationCreate() {
     const entityName = entityCreateStore(
         createStoreSelectors.details.entityName
     );
+    const fullName = `${entityPrefix.title}${entityName}`;
     const imageTag = entityCreateStore(
         createStoreSelectors.details.connectorTag
     );
@@ -152,6 +154,8 @@ function MaterializationCreate() {
     // >((state) => state.specs);
 
     // const editorContainsSpecs = editorSpecs && editorSpecs.length > 0;
+
+    const configEditor = document.getElementById(CONFIG_EDITOR_ID);
 
     const helpers = {
         callFailed: (formState: any, subscription?: RealtimeSubscription) => {
@@ -318,7 +322,7 @@ function MaterializationCreate() {
                 supabaseClient
                     .from(TABLES.DRAFTS)
                     .insert({
-                        detail: `${entityPrefix.title}${entityName}`,
+                        detail: fullName,
                     })
                     .then(
                         (draftsResponse) => {
@@ -328,12 +332,16 @@ function MaterializationCreate() {
                             ) {
                                 setDraftId(draftsResponse.data[0].id);
 
+                                configEditor?.scrollIntoView({
+                                    behavior: 'smooth',
+                                });
+
                                 supabaseClient
                                     .from(TABLES.DRAFT_SPECS)
                                     .insert([
                                         {
                                             draft_id: draftsResponse.data[0].id,
-                                            catalog_name: entityName,
+                                            catalog_name: fullName,
                                             spec_type: 'materialization',
                                             spec: draftSpec,
                                         },

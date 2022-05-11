@@ -12,8 +12,9 @@ export interface Props extends MonacoEditorProps {
 }
 
 const MIN_RESIZE_WIDTH = 25;
+const INITIAL_SELECTOR_WIDTH = 250;
 
-function EditorAndList(props: Props) {
+function EditorWithFileSelector(props: Props) {
     const { height } = props;
     const heightVal = (height ?? DEFAULT_HEIGHT) + DEFAULT_TOOLBAR_HEIGHT;
 
@@ -27,7 +28,11 @@ function EditorAndList(props: Props) {
             }}
         >
             <ReflexContainer orientation="vertical">
-                <ReflexElement className="left-pane" minSize={MIN_RESIZE_WIDTH}>
+                <ReflexElement
+                    className="left-pane"
+                    size={INITIAL_SELECTOR_WIDTH}
+                    minSize={MIN_RESIZE_WIDTH}
+                >
                     <div className="pane-content" style={{ height: heightVal }}>
                         <EditorFileSelector />
                     </div>
@@ -55,4 +60,4 @@ function EditorAndList(props: Props) {
     );
 }
 
-export default EditorAndList;
+export default EditorWithFileSelector;

@@ -208,7 +208,7 @@ const BrowserTitles: ResolvedIntlConfig['messages'] = {
 
 const LogsDialog: ResolvedIntlConfig['messages'] = {
     'logs.default': `waiting for logs...`,
-    'logs.toManyEmpty': `Logs may have ended. To restart fetching click ${CommonMessages['cta.restart']}.`,
+    'logs.toManyEmpty': `Logs may have ended. To restart fetching click ${CTAs['cta.restart']}.`,
 };
 
 const AdminPage: ResolvedIntlConfig['messages'] = {

@@ -1,5 +1,5 @@
 import { PubSpecQuery } from 'components/capture/Details';
-import EditorAndList from 'components/editor/EditorAndList';
+import EditorWithFileSelector from 'components/editor/EditorWithFileSelector';
 import { EditorStoreState } from 'components/editor/Store';
 import { useZustandStore } from 'hooks/useZustand';
 
@@ -10,7 +10,7 @@ function LiveSpecEditor() {
     >((state) => state.currentCatalog);
 
     return (
-        <EditorAndList
+        <EditorWithFileSelector
             disabled={true}
             value={currentCatalog ? currentCatalog.spec : {}}
             path={currentCatalog ? currentCatalog.catalog_name : ''}

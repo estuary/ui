@@ -1,10 +1,10 @@
 // TODO (zustand) - add in Immer middleware
 
+import { isProduction, isTest } from 'utils/env-utils';
+
 export const devtoolsOptions = (name: string) => {
     return {
-        enabled:
-            process.env.NODE_ENV !== 'production' &&
-            process.env.NODE_ENV !== 'test',
+        enabled: !isProduction() && !isTest(),
         name,
     };
 };

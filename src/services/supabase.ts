@@ -16,6 +16,10 @@ const supabaseSettings = {
     anonKey: process.env.REACT_APP_SUPABASE_ANON_KEY,
 };
 
+export const ERROR_MESSAGES = {
+    jwtExpired: 'JWT expired',
+};
+
 export enum TABLES {
     COMBINED_GRANTS_EXT = 'combined_grants_ext',
     CONNECTOR_TAGS = 'connector_tags',

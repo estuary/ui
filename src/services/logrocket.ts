@@ -2,7 +2,11 @@ import { User } from '@supabase/supabase-js';
 import LogRocket from 'logrocket';
 import setupLogRocketReact from 'logrocket-react';
 import { getUserDetails } from 'services/supabase';
-import { getAppVersion, getLogRocketSettings } from 'utils/env-utils';
+import {
+    getAppVersion,
+    getLogRocketSettings,
+    isProduction,
+} from 'utils/env-utils';
 
 // Based on node_modules/logrocket/dist/types.d.ts
 interface IUserTraits {
@@ -14,7 +18,7 @@ const logRocketSettings = getLogRocketSettings();
 // More info about the dom settings
 //  https://docs.logrocket.com/reference/dom
 export const initLogRocket = () => {
-    if (logRocketSettings.appID) {
+    if (isProduction() && logRocketSettings.appID) {
         LogRocket.init(logRocketSettings.appID, {
             release: getAppVersion(),
             dom: {

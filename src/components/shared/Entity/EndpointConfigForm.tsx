@@ -18,6 +18,8 @@ type Props = {
     endpointSchema: any;
 };
 
+export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
+
 function EndpointConfigForm({ endpointSchema }: Props) {
     const entityCreateStore = getStore(useRouteStore());
     const setSpec = entityCreateStore(createStoreSelectors.endpointConfig.set);
@@ -49,18 +51,20 @@ function EndpointConfigForm({ endpointSchema }: Props) {
 
     return (
         <StyledEngineProvider injectFirst>
-            <JsonForms
-                schema={endpointSchema}
-                uischema={uiSchema}
-                data={formData}
-                renderers={defaultRenderers}
-                cells={materialCells}
-                config={defaultOptions}
-                readonly={formStateStatus !== FormStatus.IDLE}
-                validationMode={showValidationVal}
-                onChange={handlers.onChange}
-                ajv={setDefaultsValidator}
-            />
+            <div id={CONFIG_EDITOR_ID}>
+                <JsonForms
+                    schema={endpointSchema}
+                    uischema={uiSchema}
+                    data={formData}
+                    renderers={defaultRenderers}
+                    cells={materialCells}
+                    config={defaultOptions}
+                    readonly={formStateStatus !== FormStatus.IDLE}
+                    validationMode={showValidationVal}
+                    onChange={handlers.onChange}
+                    ajv={setDefaultsValidator}
+                />
+            </div>
         </StyledEngineProvider>
     );
 }

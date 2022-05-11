@@ -1,4 +1,9 @@
-import { Middleware, SWRConfig, SWRHook } from 'swr';
+import { logoutRoutes } from 'app/Unauthenticated';
+import useClient from 'hooks/supabase-swr/hooks/useClient';
+import { LogoutReasons } from 'pages/Login';
+import { useNavigate } from 'react-router';
+import { ERROR_MESSAGES } from 'services/supabase';
+import { SWRConfig } from 'swr';
 import { BaseComponentProps } from 'types';
 import { getSWRSettings } from 'utils/env-utils';
 
@@ -7,7 +12,6 @@ const swrSettings = getSWRSettings();
 interface IMiddleware {
     cache: any;
     logger: any;
-    errorHandler: Middleware;
 }
 
 const middleware: IMiddleware = {
@@ -72,14 +76,26 @@ const middleware: IMiddleware = {
                   };
               }
             : (fn: any) => fn,
-    errorHandler: (useSWRNext: SWRHook) => (key, fetcher, config) => {
-        const swr = useSWRNext(key, fetcher, config);
-
-        return swr;
-    },
 };
 
 const SwrConfigProvider = ({ children }: BaseComponentProps) => {
+    const supabaseClient = useClient();
+    const navigate = useNavigate();
+
+    const errorHandler = (error: any) => {
+        // Handle JWT tokens expiring
+        if (error.message === ERROR_MESSAGES.jwtExpired) {
+            supabaseClient.auth
+                .signOut()
+                .then(() => {
+                    navigate(
+                        `${logoutRoutes.path}?${logoutRoutes.params.reason}=${LogoutReasons.JWT}`
+                    );
+                })
+                .catch(() => {});
+        }
+    };
+
     const options = {
         provider:
             process.env.NODE_ENV === 'production'
@@ -91,7 +107,11 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
     };
     return (
         <SWRConfig value={options}>
-            <SWRConfig value={{ use: [middleware.errorHandler] }}>
+            <SWRConfig
+                value={{
+                    onError: errorHandler,
+                }}
+            >
                 {children}
             </SWRConfig>
         </SWRConfig>
