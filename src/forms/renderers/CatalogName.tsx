@@ -24,9 +24,7 @@
 */
 
 import {
-    and,
     ControlProps,
-    isOneOfEnumControl,
     OwnPropsOfEnum,
     RankedTester,
     rankWith,
@@ -39,9 +37,9 @@ import { CatalogNameAutoComplete } from 'forms/renderers/CatalogName/AutoComplet
 
 export const CATALOG_NAME_SCOPE = 'entityName';
 
-export const connectorTypeTester: RankedTester = rankWith(
+export const catalogNameTypeTester: RankedTester = rankWith(
     10,
-    and(isOneOfEnumControl, scopeEndsWith(CATALOG_NAME_SCOPE))
+    scopeEndsWith(CATALOG_NAME_SCOPE)
 );
 
 // This is blank on purpose. For right now we can just show null settings are nothing

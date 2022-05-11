@@ -95,11 +95,9 @@ function MaterializationCreate() {
 
     // Form store
     const entityCreateStore = getStore(useRouteStore());
-    const entityPrefix = entityCreateStore(createStoreSelectors.details.prefix);
     const entityName = entityCreateStore(
         createStoreSelectors.details.entityName
     );
-    const fullName = `${entityPrefix.title}${entityName}`;
     const imageTag = entityCreateStore(
         createStoreSelectors.details.connectorTag
     );
@@ -324,7 +322,7 @@ function MaterializationCreate() {
                 supabaseClient
                     .from(TABLES.DRAFTS)
                     .insert({
-                        detail: fullName,
+                        detail: entityName,
                     })
                     .then(
                         (draftsResponse) => {
@@ -343,7 +341,7 @@ function MaterializationCreate() {
                                     .insert([
                                         {
                                             draft_id: draftsResponse.data[0].id,
-                                            catalog_name: fullName,
+                                            catalog_name: entityName,
                                             spec_type: 'materialization',
                                             spec: draftSpec,
                                         },

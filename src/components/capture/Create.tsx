@@ -82,7 +82,6 @@ function CaptureCreate() {
 
     // Form store
     const entityCreateStore = getStore(useRouteStore());
-    const entityPrefix = entityCreateStore(createStoreSelectors.details.prefix);
     const entityName = entityCreateStore(
         createStoreSelectors.details.entityName
     );
@@ -333,7 +332,7 @@ function CaptureCreate() {
                 supabaseClient
                     .from(TABLES.DRAFTS)
                     .insert({
-                        detail: `${entityPrefix.title}${entityName}`,
+                        detail: entityName,
                     })
                     .then(
                         (draftsResponse) => {
@@ -348,7 +347,7 @@ function CaptureCreate() {
                                     .from(TABLES.DISCOVERS)
                                     .insert([
                                         {
-                                            capture_name: `${entityPrefix.title}${entityName}`,
+                                            capture_name: entityName,
                                             endpoint_config: endpointConfigData,
                                             connector_tag_id: imageTag.id,
                                             draft_id: draftsResponse.data[0].id,

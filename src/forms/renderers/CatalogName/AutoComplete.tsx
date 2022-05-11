@@ -22,87 +22,110 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
-import { EnumCellProps, EnumOption, WithClassname } from '@jsonforms/core';
+import {
+    EnumCellProps,
+    EnumOption,
+    JsonSchema7,
+    WithClassname,
+} from '@jsonforms/core';
 import {
     Autocomplete,
     AutocompleteRenderOptionState,
     FilterOptionsState,
-    TextField,
+    Input,
 } from '@mui/material';
+import { throttle } from 'lodash';
+import merge from 'lodash/merge';
 import React, { ReactNode } from 'react';
 
 export interface WithOptionLabel {
-    getOptionLabel?(option: any): string;
     renderOption?(
         props: React.HTMLAttributes<HTMLLIElement>,
-        option: EnumOption,
+        option: any,
         state: AutocompleteRenderOptionState
     ): ReactNode;
     filterOptions?(
-        options: EnumOption[],
-        state: FilterOptionsState<EnumOption>
+        options: any[],
+        state: FilterOptionsState<any>
     ): EnumOption[];
 }
+
+const generateOptionsArray = (rootSchema: JsonSchema7, path: string) => {
+    return (
+        rootSchema.properties?.[path].examples?.map((pathVal) => {
+            return {
+                const: pathVal,
+                label: pathVal,
+            };
+        }) ?? []
+    );
+};
+
+const getStringValue = (val: any) => {
+    return typeof val === 'string' ? val : val?.label ?? '';
+};
 
 export const CatalogNameAutoComplete = (
     props: EnumCellProps & WithClassname & WithOptionLabel
 ) => {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     const {
-        // data,
+        data,
         className,
         id,
         enabled,
-        // uischema,
         path,
         handleChange,
-        options,
-        // config,
-        // getOptionLabel,
+        config,
+        rootSchema,
+        renderOption,
         filterOptions,
     } = props;
 
-    // const appliedUiSchemaOptions = merge({}, config, uischema.options);
-    const [inputValue, setInputValue] = React.useState('');
+    const options = generateOptionsArray(rootSchema as JsonSchema7, path);
+    const appliedUiSchemaOptions = merge({}, config, options);
+    const [inputValue, setInputValue] = React.useState(data ?? '');
+
+    const debounceUpdate = throttle((newInputValue: any) => {
+        handleChange(path, newInputValue);
+    }, 250);
 
     return (
         <Autocomplete
-            options={options ?? []}
-            // getOptionLabel={getOptionLabel ?? ((option) => option)}
             className={className}
             id={id}
-            freeSolo
-            disableClearable
             disabled={!enabled}
+            value={inputValue}
             inputValue={inputValue}
-            onChange={(_event: any, newValue: string | EnumOption) => {
-                handleChange(path, newValue);
+            onChange={(_event: any, newValue: any) => {
+                handleChange(path, newValue?.value);
             }}
             onInputChange={(_event, newInputValue) => {
                 setInputValue(newInputValue);
+                debounceUpdate(newInputValue);
             }}
             autoHighlight
-            autoSelect
             autoComplete
-            clearOnBlur
+            disableClearable
+            openOnFocus={inputValue.length === 0}
             fullWidth
-            sx={{
-                marginTop: 2,
-            }}
-            filterOptions={filterOptions}
+            freeSolo
+            options={options}
+            getOptionLabel={getStringValue}
+            style={{ marginTop: 16 }}
             renderInput={(params) => (
-                <TextField
-                    {...params}
-                    label="Search input"
-                    InputProps={{
-                        ...params.InputProps,
-                        type: 'search',
-                    }}
+                <Input
+                    style={{ width: '100%' }}
+                    type="text"
+                    inputProps={params.inputProps}
+                    inputRef={params.InputProps.ref}
+                    autoFocus={appliedUiSchemaOptions.focus}
+                    disabled={!enabled}
+                    value={inputValue}
                 />
             )}
-            renderOption={() => {
-                return <>Option</>;
-            }}
+            renderOption={renderOption}
+            filterOptions={filterOptions}
         />
     );
 };

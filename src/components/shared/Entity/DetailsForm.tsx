@@ -99,13 +99,6 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
                     oneOf: connectorsOneOf,
                     type: 'object',
                 },
-                prefix: {
-                    description: intl.formatMessage({
-                        id: 'entityPrefix.description',
-                    }),
-                    enum: accessGrantsOneOf,
-                    type: 'string',
-                },
                 [CATALOG_NAME_SCOPE]: {
                     description: intl.formatMessage({
                         id: 'entityName.description',
@@ -115,8 +108,11 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
                     // Right now with prefix broken out it means the first part is a bit different
                     // `^([a-zA-Z0-9-_.]+/)+[a-zA-Z0-9-_.]+$`
                     //${accessGrantsOneOf.join('|')}
-                    pattern: `^([a-zA-Z0-9-_./])+[^/]$`,
+                    examples: accessGrantsOneOf,
                     type: 'string',
+                    pattern: `^${accessGrantsOneOf.join(
+                        '|'
+                    )}([a-zA-Z0-9-_./])+[^/]$`,
                 },
                 description: {
                     description: intl.formatMessage({
@@ -125,7 +121,7 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
                     type: 'string',
                 },
             },
-            required: ['prefix', CATALOG_NAME_SCOPE, CONNECTOR_IMAGE_SCOPE],
+            required: [CATALOG_NAME_SCOPE, CONNECTOR_IMAGE_SCOPE],
             type: 'object',
         };
     }, [accessGrantsOneOf, connectorsOneOf, intl]);
@@ -134,13 +130,6 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
         elements: [
             {
                 elements: [
-                    {
-                        label: intl.formatMessage({
-                            id: 'entityPrefix.label',
-                        }),
-                        scope: '#/properties/prefix',
-                        type: 'Control',
-                    },
                     {
                         label: intl.formatMessage({
                             id: 'entityName.label',
@@ -183,8 +172,9 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
             <FormattedMessage id={`${messagePrefix}.instructions`} />
 
             <Stack direction="row" spacing={2}>
-                {schema.properties.connectorImage.oneOf.length > 0 ? (
-                    schema.properties.prefix.enum.length > 0 ? (
+                {schema.properties[CONNECTOR_IMAGE_SCOPE].oneOf.length > 0 ? (
+                    schema.properties[CATALOG_NAME_SCOPE].examples.length >
+                    0 ? (
                         <JsonForms
                             schema={schema}
                             uischema={uiSchema}

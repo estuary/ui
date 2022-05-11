@@ -9,10 +9,6 @@ export interface Details extends Pick<JsonFormsCore, 'data' | 'errors'> {
     data: {
         description?: string;
         entityName: string;
-        prefix: {
-            const: string;
-            title: string;
-        };
         connectorImage?: {
             id: string;
             iconPath: string;
@@ -78,10 +74,6 @@ export const initialCreateStates = {
                     iconPath: '',
                 },
                 entityName: '',
-                prefix: {
-                    const: '',
-                    title: '',
-                },
             },
             errors: [],
         };
@@ -219,7 +211,6 @@ export const createStoreSelectors = {
             state.details.data.connectorImage,
         description: (state: CreateEntityStore) =>
             state.details.data.description,
-        prefix: (state: CreateEntityStore) => state.details.data.prefix,
         set: (state: CreateEntityStore) => state.setDetails,
     },
     endpointConfig: {

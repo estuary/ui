@@ -14,6 +14,10 @@ import {
 } from '@jsonforms/core';
 import { materialRenderers } from '@jsonforms/material-renderers';
 import {
+    CatalogName,
+    catalogNameTypeTester,
+} from 'forms/renderers/CatalogName';
+import {
     CollapsibleGroup,
     collapsibleGroupTester,
 } from 'forms/renderers/CollapsibleGroup';
@@ -33,6 +37,7 @@ export const defaultRenderers = [
     { renderer: NullType, tester: nullTypeTester },
     { renderer: CollapsibleGroup, tester: collapsibleGroupTester },
     { renderer: ConnectorType, tester: connectorTypeTester },
+    { renderer: CatalogName, tester: catalogNameTypeTester },
 ];
 
 export const showValidation = (_val: any): ValidationMode => {
