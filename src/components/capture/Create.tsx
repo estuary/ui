@@ -336,65 +336,78 @@ function CaptureCreate() {
                         detail: entityName,
                     })
                     .then(
-                        async (draftsResponse) => {
+                        (draftsResponse) => {
                             if (
                                 imageTag &&
                                 draftsResponse.data &&
                                 draftsResponse.data.length > 0
                             ) {
-                                const discoversSubscription =
-                                    waitFor.discovers();
+                                getEncryptedConfig({
+                                    data: {
+                                        schema: endpointSchema,
+                                        config: endpointConfigData,
+                                    },
+                                })
+                                    .then((encryptedEndpointConfig) => {
+                                        const discoversSubscription =
+                                            waitFor.discovers();
 
-                                const encryptedEndpointConfig =
-                                    await getEncryptedConfig({
-                                        data: {
-                                            schema: endpointSchema,
-                                            config: endpointConfigData,
-                                        },
-                                    });
-
-                                supabaseClient
-                                    .from(TABLES.DISCOVERS)
-                                    .insert([
-                                        {
-                                            capture_name: entityName,
-                                            endpoint_config:
-                                                encryptedEndpointConfig,
-                                            connector_tag_id: imageTag.id,
-                                            draft_id: draftsResponse.data[0].id,
-                                        },
-                                    ])
-                                    .then(
-                                        (response) => {
-                                            if (response.data) {
-                                                setFormState({
-                                                    logToken:
-                                                        response.data[0]
-                                                            .logs_token,
-                                                });
-                                            } else {
-                                                helpers.callFailed(
-                                                    {
-                                                        error: {
-                                                            title: 'captureCreation.test.failedErrorTitle',
-                                                            error: response.error,
-                                                        },
-                                                    },
-                                                    discoversSubscription
-                                                );
-                                            }
-                                        },
-                                        () => {
-                                            helpers.callFailed(
+                                        supabaseClient
+                                            .from(TABLES.DISCOVERS)
+                                            .insert([
                                                 {
-                                                    error: {
-                                                        title: 'captureCreation.test.serverUnreachable',
-                                                    },
+                                                    capture_name: entityName,
+                                                    endpoint_config:
+                                                        encryptedEndpointConfig,
+                                                    connector_tag_id:
+                                                        imageTag.id,
+                                                    draft_id:
+                                                        draftsResponse.data[0]
+                                                            .id,
                                                 },
-                                                discoversSubscription
+                                            ])
+                                            .then(
+                                                (response) => {
+                                                    if (response.data) {
+                                                        setFormState({
+                                                            logToken:
+                                                                response.data[0]
+                                                                    .logs_token,
+                                                        });
+                                                    } else {
+                                                        helpers.callFailed(
+                                                            {
+                                                                error: {
+                                                                    title: 'captureCreation.test.failedErrorTitle',
+                                                                    error: response.error,
+                                                                },
+                                                            },
+                                                            discoversSubscription
+                                                        );
+                                                    }
+                                                },
+                                                () => {
+                                                    helpers.callFailed(
+                                                        {
+                                                            error: {
+                                                                title: 'captureCreation.test.serverUnreachable',
+                                                            },
+                                                        },
+                                                        discoversSubscription
+                                                    );
+                                                }
                                             );
-                                        }
-                                    );
+                                    })
+                                    .catch((error) => {
+                                        console.log(error);
+
+                                        helpers.callFailed({
+                                            error: {
+                                                title: 'captureCreation.test.failedConfigEncryptTitle',
+                                                error,
+                                            },
+                                        });
+                                    });
                             } else if (draftsResponse.error) {
                                 helpers.callFailed({
                                     error: {

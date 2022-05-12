@@ -77,6 +77,7 @@ const Error: ResolvedIntlConfig['messages'] = {
     'error.messageLabel': `Message:`,
     'error.detailsLabel': `Details:`,
     'error.hintLabel': `Hint:`,
+    'error.descriptionLabel': `Description:`,
 };
 
 const ErrorBoundry: ResolvedIntlConfig['messages'] = {
@@ -319,6 +320,7 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreation.finalReview.instructions': `Look over the catalog configuration that was generated. If you want to edit anything you can do that directly in the editor. Once you're ready you can download the file for your local.`,
     'captureCreation.test.waitMessage': `Please wait while we try to connect to this endpoint.`,
     'captureCreation.test.failedErrorTitle': `Config Test Failed`,
+    'captureCreation.test.failedConfigEncryptTitle': `Encrypting Config Failed`,
     'captureCreation.test.serverUnreachable': `Config Test was unable to reach server`,
     'captureCreation.save.failedErrorTitle': `Capture Save Failed`,
     'captureCreation.save.serverUnreachable': `Config Save was unable to reach server`,
