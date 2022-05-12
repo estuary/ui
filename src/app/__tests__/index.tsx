@@ -8,9 +8,7 @@ describe('When there is no user', () => {
 
         await waitFor(() => {
             expect(
-                screen.getByText(
-                    'Please use one of the providers below to continue.'
-                )
+                screen.getByText('Sign in to continue to Estuary Flow.')
             ).toBeInTheDocument();
         });
     });
