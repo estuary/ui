@@ -42,8 +42,10 @@ function Row({ row }: RowProps) {
                 />
             ) : row.user_email ? (
                 <TableCell>{row.user_email}</TableCell>
-            ) : (
+            ) : row.subject_role ? (
                 <TableCell>{row.subject_role}</TableCell>
+            ) : (
+                <TableCell> </TableCell>
             )}
 
             <TableCell>{row.capability}</TableCell>
