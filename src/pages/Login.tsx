@@ -68,7 +68,7 @@ const Login = () => {
                     src={lightLogo}
                     style={{ marginBottom: 16 }}
                     width={200}
-                    alt=""
+                    alt="Estuary Logo"
                 />
 
                 <Typography sx={{ mb: 5 }}>
@@ -77,7 +77,7 @@ const Login = () => {
 
                 <Box>
                     <Auth
-                        providers={['google', 'github']}
+                        providers={['github', 'google']}
                         supabaseClient={supabaseClient}
                         socialColors={true}
                         onlyThirdPartyProviders={!loginSettings.showEmail}
