@@ -26,9 +26,10 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
 import { isEmpty } from 'lodash';
-import { MouseEvent } from 'react';
+import { MouseEvent, useEffect } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
+import { getEncryptedConfig } from 'services/encryption';
 import { TABLES } from 'services/supabase';
 import { createStoreSelectors, FormStatus } from 'stores/Create';
 import useNotificationStore, {
@@ -95,6 +96,9 @@ function MaterializationCreate() {
     const endpointConfig = entityCreateStore(
         createStoreSelectors.endpointConfig.data
     );
+    const endpointSchema = entityCreateStore(
+        createStoreSelectors.endpointSchema
+    );
     const hasChanges = entityCreateStore(createStoreSelectors.hasChanges);
     const resetState = entityCreateStore(createStoreSelectors.resetState);
     const [detailErrors, specErrors] = entityCreateStore(
@@ -132,6 +136,10 @@ function MaterializationCreate() {
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setId']
     >((state) => state.setId);
+
+    useEffect(() => {
+        setDraftId(null);
+    }, [imageTag, setDraftId]);
 
     const helpers = {
         callFailed: (formState: any, subscription?: RealtimeSubscription) => {
@@ -285,38 +293,50 @@ function MaterializationCreate() {
                     image_tag,
                 } = connectorInfo;
 
-                // TODO (typing) MaterializationDef
-                const draftSpec: any = {
-                    bindings: [],
-                    endpoint: {
-                        connector: {
-                            config: endpointConfig,
-                            image: `${image_name}${image_tag}`,
-                        },
-                    },
-                };
-
-                Object.keys(resourceConfig).forEach((collectionName) => {
-                    draftSpec.bindings.push({
-                        source: collectionName,
-                        resource: {
-                            ...resourceConfig[collectionName].data,
-                        },
-                    });
-                });
-
                 supabaseClient
                     .from(TABLES.DRAFTS)
                     .insert({
                         detail: entityName,
                     })
                     .then(
-                        (draftsResponse) => {
+                        async (draftsResponse) => {
                             if (
                                 draftsResponse.data &&
                                 draftsResponse.data.length > 0
                             ) {
                                 setDraftId(draftsResponse.data[0].id);
+
+                                const encryptedEndpointConfig =
+                                    await getEncryptedConfig({
+                                        data: {
+                                            schema: endpointSchema,
+                                            config: endpointConfig,
+                                        },
+                                    });
+
+                                // TODO (typing) MaterializationDef
+                                const draftSpec: any = {
+                                    bindings: [],
+                                    endpoint: {
+                                        connector: {
+                                            config: encryptedEndpointConfig,
+                                            image: `${image_name}${image_tag}`,
+                                        },
+                                    },
+                                };
+
+                                Object.keys(resourceConfig).forEach(
+                                    (collectionName) => {
+                                        draftSpec.bindings.push({
+                                            source: collectionName,
+                                            resource: {
+                                                ...resourceConfig[
+                                                    collectionName
+                                                ].data,
+                                            },
+                                        });
+                                    }
+                                );
 
                                 supabaseClient
                                     .from(TABLES.DRAFT_SPECS)
@@ -325,7 +345,7 @@ function MaterializationCreate() {
                                             draft_id: draftsResponse.data[0].id,
                                             catalog_name: entityName,
                                             spec_type: 'materialization',
-                                            spec: draftSpec,
+                                            spec: encryptedEndpointConfig,
                                         },
                                     ])
                                     .then(

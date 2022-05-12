@@ -20,7 +20,7 @@ import useConnectorTags from 'hooks/useConnectorTags';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
-import { MouseEvent } from 'react';
+import { MouseEvent, useEffect } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { getEncryptedConfig } from 'services/encryption';
@@ -124,6 +124,10 @@ function CaptureCreate() {
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
     >((state) => state.id);
+
+    useEffect(() => {
+        setDraftId(null);
+    }, [imageTag, setDraftId]);
 
     const helpers = {
         callFailed: (formState: any, subscription?: RealtimeSubscription) => {
@@ -348,8 +352,6 @@ function CaptureCreate() {
                                             config: endpointConfigData,
                                         },
                                     });
-
-                                console.log(encryptedEndpointConfig);
 
                                 supabaseClient
                                     .from(TABLES.DISCOVERS)

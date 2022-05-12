@@ -18,6 +18,8 @@ export interface EditorStoreState<T> {
 
     serverUpdate: any | null;
     setServerUpdate: (newVal: EditorStoreState<T>['serverUpdate']) => void;
+
+    resetState: () => void;
 }
 
 const getInitialStateData = () => {
@@ -73,6 +75,10 @@ const getInitialState = <T,>(
                 }),
                 false
             );
+        },
+
+        resetState: () => {
+            set(getInitialStateData(), false, 'Resetting Editor State');
         },
     };
 };
