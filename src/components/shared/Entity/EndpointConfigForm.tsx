@@ -31,13 +31,17 @@ function EndpointConfigForm({ endpointSchema }: Props) {
     const formStateStatus = entityCreateStore(
         createStoreSelectors.formState.status
     );
+    const setEndpointSchema = entityCreateStore(
+        createStoreSelectors.setEndpointSchema
+    );
 
     useEffect(() => {
+        setEndpointSchema(endpointSchema);
         setSpec({
             data: createJSONFormDefaults(endpointSchema),
             errors: [],
         });
-    }, [endpointSchema, setSpec]);
+    }, [endpointSchema, setEndpointSchema, setSpec]);
 
     const uiSchema = generateCustomUISchema(endpointSchema);
     const showValidationVal = showValidation(displayValidation);

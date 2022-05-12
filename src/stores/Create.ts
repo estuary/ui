@@ -57,7 +57,10 @@ export interface CreateEntityStore {
 
     //Misc
     connectors: { [key: string]: any }[];
-    setConnectors: (val: { [key: string]: any }[]) => void;
+    setConnectors: (val: CreateEntityStore['connectors']) => void;
+    endpointSchema: { [key: string]: any };
+    setEndpointSchema: (val: CreateEntityStore['endpointSchema']) => void;
+
     resetState: () => void;
     hasChanges: () => boolean;
 }
@@ -77,6 +80,9 @@ export const initialCreateStates = {
             },
             errors: [],
         };
+    },
+    endpointSchema: () => {
+        return {};
     },
     endpointConfig: (): EndpointConfig => {
         return {
@@ -99,13 +105,14 @@ export const initialCreateStates = {
 
 export const getInitialStateData = (): Pick<
     CreateEntityStore,
-    'details' | 'endpointConfig' | 'connectors' | 'formState'
+    'details' | 'endpointConfig' | 'connectors' | 'formState' | 'endpointSchema'
 > => {
     return {
         details: initialCreateStates.details(),
         endpointConfig: initialCreateStates.endpointConfig(),
         connectors: initialCreateStates.connectors(),
         formState: initialCreateStates.formState(),
+        endpointSchema: initialCreateStates.endpointSchema(),
     };
 };
 
@@ -197,6 +204,15 @@ export const getInitialState = (
                 'Caching connectors response'
             );
         },
+        setEndpointSchema: (val) => {
+            set(
+                produce((state) => {
+                    state.endpointSchema = val;
+                }),
+                false,
+                'Setting endpointSchema'
+            );
+        },
         resetState: () => {
             set(getInitialStateData(), false, 'Resetting State');
         },
@@ -234,6 +250,8 @@ export const createStoreSelectors = {
         reset: (state: CreateEntityStore) => state.resetFormState,
     },
     connectors: (state: CreateEntityStore) => state.connectors,
+    endpointSchema: (state: CreateEntityStore) => state.endpointSchema,
+    setEndpointSchema: (state: CreateEntityStore) => state.setEndpointSchema,
 
     resetState: (state: CreateEntityStore) => state.resetState,
     hasChanges: (state: CreateEntityStore) => state.hasChanges,

@@ -23,6 +23,7 @@ import { useZustandStore } from 'hooks/useZustand';
 import { MouseEvent } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
+import { getEncryptedConfig } from 'services/encryption';
 import { TABLES } from 'services/supabase';
 import { createStoreSelectors, FormStatus } from 'stores/Create';
 import useNotificationStore, {
@@ -82,6 +83,9 @@ function CaptureCreate() {
     );
     const endpointConfigData = entityCreateStore(
         createStoreSelectors.endpointConfig.data
+    );
+    const endpointSchema = entityCreateStore(
+        createStoreSelectors.endpointSchema
     );
     const hasChanges = entityCreateStore(createStoreSelectors.hasChanges);
     const resetState = entityCreateStore(createStoreSelectors.resetState);
@@ -328,7 +332,7 @@ function CaptureCreate() {
                         detail: entityName,
                     })
                     .then(
-                        (draftsResponse) => {
+                        async (draftsResponse) => {
                             if (
                                 imageTag &&
                                 draftsResponse.data &&
@@ -336,12 +340,24 @@ function CaptureCreate() {
                             ) {
                                 const discoversSubscription =
                                     waitFor.discovers();
+
+                                const encryptedEndpointConfig =
+                                    await getEncryptedConfig({
+                                        data: {
+                                            schema: endpointSchema,
+                                            config: endpointConfigData,
+                                        },
+                                    });
+
+                                console.log(encryptedEndpointConfig);
+
                                 supabaseClient
                                     .from(TABLES.DISCOVERS)
                                     .insert([
                                         {
                                             capture_name: entityName,
-                                            endpoint_config: endpointConfigData,
+                                            endpoint_config:
+                                                encryptedEndpointConfig,
                                             connector_tag_id: imageTag.id,
                                             draft_id: draftsResponse.data[0].id,
                                         },
