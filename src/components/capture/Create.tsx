@@ -125,6 +125,7 @@ function CaptureCreate() {
         EditorStoreState<DraftSpecQuery>['id']
     >((state) => state.id);
 
+    // Reset the cataog if the connector changes
     useEffect(() => {
         setDraftId(null);
     }, [imageTag, setDraftId]);
@@ -399,8 +400,6 @@ function CaptureCreate() {
                                             );
                                     })
                                     .catch((error) => {
-                                        console.log(error);
-
                                         helpers.callFailed({
                                             error: {
                                                 title: 'captureCreation.test.failedConfigEncryptTitle',
