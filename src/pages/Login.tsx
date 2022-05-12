@@ -1,7 +1,6 @@
 import { Alert, Box, Paper, Snackbar, Typography } from '@mui/material';
 import { Auth } from '@supabase/ui';
 import { logoutRoutes } from 'app/Unauthenticated';
-import { slate } from 'context/Theme';
 import { useClient } from 'hooks/supabase-swr';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { FormattedMessage } from 'react-intl';
@@ -34,6 +33,7 @@ const Login = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                my: 6,
             }}
         >
             <Snackbar
@@ -51,61 +51,44 @@ const Login = () => {
 
             <Paper
                 sx={{
-                    maxHeight: 800,
+                    minWidth: 360,
+                    maxHeight: 750,
                     display: 'flex',
-                    flexFlow: 'row wrap',
+                    flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
                     p: 3,
                     background:
-                        'linear-gradient(179.6deg, rgba(99, 138, 169, 0.24) 0%, rgba(13, 43, 67, 0.2) 76.56%, rgba(13, 43, 67, 0.1) 100%)',
+                        'linear-gradient(159.03deg, rgba(172, 199, 220, 0.18) 2.23%, rgba(172, 199, 220, 0.12) 40.69%)',
                     boxShadow: '0px 4px 24px -1px rgba(0, 0, 0, 0.2)',
                     borderRadius: 5,
-                    backdropFilter: 'blur(20px)',
                 }}
             >
-                <Box sx={{ mr: 4 }}>
-                    <img src={lightLogo} width={400} alt="" />
-                </Box>
+                <img
+                    src={lightLogo}
+                    style={{ marginBottom: 16 }}
+                    width={200}
+                    alt=""
+                />
+
+                <Typography sx={{ mb: 5 }}>
+                    <FormattedMessage id="login.oidc.message" />
+                </Typography>
 
                 <Box>
-                    <Box
-                        sx={{
-                            px: 2,
-                            pt: 2,
-                            pb: 3,
-                            backgroundColor: slate[500],
-                            borderRadius: '10px 10px 0px 0px',
+                    <Auth
+                        providers={['google', 'github']}
+                        supabaseClient={supabaseClient}
+                        socialColors={true}
+                        onlyThirdPartyProviders={!loginSettings.showEmail}
+                        redirectTo={redirectTo}
+                        style={{
+                            minWidth: 310,
+                            padding: 12,
+                            backgroundColor: '#FFFFFF',
+                            borderRadius: 10,
                         }}
-                    >
-                        <Typography
-                            gutterBottom
-                            variant="h6"
-                            component="h2"
-                            sx={{ textAlign: 'center' }}
-                        >
-                            <FormattedMessage id="productName" />
-                        </Typography>
-
-                        <Typography>
-                            <FormattedMessage id="login.oidc.message" />
-                        </Typography>
-                    </Box>
-
-                    <Box>
-                        <Auth
-                            providers={['google']}
-                            supabaseClient={supabaseClient}
-                            socialColors={true}
-                            onlyThirdPartyProviders={!loginSettings.showEmail}
-                            redirectTo={redirectTo}
-                            style={{
-                                padding: 16,
-                                backgroundColor: '#FFFFFF',
-                                borderRadius: '0px 0px 10px 10px',
-                            }}
-                        />
-                    </Box>
+                    />
                 </Box>
             </Paper>
         </Box>
