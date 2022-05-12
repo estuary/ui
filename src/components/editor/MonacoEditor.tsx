@@ -1,5 +1,12 @@
 import Editor, { DiffEditor } from '@monaco-editor/react';
-import { Box, Divider, Paper, Stack, useTheme } from '@mui/material';
+import {
+    Box,
+    Divider,
+    Paper,
+    Stack,
+    Typography,
+    useTheme,
+} from '@mui/material';
 import Saved from 'components/editor/Status/Saved';
 import Saving from 'components/editor/Status/Saving';
 import ServerDiff from 'components/editor/Status/ServerDiff';
@@ -107,6 +114,17 @@ function MonacoEditor({
                         minHeight: toolbarHeight,
                     }}
                 >
+                    <Typography
+                        sx={{
+                            pl: 1,
+                            maxWidth: '70%',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                        }}
+                    >
+                        {path}
+                    </Typography>
                     <Stack
                         direction="row"
                         sx={{
