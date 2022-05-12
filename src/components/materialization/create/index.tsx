@@ -79,6 +79,7 @@ function MaterializationCreate() {
 
     // Materializations store
     const resourceConfig = useCreationStore(creationSelectors.resourceConfig);
+    const resetCreationStore = useCreationStore(creationSelectors.resetState);
 
     // Form store
     const entityCreateStore = getStore(useRouteStore());
@@ -168,6 +169,7 @@ function MaterializationCreate() {
         },
         exit: () => {
             resetState();
+            resetCreationStore();
 
             navigate(routeDetails.materializations.path);
         },
@@ -484,6 +486,7 @@ function MaterializationCreate() {
 
     usePrompt('confirm.loseData', !exitWhenLogsClose && hasChanges(), () => {
         resetState();
+        resetCreationStore();
     });
 
     return (
