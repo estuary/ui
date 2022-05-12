@@ -28,7 +28,7 @@ function useConnectorTags(protocol: string | null) {
         TABLES.CONNECTOR_TAGS,
         {
             columns: CONNECTOR_TAG_QUERY,
-            filter: (query) => query.eq('protocol', 'capture'),
+            filter: (query) => query.eq('protocol', protocol as string),
         },
         [protocol]
     );

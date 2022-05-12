@@ -9,7 +9,7 @@ interface Props {
     onlyAdmin?: boolean;
 }
 
-function useCombinedGrantsExt({ onlyAdmin }: Props) {
+function useCombinedGrantsExt({ onlyAdmin: adminOnly }: Props) {
     const { user } = Auth.useUser();
 
     const combinedGrantsExtQuery = useQuery<Grants>(
@@ -19,7 +19,7 @@ function useCombinedGrantsExt({ onlyAdmin }: Props) {
             filter: (query) => {
                 let queryBuilder = query;
 
-                if (onlyAdmin) {
+                if (adminOnly) {
                     queryBuilder = queryBuilder.eq('capability', 'admin');
                 }
 

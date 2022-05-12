@@ -1,4 +1,4 @@
-import { DEFAULT_FILTER, TABLES } from 'services/supabase';
+import { TABLES } from 'services/supabase';
 import { useQuery, useSelect } from './supabase-swr/';
 
 interface DraftErrorsQuery {
@@ -14,7 +14,7 @@ function useDraftSpecErrors(draftId?: string | null) {
         TABLES.DRAFT_ERRORS,
         {
             columns: DRAFT_SPEC_COLS,
-            filter: (query) => query.eq('draft_id', draftId ?? DEFAULT_FILTER),
+            filter: (query) => query.eq('draft_id', draftId as string),
         },
         [draftId]
     );
