@@ -6,6 +6,7 @@ import ExpandDetails from 'components/tables/cells/ExpandDetails';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import UserName from 'components/tables/cells/UserName';
 import DetailsPanel from 'components/tables/DetailsPanel';
+import { tableBorderSx } from 'context/Theme';
 import { useState } from 'react';
 
 interface RowProps {
@@ -47,7 +48,9 @@ function Row({ row }: RowProps) {
             <TableRow key={`Entity-${row.id}`}>
                 <EntityName name={row.catalog_name} />
 
-                <TableCell sx={{ minWidth: 100 }}>{row.spec_type}</TableCell>
+                <TableCell sx={{ minWidth: 100, ...tableBorderSx }}>
+                    {row.spec_type}
+                </TableCell>
 
                 <TimeStamp time={row.updated_at} />
 
