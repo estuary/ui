@@ -1,4 +1,4 @@
-import { TABLES } from 'services/supabase';
+import { DEFAULT_FILTER, TABLES } from 'services/supabase';
 import { useQuery, useSelect } from './supabase-swr/';
 
 export interface DraftSpecQuery {
@@ -16,13 +16,14 @@ function useDraftSpecs(draftId: string | null) {
         TABLES.DRAFT_SPECS,
         {
             columns: DRAFT_SPEC_QUERY,
-            filter: (query) =>
-                query.eq('draft_id', draftId ? draftId : '_unknown_'),
+            filter: (query) => query.eq('draft_id', draftId ?? DEFAULT_FILTER),
         },
         [draftId]
     );
 
-    const { data, error, mutate, isValidating } = useSelect(draftSpecQuery);
+    const { data, error, mutate, isValidating } = useSelect(
+        draftId ? draftSpecQuery : null
+    );
 
     return {
         draftSpecs: data ? data.data : [],

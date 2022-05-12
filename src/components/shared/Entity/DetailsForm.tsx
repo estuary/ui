@@ -2,9 +2,9 @@ import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Alert, Stack, Typography } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
-import { ConnectorTag } from 'components/shared/Entity/query';
 import { CATALOG_NAME_SCOPE } from 'forms/renderers/CatalogName';
 import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
+import { ConnectorTagQuery } from 'hooks/useConnectorTags';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -20,7 +20,7 @@ import { Grants } from 'types';
 import { getConnectorName } from 'utils/misc-utils';
 
 interface Props {
-    connectorTags: ConnectorTag[];
+    connectorTags: ConnectorTagQuery[];
     accessGrants: Grants[];
     messagePrefix: 'materializationCreation' | 'captureCreation';
 }

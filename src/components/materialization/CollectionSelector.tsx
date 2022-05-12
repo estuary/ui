@@ -4,7 +4,9 @@ import useCreationStore, {
 } from 'components/materialization/Store';
 import { useQuery, useSelect } from 'hooks/supabase-swr/';
 import { useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { TABLES } from 'services/supabase';
+import useConstant from 'use-constant';
 
 interface LiveSpecsQuery {
     catalog_name: string;
@@ -15,6 +17,10 @@ interface LiveSpecsQuery {
 const columnsToQuery: (keyof LiveSpecsQuery)[] = ['catalog_name', 'spec_type'];
 
 function CollectionSelector() {
+    const intl = useIntl();
+    const collectionsLabel = useConstant(() =>
+        intl.formatMessage({ id: 'terms.collections' })
+    );
     const [missingInput, setMissingInput] = useState(false);
 
     const liveSpecsQuery = useQuery<LiveSpecsQuery>(
@@ -46,11 +52,11 @@ function CollectionSelector() {
     return collectionData && !error ? (
         <Box sx={{ mb: 5 }}>
             <Typography variant="h5" sx={{ mb: 1 }}>
-                Collection Selector
+                <FormattedMessage id="materializationCreation.collectionSelector.heading" />
             </Typography>
 
             <Typography sx={{ mb: 2 }}>
-                Place instructions for collection selector here.
+                <FormattedMessage id="materializationCreation.collectionSelector.instructions" />
             </Typography>
 
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -69,7 +75,7 @@ function CollectionSelector() {
                     renderInput={(params) => (
                         <TextField
                             {...params}
-                            label="Collections"
+                            label={collectionsLabel}
                             required
                             error={missingInput}
                             onBlur={handlers.validateSelection}

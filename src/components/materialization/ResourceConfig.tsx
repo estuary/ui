@@ -2,6 +2,7 @@ import { Box, Paper, Typography } from '@mui/material';
 import ResourceConfigForm from 'components/materialization/ResourceConfigForm';
 import Error from 'components/shared/Error';
 import { useQuery, useSelectSingle } from 'hooks/supabase-swr';
+import { FormattedMessage } from 'react-intl';
 import { TABLES } from 'services/supabase';
 
 interface ConnectorTag {
@@ -48,7 +49,7 @@ function NewMaterializationResourceConfig({
         return (
             <Box sx={{ mb: 5 }}>
                 <Typography variant="h5" sx={{ mb: 2 }}>
-                    Resource Config
+                    <FormattedMessage id="materializationCreation.resourceConfig.heading" />
                 </Typography>
 
                 <Paper variant="outlined" sx={{ width: '100%' }}>

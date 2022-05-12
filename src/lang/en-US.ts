@@ -349,6 +349,9 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreation.test.failure.errorTitle': `Config Test Failed`,
     'materializationCreation.test.serverUnreachable': `Config Test was unable to reach server`,
     'materializationCreation.test.inProgress': `Please wait while we try to connect to this endpoint.`,
+    'materializationCreation.collectionSelector.heading': `Collection Selector`,
+    'materializationCreation.collectionSelector.instructions': `Place instructions for collection selector here.`,
+    'materializationCreation.resourceConfig.heading': `Resource Config`,
 };
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {

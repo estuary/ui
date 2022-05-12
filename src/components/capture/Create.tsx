@@ -2,27 +2,21 @@ import { Button, Collapse } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { routeDetails } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
-import useCreationStore, {
-    creationSelectors,
-} from 'components/materialization/Store';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
 import EntityError from 'components/shared/Entity/Error';
 import FooHeader from 'components/shared/Entity/Header';
 import LogDialog from 'components/shared/Entity/LogDialog';
-import {
-    ConnectorTag,
-    CONNECTOR_TAG_QUERY,
-} from 'components/shared/Entity/query';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
 import { useConfirmationModalContext } from 'context/Confirmation';
-import { useClient, useQuery, useSelect } from 'hooks/supabase-swr';
+import { useClient } from 'hooks/supabase-swr';
 import { usePrompt } from 'hooks/useBlocker';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
+import useConnectorTags from 'hooks/useConnectorTags';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
@@ -36,6 +30,7 @@ import useNotificationStore, {
     NotificationState,
 } from 'stores/NotificationStore';
 import { getStore } from 'stores/Repo';
+import { getPathWithParam } from 'utils/misc-utils';
 
 const FORM_ID = 'newCaptureForm';
 
@@ -59,27 +54,15 @@ function CaptureCreate() {
     const navigate = useNavigate();
     const confirmationModalContext = useConfirmationModalContext();
 
-    const prefillCollections = useCreationStore(
-        creationSelectors.prefillCollections
-    );
-
     // Supabase stuff
     const supabaseClient = useClient();
     const { combinedGrants } = useCombinedGrantsExt({
         onlyAdmin: true,
     });
 
-    const tagsQuery = useQuery<ConnectorTag>(
-        TABLES.CONNECTOR_TAGS,
-        {
-            columns: CONNECTOR_TAG_QUERY,
-            filter: (query) => query.eq('protocol', 'capture'),
-        },
-        []
-    );
-    const { data: connectorTags, error: connectorTagsError } =
-        useSelect(tagsQuery);
-    const hasConnectors = connectorTags && connectorTags.data.length > 0;
+    const { connectorTags, error: connectorTagsError } =
+        useConnectorTags('capture');
+    const hasConnectors = connectorTags.length > 0;
 
     // Notification store
     const showNotification = useNotificationStore(
@@ -266,10 +249,13 @@ function CaptureCreate() {
         },
 
         materializeCollections: () => {
-            // const collections = row.writes_to;
-            prefillCollections([]);
-
-            navigate(routeDetails.materializations.create.fullPath);
+            navigate(
+                getPathWithParam(
+                    routeDetails.materializations.create.fullPath,
+                    routeDetails.materializations.create.params.specID,
+                    draftId
+                )
+            );
         },
 
         saveAndPublish: (event: MouseEvent<HTMLElement>) => {
@@ -471,10 +457,10 @@ function CaptureCreate() {
                     </Collapse>
 
                     <form id={FORM_ID}>
-                        {connectorTags ? (
+                        {hasConnectors ? (
                             <ErrorBoundryWrapper>
                                 <DetailsForm
-                                    connectorTags={connectorTags.data}
+                                    connectorTags={connectorTags}
                                     messagePrefix="captureCreation"
                                     accessGrants={combinedGrants}
                                 />

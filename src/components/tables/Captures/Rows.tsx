@@ -2,9 +2,6 @@ import { Collapse, TableCell, TableRow } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
 import CaptureDetails from 'components/capture/Details';
 import { createEditorStore } from 'components/editor/Store';
-import useCreationStore, {
-    creationSelectors,
-} from 'components/materialization/Store';
 import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import Actions from 'components/tables/cells/Actions';
 import ChipList from 'components/tables/cells/ChipList';
@@ -17,6 +14,7 @@ import UserName from 'components/tables/cells/UserName';
 import { ZustandProvider } from 'hooks/useZustand';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getPathWithParam } from 'utils/misc-utils';
 
 interface RowsProps {
     data: LiveSpecsExtQuery[];
@@ -61,16 +59,16 @@ function Row({ row }: RowProps) {
     const [detailsExpanded, setDetailsExpanded] = useState(false);
 
     const navigate = useNavigate();
-    const prefillCollections = useCreationStore(
-        creationSelectors.prefillCollections
-    );
 
     const handlers = {
         clickMaterialize: () => {
-            const collections = row.writes_to;
-            prefillCollections(collections);
-
-            navigate(routeDetails.materializations.create.fullPath);
+            navigate(
+                getPathWithParam(
+                    routeDetails.materializations.create.fullPath,
+                    routeDetails.materializations.create.params.specID,
+                    row.id
+                )
+            );
         },
     };
 

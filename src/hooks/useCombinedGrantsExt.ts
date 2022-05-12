@@ -1,5 +1,5 @@
 import { Auth } from '@supabase/ui';
-import { TABLES } from 'services/supabase';
+import { DEFAULT_FILTER, TABLES } from 'services/supabase';
 import { Grants } from 'types';
 import { useQuery, useSelect } from './supabase-swr/';
 
@@ -23,14 +23,14 @@ function useCombinedGrantsExt({ onlyAdmin }: Props) {
                     queryBuilder = queryBuilder.eq('capability', 'admin');
                 }
 
-                return queryBuilder.eq('user_id', user?.id ?? '_unknown_');
+                return queryBuilder.eq('user_id', user?.id ?? DEFAULT_FILTER);
             },
         },
         []
     );
 
     const { data, error, mutate, isValidating } = useSelect(
-        combinedGrantsExtQuery
+        user?.id ? combinedGrantsExtQuery : null
     );
 
     return {

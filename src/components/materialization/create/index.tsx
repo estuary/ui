@@ -13,18 +13,15 @@ import EndpointConfig from 'components/shared/Entity/EndpointConfig';
 import EntityError from 'components/shared/Entity/Error';
 import FooHeader from 'components/shared/Entity/Header';
 import LogDialog from 'components/shared/Entity/LogDialog';
-import {
-    ConnectorTag,
-    CONNECTOR_TAG_QUERY,
-} from 'components/shared/Entity/query';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
 import { useConfirmationModalContext } from 'context/Confirmation';
-import { useClient, useQuery, useSelect } from 'hooks/supabase-swr';
+import { useClient } from 'hooks/supabase-swr';
 import { usePrompt } from 'hooks/useBlocker';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
+import useConnectorTags from 'hooks/useConnectorTags';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
@@ -71,18 +68,9 @@ function MaterializationCreate() {
     const { combinedGrants } = useCombinedGrantsExt({
         onlyAdmin: true,
     });
-    const tagsQuery = useQuery<ConnectorTag>(
-        TABLES.CONNECTOR_TAGS,
-        {
-            columns: CONNECTOR_TAG_QUERY,
-            filter: (query) => query.eq('protocol', 'materialization'),
-        },
-        []
-    );
-    const { data: connectorTags, error: connectorTagsError } =
-        useSelect(tagsQuery);
-
-    const hasConnectors = connectorTags && connectorTags.data.length > 0;
+    const { connectorTags, error: connectorTagsError } =
+        useConnectorTags('materialization');
+    const hasConnectors = connectorTags.length > 0;
 
     // Notification store
     const showNotification = useNotificationStore(
@@ -271,7 +259,7 @@ function MaterializationCreate() {
             detailHasErrors = detailErrors ? detailErrors.length > 0 : false;
             specHasErrors = specErrors ? specErrors.length > 0 : false;
 
-            const connectorInfo = connectorTags?.data.find(
+            const connectorInfo = connectorTags.find(
                 ({ id }) => id === imageTag?.id
             );
 
@@ -549,10 +537,10 @@ function MaterializationCreate() {
                     </Collapse>
 
                     <form>
-                        {connectorTags && (
+                        {hasConnectors && (
                             <ErrorBoundryWrapper>
                                 <DetailsForm
-                                    connectorTags={connectorTags.data}
+                                    connectorTags={connectorTags}
                                     messagePrefix="materializationCreation"
                                     accessGrants={combinedGrants}
                                 />
