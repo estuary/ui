@@ -30,8 +30,6 @@ export const tableColumns = [
 ];
 
 function Row({ row }: RowProps) {
-    console.log(row);
-
     return (
         <TableRow key={`Entity-${row.id}`}>
             {row.user_full_name ? (
