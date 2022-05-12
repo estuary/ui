@@ -2,7 +2,7 @@
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import EmailIcon from '@mui/icons-material/Email';
 import Logout from '@mui/icons-material/Logout';
-import { Stack, Typography } from '@mui/material';
+import { Stack, SxProps, Typography } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import MenuItem from '@mui/material/MenuItem';
@@ -12,6 +12,12 @@ import { useClient } from 'hooks/supabase-swr';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { getUserDetails } from 'services/supabase';
 import IconMenu from './IconMenu';
+
+const nonInteractiveMenuStyling: SxProps = {
+    '&:hover': {
+        cursor: 'revert',
+    },
+};
 
 const UserMenu = () => {
     const intl = useIntl();
@@ -41,13 +47,13 @@ const UserMenu = () => {
                 tooltip={intl.formatMessage({ id: 'accountMenu.tooltip' })}
                 verticalOrigin="top"
             >
-                <MenuItem>
+                <MenuItem sx={nonInteractiveMenuStyling}>
                     <ListItemIcon>
                         <AccountCircleIcon fontSize="small" />
                     </ListItemIcon>
                     {userName}
                 </MenuItem>
-                <MenuItem>
+                <MenuItem sx={nonInteractiveMenuStyling}>
                     <ListItemIcon>
                         <EmailIcon fontSize="small" />
                     </ListItemIcon>

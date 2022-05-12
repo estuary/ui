@@ -5,6 +5,7 @@ import { Connector } from 'components/tables/Connectors';
 import Link from 'components/tables/Link';
 import { FormattedDate, FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
+import { getPathWithParam } from 'utils/misc-utils';
 
 interface Props {
     data: Connector[];
@@ -95,14 +96,28 @@ function Rows({ data }: Props) {
                                             'capture'
                                         ) {
                                             navigate(
-                                                `${routeDetails.captures.create.fullPath}?${routeDetails.captures.create.params.connectorID}=${row.connector_tags[0].id}`
+                                                getPathWithParam(
+                                                    routeDetails.captures.create
+                                                        .fullPath,
+                                                    routeDetails.captures.create
+                                                        .params.connectorID,
+                                                    row.connector_tags[0].id
+                                                )
                                             );
                                         } else if (
                                             row.connector_tags[0].protocol ===
                                             'materialization'
                                         ) {
                                             navigate(
-                                                `${routeDetails.materializations.create.fullPath}?${routeDetails.materializations.create.params.connectorID}=${row.connector_tags[0].id}`
+                                                getPathWithParam(
+                                                    routeDetails
+                                                        .materializations.create
+                                                        .fullPath,
+                                                    routeDetails
+                                                        .materializations.create
+                                                        .params.connectorID,
+                                                    row.connector_tags[0].id
+                                                )
                                             );
                                         }
                                     }}

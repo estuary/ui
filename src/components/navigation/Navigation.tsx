@@ -16,8 +16,8 @@ import {
 } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
 import { routeDetails } from 'app/Authenticated';
-import UserMenu from 'components/menus/UserMenu';
 import HelpMenu from 'components/menus/HelpMenu';
+import UserMenu from 'components/menus/UserMenu';
 import ModeSwitch from 'components/navigation/ModeSwitch';
 import { FormattedMessage, useIntl } from 'react-intl';
 import ListItemLink from './ListItemLink';

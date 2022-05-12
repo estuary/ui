@@ -2,7 +2,7 @@ import { List, ListItemText } from '@mui/material';
 
 export type KeyValue = {
     title: string;
-    val: string;
+    val?: string;
 };
 
 interface Props {

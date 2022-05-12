@@ -2,7 +2,6 @@ import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { StyledEngineProvider } from '@mui/material';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { isEmpty } from 'lodash';
 import { useEffect } from 'react';
 import { createJSONFormDefaults, setDefaultsValidator } from 'services/ajv';
 import {
@@ -36,18 +35,12 @@ function EndpointConfigForm({ endpointSchema }: Props) {
     useEffect(() => {
         setSpec({
             data: createJSONFormDefaults(endpointSchema),
+            errors: [],
         });
     }, [endpointSchema, setSpec]);
 
     const uiSchema = generateCustomUISchema(endpointSchema);
     const showValidationVal = showValidation(displayValidation);
-    const handlers = {
-        onChange: (form: any) => {
-            if (!isEmpty(form.data)) {
-                setSpec(form);
-            }
-        },
-    };
 
     return (
         <StyledEngineProvider injectFirst>
@@ -61,7 +54,7 @@ function EndpointConfigForm({ endpointSchema }: Props) {
                     config={defaultOptions}
                     readonly={formStateStatus !== FormStatus.IDLE}
                     validationMode={showValidationVal}
-                    onChange={handlers.onChange}
+                    onChange={setSpec}
                     ajv={setDefaultsValidator}
                 />
             </div>

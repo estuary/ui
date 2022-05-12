@@ -6,7 +6,9 @@ import EntityName from 'components/tables/cells/EntityName';
 import ExpandDetails from 'components/tables/cells/ExpandDetails';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import UserName from 'components/tables/cells/UserName';
+import DetailsPanel from 'components/tables/DetailsPanel';
 import { LiveSpecsExtQuery } from 'components/tables/Materializations';
+import { useState } from 'react';
 
 interface RowsProps {
     data: LiveSpecsExtQuery[];
@@ -44,29 +46,44 @@ export const tableColumns = [
 ];
 
 function Row({ row }: RowProps) {
+    const [detailsExpanded, setDetailsExpanded] = useState(false);
+
     return (
-        <TableRow key={`Entity-${row.id}`}>
-            <EntityName name={row.catalog_name} />
+        <>
+            <TableRow key={`Entity-${row.id}`}>
+                <EntityName name={row.catalog_name} />
 
-            <Connector
-                openGraph={row.connector_open_graph}
-                imageTag={`${row.connector_image_name}${row.connector_image_tag}`}
+                <Connector
+                    openGraph={row.connector_open_graph}
+                    imageTag={`${row.connector_image_name}${row.connector_image_tag}`}
+                />
+
+                <ChipList strings={row.reads_from} />
+
+                <TimeStamp time={row.updated_at} />
+
+                <UserName
+                    avatar={row.last_pub_user_avatar_url}
+                    email={row.last_pub_user_email}
+                    name={row.last_pub_user_full_name}
+                />
+
+                <Actions>
+                    <ExpandDetails
+                        onClick={() => {
+                            setDetailsExpanded(!detailsExpanded);
+                        }}
+                        expanded={detailsExpanded}
+                    />
+                </Actions>
+            </TableRow>
+
+            <DetailsPanel
+                detailsExpanded={detailsExpanded}
+                id={row.last_pub_id}
+                colSpan={tableColumns.length}
             />
-
-            <ChipList strings={row.reads_from} />
-
-            <TimeStamp time={row.updated_at} />
-
-            <UserName
-                avatar={row.last_pub_user_avatar_url}
-                email={row.last_pub_user_email}
-                name={row.last_pub_user_full_name}
-            />
-
-            <Actions>
-                <ExpandDetails disabled={true} />
-            </Actions>
-        </TableRow>
+        </>
     );
 }
 

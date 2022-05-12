@@ -14,12 +14,14 @@ function useDraftSpecErrors(draftId?: string | null) {
         TABLES.DRAFT_ERRORS,
         {
             columns: DRAFT_SPEC_COLS,
-            filter: (query) => query.eq('draft_id', draftId ?? '_unknown_'),
+            filter: (query) => query.eq('draft_id', draftId as string),
         },
         [draftId]
     );
 
-    const { data, error, mutate, isValidating } = useSelect(draftErrorsQuery);
+    const { data, error, mutate, isValidating } = useSelect(
+        draftId ? draftErrorsQuery : null
+    );
 
     return {
         draftSpecErrors: data ? data.data : [],

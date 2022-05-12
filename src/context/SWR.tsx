@@ -6,6 +6,7 @@ import { ERROR_MESSAGES } from 'services/supabase';
 import { SWRConfig } from 'swr';
 import { BaseComponentProps } from 'types';
 import { getSWRSettings } from 'utils/env-utils';
+import { getPathWithParam } from 'utils/misc-utils';
 
 const swrSettings = getSWRSettings();
 
@@ -89,7 +90,11 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
                 .signOut()
                 .then(() => {
                     navigate(
-                        `${logoutRoutes.path}?${logoutRoutes.params.reason}=${LogoutReasons.JWT}`
+                        getPathWithParam(
+                            logoutRoutes.path,
+                            logoutRoutes.params.reason,
+                            LogoutReasons.JWT
+                        )
                     );
                 })
                 .catch(() => {});

@@ -20,6 +20,8 @@ export const ERROR_MESSAGES = {
     jwtExpired: 'JWT expired',
 };
 
+export const DEFAULT_FILTER = '__unknown__';
+
 export enum TABLES {
     COMBINED_GRANTS_EXT = 'combined_grants_ext',
     CONNECTOR_TAGS = 'connector_tags',

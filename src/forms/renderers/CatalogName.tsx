@@ -24,9 +24,7 @@
 */
 
 import {
-    and,
     ControlProps,
-    isOneOfEnumControl,
     OwnPropsOfEnum,
     RankedTester,
     rankWith,
@@ -35,20 +33,20 @@ import {
 import { MaterialInputControl } from '@jsonforms/material-renderers';
 import { WithOptionLabel } from '@jsonforms/material-renderers/lib/mui-controls/MuiAutocomplete';
 import { withJsonFormsOneOfEnumProps } from '@jsonforms/react';
-import { ConnectorAutoComplete } from 'forms/renderers/ConnectorSelect/AutoComplete';
+import { CatalogNameAutoComplete } from 'forms/renderers/CatalogName/AutoComplete';
 
-export const CONNECTOR_IMAGE_SCOPE = 'connectorImage';
+export const CATALOG_NAME_SCOPE = 'entityName';
 
-export const connectorTypeTester: RankedTester = rankWith(
+export const catalogNameTypeTester: RankedTester = rankWith(
     10,
-    and(isOneOfEnumControl, scopeEndsWith(CONNECTOR_IMAGE_SCOPE))
+    scopeEndsWith(CATALOG_NAME_SCOPE)
 );
 
 // This is blank on purpose. For right now we can just show null settings are nothing
-const ConnectorTypeRenderer = (
+const CatalogNameTypeRenderer = (
     props: ControlProps & OwnPropsOfEnum & WithOptionLabel
 ) => {
-    return <MaterialInputControl {...props} input={ConnectorAutoComplete} />;
+    return <MaterialInputControl {...props} input={CatalogNameAutoComplete} />;
 };
 
-export const ConnectorType = withJsonFormsOneOfEnumProps(ConnectorTypeRenderer);
+export const CatalogName = withJsonFormsOneOfEnumProps(CatalogNameTypeRenderer);

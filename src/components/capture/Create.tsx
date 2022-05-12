@@ -5,22 +5,18 @@ import { EditorStoreState } from 'components/editor/Store';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
-import { CONFIG_EDITOR_ID } from 'components/shared/Entity/EndpointConfigForm';
 import EntityError from 'components/shared/Entity/Error';
 import FooHeader from 'components/shared/Entity/Header';
 import LogDialog from 'components/shared/Entity/LogDialog';
-import {
-    ConnectorTag,
-    CONNECTOR_TAG_QUERY,
-} from 'components/shared/Entity/query';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
 import { useConfirmationModalContext } from 'context/Confirmation';
-import { useClient, useQuery, useSelect } from 'hooks/supabase-swr';
+import { useClient } from 'hooks/supabase-swr';
 import { usePrompt } from 'hooks/useBlocker';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
+import useConnectorTags from 'hooks/useConnectorTags';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
@@ -34,6 +30,7 @@ import useNotificationStore, {
     NotificationState,
 } from 'stores/NotificationStore';
 import { getStore } from 'stores/Repo';
+import { getPathWithParam } from 'utils/misc-utils';
 
 const FORM_ID = 'newCaptureForm';
 
@@ -63,17 +60,9 @@ function CaptureCreate() {
         onlyAdmin: true,
     });
 
-    const tagsQuery = useQuery<ConnectorTag>(
-        TABLES.CONNECTOR_TAGS,
-        {
-            columns: CONNECTOR_TAG_QUERY,
-            filter: (query) => query.eq('protocol', 'capture'),
-        },
-        []
-    );
-    const { data: connectorTags, error: connectorTagsError } =
-        useSelect(tagsQuery);
-    const hasConnectors = connectorTags && connectorTags.data.length > 0;
+    const { connectorTags, error: connectorTagsError } =
+        useConnectorTags('capture');
+    const hasConnectors = connectorTags.length > 0;
 
     // Notification store
     const showNotification = useNotificationStore(
@@ -82,7 +71,6 @@ function CaptureCreate() {
 
     // Form store
     const entityCreateStore = getStore(useRouteStore());
-    const entityPrefix = entityCreateStore(createStoreSelectors.details.prefix);
     const entityName = entityCreateStore(
         createStoreSelectors.details.entityName
     );
@@ -132,8 +120,6 @@ function CaptureCreate() {
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
     >((state) => state.id);
-
-    const configEditor = document.getElementById(CONFIG_EDITOR_ID);
 
     const helpers = {
         callFailed: (formState: any, subscription?: RealtimeSubscription) => {
@@ -210,10 +196,6 @@ function CaptureCreate() {
                 supabaseClient.from(TABLES.DISCOVERS),
                 (payload: any) => {
                     setDraftId(payload.new.draft_id);
-                    configEditor?.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'end',
-                    });
                 },
                 'captureCreation.test.failedErrorTitle'
             );
@@ -264,6 +246,16 @@ function CaptureCreate() {
             if (exitWhenLogsClose) {
                 helpers.exit();
             }
+        },
+
+        materializeCollections: () => {
+            navigate(
+                getPathWithParam(
+                    routeDetails.materializations.create.fullPath,
+                    routeDetails.materializations.create.params.specID,
+                    draftId
+                )
+            );
         },
 
         saveAndPublish: (event: MouseEvent<HTMLElement>) => {
@@ -333,7 +325,7 @@ function CaptureCreate() {
                 supabaseClient
                     .from(TABLES.DRAFTS)
                     .insert({
-                        detail: `${entityPrefix.title}${entityName}`,
+                        detail: entityName,
                     })
                     .then(
                         (draftsResponse) => {
@@ -348,7 +340,7 @@ function CaptureCreate() {
                                     .from(TABLES.DISCOVERS)
                                     .insert([
                                         {
-                                            capture_name: `${entityPrefix.title}${entityName}`,
+                                            capture_name: entityName,
                                             endpoint_config: endpointConfigData,
                                             connector_tag_id: imageTag.id,
                                             draft_id: draftsResponse.data[0].id,
@@ -423,6 +415,12 @@ function CaptureCreate() {
                         {formStateSaveStatus}
                         <Button
                             disabled={formStateStatus !== FormStatus.IDLE}
+                            onClick={handlers.materializeCollections}
+                        >
+                            <FormattedMessage id="captureCreation.ctas.materialize" />
+                        </Button>
+                        <Button
+                            disabled={formStateStatus !== FormStatus.IDLE}
                             onClick={handlers.closeLogs}
                         >
                             <FormattedMessage id="cta.close" />
@@ -459,10 +457,10 @@ function CaptureCreate() {
                     </Collapse>
 
                     <form id={FORM_ID}>
-                        {connectorTags ? (
+                        {hasConnectors ? (
                             <ErrorBoundryWrapper>
                                 <DetailsForm
-                                    connectorTags={connectorTags.data}
+                                    connectorTags={connectorTags}
                                     messagePrefix="captureCreation"
                                     accessGrants={combinedGrants}
                                 />

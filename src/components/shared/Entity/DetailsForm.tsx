@@ -2,7 +2,9 @@ import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Alert, Stack, Typography } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
-import { ConnectorTag } from 'components/shared/Entity/query';
+import { CATALOG_NAME_SCOPE } from 'forms/renderers/CatalogName';
+import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
+import { ConnectorTagQuery } from 'hooks/useConnectorTags';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -18,7 +20,7 @@ import { Grants } from 'types';
 import { getConnectorName } from 'utils/misc-utils';
 
 interface Props {
-    connectorTags: ConnectorTag[];
+    connectorTags: ConnectorTagQuery[];
     accessGrants: Grants[];
     messagePrefix: 'materializationCreation' | 'captureCreation';
 }
@@ -42,12 +44,8 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
         if (connectorID) {
             setDetails({
                 data: {
-                    prefix: {
-                        const: '',
-                        title: '',
-                    },
-                    name: '',
-                    image: {
+                    entityName: '',
+                    connectorImage: {
                         id: connectorID,
                         iconPath: '',
                     },
@@ -57,17 +55,11 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
     }, [connectorID, setDetails]);
 
     const accessGrantsOneOf = useMemo(() => {
-        const response = [] as { title: string; const: Object }[];
+        const response = [] as string[];
 
         if (accessGrants.length > 0) {
             accessGrants.forEach((accessGrant) => {
-                response.push({
-                    const: {
-                        id: accessGrant.id,
-                        title: accessGrant.object_role,
-                    },
-                    title: accessGrant.object_role,
-                });
+                response.push(accessGrant.object_role);
             });
         }
 
@@ -96,30 +88,27 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
     const schema = useMemo(() => {
         return {
             properties: {
-                image: {
+                [CONNECTOR_IMAGE_SCOPE]: {
                     description: intl.formatMessage({
                         id: 'connector.description',
                     }),
                     oneOf: connectorsOneOf,
                     type: 'object',
                 },
-                prefix: {
-                    description: intl.formatMessage({
-                        id: 'entityPrefix.description',
-                    }),
-                    oneOf: accessGrantsOneOf,
-                    type: 'object',
-                },
-                name: {
+                [CATALOG_NAME_SCOPE]: {
                     description: intl.formatMessage({
                         id: 'entityName.description',
                     }),
-                    // TODO (prefix) Make prefix a part of the name field
+
                     // This pattern needs to match https://github.com/estuary/animated-carnival/blob/main/supabase/migrations/03_catalog-types.sql
-                    // Right now with prefix broken out it means the first part is a bit different
+                    //     as close as possible. We just alter it to handle that we know the list of allowed prefix values
+                    //     this means that it handles the first portion of the name.
                     // `^([a-zA-Z0-9-_.]+/)+[a-zA-Z0-9-_.]+$`
-                    pattern: `^([a-zA-Z0-9-_./])+[^/]$`,
+                    examples: accessGrantsOneOf,
                     type: 'string',
+                    pattern: `^(${accessGrantsOneOf.join(
+                        '|'
+                    )})([a-zA-Z0-9-_.]+/)*[a-zA-Z0-9-_.]+$`,
                 },
                 description: {
                     description: intl.formatMessage({
@@ -128,7 +117,7 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
                     type: 'string',
                 },
             },
-            required: ['prefix', 'name', 'image'],
+            required: [CATALOG_NAME_SCOPE, CONNECTOR_IMAGE_SCOPE],
             type: 'object',
         };
     }, [accessGrantsOneOf, connectorsOneOf, intl]);
@@ -139,23 +128,16 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
                 elements: [
                     {
                         label: intl.formatMessage({
-                            id: 'entityPrefix.label',
-                        }),
-                        scope: '#/properties/prefix',
-                        type: 'Control',
-                    },
-                    {
-                        label: intl.formatMessage({
                             id: 'entityName.label',
                         }),
-                        scope: '#/properties/name',
+                        scope: `#/properties/${CATALOG_NAME_SCOPE}`,
                         type: 'Control',
                     },
                     {
                         label: intl.formatMessage({
                             id: 'connector.label',
                         }),
-                        scope: '#/properties/image',
+                        scope: `#/properties/${CONNECTOR_IMAGE_SCOPE}`,
                         type: 'Control',
                     },
                 ],
@@ -186,8 +168,9 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
             <FormattedMessage id={`${messagePrefix}.instructions`} />
 
             <Stack direction="row" spacing={2}>
-                {schema.properties.image.oneOf.length > 0 ? (
-                    schema.properties.prefix.oneOf.length > 0 ? (
+                {schema.properties[CONNECTOR_IMAGE_SCOPE].oneOf.length > 0 ? (
+                    schema.properties[CATALOG_NAME_SCOPE].examples.length >
+                    0 ? (
                         <JsonForms
                             schema={schema}
                             uischema={uiSchema}

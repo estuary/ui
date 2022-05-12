@@ -53,9 +53,10 @@ logs_token
 
 interface Props {
     lastPubId: string;
+    disableLogs?: boolean;
 }
 
-function CaptureDetails({ lastPubId }: Props) {
+function CaptureDetails({ lastPubId, disableLogs }: Props) {
     useBrowserTitle('browserTitle.captureDetails');
 
     // Supabase stuff
@@ -105,7 +106,7 @@ function CaptureDetails({ lastPubId }: Props) {
     } else {
         return (
             <Grid container spacing={2}>
-                <Grid item xs={6}>
+                <Grid item xs={disableLogs ? 12 : 6}>
                     <LiveSpecEditor />
                 </Grid>
 
@@ -114,7 +115,7 @@ function CaptureDetails({ lastPubId }: Props) {
                         <Alert variant="filled" severity="warning">
                             <FormattedMessage id="captureDetails.logs.notFound" />
                         </Alert>
-                    ) : pubs?.data ? (
+                    ) : !disableLogs && pubs?.data ? (
                         <Logs
                             token={pubs.data.logs_token}
                             fetchAll

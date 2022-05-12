@@ -33,6 +33,8 @@ export interface CreationState {
     collections: any[];
     setCollections: (collections: any[]) => void;
     prefillCollections: (collections: any[]) => void;
+
+    resetState: () => void;
 }
 
 const getInitialStateData = (): Pick<
@@ -89,6 +91,10 @@ const useCreationStore = create<CreationState>()(
                     'Collections Prefilled'
                 );
             },
+
+            resetState: () => {
+                set(getInitialStateData(), false, 'Resetting State');
+            },
         }),
         devtoolsOptions('materialization-creation-state')
     )
@@ -102,4 +108,5 @@ export const creationSelectors = {
     prefillCollections: (state: CreationState) => state.prefillCollections,
     resourceConfig: (state: CreationState) => state.resourceConfig,
     setResourceConfig: (state: CreationState) => state.setResourceConfig,
+    resetState: (state: CreationState) => state.resetState,
 };

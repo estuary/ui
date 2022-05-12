@@ -10,22 +10,18 @@ import useCreationStore, {
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
-import { CONFIG_EDITOR_ID } from 'components/shared/Entity/EndpointConfigForm';
 import EntityError from 'components/shared/Entity/Error';
 import FooHeader from 'components/shared/Entity/Header';
 import LogDialog from 'components/shared/Entity/LogDialog';
-import {
-    ConnectorTag,
-    CONNECTOR_TAG_QUERY,
-} from 'components/shared/Entity/query';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
 import { useConfirmationModalContext } from 'context/Confirmation';
-import { useClient, useQuery, useSelect } from 'hooks/supabase-swr';
+import { useClient } from 'hooks/supabase-swr';
 import { usePrompt } from 'hooks/useBlocker';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
+import useConnectorTags from 'hooks/useConnectorTags';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
@@ -72,18 +68,9 @@ function MaterializationCreate() {
     const { combinedGrants } = useCombinedGrantsExt({
         onlyAdmin: true,
     });
-    const tagsQuery = useQuery<ConnectorTag>(
-        TABLES.CONNECTOR_TAGS,
-        {
-            columns: CONNECTOR_TAG_QUERY,
-            filter: (query) => query.eq('protocol', 'materialization'),
-        },
-        []
-    );
-    const { data: connectorTags, error: connectorTagsError } =
-        useSelect(tagsQuery);
-
-    const hasConnectors = connectorTags && connectorTags.data.length > 0;
+    const { connectorTags, error: connectorTagsError } =
+        useConnectorTags('materialization');
+    const hasConnectors = connectorTags.length > 0;
 
     // Notification store
     const showNotification = useNotificationStore(
@@ -92,14 +79,13 @@ function MaterializationCreate() {
 
     // Materializations store
     const resourceConfig = useCreationStore(creationSelectors.resourceConfig);
+    const resetCreationStore = useCreationStore(creationSelectors.resetState);
 
     // Form store
     const entityCreateStore = getStore(useRouteStore());
-    const entityPrefix = entityCreateStore(createStoreSelectors.details.prefix);
     const entityName = entityCreateStore(
         createStoreSelectors.details.entityName
     );
-    const fullName = `${entityPrefix.title}${entityName}`;
     const imageTag = entityCreateStore(
         createStoreSelectors.details.connectorTag
     );
@@ -147,16 +133,6 @@ function MaterializationCreate() {
         EditorStoreState<DraftSpecQuery>['setId']
     >((state) => state.setId);
 
-    // TODO (materializations) : get this working again
-    // const editorSpecs = useZustandStore<
-    //     EditorStoreState<DraftSpecQuery>,
-    //     EditorStoreState<DraftSpecQuery>['specs']
-    // >((state) => state.specs);
-
-    // const editorContainsSpecs = editorSpecs && editorSpecs.length > 0;
-
-    const configEditor = document.getElementById(CONFIG_EDITOR_ID);
-
     const helpers = {
         callFailed: (formState: any, subscription?: RealtimeSubscription) => {
             const setFailureState = () => {
@@ -193,6 +169,7 @@ function MaterializationCreate() {
         },
         exit: () => {
             resetState();
+            resetCreationStore();
 
             navigate(routeDetails.materializations.path);
         },
@@ -208,33 +185,41 @@ function MaterializationCreate() {
         },
     };
 
-    const createPublicationsSubscription = (): RealtimeSubscription => {
-        const subscription = supabaseClient
-            .from(TABLES.PUBLICATIONS)
-            .on('*', async (payload: any) => {
-                if (payload.new.job_status.type !== 'queued') {
-                    if (payload.new.job_status.type === 'success') {
-                        setFormState({
-                            status: FormStatus.IDLE,
-                            exitWhenLogsClose: true,
-                            saveStatus: intl.formatMessage({
-                                id: 'common.success',
-                            }),
-                        });
+    const waitFor = {
+        base: (query: any, success: Function, failureTitle: string) => {
+            const subscription = query
+                .on('*', async (payload: any) => {
+                    if (payload.new.job_status.type !== 'queued') {
+                        if (payload.new.job_status.type === 'success') {
+                            success(payload);
+                        } else {
+                            helpers.jobFailed(failureTitle);
+                        }
 
-                        showNotification(notification);
-                    } else {
-                        helpers.jobFailed(
-                            'materializationCreation.save.failure.errorTitle'
-                        );
+                        await helpers.doneSubscribing(subscription);
                     }
+                })
+                .subscribe();
 
-                    await helpers.doneSubscribing(subscription);
-                }
-            })
-            .subscribe();
+            return subscription;
+        },
+        publications: () => {
+            return waitFor.base(
+                supabaseClient.from(TABLES.PUBLICATIONS),
+                () => {
+                    setFormState({
+                        status: FormStatus.IDLE,
+                        exitWhenLogsClose: true,
+                        saveStatus: intl.formatMessage({
+                            id: 'common.success',
+                        }),
+                    });
 
-        return subscription;
+                    showNotification(notification);
+                },
+                'materializationCreation.save.failure.errorTitle'
+            );
+        },
     };
 
     // Form Event Handlers
@@ -266,8 +251,7 @@ function MaterializationCreate() {
             }
         },
 
-        // TODO: Add preview-specific content to language file and replace the test-specific content in this function.
-        preview: (event: MouseEvent<HTMLElement>) => {
+        test: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
             let detailHasErrors = false;
@@ -277,7 +261,7 @@ function MaterializationCreate() {
             detailHasErrors = detailErrors ? detailErrors.length > 0 : false;
             specHasErrors = specErrors ? specErrors.length > 0 : false;
 
-            const connectorInfo = connectorTags?.data.find(
+            const connectorInfo = connectorTags.find(
                 ({ id }) => id === imageTag?.id
             );
 
@@ -285,8 +269,10 @@ function MaterializationCreate() {
                 setFormState({ displayValidation: true });
             } else if (isEmpty(resourceConfig)) {
                 // TODO: Handle the scenario where no collections are present.
+                setFormState({ displayValidation: true });
             } else if (!connectorInfo) {
                 // TODO: Handle the highly unlikely scenario where the connector tag id could not be found.
+                setFormState({ displayValidation: true });
             } else {
                 setFormState({
                     status: FormStatus.GENERATING_PREVIEW,
@@ -322,7 +308,7 @@ function MaterializationCreate() {
                 supabaseClient
                     .from(TABLES.DRAFTS)
                     .insert({
-                        detail: fullName,
+                        detail: entityName,
                     })
                     .then(
                         (draftsResponse) => {
@@ -332,16 +318,12 @@ function MaterializationCreate() {
                             ) {
                                 setDraftId(draftsResponse.data[0].id);
 
-                                configEditor?.scrollIntoView({
-                                    behavior: 'smooth',
-                                });
-
                                 supabaseClient
                                     .from(TABLES.DRAFT_SPECS)
                                     .insert([
                                         {
                                             draft_id: draftsResponse.data[0].id,
-                                            catalog_name: fullName,
+                                            catalog_name: entityName,
                                             spec_type: 'materialization',
                                             spec: draftSpec,
                                         },
@@ -389,73 +371,11 @@ function MaterializationCreate() {
             }
         },
 
-        test: (event: MouseEvent<HTMLElement>) => {
-            event.preventDefault();
-            let detailHasErrors = false;
-            let specHasErrors = false;
-
-            // TODO (linting) - this was to make TS/Linting happy
-            detailHasErrors = detailErrors ? detailErrors.length > 0 : false;
-            specHasErrors = specErrors ? specErrors.length > 0 : false;
-
-            if (detailHasErrors || specHasErrors) {
-                setFormState({
-                    displayValidation: true,
-                });
-            } else {
-                resetFormState(FormStatus.TESTING);
-                const publicationsSubscription =
-                    createPublicationsSubscription();
-
-                supabaseClient
-                    .from(TABLES.PUBLICATIONS)
-                    .insert([
-                        {
-                            draft_id: draftId,
-                            dry_run: true,
-                        },
-                    ])
-                    .then(
-                        async (response) => {
-                            if (response.data) {
-                                if (response.data.length > 0) {
-                                    setFormState({
-                                        logToken: response.data[0].logs_token,
-                                        showLogs: true,
-                                    });
-                                }
-                            } else {
-                                helpers.callFailed(
-                                    {
-                                        error: {
-                                            title: 'materializationCreation.test.failure.errorTitle',
-                                            error: response.error,
-                                        },
-                                    },
-                                    publicationsSubscription
-                                );
-                            }
-                        },
-                        () => {
-                            helpers.callFailed(
-                                {
-                                    error: {
-                                        title: 'materializationCreation.test.serverUnreachable',
-                                    },
-                                },
-                                publicationsSubscription
-                            );
-                        }
-                    );
-            }
-        },
-
         saveAndPublish: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
             resetFormState(FormStatus.SAVING);
-
-            const publicationsSubscription = createPublicationsSubscription();
+            const publicationsSubscription = waitFor.publications();
 
             supabaseClient
                 .from(TABLES.PUBLICATIONS)
@@ -502,10 +422,71 @@ function MaterializationCreate() {
                     }
                 );
         },
+
+        oldTest: (event: MouseEvent<HTMLElement>) => {
+            event.preventDefault();
+            let detailHasErrors = false;
+            let specHasErrors = false;
+
+            // TODO (linting) - this was to make TS/Linting happy
+            detailHasErrors = detailErrors ? detailErrors.length > 0 : false;
+            specHasErrors = specErrors ? specErrors.length > 0 : false;
+
+            if (detailHasErrors || specHasErrors) {
+                setFormState({
+                    displayValidation: true,
+                });
+            } else {
+                resetFormState(FormStatus.TESTING);
+                const publicationsSubscription = waitFor.publications();
+
+                supabaseClient
+                    .from(TABLES.PUBLICATIONS)
+                    .insert([
+                        {
+                            draft_id: draftId,
+                            dry_run: true,
+                        },
+                    ])
+                    .then(
+                        async (response) => {
+                            if (response.data) {
+                                if (response.data.length > 0) {
+                                    setFormState({
+                                        logToken: response.data[0].logs_token,
+                                        showLogs: true,
+                                    });
+                                }
+                            } else {
+                                helpers.callFailed(
+                                    {
+                                        error: {
+                                            title: 'materializationCreation.test.failure.errorTitle',
+                                            error: response.error,
+                                        },
+                                    },
+                                    publicationsSubscription
+                                );
+                            }
+                        },
+                        () => {
+                            helpers.callFailed(
+                                {
+                                    error: {
+                                        title: 'materializationCreation.test.serverUnreachable',
+                                    },
+                                },
+                                publicationsSubscription
+                            );
+                        }
+                    );
+            }
+        },
     };
 
     usePrompt('confirm.loseData', !exitWhenLogsClose && hasChanges(), () => {
         resetState();
+        resetCreationStore();
     });
 
     return (
@@ -531,7 +512,7 @@ function MaterializationCreate() {
 
             <FooHeader
                 close={handlers.cancel}
-                test={handlers.preview}
+                test={handlers.test}
                 testDisabled={
                     formStateStatus !== FormStatus.IDLE || !hasConnectors
                 }
@@ -559,10 +540,10 @@ function MaterializationCreate() {
                     </Collapse>
 
                     <form>
-                        {connectorTags && (
+                        {hasConnectors && (
                             <ErrorBoundryWrapper>
                                 <DetailsForm
-                                    connectorTags={connectorTags.data}
+                                    connectorTags={connectorTags}
                                     messagePrefix="materializationCreation"
                                     accessGrants={combinedGrants}
                                 />
