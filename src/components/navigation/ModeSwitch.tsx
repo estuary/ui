@@ -9,7 +9,6 @@ function ModeSwitch() {
     const colorMode = useColorMode();
 
     return (
-<<<<<<< HEAD
         // <Tooltip title="Toggle Color Mode" placement="right-end">
         <IconButton
             color="inherit"
@@ -23,21 +22,6 @@ function ModeSwitch() {
             )}
         </IconButton>
         // </Tooltip>
-=======
-        <Tooltip title="Toggle Color Mode" placement="right-end">
-            <IconButton
-                color="inherit"
-                disabled
-                onClick={colorMode.toggleColorMode}
-            >
-                {theme.palette.mode === 'dark' ? (
-                    <ModeNightIcon />
-                ) : (
-                    <WbSunnyIcon />
-                )}
-            </IconButton>
-        </Tooltip>
->>>>>>> b2f2376... Correct layout adjustment
     );
 }
 
