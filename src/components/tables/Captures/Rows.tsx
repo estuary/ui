@@ -1,7 +1,5 @@
-import { Collapse, TableCell, TableRow } from '@mui/material';
+import { TableRow } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
-import CaptureDetails from 'components/capture/Details';
-import { createEditorStore } from 'components/editor/Store';
 import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import Actions from 'components/tables/cells/Actions';
 import ChipList from 'components/tables/cells/ChipList';
@@ -11,7 +9,7 @@ import ExpandDetails from 'components/tables/cells/ExpandDetails';
 import MaterializeAction from 'components/tables/cells/MaterializeAction';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import UserName from 'components/tables/cells/UserName';
-import { ZustandProvider } from 'hooks/useZustand';
+import DetailsPanel from 'components/tables/DetailsPanel';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getPathWithParam } from 'utils/misc-utils';
@@ -110,21 +108,11 @@ function Row({ row }: RowProps) {
                 </Actions>
             </TableRow>
 
-            <TableRow>
-                <TableCell
-                    sx={detailsExpanded ? null : { pb: 0, pt: 0 }}
-                    colSpan={tableColumns.length}
-                >
-                    <Collapse in={detailsExpanded} unmountOnExit>
-                        <ZustandProvider
-                            createStore={createEditorStore}
-                            storeName="liveSpecEditor"
-                        >
-                            <CaptureDetails lastPubId={row.last_pub_id} />
-                        </ZustandProvider>
-                    </Collapse>
-                </TableCell>
-            </TableRow>
+            <DetailsPanel
+                detailsExpanded={detailsExpanded}
+                id={row.last_pub_id}
+                colSpan={tableColumns.length}
+            />
         </>
     );
 }
