@@ -69,10 +69,6 @@ function MonacoEditor({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const editorUpdateDebounce = useCallback(
         debounce((val: string | undefined) => {
-            console.log('debounce', {
-                val,
-                curr: editorRef.current?.getValue(),
-            });
             if (val && onChange) {
                 setIsChanging(true);
                 onChange(JSON.parse(val), path)
