@@ -21,8 +21,9 @@ export const setDefaultsValidator = (function () {
     // Flow allows some extra annotations, some of which are used to control how forms are rendered
     // in the UI. The full list of allowed annotations is defined in:
     // https://github.com/estuary/flow/blob/master/crates/doc/src/annotation.rs
-    ajv.addKeyword('multiline');
-    ajv.addKeyword('secret');
+    ajv.addKeyword('multiline'); // text input should expect multiple lines
+    ajv.addKeyword('secret'); // should render as a password
+    ajv.addKeyword('advanced'); // Should be collapsed by default
     ajv.addKeyword('order'); // Unused at this time, but still present in airbyte schemas.
     return ajv;
 })();

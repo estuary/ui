@@ -24,7 +24,7 @@ import {
 import { ConnectorType, connectorTypeTester } from 'forms/renderers/Connectors';
 import { NullType, nullTypeTester } from 'forms/renderers/NullType';
 import isEmpty from 'lodash/isEmpty';
-import keys from 'lodash/keys';
+//import keys from 'lodash/keys';
 import startCase from 'lodash/startCase';
 
 export const defaultOptions = {
@@ -111,11 +111,10 @@ const addLabel = (layout: Layout, labelName: string) => {
     }
 };
 
-const addOption = (elem: ControlElement, key: string, value: any) => {
+const addOption = (elem: ControlElement | Layout, key: string, value: any) => {
     if (!elem.options) {
         elem.options = {};
     }
-    console.log(`Adding {key}={value} to control element: {elem}`);
     elem.options[key] = value;
 };
 
@@ -135,7 +134,6 @@ const isCombinator = (jsonSchema: JsonSchema): boolean => {
 
 const isMultilineText = (schema: JsonSchema): boolean => {
     if (schema.type === 'string' && Object.hasOwn(schema, 'multiline')) {
-        console.log('schema has multiline property', schema);
         // eslint-disable-next-line @typescript-eslint/dot-notation
         return schema['multiline'] === true;
     } else {
@@ -143,10 +141,20 @@ const isMultilineText = (schema: JsonSchema): boolean => {
     }
 };
 
+const isAdvancedConfig = (schema: JsonSchema): boolean => {
+    // eslint-disable-next-line @typescript-eslint/dot-notation
+    return schema['advanced'] === true;
+};
+
+const copyAdvancedOption = (elem: Layout, schema: JsonSchema) => {
+    if (isAdvancedConfig(schema)) {
+        addOption(elem, 'advanced', true);
+    }
+};
+
 // eslint-disable-next-line complexity
 const generateUISchema = (
     jsonSchema: JsonSchema,
-    schemaElements: UISchemaElement[],
     currentRef: string,
     schemaName: string,
     layoutType: string,
@@ -155,7 +163,6 @@ const generateUISchema = (
     if (!isEmpty(jsonSchema) && jsonSchema.$ref !== undefined) {
         return generateUISchema(
             resolveSchema(rootSchema, jsonSchema.$ref),
-            schemaElements,
             currentRef,
             schemaName,
             layoutType,
@@ -163,10 +170,30 @@ const generateUISchema = (
         );
     }
 
+    // Always create a Group for "advanced" configuration objects, so that we can collapse it and
+    // see the label.
+    if (isCombinator(jsonSchema) && isAdvancedConfig(jsonSchema)) {
+        const group: GroupLayout = {
+            type: 'Group',
+            elements: [createControlElement(currentRef)],
+        };
+        copyAdvancedOption(group, jsonSchema);
+        if (jsonSchema.title) {
+            group.label = jsonSchema.title;
+        } else {
+            group.label = schemaName;
+        }
+        return group;
+    }
+
+    // For oneOf/allOf, we just create a control element. This is where things get weird in json
+    // forms, because the _control_ is what causes the tabs to render. Since it's a control and not
+    // a layout, it means we lose the ability to have uischemas that apply to the nested elements.
     if (isCombinator(jsonSchema)) {
         const controlObject: ControlElement = createControlElement(currentRef);
-        schemaElements.push(controlObject);
-
+        if (jsonSchema.title) {
+            controlObject.label = jsonSchema.title;
+        }
         return controlObject;
     }
 
@@ -181,7 +208,6 @@ const generateUISchema = (
 
     if (types.length > 1) {
         const controlObject: ControlElement = createControlElement(currentRef);
-        schemaElements.push(controlObject);
         return controlObject;
     }
 
@@ -195,43 +221,38 @@ const generateUISchema = (
             layout = createLayout(layoutType);
         } else {
             layout = createLayout('Group');
-            addLabel(layout, schemaName);
         }
+        // Add the advanced option to the layout, if required
+        copyAdvancedOption(layout, jsonSchema);
 
-        schemaElements.push(layout);
-
-        if (jsonSchema.properties && keys(jsonSchema.properties).length > 1) {
-            addLabel(layout, schemaName);
-        }
+        // Prefer using the schema's title, if provided, but fall back to a generated name if not.
+        // The fallback is primarily there because it's more obvious that it's missing than it would
+        // be if we just omitted the label altogether.
+        const label = jsonSchema.title ? jsonSchema.title : schemaName;
+        addLabel(layout, label);
 
         if (!isEmpty(jsonSchema.properties)) {
             // traverse properties
             const nextRef: string = `${currentRef}/properties`;
 
-            // TODO (linting) this is a dumb check since above it was already done
-            if (jsonSchema.properties !== undefined) {
-                Object.keys(jsonSchema.properties).map((propName) => {
-                    // TODO (linting) like above this is safe but TS complained
-                    let value;
-                    if (jsonSchema.properties) {
-                        value = jsonSchema.properties[propName];
-                    } else {
-                        value = {};
-                    }
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            layout.elements = Object.keys(jsonSchema.properties!).map(
+                (propName) => {
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                    let value: JsonSchema = jsonSchema.properties![propName];
                     const ref = `${nextRef}/${encode(propName)}`;
                     if (value.$ref !== undefined) {
                         value = resolveSchema(rootSchema, value.$ref);
                     }
                     return generateUISchema(
                         value,
-                        layout.elements,
                         ref,
                         propName,
                         layoutType,
                         rootSchema
                     );
-                });
-            }
+                }
+            );
         }
 
         return layout;
@@ -244,7 +265,6 @@ const generateUISchema = (
     if (isMultilineText(jsonSchema)) {
         addOption(controlObject, 'multi', true);
     }
-    schemaElements.push(controlObject);
     return controlObject;
 };
 
@@ -261,7 +281,7 @@ export const generateCustomUISchema = (
     rootSchema = jsonSchema
 ): UISchemaElement | Layout =>
     wrapInLayoutIfNecessary(
-        generateUISchema(jsonSchema, [], prefix, '', layoutType, rootSchema),
+        generateUISchema(jsonSchema, prefix, '', layoutType, rootSchema),
         layoutType
     );
 
