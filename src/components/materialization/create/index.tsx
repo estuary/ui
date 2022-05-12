@@ -137,6 +137,7 @@ function MaterializationCreate() {
         EditorStoreState<DraftSpecQuery>['setId']
     >((state) => state.setId);
 
+    // Reset the cataog if the connector changes
     useEffect(() => {
         setDraftId(null);
     }, [imageTag, setDraftId]);
@@ -285,6 +286,7 @@ function MaterializationCreate() {
                 setFormState({
                     status: FormStatus.GENERATING_PREVIEW,
                 });
+                setDraftId(null);
 
                 // TODO: Use connector_tags.resource_spec_schema as the value of bindings.resource when the
                 // connector_tags schema is updated.
@@ -304,73 +306,86 @@ function MaterializationCreate() {
                                 draftsResponse.data &&
                                 draftsResponse.data.length > 0
                             ) {
-                                setDraftId(draftsResponse.data[0].id);
-
-                                const encryptedEndpointConfig =
-                                    await getEncryptedConfig({
-                                        data: {
-                                            schema: endpointSchema,
-                                            config: endpointConfig,
-                                        },
-                                    });
-
-                                // TODO (typing) MaterializationDef
-                                const draftSpec: any = {
-                                    bindings: [],
-                                    endpoint: {
-                                        connector: {
-                                            config: encryptedEndpointConfig,
-                                            image: `${image_name}${image_tag}`,
-                                        },
+                                getEncryptedConfig({
+                                    data: {
+                                        schema: endpointSchema,
+                                        config: endpointConfig,
                                     },
-                                };
+                                })
+                                    .then((encryptedEndpointConfig) => {
+                                        const newDraftId =
+                                            draftsResponse.data[0].id;
 
-                                Object.keys(resourceConfig).forEach(
-                                    (collectionName) => {
-                                        draftSpec.bindings.push({
-                                            source: collectionName,
-                                            resource: {
-                                                ...resourceConfig[
-                                                    collectionName
-                                                ].data,
+                                        // TODO (typing) MaterializationDef
+                                        const draftSpec: any = {
+                                            bindings: [],
+                                            endpoint: {
+                                                connector: {
+                                                    config: encryptedEndpointConfig,
+                                                    image: `${image_name}${image_tag}`,
+                                                },
                                             },
-                                        });
-                                    }
-                                );
+                                        };
 
-                                supabaseClient
-                                    .from(TABLES.DRAFT_SPECS)
-                                    .insert([
-                                        {
-                                            draft_id: draftsResponse.data[0].id,
-                                            catalog_name: entityName,
-                                            spec_type: 'materialization',
-                                            spec: encryptedEndpointConfig,
-                                        },
-                                    ])
-                                    .then(
-                                        (draftSpecsResponse) => {
-                                            setFormState({
-                                                status: FormStatus.IDLE,
-                                            });
-
-                                            if (draftSpecsResponse.error) {
-                                                helpers.callFailed({
-                                                    error: {
-                                                        title: 'materializationCreation.test.failure.errorTitle',
-                                                        error: draftSpecsResponse.error,
+                                        Object.keys(resourceConfig).forEach(
+                                            (collectionName) => {
+                                                draftSpec.bindings.push({
+                                                    source: collectionName,
+                                                    resource: {
+                                                        ...resourceConfig[
+                                                            collectionName
+                                                        ].data,
                                                     },
                                                 });
                                             }
-                                        },
-                                        () => {
-                                            helpers.callFailed({
-                                                error: {
-                                                    title: 'materializationCreation.test.serverUnreachable',
+                                        );
+
+                                        supabaseClient
+                                            .from(TABLES.DRAFT_SPECS)
+                                            .insert([
+                                                {
+                                                    draft_id: newDraftId,
+                                                    catalog_name: entityName,
+                                                    spec_type:
+                                                        'materialization',
+                                                    spec: encryptedEndpointConfig,
                                                 },
-                                            });
-                                        }
-                                    );
+                                            ])
+                                            .then(
+                                                (draftSpecsResponse) => {
+                                                    setDraftId(newDraftId);
+                                                    setFormState({
+                                                        status: FormStatus.IDLE,
+                                                    });
+
+                                                    if (
+                                                        draftSpecsResponse.error
+                                                    ) {
+                                                        helpers.callFailed({
+                                                            error: {
+                                                                title: 'materializationCreation.test.failure.errorTitle',
+                                                                error: draftSpecsResponse.error,
+                                                            },
+                                                        });
+                                                    }
+                                                },
+                                                () => {
+                                                    helpers.callFailed({
+                                                        error: {
+                                                            title: 'materializationCreation.test.serverUnreachable',
+                                                        },
+                                                    });
+                                                }
+                                            );
+                                    })
+                                    .catch((error) => {
+                                        helpers.callFailed({
+                                            error: {
+                                                title: 'captureCreation.test.failedConfigEncryptTitle',
+                                                error,
+                                            },
+                                        });
+                                    });
                             } else if (draftsResponse.error) {
                                 helpers.callFailed({
                                     error: {
