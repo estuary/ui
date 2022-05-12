@@ -349,6 +349,7 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreation.save.serverUnreachable': `Config Save was unable to reach server`,
     'materializationCreation.tenant.label': `Tenant`,
     'materializationCreation.test.failure.errorTitle': `Config Test Failed`,
+    'materializationCreation.test.failedConfigEncryptTitle': `Encrypting Config Failed`,
     'materializationCreation.test.serverUnreachable': `Config Test was unable to reach server`,
     'materializationCreation.test.inProgress': `Please wait while we try to connect to this endpoint.`,
     'materializationCreation.collectionSelector.heading': `Collection Selector`,
