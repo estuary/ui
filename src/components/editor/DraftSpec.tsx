@@ -55,7 +55,9 @@ function DraftSpecEditor() {
     };
 
     useEffect(() => {
-        setSpecs(draftSpecs);
+        if (draftSpecs.length > 0) {
+            setSpecs(draftSpecs);
+        }
     }, [draftSpecs, setSpecs]);
 
     useEffect(() => {
