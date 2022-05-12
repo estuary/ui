@@ -8,6 +8,7 @@ interface Props {
     id: string;
     storeName?: string;
     colSpan: number;
+    disableLogs?: boolean;
 }
 
 function DetailsPanel({
@@ -15,6 +16,7 @@ function DetailsPanel({
     id,
     storeName = 'liveSpecEditor',
     colSpan,
+    disableLogs,
 }: Props) {
     return (
         <TableRow>
@@ -27,7 +29,10 @@ function DetailsPanel({
                         createStore={createEditorStore}
                         storeName={storeName}
                     >
-                        <CaptureDetails lastPubId={id} />
+                        <CaptureDetails
+                            lastPubId={id}
+                            disableLogs={disableLogs}
+                        />
                     </ZustandProvider>
                 </Collapse>
             </TableCell>
