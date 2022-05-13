@@ -57,7 +57,7 @@ const xl = 1800;
 const lg = 1350;
 const md = 900;
 const sm = 600;
-const xs = 300;
+const xs = 500;
 
 // Color Palettes
 // TODO: Balance the light mode color palette.
