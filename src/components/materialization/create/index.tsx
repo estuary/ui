@@ -1,4 +1,4 @@
-import { Button, Collapse } from '@mui/material';
+import { Collapse } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { routeDetails } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
@@ -13,6 +13,7 @@ import EndpointConfig from 'components/shared/Entity/EndpointConfig';
 import EntityError from 'components/shared/Entity/Error';
 import FooHeader from 'components/shared/Entity/Header';
 import LogDialog from 'components/shared/Entity/LogDialog';
+import LogDialogActions from 'components/shared/Entity/LogDialogActions';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
@@ -27,7 +28,7 @@ import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
 import { isEmpty } from 'lodash';
 import { MouseEvent, useEffect } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { getEncryptedConfig } from 'services/encryption';
 import { TABLES } from 'services/supabase';
@@ -60,7 +61,6 @@ function MaterializationCreate() {
     useBrowserTitle('browserTitle.materializationCreate');
 
     // Misc. hooks
-    const intl = useIntl();
     const navigate = useNavigate();
     const confirmationModalContext = useConfirmationModalContext();
 
@@ -119,9 +119,6 @@ function MaterializationCreate() {
     const formSubmitError = entityCreateStore(
         createStoreSelectors.formState.error
     );
-    const formStateSaveStatus = entityCreateStore(
-        createStoreSelectors.formState.formStateSaveStatus
-    );
     const exitWhenLogsClose = entityCreateStore(
         createStoreSelectors.formState.exitWhenLogsClose
     );
@@ -146,11 +143,8 @@ function MaterializationCreate() {
         callFailed: (formState: any, subscription?: RealtimeSubscription) => {
             const setFailureState = () => {
                 setFormState({
-                    status: FormStatus.IDLE,
+                    status: FormStatus.FAILED,
                     exitWhenLogsClose: false,
-                    saveStatus: intl.formatMessage({
-                        id: 'common.fail',
-                    }),
                     ...formState,
                 });
             };
@@ -187,9 +181,7 @@ function MaterializationCreate() {
                 error: {
                     title: errorTitle,
                 },
-                saveStatus: intl.formatMessage({
-                    id: 'common.fail',
-                }),
+                status: FormStatus.FAILED,
             });
         },
     };
@@ -217,11 +209,8 @@ function MaterializationCreate() {
                 supabaseClient.from(TABLES.PUBLICATIONS),
                 () => {
                     setFormState({
-                        status: FormStatus.IDLE,
+                        status: FormStatus.SUCCESS,
                         exitWhenLogsClose: true,
-                        saveStatus: intl.formatMessage({
-                            id: 'common.success',
-                        }),
                     });
 
                     showNotification(notification);
@@ -448,9 +437,6 @@ function MaterializationCreate() {
                                 error: {
                                     title: 'materializationCreation.save.serverUnreachable',
                                 },
-                                saveStatus: intl.formatMessage({
-                                    id: 'common.fail',
-                                }),
                             },
                             publicationsSubscription
                         );
@@ -533,15 +519,7 @@ function MaterializationCreate() {
                     <FormattedMessage id="materializationCreation.save.inProgress" />
                 }
                 actionComponent={
-                    <>
-                        {formStateSaveStatus}
-                        <Button
-                            disabled={formStateStatus !== FormStatus.IDLE}
-                            onClick={handlers.closeLogs}
-                        >
-                            <FormattedMessage id="cta.close" />
-                        </Button>
-                    </>
+                    <LogDialogActions close={handlers.closeLogs} />
                 }
             />
 

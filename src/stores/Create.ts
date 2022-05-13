@@ -26,7 +26,6 @@ export interface FormState {
     displayValidation: boolean;
     status: FormStatus;
     showLogs: boolean;
-    saveStatus: string;
     exitWhenLogsClose: boolean;
     logToken: string | null;
     error: {
@@ -39,6 +38,8 @@ export enum FormStatus {
     SAVING = 'saving',
     TESTING = 'testing',
     IDLE = 'idle',
+    SUCCESS = 'success',
+    FAILED = 'failed',
     GENERATING_PREVIEW = 'Generating Preview',
 }
 
@@ -97,7 +98,6 @@ export const initialCreateStates = {
             showLogs: false,
             exitWhenLogsClose: false,
             logToken: null,
-            saveStatus: 'running...',
             error: null,
         };
     },
@@ -235,8 +235,6 @@ export const createStoreSelectors = {
         set: (state: CreateEntityStore) => state.setEndpointConfig,
     },
     formState: {
-        formStateSaveStatus: (state: CreateEntityStore) =>
-            state.formState.saveStatus,
         formStateStatus: (state: CreateEntityStore) => state.formState.status,
         showLogs: (state: CreateEntityStore) => state.formState.showLogs,
         logToken: (state: CreateEntityStore) => state.formState.logToken,
