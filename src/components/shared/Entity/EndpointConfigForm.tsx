@@ -40,6 +40,13 @@ function EndpointConfigForm({ endpointSchema }: Props) {
     }, [endpointSchema, setSpec]);
 
     const uiSchema = generateCustomUISchema(endpointSchema);
+    // To help debug form rendering
+    console.log(
+        'Input JSON Schema:',
+        endpointSchema,
+        'Output UI Schema:',
+        uiSchema
+    );
     const showValidationVal = showValidation(displayValidation);
 
     return (
