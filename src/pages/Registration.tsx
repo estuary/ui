@@ -1,4 +1,5 @@
 import {
+    Box,
     Button,
     Card,
     CardActions,
@@ -6,19 +7,21 @@ import {
     Checkbox,
     FormControl,
     FormControlLabel,
-    Grid,
     Link,
+    SxProps,
     TextField,
+    Theme,
     Typography,
 } from '@mui/material';
 import { Auth } from '@supabase/ui';
-import Topbar from 'components/header/Topbar';
 import ExternalLink from 'components/shared/ExternalLink';
+import { slate } from 'context/Theme';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import React, { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { getUserDetails } from 'services/supabase';
 import { getUrls } from 'utils/env-utils';
+import lightLogo from '../images/light-horizontal/estuary-logo-light.png';
 
 interface RegistrationRequest {
     fullName: string;
@@ -58,6 +61,13 @@ const Registration = () => {
         company: false,
         acknowledgedDocuments: false,
     });
+
+    const textFieldSx: SxProps<Theme> = {
+        width: 250,
+        mb: 3,
+        backgroundColor: slate[800],
+        label: { color: slate[50] },
+    };
 
     const handlers = {
         updateTextInput:
@@ -133,199 +143,193 @@ const Registration = () => {
     };
 
     return (
-        <Grid
-            container
-            direction="column"
+        <Box
             sx={{
+                width: '100%',
                 height: '100vh',
+                display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                my: 6,
             }}
         >
-            <Grid item>
-                <Topbar
-                    isNavigationOpen={false}
-                    hideNavigationMenu
-                    hideUserMenu
-                />
-            </Grid>
+            <Card
+                sx={{
+                    minWidth: 400,
+                    minHeight: 300,
+                    p: 2,
+                    background:
+                        'linear-gradient(159.03deg, rgba(172, 199, 220, 0.18) 2.23%, rgba(172, 199, 220, 0.12) 40.69%)',
+                    boxShadow: '0px 4px 24px -1px rgba(0, 0, 0, 0.2)',
+                    borderRadius: 5,
+                }}
+            >
+                <CardContent
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                    }}
+                >
+                    <img
+                        src={lightLogo}
+                        width={200}
+                        alt="Estuary Logo"
+                        style={{ marginBottom: 16 }}
+                    />
 
-            <Grid item xs={5}>
-                <Card sx={{ minWidth: 400, minHeight: 300, p: 2 }}>
-                    <CardContent>
-                        <Typography
-                            variant="h6"
-                            align="center"
-                            sx={{ mb: 1.5 }}
+                    <Typography variant="h6" align="center" sx={{ mb: 1.5 }}>
+                        <FormattedMessage id="register.heading" />
+                    </Typography>
+
+                    <Typography sx={{ mb: 1 }}>
+                        <FormattedMessage id="register.main.message" />
+                    </Typography>
+                </CardContent>
+
+                <CardActions disableSpacing>
+                    <form
+                        onSubmit={handlers.submit}
+                        style={{
+                            width: '100%',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}
+                    >
+                        <TextField
+                            id="full-name"
+                            label={intl.formatMessage({
+                                id: 'register.label.fullName',
+                            })}
+                            value={fullName}
+                            error={errors.fullName}
+                            required
+                            onChange={handlers.updateTextInput(
+                                'fullName',
+                                setFullName
+                            )}
+                            onBlur={handlers.validateTextInput(
+                                'fullName',
+                                fullName,
+                                setFullName
+                            )}
+                            sx={textFieldSx}
+                        />
+
+                        <TextField
+                            id="email"
+                            label={intl.formatMessage({
+                                id: 'register.label.email',
+                            })}
+                            value={email}
+                            error={errors.email}
+                            required
+                            onChange={handlers.updateTextInput(
+                                'email',
+                                setEmail
+                            )}
+                            onBlur={handlers.validateTextInput(
+                                'email',
+                                email,
+                                setEmail
+                            )}
+                            sx={textFieldSx}
+                        />
+
+                        <TextField
+                            id="company"
+                            label={intl.formatMessage({
+                                id: 'register.label.company',
+                            })}
+                            value={company}
+                            error={errors.company}
+                            required
+                            onChange={handlers.updateTextInput(
+                                'company',
+                                setCompany
+                            )}
+                            onBlur={handlers.validateTextInput(
+                                'company',
+                                company,
+                                setCompany
+                            )}
+                            sx={textFieldSx}
+                        />
+
+                        <TextField
+                            id="describe-intended-use"
+                            label={intl.formatMessage({
+                                id: 'register.label.intendedUse',
+                            })}
+                            value={useCase}
+                            multiline
+                            minRows={3}
+                            onChange={handlers.updateTextInput(
+                                'useCase',
+                                setUseCase
+                            )}
+                            sx={textFieldSx}
+                        />
+
+                        <FormControl
+                            error={errors.acknowledgedDocuments}
+                            sx={{ mb: 4, mx: 0 }}
                         >
-                            <FormattedMessage id="register.heading" />
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        value={acknowledgedDocuments}
+                                        required
+                                    />
+                                }
+                                onChange={
+                                    handlers.updateDocumentAcknowledgement
+                                }
+                                onBlur={
+                                    handlers.validateDocumentAcknowledgement
+                                }
+                                label={
+                                    <FormattedMessage
+                                        id="register.label.documentAcknowledgement"
+                                        values={{
+                                            privacy: (
+                                                <ExternalLink
+                                                    hideIcon
+                                                    link={urls.privacyPolicy}
+                                                >
+                                                    <FormattedMessage id="register.label.documentAcknowledgement.privacy" />
+                                                </ExternalLink>
+                                            ),
+                                            terms: (
+                                                <ExternalLink
+                                                    hideIcon
+                                                    link={urls.termsOfService}
+                                                >
+                                                    <FormattedMessage id="register.label.documentAcknowledgement.terms" />
+                                                </ExternalLink>
+                                            ),
+                                        }}
+                                    />
+                                }
+                            />
+                        </FormControl>
+
+                        <Typography sx={{ mb: 2 }}>
+                            <FormattedMessage id="register.existingAccount" />{' '}
+                            <Link href="/" underline="hover">
+                                <FormattedMessage id="cta.login" />
+                            </Link>
                         </Typography>
 
-                        <Typography sx={{ mb: 1 }}>
-                            <FormattedMessage id="register.main.message" />
-                        </Typography>
-                    </CardContent>
-
-                    <CardActions disableSpacing>
-                        <form
-                            onSubmit={handlers.submit}
-                            style={{
-                                width: '100%',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                            }}
-                        >
-                            <TextField
-                                id="full-name"
-                                label={intl.formatMessage({
-                                    id: 'register.label.fullName',
-                                })}
-                                value={fullName}
-                                error={errors.fullName}
-                                required
-                                onChange={handlers.updateTextInput(
-                                    'fullName',
-                                    setFullName
-                                )}
-                                onBlur={handlers.validateTextInput(
-                                    'fullName',
-                                    fullName,
-                                    setFullName
-                                )}
-                                sx={{ width: 250, mb: 3 }}
-                            />
-
-                            <TextField
-                                id="email"
-                                label={intl.formatMessage({
-                                    id: 'register.label.email',
-                                })}
-                                value={email}
-                                error={errors.email}
-                                required
-                                onChange={handlers.updateTextInput(
-                                    'email',
-                                    setEmail
-                                )}
-                                onBlur={handlers.validateTextInput(
-                                    'email',
-                                    email,
-                                    setEmail
-                                )}
-                                sx={{ width: 250, mb: 3 }}
-                            />
-
-                            <TextField
-                                id="company"
-                                label={intl.formatMessage({
-                                    id: 'register.label.company',
-                                })}
-                                value={company}
-                                error={errors.company}
-                                required
-                                onChange={handlers.updateTextInput(
-                                    'company',
-                                    setCompany
-                                )}
-                                onBlur={handlers.validateTextInput(
-                                    'company',
-                                    company,
-                                    setCompany
-                                )}
-                                sx={{ width: 250, mb: 3 }}
-                            />
-
-                            <TextField
-                                id="describe-intended-use"
-                                label={intl.formatMessage({
-                                    id: 'register.label.intendedUse',
-                                })}
-                                value={useCase}
-                                multiline
-                                minRows={3}
-                                onChange={handlers.updateTextInput(
-                                    'useCase',
-                                    setUseCase
-                                )}
-                                sx={{ width: 250, mb: 3 }}
-                            />
-
-                            <FormControl
-                                error={errors.acknowledgedDocuments}
-                                sx={{ mb: 4, mx: 0 }}
-                            >
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            value={acknowledgedDocuments}
-                                            required
-                                        />
-                                    }
-                                    onChange={
-                                        handlers.updateDocumentAcknowledgement
-                                    }
-                                    onBlur={
-                                        handlers.validateDocumentAcknowledgement
-                                    }
-                                    label={
-                                        <FormattedMessage
-                                            id="register.label.documentAcknowledgement"
-                                            values={{
-                                                privacy: (
-                                                    <ExternalLink
-                                                        hideIcon
-                                                        link={
-                                                            urls.privacyPolicy
-                                                        }
-                                                    >
-                                                        <FormattedMessage
-                                                            id={intl.formatMessage(
-                                                                {
-                                                                    id: 'register.label.documentAcknowledgement.privacy',
-                                                                }
-                                                            )}
-                                                        />
-                                                    </ExternalLink>
-                                                ),
-                                                terms: (
-                                                    <ExternalLink
-                                                        hideIcon
-                                                        link={
-                                                            urls.termsOfService
-                                                        }
-                                                    >
-                                                        <FormattedMessage
-                                                            id={intl.formatMessage(
-                                                                {
-                                                                    id: 'register.label.documentAcknowledgement.terms',
-                                                                }
-                                                            )}
-                                                        />
-                                                    </ExternalLink>
-                                                ),
-                                            }}
-                                        />
-                                    }
-                                />
-                            </FormControl>
-
-                            <Typography sx={{ mb: 2 }}>
-                                <FormattedMessage id="register.existingAccount" />{' '}
-                                <Link href="/" underline="hover">
-                                    <FormattedMessage id="cta.login" />
-                                </Link>
-                            </Typography>
-
-                            <Button type="submit" onClick={handlers.signUp}>
-                                <FormattedMessage id="cta.register" />
-                            </Button>
-                        </form>
-                    </CardActions>
-                </Card>
-            </Grid>
-        </Grid>
+                        <Button type="submit" onClick={handlers.signUp}>
+                            <FormattedMessage id="cta.register" />
+                        </Button>
+                    </form>
+                </CardActions>
+            </Card>
+        </Box>
     );
 };
 

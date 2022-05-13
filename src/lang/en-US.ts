@@ -4,7 +4,7 @@ import { ResolvedIntlConfig } from 'react-intl/src/types';
 const CommonMessages: ResolvedIntlConfig['messages'] = {
     // Misc
     'company': `Estuary`,
-    'productName': `Control Plane`,
+    'productName': `Estuary Flow`,
     'common.browserTitle': `Flow`,
     'common.loading': `loading...`,
     'common.running': `running...`,
@@ -256,7 +256,7 @@ const ConnectorsPage: ResolvedIntlConfig['messages'] = {
 
 const LoginPage: ResolvedIntlConfig['messages'] = {
     'login.main.message': `When running locally you can login with whatever name you want.`,
-    'login.oidc.message': `Please use one of the providers below to continue.`,
+    'login.oidc.message': `Sign in to continue to ${CommonMessages.productName}.`,
 };
 
 const Captures: ResolvedIntlConfig['messages'] = {

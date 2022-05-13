@@ -11,7 +11,7 @@ import React from 'react';
 import { BaseComponentProps } from 'types';
 
 // Colors
-const teal = {
+export const teal = {
     25: '#E6FFFF',
     50: '#CDFBFB',
     100: '#ABEDEE',
@@ -24,7 +24,7 @@ const teal = {
     800: '#015556',
 };
 
-const slate = {
+export const slate = {
     15: '#F6FAFF',
     25: '#EEF8FF',
     50: '#D8E9F5',
