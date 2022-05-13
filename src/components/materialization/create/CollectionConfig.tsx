@@ -1,3 +1,4 @@
+import Grid from '@mui/material/Grid/Grid';
 import { routeDetails } from 'app/Authenticated';
 import CollectionSelector from 'components/materialization/CollectionSelector';
 import ExpandableResourceConfig from 'components/materialization/create/ExpandableResourceConfig';
@@ -45,15 +46,28 @@ function CollectionConfig() {
             >
                 <>
                     <CollectionSelector />
-                    {collections.map((collection: any, index: number) => {
-                        return (
-                            <ExpandableResourceConfig
-                                collectionName={collection}
-                                id={imageTag.id}
-                                key={`CollectionResourceConfig-${index}`}
-                            />
-                        );
-                    })}
+                    <Grid
+                        container
+                        spacing={1}
+                        columns={{ xs: 4, sm: 8, md: 12 }}
+                    >
+                        {collections.map((collection: any, index: number) => {
+                            return (
+                                <Grid
+                                    item
+                                    key={`CollectionResourceConfig-${index}`}
+                                    xs={2}
+                                    sm={4}
+                                    md={4}
+                                >
+                                    <ExpandableResourceConfig
+                                        collectionName={collection}
+                                        id={imageTag.id}
+                                    />
+                                </Grid>
+                            );
+                        })}
+                    </Grid>
                 </>
             </WrapperWithHeader>
         );

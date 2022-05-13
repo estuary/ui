@@ -54,7 +54,7 @@ const tonalOffset = 0.1;
 
 // Breakpoints
 const xl = 1800;
-const lg = 1500;
+const lg = 1350;
 const md = 900;
 const sm = 600;
 const xs = 300;
@@ -124,6 +124,13 @@ export const tableBorderSx: SxProps<Theme> = {
 
 export const outlineSx: SxProps<Theme> = {
     border: `1px solid ${slate[200]}`,
+};
+
+// TODO (theme) Figure out how to make these composable
+export const truncateTextSx: SxProps<Theme> = {
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
 };
 
 // Theme

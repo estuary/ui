@@ -18,7 +18,13 @@ function ExpandableResourceConfig({ collectionName, id }: Props) {
         <Paper>
             <Accordion defaultExpanded={true}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography>{collectionName}</Typography>
+                    <Typography
+                        sx={{
+                            wordBreak: 'break-all',
+                        }}
+                    >
+                        {collectionName}
+                    </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                     <ResourceConfig
