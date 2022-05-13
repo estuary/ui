@@ -77,7 +77,7 @@ const Login = () => {
 
                 <Box>
                     <Auth
-                        providers={['github', 'google']}
+                        providers={['google']}
                         supabaseClient={supabaseClient}
                         socialColors={true}
                         onlyThirdPartyProviders={!loginSettings.showEmail}
