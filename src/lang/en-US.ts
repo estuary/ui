@@ -268,6 +268,7 @@ const Captures: ResolvedIntlConfig['messages'] = {
     'captures.message2': `It will guide you through generating and downloading a valid {docLink}.`,
     'captures.message2.docLink': `capture spec`,
     'captures.message2.docPath': `https://docs.estuary.dev/concepts/#captures`,
+    'captureCreation.status.success': `${CommonMessages['common.success']}`,
 };
 
 const Materializations: ResolvedIntlConfig['messages'] = {
