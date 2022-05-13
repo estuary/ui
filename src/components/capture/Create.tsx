@@ -444,7 +444,10 @@ function CaptureCreate() {
                     <>
                         {formStateSaveStatus}
                         <Button
-                            disabled={formStateStatus !== FormStatus.IDLE}
+                            disabled={
+                                formStateStatus !== FormStatus.IDLE &&
+                                !exitWhenLogsClose
+                            }
                             onClick={handlers.materializeCollections}
                         >
                             <FormattedMessage id="captureCreation.ctas.materialize" />
