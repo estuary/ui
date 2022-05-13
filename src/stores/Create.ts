@@ -43,6 +43,14 @@ export enum FormStatus {
     GENERATING_PREVIEW = 'Generating Preview',
 }
 
+export const formInProgress = (formStateStatus: FormStatus) => {
+    return (
+        formStateStatus === FormStatus.TESTING ||
+        formStateStatus === FormStatus.GENERATING_PREVIEW ||
+        formStateStatus === FormStatus.SAVING
+    );
+};
+
 export interface CreateEntityStore {
     //Details
     details: Details;

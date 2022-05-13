@@ -99,9 +99,6 @@ function CaptureCreate() {
     );
 
     // Form State
-    const formStateStatus = entityCreateStore(
-        createStoreSelectors.formState.status
-    );
     const showLogs = entityCreateStore(createStoreSelectors.formState.showLogs);
     const logToken = entityCreateStore(createStoreSelectors.formState.logToken);
     const formSubmitError = entityCreateStore(
@@ -150,11 +147,7 @@ function CaptureCreate() {
         doneSubscribing: (subscription: RealtimeSubscription) => {
             return supabaseClient
                 .removeSubscription(subscription)
-                .then(() => {
-                    setFormState({
-                        status: FormStatus.IDLE,
-                    });
-                })
+                .then(() => {})
                 .catch(() => {});
         },
         exit: () => {
@@ -196,6 +189,9 @@ function CaptureCreate() {
             return waitFor.base(
                 supabaseClient.from(TABLES.DISCOVERS),
                 (payload: any) => {
+                    setFormState({
+                        status: FormStatus.IDLE,
+                    });
                     setDraftId(payload.new.draft_id);
                 },
                 'captureCreation.test.failedErrorTitle'
@@ -440,11 +436,9 @@ function CaptureCreate() {
             <FooHeader
                 close={handlers.cancel}
                 test={handlers.test}
-                testDisabled={
-                    formStateStatus !== FormStatus.IDLE || !hasConnectors
-                }
+                testDisabled={!hasConnectors}
                 save={handlers.saveAndPublish}
-                saveDisabled={formStateStatus !== FormStatus.IDLE || !draftId}
+                saveDisabled={!draftId}
                 formId={FORM_ID}
                 heading={<FormattedMessage id="captureCreation.heading" />}
             />

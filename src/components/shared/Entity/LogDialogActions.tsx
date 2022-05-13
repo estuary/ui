@@ -18,6 +18,8 @@ function LogDialogActions({ close, materialize }: Props) {
 
     const formStatus = entityCreateStore(createStoreSelectors.formState.status);
 
+    console.log(formStatus);
+
     return (
         <>
             <Status />
@@ -31,7 +33,13 @@ function LogDialogActions({ close, materialize }: Props) {
                 </Button>
             ) : null}
 
-            <Button disabled={formStatus !== FormStatus.IDLE} onClick={close}>
+            <Button
+                disabled={
+                    formStatus === FormStatus.TESTING ||
+                    formStatus === FormStatus.SAVING
+                }
+                onClick={close}
+            >
                 <FormattedMessage id="cta.close" />
             </Button>
         </>

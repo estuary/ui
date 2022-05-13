@@ -111,9 +111,6 @@ function MaterializationCreate() {
     );
 
     // Form State
-    const formStateStatus = entityCreateStore(
-        createStoreSelectors.formState.status
-    );
     const showLogs = entityCreateStore(createStoreSelectors.formState.showLogs);
     const logToken = entityCreateStore(createStoreSelectors.formState.logToken);
     const formSubmitError = entityCreateStore(
@@ -526,11 +523,9 @@ function MaterializationCreate() {
             <FooHeader
                 close={handlers.cancel}
                 test={handlers.test}
-                testDisabled={
-                    formStateStatus !== FormStatus.IDLE || !hasConnectors
-                }
+                testDisabled={!hasConnectors}
                 save={handlers.saveAndPublish}
-                saveDisabled={formStateStatus !== FormStatus.IDLE || !draftId}
+                saveDisabled={!draftId}
                 formId={FORM_ID}
                 heading={
                     <FormattedMessage id="materializationCreation.heading" />

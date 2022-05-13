@@ -13,7 +13,7 @@ import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
 import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { createStoreSelectors, FormStatus } from 'stores/Create';
+import { createStoreSelectors, formInProgress } from 'stores/Create';
 import { getStore } from 'stores/Repo';
 
 interface Props {
@@ -64,7 +64,9 @@ function FooHeader({
 
                     <Button
                         onClick={test}
-                        disabled={testDisabled}
+                        disabled={
+                            formInProgress(formStateStatus) || testDisabled
+                        }
                         form={formId}
                         type="submit"
                         color="success"
@@ -80,14 +82,16 @@ function FooHeader({
 
                     <Button
                         onClick={save}
-                        disabled={saveDisabled}
+                        disabled={
+                            formInProgress(formStateStatus) || saveDisabled
+                        }
                         color="success"
                     >
                         <FormattedMessage id="cta.saveEntity" />
                     </Button>
                 </Stack>
             </Toolbar>
-            <Collapse in={formStateStatus !== FormStatus.IDLE} unmountOnExit>
+            <Collapse in={formInProgress(formStateStatus)} unmountOnExit>
                 <LinearProgress />
             </Collapse>
             <ValidationErrorSummary />
