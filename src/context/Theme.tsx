@@ -54,7 +54,7 @@ const tonalOffset = 0.1;
 
 // Breakpoints
 const xl = 1800;
-const lg = 1350;
+const lg = 1200;
 const md = 900;
 const sm = 600;
 const xs = 500;

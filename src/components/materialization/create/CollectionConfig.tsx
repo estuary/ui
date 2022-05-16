@@ -49,16 +49,17 @@ function CollectionConfig() {
                     <Grid
                         container
                         spacing={1}
-                        columns={{ xs: 4, sm: 8, md: 12 }}
+                        columns={{ xs: 4, sm: 8, md: 12, lg: 12 }}
                     >
                         {collections.map((collection: any, index: number) => {
                             return (
                                 <Grid
                                     item
                                     key={`CollectionResourceConfig-${index}`}
-                                    xs={2}
+                                    xs={4}
                                     sm={4}
                                     md={4}
+                                    lg={3}
                                 >
                                     <ExpandableResourceConfig
                                         collectionName={collection}
