@@ -9,6 +9,9 @@ export interface EditorStoreState<T> {
     id: string | null;
     setId: (newVal: EditorStoreState<T>['id']) => void;
 
+    pubId: string | null;
+    setPubId: (newVal: EditorStoreState<T>['pubId']) => void;
+
     currentCatalog: any;
     setCurrentCatalog: (newVal: EditorStoreState<T>['currentCatalog']) => void;
 
@@ -26,6 +29,7 @@ const getInitialStateData = () => {
     return {
         currentCatalog: null,
         id: null,
+        pubId: null,
         specs: null,
         serverUpdate: null,
     };
@@ -40,6 +44,15 @@ const getInitialState = <T,>(
             set(
                 produce((state) => {
                     state.id = newVal;
+                }),
+                false
+            );
+        },
+
+        setPubId: (newVal) => {
+            set(
+                produce((state) => {
+                    state.pubId = newVal;
                 }),
                 false
             );

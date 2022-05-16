@@ -4,16 +4,22 @@ import { useQuery, useSelectSingle } from './supabase-swr/';
 export interface LiveSpecsExtQuery {
     id: string;
     writes_to: string[];
+    spec_type: string;
 }
 
-const queryColumns = ['id', 'writes_to'];
+const queryColumns = ['id', 'writes_to', 'spec_type'];
 
 function useLiveSpecsExt(draftId: string | null) {
     const draftSpecQuery = useQuery<LiveSpecsExtQuery>(
         TABLES.LIVE_SPECS_EXT,
         {
             columns: queryColumns,
-            filter: draftId ? (query) => query.eq('id', draftId) : undefined,
+            filter: draftId
+                ? (query) =>
+                      query
+                          .eq('spec_type', 'capture')
+                          .or(`id.eq.${draftId},last_pub_id.eq.${draftId}`)
+                : undefined,
         },
         [draftId]
     );

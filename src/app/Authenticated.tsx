@@ -59,7 +59,7 @@ export const routeDetails = {
             },
             params: {
                 connectorID: 'connectorID',
-                specID: 'specID',
+                specID: 'specID', // Can consume a live spec ID OR the last published ID
             },
         },
     },

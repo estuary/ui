@@ -119,6 +119,16 @@ function CaptureCreate() {
         EditorStoreState<DraftSpecQuery>['id']
     >((state) => state.id);
 
+    const pubId = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['pubId']
+    >((state) => state.pubId);
+
+    const setPubId = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['setPubId']
+    >((state) => state.setPubId);
+
     // Reset the cataolg if the connector changes
     useEffect(() => {
         setDraftId(null);
@@ -200,7 +210,8 @@ function CaptureCreate() {
         publications: () => {
             return waitFor.base(
                 supabaseClient.from(TABLES.PUBLICATIONS),
-                () => {
+                (payload: any) => {
+                    setPubId(payload.new.id);
                     setFormState({
                         status: FormStatus.SUCCESS,
                         exitWhenLogsClose: true,
@@ -243,11 +254,12 @@ function CaptureCreate() {
         },
 
         materializeCollections: () => {
+            helpers.exit();
             navigate(
                 getPathWithParam(
                     routeDetails.materializations.create.fullPath,
                     routeDetails.materializations.create.params.specID,
-                    draftId
+                    pubId
                 )
             );
         },
@@ -269,6 +281,11 @@ function CaptureCreate() {
                     async (response) => {
                         if (response.data) {
                             if (response.data.length > 0) {
+                                console.log(
+                                    'response.data[0]',
+                                    response.data[0]
+                                );
+
                                 setFormState({
                                     logToken: response.data[0].logs_token,
                                     showLogs: true,

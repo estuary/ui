@@ -24,15 +24,6 @@ function LogDialogActions({ close, materialize }: Props) {
         <>
             <Status />
 
-            {materialize ? (
-                <Button
-                    disabled={formStatus !== FormStatus.SUCCESS}
-                    onClick={materialize.action}
-                >
-                    <FormattedMessage id={materialize.title} />
-                </Button>
-            ) : null}
-
             <Button
                 disabled={
                     formStatus === FormStatus.TESTING ||
@@ -42,6 +33,15 @@ function LogDialogActions({ close, materialize }: Props) {
             >
                 <FormattedMessage id="cta.close" />
             </Button>
+
+            {materialize ? (
+                <Button
+                    disabled={formStatus !== FormStatus.SUCCESS}
+                    onClick={materialize.action}
+                >
+                    <FormattedMessage id={materialize.title} />
+                </Button>
+            ) : null}
         </>
     );
 }
