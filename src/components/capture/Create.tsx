@@ -327,6 +327,7 @@ function CaptureCreate() {
 
             if (detailHasErrors || specHasErrors) {
                 setFormState({
+                    status: FormStatus.IDLE,
                     displayValidation: true,
                 });
             } else {

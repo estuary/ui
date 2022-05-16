@@ -13,7 +13,11 @@ import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
 import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { createStoreSelectors, formInProgress } from 'stores/Create';
+import {
+    createStoreSelectors,
+    formInProgress,
+    FormStatus,
+} from 'stores/Create';
 import { getStore } from 'stores/Repo';
 
 interface Props {
@@ -44,6 +48,22 @@ function FooHeader({
     const formStateStatus = entityCreateStore(
         createStoreSelectors.formState.status
     );
+    const setFormState = entityCreateStore(createStoreSelectors.formState.set);
+
+    const handlers = {
+        test: (event: any) => {
+            setFormState({
+                status: FormStatus.TESTING,
+            });
+            test(event);
+        },
+        save: (event: any) => {
+            setFormState({
+                status: FormStatus.SAVING,
+            });
+            save(event);
+        },
+    };
 
     return (
         <>
@@ -63,7 +83,7 @@ function FooHeader({
                     </Button>
 
                     <Button
-                        onClick={test}
+                        onClick={handlers.test}
                         disabled={
                             formInProgress(formStateStatus) || testDisabled
                         }
@@ -81,7 +101,7 @@ function FooHeader({
                     </Button>
 
                     <Button
-                        onClick={save}
+                        onClick={handlers.save}
                         disabled={
                             formInProgress(formStateStatus) || saveDisabled
                         }

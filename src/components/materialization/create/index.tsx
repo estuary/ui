@@ -261,13 +261,22 @@ function MaterializationCreate() {
             );
 
             if (detailHasErrors || specHasErrors) {
-                setFormState({ displayValidation: true });
+                setFormState({
+                    status: FormStatus.IDLE,
+                    displayValidation: true,
+                });
             } else if (isEmpty(resourceConfig)) {
                 // TODO: Handle the scenario where no collections are present.
-                setFormState({ displayValidation: true });
+                setFormState({
+                    status: FormStatus.IDLE,
+                    displayValidation: true,
+                });
             } else if (!connectorInfo) {
                 // TODO: Handle the highly unlikely scenario where the connector tag id could not be found.
-                setFormState({ displayValidation: true });
+                setFormState({
+                    status: FormStatus.IDLE,
+                    displayValidation: true,
+                });
             } else {
                 setFormState({
                     status: FormStatus.GENERATING_PREVIEW,

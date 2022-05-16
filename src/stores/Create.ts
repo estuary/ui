@@ -243,7 +243,6 @@ export const createStoreSelectors = {
         set: (state: CreateEntityStore) => state.setEndpointConfig,
     },
     formState: {
-        formStateStatus: (state: CreateEntityStore) => state.formState.status,
         showLogs: (state: CreateEntityStore) => state.formState.showLogs,
         logToken: (state: CreateEntityStore) => state.formState.logToken,
         error: (state: CreateEntityStore) => state.formState.error,
