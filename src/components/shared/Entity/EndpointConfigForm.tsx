@@ -5,9 +5,9 @@ import { useRouteStore } from 'hooks/useRouteStore';
 import { useEffect } from 'react';
 import { createJSONFormDefaults, setDefaultsValidator } from 'services/ajv';
 import {
+    custom_generateDefaultUISchema,
     defaultOptions,
     defaultRenderers,
-    generateCustomUISchema,
     showValidation,
 } from 'services/jsonforms';
 import { createStoreSelectors, FormStatus } from 'stores/Create';
@@ -43,7 +43,7 @@ function EndpointConfigForm({ endpointSchema }: Props) {
         });
     }, [endpointSchema, setEndpointSchema, setSpec]);
 
-    const uiSchema = generateCustomUISchema(endpointSchema);
+    const uiSchema = custom_generateDefaultUISchema(endpointSchema);
     // To help debug form rendering
     console.log(
         'Input JSON Schema:',

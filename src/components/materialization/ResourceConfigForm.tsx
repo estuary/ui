@@ -9,9 +9,9 @@ import { isEmpty } from 'lodash';
 import { useEffect } from 'react';
 import { createJSONFormDefaults, setDefaultsValidator } from 'services/ajv';
 import {
+    custom_generateDefaultUISchema,
     defaultOptions,
     defaultRenderers,
-    generateCustomUISchema,
     showValidation,
 } from 'services/jsonforms';
 import { createStoreSelectors, FormStatus } from 'stores/Create';
@@ -50,7 +50,7 @@ function NewMaterializationResourceConfigForm({
         });
     }, [collectionName, resourceSchema, setConfig]);
 
-    const uiSchema = generateCustomUISchema(resourceSchema);
+    const uiSchema = custom_generateDefaultUISchema(resourceSchema);
     const showValidationVal = showValidation(displayValidation);
 
     const handlers = {
