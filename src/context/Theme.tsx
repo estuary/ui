@@ -136,9 +136,9 @@ export const truncateTextSx: SxProps<Theme> = {
 // Right now this focuses on "nested" forms because they are simpler to select
 //  Applying
 export const jsonFormsGridHack: SxProps<Theme> = {
-    '& > .MuiGrid-root .MuiGrid-root': {
+    '& > .MuiGrid-container .MuiGrid-root > .MuiGrid-container .MuiGrid-root': {
         'disply': 'flex',
-        'flex': '1 1 455',
+        'flex': '1 1 0',
         'flexDirection': 'row',
         '& .MuiGrid-grid-xs-true': {
             minWidth: 455,

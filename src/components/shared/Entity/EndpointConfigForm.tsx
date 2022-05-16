@@ -56,22 +56,20 @@ function EndpointConfigForm({ endpointSchema }: Props) {
 
     return (
         <StyledEngineProvider injectFirst>
-            <div id={CONFIG_EDITOR_ID}>
-                <Box sx={{ ...jsonFormsGridHack }}>
-                    <JsonForms
-                        schema={endpointSchema}
-                        uischema={uiSchema}
-                        data={formData}
-                        renderers={defaultRenderers}
-                        cells={materialCells}
-                        config={defaultOptions}
-                        readonly={formStateStatus !== FormStatus.IDLE}
-                        validationMode={showValidationVal}
-                        onChange={setSpec}
-                        ajv={setDefaultsValidator}
-                    />
-                </Box>
-            </div>
+            <Box id={CONFIG_EDITOR_ID} sx={{ ...jsonFormsGridHack }}>
+                <JsonForms
+                    schema={endpointSchema}
+                    uischema={uiSchema}
+                    data={formData}
+                    renderers={defaultRenderers}
+                    cells={materialCells}
+                    config={defaultOptions}
+                    readonly={formStateStatus !== FormStatus.IDLE}
+                    validationMode={showValidationVal}
+                    onChange={setSpec}
+                    ajv={setDefaultsValidator}
+                />
+            </Box>
         </StyledEngineProvider>
     );
 }
