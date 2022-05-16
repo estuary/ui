@@ -131,7 +131,7 @@ function MaterializationCreate() {
         EditorStoreState<DraftSpecQuery>['setId']
     >((state) => state.setId);
 
-    // Reset the cataog if the connector changes
+    // Reset the catalog if the connector changes
     useEffect(() => {
         setDraftId(null);
     }, [imageTag, setDraftId]);
