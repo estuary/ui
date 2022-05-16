@@ -274,8 +274,6 @@ function MaterializationCreate() {
                 });
                 setDraftId(null);
 
-                // TODO: Use connector_tags.resource_spec_schema as the value of bindings.resource when the
-                // connector_tags schema is updated.
                 const {
                     connectors: { image_name },
                     image_tag,

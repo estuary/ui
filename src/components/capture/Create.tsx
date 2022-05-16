@@ -119,7 +119,7 @@ function CaptureCreate() {
         EditorStoreState<DraftSpecQuery>['id']
     >((state) => state.id);
 
-    // Reset the cataog if the connector changes
+    // Reset the cataolg if the connector changes
     useEffect(() => {
         setDraftId(null);
     }, [imageTag, setDraftId]);
