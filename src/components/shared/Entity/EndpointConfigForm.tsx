@@ -1,6 +1,6 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
-import { StyledEngineProvider } from '@mui/material';
+import { Box, StyledEngineProvider } from '@mui/material';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useEffect } from 'react';
 import { createJSONFormDefaults, setDefaultsValidator } from 'services/ajv';
@@ -56,18 +56,36 @@ function EndpointConfigForm({ endpointSchema }: Props) {
     return (
         <StyledEngineProvider injectFirst>
             <div id={CONFIG_EDITOR_ID}>
-                <JsonForms
-                    schema={endpointSchema}
-                    uischema={uiSchema}
-                    data={formData}
-                    renderers={defaultRenderers}
-                    cells={materialCells}
-                    config={defaultOptions}
-                    readonly={formStateStatus !== FormStatus.IDLE}
-                    validationMode={showValidationVal}
-                    onChange={setSpec}
-                    ajv={setDefaultsValidator}
-                />
+                <Box
+                    sx={{
+                        '& .MuiGrid-root': {
+                            '& .MuiGrid-root': {
+                                'disply': 'flex',
+                                'flex': '1 1 0',
+                                'flexDirection': 'row',
+                                '& .MuiGrid-grid-xs-true': {
+                                    border: '1px solid #00ff00',
+                                    minWidth: 300,
+                                    padding: '0',
+                                    margin: 1,
+                                },
+                            },
+                        },
+                    }}
+                >
+                    <JsonForms
+                        schema={endpointSchema}
+                        uischema={uiSchema}
+                        data={formData}
+                        renderers={defaultRenderers}
+                        cells={materialCells}
+                        config={defaultOptions}
+                        readonly={formStateStatus !== FormStatus.IDLE}
+                        validationMode={showValidationVal}
+                        onChange={setSpec}
+                        ajv={setDefaultsValidator}
+                    />
+                </Box>
             </div>
         </StyledEngineProvider>
     );

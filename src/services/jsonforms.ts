@@ -64,6 +64,12 @@ export const defaultOptions = {
 
 export const defaultRenderers = [
     ...materialRenderers,
+    // Renderers wrapped in a responsive grid
+    // { renderer: ResponsiveText, tester: responsiveTextTester },
+    // { renderer: ResponsiveBoolean, tester: responsiveBooleanTester },
+    // { renderer: ResponsiveNumber, tester: responsiveNumberTester },
+
+    // Custom types
     { renderer: NullType, tester: nullTypeTester },
     { renderer: CollapsibleGroup, tester: collapsibleGroupTester },
     { renderer: ConnectorType, tester: connectorTypeTester },
