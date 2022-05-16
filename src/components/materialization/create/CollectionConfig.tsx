@@ -1,4 +1,4 @@
-import Grid from '@mui/material/Grid/Grid';
+import { Grid } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
 import CollectionSelector from 'components/materialization/CollectionSelector';
 import ExpandableResourceConfig from 'components/materialization/create/ExpandableResourceConfig';

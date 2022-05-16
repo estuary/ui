@@ -75,7 +75,7 @@ export const getLogRocketSettings = () => {
     return {
         appID: process.env.REACT_APP_LOGROCKET_APP_ID ?? null,
         idUser: {
-            enabled: process.env.REACT_APP_LOGROCKET_ID_USER,
+            enabled: process.env.REACT_APP_LOGROCKET_ID_USER === ENABLED,
             includeName:
                 process.env.REACT_APP_LOGROCKET_ID_USER_INCLUDE_NAME ===
                 ENABLED,
