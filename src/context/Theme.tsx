@@ -133,6 +133,14 @@ export const truncateTextSx: SxProps<Theme> = {
     textOverflow: 'ellipsis',
 };
 
+const baseBackground = {
+    styleOverrides: {
+        root: {
+            backgroundColor: 'transparent',
+        },
+    },
+};
+
 export const jsonFormsPadding: SxProps<Theme> = {
     '& > div > .MuiGrid-container.MuiGrid-root': {
         padding: 1,
@@ -151,18 +159,10 @@ const themeSettings = createTheme({
     },
     components: {
         MuiAppBar: {
-            styleOverrides: {
-                root: {
-                    backgroundColor: 'transparent',
-                },
-            },
+            ...baseBackground,
         },
         MuiAccordion: {
-            styleOverrides: {
-                root: {
-                    backgroundColor: 'transparent',
-                },
-            },
+            ...baseBackground,
         },
         MuiBadge: {
             defaultProps: {
@@ -209,11 +209,9 @@ const themeSettings = createTheme({
             },
         },
         MuiTabs: {
+            ...baseBackground,
             defaultProps: {
                 indicatorColor: 'secondary',
-                sx: {
-                    backgroundColor: 'transparent',
-                },
             },
         },
     },
