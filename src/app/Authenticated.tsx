@@ -53,6 +53,9 @@ export const routeDetails = {
     materializations: {
         title: 'routeTitle.materializations',
         path: '/materializations',
+        store: {
+            key: Stores.MATERIALIZATION_SHARD_DETAIL,
+        },
         create: {
             title: 'routeTitle.materializationCreate',
             path: 'create',
@@ -127,7 +130,18 @@ const Authenticated = () => {
                 </Route>
 
                 <Route path={routeDetails.materializations.path}>
-                    <Route path="" element={<Materializations />} />
+                    <Route
+                        path=""
+                        element={
+                            <RouteStoreProvider
+                                routeStoreKey={
+                                    routeDetails.materializations.store.key
+                                }
+                            >
+                                <Materializations />
+                            </RouteStoreProvider>
+                        }
+                    />
                     <Route
                         path={routeDetails.materializations.create.path}
                         element={

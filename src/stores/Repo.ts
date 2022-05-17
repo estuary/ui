@@ -12,6 +12,7 @@ export enum Stores {
     CAPTURE_CREATE = 'captureCreate',
     CAPTURE_SHARD_DETAIL = 'captureShardDetail',
     MATERIALIZATION_CREATE = 'materializationCreate',
+    MATERIALIZATION_SHARD_DETAIL = 'materializationShardDetail',
 }
 
 // TODO (typing) : Need to get the map typed and get the selectors passing back types
@@ -40,6 +41,16 @@ storeMap.set(
         devtools(
             getInitialShardDetailState,
             devtoolsOptions(Stores.CAPTURE_SHARD_DETAIL)
+        )
+    )
+);
+
+storeMap.set(
+    Stores.MATERIALIZATION_SHARD_DETAIL,
+    create<ShardDetailStore>()(
+        devtools(
+            getInitialShardDetailState,
+            devtoolsOptions(Stores.MATERIALIZATION_SHARD_DETAIL)
         )
     )
 );
