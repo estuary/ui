@@ -133,22 +133,12 @@ export const truncateTextSx: SxProps<Theme> = {
     textOverflow: 'ellipsis',
 };
 
-// Right now this focuses on "nested" forms because they are simpler to select
-//  Applying
-export const jsonFormsGridHack: SxProps<Theme> = {
-    '& > .MuiGrid-container .MuiGrid-root > .MuiGrid-container .MuiGrid-root': {
-        'disply': 'flex',
-        'flex': '1 1 0',
-        'flexDirection': 'row',
-        '& .MuiGrid-grid-xs-true': {
-            minWidth: 455,
-            padding: '0',
-            margin: 1,
-        },
+export const jsonFormsPadding: SxProps<Theme> = {
+    '& > div > .MuiGrid-container.MuiGrid-root': {
+        padding: 1,
     },
 };
 
-// Theme
 const themeSettings = createTheme({
     breakpoints: {
         values: {

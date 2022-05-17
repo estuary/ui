@@ -1,7 +1,7 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Box, StyledEngineProvider } from '@mui/material';
-import { jsonFormsGridHack } from 'context/Theme';
+import { jsonFormsPadding } from 'context/Theme';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useEffect } from 'react';
 import { createJSONFormDefaults, setDefaultsValidator } from 'services/ajv';
@@ -9,10 +9,12 @@ import {
     custom_generateDefaultUISchema,
     defaultOptions,
     defaultRenderers,
+    generateCategoryUiSchema,
     showValidation,
 } from 'services/jsonforms';
 import { createStoreSelectors, FormStatus } from 'stores/Create';
 import { getStore } from 'stores/Repo';
+import useConstant from 'use-constant';
 
 type Props = {
     endpointSchema: any;
@@ -44,22 +46,24 @@ function EndpointConfigForm({ endpointSchema }: Props) {
         });
     }, [endpointSchema, setEndpointSchema, setSpec]);
 
-    const uiSchema = custom_generateDefaultUISchema(endpointSchema);
-    // To help debug form rendering
-    console.log(
-        'Input JSON Schema:',
-        endpointSchema,
-        'Output UI Schema:',
-        uiSchema
+    const categoryLikeSchema = useConstant(() =>
+        generateCategoryUiSchema(custom_generateDefaultUISchema(endpointSchema))
     );
+    console.log('categoryLikeSchema', categoryLikeSchema);
+
     const showValidationVal = showValidation(displayValidation);
 
     return (
         <StyledEngineProvider injectFirst>
-            <Box id={CONFIG_EDITOR_ID} sx={{ ...jsonFormsGridHack }}>
+            <Box
+                id={CONFIG_EDITOR_ID}
+                sx={{
+                    ...jsonFormsPadding,
+                }}
+            >
                 <JsonForms
                     schema={endpointSchema}
-                    uischema={uiSchema}
+                    uischema={categoryLikeSchema}
                     data={formData}
                     renderers={defaultRenderers}
                     cells={materialCells}

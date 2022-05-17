@@ -102,6 +102,46 @@ const copyAdvancedOption = (elem: Layout, schema: JsonSchema) => {
     }
 };
 
+export const generateCategoryUiSchema = (uiSchema: any) => {
+    const basicElements: any[] = [];
+    const categoryUiSchema = {
+        type: 'Categorization',
+        elements: [
+            {
+                type: 'Category',
+                label: 'Basic Information',
+                elements: [
+                    {
+                        type: 'VerticalLayout',
+                        elements: [],
+                    } as { type: string; elements: any[] },
+                ],
+            },
+        ],
+    };
+
+    uiSchema.elements.forEach((element: any) => {
+        if (element.label) {
+            categoryUiSchema.elements.push({
+                type: 'Category',
+                label: element.label,
+                elements: [
+                    {
+                        type: 'VerticalLayout',
+                        elements: [element],
+                    },
+                ],
+            });
+        } else {
+            basicElements.push(element);
+        }
+    });
+
+    categoryUiSchema.elements[0].elements = basicElements;
+
+    return categoryUiSchema;
+};
+
 /////////////////////////////////////////////////////////
 //  CUSTOM FUNCTIONS AND SETTINGS
 /////////////////////////////////////////////////////////
