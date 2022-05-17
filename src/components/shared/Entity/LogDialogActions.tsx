@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import { Box, Button, SxProps, Theme } from '@mui/material';
 import Status from 'components/shared/Entity/Status';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { FormattedMessage } from 'react-intl';
@@ -12,6 +12,10 @@ interface Props {
     };
 }
 
+const buttonSX: SxProps<Theme> = {
+    mx: 1,
+};
+
 function LogDialogActions({ close, materialize }: Props) {
     const entityCreateStore = useRouteStore();
 
@@ -23,26 +27,36 @@ function LogDialogActions({ close, materialize }: Props) {
 
     return (
         <>
-            <Status />
-
-            <Button
-                disabled={
-                    formStatus === FormStatus.TESTING ||
-                    formStatus === FormStatus.SAVING
-                }
-                onClick={close}
+            <Box
+                sx={{
+                    pl: 2,
+                }}
             >
-                <FormattedMessage id="cta.close" />
-            </Button>
+                <Status />
+            </Box>
 
-            {materialize ? (
+            <Box>
                 <Button
-                    disabled={formStatus !== FormStatus.SUCCESS}
-                    onClick={materialize.action}
+                    disabled={
+                        formStatus === FormStatus.TESTING ||
+                        formStatus === FormStatus.SAVING
+                    }
+                    onClick={close}
+                    sx={buttonSX}
                 >
-                    <FormattedMessage id={materialize.title} />
+                    <FormattedMessage id="cta.close" />
                 </Button>
-            ) : null}
+
+                {materialize ? (
+                    <Button
+                        disabled={formStatus !== FormStatus.SUCCESS}
+                        onClick={materialize.action}
+                        sx={buttonSX}
+                    >
+                        <FormattedMessage id={materialize.title} />
+                    </Button>
+                ) : null}
+            </Box>
         </>
     );
 }

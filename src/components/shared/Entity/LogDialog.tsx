@@ -39,7 +39,15 @@ function LogDialog({
                     height={logHeight}
                 />
             </DialogContent>
-            <DialogActions>{actionComponent}</DialogActions>
+            <DialogActions
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                }}
+            >
+                {actionComponent}
+            </DialogActions>
         </Dialog>
     );
 }
