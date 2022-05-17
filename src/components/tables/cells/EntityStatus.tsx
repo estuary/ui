@@ -1,14 +1,25 @@
 import { Tooltip } from '@mui/material';
-import { getDeploymentStatusHexCode } from 'utils/misc-utils';
+import { useRouteStore } from 'hooks/useRouteStore';
+import { getStore } from 'stores/Repo';
+import { shardDetailSelectors } from 'stores/ShardDetail';
 
-function EntityStatus() {
+interface Props {
+    name: string;
+}
+
+function EntityStatus({ name }: Props) {
+    const shardDetailStore = getStore(useRouteStore());
+    const getShardStatus = shardDetailStore(
+        shardDetailSelectors.getShardStatus
+    );
+
     return (
         <Tooltip title="Status" placement="bottom-start">
             <span
                 style={{
                     height: 16,
                     width: 16,
-                    backgroundColor: getDeploymentStatusHexCode('ACTIVE'),
+                    backgroundColor: getShardStatus(name),
                     borderRadius: 50,
                     display: 'inline-block',
                     verticalAlign: 'middle',

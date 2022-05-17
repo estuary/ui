@@ -1,4 +1,8 @@
 import { CreateEntityStore, getInitialState } from 'stores/Create';
+import {
+    ShardDetailStore,
+    getInitialState as getInitialShardDetailState,
+} from 'stores/ShardDetail';
 import { devtoolsOptions } from 'utils/store-utils';
 import create from 'zustand';
 import { devtools } from 'zustand/middleware';
@@ -6,6 +10,7 @@ import { devtools } from 'zustand/middleware';
 export enum Stores {
     EMPTY = '',
     CAPTURE_CREATE = 'captureCreate',
+    CAPTURE_SHARD_DETAIL = 'captureShardDetail',
     MATERIALIZATION_CREATE = 'materializationCreate',
 }
 
@@ -25,6 +30,16 @@ storeMap.set(
         devtools(
             getInitialState,
             devtoolsOptions(Stores.MATERIALIZATION_CREATE)
+        )
+    )
+);
+
+storeMap.set(
+    Stores.CAPTURE_SHARD_DETAIL,
+    create<ShardDetailStore>()(
+        devtools(
+            getInitialShardDetailState,
+            devtoolsOptions(Stores.CAPTURE_SHARD_DETAIL)
         )
     )
 );

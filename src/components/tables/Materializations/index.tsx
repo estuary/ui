@@ -78,7 +78,9 @@ function MaterializationsTable() {
                 }}
                 columns={tableColumns}
                 query={liveSpecQuery}
-                renderTableRows={(data) => <Rows data={data} />}
+                renderTableRows={(data, showEntityStatus) => (
+                    <Rows data={data} showEntityStatus={showEntityStatus} />
+                )}
                 setPagination={setPagination}
                 setSearchQuery={setSearchQuery}
                 sortDirection={sortDirection}
@@ -87,6 +89,7 @@ function MaterializationsTable() {
                 setColumnToSort={setColumnToSort}
                 header="materializationsTable.title"
                 filterLabel="entityTable.filterLabel"
+                showEntityStatus={true}
             />
         </Box>
     );

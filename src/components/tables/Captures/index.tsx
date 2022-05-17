@@ -5,8 +5,12 @@ import EntityTable, {
     SortDirection,
 } from 'components/tables/EntityTable';
 import { useQuery } from 'hooks/supabase-swr';
+import { useRouteStore } from 'hooks/useRouteStore';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
+import { getStore } from 'stores/Repo';
+import { shardDetailSelectors } from 'stores/ShardDetail';
+import useSWR from 'swr';
 import { OpenGraph } from 'types';
 
 export interface LiveSpecsExtQuery {
@@ -67,6 +71,37 @@ function CapturesTable() {
         [pagination, searchQuery, columnToSort, sortDirection]
     );
 
+    const shardDetailStore = getStore(useRouteStore());
+    const setShards = shardDetailStore(shardDetailSelectors.setShards);
+
+    const shardsListEndpoint = 'http://localhost:28318/v1/shards/list';
+
+    const fetcher = async () => {
+        return fetch(shardsListEndpoint, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                selector: {
+                    include: {
+                        labels: [
+                            { name: 'estuary.dev/task-type', value: 'capture' },
+                        ],
+                    },
+                    exclude: { labels: [] },
+                },
+            }),
+        }).then((res) => res.json());
+    };
+
+    useSWR(shardsListEndpoint, fetcher, {
+        onSuccess: ({ shards }) => {
+            setShards(shards);
+        },
+    });
+
     return (
         <Box>
             <EntityTable
@@ -78,7 +113,9 @@ function CapturesTable() {
                 }}
                 columns={tableColumns}
                 query={liveSpecQuery}
-                renderTableRows={(data) => <Rows data={data} />}
+                renderTableRows={(data, showEntityStatus) => (
+                    <Rows data={data} showEntityStatus={showEntityStatus} />
+                )}
                 setPagination={setPagination}
                 setSearchQuery={setSearchQuery}
                 sortDirection={sortDirection}
@@ -87,6 +124,7 @@ function CapturesTable() {
                 setColumnToSort={setColumnToSort}
                 header="captureTable.header"
                 filterLabel="entityTable.filterLabel"
+                showEntityStatus={true}
             />
         </Box>
     );

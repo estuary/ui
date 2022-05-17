@@ -27,6 +27,9 @@ export const routeDetails = {
     captures: {
         title: 'routeTitle.captures',
         path: '/captures',
+        store: {
+            key: Stores.CAPTURE_SHARD_DETAIL,
+        },
         create: {
             title: 'routeTitle.captureCreate',
             path: `create`,
@@ -94,7 +97,16 @@ const Authenticated = () => {
                 />
 
                 <Route path={routeDetails.captures.path}>
-                    <Route path="" element={<Captures />} />
+                    <Route
+                        path=""
+                        element={
+                            <RouteStoreProvider
+                                routeStoreKey={routeDetails.captures.store.key}
+                            >
+                                <Captures />
+                            </RouteStoreProvider>
+                        }
+                    />
                     <Route
                         path={routeDetails.captures.create.path}
                         element={

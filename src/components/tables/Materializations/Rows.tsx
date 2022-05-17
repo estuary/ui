@@ -12,10 +12,12 @@ import { useState } from 'react';
 
 interface RowsProps {
     data: LiveSpecsExtQuery[];
+    showEntityStatus: boolean;
 }
 
 interface RowProps {
     row: LiveSpecsExtQuery;
+    showEntityStatus: boolean;
 }
 
 export const tableColumns = [
@@ -45,13 +47,16 @@ export const tableColumns = [
     },
 ];
 
-function Row({ row }: RowProps) {
+function Row({ row, showEntityStatus }: RowProps) {
     const [detailsExpanded, setDetailsExpanded] = useState(false);
 
     return (
         <>
             <TableRow key={`Entity-${row.id}`}>
-                <EntityName name={row.catalog_name} />
+                <EntityName
+                    name={row.catalog_name}
+                    showEntityStatus={showEntityStatus}
+                />
 
                 <Connector
                     openGraph={row.connector_open_graph}
@@ -87,11 +92,15 @@ function Row({ row }: RowProps) {
     );
 }
 
-function Rows({ data }: RowsProps) {
+function Rows({ data, showEntityStatus }: RowsProps) {
     return (
         <>
             {data.map((row) => (
-                <Row row={row} key={row.id} />
+                <Row
+                    row={row}
+                    showEntityStatus={showEntityStatus}
+                    key={row.id}
+                />
             ))}
         </>
     );
