@@ -3,10 +3,7 @@ import { RealtimeSubscription } from '@supabase/supabase-js';
 import { routeDetails } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
 import CollectionConfig from 'components/materialization/create/CollectionConfig';
-import useCreationStore, {
-    creationSelectors,
-    CreationState,
-} from 'components/materialization/Store';
+import { CreationState } from 'components/materialization/Store';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
@@ -37,7 +34,6 @@ import useNotificationStore, {
     Notification,
     NotificationState,
 } from 'stores/NotificationStore';
-import { getStore } from 'stores/Repo';
 
 const FORM_ID = 'newMaterializationForm';
 
@@ -78,12 +74,14 @@ function MaterializationCreate() {
         selectors.notifications.showNotification
     );
 
+    const entityCreateStore = useRouteStore();
+
     // Materializations store
-    const resourceConfig = useCreationStore(creationSelectors.resourceConfig);
-    const resetCreationStore = useCreationStore(creationSelectors.resetState);
+    const resourceConfig = entityCreateStore(
+        createStoreSelectors.resourceConfig
+    );
 
     // Form store
-    const entityCreateStore = getStore(useRouteStore());
     const entityName = entityCreateStore(
         createStoreSelectors.details.entityName
     );
@@ -169,7 +167,6 @@ function MaterializationCreate() {
         },
         exit: () => {
             resetState();
-            resetCreationStore();
 
             navigate(routeDetails.materializations.path);
         },
@@ -341,7 +338,7 @@ function MaterializationCreate() {
                                                     catalog_name: entityName,
                                                     spec_type:
                                                         'materialization',
-                                                    spec: encryptedEndpointConfig,
+                                                    spec: draftSpec,
                                                 },
                                             ])
                                             .then(
@@ -511,7 +508,6 @@ function MaterializationCreate() {
 
     usePrompt('confirm.loseData', !exitWhenLogsClose && hasChanges(), () => {
         resetState();
-        resetCreationStore();
     });
 
     return (

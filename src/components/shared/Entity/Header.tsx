@@ -18,7 +18,6 @@ import {
     formInProgress,
     FormStatus,
 } from 'stores/Create';
-import { getStore } from 'stores/Repo';
 
 interface Props {
     close: (event: any) => void;
@@ -44,7 +43,7 @@ function FooHeader({
         EditorStoreState<DraftSpecQuery>['id']
     >((state) => state.id);
 
-    const entityCreateStore = getStore(useRouteStore());
+    const entityCreateStore = useRouteStore();
     const formStateStatus = entityCreateStore(
         createStoreSelectors.formState.status
     );

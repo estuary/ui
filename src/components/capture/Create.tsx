@@ -31,7 +31,6 @@ import useNotificationStore, {
     Notification,
     NotificationState,
 } from 'stores/NotificationStore';
-import { getStore } from 'stores/Repo';
 import { getPathWithParam } from 'utils/misc-utils';
 
 const FORM_ID = 'newCaptureForm';
@@ -71,7 +70,7 @@ function CaptureCreate() {
     );
 
     // Form store
-    const entityCreateStore = getStore(useRouteStore());
+    const entityCreateStore = useRouteStore();
     const entityName = entityCreateStore(
         createStoreSelectors.details.entityName
     );

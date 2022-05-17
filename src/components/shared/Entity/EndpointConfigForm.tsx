@@ -13,7 +13,6 @@ import {
     showValidation,
 } from 'services/jsonforms';
 import { createStoreSelectors, FormStatus } from 'stores/Create';
-import { getStore } from 'stores/Repo';
 import useConstant from 'use-constant';
 
 type Props = {
@@ -23,7 +22,7 @@ type Props = {
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
 
 function EndpointConfigForm({ endpointSchema }: Props) {
-    const entityCreateStore = getStore(useRouteStore());
+    const entityCreateStore = useRouteStore();
     const setSpec = entityCreateStore(createStoreSelectors.endpointConfig.set);
     const formData = entityCreateStore(
         createStoreSelectors.endpointConfig.data
@@ -72,7 +71,10 @@ function EndpointConfigForm({ endpointSchema }: Props) {
                     renderers={defaultRenderers}
                     cells={materialCells}
                     config={defaultOptions}
-                    readonly={formStateStatus !== FormStatus.IDLE}
+                    readonly={
+                        formStateStatus === FormStatus.TESTING ||
+                        formStateStatus === FormStatus.SAVING
+                    }
                     validationMode={showValidationVal}
                     onChange={setSpec}
                     ajv={setDefaultsValidator}

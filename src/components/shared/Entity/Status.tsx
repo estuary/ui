@@ -1,10 +1,9 @@
 import { useRouteStore } from 'hooks/useRouteStore';
 import { FormattedMessage } from 'react-intl';
 import { createStoreSelectors, FormStatus } from 'stores/Create';
-import { getStore } from 'stores/Repo';
 
 function Status() {
-    const entityCreateStore = getStore(useRouteStore());
+    const entityCreateStore = useRouteStore();
 
     const formStatus = entityCreateStore(createStoreSelectors.formState.status);
 

@@ -52,7 +52,7 @@ const getDefaultResourceConfig = () => ({
     errors: {},
 });
 
-const useCreationStore = create<CreationState>()(
+const entityCreateStore = create<CreationState>()(
     devtools(
         (set) => ({
             ...getInitialStateData(),
@@ -100,7 +100,7 @@ const useCreationStore = create<CreationState>()(
     )
 );
 
-export default useCreationStore;
+export default entityCreateStore;
 
 export const creationSelectors = {
     collections: (state: CreationState) => state.collections,

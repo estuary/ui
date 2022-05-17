@@ -4,14 +4,13 @@ import { useRouteStore } from 'hooks/useRouteStore';
 import { map } from 'lodash';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { createStoreSelectors } from 'stores/Create';
-import { getStore } from 'stores/Repo';
 
 // TODO : Delete this or make is useful. Right now JSON Forms is kinda hard to write custom validation
 // just so that we don't have to display validation errors right away.
 function ValidationErrorSummary() {
     const intl = useIntl();
 
-    const entityCreateStore = getStore(useRouteStore());
+    const entityCreateStore = useRouteStore();
     const [detailErrors, specErrors] = entityCreateStore(
         createStoreSelectors.errors
     );

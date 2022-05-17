@@ -3,7 +3,6 @@ import Status from 'components/shared/Entity/Status';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { FormattedMessage } from 'react-intl';
 import { createStoreSelectors, FormStatus } from 'stores/Create';
-import { getStore } from 'stores/Repo';
 
 interface Props {
     close: any;
@@ -14,7 +13,7 @@ interface Props {
 }
 
 function LogDialogActions({ close, materialize }: Props) {
-    const entityCreateStore = getStore(useRouteStore());
+    const entityCreateStore = useRouteStore();
 
     const formStatus = entityCreateStore(createStoreSelectors.formState.status);
 

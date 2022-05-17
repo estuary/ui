@@ -1,11 +1,10 @@
 import { Autocomplete, Box, TextField, Typography } from '@mui/material';
-import useCreationStore, {
-    creationSelectors,
-} from 'components/materialization/Store';
 import { useQuery, useSelect } from 'hooks/supabase-swr/';
+import { useRouteStore } from 'hooks/useRouteStore';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { TABLES } from 'services/supabase';
+import { createStoreSelectors } from 'stores/Create';
 import useConstant from 'use-constant';
 
 interface LiveSpecsQuery {
@@ -33,10 +32,13 @@ function CollectionSelector() {
     );
     const { data: collectionData, error } = useSelect(liveSpecsQuery);
 
-    const collections = useCreationStore(creationSelectors.collections);
-    const setCollections = useCreationStore(creationSelectors.setCollection);
-    const setResourceConfig = useCreationStore(
-        creationSelectors.setResourceConfig
+    const entityCreateStore = useRouteStore();
+    const collections = entityCreateStore(createStoreSelectors.collections);
+    const setCollections = entityCreateStore(
+        createStoreSelectors.setCollections
+    );
+    const setResourceConfig = entityCreateStore(
+        createStoreSelectors.setResourceConfig
     );
 
     const handlers = {

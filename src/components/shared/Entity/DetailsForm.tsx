@@ -15,7 +15,6 @@ import {
     showValidation,
 } from 'services/jsonforms';
 import { createStoreSelectors, FormStatus } from 'stores/Create';
-import { getStore } from 'stores/Repo';
 import { Grants } from 'types';
 import { getConnectorName } from 'utils/misc-utils';
 
@@ -32,7 +31,7 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
         routeDetails.captures.create.params.connectorID
     );
 
-    const entityCreateStore = getStore(useRouteStore());
+    const entityCreateStore = useRouteStore();
     const formData = entityCreateStore(createStoreSelectors.details.data);
     const setDetails = entityCreateStore(createStoreSelectors.details.set);
     const displayValidation = entityCreateStore(
@@ -173,7 +172,10 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
                             renderers={defaultRenderers}
                             cells={materialCells}
                             config={defaultOptions}
-                            readonly={status !== FormStatus.IDLE}
+                            readonly={
+                                status === FormStatus.TESTING ||
+                                status === FormStatus.SAVING
+                            }
                             validationMode={showValidation(displayValidation)}
                             onChange={setDetails}
                         />
