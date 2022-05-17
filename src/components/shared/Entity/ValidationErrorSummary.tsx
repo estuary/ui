@@ -5,8 +5,6 @@ import { map } from 'lodash';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { entityCreateStoreSelectors } from 'stores/Create';
 
-// TODO : Delete this or make is useful. Right now JSON Forms is kinda hard to write custom validation
-// just so that we don't have to display validation errors right away.
 function ValidationErrorSummary() {
     const intl = useIntl();
 
@@ -18,7 +16,6 @@ function ValidationErrorSummary() {
         entityCreateStoreSelectors.resourceConfig.getErrors
     );
     const resourceConfigErrors = getResourceConfigErrors();
-    console.log('resourceConfigErrors', resourceConfigErrors);
 
     const displayValidation = entityCreateStore(
         entityCreateStoreSelectors.formState.displayValidation
@@ -30,10 +27,6 @@ function ValidationErrorSummary() {
         resourceConfigErrors,
         'instancePath'
     );
-    // const filteredErrors = uniq(
-    //     map(filteredDetailErrors.concat(filteredSpecErrors), 'instancePath')
-    // );
-
     const filteredErrorsList: KeyValue[] = [];
 
     if (filteredDetailErrors.length > 0) {
