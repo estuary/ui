@@ -42,6 +42,7 @@ function NewMaterializationResourceConfigForm({
     useEffect(() => {
         setConfig(collectionName, {
             data: createJSONFormDefaults(resourceSchema),
+            errors: [],
         });
     }, [collectionName, resourceSchema, setConfig]);
 

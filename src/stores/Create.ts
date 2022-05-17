@@ -266,14 +266,14 @@ export const getInitialState = (
         },
         getResourceConfigErrors: () => {
             const { resourceConfig } = get();
-            const response: any[] = [];
+            let response: any[] = [];
 
             if (Object.keys(resourceConfig).length > 0) {
                 map(resourceConfig, (config) => {
                     const { errors } = config;
                     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                     if (errors && errors.length > 0) {
-                        response.concat(errors);
+                        response = response.concat(errors);
                     }
                 });
             }
