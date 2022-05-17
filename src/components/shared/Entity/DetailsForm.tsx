@@ -14,7 +14,7 @@ import {
     defaultRenderers,
     showValidation,
 } from 'services/jsonforms';
-import { createStoreSelectors, FormStatus } from 'stores/Create';
+import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 import { Grants } from 'types';
 import { getConnectorName } from 'utils/misc-utils';
 
@@ -32,12 +32,16 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
     );
 
     const entityCreateStore = useRouteStore();
-    const formData = entityCreateStore(createStoreSelectors.details.data);
-    const setDetails = entityCreateStore(createStoreSelectors.details.set);
-    const displayValidation = entityCreateStore(
-        createStoreSelectors.formState.displayValidation
+    const formData = entityCreateStore(entityCreateStoreSelectors.details.data);
+    const setDetails = entityCreateStore(
+        entityCreateStoreSelectors.details.set
     );
-    const status = entityCreateStore(createStoreSelectors.formState.status);
+    const displayValidation = entityCreateStore(
+        entityCreateStoreSelectors.formState.displayValidation
+    );
+    const status = entityCreateStore(
+        entityCreateStoreSelectors.formState.status
+    );
 
     useEffect(() => {
         if (connectorID) {

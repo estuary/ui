@@ -4,7 +4,7 @@ import { useRouteStore } from 'hooks/useRouteStore';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { TABLES } from 'services/supabase';
-import { createStoreSelectors } from 'stores/Create';
+import { entityCreateStoreSelectors } from 'stores/Create';
 import useConstant from 'use-constant';
 
 interface LiveSpecsQuery {
@@ -33,12 +33,14 @@ function CollectionSelector() {
     const { data: collectionData, error } = useSelect(liveSpecsQuery);
 
     const entityCreateStore = useRouteStore();
-    const collections = entityCreateStore(createStoreSelectors.collections);
+    const collections = entityCreateStore(
+        entityCreateStoreSelectors.collections
+    );
     const setCollections = entityCreateStore(
-        createStoreSelectors.setCollections
+        entityCreateStoreSelectors.setCollections
     );
     const setResourceConfig = entityCreateStore(
-        createStoreSelectors.setResourceConfig
+        entityCreateStoreSelectors.setResourceConfig
     );
 
     const handlers = {

@@ -3,7 +3,6 @@ import { RealtimeSubscription } from '@supabase/supabase-js';
 import { routeDetails } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
 import CollectionConfig from 'components/materialization/create/CollectionConfig';
-import { CreationState } from 'components/materialization/Store';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
@@ -29,7 +28,7 @@ import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { getEncryptedConfig } from 'services/encryption';
 import { TABLES } from 'services/supabase';
-import { createStoreSelectors, FormStatus } from 'stores/Create';
+import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 import useNotificationStore, {
     Notification,
     NotificationState,
@@ -38,10 +37,6 @@ import useNotificationStore, {
 const FORM_ID = 'newMaterializationForm';
 
 const selectors = {
-    page: {
-        collections: (state: CreationState) => state.collections,
-        resourceConfigData: (state: CreationState) => state.resourceConfig.data,
-    },
     notifications: {
         showNotification: (state: NotificationState) => state.showNotification,
     },
@@ -78,44 +73,50 @@ function MaterializationCreate() {
 
     // Materializations store
     const resourceConfig = entityCreateStore(
-        createStoreSelectors.resourceConfig
+        entityCreateStoreSelectors.resourceConfig
     );
 
     // Form store
     const entityName = entityCreateStore(
-        createStoreSelectors.details.entityName
+        entityCreateStoreSelectors.details.entityName
     );
     const imageTag = entityCreateStore(
-        createStoreSelectors.details.connectorTag
+        entityCreateStoreSelectors.details.connectorTag
     );
     const entityDescription = entityCreateStore(
-        createStoreSelectors.details.description
+        entityCreateStoreSelectors.details.description
     );
     const endpointConfig = entityCreateStore(
-        createStoreSelectors.endpointConfig.data
+        entityCreateStoreSelectors.endpointConfig.data
     );
     const endpointSchema = entityCreateStore(
-        createStoreSelectors.endpointSchema
+        entityCreateStoreSelectors.endpointSchema
     );
-    const hasChanges = entityCreateStore(createStoreSelectors.hasChanges);
-    const resetState = entityCreateStore(createStoreSelectors.resetState);
+    const hasChanges = entityCreateStore(entityCreateStoreSelectors.hasChanges);
+    const resetState = entityCreateStore(entityCreateStoreSelectors.resetState);
     const [detailErrors, specErrors] = entityCreateStore(
-        createStoreSelectors.errors
+        entityCreateStoreSelectors.errors
     );
 
-    const setFormState = entityCreateStore(createStoreSelectors.formState.set);
+    const setFormState = entityCreateStore(
+        entityCreateStoreSelectors.formState.set
+    );
     const resetFormState = entityCreateStore(
-        createStoreSelectors.formState.reset
+        entityCreateStoreSelectors.formState.reset
     );
 
     // Form State
-    const showLogs = entityCreateStore(createStoreSelectors.formState.showLogs);
-    const logToken = entityCreateStore(createStoreSelectors.formState.logToken);
+    const showLogs = entityCreateStore(
+        entityCreateStoreSelectors.formState.showLogs
+    );
+    const logToken = entityCreateStore(
+        entityCreateStoreSelectors.formState.logToken
+    );
     const formSubmitError = entityCreateStore(
-        createStoreSelectors.formState.error
+        entityCreateStoreSelectors.formState.error
     );
     const exitWhenLogsClose = entityCreateStore(
-        createStoreSelectors.formState.exitWhenLogsClose
+        entityCreateStoreSelectors.formState.exitWhenLogsClose
     );
 
     // Editor state

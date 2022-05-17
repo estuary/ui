@@ -14,7 +14,7 @@ import { useZustandStore } from 'hooks/useZustand';
 import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
-    createStoreSelectors,
+    entityCreateStoreSelectors,
     formInProgress,
     FormStatus,
 } from 'stores/Create';
@@ -45,9 +45,11 @@ function FooHeader({
 
     const entityCreateStore = useRouteStore();
     const formStateStatus = entityCreateStore(
-        createStoreSelectors.formState.status
+        entityCreateStoreSelectors.formState.status
     );
-    const setFormState = entityCreateStore(createStoreSelectors.formState.set);
+    const setFormState = entityCreateStore(
+        entityCreateStoreSelectors.formState.set
+    );
 
     const handlers = {
         test: (event: any) => {

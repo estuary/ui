@@ -12,7 +12,7 @@ import {
     generateCategoryUiSchema,
     showValidation,
 } from 'services/jsonforms';
-import { createStoreSelectors, FormStatus } from 'stores/Create';
+import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 import useConstant from 'use-constant';
 
 type Props = {
@@ -23,18 +23,20 @@ export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
 
 function EndpointConfigForm({ endpointSchema }: Props) {
     const entityCreateStore = useRouteStore();
-    const setSpec = entityCreateStore(createStoreSelectors.endpointConfig.set);
+    const setSpec = entityCreateStore(
+        entityCreateStoreSelectors.endpointConfig.set
+    );
     const formData = entityCreateStore(
-        createStoreSelectors.endpointConfig.data
+        entityCreateStoreSelectors.endpointConfig.data
     );
     const displayValidation = entityCreateStore(
-        createStoreSelectors.formState.displayValidation
+        entityCreateStoreSelectors.formState.displayValidation
     );
     const formStateStatus = entityCreateStore(
-        createStoreSelectors.formState.status
+        entityCreateStoreSelectors.formState.status
     );
     const setEndpointSchema = entityCreateStore(
-        createStoreSelectors.setEndpointSchema
+        entityCreateStoreSelectors.setEndpointSchema
     );
 
     useEffect(() => {

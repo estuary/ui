@@ -3,7 +3,7 @@ import KeyValueList, { KeyValue } from 'components/shared/KeyValueList';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { map } from 'lodash';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { createStoreSelectors } from 'stores/Create';
+import { entityCreateStoreSelectors } from 'stores/Create';
 
 // TODO : Delete this or make is useful. Right now JSON Forms is kinda hard to write custom validation
 // just so that we don't have to display validation errors right away.
@@ -12,10 +12,10 @@ function ValidationErrorSummary() {
 
     const entityCreateStore = useRouteStore();
     const [detailErrors, specErrors] = entityCreateStore(
-        createStoreSelectors.errors
+        entityCreateStoreSelectors.errors
     );
     const displayValidation = entityCreateStore(
-        createStoreSelectors.formState.displayValidation
+        entityCreateStoreSelectors.formState.displayValidation
     );
 
     const filteredDetailErrors = map(detailErrors, 'instancePath');

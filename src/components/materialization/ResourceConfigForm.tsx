@@ -11,7 +11,7 @@ import {
     defaultRenderers,
     showValidation,
 } from 'services/jsonforms';
-import { createStoreSelectors, FormStatus } from 'stores/Create';
+import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 
 type Props = {
     resourceSchema: any;
@@ -24,14 +24,18 @@ function NewMaterializationResourceConfigForm({
 }: Props) {
     const entityCreateStore = useRouteStore();
 
-    const setConfig = entityCreateStore(createStoreSelectors.setResourceConfig);
+    const setConfig = entityCreateStore(
+        entityCreateStoreSelectors.setResourceConfig
+    );
     const formData = entityCreateStore(
         (state: any) => state.resourceConfig[collectionName].data
     );
     const displayValidation = entityCreateStore(
-        createStoreSelectors.formState.displayValidation
+        entityCreateStoreSelectors.formState.displayValidation
     );
-    const status = entityCreateStore(createStoreSelectors.formState.status);
+    const status = entityCreateStore(
+        entityCreateStoreSelectors.formState.status
+    );
 
     // Resolve Refs & Hydrate the object
     //  This will hydrate the default values for us as we don't want JSONForms to

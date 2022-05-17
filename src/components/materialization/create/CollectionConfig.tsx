@@ -2,23 +2,24 @@ import { Grid } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
 import CollectionSelector from 'components/materialization/CollectionSelector';
 import ExpandableResourceConfig from 'components/materialization/create/ExpandableResourceConfig';
-import { creationSelectors } from 'components/materialization/Store';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import useLiveSpecsExt from 'hooks/useLiveSpecsExt';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
-import { createStoreSelectors } from 'stores/Create';
+import { entityCreateStoreSelectors } from 'stores/Create';
 
 function CollectionConfig() {
     const entityCreateStore = useRouteStore();
     const imageTag = entityCreateStore(
-        createStoreSelectors.details.connectorTag
+        entityCreateStoreSelectors.details.connectorTag
     );
-    const collections = entityCreateStore(creationSelectors.collections);
+    const collections = entityCreateStore(
+        entityCreateStoreSelectors.collections
+    );
     const prefillCollections = entityCreateStore(
-        creationSelectors.prefillCollections
+        entityCreateStoreSelectors.prefillCollections
     );
 
     const [searchParams] = useSearchParams();

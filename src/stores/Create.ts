@@ -296,7 +296,7 @@ export const getInitialState = (
     };
 };
 
-export const createStoreSelectors = {
+export const entityCreateStoreSelectors = {
     details: {
         data: (state: CreateEntityStore) => state.details.data,
         entityName: (state: CreateEntityStore) => state.details.data.entityName,
