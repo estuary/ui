@@ -31,7 +31,11 @@ export const initLogRocket = () => {
 };
 
 export const identifyUser = (user: User) => {
-    if (logRocketSettings.idUser.enabled) {
+    if (
+        isProduction() &&
+        logRocketSettings.idUser.enabled &&
+        logRocketSettings.appID
+    ) {
         const traits = {} as IUserTraits;
         const userDetails = getUserDetails(user);
 

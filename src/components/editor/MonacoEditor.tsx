@@ -6,9 +6,9 @@ import ServerDiff from 'components/editor/Status/ServerDiff';
 import { EditorStoreState } from 'components/editor/Store';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useZustandStore } from 'hooks/useZustand';
-import { debounce, isEqual } from 'lodash';
+import { debounce } from 'lodash';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface Props {
@@ -39,7 +39,7 @@ function MonacoEditor({
         null
     );
     const [isChanging, setIsChanging] = useState<boolean | null>(null);
-    const [hasServerChanges, setHasServerChanges] = useState<any | null>(null);
+    const [hasServerChanges] = useState<boolean>(false);
     const [showServerDiff, setShowServerDiff] = useState(false);
 
     const serverUpdate = useZustandStore<
@@ -47,31 +47,28 @@ function MonacoEditor({
         EditorStoreState<DraftSpecQuery>['serverUpdate']
     >((state) => state.serverUpdate);
 
-    useEffect(() => {
-        if (editorRef.current) {
-            const currentStringValue = editorRef.current.getValue();
+    // TODO (sync editing)
+    // useEffect(() => {
+    //     if (editorRef.current) {
+    //         const currentStringValue = editorRef.current.getValue();
 
-            if (currentStringValue) {
-                const currentEditorValue = JSON.parse(currentStringValue);
+    //         if (currentStringValue) {
+    //             const currentEditorValue = JSON.parse(currentStringValue);
 
-                if (!isEqual(currentEditorValue, serverUpdate)) {
-                    setHasServerChanges(serverUpdate);
-                } else {
-                    setHasServerChanges(null);
-                }
-            }
-        }
+    //             if (!isEqual(currentEditorValue, serverUpdate)) {
+    //                 setHasServerChanges(serverUpdate);
+    //             } else {
+    //                 setHasServerChanges(null);
+    //             }
+    //         }
+    //     }
 
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [serverUpdate]);
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [serverUpdate]);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    const bar = useCallback(
+    const editorUpdateDebounce = useCallback(
         debounce((val: string | undefined) => {
-            console.log('debounce', {
-                val,
-                curr: editorRef.current?.getValue(),
-            });
             if (val && onChange) {
                 setIsChanging(true);
                 onChange(JSON.parse(val), path)
@@ -89,7 +86,7 @@ function MonacoEditor({
     const handlers = {
         change: (val: string | undefined) => {
             setIsChanging(true);
-            bar(val);
+            editorUpdateDebounce(val);
         },
         mount: (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
             editorRef.current = editor;

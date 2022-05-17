@@ -1,6 +1,32 @@
+/*
+  The MIT License
+
+  Copyright (c) 2017-2019 EclipseSource Munich
+  https://github.com/eclipsesource/jsonforms
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  THE SOFTWARE.
+*/
+
 import {
     ControlElement,
     deriveTypes,
+    encode,
     Generate,
     GroupLayout,
     isGroup,
@@ -24,8 +50,12 @@ import {
 import { ConnectorType, connectorTypeTester } from 'forms/renderers/Connectors';
 import { NullType, nullTypeTester } from 'forms/renderers/NullType';
 import isEmpty from 'lodash/isEmpty';
-//import keys from 'lodash/keys';
+import keys from 'lodash/keys';
 import startCase from 'lodash/startCase';
+
+/////////////////////////////////////////////////////////
+//  CUSTOM FUNCTIONS AND SETTINGS
+/////////////////////////////////////////////////////////
 
 export const defaultOptions = {
     restrict: true,
@@ -34,6 +64,7 @@ export const defaultOptions = {
 
 export const defaultRenderers = [
     ...materialRenderers,
+    // Custom types
     { renderer: NullType, tester: nullTypeTester },
     { renderer: CollapsibleGroup, tester: collapsibleGroupTester },
     { renderer: ConnectorType, tester: connectorTypeTester },
@@ -44,11 +75,80 @@ export const showValidation = (_val: any): ValidationMode => {
     return 'ValidateAndShow';
 };
 
-/**
- * taken from JSON Forms: packages/core/src/util/path.ts
- */
-export const encode = (segment: string) =>
-    segment.replace(/~/g, '~0').replace(/\//g, '~1');
+const addOption = (elem: ControlElement | Layout, key: string, value: any) => {
+    if (!elem.options) {
+        elem.options = {};
+    }
+    elem.options[key] = value;
+};
+
+const isMultilineText = (schema: JsonSchema): boolean => {
+    if (schema.type === 'string' && Object.hasOwn(schema, 'multiline')) {
+        // eslint-disable-next-line @typescript-eslint/dot-notation
+        return schema['multiline'] === true;
+    } else {
+        return false;
+    }
+};
+
+const isAdvancedConfig = (schema: JsonSchema): boolean => {
+    // eslint-disable-next-line @typescript-eslint/dot-notation
+    return schema['advanced'] === true;
+};
+
+const copyAdvancedOption = (elem: Layout, schema: JsonSchema) => {
+    if (isAdvancedConfig(schema)) {
+        addOption(elem, 'advanced', true);
+    }
+};
+
+export const generateCategoryUiSchema = (uiSchema: any) => {
+    const basicElements: any[] = [];
+    const categoryUiSchema = {
+        type: 'Categorization',
+        elements: [
+            {
+                type: 'Category',
+                label: 'Basic Information',
+                elements: [
+                    {
+                        type: 'VerticalLayout',
+                        elements: [],
+                    } as { type: string; elements: any[] },
+                ],
+            },
+        ],
+    };
+
+    uiSchema.elements.forEach((element: any) => {
+        if (element.label) {
+            categoryUiSchema.elements.push({
+                type: 'Category',
+                label: element.label,
+                elements: [
+                    {
+                        type: 'VerticalLayout',
+                        elements: [element],
+                    },
+                ],
+            });
+        } else {
+            basicElements.push(element);
+        }
+    });
+
+    if (basicElements.length > 0) {
+        categoryUiSchema.elements[0].elements = basicElements;
+    } else {
+        categoryUiSchema.elements.shift();
+    }
+
+    return categoryUiSchema;
+};
+
+/////////////////////////////////////////////////////////
+//  CUSTOM FUNCTIONS AND SETTINGS
+/////////////////////////////////////////////////////////
 
 /**
  * Creates a new ILayout.
@@ -56,16 +156,16 @@ export const encode = (segment: string) =>
  * @returns the new ILayout
  */
 const createLayout = (layoutType: string): Layout => ({
-    elements: [],
     type: layoutType,
+    elements: [],
 });
 
 /**
  * Creates a IControlObject with the given label referencing the given ref
  */
 export const createControlElement = (ref: string): ControlElement => ({
-    scope: ref,
     type: 'Control',
+    scope: ref,
 });
 
 /**
@@ -103,19 +203,12 @@ const addLabel = (layout: Layout, labelName: string) => {
         } else {
             // add label with name
             const label: LabelElement = {
-                text: fixedLabel,
                 type: 'Label',
+                text: fixedLabel,
             };
             layout.elements.push(label);
         }
     }
-};
-
-const addOption = (elem: ControlElement | Layout, key: string, value: any) => {
-    if (!elem.options) {
-        elem.options = {};
-    }
-    elem.options[key] = value;
 };
 
 /**
@@ -132,37 +225,23 @@ const isCombinator = (jsonSchema: JsonSchema): boolean => {
     );
 };
 
-const isMultilineText = (schema: JsonSchema): boolean => {
-    if (schema.type === 'string' && Object.hasOwn(schema, 'multiline')) {
-        // eslint-disable-next-line @typescript-eslint/dot-notation
-        return schema['multiline'] === true;
-    } else {
-        return false;
-    }
-};
-
-const isAdvancedConfig = (schema: JsonSchema): boolean => {
-    // eslint-disable-next-line @typescript-eslint/dot-notation
-    return schema['advanced'] === true;
-};
-
-const copyAdvancedOption = (elem: Layout, schema: JsonSchema) => {
-    if (isAdvancedConfig(schema)) {
-        addOption(elem, 'advanced', true);
-    }
-};
-
 // eslint-disable-next-line complexity
 const generateUISchema = (
     jsonSchema: JsonSchema,
+    schemaElements: UISchemaElement[],
     currentRef: string,
     schemaName: string,
     layoutType: string,
-    rootSchema: JsonSchema
+    rootSchema?: JsonSchema
 ): UISchemaElement => {
     if (!isEmpty(jsonSchema) && jsonSchema.$ref !== undefined) {
         return generateUISchema(
-            resolveSchema(rootSchema, jsonSchema.$ref),
+            resolveSchema(
+                rootSchema as JsonSchema,
+                jsonSchema.$ref,
+                rootSchema as JsonSchema
+            ),
+            schemaElements,
             currentRef,
             schemaName,
             layoutType,
@@ -189,11 +268,16 @@ const generateUISchema = (
     // For oneOf/allOf, we just create a control element. This is where things get weird in json
     // forms, because the _control_ is what causes the tabs to render. Since it's a control and not
     // a layout, it means we lose the ability to have uischemas that apply to the nested elements.
+
     if (isCombinator(jsonSchema)) {
         const controlObject: ControlElement = createControlElement(currentRef);
+
         if (jsonSchema.title) {
             controlObject.label = jsonSchema.title;
         }
+
+        schemaElements.push(controlObject);
+
         return controlObject;
     }
 
@@ -208,6 +292,7 @@ const generateUISchema = (
 
     if (types.length > 1) {
         const controlObject: ControlElement = createControlElement(currentRef);
+        schemaElements.push(controlObject);
         return controlObject;
     }
 
@@ -231,6 +316,12 @@ const generateUISchema = (
         const label = jsonSchema.title ? jsonSchema.title : schemaName;
         addLabel(layout, label);
 
+        schemaElements.push(layout);
+
+        if (jsonSchema.properties && keys(jsonSchema.properties).length > 1) {
+            addLabel(layout, schemaName);
+        }
+
         if (!isEmpty(jsonSchema.properties)) {
             // traverse properties
             const nextRef: string = `${currentRef}/properties`;
@@ -242,10 +333,15 @@ const generateUISchema = (
                     let value: JsonSchema = jsonSchema.properties![propName];
                     const ref = `${nextRef}/${encode(propName)}`;
                     if (value.$ref !== undefined) {
-                        value = resolveSchema(rootSchema, value.$ref);
+                        value = resolveSchema(
+                            rootSchema as JsonSchema,
+                            value.$ref,
+                            rootSchema as JsonSchema
+                        );
                     }
                     return generateUISchema(
                         value,
+                        layout.elements,
                         ref,
                         propName,
                         layoutType,
@@ -265,24 +361,41 @@ const generateUISchema = (
     if (isMultilineText(jsonSchema)) {
         addOption(controlObject, 'multi', true);
     }
-    return controlObject;
+
+    switch (types[0]) {
+        case 'object': // object items will be handled by the object control itself
+        /* falls through */
+        case 'array': // array items will be handled by the array control itself
+        /* falls through */
+        case 'string':
+        /* falls through */
+        case 'number':
+        /* falls through */
+        case 'integer':
+        /* falls through */
+        case 'boolean':
+        /* falls through */
+        default:
+            schemaElements.push(controlObject);
+            return controlObject;
+    }
 };
 
 /**
- * Generate a custom UI schema.
+ * Generate a default UI schema.
  * @param {JsonSchema} jsonSchema the JSON schema to generated a UI schema for
  * @param {string} layoutType the desired layout type for the root layout
  *        of the generated UI schema
  */
-export const generateCustomUISchema = (
+export const custom_generateDefaultUISchema = (
     jsonSchema: JsonSchema,
     layoutType = 'VerticalLayout',
     prefix = '#',
     rootSchema = jsonSchema
-): UISchemaElement | Layout =>
+): UISchemaElement =>
     wrapInLayoutIfNecessary(
-        generateUISchema(jsonSchema, prefix, '', layoutType, rootSchema),
+        generateUISchema(jsonSchema, [], prefix, '', layoutType, rootSchema),
         layoutType
     );
 
-Generate.uiSchema = generateCustomUISchema;
+Generate.uiSchema = custom_generateDefaultUISchema;

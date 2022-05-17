@@ -14,7 +14,7 @@ import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 export interface ErrorProps {
-    error?: PostgrestError | null;
+    error?: PostgrestError | any | null;
     hideTitle?: boolean;
 }
 
@@ -28,20 +28,35 @@ function Error({ error, hideTitle }: ErrorProps) {
     };
 
     if (error) {
-        const details: KeyValue[] = [
-            {
+        const details: KeyValue[] = [];
+
+        if (error.description) {
+            details.push({
+                title: intl.formatMessage({ id: 'error.descriptionLabel' }),
+                val: error.description,
+            });
+        }
+
+        if (error.code) {
+            details.push({
                 title: intl.formatMessage({ id: 'error.codeLabel' }),
                 val: error.code,
-            },
-            {
+            });
+        }
+
+        if (error.details) {
+            details.push({
                 title: intl.formatMessage({ id: 'error.detailsLabel' }),
                 val: error.details,
-            },
-            {
+            });
+        }
+
+        if (error.hint) {
+            details.push({
                 title: intl.formatMessage({ id: 'error.hintLabel' }),
                 val: error.hint,
-            },
-        ];
+            });
+        }
 
         return (
             <Box sx={{ width: '100%' }}>

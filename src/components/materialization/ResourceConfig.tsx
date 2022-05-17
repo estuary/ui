@@ -1,4 +1,4 @@
-import { Box, Paper, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import ResourceConfigForm from 'components/materialization/ResourceConfigForm';
 import Error from 'components/shared/Error';
 import { useQuery, useSelectSingle } from 'hooks/supabase-swr';
@@ -52,12 +52,12 @@ function NewMaterializationResourceConfig({
                     <FormattedMessage id="materializationCreation.resourceConfig.heading" />
                 </Typography>
 
-                <Paper variant="outlined" sx={{ width: '100%' }}>
+                <Box sx={{ width: '100%' }}>
                     <ResourceConfigForm
                         resourceSchema={connector.data.resource_spec_schema}
                         collectionName={collectionName}
                     />
-                </Paper>
+                </Box>
             </Box>
         );
     } else {

@@ -13,7 +13,11 @@ import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
 import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { createStoreSelectors, FormStatus } from 'stores/Create';
+import {
+    createStoreSelectors,
+    formInProgress,
+    FormStatus,
+} from 'stores/Create';
 import { getStore } from 'stores/Repo';
 
 interface Props {
@@ -44,6 +48,22 @@ function FooHeader({
     const formStateStatus = entityCreateStore(
         createStoreSelectors.formState.status
     );
+    const setFormState = entityCreateStore(createStoreSelectors.formState.set);
+
+    const handlers = {
+        test: (event: any) => {
+            setFormState({
+                status: FormStatus.TESTING,
+            });
+            test(event);
+        },
+        save: (event: any) => {
+            setFormState({
+                status: FormStatus.SAVING,
+            });
+            save(event);
+        },
+    };
 
     return (
         <>
@@ -63,8 +83,10 @@ function FooHeader({
                     </Button>
 
                     <Button
-                        onClick={test}
-                        disabled={testDisabled}
+                        onClick={handlers.test}
+                        disabled={
+                            formInProgress(formStateStatus) || testDisabled
+                        }
                         form={formId}
                         type="submit"
                         color="success"
@@ -79,15 +101,17 @@ function FooHeader({
                     </Button>
 
                     <Button
-                        onClick={save}
-                        disabled={saveDisabled}
+                        onClick={handlers.save}
+                        disabled={
+                            formInProgress(formStateStatus) || saveDisabled
+                        }
                         color="success"
                     >
                         <FormattedMessage id="cta.saveEntity" />
                     </Button>
                 </Stack>
             </Toolbar>
-            <Collapse in={formStateStatus !== FormStatus.IDLE} unmountOnExit>
+            <Collapse in={formInProgress(formStateStatus)} unmountOnExit>
                 <LinearProgress />
             </Collapse>
             <ValidationErrorSummary />

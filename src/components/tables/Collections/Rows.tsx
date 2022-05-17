@@ -48,7 +48,7 @@ function Row({ row }: RowProps) {
             <TableRow key={`Entity-${row.id}`}>
                 <EntityName name={row.catalog_name} />
 
-                <TableCell sx={{ minWidth: 100, ...tableBorderSx }}>
+                <TableCell sx={{ ...tableBorderSx, minWidth: 100 }}>
                     {row.spec_type}
                 </TableCell>
 

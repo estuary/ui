@@ -1,17 +1,20 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
-import { StyledEngineProvider } from '@mui/material';
+import { Box, StyledEngineProvider } from '@mui/material';
+import { jsonFormsPadding } from 'context/Theme';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useEffect } from 'react';
 import { createJSONFormDefaults, setDefaultsValidator } from 'services/ajv';
 import {
+    custom_generateDefaultUISchema,
     defaultOptions,
     defaultRenderers,
-    generateCustomUISchema,
+    generateCategoryUiSchema,
     showValidation,
 } from 'services/jsonforms';
 import { createStoreSelectors, FormStatus } from 'stores/Create';
 import { getStore } from 'stores/Repo';
+import useConstant from 'use-constant';
 
 type Props = {
     endpointSchema: any;
@@ -31,30 +34,40 @@ function EndpointConfigForm({ endpointSchema }: Props) {
     const formStateStatus = entityCreateStore(
         createStoreSelectors.formState.status
     );
+    const setEndpointSchema = entityCreateStore(
+        createStoreSelectors.setEndpointSchema
+    );
 
     useEffect(() => {
+        setEndpointSchema(endpointSchema);
         setSpec({
             data: createJSONFormDefaults(endpointSchema),
             errors: [],
         });
-    }, [endpointSchema, setSpec]);
+    }, [endpointSchema, setEndpointSchema, setSpec]);
 
-    const uiSchema = generateCustomUISchema(endpointSchema);
-    // To help debug form rendering
-    console.log(
-        'Input JSON Schema:',
-        endpointSchema,
-        'Output UI Schema:',
-        uiSchema
+    const categoryLikeSchema = useConstant(() =>
+        generateCategoryUiSchema(custom_generateDefaultUISchema(endpointSchema))
     );
+
+    console.log('Schema generated for the endpoint config form', {
+        input: endpointSchema,
+        output: categoryLikeSchema,
+    });
+
     const showValidationVal = showValidation(displayValidation);
 
     return (
         <StyledEngineProvider injectFirst>
-            <div id={CONFIG_EDITOR_ID}>
+            <Box
+                id={CONFIG_EDITOR_ID}
+                sx={{
+                    ...jsonFormsPadding,
+                }}
+            >
                 <JsonForms
                     schema={endpointSchema}
-                    uischema={uiSchema}
+                    uischema={categoryLikeSchema}
                     data={formData}
                     renderers={defaultRenderers}
                     cells={materialCells}
@@ -64,7 +77,7 @@ function EndpointConfigForm({ endpointSchema }: Props) {
                     onChange={setSpec}
                     ajv={setDefaultsValidator}
                 />
-            </div>
+            </Box>
         </StyledEngineProvider>
     );
 }

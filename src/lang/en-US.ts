@@ -77,6 +77,7 @@ const Error: ResolvedIntlConfig['messages'] = {
     'error.messageLabel': `Message:`,
     'error.detailsLabel': `Details:`,
     'error.hintLabel': `Hint:`,
+    'error.descriptionLabel': `Description:`,
 };
 
 const ErrorBoundry: ResolvedIntlConfig['messages'] = {
@@ -267,6 +268,7 @@ const Captures: ResolvedIntlConfig['messages'] = {
     'captures.message2': `It will guide you through generating and downloading a valid {docLink}.`,
     'captures.message2.docLink': `capture spec`,
     'captures.message2.docPath': `https://docs.estuary.dev/concepts/#captures`,
+    'captureCreation.status.success': `${CommonMessages['common.success']}`,
 };
 
 const Materializations: ResolvedIntlConfig['messages'] = {
@@ -319,6 +321,7 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreation.finalReview.instructions': `Look over the catalog configuration that was generated. If you want to edit anything you can do that directly in the editor. Once you're ready you can download the file for your local.`,
     'captureCreation.test.waitMessage': `Please wait while we try to connect to this endpoint.`,
     'captureCreation.test.failedErrorTitle': `Config Test Failed`,
+    'captureCreation.test.failedConfigEncryptTitle': `Encrypting Config Failed`,
     'captureCreation.test.serverUnreachable': `Config Test was unable to reach server`,
     'captureCreation.save.failedErrorTitle': `Capture Save Failed`,
     'captureCreation.save.serverUnreachable': `Config Save was unable to reach server`,
@@ -347,6 +350,7 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreation.save.serverUnreachable': `Config Save was unable to reach server`,
     'materializationCreation.tenant.label': `Tenant`,
     'materializationCreation.test.failure.errorTitle': `Config Test Failed`,
+    'materializationCreation.test.failedConfigEncryptTitle': `Encrypting Config Failed`,
     'materializationCreation.test.serverUnreachable': `Config Test was unable to reach server`,
     'materializationCreation.test.inProgress': `Please wait while we try to connect to this endpoint.`,
     'materializationCreation.collectionSelector.heading': `Collection Selector`,
