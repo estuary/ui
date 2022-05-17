@@ -137,7 +137,11 @@ export const generateCategoryUiSchema = (uiSchema: any) => {
         }
     });
 
-    categoryUiSchema.elements[0].elements = basicElements;
+    if (basicElements.length > 0) {
+        categoryUiSchema.elements[0].elements = basicElements;
+    } else {
+        categoryUiSchema.elements.shift();
+    }
 
     return categoryUiSchema;
 };
