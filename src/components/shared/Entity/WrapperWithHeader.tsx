@@ -1,6 +1,6 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 
 interface Props {
     header: ReactNode;
@@ -8,9 +8,17 @@ interface Props {
 }
 
 function WrapperWithHeader({ header, children }: Props) {
+    const [expanded, setExpanded] = useState(true);
+    const handlers = {
+        change: () => {
+            setExpanded(!expanded);
+        },
+    };
+
     return (
         <Accordion
-            defaultExpanded
+            expanded={expanded}
+            onChange={handlers.change}
             sx={{
                 mt: 2,
             }}
