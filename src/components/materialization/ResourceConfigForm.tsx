@@ -2,7 +2,6 @@ import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { StyledEngineProvider } from '@mui/material';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { isEmpty } from 'lodash';
 import { useEffect } from 'react';
 import { createJSONFormDefaults, setDefaultsValidator } from 'services/ajv';
 import {
@@ -25,7 +24,7 @@ function NewMaterializationResourceConfigForm({
     const entityCreateStore = useRouteStore();
 
     const setConfig = entityCreateStore(
-        entityCreateStoreSelectors.setResourceConfig
+        entityCreateStoreSelectors.resourceConfig.set
     );
     const formData = entityCreateStore(
         (state: any) => state.resourceConfig[collectionName].data
@@ -51,9 +50,7 @@ function NewMaterializationResourceConfigForm({
 
     const handlers = {
         onChange: (form: any) => {
-            if (!isEmpty(form.data)) {
-                setConfig(collectionName, form);
-            }
+            setConfig(collectionName, form);
         },
     };
 

@@ -73,7 +73,7 @@ function MaterializationCreate() {
 
     // Materializations store
     const resourceConfig = entityCreateStore(
-        entityCreateStoreSelectors.resourceConfig
+        entityCreateStoreSelectors.resourceConfig.get
     );
 
     // Form store

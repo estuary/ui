@@ -40,7 +40,7 @@ function CollectionSelector() {
         entityCreateStoreSelectors.setCollections
     );
     const setResourceConfig = entityCreateStore(
-        entityCreateStoreSelectors.setResourceConfig
+        entityCreateStoreSelectors.resourceConfig.set
     );
 
     const handlers = {

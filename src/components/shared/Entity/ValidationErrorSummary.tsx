@@ -14,12 +14,22 @@ function ValidationErrorSummary() {
     const [detailErrors, specErrors] = entityCreateStore(
         entityCreateStoreSelectors.errors
     );
+    const getResourceConfigErrors = entityCreateStore(
+        entityCreateStoreSelectors.resourceConfig.getErrors
+    );
+    const resourceConfigErrors = getResourceConfigErrors();
+    console.log('resourceConfigErrors', resourceConfigErrors);
+
     const displayValidation = entityCreateStore(
         entityCreateStoreSelectors.formState.displayValidation
     );
 
     const filteredDetailErrors = map(detailErrors, 'instancePath');
     const filteredSpecErrors = map(specErrors, 'instancePath');
+    const filteredResourceConfigErrors = map(
+        resourceConfigErrors,
+        'instancePath'
+    );
     // const filteredErrors = uniq(
     //     map(filteredDetailErrors.concat(filteredSpecErrors), 'instancePath')
     // );
@@ -38,6 +48,14 @@ function ValidationErrorSummary() {
         filteredErrorsList.push({
             title: intl.formatMessage({
                 id: 'foo.endpointConfig.endpointConfigHaveErrors',
+            }),
+        });
+    }
+
+    if (filteredResourceConfigErrors.length > 0) {
+        filteredErrorsList.push({
+            title: intl.formatMessage({
+                id: 'foo.endpointConfig.resourceConfigHaveErrors',
             }),
         });
     }

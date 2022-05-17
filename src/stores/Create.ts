@@ -1,7 +1,7 @@
 import { JsonFormsCore } from '@jsonforms/core';
 import { PostgrestError } from '@supabase/postgrest-js';
 import produce from 'immer';
-import { isEqual } from 'lodash';
+import { isEqual, map } from 'lodash';
 import { GetState } from 'zustand';
 import { NamedSet } from 'zustand/middleware';
 
@@ -16,16 +16,15 @@ export interface Details extends Pick<JsonFormsCore, 'data' | 'errors'> {
     };
 }
 
-export interface EndpointConfig extends Pick<JsonFormsCore, 'data' | 'errors'> {
+export interface JsonFormsData extends Pick<JsonFormsCore, 'data' | 'errors'> {
     data: {
         [key: string]: any;
     };
 }
 
-export interface ResourceConfig extends Pick<JsonFormsCore, 'data' | 'errors'> {
-    data: {
-        [key: string]: any;
-    };
+export interface ResourceConfig {
+    errors: any[];
+    [key: string]: JsonFormsData | any[];
 }
 
 export interface FormState {
@@ -68,12 +67,13 @@ export interface CreateEntityStore {
     setDetails: (details: Details) => void;
 
     //Spec
-    endpointConfig: EndpointConfig;
-    setEndpointConfig: (endpointConfig: EndpointConfig) => void;
+    endpointConfig: JsonFormsData;
+    setEndpointConfig: (endpointConfig: JsonFormsData) => void;
 
     // Resource Config
     resourceConfig: { [key: string]: ResourceConfig };
     setResourceConfig: (key: string, value?: ResourceConfig) => void;
+    getResourceConfigErrors: () => any[];
 
     // Collection Selector
     collections: any[];
@@ -117,7 +117,7 @@ export const initialCreateStates = {
     endpointSchema: () => {
         return {};
     },
-    endpointConfig: (): EndpointConfig => {
+    endpointConfig: (): JsonFormsData => {
         const defaults = getDefaultJsonFormsData();
         return { ...defaults };
     },
@@ -264,6 +264,22 @@ export const getInitialState = (
                 'Resource Config Changed'
             );
         },
+        getResourceConfigErrors: () => {
+            const { resourceConfig } = get();
+            const response: any[] = [];
+
+            if (Object.keys(resourceConfig).length > 0) {
+                map(resourceConfig, (config) => {
+                    const { errors } = config;
+                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                    if (errors && errors.length > 0) {
+                        response.concat(errors);
+                    }
+                });
+            }
+
+            return response;
+        },
 
         setCollections: (value) => {
             set(
@@ -280,6 +296,7 @@ export const getInitialState = (
                 produce((state) => {
                     state.collections = value;
                     state.resourceConfig = {};
+
                     value.forEach((collection) => {
                         state.resourceConfig[collection] =
                             getDefaultJsonFormsData();
@@ -323,6 +340,12 @@ export const entityCreateStoreSelectors = {
         set: (state: CreateEntityStore) => state.setFormState,
         reset: (state: CreateEntityStore) => state.resetFormState,
     },
+    resourceConfig: {
+        get: (state: CreateEntityStore) => state.resourceConfig,
+        set: (state: CreateEntityStore) => state.setResourceConfig,
+        getErrors: (state: CreateEntityStore) => state.getResourceConfigErrors,
+    },
+
     connectors: (state: CreateEntityStore) => state.connectors,
     endpointSchema: (state: CreateEntityStore) => state.endpointSchema,
     setEndpointSchema: (state: CreateEntityStore) => state.setEndpointSchema,
@@ -330,9 +353,6 @@ export const entityCreateStoreSelectors = {
     collections: (state: CreateEntityStore) => state.collections,
     setCollections: (state: CreateEntityStore) => state.setCollections,
     prefillCollections: (state: CreateEntityStore) => state.prefillCollections,
-
-    resourceConfig: (state: CreateEntityStore) => state.resourceConfig,
-    setResourceConfig: (state: CreateEntityStore) => state.setResourceConfig,
 
     resetState: (state: CreateEntityStore) => state.resetState,
     hasChanges: (state: CreateEntityStore) => state.hasChanges,
