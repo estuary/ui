@@ -150,6 +150,20 @@ const themeSettings = createTheme({
         },
     },
     components: {
+        MuiAppBar: {
+            styleOverrides: {
+                root: {
+                    backgroundColor: 'transparent',
+                },
+            },
+        },
+        MuiAccordion: {
+            styleOverrides: {
+                root: {
+                    backgroundColor: 'transparent',
+                },
+            },
+        },
         MuiBadge: {
             defaultProps: {
                 color: 'info',
@@ -197,6 +211,9 @@ const themeSettings = createTheme({
         MuiTabs: {
             defaultProps: {
                 indicatorColor: 'secondary',
+                sx: {
+                    backgroundColor: 'transparent',
+                },
             },
         },
     },

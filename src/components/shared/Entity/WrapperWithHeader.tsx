@@ -1,5 +1,5 @@
-import { Divider, Paper } from '@mui/material';
-import RelativeAppBar from 'components/shared/RelativeAppBar';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { ReactNode } from 'react';
 
 interface Props {
@@ -9,12 +9,17 @@ interface Props {
 
 function WrapperWithHeader({ header, children }: Props) {
     return (
-        <Paper sx={{ width: '100%', mb: 2 }} variant="outlined">
-            <RelativeAppBar>{header}</RelativeAppBar>
-
-            <Divider />
-            {children}
-        </Paper>
+        <Accordion
+            defaultExpanded
+            sx={{
+                mt: 2,
+            }}
+        >
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                {header}
+            </AccordionSummary>
+            <AccordionDetails>{children}</AccordionDetails>
+        </Accordion>
     );
 }
 

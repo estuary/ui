@@ -49,7 +49,11 @@ function EndpointConfigForm({ endpointSchema }: Props) {
     const categoryLikeSchema = useConstant(() =>
         generateCategoryUiSchema(custom_generateDefaultUISchema(endpointSchema))
     );
-    console.log('categoryLikeSchema', categoryLikeSchema);
+
+    console.log('Schema generated for the endpoint config form', {
+        input: endpointSchema,
+        output: categoryLikeSchema,
+    });
 
     const showValidationVal = showValidation(displayValidation);
 
