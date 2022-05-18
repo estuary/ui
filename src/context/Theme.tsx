@@ -39,10 +39,10 @@ export const slate = {
 };
 
 // Status Colors
-const errorMain = '#f67375';
-const warningMain = '#f5d75e';
-const infoMain = '#4FD6FF';
-const successMain = '#00c892';
+export const errorMain = '#CA3B55';
+export const warningMain = '#F5D75E';
+export const infoMain = '#4FD6FF';
+export const successMain = '#40B763';
 
 // Color modifiers
 const contrastThreshold = 4;

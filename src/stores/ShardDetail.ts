@@ -1,7 +1,9 @@
+import { errorMain, slate, successMain, warningMain } from 'context/Theme';
 import produce from 'immer';
 import { GetState } from 'zustand';
 import { NamedSet } from 'zustand/middleware';
 
+// TODO: Determine a way to access an interface property with a function type.
 export type SetShards = (shards: any[]) => void;
 
 export interface ShardDetailStore {
@@ -35,13 +37,13 @@ export const getInitialState = (
             switch (selectedShard?.status[0].code) {
                 case 'PRIMARY':
                 case 'BACKFILL':
-                    return '#40B763';
+                    return successMain;
                 case 'STANDBY':
-                    return '#F5D75E';
+                    return warningMain;
                 case 'FAILED':
-                    return '#C9393E';
+                    return errorMain;
                 default:
-                    return '#F7F7F7';
+                    return slate[25];
             }
         },
     };
