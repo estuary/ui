@@ -38,6 +38,7 @@ import useNotificationStore, {
     NotificationState,
 } from 'stores/NotificationStore';
 import { getStore } from 'stores/Repo';
+import { MaterializationDef } from '../../../../flow_deps/flow';
 
 const FORM_ID = 'newMaterializationForm';
 
@@ -266,13 +267,11 @@ function MaterializationCreate() {
                     displayValidation: true,
                 });
             } else if (isEmpty(resourceConfig)) {
-                // TODO: Handle the scenario where no collections are present.
                 setFormState({
                     status: FormStatus.IDLE,
                     displayValidation: true,
                 });
             } else if (!connectorInfo) {
-                // TODO: Handle the highly unlikely scenario where the connector tag id could not be found.
                 setFormState({
                     status: FormStatus.IDLE,
                     displayValidation: true,
@@ -310,7 +309,7 @@ function MaterializationCreate() {
                                             draftsResponse.data[0].id;
 
                                         // TODO (typing) MaterializationDef
-                                        const draftSpec: any = {
+                                        const draftSpec: MaterializationDef = {
                                             bindings: [],
                                             endpoint: {
                                                 connector: {
