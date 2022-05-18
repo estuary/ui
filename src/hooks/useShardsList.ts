@@ -23,7 +23,15 @@ const fetcher = (_url: string, entityType: 'capture' | 'materialization') => {
                 exclude: { labels: [] },
             },
         }),
-    }).then((res) => res.json());
+    }).then((res) => {
+        if (res.ok) {
+            return res.json();
+        } else {
+            return res.text().then((text) => {
+                throw new Error(text);
+            });
+        }
+    });
 };
 
 const useShardsList = (
@@ -33,6 +41,9 @@ const useShardsList = (
     return useSWR([shardsListEndpoint, entityType], fetcher, {
         onSuccess: ({ shards }) => {
             setShards(shards);
+        },
+        onError: (error) => {
+            console.log(error);
         },
     });
 };
