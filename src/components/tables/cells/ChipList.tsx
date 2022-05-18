@@ -1,5 +1,6 @@
 import { Box, Chip, styled, TableCell, Tooltip } from '@mui/material';
-import { outlineSx, tableBorderSx } from 'context/Theme';
+import { outlineSx, tableBorderSx, truncateTextSx } from 'context/Theme';
+import { formatSx } from 'utils/misc-utils';
 
 interface Props {
     strings: string[];
@@ -42,20 +43,19 @@ function ChipList({ strings }: Props) {
                                     label={val}
                                     size="small"
                                     variant="outlined"
-                                    sx={{
-                                        ...outlineSx,
-                                        // TODO (typing) Figure out how to use truncateTextSx here
-                                        'whiteSpace': 'nowrap',
-                                        'overflow': 'hidden',
-                                        'textOverflow': 'ellipsis',
-                                        'maxWidth': 200,
-                                        '&:hover': {
-                                            ...chipListHoverStyling,
-                                            background: (theme) =>
-                                                theme.palette.background
-                                                    .default,
+                                    sx={[
+                                        ...formatSx(outlineSx),
+                                        ...formatSx(truncateTextSx),
+                                        {
+                                            'maxWidth': 200,
+                                            '&:hover': {
+                                                ...chipListHoverStyling,
+                                                background: (theme) =>
+                                                    theme.palette.background
+                                                        .default,
+                                            },
                                         },
-                                    }}
+                                    ]}
                                 />
                             </Tooltip>
                         </ListItem>

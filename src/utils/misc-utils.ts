@@ -1,3 +1,5 @@
+import { SxProps, Theme } from '@mui/material';
+import { SystemStyleObject } from '@mui/system';
 import { OpenGraph } from 'types';
 
 export const stripPathing = (stringVal: string) => {
@@ -35,3 +37,6 @@ export const getDeploymentStatusHexCode = (
 export const getPathWithParam = (path: string, param: any, val: any) => {
     return `${path}?${param}=${val}`;
 };
+
+export const formatSx = (sx: SxProps<Theme>): SystemStyleObject<Theme>[] =>
+    Array.isArray(sx) ? sx : [sx];
