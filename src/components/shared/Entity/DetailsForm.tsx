@@ -140,11 +140,6 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
                         scope: `#/properties/${CONNECTOR_IMAGE_SCOPE}`,
                         type: 'Control',
                     },
-                ],
-                type: 'HorizontalLayout',
-            },
-            {
-                elements: [
                     {
                         label: intl.formatMessage({
                             id: 'description.label',

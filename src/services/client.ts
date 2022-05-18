@@ -1,5 +1,3 @@
-import { getAPIPath } from 'utils/env-utils';
-
 export interface ClientConfig<T> extends RequestInit {
     data?: T;
 }
@@ -11,7 +9,6 @@ export const client = <Response, Request = {}>(
     const config: NonNullable<RequestInit> = {
         body: data ? JSON.stringify(data) : undefined,
         method: data ? 'POST' : 'GET',
-        credentials: 'include',
         ...customConfig,
     };
 
@@ -30,16 +27,8 @@ export const client = <Response, Request = {}>(
 
     config.headers = headersInit;
 
-    // TODO (REST) : probably need to remove this for production
-    const API_ENDPOINT = getAPIPath();
-
-    // TODO (REST) Sometimes rest returns the full path so handling that here for now
-    const fullEndpoint = /^(http)s?:\/\//i.test(endpoint)
-        ? endpoint
-        : `${API_ENDPOINT}/${endpoint}`;
-
     const fetchPromise = window
-        .fetch(fullEndpoint, config)
+        .fetch(endpoint, config)
         .then(async (response) => {
             if (response.status === 401) {
                 // await auth.signout();

@@ -3,7 +3,6 @@ import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
-    Paper,
     Typography,
 } from '@mui/material';
 import ResourceConfig from 'components/materialization/ResourceConfig';
@@ -15,19 +14,23 @@ interface Props {
 
 function ExpandableResourceConfig({ collectionName, id }: Props) {
     return (
-        <Paper>
-            <Accordion defaultExpanded={true}>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography>{collectionName}</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                    <ResourceConfig
-                        connectorImage={id}
-                        collectionName={collectionName}
-                    />
-                </AccordionDetails>
-            </Accordion>
-        </Paper>
+        <Accordion defaultExpanded={true}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography
+                    sx={{
+                        wordBreak: 'break-all',
+                    }}
+                >
+                    {collectionName}
+                </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+                <ResourceConfig
+                    connectorImage={id}
+                    collectionName={collectionName}
+                />
+            </AccordionDetails>
+        </Accordion>
     );
 }
 

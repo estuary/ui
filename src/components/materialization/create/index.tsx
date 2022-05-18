@@ -1,4 +1,4 @@
-import { Button, Collapse } from '@mui/material';
+import { Collapse } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { routeDetails } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
@@ -13,6 +13,7 @@ import EndpointConfig from 'components/shared/Entity/EndpointConfig';
 import EntityError from 'components/shared/Entity/Error';
 import FooHeader from 'components/shared/Entity/Header';
 import LogDialog from 'components/shared/Entity/LogDialog';
+import LogDialogActions from 'components/shared/Entity/LogDialogActions';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
@@ -26,9 +27,10 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
 import { isEmpty } from 'lodash';
-import { MouseEvent } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { MouseEvent, useEffect } from 'react';
+import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
+import { getEncryptedConfig } from 'services/encryption';
 import { TABLES } from 'services/supabase';
 import { createStoreSelectors, FormStatus } from 'stores/Create';
 import useNotificationStore, {
@@ -59,7 +61,6 @@ function MaterializationCreate() {
     useBrowserTitle('browserTitle.materializationCreate');
 
     // Misc. hooks
-    const intl = useIntl();
     const navigate = useNavigate();
     const confirmationModalContext = useConfirmationModalContext();
 
@@ -95,6 +96,9 @@ function MaterializationCreate() {
     const endpointConfig = entityCreateStore(
         createStoreSelectors.endpointConfig.data
     );
+    const endpointSchema = entityCreateStore(
+        createStoreSelectors.endpointSchema
+    );
     const hasChanges = entityCreateStore(createStoreSelectors.hasChanges);
     const resetState = entityCreateStore(createStoreSelectors.resetState);
     const [detailErrors, specErrors] = entityCreateStore(
@@ -107,16 +111,10 @@ function MaterializationCreate() {
     );
 
     // Form State
-    const formStateStatus = entityCreateStore(
-        createStoreSelectors.formState.status
-    );
     const showLogs = entityCreateStore(createStoreSelectors.formState.showLogs);
     const logToken = entityCreateStore(createStoreSelectors.formState.logToken);
     const formSubmitError = entityCreateStore(
         createStoreSelectors.formState.error
-    );
-    const formStateSaveStatus = entityCreateStore(
-        createStoreSelectors.formState.formStateSaveStatus
     );
     const exitWhenLogsClose = entityCreateStore(
         createStoreSelectors.formState.exitWhenLogsClose
@@ -133,15 +131,17 @@ function MaterializationCreate() {
         EditorStoreState<DraftSpecQuery>['setId']
     >((state) => state.setId);
 
+    // Reset the catalog if the connector changes
+    useEffect(() => {
+        setDraftId(null);
+    }, [imageTag, setDraftId]);
+
     const helpers = {
         callFailed: (formState: any, subscription?: RealtimeSubscription) => {
             const setFailureState = () => {
                 setFormState({
-                    status: FormStatus.IDLE,
+                    status: FormStatus.FAILED,
                     exitWhenLogsClose: false,
-                    saveStatus: intl.formatMessage({
-                        id: 'common.fail',
-                    }),
                     ...formState,
                 });
             };
@@ -178,9 +178,7 @@ function MaterializationCreate() {
                 error: {
                     title: errorTitle,
                 },
-                saveStatus: intl.formatMessage({
-                    id: 'common.fail',
-                }),
+                status: FormStatus.FAILED,
             });
         },
     };
@@ -208,11 +206,8 @@ function MaterializationCreate() {
                 supabaseClient.from(TABLES.PUBLICATIONS),
                 () => {
                     setFormState({
-                        status: FormStatus.IDLE,
+                        status: FormStatus.SUCCESS,
                         exitWhenLogsClose: true,
-                        saveStatus: intl.formatMessage({
-                            id: 'common.success',
-                        }),
                     });
 
                     showNotification(notification);
@@ -266,44 +261,32 @@ function MaterializationCreate() {
             );
 
             if (detailHasErrors || specHasErrors) {
-                setFormState({ displayValidation: true });
+                setFormState({
+                    status: FormStatus.IDLE,
+                    displayValidation: true,
+                });
             } else if (isEmpty(resourceConfig)) {
                 // TODO: Handle the scenario where no collections are present.
-                setFormState({ displayValidation: true });
+                setFormState({
+                    status: FormStatus.IDLE,
+                    displayValidation: true,
+                });
             } else if (!connectorInfo) {
                 // TODO: Handle the highly unlikely scenario where the connector tag id could not be found.
-                setFormState({ displayValidation: true });
+                setFormState({
+                    status: FormStatus.IDLE,
+                    displayValidation: true,
+                });
             } else {
                 setFormState({
                     status: FormStatus.GENERATING_PREVIEW,
                 });
+                setDraftId(null);
 
-                // TODO: Use connector_tags.resource_spec_schema as the value of bindings.resource when the
-                // connector_tags schema is updated.
                 const {
                     connectors: { image_name },
                     image_tag,
                 } = connectorInfo;
-
-                // TODO (typing) MaterializationDef
-                const draftSpec: any = {
-                    bindings: [],
-                    endpoint: {
-                        connector: {
-                            config: endpointConfig,
-                            image: `${image_name}${image_tag}`,
-                        },
-                    },
-                };
-
-                Object.keys(resourceConfig).forEach((collectionName) => {
-                    draftSpec.bindings.push({
-                        source: collectionName,
-                        resource: {
-                            ...resourceConfig[collectionName].data,
-                        },
-                    });
-                });
 
                 supabaseClient
                     .from(TABLES.DRAFTS)
@@ -311,46 +294,91 @@ function MaterializationCreate() {
                         detail: entityName,
                     })
                     .then(
-                        (draftsResponse) => {
+                        async (draftsResponse) => {
                             if (
                                 draftsResponse.data &&
                                 draftsResponse.data.length > 0
                             ) {
-                                setDraftId(draftsResponse.data[0].id);
+                                getEncryptedConfig({
+                                    data: {
+                                        schema: endpointSchema,
+                                        config: endpointConfig,
+                                    },
+                                })
+                                    .then((encryptedEndpointConfig) => {
+                                        const newDraftId =
+                                            draftsResponse.data[0].id;
 
-                                supabaseClient
-                                    .from(TABLES.DRAFT_SPECS)
-                                    .insert([
-                                        {
-                                            draft_id: draftsResponse.data[0].id,
-                                            catalog_name: entityName,
-                                            spec_type: 'materialization',
-                                            spec: draftSpec,
-                                        },
-                                    ])
-                                    .then(
-                                        (draftSpecsResponse) => {
-                                            setFormState({
-                                                status: FormStatus.IDLE,
-                                            });
+                                        // TODO (typing) MaterializationDef
+                                        const draftSpec: any = {
+                                            bindings: [],
+                                            endpoint: {
+                                                connector: {
+                                                    config: encryptedEndpointConfig,
+                                                    image: `${image_name}${image_tag}`,
+                                                },
+                                            },
+                                        };
 
-                                            if (draftSpecsResponse.error) {
-                                                helpers.callFailed({
-                                                    error: {
-                                                        title: 'materializationCreation.test.failure.errorTitle',
-                                                        error: draftSpecsResponse.error,
+                                        Object.keys(resourceConfig).forEach(
+                                            (collectionName) => {
+                                                draftSpec.bindings.push({
+                                                    source: collectionName,
+                                                    resource: {
+                                                        ...resourceConfig[
+                                                            collectionName
+                                                        ].data,
                                                     },
                                                 });
                                             }
-                                        },
-                                        () => {
-                                            helpers.callFailed({
-                                                error: {
-                                                    title: 'materializationCreation.test.serverUnreachable',
+                                        );
+
+                                        supabaseClient
+                                            .from(TABLES.DRAFT_SPECS)
+                                            .insert([
+                                                {
+                                                    draft_id: newDraftId,
+                                                    catalog_name: entityName,
+                                                    spec_type:
+                                                        'materialization',
+                                                    spec: encryptedEndpointConfig,
                                                 },
-                                            });
-                                        }
-                                    );
+                                            ])
+                                            .then(
+                                                (draftSpecsResponse) => {
+                                                    setDraftId(newDraftId);
+                                                    setFormState({
+                                                        status: FormStatus.IDLE,
+                                                    });
+
+                                                    if (
+                                                        draftSpecsResponse.error
+                                                    ) {
+                                                        helpers.callFailed({
+                                                            error: {
+                                                                title: 'materializationCreation.test.failure.errorTitle',
+                                                                error: draftSpecsResponse.error,
+                                                            },
+                                                        });
+                                                    }
+                                                },
+                                                () => {
+                                                    helpers.callFailed({
+                                                        error: {
+                                                            title: 'materializationCreation.test.serverUnreachable',
+                                                        },
+                                                    });
+                                                }
+                                            );
+                                    })
+                                    .catch((error) => {
+                                        helpers.callFailed({
+                                            error: {
+                                                title: 'captureCreation.test.failedConfigEncryptTitle',
+                                                error,
+                                            },
+                                        });
+                                    });
                             } else if (draftsResponse.error) {
                                 helpers.callFailed({
                                     error: {
@@ -413,9 +441,6 @@ function MaterializationCreate() {
                                 error: {
                                     title: 'materializationCreation.save.serverUnreachable',
                                 },
-                                saveStatus: intl.formatMessage({
-                                    id: 'common.fail',
-                                }),
                             },
                             publicationsSubscription
                         );
@@ -498,26 +523,16 @@ function MaterializationCreate() {
                     <FormattedMessage id="materializationCreation.save.inProgress" />
                 }
                 actionComponent={
-                    <>
-                        {formStateSaveStatus}
-                        <Button
-                            disabled={formStateStatus !== FormStatus.IDLE}
-                            onClick={handlers.closeLogs}
-                        >
-                            <FormattedMessage id="cta.close" />
-                        </Button>
-                    </>
+                    <LogDialogActions close={handlers.closeLogs} />
                 }
             />
 
             <FooHeader
                 close={handlers.cancel}
                 test={handlers.test}
-                testDisabled={
-                    formStateStatus !== FormStatus.IDLE || !hasConnectors
-                }
+                testDisabled={!hasConnectors}
                 save={handlers.saveAndPublish}
-                saveDisabled={formStateStatus !== FormStatus.IDLE || !draftId}
+                saveDisabled={!draftId}
                 formId={FORM_ID}
                 heading={
                     <FormattedMessage id="materializationCreation.heading" />

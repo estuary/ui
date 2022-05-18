@@ -55,7 +55,9 @@ export const getUrls = () => {
             termsOfService,
         };
     } else {
-        throw new Error('Missing Privacy or TOS environmental settings.');
+        throw new Error(
+            'Missing Privacy or TOS environmental settings: [REACT_APP_URLS_PRIVACY_POLICY, REACT_APP_URLS_TERMS_OF_SERVICE]'
+        );
     }
 };
 
@@ -73,7 +75,7 @@ export const getLogRocketSettings = () => {
     return {
         appID: process.env.REACT_APP_LOGROCKET_APP_ID ?? null,
         idUser: {
-            enabled: process.env.REACT_APP_LOGROCKET_ID_USER,
+            enabled: process.env.REACT_APP_LOGROCKET_ID_USER === ENABLED,
             includeName:
                 process.env.REACT_APP_LOGROCKET_ID_USER_INCLUDE_NAME ===
                 ENABLED,
@@ -86,4 +88,18 @@ export const getLogRocketSettings = () => {
             text: process.env.REACT_APP_LOGROCKET_SANITIZE_TEXT === ENABLED,
         },
     };
+};
+
+export const getEncryptionSettings = () => {
+    const encryptionEndpoint = process.env.REACT_APP_ENCRYPTION_URL;
+
+    if (encryptionEndpoint) {
+        return {
+            encryptionEndpoint,
+        };
+    } else {
+        throw new Error(
+            'Missing endpoint for encrypting endpoint configs: REACT_APP_ENCRYPTION_URL'
+        );
+    }
 };

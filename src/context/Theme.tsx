@@ -54,10 +54,10 @@ const tonalOffset = 0.1;
 
 // Breakpoints
 const xl = 1800;
-const lg = 1500;
+const lg = 1200;
 const md = 900;
 const sm = 600;
-const xs = 300;
+const xs = 500;
 
 // Color Palettes
 // TODO: Balance the light mode color palette.
@@ -126,7 +126,27 @@ export const outlineSx: SxProps<Theme> = {
     border: `1px solid ${slate[200]}`,
 };
 
-// Theme
+// TODO (theme) Figure out how to make these composable
+export const truncateTextSx: SxProps<Theme> = {
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+};
+
+const baseBackground = {
+    styleOverrides: {
+        root: {
+            backgroundColor: 'transparent',
+        },
+    },
+};
+
+export const jsonFormsPadding: SxProps<Theme> = {
+    '& > div > .MuiGrid-container.MuiGrid-root': {
+        padding: 1,
+    },
+};
+
 const themeSettings = createTheme({
     breakpoints: {
         values: {
@@ -138,6 +158,12 @@ const themeSettings = createTheme({
         },
     },
     components: {
+        MuiAppBar: {
+            ...baseBackground,
+        },
+        MuiAccordion: {
+            ...baseBackground,
+        },
         MuiBadge: {
             defaultProps: {
                 color: 'info',
@@ -183,6 +209,7 @@ const themeSettings = createTheme({
             },
         },
         MuiTabs: {
+            ...baseBackground,
             defaultProps: {
                 indicatorColor: 'secondary',
             },

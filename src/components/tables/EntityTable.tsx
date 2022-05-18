@@ -316,7 +316,7 @@ function EntityTable({
                                                             {getEmptyTableMessage(
                                                                 tableState.status
                                                             )}
-                                                        </Typography>{' '}
+                                                        </Typography>
                                                     </>
                                                 )}
                                             </Box>
@@ -326,22 +326,26 @@ function EntityTable({
                             )}
                         </TableBody>
 
-                        {selectData && useSelectResponse?.count && (
-                            <TableFooter>
-                                <TableRow>
-                                    <TablePagination
-                                        rowsPerPageOptions={rowsPerPageOptions}
-                                        count={useSelectResponse.count}
-                                        rowsPerPage={rowsPerPage}
-                                        page={page}
-                                        onPageChange={handlers.changePage}
-                                        onRowsPerPageChange={
-                                            handlers.changeRowsPerPage
-                                        }
-                                    />
-                                </TableRow>
-                            </TableFooter>
-                        )}
+                        {selectData &&
+                            selectData.length > 0 &&
+                            useSelectResponse?.count && (
+                                <TableFooter>
+                                    <TableRow>
+                                        <TablePagination
+                                            rowsPerPageOptions={
+                                                rowsPerPageOptions
+                                            }
+                                            count={useSelectResponse.count}
+                                            rowsPerPage={rowsPerPage}
+                                            page={page}
+                                            onPageChange={handlers.changePage}
+                                            onRowsPerPageChange={
+                                                handlers.changeRowsPerPage
+                                            }
+                                        />
+                                    </TableRow>
+                                </TableFooter>
+                            )}
                     </Table>
                 </TableContainer>
             </Box>

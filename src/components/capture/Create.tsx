@@ -1,4 +1,4 @@
-import { Button, Collapse } from '@mui/material';
+import { Collapse } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { routeDetails } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
@@ -8,6 +8,7 @@ import EndpointConfig from 'components/shared/Entity/EndpointConfig';
 import EntityError from 'components/shared/Entity/Error';
 import FooHeader from 'components/shared/Entity/Header';
 import LogDialog from 'components/shared/Entity/LogDialog';
+import LogDialogActions from 'components/shared/Entity/LogDialogActions';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
@@ -20,9 +21,10 @@ import useConnectorTags from 'hooks/useConnectorTags';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
-import { MouseEvent } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { MouseEvent, useEffect } from 'react';
+import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
+import { getEncryptedConfig } from 'services/encryption';
 import { TABLES } from 'services/supabase';
 import { createStoreSelectors, FormStatus } from 'stores/Create';
 import useNotificationStore, {
@@ -50,7 +52,6 @@ function CaptureCreate() {
     useBrowserTitle('browserTitle.captureCreate');
 
     // misc hooks
-    const intl = useIntl();
     const navigate = useNavigate();
     const confirmationModalContext = useConfirmationModalContext();
 
@@ -83,6 +84,9 @@ function CaptureCreate() {
     const endpointConfigData = entityCreateStore(
         createStoreSelectors.endpointConfig.data
     );
+    const endpointSchema = entityCreateStore(
+        createStoreSelectors.endpointSchema
+    );
     const hasChanges = entityCreateStore(createStoreSelectors.hasChanges);
     const resetState = entityCreateStore(createStoreSelectors.resetState);
     const [detailErrors, specErrors] = entityCreateStore(
@@ -95,16 +99,10 @@ function CaptureCreate() {
     );
 
     // Form State
-    const formStateStatus = entityCreateStore(
-        createStoreSelectors.formState.status
-    );
     const showLogs = entityCreateStore(createStoreSelectors.formState.showLogs);
     const logToken = entityCreateStore(createStoreSelectors.formState.logToken);
     const formSubmitError = entityCreateStore(
         createStoreSelectors.formState.error
-    );
-    const formStateSaveStatus = entityCreateStore(
-        createStoreSelectors.formState.formStateSaveStatus
     );
     const exitWhenLogsClose = entityCreateStore(
         createStoreSelectors.formState.exitWhenLogsClose
@@ -121,15 +119,27 @@ function CaptureCreate() {
         EditorStoreState<DraftSpecQuery>['id']
     >((state) => state.id);
 
+    const pubId = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['pubId']
+    >((state) => state.pubId);
+
+    const setPubId = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['setPubId']
+    >((state) => state.setPubId);
+
+    // Reset the cataolg if the connector changes
+    useEffect(() => {
+        setDraftId(null);
+    }, [imageTag, setDraftId]);
+
     const helpers = {
         callFailed: (formState: any, subscription?: RealtimeSubscription) => {
             const setFailureState = () => {
                 setFormState({
-                    status: FormStatus.IDLE,
+                    status: FormStatus.FAILED,
                     exitWhenLogsClose: false,
-                    saveStatus: intl.formatMessage({
-                        id: 'common.fail',
-                    }),
                     ...formState,
                 });
             };
@@ -147,11 +157,7 @@ function CaptureCreate() {
         doneSubscribing: (subscription: RealtimeSubscription) => {
             return supabaseClient
                 .removeSubscription(subscription)
-                .then(() => {
-                    setFormState({
-                        status: FormStatus.IDLE,
-                    });
-                })
+                .then(() => {})
                 .catch(() => {});
         },
         exit: () => {
@@ -164,9 +170,7 @@ function CaptureCreate() {
                 error: {
                     title: errorTitle,
                 },
-                saveStatus: intl.formatMessage({
-                    id: 'common.fail',
-                }),
+                status: FormStatus.FAILED,
             });
         },
     };
@@ -195,6 +199,9 @@ function CaptureCreate() {
             return waitFor.base(
                 supabaseClient.from(TABLES.DISCOVERS),
                 (payload: any) => {
+                    setFormState({
+                        status: FormStatus.IDLE,
+                    });
                     setDraftId(payload.new.draft_id);
                 },
                 'captureCreation.test.failedErrorTitle'
@@ -203,13 +210,11 @@ function CaptureCreate() {
         publications: () => {
             return waitFor.base(
                 supabaseClient.from(TABLES.PUBLICATIONS),
-                () => {
+                (payload: any) => {
+                    setPubId(payload.new.id);
                     setFormState({
-                        status: FormStatus.IDLE,
+                        status: FormStatus.SUCCESS,
                         exitWhenLogsClose: true,
-                        saveStatus: intl.formatMessage({
-                            id: 'captureCreation.status.success',
-                        }),
                     });
 
                     showNotification(notification);
@@ -249,11 +254,12 @@ function CaptureCreate() {
         },
 
         materializeCollections: () => {
+            helpers.exit();
             navigate(
                 getPathWithParam(
                     routeDetails.materializations.create.fullPath,
                     routeDetails.materializations.create.params.specID,
-                    draftId
+                    pubId
                 )
             );
         },
@@ -275,6 +281,11 @@ function CaptureCreate() {
                     async (response) => {
                         if (response.data) {
                             if (response.data.length > 0) {
+                                console.log(
+                                    'response.data[0]',
+                                    response.data[0]
+                                );
+
                                 setFormState({
                                     logToken: response.data[0].logs_token,
                                     showLogs: true,
@@ -298,9 +309,6 @@ function CaptureCreate() {
                                 error: {
                                     title: 'captureCreation.save.serverUnreachable',
                                 },
-                                saveStatus: intl.formatMessage({
-                                    id: 'common.fail',
-                                }),
                             },
                             publicationsSubscription
                         );
@@ -319,6 +327,7 @@ function CaptureCreate() {
 
             if (detailHasErrors || specHasErrors) {
                 setFormState({
+                    status: FormStatus.IDLE,
                     displayValidation: true,
                 });
             } else {
@@ -334,49 +343,70 @@ function CaptureCreate() {
                                 draftsResponse.data &&
                                 draftsResponse.data.length > 0
                             ) {
-                                const discoversSubscription =
-                                    waitFor.discovers();
-                                supabaseClient
-                                    .from(TABLES.DISCOVERS)
-                                    .insert([
-                                        {
-                                            capture_name: entityName,
-                                            endpoint_config: endpointConfigData,
-                                            connector_tag_id: imageTag.id,
-                                            draft_id: draftsResponse.data[0].id,
-                                        },
-                                    ])
-                                    .then(
-                                        (response) => {
-                                            if (response.data) {
-                                                setFormState({
-                                                    logToken:
-                                                        response.data[0]
-                                                            .logs_token,
-                                                });
-                                            } else {
-                                                helpers.callFailed(
-                                                    {
-                                                        error: {
-                                                            title: 'captureCreation.test.failedErrorTitle',
-                                                            error: response.error,
-                                                        },
-                                                    },
-                                                    discoversSubscription
-                                                );
-                                            }
-                                        },
-                                        () => {
-                                            helpers.callFailed(
+                                getEncryptedConfig({
+                                    data: {
+                                        schema: endpointSchema,
+                                        config: endpointConfigData,
+                                    },
+                                })
+                                    .then((encryptedEndpointConfig) => {
+                                        const discoversSubscription =
+                                            waitFor.discovers();
+
+                                        supabaseClient
+                                            .from(TABLES.DISCOVERS)
+                                            .insert([
                                                 {
-                                                    error: {
-                                                        title: 'captureCreation.test.serverUnreachable',
-                                                    },
+                                                    capture_name: entityName,
+                                                    endpoint_config:
+                                                        encryptedEndpointConfig,
+                                                    connector_tag_id:
+                                                        imageTag.id,
+                                                    draft_id:
+                                                        draftsResponse.data[0]
+                                                            .id,
                                                 },
-                                                discoversSubscription
+                                            ])
+                                            .then(
+                                                (response) => {
+                                                    if (response.data) {
+                                                        setFormState({
+                                                            logToken:
+                                                                response.data[0]
+                                                                    .logs_token,
+                                                        });
+                                                    } else {
+                                                        helpers.callFailed(
+                                                            {
+                                                                error: {
+                                                                    title: 'captureCreation.test.failedErrorTitle',
+                                                                    error: response.error,
+                                                                },
+                                                            },
+                                                            discoversSubscription
+                                                        );
+                                                    }
+                                                },
+                                                () => {
+                                                    helpers.callFailed(
+                                                        {
+                                                            error: {
+                                                                title: 'captureCreation.test.serverUnreachable',
+                                                            },
+                                                        },
+                                                        discoversSubscription
+                                                    );
+                                                }
                                             );
-                                        }
-                                    );
+                                    })
+                                    .catch((error) => {
+                                        helpers.callFailed({
+                                            error: {
+                                                title: 'captureCreation.test.failedConfigEncryptTitle',
+                                                error,
+                                            },
+                                        });
+                                    });
                             } else if (draftsResponse.error) {
                                 helpers.callFailed({
                                     error: {
@@ -411,32 +441,22 @@ function CaptureCreate() {
                     <FormattedMessage id="captureCreation.save.waitMessage" />
                 }
                 actionComponent={
-                    <>
-                        {formStateSaveStatus}
-                        <Button
-                            disabled={formStateStatus !== FormStatus.IDLE}
-                            onClick={handlers.materializeCollections}
-                        >
-                            <FormattedMessage id="captureCreation.ctas.materialize" />
-                        </Button>
-                        <Button
-                            disabled={formStateStatus !== FormStatus.IDLE}
-                            onClick={handlers.closeLogs}
-                        >
-                            <FormattedMessage id="cta.close" />
-                        </Button>
-                    </>
+                    <LogDialogActions
+                        close={handlers.closeLogs}
+                        materialize={{
+                            action: handlers.materializeCollections,
+                            title: 'captureCreation.ctas.materialize',
+                        }}
+                    />
                 }
             />
 
             <FooHeader
                 close={handlers.cancel}
                 test={handlers.test}
-                testDisabled={
-                    formStateStatus !== FormStatus.IDLE || !hasConnectors
-                }
+                testDisabled={!hasConnectors}
                 save={handlers.saveAndPublish}
-                saveDisabled={formStateStatus !== FormStatus.IDLE || !draftId}
+                saveDisabled={!draftId}
                 formId={FORM_ID}
                 heading={<FormattedMessage id="captureCreation.heading" />}
             />

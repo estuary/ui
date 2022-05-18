@@ -9,6 +9,9 @@ export interface EditorStoreState<T> {
     id: string | null;
     setId: (newVal: EditorStoreState<T>['id']) => void;
 
+    pubId: string | null;
+    setPubId: (newVal: EditorStoreState<T>['pubId']) => void;
+
     currentCatalog: any;
     setCurrentCatalog: (newVal: EditorStoreState<T>['currentCatalog']) => void;
 
@@ -18,12 +21,15 @@ export interface EditorStoreState<T> {
 
     serverUpdate: any | null;
     setServerUpdate: (newVal: EditorStoreState<T>['serverUpdate']) => void;
+
+    resetState: () => void;
 }
 
 const getInitialStateData = () => {
     return {
         currentCatalog: null,
         id: null,
+        pubId: null,
         specs: null,
         serverUpdate: null,
     };
@@ -43,6 +49,15 @@ const getInitialState = <T,>(
             );
         },
 
+        setPubId: (newVal) => {
+            set(
+                produce((state) => {
+                    state.pubId = newVal;
+                }),
+                false
+            );
+        },
+
         setCurrentCatalog: (newVal) => {
             set(
                 produce((state) => {
@@ -56,7 +71,7 @@ const getInitialState = <T,>(
             set(
                 produce((state) => {
                     if (newVal && newVal.length > 0) {
-                        if (state.specs === null) {
+                        if (state.specs === null || newVal.length === 1) {
                             state.currentCatalog = newVal[0];
                         }
                         state.specs = newVal;
@@ -73,6 +88,10 @@ const getInitialState = <T,>(
                 }),
                 false
             );
+        },
+
+        resetState: () => {
+            set(getInitialStateData(), false, 'Resetting Editor State');
         },
     };
 };

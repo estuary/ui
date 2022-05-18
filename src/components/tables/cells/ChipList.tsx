@@ -44,10 +44,11 @@ function ChipList({ strings }: Props) {
                                     variant="outlined"
                                     sx={{
                                         ...outlineSx,
-                                        'maxWidth': 200,
+                                        // TODO (typing) Figure out how to use truncateTextSx here
                                         'whiteSpace': 'nowrap',
                                         'overflow': 'hidden',
                                         'textOverflow': 'ellipsis',
+                                        'maxWidth': 200,
                                         '&:hover': {
                                             ...chipListHoverStyling,
                                             background: (theme) =>

@@ -53,7 +53,7 @@ function Row({ row, showEntityStatus }: RowProps) {
                     showEntityStatus={showEntityStatus}
                 />
 
-                <TableCell sx={{ minWidth: 100, ...tableBorderSx }}>
+                <TableCell sx={{ ...tableBorderSx, minWidth: 100 }}>
                     {row.spec_type}
                 </TableCell>
 

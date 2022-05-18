@@ -26,7 +26,6 @@ export interface FormState {
     displayValidation: boolean;
     status: FormStatus;
     showLogs: boolean;
-    saveStatus: string;
     exitWhenLogsClose: boolean;
     logToken: string | null;
     error: {
@@ -39,8 +38,18 @@ export enum FormStatus {
     SAVING = 'saving',
     TESTING = 'testing',
     IDLE = 'idle',
+    SUCCESS = 'success',
+    FAILED = 'failed',
     GENERATING_PREVIEW = 'Generating Preview',
 }
+
+export const formInProgress = (formStateStatus: FormStatus) => {
+    return (
+        formStateStatus === FormStatus.TESTING ||
+        formStateStatus === FormStatus.GENERATING_PREVIEW ||
+        formStateStatus === FormStatus.SAVING
+    );
+};
 
 export interface CreateEntityStore {
     //Details
@@ -57,7 +66,10 @@ export interface CreateEntityStore {
 
     //Misc
     connectors: { [key: string]: any }[];
-    setConnectors: (val: { [key: string]: any }[]) => void;
+    setConnectors: (val: CreateEntityStore['connectors']) => void;
+    endpointSchema: { [key: string]: any };
+    setEndpointSchema: (val: CreateEntityStore['endpointSchema']) => void;
+
     resetState: () => void;
     hasChanges: () => boolean;
 }
@@ -78,6 +90,9 @@ export const initialCreateStates = {
             errors: [],
         };
     },
+    endpointSchema: () => {
+        return {};
+    },
     endpointConfig: (): EndpointConfig => {
         return {
             data: {},
@@ -91,7 +106,6 @@ export const initialCreateStates = {
             showLogs: false,
             exitWhenLogsClose: false,
             logToken: null,
-            saveStatus: 'running...',
             error: null,
         };
     },
@@ -99,13 +113,14 @@ export const initialCreateStates = {
 
 export const getInitialStateData = (): Pick<
     CreateEntityStore,
-    'details' | 'endpointConfig' | 'connectors' | 'formState'
+    'details' | 'endpointConfig' | 'connectors' | 'formState' | 'endpointSchema'
 > => {
     return {
         details: initialCreateStates.details(),
         endpointConfig: initialCreateStates.endpointConfig(),
         connectors: initialCreateStates.connectors(),
         formState: initialCreateStates.formState(),
+        endpointSchema: initialCreateStates.endpointSchema(),
     };
 };
 
@@ -197,6 +212,15 @@ export const getInitialState = (
                 'Caching connectors response'
             );
         },
+        setEndpointSchema: (val) => {
+            set(
+                produce((state) => {
+                    state.endpointSchema = val;
+                }),
+                false,
+                'Setting endpointSchema'
+            );
+        },
         resetState: () => {
             set(getInitialStateData(), false, 'Resetting State');
         },
@@ -219,9 +243,6 @@ export const createStoreSelectors = {
         set: (state: CreateEntityStore) => state.setEndpointConfig,
     },
     formState: {
-        formStateSaveStatus: (state: CreateEntityStore) =>
-            state.formState.saveStatus,
-        formStateStatus: (state: CreateEntityStore) => state.formState.status,
         showLogs: (state: CreateEntityStore) => state.formState.showLogs,
         logToken: (state: CreateEntityStore) => state.formState.logToken,
         error: (state: CreateEntityStore) => state.formState.error,
@@ -234,6 +255,8 @@ export const createStoreSelectors = {
         reset: (state: CreateEntityStore) => state.resetFormState,
     },
     connectors: (state: CreateEntityStore) => state.connectors,
+    endpointSchema: (state: CreateEntityStore) => state.endpointSchema,
+    setEndpointSchema: (state: CreateEntityStore) => state.setEndpointSchema,
 
     resetState: (state: CreateEntityStore) => state.resetState,
     hasChanges: (state: CreateEntityStore) => state.hasChanges,
