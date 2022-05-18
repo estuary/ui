@@ -2,9 +2,11 @@ import produce from 'immer';
 import { GetState } from 'zustand';
 import { NamedSet } from 'zustand/middleware';
 
+export type SetShards = (shards: any[]) => void;
+
 export interface ShardDetailStore {
     shards: any[];
-    setShards: (shards: any[]) => void;
+    setShards: SetShards;
     getShardStatus: (catalogNamespace: string) => string;
 }
 
