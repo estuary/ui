@@ -1,11 +1,7 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { StyledEngineProvider } from '@mui/material';
-import useCreationStore, {
-    CreationState,
-} from 'components/materialization/Store';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { isEmpty } from 'lodash';
 import { useEffect } from 'react';
 import { createJSONFormDefaults, setDefaultsValidator } from 'services/ajv';
 import {
@@ -14,32 +10,31 @@ import {
     defaultRenderers,
     showValidation,
 } from 'services/jsonforms';
-import { createStoreSelectors, FormStatus } from 'stores/Create';
-import { getStore } from 'stores/Repo';
-import { StoreSelector } from 'types';
+import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 
 type Props = {
     resourceSchema: any;
     collectionName: string;
 };
 
-const stateSelectors: StoreSelector<CreationState> = {
-    setConfig: (state) => state.setResourceConfig,
-};
-
 function NewMaterializationResourceConfigForm({
     resourceSchema,
     collectionName,
 }: Props) {
-    const setConfig = useCreationStore(stateSelectors.setConfig);
-    const formData = useCreationStore(
-        (state) => state.resourceConfig[collectionName].data
+    const entityCreateStore = useRouteStore();
+
+    const setConfig = entityCreateStore(
+        entityCreateStoreSelectors.resourceConfig.set
     );
-    const entityCreateStore = getStore(useRouteStore());
+    const formData = entityCreateStore(
+        (state: any) => state.resourceConfig[collectionName].data
+    );
     const displayValidation = entityCreateStore(
-        createStoreSelectors.formState.displayValidation
+        entityCreateStoreSelectors.formState.displayValidation
     );
-    const status = entityCreateStore(createStoreSelectors.formState.status);
+    const status = entityCreateStore(
+        entityCreateStoreSelectors.formState.status
+    );
 
     // Resolve Refs & Hydrate the object
     //  This will hydrate the default values for us as we don't want JSONForms to
@@ -47,6 +42,7 @@ function NewMaterializationResourceConfigForm({
     useEffect(() => {
         setConfig(collectionName, {
             data: createJSONFormDefaults(resourceSchema),
+            errors: [],
         });
     }, [collectionName, resourceSchema, setConfig]);
 
@@ -55,9 +51,7 @@ function NewMaterializationResourceConfigForm({
 
     const handlers = {
         onChange: (form: any) => {
-            if (!isEmpty(form.data)) {
-                setConfig(collectionName, form);
-            }
+            setConfig(collectionName, form);
         },
     };
 
@@ -70,7 +64,10 @@ function NewMaterializationResourceConfigForm({
                 renderers={defaultRenderers}
                 cells={materialCells}
                 config={defaultOptions}
-                readonly={status !== FormStatus.IDLE}
+                readonly={
+                    status === FormStatus.TESTING ||
+                    status === FormStatus.SAVING
+                }
                 validationMode={showValidationVal}
                 onChange={handlers.onChange}
                 ajv={setDefaultsValidator}

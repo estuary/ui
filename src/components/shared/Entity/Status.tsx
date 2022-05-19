@@ -1,13 +1,14 @@
 import { Typography } from '@mui/material';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { FormattedMessage } from 'react-intl';
-import { createStoreSelectors, FormStatus } from 'stores/Create';
-import { getStore } from 'stores/Repo';
+import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 
 function Status() {
-    const entityCreateStore = getStore(useRouteStore());
+    const entityCreateStore = useRouteStore();
 
-    const formStatus = entityCreateStore(createStoreSelectors.formState.status);
+    const formStatus = entityCreateStore(
+        entityCreateStoreSelectors.formState.status
+    );
 
     let messageKey;
     if (formStatus === FormStatus.SUCCESS) {

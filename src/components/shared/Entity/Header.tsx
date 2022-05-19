@@ -16,14 +16,12 @@ import { useZustandStore } from 'hooks/useZustand';
 import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
-    createStoreSelectors,
+    entityCreateStoreSelectors,
     formInProgress,
     FormStatus,
 } from 'stores/Create';
-import { getStore } from 'stores/Repo';
 
 interface Props {
-    close: (event: any) => void;
     test: (event: any) => void;
     testDisabled: boolean;
     save: (event: any) => void;
@@ -33,7 +31,6 @@ interface Props {
 }
 
 function FooHeader({
-    close,
     test,
     testDisabled,
     save,
@@ -46,11 +43,13 @@ function FooHeader({
         EditorStoreState<DraftSpecQuery>['id']
     >((state) => state.id);
 
-    const entityCreateStore = getStore(useRouteStore());
+    const entityCreateStore = useRouteStore();
     const formStateStatus = entityCreateStore(
-        createStoreSelectors.formState.status
+        entityCreateStoreSelectors.formState.status
     );
-    const setFormState = entityCreateStore(createStoreSelectors.formState.set);
+    const setFormState = entityCreateStore(
+        entityCreateStoreSelectors.formState.set
+    );
 
     const handlers = {
         test: (event: any) => {
@@ -83,10 +82,6 @@ function FooHeader({
                         ml: 'auto',
                     }}
                 >
-                    <Button variant="text" onClick={close} color="error">
-                        <FormattedMessage id="cta.cancel" />
-                    </Button>
-
                     <Button
                         onClick={handlers.test}
                         disabled={

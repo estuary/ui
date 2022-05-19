@@ -3,10 +3,6 @@ import { RealtimeSubscription } from '@supabase/supabase-js';
 import { routeDetails } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
 import CollectionConfig from 'components/materialization/create/CollectionConfig';
-import useCreationStore, {
-    creationSelectors,
-    CreationState,
-} from 'components/materialization/Store';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
@@ -17,7 +13,6 @@ import LogDialogActions from 'components/shared/Entity/LogDialogActions';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
-import { useConfirmationModalContext } from 'context/Confirmation';
 import { useClient } from 'hooks/supabase-swr';
 import { usePrompt } from 'hooks/useBlocker';
 import useBrowserTitle from 'hooks/useBrowserTitle';
@@ -32,20 +27,15 @@ import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { getEncryptedConfig } from 'services/encryption';
 import { TABLES } from 'services/supabase';
-import { createStoreSelectors, FormStatus } from 'stores/Create';
+import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 import useNotificationStore, {
     Notification,
     NotificationState,
 } from 'stores/NotificationStore';
-import { getStore } from 'stores/Repo';
 
 const FORM_ID = 'newMaterializationForm';
 
 const selectors = {
-    page: {
-        collections: (state: CreationState) => state.collections,
-        resourceConfigData: (state: CreationState) => state.resourceConfig.data,
-    },
     notifications: {
         showNotification: (state: NotificationState) => state.showNotification,
     },
@@ -62,7 +52,6 @@ function MaterializationCreate() {
 
     // Misc. hooks
     const navigate = useNavigate();
-    const confirmationModalContext = useConfirmationModalContext();
 
     // Supabase
     const supabaseClient = useClient();
@@ -78,46 +67,54 @@ function MaterializationCreate() {
         selectors.notifications.showNotification
     );
 
+    const entityCreateStore = useRouteStore();
+
     // Materializations store
-    const resourceConfig = useCreationStore(creationSelectors.resourceConfig);
-    const resetCreationStore = useCreationStore(creationSelectors.resetState);
+    const resourceConfig = entityCreateStore(
+        entityCreateStoreSelectors.resourceConfig.get
+    );
 
     // Form store
-    const entityCreateStore = getStore(useRouteStore());
     const entityName = entityCreateStore(
-        createStoreSelectors.details.entityName
+        entityCreateStoreSelectors.details.entityName
     );
     const imageTag = entityCreateStore(
-        createStoreSelectors.details.connectorTag
+        entityCreateStoreSelectors.details.connectorTag
     );
     const entityDescription = entityCreateStore(
-        createStoreSelectors.details.description
+        entityCreateStoreSelectors.details.description
     );
     const endpointConfig = entityCreateStore(
-        createStoreSelectors.endpointConfig.data
+        entityCreateStoreSelectors.endpointConfig.data
     );
     const endpointSchema = entityCreateStore(
-        createStoreSelectors.endpointSchema
+        entityCreateStoreSelectors.endpointSchema
     );
-    const hasChanges = entityCreateStore(createStoreSelectors.hasChanges);
-    const resetState = entityCreateStore(createStoreSelectors.resetState);
+    const hasChanges = entityCreateStore(entityCreateStoreSelectors.hasChanges);
+    const resetState = entityCreateStore(entityCreateStoreSelectors.resetState);
     const [detailErrors, specErrors] = entityCreateStore(
-        createStoreSelectors.errors
+        entityCreateStoreSelectors.errors
     );
 
-    const setFormState = entityCreateStore(createStoreSelectors.formState.set);
+    const setFormState = entityCreateStore(
+        entityCreateStoreSelectors.formState.set
+    );
     const resetFormState = entityCreateStore(
-        createStoreSelectors.formState.reset
+        entityCreateStoreSelectors.formState.reset
     );
 
     // Form State
-    const showLogs = entityCreateStore(createStoreSelectors.formState.showLogs);
-    const logToken = entityCreateStore(createStoreSelectors.formState.logToken);
+    const showLogs = entityCreateStore(
+        entityCreateStoreSelectors.formState.showLogs
+    );
+    const logToken = entityCreateStore(
+        entityCreateStoreSelectors.formState.logToken
+    );
     const formSubmitError = entityCreateStore(
-        createStoreSelectors.formState.error
+        entityCreateStoreSelectors.formState.error
     );
     const exitWhenLogsClose = entityCreateStore(
-        createStoreSelectors.formState.exitWhenLogsClose
+        entityCreateStoreSelectors.formState.exitWhenLogsClose
     );
 
     // Editor state
@@ -169,7 +166,6 @@ function MaterializationCreate() {
         },
         exit: () => {
             resetState();
-            resetCreationStore();
 
             navigate(routeDetails.materializations.path);
         },
@@ -219,23 +215,6 @@ function MaterializationCreate() {
 
     // Form Event Handlers
     const handlers = {
-        cancel: () => {
-            if (hasChanges()) {
-                confirmationModalContext
-                    ?.showConfirmation({
-                        message: 'confirm.loseData',
-                    })
-                    .then((confirmed) => {
-                        if (confirmed) {
-                            helpers.exit();
-                        }
-                    })
-                    .catch(() => {});
-            } else {
-                helpers.exit();
-            }
-        },
-
         closeLogs: () => {
             setFormState({
                 showLogs: false,
@@ -341,7 +320,7 @@ function MaterializationCreate() {
                                                     catalog_name: entityName,
                                                     spec_type:
                                                         'materialization',
-                                                    spec: encryptedEndpointConfig,
+                                                    spec: draftSpec,
                                                 },
                                             ])
                                             .then(
@@ -511,7 +490,6 @@ function MaterializationCreate() {
 
     usePrompt('confirm.loseData', !exitWhenLogsClose && hasChanges(), () => {
         resetState();
-        resetCreationStore();
     });
 
     return (
@@ -528,7 +506,6 @@ function MaterializationCreate() {
             />
 
             <FooHeader
-                close={handlers.cancel}
                 test={handlers.test}
                 testDisabled={!hasConnectors}
                 save={handlers.saveAndPublish}

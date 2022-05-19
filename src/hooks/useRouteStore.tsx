@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useContext } from 'react';
-import { Stores } from 'stores/Repo';
+import { Stores, useStoreRepo } from 'stores/Repo';
 
 interface Props {
     routeStoreKey: Stores;
@@ -16,6 +16,9 @@ function RouteStoreProvider({ children, routeStoreKey }: Props) {
     );
 }
 
-const useRouteStore = () => useContext(RouteStoreContext);
+const useRouteStore = () => {
+    const routeStoreKey = useContext(RouteStoreContext);
+    return useStoreRepo(routeStoreKey);
+};
 
 export { RouteStoreProvider, useRouteStore };

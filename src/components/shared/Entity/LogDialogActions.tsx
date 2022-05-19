@@ -1,9 +1,8 @@
-import { Button } from '@mui/material';
+import { Box, Button, Stack } from '@mui/material';
 import Status from 'components/shared/Entity/Status';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { FormattedMessage } from 'react-intl';
-import { createStoreSelectors, FormStatus } from 'stores/Create';
-import { getStore } from 'stores/Repo';
+import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 
 interface Props {
     close: any;
@@ -14,34 +13,42 @@ interface Props {
 }
 
 function LogDialogActions({ close, materialize }: Props) {
-    const entityCreateStore = getStore(useRouteStore());
+    const entityCreateStore = useRouteStore();
 
-    const formStatus = entityCreateStore(createStoreSelectors.formState.status);
-
-    console.log(formStatus);
+    const formStatus = entityCreateStore(
+        entityCreateStoreSelectors.formState.status
+    );
 
     return (
         <>
-            <Status />
-
-            <Button
-                disabled={
-                    formStatus === FormStatus.TESTING ||
-                    formStatus === FormStatus.SAVING
-                }
-                onClick={close}
+            <Box
+                sx={{
+                    pl: 2,
+                }}
             >
-                <FormattedMessage id="cta.close" />
-            </Button>
+                <Status />
+            </Box>
 
-            {materialize ? (
+            <Stack direction="row" spacing={2}>
                 <Button
-                    disabled={formStatus !== FormStatus.SUCCESS}
-                    onClick={materialize.action}
+                    disabled={
+                        formStatus === FormStatus.TESTING ||
+                        formStatus === FormStatus.SAVING
+                    }
+                    onClick={close}
                 >
-                    <FormattedMessage id={materialize.title} />
+                    <FormattedMessage id="cta.close" />
                 </Button>
-            ) : null}
+
+                {materialize ? (
+                    <Button
+                        disabled={formStatus !== FormStatus.SUCCESS}
+                        onClick={materialize.action}
+                    >
+                        <FormattedMessage id={materialize.title} />
+                    </Button>
+                ) : null}
+            </Stack>
         </>
     );
 }
