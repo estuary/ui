@@ -98,7 +98,7 @@ const IconMenu = ({
                             height: 10,
                             position: 'absolute',
                             left: -5,
-                            top: verticalOrigin === 'top' ? '8px' : '',
+                            top: verticalOrigin === 'top' ? '48px' : '',
                             bottom: verticalOrigin === 'bottom' ? '22px' : '',
                             transform: 'translateY(-50%) rotate(45deg)',
                             width: 10,
