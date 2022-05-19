@@ -1,4 +1,4 @@
-import { Box, Button, SxProps, Theme } from '@mui/material';
+import { Box, Button, Stack } from '@mui/material';
 import Status from 'components/shared/Entity/Status';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { FormattedMessage } from 'react-intl';
@@ -12,18 +12,12 @@ interface Props {
     };
 }
 
-const buttonSX: SxProps<Theme> = {
-    mx: 1,
-};
-
 function LogDialogActions({ close, materialize }: Props) {
     const entityCreateStore = useRouteStore();
 
     const formStatus = entityCreateStore(
         entityCreateStoreSelectors.formState.status
     );
-
-    console.log(formStatus);
 
     return (
         <>
@@ -35,14 +29,13 @@ function LogDialogActions({ close, materialize }: Props) {
                 <Status />
             </Box>
 
-            <Box>
+            <Stack direction="row" spacing={2}>
                 <Button
                     disabled={
                         formStatus === FormStatus.TESTING ||
                         formStatus === FormStatus.SAVING
                     }
                     onClick={close}
-                    sx={buttonSX}
                 >
                     <FormattedMessage id="cta.close" />
                 </Button>
@@ -51,12 +44,11 @@ function LogDialogActions({ close, materialize }: Props) {
                     <Button
                         disabled={formStatus !== FormStatus.SUCCESS}
                         onClick={materialize.action}
-                        sx={buttonSX}
                     >
                         <FormattedMessage id={materialize.title} />
                     </Button>
                 ) : null}
-            </Box>
+            </Stack>
         </>
     );
 }
