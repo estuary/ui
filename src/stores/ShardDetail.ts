@@ -36,8 +36,8 @@ export const getInitialState = (
 
             switch (selectedShard?.status[0].code) {
                 case 'PRIMARY':
-                case 'BACKFILL':
                     return successMain;
+                case 'BACKFILL':
                 case 'STANDBY':
                     return warningMain;
                 case 'FAILED':
