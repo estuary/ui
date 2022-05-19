@@ -118,7 +118,7 @@ function FooHeader({
             </Toolbar>
 
             <Collapse in={formInProgress(formStateStatus)} unmountOnExit>
-                <LinearProgress />
+                <LinearProgress sx={{ mb: 2 }} />
             </Collapse>
             <ValidationErrorSummary />
         </>
