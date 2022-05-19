@@ -20,7 +20,6 @@ import {
 } from 'stores/Create';
 
 interface Props {
-    close: (event: any) => void;
     test: (event: any) => void;
     testDisabled: boolean;
     save: (event: any) => void;
@@ -30,7 +29,6 @@ interface Props {
 }
 
 function FooHeader({
-    close,
     test,
     testDisabled,
     save,
@@ -79,10 +77,6 @@ function FooHeader({
                         ml: 'auto',
                     }}
                 >
-                    <Button variant="text" onClick={close} color="error">
-                        <FormattedMessage id="cta.cancel" />
-                    </Button>
-
                     <Button
                         onClick={handlers.test}
                         disabled={

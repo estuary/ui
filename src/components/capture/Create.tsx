@@ -12,7 +12,6 @@ import LogDialogActions from 'components/shared/Entity/LogDialogActions';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
-import { useConfirmationModalContext } from 'context/Confirmation';
 import { useClient } from 'hooks/supabase-swr';
 import { usePrompt } from 'hooks/useBlocker';
 import useBrowserTitle from 'hooks/useBrowserTitle';
@@ -52,7 +51,6 @@ function CaptureCreate() {
 
     // misc hooks
     const navigate = useNavigate();
-    const confirmationModalContext = useConfirmationModalContext();
 
     // Supabase stuff
     const supabaseClient = useClient();
@@ -231,23 +229,6 @@ function CaptureCreate() {
 
     // Form Event Handlers
     const handlers = {
-        cancel: () => {
-            if (hasChanges()) {
-                confirmationModalContext
-                    ?.showConfirmation({
-                        message: 'confirm.loseData',
-                    })
-                    .then((confirmed) => {
-                        if (confirmed) {
-                            helpers.exit();
-                        }
-                    })
-                    .catch(() => {});
-            } else {
-                helpers.exit();
-            }
-        },
-
         closeLogs: () => {
             setFormState({
                 showLogs: false,
@@ -457,7 +438,6 @@ function CaptureCreate() {
             />
 
             <FooHeader
-                close={handlers.cancel}
                 test={handlers.test}
                 testDisabled={!hasConnectors}
                 save={handlers.saveAndPublish}
