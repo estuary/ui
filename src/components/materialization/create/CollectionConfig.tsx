@@ -1,3 +1,4 @@
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { Grid } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
 import CollectionSelector from 'components/materialization/CollectionSelector';
@@ -27,6 +28,10 @@ function CollectionConfig() {
         routeDetails.materializations.create.params.specID
     );
 
+    const getErrors = entityCreateStore(
+        entityCreateStoreSelectors.resourceConfig.getErrors
+    );
+
     const { liveSpecs } = useLiveSpecsExt(specID);
 
     useEffect(() => {
@@ -39,7 +44,13 @@ function CollectionConfig() {
         return (
             <WrapperWithHeader
                 header={
-                    <FormattedMessage id="materializationCreation.collections.heading" />
+                    <>
+                        {' '}
+                        {getErrors().length > 0 ? (
+                            <ErrorOutlineIcon color="error" sx={{ pr: 1 }} />
+                        ) : null}
+                        <FormattedMessage id="materializationCreation.collections.heading" />
+                    </>
                 }
             >
                 <>
