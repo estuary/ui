@@ -41,7 +41,7 @@ function LogDialog({
                 />
             </DialogContent>
 
-            <DialogActions sx={{ pr: 5 }}>{actionComponent}</DialogActions>
+            <DialogActions sx={{ pr: 3 }}>{actionComponent}</DialogActions>
         </Dialog>
     );
 }
