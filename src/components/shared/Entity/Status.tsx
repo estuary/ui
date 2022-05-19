@@ -21,7 +21,7 @@ function Status() {
 
     if (messageKey) {
         return (
-            <Typography>
+            <Typography sx={{ mr: 1 }}>
                 <FormattedMessage id={messageKey} />
             </Typography>
         );

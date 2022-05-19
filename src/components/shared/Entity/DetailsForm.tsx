@@ -159,11 +159,13 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
 
     return (
         <>
-            <Typography variant="h5">
+            <Typography variant="h5" sx={{ mb: 1 }}>
                 <FormattedMessage id={`${messagePrefix}.details.heading`} />
             </Typography>
 
-            <FormattedMessage id={`${messagePrefix}.instructions`} />
+            <Typography sx={{ mb: 2 }}>
+                <FormattedMessage id={`${messagePrefix}.instructions`} />
+            </Typography>
 
             <Stack direction="row" spacing={2}>
                 {schema.properties[CONNECTOR_IMAGE_SCOPE].oneOf.length > 0 ? (

@@ -28,6 +28,7 @@ function LogDialog({
     return (
         <Dialog open={open} maxWidth="lg" fullWidth aria-labelledby={TITLE_ID}>
             <DialogTitle id={TITLE_ID}>{title}</DialogTitle>
+
             <DialogContent
                 sx={{
                     height: logHeight + 25,
