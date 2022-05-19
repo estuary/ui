@@ -33,12 +33,14 @@ const Admin = () => {
             <AccessGrantsTable />
 
             <Box sx={boxStyling}>
-                <Typography variant="h6">
+                <Typography variant="h6" sx={{ mb: 0.5 }}>
                     <FormattedMessage id="admin.accessToken" />
                 </Typography>
-                <Typography>
+
+                <Typography sx={{ mb: 2 }}>
                     <FormattedMessage id="admin.accessToken.message" />
                 </Typography>
+
                 <TextareaAutosize
                     minRows={4}
                     style={{ width: '100%' }}

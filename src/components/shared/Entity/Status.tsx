@@ -1,3 +1,4 @@
+import { Typography } from '@mui/material';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { FormattedMessage } from 'react-intl';
 import { createStoreSelectors, FormStatus } from 'stores/Create';
@@ -18,7 +19,11 @@ function Status() {
     }
 
     if (messageKey) {
-        return <FormattedMessage id={messageKey} />;
+        return (
+            <Typography sx={{ mr: 1 }}>
+                <FormattedMessage id={messageKey} />
+            </Typography>
+        );
     } else {
         return null;
     }

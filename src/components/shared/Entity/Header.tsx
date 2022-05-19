@@ -3,6 +3,8 @@ import {
     Collapse,
     LinearProgress,
     Stack,
+    SxProps,
+    Theme,
     Toolbar,
     Typography,
 } from '@mui/material';
@@ -65,12 +67,15 @@ function FooHeader({
         },
     };
 
+    const buttonSx: SxProps<Theme> = { ml: 1, borderRadius: 5 };
+
     return (
         <>
-            <Toolbar>
+            <Toolbar disableGutters>
                 <Typography variant="h6" noWrap>
                     {heading}
                 </Typography>
+
                 <Stack
                     direction="row"
                     alignItems="center"
@@ -89,7 +94,7 @@ function FooHeader({
                         }
                         form={formId}
                         type="submit"
-                        color="success"
+                        sx={buttonSx}
                     >
                         <FormattedMessage
                             id={
@@ -105,14 +110,15 @@ function FooHeader({
                         disabled={
                             formInProgress(formStateStatus) || saveDisabled
                         }
-                        color="success"
+                        sx={buttonSx}
                     >
                         <FormattedMessage id="cta.saveEntity" />
                     </Button>
                 </Stack>
             </Toolbar>
+
             <Collapse in={formInProgress(formStateStatus)} unmountOnExit>
-                <LinearProgress />
+                <LinearProgress sx={{ mb: 2 }} />
             </Collapse>
             <ValidationErrorSummary />
         </>
