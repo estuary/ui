@@ -20,6 +20,7 @@ import useConnectorTags from 'hooks/useConnectorTags';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
+import { isEmpty } from 'lodash';
 import { MouseEvent, useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
@@ -311,7 +312,11 @@ function CaptureCreate() {
             detailHasErrors = detailErrors ? detailErrors.length > 0 : false;
             specHasErrors = specErrors ? specErrors.length > 0 : false;
 
-            if (detailHasErrors || specHasErrors) {
+            if (
+                isEmpty(endpointConfigData) ||
+                detailHasErrors ||
+                specHasErrors
+            ) {
                 setFormState({
                     status: FormStatus.IDLE,
                     displayValidation: true,

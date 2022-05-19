@@ -276,6 +276,9 @@ export const getInitialState = (
                         response = response.concat(errors);
                     }
                 });
+            } else {
+                // TODO (errors) Need to populate this object with something?
+                response = [{}];
             }
 
             return response;
