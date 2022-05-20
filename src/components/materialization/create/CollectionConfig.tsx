@@ -35,8 +35,8 @@ function CollectionConfig() {
     const { liveSpecs } = useLiveSpecsExt(specID);
 
     useEffect(() => {
-        if (liveSpecs.writes_to.length > 0) {
-            prefillCollections(liveSpecs.writes_to);
+        if (liveSpecs.length > 0) {
+            prefillCollections(liveSpecs);
         }
     }, [liveSpecs, prefillCollections]);
 

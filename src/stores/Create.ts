@@ -1,5 +1,6 @@
 import { JsonFormsCore } from '@jsonforms/core';
 import { PostgrestError } from '@supabase/postgrest-js';
+import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
 import { isEqual, map } from 'lodash';
 import { GetState } from 'zustand';
@@ -78,7 +79,7 @@ export interface CreateEntityStore {
     // Collection Selector
     collections: any[];
     setCollections: (collections: any[]) => void;
-    prefillCollections: (collections: any[]) => void;
+    prefillCollections: (collections: LiveSpecsExtQuery[]) => void;
 
     //Form State
     formState: FormState;
@@ -297,13 +298,18 @@ export const getInitialState = (
         prefillCollections: (value) => {
             set(
                 produce((state) => {
-                    state.collections = value;
+                    state.collections = [];
                     state.resourceConfig = {};
 
                     value.forEach((collection) => {
-                        state.resourceConfig[collection] =
-                            getDefaultJsonFormsData();
+                        collection.writes_to.forEach((writes_to) => {
+                            state.collections.push(writes_to);
+                            state.resourceConfig[writes_to] =
+                                getDefaultJsonFormsData();
+                        });
                     });
+
+                    console.log('state.resourceConfig', state.resourceConfig);
                 }),
                 false,
                 'Collections Prefilled'

@@ -2,6 +2,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
 import { Button, ButtonGroup, Menu, MenuItem, Stack } from '@mui/material';
+import { routeDetails } from 'app/Authenticated';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
@@ -9,8 +10,11 @@ import {
 import { useZustandStore } from 'hooks/useZustand';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { useNavigate } from 'react-router';
+import { getPathWithParam } from 'utils/misc-utils';
 
 function RowSelector() {
+    const navigate = useNavigate();
     const intl = useIntl();
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -31,6 +35,23 @@ function RowSelector() {
     const handlers = {
         closeMenu: () => {
             setAnchorEl(null);
+        },
+        materialize: () => {
+            const selectedRowsArray: string[] = [];
+
+            selectedRows.forEach((value, key) => {
+                selectedRowsArray.push(key);
+            });
+
+            if (selectedRowsArray.length > 0) {
+                navigate(
+                    getPathWithParam(
+                        routeDetails.materializations.create.fullPath,
+                        routeDetails.materializations.create.params.specID,
+                        selectedRowsArray
+                    )
+                );
+            }
         },
         openMenu: (event: React.MouseEvent<HTMLButtonElement>) => {
             setAnchorEl(event.currentTarget);
@@ -72,13 +93,16 @@ function RowSelector() {
                 aria-label={intl.formatMessage({
                     id: 'capturesTable.ctaGroup.aria',
                 })}
-                disabled={true} //TODO (disable entity) !hasSelections
+                disabled={false} //TODO (disable entity) !hasSelections
             >
                 <Button>
                     <FormattedMessage id="cta.enable" />
                 </Button>
                 <Button>
                     <FormattedMessage id="cta.disable" />
+                </Button>
+                <Button onClick={handlers.materialize}>
+                    <FormattedMessage id="cta.materialize" />
                 </Button>
             </ButtonGroup>
 
