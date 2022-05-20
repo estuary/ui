@@ -1,7 +1,7 @@
 import stringify from 'safe-stable-stringify';
 
 const configuredStringify = stringify.configure({
-    deterministic: true,
+    deterministic: false,
 });
 
 export const stringifyJSON = (json: any) => {
