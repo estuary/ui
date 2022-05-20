@@ -17,7 +17,9 @@ import {
 } from '@mui/material';
 import { PostgrestError } from '@supabase/supabase-js';
 import ExternalLink from 'components/shared/ExternalLink';
+import { SelectableTableStore } from 'components/tables/Store';
 import { Query, useSelect } from 'hooks/supabase-swr';
+import { useZustandStore } from 'hooks/useZustand';
 import { debounce } from 'lodash';
 import { ChangeEvent, MouseEvent, ReactNode, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -188,6 +190,13 @@ function EntityTable({
             setPage(0);
         },
     };
+
+    const selectedRows = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['selected']
+    >((state) => state.selected);
+
+    console.log('Selected Rows', selectedRows);
 
     return (
         <Box>

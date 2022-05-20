@@ -4,9 +4,7 @@ import EntityTable, {
     getPagination,
     SortDirection,
 } from 'components/tables/EntityTable';
-import { SelectableTableStore } from 'components/tables/Store';
 import { useQuery } from 'hooks/supabase-swr';
-import { useZustandStore } from 'hooks/useZustand';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
 import { OpenGraph } from 'types';
@@ -68,13 +66,6 @@ function CapturesTable() {
         },
         [pagination, searchQuery, columnToSort, sortDirection]
     );
-
-    const selectedRows = useZustandStore<
-        SelectableTableStore,
-        SelectableTableStore['selected']
-    >((state) => state.selected);
-
-    console.log('selectedRows', selectedRows);
 
     return (
         <Box>
