@@ -4,6 +4,9 @@ import EntityTable, {
     getPagination,
     SortDirection,
 } from 'components/tables/EntityTable';
+import useSelectableTableStore, {
+    selectableTableStoreSelectors,
+} from 'components/tables/Store';
 import { useQuery } from 'hooks/supabase-swr';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
@@ -66,6 +69,11 @@ function CapturesTable() {
         },
         [pagination, searchQuery, columnToSort, sortDirection]
     );
+
+    const selectedRows = useSelectableTableStore(
+        selectableTableStoreSelectors.selected
+    );
+    console.log('selectedRows', selectedRows);
 
     return (
         <Box>

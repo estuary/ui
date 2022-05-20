@@ -1,4 +1,4 @@
-import { TableRow } from '@mui/material';
+import { Checkbox, TableCell, TableRow } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
 import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import Actions from 'components/tables/cells/Actions';
@@ -10,6 +10,9 @@ import MaterializeAction from 'components/tables/cells/MaterializeAction';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import UserName from 'components/tables/cells/UserName';
 import DetailsPanel from 'components/tables/DetailsPanel';
+import useSelectableTableStore, {
+    selectableTableStoreSelectors,
+} from 'components/tables/Store';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getPathWithParam } from 'utils/misc-utils';
@@ -20,9 +23,16 @@ interface RowsProps {
 
 interface RowProps {
     row: LiveSpecsExtQuery;
+    addRow: any;
+    removeRow: any;
+    isSelected: boolean;
 }
 
 export const tableColumns = [
+    {
+        field: null,
+        headerIntlKey: '',
+    },
     {
         field: 'catalog_name',
         headerIntlKey: 'entityTable.data.entity',
@@ -53,10 +63,10 @@ export const tableColumns = [
     },
 ];
 
-function Row({ row }: RowProps) {
-    const [detailsExpanded, setDetailsExpanded] = useState(false);
-
+function Row({ isSelected, addRow, removeRow, row }: RowProps) {
     const navigate = useNavigate();
+
+    const [detailsExpanded, setDetailsExpanded] = useState(false);
 
     const handlers = {
         clickMaterialize: () => {
@@ -68,15 +78,34 @@ function Row({ row }: RowProps) {
                 )
             );
         },
+        clickRow: (rowId: string) => {
+            if (isSelected) {
+                removeRow(rowId);
+            } else {
+                addRow(rowId);
+            }
+        },
     };
 
     return (
         <>
             <TableRow
+                hover
+                onClick={() => handlers.clickRow(row.id)}
+                selected={isSelected}
                 sx={{
                     background: detailsExpanded ? '#04192A' : null,
                 }}
             >
+                <TableCell padding="checkbox">
+                    <Checkbox
+                        color="primary"
+                        checked={isSelected}
+                        inputProps={{
+                            'aria-labelledby': row.catalog_name,
+                        }}
+                    />
+                </TableCell>
                 <EntityName name={row.catalog_name} />
 
                 <Connector
@@ -118,10 +147,24 @@ function Row({ row }: RowProps) {
 }
 
 function Rows({ data }: RowsProps) {
+    const selected = useSelectableTableStore(
+        selectableTableStoreSelectors.selected
+    );
+    const addRow = useSelectableTableStore(selectableTableStoreSelectors.set);
+    const removeRow = useSelectableTableStore(
+        selectableTableStoreSelectors.remove
+    );
+
     return (
         <>
             {data.map((row) => (
-                <Row row={row} key={row.id} />
+                <Row
+                    row={row}
+                    key={row.id}
+                    isSelected={selected.has(row.id)}
+                    addRow={addRow}
+                    removeRow={removeRow}
+                />
             ))}
         </>
     );
