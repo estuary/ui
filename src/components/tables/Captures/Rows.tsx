@@ -78,34 +78,6 @@ function Row({ row, showEntityStatus }: RowProps) {
         },
     };
 
-    const shardDetailStore = useRouteStore();
-    const setShards = shardDetailStore(shardDetailSelectors.setShards);
-
-    if (showEntityStatus) {
-        const shardClient = new ShardClient(baseUrl);
-        const taskSelector = new ShardSelector().task(row.catalog_name);
-
-        // TODO: Move this call to a more performant location or adjust the EntityStatus component
-        // so that it has a sudo loading state. Additionally, this data will need to be polled in
-        // some fashion. The code fragment below is merely an initial pass at integrating the shard
-        // utilities provided by the data-plane-gateway.
-        shardClient
-            .list(taskSelector)
-            .then((result) => {
-                // TODO: Follow-up on this list method of the ShardClient class. The result currently
-                // returns the shard spec which does not contain the shard status.
-                const shards = result.unwrap();
-
-                if (shards.length > 0) {
-                    setShards(shards);
-                }
-            })
-            .catch(() => {
-                // TODO: Remove call to console.log().
-                console.log('Inside capture catch statement');
-            });
-    }
-
     return (
         <>
             <TableRow
@@ -157,6 +129,38 @@ function Row({ row, showEntityStatus }: RowProps) {
 }
 
 function Rows({ data, showEntityStatus }: RowsProps) {
+    const shardDetailStore = useRouteStore();
+    const setShards = shardDetailStore(shardDetailSelectors.setShards);
+
+    if (showEntityStatus) {
+        const shardClient = new ShardClient(baseUrl);
+        const taskSelector = new ShardSelector();
+
+        data.map(({ catalog_name }) => catalog_name)
+            .sort()
+            .forEach((name) => taskSelector.task(name));
+
+        // TODO: Move this call to a more performant location or adjust the EntityStatus component
+        // so that it has a sudo loading state. Additionally, this data will need to be polled in
+        // some fashion. The code fragment below is merely an initial pass at integrating the shard
+        // utilities provided by the data-plane-gateway.
+        shardClient
+            .list(taskSelector)
+            .then((result) => {
+                // TODO: Follow-up on this list method of the ShardClient class. The result currently
+                // returns the shard spec which does not contain the shard status.
+                const shards = result.unwrap();
+
+                if (shards.length > 0) {
+                    setShards(shards);
+                }
+            })
+            .catch(() => {
+                // TODO: Remove call to console.log().
+                console.log('Inside capture catch statement');
+            });
+    }
+
     return (
         <>
             {data.map((row) => (
