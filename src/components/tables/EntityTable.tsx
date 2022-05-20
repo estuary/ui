@@ -103,6 +103,16 @@ function EntityTable({
 
     const intl = useIntl();
 
+    const selectedRows = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['selected']
+    >((state) => state.selected);
+
+    const setRows = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['setRows']
+    >((state) => state.setRows);
+
     const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
     const [tableState, setTableState] = useState<TableState>({
         status: TableStatuses.LOADING,
@@ -111,10 +121,11 @@ function EntityTable({
     useEffect(() => {
         if (selectData && selectData.length > 0) {
             setTableState({ status: TableStatuses.DATA_FETCHED });
+            setRows(selectData);
         } else {
             setTableState({ status: TableStatuses.NO_EXISTING_DATA });
         }
-    }, [selectData, isValidating]);
+    }, [selectData, isValidating, setRows]);
 
     const getEmptyTableHeader = (tableStatus: TableStatuses): string => {
         switch (tableStatus) {
@@ -191,11 +202,6 @@ function EntityTable({
             setPage(0);
         },
     };
-
-    const selectedRows = useZustandStore<
-        SelectableTableStore,
-        SelectableTableStore['selected']
-    >((state) => state.selected);
 
     return (
         <Box>

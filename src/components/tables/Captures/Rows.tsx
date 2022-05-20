@@ -25,8 +25,7 @@ interface RowsProps {
 
 interface RowProps {
     row: LiveSpecsExtQuery;
-    addRow: any;
-    removeRow: any;
+    setRow: any;
     isSelected: boolean;
 }
 
@@ -65,10 +64,8 @@ export const tableColumns = [
     },
 ];
 
-function Row({ isSelected, addRow, removeRow, row }: RowProps) {
+function Row({ isSelected, setRow, row }: RowProps) {
     const navigate = useNavigate();
-
-    console.log('>', { isSelected, addRow, removeRow, row });
 
     const [detailsExpanded, setDetailsExpanded] = useState(false);
 
@@ -83,11 +80,7 @@ function Row({ isSelected, addRow, removeRow, row }: RowProps) {
             );
         },
         clickRow: (rowId: string) => {
-            if (isSelected) {
-                removeRow(rowId);
-            } else {
-                addRow(rowId);
-            }
+            setRow(rowId, !isSelected);
         },
     };
 
@@ -154,17 +147,12 @@ function Rows({ data }: RowsProps) {
     const selected = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['selected']
-    >(selectableTableStoreSelectors.selected);
+    >(selectableTableStoreSelectors.selected.get);
 
-    const addRow = useZustandStore<
+    const setRow = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['setSelected']
-    >(selectableTableStoreSelectors.set);
-
-    const removeRow = useZustandStore<
-        SelectableTableStore,
-        SelectableTableStore['removeSelected']
-    >(selectableTableStoreSelectors.remove);
+    >(selectableTableStoreSelectors.selected.set);
 
     return (
         <>
@@ -173,8 +161,7 @@ function Rows({ data }: RowsProps) {
                     row={row}
                     key={row.id}
                     isSelected={selected.has(row.id)}
-                    addRow={addRow}
-                    removeRow={removeRow}
+                    setRow={setRow}
                 />
             ))}
         </>

@@ -1,17 +1,28 @@
+import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
 import { devtoolsOptions } from 'utils/store-utils';
-import create from 'zustand';
+import create, { GetState } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 
 export interface SelectableTableStore {
+    rows: Map<string, any>;
+    setRows: (val: LiveSpecsExtQuery[]) => void;
+    removeRows: () => void;
+
     selected: Map<string, any>;
-    setSelected: (val: SelectableTableStore['selected']) => void;
-    removeSelected: (val: SelectableTableStore['selected']) => void;
+    setSelected: (
+        val: SelectableTableStore['selected'],
+        isSelected: boolean
+    ) => void;
+    setAllSelected: (isSelected: boolean) => void;
 
     resetState: () => void;
 }
 
 export const initialCreateStates = {
+    rows: () => {
+        return new Map();
+    },
     selected: () => {
         return new Map();
     },
@@ -19,35 +30,72 @@ export const initialCreateStates = {
 
 export const getInitialStateData = (): Pick<
     SelectableTableStore,
-    'selected'
+    'selected' | 'rows'
 > => {
     return {
         selected: initialCreateStates.selected(),
+        rows: initialCreateStates.rows(),
     };
 };
 
 export const getInitialState = (
-    set: NamedSet<SelectableTableStore>
+    set: NamedSet<SelectableTableStore>,
+    get: GetState<SelectableTableStore>
 ): SelectableTableStore => {
     return {
         ...getInitialStateData(),
-        setSelected: (val) => {
+        setSelected: (val, isSelected) => {
             set(
                 produce(({ selected }) => {
-                    selected.set(val, {});
+                    if (isSelected) {
+                        selected.set(val, {});
+                    } else {
+                        selected.delete(val);
+                    }
                 }),
                 false,
                 'Selected rows changed'
             );
         },
 
-        removeSelected: (val) => {
+        setAllSelected: (isSelected) => {
             set(
                 produce(({ selected }) => {
-                    selected.delete(val);
+                    const { rows } = get();
+                    rows.forEach((value, key) => {
+                        console.log('row', { key, isSelected });
+
+                        if (isSelected) {
+                            selected.set(key, {});
+                        } else {
+                            selected.delete(key);
+                        }
+                    });
                 }),
                 false,
                 'Selected rows changed'
+            );
+        },
+
+        setRows: (val) => {
+            set(
+                produce(({ rows }) => {
+                    val.forEach((el) => {
+                        rows.set(el.id, {});
+                    });
+                }),
+                false,
+                'Rows populated'
+            );
+        },
+
+        removeRows: () => {
+            set(
+                produce(({ rows }) => {
+                    rows.clear();
+                }),
+                false,
+                'Selected rows reset'
             );
         },
 
@@ -59,12 +107,19 @@ export const getInitialState = (
 
 export const createSelectableTableStore = (key: string) => {
     return create<SelectableTableStore>()(
-        devtools((set) => getInitialState(set), devtoolsOptions(key))
+        devtools((set, get) => getInitialState(set, get), devtoolsOptions(key))
     );
 };
 
 export const selectableTableStoreSelectors = {
-    selected: (state: SelectableTableStore) => state.selected,
-    set: (state: SelectableTableStore) => state.setSelected,
-    remove: (state: SelectableTableStore) => state.removeSelected,
+    rows: {
+        get: (state: SelectableTableStore) => state.rows,
+        set: (state: SelectableTableStore) => state.setRows,
+        reset: (state: SelectableTableStore) => state.removeRows,
+    },
+    selected: {
+        get: (state: SelectableTableStore) => state.selected,
+        set: (state: SelectableTableStore) => state.setSelected,
+        setAll: (state: SelectableTableStore) => state.setAllSelected,
+    },
 };

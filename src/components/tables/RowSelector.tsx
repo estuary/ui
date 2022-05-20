@@ -2,7 +2,10 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
 import { Button, IconButton, Menu, MenuItem, Stack } from '@mui/material';
-import { SelectableTableStore } from 'components/tables/Store';
+import {
+    SelectableTableStore,
+    selectableTableStoreSelectors,
+} from 'components/tables/Store';
 import { useZustandStore } from 'hooks/useZustand';
 import { useState } from 'react';
 
@@ -19,9 +22,12 @@ function RowSelector() {
     const selectedRows = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['selected']
-    >((state) => state.selected);
+    >(selectableTableStoreSelectors.selected.get);
 
-    console.log('Selected Rows', selectedRows);
+    const setAll = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['setAllSelected']
+    >(selectableTableStoreSelectors.selected.setAll);
 
     return (
         <Stack direction="row">
@@ -51,8 +57,8 @@ function RowSelector() {
                     horizontal: 'left',
                 }}
             >
-                <MenuItem>All</MenuItem>
-                <MenuItem>None</MenuItem>
+                <MenuItem onClick={() => setAll(true)}>All</MenuItem>
+                <MenuItem onClick={() => setAll(false)}>None</MenuItem>
             </Menu>
         </Stack>
     );
