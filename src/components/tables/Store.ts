@@ -3,10 +3,10 @@ import { devtoolsOptions } from 'utils/store-utils';
 import create from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 
-export interface TableStore {
+export interface SelectableTableStore {
     selected: Map<string, Object>;
-    setSelected: (val: TableStore['selected']) => void;
-    removeSelected: (val: TableStore['selected']) => void;
+    setSelected: (val: SelectableTableStore['selected']) => void;
+    removeSelected: (val: SelectableTableStore['selected']) => void;
 
     resetState: () => void;
 }
@@ -17,13 +17,18 @@ export const initialCreateStates = {
     },
 };
 
-export const getInitialStateData = (): Pick<TableStore, 'selected'> => {
+export const getInitialStateData = (): Pick<
+    SelectableTableStore,
+    'selected'
+> => {
     return {
         selected: initialCreateStates.selected(),
     };
 };
 
-export const getInitialState = (set: NamedSet<TableStore>): TableStore => {
+export const getInitialState = (
+    set: NamedSet<SelectableTableStore>
+): SelectableTableStore => {
     return {
         ...getInitialStateData(),
         setSelected: (val) => {
@@ -52,14 +57,14 @@ export const getInitialState = (set: NamedSet<TableStore>): TableStore => {
     };
 };
 
-export const useSelectableTableStore = create<TableStore>()(
-    devtools(getInitialState, devtoolsOptions('selectable-table-state'))
-);
-
-export default useSelectableTableStore;
+export const createSelectableTableStore = (key: string) => {
+    return create<SelectableTableStore>()(
+        devtools((set) => getInitialState(set), devtoolsOptions(key))
+    );
+};
 
 export const selectableTableStoreSelectors = {
-    selected: (state: TableStore) => state.selected,
-    set: (state: TableStore) => state.setSelected,
-    remove: (state: TableStore) => state.removeSelected,
+    selected: (state: SelectableTableStore) => state.selected,
+    set: (state: SelectableTableStore) => state.setSelected,
+    remove: (state: SelectableTableStore) => state.removeSelected,
 };

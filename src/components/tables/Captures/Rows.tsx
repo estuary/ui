@@ -10,9 +10,11 @@ import MaterializeAction from 'components/tables/cells/MaterializeAction';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import UserName from 'components/tables/cells/UserName';
 import DetailsPanel from 'components/tables/DetailsPanel';
-import useSelectableTableStore, {
+import {
+    SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
+import { useZustandStore } from 'hooks/useZustand';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getPathWithParam } from 'utils/misc-utils';
@@ -147,13 +149,20 @@ function Row({ isSelected, addRow, removeRow, row }: RowProps) {
 }
 
 function Rows({ data }: RowsProps) {
-    const selected = useSelectableTableStore(
-        selectableTableStoreSelectors.selected
-    );
-    const addRow = useSelectableTableStore(selectableTableStoreSelectors.set);
-    const removeRow = useSelectableTableStore(
-        selectableTableStoreSelectors.remove
-    );
+    const selected = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['selected']
+    >(selectableTableStoreSelectors.selected);
+
+    const addRow = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['setSelected']
+    >(selectableTableStoreSelectors.set);
+
+    const removeRow = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['removeSelected']
+    >(selectableTableStoreSelectors.remove);
 
     return (
         <>
