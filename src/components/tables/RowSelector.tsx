@@ -3,6 +3,7 @@ import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
 import {
     Alert,
+    AlertTitle,
     Button,
     ButtonGroup,
     List,
@@ -34,7 +35,10 @@ interface DeleteConfirmationprops {
 function DeleteConfirmation({ deleting }: DeleteConfirmationprops) {
     return (
         <>
-            <Alert severity="warning">
+            <Alert variant="filled" severity="warning">
+                <AlertTitle>
+                    <FormattedMessage id="common.noUnDo" />
+                </AlertTitle>
                 <FormattedMessage id="capturesTable.delete.confirm" />
             </Alert>
             <List>

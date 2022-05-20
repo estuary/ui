@@ -17,6 +17,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.noData': `No data to display`,
     'common.loggedOut': `You have been logged out. Please log back in.`,
     'common.missing': `N/A`,
+    'common.noUnDo': `This action cannot be undone.`,
 
     // Aria
     'aria.openExpand': `show more`,
@@ -271,7 +272,7 @@ const Captures: ResolvedIntlConfig['messages'] = {
     'captureTable.header': `Captures`,
     'capturesTable.title': `Your Captures`,
     'capturesTable.cta.new': `New Capture`,
-    'capturesTable.delete.confirm': `This action cannot be undone. Are you sure you want to delete these?`,
+    'capturesTable.delete.confirm': `The items listed below will be deleted forever. Please review before continuing.`,
     'capturesTable.ctaGroup.aria': `capture table available actions`,
     'capturesTable.cta.materialize': `${CTAs['cta.materialize']} ${CommonMessages['terms.collections']}`,
     'captures.message1': `Click the "New Capture" button up above to get started.`,
