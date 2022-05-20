@@ -40,6 +40,7 @@ function RowSelector({ showMaterialize }: RowSelectorProps) {
         closeMenu: () => {
             setAnchorEl(null);
         },
+        delete: () => {},
         toggle: (enable: boolean) => {
             throw Error(
                 `Toggling enable/disable not implemented yet. Passing variable ${enable}`
@@ -102,6 +103,7 @@ function RowSelector({ showMaterialize }: RowSelectorProps) {
                 aria-label={intl.formatMessage({
                     id: 'capturesTable.ctaGroup.aria',
                 })}
+                disableElevation
                 disabled={!hasSelections}
             >
                 <Button onClick={() => handlers.toggle(true)}>
@@ -110,12 +112,19 @@ function RowSelector({ showMaterialize }: RowSelectorProps) {
                 <Button onClick={() => handlers.toggle(false)}>
                     <FormattedMessage id="cta.disable" />
                 </Button>
-                {showMaterialize ? (
-                    <Button onClick={handlers.materialize}>
-                        <FormattedMessage id="cta.materialize" />
-                    </Button>
-                ) : null}
+                <Button onClick={() => handlers.delete()}>
+                    <FormattedMessage id="cta.delete" />
+                </Button>
             </ButtonGroup>
+
+            {showMaterialize ? (
+                <Button
+                    disabled={!hasSelections}
+                    onClick={handlers.materialize}
+                >
+                    <FormattedMessage id="cta.materialize" />
+                </Button>
+            ) : null}
 
             <Menu
                 id="row-selector-menu"
