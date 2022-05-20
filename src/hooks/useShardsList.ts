@@ -1,6 +1,7 @@
 import { SetShards } from 'stores/ShardDetail';
 import useSWR from 'swr';
 
+// TODO: Remove this URL when it is no longer in use. This hook will likely disappear entirely.
 const shardsListEndpoint = 'http://localhost:28318/v1/shards/list';
 
 const fetcher = (_url: string, entityType: 'capture' | 'materialization') => {

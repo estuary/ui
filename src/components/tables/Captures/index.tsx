@@ -5,12 +5,8 @@ import EntityTable, {
     SortDirection,
 } from 'components/tables/EntityTable';
 import { useQuery } from 'hooks/supabase-swr';
-import { useRouteStore } from 'hooks/useRouteStore';
-import useShardsList from 'hooks/useShardsList';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
-import { useStoreRepo } from 'stores/Repo';
-import { shardDetailSelectors } from 'stores/ShardDetail';
 import { OpenGraph } from 'types';
 
 export interface LiveSpecsExtQuery {
@@ -70,11 +66,6 @@ function CapturesTable() {
         },
         [pagination, searchQuery, columnToSort, sortDirection]
     );
-
-    const shardDetailStore = useStoreRepo(useRouteStore());
-    const setShards = shardDetailStore(shardDetailSelectors.setShards);
-
-    useShardsList('capture', setShards);
 
     return (
         <Box>

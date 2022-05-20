@@ -1,6 +1,5 @@
 import { Tooltip } from '@mui/material';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { useStoreRepo } from 'stores/Repo';
 import { shardDetailSelectors } from 'stores/ShardDetail';
 
 interface Props {
@@ -8,7 +7,7 @@ interface Props {
 }
 
 function EntityStatus({ name }: Props) {
-    const shardDetailStore = useStoreRepo(useRouteStore());
+    const shardDetailStore = useRouteStore();
     const getShardStatus = shardDetailStore(
         shardDetailSelectors.getShardStatus
     );
