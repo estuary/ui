@@ -27,6 +27,10 @@ export const ZustandProvider = ({
     );
 };
 
+// TODO (useZustand) it would be great to check that the parent exists
+//   and if so then enable the functionality relying on this. An example
+//   where this would be good is the tables as any tables currently needs
+//   the store even if they don't allow for selection
 export const useZustandStore = <S extends Object, U>(
     selector: StateSelector<S, U>,
     equalityFn?: any
