@@ -1,7 +1,7 @@
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
-import { Button, ButtonGroup, Menu, MenuItem } from '@mui/material';
+import { Button, ButtonGroup, Menu, MenuItem, Stack } from '@mui/material';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
@@ -41,7 +41,7 @@ function RowSelector() {
     };
 
     return (
-        <>
+        <Stack direction="row" spacing={2}>
             <ButtonGroup>
                 <Button
                     size="small"
@@ -95,7 +95,7 @@ function RowSelector() {
                 <MenuItem onClick={() => setAll(true)}>All</MenuItem>
                 <MenuItem onClick={() => setAll(false)}>None</MenuItem>
             </Menu>
-        </>
+        </Stack>
     );
 }
 
