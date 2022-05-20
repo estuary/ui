@@ -13,7 +13,11 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router';
 import { getPathWithParam } from 'utils/misc-utils';
 
-function RowSelector() {
+export interface RowSelectorProps {
+    showMaterialize?: boolean;
+}
+
+function RowSelector({ showMaterialize }: RowSelectorProps) {
     const navigate = useNavigate();
     const intl = useIntl();
 
@@ -93,7 +97,7 @@ function RowSelector() {
                 aria-label={intl.formatMessage({
                     id: 'capturesTable.ctaGroup.aria',
                 })}
-                disabled={false} //TODO (disable entity) !hasSelections
+                disabled={!hasSelections}
             >
                 <Button>
                     <FormattedMessage id="cta.enable" />
@@ -101,9 +105,11 @@ function RowSelector() {
                 <Button>
                     <FormattedMessage id="cta.disable" />
                 </Button>
-                <Button onClick={handlers.materialize}>
-                    <FormattedMessage id="cta.materialize" />
-                </Button>
+                {showMaterialize ? (
+                    <Button onClick={handlers.materialize}>
+                        <FormattedMessage id="cta.materialize" />
+                    </Button>
+                ) : null}
             </ButtonGroup>
 
             <Menu

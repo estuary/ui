@@ -6,7 +6,6 @@ import ChipList from 'components/tables/cells/ChipList';
 import Connector from 'components/tables/cells/Connector';
 import EntityName from 'components/tables/cells/EntityName';
 import ExpandDetails from 'components/tables/cells/ExpandDetails';
-import MaterializeAction from 'components/tables/cells/MaterializeAction';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import UserName from 'components/tables/cells/UserName';
 import DetailsPanel from 'components/tables/DetailsPanel';
@@ -45,10 +44,6 @@ export const tableColumns = [
     {
         field: 'writes_to',
         headerIntlKey: 'entityTable.data.writesTo',
-    },
-    {
-        field: null,
-        headerIntlKey: 'entityTable.data.actions',
     },
     {
         field: 'updated_at',
@@ -112,10 +107,6 @@ function Row({ isSelected, setRow, row }: RowProps) {
                 />
 
                 <ChipList strings={row.writes_to} />
-
-                <Actions>
-                    <MaterializeAction onClick={handlers.clickMaterialize} />
-                </Actions>
 
                 <TimeStamp time={row.updated_at} />
 

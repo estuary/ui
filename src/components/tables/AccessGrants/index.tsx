@@ -4,7 +4,9 @@ import EntityTable, {
     getPagination,
     SortDirection,
 } from 'components/tables/EntityTable';
+import { createSelectableTableStore } from 'components/tables/Store';
 import { useQuery } from 'hooks/supabase-swr';
+import { ZustandProvider } from 'hooks/useZustand';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
 
@@ -40,25 +42,30 @@ function AccessGrantsTable() {
 
     return (
         <Box>
-            <EntityTable
-                noExistingDataContentIds={{
-                    header: 'accessGrants.message1',
-                    message: 'accessGrants.message2',
-                    docLink: 'accessGrants.message2.docLink',
-                    docPath: 'accessGrants.message2.docPath',
-                }}
-                columns={tableColumns}
-                query={rolesQuery}
-                renderTableRows={(data) => <Rows data={data} />}
-                setPagination={setPagination}
-                setSearchQuery={setSearchQuery}
-                sortDirection={sortDirection}
-                setSortDirection={setSortDirection}
-                columnToSort={columnToSort}
-                setColumnToSort={setColumnToSort}
-                header="accessGrantsTable.title"
-                filterLabel="accessGrantsTable.filterLabel"
-            />
+            <ZustandProvider
+                createStore={createSelectableTableStore}
+                storeName="AccessGrants-Selectable-Table"
+            >
+                <EntityTable
+                    noExistingDataContentIds={{
+                        header: 'accessGrants.message1',
+                        message: 'accessGrants.message2',
+                        docLink: 'accessGrants.message2.docLink',
+                        docPath: 'accessGrants.message2.docPath',
+                    }}
+                    columns={tableColumns}
+                    query={rolesQuery}
+                    renderTableRows={(data) => <Rows data={data} />}
+                    setPagination={setPagination}
+                    setSearchQuery={setSearchQuery}
+                    sortDirection={sortDirection}
+                    setSortDirection={setSortDirection}
+                    columnToSort={columnToSort}
+                    setColumnToSort={setColumnToSort}
+                    header="accessGrantsTable.title"
+                    filterLabel="accessGrantsTable.filterLabel"
+                />
+            </ZustandProvider>
         </Box>
     );
 }

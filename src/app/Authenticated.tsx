@@ -2,7 +2,6 @@ import AppLayout from 'AppLayout';
 import CaptureCreate from 'components/capture/Create';
 import { createEditorStore, DraftSpecEditorKey } from 'components/editor/Store';
 import NewMaterialization from 'components/materialization/create';
-import { createSelectableTableStore } from 'components/tables/Store';
 import { RouteStoreProvider } from 'hooks/useRouteStore';
 import { ZustandProvider } from 'hooks/useZustand';
 import Admin from 'pages/Admin';
@@ -95,17 +94,7 @@ const Authenticated = () => {
                 />
 
                 <Route path={routeDetails.captures.path}>
-                    <Route
-                        path=""
-                        element={
-                            <ZustandProvider
-                                createStore={createSelectableTableStore}
-                                storeName="Capture-Selectable-Table"
-                            >
-                                <Captures />
-                            </ZustandProvider>
-                        }
-                    />
+                    <Route path="" element={<Captures />} />
                     <Route
                         path={routeDetails.captures.create.path}
                         element={

@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import { PostgrestError } from '@supabase/supabase-js';
 import ExternalLink from 'components/shared/ExternalLink';
-import RowSelector from 'components/tables/RowSelector';
+import RowSelector, { RowSelectorProps } from 'components/tables/RowSelector';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
@@ -60,6 +60,8 @@ interface Props {
     setColumnToSort: (data: any) => void;
     header: string;
     filterLabel: string;
+    enableSelection?: boolean;
+    rowSelectorProps?: RowSelectorProps;
     noExistingDataContentIds: {
         header: string;
         message: string;
@@ -98,6 +100,8 @@ function EntityTable({
     setColumnToSort,
     header,
     filterLabel,
+    enableSelection,
+    rowSelectorProps,
 }: Props) {
     const [page, setPage] = useState(0);
 
@@ -124,11 +128,11 @@ function EntityTable({
     useEffect(() => {
         if (selectData && selectData.length > 0) {
             setTableState({ status: TableStatuses.DATA_FETCHED });
-            setRows(selectData);
+            enableSelection ? setRows(selectData) : null;
         } else {
             setTableState({ status: TableStatuses.NO_EXISTING_DATA });
         }
-    }, [selectData, isValidating, setRows]);
+    }, [selectData, isValidating, setRows, enableSelection]);
 
     const getEmptyTableHeader = (tableStatus: TableStatuses): string => {
         switch (tableStatus) {
@@ -172,11 +176,15 @@ function EntityTable({
         }
     };
 
+    const resetSelection = () => {
+        enableSelection ? setAll(false) : null;
+    };
+
     const handlers = {
         filterTable: debounce(
             (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
                 const filterQuery = event.target.value;
-                setAll(false);
+                resetSelection();
                 setSearchQuery(
                     filterQuery && filterQuery.length > 0 ? filterQuery : null
                 );
@@ -185,7 +193,7 @@ function EntityTable({
         ),
         sortRequest: (event: React.MouseEvent<unknown>, column: any) => {
             const isAsc = columnToSort === column && sortDirection === 'asc';
-            setAll(false);
+            resetSelection();
             setSortDirection(isAsc ? 'desc' : 'asc');
             setColumnToSort(column);
         },
@@ -196,14 +204,14 @@ function EntityTable({
             event: MouseEvent<HTMLButtonElement> | null,
             newPage: number
         ) => {
-            setAll(false);
+            resetSelection();
             setPagination(getPagination(newPage, rowsPerPage));
             setPage(newPage);
         },
         changeRowsPerPage: (event: ChangeEvent<HTMLInputElement>) => {
             const newLimit = parseInt(event.target.value, 10);
 
-            setAll(false);
+            resetSelection();
             setRowsPerPage(newLimit);
             setPagination(getPagination(0, newLimit));
             setPage(0);
@@ -218,14 +226,20 @@ function EntityTable({
                 </Typography>
                 <Toolbar
                     disableGutters
-                    sx={{ mb: 2, justifyContent: 'space-between' }}
+                    sx={{
+                        mb: 2,
+                        display: 'flex',
+                        justifyContent: enableSelection
+                            ? 'space-between'
+                            : 'flex-end',
+                        alignItems: 'center',
+                    }}
                 >
-                    <RowSelector />
+                    {enableSelection ? (
+                        <RowSelector {...rowSelectorProps} />
+                    ) : null}
 
-                    <Box
-                        margin={0}
-                        sx={{ display: 'flex', alignItems: 'flex-end' }}
-                    >
+                    <Box sx={{ display: 'flex', alignItems: 'flex-end', m: 0 }}>
                         <SearchIcon sx={{ mb: 0.9, mr: 0.5, fontSize: 18 }} />
                         <TextField
                             id="capture-search-box"

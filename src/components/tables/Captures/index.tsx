@@ -4,7 +4,9 @@ import EntityTable, {
     getPagination,
     SortDirection,
 } from 'components/tables/EntityTable';
+import { createSelectableTableStore } from 'components/tables/Store';
 import { useQuery } from 'hooks/supabase-swr';
+import { ZustandProvider } from 'hooks/useZustand';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
 import { OpenGraph } from 'types';
@@ -69,25 +71,34 @@ function CapturesTable() {
 
     return (
         <Box>
-            <EntityTable
-                noExistingDataContentIds={{
-                    header: 'captures.message1',
-                    message: 'captures.message2',
-                    docLink: 'captures.message2.docLink',
-                    docPath: 'captures.message2.docPath',
-                }}
-                columns={tableColumns}
-                query={liveSpecQuery}
-                renderTableRows={(data) => <Rows data={data} />}
-                setPagination={setPagination}
-                setSearchQuery={setSearchQuery}
-                sortDirection={sortDirection}
-                setSortDirection={setSortDirection}
-                columnToSort={columnToSort}
-                setColumnToSort={setColumnToSort}
-                header="captureTable.header"
-                filterLabel="entityTable.filterLabel"
-            />
+            <ZustandProvider
+                createStore={createSelectableTableStore}
+                storeName="Captures-Selectable-Table"
+            >
+                <EntityTable
+                    noExistingDataContentIds={{
+                        header: 'captures.message1',
+                        message: 'captures.message2',
+                        docLink: 'captures.message2.docLink',
+                        docPath: 'captures.message2.docPath',
+                    }}
+                    columns={tableColumns}
+                    query={liveSpecQuery}
+                    renderTableRows={(data) => <Rows data={data} />}
+                    setPagination={setPagination}
+                    setSearchQuery={setSearchQuery}
+                    sortDirection={sortDirection}
+                    setSortDirection={setSortDirection}
+                    columnToSort={columnToSort}
+                    setColumnToSort={setColumnToSort}
+                    header="captureTable.header"
+                    filterLabel="entityTable.filterLabel"
+                    enableSelection
+                    rowSelectorProps={{
+                        showMaterialize: true,
+                    }}
+                />
+            </ZustandProvider>
         </Box>
     );
 }

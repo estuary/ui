@@ -4,7 +4,9 @@ import EntityTable, {
     getPagination,
     SortDirection,
 } from 'components/tables/EntityTable';
+import { createSelectableTableStore } from 'components/tables/Store';
 import { useQuery } from 'hooks/supabase-swr';
+import { ZustandProvider } from 'hooks/useZustand';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
 import { OpenGraph } from 'types';
@@ -69,25 +71,30 @@ function ConnectorsTable() {
 
     return (
         <Box>
-            <EntityTable
-                noExistingDataContentIds={{
-                    header: 'connectors.main.message1',
-                    message: 'connectors.main.message2',
-                    docLink: 'connectors.main.message2.docLink',
-                    docPath: 'connectors.main.message2.docPath',
-                }}
-                columns={tableColumns}
-                query={liveSpecQuery}
-                renderTableRows={(data) => <Rows data={data} />}
-                setPagination={setPagination}
-                setSearchQuery={setSearchQuery}
-                sortDirection={sortDirection}
-                setSortDirection={setSortDirection}
-                columnToSort={columnToSort}
-                setColumnToSort={setColumnToSort}
-                header="connectorTable.title"
-                filterLabel="connectorTable.filterLabel"
-            />
+            <ZustandProvider
+                createStore={createSelectableTableStore}
+                storeName="Connectors-Selectable-Table"
+            >
+                <EntityTable
+                    noExistingDataContentIds={{
+                        header: 'connectors.main.message1',
+                        message: 'connectors.main.message2',
+                        docLink: 'connectors.main.message2.docLink',
+                        docPath: 'connectors.main.message2.docPath',
+                    }}
+                    columns={tableColumns}
+                    query={liveSpecQuery}
+                    renderTableRows={(data) => <Rows data={data} />}
+                    setPagination={setPagination}
+                    setSearchQuery={setSearchQuery}
+                    sortDirection={sortDirection}
+                    setSortDirection={setSortDirection}
+                    columnToSort={columnToSort}
+                    setColumnToSort={setColumnToSort}
+                    header="connectorTable.title"
+                    filterLabel="connectorTable.filterLabel"
+                />
+            </ZustandProvider>
         </Box>
     );
 }
