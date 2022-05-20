@@ -18,7 +18,10 @@ import {
 import { PostgrestError } from '@supabase/supabase-js';
 import ExternalLink from 'components/shared/ExternalLink';
 import RowSelector from 'components/tables/RowSelector';
-import { SelectableTableStore } from 'components/tables/Store';
+import {
+    SelectableTableStore,
+    selectableTableStoreSelectors,
+} from 'components/tables/Store';
 import { Query, useSelect } from 'hooks/supabase-swr';
 import { useZustandStore } from 'hooks/useZustand';
 import { debounce } from 'lodash';
@@ -106,7 +109,12 @@ function EntityTable({
     const setRows = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['setRows']
-    >((state) => state.setRows);
+    >(selectableTableStoreSelectors.rows.set);
+
+    const setAll = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['setAllSelected']
+    >(selectableTableStoreSelectors.selected.setAll);
 
     const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
     const [tableState, setTableState] = useState<TableState>({
@@ -168,6 +176,7 @@ function EntityTable({
         filterTable: debounce(
             (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
                 const filterQuery = event.target.value;
+                setAll(false);
                 setSearchQuery(
                     filterQuery && filterQuery.length > 0 ? filterQuery : null
                 );
@@ -176,7 +185,7 @@ function EntityTable({
         ),
         sortRequest: (event: React.MouseEvent<unknown>, column: any) => {
             const isAsc = columnToSort === column && sortDirection === 'asc';
-
+            setAll(false);
             setSortDirection(isAsc ? 'desc' : 'asc');
             setColumnToSort(column);
         },
@@ -187,11 +196,14 @@ function EntityTable({
             event: MouseEvent<HTMLButtonElement> | null,
             newPage: number
         ) => {
+            setAll(false);
             setPagination(getPagination(newPage, rowsPerPage));
             setPage(newPage);
         },
         changeRowsPerPage: (event: ChangeEvent<HTMLInputElement>) => {
             const newLimit = parseInt(event.target.value, 10);
+
+            setAll(false);
             setRowsPerPage(newLimit);
             setPagination(getPagination(0, newLimit));
             setPage(0);

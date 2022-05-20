@@ -61,16 +61,14 @@ export const getInitialState = (
         setAllSelected: (isSelected) => {
             set(
                 produce(({ selected }) => {
-                    const { rows } = get();
-                    rows.forEach((value, key) => {
-                        console.log('row', { key, isSelected });
-
-                        if (isSelected) {
+                    if (isSelected) {
+                        const { rows } = get();
+                        rows.forEach((value, key) => {
                             selected.set(key);
-                        } else {
-                            selected.delete(key);
-                        }
-                    });
+                        });
+                    } else {
+                        selected.clear();
+                    }
                 }),
                 false,
                 'Selected rows changed'

@@ -92,6 +92,7 @@ function Row({ isSelected, setRow, row }: RowProps) {
                 selected={isSelected}
                 sx={{
                     background: detailsExpanded ? '#04192A' : null,
+                    cursor: 'pointer',
                 }}
             >
                 <TableCell padding="checkbox">
