@@ -48,7 +48,7 @@ export const getInitialState = (
             set(
                 produce(({ selected }) => {
                     if (isSelected) {
-                        selected.set(val, {});
+                        selected.set(val);
                     } else {
                         selected.delete(val);
                     }
@@ -66,7 +66,7 @@ export const getInitialState = (
                         console.log('row', { key, isSelected });
 
                         if (isSelected) {
-                            selected.set(key, {});
+                            selected.set(key);
                         } else {
                             selected.delete(key);
                         }

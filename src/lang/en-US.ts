@@ -56,6 +56,8 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.details': `Details`,
     'cta.saveEntity': `Save and Publish`,
     'cta.restart': `Restart`,
+    'cta.enable': `Enable`,
+    'cta.disable': `Disable`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
@@ -263,6 +265,7 @@ const Captures: ResolvedIntlConfig['messages'] = {
     'captureTable.header': `Captures`,
     'capturesTable.title': `Your Captures`,
     'capturesTable.cta.new': `New Capture`,
+    'capturesTable.ctaGroup.aria': `capture table available actions`,
     'capturesTable.cta.materialize': `${CTAs['cta.materialize']} ${CommonMessages['terms.collections']}`,
     'captures.message1': `Click the "New Capture" button up above to get started.`,
     'captures.message2': `It will guide you through generating and downloading a valid {docLink}.`,
