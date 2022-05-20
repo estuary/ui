@@ -1,4 +1,5 @@
-import { errorMain, slate, successMain, warningMain } from 'context/Theme';
+// import { errorMain, slate, successMain, warningMain } from 'context/Theme';
+import { slate } from 'context/Theme';
 import produce from 'immer';
 import { GetState } from 'zustand';
 import { NamedSet } from 'zustand/middleware';
@@ -30,21 +31,25 @@ export const getInitialState = (
         getShardStatus: (catalogNamespace) => {
             const { shards } = get();
 
-            const selectedShard = shards.find((shard) =>
-                shard.spec.id.includes(catalogNamespace)
-            );
+            // const selectedShard = shards.find((shard) =>
+            //     shard.spec.id.includes(catalogNamespace)
+            // );
 
-            switch (selectedShard?.status[0].code) {
-                case 'PRIMARY':
-                    return successMain;
-                case 'BACKFILL':
-                case 'STANDBY':
-                    return warningMain;
-                case 'FAILED':
-                    return errorMain;
-                default:
-                    return slate[25];
-            }
+            // switch (selectedShard?.status[0].code) {
+            //     case 'PRIMARY':
+            //         return successMain;
+            //     case 'BACKFILL':
+            //     case 'STANDBY':
+            //         return warningMain;
+            //     case 'FAILED':
+            //         return errorMain;
+            //     default:
+            //         return slate[25];
+            // }
+
+            return shards.length > 0 && catalogNamespace
+                ? slate[25]
+                : slate[200];
         },
     };
 };
