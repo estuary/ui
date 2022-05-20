@@ -54,3 +54,7 @@ export const useNotificationStore = create<NotificationState>()(
 );
 
 export default useNotificationStore;
+
+export const notificationStoreSelectors = {
+    showNotification: (state: NotificationState) => state.showNotification,
+};

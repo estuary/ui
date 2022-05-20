@@ -1,45 +1,28 @@
-import { Collapse } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { routeDetails } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
-import CatalogEditor from 'components/shared/Entity/CatalogEditor';
-import DetailsForm from 'components/shared/Entity/DetailsForm';
-import EndpointConfig from 'components/shared/Entity/EndpointConfig';
-import EntityError from 'components/shared/Entity/Error';
-import FooHeader from 'components/shared/Entity/Header';
-import LogDialog from 'components/shared/Entity/LogDialog';
+import Create from 'components/shared/Entity/Create';
 import LogDialogActions from 'components/shared/Entity/LogDialogActions';
-import Error from 'components/shared/Error';
-import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
 import { useClient } from 'hooks/supabase-swr';
 import { usePrompt } from 'hooks/useBlocker';
 import useBrowserTitle from 'hooks/useBrowserTitle';
-import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
-import useConnectorTags from 'hooks/useConnectorTags';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
 import { isEmpty } from 'lodash';
 import { MouseEvent, useEffect } from 'react';
-import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { getEncryptedConfig } from 'services/encryption';
 import { TABLES } from 'services/supabase';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 import useNotificationStore, {
     Notification,
-    NotificationState,
+    notificationStoreSelectors,
 } from 'stores/NotificationStore';
 import { getPathWithParam } from 'utils/misc-utils';
 
 const FORM_ID = 'newCaptureForm';
-
-const selectors = {
-    notifications: {
-        showNotification: (state: NotificationState) => state.showNotification,
-    },
-};
 
 const notification: Notification = {
     description: 'Your new capture is published and ready to be used.',
@@ -55,17 +38,10 @@ function CaptureCreate() {
 
     // Supabase stuff
     const supabaseClient = useClient();
-    const { combinedGrants } = useCombinedGrantsExt({
-        onlyAdmin: true,
-    });
-
-    const { connectorTags, error: connectorTagsError } =
-        useConnectorTags('capture');
-    const hasConnectors = connectorTags.length > 0;
 
     // Notification store
     const showNotification = useNotificationStore(
-        selectors.notifications.showNotification
+        notificationStoreSelectors.showNotification
     );
 
     // Form store
@@ -98,16 +74,6 @@ function CaptureCreate() {
         entityCreateStoreSelectors.formState.reset
     );
 
-    // Form State
-    const showLogs = entityCreateStore(
-        entityCreateStoreSelectors.formState.showLogs
-    );
-    const logToken = entityCreateStore(
-        entityCreateStoreSelectors.formState.logToken
-    );
-    const formSubmitError = entityCreateStore(
-        entityCreateStoreSelectors.formState.error
-    );
     const exitWhenLogsClose = entityCreateStore(
         entityCreateStoreSelectors.formState.exitWhenLogsClose
     );
@@ -425,13 +391,15 @@ function CaptureCreate() {
 
     return (
         <PageContainer>
-            <LogDialog
-                open={showLogs}
-                token={logToken}
-                title={
-                    <FormattedMessage id="captureCreation.save.waitMessage" />
-                }
-                actionComponent={
+            <Create
+                title="browserTitle.captureCreate"
+                connectorType="capture"
+                formID={FORM_ID}
+                successNotification={notification}
+                messagePrefix="captureCreation"
+                test={handlers.test}
+                save={handlers.saveAndPublish}
+                logAction={
                     <LogDialogActions
                         close={handlers.closeLogs}
                         materialize={{
@@ -441,54 +409,6 @@ function CaptureCreate() {
                     />
                 }
             />
-
-            <FooHeader
-                test={handlers.test}
-                testDisabled={!hasConnectors}
-                save={handlers.saveAndPublish}
-                saveDisabled={!draftId}
-                formId={FORM_ID}
-                heading={<FormattedMessage id="captureCreation.heading" />}
-            />
-
-            {connectorTagsError ? (
-                <Error error={connectorTagsError} />
-            ) : (
-                <>
-                    <Collapse in={formSubmitError !== null}>
-                        {formSubmitError && (
-                            <EntityError
-                                title={formSubmitError.title}
-                                error={formSubmitError.error}
-                                logToken={logToken}
-                                draftId={draftId}
-                            />
-                        )}
-                    </Collapse>
-
-                    <form id={FORM_ID}>
-                        {hasConnectors ? (
-                            <ErrorBoundryWrapper>
-                                <DetailsForm
-                                    connectorTags={connectorTags}
-                                    messagePrefix="captureCreation"
-                                    accessGrants={combinedGrants}
-                                />
-                            </ErrorBoundryWrapper>
-                        ) : null}
-
-                        {imageTag?.id ? (
-                            <ErrorBoundryWrapper>
-                                <EndpointConfig connectorImage={imageTag.id} />
-                            </ErrorBoundryWrapper>
-                        ) : null}
-                    </form>
-
-                    <ErrorBoundryWrapper>
-                        <CatalogEditor messageId="captureCreation.finalReview.instructions" />
-                    </ErrorBoundryWrapper>
-                </>
-            )}
         </PageContainer>
     );
 }
