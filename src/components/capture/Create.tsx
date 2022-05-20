@@ -234,11 +234,6 @@ function CaptureCreate() {
                     async (response) => {
                         if (response.data) {
                             if (response.data.length > 0) {
-                                console.log(
-                                    'response.data[0]',
-                                    response.data[0]
-                                );
-
                                 setFormState({
                                     logToken: response.data[0].logs_token,
                                     showLogs: true,

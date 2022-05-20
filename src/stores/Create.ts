@@ -298,18 +298,18 @@ export const getInitialState = (
         prefillCollections: (value) => {
             set(
                 produce((state) => {
-                    state.collections = [];
-                    state.resourceConfig = {};
+                    const collections: string[] = [];
+                    const configs = {};
 
                     value.forEach((collection) => {
                         collection.writes_to.forEach((writes_to) => {
-                            state.collections.push(writes_to);
-                            state.resourceConfig[writes_to] =
-                                getDefaultJsonFormsData();
+                            collections.push(writes_to);
+                            configs[writes_to] = getDefaultJsonFormsData();
                         });
                     });
 
-                    console.log('state.resourceConfig', state.resourceConfig);
+                    state.collections = collections;
+                    state.resourceConfig = configs;
                 }),
                 false,
                 'Collections Prefilled'

@@ -53,8 +53,6 @@ function CollectionSelector() {
         },
     };
 
-    console.log('collections', collections);
-
     return collectionData && !error ? (
         <Box sx={{ mb: 5 }}>
             <Typography variant="h5" sx={{ mb: 1 }}>
