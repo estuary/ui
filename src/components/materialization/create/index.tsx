@@ -55,8 +55,8 @@ function MaterializationCreate() {
 
     // Supabase
     const supabaseClient = useClient();
-    const { combinedGrants } = useCombinedGrantsExt({
-        onlyAdmin: true,
+    const { combinedGrants, isValidating } = useCombinedGrantsExt({
+        adminOnly: true,
     });
     const { connectorTags, error: connectorTagsError } =
         useConnectorTags('materialization');
@@ -532,7 +532,7 @@ function MaterializationCreate() {
                     </Collapse>
 
                     <form>
-                        {hasConnectors && (
+                        {hasConnectors && !isValidating && (
                             <ErrorBoundryWrapper>
                                 <DetailsForm
                                     connectorTags={connectorTags}

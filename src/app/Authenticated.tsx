@@ -1,7 +1,9 @@
+import NoGrantsFound from 'app/NoGrants';
 import AppLayout from 'AppLayout';
 import CaptureCreate from 'components/capture/Create';
 import { createEditorStore, DraftSpecEditorKey } from 'components/editor/Store';
 import NewMaterialization from 'components/materialization/create';
+import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import { RouteStoreProvider } from 'hooks/useRouteStore';
 import { ZustandProvider } from 'hooks/useZustand';
 import Admin from 'pages/Admin';
@@ -74,76 +76,87 @@ export const routeDetails = {
 };
 
 const Authenticated = () => {
-    return (
-        <Routes>
-            <Route
-                path={routeDetails.registration.path}
-                element={<Registration />}
-            />
-            <Route element={<AppLayout />}>
-                <Route path={routeDetails.home.path} element={<Home />} />
+    const { combinedGrants, isValidating } = useCombinedGrantsExt({
+        singleCall: true,
+    });
+    const hasGrants = !isValidating && combinedGrants.length > 0;
 
+    console.log('authenticated', hasGrants);
+
+    if (!hasGrants) {
+        return <NoGrantsFound />;
+    } else {
+        return (
+            <Routes>
                 <Route
-                    path={routeDetails.connectors.path}
-                    element={<Connectors />}
+                    path={routeDetails.registration.path}
+                    element={<Registration />}
                 />
+                <Route element={<AppLayout />}>
+                    <Route path={routeDetails.home.path} element={<Home />} />
 
-                <Route
-                    path={routeDetails.collections.path}
-                    element={<Collections />}
-                />
-
-                <Route path={routeDetails.captures.path}>
-                    <Route path="" element={<Captures />} />
                     <Route
-                        path={routeDetails.captures.create.path}
-                        element={
-                            <RouteStoreProvider
-                                routeStoreKey={
-                                    routeDetails.captures.create.store.key
-                                }
-                            >
-                                <ZustandProvider
-                                    createStore={createEditorStore}
-                                    storeName={`${DraftSpecEditorKey}-Captures`}
+                        path={routeDetails.connectors.path}
+                        element={<Connectors />}
+                    />
+
+                    <Route
+                        path={routeDetails.collections.path}
+                        element={<Collections />}
+                    />
+
+                    <Route path={routeDetails.captures.path}>
+                        <Route path="" element={<Captures />} />
+                        <Route
+                            path={routeDetails.captures.create.path}
+                            element={
+                                <RouteStoreProvider
+                                    routeStoreKey={
+                                        routeDetails.captures.create.store.key
+                                    }
                                 >
-                                    <CaptureCreate />
-                                </ZustandProvider>
-                            </RouteStoreProvider>
-                        }
+                                    <ZustandProvider
+                                        createStore={createEditorStore}
+                                        storeName={`${DraftSpecEditorKey}-Captures`}
+                                    >
+                                        <CaptureCreate />
+                                    </ZustandProvider>
+                                </RouteStoreProvider>
+                            }
+                        />
+                    </Route>
+
+                    <Route path={routeDetails.materializations.path}>
+                        <Route path="" element={<Materializations />} />
+                        <Route
+                            path={routeDetails.materializations.create.path}
+                            element={
+                                <RouteStoreProvider
+                                    routeStoreKey={
+                                        routeDetails.materializations.create
+                                            .store.key
+                                    }
+                                >
+                                    <ZustandProvider
+                                        createStore={createEditorStore}
+                                        storeName={`${DraftSpecEditorKey}-Materializations`}
+                                    >
+                                        <NewMaterialization />
+                                    </ZustandProvider>
+                                </RouteStoreProvider>
+                            }
+                        />
+                    </Route>
+
+                    <Route path={routeDetails.admin.path} element={<Admin />} />
+                    <Route
+                        path={routeDetails.pageNotFound.path}
+                        element={<PageNotFound />}
                     />
                 </Route>
-
-                <Route path={routeDetails.materializations.path}>
-                    <Route path="" element={<Materializations />} />
-                    <Route
-                        path={routeDetails.materializations.create.path}
-                        element={
-                            <RouteStoreProvider
-                                routeStoreKey={
-                                    routeDetails.materializations.create.store
-                                        .key
-                                }
-                            >
-                                <ZustandProvider
-                                    createStore={createEditorStore}
-                                    storeName={`${DraftSpecEditorKey}-Materializations`}
-                                >
-                                    <NewMaterialization />
-                                </ZustandProvider>
-                            </RouteStoreProvider>
-                        }
-                    />
-                </Route>
-
-                <Route path={routeDetails.admin.path} element={<Admin />} />
-                <Route
-                    path={routeDetails.pageNotFound.path}
-                    element={<PageNotFound />}
-                />
-            </Route>
-        </Routes>
-    );
+            </Routes>
+        );
+    }
 };
 
 export default Authenticated;

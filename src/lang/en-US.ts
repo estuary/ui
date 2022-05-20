@@ -189,6 +189,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.error.pageNotFound': `Page Not Found`,
     'routeTitle.login': `Login`,
     'routeTitle.loginLoading': `Checking Credentials`,
+    'routeTitle.noGrants': `No Access Grants`,
     'routeTitle.materializationCreate': `Materialization Create`,
     'routeTitle.materializationEdit': `Materialization Edit`,
     'routeTitle.materializations': `Materializations`,
@@ -206,6 +207,7 @@ const BrowserTitles: ResolvedIntlConfig['messages'] = {
     'browserTitle.connectors': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.connectors']}`,
     'browserTitle.error.pageNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.pageNotFound']}`,
     'browserTitle.login': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.login']}`,
+    'browserTitle.noGrants': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.noGrants']}`,
     'browserTitle.loginLoading': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.loginLoading']}`,
     'browserTitle.materializationCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationCreate']}`,
     'browserTitle.materializationEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationEdit']}`,
@@ -259,6 +261,10 @@ const ConnectorsPage: ResolvedIntlConfig['messages'] = {
 const LoginPage: ResolvedIntlConfig['messages'] = {
     'login.main.message': `When running locally you can login with whatever name you want.`,
     'login.oidc.message': `Sign in to continue to ${CommonMessages.productName}.`,
+};
+
+const NoGrants: ResolvedIntlConfig['messages'] = {
+    'noGrants.main.message': `Thanks for signing up. Our team is reviewing your account and will get back to you shortly..`,
 };
 
 const Captures: ResolvedIntlConfig['messages'] = {
@@ -382,6 +388,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...MonacoEditor,
     ...ConnectorsPage,
     ...Error,
+    ...NoGrants,
     ...LoginPage,
     ...AccessGrants,
     ...Collections,

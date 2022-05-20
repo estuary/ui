@@ -56,7 +56,7 @@ function Create({
     // Supabase stuff
     const supabaseClient = useClient();
     const { combinedGrants } = useCombinedGrantsExt({
-        onlyAdmin: true,
+        adminOnly: true,
     });
 
     const { connectorTags, error: connectorTagsError } =

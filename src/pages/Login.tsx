@@ -68,7 +68,7 @@ const Login = () => {
                     src={lightLogo}
                     style={{ marginBottom: 16 }}
                     width={200}
-                    alt="Estuary Logo"
+                    alt="Estuary"
                 />
 
                 <Typography sx={{ mb: 5 }}>

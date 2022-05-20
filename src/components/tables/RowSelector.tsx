@@ -40,6 +40,11 @@ function RowSelector({ showMaterialize }: RowSelectorProps) {
         closeMenu: () => {
             setAnchorEl(null);
         },
+        toggle: (enable: boolean) => {
+            throw Error(
+                `Toggling enable/disable not implemented yet. Passing variable ${enable}`
+            );
+        },
         materialize: () => {
             const selectedRowsArray: string[] = [];
 
@@ -99,10 +104,10 @@ function RowSelector({ showMaterialize }: RowSelectorProps) {
                 })}
                 disabled={!hasSelections}
             >
-                <Button>
+                <Button onClick={() => handlers.toggle(true)}>
                     <FormattedMessage id="cta.enable" />
                 </Button>
-                <Button>
+                <Button onClick={() => handlers.toggle(false)}>
                     <FormattedMessage id="cta.disable" />
                 </Button>
                 {showMaterialize ? (
