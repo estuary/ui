@@ -9,7 +9,7 @@ import { useRouteStore } from 'hooks/useRouteStore';
 import useShardsList from 'hooks/useShardsList';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
-import { getStore } from 'stores/Repo';
+import { useStoreRepo } from 'stores/Repo';
 import { shardDetailSelectors } from 'stores/ShardDetail';
 import { OpenGraph } from 'types';
 
@@ -71,7 +71,7 @@ function CapturesTable() {
         [pagination, searchQuery, columnToSort, sortDirection]
     );
 
-    const shardDetailStore = getStore(useRouteStore());
+    const shardDetailStore = useStoreRepo(useRouteStore());
     const setShards = shardDetailStore(shardDetailSelectors.setShards);
 
     useShardsList('capture', setShards);

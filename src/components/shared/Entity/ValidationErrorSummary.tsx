@@ -3,28 +3,30 @@ import KeyValueList, { KeyValue } from 'components/shared/KeyValueList';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { map } from 'lodash';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { createStoreSelectors } from 'stores/Create';
-import { getStore } from 'stores/Repo';
+import { entityCreateStoreSelectors } from 'stores/Create';
 
-// TODO : Delete this or make is useful. Right now JSON Forms is kinda hard to write custom validation
-// just so that we don't have to display validation errors right away.
 function ValidationErrorSummary() {
     const intl = useIntl();
 
-    const entityCreateStore = getStore(useRouteStore());
+    const entityCreateStore = useRouteStore();
     const [detailErrors, specErrors] = entityCreateStore(
-        createStoreSelectors.errors
+        entityCreateStoreSelectors.errors
     );
+    const getResourceConfigErrors = entityCreateStore(
+        entityCreateStoreSelectors.resourceConfig.getErrors
+    );
+    const resourceConfigErrors = getResourceConfigErrors();
+
     const displayValidation = entityCreateStore(
-        createStoreSelectors.formState.displayValidation
+        entityCreateStoreSelectors.formState.displayValidation
     );
 
     const filteredDetailErrors = map(detailErrors, 'instancePath');
     const filteredSpecErrors = map(specErrors, 'instancePath');
-    // const filteredErrors = uniq(
-    //     map(filteredDetailErrors.concat(filteredSpecErrors), 'instancePath')
-    // );
-
+    const filteredResourceConfigErrors = map(
+        resourceConfigErrors,
+        'instancePath'
+    );
     const filteredErrorsList: KeyValue[] = [];
 
     if (filteredDetailErrors.length > 0) {
@@ -39,6 +41,14 @@ function ValidationErrorSummary() {
         filteredErrorsList.push({
             title: intl.formatMessage({
                 id: 'foo.endpointConfig.endpointConfigHaveErrors',
+            }),
+        });
+    }
+
+    if (filteredResourceConfigErrors.length > 0) {
+        filteredErrorsList.push({
+            title: intl.formatMessage({
+                id: 'foo.endpointConfig.resourceConfigHaveErrors',
             }),
         });
     }

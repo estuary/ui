@@ -14,8 +14,7 @@ import {
     defaultRenderers,
     showValidation,
 } from 'services/jsonforms';
-import { createStoreSelectors, FormStatus } from 'stores/Create';
-import { getStore } from 'stores/Repo';
+import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 import { Grants } from 'types';
 import { getConnectorName } from 'utils/misc-utils';
 
@@ -32,13 +31,17 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
         routeDetails.captures.create.params.connectorID
     );
 
-    const entityCreateStore = getStore(useRouteStore());
-    const formData = entityCreateStore(createStoreSelectors.details.data);
-    const setDetails = entityCreateStore(createStoreSelectors.details.set);
-    const displayValidation = entityCreateStore(
-        createStoreSelectors.formState.displayValidation
+    const entityCreateStore = useRouteStore();
+    const formData = entityCreateStore(entityCreateStoreSelectors.details.data);
+    const setDetails = entityCreateStore(
+        entityCreateStoreSelectors.details.set
     );
-    const status = entityCreateStore(createStoreSelectors.formState.status);
+    const displayValidation = entityCreateStore(
+        entityCreateStoreSelectors.formState.displayValidation
+    );
+    const status = entityCreateStore(
+        entityCreateStoreSelectors.formState.status
+    );
 
     useEffect(() => {
         if (connectorID) {
@@ -156,11 +159,13 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
 
     return (
         <>
-            <Typography variant="h5">
+            <Typography variant="h5" sx={{ mb: 1 }}>
                 <FormattedMessage id={`${messagePrefix}.details.heading`} />
             </Typography>
 
-            <FormattedMessage id={`${messagePrefix}.instructions`} />
+            <Typography sx={{ mb: 2 }}>
+                <FormattedMessage id={`${messagePrefix}.instructions`} />
+            </Typography>
 
             <Stack direction="row" spacing={2}>
                 {schema.properties[CONNECTOR_IMAGE_SCOPE].oneOf.length > 0 ? (
@@ -173,7 +178,10 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
                             renderers={defaultRenderers}
                             cells={materialCells}
                             config={defaultOptions}
-                            readonly={status !== FormStatus.IDLE}
+                            readonly={
+                                status === FormStatus.TESTING ||
+                                status === FormStatus.SAVING
+                            }
                             validationMode={showValidation(displayValidation)}
                             onChange={setDetails}
                         />

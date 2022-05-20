@@ -78,38 +78,33 @@ const Navigation = ({ open, width, onNavigationToggle }: Props) => {
                 }}
             >
                 <Box>
-                    <Box sx={{ mb: 16, pl: 1 }}>
-                        <Box
+                    <Box
+                        sx={{
+                            pt: 1,
+                            pb: 0.25,
+                            pl: 1,
+                            display: 'flex',
+                            flexGrow: 1,
+                            alignItems: 'center',
+                        }}
+                    >
+                        <IconButton
+                            aria-label={intl.formatMessage({
+                                id: 'header.openNavigation.ariaLabel',
+                            })}
+                            onClick={openNavigation}
                             sx={{
-                                pt: 1,
-                                pb: 0.25,
-                                display: 'flex',
-                                flexGrow: 1,
-                                alignItems: 'center',
+                                display: 'inline-flex',
+                                justifyContent: 'left',
+                                flexShrink: 0,
                             }}
                         >
-                            <IconButton
-                                aria-label={intl.formatMessage({
-                                    id: 'header.openNavigation.ariaLabel',
-                                })}
-                                onClick={openNavigation}
-                                sx={{
-                                    display: 'inline-flex',
-                                    justifyContent: 'left',
-                                    flexShrink: 0,
-                                }}
-                            >
-                                <MenuIcon />
-                            </IconButton>
+                            <MenuIcon />
+                        </IconButton>
 
-                            <Typography
-                                sx={{ width: 136, ml: 2, flexShrink: 0 }}
-                            >
-                                <FormattedMessage id="mainMenu.label" />
-                            </Typography>
-                        </Box>
-
-                        <UserMenu />
+                        <Typography sx={{ width: 136, ml: 2, flexShrink: 0 }}>
+                            <FormattedMessage id="mainMenu.label" />
+                        </Typography>
                     </Box>
 
                     <List
@@ -150,6 +145,8 @@ const Navigation = ({ open, width, onNavigationToggle }: Props) => {
                 </Box>
 
                 <Box sx={{ pl: 1 }}>
+                    <UserMenu />
+
                     <HelpMenu />
 
                     <Box

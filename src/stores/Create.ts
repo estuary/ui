@@ -1,7 +1,7 @@
 import { JsonFormsCore } from '@jsonforms/core';
 import { PostgrestError } from '@supabase/postgrest-js';
 import produce from 'immer';
-import { isEqual } from 'lodash';
+import { isEqual, map } from 'lodash';
 import { GetState } from 'zustand';
 import { NamedSet } from 'zustand/middleware';
 
@@ -16,10 +16,15 @@ export interface Details extends Pick<JsonFormsCore, 'data' | 'errors'> {
     };
 }
 
-export interface EndpointConfig extends Pick<JsonFormsCore, 'data' | 'errors'> {
+export interface JsonFormsData extends Pick<JsonFormsCore, 'data' | 'errors'> {
     data: {
         [key: string]: any;
     };
+}
+
+export interface ResourceConfig {
+    errors: any[];
+    [key: string]: JsonFormsData | any[];
 }
 
 export interface FormState {
@@ -51,15 +56,31 @@ export const formInProgress = (formStateStatus: FormStatus) => {
     );
 };
 
+const getDefaultJsonFormsData = () => ({
+    data: {},
+    errors: [],
+});
+
 export interface CreateEntityStore {
     //Details
     details: Details;
     setDetails: (details: Details) => void;
 
     //Spec
-    endpointConfig: EndpointConfig;
-    setEndpointConfig: (endpointConfig: EndpointConfig) => void;
+    endpointConfig: JsonFormsData;
+    setEndpointConfig: (endpointConfig: JsonFormsData) => void;
 
+    // Resource Config
+    resourceConfig: { [key: string]: ResourceConfig };
+    setResourceConfig: (key: string, value?: ResourceConfig) => void;
+    getResourceConfigErrors: () => any[];
+
+    // Collection Selector
+    collections: any[];
+    setCollections: (collections: any[]) => void;
+    prefillCollections: (collections: any[]) => void;
+
+    //Form State
     formState: FormState;
     setFormState: (data: Partial<FormState>) => void;
     resetFormState: (status: FormStatus) => void;
@@ -75,6 +96,9 @@ export interface CreateEntityStore {
 }
 
 export const initialCreateStates = {
+    collections: () => {
+        return [];
+    },
     connectors: () => {
         return [];
     },
@@ -93,11 +117,9 @@ export const initialCreateStates = {
     endpointSchema: () => {
         return {};
     },
-    endpointConfig: (): EndpointConfig => {
-        return {
-            data: {},
-            errors: [],
-        };
+    endpointConfig: (): JsonFormsData => {
+        const defaults = getDefaultJsonFormsData();
+        return { ...defaults };
     },
     formState: (): FormState => {
         return {
@@ -109,11 +131,20 @@ export const initialCreateStates = {
             error: null,
         };
     },
+    resourceConfig: () => {
+        return {};
+    },
 };
 
 export const getInitialStateData = (): Pick<
     CreateEntityStore,
-    'details' | 'endpointConfig' | 'connectors' | 'formState' | 'endpointSchema'
+    | 'details'
+    | 'endpointConfig'
+    | 'connectors'
+    | 'formState'
+    | 'endpointSchema'
+    | 'collections'
+    | 'resourceConfig'
 > => {
     return {
         details: initialCreateStates.details(),
@@ -121,6 +152,8 @@ export const getInitialStateData = (): Pick<
         connectors: initialCreateStates.connectors(),
         formState: initialCreateStates.formState(),
         endpointSchema: initialCreateStates.endpointSchema(),
+        resourceConfig: initialCreateStates.resourceConfig(),
+        collections: initialCreateStates.collections(),
     };
 };
 
@@ -221,13 +254,69 @@ export const getInitialState = (
                 'Setting endpointSchema'
             );
         },
+        setResourceConfig: (key, value) => {
+            set(
+                produce((state) => {
+                    state.resourceConfig[key] =
+                        value ?? getDefaultJsonFormsData();
+                }),
+                false,
+                'Resource Config Changed'
+            );
+        },
+        getResourceConfigErrors: () => {
+            const { resourceConfig } = get();
+            let response: any[] = [];
+
+            if (Object.keys(resourceConfig).length > 0) {
+                map(resourceConfig, (config) => {
+                    const { errors } = config;
+                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                    if (errors && errors.length > 0) {
+                        response = response.concat(errors);
+                    }
+                });
+            } else {
+                // TODO (errors) Need to populate this object with something?
+                response = [{}];
+            }
+
+            return response;
+        },
+
+        setCollections: (value) => {
+            set(
+                produce((state) => {
+                    state.collections = value;
+                }),
+                false,
+                'Collections Changed'
+            );
+        },
+
+        prefillCollections: (value) => {
+            set(
+                produce((state) => {
+                    state.collections = value;
+                    state.resourceConfig = {};
+
+                    value.forEach((collection) => {
+                        state.resourceConfig[collection] =
+                            getDefaultJsonFormsData();
+                    });
+                }),
+                false,
+                'Collections Prefilled'
+            );
+        },
+
         resetState: () => {
             set(getInitialStateData(), false, 'Resetting State');
         },
     };
 };
 
-export const createStoreSelectors = {
+export const entityCreateStoreSelectors = {
     details: {
         data: (state: CreateEntityStore) => state.details.data,
         entityName: (state: CreateEntityStore) => state.details.data.entityName,
@@ -241,6 +330,7 @@ export const createStoreSelectors = {
         id: (state: CreateEntityStore) => state.endpointConfig.data.id,
         data: (state: CreateEntityStore) => state.endpointConfig.data,
         set: (state: CreateEntityStore) => state.setEndpointConfig,
+        errors: (state: CreateEntityStore) => state.endpointConfig.errors,
     },
     formState: {
         showLogs: (state: CreateEntityStore) => state.formState.showLogs,
@@ -254,9 +344,19 @@ export const createStoreSelectors = {
         set: (state: CreateEntityStore) => state.setFormState,
         reset: (state: CreateEntityStore) => state.resetFormState,
     },
+    resourceConfig: {
+        get: (state: CreateEntityStore) => state.resourceConfig,
+        set: (state: CreateEntityStore) => state.setResourceConfig,
+        getErrors: (state: CreateEntityStore) => state.getResourceConfigErrors,
+    },
+
     connectors: (state: CreateEntityStore) => state.connectors,
     endpointSchema: (state: CreateEntityStore) => state.endpointSchema,
     setEndpointSchema: (state: CreateEntityStore) => state.setEndpointSchema,
+
+    collections: (state: CreateEntityStore) => state.collections,
+    setCollections: (state: CreateEntityStore) => state.setCollections,
+    prefillCollections: (state: CreateEntityStore) => state.prefillCollections,
 
     resetState: (state: CreateEntityStore) => state.resetState,
     hasChanges: (state: CreateEntityStore) => state.hasChanges,

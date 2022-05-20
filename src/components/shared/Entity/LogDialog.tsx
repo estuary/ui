@@ -28,6 +28,7 @@ function LogDialog({
     return (
         <Dialog open={open} maxWidth="lg" fullWidth aria-labelledby={TITLE_ID}>
             <DialogTitle id={TITLE_ID}>{title}</DialogTitle>
+
             <DialogContent
                 sx={{
                     height: logHeight + 25,
@@ -39,7 +40,15 @@ function LogDialog({
                     height={logHeight}
                 />
             </DialogContent>
-            <DialogActions>{actionComponent}</DialogActions>
+            <DialogActions
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                }}
+            >
+                {actionComponent}
+            </DialogActions>
         </Dialog>
     );
 }

@@ -3,6 +3,8 @@ import {
     Collapse,
     LinearProgress,
     Stack,
+    SxProps,
+    Theme,
     Toolbar,
     Typography,
 } from '@mui/material';
@@ -14,14 +16,12 @@ import { useZustandStore } from 'hooks/useZustand';
 import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
-    createStoreSelectors,
+    entityCreateStoreSelectors,
     formInProgress,
     FormStatus,
 } from 'stores/Create';
-import { getStore } from 'stores/Repo';
 
 interface Props {
-    close: (event: any) => void;
     test: (event: any) => void;
     testDisabled: boolean;
     save: (event: any) => void;
@@ -31,7 +31,6 @@ interface Props {
 }
 
 function FooHeader({
-    close,
     test,
     testDisabled,
     save,
@@ -44,11 +43,13 @@ function FooHeader({
         EditorStoreState<DraftSpecQuery>['id']
     >((state) => state.id);
 
-    const entityCreateStore = getStore(useRouteStore());
+    const entityCreateStore = useRouteStore();
     const formStateStatus = entityCreateStore(
-        createStoreSelectors.formState.status
+        entityCreateStoreSelectors.formState.status
     );
-    const setFormState = entityCreateStore(createStoreSelectors.formState.set);
+    const setFormState = entityCreateStore(
+        entityCreateStoreSelectors.formState.set
+    );
 
     const handlers = {
         test: (event: any) => {
@@ -65,12 +66,15 @@ function FooHeader({
         },
     };
 
+    const buttonSx: SxProps<Theme> = { ml: 1, borderRadius: 5 };
+
     return (
         <>
-            <Toolbar>
+            <Toolbar disableGutters>
                 <Typography variant="h6" noWrap>
                     {heading}
                 </Typography>
+
                 <Stack
                     direction="row"
                     alignItems="center"
@@ -78,10 +82,6 @@ function FooHeader({
                         ml: 'auto',
                     }}
                 >
-                    <Button variant="text" onClick={close} color="error">
-                        <FormattedMessage id="cta.cancel" />
-                    </Button>
-
                     <Button
                         onClick={handlers.test}
                         disabled={
@@ -89,7 +89,7 @@ function FooHeader({
                         }
                         form={formId}
                         type="submit"
-                        color="success"
+                        sx={buttonSx}
                     >
                         <FormattedMessage
                             id={
@@ -105,14 +105,15 @@ function FooHeader({
                         disabled={
                             formInProgress(formStateStatus) || saveDisabled
                         }
-                        color="success"
+                        sx={buttonSx}
                     >
                         <FormattedMessage id="cta.saveEntity" />
                     </Button>
                 </Stack>
             </Toolbar>
+
             <Collapse in={formInProgress(formStateStatus)} unmountOnExit>
-                <LinearProgress />
+                <LinearProgress sx={{ mb: 2 }} />
             </Collapse>
             <ValidationErrorSummary />
         </>

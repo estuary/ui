@@ -10,6 +10,7 @@ import { debounce } from 'lodash';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useCallback, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { stringifyJSON } from 'services/stringify';
 
 export interface Props {
     disabled?: boolean;
@@ -128,7 +129,7 @@ function MonacoEditor({
                     <DiffEditor
                         height={`${height}px`}
                         original={editorRef.current.getValue()}
-                        modified={JSON.stringify(serverUpdate, null, 2)}
+                        modified={stringifyJSON(serverUpdate)}
                         theme={
                             theme.palette.mode === 'light' ? 'vs' : 'vs-dark'
                         }
@@ -143,7 +144,7 @@ function MonacoEditor({
                         defaultValue={intl.formatMessage({
                             id: 'common.loading',
                         })}
-                        value={JSON.stringify(value, null, 2)}
+                        value={stringifyJSON(value)}
                         path={path}
                         options={{
                             readOnly: disabled ? disabled : false,

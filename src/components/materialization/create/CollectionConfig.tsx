@@ -1,32 +1,35 @@
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { Grid } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
 import CollectionSelector from 'components/materialization/CollectionSelector';
 import ExpandableResourceConfig from 'components/materialization/create/ExpandableResourceConfig';
-import useCreationStore, {
-    creationSelectors,
-} from 'components/materialization/Store';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import useLiveSpecsExt from 'hooks/useLiveSpecsExt';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
-import { createStoreSelectors } from 'stores/Create';
-import { getStore } from 'stores/Repo';
+import { entityCreateStoreSelectors } from 'stores/Create';
 
 function CollectionConfig() {
-    const entityCreateStore = getStore(useRouteStore());
+    const entityCreateStore = useRouteStore();
     const imageTag = entityCreateStore(
-        createStoreSelectors.details.connectorTag
+        entityCreateStoreSelectors.details.connectorTag
     );
-    const collections = useCreationStore(creationSelectors.collections);
-    const prefillCollections = useCreationStore(
-        creationSelectors.prefillCollections
+    const collections = entityCreateStore(
+        entityCreateStoreSelectors.collections
+    );
+    const prefillCollections = entityCreateStore(
+        entityCreateStoreSelectors.prefillCollections
     );
 
     const [searchParams] = useSearchParams();
     const specID = searchParams.get(
         routeDetails.materializations.create.params.specID
+    );
+
+    const getErrors = entityCreateStore(
+        entityCreateStoreSelectors.resourceConfig.getErrors
     );
 
     const { liveSpecs } = useLiveSpecsExt(specID);
@@ -41,7 +44,13 @@ function CollectionConfig() {
         return (
             <WrapperWithHeader
                 header={
-                    <FormattedMessage id="materializationCreation.collections.heading" />
+                    <>
+                        {' '}
+                        {getErrors().length > 0 ? (
+                            <ErrorOutlineIcon color="error" sx={{ pr: 1 }} />
+                        ) : null}
+                        <FormattedMessage id="materializationCreation.collections.heading" />
+                    </>
                 }
             >
                 <>

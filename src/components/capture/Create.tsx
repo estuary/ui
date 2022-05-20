@@ -12,7 +12,6 @@ import LogDialogActions from 'components/shared/Entity/LogDialogActions';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import PageContainer from 'components/shared/PageContainer';
-import { useConfirmationModalContext } from 'context/Confirmation';
 import { useClient } from 'hooks/supabase-swr';
 import { usePrompt } from 'hooks/useBlocker';
 import useBrowserTitle from 'hooks/useBrowserTitle';
@@ -21,17 +20,17 @@ import useConnectorTags from 'hooks/useConnectorTags';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
+import { isEmpty } from 'lodash';
 import { MouseEvent, useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { getEncryptedConfig } from 'services/encryption';
 import { TABLES } from 'services/supabase';
-import { createStoreSelectors, FormStatus } from 'stores/Create';
+import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 import useNotificationStore, {
     Notification,
     NotificationState,
 } from 'stores/NotificationStore';
-import { getStore } from 'stores/Repo';
 import { getPathWithParam } from 'utils/misc-utils';
 
 const FORM_ID = 'newCaptureForm';
@@ -53,7 +52,6 @@ function CaptureCreate() {
 
     // misc hooks
     const navigate = useNavigate();
-    const confirmationModalContext = useConfirmationModalContext();
 
     // Supabase stuff
     const supabaseClient = useClient();
@@ -71,41 +69,47 @@ function CaptureCreate() {
     );
 
     // Form store
-    const entityCreateStore = getStore(useRouteStore());
+    const entityCreateStore = useRouteStore();
     const entityName = entityCreateStore(
-        createStoreSelectors.details.entityName
+        entityCreateStoreSelectors.details.entityName
     );
     const imageTag = entityCreateStore(
-        createStoreSelectors.details.connectorTag
+        entityCreateStoreSelectors.details.connectorTag
     );
     const entityDescription = entityCreateStore(
-        createStoreSelectors.details.description
+        entityCreateStoreSelectors.details.description
     );
     const endpointConfigData = entityCreateStore(
-        createStoreSelectors.endpointConfig.data
+        entityCreateStoreSelectors.endpointConfig.data
     );
     const endpointSchema = entityCreateStore(
-        createStoreSelectors.endpointSchema
+        entityCreateStoreSelectors.endpointSchema
     );
-    const hasChanges = entityCreateStore(createStoreSelectors.hasChanges);
-    const resetState = entityCreateStore(createStoreSelectors.resetState);
+    const hasChanges = entityCreateStore(entityCreateStoreSelectors.hasChanges);
+    const resetState = entityCreateStore(entityCreateStoreSelectors.resetState);
     const [detailErrors, specErrors] = entityCreateStore(
-        createStoreSelectors.errors
+        entityCreateStoreSelectors.errors
     );
 
-    const setFormState = entityCreateStore(createStoreSelectors.formState.set);
+    const setFormState = entityCreateStore(
+        entityCreateStoreSelectors.formState.set
+    );
     const resetFormState = entityCreateStore(
-        createStoreSelectors.formState.reset
+        entityCreateStoreSelectors.formState.reset
     );
 
     // Form State
-    const showLogs = entityCreateStore(createStoreSelectors.formState.showLogs);
-    const logToken = entityCreateStore(createStoreSelectors.formState.logToken);
+    const showLogs = entityCreateStore(
+        entityCreateStoreSelectors.formState.showLogs
+    );
+    const logToken = entityCreateStore(
+        entityCreateStoreSelectors.formState.logToken
+    );
     const formSubmitError = entityCreateStore(
-        createStoreSelectors.formState.error
+        entityCreateStoreSelectors.formState.error
     );
     const exitWhenLogsClose = entityCreateStore(
-        createStoreSelectors.formState.exitWhenLogsClose
+        entityCreateStoreSelectors.formState.exitWhenLogsClose
     );
 
     //Editor state
@@ -226,23 +230,6 @@ function CaptureCreate() {
 
     // Form Event Handlers
     const handlers = {
-        cancel: () => {
-            if (hasChanges()) {
-                confirmationModalContext
-                    ?.showConfirmation({
-                        message: 'confirm.loseData',
-                    })
-                    .then((confirmed) => {
-                        if (confirmed) {
-                            helpers.exit();
-                        }
-                    })
-                    .catch(() => {});
-            } else {
-                helpers.exit();
-            }
-        },
-
         closeLogs: () => {
             setFormState({
                 showLogs: false,
@@ -325,7 +312,11 @@ function CaptureCreate() {
             detailHasErrors = detailErrors ? detailErrors.length > 0 : false;
             specHasErrors = specErrors ? specErrors.length > 0 : false;
 
-            if (detailHasErrors || specHasErrors) {
+            if (
+                isEmpty(endpointConfigData) ||
+                detailHasErrors ||
+                specHasErrors
+            ) {
                 setFormState({
                     status: FormStatus.IDLE,
                     displayValidation: true,
@@ -452,7 +443,6 @@ function CaptureCreate() {
             />
 
             <FooHeader
-                close={handlers.cancel}
                 test={handlers.test}
                 testDisabled={!hasConnectors}
                 save={handlers.saveAndPublish}

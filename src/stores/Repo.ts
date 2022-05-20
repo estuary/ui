@@ -55,7 +55,7 @@ storeMap.set(
     )
 );
 
-export const getStore = (key: Stores) => {
+export const useStoreRepo = (key: Stores) => {
     if (key === Stores.EMPTY) {
         throw new Error(
             'No store name provided to fetch. Ensure StoreMap and RouteStoreProvider are both configured correctly.'

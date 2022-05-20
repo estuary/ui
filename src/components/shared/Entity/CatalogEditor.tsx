@@ -22,15 +22,11 @@ function CatalogEditor({ messageId }: Props) {
                 header={<FormattedMessage id="foo.catalogEditor.heading" />}
             >
                 <>
-                    <Typography>
+                    <Typography sx={{ mb: 2 }}>
                         <FormattedMessage id={messageId} />
                     </Typography>
-                    <Paper
-                        variant="outlined"
-                        sx={{
-                            padding: 1,
-                        }}
-                    >
+
+                    <Paper variant="outlined" sx={{ p: 1 }}>
                         <DraftSpecEditor />
                     </Paper>
                 </>
