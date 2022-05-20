@@ -1,7 +1,8 @@
-import NoGrantsFound from 'app/NoGrants';
+import NoGrantsFound from 'app/NoGrantsFound';
 import AppLayout from 'AppLayout';
 import CaptureCreate from 'components/capture/Create';
 import { createEditorStore, DraftSpecEditorKey } from 'components/editor/Store';
+import FullPageSpinner from 'components/fullPage/Spinner';
 import NewMaterialization from 'components/materialization/create';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import { RouteStoreProvider } from 'hooks/useRouteStore';
@@ -79,11 +80,10 @@ const Authenticated = () => {
     const { combinedGrants, isValidating } = useCombinedGrantsExt({
         singleCall: true,
     });
-    const hasGrants = !isValidating && combinedGrants.length > 0;
 
-    console.log('authenticated', hasGrants);
-
-    if (!hasGrants) {
+    if (isValidating) {
+        return <FullPageSpinner />;
+    } else if (combinedGrants.length === 0) {
         return <NoGrantsFound />;
     } else {
         return (

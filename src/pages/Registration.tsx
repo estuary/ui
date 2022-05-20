@@ -17,11 +17,11 @@ import { Auth } from '@supabase/ui';
 import ExternalLink from 'components/shared/ExternalLink';
 import { slate } from 'context/Theme';
 import useBrowserTitle from 'hooks/useBrowserTitle';
+import lightLogo from 'images/light-horizontal/estuary-logo.png';
 import React, { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { getUserDetails } from 'services/supabase';
 import { getUrls } from 'utils/env-utils';
-import lightLogo from '../images/light-horizontal/estuary-logo-light.png';
 
 interface RegistrationRequest {
     fullName: string;
