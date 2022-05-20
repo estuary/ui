@@ -72,7 +72,7 @@ function RowSelector() {
                 aria-label={intl.formatMessage({
                     id: 'capturesTable.ctaGroup.aria',
                 })}
-                disabled={!hasSelections}
+                disabled={true} //TODO (disable entity) !hasSelections
             >
                 <Button>
                     <FormattedMessage id="cta.enable" />
