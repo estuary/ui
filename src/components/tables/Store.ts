@@ -48,7 +48,7 @@ export const getInitialState = (
             set(
                 produce(({ selected }) => {
                     if (isSelected) {
-                        selected.set(val);
+                        selected.set(val, null);
                     } else {
                         selected.delete(val);
                     }
@@ -64,7 +64,7 @@ export const getInitialState = (
                     if (isSelected) {
                         const { rows } = get();
                         rows.forEach((value, key) => {
-                            selected.set(key);
+                            selected.set(key, null);
                         });
                     } else {
                         selected.clear();
@@ -79,7 +79,7 @@ export const getInitialState = (
             set(
                 produce(({ rows }) => {
                     val.forEach((el) => {
-                        rows.set(el.id, {});
+                        rows.set(el.id, el);
                     });
                 }),
                 false,

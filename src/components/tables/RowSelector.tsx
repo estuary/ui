@@ -1,12 +1,22 @@
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
-import { Button, ButtonGroup, Menu, MenuItem, Stack } from '@mui/material';
+import {
+    Alert,
+    Button,
+    ButtonGroup,
+    List,
+    ListItem,
+    Menu,
+    MenuItem,
+    Stack,
+} from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
+import { useConfirmationModalContext } from 'context/Confirmation';
 import { useZustandStore } from 'hooks/useZustand';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -17,7 +27,32 @@ export interface RowSelectorProps {
     showMaterialize?: boolean;
 }
 
+interface DeleteConfirmationprops {
+    deleting: any; //SelectableTableStore['selected'];
+}
+
+function DeleteConfirmation({ deleting }: DeleteConfirmationprops) {
+    return (
+        <>
+            <Alert severity="warning">
+                <FormattedMessage id="capturesTable.delete.confirm" />
+            </Alert>
+            <List>
+                {deleting.map((value: any, index: number) => {
+                    console.log({
+                        value,
+                    });
+
+                    return <ListItem key={index}>{value}</ListItem>;
+                })}
+            </List>
+        </>
+    );
+}
+
 function RowSelector({ showMaterialize }: RowSelectorProps) {
+    const confirmationModalContext = useConfirmationModalContext();
+
     const navigate = useNavigate();
     const intl = useIntl();
 
@@ -34,13 +69,37 @@ function RowSelector({ showMaterialize }: RowSelectorProps) {
         SelectableTableStore['setAllSelected']
     >(selectableTableStoreSelectors.selected.setAll);
 
+    const rows = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['rows']
+    >(selectableTableStoreSelectors.rows.get);
+
     const hasSelections = selectedRows.size > 0;
 
     const handlers = {
         closeMenu: () => {
             setAnchorEl(null);
         },
-        delete: () => {},
+        delete: () => {
+            if (hasSelections) {
+                const deleting: string[] = [];
+
+                selectedRows.forEach((value: any, key: string) => {
+                    deleting.push(rows.get(key).catalog_name);
+                });
+
+                confirmationModalContext
+                    ?.showConfirmation({
+                        message: <DeleteConfirmation deleting={deleting} />,
+                    })
+                    .then((confirmed: any) => {
+                        if (confirmed) {
+                            console.log('Going to delete stuff now');
+                        }
+                    })
+                    .catch(() => {});
+            }
+        },
         toggle: (enable: boolean) => {
             throw Error(
                 `Toggling enable/disable not implemented yet. Passing variable ${enable}`

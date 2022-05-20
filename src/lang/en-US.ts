@@ -271,6 +271,7 @@ const Captures: ResolvedIntlConfig['messages'] = {
     'captureTable.header': `Captures`,
     'capturesTable.title': `Your Captures`,
     'capturesTable.cta.new': `New Capture`,
+    'capturesTable.delete.confirm': `This action cannot be undone. Are you sure you want to delete these?`,
     'capturesTable.ctaGroup.aria': `capture table available actions`,
     'capturesTable.cta.materialize': `${CTAs['cta.materialize']} ${CommonMessages['terms.collections']}`,
     'captures.message1': `Click the "New Capture" button up above to get started.`,
