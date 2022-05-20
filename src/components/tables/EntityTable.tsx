@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 import { PostgrestError } from '@supabase/supabase-js';
 import ExternalLink from 'components/shared/ExternalLink';
+import RowSelector from 'components/tables/RowSelector';
 import { SelectableTableStore } from 'components/tables/Store';
 import { Query, useSelect } from 'hooks/supabase-swr';
 import { useZustandStore } from 'hooks/useZustand';
@@ -196,8 +197,6 @@ function EntityTable({
         SelectableTableStore['selected']
     >((state) => state.selected);
 
-    console.log('Selected Rows', selectedRows);
-
     return (
         <Box>
             <Box sx={{ mx: 2 }}>
@@ -208,6 +207,8 @@ function EntityTable({
                     <Typography variant="h6">
                         <FormattedMessage id={header} />
                     </Typography>
+
+                    <RowSelector />
 
                     <Box
                         margin={0}
@@ -241,48 +242,68 @@ function EntityTable({
                                         theme.palette.background.default,
                                 }}
                             >
-                                {columns.map((column, index) => {
-                                    return (
+                                {selectedRows.size > 0 ? (
+                                    <>
+                                        <TableCell>
+                                            {selectedRows.size}
+                                        </TableCell>
                                         <TableCell
-                                            key={`${column.field}-${index}`}
-                                            sortDirection={
-                                                columnToSort === column.field
-                                                    ? sortDirection
-                                                    : false
-                                            }
+                                            align="right"
+                                            colSpan={columns.length - 1}
                                         >
-                                            {selectData && column.field ? (
-                                                <TableSortLabel
-                                                    active={
-                                                        columnToSort ===
-                                                        column.field
-                                                    }
-                                                    direction={
+                                            Enable / Disable
+                                        </TableCell>
+                                    </>
+                                ) : (
+                                    <>
+                                        {columns.map((column, index) => {
+                                            return (
+                                                <TableCell
+                                                    key={`${column.field}-${index}`}
+                                                    sortDirection={
                                                         columnToSort ===
                                                         column.field
                                                             ? sortDirection
-                                                            : 'asc'
+                                                            : false
                                                     }
-                                                    onClick={handlers.sort(
-                                                        column.field
-                                                    )}
                                                 >
-                                                    {column.headerIntlKey ? (
+                                                    {selectData &&
+                                                    column.field ? (
+                                                        <TableSortLabel
+                                                            active={
+                                                                columnToSort ===
+                                                                column.field
+                                                            }
+                                                            direction={
+                                                                columnToSort ===
+                                                                column.field
+                                                                    ? sortDirection
+                                                                    : 'asc'
+                                                            }
+                                                            onClick={handlers.sort(
+                                                                column.field
+                                                            )}
+                                                        >
+                                                            {column.headerIntlKey ? (
+                                                                <FormattedMessage
+                                                                    id={
+                                                                        column.headerIntlKey
+                                                                    }
+                                                                />
+                                                            ) : null}
+                                                        </TableSortLabel>
+                                                    ) : column.headerIntlKey ? (
                                                         <FormattedMessage
                                                             id={
                                                                 column.headerIntlKey
                                                             }
                                                         />
                                                     ) : null}
-                                                </TableSortLabel>
-                                            ) : column.headerIntlKey ? (
-                                                <FormattedMessage
-                                                    id={column.headerIntlKey}
-                                                />
-                                            ) : null}
-                                        </TableCell>
-                                    );
-                                })}
+                                                </TableCell>
+                                            );
+                                        })}
+                                    </>
+                                )}
                             </TableRow>
                         </TableHead>
 

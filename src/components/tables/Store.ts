@@ -4,7 +4,7 @@ import create from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 
 export interface SelectableTableStore {
-    selected: Map<string, Object>;
+    selected: Map<string, any>;
     setSelected: (val: SelectableTableStore['selected']) => void;
     removeSelected: (val: SelectableTableStore['selected']) => void;
 

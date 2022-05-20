@@ -68,6 +68,8 @@ export const tableColumns = [
 function Row({ isSelected, addRow, removeRow, row }: RowProps) {
     const navigate = useNavigate();
 
+    console.log('>', { isSelected, addRow, removeRow, row });
+
     const [detailsExpanded, setDetailsExpanded] = useState(false);
 
     const handlers = {
