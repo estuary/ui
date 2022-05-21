@@ -71,9 +71,8 @@ function CaptureTestButton({
         // TODO (linting) - this was to make TS/Linting happy
         detailHasErrors = detailErrors ? detailErrors.length > 0 : false;
         specHasErrors = specErrors ? specErrors.length > 0 : false;
-
         if (isEmpty(endpointConfigData) || detailHasErrors || specHasErrors) {
-            setFormState({
+            return setFormState({
                 status: FormStatus.IDLE,
                 displayValidation: true,
             });

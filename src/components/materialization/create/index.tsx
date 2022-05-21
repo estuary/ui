@@ -16,7 +16,7 @@ import { useZustandStore } from 'hooks/useZustand';
 import { useEffect } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
-import { TABLES } from 'services/supabase';
+import { startSubscription, TABLES } from 'services/supabase';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 import useNotificationStore, {
     Notification,
@@ -157,32 +157,26 @@ function MaterializationCreate() {
 
     const waitFor = {
         base: (query: any, success: Function, failureTitle: string) => {
-            const subscription = query
-                .on('*', async (payload: any) => {
-                    if (payload.new.job_status.type !== 'queued') {
-                        if (payload.new.job_status.type === 'success') {
-                            success(payload);
-                        } else {
-                            helpers.jobFailed(failureTitle);
-                        }
-
-                        await helpers.doneSubscribing(subscription);
-                    }
-                })
-                .subscribe();
-
-            return subscription;
+            return startSubscription(query, success, () => {
+                helpers.jobFailed(failureTitle);
+            });
         },
-        publications: () => {
+        publications: (dryRun: boolean) => {
             return waitFor.base(
                 supabaseClient.from(TABLES.PUBLICATIONS),
                 () => {
-                    setFormState({
-                        status: FormStatus.SUCCESS,
-                        exitWhenLogsClose: true,
-                    });
+                    if (dryRun) {
+                        setFormState({
+                            status: FormStatus.IDLE,
+                        });
+                    } else {
+                        setFormState({
+                            status: FormStatus.SUCCESS,
+                            exitWhenLogsClose: true,
+                        });
 
-                    showNotification(successNotification);
+                        showNotification(successNotification);
+                    }
                 },
                 'materializationCreate.save.failure.errorTitle'
             );

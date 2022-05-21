@@ -1,5 +1,9 @@
 import { PostgrestError, PostgrestFilterBuilder } from '@supabase/postgrest-js';
-import { createClient, User } from '@supabase/supabase-js';
+import {
+    createClient,
+    RealtimeSubscription,
+    User,
+} from '@supabase/supabase-js';
 import { isEmpty } from 'lodash';
 
 if (
@@ -162,4 +166,33 @@ export const supabaseUpdate = (
     };
 
     return makeCall();
+};
+
+export const endSubscription = (subscription: RealtimeSubscription) => {
+    return supabaseClient
+        .removeSubscription(subscription)
+        .then(() => {})
+        .catch(() => {});
+};
+
+export const startSubscription = (
+    query: any,
+    success: Function,
+    failure: Function
+) => {
+    const subscription = query
+        .on('*', async (payload: any) => {
+            if (payload.new.job_status.type !== 'queued') {
+                if (payload.new.job_status.type === 'success') {
+                    success(payload);
+                } else {
+                    failure(payload);
+                }
+
+                await endSubscription(subscription);
+            }
+        })
+        .subscribe();
+
+    return subscription;
 };

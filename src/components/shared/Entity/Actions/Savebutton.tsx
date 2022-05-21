@@ -51,7 +51,7 @@ function EntityCreateSaveButton({
         event.preventDefault();
 
         resetFormState(FormStatus.SAVING);
-        const publicationsSubscription = subscription();
+        const publicationsSubscription = subscription(false);
 
         const response = await createPublication(
             draftId,
