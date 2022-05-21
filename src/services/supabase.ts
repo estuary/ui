@@ -116,12 +116,19 @@ export interface CallSupabaseResponse {
 // Used to make update calls. Mainly consumed in the src/api folder
 export const supabaseUpsert = (
     table: TABLES,
-    data: any
+    data: any,
+    matchData?: any
 ): PromiseLike<CallSupabaseResponse> => {
     const query = supabaseClient.from(table);
 
     const makeCall = () => {
-        return query.upsert(data).then(
+        let upsetCall = query.upsert(data);
+
+        if (matchData) {
+            upsetCall = upsetCall.match(matchData);
+        }
+
+        return upsetCall.then(
             (response) => {
                 if (response.error) {
                     return {

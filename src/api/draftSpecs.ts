@@ -16,6 +16,25 @@ export const createDraftSpec = (
     ]);
 };
 
+export const updateDraftSpec = (
+    draftId: string | null,
+    catalogName: string,
+    draftSpec: any
+) => {
+    return supabaseUpsert(
+        TABLES.DRAFT_SPECS,
+        [
+            {
+                spec: draftSpec,
+            },
+        ],
+        {
+            draft_id: draftId,
+            catalog_name: catalogName,
+        }
+    );
+};
+
 export const generateDraftSpec = (
     config: any,
     image: string,

@@ -1,4 +1,4 @@
-import { createDraftSpec } from 'api/draftSpecs';
+import { updateDraftSpec } from 'api/draftSpecs';
 import EditorWithFileSelector from 'components/editor/EditorWithFileSelector';
 import { EditorStoreState } from 'components/editor/Store';
 import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
@@ -25,9 +25,9 @@ function DraftSpecEditor() {
     const [draftSpec, setDraftSpec] = useState<DraftSpecQuery | null>(null);
 
     const handlers = {
-        change: (newVal: any, catalogName: string, specType: string) => {
+        change: (newVal: any, catalogName: string) => {
             if (draftSpec) {
-                return createDraftSpec(id, catalogName, newVal, specType);
+                return updateDraftSpec(id, catalogName, newVal);
             }
 
             return Promise.reject();
