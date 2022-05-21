@@ -1,5 +1,4 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
-import { createPublication } from 'api/publications';
 import { routeDetails } from 'app/Authenticated';
 import CaptureSaveButton from 'components/capture/SaveButton';
 import CaptureTestButton from 'components/capture/TestButton';
@@ -13,7 +12,7 @@ import useBrowserTitle from 'hooks/useBrowserTitle';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
-import { MouseEvent, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { TABLES } from 'services/supabase';
@@ -70,9 +69,6 @@ function CaptureCreate() {
     const imageTag = entityCreateStore(
         entityCreateStoreSelectors.details.connectorTag
     );
-    const entityDescription = entityCreateStore(
-        entityCreateStoreSelectors.details.description
-    );
     const hasChanges = entityCreateStore(entityCreateStoreSelectors.hasChanges);
     const resetState = entityCreateStore(entityCreateStoreSelectors.resetState);
 
@@ -92,11 +88,6 @@ function CaptureCreate() {
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setId']
     >((state) => state.setId);
-
-    const draftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['id']
-    >((state) => state.id);
 
     const pubId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
@@ -224,33 +215,6 @@ function CaptureCreate() {
                     pubId
                 )
             );
-        },
-
-        saveAndPublish: async (event: MouseEvent<HTMLElement>) => {
-            event.preventDefault();
-
-            const publicationsSubscription = waitFor.publications();
-            const response = await createPublication(
-                draftId,
-                entityDescription
-            );
-
-            if (response.error) {
-                helpers.callFailed(
-                    {
-                        error: {
-                            title: 'captureCreation.save.failedErrorTitle',
-                            error: response.error,
-                        },
-                    },
-                    publicationsSubscription
-                );
-            }
-
-            setFormState({
-                logToken: response.data[0].logs_token,
-                showLogs: true,
-            });
         },
     };
 
