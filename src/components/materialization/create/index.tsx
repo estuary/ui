@@ -3,7 +3,7 @@ import { RealtimeSubscription } from '@supabase/supabase-js';
 import { routeDetails } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
 import CollectionConfig from 'components/materialization/create/CollectionConfig';
-import Test from 'components/materialization/create/Test';
+import MaterializeTestButton from 'components/materialization/create/TestButton';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
@@ -508,7 +508,7 @@ function MaterializationCreate() {
 
             <FooHeader
                 TestButton={
-                    <Test
+                    <MaterializeTestButton
                         disabled={!hasConnectors}
                         formId={FORM_ID}
                         onFailure={helpers.callFailed}

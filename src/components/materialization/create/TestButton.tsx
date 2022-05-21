@@ -23,7 +23,7 @@ interface Props {
 
 const buttonSx: SxProps<Theme> = { ml: 1, borderRadius: 5 };
 
-function Test({ disabled, formId, onFailure }: Props) {
+function MaterializeTestButton({ disabled, formId, onFailure }: Props) {
     // Supabase
     const supabaseClient = useClient();
     const { connectorTags } = useConnectorTags('materialization');
@@ -236,4 +236,4 @@ function Test({ disabled, formId, onFailure }: Props) {
     );
 }
 
-export default Test;
+export default MaterializeTestButton;

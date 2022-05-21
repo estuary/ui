@@ -23,7 +23,12 @@ interface Props {
 
 const buttonSx: SxProps<Theme> = { ml: 1, borderRadius: 5 };
 
-function Test({ disabled, formId, onFailure, subscription }: Props) {
+function CaptureTestButton({
+    disabled,
+    formId,
+    onFailure,
+    subscription,
+}: Props) {
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
@@ -131,4 +136,4 @@ function Test({ disabled, formId, onFailure, subscription }: Props) {
     );
 }
 
-export default Test;
+export default CaptureTestButton;

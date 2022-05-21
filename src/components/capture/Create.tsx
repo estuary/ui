@@ -1,7 +1,7 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { createPublication } from 'api/publications';
 import { routeDetails } from 'app/Authenticated';
-import Test from 'components/capture/Test';
+import CaptureTestButton from 'components/capture/TestButton';
 import { EditorStoreState } from 'components/editor/Store';
 import Create from 'components/shared/Entity/Create';
 import LogDialogActions from 'components/shared/Entity/LogDialogActions';
@@ -245,7 +245,7 @@ function CaptureCreate() {
                 formID={FORM_ID}
                 successNotification={notification}
                 messagePrefix="captureCreation"
-                TestButton={Test}
+                TestButton={CaptureTestButton}
                 save={handlers.saveAndPublish}
                 logAction={
                     <LogDialogActions
