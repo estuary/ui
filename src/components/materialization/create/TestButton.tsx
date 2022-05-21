@@ -144,8 +144,8 @@ function MaterializeTestButton({ disabled, formId, onFailure }: Props) {
             const draftSpecsResponse = await createDraftSpec(
                 newDraftId,
                 entityName,
-                'materialization',
-                draftSpec
+                draftSpec,
+                'materialization'
             );
             if (draftSpecsResponse.error) {
                 return onFailure({

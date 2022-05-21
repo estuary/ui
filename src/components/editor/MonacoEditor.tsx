@@ -16,7 +16,7 @@ export interface Props {
     disabled?: boolean;
     value: any;
     path: string;
-    onChange?: (newVal: any, path: string) => any;
+    onChange?: (newVal: any, path: string, specType: string) => any;
     height?: number;
     toolbarHeight?: number;
 }
@@ -48,6 +48,11 @@ function MonacoEditor({
         EditorStoreState<DraftSpecQuery>['serverUpdate']
     >((state) => state.serverUpdate);
 
+    const currentCatalog = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['currentCatalog']
+    >((state) => state.currentCatalog);
+
     // TODO (sync editing)
     // useEffect(() => {
     //     if (editorRef.current) {
@@ -72,7 +77,7 @@ function MonacoEditor({
         debounce((val: string | undefined) => {
             if (val && onChange) {
                 setIsChanging(true);
-                onChange(JSON.parse(val), path)
+                onChange(JSON.parse(val), path, currentCatalog.spec_type)
                     .then(() => {
                         setIsChanging(false);
                     })

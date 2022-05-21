@@ -121,7 +121,7 @@ export const callSupabase = (
     const query = supabaseClient.from(table);
 
     const makeCall = () => {
-        return query.insert(data).then(
+        return query.upsert(data).then(
             (response) => {
                 if (response.error) {
                     return {

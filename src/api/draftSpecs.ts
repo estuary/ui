@@ -3,14 +3,14 @@ import { callSupabase, TABLES } from 'services/supabase';
 export const createDraftSpec = (
     draftId: string | null,
     catalogName: string,
-    specType: 'materialization',
-    draftSpec: any
+    draftSpec: any,
+    specType?: 'materialization' | 'capture' | string // TODO (typing) get the spec types passed through properly
 ) => {
     return callSupabase(TABLES.DRAFT_SPECS, [
         {
             draft_id: draftId,
             catalog_name: catalogName,
-            spec_type: specType,
+            spec_type: specType ?? undefined,
             spec: draftSpec,
         },
     ]);

@@ -1,11 +1,11 @@
 import { Button } from '@mui/material';
+import { createDraftSpec } from 'api/draftSpecs';
 import DeleteConfirmation from 'components/tables/RowActions/DeleteConfirmation';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
 import { useConfirmationModalContext } from 'context/Confirmation';
-import { updateDraftSpec } from 'hooks/useDraftSpecs';
 import { useZustandStore } from 'hooks/useZustand';
 import { FormattedMessage } from 'react-intl';
 
@@ -28,7 +28,9 @@ function Delete() {
         console.log('Going to delete stuff now', deletingSpecs);
         const updateCalls: any[] = [];
         deletingSpecs.forEach((spec) => {
-            updateCalls.push(updateDraftSpec(spec.catalog_name, spec.id, null));
+            updateCalls.push(
+                createDraftSpec(spec.id, spec.catalog_name, null, 'capture')
+            );
         });
 
         await Promise.all(updateCalls).then((values) => {
