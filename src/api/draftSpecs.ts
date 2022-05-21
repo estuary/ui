@@ -21,11 +21,9 @@ export const updateDraftSpec = (
 ) => {
     return supabaseUpdate(
         TABLES.DRAFT_SPECS,
-        [
-            {
-                spec: draftSpec,
-            },
-        ],
+        {
+            spec: draftSpec,
+        },
         {
             draft_id: draftId,
             catalog_name: catalogName,
