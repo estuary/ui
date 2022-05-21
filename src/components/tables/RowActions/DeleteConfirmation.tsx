@@ -16,10 +16,6 @@ function DeleteConfirmation({ deleting }: DeleteConfirmationprops) {
             </Alert>
             <List>
                 {deleting.map((value: any, index: number) => {
-                    console.log({
-                        value,
-                    });
-
                     return <ListItem key={index}>{value}</ListItem>;
                 })}
             </List>
