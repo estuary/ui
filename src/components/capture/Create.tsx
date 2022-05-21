@@ -1,6 +1,7 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { createPublication } from 'api/publications';
 import { routeDetails } from 'app/Authenticated';
+import CaptureSaveButton from 'components/capture/SaveButton';
 import CaptureTestButton from 'components/capture/TestButton';
 import { EditorStoreState } from 'components/editor/Store';
 import Create from 'components/shared/Entity/Create';
@@ -13,6 +14,7 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
 import { MouseEvent, useEffect } from 'react';
+import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { TABLES } from 'services/supabase';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
@@ -20,18 +22,37 @@ import useNotificationStore, {
     Notification,
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
+import useConstant from 'use-constant';
 import { getPathWithParam } from 'utils/misc-utils';
 
 const FORM_ID = 'newCaptureForm';
 
-const notification: Notification = {
-    description: 'Your new capture is published and ready to be used.',
-    severity: 'success',
-    title: 'New Capture Created',
-};
-
 function CaptureCreate() {
     useBrowserTitle('browserTitle.captureCreate');
+
+    const intl = useIntl();
+
+    const notification: Notification = useConstant(() => {
+        return {
+            description: intl.formatMessage(
+                {
+                    id: 'notifications.create.description',
+                },
+                {
+                    entityType: intl.formatMessage({ id: 'terms.capture' }),
+                }
+            ),
+            severity: 'success',
+            title: intl.formatMessage(
+                {
+                    id: 'notifications.create.title',
+                },
+                {
+                    entityType: intl.formatMessage({ id: 'terms.capture' }),
+                }
+            ),
+        };
+    });
 
     // misc hooks
     const navigate = useNavigate();
@@ -246,7 +267,7 @@ function CaptureCreate() {
                 successNotification={notification}
                 messagePrefix="captureCreation"
                 TestButton={CaptureTestButton}
-                save={handlers.saveAndPublish}
+                SaveButton={CaptureSaveButton}
                 logAction={
                     <LogDialogActions
                         close={handlers.closeLogs}

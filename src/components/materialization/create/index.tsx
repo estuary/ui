@@ -3,6 +3,7 @@ import { RealtimeSubscription } from '@supabase/supabase-js';
 import { routeDetails } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
 import CollectionConfig from 'components/materialization/create/CollectionConfig';
+import MaterializeSaveButton from 'components/materialization/create/Savebutton';
 import MaterializeTestButton from 'components/materialization/create/TestButton';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
@@ -22,17 +23,16 @@ import useConnectorTags from 'hooks/useConnectorTags';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
-import { isEmpty } from 'lodash';
 import { MouseEvent, useEffect } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
-import { getEncryptedConfig } from 'services/encryption';
 import { TABLES } from 'services/supabase';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 import useNotificationStore, {
     Notification,
     NotificationState,
 } from 'stores/NotificationStore';
+import useConstant from 'use-constant';
 
 const FORM_ID = 'newMaterializationForm';
 
@@ -42,14 +42,36 @@ const selectors = {
     },
 };
 
-const notification: Notification = {
-    description: 'Your new materialization is published and ready to be used.',
-    severity: 'success',
-    title: 'New Materialization Created',
-};
-
 function MaterializationCreate() {
     useBrowserTitle('browserTitle.materializationCreate');
+
+    const intl = useIntl();
+
+    const notification: Notification = useConstant(() => {
+        return {
+            description: intl.formatMessage(
+                {
+                    id: 'notifications.create.description',
+                },
+                {
+                    entityType: intl.formatMessage({
+                        id: 'terms.materialization',
+                    }),
+                }
+            ),
+            severity: 'success',
+            title: intl.formatMessage(
+                {
+                    id: 'notifications.create.title',
+                },
+                {
+                    entityType: intl.formatMessage({
+                        id: 'terms.materialization',
+                    }),
+                }
+            ),
+        };
+    });
 
     // Misc. hooks
     const navigate = useNavigate();
@@ -69,27 +91,8 @@ function MaterializationCreate() {
     );
 
     const entityCreateStore = useRouteStore();
-
-    // Materializations store
-    const resourceConfig = entityCreateStore(
-        entityCreateStoreSelectors.resourceConfig.get
-    );
-
-    // Form store
-    const entityName = entityCreateStore(
-        entityCreateStoreSelectors.details.entityName
-    );
     const imageTag = entityCreateStore(
         entityCreateStoreSelectors.details.connectorTag
-    );
-    const entityDescription = entityCreateStore(
-        entityCreateStoreSelectors.details.description
-    );
-    const endpointConfig = entityCreateStore(
-        entityCreateStoreSelectors.endpointConfig.data
-    );
-    const endpointSchema = entityCreateStore(
-        entityCreateStoreSelectors.endpointSchema
     );
     const hasChanges = entityCreateStore(entityCreateStoreSelectors.hasChanges);
     const resetState = entityCreateStore(entityCreateStoreSelectors.resetState);
@@ -226,208 +229,6 @@ function MaterializationCreate() {
             }
         },
 
-        test: (event: MouseEvent<HTMLElement>) => {
-            event.preventDefault();
-
-            let detailHasErrors = false;
-            let specHasErrors = false;
-
-            // TODO - this was to make TS/Linting happy
-            detailHasErrors = detailErrors ? detailErrors.length > 0 : false;
-            specHasErrors = specErrors ? specErrors.length > 0 : false;
-
-            const connectorInfo = connectorTags.find(
-                ({ id }) => id === imageTag?.id
-            );
-
-            if (detailHasErrors || specHasErrors) {
-                setFormState({
-                    status: FormStatus.IDLE,
-                    displayValidation: true,
-                });
-            } else if (isEmpty(resourceConfig)) {
-                // TODO: Handle the scenario where no collections are present.
-                setFormState({
-                    status: FormStatus.IDLE,
-                    displayValidation: true,
-                });
-            } else if (!connectorInfo) {
-                // TODO: Handle the highly unlikely scenario where the connector tag id could not be found.
-                setFormState({
-                    status: FormStatus.IDLE,
-                    displayValidation: true,
-                });
-            } else {
-                setFormState({
-                    status: FormStatus.GENERATING_PREVIEW,
-                });
-                setDraftId(null);
-
-                const {
-                    connectors: { image_name },
-                    image_tag,
-                } = connectorInfo;
-
-                supabaseClient
-                    .from(TABLES.DRAFTS)
-                    .insert({
-                        detail: entityName,
-                    })
-                    .then(
-                        async (draftsResponse) => {
-                            if (
-                                draftsResponse.data &&
-                                draftsResponse.data.length > 0
-                            ) {
-                                getEncryptedConfig({
-                                    data: {
-                                        schema: endpointSchema,
-                                        config: endpointConfig,
-                                    },
-                                })
-                                    .then((encryptedEndpointConfig) => {
-                                        const newDraftId =
-                                            draftsResponse.data[0].id;
-
-                                        // TODO (typing) MaterializationDef
-                                        const draftSpec: any = {
-                                            bindings: [],
-                                            endpoint: {
-                                                connector: {
-                                                    config: encryptedEndpointConfig,
-                                                    image: `${image_name}${image_tag}`,
-                                                },
-                                            },
-                                        };
-
-                                        Object.keys(resourceConfig).forEach(
-                                            (collectionName) => {
-                                                draftSpec.bindings.push({
-                                                    source: collectionName,
-                                                    resource: {
-                                                        ...resourceConfig[
-                                                            collectionName
-                                                        ].data,
-                                                    },
-                                                });
-                                            }
-                                        );
-
-                                        supabaseClient
-                                            .from(TABLES.DRAFT_SPECS)
-                                            .insert([
-                                                {
-                                                    draft_id: newDraftId,
-                                                    catalog_name: entityName,
-                                                    spec_type:
-                                                        'materialization',
-                                                    spec: draftSpec,
-                                                },
-                                            ])
-                                            .then(
-                                                (draftSpecsResponse) => {
-                                                    setDraftId(newDraftId);
-                                                    setFormState({
-                                                        status: FormStatus.IDLE,
-                                                    });
-
-                                                    if (
-                                                        draftSpecsResponse.error
-                                                    ) {
-                                                        helpers.callFailed({
-                                                            error: {
-                                                                title: 'materializationCreation.test.failure.errorTitle',
-                                                                error: draftSpecsResponse.error,
-                                                            },
-                                                        });
-                                                    }
-                                                },
-                                                () => {
-                                                    helpers.callFailed({
-                                                        error: {
-                                                            title: 'materializationCreation.test.serverUnreachable',
-                                                        },
-                                                    });
-                                                }
-                                            );
-                                    })
-                                    .catch((error) => {
-                                        helpers.callFailed({
-                                            error: {
-                                                title: 'captureCreation.test.failedConfigEncryptTitle',
-                                                error,
-                                            },
-                                        });
-                                    });
-                            } else if (draftsResponse.error) {
-                                helpers.callFailed({
-                                    error: {
-                                        title: 'materializationCreation.test.failure.errorTitle',
-                                        error: draftsResponse.error,
-                                    },
-                                });
-                            }
-                        },
-                        () => {
-                            helpers.callFailed({
-                                error: {
-                                    title: 'materializationCreation.test.serverUnreachable',
-                                },
-                            });
-                        }
-                    );
-            }
-        },
-
-        saveAndPublish: (event: MouseEvent<HTMLElement>) => {
-            event.preventDefault();
-
-            resetFormState(FormStatus.SAVING);
-            const publicationsSubscription = waitFor.publications();
-
-            supabaseClient
-                .from(TABLES.PUBLICATIONS)
-                .insert([
-                    {
-                        draft_id: draftId,
-                        dry_run: false,
-                        detail: entityDescription ?? null,
-                    },
-                ])
-                .then(
-                    async (response) => {
-                        if (response.data) {
-                            if (response.data.length > 0) {
-                                setFormState({
-                                    logToken: response.data[0].logs_token,
-                                    showLogs: true,
-                                });
-                            }
-                        } else {
-                            helpers.callFailed(
-                                {
-                                    error: {
-                                        title: 'materializationCreation.save.failure.errorTitle',
-                                        error: response.error,
-                                    },
-                                },
-                                publicationsSubscription
-                            );
-                        }
-                    },
-                    () => {
-                        helpers.callFailed(
-                            {
-                                error: {
-                                    title: 'materializationCreation.save.serverUnreachable',
-                                },
-                            },
-                            publicationsSubscription
-                        );
-                    }
-                );
-        },
-
         oldTest: (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
             let detailHasErrors = false;
@@ -514,8 +315,14 @@ function MaterializationCreate() {
                         onFailure={helpers.callFailed}
                     />
                 }
-                save={handlers.saveAndPublish}
-                saveDisabled={!draftId}
+                SaveButton={
+                    <MaterializeSaveButton
+                        disabled={!draftId}
+                        formId={FORM_ID}
+                        onFailure={helpers.callFailed}
+                        subscription={waitFor.publications}
+                    />
+                }
                 heading={
                     <FormattedMessage id="materializationCreation.heading" />
                 }

@@ -27,6 +27,8 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'terms.connectors': `Connectors`,
     'terms.collections': `Collections`,
     'terms.permissions': `Access Grants`,
+    'terms.materialization': `Materialization`,
+    'terms.capture': `Capture`,
 
     // Common fields
     'entityPrefix.label': `Prefix`,
@@ -369,6 +371,11 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreation.resourceConfig.heading': `Resource Config`,
 };
 
+const Notifications: ResolvedIntlConfig['messages'] = {
+    'notifications.create.title': `New {entityType} Created`,
+    'notifications.create.description': `Your new {entityType} is published and ready to be used.`,
+};
+
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
     ...CTAs,
@@ -400,6 +407,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CaptureCreate,
     ...CaptureDetails,
     ...MaterializationCreate,
+    ...Notifications,
 };
 
 export default enUSMessages;

@@ -1,5 +1,4 @@
 import {
-    Button,
     Collapse,
     LinearProgress,
     Stack,
@@ -11,45 +10,21 @@ import {
 import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { ReactNode } from 'react';
-import { FormattedMessage } from 'react-intl';
-import {
-    entityCreateStoreSelectors,
-    formInProgress,
-    FormStatus,
-} from 'stores/Create';
+import { entityCreateStoreSelectors, formInProgress } from 'stores/Create';
 
 interface Props {
     TestButton: ReactNode;
-    save: (event: any) => void;
-    saveDisabled: boolean;
+    SaveButton: ReactNode;
     heading: ReactNode;
 }
 
-const buttonSx: SxProps<Theme> = { ml: 1, borderRadius: 5 };
+export const buttonSx: SxProps<Theme> = { ml: 1, borderRadius: 5 };
 
-function FooHeader({ TestButton, save, saveDisabled, heading }: Props) {
+function FooHeader({ TestButton, SaveButton, heading }: Props) {
     const entityCreateStore = useRouteStore();
     const formStateStatus = entityCreateStore(
         entityCreateStoreSelectors.formState.status
     );
-    const setFormState = entityCreateStore(
-        entityCreateStoreSelectors.formState.set
-    );
-
-    const handlers = {
-        test: (event: any) => {
-            setFormState({
-                status: FormStatus.TESTING,
-            });
-            test(event);
-        },
-        save: (event: any) => {
-            setFormState({
-                status: FormStatus.SAVING,
-            });
-            save(event);
-        },
-    };
 
     return (
         <>
@@ -67,15 +42,7 @@ function FooHeader({ TestButton, save, saveDisabled, heading }: Props) {
                 >
                     {TestButton}
 
-                    <Button
-                        onClick={handlers.save}
-                        disabled={
-                            formInProgress(formStateStatus) || saveDisabled
-                        }
-                        sx={buttonSx}
-                    >
-                        <FormattedMessage id="cta.saveEntity" />
-                    </Button>
+                    {SaveButton}
                 </Stack>
             </Toolbar>
 

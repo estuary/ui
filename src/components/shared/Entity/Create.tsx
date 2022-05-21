@@ -34,7 +34,7 @@ interface Props {
     successNotification: any;
     messagePrefix: 'materializationCreation' | 'captureCreation';
     TestButton: any;
-    save: (event: any) => void;
+    SaveButton: any;
     logAction: ReactNode;
 }
 
@@ -45,7 +45,7 @@ function Create({
     successNotification,
     messagePrefix,
     TestButton,
-    save,
+    SaveButton,
     logAction,
 }: Props) {
     useBrowserTitle(title); //'browserTitle.captureCreate'
@@ -234,8 +234,13 @@ function Create({
                         subscription={waitFor.discovers}
                     />
                 }
-                save={save}
-                saveDisabled={!draftId}
+                SaveButton={
+                    <SaveButton
+                        disabled={!draftId}
+                        onFailure={helpers.callFailed}
+                        subscription={waitFor.publications}
+                    />
+                }
                 heading={<FormattedMessage id={`${messagePrefix}.heading`} />}
             />
 

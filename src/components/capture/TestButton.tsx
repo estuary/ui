@@ -1,8 +1,9 @@
-import { Button, SxProps, Theme } from '@mui/material';
+import { Button } from '@mui/material';
 import { discover } from 'api/discovers';
 import { createEntityDraft } from 'api/drafts';
 import { encryptConfig } from 'api/sops';
 import { EditorStoreState } from 'components/editor/Store';
+import { buttonSx } from 'components/shared/Entity/Header';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
@@ -20,8 +21,6 @@ interface Props {
     onFailure: Function;
     subscription: Function;
 }
-
-const buttonSx: SxProps<Theme> = { ml: 1, borderRadius: 5 };
 
 function CaptureTestButton({
     disabled,
@@ -60,6 +59,10 @@ function CaptureTestButton({
 
     const test = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
+        setFormState({
+            status: FormStatus.TESTING,
+        });
+
         let detailHasErrors = false;
         let specHasErrors = false;
 
