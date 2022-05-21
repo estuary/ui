@@ -1,8 +1,8 @@
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { Grid } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
-import CollectionSelector from 'components/materialization/CollectionSelector';
-import ExpandableResourceConfig from 'components/materialization/create/ExpandableResourceConfig';
+import ExpandableResourceConfig from 'components/collection/ExpandableResourceConfig';
+import CollectionSelector from 'components/collection/Selector';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import useLiveSpecsExt from 'hooks/useLiveSpecsExt';
 import { useRouteStore } from 'hooks/useRouteStore';

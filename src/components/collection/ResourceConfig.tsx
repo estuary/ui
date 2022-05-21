@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material';
-import ResourceConfigForm from 'components/materialization/ResourceConfigForm';
+import ResourceConfigForm from 'components/collection/ResourceConfigForm';
 import Error from 'components/shared/Error';
 import useConnectorTag from 'hooks/useConnectorTag';
 import { FormattedMessage } from 'react-intl';

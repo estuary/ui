@@ -1,7 +1,7 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { routeDetails } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
-import MaterializeTestButton from 'components/materialization/create/TestButton';
+import MaterializeTestButton from 'components/materialization/TestButton';
 import EntityCreateSaveButton from 'components/shared/Entity/Actions/Savebutton';
 import EntityCreate from 'components/shared/Entity/Create';
 import FooHeader from 'components/shared/Entity/Header';

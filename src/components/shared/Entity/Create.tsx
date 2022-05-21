@@ -1,8 +1,8 @@
 import { Collapse } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { routeDetails } from 'app/Authenticated';
+import CollectionConfig from 'components/collection/Config';
 import { EditorStoreState } from 'components/editor/Store';
-import CollectionConfig from 'components/materialization/create/CollectionConfig';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';

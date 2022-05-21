@@ -3,7 +3,7 @@ import AppLayout from 'AppLayout';
 import CaptureCreate from 'components/capture/Create';
 import { createEditorStore, DraftSpecEditorKey } from 'components/editor/Store';
 import FullPageSpinner from 'components/fullPage/Spinner';
-import NewMaterialization from 'components/materialization/create';
+import MaterializationCreate from 'components/materialization/Create';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import { RouteStoreProvider } from 'hooks/useRouteStore';
 import { ZustandProvider } from 'hooks/useZustand';
@@ -141,7 +141,7 @@ const Authenticated = () => {
                                         createStore={createEditorStore}
                                         storeName={`${DraftSpecEditorKey}-Materializations`}
                                     >
-                                        <NewMaterialization />
+                                        <MaterializationCreate />
                                     </ZustandProvider>
                                 </RouteStoreProvider>
                             }
