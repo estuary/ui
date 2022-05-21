@@ -12,6 +12,9 @@ function ValidationErrorSummary() {
     const [detailErrors, specErrors] = entityCreateStore(
         entityCreateStoreSelectors.errors
     );
+    const collections = entityCreateStore(
+        entityCreateStoreSelectors.collections
+    );
     const getResourceConfigErrors = entityCreateStore(
         entityCreateStoreSelectors.resourceConfig.getErrors
     );
@@ -45,7 +48,7 @@ function ValidationErrorSummary() {
         });
     }
 
-    if (filteredResourceConfigErrors.length > 0) {
+    if (collections && filteredResourceConfigErrors.length > 0) {
         filteredErrorsList.push({
             title: intl.formatMessage({
                 id: 'foo.endpointConfig.resourceConfigHaveErrors',

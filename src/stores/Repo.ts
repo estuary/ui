@@ -1,4 +1,4 @@
-import { CreateEntityStore, getInitialState } from 'stores/Create';
+import { CreateEntityStore, getInitialCreateState } from 'stores/Create';
 import { devtoolsOptions } from 'utils/store-utils';
 import create from 'zustand';
 import { devtools } from 'zustand/middleware';
@@ -15,7 +15,10 @@ export const storeMap = new Map<Stores, any>();
 storeMap.set(
     Stores.CAPTURE_CREATE,
     create<CreateEntityStore>()(
-        devtools(getInitialState, devtoolsOptions(Stores.CAPTURE_CREATE))
+        devtools(
+            (set, get) => getInitialCreateState(set, get, false),
+            devtoolsOptions(Stores.CAPTURE_CREATE)
+        )
     )
 );
 
@@ -23,7 +26,7 @@ storeMap.set(
     Stores.MATERIALIZATION_CREATE,
     create<CreateEntityStore>()(
         devtools(
-            getInitialState,
+            (set, get) => getInitialCreateState(set, get, true),
             devtoolsOptions(Stores.MATERIALIZATION_CREATE)
         )
     )

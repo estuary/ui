@@ -77,7 +77,7 @@ export interface CreateEntityStore {
     getResourceConfigErrors: () => any[];
 
     // Collection Selector
-    collections: any[];
+    collections: any[] | null;
     setCollections: (collections: any[]) => void;
     prefillCollections: (collections: LiveSpecsExtQuery[]) => void;
 
@@ -137,7 +137,9 @@ export const initialCreateStates = {
     },
 };
 
-export const getInitialStateData = (): Pick<
+export const getInitialStateData = (
+    includeCollections: boolean
+): Pick<
     CreateEntityStore,
     | 'details'
     | 'endpointConfig'
@@ -154,16 +156,19 @@ export const getInitialStateData = (): Pick<
         formState: initialCreateStates.formState(),
         endpointSchema: initialCreateStates.endpointSchema(),
         resourceConfig: initialCreateStates.resourceConfig(),
-        collections: initialCreateStates.collections(),
+        collections: includeCollections
+            ? initialCreateStates.collections()
+            : null,
     };
 };
 
-export const getInitialState = (
+export const getInitialCreateState = (
     set: NamedSet<CreateEntityStore>,
-    get: GetState<CreateEntityStore>
+    get: GetState<CreateEntityStore>,
+    includeCollections: boolean
 ): CreateEntityStore => {
     return {
-        ...getInitialStateData(),
+        ...getInitialStateData(includeCollections),
         setDetails: (details) => {
             set(
                 produce((state) => {
@@ -171,7 +176,8 @@ export const getInitialState = (
                         state.details.data.connectorImage?.id !==
                         details.data.connectorImage?.id
                     ) {
-                        const initState = getInitialStateData();
+                        const initState =
+                            getInitialStateData(includeCollections);
                         state.endpointConfig = initState.endpointConfig;
                         state.formState = initState.formState;
                     }
@@ -210,7 +216,8 @@ export const getInitialState = (
         resetFormState: (status) => {
             set(
                 produce((state) => {
-                    const { formState } = getInitialStateData();
+                    const { formState } =
+                        getInitialStateData(includeCollections);
                     state.formState = formState;
                     state.formState.status = status;
                 }),
@@ -224,7 +231,7 @@ export const getInitialState = (
             const {
                 details: initialDetails,
                 endpointConfig: initialendpointConfig,
-            } = getInitialStateData();
+            } = getInitialStateData(includeCollections);
 
             return !isEqual(
                 {
@@ -317,7 +324,11 @@ export const getInitialState = (
         },
 
         resetState: () => {
-            set(getInitialStateData(), false, 'Resetting State');
+            set(
+                getInitialStateData(includeCollections),
+                false,
+                'Resetting State'
+            );
         },
     };
 };
