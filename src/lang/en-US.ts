@@ -340,6 +340,8 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreate.save.failedErrorTitle': `Capture Save Failed`,
     'captureCreate.save.serverUnreachable': `Config Save was unable to reach server`,
     'captureCreate.save.waitMessage': `Please wait while we test, save, and publish your capture.`,
+    'captureCreate.createNotification.title': `New Capture Created`,
+    'captureCreate.createNotification.desc': `Your new Capture is published and ready to be used.`,
 };
 
 const CaptureDetails: ResolvedIntlConfig['messages'] = {
@@ -370,11 +372,8 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreate.collectionSelector.instructions': `Place instructions for collection selector here.`,
     'materializationCreate.resourceConfig.heading': `Resource Config`,
     'materializationCreate.save.waitMessage': `Please wait while we test, save, and publish your materialization.`,
-};
-
-const Notifications: ResolvedIntlConfig['messages'] = {
-    'notifications.create.title': `New {entityType} Created`,
-    'notifications.create.description': `Your new {entityType} is published and ready to be used.`,
+    'materializationCreate.createNotification.title': `New Materialization Created`,
+    'materializationCreate.createNotification.desc': `Your new Materialization is published and ready to be used.`,
 };
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {
@@ -408,7 +407,6 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CaptureCreate,
     ...CaptureDetails,
     ...MaterializationCreate,
-    ...Notifications,
 };
 
 export default enUSMessages;

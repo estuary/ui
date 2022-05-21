@@ -2,56 +2,94 @@ import { Button } from '@mui/material';
 import { createPublication } from 'api/publications';
 import { EditorStoreState } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
+import { useClient } from 'hooks/supabase-swr';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
+import { startSubscription, TABLES } from 'services/supabase';
 import {
     entityCreateStoreSelectors,
     formInProgress,
     FormStatus,
 } from 'stores/Create';
+import useNotificationStore, {
+    notificationStoreSelectors,
+} from 'stores/NotificationStore';
 
 interface Props {
     disabled: boolean;
     formId: string;
     onFailure: Function;
-    subscription: Function;
 }
 
-function EntityCreateSaveButton({
-    disabled,
-    formId,
-    onFailure,
-    subscription,
-}: Props) {
+function EntityCreateSaveButton({ disabled, formId, onFailure }: Props) {
+    const intl = useIntl();
+    const supabaseClient = useClient();
+
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
     >((state) => state.id);
 
-    const entityCreateStore = useRouteStore();
-    const entityDescription = entityCreateStore(
+    const setPubId = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['setPubId']
+    >((state) => state.setPubId);
+
+    const showNotification = useNotificationStore(
+        notificationStoreSelectors.showNotification
+    );
+
+    const useEntityCreateStore = useRouteStore();
+    const entityDescription = useEntityCreateStore(
         entityCreateStoreSelectors.details.description
     );
-    const setFormState = entityCreateStore(
+    const setFormState = useEntityCreateStore(
         entityCreateStoreSelectors.formState.set
     );
-    const resetFormState = entityCreateStore(
+    const resetFormState = useEntityCreateStore(
         entityCreateStoreSelectors.formState.reset
     );
-    const formStateStatus = entityCreateStore(
+    const formStateStatus = useEntityCreateStore(
         entityCreateStoreSelectors.formState.status
     );
-    const messagePrefix = entityCreateStore(
+    const messagePrefix = useEntityCreateStore(
         entityCreateStoreSelectors.messagePrefix
     );
+
+    const waitForPublishToFinish = () => {
+        resetFormState(FormStatus.SAVING);
+        return startSubscription(
+            supabaseClient.from(TABLES.PUBLICATIONS),
+            (payload: any) => {
+                setPubId(payload.new.id);
+                setFormState({
+                    status: FormStatus.SUCCESS,
+                    exitWhenLogsClose: true,
+                });
+
+                showNotification({
+                    description: intl.formatMessage({
+                        id: `${messagePrefix}.captureCreate.createNotification.desc`,
+                    }),
+                    severity: 'success',
+                    title: intl.formatMessage({
+                        id: `${messagePrefix}.captureCreate.createNotification.title`,
+                    }),
+                });
+            },
+            () => {
+                onFailure(`${messagePrefix}.save.failedErrorTitle`);
+            }
+        );
+    };
 
     const save = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
 
         resetFormState(FormStatus.SAVING);
-        const publicationsSubscription = subscription(false);
+        const publicationsSubscription = waitForPublishToFinish();
 
         const response = await createPublication(
             draftId,

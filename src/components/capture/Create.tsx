@@ -9,65 +9,27 @@ import LogDialogActions from 'components/shared/Entity/LogDialogActions';
 import PageContainer from 'components/shared/PageContainer';
 import { useClient } from 'hooks/supabase-swr';
 import { usePrompt } from 'hooks/useBlocker';
-import useBrowserTitle from 'hooks/useBrowserTitle';
 import useConnectorTags from 'hooks/useConnectorTags';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
 import { useEffect } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { startSubscription, TABLES } from 'services/supabase';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
-import useNotificationStore, {
-    Notification,
-    notificationStoreSelectors,
-} from 'stores/NotificationStore';
-import useConstant from 'use-constant';
 import { getPathWithParam } from 'utils/misc-utils';
 
 const FORM_ID = 'newCaptureForm';
 const connectorType = 'capture';
 
 function CaptureCreate() {
-    useBrowserTitle('browserTitle.captureCreate');
-
-    const intl = useIntl();
-
-    const successNotification: Notification = useConstant(() => {
-        return {
-            description: intl.formatMessage(
-                {
-                    id: 'notifications.create.description',
-                },
-                {
-                    entityType: intl.formatMessage({ id: 'terms.capture' }),
-                }
-            ),
-            severity: 'success',
-            title: intl.formatMessage(
-                {
-                    id: 'notifications.create.title',
-                },
-                {
-                    entityType: intl.formatMessage({ id: 'terms.capture' }),
-                }
-            ),
-        };
-    });
-
-    // misc hooks
     const navigate = useNavigate();
 
     // Supabase stuff
     const supabaseClient = useClient();
     const { connectorTags } = useConnectorTags(connectorType);
     const hasConnectors = connectorTags.length > 0;
-
-    // Notification store
-    const showNotification = useNotificationStore(
-        notificationStoreSelectors.showNotification
-    );
 
     // Form store
     const entityCreateStore = useRouteStore();
@@ -101,11 +63,6 @@ function CaptureCreate() {
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['pubId']
     >((state) => state.pubId);
-
-    const setPubId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['setPubId']
-    >((state) => state.setPubId);
 
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
@@ -202,27 +159,6 @@ function CaptureCreate() {
                 `${messagePrefix}.test.failedErrorTitle`
             );
         },
-        publications: (dryRun: boolean) => {
-            return waitFor.base(
-                supabaseClient.from(TABLES.PUBLICATIONS),
-                (payload: any) => {
-                    if (dryRun) {
-                        setFormState({
-                            status: FormStatus.IDLE,
-                        });
-                    } else {
-                        setPubId(payload.new.id);
-                        setFormState({
-                            status: FormStatus.SUCCESS,
-                            exitWhenLogsClose: true,
-                        });
-
-                        showNotification(successNotification);
-                    }
-                },
-                `${messagePrefix}.save.failedErrorTitle`
-            );
-        },
     };
 
     usePrompt('confirm.loseData', !exitWhenLogsClose && hasChanges(), () => {
@@ -250,7 +186,6 @@ function CaptureCreate() {
                                 disabled={!draftId}
                                 formId={FORM_ID}
                                 onFailure={helpers.callFailed}
-                                subscription={waitFor.publications}
                             />
                         }
                         heading={
