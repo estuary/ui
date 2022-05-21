@@ -310,6 +310,7 @@ const Foo: ResolvedIntlConfig['messages'] = {
     'foo.endpointConfig.heading': `Connection Configuration`,
     'foo.endpointConfig.errorSummary': `You must provide valid data for all required fields before continuing.`,
     'foo.endpointConfig.detailsHaveErrors': `The Details section has errors.`,
+    'foo.endpointConfig.endpointConfigMissing': `Please select a connector.`,
     'foo.endpointConfig.endpointConfigHaveErrors': `The Connection Configuration section has errors.`,
     'foo.endpointConfig.resourceConfigHaveErrors': `The Output Configuration section has errors.`,
 };
