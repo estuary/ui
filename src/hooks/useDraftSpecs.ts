@@ -1,4 +1,4 @@
-import { TABLES } from 'services/supabase';
+import { DEFAULT_FILTER, supabaseClient, TABLES } from 'services/supabase';
 import { useQuery, useSelect } from './supabase-swr/';
 
 export interface DraftSpecQuery {
@@ -31,6 +31,33 @@ function useDraftSpecs(draftId: string | null) {
         mutate,
         isValidating,
     };
+}
+
+export function updateDraftSpec(
+    catalogName: string,
+    id: string | null,
+    spec: any,
+    mutate?: any
+) {
+    const updatedPromise = supabaseClient
+        .from(TABLES.DRAFT_SPECS)
+        .update({ spec })
+        .match({
+            draft_id: id ?? DEFAULT_FILTER,
+            catalog_name: catalogName,
+        })
+        .then(
+            () => {},
+            () => {}
+        );
+
+    if (mutate) {
+        mutate()
+            .then(() => {})
+            .catch(() => {});
+    }
+
+    return updatedPromise;
 }
 
 export default useDraftSpecs;

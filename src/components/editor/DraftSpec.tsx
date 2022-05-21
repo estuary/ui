@@ -1,9 +1,11 @@
 import EditorWithFileSelector from 'components/editor/EditorWithFileSelector';
 import { EditorStoreState } from 'components/editor/Store';
-import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import useDraftSpecs, {
+    DraftSpecQuery,
+    updateDraftSpec,
+} from 'hooks/useDraftSpecs';
 import { useZustandStore } from 'hooks/useZustand';
 import { useEffect, useState } from 'react';
-import { supabaseClient, TABLES } from 'services/supabase';
 
 function DraftSpecEditor() {
     const currentCatalog = useZustandStore<
@@ -27,27 +29,7 @@ function DraftSpecEditor() {
     const handlers = {
         change: (newVal: any, catalogName: string) => {
             if (draftSpec) {
-                const newData = {
-                    spec: newVal,
-                };
-
-                const updatedPromise = supabaseClient
-                    .from(TABLES.DRAFT_SPECS)
-                    .update(newData)
-                    .match({
-                        draft_id: id,
-                        catalog_name: catalogName,
-                    })
-                    .then(
-                        () => {},
-                        () => {}
-                    );
-
-                mutate()
-                    .then(() => {})
-                    .catch(() => {});
-
-                return updatedPromise;
+                return updateDraftSpec(catalogName, id, newVal, mutate);
             }
 
             return Promise.reject();

@@ -33,7 +33,7 @@ interface Props {
     formID: string;
     successNotification: any;
     messagePrefix: 'materializationCreation' | 'captureCreation';
-    test: (event: any) => void;
+    TestButton: any;
     save: (event: any) => void;
     logAction: ReactNode;
 }
@@ -44,7 +44,7 @@ function Create({
     formID,
     successNotification,
     messagePrefix,
-    test,
+    TestButton,
     save,
     logAction,
 }: Props) {
@@ -226,11 +226,16 @@ function Create({
             />
 
             <FooHeader
-                test={test}
-                testDisabled={!hasConnectors}
+                TestButton={
+                    <TestButton
+                        disabled={!hasConnectors}
+                        formId={formID}
+                        onFailure={helpers.callFailed}
+                        subscription={waitFor.discovers}
+                    />
+                }
                 save={save}
                 saveDisabled={!draftId}
-                formId={formID}
                 heading={<FormattedMessage id={`${messagePrefix}.heading`} />}
             />
 

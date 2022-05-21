@@ -17,7 +17,9 @@ import {
 } from '@mui/material';
 import { PostgrestError } from '@supabase/supabase-js';
 import ExternalLink from 'components/shared/ExternalLink';
-import RowSelector, { RowSelectorProps } from 'components/tables/RowSelector';
+import RowSelector, {
+    RowSelectorProps,
+} from 'components/tables/RowActions/RowSelector';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,

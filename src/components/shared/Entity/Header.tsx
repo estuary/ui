@@ -8,11 +8,8 @@ import {
     Toolbar,
     Typography,
 } from '@mui/material';
-import { EditorStoreState } from 'components/editor/Store';
 import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { useZustandStore } from 'hooks/useZustand';
 import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -22,27 +19,15 @@ import {
 } from 'stores/Create';
 
 interface Props {
-    test: (event: any) => void;
-    testDisabled: boolean;
+    TestButton: ReactNode;
     save: (event: any) => void;
     saveDisabled: boolean;
-    formId: string;
     heading: ReactNode;
 }
 
-function FooHeader({
-    test,
-    testDisabled,
-    save,
-    saveDisabled,
-    formId,
-    heading,
-}: Props) {
-    const id = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['id']
-    >((state) => state.id);
+const buttonSx: SxProps<Theme> = { ml: 1, borderRadius: 5 };
 
+function FooHeader({ TestButton, save, saveDisabled, heading }: Props) {
     const entityCreateStore = useRouteStore();
     const formStateStatus = entityCreateStore(
         entityCreateStoreSelectors.formState.status
@@ -66,8 +51,6 @@ function FooHeader({
         },
     };
 
-    const buttonSx: SxProps<Theme> = { ml: 1, borderRadius: 5 };
-
     return (
         <>
             <Toolbar disableGutters>
@@ -82,23 +65,7 @@ function FooHeader({
                         ml: 'auto',
                     }}
                 >
-                    <Button
-                        onClick={handlers.test}
-                        disabled={
-                            formInProgress(formStateStatus) || testDisabled
-                        }
-                        form={formId}
-                        type="submit"
-                        sx={buttonSx}
-                    >
-                        <FormattedMessage
-                            id={
-                                id
-                                    ? 'foo.ctas.discoverAgain'
-                                    : 'foo.ctas.discover'
-                            }
-                        />
-                    </Button>
+                    {TestButton}
 
                     <Button
                         onClick={handlers.save}

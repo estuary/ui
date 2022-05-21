@@ -1,63 +1,22 @@
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
-import {
-    Alert,
-    AlertTitle,
-    Button,
-    ButtonGroup,
-    List,
-    ListItem,
-    Menu,
-    MenuItem,
-    Stack,
-} from '@mui/material';
-import { routeDetails } from 'app/Authenticated';
+import { Button, ButtonGroup, Menu, MenuItem, Stack } from '@mui/material';
+import Delete from 'components/tables/RowActions/Delete';
+import Materialize from 'components/tables/RowActions/Materialize';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
-import { useConfirmationModalContext } from 'context/Confirmation';
 import { useZustandStore } from 'hooks/useZustand';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useNavigate } from 'react-router';
-import { getPathWithParam } from 'utils/misc-utils';
 
 export interface RowSelectorProps {
     showMaterialize?: boolean;
 }
 
-interface DeleteConfirmationprops {
-    deleting: any; //SelectableTableStore['selected'];
-}
-
-function DeleteConfirmation({ deleting }: DeleteConfirmationprops) {
-    return (
-        <>
-            <Alert variant="filled" severity="warning">
-                <AlertTitle>
-                    <FormattedMessage id="common.noUnDo" />
-                </AlertTitle>
-                <FormattedMessage id="capturesTable.delete.confirm" />
-            </Alert>
-            <List>
-                {deleting.map((value: any, index: number) => {
-                    console.log({
-                        value,
-                    });
-
-                    return <ListItem key={index}>{value}</ListItem>;
-                })}
-            </List>
-        </>
-    );
-}
-
 function RowSelector({ showMaterialize }: RowSelectorProps) {
-    const confirmationModalContext = useConfirmationModalContext();
-
-    const navigate = useNavigate();
     const intl = useIntl();
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -73,58 +32,16 @@ function RowSelector({ showMaterialize }: RowSelectorProps) {
         SelectableTableStore['setAllSelected']
     >(selectableTableStoreSelectors.selected.setAll);
 
-    const rows = useZustandStore<
-        SelectableTableStore,
-        SelectableTableStore['rows']
-    >(selectableTableStoreSelectors.rows.get);
-
     const hasSelections = selectedRows.size > 0;
 
     const handlers = {
         closeMenu: () => {
             setAnchorEl(null);
         },
-        delete: () => {
-            if (hasSelections) {
-                const deleting: string[] = [];
-
-                selectedRows.forEach((value: any, key: string) => {
-                    deleting.push(rows.get(key).catalog_name);
-                });
-
-                confirmationModalContext
-                    ?.showConfirmation({
-                        message: <DeleteConfirmation deleting={deleting} />,
-                    })
-                    .then((confirmed: any) => {
-                        if (confirmed) {
-                            console.log('Going to delete stuff now');
-                        }
-                    })
-                    .catch(() => {});
-            }
-        },
         toggle: (enable: boolean) => {
             throw Error(
                 `Toggling enable/disable not implemented yet. Passing variable ${enable}`
             );
-        },
-        materialize: () => {
-            const selectedRowsArray: string[] = [];
-
-            selectedRows.forEach((value, key) => {
-                selectedRowsArray.push(key);
-            });
-
-            if (selectedRowsArray.length > 0) {
-                navigate(
-                    getPathWithParam(
-                        routeDetails.materializations.create.fullPath,
-                        routeDetails.materializations.create.params.specID,
-                        selectedRowsArray
-                    )
-                );
-            }
         },
         openMenu: (event: React.MouseEvent<HTMLButtonElement>) => {
             setAnchorEl(event.currentTarget);
@@ -175,19 +92,10 @@ function RowSelector({ showMaterialize }: RowSelectorProps) {
                 <Button onClick={() => handlers.toggle(false)}>
                     <FormattedMessage id="cta.disable" />
                 </Button>
-                <Button onClick={() => handlers.delete()}>
-                    <FormattedMessage id="cta.delete" />
-                </Button>
+                <Delete />
             </ButtonGroup>
 
-            {showMaterialize ? (
-                <Button
-                    disabled={!hasSelections}
-                    onClick={handlers.materialize}
-                >
-                    <FormattedMessage id="cta.materialize" />
-                </Button>
-            ) : null}
+            {showMaterialize ? <Materialize /> : null}
 
             <Menu
                 id="row-selector-menu"

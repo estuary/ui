@@ -1,5 +1,7 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
+import { createPublication } from 'api/publications';
 import { routeDetails } from 'app/Authenticated';
+import Test from 'components/capture/Test';
 import { EditorStoreState } from 'components/editor/Store';
 import Create from 'components/shared/Entity/Create';
 import LogDialogActions from 'components/shared/Entity/LogDialogActions';
@@ -10,10 +12,8 @@ import useBrowserTitle from 'hooks/useBrowserTitle';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
-import { isEmpty } from 'lodash';
 import { MouseEvent, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getEncryptedConfig } from 'services/encryption';
 import { TABLES } from 'services/supabase';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 import useNotificationStore, {
@@ -46,26 +46,14 @@ function CaptureCreate() {
 
     // Form store
     const entityCreateStore = useRouteStore();
-    const entityName = entityCreateStore(
-        entityCreateStoreSelectors.details.entityName
-    );
     const imageTag = entityCreateStore(
         entityCreateStoreSelectors.details.connectorTag
     );
     const entityDescription = entityCreateStore(
         entityCreateStoreSelectors.details.description
     );
-    const endpointConfigData = entityCreateStore(
-        entityCreateStoreSelectors.endpointConfig.data
-    );
-    const endpointSchema = entityCreateStore(
-        entityCreateStoreSelectors.endpointSchema
-    );
     const hasChanges = entityCreateStore(entityCreateStoreSelectors.hasChanges);
     const resetState = entityCreateStore(entityCreateStoreSelectors.resetState);
-    const [detailErrors, specErrors] = entityCreateStore(
-        entityCreateStoreSelectors.errors
-    );
 
     const setFormState = entityCreateStore(
         entityCreateStoreSelectors.formState.set
@@ -217,166 +205,31 @@ function CaptureCreate() {
             );
         },
 
-        saveAndPublish: (event: MouseEvent<HTMLElement>) => {
+        saveAndPublish: async (event: MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
             const publicationsSubscription = waitFor.publications();
-            supabaseClient
-                .from(TABLES.PUBLICATIONS)
-                .insert([
+            const response = await createPublication(
+                draftId,
+                entityDescription
+            );
+
+            if (response.error) {
+                helpers.callFailed(
                     {
-                        draft_id: draftId,
-                        dry_run: false,
-                        detail: entityDescription ?? null,
-                    },
-                ])
-                .then(
-                    async (response) => {
-                        if (response.data) {
-                            if (response.data.length > 0) {
-                                setFormState({
-                                    logToken: response.data[0].logs_token,
-                                    showLogs: true,
-                                });
-                            }
-                        } else {
-                            helpers.callFailed(
-                                {
-                                    error: {
-                                        title: 'captureCreation.save.failedErrorTitle',
-                                        error: response.error,
-                                    },
-                                },
-                                publicationsSubscription
-                            );
-                        }
-                    },
-                    () => {
-                        helpers.callFailed(
-                            {
-                                error: {
-                                    title: 'captureCreation.save.serverUnreachable',
-                                },
-                            },
-                            publicationsSubscription
-                        );
-                    }
-                );
-        },
-
-        test: (event: MouseEvent<HTMLElement>) => {
-            event.preventDefault();
-            let detailHasErrors = false;
-            let specHasErrors = false;
-
-            // TODO (linting) - this was to make TS/Linting happy
-            detailHasErrors = detailErrors ? detailErrors.length > 0 : false;
-            specHasErrors = specErrors ? specErrors.length > 0 : false;
-
-            if (
-                isEmpty(endpointConfigData) ||
-                detailHasErrors ||
-                specHasErrors
-            ) {
-                setFormState({
-                    status: FormStatus.IDLE,
-                    displayValidation: true,
-                });
-            } else {
-                supabaseClient
-                    .from(TABLES.DRAFTS)
-                    .insert({
-                        detail: entityName,
-                    })
-                    .then(
-                        (draftsResponse) => {
-                            if (
-                                imageTag &&
-                                draftsResponse.data &&
-                                draftsResponse.data.length > 0
-                            ) {
-                                getEncryptedConfig({
-                                    data: {
-                                        schema: endpointSchema,
-                                        config: endpointConfigData,
-                                    },
-                                })
-                                    .then((encryptedEndpointConfig) => {
-                                        const discoversSubscription =
-                                            waitFor.discovers();
-
-                                        supabaseClient
-                                            .from(TABLES.DISCOVERS)
-                                            .insert([
-                                                {
-                                                    capture_name: entityName,
-                                                    endpoint_config:
-                                                        encryptedEndpointConfig,
-                                                    connector_tag_id:
-                                                        imageTag.id,
-                                                    draft_id:
-                                                        draftsResponse.data[0]
-                                                            .id,
-                                                },
-                                            ])
-                                            .then(
-                                                (response) => {
-                                                    if (response.data) {
-                                                        setFormState({
-                                                            logToken:
-                                                                response.data[0]
-                                                                    .logs_token,
-                                                        });
-                                                    } else {
-                                                        helpers.callFailed(
-                                                            {
-                                                                error: {
-                                                                    title: 'captureCreation.test.failedErrorTitle',
-                                                                    error: response.error,
-                                                                },
-                                                            },
-                                                            discoversSubscription
-                                                        );
-                                                    }
-                                                },
-                                                () => {
-                                                    helpers.callFailed(
-                                                        {
-                                                            error: {
-                                                                title: 'captureCreation.test.serverUnreachable',
-                                                            },
-                                                        },
-                                                        discoversSubscription
-                                                    );
-                                                }
-                                            );
-                                    })
-                                    .catch((error) => {
-                                        helpers.callFailed({
-                                            error: {
-                                                title: 'captureCreation.test.failedConfigEncryptTitle',
-                                                error,
-                                            },
-                                        });
-                                    });
-                            } else if (draftsResponse.error) {
-                                helpers.callFailed({
-                                    error: {
-                                        title: 'captureCreation.test.failedErrorTitle',
-                                        error: draftsResponse.error,
-                                    },
-                                });
-                            }
+                        error: {
+                            title: 'captureCreation.save.failedErrorTitle',
+                            error: response.error,
                         },
-                        () => {
-                            helpers.callFailed({
-                                error: {
-                                    title: 'captureCreation.test.serverUnreachable',
-                                },
-                            });
-                        }
-                    );
+                    },
+                    publicationsSubscription
+                );
             }
+
+            setFormState({
+                logToken: response.data[0].logs_token,
+                showLogs: true,
+            });
         },
     };
 
@@ -392,7 +245,7 @@ function CaptureCreate() {
                 formID={FORM_ID}
                 successNotification={notification}
                 messagePrefix="captureCreation"
-                test={handlers.test}
+                TestButton={Test}
                 save={handlers.saveAndPublish}
                 logAction={
                     <LogDialogActions
