@@ -16,7 +16,8 @@ storeMap.set(
     Stores.CAPTURE_CREATE,
     create<CreateEntityStore>()(
         devtools(
-            (set, get) => getInitialCreateState(set, get, false),
+            (set, get) =>
+                getInitialCreateState(set, get, false, Stores.CAPTURE_CREATE),
             devtoolsOptions(Stores.CAPTURE_CREATE)
         )
     )
@@ -26,7 +27,13 @@ storeMap.set(
     Stores.MATERIALIZATION_CREATE,
     create<CreateEntityStore>()(
         devtools(
-            (set, get) => getInitialCreateState(set, get, true),
+            (set, get) =>
+                getInitialCreateState(
+                    set,
+                    get,
+                    true,
+                    Stores.MATERIALIZATION_CREATE
+                ),
             devtoolsOptions(Stores.MATERIALIZATION_CREATE)
         )
     )

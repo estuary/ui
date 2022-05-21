@@ -1,8 +1,8 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { routeDetails } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
-import MaterializeSaveButton from 'components/materialization/create/Savebutton';
 import MaterializeTestButton from 'components/materialization/create/TestButton';
+import EntityCreateSaveButton from 'components/shared/Entity/Actions/Savebutton';
 import EntityCreate from 'components/shared/Entity/Create';
 import FooHeader from 'components/shared/Entity/Header';
 import LogDialogActions from 'components/shared/Entity/LogDialogActions';
@@ -25,7 +25,7 @@ import useNotificationStore, {
 import useConstant from 'use-constant';
 
 const FORM_ID = 'newMaterializationForm';
-const messagePrefix = 'materializationCreation';
+const messagePrefix = 'materializationCreate';
 const connectorType = 'materialization';
 
 const selectors = {
@@ -183,7 +183,7 @@ function MaterializationCreate() {
 
                     showNotification(successNotification);
                 },
-                'materializationCreation.save.failure.errorTitle'
+                'materializationCreate.save.failure.errorTitle'
             );
         },
     };
@@ -223,7 +223,7 @@ function MaterializationCreate() {
                             />
                         }
                         SaveButton={
-                            <MaterializeSaveButton
+                            <EntityCreateSaveButton
                                 disabled={!draftId}
                                 onFailure={helpers.callFailed}
                                 subscription={waitFor.publications}

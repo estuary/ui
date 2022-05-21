@@ -71,6 +71,9 @@ function MaterializeTestButton({ disabled, formId, onFailure }: Props) {
 
     const test = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
+        setFormState({
+            status: FormStatus.TESTING,
+        });
 
         let detailHasErrors = false;
         let specHasErrors = false;
@@ -115,7 +118,7 @@ function MaterializeTestButton({ disabled, formId, onFailure }: Props) {
             if (draftsResponse.error) {
                 return onFailure({
                     error: {
-                        title: 'materializationCreation.test.failure.errorTitle',
+                        title: 'materializationCreate.test.failure.errorTitle',
                         error: draftsResponse.error,
                     },
                 });
@@ -128,7 +131,7 @@ function MaterializeTestButton({ disabled, formId, onFailure }: Props) {
             if (encryptedEndpointConfig.error) {
                 return onFailure({
                     error: {
-                        title: 'captureCreation.test.failedConfigEncryptTitle',
+                        title: 'captureCreate.test.failedConfigEncryptTitle',
                         error: encryptedEndpointConfig.error,
                     },
                 });
@@ -150,7 +153,7 @@ function MaterializeTestButton({ disabled, formId, onFailure }: Props) {
             if (draftSpecsResponse.error) {
                 return onFailure({
                     error: {
-                        title: 'materializationCreation.test.failure.errorTitle',
+                        title: 'materializationCreate.test.failure.errorTitle',
                         error: draftSpecsResponse.error,
                     },
                 });

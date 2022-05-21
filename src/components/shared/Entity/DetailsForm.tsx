@@ -21,7 +21,7 @@ import { getConnectorName } from 'utils/misc-utils';
 interface Props {
     connectorTags: ConnectorTagQuery[];
     accessGrants: Grants[];
-    messagePrefix: 'materializationCreation' | 'captureCreation';
+    messagePrefix: 'materializationCreate' | 'captureCreate';
 }
 
 function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {

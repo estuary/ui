@@ -3,6 +3,7 @@ import { PostgrestError } from '@supabase/postgrest-js';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
 import { isEqual, map } from 'lodash';
+import { Stores } from 'stores/Repo';
 import { GetState } from 'zustand';
 import { NamedSet } from 'zustand/middleware';
 
@@ -92,6 +93,9 @@ export interface CreateEntityStore {
     endpointSchema: { [key: string]: any };
     setEndpointSchema: (val: CreateEntityStore['endpointSchema']) => void;
 
+    //Content
+    messagePrefix: Stores;
+
     resetState: () => void;
     hasChanges: () => boolean;
 }
@@ -138,7 +142,8 @@ export const initialCreateStates = {
 };
 
 export const getInitialStateData = (
-    includeCollections: boolean
+    includeCollections: boolean,
+    messagePrefix: Stores
 ): Pick<
     CreateEntityStore,
     | 'details'
@@ -148,8 +153,10 @@ export const getInitialStateData = (
     | 'endpointSchema'
     | 'collections'
     | 'resourceConfig'
+    | 'messagePrefix'
 > => {
     return {
+        messagePrefix,
         details: initialCreateStates.details(),
         endpointConfig: initialCreateStates.endpointConfig(),
         connectors: initialCreateStates.connectors(),
@@ -165,10 +172,11 @@ export const getInitialStateData = (
 export const getInitialCreateState = (
     set: NamedSet<CreateEntityStore>,
     get: GetState<CreateEntityStore>,
-    includeCollections: boolean
+    includeCollections: boolean,
+    messagePrefix: Stores
 ): CreateEntityStore => {
     return {
-        ...getInitialStateData(includeCollections),
+        ...getInitialStateData(includeCollections, messagePrefix),
         setDetails: (details) => {
             set(
                 produce((state) => {
@@ -176,8 +184,10 @@ export const getInitialCreateState = (
                         state.details.data.connectorImage?.id !==
                         details.data.connectorImage?.id
                     ) {
-                        const initState =
-                            getInitialStateData(includeCollections);
+                        const initState = getInitialStateData(
+                            includeCollections,
+                            messagePrefix
+                        );
                         state.endpointConfig = initState.endpointConfig;
                         state.formState = initState.formState;
                     }
@@ -216,8 +226,10 @@ export const getInitialCreateState = (
         resetFormState: (status) => {
             set(
                 produce((state) => {
-                    const { formState } =
-                        getInitialStateData(includeCollections);
+                    const { formState } = getInitialStateData(
+                        includeCollections,
+                        messagePrefix
+                    );
                     state.formState = formState;
                     state.formState.status = status;
                 }),
@@ -231,7 +243,7 @@ export const getInitialCreateState = (
             const {
                 details: initialDetails,
                 endpointConfig: initialendpointConfig,
-            } = getInitialStateData(includeCollections);
+            } = getInitialStateData(includeCollections, messagePrefix);
 
             return !isEqual(
                 {
@@ -325,7 +337,7 @@ export const getInitialCreateState = (
 
         resetState: () => {
             set(
-                getInitialStateData(includeCollections),
+                getInitialStateData(includeCollections, messagePrefix),
                 false,
                 'Resetting State'
             );
@@ -374,6 +386,8 @@ export const entityCreateStoreSelectors = {
     collections: (state: CreateEntityStore) => state.collections,
     setCollections: (state: CreateEntityStore) => state.setCollections,
     prefillCollections: (state: CreateEntityStore) => state.prefillCollections,
+
+    messagePrefix: (state: CreateEntityStore) => state.messagePrefix,
 
     resetState: (state: CreateEntityStore) => state.resetState,
     hasChanges: (state: CreateEntityStore) => state.hasChanges,

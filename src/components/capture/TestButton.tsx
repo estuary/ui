@@ -34,6 +34,7 @@ function CaptureTestButton({
     >((state) => state.id);
 
     const entityCreateStore = useRouteStore();
+
     const formStateStatus = entityCreateStore(
         entityCreateStoreSelectors.formState.status
     );
@@ -80,7 +81,7 @@ function CaptureTestButton({
             if (draftsResponse.error) {
                 return onFailure({
                     error: {
-                        title: 'captureCreation.test.failedErrorTitle',
+                        title: 'captureCreate.test.failedErrorTitle',
                         error: draftsResponse.error,
                     },
                 });
@@ -93,7 +94,7 @@ function CaptureTestButton({
             if (encryptedEndpointConfig.error) {
                 return onFailure({
                     error: {
-                        title: 'captureCreation.test.failedConfigEncryptTitle',
+                        title: 'captureCreate.test.failedConfigEncryptTitle',
                         error: encryptedEndpointConfig.error,
                     },
                 });
@@ -110,7 +111,7 @@ function CaptureTestButton({
                 return onFailure(
                     {
                         error: {
-                            title: 'captureCreation.test.failedErrorTitle',
+                            title: 'captureCreate.test.failedErrorTitle',
                             error: discoverResponse.error,
                         },
                     },

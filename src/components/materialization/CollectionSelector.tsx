@@ -39,11 +39,11 @@ function CollectionSelector() {
     return collectionData.length > 0 && !error ? (
         <Box sx={{ mb: 5 }}>
             <Typography variant="h5" sx={{ mb: 1 }}>
-                <FormattedMessage id="materializationCreation.collectionSelector.heading" />
+                <FormattedMessage id="materializationCreate.collectionSelector.heading" />
             </Typography>
 
             <Typography sx={{ mb: 2 }}>
-                <FormattedMessage id="materializationCreation.collectionSelector.instructions" />
+                <FormattedMessage id="materializationCreate.collectionSelector.instructions" />
             </Typography>
 
             <Box sx={{ display: 'flex', alignItems: 'center' }}>

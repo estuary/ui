@@ -21,7 +21,7 @@ function NewMaterializationResourceConfig({
         return (
             <Box sx={{ mb: 5 }}>
                 <Typography variant="h5" sx={{ mb: 2 }}>
-                    <FormattedMessage id="materializationCreation.resourceConfig.heading" />
+                    <FormattedMessage id="materializationCreate.resourceConfig.heading" />
                 </Typography>
 
                 <Box sx={{ width: '100%' }}>

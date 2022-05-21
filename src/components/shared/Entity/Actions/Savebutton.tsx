@@ -6,43 +6,60 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
 import { FormattedMessage } from 'react-intl';
-import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
+import {
+    entityCreateStoreSelectors,
+    formInProgress,
+    FormStatus,
+} from 'stores/Create';
 
 interface Props {
     disabled: boolean;
+    formId: string;
     onFailure: Function;
     subscription: Function;
 }
 
-function CaptureSaveButton({ disabled, onFailure, subscription }: Props) {
-    const entityCreateStore = useRouteStore();
-    const setFormState = entityCreateStore(
-        entityCreateStoreSelectors.formState.set
-    );
-    const entityDescription = entityCreateStore(
-        entityCreateStoreSelectors.details.description
-    );
-
+function EntityCreateSaveButton({
+    disabled,
+    formId,
+    onFailure,
+    subscription,
+}: Props) {
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
     >((state) => state.id);
 
+    const entityCreateStore = useRouteStore();
+    const entityDescription = entityCreateStore(
+        entityCreateStoreSelectors.details.description
+    );
+    const setFormState = entityCreateStore(
+        entityCreateStoreSelectors.formState.set
+    );
+    const resetFormState = entityCreateStore(
+        entityCreateStoreSelectors.formState.reset
+    );
+    const formStateStatus = entityCreateStore(
+        entityCreateStoreSelectors.formState.status
+    );
+    const messagePrefix = entityCreateStore(
+        entityCreateStoreSelectors.messagePrefix
+    );
+
     const save = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
 
-        setFormState({
-            status: FormStatus.SAVING,
-        });
-
+        resetFormState(FormStatus.SAVING);
         const publicationsSubscription = subscription();
+
         const response = await createPublication(draftId, entityDescription);
 
         if (response.error) {
             onFailure(
                 {
                     error: {
-                        title: 'captureCreation.save.failedErrorTitle',
+                        title: `${messagePrefix}.save.failure.errorTitle`,
                         error: response.error,
                     },
                 },
@@ -57,10 +74,16 @@ function CaptureSaveButton({ disabled, onFailure, subscription }: Props) {
     };
 
     return (
-        <Button onClick={save} disabled={disabled} sx={buttonSx}>
+        <Button
+            onClick={save}
+            disabled={formInProgress(formStateStatus) || disabled}
+            form={formId}
+            type="submit"
+            sx={buttonSx}
+        >
             <FormattedMessage id="cta.saveEntity" />
         </Button>
     );
 }
 
-export default CaptureSaveButton;
+export default EntityCreateSaveButton;

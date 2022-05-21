@@ -1,8 +1,8 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { routeDetails } from 'app/Authenticated';
-import SaveButton from 'components/capture/SaveButton';
 import TestButton from 'components/capture/TestButton';
 import { EditorStoreState } from 'components/editor/Store';
+import EntityCreateSaveButton from 'components/shared/Entity/Actions/Savebutton';
 import EntityCreate from 'components/shared/Entity/Create';
 import FooHeader from 'components/shared/Entity/Header';
 import LogDialogActions from 'components/shared/Entity/LogDialogActions';
@@ -27,7 +27,7 @@ import useConstant from 'use-constant';
 import { getPathWithParam } from 'utils/misc-utils';
 
 const FORM_ID = 'newCaptureForm';
-const messagePrefix = 'captureCreation';
+const messagePrefix = 'captureCreate';
 const connectorType = 'capture';
 
 function CaptureCreate() {
@@ -251,8 +251,9 @@ function CaptureCreate() {
                             />
                         }
                         SaveButton={
-                            <SaveButton
+                            <EntityCreateSaveButton
                                 disabled={!draftId}
+                                formId={FORM_ID}
                                 onFailure={helpers.callFailed}
                                 subscription={waitFor.publications}
                             />
@@ -267,7 +268,7 @@ function CaptureCreate() {
                         close={handlers.closeLogs}
                         materialize={{
                             action: handlers.materializeCollections,
-                            title: 'captureCreation.ctas.materialize',
+                            title: 'captureCreate.ctas.materialize',
                         }}
                     />
                 }

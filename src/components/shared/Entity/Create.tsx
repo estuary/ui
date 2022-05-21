@@ -27,7 +27,7 @@ interface Props {
     title: string;
     connectorType: 'capture' | 'materialization';
     formID: string;
-    messagePrefix: 'materializationCreation' | 'captureCreation';
+    messagePrefix: 'materializationCreate' | 'captureCreate';
     Header: any;
     logAction: ReactNode;
     showCollections?: boolean;

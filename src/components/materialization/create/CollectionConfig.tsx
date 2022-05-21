@@ -49,7 +49,7 @@ function CollectionConfig() {
                         {getErrors().length > 0 ? (
                             <ErrorOutlineIcon color="error" sx={{ pr: 1 }} />
                         ) : null}
-                        <FormattedMessage id="materializationCreation.collections.heading" />
+                        <FormattedMessage id="materializationCreate.collections.heading" />
                     </>
                 }
             >
