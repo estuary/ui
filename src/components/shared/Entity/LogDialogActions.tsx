@@ -30,13 +30,7 @@ function LogDialogActions({ close, materialize }: Props) {
             </Box>
 
             <Stack direction="row" spacing={2}>
-                <Button
-                    disabled={
-                        formStatus === FormStatus.TESTING ||
-                        formStatus === FormStatus.SAVING
-                    }
-                    onClick={close}
-                >
+                <Button onClick={close}>
                     <FormattedMessage id="cta.close" />
                 </Button>
 
