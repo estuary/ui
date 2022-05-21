@@ -114,7 +114,7 @@ export interface CallSupabaseResponse {
 }
 
 // Used to make update calls. Mainly consumed in the src/api folder
-export const callSupabase = (
+export const supabaseUpsert = (
     table: TABLES,
     data: any
 ): PromiseLike<CallSupabaseResponse> => {

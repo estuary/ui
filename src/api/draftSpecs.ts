@@ -1,4 +1,4 @@
-import { callSupabase, TABLES } from 'services/supabase';
+import { supabaseUpsert, TABLES } from 'services/supabase';
 
 export const createDraftSpec = (
     draftId: string | null,
@@ -6,7 +6,7 @@ export const createDraftSpec = (
     draftSpec: any,
     specType?: 'materialization' | 'capture' | string // TODO (typing) get the spec types passed through properly
 ) => {
-    return callSupabase(TABLES.DRAFT_SPECS, [
+    return supabaseUpsert(TABLES.DRAFT_SPECS, [
         {
             draft_id: draftId,
             catalog_name: catalogName,
