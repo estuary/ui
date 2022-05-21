@@ -1,4 +1,4 @@
-import { Alert, AlertTitle, List, ListItem } from '@mui/material';
+import { Alert, AlertTitle, Box, Stack } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 
 interface DeleteConfirmationprops {
@@ -14,11 +14,11 @@ function DeleteConfirmation({ deleting }: DeleteConfirmationprops) {
                 </AlertTitle>
                 <FormattedMessage id="capturesTable.delete.confirm" />
             </Alert>
-            <List>
+            <Stack direction="column">
                 {deleting.map((value: any, index: number) => {
-                    return <ListItem key={index}>{value}</ListItem>;
+                    return <Box key={index}>{value}</Box>;
                 })}
-            </List>
+            </Stack>
         </>
     );
 }

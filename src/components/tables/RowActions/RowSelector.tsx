@@ -2,7 +2,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
 import { Button, ButtonGroup, Menu, MenuItem, Stack } from '@mui/material';
-import Delete from 'components/tables/RowActions/Delete';
+import DeleteButton from 'components/tables/RowActions/Delete/Button';
 import Materialize from 'components/tables/RowActions/Materialize';
 import {
     SelectableTableStore,
@@ -92,7 +92,7 @@ function RowSelector({ showMaterialize }: RowSelectorProps) {
                 <Button onClick={() => handlers.toggle(false)}>
                     <FormattedMessage id="cta.disable" />
                 </Button>
-                <Delete />
+                <DeleteButton />
             </ButtonGroup>
 
             {showMaterialize ? <Materialize /> : null}

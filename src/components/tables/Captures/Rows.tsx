@@ -22,7 +22,7 @@ interface RowsProps {
     data: LiveSpecsExtQuery[];
 }
 
-interface RowProps {
+export interface RowProps {
     row: LiveSpecsExtQuery;
     setRow: any;
     isSelected: boolean;
