@@ -1,20 +1,44 @@
-import { Box, CircularProgress, Stack } from '@mui/material';
+import { Box, CircularProgress, ListItemText, Stack } from '@mui/material';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec } from 'api/draftSpecs';
 import { createPublication } from 'api/publications';
-import { useEffect } from 'react';
+import Error from 'components/shared/Error';
+import { useEffect, useState } from 'react';
+import { FormattedMessage } from 'react-intl';
 
 interface Props {
     deleting: any;
     onFinish: Function;
 }
 
+enum States {
+    DELETING = 1,
+    FAILED = 2,
+    DELETED = 3,
+}
+
 function DeleteProgress({ deleting, onFinish }: Props) {
+    const [state, setState] = useState<States>(States.DELETING);
+    const [error, setError] = useState<any | null>(null);
+
     useEffect(() => {
+        const failed = (response: any) => {
+            console.log('response.error', response.error);
+
+            setState(States.FAILED);
+            setError(response.error);
+            onFinish(response);
+        };
+
+        const succeeded = (response: any) => {
+            setState(States.DELETED);
+            onFinish(response);
+        };
+
         const makeDeleteCall = async (spec: any) => {
             const entityResponse = await createEntityDraft(spec.catalog_name);
             if (entityResponse.error) {
-                return onFinish(entityResponse);
+                return failed(entityResponse);
             }
 
             const draftSpecResponse = await createDraftSpec(
@@ -24,21 +48,43 @@ function DeleteProgress({ deleting, onFinish }: Props) {
                 'capture'
             );
             if (draftSpecResponse.error) {
-                return onFinish(draftSpecResponse);
+                return failed(draftSpecResponse);
             }
 
             const publishResponse = await createPublication(spec.id, true);
-            return onFinish(publishResponse);
+            if (publishResponse.error) {
+                return failed(publishResponse);
+            }
+
+            return succeeded(publishResponse);
         };
 
         void makeDeleteCall(deleting);
     }, [deleting, onFinish]);
 
     return (
-        <Stack direction="row" spacing={1}>
-            <CircularProgress size={18} />
-            <Box>{deleting.catalog_name}</Box>
-        </Stack>
+        <Box>
+            <Stack direction="row" spacing={1}>
+                {state === States.DELETING && <CircularProgress size={18} />}
+                <ListItemText
+                    primary={deleting.catalog_name}
+                    secondary={
+                        <FormattedMessage
+                            id={
+                                state === States.DELETED
+                                    ? 'common.deleted'
+                                    : state === States.FAILED
+                                    ? 'common.fail'
+                                    : 'common.deleting'
+                            }
+                        />
+                    }
+                />
+            </Stack>
+            {state === States.FAILED && error !== null ? (
+                <Error error={error} hideTitle={true} />
+            ) : null}
+        </Box>
     );
 }
 

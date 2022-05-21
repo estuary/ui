@@ -9,6 +9,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.loading': `loading...`,
     'common.running': `running...`,
     'common.deleting': `deleting...`,
+    'common.deleted': `Deleted`,
     'common.saving': `saving`,
     'common.saved': `saved`,
     'common.fail': `Failed`,
