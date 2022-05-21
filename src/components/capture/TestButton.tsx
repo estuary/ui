@@ -41,6 +41,9 @@ function CaptureTestButton({
     const setFormState = entityCreateStore(
         entityCreateStoreSelectors.formState.set
     );
+    const resetFormState = entityCreateStore(
+        entityCreateStoreSelectors.formState.reset
+    );
 
     const entityName = entityCreateStore(
         entityCreateStoreSelectors.details.entityName
@@ -60,9 +63,7 @@ function CaptureTestButton({
 
     const test = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
-        setFormState({
-            status: FormStatus.TESTING,
-        });
+        resetFormState(FormStatus.TESTING);
 
         let detailHasErrors = false;
         let specHasErrors = false;

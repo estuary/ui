@@ -53,7 +53,11 @@ function EntityCreateSaveButton({
         resetFormState(FormStatus.SAVING);
         const publicationsSubscription = subscription();
 
-        const response = await createPublication(draftId, entityDescription);
+        const response = await createPublication(
+            draftId,
+            false,
+            entityDescription
+        );
 
         if (response.error) {
             onFailure(
@@ -65,12 +69,12 @@ function EntityCreateSaveButton({
                 },
                 publicationsSubscription
             );
+        } else {
+            setFormState({
+                logToken: response.data[0].logs_token,
+                showLogs: true,
+            });
         }
-
-        setFormState({
-            logToken: response.data[0].logs_token,
-            showLogs: true,
-        });
     };
 
     return (

@@ -1,6 +1,7 @@
 import { Button, SxProps, Theme } from '@mui/material';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec, generateDraftSpec } from 'api/draftSpecs';
+import { createPublication } from 'api/publications';
 import { encryptConfig } from 'api/sops';
 import { EditorStoreState } from 'components/editor/Store';
 import useConnectorTags from 'hooks/useConnectorTags';
@@ -19,11 +20,17 @@ interface Props {
     disabled: boolean;
     formId: string;
     onFailure: Function;
+    subscription: Function;
 }
 
 const buttonSx: SxProps<Theme> = { ml: 1, borderRadius: 5 };
 
-function MaterializeTestButton({ disabled, formId, onFailure }: Props) {
+function MaterializeTestButton({
+    disabled,
+    formId,
+    onFailure,
+    subscription,
+}: Props) {
     const { connectorTags } = useConnectorTags('materialization');
 
     const draftId = useZustandStore<
@@ -39,6 +46,9 @@ function MaterializeTestButton({ disabled, formId, onFailure }: Props) {
     );
     const formStateStatus = entityCreateStore(
         entityCreateStoreSelectors.formState.status
+    );
+    const resetFormState = entityCreateStore(
+        entityCreateStoreSelectors.formState.reset
     );
 
     // Form store
@@ -57,6 +67,9 @@ function MaterializeTestButton({ disabled, formId, onFailure }: Props) {
     const [detailErrors, specErrors] = entityCreateStore(
         entityCreateStoreSelectors.errors
     );
+    const messagePrefix = entityCreateStore(
+        entityCreateStoreSelectors.messagePrefix
+    );
 
     const setFormState = entityCreateStore(
         entityCreateStoreSelectors.formState.set
@@ -71,9 +84,7 @@ function MaterializeTestButton({ disabled, formId, onFailure }: Props) {
 
     const test = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
-        setFormState({
-            status: FormStatus.TESTING,
-        });
+        resetFormState(FormStatus.TESTING);
 
         let detailHasErrors = false;
         let specHasErrors = false;
@@ -159,7 +170,23 @@ function MaterializeTestButton({ disabled, formId, onFailure }: Props) {
                 });
             }
 
-            setDraftId(newDraftId);
+            resetFormState(FormStatus.TESTING);
+            const publicationsSubscription = subscription();
+            const dryRunResponse = await createPublication(newDraftId, true);
+
+            if (dryRunResponse.error) {
+                return onFailure(
+                    {
+                        error: {
+                            title: `${messagePrefix}.test.failure.errorTitle`,
+                            error: dryRunResponse.error,
+                        },
+                    },
+                    publicationsSubscription
+                );
+            }
+
+            setDraftId(dryRunResponse.data[0].draft_id);
             setFormState({
                 status: FormStatus.IDLE,
             });

@@ -218,8 +218,9 @@ function MaterializationCreate() {
                         TestButton={
                             <MaterializeTestButton
                                 disabled={!hasConnectors}
-                                formId={FORM_ID}
                                 onFailure={helpers.callFailed}
+                                subscription={waitFor.publications}
+                                formId={FORM_ID}
                             />
                         }
                         SaveButton={
