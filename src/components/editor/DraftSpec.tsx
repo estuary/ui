@@ -5,7 +5,11 @@ import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useZustandStore } from 'hooks/useZustand';
 import { useEffect, useState } from 'react';
 
-function DraftSpecEditor() {
+export interface Props {
+    disabled?: boolean;
+}
+
+function DraftSpecEditor({ disabled }: Props) {
     const currentCatalog = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['currentCatalog']
@@ -76,6 +80,7 @@ function DraftSpecEditor() {
                 value={draftSpec.spec}
                 path={draftSpec.catalog_name}
                 onChange={handlers.change}
+                disabled={disabled}
             />
         );
     } else {
