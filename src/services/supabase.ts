@@ -1,4 +1,4 @@
-import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
+import { PostgrestError, PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import { createClient, User } from '@supabase/supabase-js';
 import { isEmpty } from 'lodash';
 
@@ -106,4 +106,42 @@ export const getUserDetails = (user: User | null) => {
         emailVerified,
         avatar,
     };
+};
+
+export interface CallSupabaseResponse {
+    error?: PostgrestError;
+    data: any;
+}
+
+// Used to make update calls. Mainly consumed in the src/api folder
+export const callSupabase = (
+    table: TABLES,
+    data: any
+): PromiseLike<CallSupabaseResponse> => {
+    const query = supabaseClient.from(table);
+
+    const makeCall = () => {
+        return query.insert([data]).then(
+            (response) => {
+                if (response.error) {
+                    return {
+                        data: null,
+                        error: response.error,
+                    };
+                } else {
+                    return {
+                        data: response.data,
+                    };
+                }
+            },
+            (error) => {
+                return {
+                    data: null,
+                    error,
+                };
+            }
+        );
+    };
+
+    return makeCall();
 };
