@@ -1,19 +1,10 @@
 import { Autocomplete, Box, TextField, Typography } from '@mui/material';
-import { useQuery, useSelect } from 'hooks/supabase-swr/';
+import useLiveSpecs from 'hooks/useLiveSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { TABLES } from 'services/supabase';
 import { entityCreateStoreSelectors } from 'stores/Create';
 import useConstant from 'use-constant';
-
-interface LiveSpecsQuery {
-    catalog_name: string;
-    spec_type: string;
-    spec: object;
-}
-
-const columnsToQuery: (keyof LiveSpecsQuery)[] = ['catalog_name', 'spec_type'];
 
 function CollectionSelector() {
     const intl = useIntl();
@@ -22,15 +13,7 @@ function CollectionSelector() {
     );
     const [missingInput, setMissingInput] = useState(false);
 
-    const liveSpecsQuery = useQuery<LiveSpecsQuery>(
-        TABLES.LIVE_SPECS,
-        {
-            columns: columnsToQuery,
-            filter: (query) => query.eq('spec_type', 'collection'),
-        },
-        []
-    );
-    const { data: collectionData, error } = useSelect(liveSpecsQuery);
+    const { liveSpecs: collectionData, error } = useLiveSpecs('collection');
 
     const entityCreateStore = useRouteStore();
     const collections = entityCreateStore(
@@ -53,7 +36,7 @@ function CollectionSelector() {
         },
     };
 
-    return collectionData && !error ? (
+    return collectionData.length > 0 && !error ? (
         <Box sx={{ mb: 5 }}>
             <Typography variant="h5" sx={{ mb: 1 }}>
                 <FormattedMessage id="materializationCreation.collectionSelector.heading" />
@@ -66,7 +49,7 @@ function CollectionSelector() {
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Autocomplete
                     multiple
-                    options={collectionData.data.map(
+                    options={collectionData.map(
                         ({ catalog_name }) => catalog_name
                     )}
                     value={collections}
