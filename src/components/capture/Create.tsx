@@ -1,19 +1,21 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { routeDetails } from 'app/Authenticated';
-import CaptureSaveButton from 'components/capture/SaveButton';
-import CaptureTestButton from 'components/capture/TestButton';
+import SaveButton from 'components/capture/SaveButton';
+import TestButton from 'components/capture/TestButton';
 import { EditorStoreState } from 'components/editor/Store';
-import Create from 'components/shared/Entity/Create';
+import EntityCreate from 'components/shared/Entity/Create';
+import FooHeader from 'components/shared/Entity/Header';
 import LogDialogActions from 'components/shared/Entity/LogDialogActions';
 import PageContainer from 'components/shared/PageContainer';
 import { useClient } from 'hooks/supabase-swr';
 import { usePrompt } from 'hooks/useBlocker';
 import useBrowserTitle from 'hooks/useBrowserTitle';
+import useConnectorTags from 'hooks/useConnectorTags';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
 import { useEffect } from 'react';
-import { useIntl } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { TABLES } from 'services/supabase';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
@@ -25,13 +27,15 @@ import useConstant from 'use-constant';
 import { getPathWithParam } from 'utils/misc-utils';
 
 const FORM_ID = 'newCaptureForm';
+const messagePrefix = 'captureCreation';
+const connectorType = 'capture';
 
 function CaptureCreate() {
     useBrowserTitle('browserTitle.captureCreate');
 
     const intl = useIntl();
 
-    const notification: Notification = useConstant(() => {
+    const successNotification: Notification = useConstant(() => {
         return {
             description: intl.formatMessage(
                 {
@@ -58,6 +62,8 @@ function CaptureCreate() {
 
     // Supabase stuff
     const supabaseClient = useClient();
+    const { connectorTags } = useConnectorTags(connectorType);
+    const hasConnectors = connectorTags.length > 0;
 
     // Notification store
     const showNotification = useNotificationStore(
@@ -98,6 +104,11 @@ function CaptureCreate() {
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setPubId']
     >((state) => state.setPubId);
+
+    const draftId = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['id']
+    >((state) => state.id);
 
     // Reset the cataolg if the connector changes
     useEffect(() => {
@@ -145,6 +156,30 @@ function CaptureCreate() {
         },
     };
 
+    // Form Event Handlers
+    const handlers = {
+        closeLogs: () => {
+            setFormState({
+                showLogs: false,
+            });
+
+            if (exitWhenLogsClose) {
+                helpers.exit();
+            }
+        },
+
+        materializeCollections: () => {
+            helpers.exit();
+            navigate(
+                getPathWithParam(
+                    routeDetails.materializations.create.fullPath,
+                    routeDetails.materializations.create.params.specID,
+                    pubId
+                )
+            );
+        },
+    };
+
     const waitFor = {
         base: (query: any, success: Function, failureTitle: string) => {
             resetFormState(FormStatus.TESTING);
@@ -174,7 +209,7 @@ function CaptureCreate() {
                     });
                     setDraftId(payload.new.draft_id);
                 },
-                'captureCreation.test.failedErrorTitle'
+                `${messagePrefix}.test.failedErrorTitle`
             );
         },
         publications: () => {
@@ -187,33 +222,9 @@ function CaptureCreate() {
                         exitWhenLogsClose: true,
                     });
 
-                    showNotification(notification);
+                    showNotification(successNotification);
                 },
-                'captureCreation.save.failedErrorTitle'
-            );
-        },
-    };
-
-    // Form Event Handlers
-    const handlers = {
-        closeLogs: () => {
-            setFormState({
-                showLogs: false,
-            });
-
-            if (exitWhenLogsClose) {
-                helpers.exit();
-            }
-        },
-
-        materializeCollections: () => {
-            helpers.exit();
-            navigate(
-                getPathWithParam(
-                    routeDetails.materializations.create.fullPath,
-                    routeDetails.materializations.create.params.specID,
-                    pubId
-                )
+                `${messagePrefix}.save.failedErrorTitle`
             );
         },
     };
@@ -224,14 +235,33 @@ function CaptureCreate() {
 
     return (
         <PageContainer>
-            <Create
+            <EntityCreate
                 title="browserTitle.captureCreate"
-                connectorType="capture"
+                connectorType={connectorType}
                 formID={FORM_ID}
-                successNotification={notification}
-                messagePrefix="captureCreation"
-                TestButton={CaptureTestButton}
-                SaveButton={CaptureSaveButton}
+                messagePrefix={messagePrefix}
+                Header={
+                    <FooHeader
+                        TestButton={
+                            <TestButton
+                                disabled={!hasConnectors}
+                                formId={FORM_ID}
+                                onFailure={helpers.callFailed}
+                                subscription={waitFor.discovers}
+                            />
+                        }
+                        SaveButton={
+                            <SaveButton
+                                disabled={!draftId}
+                                onFailure={helpers.callFailed}
+                                subscription={waitFor.publications}
+                            />
+                        }
+                        heading={
+                            <FormattedMessage id={`${messagePrefix}.heading`} />
+                        }
+                    />
+                }
                 logAction={
                     <LogDialogActions
                         close={handlers.closeLogs}

@@ -359,7 +359,6 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreation.noAccessGrants': `You do not have the necessary ${CommonMessages['terms.permissions']} to create a Materialization. Please contact an administrator.`,
     'materializationCreation.save.failure': `Materialization creation failed. Please see below for details:`,
     'materializationCreation.save.failure.errorTitle': `Materialization Save Failed`,
-    'materializationCreation.save.inProgress': `Please wait while we test, save, and publish your materialization.`,
     'materializationCreation.save.serverUnreachable': `Config Save was unable to reach server`,
     'materializationCreation.tenant.label': `Tenant`,
     'materializationCreation.test.failure.errorTitle': `Config Test Failed`,
@@ -369,6 +368,7 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreation.collectionSelector.heading': `Collection Selector`,
     'materializationCreation.collectionSelector.instructions': `Place instructions for collection selector here.`,
     'materializationCreation.resourceConfig.heading': `Resource Config`,
+    'materializationCreation.save.waitMessage': `Please wait while we test, save, and publish your materialization.`,
 };
 
 const Notifications: ResolvedIntlConfig['messages'] = {
