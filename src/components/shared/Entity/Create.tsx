@@ -27,7 +27,6 @@ interface Props {
     title: string;
     connectorType: 'capture' | 'materialization';
     formID: string;
-    messagePrefix: 'materializationCreate' | 'captureCreate';
     Header: any;
     logAction: ReactNode;
     showCollections?: boolean;
@@ -37,7 +36,6 @@ function EntityCreate({
     title,
     connectorType,
     formID,
-    messagePrefix,
     logAction,
     showCollections,
     Header,
@@ -57,21 +55,18 @@ function EntityCreate({
         useConnectorTags(connectorType); //'capture'
     const hasConnectors = connectorTags.length > 0;
 
-    // Notification store
-
-    // Form store
     const entityCreateStore = useRouteStore();
     const imageTag = entityCreateStore(
         entityCreateStoreSelectors.details.connectorTag
     );
     const hasChanges = entityCreateStore(entityCreateStoreSelectors.hasChanges);
     const resetState = entityCreateStore(entityCreateStoreSelectors.resetState);
-
     const setFormState = entityCreateStore(
         entityCreateStoreSelectors.formState.set
     );
-
-    // Form State
+    const messagePrefix = entityCreateStore(
+        entityCreateStoreSelectors.messagePrefix
+    );
     const showLogs = entityCreateStore(
         entityCreateStoreSelectors.formState.showLogs
     );
@@ -181,7 +176,6 @@ function EntityCreate({
                             <ErrorBoundryWrapper>
                                 <DetailsForm
                                     connectorTags={connectorTags}
-                                    messagePrefix={messagePrefix}
                                     accessGrants={combinedGrants}
                                 />
                             </ErrorBoundryWrapper>

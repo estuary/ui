@@ -25,7 +25,6 @@ import useNotificationStore, {
 import useConstant from 'use-constant';
 
 const FORM_ID = 'newMaterializationForm';
-const messagePrefix = 'materializationCreate';
 const connectorType = 'materialization';
 
 const selectors = {
@@ -82,9 +81,11 @@ function MaterializationCreate() {
     );
     const hasChanges = entityCreateStore(entityCreateStoreSelectors.hasChanges);
     const resetState = entityCreateStore(entityCreateStoreSelectors.resetState);
-
     const setFormState = entityCreateStore(
         entityCreateStoreSelectors.formState.set
+    );
+    const messagePrefix = entityCreateStore(
+        entityCreateStoreSelectors.messagePrefix
     );
 
     // Form State
@@ -211,7 +212,6 @@ function MaterializationCreate() {
                 title="browserTitle.materializationCreate"
                 connectorType={connectorType}
                 formID={FORM_ID}
-                messagePrefix={messagePrefix}
                 showCollections
                 Header={
                     <FooHeader

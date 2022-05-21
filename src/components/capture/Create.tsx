@@ -27,7 +27,6 @@ import useConstant from 'use-constant';
 import { getPathWithParam } from 'utils/misc-utils';
 
 const FORM_ID = 'newCaptureForm';
-const messagePrefix = 'captureCreate';
 const connectorType = 'capture';
 
 function CaptureCreate() {
@@ -72,6 +71,9 @@ function CaptureCreate() {
 
     // Form store
     const entityCreateStore = useRouteStore();
+    const messagePrefix = entityCreateStore(
+        entityCreateStoreSelectors.messagePrefix
+    );
     const imageTag = entityCreateStore(
         entityCreateStoreSelectors.details.connectorTag
     );
@@ -239,7 +241,6 @@ function CaptureCreate() {
                 title="browserTitle.captureCreate"
                 connectorType={connectorType}
                 formID={FORM_ID}
-                messagePrefix={messagePrefix}
                 Header={
                     <FooHeader
                         TestButton={
