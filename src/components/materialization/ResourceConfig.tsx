@@ -1,51 +1,23 @@
 import { Box, Typography } from '@mui/material';
 import ResourceConfigForm from 'components/materialization/ResourceConfigForm';
 import Error from 'components/shared/Error';
-import { useQuery, useSelectSingle } from 'hooks/supabase-swr';
+import useConnectorTag from 'hooks/useConnectorTag';
 import { FormattedMessage } from 'react-intl';
-import { TABLES } from 'services/supabase';
-
-interface ConnectorTag {
-    connectors: {
-        image_name: string;
-    };
-    id: string;
-    resource_spec_schema: string;
-    documentation_url: string;
-}
 
 interface Props {
     connectorImage: string;
     collectionName: string;
 }
 
-const CONNECTOR_TAGS_QUERY = `
-    connectors(
-        image_name
-    ),
-    id,
-    resource_spec_schema, 
-    documentation_url
-`;
-
 function NewMaterializationResourceConfig({
     connectorImage,
     collectionName,
 }: Props) {
-    const tagsQuery = useQuery<ConnectorTag>(
-        TABLES.CONNECTOR_TAGS,
-        {
-            columns: CONNECTOR_TAGS_QUERY,
-            filter: (query) => query.eq('id', connectorImage),
-            count: 'exact',
-        },
-        [connectorImage]
-    );
-    const { data: connector, error } = useSelectSingle(tagsQuery);
+    const { connectorTag, error } = useConnectorTag(connectorImage);
 
     if (error) {
         return <Error error={error} />;
-    } else if (connector?.data) {
+    } else if (connectorTag) {
         return (
             <Box sx={{ mb: 5 }}>
                 <Typography variant="h5" sx={{ mb: 2 }}>
@@ -54,7 +26,7 @@ function NewMaterializationResourceConfig({
 
                 <Box sx={{ width: '100%' }}>
                     <ResourceConfigForm
-                        resourceSchema={connector.data.resource_spec_schema}
+                        resourceSchema={connectorTag.resource_spec_schema}
                         collectionName={collectionName}
                     />
                 </Box>
