@@ -113,41 +113,52 @@ export interface CallSupabaseResponse {
     data: any;
 }
 
-// Used to make update calls. Mainly consumed in the src/api folder
-export const supabaseUpsert = (
+const handleSuccess = (response: any) => {
+    if (response.error) {
+        return {
+            data: null,
+            error: response.error,
+        };
+    } else {
+        return {
+            data: response.data,
+        };
+    }
+};
+
+const handleFailure = (error: any) => {
+    return {
+        data: null,
+        error,
+    };
+};
+
+export const insertSupabase = (
     table: TABLES,
-    data: any,
-    matchData?: any
+    data: any
 ): PromiseLike<CallSupabaseResponse> => {
     const query = supabaseClient.from(table);
 
     const makeCall = () => {
-        let upsetCall = query.upsert(data);
+        return query.insert([data]).then(handleSuccess, handleFailure);
+    };
 
-        if (matchData) {
-            upsetCall = upsetCall.match(matchData);
-        }
+    return makeCall();
+};
 
-        return upsetCall.then(
-            (response) => {
-                if (response.error) {
-                    return {
-                        data: null,
-                        error: response.error,
-                    };
-                } else {
-                    return {
-                        data: response.data,
-                    };
-                }
-            },
-            (error) => {
-                return {
-                    data: null,
-                    error,
-                };
-            }
-        );
+// Used to make update calls. Mainly consumed in the src/api folder
+export const supabaseUpdate = (
+    table: TABLES,
+    data: any,
+    matchData: any
+): PromiseLike<CallSupabaseResponse> => {
+    const query = supabaseClient.from(table);
+
+    const makeCall = () => {
+        return query
+            .update(data)
+            .match(matchData)
+            .then(handleSuccess, handleFailure);
     };
 
     return makeCall();

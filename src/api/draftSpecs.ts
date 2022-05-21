@@ -1,4 +1,4 @@
-import { supabaseUpsert, TABLES } from 'services/supabase';
+import { insertSupabase, supabaseUpdate, TABLES } from 'services/supabase';
 
 export const createDraftSpec = (
     draftId: string | null,
@@ -6,14 +6,12 @@ export const createDraftSpec = (
     draftSpec: any,
     specType?: 'materialization' | 'capture' | string // TODO (typing) get the spec types passed through properly
 ) => {
-    return supabaseUpsert(TABLES.DRAFT_SPECS, [
-        {
-            draft_id: draftId,
-            catalog_name: catalogName,
-            spec_type: specType ?? undefined,
-            spec: draftSpec,
-        },
-    ]);
+    return insertSupabase(TABLES.DRAFT_SPECS, {
+        draft_id: draftId,
+        catalog_name: catalogName,
+        spec_type: specType ?? undefined,
+        spec: draftSpec,
+    });
 };
 
 export const updateDraftSpec = (
@@ -21,7 +19,7 @@ export const updateDraftSpec = (
     catalogName: string,
     draftSpec: any
 ) => {
-    return supabaseUpsert(
+    return supabaseUpdate(
         TABLES.DRAFT_SPECS,
         [
             {

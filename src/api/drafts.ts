@@ -1,7 +1,7 @@
-import { supabaseUpsert, TABLES } from 'services/supabase';
+import { insertSupabase, TABLES } from 'services/supabase';
 
 export const createEntityDraft = (entityName: string) => {
-    return supabaseUpsert(TABLES.DRAFTS, {
+    return insertSupabase(TABLES.DRAFTS, {
         detail: entityName,
     });
 };
