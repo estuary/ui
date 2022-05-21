@@ -1,6 +1,6 @@
 import { Button, SxProps, Theme } from '@mui/material';
 import { createEntityDraft } from 'api/drafts';
-import { createDraftSpec } from 'api/draftSpecs';
+import { createDraftSpec, generateDraftSpec } from 'api/draftSpecs';
 import { encryptConfig } from 'api/sops';
 import { EditorStoreState } from 'components/editor/Store';
 import useConnectorTags from 'hooks/useConnectorTags';
@@ -135,26 +135,11 @@ function MaterializeTestButton({ disabled, formId, onFailure }: Props) {
             }
 
             const newDraftId = draftsResponse.data[0].id;
-
-            // TODO (typing) MaterializationDef
-            const draftSpec: any = {
-                bindings: [],
-                endpoint: {
-                    connector: {
-                        config: encryptedEndpointConfig,
-                        image: `${image_name}${image_tag}`,
-                    },
-                },
-            };
-
-            Object.keys(resourceConfig).forEach((collectionName) => {
-                draftSpec.bindings.push({
-                    source: collectionName,
-                    resource: {
-                        ...resourceConfig[collectionName].data,
-                    },
-                });
-            });
+            const draftSpec = generateDraftSpec(
+                encryptedEndpointConfig,
+                `${image_name}${image_tag}`,
+                resourceConfig
+            );
 
             const draftSpecsResponse = await createDraftSpec(
                 newDraftId,

@@ -48,3 +48,33 @@ export const createDraftSpec = (
 
     return callDraftSpecs();
 };
+
+export const generateDraftSpec = (
+    config: any,
+    image: string,
+    resources?: any
+) => {
+    // TODO (typing) MaterializationDef
+    const draftSpec: any = {
+        bindings: [],
+        endpoint: {
+            connector: {
+                config,
+                image,
+            },
+        },
+    };
+
+    if (resources) {
+        Object.keys(resources).forEach((collectionName) => {
+            draftSpec.bindings.push({
+                source: collectionName,
+                resource: {
+                    ...resources[collectionName].data,
+                },
+            });
+        });
+    }
+
+    return draftSpec;
+};
