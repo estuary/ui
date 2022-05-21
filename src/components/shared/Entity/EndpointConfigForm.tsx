@@ -56,6 +56,11 @@ function EndpointConfigForm({ endpointSchema }: Props) {
         output: categoryLikeSchema,
     });
 
+    const foo = (data: any) => {
+        console.log('>', data);
+        setSpec(data);
+    };
+
     const showValidationVal = showValidation(displayValidation);
 
     return (
@@ -78,7 +83,7 @@ function EndpointConfigForm({ endpointSchema }: Props) {
                         formStateStatus === FormStatus.SAVING
                     }
                     validationMode={showValidationVal}
-                    onChange={setSpec}
+                    onChange={foo}
                     ajv={setDefaultsValidator}
                 />
             </Box>

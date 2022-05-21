@@ -1,5 +1,4 @@
 import {
-    Box,
     Button,
     Card,
     CardActions,
@@ -14,10 +13,10 @@ import {
     Typography,
 } from '@mui/material';
 import { Auth } from '@supabase/ui';
+import FullPageDialog from 'components/fullPage/Dialog';
 import ExternalLink from 'components/shared/ExternalLink';
 import { slate } from 'context/Theme';
 import useBrowserTitle from 'hooks/useBrowserTitle';
-import lightLogo from 'images/light-horizontal/estuary-logo.png';
 import React, { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { getUserDetails } from 'services/supabase';
@@ -143,25 +142,10 @@ const Registration = () => {
     };
 
     return (
-        <Box
-            sx={{
-                width: '100%',
-                height: '100vh',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                my: 6,
-            }}
-        >
+        <FullPageDialog>
             <Card
                 sx={{
-                    minWidth: 400,
-                    minHeight: 300,
-                    p: 2,
-                    background:
-                        'linear-gradient(159.03deg, rgba(172, 199, 220, 0.18) 2.23%, rgba(172, 199, 220, 0.12) 40.69%)',
-                    boxShadow: '0px 4px 24px -1px rgba(0, 0, 0, 0.2)',
-                    borderRadius: 5,
+                    background: 'transparent',
                 }}
             >
                 <CardContent
@@ -171,13 +155,6 @@ const Registration = () => {
                         alignItems: 'center',
                     }}
                 >
-                    <img
-                        src={lightLogo}
-                        width={200}
-                        alt="Estuary Logo"
-                        style={{ marginBottom: 16 }}
-                    />
-
                     <Typography variant="h6" align="center" sx={{ mb: 1.5 }}>
                         <FormattedMessage id="register.heading" />
                     </Typography>
@@ -329,7 +306,7 @@ const Registration = () => {
                     </form>
                 </CardActions>
             </Card>
-        </Box>
+        </FullPageDialog>
     );
 };
 
