@@ -1,11 +1,12 @@
 import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import { ShardClient, ShardSelector } from 'data-plane-gateway';
+import { SetShards } from 'stores/ShardDetail';
 
 const getShardList = (
     baseUrl: URL,
     authToken: string,
     specs: LiveSpecsExtQuery[],
-    setShards: any
+    setShards: SetShards
 ) => {
     const shardClient = new ShardClient(baseUrl, authToken);
     const taskSelector = new ShardSelector();

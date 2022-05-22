@@ -1,14 +1,25 @@
 // import { errorMain, slate, successMain, warningMain } from 'context/Theme';
 import { slate } from 'context/Theme';
+import {
+    ConsumerReplicaStatus,
+    ConsumerShardSpec,
+} from 'data-plane-gateway/types/gen/consumer/protocol/consumer';
 import produce from 'immer';
 import { GetState } from 'zustand';
 import { NamedSet } from 'zustand/middleware';
+
+// TODO: Follow up on the data plane gateway. This type is defined within shard_client.ts in that project.
+// See if it can be exported and replace the duplicate type below.
+interface Shard {
+    spec: ConsumerShardSpec;
+    status: ConsumerReplicaStatus[];
+}
 
 // TODO: Determine a way to access an interface property with a function type.
 export type SetShards = (shards: any[]) => void;
 
 export interface ShardDetailStore {
-    shards: any[];
+    shards: Shard[];
     setShards: SetShards;
     getShardStatus: (catalogNamespace: string) => string;
 }
