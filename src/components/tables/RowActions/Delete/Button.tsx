@@ -1,12 +1,6 @@
-import {
-    Button,
-    Dialog,
-    DialogContent,
-    DialogTitle,
-    Stack,
-} from '@mui/material';
+import { Button, Dialog } from '@mui/material';
 import DeleteConfirmation from 'components/tables/RowActions/Delete/Confirmation';
-import DeleteProgress from 'components/tables/RowActions/Delete/Progress';
+import ProgressDialog from 'components/tables/RowActions/Delete/ProgressDialog';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
@@ -19,6 +13,7 @@ import { FormattedMessage } from 'react-intl';
 function DeleteButton() {
     const confirmationModalContext = useConfirmationModalContext();
 
+    const [showProgress, setShowProgress] = useState(false);
     const [deleting, setDeleting] = useState<any[]>([]);
 
     const selectedRows = useZustandStore<
@@ -26,16 +21,17 @@ function DeleteButton() {
         SelectableTableStore['selected']
     >(selectableTableStoreSelectors.selected.get);
 
+    const setAllSelected = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['setAllSelected']
+    >(selectableTableStoreSelectors.selected.setAll);
+
     const rows = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['rows']
     >(selectableTableStoreSelectors.rows.get);
 
     const hasSelections = selectedRows.size > 0;
-
-    const onFinish = (response: any) => {
-        console.log('Finished delete', response);
-    };
 
     const handlers = {
         delete: () => {
@@ -54,11 +50,17 @@ function DeleteButton() {
                     })
                     .then(async (confirmed: any) => {
                         if (confirmed) {
+                            setShowProgress(true);
                             setDeleting(deletingSpecs);
                         }
                     })
                     .catch(() => {});
             }
+        },
+        finished: () => {
+            setDeleting([]);
+            setAllSelected(false);
+            setShowProgress(false);
         },
     };
     return (
@@ -66,23 +68,13 @@ function DeleteButton() {
             <Button onClick={() => handlers.delete()}>
                 <FormattedMessage id="cta.delete" />
             </Button>
-            <Dialog open={deleting.length > 0}>
-                <DialogTitle>
-                    <FormattedMessage id="common.deleting" />
-                </DialogTitle>
-                <DialogContent>
-                    <Stack direction="column">
-                        {deleting.length > 0
-                            ? deleting.map((item, index) => (
-                                  <DeleteProgress
-                                      key={`Item-delete-${index}`}
-                                      deleting={item}
-                                      onFinish={onFinish}
-                                  />
-                              ))
-                            : null}
-                    </Stack>
-                </DialogContent>
+            <Dialog open={showProgress}>
+                {deleting.length > 0 ? (
+                    <ProgressDialog
+                        deleting={deleting}
+                        finished={handlers.finished}
+                    />
+                ) : null}
             </Dialog>
         </>
     );

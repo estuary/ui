@@ -8,7 +8,7 @@ import { FormattedMessage } from 'react-intl';
 
 interface Props {
     deleting: any;
-    onFinish: Function;
+    onFinish: (response: any) => void;
 }
 
 enum States {
