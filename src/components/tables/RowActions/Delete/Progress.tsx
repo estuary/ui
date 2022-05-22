@@ -44,8 +44,7 @@ function DeleteProgress({ deleting, onFinish }: Props) {
             const draftSpecResponse = await createDraftSpec(
                 entityResponse.data[0].id,
                 entityResponse.data[0].detail,
-                null,
-                'capture'
+                null
             );
             if (draftSpecResponse.error) {
                 return failed(draftSpecResponse);
