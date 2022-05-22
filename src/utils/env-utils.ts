@@ -103,3 +103,28 @@ export const getEncryptionSettings = () => {
         );
     }
 };
+
+export const getGatewayAuthTokenSettings = () => {
+    const gatewayAuthTokenEndpoint =
+        process.env.REACT_APP_GATEWAY_AUTH_TOKEN_URL;
+
+    if (gatewayAuthTokenEndpoint) {
+        return { gatewayAuthTokenEndpoint };
+    } else {
+        throw new Error(
+            'Missing endpoint for creating gateway auth tokens: REACT_APP_GATEWAY_AUTH_TOKEN_URL'
+        );
+    }
+};
+
+export const getSupabaseAnonymousKey = () => {
+    const supabaseAnonymousKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
+
+    if (supabaseAnonymousKey) {
+        return { supabaseAnonymousKey };
+    } else {
+        throw new Error(
+            'Missing Supabase anonymous key: REACT_APP_SUPABASE_ANON_KEY'
+        );
+    }
+};
