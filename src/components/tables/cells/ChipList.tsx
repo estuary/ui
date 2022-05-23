@@ -1,5 +1,7 @@
 import { Box, Chip, styled, TableCell, Tooltip } from '@mui/material';
 import { outlineSx, tableBorderSx } from 'context/Theme';
+import { FormattedMessage } from 'react-intl';
+import { stripPathing } from 'utils/misc-utils';
 
 interface Props {
     disabled?: boolean;
@@ -40,7 +42,14 @@ function ChipList({ disabled, strings }: Props) {
                         <ListItem key={`${val}-${index}`}>
                             <Tooltip title={val}>
                                 <Chip
-                                    label={val}
+                                    label={
+                                        <FormattedMessage
+                                            id="commin.pathShort.prefix"
+                                            values={{
+                                                path: stripPathing(val),
+                                            }}
+                                        />
+                                    }
                                     size="small"
                                     variant="outlined"
                                     disabled={disabled}

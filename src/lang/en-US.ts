@@ -49,6 +49,8 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
 
     // Common sections
     'connectionConfig.header': `Connection Config`,
+
+    'commin.pathShort.prefix': '.../{path}',
 };
 
 const CTAs: ResolvedIntlConfig['messages'] = {

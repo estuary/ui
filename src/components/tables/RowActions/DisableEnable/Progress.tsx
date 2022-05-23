@@ -65,7 +65,7 @@ function DisableEnableProgress({ enabling, entity, onFinish }: Props) {
                     `${entity.connector_image_name}${entity.connector_image_tag}`
                 );
 
-                draftSpec.bindings = spec.bindings ? spec.bindings : [];
+                draftSpec.bindingssssss = spec.bindings ? spec.bindings : [];
                 draftSpec.shards = spec.shards ? { ...spec.shards } : {};
                 draftSpec.shards.disable = !enabling;
 
@@ -121,6 +121,7 @@ function DisableEnableProgress({ enabling, entity, onFinish }: Props) {
             error={error}
             renderError={() => (
                 <Alert
+                    icon={false}
                     severity="error"
                     sx={{
                         maxHeight: 100,
