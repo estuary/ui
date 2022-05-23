@@ -8,8 +8,8 @@ interface Props {
 
 function EntityStatus({ name }: Props) {
     const shardDetailStore = useRouteStore();
-    const getShardStatus = shardDetailStore(
-        shardDetailSelectors.getShardStatus
+    const getShardStatusColor = shardDetailStore(
+        shardDetailSelectors.getShardStatusColor
     );
 
     return (
@@ -18,7 +18,7 @@ function EntityStatus({ name }: Props) {
                 style={{
                     height: 16,
                     width: 16,
-                    backgroundColor: getShardStatus(name),
+                    backgroundColor: getShardStatusColor(name),
                     borderRadius: 50,
                     display: 'inline-block',
                     verticalAlign: 'middle',

@@ -1,8 +1,9 @@
 // import { errorMain, slate, successMain, warningMain } from 'context/Theme';
-import { slate } from 'context/Theme';
+import { errorMain, slate, successMain, warningMain } from 'context/Theme';
 import {
     ConsumerReplicaStatus,
     ConsumerShardSpec,
+    ReplicaStatusCode,
 } from 'data-plane-gateway/types/gen/consumer/protocol/consumer';
 import produce from 'immer';
 import { GetState } from 'zustand';
@@ -16,13 +17,54 @@ interface Shard {
 }
 
 // TODO: Determine a way to access an interface property with a function type.
-export type SetShards = (shards: any[]) => void;
+export type SetShards = (shards: Shard[]) => void;
 
 export interface ShardDetailStore {
     shards: Shard[];
     setShards: SetShards;
-    getShardStatus: (catalogNamespace: string) => string;
+    getShardStatusColor: (catalogNamespace: string) => string;
 }
+
+const evaluateShardStatus = (
+    { status }: Shard,
+    defaultColor: string
+): string => {
+    if (status.length === 1) {
+        switch (status[0].code) {
+            case 'PRIMARY':
+                return successMain;
+            case 'IDLE':
+            case 'STANDBY':
+            case 'BACKFILL':
+                return warningMain;
+            case 'FAILED':
+                return errorMain;
+            default:
+                return defaultColor;
+        }
+    } else if (status.length > 1) {
+        const statusCodes: (ReplicaStatusCode | undefined)[] = status.map(
+            ({ code }) => code
+        );
+
+        if (statusCodes.find((code) => code === 'PRIMARY')) {
+            return successMain;
+        } else if (statusCodes.find((code) => code === 'FAILED')) {
+            return errorMain;
+        } else if (
+            statusCodes.find(
+                (code) =>
+                    code === 'IDLE' || code === 'STANDBY' || code === 'BACKFILL'
+            )
+        ) {
+            return warningMain;
+        } else {
+            return defaultColor;
+        }
+    } else {
+        return defaultColor;
+    }
+};
 
 export const getInitialState = (
     set: NamedSet<ShardDetailStore>,
@@ -39,28 +81,22 @@ export const getInitialState = (
                 'Shard List Set'
             );
         },
-        getShardStatus: (catalogNamespace) => {
+        getShardStatusColor: (catalogNamespace) => {
+            const defaultColor = slate[25];
+
             const { shards } = get();
 
-            // const selectedShard = shards.find((shard) =>
-            //     shard.spec.id.includes(catalogNamespace)
-            // );
+            if (shards.length > 0) {
+                const selectedShard = shards.find(({ spec }) =>
+                    spec.id ? spec.id.includes(catalogNamespace) : undefined
+                );
 
-            // switch (selectedShard?.status[0].code) {
-            //     case 'PRIMARY':
-            //         return successMain;
-            //     case 'BACKFILL':
-            //     case 'STANDBY':
-            //         return warningMain;
-            //     case 'FAILED':
-            //         return errorMain;
-            //     default:
-            //         return slate[25];
-            // }
-
-            return shards.length > 0 && catalogNamespace
-                ? slate[25]
-                : slate[200];
+                return selectedShard
+                    ? evaluateShardStatus(selectedShard, defaultColor)
+                    : defaultColor;
+            } else {
+                return defaultColor;
+            }
         },
     };
 };
@@ -68,5 +104,5 @@ export const getInitialState = (
 export const shardDetailSelectors = {
     shards: (state: ShardDetailStore) => state.shards,
     setShards: (state: ShardDetailStore) => state.setShards,
-    getShardStatus: (state: ShardDetailStore) => state.getShardStatus,
+    getShardStatusColor: (state: ShardDetailStore) => state.getShardStatusColor,
 };
