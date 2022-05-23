@@ -4,7 +4,7 @@ export const createDraftSpec = (
     draftId: string | null,
     catalogName: string,
     draftSpec: any,
-    specType?: 'materialization' | 'capture' | string // TODO (typing) get the spec types passed through properly
+    specType?: 'materialization' | 'capture' | null // TODO (typing) get the spec types passed through properly
 ) => {
     return insertSupabase(TABLES.DRAFT_SPECS, {
         draft_id: draftId,

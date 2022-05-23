@@ -9,7 +9,7 @@ function DeleteButton() {
             renderProgress={(item, index, onFinish) => (
                 <DeleteProgress
                     key={`Item-delete-${index}`}
-                    deleting={item}
+                    entity={item}
                     onFinish={onFinish}
                 />
             )}
