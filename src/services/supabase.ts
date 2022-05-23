@@ -118,16 +118,14 @@ export interface CallSupabaseResponse {
 }
 
 const handleSuccess = (response: any) => {
-    if (response.error) {
-        return {
-            data: null,
-            error: response.error,
-        };
-    } else {
-        return {
-            data: response.data,
-        };
-    }
+    return response.error
+        ? {
+              data: null,
+              error: response.error,
+          }
+        : {
+              data: response.data,
+          };
 };
 
 const handleFailure = (error: any) => {

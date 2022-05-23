@@ -78,8 +78,8 @@ export interface CreateEntityStore {
     getResourceConfigErrors: () => any[];
 
     // Collection Selector
-    collections: any[] | null;
-    setCollections: (collections: any[]) => void;
+    collections: string[] | null;
+    setCollections: (collections: string[]) => void;
     prefillCollections: (collections: LiveSpecsExtQuery[]) => void;
 
     //Form State
@@ -184,12 +184,13 @@ export const getInitialCreateState = (
                         state.details.data.connectorImage?.id !==
                         details.data.connectorImage?.id
                     ) {
-                        const initState = getInitialStateData(
-                            includeCollections,
-                            messagePrefix
-                        );
-                        state.endpointConfig = initState.endpointConfig;
-                        state.formState = initState.formState;
+                        const { endpointConfig, formState } =
+                            getInitialStateData(
+                                includeCollections,
+                                messagePrefix
+                            );
+                        state.endpointConfig = endpointConfig;
+                        state.formState = formState;
                     }
 
                     state.details = details;

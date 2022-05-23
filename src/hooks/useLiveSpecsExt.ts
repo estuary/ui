@@ -5,11 +5,19 @@ export interface LiveSpecsExtQuery {
     id: string;
     writes_to: string[];
     spec_type: string;
+    spec?: string;
 }
 
 const queryColumns = ['id', 'writes_to', 'spec_type'];
 
-function useLiveSpecsExt(draftId: string[] | string | null) {
+function useLiveSpecsExt(
+    draftId: string[] | string | null,
+    includeSpec?: boolean
+) {
+    if (includeSpec) {
+        queryColumns.push('spec');
+    }
+
     const draftSpecQuery = useQuery<LiveSpecsExtQuery>(
         TABLES.LIVE_SPECS_EXT,
         {

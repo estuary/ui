@@ -1,6 +1,7 @@
 import SharedProgress, {
     ProgressStates,
 } from 'components/tables/RowActions/Shared/Progress';
+import useLiveSpecsExt from 'hooks/useLiveSpecsExt';
 import { useEffect, useState } from 'react';
 
 interface Props {
@@ -13,7 +14,11 @@ function DisableEnableProgress({ enabling, entity, onFinish }: Props) {
     const [state, setState] = useState<ProgressStates>(ProgressStates.RUNNING);
     const [error, setError] = useState<any | null>(null);
 
+    const { liveSpecs } = useLiveSpecsExt(entity.last_pub_id, true);
+
     useEffect(() => {
+        console.log('Progress use effect');
+
         const failed = (response: any) => {
             console.log('response.error', response.error);
 
@@ -33,11 +38,14 @@ function DisableEnableProgress({ enabling, entity, onFinish }: Props) {
                 spec,
                 succeeded,
                 failed,
+                liveSpecs,
             });
         };
 
-        void makeDisableCall(entity);
-    }, [enabling, entity, onFinish]);
+        if (liveSpecs.length > 0) {
+            void makeDisableCall(entity);
+        }
+    }, [enabling, entity, liveSpecs, onFinish]);
 
     return (
         <SharedProgress
