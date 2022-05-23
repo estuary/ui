@@ -13,7 +13,6 @@ const getShardList = <T extends LiveSpecsExtBaseQuery>(
 
     specs
         .map((spec) => spec.catalog_name)
-        .sort()
         .forEach((name) => taskSelector.task(name));
 
     // TODO: Determine how frequently this data should be polled and an approach to do so. This function should be broken out
