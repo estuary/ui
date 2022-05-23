@@ -1,23 +1,23 @@
-import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import { ShardClient, ShardSelector } from 'data-plane-gateway';
 import { SetShards } from 'stores/ShardDetail';
+import { LiveSpecsExtBaseQuery } from 'types';
 
-const getShardList = (
+const getShardList = <T extends LiveSpecsExtBaseQuery>(
     baseUrl: URL,
     authToken: string,
-    specs: LiveSpecsExtQuery[],
+    specs: T[],
     setShards: SetShards
 ) => {
     const shardClient = new ShardClient(baseUrl, authToken);
     const taskSelector = new ShardSelector();
 
     specs
-        .map(({ catalog_name }) => catalog_name)
+        .map((spec) => spec.catalog_name)
         .sort()
         .forEach((name) => taskSelector.task(name));
 
-    // TODO: Determine how frequently this data should be polled and an approach to do so. Since useSWR is
-    // the caller of this function, the refreshInterval setting may be a contender.
+    // TODO: Determine how frequently this data should be polled and an approach to do so. This function should be broken out
+    // from the useGatewayAuthToken hook and placed in its own hook driven by useEffect.
     shardClient
         .list(taskSelector)
         .then((result) => {

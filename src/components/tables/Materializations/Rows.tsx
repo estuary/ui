@@ -8,7 +8,10 @@ import TimeStamp from 'components/tables/cells/TimeStamp';
 import UserName from 'components/tables/cells/UserName';
 import DetailsPanel from 'components/tables/DetailsPanel';
 import { LiveSpecsExtQuery } from 'components/tables/Materializations';
+import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
+import { useRouteStore } from 'hooks/useRouteStore';
 import { useState } from 'react';
+import { shardDetailSelectors } from 'stores/ShardDetail';
 
 interface RowsProps {
     data: LiveSpecsExtQuery[];
@@ -93,6 +96,11 @@ function Row({ row, showEntityStatus }: RowProps) {
 }
 
 function Rows({ data, showEntityStatus }: RowsProps) {
+    const shardDetailStore = useRouteStore();
+    const setShards = shardDetailStore(shardDetailSelectors.setShards);
+
+    useGatewayAuthToken(data, setShards);
+
     return (
         <>
             {data.map((row) => (

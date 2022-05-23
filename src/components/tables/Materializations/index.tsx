@@ -5,12 +5,8 @@ import EntityTable, {
 } from 'components/tables/EntityTable';
 import Rows, { tableColumns } from 'components/tables/Materializations/Rows';
 import { useQuery } from 'hooks/supabase-swr';
-import { useRouteStore } from 'hooks/useRouteStore';
-import useShardsList from 'hooks/useShardsList';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
-import { useStoreRepo } from 'stores/Repo';
-import { shardDetailSelectors } from 'stores/ShardDetail';
 import { OpenGraph } from 'types';
 
 export interface LiveSpecsExtQuery {
@@ -23,9 +19,9 @@ export interface LiveSpecsExtQuery {
     last_pub_user_avatar_url: string;
     last_pub_user_email: string;
     last_pub_user_full_name: string;
-    reads_from: string[];
     spec_type: string;
     updated_at: string;
+    reads_from: string[];
 }
 
 const queryColumns = [
@@ -70,11 +66,6 @@ function MaterializationsTable() {
         },
         [pagination, searchQuery, columnToSort, sortDirection]
     );
-
-    const shardDetailStore = useStoreRepo(useRouteStore());
-    const setShards = shardDetailStore(shardDetailSelectors.setShards);
-
-    useShardsList('materialization', setShards);
 
     return (
         <Box>

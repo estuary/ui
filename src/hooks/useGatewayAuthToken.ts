@@ -1,9 +1,9 @@
-import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import { useQuery, useSelect } from 'hooks/supabase-swr';
 import { client } from 'services/client';
 import getShardList from 'services/shard-client';
 import { TABLES } from 'services/supabase';
 import useSWR from 'swr';
+import { LiveSpecsExtBaseQuery } from 'types';
 import {
     getGatewayAuthTokenSettings,
     getSupabaseAnonymousKey,
@@ -40,7 +40,10 @@ const fetcher = (
     });
 };
 
-const useGatewayAuthToken = (specs: LiveSpecsExtQuery[], setShards: any) => {
+const useGatewayAuthToken = <T extends LiveSpecsExtBaseQuery>(
+    specs: T[],
+    setShards: any
+) => {
     const roleQuery = useQuery<RoleGrantsQuery>(
         TABLES.ROLE_GRANTS,
         { columns: `id, object_role` },

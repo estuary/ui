@@ -53,3 +53,17 @@ export interface Grants {
     user_id: string;
     id: string;
 }
+
+export interface LiveSpecsExtBaseQuery {
+    catalog_name: string;
+    connector_image_name: string | null;
+    connector_image_tag: string | null;
+    connector_open_graph: OpenGraph;
+    id: string;
+    last_pub_id: string;
+    last_pub_user_avatar_url: string | null;
+    last_pub_user_email: string;
+    last_pub_user_full_name: string | null;
+    spec_type: string;
+    updated_at: string;
+}
