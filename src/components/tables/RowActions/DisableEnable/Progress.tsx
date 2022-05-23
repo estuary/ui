@@ -1,8 +1,16 @@
+import { createEntityDraft } from 'api/drafts';
+import { createDraftSpec, generateDraftSpec } from 'api/draftSpecs';
+import { createPublication } from 'api/publications';
+import { encryptConfig } from 'api/sops';
+import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import SharedProgress, {
     ProgressStates,
 } from 'components/tables/RowActions/Shared/Progress';
+import { useClient } from 'hooks/supabase-swr';
 import useLiveSpecsExt from 'hooks/useLiveSpecsExt';
+import produce from 'immer';
 import { useEffect, useState } from 'react';
+import { startSubscription, TABLES } from 'services/supabase';
 
 interface Props {
     entity: any;
@@ -11,6 +19,7 @@ interface Props {
 }
 
 function DisableEnableProgress({ enabling, entity, onFinish }: Props) {
+    const supabaseClient = useClient();
     const [state, setState] = useState<ProgressStates>(ProgressStates.RUNNING);
     const [error, setError] = useState<any | null>(null);
 
@@ -32,18 +41,80 @@ function DisableEnableProgress({ enabling, entity, onFinish }: Props) {
             onFinish(response);
         };
 
-        const makeDisableCall = async (spec: any) => {
+        const makeDisableCall = async (
+            targetEntity: LiveSpecsExtQuery,
+            spec: any
+        ) => {
             console.log('enable disable', {
                 enabling,
                 spec,
+                targetEntity,
                 succeeded,
                 failed,
                 liveSpecs,
             });
+
+            const entityName = targetEntity.catalog_name;
+
+            const draftsResponse = await createEntityDraft(entityName);
+            if (draftsResponse.error) {
+                return failed(draftsResponse);
+            }
+
+            const encryptedEndpointConfig = await encryptConfig(
+                spec.bindings,
+                spec.endpoint
+            );
+            if (encryptedEndpointConfig.error) {
+                return failed(encryptedEndpointConfig);
+            }
+
+            const newDraftId = draftsResponse.data[0].id;
+            const draftSpec = generateDraftSpec(
+                encryptedEndpointConfig,
+                `${targetEntity.connector_image_name}${targetEntity.connector_image_tag}`
+            );
+
+            const draftSpecsResponse = await createDraftSpec(
+                newDraftId,
+                entityName,
+                draftSpec,
+                'capture'
+            );
+            if (draftSpecsResponse.error) {
+                return failed(draftSpecsResponse);
+            }
+
+            const publicationsSubscription = startSubscription(
+                supabaseClient.from(TABLES.PUBLICATIONS),
+                (payload: any) => {
+                    return succeeded(payload);
+                },
+                (publishSubError: any) => {
+                    return failed(publishSubError);
+                }
+            );
+
+            const publishResponse = await createPublication(newDraftId, false);
+            if (publishResponse.error) {
+                return failed(publishResponse);
+            }
+
+            return publicationsSubscription;
         };
 
         if (liveSpecs.length > 0) {
-            void makeDisableCall(entity);
+            const updatedSpec = produce(liveSpecs[0].spec, (spec) => {
+                // TODO (typing) this is only optional because the hook takes an option
+                if (spec) {
+                    if (spec.shards) {
+                        spec.shards.disable = !enabling;
+                    } else {
+                        spec.shards = { disable: !enabling };
+                    }
+                }
+            });
+            void makeDisableCall(entity, updatedSpec);
         }
     }, [enabling, entity, liveSpecs, onFinish]);
 

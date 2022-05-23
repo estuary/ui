@@ -5,7 +5,7 @@ export interface LiveSpecsExtQuery {
     id: string;
     writes_to: string[];
     spec_type: string;
-    spec?: string;
+    spec?: { [k: string]: any };
 }
 
 const queryColumns = ['id', 'writes_to', 'spec_type'];
