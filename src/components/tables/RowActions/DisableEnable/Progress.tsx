@@ -65,7 +65,7 @@ function DisableEnableProgress({ enabling, entity, onFinish }: Props) {
                     `${entity.connector_image_name}${entity.connector_image_tag}`
                 );
 
-                draftSpec.bindingssssss = spec.bindings ? spec.bindings : [];
+                draftSpec.bindings = spec.bindings ? spec.bindings : [];
                 draftSpec.shards = spec.shards ? { ...spec.shards } : {};
                 draftSpec.shards.disable = !enabling;
 
