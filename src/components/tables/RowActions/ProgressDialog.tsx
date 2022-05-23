@@ -5,29 +5,37 @@ import {
     DialogTitle,
     Stack,
 } from '@mui/material';
-import DeleteProgress from 'components/tables/RowActions/Delete/Progress';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
-    deleting: any[];
+    selectedEntities: any[];
+    renderComponent: (
+        item: any,
+        index: number,
+        onFinish: (response: any) => void
+    ) => ReactNode;
     finished: Function;
 }
 
-function ProgressDialog({ deleting, finished }: Props) {
+function ProgressDialog({
+    selectedEntities,
+    finished,
+    renderComponent,
+}: Props) {
     const [done, setDone] = useState(false);
-    const [deleted, setDeleted] = useState<any[]>([]);
+    const [finishedEntities, setFinishedEntities] = useState<any[]>([]);
 
     const onFinish = (response: any) => {
-        deleted.push(response);
-        setDeleted(deleted);
-        if (deleted.length === deleting.length) {
+        finishedEntities.push(response);
+        setFinishedEntities(finishedEntities);
+        if (finishedEntities.length === selectedEntities.length) {
             setDone(true);
         }
     };
 
     const onClose = () => {
-        setDeleted([]);
+        setFinishedEntities([]);
         finished();
     };
 
@@ -38,14 +46,10 @@ function ProgressDialog({ deleting, finished }: Props) {
             </DialogTitle>
             <DialogContent>
                 <Stack direction="column">
-                    {deleting.length > 0
-                        ? deleting.map((item, index) => (
-                              <DeleteProgress
-                                  key={`Item-delete-${index}`}
-                                  deleting={item}
-                                  onFinish={onFinish}
-                              />
-                          ))
+                    {selectedEntities.length > 0
+                        ? selectedEntities.map((item, index) =>
+                              renderComponent(item, index, onFinish)
+                          )
                         : null}
                 </Stack>
             </DialogContent>

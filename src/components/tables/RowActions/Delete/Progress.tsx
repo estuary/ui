@@ -12,13 +12,13 @@ interface Props {
 }
 
 enum States {
-    DELETING = 1,
+    RUNNING = 1,
     FAILED = 2,
-    DELETED = 3,
+    SUCCESS = 3,
 }
 
 function DeleteProgress({ deleting, onFinish }: Props) {
-    const [state, setState] = useState<States>(States.DELETING);
+    const [state, setState] = useState<States>(States.RUNNING);
     const [error, setError] = useState<any | null>(null);
 
     useEffect(() => {
@@ -31,7 +31,7 @@ function DeleteProgress({ deleting, onFinish }: Props) {
         };
 
         const succeeded = (response: any) => {
-            setState(States.DELETED);
+            setState(States.SUCCESS);
             onFinish(response);
         };
 
@@ -64,13 +64,13 @@ function DeleteProgress({ deleting, onFinish }: Props) {
     return (
         <Box>
             <Stack direction="row" spacing={1}>
-                {state === States.DELETING && <CircularProgress size={18} />}
+                {state === States.RUNNING && <CircularProgress size={18} />}
                 <ListItemText
                     primary={deleting.catalog_name}
                     secondary={
                         <FormattedMessage
                             id={
-                                state === States.DELETED
+                                state === States.SUCCESS
                                     ? 'common.deleted'
                                     : state === States.FAILED
                                     ? 'common.fail'

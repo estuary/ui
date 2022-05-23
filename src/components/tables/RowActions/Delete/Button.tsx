@@ -1,6 +1,7 @@
 import { Button, Dialog } from '@mui/material';
 import DeleteConfirmation from 'components/tables/RowActions/Delete/Confirmation';
-import ProgressDialog from 'components/tables/RowActions/Delete/ProgressDialog';
+import DeleteProgress from 'components/tables/RowActions/Delete/Progress';
+import ProgressDialog from 'components/tables/RowActions/ProgressDialog';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
@@ -71,8 +72,15 @@ function DeleteButton() {
             <Dialog open={showProgress}>
                 {deleting.length > 0 ? (
                     <ProgressDialog
-                        deleting={deleting}
+                        selectedEntities={deleting}
                         finished={handlers.finished}
+                        renderComponent={(item, index, onFinish) => (
+                            <DeleteProgress
+                                key={`Item-delete-${index}`}
+                                deleting={item}
+                                onFinish={onFinish}
+                            />
+                        )}
                     />
                 ) : null}
             </Dialog>
