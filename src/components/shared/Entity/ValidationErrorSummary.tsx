@@ -1,7 +1,7 @@
 import { Alert, AlertTitle, Collapse } from '@mui/material';
 import KeyValueList, { KeyValue } from 'components/shared/KeyValueList';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { map } from 'lodash';
+import { isEmpty, map } from 'lodash';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { entityCreateStoreSelectors } from 'stores/Create';
 
@@ -11,6 +11,12 @@ function ValidationErrorSummary() {
     const entityCreateStore = useRouteStore();
     const [detailErrors, specErrors] = entityCreateStore(
         entityCreateStoreSelectors.errors
+    );
+    const endpointSchema = entityCreateStore(
+        entityCreateStoreSelectors.endpointConfig.data
+    );
+    const collections = entityCreateStore(
+        entityCreateStoreSelectors.collections
     );
     const getResourceConfigErrors = entityCreateStore(
         entityCreateStoreSelectors.resourceConfig.getErrors
@@ -37,7 +43,13 @@ function ValidationErrorSummary() {
         });
     }
 
-    if (filteredSpecErrors.length > 0) {
+    if (isEmpty(endpointSchema)) {
+        filteredErrorsList.push({
+            title: intl.formatMessage({
+                id: 'foo.endpointConfig.endpointConfigMissing',
+            }),
+        });
+    } else if (filteredSpecErrors.length > 0) {
         filteredErrorsList.push({
             title: intl.formatMessage({
                 id: 'foo.endpointConfig.endpointConfigHaveErrors',
@@ -45,7 +57,7 @@ function ValidationErrorSummary() {
         });
     }
 
-    if (filteredResourceConfigErrors.length > 0) {
+    if (collections && filteredResourceConfigErrors.length > 0) {
         filteredErrorsList.push({
             title: intl.formatMessage({
                 id: 'foo.endpointConfig.resourceConfigHaveErrors',

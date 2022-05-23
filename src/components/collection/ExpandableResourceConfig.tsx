@@ -5,7 +5,7 @@ import {
     AccordionSummary,
     Typography,
 } from '@mui/material';
-import ResourceConfig from 'components/materialization/ResourceConfig';
+import ResourceConfig from 'components/collection/ResourceConfig';
 
 interface Props {
     collectionName: string;

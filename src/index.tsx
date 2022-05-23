@@ -1,3 +1,4 @@
+import { enableMapSet } from 'immer';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { initLogRocket } from 'services/logrocket';
@@ -19,6 +20,7 @@ import AppProviders from './context';
 // };
 
 initLogRocket();
+enableMapSet();
 
 ReactDOM.render(
     <React.StrictMode>

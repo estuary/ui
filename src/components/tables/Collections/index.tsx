@@ -4,7 +4,9 @@ import EntityTable, {
     getPagination,
     SortDirection,
 } from 'components/tables/EntityTable';
+import { createSelectableTableStore } from 'components/tables/Store';
 import { useQuery } from 'hooks/supabase-swr';
+import { ZustandProvider } from 'hooks/useZustand';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
 
@@ -47,25 +49,30 @@ function CollectionsTable() {
 
     return (
         <Box>
-            <EntityTable
-                noExistingDataContentIds={{
-                    header: 'collections.message1',
-                    message: 'collections.message2',
-                    docLink: 'collections.message2.docLink',
-                    docPath: 'collections.message2.docPath',
-                }}
-                columns={tableColumns}
-                query={liveSpecQuery}
-                renderTableRows={(data) => <Rows data={data} />}
-                setPagination={setPagination}
-                setSearchQuery={setSearchQuery}
-                sortDirection={sortDirection}
-                setSortDirection={setSortDirection}
-                columnToSort={columnToSort}
-                setColumnToSort={setColumnToSort}
-                header="collectionsTable.title"
-                filterLabel="entityTable.filterLabel"
-            />
+            <ZustandProvider
+                createStore={createSelectableTableStore}
+                storeName="Collections-Selectable-Table"
+            >
+                <EntityTable
+                    noExistingDataContentIds={{
+                        header: 'collections.message1',
+                        message: 'collections.message2',
+                        docLink: 'collections.message2.docLink',
+                        docPath: 'collections.message2.docPath',
+                    }}
+                    columns={tableColumns}
+                    query={liveSpecQuery}
+                    renderTableRows={(data) => <Rows data={data} />}
+                    setPagination={setPagination}
+                    setSearchQuery={setSearchQuery}
+                    sortDirection={sortDirection}
+                    setSortDirection={setSortDirection}
+                    columnToSort={columnToSort}
+                    setColumnToSort={setColumnToSort}
+                    header="collectionsTable.title"
+                    filterLabel="entityTable.filterLabel"
+                />
+            </ZustandProvider>
         </Box>
     );
 }

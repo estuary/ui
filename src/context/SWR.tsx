@@ -15,6 +15,12 @@ interface IMiddleware {
     logger: any;
 }
 
+export const singleCallSettings = {
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+};
+
 const middleware: IMiddleware = {
     cache: () => {
         // When initializing, we restore the data from `localStorage` into a map.

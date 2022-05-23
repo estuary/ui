@@ -21,10 +21,9 @@ import { getConnectorName } from 'utils/misc-utils';
 interface Props {
     connectorTags: ConnectorTagQuery[];
     accessGrants: Grants[];
-    messagePrefix: 'materializationCreation' | 'captureCreation';
 }
 
-function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
+function DetailsForm({ connectorTags, accessGrants }: Props) {
     const intl = useIntl();
     const [searchParams] = useSearchParams();
     const connectorID = searchParams.get(
@@ -32,6 +31,9 @@ function DetailsForm({ connectorTags, messagePrefix, accessGrants }: Props) {
     );
 
     const entityCreateStore = useRouteStore();
+    const messagePrefix = entityCreateStore(
+        entityCreateStoreSelectors.messagePrefix
+    );
     const formData = entityCreateStore(entityCreateStoreSelectors.details.data);
     const setDetails = entityCreateStore(
         entityCreateStoreSelectors.details.set

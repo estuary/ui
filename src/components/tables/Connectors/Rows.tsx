@@ -73,7 +73,7 @@ function Rows({ data }: Props) {
                         <TableCell style={columnStyling}>
                             <Link
                                 path={row.connector_tags[0].documentation_url}
-                                messageId="captureCreation.config.source.doclink"
+                                messageId="captureCreate.config.source.doclink"
                             />
                         </TableCell>
                         <TableCell>

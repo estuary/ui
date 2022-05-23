@@ -1,7 +1,10 @@
 import { Box, Chip, styled, TableCell, Tooltip } from '@mui/material';
 import { outlineSx, tableBorderSx } from 'context/Theme';
+import { FormattedMessage } from 'react-intl';
+import { stripPathing } from 'utils/misc-utils';
 
 interface Props {
+    disabled?: boolean;
     strings: string[];
 }
 
@@ -19,7 +22,7 @@ export const chipListWrapperStyling = {
     overflow: 'auto',
 };
 
-function ChipList({ strings }: Props) {
+function ChipList({ disabled, strings }: Props) {
     return (
         <TableCell sx={chipListWrapperStyling}>
             <Box
@@ -39,9 +42,17 @@ function ChipList({ strings }: Props) {
                         <ListItem key={`${val}-${index}`}>
                             <Tooltip title={val}>
                                 <Chip
-                                    label={val}
+                                    label={
+                                        <FormattedMessage
+                                            id="commin.pathShort.prefix"
+                                            values={{
+                                                path: stripPathing(val),
+                                            }}
+                                        />
+                                    }
                                     size="small"
                                     variant="outlined"
+                                    disabled={disabled}
                                     sx={{
                                         ...outlineSx,
                                         // TODO (typing) Figure out how to use truncateTextSx here

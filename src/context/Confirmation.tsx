@@ -6,7 +6,7 @@ import {
     DialogContentText,
     DialogTitle,
 } from '@mui/material';
-import { createContext, useContext, useRef, useState } from 'react';
+import { createContext, ReactNode, useContext, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { BaseComponentProps } from 'types';
 
@@ -14,7 +14,7 @@ export interface IConfirmationModalOptions {
     confirmText?: string;
     cancelText?: string;
     title?: string;
-    message: string;
+    message: string | ReactNode;
 }
 
 interface IConfirmationModalContext {
@@ -87,7 +87,11 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText id={DESCRIPTION_ID}>
-                        <FormattedMessage id={settings.message} />
+                        {typeof settings.message === 'string' ? (
+                            <FormattedMessage id={settings.message} />
+                        ) : (
+                            settings.message
+                        )}
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
