@@ -1,4 +1,4 @@
-import { insertSupabase, supabaseUpdate, TABLES } from 'services/supabase';
+import { insertSupabase, TABLES, updateSupabase } from 'services/supabase';
 
 export const createDraftSpec = (
     draftId: string | null,
@@ -19,7 +19,7 @@ export const updateDraftSpec = (
     catalogName: string,
     draftSpec: any
 ) => {
-    return supabaseUpdate(
+    return updateSupabase(
         TABLES.DRAFT_SPECS,
         {
             spec: draftSpec,

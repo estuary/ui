@@ -149,7 +149,7 @@ export const insertSupabase = (
 };
 
 // Used to make update calls. Mainly consumed in the src/api folder
-export const supabaseUpdate = (
+export const updateSupabase = (
     table: TABLES,
     data: any,
     matchData: any
