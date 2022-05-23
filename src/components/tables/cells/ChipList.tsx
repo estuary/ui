@@ -2,6 +2,7 @@ import { Box, Chip, styled, TableCell, Tooltip } from '@mui/material';
 import { outlineSx, tableBorderSx } from 'context/Theme';
 
 interface Props {
+    disabled?: boolean;
     strings: string[];
 }
 
@@ -19,7 +20,7 @@ export const chipListWrapperStyling = {
     overflow: 'auto',
 };
 
-function ChipList({ strings }: Props) {
+function ChipList({ disabled, strings }: Props) {
     return (
         <TableCell sx={chipListWrapperStyling}>
             <Box
@@ -42,6 +43,7 @@ function ChipList({ strings }: Props) {
                                     label={val}
                                     size="small"
                                     variant="outlined"
+                                    disabled={disabled}
                                     sx={{
                                         ...outlineSx,
                                         // TODO (typing) Figure out how to use truncateTextSx here
