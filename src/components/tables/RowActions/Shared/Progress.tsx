@@ -1,3 +1,5 @@
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { Box, CircularProgress, ListItemText, Stack } from '@mui/material';
 import Error from 'components/shared/Error';
 import { FormattedMessage } from 'react-intl';
@@ -11,6 +13,7 @@ export enum ProgressStates {
 interface Props {
     name: string;
     error: any | null;
+    renderError?: Function;
     successMessageID: string;
     runningMessageID: string;
     state: ProgressStates;
@@ -19,6 +22,7 @@ interface Props {
 function SharedProgress({
     name,
     error,
+    renderError,
     state,
     successMessageID,
     runningMessageID,
@@ -26,7 +30,11 @@ function SharedProgress({
     return (
         <Box>
             <Stack direction="row" spacing={1}>
-                {state === ProgressStates.RUNNING && (
+                {state === ProgressStates.FAILED ? (
+                    <ErrorOutlineIcon />
+                ) : state === ProgressStates.SUCCESS ? (
+                    <CheckCircleOutlineIcon />
+                ) : (
                     <CircularProgress size={18} />
                 )}
                 <ListItemText
@@ -45,7 +53,11 @@ function SharedProgress({
                 />
             </Stack>
             {state === ProgressStates.FAILED && error !== null ? (
-                <Error error={error} hideTitle={true} />
+                renderError ? (
+                    renderError(error)
+                ) : (
+                    <Error error={error} hideTitle={true} />
+                )
             ) : null}
         </Box>
     );

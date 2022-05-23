@@ -26,7 +26,10 @@ function useConnectorTag(connectorImage: string | null) {
         TABLES.CONNECTOR_TAGS,
         {
             columns: CONNECTOR_TAG_QUERY,
-            filter: (query) => query.eq('id', connectorImage as string),
+            filter: (query) =>
+                query.or(
+                    `id.eq.${connectorImage},connector_id.eq.${connectorImage}`
+                ),
         },
         [connectorImage]
     );

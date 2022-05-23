@@ -23,7 +23,8 @@ function CaptureDetails({ lastPubId, disableLogs }: Props) {
 
     const { publicationSpecs, error: pubSpecsError } =
         usePublicationSpecs(lastPubId);
-    const { publications, error: pubsError } = usePublications(lastPubId);
+    const { publication: publications, error: pubsError } =
+        usePublications(lastPubId);
 
     const setSpecs = useZustandStore<
         EditorStoreState<PublicationSpecQuery>,

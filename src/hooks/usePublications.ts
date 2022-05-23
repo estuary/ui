@@ -1,14 +1,17 @@
 import { TABLES } from 'services/supabase';
+import { SWRConfiguration } from 'swr';
+import { JobStatus } from 'types';
 import { useQuery, useSelectSingle } from './supabase-swr/';
 
 export interface Publications {
     id: string;
+    job_status: JobStatus;
     logs_token: string;
 }
 
-const PUBLICATION_COLS = ['id', 'logs_token'];
+const PUBLICATION_COLS = ['id', 'job_status', 'logs_token'];
 
-function usePublications(lastPubId: string | null) {
+function usePublications(lastPubId: string | null, enablePolling?: boolean) {
     const publicationsQuery = useQuery<Publications>(
         TABLES.PUBLICATIONS,
         {
@@ -18,12 +21,19 @@ function usePublications(lastPubId: string | null) {
         [lastPubId]
     );
 
+    const options: SWRConfiguration | undefined = enablePolling
+        ? {
+              refreshInterval: 500,
+          }
+        : undefined;
+
     const { data, error } = useSelectSingle(
-        lastPubId ? publicationsQuery : null
+        lastPubId ? publicationsQuery : null,
+        options
     );
 
     return {
-        publications: data ? data.data : null,
+        publication: data ? data.data : null,
         error,
     };
 }

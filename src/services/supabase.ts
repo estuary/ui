@@ -5,6 +5,7 @@ import {
     User,
 } from '@supabase/supabase-js';
 import { isEmpty } from 'lodash';
+import { JobStatus } from 'types';
 
 if (
     !process.env.REACT_APP_SUPABASE_URL ||
@@ -176,7 +177,8 @@ export const endSubscription = (subscription: RealtimeSubscription) => {
 export const startSubscription = (
     query: any,
     success: Function,
-    failure: Function
+    failure: Function,
+    keepSubscription?: boolean
 ) => {
     const subscription = query
         .on('*', async (payload: any) => {
@@ -187,10 +189,24 @@ export const startSubscription = (
                     failure(payload);
                 }
 
-                await endSubscription(subscription);
+                if (!keepSubscription) {
+                    await endSubscription(subscription);
+                }
             }
         })
         .subscribe();
 
     return subscription;
+};
+
+export const jobSucceeded = (jobStatus?: JobStatus) => {
+    if (jobStatus) {
+        if (jobStatus.type !== 'queued') {
+            return jobStatus.type === 'success';
+        } else {
+            return null;
+        }
+    } else {
+        return null;
+    }
 };
