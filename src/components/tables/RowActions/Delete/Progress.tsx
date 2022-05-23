@@ -1,37 +1,31 @@
-import { Box, CircularProgress, ListItemText, Stack } from '@mui/material';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec } from 'api/draftSpecs';
 import { createPublication } from 'api/publications';
-import Error from 'components/shared/Error';
+import SharedProgress, {
+    ProgressStates,
+} from 'components/tables/RowActions/Shared/Progress';
 import { useEffect, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
 
 interface Props {
     deleting: any;
     onFinish: (response: any) => void;
 }
 
-enum States {
-    RUNNING = 1,
-    FAILED = 2,
-    SUCCESS = 3,
-}
-
 function DeleteProgress({ deleting, onFinish }: Props) {
-    const [state, setState] = useState<States>(States.RUNNING);
+    const [state, setState] = useState<ProgressStates>(ProgressStates.RUNNING);
     const [error, setError] = useState<any | null>(null);
 
     useEffect(() => {
         const failed = (response: any) => {
             console.log('response.error', response.error);
 
-            setState(States.FAILED);
+            setState(ProgressStates.FAILED);
             setError(response.error);
             onFinish(response);
         };
 
         const succeeded = (response: any) => {
-            setState(States.SUCCESS);
+            setState(ProgressStates.SUCCESS);
             onFinish(response);
         };
 
@@ -62,28 +56,13 @@ function DeleteProgress({ deleting, onFinish }: Props) {
     }, [deleting, onFinish]);
 
     return (
-        <Box>
-            <Stack direction="row" spacing={1}>
-                {state === States.RUNNING && <CircularProgress size={18} />}
-                <ListItemText
-                    primary={deleting.catalog_name}
-                    secondary={
-                        <FormattedMessage
-                            id={
-                                state === States.SUCCESS
-                                    ? 'common.deleted'
-                                    : state === States.FAILED
-                                    ? 'common.fail'
-                                    : 'common.deleting'
-                            }
-                        />
-                    }
-                />
-            </Stack>
-            {state === States.FAILED && error !== null ? (
-                <Error error={error} hideTitle={true} />
-            ) : null}
-        </Box>
+        <SharedProgress
+            name={deleting.catalog_name}
+            error={error}
+            state={state}
+            successMessageID="common.deleted"
+            runningMessageID="common.deleting"
+        />
     );
 }
 

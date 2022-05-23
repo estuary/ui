@@ -3,6 +3,7 @@ import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
 import { Button, ButtonGroup, Menu, MenuItem, Stack } from '@mui/material';
 import DeleteButton from 'components/tables/RowActions/Delete/Button';
+import DisableEnableButton from 'components/tables/RowActions/DisableEnable/Button';
 import Materialize from 'components/tables/RowActions/Materialize';
 import {
     SelectableTableStore,
@@ -10,7 +11,7 @@ import {
 } from 'components/tables/Store';
 import { useZustandStore } from 'hooks/useZustand';
 import { useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 export interface RowSelectorProps {
     showMaterialize?: boolean;
@@ -37,11 +38,6 @@ function RowSelector({ showMaterialize }: RowSelectorProps) {
     const handlers = {
         closeMenu: () => {
             setAnchorEl(null);
-        },
-        toggle: (enable: boolean) => {
-            throw Error(
-                `Toggling enable/disable not implemented yet. Passing variable ${enable}`
-            );
         },
         openMenu: (event: React.MouseEvent<HTMLButtonElement>) => {
             setAnchorEl(event.currentTarget);
@@ -86,12 +82,8 @@ function RowSelector({ showMaterialize }: RowSelectorProps) {
                 disableElevation
                 disabled={!hasSelections}
             >
-                <Button onClick={() => handlers.toggle(true)}>
-                    <FormattedMessage id="cta.enable" />
-                </Button>
-                <Button onClick={() => handlers.toggle(false)}>
-                    <FormattedMessage id="cta.disable" />
-                </Button>
+                <DisableEnableButton enabling={true} />
+                <DisableEnableButton enabling={false} />
                 <DeleteButton />
             </ButtonGroup>
 

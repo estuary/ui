@@ -42,7 +42,7 @@ function ProgressDialog({
     return (
         <>
             <DialogTitle>
-                <FormattedMessage id="common.deleting" />
+                <FormattedMessage id="common.inProgress" />
             </DialogTitle>
             <DialogContent>
                 <Stack direction="column">
