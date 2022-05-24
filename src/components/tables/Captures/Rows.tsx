@@ -10,10 +10,11 @@ import MaterializeAction from 'components/tables/cells/MaterializeAction';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import UserName from 'components/tables/cells/UserName';
 import DetailsPanel from 'components/tables/DetailsPanel';
-import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
+// import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import getShardList from 'services/shard-client';
 import { shardDetailSelectors } from 'stores/ShardDetail';
 import { getPathWithParam } from 'utils/misc-utils';
 
@@ -127,9 +128,35 @@ function Row({ row, showEntityStatus }: RowProps) {
 
 function Rows({ data, showEntityStatus }: RowsProps) {
     const shardDetailStore = useRouteStore();
+    const shards = shardDetailStore(shardDetailSelectors.shards);
     const setShards = shardDetailStore(shardDetailSelectors.setShards);
 
-    useGatewayAuthToken(data, setShards);
+    // useGatewayAuthToken(data, setShards);
+
+    // TODO: Resolve the lag in the indicator color change. When the component is first rendered, the indicator
+    // is the default color. When the component renders a second time, the indicator color reflects the status.
+    const gatewayUrlString = localStorage.getItem('gateway-url');
+    const authToken = localStorage.getItem('auth-gateway-jwt');
+
+    useEffect(() => {
+        if (gatewayUrlString && authToken) {
+            const gatewayUrl = new URL(gatewayUrlString);
+
+            getShardList(gatewayUrl, authToken, data, setShards);
+        }
+    }, [gatewayUrlString, authToken, data, setShards]);
+
+    useEffect(() => {
+        const refreshInterval = setInterval(() => {
+            if (gatewayUrlString && authToken) {
+                const gatewayUrl = new URL(gatewayUrlString);
+
+                getShardList(gatewayUrl, authToken, data, setShards);
+            }
+        }, 30000);
+
+        return () => clearInterval(refreshInterval);
+    }, [gatewayUrlString, authToken, shards, data, setShards]);
 
     return (
         <>
