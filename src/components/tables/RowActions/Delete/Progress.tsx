@@ -5,7 +5,6 @@ import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import SharedProgress, {
     ProgressStates,
 } from 'components/tables/RowActions/Shared/Progress';
-import useConnectorTag from 'hooks/useConnectorTag';
 import useLiveSpecsExt from 'hooks/useLiveSpecsExt';
 import usePublications from 'hooks/usePublications';
 import { useEffect, useState } from 'react';
@@ -21,17 +20,16 @@ function DeleteProgress({ entity, onFinish }: Props) {
     const [error, setError] = useState<any | null>(null);
     const [pubID, setPubID] = useState<string | null>(null);
 
-    const { connectorTag } = useConnectorTag(entity.connector_id);
     const { liveSpecs } = useLiveSpecsExt(entity.last_pub_id, true);
 
     useEffect(() => {
-        const failed = (response: any) => {
-            setState(ProgressStates.FAILED);
-            setError(response.error);
-            onFinish(response);
-        };
+        if (liveSpecs.length > 0) {
+            const failed = (response: any) => {
+                setState(ProgressStates.FAILED);
+                setError(response.error);
+                onFinish(response);
+            };
 
-        if (liveSpecs.length > 0 && connectorTag) {
             const deleteEntity = async (targetEntity: LiveSpecsExtQuery) => {
                 const entityName = targetEntity.catalog_name;
 
@@ -69,7 +67,7 @@ function DeleteProgress({ entity, onFinish }: Props) {
 
         // We only want to run the useEffect after the data is fetched
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [connectorTag, liveSpecs]);
+    }, [liveSpecs]);
 
     const { publication } = usePublications(pubID, true);
     useEffect(() => {
