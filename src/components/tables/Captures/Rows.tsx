@@ -133,8 +133,6 @@ function Rows({ data, showEntityStatus }: RowsProps) {
 
     // useGatewayAuthToken(data, setShards);
 
-    // TODO: Resolve the lag in the indicator color change. When the component is first rendered, the indicator
-    // is the default color. When the component renders a second time, the indicator color reflects the status.
     const gatewayUrlString = localStorage.getItem('gateway-url');
     const authToken = localStorage.getItem('auth-gateway-jwt');
 

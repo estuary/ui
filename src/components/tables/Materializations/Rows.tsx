@@ -8,9 +8,10 @@ import TimeStamp from 'components/tables/cells/TimeStamp';
 import UserName from 'components/tables/cells/UserName';
 import DetailsPanel from 'components/tables/DetailsPanel';
 import { LiveSpecsExtQuery } from 'components/tables/Materializations';
-import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
+// import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import getShardList from 'services/shard-client';
 import { shardDetailSelectors } from 'stores/ShardDetail';
 
 interface RowsProps {
@@ -97,9 +98,33 @@ function Row({ row, showEntityStatus }: RowProps) {
 
 function Rows({ data, showEntityStatus }: RowsProps) {
     const shardDetailStore = useRouteStore();
+    const shards = shardDetailStore(shardDetailSelectors.shards);
     const setShards = shardDetailStore(shardDetailSelectors.setShards);
 
-    useGatewayAuthToken(data, setShards);
+    // useGatewayAuthToken(data, setShards);
+
+    const gatewayUrlString = localStorage.getItem('gateway-url');
+    const authToken = localStorage.getItem('auth-gateway-jwt');
+
+    useEffect(() => {
+        if (gatewayUrlString && authToken) {
+            const gatewayUrl = new URL(gatewayUrlString);
+
+            getShardList(gatewayUrl, authToken, data, setShards);
+        }
+    }, [gatewayUrlString, authToken, data, setShards]);
+
+    useEffect(() => {
+        const refreshInterval = setInterval(() => {
+            if (gatewayUrlString && authToken) {
+                const gatewayUrl = new URL(gatewayUrlString);
+
+                getShardList(gatewayUrl, authToken, data, setShards);
+            }
+        }, 30000);
+
+        return () => clearInterval(refreshInterval);
+    }, [gatewayUrlString, authToken, shards, data, setShards]);
 
     return (
         <>
