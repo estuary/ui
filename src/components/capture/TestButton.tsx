@@ -1,7 +1,6 @@
 import { Button } from '@mui/material';
 import { discover } from 'api/discovers';
 import { createEntityDraft } from 'api/drafts';
-import { encryptConfig } from 'api/sops';
 import { EditorStoreState } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
@@ -54,9 +53,9 @@ function CaptureTestButton({
     const endpointConfigData = entityCreateStore(
         entityCreateStoreSelectors.endpointConfig.data
     );
-    const endpointSchema = entityCreateStore(
-        entityCreateStoreSelectors.endpointSchema
-    );
+    // const endpointSchema = entityCreateStore(
+    //     entityCreateStoreSelectors.endpointSchema
+    // );
     const [detailErrors, specErrors] = entityCreateStore(
         entityCreateStoreSelectors.errors
     );
@@ -87,23 +86,23 @@ function CaptureTestButton({
                 });
             }
 
-            const encryptedEndpointConfig = await encryptConfig(
-                endpointSchema,
-                endpointConfigData
-            );
-            if (encryptedEndpointConfig.error) {
-                return onFailure({
-                    error: {
-                        title: 'captureCreate.test.failedConfigEncryptTitle',
-                        error: encryptedEndpointConfig.error,
-                    },
-                });
-            }
+            // const encryptedEndpointConfig = await encryptConfig(
+            //     endpointSchema,
+            //     endpointConfigData
+            // );
+            // if (encryptedEndpointConfig.error) {
+            //     return onFailure({
+            //         error: {
+            //             title: 'captureCreate.test.failedConfigEncryptTitle',
+            //             error: encryptedEndpointConfig.error,
+            //         },
+            //     });
+            // }
 
             const discoversSubscription = subscription();
             const discoverResponse = await discover(
                 entityName,
-                encryptedEndpointConfig.data,
+                endpointConfigData, //encryptedEndpointConfig,
                 imageTag.id,
                 draftsResponse.data[0].id
             );
