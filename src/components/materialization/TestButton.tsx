@@ -150,7 +150,7 @@ function MaterializeTestButton({
 
             const newDraftId = draftsResponse.data[0].id;
             const draftSpec = generateDraftSpec(
-                encryptedEndpointConfig,
+                encryptedEndpointConfig.data,
                 `${image_name}${image_tag}`,
                 resourceConfig
             );
