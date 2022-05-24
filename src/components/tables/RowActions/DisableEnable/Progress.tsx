@@ -36,7 +36,7 @@ function DisableEnableProgress({ enabling, entity, onFinish }: Props) {
         };
 
         if (liveSpecs.length > 0 && connectorTag) {
-            const makeDisableCall = async (
+            const disableEntity = async (
                 targetEntity: LiveSpecsExtQuery,
                 spec: any
             ) => {
@@ -74,7 +74,7 @@ function DisableEnableProgress({ enabling, entity, onFinish }: Props) {
                 setPubID(publishResponse.data[0].id);
             };
 
-            void makeDisableCall(entity, liveSpecs[0].spec);
+            void disableEntity(entity, liveSpecs[0].spec);
         }
 
         // We only want to run the useEffect after the data is fetched

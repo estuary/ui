@@ -1,7 +1,6 @@
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec } from 'api/draftSpecs';
 import { createPublication } from 'api/publications';
-import { encryptConfig } from 'api/sops';
 import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import SharedProgress, {
     ProgressStates,
@@ -9,7 +8,6 @@ import SharedProgress, {
 import useConnectorTag from 'hooks/useConnectorTag';
 import useLiveSpecsExt from 'hooks/useLiveSpecsExt';
 import usePublications from 'hooks/usePublications';
-import produce from 'immer';
 import { useEffect, useState } from 'react';
 import { jobSucceeded } from 'services/supabase';
 
@@ -34,10 +32,7 @@ function DeleteProgress({ entity, onFinish }: Props) {
         };
 
         if (liveSpecs.length > 0 && connectorTag) {
-            const makeDisableCall = async (
-                targetEntity: LiveSpecsExtQuery,
-                spec: any
-            ) => {
+            const deleteEntity = async (targetEntity: LiveSpecsExtQuery) => {
                 const entityName = targetEntity.catalog_name;
 
                 const draftsResponse = await createEntityDraft(entityName);
@@ -45,22 +40,15 @@ function DeleteProgress({ entity, onFinish }: Props) {
                     return failed(draftsResponse);
                 }
 
-                const encryptedEndpointConfig = await encryptConfig(
-                    connectorTag.endpoint_spec_schema,
-                    spec.endpoint.connector.config
-                );
-                if (encryptedEndpointConfig.error) {
-                    return failed(encryptedEndpointConfig);
-                }
-
                 const newDraftId = draftsResponse.data[0].id;
+
                 const draftSpec = null;
 
                 const draftSpecsResponse = await createDraftSpec(
                     newDraftId,
                     entityName,
                     draftSpec,
-                    null
+                    targetEntity.spec_type
                 );
                 if (draftSpecsResponse.error) {
                     return failed(draftSpecsResponse);
@@ -76,13 +64,7 @@ function DeleteProgress({ entity, onFinish }: Props) {
                 setPubID(publishResponse.data[0].id);
             };
 
-            const updatedSpec = produce(liveSpecs[0].spec, (spec) => {
-                // TODO (typing) this is only optional because the hook takes an option
-                if (spec) {
-                    delete spec.endpoint.connector.config.sops;
-                }
-            });
-            void makeDisableCall(entity, updatedSpec);
+            void deleteEntity(entity);
         }
 
         // We only want to run the useEffect after the data is fetched
