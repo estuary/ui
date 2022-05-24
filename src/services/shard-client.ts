@@ -32,11 +32,13 @@ const getShardList = <T extends LiveSpecsExtBaseQuery>(
                 setShards(shards);
             }
         })
-        .catch((error: Error) => {
+        .catch((error: string) => {
+            // All errors are formatted strings that contain an error object.
+
             // TODO: Create and call a gateway-auth-token service to generate a new authentication token. The polling done by the useEffect
             // caller for the shard-client will handle making a follow-up call to the shards list API. This error is currently silent. Should
             // the user be notified that a service error is present after a certain number of resolution attempts?
-            if (error.message.includes(ErrorFlags.TOKEN_INVALID)) {
+            if (error.includes(ErrorFlags.TOKEN_INVALID)) {
                 console.log('Call a service that will update the JWT token');
             }
 
