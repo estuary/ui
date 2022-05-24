@@ -159,6 +159,12 @@ const Registration: ResolvedIntlConfig['messages'] = {
     'register.existingAccount': `Already have an account?`,
 };
 
+const LoginPage: ResolvedIntlConfig['messages'] = {
+    'login.main.message': `When running locally you can login with whatever name you want.`,
+    'login.oidc.message': `Sign in to continue to ${CommonMessages.productName}.`,
+    'login.documentAcknowledgement': `By accessing ${CommonMessages.productName} you agree to our {terms} and {privacy}.`,
+};
+
 const EntityStatus: ResolvedIntlConfig['messages'] = {
     'entityStatus.green': `Running`,
     'entityStatus.yellow': `Alerts`,
@@ -268,11 +274,6 @@ const ConnectorsPage: ResolvedIntlConfig['messages'] = {
     'connectors.main.message2': `Please contact support to get help setting up a {docLink}.`,
     'connectors.main.message2.docLink': `connector`,
     'connectors.main.message2.docPath': `https://docs.estuary.dev/concepts/#connectors`,
-};
-
-const LoginPage: ResolvedIntlConfig['messages'] = {
-    'login.main.message': `When running locally you can login with whatever name you want.`,
-    'login.oidc.message': `Sign in to continue to ${CommonMessages.productName}.`,
 };
 
 const NoGrants: ResolvedIntlConfig['messages'] = {
