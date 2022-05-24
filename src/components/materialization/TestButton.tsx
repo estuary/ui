@@ -15,6 +15,7 @@ import {
     formInProgress,
     FormStatus,
 } from 'stores/Create';
+import { ENTITY } from 'types';
 
 interface Props {
     disabled: boolean;
@@ -159,7 +160,7 @@ function MaterializeTestButton({
                 newDraftId,
                 entityName,
                 draftSpec,
-                'materialization'
+                ENTITY.MATERIALIZATION
             );
             if (draftSpecsResponse.error) {
                 return onFailure({

@@ -9,7 +9,7 @@ import { useQuery } from 'hooks/supabase-swr';
 import { ZustandProvider } from 'hooks/useZustand';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
-import { OpenGraph } from 'types';
+import { ENTITY, OpenGraph } from 'types';
 
 export interface LiveSpecsExtQuery {
     catalog_name: string;
@@ -22,7 +22,7 @@ export interface LiveSpecsExtQuery {
     last_pub_user_avatar_url: string | null;
     last_pub_user_email: string;
     last_pub_user_full_name: string | null;
-    spec_type: string;
+    spec_type: ENTITY;
     updated_at: string;
     writes_to: string[];
 }
