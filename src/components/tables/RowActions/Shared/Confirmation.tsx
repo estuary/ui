@@ -13,7 +13,7 @@ function RowActionConfirmation({
     return (
         <>
             {message}
-            <Stack direction="column">
+            <Stack direction="column" spacing={1} sx={{ mt: 2 }}>
                 {selected.map((value: any, index: number) => {
                     return <Box key={index}>{value}</Box>;
                 })}

@@ -5,7 +5,7 @@ export const createDraftSpec = (
     draftId: string | null,
     catalogName: string,
     draftSpec: any,
-    specType?: ENTITY | null // TODO (typing) get the spec types passed through properly
+    specType?: ENTITY | null
 ) => {
     return insertSupabase(TABLES.DRAFT_SPECS, {
         draft_id: draftId,

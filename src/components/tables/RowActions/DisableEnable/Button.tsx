@@ -1,23 +1,39 @@
 import DisableEnableConfirmation from 'components/tables/RowActions/DisableEnable/Confirmation';
-import DisableEnableProgress from 'components/tables/RowActions/DisableEnable/Progress';
 import RowActionButton from 'components/tables/RowActions/Shared/Button';
+import UpdateEntity from 'components/tables/RowActions/Shared/UpdateEntity';
+import produce from 'immer';
 
 export interface DisableEnableButtonProps {
     enabling: boolean;
 }
 
 function DisableEnableButton({ enabling }: DisableEnableButtonProps) {
+    const messages = {
+        running: enabling ? 'common.enabling' : 'common.disabling',
+        success: enabling ? 'common.enabled' : 'common.disabled',
+    };
+
     return (
         <RowActionButton
             confirmationMessage={
                 <DisableEnableConfirmation enabling={enabling} />
             }
             renderProgress={(item, index, onFinish) => (
-                <DisableEnableProgress
+                <UpdateEntity
                     key={`Item-disable_enable-${index}`}
                     entity={item}
                     onFinish={onFinish}
-                    enabling={enabling}
+                    successMessageID={messages.success}
+                    runningMessageID={messages.running}
+                    generateNewSpec={(spec) => {
+                        return produce<typeof spec>(spec, (draftSpec) => {
+                            if (draftSpec) {
+                                draftSpec.shards = draftSpec.shards ?? {};
+                                draftSpec.shards.disable = !enabling;
+                            }
+                        });
+                    }}
+                    generateNewSpecType={(entity) => entity.spec_type}
                 />
             )}
             messageID={enabling ? 'cta.enable' : 'cta.disable'}

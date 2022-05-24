@@ -63,7 +63,7 @@ const Login = () => {
                         />
                     </Box>
 
-                    <Box>
+                    <Box sx={{ mt: 4 }}>
                         <FormattedMessage
                             id="login.documentAcknowledgement"
                             values={{

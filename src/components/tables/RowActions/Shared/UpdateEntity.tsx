@@ -6,25 +6,45 @@ import DraftErrors from 'components/shared/Entity/Error/DraftErrors';
 import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import SharedProgress, {
     ProgressStates,
+    SharedProgressProps,
 } from 'components/tables/RowActions/Shared/Progress';
-import useLiveSpecsExt from 'hooks/useLiveSpecsExt';
+import {
+    LiveSpecsExtQueryWithSpec,
+    useLiveSpecsExtWithSpec,
+} from 'hooks/useLiveSpecsExt';
 import usePublications from 'hooks/usePublications';
 import { useEffect, useState } from 'react';
 import { jobSucceeded } from 'services/supabase';
+import { ENTITY } from 'types';
 
-interface Props {
+export interface UpdateEntityProps {
     entity: LiveSpecsExtQuery;
     onFinish: (response: any) => void;
-    enabling: boolean;
+    generateNewSpec: (
+        spec: LiveSpecsExtQueryWithSpec['spec']
+    ) => any | Promise<void>;
+    generateNewSpecType: (entity: LiveSpecsExtQuery) => ENTITY | null;
+    runningMessageID: SharedProgressProps['runningMessageID'];
+    successMessageID: SharedProgressProps['successMessageID'];
 }
 
-function DisableEnableProgress({ enabling, entity, onFinish }: Props) {
+function UpdateEntity({
+    generateNewSpec,
+    generateNewSpecType,
+    entity,
+    onFinish,
+    runningMessageID,
+    successMessageID,
+}: UpdateEntityProps) {
     const [state, setState] = useState<ProgressStates>(ProgressStates.RUNNING);
     const [error, setError] = useState<any | null>(null);
     const [draftId, setDraftId] = useState<string | null>(null);
     const [pubID, setPubID] = useState<string | null>(null);
 
-    const { liveSpecs } = useLiveSpecsExt(entity.last_pub_id, true);
+    const { liveSpecs } = useLiveSpecsExtWithSpec(
+        entity.last_pub_id,
+        entity.spec_type
+    );
 
     useEffect(() => {
         const failed = (response: any) => {
@@ -34,9 +54,9 @@ function DisableEnableProgress({ enabling, entity, onFinish }: Props) {
         };
 
         if (liveSpecs.length > 0) {
-            const disableEntity = async (
+            const updateEntity = async (
                 targetEntity: LiveSpecsExtQuery,
-                spec: any
+                spec: LiveSpecsExtQueryWithSpec['spec']
             ) => {
                 const entityName = targetEntity.catalog_name;
 
@@ -48,15 +68,11 @@ function DisableEnableProgress({ enabling, entity, onFinish }: Props) {
                 const newDraftId = draftsResponse.data[0].id;
                 setDraftId(newDraftId);
 
-                const draftSpec = { ...spec };
-                draftSpec.shards = draftSpec.shards ?? {};
-                draftSpec.shards.disable = !enabling;
-
                 const draftSpecsResponse = await createDraftSpec(
                     newDraftId,
                     entityName,
-                    draftSpec,
-                    targetEntity.spec_type
+                    generateNewSpec(spec),
+                    generateNewSpecType(targetEntity)
                 );
                 if (draftSpecsResponse.error) {
                     return failed(draftSpecsResponse);
@@ -72,7 +88,7 @@ function DisableEnableProgress({ enabling, entity, onFinish }: Props) {
                 setPubID(publishResponse.data[0].id);
             };
 
-            void disableEntity(entity, liveSpecs[0].spec);
+            void updateEntity(entity, liveSpecs[0].spec);
         }
 
         // We only want to run the useEffect after the data is fetched
@@ -102,17 +118,17 @@ function DisableEnableProgress({ enabling, entity, onFinish }: Props) {
                     severity="error"
                     sx={{
                         maxHeight: 100,
-                        overflowY: 'scroll',
+                        overflowY: 'auto',
                     }}
                 >
                     <DraftErrors draftId={draftId} />
                 </Alert>
             )}
             state={state}
-            successMessageID={enabling ? 'common.enabled' : 'common.disabled'}
-            runningMessageID={enabling ? 'common.enabling' : 'common.disabling'}
+            runningMessageID={runningMessageID}
+            successMessageID={successMessageID}
         />
     );
 }
 
-export default DisableEnableProgress;
+export default UpdateEntity;
