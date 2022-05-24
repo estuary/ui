@@ -64,10 +64,10 @@ function RowSelector({ showMaterialize }: RowSelectorProps) {
                 <Button
                     id="row-selector-button"
                     size="small"
-                    variant="text"
                     aria-haspopup="true"
                     aria-controls={open ? 'basic-menu' : undefined}
                     aria-expanded={open ? 'true' : undefined}
+                    variant="text"
                     onClick={handlers.openMenu}
                 >
                     <ArrowDropDownIcon />

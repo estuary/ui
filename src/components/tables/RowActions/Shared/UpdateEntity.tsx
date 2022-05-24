@@ -46,7 +46,9 @@ function UpdateEntity({
         entity.spec_type
     );
 
+    console.log('0');
     useEffect(() => {
+        console.log('1');
         const failed = (response: any) => {
             setState(ProgressStates.FAILED);
             setError(response.error);
@@ -54,6 +56,7 @@ function UpdateEntity({
         };
 
         if (liveSpecs.length > 0) {
+            console.log('2');
             const updateEntity = async (
                 targetEntity: LiveSpecsExtQuery,
                 spec: LiveSpecsExtQueryWithSpec['spec']
