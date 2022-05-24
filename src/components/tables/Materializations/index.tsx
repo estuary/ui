@@ -93,6 +93,7 @@ function MaterializationsTable() {
                     setColumnToSort={setColumnToSort}
                     header="materializationsTable.title"
                     filterLabel="entityTable.filterLabel"
+                    enableSelection
                 />
             </ZustandProvider>
         </Box>

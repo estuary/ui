@@ -7,7 +7,6 @@ import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import SharedProgress, {
     ProgressStates,
 } from 'components/tables/RowActions/Shared/Progress';
-import useConnectorTag from 'hooks/useConnectorTag';
 import useLiveSpecsExt from 'hooks/useLiveSpecsExt';
 import usePublications from 'hooks/usePublications';
 import { useEffect, useState } from 'react';
@@ -25,7 +24,6 @@ function DisableEnableProgress({ enabling, entity, onFinish }: Props) {
     const [draftId, setDraftId] = useState<string | null>(null);
     const [pubID, setPubID] = useState<string | null>(null);
 
-    const { connectorTag } = useConnectorTag(entity.connector_id);
     const { liveSpecs } = useLiveSpecsExt(entity.last_pub_id, true);
 
     useEffect(() => {
@@ -35,7 +33,7 @@ function DisableEnableProgress({ enabling, entity, onFinish }: Props) {
             onFinish(response);
         };
 
-        if (liveSpecs.length > 0 && connectorTag) {
+        if (liveSpecs.length > 0) {
             const disableEntity = async (
                 targetEntity: LiveSpecsExtQuery,
                 spec: any
@@ -79,7 +77,7 @@ function DisableEnableProgress({ enabling, entity, onFinish }: Props) {
 
         // We only want to run the useEffect after the data is fetched
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [connectorTag, liveSpecs]);
+    }, [liveSpecs]);
 
     const { publication } = usePublications(pubID, true);
     useEffect(() => {

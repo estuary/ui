@@ -13,7 +13,6 @@ import { ENTITY, OpenGraph } from 'types';
 
 export interface LiveSpecsExtQuery {
     catalog_name: string;
-    connector_id: string;
     connector_image_name: string | null;
     connector_image_tag: string | null;
     connector_open_graph: OpenGraph;
@@ -29,7 +28,6 @@ export interface LiveSpecsExtQuery {
 
 const queryColumns = [
     'catalog_name',
-    'connector_id',
     'connector_image_name',
     'connector_image_tag',
     'connector_open_graph',
