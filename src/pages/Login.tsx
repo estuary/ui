@@ -42,7 +42,11 @@ const Login = () => {
                 </Alert>
             </Snackbar>
             <FullPageDialog>
-                <>
+                <Box
+                    sx={{
+                        justifyItems: 'center',
+                    }}
+                >
                     <Typography sx={{ mb: 5 }}>
                         <FormattedMessage id="login.oidc.message" />
                     </Typography>
@@ -63,7 +67,7 @@ const Login = () => {
                         />
                     </Box>
 
-                    <Box sx={{ mt: 4 }}>
+                    <Typography align="center" sx={{ mt: 4 }}>
                         <FormattedMessage
                             id="login.documentAcknowledgement"
                             values={{
@@ -85,8 +89,8 @@ const Login = () => {
                                 ),
                             }}
                         />
-                    </Box>
-                </>
+                    </Typography>
+                </Box>
             </FullPageDialog>
         </>
     );
