@@ -90,12 +90,16 @@ function EditorFileSelector() {
                 rowCount={specs.length}
                 hideFooter
                 disableColumnSelector
-                disableSelectionOnClick={isEditorActive(status)}
+                loading={isEditorActive(status)}
                 onSelectionModelChange={(newSelectionModel) => {
-                    setSelectionModel(newSelectionModel);
+                    if (!isEditorActive(status)) {
+                        setSelectionModel(newSelectionModel);
+                    }
                 }}
                 onRowClick={(params: any) => {
-                    setCurrentCatalog(params.row);
+                    if (!isEditorActive(status)) {
+                        setCurrentCatalog(params.row);
+                    }
                 }}
                 getRowId={getRowId}
                 selectionModel={selectionModel}
