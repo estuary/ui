@@ -27,7 +27,7 @@ function LogDialog({ open, token, actionComponent, title }: Props) {
                     minHeight: logHeight + 25,
                 }}
             >
-                <ErrorLogs logToken={token} />
+                <ErrorLogs logToken={token} defaultOpen />
             </DialogContent>
             <DialogActions
                 sx={{

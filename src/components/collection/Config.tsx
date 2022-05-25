@@ -33,7 +33,7 @@ function CollectionConfig() {
         entityCreateStoreSelectors.resourceConfig.getErrors
     );
 
-    const { liveSpecs } = useLiveSpecsExtWithOutSpec(specID, ENTITY.COLLECTION);
+    const { liveSpecs } = useLiveSpecsExtWithOutSpec(specID, ENTITY.CAPTURE);
 
     useEffect(() => {
         if (liveSpecs.length > 0) {
