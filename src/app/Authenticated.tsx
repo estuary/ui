@@ -3,7 +3,7 @@ import CaptureCreate from 'components/capture/Create';
 import { createEditorStore, DraftSpecEditorKey } from 'components/editor/Store';
 import NewMaterialization from 'components/materialization/create';
 import { PreFetchDataProvider } from 'context/PreFetchData';
-import useGatewayAuthTokenAlt from 'hooks/useGatewayAuthTokenAlt';
+import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import { RouteStoreProvider } from 'hooks/useRouteStore';
 import { ZustandProvider } from 'hooks/useZustand';
 import Admin from 'pages/Admin';
@@ -84,7 +84,7 @@ export const routeDetails = {
 const Authenticated = () => {
     // TODO: Determine whether a context provider or a hook should be used to fetch the initial auth gateway URL and token.
     // The context provider results in a duped, gateway auth token API call.
-    useGatewayAuthTokenAlt();
+    useGatewayAuthToken();
 
     return (
         <PreFetchDataProvider>

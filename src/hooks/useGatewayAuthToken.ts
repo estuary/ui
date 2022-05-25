@@ -40,7 +40,7 @@ const fetcher = (
     });
 };
 
-const useGatewayAuthTokenAlt = () => {
+const useGatewayAuthToken = () => {
     const { session } = Auth.useUser();
 
     const combinedGrantsQuery = useQuery<CombinedGrantsExtQuery>(
@@ -73,4 +73,4 @@ const useGatewayAuthTokenAlt = () => {
     );
 };
 
-export default useGatewayAuthTokenAlt;
+export default useGatewayAuthToken;
