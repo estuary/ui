@@ -53,3 +53,9 @@ export interface Grants {
     user_id: string;
     id: string;
 }
+
+export enum ENTITY {
+    CAPTURE = 'capture',
+    MATERIALIZATION = 'materialization',
+    COLLECTION = 'collection',
+}

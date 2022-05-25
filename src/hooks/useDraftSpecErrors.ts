@@ -1,4 +1,5 @@
 import { TABLES } from 'services/supabase';
+import { getSWRConfig } from 'utils/misc-utils';
 import { useQuery, useSelect } from './supabase-swr/';
 
 interface DraftErrorsQuery {
@@ -9,7 +10,7 @@ interface DraftErrorsQuery {
 
 const DRAFT_SPEC_COLS = ['scope', 'detail', 'draft_id'];
 
-function useDraftSpecErrors(draftId?: string | null) {
+function useDraftSpecErrors(draftId?: string | null, enablePolling?: boolean) {
     const draftErrorsQuery = useQuery<DraftErrorsQuery>(
         TABLES.DRAFT_ERRORS,
         {
@@ -19,8 +20,11 @@ function useDraftSpecErrors(draftId?: string | null) {
         [draftId]
     );
 
+    const options = getSWRConfig(enablePolling);
+
     const { data, error, mutate, isValidating } = useSelect(
-        draftId ? draftErrorsQuery : null
+        draftId ? draftErrorsQuery : null,
+        options
     );
 
     return {

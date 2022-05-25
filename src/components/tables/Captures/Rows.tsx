@@ -1,4 +1,4 @@
-import { Checkbox, TableCell, TableRow } from '@mui/material';
+import { TableRow } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
 import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import Actions from 'components/tables/cells/Actions';
@@ -6,6 +6,7 @@ import ChipList from 'components/tables/cells/ChipList';
 import Connector from 'components/tables/cells/Connector';
 import EntityName from 'components/tables/cells/EntityName';
 import ExpandDetails from 'components/tables/cells/ExpandDetails';
+import RowSelect from 'components/tables/cells/RowSelect';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import UserName from 'components/tables/cells/UserName';
 import DetailsPanel from 'components/tables/DetailsPanel';
@@ -90,15 +91,8 @@ function Row({ isSelected, setRow, row }: RowProps) {
                     cursor: 'pointer',
                 }}
             >
-                <TableCell padding="checkbox">
-                    <Checkbox
-                        color="primary"
-                        checked={isSelected}
-                        inputProps={{
-                            'aria-labelledby': row.catalog_name,
-                        }}
-                    />
-                </TableCell>
+                <RowSelect isSelected={isSelected} name={row.catalog_name} />
+
                 <EntityName name={row.catalog_name} />
 
                 <Connector

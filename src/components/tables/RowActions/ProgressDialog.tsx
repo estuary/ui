@@ -42,10 +42,12 @@ function ProgressDialog({
     return (
         <>
             <DialogTitle>
-                <FormattedMessage id="common.inProgress" />
+                <FormattedMessage
+                    id={done ? 'common.done' : 'common.inProgress'}
+                />
             </DialogTitle>
             <DialogContent>
-                <Stack direction="column">
+                <Stack direction="column" spacing={2}>
                     {selectedEntities.length > 0
                         ? selectedEntities.map((item, index) =>
                               renderComponent(item, index, onFinish)

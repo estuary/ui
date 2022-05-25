@@ -1,3 +1,4 @@
+import { SWRConfiguration } from 'swr';
 import { OpenGraph } from 'types';
 
 export const stripPathing = (stringVal: string) => {
@@ -34,4 +35,14 @@ export const getDeploymentStatusHexCode = (
 
 export const getPathWithParam = (path: string, param: any, val: any) => {
     return `${path}?${param}=${val}`;
+};
+
+export const getSWRConfig = (enablePolling?: boolean) => {
+    const options: SWRConfiguration | undefined = enablePolling
+        ? {
+              refreshInterval: 500,
+          }
+        : undefined;
+
+    return options;
 };

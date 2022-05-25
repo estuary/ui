@@ -4,12 +4,13 @@ import { routeDetails } from 'app/Authenticated';
 import ExpandableResourceConfig from 'components/collection/ExpandableResourceConfig';
 import CollectionSelector from 'components/collection/Selector';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
-import useLiveSpecsExt from 'hooks/useLiveSpecsExt';
+import { useLiveSpecsExtWithOutSpec } from 'hooks/useLiveSpecsExt';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
 import { entityCreateStoreSelectors } from 'stores/Create';
+import { ENTITY } from 'types';
 
 function CollectionConfig() {
     const entityCreateStore = useRouteStore();
@@ -32,7 +33,7 @@ function CollectionConfig() {
         entityCreateStoreSelectors.resourceConfig.getErrors
     );
 
-    const { liveSpecs } = useLiveSpecsExt(specID);
+    const { liveSpecs } = useLiveSpecsExtWithOutSpec(specID, ENTITY.CAPTURE);
 
     useEffect(() => {
         if (liveSpecs.length > 0) {

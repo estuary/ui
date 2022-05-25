@@ -4,10 +4,16 @@ import ChipList from 'components/tables/cells/ChipList';
 import Connector from 'components/tables/cells/Connector';
 import EntityName from 'components/tables/cells/EntityName';
 import ExpandDetails from 'components/tables/cells/ExpandDetails';
+import RowSelect from 'components/tables/cells/RowSelect';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import UserName from 'components/tables/cells/UserName';
 import DetailsPanel from 'components/tables/DetailsPanel';
 import { LiveSpecsExtQuery } from 'components/tables/Materializations';
+import {
+    SelectableTableStore,
+    selectableTableStoreSelectors,
+} from 'components/tables/Store';
+import { useZustandStore } from 'hooks/useZustand';
 import { useState } from 'react';
 
 interface RowsProps {
@@ -16,9 +22,15 @@ interface RowsProps {
 
 interface RowProps {
     row: LiveSpecsExtQuery;
+    setRow: any;
+    isSelected: boolean;
 }
 
 export const tableColumns = [
+    {
+        field: null,
+        headerIntlKey: '',
+    },
     {
         field: 'catalog_name',
         headerIntlKey: 'entityTable.data.entity',
@@ -45,12 +57,28 @@ export const tableColumns = [
     },
 ];
 
-function Row({ row }: RowProps) {
+function Row({ isSelected, setRow, row }: RowProps) {
     const [detailsExpanded, setDetailsExpanded] = useState(false);
+
+    const handlers = {
+        clickRow: (rowId: string) => {
+            setRow(rowId, !isSelected);
+        },
+    };
 
     return (
         <>
-            <TableRow key={`Entity-${row.id}`}>
+            <TableRow
+                hover
+                onClick={() => handlers.clickRow(row.id)}
+                selected={isSelected}
+                sx={{
+                    background: detailsExpanded ? '#04192A' : null,
+                    cursor: 'pointer',
+                }}
+            >
+                <RowSelect isSelected={isSelected} name={row.catalog_name} />
+
                 <EntityName name={row.catalog_name} />
 
                 <Connector
@@ -88,10 +116,25 @@ function Row({ row }: RowProps) {
 }
 
 function Rows({ data }: RowsProps) {
+    const selected = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['selected']
+    >(selectableTableStoreSelectors.selected.get);
+
+    const setRow = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['setSelected']
+    >(selectableTableStoreSelectors.selected.set);
+
     return (
         <>
             {data.map((row) => (
-                <Row row={row} key={row.id} />
+                <Row
+                    row={row}
+                    key={row.id}
+                    isSelected={selected.has(row.id)}
+                    setRow={setRow}
+                />
             ))}
         </>
     );

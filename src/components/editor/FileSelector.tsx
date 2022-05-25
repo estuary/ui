@@ -51,6 +51,18 @@ const columns: GridColDef[] = [
 ];
 
 function EditorFileSelector() {
+    const [initDone, setInitDone] = useState(false);
+
+    const isSaving = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['isSaving']
+    >((state) => state.isSaving);
+
+    const isEditing = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['isEditing']
+    >((state) => state.isEditing);
+
     const setCurrentCatalog = useZustandStore<
         EditorStoreState<PublicationSpecQuery | DraftSpecQuery>,
         EditorStoreState<
@@ -68,10 +80,11 @@ function EditorFileSelector() {
     );
 
     useEffect(() => {
-        if (specs) {
+        if (!initDone && specs) {
+            setInitDone(true);
             setSelectionModel(getRowId(specs[0]) as any);
         }
-    }, [specs]);
+    }, [initDone, specs]);
 
     if (specs && specs.length > 0) {
         return (
@@ -82,11 +95,16 @@ function EditorFileSelector() {
                 rowCount={specs.length}
                 hideFooter
                 disableColumnSelector
+                loading={isSaving}
                 onSelectionModelChange={(newSelectionModel) => {
-                    setSelectionModel(newSelectionModel);
+                    if (!isEditing) {
+                        setSelectionModel(newSelectionModel);
+                    }
                 }}
                 onRowClick={(params: any) => {
-                    setCurrentCatalog(params.row);
+                    if (!isEditing) {
+                        setCurrentCatalog(params.row);
+                    }
                 }}
                 getRowId={getRowId}
                 selectionModel={selectionModel}
