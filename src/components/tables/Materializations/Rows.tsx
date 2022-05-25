@@ -14,6 +14,7 @@ import { useRouteStore } from 'hooks/useRouteStore';
 import { useEffect, useState } from 'react';
 import getShardList from 'services/shard-client';
 import { shardDetailSelectors } from 'stores/ShardDetail';
+import { getStoredGatewayAuthConfig } from 'utils/env-utils';
 
 interface RowsProps {
     data: LiveSpecsExtQuery[];
@@ -106,15 +107,14 @@ function Rows({ data, showEntityStatus }: RowsProps) {
     const { grantDetails } = usePreFetchData();
 
     useEffect(() => {
-        const gatewayUrlString = localStorage.getItem('gateway-url');
-        const authToken = localStorage.getItem('auth-gateway-jwt');
+        const gatewayConfig = getStoredGatewayAuthConfig();
 
-        if (gatewayUrlString && authToken && session) {
-            const gatewayUrl = new URL(gatewayUrlString);
+        if (gatewayConfig?.gateway_url && gatewayConfig.token && session) {
+            const gatewayUrl = new URL(gatewayConfig.gateway_url);
 
             getShardList(
                 gatewayUrl,
-                authToken,
+                gatewayConfig.token,
                 data,
                 setShards,
                 session.access_token,
@@ -125,15 +125,14 @@ function Rows({ data, showEntityStatus }: RowsProps) {
 
     useEffect(() => {
         const refreshInterval = setInterval(() => {
-            const gatewayUrlString = localStorage.getItem('gateway-url');
-            const authToken = localStorage.getItem('auth-gateway-jwt');
+            const gatewayConfig = getStoredGatewayAuthConfig();
 
-            if (gatewayUrlString && authToken && session) {
-                const gatewayUrl = new URL(gatewayUrlString);
+            if (gatewayConfig?.gateway_url && gatewayConfig.token && session) {
+                const gatewayUrl = new URL(gatewayConfig.gateway_url);
 
                 getShardList(
                     gatewayUrl,
-                    authToken,
+                    gatewayConfig.token,
                     data,
                     setShards,
                     session.access_token,

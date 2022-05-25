@@ -3,19 +3,17 @@ import { useQuery, useSelect } from 'hooks/supabase-swr';
 import { client } from 'services/client';
 import { TABLES } from 'services/supabase';
 import useSWR from 'swr';
+import { GatewayAuthTokenResponse } from 'types';
 import {
     getGatewayAuthTokenSettings,
+    getStoredGatewayAuthConfig,
     getSupabaseAnonymousKey,
+    storeGatewayAuthConfig,
 } from 'utils/env-utils';
 
 interface CombinedGrantsExtQuery {
     id: string;
     object_role: string;
-}
-
-interface GatewayAuthTokenResponse {
-    gateway_url: URL;
-    token: string;
 }
 
 const { gatewayAuthTokenEndpoint } = getGatewayAuthTokenSettings();
@@ -53,17 +51,16 @@ const useGatewayAuthToken = () => {
     const prefixes: string[] =
         grants?.data.map(({ object_role }) => object_role) ?? [];
 
-    const existingAuthToken = localStorage.getItem('auth-gateway-jwt');
+    const gatewayConfig = getStoredGatewayAuthConfig();
 
     return useSWR(
-        !existingAuthToken && prefixes.length > 0
+        !gatewayConfig?.token && prefixes.length > 0
             ? [gatewayAuthTokenEndpoint, prefixes, session?.access_token]
             : null,
         fetcher,
         {
-            onSuccess: ([{ gateway_url, token }]) => {
-                localStorage.setItem('gateway-url', gateway_url.toString());
-                localStorage.setItem('auth-gateway-jwt', token);
+            onSuccess: ([response]) => {
+                storeGatewayAuthConfig(response);
             },
             onError: (error) => {
                 // TODO: Remove console.log call.

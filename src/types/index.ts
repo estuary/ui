@@ -67,3 +67,8 @@ export interface LiveSpecsExtBaseQuery {
     spec_type: string;
     updated_at: string;
 }
+
+export interface GatewayAuthTokenResponse {
+    gateway_url: URL;
+    token: string;
+}
