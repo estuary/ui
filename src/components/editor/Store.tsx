@@ -12,7 +12,7 @@ export enum EditorStatus {
     SAVING = 'calling server to save changes',
     SAVED = 'changes saved to server',
     SAVE_FAILED = 'calling server failed',
-    OUT_OF_SYNC = 'there are changes on server that client neds to merge',
+    OUT_OF_SYNC = 'there are changes on server that client needs to merge',
 }
 
 export const isEditorActive = (status: EditorStatus) => {
