@@ -51,6 +51,8 @@ const columns: GridColDef[] = [
 ];
 
 function EditorFileSelector() {
+    const [initDone, setInitDone] = useState(false);
+
     const setCurrentCatalog = useZustandStore<
         EditorStoreState<PublicationSpecQuery | DraftSpecQuery>,
         EditorStoreState<
@@ -68,10 +70,11 @@ function EditorFileSelector() {
     );
 
     useEffect(() => {
-        if (specs) {
+        if (!initDone && specs) {
+            setInitDone(true);
             setSelectionModel(getRowId(specs[0]) as any);
         }
-    }, [specs]);
+    }, [initDone, specs]);
 
     if (specs && specs.length > 0) {
         return (

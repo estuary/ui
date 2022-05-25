@@ -1,15 +1,16 @@
 import Editor, { DiffEditor } from '@monaco-editor/react';
 import { Box, Divider, Paper, Stack, useTheme } from '@mui/material';
+import Invalid from 'components/editor/Status/Invalid';
 import Saved from 'components/editor/Status/Saved';
 import Saving from 'components/editor/Status/Saving';
 import ServerDiff from 'components/editor/Status/ServerDiff';
 import { EditorStoreState } from 'components/editor/Store';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useZustandStore } from 'hooks/useZustand';
-import { debounce } from 'lodash';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
-import { useCallback, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useDebounce } from 'react-use';
 import { stringifyJSON } from 'services/stringify';
 
 export interface Props {
@@ -39,6 +40,9 @@ function MonacoEditor({
     const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(
         null
     );
+    const [lastValue, setLastValue] = useState<string | null>('');
+    const [storedPath] = useState(path);
+    const [isInvalid, setIsInvalid] = useState(false);
     const [isChanging, setIsChanging] = useState<boolean | null>(null);
     const [hasServerChanges] = useState<boolean>(false);
     const [showServerDiff, setShowServerDiff] = useState(false);
@@ -72,27 +76,46 @@ function MonacoEditor({
     //     // eslint-disable-next-line react-hooks/exhaustive-deps
     // }, [serverUpdate]);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const editorUpdateDebounce = useCallback(
-        debounce((val: string | undefined) => {
-            if (val && onChange) {
+    useDebounce(
+        () => {
+            if (lastValue && onChange) {
                 setIsChanging(true);
-                onChange(JSON.parse(val), path, currentCatalog.spec_type)
-                    .then(() => {
-                        setIsChanging(false);
-                    })
-                    .catch(() => {
-                        setIsChanging(false);
-                    });
+
+                let parsedVal;
+                try {
+                    parsedVal = JSON.parse(lastValue);
+                } catch {
+                    console.log('faied to parse');
+                    setIsInvalid(true);
+                    setIsChanging(false);
+                }
+
+                if (parsedVal) {
+                    onChange(parsedVal, storedPath, currentCatalog.spec_type)
+                        .then(() => {
+                            console.log('3s');
+                            setIsInvalid(false);
+                            setIsChanging(false);
+                        })
+                        .catch((error: any) => {
+                            console.log('3e');
+                            console.log('error', error);
+                            setIsInvalid(false);
+                            setIsChanging(false);
+                        });
+                } else {
+                    setIsChanging(false);
+                }
             }
-        }, 750),
-        []
+        },
+        1000,
+        [lastValue]
     );
 
     const handlers = {
-        change: (val: string | undefined) => {
+        change: (val: any) => {
             setIsChanging(true);
-            editorUpdateDebounce(val);
+            setLastValue(val);
         },
         mount: (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
             editorRef.current = editor;
@@ -117,7 +140,9 @@ function MonacoEditor({
                             alignItems: 'center',
                         }}
                     >
-                        {hasServerChanges ? (
+                        {isInvalid ? (
+                            <Invalid iconSize={ICON_SIZE} />
+                        ) : hasServerChanges ? (
                             <ServerDiff
                                 iconSize={ICON_SIZE}
                                 onMerge={handlers.merge}
@@ -150,7 +175,7 @@ function MonacoEditor({
                             id: 'common.loading',
                         })}
                         value={stringifyJSON(value)}
-                        path={path}
+                        path={storedPath}
                         options={{
                             readOnly: disabled ? disabled : false,
                             minimap: {
