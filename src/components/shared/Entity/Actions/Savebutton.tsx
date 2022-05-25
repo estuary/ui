@@ -76,11 +76,11 @@ function EntityCreateSaveButton({ disabled, formId, onFailure }: Props) {
 
                 showNotification({
                     description: intl.formatMessage({
-                        id: `${messagePrefix}.captureCreate.createNotification.desc`,
+                        id: `${messagePrefix}.createNotification.desc`,
                     }),
                     severity: 'success',
                     title: intl.formatMessage({
-                        id: `${messagePrefix}.captureCreate.createNotification.title`,
+                        id: `${messagePrefix}.createNotification.title`,
                     }),
                 });
             },
