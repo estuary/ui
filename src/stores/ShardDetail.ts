@@ -8,6 +8,7 @@ import { NamedSet } from 'zustand/middleware';
 // TODO: Determine a way to access an interface property with a function type.
 export type SetShards = (shards: Shard[]) => void;
 
+// TODO: Follow-up with team. Determine fallback status to display in tooltip.
 export interface ShardStatusIndicator {
     code: ReplicaStatusCode | 'UNKNOWN';
     color: string;
@@ -110,16 +111,15 @@ export const getInitialState = (
                     spec.id ? spec.id.includes(catalogNamespace) : undefined
                 );
 
-                const statusIndicator: ShardStatusIndicator[] = selectedShard
-                    ? selectedShard.status.map(({ code }) => ({
-                          code: code ?? 'UNKNOWN',
-                          color: evaluateSingleShardStatus(code),
-                      }))
-                    : [defaultStatusIndicator];
+                const statusIndicator: ShardStatusIndicator[] =
+                    selectedShard && selectedShard.status.length > 0
+                        ? selectedShard.status.map(({ code }) => ({
+                              code: code ?? 'UNKNOWN',
+                              color: evaluateSingleShardStatus(code),
+                          }))
+                        : [defaultStatusIndicator];
 
-                return selectedShard
-                    ? statusIndicator
-                    : [defaultStatusIndicator];
+                return statusIndicator;
             } else {
                 return [defaultStatusIndicator];
             }
