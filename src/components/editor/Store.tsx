@@ -5,6 +5,20 @@ import { devtools, NamedSet } from 'zustand/middleware';
 
 export const DraftSpecEditorKey = 'draftSpecEditor';
 
+export enum EditorStatus {
+    IDLE = 'nothing happened since load',
+    EDITING = 'user typing',
+    INVALID = 'editor value not parsable',
+    SAVING = 'calling server to save changes',
+    SAVED = 'changes saved to server',
+    SAVE_FAILED = 'calling server failed',
+    OUT_OF_SYNC = 'there are changes on server that client neds to merge',
+}
+
+export const isEditorActive = (status: EditorStatus) => {
+    return status === EditorStatus.EDITING || status === EditorStatus.SAVING;
+};
+
 export interface EditorStoreState<T> {
     id: string | null;
     setId: (newVal: EditorStoreState<T>['id']) => void;
@@ -22,6 +36,9 @@ export interface EditorStoreState<T> {
     serverUpdate: any | null;
     setServerUpdate: (newVal: EditorStoreState<T>['serverUpdate']) => void;
 
+    status: EditorStatus;
+    setStatus: (newVal: EditorStatus) => void;
+
     resetState: () => void;
 }
 
@@ -31,6 +48,7 @@ const getInitialStateData = () => {
         id: null,
         pubId: null,
         specs: null,
+        status: EditorStatus.IDLE,
         serverUpdate: null,
     };
 };
@@ -64,6 +82,7 @@ const getInitialState = <T,>(
             set(
                 produce((state) => {
                     state.currentCatalog = newVal;
+                    state.status = EditorStatus.IDLE;
                 }),
                 false,
                 'Setting current catalog'
@@ -93,6 +112,16 @@ const getInitialState = <T,>(
                 }),
                 false,
                 'Set server update'
+            );
+        },
+
+        setStatus: (newVal) => {
+            set(
+                produce((state) => {
+                    state.status = newVal;
+                }),
+                false,
+                'Setting status'
             );
         },
 

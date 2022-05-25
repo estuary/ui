@@ -5,7 +5,7 @@ import {
     GridRenderCellParams,
     GridSelectionModel,
 } from '@mui/x-data-grid';
-import { EditorStoreState } from 'components/editor/Store';
+import { EditorStoreState, isEditorActive } from 'components/editor/Store';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { PublicationSpecQuery } from 'hooks/usePublicationSpecs';
 import { useZustandStore } from 'hooks/useZustand';
@@ -53,6 +53,11 @@ const columns: GridColDef[] = [
 function EditorFileSelector() {
     const [initDone, setInitDone] = useState(false);
 
+    const status: EditorStoreState<DraftSpecQuery>['status'] = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['status']
+    >((state) => state.status);
+
     const setCurrentCatalog = useZustandStore<
         EditorStoreState<PublicationSpecQuery | DraftSpecQuery>,
         EditorStoreState<
@@ -85,6 +90,7 @@ function EditorFileSelector() {
                 rowCount={specs.length}
                 hideFooter
                 disableColumnSelector
+                disableSelectionOnClick={isEditorActive(status)}
                 onSelectionModelChange={(newSelectionModel) => {
                     setSelectionModel(newSelectionModel);
                 }}

@@ -89,8 +89,6 @@ function DraftSpecEditor({ disabled }: Props) {
     if (draftSpec) {
         return (
             <EditorWithFileSelector
-                value={draftSpec.spec}
-                path={draftSpec.catalog_name}
                 onChange={handlers.change}
                 disabled={disabled}
             />
