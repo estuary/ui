@@ -1,48 +1,24 @@
 import { Auth } from '@supabase/ui';
 import { useQuery, useSelect } from 'hooks/supabase-swr';
-import { createContext } from 'react';
-import { client } from 'services/client';
+import { createContext, useContext } from 'react';
 import { TABLES } from 'services/supabase';
 import { BaseComponentProps } from 'types';
-import {
-    getGatewayAuthTokenSettings,
-    getSupabaseAnonymousKey,
-} from 'utils/env-utils';
 
 // TODO: Determine if this approach is worth keeping around. The logic in this file is a WIP.
 
-interface CombinedGrantsExtQuery {
+export interface CombinedGrantsExtQuery {
     id: string;
     object_role: string;
 }
 
-interface GatewayAuthTokenResponse {
-    gateway_url: URL;
-    token: string;
+interface PreFetchData {
+    sessionKey: string;
+    grantDetails: CombinedGrantsExtQuery[];
 }
 
-const getGatewayAuthConfig = (
-    prefixes: string[],
-    sessionKey: string | undefined
-): Promise<GatewayAuthTokenResponse[]> => {
-    const { gatewayAuthTokenEndpoint } = getGatewayAuthTokenSettings();
-    const { supabaseAnonymousKey } = getSupabaseAnonymousKey();
+const PreFetchDataContext = createContext<PreFetchData | null>(null);
 
-    const headers: HeadersInit = {};
-
-    headers.apikey = supabaseAnonymousKey;
-    headers.Authorization = `Bearer ${sessionKey}`;
-    headers['Content-Type'] = 'application/json';
-
-    return client(gatewayAuthTokenEndpoint, {
-        data: { prefixes },
-        headers,
-    });
-};
-
-const PreFetchDataContext = createContext(null);
-
-const PreFetchDataContextProvider = ({ children }: BaseComponentProps) => {
+const PreFetchDataProvider = ({ children }: BaseComponentProps) => {
     const { session } = Auth.useUser();
 
     const combinedGrantsQuery = useQuery<CombinedGrantsExtQuery>(
@@ -52,23 +28,28 @@ const PreFetchDataContextProvider = ({ children }: BaseComponentProps) => {
     );
     const { data: grants } = useSelect(combinedGrantsQuery);
 
-    const prefixes: string[] =
-        grants?.data.map(({ object_role }) => object_role) ?? [];
-
-    if (!localStorage.getItem('auth-gateway-jwt') && prefixes.length > 0) {
-        getGatewayAuthConfig(prefixes, session?.access_token)
-            .then(([{ gateway_url, token }]) => {
-                localStorage.setItem('gateway-url', gateway_url.toString());
-                localStorage.setItem('auth-gateway-jwt', token);
-            })
-            .catch((error) => Promise.reject(error));
-    }
+    const value: PreFetchData | null =
+        session?.access_token && grants?.data
+            ? { sessionKey: session.access_token, grantDetails: grants.data }
+            : null;
 
     return (
-        <PreFetchDataContext.Provider value={null}>
+        <PreFetchDataContext.Provider value={value}>
             {children}
         </PreFetchDataContext.Provider>
     );
 };
 
-export default PreFetchDataContextProvider;
+const usePreFetchData = () => {
+    const context = useContext(PreFetchDataContext);
+
+    if (context === null) {
+        throw new Error(
+            'usePreFetchData must be used within a PreFetchDataProvider'
+        );
+    }
+
+    return context;
+};
+
+export { PreFetchDataProvider, usePreFetchData };

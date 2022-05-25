@@ -10,7 +10,7 @@ import MaterializeAction from 'components/tables/cells/MaterializeAction';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import UserName from 'components/tables/cells/UserName';
 import DetailsPanel from 'components/tables/DetailsPanel';
-// import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
+import { usePreFetchData } from 'context/PreFetchData';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -131,30 +131,47 @@ function Rows({ data, showEntityStatus }: RowsProps) {
     const shards = shardDetailStore(shardDetailSelectors.shards);
     const setShards = shardDetailStore(shardDetailSelectors.setShards);
 
-    // useGatewayAuthToken(data, setShards);
-
-    const gatewayUrlString = localStorage.getItem('gateway-url');
-    const authToken = localStorage.getItem('auth-gateway-jwt');
+    const { sessionKey, grantDetails } = usePreFetchData();
 
     useEffect(() => {
+        const gatewayUrlString = localStorage.getItem('gateway-url');
+        const authToken = localStorage.getItem('auth-gateway-jwt');
+
         if (gatewayUrlString && authToken) {
             const gatewayUrl = new URL(gatewayUrlString);
 
-            getShardList(gatewayUrl, authToken, data, setShards);
+            getShardList(
+                gatewayUrl,
+                authToken,
+                data,
+                setShards,
+                sessionKey,
+                grantDetails
+            );
         }
-    }, [gatewayUrlString, authToken, data, setShards]);
+    }, [data, setShards, sessionKey, grantDetails]);
 
     useEffect(() => {
         const refreshInterval = setInterval(() => {
+            const gatewayUrlString = localStorage.getItem('gateway-url');
+            const authToken = localStorage.getItem('auth-gateway-jwt');
+
             if (gatewayUrlString && authToken) {
                 const gatewayUrl = new URL(gatewayUrlString);
 
-                getShardList(gatewayUrl, authToken, data, setShards);
+                getShardList(
+                    gatewayUrl,
+                    authToken,
+                    data,
+                    setShards,
+                    sessionKey,
+                    grantDetails
+                );
             }
         }, 30000);
 
         return () => clearInterval(refreshInterval);
-    }, [gatewayUrlString, authToken, shards, data, setShards]);
+    }, [shards, data, setShards, sessionKey, grantDetails]);
 
     return (
         <>

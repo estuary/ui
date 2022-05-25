@@ -1,4 +1,6 @@
+import { CombinedGrantsExtQuery } from 'context/PreFetchData';
 import { ShardClient, ShardSelector } from 'data-plane-gateway';
+import getGatewayAuthConfig from 'services/gateway-auth-config';
 import { SetShards } from 'stores/ShardDetail';
 import { LiveSpecsExtBaseQuery } from 'types';
 
@@ -14,7 +16,9 @@ const getShardList = <T extends LiveSpecsExtBaseQuery>(
     baseUrl: URL,
     authToken: string,
     specs: T[],
-    setShards: SetShards
+    setShards: SetShards,
+    sessionKey: string,
+    grantDetails: CombinedGrantsExtQuery[]
 ) => {
     const shardClient = new ShardClient(baseUrl, authToken);
     const taskSelector = new ShardSelector();
@@ -38,8 +42,27 @@ const getShardList = <T extends LiveSpecsExtBaseQuery>(
             // TODO: Create and call a gateway-auth-token service to generate a new authentication token. The polling done by the useEffect
             // caller for the shard-client will handle making a follow-up call to the shards list API. This error is currently silent. Should
             // the user be notified that a service error is present after a certain number of resolution attempts?
-            if (error.includes(ErrorFlags.TOKEN_INVALID)) {
-                console.log('Call a service that will update the JWT token');
+
+            if (
+                error.includes(ErrorFlags.TOKEN_INVALID) ||
+                error.includes(ErrorFlags.TOKEN_NOT_FOUND)
+            ) {
+                localStorage.removeItem('gateway-url');
+                localStorage.removeItem('auth-gateway-jwt');
+
+                const prefixes: string[] = grantDetails.map(
+                    ({ object_role }) => object_role
+                );
+
+                getGatewayAuthConfig(prefixes, sessionKey)
+                    .then(([{ gateway_url, token }]) => {
+                        localStorage.setItem(
+                            'gateway-url',
+                            gateway_url.toString()
+                        );
+                        localStorage.setItem('auth-gateway-jwt', token);
+                    })
+                    .catch((configError) => Promise.reject(configError));
             }
 
             return Promise.reject(error);
