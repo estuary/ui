@@ -133,7 +133,7 @@ function MonacoEditor({
         },
     };
 
-    if (currentCatalog.spec) {
+    if (currentCatalog?.spec) {
         return (
             <Paper sx={{ width: '100%' }} variant="outlined">
                 <Box
