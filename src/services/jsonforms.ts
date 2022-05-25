@@ -91,6 +91,19 @@ const isMultilineText = (schema: JsonSchema): boolean => {
     }
 };
 
+const isSecretText = (schema: JsonSchema): boolean => {
+    if (
+        schema.type === 'string' &&
+        (Object.hasOwn(schema, 'secret') ||
+            Object.hasOwn(schema, 'airbyte_secret'))
+    ) {
+        // eslint-disable-next-line @typescript-eslint/dot-notation
+        return schema['secret'] === true || schema['airbyte_secret'] === true;
+    } else {
+        return false;
+    }
+};
+
 const isAdvancedConfig = (schema: JsonSchema): boolean => {
     // eslint-disable-next-line @typescript-eslint/dot-notation
     return schema['advanced'] === true;
@@ -358,7 +371,9 @@ const generateUISchema = (
     // just create a default Control, but for string types, we set the `multi` option based on
     // whether the json schema contains a `multiline` annotation.
     const controlObject: ControlElement = createControlElement(currentRef);
-    if (isMultilineText(jsonSchema)) {
+    if (isSecretText(jsonSchema)) {
+        addOption(controlObject, 'format', 'password');
+    } else if (isMultilineText(jsonSchema)) {
         addOption(controlObject, 'multi', true);
     }
 
