@@ -149,7 +149,7 @@ export const insertSupabase = (
     return makeCall();
 };
 
-// Used to make update calls. Mainly consumed in the src/api folder
+// Makes update calls. Mainly consumed in the src/api folder
 export const updateSupabase = (
     table: TABLES,
     data: any,

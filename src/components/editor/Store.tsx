@@ -45,7 +45,8 @@ const getInitialState = <T,>(
                 produce((state) => {
                     state.id = newVal;
                 }),
-                false
+                false,
+                'Set draft id'
             );
         },
 
@@ -54,7 +55,8 @@ const getInitialState = <T,>(
                 produce((state) => {
                     state.pubId = newVal;
                 }),
-                false
+                false,
+                'Set publication id'
             );
         },
 
@@ -63,7 +65,8 @@ const getInitialState = <T,>(
                 produce((state) => {
                     state.currentCatalog = newVal;
                 }),
-                false
+                false,
+                'Setting current catalog'
             );
         },
 
@@ -74,10 +77,12 @@ const getInitialState = <T,>(
                         if (state.specs === null || newVal.length === 1) {
                             state.currentCatalog = newVal[0];
                         }
+
                         state.specs = newVal;
                     }
                 }),
-                false
+                false,
+                'Set specs'
             );
         },
 
@@ -86,7 +91,8 @@ const getInitialState = <T,>(
                 produce((state) => {
                     state.serverUpdate = newVal;
                 }),
-                false
+                false,
+                'Set server update'
             );
         },
 

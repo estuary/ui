@@ -103,7 +103,7 @@ function CaptureTestButton({
             const discoversSubscription = subscription();
             const discoverResponse = await discover(
                 entityName,
-                encryptedEndpointConfig,
+                encryptedEndpointConfig.data,
                 imageTag.id,
                 draftsResponse.data[0].id
             );

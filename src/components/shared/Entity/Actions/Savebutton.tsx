@@ -80,7 +80,9 @@ function EntityCreateSaveButton({ disabled, formId, onFailure }: Props) {
                 });
             },
             () => {
-                onFailure(`${messagePrefix}.save.failedErrorTitle`);
+                onFailure({
+                    error: { title: `${messagePrefix}.save.failedErrorTitle` },
+                });
             }
         );
     };

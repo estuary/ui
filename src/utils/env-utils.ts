@@ -4,6 +4,7 @@ declare global {
             api_endpoint: string | null;
             auth_url: string | null;
         } | null;
+        monaco: any;
     }
 }
 
