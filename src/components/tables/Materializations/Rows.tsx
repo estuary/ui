@@ -1,4 +1,5 @@
 import { TableRow } from '@mui/material';
+import { Auth } from '@supabase/ui';
 import Actions from 'components/tables/cells/Actions';
 import ChipList from 'components/tables/cells/ChipList';
 import Connector from 'components/tables/cells/Connector';
@@ -101,13 +102,14 @@ function Rows({ data, showEntityStatus }: RowsProps) {
     const shards = shardDetailStore(shardDetailSelectors.shards);
     const setShards = shardDetailStore(shardDetailSelectors.setShards);
 
-    const { sessionKey, grantDetails } = usePreFetchData();
+    const { session } = Auth.useUser();
+    const { grantDetails } = usePreFetchData();
 
     useEffect(() => {
         const gatewayUrlString = localStorage.getItem('gateway-url');
         const authToken = localStorage.getItem('auth-gateway-jwt');
 
-        if (gatewayUrlString && authToken) {
+        if (gatewayUrlString && authToken && session) {
             const gatewayUrl = new URL(gatewayUrlString);
 
             getShardList(
@@ -115,18 +117,18 @@ function Rows({ data, showEntityStatus }: RowsProps) {
                 authToken,
                 data,
                 setShards,
-                sessionKey,
+                session.access_token,
                 grantDetails
             );
         }
-    }, [data, setShards, sessionKey, grantDetails]);
+    }, [data, setShards, session, grantDetails]);
 
     useEffect(() => {
         const refreshInterval = setInterval(() => {
             const gatewayUrlString = localStorage.getItem('gateway-url');
             const authToken = localStorage.getItem('auth-gateway-jwt');
 
-            if (gatewayUrlString && authToken) {
+            if (gatewayUrlString && authToken && session) {
                 const gatewayUrl = new URL(gatewayUrlString);
 
                 getShardList(
@@ -134,14 +136,14 @@ function Rows({ data, showEntityStatus }: RowsProps) {
                     authToken,
                     data,
                     setShards,
-                    sessionKey,
+                    session.access_token,
                     grantDetails
                 );
             }
         }, 30000);
 
         return () => clearInterval(refreshInterval);
-    }, [shards, data, setShards, sessionKey, grantDetails]);
+    }, [shards, data, setShards, session, grantDetails]);
 
     return (
         <>
