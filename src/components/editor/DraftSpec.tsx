@@ -25,16 +25,28 @@ function DraftSpecEditor({ disabled }: Props) {
         EditorStoreState<DraftSpecQuery>['id']
     >((state) => state.id);
 
-    const { draftSpecs } = useDraftSpecs(id);
+    const { draftSpecs, mutate } = useDraftSpecs(id);
     const [draftSpec, setDraftSpec] = useState<DraftSpecQuery | null>(null);
 
     const handlers = {
-        change: (newVal: any, catalogName: string) => {
+        change: async (newVal: any, catalogName: string) => {
             if (draftSpec) {
-                return updateDraftSpec(id, catalogName, newVal);
-            }
+                console.log('1');
+                const updateResponse = await updateDraftSpec(
+                    id,
+                    catalogName,
+                    newVal
+                );
+                console.log('2');
 
-            return Promise.reject();
+                if (updateResponse.error) {
+                    return Promise.reject();
+                }
+
+                return mutate();
+            } else {
+                return Promise.reject();
+            }
         },
     };
 
