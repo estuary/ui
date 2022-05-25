@@ -1,6 +1,11 @@
-import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
-import { createClient, User } from '@supabase/supabase-js';
+import { PostgrestError, PostgrestFilterBuilder } from '@supabase/postgrest-js';
+import {
+    createClient,
+    RealtimeSubscription,
+    User,
+} from '@supabase/supabase-js';
 import { isEmpty } from 'lodash';
+import { JobStatus } from 'types';
 
 if (
     !process.env.REACT_APP_SUPABASE_URL ||
@@ -106,4 +111,102 @@ export const getUserDetails = (user: User | null) => {
         emailVerified,
         avatar,
     };
+};
+
+export interface CallSupabaseResponse {
+    error?: PostgrestError;
+    data: any;
+}
+
+const handleSuccess = (response: any) => {
+    return response.error
+        ? {
+              data: null,
+              error: response.error,
+          }
+        : {
+              data: response.data,
+          };
+};
+
+const handleFailure = (error: any) => {
+    return {
+        data: null,
+        error,
+    };
+};
+
+export const insertSupabase = (
+    table: TABLES,
+    data: any
+): PromiseLike<CallSupabaseResponse> => {
+    const query = supabaseClient.from(table);
+
+    const makeCall = () => {
+        return query.insert([data]).then(handleSuccess, handleFailure);
+    };
+
+    return makeCall();
+};
+
+// Used to make update calls. Mainly consumed in the src/api folder
+export const updateSupabase = (
+    table: TABLES,
+    data: any,
+    matchData: any
+): PromiseLike<CallSupabaseResponse> => {
+    const query = supabaseClient.from(table);
+
+    const makeCall = () => {
+        return query
+            .update(data)
+            .match(matchData)
+            .then(handleSuccess, handleFailure);
+    };
+
+    return makeCall();
+};
+
+export const endSubscription = (subscription: RealtimeSubscription) => {
+    return supabaseClient
+        .removeSubscription(subscription)
+        .then(() => {})
+        .catch(() => {});
+};
+
+export const startSubscription = (
+    query: any,
+    success: Function,
+    failure: Function,
+    keepSubscription?: boolean
+) => {
+    const subscription = query
+        .on('*', async (payload: any) => {
+            if (payload.new.job_status.type !== 'queued') {
+                if (payload.new.job_status.type === 'success') {
+                    success(payload);
+                } else {
+                    failure(payload);
+                }
+
+                if (!keepSubscription) {
+                    await endSubscription(subscription);
+                }
+            }
+        })
+        .subscribe();
+
+    return subscription;
+};
+
+export const jobSucceeded = (jobStatus?: JobStatus) => {
+    if (jobStatus) {
+        if (jobStatus.type !== 'queued') {
+            return jobStatus.type === 'success';
+        } else {
+            return null;
+        }
+    } else {
+        return null;
+    }
 };

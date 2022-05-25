@@ -1,5 +1,4 @@
 import {
-    Button,
     Collapse,
     LinearProgress,
     Stack,
@@ -8,65 +7,24 @@ import {
     Toolbar,
     Typography,
 } from '@mui/material';
-import { EditorStoreState } from 'components/editor/Store';
 import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { useZustandStore } from 'hooks/useZustand';
 import { ReactNode } from 'react';
-import { FormattedMessage } from 'react-intl';
-import {
-    entityCreateStoreSelectors,
-    formInProgress,
-    FormStatus,
-} from 'stores/Create';
+import { entityCreateStoreSelectors, formInProgress } from 'stores/Create';
 
 interface Props {
-    test: (event: any) => void;
-    testDisabled: boolean;
-    save: (event: any) => void;
-    saveDisabled: boolean;
-    formId: string;
+    TestButton: ReactNode;
+    SaveButton: ReactNode;
     heading: ReactNode;
 }
 
-function FooHeader({
-    test,
-    testDisabled,
-    save,
-    saveDisabled,
-    formId,
-    heading,
-}: Props) {
-    const id = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['id']
-    >((state) => state.id);
+export const buttonSx: SxProps<Theme> = { ml: 1, borderRadius: 5 };
 
+function FooHeader({ TestButton, SaveButton, heading }: Props) {
     const entityCreateStore = useRouteStore();
     const formStateStatus = entityCreateStore(
         entityCreateStoreSelectors.formState.status
     );
-    const setFormState = entityCreateStore(
-        entityCreateStoreSelectors.formState.set
-    );
-
-    const handlers = {
-        test: (event: any) => {
-            setFormState({
-                status: FormStatus.TESTING,
-            });
-            test(event);
-        },
-        save: (event: any) => {
-            setFormState({
-                status: FormStatus.SAVING,
-            });
-            save(event);
-        },
-    };
-
-    const buttonSx: SxProps<Theme> = { ml: 1, borderRadius: 5 };
 
     return (
         <>
@@ -82,33 +40,9 @@ function FooHeader({
                         ml: 'auto',
                     }}
                 >
-                    <Button
-                        onClick={handlers.test}
-                        disabled={
-                            formInProgress(formStateStatus) || testDisabled
-                        }
-                        form={formId}
-                        type="submit"
-                        sx={buttonSx}
-                    >
-                        <FormattedMessage
-                            id={
-                                id
-                                    ? 'foo.ctas.discoverAgain'
-                                    : 'foo.ctas.discover'
-                            }
-                        />
-                    </Button>
+                    {TestButton}
 
-                    <Button
-                        onClick={handlers.save}
-                        disabled={
-                            formInProgress(formStateStatus) || saveDisabled
-                        }
-                        sx={buttonSx}
-                    >
-                        <FormattedMessage id="cta.saveEntity" />
-                    </Button>
+                    {SaveButton}
                 </Stack>
             </Toolbar>
 

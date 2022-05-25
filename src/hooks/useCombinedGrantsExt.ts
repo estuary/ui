@@ -1,4 +1,5 @@
 import { Auth } from '@supabase/ui';
+import { singleCallSettings } from 'context/SWR';
 import { DEFAULT_FILTER, TABLES } from 'services/supabase';
 import { Grants } from 'types';
 import { useQuery, useSelect } from './supabase-swr/';
@@ -6,10 +7,11 @@ import { useQuery, useSelect } from './supabase-swr/';
 const COMBINED_GRANTS_EXT_COLS = ['*'];
 
 interface Props {
-    onlyAdmin?: boolean;
+    adminOnly?: boolean;
+    singleCall?: boolean;
 }
 
-function useCombinedGrantsExt({ onlyAdmin: adminOnly }: Props) {
+function useCombinedGrantsExt({ adminOnly, singleCall }: Props) {
     const { user } = Auth.useUser();
 
     const combinedGrantsExtQuery = useQuery<Grants>(
@@ -30,7 +32,8 @@ function useCombinedGrantsExt({ onlyAdmin: adminOnly }: Props) {
     );
 
     const { data, error, mutate, isValidating } = useSelect(
-        user?.id ? combinedGrantsExtQuery : null
+        user?.id ? combinedGrantsExtQuery : null,
+        singleCall ? singleCallSettings : undefined
     );
 
     return {

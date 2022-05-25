@@ -1,11 +1,15 @@
+import { updateDraftSpec } from 'api/draftSpecs';
 import EditorWithFileSelector from 'components/editor/EditorWithFileSelector';
 import { EditorStoreState } from 'components/editor/Store';
 import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useZustandStore } from 'hooks/useZustand';
 import { useEffect, useState } from 'react';
-import { supabaseClient, TABLES } from 'services/supabase';
 
-function DraftSpecEditor() {
+export interface Props {
+    disabled?: boolean;
+}
+
+function DraftSpecEditor({ disabled }: Props) {
     const currentCatalog = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['currentCatalog']
@@ -21,33 +25,13 @@ function DraftSpecEditor() {
         EditorStoreState<DraftSpecQuery>['id']
     >((state) => state.id);
 
-    const { draftSpecs, mutate } = useDraftSpecs(id);
+    const { draftSpecs } = useDraftSpecs(id);
     const [draftSpec, setDraftSpec] = useState<DraftSpecQuery | null>(null);
 
     const handlers = {
         change: (newVal: any, catalogName: string) => {
             if (draftSpec) {
-                const newData = {
-                    spec: newVal,
-                };
-
-                const updatedPromise = supabaseClient
-                    .from(TABLES.DRAFT_SPECS)
-                    .update(newData)
-                    .match({
-                        draft_id: id,
-                        catalog_name: catalogName,
-                    })
-                    .then(
-                        () => {},
-                        () => {}
-                    );
-
-                mutate()
-                    .then(() => {})
-                    .catch(() => {});
-
-                return updatedPromise;
+                return updateDraftSpec(id, catalogName, newVal);
             }
 
             return Promise.reject();
@@ -96,6 +80,7 @@ function DraftSpecEditor() {
                 value={draftSpec.spec}
                 path={draftSpec.catalog_name}
                 onChange={handlers.change}
+                disabled={disabled}
             />
         );
     } else {

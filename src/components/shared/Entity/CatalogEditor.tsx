@@ -3,8 +3,10 @@ import DraftSpecEditor from 'components/editor/DraftSpec';
 import { EditorStoreState } from 'components/editor/Store';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
 import { FormattedMessage } from 'react-intl';
+import { entityCreateStoreSelectors, formInProgress } from 'stores/Create';
 
 interface Props {
     messageId: string;
@@ -15,6 +17,12 @@ function CatalogEditor({ messageId }: Props) {
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
     >((state) => state.id);
+
+    const entityCreateStore = useRouteStore();
+
+    const formStateStatus = entityCreateStore(
+        entityCreateStoreSelectors.formState.status
+    );
 
     if (draftId) {
         return (
@@ -27,7 +35,9 @@ function CatalogEditor({ messageId }: Props) {
                     </Typography>
 
                     <Paper variant="outlined" sx={{ p: 1 }}>
-                        <DraftSpecEditor />
+                        <DraftSpecEditor
+                            disabled={formInProgress(formStateStatus)}
+                        />
                     </Paper>
                 </>
             </WrapperWithHeader>

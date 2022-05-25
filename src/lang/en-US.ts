@@ -8,6 +8,13 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.browserTitle': `Flow`,
     'common.loading': `loading...`,
     'common.running': `running...`,
+    'common.deleting': `deleting...`,
+    'common.deleted': `Deleted`,
+    'common.enabling': `enabling...`,
+    'common.enabled': `Enabled`,
+    'common.disabling': `disabling...`,
+    'common.disabled': `Disabled`,
+    'common.inProgress': `In Progress`,
     'common.saving': `saving`,
     'common.saved': `saved`,
     'common.fail': `Failed`,
@@ -17,6 +24,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.noData': `No data to display`,
     'common.loggedOut': `You have been logged out. Please log back in.`,
     'common.missing': `N/A`,
+    'common.noUnDo': `This action cannot be undone.`,
 
     // Aria
     'aria.openExpand': `show more`,
@@ -26,6 +34,8 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'terms.connectors': `Connectors`,
     'terms.collections': `Collections`,
     'terms.permissions': `Access Grants`,
+    'terms.materialization': `Materialization`,
+    'terms.capture': `Capture`,
 
     // Common fields
     'entityPrefix.label': `Prefix`,
@@ -39,6 +49,8 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
 
     // Common sections
     'connectionConfig.header': `Connection Config`,
+
+    'commin.pathShort.prefix': '.../{path}',
 };
 
 const CTAs: ResolvedIntlConfig['messages'] = {
@@ -56,6 +68,8 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.details': `Details`,
     'cta.saveEntity': `Save and Publish`,
     'cta.restart': `Restart`,
+    'cta.enable': `Enable`,
+    'cta.disable': `Disable`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
@@ -187,6 +201,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.error.pageNotFound': `Page Not Found`,
     'routeTitle.login': `Login`,
     'routeTitle.loginLoading': `Checking Credentials`,
+    'routeTitle.noGrants': `No Access Grants`,
     'routeTitle.materializationCreate': `Materialization Create`,
     'routeTitle.materializationEdit': `Materialization Edit`,
     'routeTitle.materializations': `Materializations`,
@@ -204,6 +219,7 @@ const BrowserTitles: ResolvedIntlConfig['messages'] = {
     'browserTitle.connectors': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.connectors']}`,
     'browserTitle.error.pageNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.pageNotFound']}`,
     'browserTitle.login': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.login']}`,
+    'browserTitle.noGrants': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.noGrants']}`,
     'browserTitle.loginLoading': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.loginLoading']}`,
     'browserTitle.materializationCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationCreate']}`,
     'browserTitle.materializationEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationEdit']}`,
@@ -259,16 +275,23 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
     'login.oidc.message': `Sign in to continue to ${CommonMessages.productName}.`,
 };
 
+const NoGrants: ResolvedIntlConfig['messages'] = {
+    'noGrants.main.message': `Thanks for signing up. Our team is reviewing your account and will get back to you shortly.`,
+};
+
 const Captures: ResolvedIntlConfig['messages'] = {
     'captureTable.header': `Captures`,
     'capturesTable.title': `Your Captures`,
     'capturesTable.cta.new': `New Capture`,
+    'capturesTable.disableEnable.confirm': `All items listed below will be {setting}.`,
+    'capturesTable.delete.confirm': `All items listed below will be deleted forever. Please review before continuing.`,
+    'capturesTable.ctaGroup.aria': `capture table available actions`,
     'capturesTable.cta.materialize': `${CTAs['cta.materialize']} ${CommonMessages['terms.collections']}`,
     'captures.message1': `Click the "New Capture" button up above to get started.`,
     'captures.message2': `It will guide you through generating and downloading a valid {docLink}.`,
     'captures.message2.docLink': `capture spec`,
     'captures.message2.docPath': `https://docs.estuary.dev/concepts/#captures`,
-    'captureCreation.status.success': `${CommonMessages['common.success']}`,
+    'captureCreate.status.success': `${CommonMessages['common.success']}`,
 };
 
 const Materializations: ResolvedIntlConfig['messages'] = {
@@ -297,6 +320,7 @@ const Foo: ResolvedIntlConfig['messages'] = {
     'foo.endpointConfig.heading': `Connection Configuration`,
     'foo.endpointConfig.errorSummary': `You must provide valid data for all required fields before continuing.`,
     'foo.endpointConfig.detailsHaveErrors': `The Details section has errors.`,
+    'foo.endpointConfig.endpointConfigMissing': `Please select a connector.`,
     'foo.endpointConfig.endpointConfigHaveErrors': `The Connection Configuration section has errors.`,
     'foo.endpointConfig.resourceConfigHaveErrors': `The Output Configuration section has errors.`,
 };
@@ -307,25 +331,27 @@ const MonacoEditor: ResolvedIntlConfig['messages'] = {
 };
 
 const CaptureCreate: ResolvedIntlConfig['messages'] = {
-    'captureCreation.heading': `${RouteTitles['routeTitle.captureCreate']}`,
-    'captureCreation.details.heading': `Capture Details`,
-    'captureCreation.ctas.materialize': `Materialize Collections`,
-    'captureCreation.instructions': `To get started please provide a unique name and the source type of the Capture you want to create. Once you've filled out the source details you can click "Test Capture" down below to test the connection.`,
-    'captureCreation.missingConnectors': `No connectors installed. You must install a source connector before being able to create a capture.`,
-    'captureCreation.noAccessGrants': `You do not have the necessary ${CommonMessages['terms.permissions']} to create a Capture. Please contact an administrator.`,
-    'captureCreation.tenant.label': `Tenant`,
-    'captureCreation.config.source.doclink': `Connector Docs`,
-    'captureCreation.config.source.homepage': `Home Page`,
-    'captureCreation.save.failed': `Capture creation failed. Please see below for details:`,
-    'captureCreation.editor.default': `Before you can edit the Capture Catalog you need to fill out the connection config section and click Discover`,
-    'captureCreation.finalReview.instructions': `Look over the catalog configuration that was generated. If you want to edit anything you can do that directly in the editor. Once you're ready you can download the file for your local.`,
-    'captureCreation.test.waitMessage': `Please wait while we try to connect to this endpoint.`,
-    'captureCreation.test.failedErrorTitle': `Config Test Failed`,
-    'captureCreation.test.failedConfigEncryptTitle': `Encrypting Config Failed`,
-    'captureCreation.test.serverUnreachable': `Config Test was unable to reach server`,
-    'captureCreation.save.failedErrorTitle': `Capture Save Failed`,
-    'captureCreation.save.serverUnreachable': `Config Save was unable to reach server`,
-    'captureCreation.save.waitMessage': `Please wait while we test, save, and publish your capture.`,
+    'captureCreate.heading': `${RouteTitles['routeTitle.captureCreate']}`,
+    'captureCreate.details.heading': `Capture Details`,
+    'captureCreate.ctas.materialize': `Materialize Collections`,
+    'captureCreate.instructions': `To get started please provide a unique name and the source type of the Capture you want to create. Once you've filled out the source details you can click "Test Capture" down below to test the connection.`,
+    'captureCreate.missingConnectors': `No connectors installed. You must install a source connector before being able to create a capture.`,
+    'captureCreate.noAccessGrants': `You do not have the necessary ${CommonMessages['terms.permissions']} to create a Capture. Please contact an administrator.`,
+    'captureCreate.tenant.label': `Tenant`,
+    'captureCreate.config.source.doclink': `Connector Docs`,
+    'captureCreate.config.source.homepage': `Home Page`,
+    'captureCreate.save.failed': `Capture creation failed. Please see below for details:`,
+    'captureCreate.editor.default': `Before you can edit the Capture Catalog you need to fill out the connection config section and click Discover`,
+    'captureCreate.finalReview.instructions': `Look over the catalog configuration that was generated. If you want to edit anything you can do that directly in the editor. Once you're ready you can download the file for your local.`,
+    'captureCreate.test.waitMessage': `Please wait while we try to connect to this endpoint.`,
+    'captureCreate.test.failedErrorTitle': `Config Test Failed`,
+    'captureCreate.test.failedConfigEncryptTitle': `Encrypting Config Failed`,
+    'captureCreate.test.serverUnreachable': `Config Test was unable to reach server`,
+    'captureCreate.save.failedErrorTitle': `Capture Save Failed`,
+    'captureCreate.save.serverUnreachable': `Config Save was unable to reach server`,
+    'captureCreate.save.waitMessage': `Please wait while we test, save, and publish your capture.`,
+    'captureCreate.createNotification.title': `New Capture Created`,
+    'captureCreate.createNotification.desc': `Your new Capture is published and ready to be used.`,
 };
 
 const CaptureDetails: ResolvedIntlConfig['messages'] = {
@@ -334,28 +360,30 @@ const CaptureDetails: ResolvedIntlConfig['messages'] = {
 };
 
 const MaterializationCreate: ResolvedIntlConfig['messages'] = {
-    'materializationCreation.details.heading': `Materialization Details`,
-    'materializationCreation.collections.heading': `Output Configuration`,
-    'materializationCreation.config.source.doclink': `Connector Docs`,
-    'materializationCreation.cta.test': `Test Config`,
-    'materializationCreation.editor.default': `Before you can edit the Materialization Catalog you need to fill out the connection config section`,
-    'materializationCreation.finalReview.instructions': `Look over the catalog configuration that was generated. If you want to edit anything, you can do that directly in the editor. You can download the file for your local machine when you're ready.`,
-    'materializationCreation.heading': `New Materialization`,
-    'materializationCreation.instructions': `To get started, please provide a unique name and select an endpoint. Next, configure your endpoint and choose the collections you want to materialize. The generated YAML can be reviewed before saving.`,
-    'materializationCreation.missingConnectors': `No connectors installed. A source connector must be installed before a materialization can be created.`,
-    'materializationCreation.noAccessGrants': `You do not have the necessary ${CommonMessages['terms.permissions']} to create a Materialization. Please contact an administrator.`,
-    'materializationCreation.save.failure': `Materialization creation failed. Please see below for details:`,
-    'materializationCreation.save.failure.errorTitle': `Materialization Save Failed`,
-    'materializationCreation.save.inProgress': `Please wait while we test, save, and publish your materialization.`,
-    'materializationCreation.save.serverUnreachable': `Config Save was unable to reach server`,
-    'materializationCreation.tenant.label': `Tenant`,
-    'materializationCreation.test.failure.errorTitle': `Config Test Failed`,
-    'materializationCreation.test.failedConfigEncryptTitle': `Encrypting Config Failed`,
-    'materializationCreation.test.serverUnreachable': `Config Test was unable to reach server`,
-    'materializationCreation.test.inProgress': `Please wait while we try to connect to this endpoint.`,
-    'materializationCreation.collectionSelector.heading': `Collection Selector`,
-    'materializationCreation.collectionSelector.instructions': `Place instructions for collection selector here.`,
-    'materializationCreation.resourceConfig.heading': `Resource Config`,
+    'materializationCreate.details.heading': `Materialization Details`,
+    'materializationCreate.collections.heading': `Output Configuration`,
+    'materializationCreate.config.source.doclink': `Connector Docs`,
+    'materializationCreate.cta.test': `Test Config`,
+    'materializationCreate.editor.default': `Before you can edit the Materialization Catalog you need to fill out the connection config section`,
+    'materializationCreate.finalReview.instructions': `Look over the catalog configuration that was generated. If you want to edit anything, you can do that directly in the editor. You can download the file for your local machine when you're ready.`,
+    'materializationCreate.heading': `New Materialization`,
+    'materializationCreate.instructions': `To get started, please provide a unique name and select an endpoint. Next, configure your endpoint and choose the collections you want to materialize. The generated YAML can be reviewed before saving.`,
+    'materializationCreate.missingConnectors': `No connectors installed. A source connector must be installed before a materialization can be created.`,
+    'materializationCreate.noAccessGrants': `You do not have the necessary ${CommonMessages['terms.permissions']} to create a Materialization. Please contact an administrator.`,
+    'materializationCreate.save.failure': `Materialization creation failed. Please see below for details:`,
+    'materializationCreate.save.failure.errorTitle': `Materialization Save Failed`,
+    'materializationCreate.save.serverUnreachable': `Config Save was unable to reach server`,
+    'materializationCreate.tenant.label': `Tenant`,
+    'materializationCreate.test.failure.errorTitle': `Config Test Failed`,
+    'materializationCreate.test.failedConfigEncryptTitle': `Encrypting Config Failed`,
+    'materializationCreate.test.serverUnreachable': `Config Test was unable to reach server`,
+    'materializationCreate.test.inProgress': `Please wait while we try to connect to this endpoint.`,
+    'materializationCreate.collectionSelector.heading': `Collection Selector`,
+    'materializationCreate.collectionSelector.instructions': `Place instructions for collection selector here.`,
+    'materializationCreate.resourceConfig.heading': `Resource Config`,
+    'materializationCreate.save.waitMessage': `Please wait while we test, save, and publish your materialization.`,
+    'materializationCreate.createNotification.title': `New Materialization Created`,
+    'materializationCreate.createNotification.desc': `Your new Materialization is published and ready to be used.`,
 };
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {
@@ -379,6 +407,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...MonacoEditor,
     ...ConnectorsPage,
     ...Error,
+    ...NoGrants,
     ...LoginPage,
     ...AccessGrants,
     ...Collections,

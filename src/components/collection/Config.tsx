@@ -1,8 +1,8 @@
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { Grid } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
-import CollectionSelector from 'components/materialization/CollectionSelector';
-import ExpandableResourceConfig from 'components/materialization/create/ExpandableResourceConfig';
+import ExpandableResourceConfig from 'components/collection/ExpandableResourceConfig';
+import CollectionSelector from 'components/collection/Selector';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import useLiveSpecsExt from 'hooks/useLiveSpecsExt';
 import { useRouteStore } from 'hooks/useRouteStore';
@@ -35,8 +35,8 @@ function CollectionConfig() {
     const { liveSpecs } = useLiveSpecsExt(specID);
 
     useEffect(() => {
-        if (liveSpecs.writes_to.length > 0) {
-            prefillCollections(liveSpecs.writes_to);
+        if (liveSpecs.length > 0) {
+            prefillCollections(liveSpecs);
         }
     }, [liveSpecs, prefillCollections]);
 
@@ -49,7 +49,7 @@ function CollectionConfig() {
                         {getErrors().length > 0 ? (
                             <ErrorOutlineIcon color="error" sx={{ pr: 1 }} />
                         ) : null}
-                        <FormattedMessage id="materializationCreation.collections.heading" />
+                        <FormattedMessage id="materializationCreate.collections.heading" />
                     </>
                 }
             >

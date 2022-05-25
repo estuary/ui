@@ -1,4 +1,4 @@
-import { TableRow } from '@mui/material';
+import { Checkbox, TableCell, TableRow } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
 import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import Actions from 'components/tables/cells/Actions';
@@ -6,12 +6,16 @@ import ChipList from 'components/tables/cells/ChipList';
 import Connector from 'components/tables/cells/Connector';
 import EntityName from 'components/tables/cells/EntityName';
 import ExpandDetails from 'components/tables/cells/ExpandDetails';
-import MaterializeAction from 'components/tables/cells/MaterializeAction';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import UserName from 'components/tables/cells/UserName';
 import DetailsPanel from 'components/tables/DetailsPanel';
+import {
+    SelectableTableStore,
+    selectableTableStoreSelectors,
+} from 'components/tables/Store';
 import { usePreFetchData } from 'context/PreFetchData';
 import { useRouteStore } from 'hooks/useRouteStore';
+import { useZustandStore } from 'hooks/useZustand';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import getShardList from 'services/shard-client';
@@ -23,12 +27,18 @@ interface RowsProps {
     showEntityStatus: boolean;
 }
 
-interface RowProps {
+export interface RowProps {
     row: LiveSpecsExtQuery;
+    setRow: any;
+    isSelected: boolean;
     showEntityStatus: boolean;
 }
 
 export const tableColumns = [
+    {
+        field: null,
+        headerIntlKey: '',
+    },
     {
         field: 'catalog_name',
         headerIntlKey: 'entityTable.data.entity',
@@ -40,10 +50,6 @@ export const tableColumns = [
     {
         field: 'writes_to',
         headerIntlKey: 'entityTable.data.writesTo',
-    },
-    {
-        field: null,
-        headerIntlKey: 'entityTable.data.actions',
     },
     {
         field: 'updated_at',
@@ -59,10 +65,10 @@ export const tableColumns = [
     },
 ];
 
-function Row({ row, showEntityStatus }: RowProps) {
-    const [detailsExpanded, setDetailsExpanded] = useState(false);
-
+function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
     const navigate = useNavigate();
+
+    const [detailsExpanded, setDetailsExpanded] = useState(false);
 
     const handlers = {
         clickMaterialize: () => {
@@ -74,15 +80,32 @@ function Row({ row, showEntityStatus }: RowProps) {
                 )
             );
         },
+        clickRow: (rowId: string) => {
+            setRow(rowId, !isSelected);
+        },
     };
 
     return (
         <>
             <TableRow
+                hover
+                onClick={() => handlers.clickRow(row.id)}
+                selected={isSelected}
                 sx={{
                     background: detailsExpanded ? '#04192A' : null,
+                    cursor: 'pointer',
                 }}
             >
+                <TableCell padding="checkbox">
+                    <Checkbox
+                        color="primary"
+                        checked={isSelected}
+                        inputProps={{
+                            'aria-labelledby': row.catalog_name,
+                        }}
+                    />
+                </TableCell>
+
                 <EntityName
                     name={row.catalog_name}
                     showEntityStatus={showEntityStatus}
@@ -94,10 +117,6 @@ function Row({ row, showEntityStatus }: RowProps) {
                 />
 
                 <ChipList strings={row.writes_to} />
-
-                <Actions>
-                    <MaterializeAction onClick={handlers.clickMaterialize} />
-                </Actions>
 
                 <TimeStamp time={row.updated_at} />
 
@@ -127,6 +146,16 @@ function Row({ row, showEntityStatus }: RowProps) {
 }
 
 function Rows({ data, showEntityStatus }: RowsProps) {
+    const selected = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['selected']
+    >(selectableTableStoreSelectors.selected.get);
+
+    const setRow = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['setSelected']
+    >(selectableTableStoreSelectors.selected.set);
+
     const shardDetailStore = useRouteStore();
     const shards = shardDetailStore(shardDetailSelectors.shards);
     const setShards = shardDetailStore(shardDetailSelectors.setShards);
@@ -178,8 +207,10 @@ function Rows({ data, showEntityStatus }: RowsProps) {
             {data.map((row) => (
                 <Row
                     row={row}
-                    showEntityStatus={showEntityStatus}
                     key={row.id}
+                    isSelected={selected.has(row.id)}
+                    setRow={setRow}
+                    showEntityStatus={showEntityStatus}
                 />
             ))}
         </>
