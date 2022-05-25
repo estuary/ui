@@ -80,7 +80,6 @@ function MonacoEditor({
 
     const updateValue = () => {
         const currentValue = editorRef.current?.getValue();
-        console.log('updateValue', currentValue);
         if (onChange && currentValue) {
             setStatus(EditorStatus.EDITING);
 
@@ -88,7 +87,6 @@ function MonacoEditor({
             try {
                 parsedVal = JSON.parse(currentValue);
             } catch {
-                console.log('faied to parse');
                 setStatus(EditorStatus.INVALID);
             }
 
@@ -100,12 +98,9 @@ function MonacoEditor({
                     currentCatalog.spec_type
                 )
                     .then(() => {
-                        console.log('3s');
                         setStatus(EditorStatus.SAVED);
                     })
-                    .catch((error: any) => {
-                        console.log('3e');
-                        console.log('error', error);
+                    .catch(() => {
                         setStatus(EditorStatus.SAVE_FAILED);
                     });
             } else {
@@ -149,7 +144,9 @@ function MonacoEditor({
                             alignItems: 'center',
                         }}
                     >
-                        {status === EditorStatus.INVALID ? (
+                        {/* TODO (editor) Need to get the save failure state working */}
+                        {status === EditorStatus.INVALID ||
+                        status === EditorStatus.SAVE_FAILED ? (
                             <Invalid iconSize={ICON_SIZE} />
                         ) : status === EditorStatus.OUT_OF_SYNC ? (
                             <ServerDiff

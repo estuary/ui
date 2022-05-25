@@ -31,13 +31,11 @@ function DraftSpecEditor({ disabled }: Props) {
     const handlers = {
         change: async (newVal: any, catalogName: string) => {
             if (draftSpec) {
-                console.log('1');
                 const updateResponse = await updateDraftSpec(
                     id,
                     catalogName,
                     newVal
                 );
-                console.log('2');
 
                 if (updateResponse.error) {
                     return Promise.reject();
