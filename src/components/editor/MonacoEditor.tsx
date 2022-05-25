@@ -93,6 +93,7 @@ function MonacoEditor({
             }
 
             if (parsedVal) {
+                setStatus(EditorStatus.SAVING);
                 onChange(
                     parsedVal,
                     currentCatalog.catalog_name,

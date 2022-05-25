@@ -5,7 +5,7 @@ import {
     GridRenderCellParams,
     GridSelectionModel,
 } from '@mui/x-data-grid';
-import { EditorStoreState, isEditorActive } from 'components/editor/Store';
+import { EditorStoreState } from 'components/editor/Store';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { PublicationSpecQuery } from 'hooks/usePublicationSpecs';
 import { useZustandStore } from 'hooks/useZustand';
@@ -53,10 +53,15 @@ const columns: GridColDef[] = [
 function EditorFileSelector() {
     const [initDone, setInitDone] = useState(false);
 
-    const status: EditorStoreState<DraftSpecQuery>['status'] = useZustandStore<
+    const isSaving = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['status']
-    >((state) => state.status);
+        EditorStoreState<DraftSpecQuery>['isSaving']
+    >((state) => state.isSaving);
+
+    const isEditing = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['isEditing']
+    >((state) => state.isEditing);
 
     const setCurrentCatalog = useZustandStore<
         EditorStoreState<PublicationSpecQuery | DraftSpecQuery>,
@@ -90,14 +95,14 @@ function EditorFileSelector() {
                 rowCount={specs.length}
                 hideFooter
                 disableColumnSelector
-                loading={isEditorActive(status)}
+                loading={isSaving}
                 onSelectionModelChange={(newSelectionModel) => {
-                    if (!isEditorActive(status)) {
+                    if (!isEditing) {
                         setSelectionModel(newSelectionModel);
                     }
                 }}
                 onRowClick={(params: any) => {
-                    if (!isEditorActive(status)) {
+                    if (!isEditing) {
                         setCurrentCatalog(params.row);
                     }
                 }}

@@ -3,7 +3,7 @@ import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec, generateDraftSpec } from 'api/draftSpecs';
 import { createPublication } from 'api/publications';
 import { encryptConfig } from 'api/sops';
-import { EditorStoreState, isEditorActive } from 'components/editor/Store';
+import { EditorStoreState } from 'components/editor/Store';
 import useConnectorTags from 'hooks/useConnectorTags';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
@@ -39,10 +39,15 @@ function MaterializeTestButton({
         EditorStoreState<DraftSpecQuery>['id']
     >((state) => state.id);
 
-    const status: EditorStoreState<DraftSpecQuery>['status'] = useZustandStore<
+    const isSaving = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['status']
-    >((state) => state.status);
+        EditorStoreState<DraftSpecQuery>['isSaving']
+    >((state) => state.isSaving);
+
+    const resetEditorState = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['resetState']
+    >((state) => state.resetState);
 
     const entityCreateStore = useRouteStore();
 
@@ -121,6 +126,7 @@ function MaterializeTestButton({
                 displayValidation: true,
             });
         } else {
+            resetEditorState();
             setFormState({
                 status: FormStatus.GENERATING_PREVIEW,
             });
@@ -202,11 +208,7 @@ function MaterializeTestButton({
     return (
         <Button
             onClick={test}
-            disabled={
-                disabled ||
-                formInProgress(formStateStatus) ||
-                isEditorActive(status)
-            }
+            disabled={disabled || isSaving || formInProgress(formStateStatus)}
             form={formId}
             type="submit"
             sx={buttonSx}

@@ -16,7 +16,7 @@ export enum EditorStatus {
 }
 
 export const isEditorActive = (status: EditorStatus) => {
-    return status === EditorStatus.EDITING || status === EditorStatus.SAVING;
+    return status === EditorStatus.SAVING;
 };
 
 export interface EditorStoreState<T> {
@@ -36,6 +36,8 @@ export interface EditorStoreState<T> {
     serverUpdate: any | null;
     setServerUpdate: (newVal: EditorStoreState<T>['serverUpdate']) => void;
 
+    isSaving: boolean;
+    isEditing: boolean;
     status: EditorStatus;
     setStatus: (newVal: EditorStatus) => void;
 
@@ -48,6 +50,8 @@ const getInitialStateData = () => {
         id: null,
         pubId: null,
         specs: null,
+        isSaving: false,
+        isEditing: false,
         status: EditorStatus.IDLE,
         serverUpdate: null,
     };
@@ -118,6 +122,8 @@ const getInitialState = <T,>(
         setStatus: (newVal) => {
             set(
                 produce((state) => {
+                    state.isSaving = newVal === EditorStatus.SAVING;
+                    state.isEditing = newVal === EditorStatus.EDITING;
                     state.status = newVal;
                 }),
                 false,

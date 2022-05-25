@@ -2,7 +2,7 @@ import { Button } from '@mui/material';
 import { discover } from 'api/discovers';
 import { createEntityDraft } from 'api/drafts';
 import { encryptConfig } from 'api/sops';
-import { EditorStoreState, isEditorActive } from 'components/editor/Store';
+import { EditorStoreState } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
@@ -33,10 +33,15 @@ function CaptureTestButton({
         EditorStoreState<DraftSpecQuery>['id']
     >((state) => state.id);
 
-    const status: EditorStoreState<DraftSpecQuery>['status'] = useZustandStore<
+    const isSaving = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['status']
-    >((state) => state.status);
+        EditorStoreState<DraftSpecQuery>['isSaving']
+    >((state) => state.isSaving);
+
+    const resetEditorState = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['resetState']
+    >((state) => state.resetState);
 
     const entityCreateStore = useRouteStore();
 
@@ -82,6 +87,7 @@ function CaptureTestButton({
                 displayValidation: true,
             });
         } else {
+            resetEditorState();
             const draftsResponse = await createEntityDraft(entityName);
             if (draftsResponse.error) {
                 return onFailure({
@@ -133,11 +139,7 @@ function CaptureTestButton({
     return (
         <Button
             onClick={test}
-            disabled={
-                disabled ||
-                formInProgress(formStateStatus) ||
-                isEditorActive(status)
-            }
+            disabled={disabled || isSaving || formInProgress(formStateStatus)}
             form={formId}
             type="submit"
             sx={buttonSx}

@@ -1,6 +1,6 @@
 import { Button } from '@mui/material';
 import { createPublication } from 'api/publications';
-import { EditorStoreState, isEditorActive } from 'components/editor/Store';
+import { EditorStoreState } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
 import { useClient } from 'hooks/supabase-swr';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
@@ -37,10 +37,10 @@ function EntityCreateSaveButton({ disabled, formId, onFailure }: Props) {
         EditorStoreState<DraftSpecQuery>['setPubId']
     >((state) => state.setPubId);
 
-    const status: EditorStoreState<DraftSpecQuery>['status'] = useZustandStore<
+    const isSaving = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['status']
-    >((state) => state.status);
+        EditorStoreState<DraftSpecQuery>['isSaving']
+    >((state) => state.isSaving);
 
     const showNotification = useNotificationStore(
         notificationStoreSelectors.showNotification
@@ -125,11 +125,7 @@ function EntityCreateSaveButton({ disabled, formId, onFailure }: Props) {
     return (
         <Button
             onClick={save}
-            disabled={
-                disabled ||
-                formInProgress(formStateStatus) ||
-                isEditorActive(status)
-            }
+            disabled={disabled || isSaving || formInProgress(formStateStatus)}
             form={formId}
             type="submit"
             sx={buttonSx}
