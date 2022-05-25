@@ -368,8 +368,9 @@ const generateUISchema = (
     }
 
     // If we've gotten here, then the schema appears to be for a scalar value. For most of these, we
-    // just create a default Control, but for string types, we set the `multi` option based on
-    // whether the json schema contains a `multiline` annotation.
+    // just create a default Control, but we first check if we should turn the input into a password
+    // input. This overrides other settings to keep things secure. Then we check if we need to set
+    // the `multi` option based on whether the json schema contains a `multiline` annotation.
     const controlObject: ControlElement = createControlElement(currentRef);
     if (isSecretText(jsonSchema)) {
         addOption(controlObject, 'format', 'password');
