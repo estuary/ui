@@ -1,20 +1,9 @@
-// import { errorMain, slate, successMain, warningMain } from 'context/Theme';
 import { errorMain, slate, successMain, warningMain } from 'context/Theme';
-import {
-    ConsumerReplicaStatus,
-    ConsumerShardSpec,
-    ReplicaStatusCode,
-} from 'data-plane-gateway/types/gen/consumer/protocol/consumer';
+import { ReplicaStatusCode } from 'data-plane-gateway/types/gen/consumer/protocol/consumer';
+import { Shard } from 'data-plane-gateway/types/shard_client';
 import produce from 'immer';
 import { GetState } from 'zustand';
 import { NamedSet } from 'zustand/middleware';
-
-// TODO: Follow up on the data plane gateway. This type is defined within shard_client.ts in that project.
-// See if it can be exported and replace the duplicate type below.
-interface Shard {
-    spec: ConsumerShardSpec;
-    status: ConsumerReplicaStatus[];
-}
 
 // TODO: Determine a way to access an interface property with a function type.
 export type SetShards = (shards: Shard[]) => void;
