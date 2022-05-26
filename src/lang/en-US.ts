@@ -27,6 +27,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.loggedOut': `You have been logged out. Please log back in.`,
     'common.missing': `N/A`,
     'common.noUnDo': `This action cannot be undone.`,
+    'common.version': `version`,
 
     // Aria
     'aria.openExpand': `show more`,
