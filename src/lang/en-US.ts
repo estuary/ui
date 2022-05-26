@@ -6,17 +6,17 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'company': `Estuary`,
     'productName': `Estuary Flow`,
     'common.browserTitle': `Flow`,
-    'common.loading': `loading...`,
-    'common.running': `running...`,
-    'common.deleting': `deleting...`,
+    'common.loading': `Loading...`,
+    'common.running': `Running...`,
+    'common.deleting': `Deleting...`,
     'common.deleted': `Deleted`,
-    'common.enabling': `enabling...`,
+    'common.enabling': `Enabling...`,
     'common.enabled': `Enabled`,
-    'common.disabling': `disabling...`,
+    'common.disabling': `Disabling...`,
     'common.disabled': `Disabled`,
-    'common.inProgress': `In Progress`,
-    'common.saving': `saving`,
-    'common.saved': `saved`,
+    'common.inProgress': `In progress`,
+    'common.saving': `Saving`,
+    'common.saved': `Saved`,
     'common.fail': `Failed`,
     'common.success': `Success`,
     'common.errors.heading': `Error`,
@@ -41,11 +41,11 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'entityPrefix.label': `Prefix`,
     'entityPrefix.description': `Prefix for the entity name.`,
     'entityName.label': `Name`,
-    'entityName.description': `Name of the entity - must be unique. Will be combines with selected prefix. (ex: acemCo/marketing_data)`,
+    'entityName.description': `Select a prefix from the drop-down and add a unique name. (ex: acmeCo/marketing_data)`,
     'connector.label': `Connector`,
-    'connector.description': `The connector you want to use to connect to your endpoint.`,
+    'connector.description': `Choose the external system you're connecting to.`,
     'description.label': `Details`,
-    'description.description': `Describe your changes / why you're changing things.`,
+    'description.description': `Describe your changes or why you're changing things.`,
 
     // Common sections
     'connectionConfig.header': `Connection Config`,
@@ -54,7 +54,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
 };
 
 const CTAs: ResolvedIntlConfig['messages'] = {
-    'cta.addToChangeSet': `Add to Change Set`,
+    'cta.addToChangeSet': `Add to change set`,
     'cta.cancel': `Cancel`,
     'cta.close': `Close`,
     'cta.continue': `Continue`,
@@ -63,10 +63,10 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.login': `Login`,
     'cta.logout': `Logout`,
     'cta.materialize': `Materialize`,
-    'cta.register': `Sign Up`,
-    'cta.clickHere': `click here`,
+    'cta.register': `Sign up`,
+    'cta.clickHere': `Click here`,
     'cta.details': `Details`,
-    'cta.saveEntity': `Save and Publish`,
+    'cta.saveEntity': `Save and publish`,
     'cta.restart': `Restart`,
     'cta.enable': `Enable`,
     'cta.disable': `Disable`,
@@ -74,19 +74,21 @@ const CTAs: ResolvedIntlConfig['messages'] = {
 
 const Data: ResolvedIntlConfig['messages'] = {
     'data.name': `Name`,
-    'data.fullName': `Full Name`,
+    'data.fullName': `Full name`,
     'data.description': `Description`,
     'data.status': `Status`,
     'data.type': `Type`,
     'data.maintainer': `Maintainer`,
     'data.updated_at': `Updated`,
     'data.email': `Email`,
-    'data.display_name': `User Name`,
+    'data.display_name': `Username`,
 };
 
 const Error: ResolvedIntlConfig['messages'] = {
     'error.title': `Error`,
-    'error.message': `This is not something you did wrong. There was a technical issue fetching data. Please contact support.`,
+    'error.message': `This is not something you did wrong. There was a technical issue fetching data. Please {docLink}.`,
+    'error.message.docLink': `contact support`,
+    'error.message.docPath': `mailto:support@estuary.dev`,
     'error.codeLabel': `Code:`,
     'error.messageLabel': `Message:`,
     'error.detailsLabel': `Details:`,
@@ -96,8 +98,8 @@ const Error: ResolvedIntlConfig['messages'] = {
 
 const ErrorBoundry: ResolvedIntlConfig['messages'] = {
     'errorBoundry.title': `${Error['error.title']}`,
-    'errorBoundry.message1': `Sorry - there was an unexpected error in some UI code. `,
-    'errorBoundry.message2': `Expand to see more details.`,
+    'errorBoundry.message1': `There was an unexpected application error. `,
+    'errorBoundry.message2': `Expand to see details.`,
 };
 
 const ConfirmationDialog: ResolvedIntlConfig['messages'] = {
@@ -121,7 +123,7 @@ const Header: ResolvedIntlConfig['messages'] = {
     'helpMenu.tooltip': `Helpful Links`,
     'helpMenu.docs': `Flow Docs`,
     'helpMenu.docs.link': `https://docs.estuary.dev/`,
-    'helpMenu.slack': `Estuary's Slack`,
+    'helpMenu.slack': `Estuary Slack`,
     'helpMenu.slack.link': `https://join.slack.com/t/estuary-dev/shared_invite/zt-86nal6yr-VPbv~YfZE9Q~6Zl~gmZdFQ`,
     'helpMenu.support': `Email Support`,
     'helpMenu.support.link': `mailto: flow-support@estuary.dev`,
@@ -130,15 +132,15 @@ const Header: ResolvedIntlConfig['messages'] = {
     'helpMenu.about': `About ${CommonMessages.productName}`,
 
     'accountMenu.ariaLabel': `Open Account Menu`,
-    'accountMenu.tooltip': `Account Menu`,
+    'accountMenu.tooltip': `My Account`,
     'accountMenu.emailVerified': `verified`,
 
-    'modeSwitch.label': `Toggle Color Mode`,
+    'modeSwitch.label': `Color Mode`,
 };
 
 const Home: ResolvedIntlConfig['messages'] = {
     'home.main.header': `Welcome to Flow!`,
-    'home.main.description': `Click the Capture link over on the side navigation to get started.`,
+    'home.main.description': `Click the Captures icon on the menu bar to get started.`,
 };
 
 const PageNotFound: ResolvedIntlConfig['messages'] = {
@@ -152,7 +154,7 @@ const Registration: ResolvedIntlConfig['messages'] = {
     'register.label.fullName': `Full Name`,
     'register.label.email': `Email`,
     'register.label.company': `Company`,
-    'register.label.intendedUse': `Describe your use case`,
+    'register.label.intendedUse': `Describe your use case.`,
     'register.label.documentAcknowledgement': `Accept our {terms} and {privacy}`,
     'register.label.documentAcknowledgement.terms': `Terms of Service`,
     'register.label.documentAcknowledgement.privacy': `Privacy Policy`,
@@ -168,7 +170,7 @@ const EntityStatus: ResolvedIntlConfig['messages'] = {
 const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.title': `Entity Table`,
 
-    'entityTable.filterLabel': `Filter Namespaces`,
+    'entityTable.filterLabel': `Filter collections`,
     'entityTable.data.entity': `Name`,
     'entityTable.data.connectorType': `Type`,
     'entityTable.data.lastUpdated': `Last Updated`,
@@ -182,11 +184,11 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.data.objectRole': `Object`,
     'entityTable.data.lastPubUserFullName': `Published By`,
 
-    'entityTable.unmatchedFilter.header': `Sorry, no result found.`,
-    'entityTable.unmatchedFilter.message': `We could not find any data matching that filter. Try applying a different filter or using an alternative query option.`,
+    'entityTable.unmatchedFilter.header': `No results found.`,
+    'entityTable.unmatchedFilter.message': `We couldn't find any data matching your search. Please try a different filter.`,
 
-    'entityTable.technicalDifficulties.header': `Sorry, there was an issue getting your data.`,
-    'entityTable.technicalDifficulties.message': `We apologize for the inconvenience. A message describing the issue can be found at the top of the page.`,
+    'entityTable.technicalDifficulties.header': `There was an issue getting your data.`,
+    'entityTable.technicalDifficulties.message': `We apologize for the inconvenience. You'll find a message describing the issue at the top of the page.`,
 };
 
 const RouteTitles: ResolvedIntlConfig['messages'] = {
@@ -201,9 +203,9 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.error.pageNotFound': `Page Not Found`,
     'routeTitle.login': `Login`,
     'routeTitle.loginLoading': `Checking Credentials`,
-    'routeTitle.noGrants': `No Access Grants`,
-    'routeTitle.materializationCreate': `Materialization Create`,
-    'routeTitle.materializationEdit': `Materialization Edit`,
+    'routeTitle.noGrants': `Access Denied`,
+    'routeTitle.materializationCreate': `Create Materialization`,
+    'routeTitle.materializationEdit': `Materialization Details`,
     'routeTitle.materializations': `Materializations`,
     'routeTitle.registration': `Registration`,
 };
@@ -228,46 +230,46 @@ const BrowserTitles: ResolvedIntlConfig['messages'] = {
 };
 
 const LogsDialog: ResolvedIntlConfig['messages'] = {
-    'logs.default': `waiting for logs...`,
-    'logs.toManyEmpty': `Logs may have ended. To restart fetching click ${CTAs['cta.restart']}.`,
+    'logs.default': `Waiting for logs...`,
+    'logs.toManyEmpty': `Logs for this build may have ended. Click ${CTAs['cta.restart']} to check for new logs.`,
 };
 
 const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.header': `Administration`,
-    'admin.roles.message': `These are all the ${CommonMessages['terms.permissions']} that are currently configured in the system. They currently cannot be edited via the UI.`,
+    'admin.roles.message': `These are all the ${CommonMessages['terms.permissions']} that are currently provisioned. An administrator can update them in the {docLink}.`,
+    'admin.roles.message.docLink': `authorization settings`,
+    'admin.roles.message.docPath': `https://go.estuary.dev/provision`,
     'admin.accessToken': `Access Token`,
-    'admin.accessToken.message': `If you want to use the CLI client you will need an access token. You can copy the one below to use.`,
+    'admin.accessToken.message': `Copy the access token below to authenticate the CLI client.`,
 };
 
 const AccessGrants: ResolvedIntlConfig['messages'] = {
     'accessGrantsTable.header': `Captures`,
     'accessGrantsTable.title': `${CommonMessages['terms.permissions']}`,
     'accessGrantsTable.filterLabel': `Filter User or Object`,
-    'accessGrants.message1': `Lorem ipsum.`,
-    'accessGrants.message2': `lorem ipsum {docLink}.`,
-    'accessGrants.message2.docLink': `lorem ipsum`,
-    'accessGrants.message2.docPath': `https://docs.estuary.dev/concepts/#captures`,
+    'accessGrants.message1': `No results found.`,
+    'accessGrants.message2': `We couldn't find any results matching your search. Please try a different filter.`,
 };
 
 const ConnectorsPage: ResolvedIntlConfig['messages'] = {
     'connectorTable.title': `Installed ${CommonMessages['terms.connectors']}`,
     'connectorTable.title.aria': `Table of all installed ${CommonMessages['terms.connectors']}`,
-    'connectorTable.filterLabel': `Filter Name or Detail`,
+    'connectorTable.filterLabel': `Search connectors`,
     'connectorTable.data.title': `Name`,
     'connectorTable.data.image_name': `Image`,
     'connectorTable.data.detail': `Details`,
     'connectorTable.data.protocol': `Protocol`,
-    'connectorTable.data.updated_at': `Last Changed`,
+    'connectorTable.data.updated_at': `Last Updated`,
     'connectorTable.data.documentation_url': `Documentation`,
     'connectorTable.data.external_url': `Homepage`,
     'connectorTable.data.actions': `Actions`,
     'connectorTable.actionsCta.capture': `Capture`,
     'connectorTable.actionsCta.materialization': `Materialization`,
     'connectors.header': `Connectors`,
-    'connectors.main.message1': `There are no connectors currently ready to be used.`,
-    'connectors.main.message2': `Please contact support to get help setting up a {docLink}.`,
-    'connectors.main.message2.docLink': `connector`,
-    'connectors.main.message2.docPath': `https://docs.estuary.dev/concepts/#connectors`,
+    'connectors.main.message1': `There are no connectors available matching your search.`,
+    'connectors.main.message2': `If you'd like to request a connector for a system that isn't yet supported, {docLink}.`,
+    'connectors.main.message2.docLink': `contact Estuary`,
+    'connectors.main.message2.docPath': `https://www.estuary.dev/#get-in-touch`,
 };
 
 const LoginPage: ResolvedIntlConfig['messages'] = {
@@ -287,9 +289,9 @@ const Captures: ResolvedIntlConfig['messages'] = {
     'capturesTable.delete.confirm': `All items listed below will be deleted forever. Please review before continuing.`,
     'capturesTable.ctaGroup.aria': `capture table available actions`,
     'capturesTable.cta.materialize': `${CTAs['cta.materialize']} ${CommonMessages['terms.collections']}`,
-    'captures.message1': `Click the "New Capture" button up above to get started.`,
-    'captures.message2': `It will guide you through generating and downloading a valid {docLink}.`,
-    'captures.message2.docLink': `capture spec`,
+    'captures.message1': `Click "New Capture" to get started.`,
+    'captures.message2': `You'll be guided through the process of defining, testing, and publishing a {docLink}.`,
+    'captures.message2.docLink': `capture`,
     'captures.message2.docPath': `https://docs.estuary.dev/concepts/#captures`,
     'captureCreate.status.success': `${CommonMessages['common.success']}`,
 };
@@ -297,8 +299,8 @@ const Captures: ResolvedIntlConfig['messages'] = {
 const Materializations: ResolvedIntlConfig['messages'] = {
     'materializationsTable.title': `Materializations`,
     'materializationsTable.cta.new': `New Materialization`,
-    'materializations.message1': `Click the "New Materialization" button up above to get started.`,
-    'materializations.message2': `It will guide you through generating and downloading a valid {docLink}.`,
+    'materializations.message1': `Click "New Materialization" to get started.`,
+    'materializations.message2': `You'll be guided through the process of defining, testing, and publishing a {docLink}.`,
     'materializations.message2.docLink': `materialization`,
     'materializations.message2.docPath': `https://docs.estuary.dev/concepts/materialization/`,
 };
@@ -306,19 +308,19 @@ const Materializations: ResolvedIntlConfig['messages'] = {
 const Collections: ResolvedIntlConfig['messages'] = {
     'collectionsTable.title': `Collections`,
     'collectionsTable.detailsCTA': `Details`,
-    'collections.message1': `You currently have no Collections. Click the Capture link over on the side navigation to get started.`,
+    'collections.message1': `You currently have no collections. Click the Captures icon on the menu bar to get started.`,
     'collections.message2': `Captures connect to outside systems, pull in data, and generate {docLink} within Flow.`,
     'collections.message2.docLink': `collections`,
     'collections.message2.docPath': `https://docs.estuary.dev/concepts/collections/`,
 };
 
 const Foo: ResolvedIntlConfig['messages'] = {
-    'foo.ctas.discover': `Test Config`,
+    'foo.ctas.discover': `Test Configuration`,
     'foo.ctas.discoverAgain': `Regenerate Catalog`,
-    'foo.ctas.docs': `Connector Docs`,
+    'foo.ctas.docs': `Connector Help`,
     'foo.catalogEditor.heading': `Catalog Editor`,
     'foo.endpointConfig.heading': `Connection Configuration`,
-    'foo.endpointConfig.errorSummary': `You must provide valid data for all required fields before continuing.`,
+    'foo.endpointConfig.errorSummary': `You must provide valid values for all required fields before continuing.`,
     'foo.endpointConfig.detailsHaveErrors': `The Details section has errors.`,
     'foo.endpointConfig.endpointConfigMissing': `Please select a connector.`,
     'foo.endpointConfig.endpointConfigHaveErrors': `The Connection Configuration section has errors.`,
@@ -326,7 +328,7 @@ const Foo: ResolvedIntlConfig['messages'] = {
 };
 
 const MonacoEditor: ResolvedIntlConfig['messages'] = {
-    'monacoEditor.serverDiff': `Your version is out of sync with the server`,
+    'monacoEditor.serverDiff': `Your version is out of sync with the server.`,
     'monacoEditor.serverDiffCTA': `See changes`,
 };
 
@@ -334,56 +336,56 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreate.heading': `${RouteTitles['routeTitle.captureCreate']}`,
     'captureCreate.details.heading': `Capture Details`,
     'captureCreate.ctas.materialize': `Materialize Collections`,
-    'captureCreate.instructions': `To get started please provide a unique name and the source type of the Capture you want to create. Once you've filled out the source details you can click "Test Capture" down below to test the connection.`,
-    'captureCreate.missingConnectors': `No connectors installed. You must install a source connector before being able to create a capture.`,
-    'captureCreate.noAccessGrants': `You do not have the necessary ${CommonMessages['terms.permissions']} to create a Capture. Please contact an administrator.`,
-    'captureCreate.tenant.label': `Tenant`,
-    'captureCreate.config.source.doclink': `Connector Docs`,
-    'captureCreate.config.source.homepage': `Home Page`,
-    'captureCreate.save.failed': `Capture creation failed. Please see below for details:`,
-    'captureCreate.editor.default': `Before you can edit the Capture Catalog you need to fill out the connection config section and click Discover`,
-    'captureCreate.finalReview.instructions': `Look over the catalog configuration that was generated. If you want to edit anything you can do that directly in the editor. Once you're ready you can download the file for your local.`,
-    'captureCreate.test.waitMessage': `Please wait while we try to connect to this endpoint.`,
-    'captureCreate.test.failedErrorTitle': `Config Test Failed`,
-    'captureCreate.test.failedConfigEncryptTitle': `Encrypting Config Failed`,
-    'captureCreate.test.serverUnreachable': `Config Test was unable to reach server`,
+    'captureCreate.instructions': `Provide a unique name and specify a source system for your capture. Fill in the required details and click "Test Capture" to test the connection.`,
+    'captureCreate.missingConnectors': `No connectors are installed. You must install a source connector to create a capture.`,
+    'captureCreate.noAccessGrants': `You do not have the necessary ${CommonMessages['terms.permissions']} to create a capture. Please contact an administrator.`,
+    'captureCreate.tenant.label': `Prefix`,
+    'captureCreate.config.source.doclink': `Connector Help`,
+    'captureCreate.config.source.homepage': `Home`,
+    'captureCreate.save.failed': `Capture creation failed. See below for details:`,
+    'captureCreate.editor.default': `Before you can edit the capture specification, you must fill out the Connection Configuration section and click Test Capture. `,
+    'captureCreate.finalReview.instructions': `The following catalog was generated from the details you provided. To make changes, you can enter new values in the form above and click Regenenerate Catalog, or you can edit the YAML file directly. Click Save and Publish to proceed.`,
+    'captureCreate.test.waitMessage': `Attempting to connect to the source. Please wait`,
+    'captureCreate.test.failedErrorTitle': `Configuration Test Failed`,
+    'captureCreate.test.failedConfigEncryptTitle': `Configuration Encryption Failed`,
+    'captureCreate.test.serverUnreachable': `Unable to reach server while testing configuration.`,
     'captureCreate.save.failedErrorTitle': `Capture Save Failed`,
-    'captureCreate.save.serverUnreachable': `Config Save was unable to reach server`,
+    'captureCreate.save.serverUnreachable': `Unable to reach server while saving capture`,
     'captureCreate.save.waitMessage': `Please wait while we test, save, and publish your capture.`,
     'captureCreate.createNotification.title': `New Capture Created`,
-    'captureCreate.createNotification.desc': `Your new Capture is published and ready to be used.`,
+    'captureCreate.createNotification.desc': `Your new capture is published and ready to be used.`,
 };
 
 const CaptureDetails: ResolvedIntlConfig['messages'] = {
     'captureDetails.logs.title': `Logs`,
-    'captureDetails.logs.notFound': `We were unable to find logs for this build. This is most likely a permissions issue. You do not have permissions to view other user's logs by default.`,
+    'captureDetails.logs.notFound': `Logs for this build cannot be found. This is likely a permissions issue. You don't have permissions to view other users' logs by default.`,
 };
 
 const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreate.details.heading': `Materialization Details`,
-    'materializationCreate.collections.heading': `Output Configuration`,
-    'materializationCreate.config.source.doclink': `Connector Docs`,
-    'materializationCreate.cta.test': `Test Config`,
-    'materializationCreate.editor.default': `Before you can edit the Materialization Catalog you need to fill out the connection config section`,
-    'materializationCreate.finalReview.instructions': `Look over the catalog configuration that was generated. If you want to edit anything, you can do that directly in the editor. You can download the file for your local machine when you're ready.`,
+    'materializationCreate.collections.heading': `Output Collections`,
+    'materializationCreate.config.source.doclink': `Connector Help`,
+    'materializationCreate.cta.test': `Test Materialization`,
+    'materializationCreate.editor.default': `Before you can edit the materialization specification, you must fill out the Connection Configuration section and click Test Materialization.`,
+    'materializationCreate.finalReview.instructions': `The following catalog was generated from the details you provided. To make changes, you can enter new values in the form above and click Regenenerate Catalog, or you can edit the YAML file directly. Click Save and Publish to proceed.`,
     'materializationCreate.heading': `New Materialization`,
-    'materializationCreate.instructions': `To get started, please provide a unique name and select an endpoint. Next, configure your endpoint and choose the collections you want to materialize. The generated YAML can be reviewed before saving.`,
-    'materializationCreate.missingConnectors': `No connectors installed. A source connector must be installed before a materialization can be created.`,
-    'materializationCreate.noAccessGrants': `You do not have the necessary ${CommonMessages['terms.permissions']} to create a Materialization. Please contact an administrator.`,
-    'materializationCreate.save.failure': `Materialization creation failed. Please see below for details:`,
+    'materializationCreate.instructions': `Provide a unique name and specify a destination system for your materialization. Fill in the required details and click Test Materialization.`,
+    'materializationCreate.missingConnectors': `No connectors installed. A materialization connector must be installed before a materialization can be created.`,
+    'materializationCreate.noAccessGrants': `You do not have the necessary ${CommonMessages['terms.permissions']} to create a materialization. Please contact an administrator.`,
+    'materializationCreate.save.failure': `Materialization creation failed. See below for details:`,
     'materializationCreate.save.failure.errorTitle': `Materialization Save Failed`,
-    'materializationCreate.save.serverUnreachable': `Config Save was unable to reach server`,
-    'materializationCreate.tenant.label': `Tenant`,
-    'materializationCreate.test.failure.errorTitle': `Config Test Failed`,
-    'materializationCreate.test.failedConfigEncryptTitle': `Encrypting Config Failed`,
-    'materializationCreate.test.serverUnreachable': `Config Test was unable to reach server`,
-    'materializationCreate.test.inProgress': `Please wait while we try to connect to this endpoint.`,
+    'materializationCreate.save.serverUnreachable': `Unable to reach server while saving materialization`,
+    'materializationCreate.tenant.label': `Prefix`,
+    'materializationCreate.test.failure.errorTitle': `Configuration Test Failed`,
+    'materializationCreate.test.failedConfigEncryptTitle': `Configuration Encryption Failed`,
+    'materializationCreate.test.serverUnreachable': `Unable to reach server while testing configuration`,
+    'materializationCreate.test.inProgress': `Please wait while we try to connect to the destination.`,
     'materializationCreate.collectionSelector.heading': `Collection Selector`,
-    'materializationCreate.collectionSelector.instructions': `Place instructions for collection selector here.`,
-    'materializationCreate.resourceConfig.heading': `Resource Config`,
+    'materializationCreate.collectionSelector.instructions': `Choose one or more collections to materizalize.`,
+    'materializationCreate.resourceConfig.heading': `Resource Configuration`,
     'materializationCreate.save.waitMessage': `Please wait while we test, save, and publish your materialization.`,
     'materializationCreate.createNotification.title': `New Materialization Created`,
-    'materializationCreate.createNotification.desc': `Your new Materialization is published and ready to be used.`,
+    'materializationCreate.createNotification.desc': `Your materialization is published and ready to be used.`,
 };
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {
