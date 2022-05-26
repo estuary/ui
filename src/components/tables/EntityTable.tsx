@@ -31,7 +31,14 @@ import {
 import { Query, useSelect } from 'hooks/supabase-swr';
 import { useZustandStore } from 'hooks/useZustand';
 import { debounce } from 'lodash';
-import { ChangeEvent, MouseEvent, ReactNode, useEffect, useState } from 'react';
+import {
+    ChangeEvent,
+    MouseEvent,
+    ReactNode,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 enum TableStatuses {
@@ -112,6 +119,7 @@ function EntityTable({
     rowSelectorProps,
 }: Props) {
     const [page, setPage] = useState(0);
+    const isFiltering = useRef(false);
 
     const { data: useSelectResponse, isValidating } = useSelect(query);
     const selectData = useSelectResponse ? useSelectResponse.data : null;
@@ -137,10 +145,12 @@ function EntityTable({
         if (selectData && selectData.length > 0) {
             setTableState({ status: TableStatuses.DATA_FETCHED });
             enableSelection ? setRows(selectData) : null;
+        } else if (isFiltering.current) {
+            setTableState({ status: TableStatuses.UNMATCHED_FILTER });
         } else {
             setTableState({ status: TableStatuses.NO_EXISTING_DATA });
         }
-    }, [selectData, isValidating, setRows, enableSelection]);
+    }, [selectData, setRows, enableSelection]);
 
     const getEmptyTableHeader = (tableStatus: TableStatuses): string => {
         switch (tableStatus) {
@@ -192,10 +202,10 @@ function EntityTable({
         filterTable: debounce(
             (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
                 const filterQuery = event.target.value;
+                const hasQuery = Boolean(filterQuery && filterQuery.length > 0);
+                isFiltering.current = hasQuery;
                 resetSelection();
-                setSearchQuery(
-                    filterQuery && filterQuery.length > 0 ? filterQuery : null
-                );
+                setSearchQuery(hasQuery ? filterQuery : null);
             },
             750
         ),
