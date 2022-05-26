@@ -27,7 +27,7 @@ const logRocketSettings = getLogRocketSettings();
 // More info about the dom settings
 //  https://docs.logrocket.com/reference/dom
 export const initLogRocket = () => {
-    if (!isProduction() && logRocketSettings.appID) {
+    if (isProduction() && logRocketSettings.appID) {
         const settings: Settings = {
             release: getAppVersion(),
             dom: {
