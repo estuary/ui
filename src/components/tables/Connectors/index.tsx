@@ -92,6 +92,7 @@ function ConnectorsTable() {
                     columnToSort={columnToSort}
                     setColumnToSort={setColumnToSort}
                     header="connectorTable.title"
+                    headerLink="https://docs.estuary.dev/concepts/#connectors"
                     filterLabel="connectorTable.filterLabel"
                 />
             </ZustandProvider>
