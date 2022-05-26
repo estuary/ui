@@ -73,8 +73,22 @@ export const getSWRSettings = () => {
     };
 };
 
-export const getLogRocketSettings = () => {
-    return {
+type Settings = {
+    appID: string | null;
+    idUser: {
+        enabled: boolean;
+        includeName: boolean;
+        includeEmail: boolean;
+    };
+    sanitize: {
+        inputs: boolean;
+        request: boolean;
+        response: boolean;
+        text: boolean;
+    };
+};
+export const getLogRocketSettings = (): Settings => {
+    const settings: Settings = {
         appID: process.env.REACT_APP_LOGROCKET_APP_ID ?? null,
         idUser: {
             enabled: process.env.REACT_APP_LOGROCKET_ID_USER === ENABLED,
@@ -87,9 +101,15 @@ export const getLogRocketSettings = () => {
         },
         sanitize: {
             inputs: process.env.REACT_APP_LOGROCKET_SANITIZE_INPUTS === ENABLED,
+            request:
+                process.env.REACT_APP_LOGROCKET_SANITIZE_REQUESTS === ENABLED,
+            response:
+                process.env.REACT_APP_LOGROCKET_SANITIZE_RESPONSES === ENABLED,
             text: process.env.REACT_APP_LOGROCKET_SANITIZE_TEXT === ENABLED,
         },
     };
+
+    return settings;
 };
 
 export const getEncryptionSettings = () => {

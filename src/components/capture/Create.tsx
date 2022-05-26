@@ -149,7 +149,9 @@ function CaptureCreate() {
         discovers: () => {
             setDraftId(null);
             return waitFor.base(
-                supabaseClient.from(TABLES.DISCOVERS),
+                supabaseClient.from(
+                    `${TABLES.PUBLICATIONS}:draft_id=eq.${draftId}`
+                ),
                 (payload: any) => {
                     setFormState({
                         status: FormStatus.IDLE,
