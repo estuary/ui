@@ -20,7 +20,7 @@ function EntityStatus({ name }: Props) {
 
     return (
         <Tooltip
-            title={statusIndicators.map(({ code, color }, index) => (
+            title={statusIndicators.map(({ text, color }, index) => (
                 <Box
                     key={`${index}-shard-status-tooltip`}
                     sx={{
@@ -45,7 +45,7 @@ function EntityStatus({ name }: Props) {
                         variant="caption"
                         sx={{ display: 'inline-block' }}
                     >
-                        {code}
+                        {text}
                     </Typography>
                 </Box>
             ))}

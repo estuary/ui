@@ -9,8 +9,10 @@ import { NamedSet } from 'zustand/middleware';
 export type SetShards = (shards: Shard[]) => void;
 
 // TODO: Follow-up with team. Determine fallback status to display in tooltip.
+type DefaultTooltipMessage = 'No shard status found.';
+
 export interface ShardStatusIndicator {
-    code: ReplicaStatusCode | 'UNKNOWN';
+    text: ReplicaStatusCode | DefaultTooltipMessage;
     color: string;
 }
 
@@ -25,7 +27,7 @@ export interface ShardDetailStore {
 
 const defaultStatusColor = slate[25];
 const defaultStatusIndicator: ShardStatusIndicator = {
-    code: 'UNKNOWN',
+    text: 'No shard status found.',
     color: defaultStatusColor,
 };
 
@@ -114,7 +116,7 @@ export const getInitialState = (
                 const statusIndicator: ShardStatusIndicator[] =
                     selectedShard && selectedShard.status.length > 0
                         ? selectedShard.status.map(({ code }) => ({
-                              code: code ?? 'UNKNOWN',
+                              text: code ?? 'No shard status found.',
                               color: evaluateSingleShardStatus(code),
                           }))
                         : [defaultStatusIndicator];
