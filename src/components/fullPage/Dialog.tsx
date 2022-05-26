@@ -1,15 +1,12 @@
 import { Box, Paper } from '@mui/material';
-import lightLogo from 'images/light-horizontal/estuary-logo.png';
+import CompanyLogo from 'components/CompanyLogo';
 import { ReactNode } from 'react';
-import { useIntl } from 'react-intl';
 
 interface Props {
     children: ReactNode;
 }
 
 function FullPageDialog({ children }: Props) {
-    const intl = useIntl();
-
     return (
         <Box
             sx={{
@@ -36,12 +33,7 @@ function FullPageDialog({ children }: Props) {
                     borderRadius: 5,
                 }}
             >
-                <img
-                    src={lightLogo}
-                    style={{ marginBottom: 16 }}
-                    width={200}
-                    alt={intl.formatMessage({ id: 'company' })}
-                />
+                <CompanyLogo />
 
                 {children}
             </Paper>

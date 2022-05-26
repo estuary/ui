@@ -27,6 +27,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.loggedOut': `You have been logged out. Please log back in.`,
     'common.missing': `N/A`,
     'common.noUnDo': `This action cannot be undone.`,
+    'common.version': `version`,
 
     // Aria
     'aria.openExpand': `show more`,
@@ -385,6 +386,7 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreate.collectionSelector.heading': `Collection Selector`,
     'materializationCreate.collectionSelector.instructions': `Place instructions for collection selector here.`,
     'materializationCreate.resourceConfig.heading': `Resource Config`,
+    'materializationCreate.save.failedErrorTitle': `Materialization Save Failed`,
     'materializationCreate.save.waitMessage': `Please wait while we test, save, and publish your materialization.`,
     'materializationCreate.createNotification.title': `New Materialization Created`,
     'materializationCreate.createNotification.desc': `Your new Materialization is published and ready to be used.`,

@@ -118,7 +118,9 @@ function MaterializationCreate() {
         },
         publications: () => {
             return waitFor.base(
-                supabaseClient.from(TABLES.PUBLICATIONS),
+                supabaseClient.from(
+                    `${TABLES.PUBLICATIONS}:draft_id=eq.${draftId}`
+                ),
                 () => {
                     setFormState({
                         status: FormStatus.IDLE,

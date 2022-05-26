@@ -7,6 +7,16 @@ interface Props {
     link: string;
 }
 
+export const externalLinkStyling = {
+    bgcolor: 'none',
+    color: 'text.primary',
+    fontSize: 14,
+    fontWeight: 700,
+    px: 3,
+    py: 1.5,
+    textTransform: 'uppercase',
+};
+
 function ExternalLinkMenuItem({ children, link }: Props) {
     return (
         <MenuItem
@@ -15,15 +25,7 @@ function ExternalLinkMenuItem({ children, link }: Props) {
             target="_blank"
             rel="noopener"
             tabIndex={0}
-            sx={{
-                bgcolor: 'none',
-                color: 'text.primary',
-                fontSize: 14,
-                fontWeight: 700,
-                px: 3,
-                py: 1.5,
-                textTransform: 'uppercase',
-            }}
+            sx={externalLinkStyling}
         >
             <span>{children}</span>
             <OpenInNewIcon sx={{ height: 20, width: 36 }} />

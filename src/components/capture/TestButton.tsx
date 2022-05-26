@@ -110,7 +110,9 @@ function CaptureTestButton({
             //     });
             // }
 
-            const discoversSubscription = subscription();
+            const discoversSubscription = subscription(
+                draftsResponse.data[0].id
+            );
             const discoverResponse = await discover(
                 entityName,
                 endpointConfigData, //encryptedEndpointConfig.data,

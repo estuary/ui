@@ -64,11 +64,14 @@ function EntityCreateSaveButton({ disabled, formId, onFailure }: Props) {
     );
 
     const waitForPublishToFinish = () => {
+        console.log('wait for finish');
         resetFormState(FormStatus.SAVING);
         return startSubscription(
-            supabaseClient.from(TABLES.PUBLICATIONS),
+            supabaseClient.from(
+                `${TABLES.PUBLICATIONS}:draft_id=eq.${draftId}`
+            ),
             (payload: any) => {
-                setPubId(payload.new.id);
+                setPubId(payload.id);
                 setFormState({
                     status: FormStatus.SUCCESS,
                     exitWhenLogsClose: true,
@@ -85,6 +88,7 @@ function EntityCreateSaveButton({ disabled, formId, onFailure }: Props) {
                 });
             },
             () => {
+                console.log('wait for finish - failure');
                 onFailure({
                     error: { title: `${messagePrefix}.save.failedErrorTitle` },
                 });
@@ -95,16 +99,19 @@ function EntityCreateSaveButton({ disabled, formId, onFailure }: Props) {
     const save = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
 
+        console.log('save');
         resetFormState(FormStatus.SAVING);
         const publicationsSubscription = waitForPublishToFinish();
-
+        console.log('save:pubstarted');
+        console.log('save:creating');
         const response = await createPublication(
             draftId,
             false,
             entityDescription
         );
-
+        console.log('save:created', response);
         if (response.error) {
+            console.log('save:created:failed', response);
             onFailure(
                 {
                     error: {
@@ -115,6 +122,7 @@ function EntityCreateSaveButton({ disabled, formId, onFailure }: Props) {
                 publicationsSubscription
             );
         } else {
+            console.log('save:created:success', response);
             setFormState({
                 logToken: response.data[0].logs_token,
                 showLogs: true,
