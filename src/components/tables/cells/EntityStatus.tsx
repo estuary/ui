@@ -1,14 +1,61 @@
-import { Tooltip } from '@mui/material';
-import { getDeploymentStatusHexCode } from 'utils/misc-utils';
+import { Box, Tooltip, Typography } from '@mui/material';
+import { useRouteStore } from 'hooks/useRouteStore';
+import { shardDetailSelectors, ShardStatusIndicator } from 'stores/ShardDetail';
 
-function EntityStatus() {
+interface Props {
+    name: string;
+}
+
+function EntityStatus({ name }: Props) {
+    const shardDetailStore = useRouteStore();
+    const getShardStatusColor = shardDetailStore(
+        shardDetailSelectors.getShardStatusColor
+    );
+    const getShardStatusIndicators = shardDetailStore(
+        shardDetailSelectors.getShardStatusIndicators
+    );
+
+    const statusIndicators: ShardStatusIndicator[] =
+        getShardStatusIndicators(name);
+
     return (
-        <Tooltip title="Status" placement="bottom-start">
+        <Tooltip
+            title={statusIndicators.map(({ text, color }, index) => (
+                <Box
+                    key={`${index}-shard-status-tooltip`}
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}
+                >
+                    <span
+                        style={{
+                            height: 12,
+                            width: 12,
+                            backgroundColor: color,
+                            borderRadius: 50,
+                            display: 'inline-block',
+                            verticalAlign: 'middle',
+                            marginRight: 4,
+                        }}
+                    />
+
+                    <Typography
+                        variant="caption"
+                        sx={{ display: 'inline-block' }}
+                    >
+                        {text}
+                    </Typography>
+                </Box>
+            ))}
+            placement="bottom-start"
+        >
             <span
                 style={{
                     height: 16,
                     width: 16,
-                    backgroundColor: getDeploymentStatusHexCode('ACTIVE'),
+                    backgroundColor: getShardStatusColor(name),
                     borderRadius: 50,
                     display: 'inline-block',
                     verticalAlign: 'middle',

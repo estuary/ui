@@ -4,9 +4,10 @@ import { tableBorderSx } from 'context/Theme';
 
 interface Props {
     name: string;
+    showEntityStatus: boolean;
 }
 
-function EntityName({ name }: Props) {
+function EntityName({ name, showEntityStatus }: Props) {
     return (
         <TableCell
             sx={{
@@ -15,7 +16,7 @@ function EntityName({ name }: Props) {
             }}
         >
             <>
-                <EntityStatus />
+                {showEntityStatus ? <EntityStatus name={name} /> : null}
                 <span
                     style={{
                         verticalAlign: 'middle',

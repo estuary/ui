@@ -1,4 +1,5 @@
 import { TableRow } from '@mui/material';
+import { Auth } from '@supabase/ui';
 import Actions from 'components/tables/cells/Actions';
 import ChipList from 'components/tables/cells/ChipList';
 import Connector from 'components/tables/cells/Connector';
@@ -13,17 +14,24 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
+import { usePreFetchData } from 'context/PreFetchData';
+import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import getShardList from 'services/shard-client';
+import { shardDetailSelectors } from 'stores/ShardDetail';
+import { getStoredGatewayAuthConfig } from 'utils/env-utils';
 
 interface RowsProps {
     data: LiveSpecsExtQuery[];
+    showEntityStatus: boolean;
 }
 
 interface RowProps {
     row: LiveSpecsExtQuery;
     setRow: any;
     isSelected: boolean;
+    showEntityStatus: boolean;
 }
 
 export const tableColumns = [
@@ -57,7 +65,7 @@ export const tableColumns = [
     },
 ];
 
-function Row({ isSelected, setRow, row }: RowProps) {
+function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
     const [detailsExpanded, setDetailsExpanded] = useState(false);
 
     const handlers = {
@@ -79,7 +87,10 @@ function Row({ isSelected, setRow, row }: RowProps) {
             >
                 <RowSelect isSelected={isSelected} name={row.catalog_name} />
 
-                <EntityName name={row.catalog_name} />
+                <EntityName
+                    name={row.catalog_name}
+                    showEntityStatus={showEntityStatus}
+                />
 
                 <Connector
                     openGraph={row.connector_open_graph}
@@ -115,7 +126,7 @@ function Row({ isSelected, setRow, row }: RowProps) {
     );
 }
 
-function Rows({ data }: RowsProps) {
+function Rows({ data, showEntityStatus }: RowsProps) {
     const selected = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['selected']
@@ -126,6 +137,51 @@ function Rows({ data }: RowsProps) {
         SelectableTableStore['setSelected']
     >(selectableTableStoreSelectors.selected.set);
 
+    const shardDetailStore = useRouteStore();
+    const shards = shardDetailStore(shardDetailSelectors.shards);
+    const setShards = shardDetailStore(shardDetailSelectors.setShards);
+
+    const { session } = Auth.useUser();
+    const { grantDetails } = usePreFetchData();
+
+    useEffect(() => {
+        const gatewayConfig = getStoredGatewayAuthConfig();
+
+        if (gatewayConfig?.gateway_url && gatewayConfig.token && session) {
+            const gatewayUrl = new URL(gatewayConfig.gateway_url);
+
+            getShardList(
+                gatewayUrl,
+                gatewayConfig.token,
+                data,
+                setShards,
+                session.access_token,
+                grantDetails
+            );
+        }
+    }, [data, setShards, session, grantDetails]);
+
+    useEffect(() => {
+        const refreshInterval = setInterval(() => {
+            const gatewayConfig = getStoredGatewayAuthConfig();
+
+            if (gatewayConfig?.gateway_url && gatewayConfig.token && session) {
+                const gatewayUrl = new URL(gatewayConfig.gateway_url);
+
+                getShardList(
+                    gatewayUrl,
+                    gatewayConfig.token,
+                    data,
+                    setShards,
+                    session.access_token,
+                    grantDetails
+                );
+            }
+        }, 30000);
+
+        return () => clearInterval(refreshInterval);
+    }, [shards, data, setShards, session, grantDetails]);
+
     return (
         <>
             {data.map((row) => (
@@ -134,6 +190,7 @@ function Rows({ data }: RowsProps) {
                     key={row.id}
                     isSelected={selected.has(row.id)}
                     setRow={setRow}
+                    showEntityStatus={showEntityStatus}
                 />
             ))}
         </>

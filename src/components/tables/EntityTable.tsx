@@ -53,7 +53,7 @@ interface Props {
         headerIntlKey: string | null;
     }[];
     query: Query<any>;
-    renderTableRows: (data: any) => ReactNode;
+    renderTableRows: (data: any, showEntityStatus: boolean) => ReactNode;
     setPagination: (data: any) => void;
     setSearchQuery: (data: any) => void;
     sortDirection: SortDirection;
@@ -70,6 +70,7 @@ interface Props {
         docLink: string;
         docPath: string;
     };
+    showEntityStatus?: boolean;
 }
 
 interface TableState {
@@ -104,6 +105,7 @@ function EntityTable({
     filterLabel,
     enableSelection,
     rowSelectorProps,
+    showEntityStatus = false,
 }: Props) {
     const [page, setPage] = useState(0);
 
@@ -321,8 +323,8 @@ function EntityTable({
                         </TableHead>
 
                         <TableBody>
-                            {selectData && selectData.length > 0 ? (
-                                renderTableRows(selectData)
+                            {selectData ? (
+                                renderTableRows(selectData, showEntityStatus)
                             ) : (
                                 <TableRow>
                                     <TableCell colSpan={columns.length}>

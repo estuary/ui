@@ -84,7 +84,9 @@ function CapturesTable() {
                     }}
                     columns={tableColumns}
                     query={liveSpecQuery}
-                    renderTableRows={(data) => <Rows data={data} />}
+                    renderTableRows={(data, showEntityStatus) => (
+                        <Rows data={data} showEntityStatus={showEntityStatus} />
+                    )}
                     setPagination={setPagination}
                     setSearchQuery={setSearchQuery}
                     sortDirection={sortDirection}
@@ -97,6 +99,7 @@ function CapturesTable() {
                     rowSelectorProps={{
                         showMaterialize: true,
                     }}
+                    showEntityStatus={true}
                 />
             </ZustandProvider>
         </Box>
