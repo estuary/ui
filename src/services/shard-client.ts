@@ -41,7 +41,8 @@ const getShardList = <T extends LiveSpecsExtBaseQuery>(
         .catch((error: string) => {
             if (
                 error.includes(ErrorFlags.TOKEN_INVALID) ||
-                error.includes(ErrorFlags.TOKEN_NOT_FOUND)
+                error.includes(ErrorFlags.TOKEN_NOT_FOUND) ||
+                error.includes(ErrorFlags.OPERATION_INVALID)
             ) {
                 removeGatewayAuthConfig();
 
