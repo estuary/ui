@@ -146,15 +146,17 @@ function CaptureCreate() {
                 helpers.jobFailed(failureTitle);
             });
         },
-        discovers: () => {
+        discovers: (discoverDraftId: string) => {
             setDraftId(null);
             return waitFor.base(
-                supabaseClient.from(`${TABLES.DISCOVERS}`),
+                supabaseClient.from(
+                    `${TABLES.DISCOVERS}:draft_id=eq.${discoverDraftId}`
+                ),
                 (payload: any) => {
                     setFormState({
                         status: FormStatus.IDLE,
                     });
-                    setDraftId(payload.new.draft_id);
+                    setDraftId(payload.draft_id);
                 },
                 `${messagePrefix}.test.failedErrorTitle`
             );
