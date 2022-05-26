@@ -9,7 +9,7 @@ import { EditorStoreState } from 'components/editor/Store';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { PublicationSpecQuery } from 'hooks/usePublicationSpecs';
 import { useZustandStore } from 'hooks/useZustand';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 const initialState = {
@@ -51,7 +51,7 @@ const columns: GridColDef[] = [
 ];
 
 function EditorFileSelector() {
-    const [initDone, setInitDone] = useState(false);
+    const initDone = useRef(false);
 
     const isSaving = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
@@ -80,8 +80,8 @@ function EditorFileSelector() {
     );
 
     useEffect(() => {
-        if (!initDone && specs) {
-            setInitDone(true);
+        if (!initDone.current && specs) {
+            initDone.current = true;
             setSelectionModel(getRowId(specs[0]) as any);
         }
     }, [initDone, specs]);
