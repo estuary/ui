@@ -36,10 +36,6 @@ export const tableColumns = [
         field: null,
         headerIntlKey: 'connectorTable.data.documentation_url',
     },
-    {
-        field: null,
-        headerIntlKey: 'connectorTable.data.actions',
-    },
 ];
 
 function Rows({ data }: Props) {
@@ -60,23 +56,6 @@ function Rows({ data }: Props) {
                             {row.image_name}
                         </TableCell>
                         <TableCell style={columnStyling}>
-                            {row.connector_tags[0].protocol}
-                        </TableCell>
-                        <TableCell style={columnStyling}>
-                            <FormattedDate
-                                day="numeric"
-                                month="long"
-                                year="numeric"
-                                value={row.updated_at}
-                            />
-                        </TableCell>
-                        <TableCell style={columnStyling}>
-                            <Link
-                                path={row.connector_tags[0].documentation_url}
-                                messageId="captureCreate.config.source.doclink"
-                            />
-                        </TableCell>
-                        <TableCell>
                             <Box
                                 sx={{
                                     display: 'flex',
@@ -130,6 +109,20 @@ function Rows({ data }: Props) {
                                     )}
                                 </Button>
                             </Box>
+                        </TableCell>
+                        <TableCell style={columnStyling}>
+                            <FormattedDate
+                                day="numeric"
+                                month="long"
+                                year="numeric"
+                                value={row.updated_at}
+                            />
+                        </TableCell>
+                        <TableCell style={columnStyling}>
+                            <Link
+                                path={row.connector_tags[0].documentation_url}
+                                messageId="captureCreate.config.source.doclink"
+                            />
                         </TableCell>
                     </TableRow>
                 ) : null;
