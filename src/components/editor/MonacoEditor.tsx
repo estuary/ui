@@ -1,9 +1,10 @@
 import Editor, { DiffEditor } from '@monaco-editor/react';
 import { Box, Divider, Paper, Stack, useTheme } from '@mui/material';
+import Invalid from 'components/editor/Status/Invalid';
 import Saved from 'components/editor/Status/Saved';
 import Saving from 'components/editor/Status/Saving';
 import ServerDiff from 'components/editor/Status/ServerDiff';
-import { EditorStoreState } from 'components/editor/Store';
+import { EditorStatus, EditorStoreState } from 'components/editor/Store';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useZustandStore } from 'hooks/useZustand';
 import { debounce } from 'lodash';
@@ -14,8 +15,6 @@ import { stringifyJSON } from 'services/stringify';
 
 export interface Props {
     disabled?: boolean;
-    value: any;
-    path: string;
     onChange?: (newVal: any, path: string, specType: string) => any;
     height?: number;
     toolbarHeight?: number;
@@ -28,8 +27,6 @@ const ICON_SIZE = 15;
 
 function MonacoEditor({
     disabled,
-    value,
-    path,
     height = DEFAULT_HEIGHT,
     onChange,
     toolbarHeight = DEFAULT_TOOLBAR_HEIGHT,
@@ -39,9 +36,6 @@ function MonacoEditor({
     const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(
         null
     );
-    const [isChanging, setIsChanging] = useState<boolean | null>(null);
-    const [hasServerChanges] = useState<boolean>(false);
-    const [showServerDiff, setShowServerDiff] = useState(false);
 
     const serverUpdate = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
@@ -52,6 +46,18 @@ function MonacoEditor({
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['currentCatalog']
     >((state) => state.currentCatalog);
+
+    const status = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['status']
+    >((state) => state.status);
+
+    const setStatus = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['setStatus']
+    >((state) => state.setStatus);
+
+    const [showServerDiff, setShowServerDiff] = useState(false);
 
     // TODO (sync editing)
     // useEffect(() => {
@@ -72,27 +78,48 @@ function MonacoEditor({
     //     // eslint-disable-next-line react-hooks/exhaustive-deps
     // }, [serverUpdate]);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const editorUpdateDebounce = useCallback(
-        debounce((val: string | undefined) => {
-            if (val && onChange) {
-                setIsChanging(true);
-                onChange(JSON.parse(val), path, currentCatalog.spec_type)
+    const updateValue = () => {
+        const currentValue = editorRef.current?.getValue();
+        if (onChange && currentValue) {
+            setStatus(EditorStatus.EDITING);
+
+            let parsedVal;
+            try {
+                parsedVal = JSON.parse(currentValue);
+            } catch {
+                setStatus(EditorStatus.INVALID);
+            }
+
+            if (parsedVal) {
+                setStatus(EditorStatus.SAVING);
+                onChange(
+                    parsedVal,
+                    currentCatalog.catalog_name,
+                    currentCatalog.spec_type
+                )
                     .then(() => {
-                        setIsChanging(false);
+                        setStatus(EditorStatus.SAVED);
                     })
                     .catch(() => {
-                        setIsChanging(false);
+                        setStatus(EditorStatus.SAVE_FAILED);
                     });
+            } else {
+                setStatus(EditorStatus.INVALID);
             }
-        }, 750),
-        []
-    );
+        }
+    };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const debouncedChange = useCallback(debounce(updateValue, 1000), [
+        currentCatalog,
+    ]);
 
     const handlers = {
-        change: (val: string | undefined) => {
-            setIsChanging(true);
-            editorUpdateDebounce(val);
+        change: () => {
+            if (status !== EditorStatus.EDITING) {
+                setStatus(EditorStatus.EDITING);
+            }
+            debouncedChange();
         },
         mount: (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
             editorRef.current = editor;
@@ -102,7 +129,7 @@ function MonacoEditor({
         },
     };
 
-    if (value) {
+    if (currentCatalog?.spec) {
         return (
             <Paper sx={{ width: '100%' }} variant="outlined">
                 <Box
@@ -117,12 +144,17 @@ function MonacoEditor({
                             alignItems: 'center',
                         }}
                     >
-                        {hasServerChanges ? (
+                        {/* TODO (editor) Need to get the save failure state working */}
+                        {status === EditorStatus.INVALID ||
+                        status === EditorStatus.SAVE_FAILED ? (
+                            <Invalid iconSize={ICON_SIZE} />
+                        ) : status === EditorStatus.OUT_OF_SYNC ? (
                             <ServerDiff
                                 iconSize={ICON_SIZE}
                                 onMerge={handlers.merge}
                             />
-                        ) : isChanging === null ? null : isChanging ? (
+                        ) : status === EditorStatus.IDLE ? null : status ===
+                          EditorStatus.EDITING ? (
                             <Saving iconSize={ICON_SIZE} />
                         ) : (
                             <Saved iconSize={ICON_SIZE} />
@@ -149,8 +181,8 @@ function MonacoEditor({
                         defaultValue={intl.formatMessage({
                             id: 'common.loading',
                         })}
-                        value={stringifyJSON(value)}
-                        path={path}
+                        value={stringifyJSON(currentCatalog.spec)}
+                        path={currentCatalog.catalog_name}
                         options={{
                             readOnly: disabled ? disabled : false,
                             minimap: {

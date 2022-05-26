@@ -32,6 +32,16 @@ function CaptureTestButton({
         EditorStoreState<DraftSpecQuery>['id']
     >((state) => state.id);
 
+    const isSaving = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['isSaving']
+    >((state) => state.isSaving);
+
+    const resetEditorState = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['resetState']
+    >((state) => state.resetState);
+
     const entityCreateStore = useRouteStore();
 
     const formStateStatus = entityCreateStore(
@@ -76,6 +86,7 @@ function CaptureTestButton({
                 displayValidation: true,
             });
         } else {
+            resetEditorState();
             const draftsResponse = await createEntityDraft(entityName);
             if (draftsResponse.error) {
                 return onFailure({
@@ -102,7 +113,7 @@ function CaptureTestButton({
             const discoversSubscription = subscription();
             const discoverResponse = await discover(
                 entityName,
-                endpointConfigData, //encryptedEndpointConfig,
+                endpointConfigData, //encryptedEndpointConfig.data,
                 imageTag.id,
                 draftsResponse.data[0].id
             );
@@ -127,7 +138,7 @@ function CaptureTestButton({
     return (
         <Button
             onClick={test}
-            disabled={formInProgress(formStateStatus) || disabled}
+            disabled={disabled || isSaving || formInProgress(formStateStatus)}
             form={formId}
             type="submit"
             sx={buttonSx}

@@ -10,7 +10,7 @@ export enum ProgressStates {
     SUCCESS = 3,
 }
 
-interface Props {
+export interface SharedProgressProps {
     name: string;
     error: any | null;
     renderError?: Function;
@@ -26,16 +26,16 @@ function SharedProgress({
     state,
     successMessageID,
     runningMessageID,
-}: Props) {
+}: SharedProgressProps) {
     return (
         <Box>
-            <Stack direction="row" spacing={1}>
+            <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
                 {state === ProgressStates.FAILED ? (
-                    <ErrorOutlineIcon />
+                    <ErrorOutlineIcon color="error" />
                 ) : state === ProgressStates.SUCCESS ? (
-                    <CheckCircleOutlineIcon />
+                    <CheckCircleOutlineIcon color="success" />
                 ) : (
-                    <CircularProgress size={18} />
+                    <CircularProgress color="info" size={18} />
                 )}
                 <ListItemText
                     primary={name}

@@ -15,8 +15,10 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.disabling': `disabling...`,
     'common.disabled': `Disabled`,
     'common.inProgress': `In Progress`,
+    'common.done': `Done`,
     'common.saving': `saving`,
     'common.saved': `saved`,
+    'common.invalid': `invalid`,
     'common.fail': `Failed`,
     'common.success': `Success`,
     'common.errors.heading': `Error`,
@@ -159,6 +161,12 @@ const Registration: ResolvedIntlConfig['messages'] = {
     'register.existingAccount': `Already have an account?`,
 };
 
+const LoginPage: ResolvedIntlConfig['messages'] = {
+    'login.main.message': `When running locally you can login with whatever name you want.`,
+    'login.oidc.message': `Sign in to continue to ${CommonMessages.productName}.`,
+    'login.documentAcknowledgement': `By accessing ${CommonMessages.productName} you agree to our {terms} and {privacy}.`,
+};
+
 const EntityStatus: ResolvedIntlConfig['messages'] = {
     'entityStatus.green': `Running`,
     'entityStatus.yellow': `Alerts`,
@@ -270,11 +278,6 @@ const ConnectorsPage: ResolvedIntlConfig['messages'] = {
     'connectors.main.message2.docPath': `https://docs.estuary.dev/concepts/#connectors`,
 };
 
-const LoginPage: ResolvedIntlConfig['messages'] = {
-    'login.main.message': `When running locally you can login with whatever name you want.`,
-    'login.oidc.message': `Sign in to continue to ${CommonMessages.productName}.`,
-};
-
 const NoGrants: ResolvedIntlConfig['messages'] = {
     'noGrants.main.message': `Thanks for signing up. Our team is reviewing your account and will get back to you shortly.`,
 };
@@ -317,6 +320,7 @@ const Foo: ResolvedIntlConfig['messages'] = {
     'foo.ctas.discoverAgain': `Regenerate Catalog`,
     'foo.ctas.docs': `Connector Docs`,
     'foo.catalogEditor.heading': `Catalog Editor`,
+    'foo.errors.collapseTitle': `Expand to see logs`,
     'foo.endpointConfig.heading': `Connection Configuration`,
     'foo.endpointConfig.errorSummary': `You must provide valid data for all required fields before continuing.`,
     'foo.endpointConfig.detailsHaveErrors': `The Details section has errors.`,

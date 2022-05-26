@@ -3,10 +3,11 @@ import useDraftSpecErrors from 'hooks/useDraftSpecErrors';
 
 export interface DraftErrorProps {
     draftId?: string | null;
+    enablePolling?: boolean;
 }
 
-function DraftErrors({ draftId }: DraftErrorProps) {
-    const { draftSpecErrors } = useDraftSpecErrors(draftId);
+function DraftErrors({ draftId, enablePolling }: DraftErrorProps) {
+    const { draftSpecErrors } = useDraftSpecErrors(draftId, enablePolling);
 
     if (draftSpecErrors.length > 0) {
         const errors: KeyValue[] = draftSpecErrors.map((draftError) => ({

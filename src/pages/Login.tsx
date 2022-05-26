@@ -2,16 +2,18 @@ import { Alert, Box, Snackbar, Typography } from '@mui/material';
 import { Auth } from '@supabase/ui';
 import { logoutRoutes } from 'app/Unauthenticated';
 import FullPageDialog from 'components/fullPage/Dialog';
+import ExternalLink from 'components/shared/ExternalLink';
 import { useClient } from 'hooks/supabase-swr';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { FormattedMessage } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
 import useConstant from 'use-constant';
-import { getLoginSettings } from 'utils/env-utils';
+import { getLoginSettings, getUrls } from 'utils/env-utils';
 
 export enum LogoutReasons {
     JWT = 'jwt_expired',
 }
+const urls = getUrls();
 
 const Login = () => {
     useBrowserTitle('browserTitle.login');
@@ -40,7 +42,11 @@ const Login = () => {
                 </Alert>
             </Snackbar>
             <FullPageDialog>
-                <>
+                <Box
+                    sx={{
+                        justifyItems: 'center',
+                    }}
+                >
                     <Typography sx={{ mb: 5 }}>
                         <FormattedMessage id="login.oidc.message" />
                     </Typography>
@@ -60,7 +66,31 @@ const Login = () => {
                             }}
                         />
                     </Box>
-                </>
+
+                    <Typography align="center" sx={{ mt: 4 }}>
+                        <FormattedMessage
+                            id="login.documentAcknowledgement"
+                            values={{
+                                privacy: (
+                                    <ExternalLink
+                                        hideIcon
+                                        link={urls.privacyPolicy}
+                                    >
+                                        <FormattedMessage id="register.label.documentAcknowledgement.privacy" />
+                                    </ExternalLink>
+                                ),
+                                terms: (
+                                    <ExternalLink
+                                        hideIcon
+                                        link={urls.termsOfService}
+                                    >
+                                        <FormattedMessage id="register.label.documentAcknowledgement.terms" />
+                                    </ExternalLink>
+                                ),
+                            }}
+                        />
+                    </Typography>
+                </Box>
             </FullPageDialog>
         </>
     );

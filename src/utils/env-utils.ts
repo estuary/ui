@@ -6,6 +6,7 @@ declare global {
             api_endpoint: string | null;
             auth_url: string | null;
         } | null;
+        monaco: any;
     }
 }
 
@@ -51,6 +52,7 @@ export const getLoginSettings = () => {
     };
 };
 
+// TODO (refactor) We should switch this to a provider
 export const getUrls = () => {
     const privacyPolicy = process.env.REACT_APP_URLS_PRIVACY_POLICY;
     const termsOfService = process.env.REACT_APP_URLS_TERMS_OF_SERVICE;

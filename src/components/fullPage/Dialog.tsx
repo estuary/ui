@@ -1,12 +1,15 @@
 import { Box, Paper } from '@mui/material';
 import lightLogo from 'images/light-horizontal/estuary-logo.png';
 import { ReactNode } from 'react';
+import { useIntl } from 'react-intl';
 
 interface Props {
     children: ReactNode;
 }
 
 function FullPageDialog({ children }: Props) {
+    const intl = useIntl();
+
     return (
         <Box
             sx={{
@@ -15,12 +18,12 @@ function FullPageDialog({ children }: Props) {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                my: 6,
             }}
         >
             <Paper
                 sx={{
                     minWidth: 360,
+                    maxWidth: 450,
                     maxHeight: 750,
                     display: 'flex',
                     flexDirection: 'column',
@@ -37,7 +40,7 @@ function FullPageDialog({ children }: Props) {
                     src={lightLogo}
                     style={{ marginBottom: 16 }}
                     width={200}
-                    alt="Estuary"
+                    alt={intl.formatMessage({ id: 'company' })}
                 />
 
                 {children}

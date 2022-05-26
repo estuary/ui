@@ -2,10 +2,13 @@ import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Alert, Stack, Typography } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
+import { EditorStoreState } from 'components/editor/Store';
 import { CATALOG_NAME_SCOPE } from 'forms/renderers/CatalogName';
 import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
 import { ConnectorTagQuery } from 'hooks/useConnectorTags';
+import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
+import { useZustandStore } from 'hooks/useZustand';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
@@ -29,6 +32,11 @@ function DetailsForm({ connectorTags, accessGrants }: Props) {
     const connectorID = searchParams.get(
         routeDetails.captures.create.params.connectorID
     );
+
+    const isSaving = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['isSaving']
+    >((state) => state.isSaving);
 
     const entityCreateStore = useRouteStore();
     const messagePrefix = entityCreateStore(
@@ -181,6 +189,7 @@ function DetailsForm({ connectorTags, accessGrants }: Props) {
                             cells={materialCells}
                             config={defaultOptions}
                             readonly={
+                                isSaving ||
                                 status === FormStatus.TESTING ||
                                 status === FormStatus.SAVING
                             }

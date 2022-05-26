@@ -96,6 +96,7 @@ function MaterializationsTable() {
                     header="materializationsTable.title"
                     filterLabel="entityTable.filterLabel"
                     showEntityStatus={true}
+                    enableSelection
                 />
             </ZustandProvider>
         </Box>

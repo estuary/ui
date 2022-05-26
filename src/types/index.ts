@@ -72,3 +72,9 @@ export interface GatewayAuthTokenResponse {
     gateway_url: URL;
     token: string;
 }
+
+export enum ENTITY {
+    CAPTURE = 'capture',
+    MATERIALIZATION = 'materialization',
+    COLLECTION = 'collection',
+}

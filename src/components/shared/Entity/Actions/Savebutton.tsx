@@ -37,6 +37,11 @@ function EntityCreateSaveButton({ disabled, formId, onFailure }: Props) {
         EditorStoreState<DraftSpecQuery>['setPubId']
     >((state) => state.setPubId);
 
+    const isSaving = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['isSaving']
+    >((state) => state.isSaving);
+
     const showNotification = useNotificationStore(
         notificationStoreSelectors.showNotification
     );
@@ -71,16 +76,18 @@ function EntityCreateSaveButton({ disabled, formId, onFailure }: Props) {
 
                 showNotification({
                     description: intl.formatMessage({
-                        id: `${messagePrefix}.captureCreate.createNotification.desc`,
+                        id: `${messagePrefix}.createNotification.desc`,
                     }),
                     severity: 'success',
                     title: intl.formatMessage({
-                        id: `${messagePrefix}.captureCreate.createNotification.title`,
+                        id: `${messagePrefix}.createNotification.title`,
                     }),
                 });
             },
             () => {
-                onFailure(`${messagePrefix}.save.failedErrorTitle`);
+                onFailure({
+                    error: { title: `${messagePrefix}.save.failedErrorTitle` },
+                });
             }
         );
     };
@@ -118,7 +125,7 @@ function EntityCreateSaveButton({ disabled, formId, onFailure }: Props) {
     return (
         <Button
             onClick={save}
-            disabled={formInProgress(formStateStatus) || disabled}
+            disabled={disabled || isSaving || formInProgress(formStateStatus)}
             form={formId}
             type="submit"
             sx={buttonSx}

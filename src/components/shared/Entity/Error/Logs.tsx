@@ -8,20 +8,24 @@ import {
 } from '@mui/material';
 import Logs from 'components/Logs';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
+import { FormattedMessage } from 'react-intl';
 
 export interface ErrorLogsProps {
     logToken?: string | null;
+    defaultOpen?: boolean;
 }
 
-function ErrorLogs({ logToken }: ErrorLogsProps) {
+function ErrorLogs({ logToken, defaultOpen }: ErrorLogsProps) {
     if (logToken) {
         return (
             <Accordion
-                defaultExpanded={false}
+                defaultExpanded={defaultOpen ?? false}
                 TransitionProps={{ unmountOnExit: true }}
             >
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography>Expand to see build logs</Typography>
+                    <Typography>
+                        <FormattedMessage id="foo.errors.collapseTitle" />
+                    </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                     <Box

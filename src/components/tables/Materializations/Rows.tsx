@@ -5,12 +5,18 @@ import ChipList from 'components/tables/cells/ChipList';
 import Connector from 'components/tables/cells/Connector';
 import EntityName from 'components/tables/cells/EntityName';
 import ExpandDetails from 'components/tables/cells/ExpandDetails';
+import RowSelect from 'components/tables/cells/RowSelect';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import UserName from 'components/tables/cells/UserName';
 import DetailsPanel from 'components/tables/DetailsPanel';
 import { LiveSpecsExtQuery } from 'components/tables/Materializations';
+import {
+    SelectableTableStore,
+    selectableTableStoreSelectors,
+} from 'components/tables/Store';
 import { usePreFetchData } from 'context/PreFetchData';
 import { useRouteStore } from 'hooks/useRouteStore';
+import { useZustandStore } from 'hooks/useZustand';
 import { useEffect, useState } from 'react';
 import getShardList from 'services/shard-client';
 import { shardDetailSelectors } from 'stores/ShardDetail';
@@ -23,10 +29,16 @@ interface RowsProps {
 
 interface RowProps {
     row: LiveSpecsExtQuery;
+    setRow: any;
+    isSelected: boolean;
     showEntityStatus: boolean;
 }
 
 export const tableColumns = [
+    {
+        field: null,
+        headerIntlKey: '',
+    },
     {
         field: 'catalog_name',
         headerIntlKey: 'entityTable.data.entity',
@@ -53,12 +65,28 @@ export const tableColumns = [
     },
 ];
 
-function Row({ row, showEntityStatus }: RowProps) {
+function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
     const [detailsExpanded, setDetailsExpanded] = useState(false);
+
+    const handlers = {
+        clickRow: (rowId: string) => {
+            setRow(rowId, !isSelected);
+        },
+    };
 
     return (
         <>
-            <TableRow key={`Entity-${row.id}`}>
+            <TableRow
+                hover
+                onClick={() => handlers.clickRow(row.id)}
+                selected={isSelected}
+                sx={{
+                    background: detailsExpanded ? '#04192A' : null,
+                    cursor: 'pointer',
+                }}
+            >
+                <RowSelect isSelected={isSelected} name={row.catalog_name} />
+
                 <EntityName
                     name={row.catalog_name}
                     showEntityStatus={showEntityStatus}
@@ -99,6 +127,16 @@ function Row({ row, showEntityStatus }: RowProps) {
 }
 
 function Rows({ data, showEntityStatus }: RowsProps) {
+    const selected = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['selected']
+    >(selectableTableStoreSelectors.selected.get);
+
+    const setRow = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['setSelected']
+    >(selectableTableStoreSelectors.selected.set);
+
     const shardDetailStore = useRouteStore();
     const shards = shardDetailStore(shardDetailSelectors.shards);
     const setShards = shardDetailStore(shardDetailSelectors.setShards);
@@ -149,8 +187,10 @@ function Rows({ data, showEntityStatus }: RowsProps) {
             {data.map((row) => (
                 <Row
                     row={row}
-                    showEntityStatus={showEntityStatus}
                     key={row.id}
+                    isSelected={selected.has(row.id)}
+                    setRow={setRow}
+                    showEntityStatus={showEntityStatus}
                 />
             ))}
         </>
