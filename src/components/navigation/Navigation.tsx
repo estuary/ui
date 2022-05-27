@@ -3,7 +3,6 @@ import CableIcon from '@mui/icons-material/Cable';
 import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 //TODO (UI / UX) - These icons are not final
 import InputIcon from '@mui/icons-material/Input';
-import MenuIcon from '@mui/icons-material/Menu';
 import StorageIcon from '@mui/icons-material/Storage';
 import {
     Box,
@@ -11,6 +10,7 @@ import {
     List,
     SxProps,
     Theme,
+    Tooltip,
     Typography,
     useTheme,
 } from '@mui/material';
@@ -18,6 +18,7 @@ import MuiDrawer from '@mui/material/Drawer';
 import { routeDetails } from 'app/Authenticated';
 import HelpMenu from 'components/menus/HelpMenu';
 import UserMenu from 'components/menus/UserMenu';
+import Logo from 'components/navigation/Logo';
 import ModeSwitch from 'components/navigation/ModeSwitch';
 import { FormattedMessage, useIntl } from 'react-intl';
 import ListItemLink from './ListItemLink';
@@ -82,31 +83,55 @@ const Navigation = ({ open, width, onNavigationToggle }: Props) => {
                         sx={{
                             pt: 1,
                             pb: 0.25,
-                            pl: 1,
+                            pl: '5px',
                             display: 'flex',
                             flexGrow: 1,
                             alignItems: 'center',
                         }}
                     >
-                        <IconButton
-                            aria-label={intl.formatMessage({
-                                id: 'header.openNavigation.ariaLabel',
-                            })}
-                            onClick={openNavigation}
-                            sx={{
-                                display: 'inline-flex',
-                                justifyContent: 'left',
-                                flexShrink: 0,
-                            }}
-                        >
-                            <MenuIcon />
-                        </IconButton>
+                        {open ? (
+                            <IconButton
+                                aria-label={intl.formatMessage({
+                                    id: 'header.openNavigation.ariaLabel',
+                                })}
+                                onClick={openNavigation}
+                                sx={{
+                                    display: 'inline-flex',
+                                    justifyContent: 'left',
+                                    flexShrink: 0,
+                                }}
+                            >
+                                <Logo width={24} />
+                            </IconButton>
+                        ) : (
+                            <Tooltip
+                                title={intl.formatMessage({
+                                    id: 'mainMenu.tooltip',
+                                })}
+                                placement="right-end"
+                            >
+                                <IconButton
+                                    aria-label={intl.formatMessage({
+                                        id: 'header.openNavigation.ariaLabel',
+                                    })}
+                                    onClick={openNavigation}
+                                    sx={{
+                                        display: 'inline-flex',
+                                        justifyContent: 'left',
+                                        flexShrink: 0,
+                                    }}
+                                >
+                                    <Logo width={24} />
+                                </IconButton>
+                            </Tooltip>
+                        )}
 
-                        <Typography sx={{ width: 136, ml: 2, flexShrink: 0 }}>
+                        <Typography
+                            sx={{ width: 136, ml: '20px', flexShrink: 0 }}
+                        >
                             <FormattedMessage id="mainMenu.label" />
                         </Typography>
                     </Box>
-
                     <List
                         aria-label={intl.formatMessage({
                             id: 'navigation.ariaLabel',
