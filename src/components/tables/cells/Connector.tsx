@@ -1,14 +1,14 @@
 import { Box, TableCell, Tooltip } from '@mui/material';
 import ConnectorName from 'components/ConnectorName';
 import { tableBorderSx } from 'context/Theme';
-import { OpenGraph } from 'types';
 
 interface Props {
-    openGraph: OpenGraph;
+    connectorName: string;
+    connectorImage: string;
     imageTag: string;
 }
 
-function Connector({ openGraph, imageTag }: Props) {
+function Connector({ connectorImage, connectorName, imageTag }: Props) {
     return (
         <TableCell
             sx={{
@@ -18,7 +18,11 @@ function Connector({ openGraph, imageTag }: Props) {
         >
             <Tooltip title={imageTag} placement="bottom-start">
                 <Box>
-                    <ConnectorName iconSize={20} connector={openGraph} />
+                    <ConnectorName
+                        iconSize={20}
+                        connector={connectorName}
+                        iconPath={connectorImage}
+                    />
                 </Box>
             </Tooltip>
         </TableCell>

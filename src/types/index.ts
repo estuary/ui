@@ -36,10 +36,9 @@ export interface BaseComponentProps {
 }
 
 export interface OpenGraph {
-    'en-US': {
-        image: string;
-        title: string;
-    };
+    image: string;
+    recommended: boolean | null;
+    title: string;
 }
 
 export interface JobStatus {
@@ -52,6 +51,11 @@ export interface Grants {
     subject_role: string;
     user_id: string;
     id: string;
+}
+
+export enum CONNECTOR_TYPES {
+    CAPTURE = 'capture',
+    MATERIALIZATION = 'materialization',
 }
 
 export enum ENTITY {

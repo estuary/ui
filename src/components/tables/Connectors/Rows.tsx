@@ -5,6 +5,7 @@ import { Connector } from 'components/tables/Connectors';
 import Link from 'components/tables/Link';
 import { FormattedDate, FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
+import { CONNECTOR_NAME } from 'services/supabase';
 import { getPathWithParam } from 'utils/misc-utils';
 
 interface Props {
@@ -17,7 +18,7 @@ const columnStyling = {
 
 export const tableColumns = [
     {
-        field: null,
+        field: CONNECTOR_NAME,
         headerIntlKey: 'connectorTable.data.title',
     },
     {
@@ -49,7 +50,8 @@ function Rows({ data }: Props) {
                         <TableCell align="left" style={columnStyling}>
                             <ConnectorName
                                 iconSize={40}
-                                connector={row.open_graph}
+                                connector={row.title}
+                                iconPath={row.image}
                             />
                         </TableCell>
                         <TableCell style={columnStyling}>

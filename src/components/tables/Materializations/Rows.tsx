@@ -82,7 +82,8 @@ function Row({ isSelected, setRow, row }: RowProps) {
                 <EntityName name={row.catalog_name} />
 
                 <Connector
-                    openGraph={row.connector_open_graph}
+                    connectorImage={row.image}
+                    connectorName={row.title}
                     imageTag={`${row.connector_image_name}${row.connector_image_tag}`}
                 />
 

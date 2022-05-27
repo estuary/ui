@@ -8,7 +8,7 @@ import { createSelectableTableStore } from 'components/tables/Store';
 import { useQuery } from 'hooks/supabase-swr';
 import { ZustandProvider } from 'hooks/useZustand';
 import { useState } from 'react';
-import { defaultTableFilter, TABLES } from 'services/supabase';
+import { CONNECTOR_NAME, defaultTableFilter, TABLES } from 'services/supabase';
 import { OpenGraph } from 'types';
 
 export interface Connector {
@@ -23,7 +23,9 @@ export interface Connector {
     detail: string;
     updated_at: string;
     image_name: string;
-    open_graph: OpenGraph;
+    image: OpenGraph['image'];
+    recommended: OpenGraph['image'];
+    title: OpenGraph['title'];
 }
 
 const CONNECTOR_QUERY = `
@@ -31,7 +33,9 @@ const CONNECTOR_QUERY = `
     detail,
     updated_at,
     image_name,
-    open_graph,
+    open_graph->en-US->>image,
+    open_graph->en-US->>recommended,
+    ${CONNECTOR_NAME},
     connector_tags (
         documentation_url,
         protocol,
@@ -47,8 +51,8 @@ function ConnectorsTable() {
         getPagination(0, rowsPerPage)
     );
     const [searchQuery, setSearchQuery] = useState<string | null>(null);
-    const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
-    const [columnToSort, setColumnToSort] = useState<any>('updated_at');
+    const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+    const [columnToSort, setColumnToSort] = useState<any>(CONNECTOR_NAME);
 
     const liveSpecQuery = useQuery<Connector>(
         TABLES.CONNECTORS,
@@ -58,7 +62,7 @@ function ConnectorsTable() {
             filter: (query) => {
                 return defaultTableFilter<Connector>(
                     query,
-                    ['image_name', 'detail'],
+                    [CONNECTOR_NAME],
                     searchQuery,
                     columnToSort,
                     sortDirection,

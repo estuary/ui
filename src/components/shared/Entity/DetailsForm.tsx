@@ -19,7 +19,6 @@ import {
 } from 'services/jsonforms';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 import { Grants } from 'types';
-import { getConnectorName } from 'utils/misc-utils';
 
 interface Props {
     connectorTags: ConnectorTagQuery[];
@@ -87,10 +86,9 @@ function DetailsForm({ connectorTags, accessGrants }: Props) {
                 response.push({
                     const: {
                         id: connector.id,
-                        iconPath:
-                            connector.connectors.open_graph['en-US'].image,
+                        iconPath: connector.connectors.image,
                     },
-                    title: getConnectorName(connector.connectors.open_graph),
+                    title: connector.connectors.title,
                 });
             });
         }

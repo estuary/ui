@@ -9,13 +9,13 @@ import { useQuery } from 'hooks/supabase-swr';
 import { ZustandProvider } from 'hooks/useZustand';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
-import { OpenGraph } from 'types';
 
 export interface LiveSpecsExtQuery {
     catalog_name: string;
     connector_image_name: string;
     connector_image_tag: string;
-    connector_open_graph: OpenGraph;
+    image: string;
+    title: string;
     id: string;
     last_pub_id: string;
     last_pub_user_avatar_url: string;
@@ -30,7 +30,8 @@ const queryColumns = [
     'catalog_name',
     'connector_image_name',
     'connector_image_tag',
-    'connector_open_graph',
+    'connector_open_graph->en-US->>image',
+    'connector_open_graph->en-US->>title',
     'id',
     'last_pub_id',
     'last_pub_user_avatar_url',
