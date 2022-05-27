@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 import { useIntl } from 'react-intl';
-import logo from 'images/dark/pictorial-mark.png';
+import logo from 'images/pictorial-mark.png';
 
 type Props = {
     width: number;
