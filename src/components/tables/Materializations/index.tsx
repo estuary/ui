@@ -79,8 +79,6 @@ function MaterializationsTable() {
                     noExistingDataContentIds={{
                         header: 'materializations.message1',
                         message: 'materializations.message2',
-                        docLink: 'materializations.message2.docLink',
-                        docPath: 'materializations.message2.docPath',
                     }}
                     columns={tableColumns}
                     query={liveSpecQuery}

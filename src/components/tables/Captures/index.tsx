@@ -79,8 +79,6 @@ function CapturesTable() {
                     noExistingDataContentIds={{
                         header: 'captures.message1',
                         message: 'captures.message2',
-                        docLink: 'captures.message2.docLink',
-                        docPath: 'captures.message2.docPath',
                     }}
                     columns={tableColumns}
                     query={liveSpecQuery}
