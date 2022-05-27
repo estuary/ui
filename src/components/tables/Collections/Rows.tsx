@@ -1,4 +1,4 @@
-import { TableCell, TableRow } from '@mui/material';
+import { TableRow } from '@mui/material';
 import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import Actions from 'components/tables/cells/Actions';
 import EntityName from 'components/tables/cells/EntityName';
@@ -6,7 +6,6 @@ import ExpandDetails from 'components/tables/cells/ExpandDetails';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import UserName from 'components/tables/cells/UserName';
 import DetailsPanel from 'components/tables/DetailsPanel';
-import { tableBorderSx } from 'context/Theme';
 import { useState } from 'react';
 
 interface RowProps {
@@ -21,10 +20,6 @@ export const tableColumns = [
     {
         field: 'catalog_name',
         headerIntlKey: 'entityTable.data.entity',
-    },
-    {
-        field: 'spec_type',
-        headerIntlKey: 'entityTable.data.connectorType',
     },
     {
         field: 'updated_at',
@@ -47,10 +42,6 @@ function Row({ row }: RowProps) {
         <>
             <TableRow key={`Entity-${row.id}`}>
                 <EntityName name={row.catalog_name} />
-
-                <TableCell sx={{ ...tableBorderSx, minWidth: 100 }}>
-                    {row.spec_type}
-                </TableCell>
 
                 <TimeStamp time={row.updated_at} />
 
