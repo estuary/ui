@@ -5,7 +5,7 @@ import { routeDetails } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
 import { CATALOG_NAME_SCOPE } from 'forms/renderers/CatalogName';
 import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
-import { ConnectorTagQuery } from 'hooks/useConnectorTags';
+import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
@@ -21,7 +21,7 @@ import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 import { Grants } from 'types';
 
 interface Props {
-    connectorTags: ConnectorTagQuery[];
+    connectorTags: ConnectorWithTagDetailQuery[];
     accessGrants: Grants[];
 }
 

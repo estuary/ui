@@ -4,9 +4,9 @@ import {
     TABLES,
 } from 'services/supabase';
 import { OpenGraph } from 'types';
-import { useQuery, useSelect } from './supabase-swr/';
+import { useQuery, useSelect } from './supabase-swr';
 
-export interface ConnectorTagQuery {
+export interface ConnectorWithTagDetailQuery {
     connector_tags: {
         documentation_url: string;
         protocol: string;
@@ -28,7 +28,7 @@ export interface ConnectorTagQuery {
     [CONNECTOR_RECOMMENDED]: undefined;
 }
 
-const CONNECTOR_QUERY = `
+export const CONNECTOR_WITH_TAG_QUERY = `
     id,
     detail,
     updated_at,
@@ -45,11 +45,11 @@ const CONNECTOR_QUERY = `
     )
 `;
 
-function useConnectorTags(protocol: string | null) {
-    const connectorTagsQuery = useQuery<ConnectorTagQuery>(
+function useConnectorWithTagDetail(protocol: string | null) {
+    const connectorTagsQuery = useQuery<ConnectorWithTagDetailQuery>(
         TABLES.CONNECTORS,
         {
-            columns: CONNECTOR_QUERY,
+            columns: CONNECTOR_WITH_TAG_QUERY,
             filter: (query) =>
                 query
                     .eq('connector_tags.protocol', protocol as string)
@@ -71,4 +71,4 @@ function useConnectorTags(protocol: string | null) {
     };
 }
 
-export default useConnectorTags;
+export default useConnectorWithTagDetail;

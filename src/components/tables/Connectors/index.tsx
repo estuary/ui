@@ -6,44 +6,13 @@ import EntityTable, {
 } from 'components/tables/EntityTable';
 import { createSelectableTableStore } from 'components/tables/Store';
 import { useQuery } from 'hooks/supabase-swr';
+import {
+    ConnectorWithTagDetailQuery,
+    CONNECTOR_WITH_TAG_QUERY,
+} from 'hooks/useConnectorWithTagDetail';
 import { ZustandProvider } from 'hooks/useZustand';
 import { useState } from 'react';
 import { CONNECTOR_NAME, defaultTableFilter, TABLES } from 'services/supabase';
-import { OpenGraph } from 'types';
-
-export interface Connector {
-    connector_tags: {
-        documentation_url: string;
-        protocol: string;
-        image_tag: string;
-        id: string;
-        title: string;
-    }[];
-    id: string;
-    detail: string;
-    updated_at: string;
-    image_name: string;
-    image: OpenGraph['image'];
-    recommended: OpenGraph['image'];
-    title: OpenGraph['title'];
-}
-
-const CONNECTOR_QUERY = `
-    id,
-    detail,
-    updated_at,
-    image_name,
-    open_graph->en-US->>image,
-    open_graph->en-US->>recommended,
-    ${CONNECTOR_NAME},
-    connector_tags (
-        documentation_url,
-        protocol,
-        image_tag,
-        id,
-        endpoint_spec_schema->>title
-    )
-`;
 
 function ConnectorsTable() {
     const rowsPerPage = 10;
@@ -54,13 +23,13 @@ function ConnectorsTable() {
     const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
     const [columnToSort, setColumnToSort] = useState<any>(CONNECTOR_NAME);
 
-    const liveSpecQuery = useQuery<Connector>(
+    const liveSpecQuery = useQuery<ConnectorWithTagDetailQuery>(
         TABLES.CONNECTORS,
         {
-            columns: CONNECTOR_QUERY,
+            columns: CONNECTOR_WITH_TAG_QUERY,
             count: 'exact',
             filter: (query) => {
-                return defaultTableFilter<Connector>(
+                return defaultTableFilter<ConnectorWithTagDetailQuery>(
                     query,
                     [CONNECTOR_NAME],
                     searchQuery,

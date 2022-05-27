@@ -1,15 +1,15 @@
 import { Box, Button, TableCell, TableRow } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
 import ConnectorName from 'components/ConnectorName';
-import { Connector } from 'components/tables/Connectors';
 import Link from 'components/tables/Link';
+import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
 import { FormattedDate, FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { CONNECTOR_NAME } from 'services/supabase';
 import { getPathWithParam } from 'utils/misc-utils';
 
 interface Props {
-    data: Connector[];
+    data: ConnectorWithTagDetailQuery[];
 }
 const columnStyling = {
     minWidth: '10%',

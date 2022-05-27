@@ -3,7 +3,7 @@ import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec, generateDraftSpec } from 'api/draftSpecs';
 import { createPublication } from 'api/publications';
 import { EditorStoreState } from 'components/editor/Store';
-import useConnectorTags from 'hooks/useConnectorTags';
+import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
@@ -31,7 +31,7 @@ function MaterializeTestButton({
     onFailure,
     subscription,
 }: Props) {
-    const { connectorTags } = useConnectorTags('materialization');
+    const { connectorTags } = useConnectorWithTagDetail('materialization');
 
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
