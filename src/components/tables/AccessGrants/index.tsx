@@ -50,8 +50,7 @@ function AccessGrantsTable() {
                     noExistingDataContentIds={{
                         header: 'accessGrants.message1',
                         message: 'accessGrants.message2',
-                        docLink: 'accessGrants.message2.docLink',
-                        docPath: 'accessGrants.message2.docPath',
+                        disableDoclink: true,
                     }}
                     columns={tableColumns}
                     query={rolesQuery}
@@ -64,6 +63,7 @@ function AccessGrantsTable() {
                     setColumnToSort={setColumnToSort}
                     header="accessGrantsTable.title"
                     filterLabel="accessGrantsTable.filterLabel"
+                    tableDescriptionId="admin.roles.message"
                 />
             </ZustandProvider>
         </Box>

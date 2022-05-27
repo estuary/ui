@@ -57,8 +57,6 @@ function CollectionsTable() {
                     noExistingDataContentIds={{
                         header: 'collections.message1',
                         message: 'collections.message2',
-                        docLink: 'collections.message2.docLink',
-                        docPath: 'collections.message2.docPath',
                     }}
                     columns={tableColumns}
                     query={liveSpecQuery}

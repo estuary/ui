@@ -16,7 +16,7 @@ import {
     Typography,
 } from '@mui/material';
 import { PostgrestError } from '@supabase/supabase-js';
-import ExternalLink from 'components/shared/ExternalLink';
+import MessageWithLink from 'components/content/MessageWithLink';
 import RowSelector, {
     RowSelectorProps,
 } from 'components/tables/RowActions/RowSelector';
@@ -64,11 +64,11 @@ interface Props {
     filterLabel: string;
     enableSelection?: boolean;
     rowSelectorProps?: RowSelectorProps;
+    tableDescriptionId?: string;
     noExistingDataContentIds: {
         header: string;
         message: string;
-        docLink: string;
-        docPath: string;
+        disableDoclink?: boolean;
     };
     showEntityStatus?: boolean;
 }
@@ -106,6 +106,7 @@ function EntityTable({
     enableSelection,
     rowSelectorProps,
     showEntityStatus = false,
+    tableDescriptionId,
 }: Props) {
     const [page, setPage] = useState(0);
 
@@ -160,22 +161,13 @@ function EntityTable({
                     <FormattedMessage id="entityTable.unmatchedFilter.message" />
                 );
             default: {
-                const { message, docLink, docPath } = noExistingDataContentIds;
+                const { disableDoclink, message } = noExistingDataContentIds;
 
-                return (
-                    <FormattedMessage
-                        id={message}
-                        values={{
-                            docLink: (
-                                <ExternalLink
-                                    link={intl.formatMessage({ id: docPath })}
-                                >
-                                    <FormattedMessage id={docLink} />
-                                </ExternalLink>
-                            ),
-                        }}
-                    />
-                );
+                if (disableDoclink) {
+                    <FormattedMessage id={message} />;
+                }
+
+                return <MessageWithLink messageID={message} />;
             }
         }
     };
@@ -228,6 +220,12 @@ function EntityTable({
                 <Typography variant="h6">
                     <FormattedMessage id={header} />
                 </Typography>
+                {tableDescriptionId ? (
+                    <Box>
+                        <MessageWithLink messageID={tableDescriptionId} />
+                    </Box>
+                ) : null}
+
                 <Toolbar
                     disableGutters
                     sx={{
