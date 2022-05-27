@@ -1,4 +1,4 @@
-import { Alert, AlertTitle, Box } from '@mui/material';
+import { Alert, AlertTitle, Box, Stack } from '@mui/material';
 import DraftErrors, {
     DraftErrorProps,
 } from 'components/shared/Entity/Error/DraftErrors';
@@ -17,6 +17,7 @@ function EntityError({ logToken, error, title, draftId }: Props) {
     return (
         <Box sx={{ width: '100%' }}>
             <Alert
+                icon={false}
                 sx={{
                     'width': '100%',
                     '& .MuiAlert-message': { width: '100%' },
@@ -26,9 +27,17 @@ function EntityError({ logToken, error, title, draftId }: Props) {
                 <AlertTitle>
                     <FormattedMessage id={title} />
                 </AlertTitle>
-                <Error error={error} hideTitle={true} />
-                {draftId ? <DraftErrors draftId={draftId} /> : null}
-                <ErrorLogs logToken={logToken} />
+                <Stack direction="column" spacing={2}>
+                    <Box
+                        sx={{
+                            overflow: 'auto',
+                        }}
+                    >
+                        <Error error={error} hideTitle={true} />
+                        {draftId ? <DraftErrors draftId={draftId} /> : null}
+                    </Box>
+                    <ErrorLogs logToken={logToken} />
+                </Stack>
             </Alert>
         </Box>
     );

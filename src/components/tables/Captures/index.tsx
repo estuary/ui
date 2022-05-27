@@ -9,11 +9,10 @@ import { useQuery } from 'hooks/supabase-swr';
 import { ZustandProvider } from 'hooks/useZustand';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
-import { OpenGraph } from 'types';
+import { ENTITY, OpenGraph } from 'types';
 
 export interface LiveSpecsExtQuery {
     catalog_name: string;
-    connector_id: string;
     connector_image_name: string | null;
     connector_image_tag: string | null;
     connector_open_graph: OpenGraph;
@@ -22,14 +21,13 @@ export interface LiveSpecsExtQuery {
     last_pub_user_avatar_url: string | null;
     last_pub_user_email: string;
     last_pub_user_full_name: string | null;
-    spec_type: string;
+    spec_type: ENTITY;
     updated_at: string;
     writes_to: string[];
 }
 
 const queryColumns = [
     'catalog_name',
-    'connector_id',
     'connector_image_name',
     'connector_image_tag',
     'connector_open_graph',
@@ -86,7 +84,9 @@ function CapturesTable() {
                     }}
                     columns={tableColumns}
                     query={liveSpecQuery}
-                    renderTableRows={(data) => <Rows data={data} />}
+                    renderTableRows={(data, showEntityStatus) => (
+                        <Rows data={data} showEntityStatus={showEntityStatus} />
+                    )}
                     setPagination={setPagination}
                     setSearchQuery={setSearchQuery}
                     sortDirection={sortDirection}
@@ -99,6 +99,7 @@ function CapturesTable() {
                     rowSelectorProps={{
                         showMaterialize: true,
                     }}
+                    showEntityStatus={true}
                 />
             </ZustandProvider>
         </Box>

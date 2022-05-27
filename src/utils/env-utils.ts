@@ -1,13 +1,20 @@
+import { GatewayAuthTokenResponse } from 'types';
+
 declare global {
     interface Window {
         Estuary: {
             api_endpoint: string | null;
             auth_url: string | null;
         } | null;
+        monaco: any;
     }
 }
 
 const ENABLED = 'true';
+
+export enum LocalStorageKeys {
+    GATEWAY = 'gateway-auth-config',
+}
 
 export const isProduction = () => {
     return process.env.NODE_ENV === 'production';
@@ -45,6 +52,7 @@ export const getLoginSettings = () => {
     };
 };
 
+// TODO (refactor) We should switch this to a provider
 export const getUrls = () => {
     const privacyPolicy = process.env.REACT_APP_URLS_PRIVACY_POLICY;
     const termsOfService = process.env.REACT_APP_URLS_TERMS_OF_SERVICE;
@@ -71,8 +79,22 @@ export const getSWRSettings = () => {
     };
 };
 
-export const getLogRocketSettings = () => {
-    return {
+type Settings = {
+    appID: string | null;
+    idUser: {
+        enabled: boolean;
+        includeName: boolean;
+        includeEmail: boolean;
+    };
+    sanitize: {
+        inputs: boolean;
+        request: boolean;
+        response: boolean;
+        text: boolean;
+    };
+};
+export const getLogRocketSettings = (): Settings => {
+    const settings: Settings = {
         appID: process.env.REACT_APP_LOGROCKET_APP_ID ?? null,
         idUser: {
             enabled: process.env.REACT_APP_LOGROCKET_ID_USER === ENABLED,
@@ -85,9 +107,15 @@ export const getLogRocketSettings = () => {
         },
         sanitize: {
             inputs: process.env.REACT_APP_LOGROCKET_SANITIZE_INPUTS === ENABLED,
+            request:
+                process.env.REACT_APP_LOGROCKET_SANITIZE_REQUESTS === ENABLED,
+            response:
+                process.env.REACT_APP_LOGROCKET_SANITIZE_RESPONSES === ENABLED,
             text: process.env.REACT_APP_LOGROCKET_SANITIZE_TEXT === ENABLED,
         },
     };
+
+    return settings;
 };
 
 export const getEncryptionSettings = () => {
@@ -100,6 +128,52 @@ export const getEncryptionSettings = () => {
     } else {
         throw new Error(
             'Missing endpoint for encrypting endpoint configs: REACT_APP_ENCRYPTION_URL'
+        );
+    }
+};
+
+export const getGatewayAuthTokenSettings = () => {
+    const gatewayAuthTokenEndpoint =
+        process.env.REACT_APP_GATEWAY_AUTH_TOKEN_URL;
+
+    if (gatewayAuthTokenEndpoint) {
+        return { gatewayAuthTokenEndpoint };
+    } else {
+        throw new Error(
+            'Missing endpoint for creating gateway auth tokens: REACT_APP_GATEWAY_AUTH_TOKEN_URL'
+        );
+    }
+};
+
+export const storeGatewayAuthConfig = ({
+    gateway_url,
+    token,
+}: GatewayAuthTokenResponse): void => {
+    localStorage.setItem(
+        LocalStorageKeys.GATEWAY,
+        JSON.stringify({ gateway_url: gateway_url.toString(), token })
+    );
+};
+
+export const getStoredGatewayAuthConfig =
+    (): GatewayAuthTokenResponse | null => {
+        const config = localStorage.getItem(LocalStorageKeys.GATEWAY);
+
+        return config ? JSON.parse(config) : null;
+    };
+
+export const removeGatewayAuthConfig = (): void => {
+    localStorage.removeItem(LocalStorageKeys.GATEWAY);
+};
+
+export const getSupabaseAnonymousKey = () => {
+    const supabaseAnonymousKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
+
+    if (supabaseAnonymousKey) {
+        return { supabaseAnonymousKey };
+    } else {
+        throw new Error(
+            'Missing Supabase anonymous key: REACT_APP_SUPABASE_ANON_KEY'
         );
     }
 };

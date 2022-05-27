@@ -5,6 +5,20 @@ import { devtools, NamedSet } from 'zustand/middleware';
 
 export const DraftSpecEditorKey = 'draftSpecEditor';
 
+export enum EditorStatus {
+    IDLE = 'nothing happened since load',
+    EDITING = 'user typing',
+    INVALID = 'editor value not parsable',
+    SAVING = 'calling server to save changes',
+    SAVED = 'changes saved to server',
+    SAVE_FAILED = 'calling server failed',
+    OUT_OF_SYNC = 'there are changes on server that client needs to merge',
+}
+
+export const isEditorActive = (status: EditorStatus) => {
+    return status === EditorStatus.SAVING;
+};
+
 export interface EditorStoreState<T> {
     id: string | null;
     setId: (newVal: EditorStoreState<T>['id']) => void;
@@ -22,6 +36,11 @@ export interface EditorStoreState<T> {
     serverUpdate: any | null;
     setServerUpdate: (newVal: EditorStoreState<T>['serverUpdate']) => void;
 
+    isSaving: boolean;
+    isEditing: boolean;
+    status: EditorStatus;
+    setStatus: (newVal: EditorStatus) => void;
+
     resetState: () => void;
 }
 
@@ -31,6 +50,9 @@ const getInitialStateData = () => {
         id: null,
         pubId: null,
         specs: null,
+        isSaving: false,
+        isEditing: false,
+        status: EditorStatus.IDLE,
         serverUpdate: null,
     };
 };
@@ -45,7 +67,8 @@ const getInitialState = <T,>(
                 produce((state) => {
                     state.id = newVal;
                 }),
-                false
+                false,
+                'Set draft id'
             );
         },
 
@@ -54,7 +77,8 @@ const getInitialState = <T,>(
                 produce((state) => {
                     state.pubId = newVal;
                 }),
-                false
+                false,
+                'Set publication id'
             );
         },
 
@@ -62,8 +86,10 @@ const getInitialState = <T,>(
             set(
                 produce((state) => {
                     state.currentCatalog = newVal;
+                    state.status = EditorStatus.IDLE;
                 }),
-                false
+                false,
+                'Setting current catalog'
             );
         },
 
@@ -74,10 +100,12 @@ const getInitialState = <T,>(
                         if (state.specs === null || newVal.length === 1) {
                             state.currentCatalog = newVal[0];
                         }
+
                         state.specs = newVal;
                     }
                 }),
-                false
+                false,
+                'Set specs'
             );
         },
 
@@ -86,7 +114,20 @@ const getInitialState = <T,>(
                 produce((state) => {
                     state.serverUpdate = newVal;
                 }),
-                false
+                false,
+                'Set server update'
+            );
+        },
+
+        setStatus: (newVal) => {
+            set(
+                produce((state) => {
+                    state.isSaving = newVal === EditorStatus.SAVING;
+                    state.isEditing = newVal === EditorStatus.EDITING;
+                    state.status = newVal;
+                }),
+                false,
+                'Setting status'
             );
         },
 

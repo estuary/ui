@@ -47,13 +47,17 @@ function EndpointConfigForm({ endpointSchema }: Props) {
         });
     }, [endpointSchema, setEndpointSchema, setSpec]);
 
-    const categoryLikeSchema = useConstant(() =>
-        generateCategoryUiSchema(custom_generateDefaultUISchema(endpointSchema))
-    );
+    const categoryLikeSchema = useConstant(() => {
+        const generatedSchema = generateCategoryUiSchema(
+            custom_generateDefaultUISchema(endpointSchema)
+        );
 
-    console.log('Schema generated for the endpoint config form', {
-        input: endpointSchema,
-        output: categoryLikeSchema,
+        console.log('Schema generated for the endpoint config form', {
+            input: endpointSchema,
+            output: generatedSchema,
+        });
+
+        return generatedSchema;
     });
 
     const showValidationVal = showValidation(displayValidation);

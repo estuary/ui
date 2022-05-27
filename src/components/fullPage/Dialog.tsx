@@ -1,5 +1,5 @@
 import { Box, Paper } from '@mui/material';
-import lightLogo from 'images/light-horizontal/estuary-logo.png';
+import CompanyLogo from 'components/CompanyLogo';
 import { ReactNode } from 'react';
 
 interface Props {
@@ -15,12 +15,12 @@ function FullPageDialog({ children }: Props) {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                my: 6,
             }}
         >
             <Paper
                 sx={{
                     minWidth: 360,
+                    maxWidth: 450,
                     maxHeight: 750,
                     display: 'flex',
                     flexDirection: 'column',
@@ -33,12 +33,7 @@ function FullPageDialog({ children }: Props) {
                     borderRadius: 5,
                 }}
             >
-                <img
-                    src={lightLogo}
-                    style={{ marginBottom: 16 }}
-                    width={200}
-                    alt="Estuary"
-                />
+                <CompanyLogo />
 
                 {children}
             </Paper>

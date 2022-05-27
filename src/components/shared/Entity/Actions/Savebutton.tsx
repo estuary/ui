@@ -37,6 +37,11 @@ function EntityCreateSaveButton({ disabled, formId, onFailure }: Props) {
         EditorStoreState<DraftSpecQuery>['setPubId']
     >((state) => state.setPubId);
 
+    const isSaving = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['isSaving']
+    >((state) => state.isSaving);
+
     const showNotification = useNotificationStore(
         notificationStoreSelectors.showNotification
     );
@@ -59,11 +64,14 @@ function EntityCreateSaveButton({ disabled, formId, onFailure }: Props) {
     );
 
     const waitForPublishToFinish = () => {
+        console.log('wait for finish');
         resetFormState(FormStatus.SAVING);
         return startSubscription(
-            supabaseClient.from(TABLES.PUBLICATIONS),
+            supabaseClient.from(
+                `${TABLES.PUBLICATIONS}:draft_id=eq.${draftId}`
+            ),
             (payload: any) => {
-                setPubId(payload.new.id);
+                setPubId(payload.id);
                 setFormState({
                     status: FormStatus.SUCCESS,
                     exitWhenLogsClose: true,
@@ -71,16 +79,19 @@ function EntityCreateSaveButton({ disabled, formId, onFailure }: Props) {
 
                 showNotification({
                     description: intl.formatMessage({
-                        id: `${messagePrefix}.captureCreate.createNotification.desc`,
+                        id: `${messagePrefix}.createNotification.desc`,
                     }),
                     severity: 'success',
                     title: intl.formatMessage({
-                        id: `${messagePrefix}.captureCreate.createNotification.title`,
+                        id: `${messagePrefix}.createNotification.title`,
                     }),
                 });
             },
             () => {
-                onFailure(`${messagePrefix}.save.failedErrorTitle`);
+                console.log('wait for finish - failure');
+                onFailure({
+                    error: { title: `${messagePrefix}.save.failedErrorTitle` },
+                });
             }
         );
     };
@@ -88,16 +99,19 @@ function EntityCreateSaveButton({ disabled, formId, onFailure }: Props) {
     const save = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
 
+        console.log('save');
         resetFormState(FormStatus.SAVING);
         const publicationsSubscription = waitForPublishToFinish();
-
+        console.log('save:pubstarted');
+        console.log('save:creating');
         const response = await createPublication(
             draftId,
             false,
             entityDescription
         );
-
+        console.log('save:created', response);
         if (response.error) {
+            console.log('save:created:failed', response);
             onFailure(
                 {
                     error: {
@@ -108,6 +122,7 @@ function EntityCreateSaveButton({ disabled, formId, onFailure }: Props) {
                 publicationsSubscription
             );
         } else {
+            console.log('save:created:success', response);
             setFormState({
                 logToken: response.data[0].logs_token,
                 showLogs: true,
@@ -118,7 +133,7 @@ function EntityCreateSaveButton({ disabled, formId, onFailure }: Props) {
     return (
         <Button
             onClick={save}
-            disabled={formInProgress(formStateStatus) || disabled}
+            disabled={disabled || isSaving || formInProgress(formStateStatus)}
             form={formId}
             type="submit"
             sx={buttonSx}

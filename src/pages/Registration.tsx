@@ -144,6 +144,7 @@ const Registration = () => {
     return (
         <FullPageDialog>
             <Card
+                raised={false}
                 sx={{
                     background: 'transparent',
                 }}

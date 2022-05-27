@@ -14,6 +14,7 @@ import {
     formInProgress,
     FormStatus,
 } from 'stores/Create';
+import { ENTITY } from 'types';
 
 interface Props {
     disabled: boolean;
@@ -36,6 +37,16 @@ function MaterializeTestButton({
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
     >((state) => state.id);
+
+    const isSaving = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['isSaving']
+    >((state) => state.isSaving);
+
+    const resetEditorState = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['resetState']
+    >((state) => state.resetState);
 
     const entityCreateStore = useRouteStore();
 
@@ -114,6 +125,7 @@ function MaterializeTestButton({
                 displayValidation: true,
             });
         } else {
+            resetEditorState();
             setFormState({
                 status: FormStatus.GENERATING_PREVIEW,
             });
@@ -149,7 +161,7 @@ function MaterializeTestButton({
 
             const newDraftId = draftsResponse.data[0].id;
             const draftSpec = generateDraftSpec(
-                endpointConfig, //encryptedEndpointConfig,
+                endpointConfig, //encryptedEndpointConfig.data,
                 `${image_name}${image_tag}`,
                 resourceConfig
             );
@@ -158,7 +170,7 @@ function MaterializeTestButton({
                 newDraftId,
                 entityName,
                 draftSpec,
-                'materialization'
+                ENTITY.MATERIALIZATION
             );
             if (draftSpecsResponse.error) {
                 return onFailure({
@@ -195,7 +207,7 @@ function MaterializeTestButton({
     return (
         <Button
             onClick={test}
-            disabled={formInProgress(formStateStatus) || disabled}
+            disabled={disabled || isSaving || formInProgress(formStateStatus)}
             form={formId}
             type="submit"
             sx={buttonSx}

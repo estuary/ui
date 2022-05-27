@@ -149,7 +149,7 @@ export const insertSupabase = (
     return makeCall();
 };
 
-// Used to make update calls. Mainly consumed in the src/api folder
+// Makes update calls. Mainly consumed in the src/api folder
 export const updateSupabase = (
     table: TABLES,
     data: any,
@@ -182,16 +182,27 @@ export const startSubscription = (
 ) => {
     const subscription = query
         .on('*', async (payload: any) => {
-            if (payload.new.job_status.type !== 'queued') {
-                if (payload.new.job_status.type === 'success') {
-                    success(payload);
-                } else {
-                    failure(payload);
-                }
+            console.log('WS: ', payload);
+            const response = payload.new
+                ? payload.new
+                : payload.record
+                ? payload.record
+                : null;
+            if (response) {
+                if (response.job_status.type !== 'queued') {
+                    if (response.job_status.type === 'success') {
+                        success(response);
+                    } else {
+                        failure(response);
+                    }
 
-                if (!keepSubscription) {
-                    await endSubscription(subscription);
+                    if (!keepSubscription) {
+                        await endSubscription(subscription);
+                    }
                 }
+            } else {
+                // TODO (error handling) Do not know how this path could happen but wanted to be safe
+                failure(payload);
             }
         })
         .subscribe();

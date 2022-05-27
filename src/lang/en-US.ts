@@ -14,9 +14,11 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.enabled': `Enabled`,
     'common.disabling': `Disabling...`,
     'common.disabled': `Disabled`,
-    'common.inProgress': `In progress`,
+    'common.inProgress': `In Progress`,
+    'common.done': `Done`,
     'common.saving': `Saving`,
     'common.saved': `Saved`,
+    'common.invalid': `Invalid`,
     'common.fail': `Failed`,
     'common.success': `Success`,
     'common.errors.heading': `Error`,
@@ -25,6 +27,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.loggedOut': `You have been logged out. Please log back in.`,
     'common.missing': `N/A`,
     'common.noUnDo': `This action cannot be undone.`,
+    'common.version': `version`,
 
     // Aria
     'aria.openExpand': `show more`,
@@ -117,7 +120,7 @@ const Navigation: ResolvedIntlConfig['messages'] = {
 };
 
 const Header: ResolvedIntlConfig['messages'] = {
-    'mainMenu.label': `Main Menu`,
+    'mainMenu.tooltip': `Open Main Menu`,
 
     'helpMenu.ariaLabel': `Open Help Menu`,
     'helpMenu.tooltip': `Helpful Links`,
@@ -159,6 +162,12 @@ const Registration: ResolvedIntlConfig['messages'] = {
     'register.label.documentAcknowledgement.terms': `Terms of Service`,
     'register.label.documentAcknowledgement.privacy': `Privacy Policy`,
     'register.existingAccount': `Already have an account?`,
+};
+
+const LoginPage: ResolvedIntlConfig['messages'] = {
+    'login.main.message': `When running locally you can login with whatever name you want.`,
+    'login.oidc.message': `Sign in to continue to ${CommonMessages.productName}.`,
+    'login.documentAcknowledgement': `By accessing ${CommonMessages.productName} you agree to our {terms} and {privacy}.`,
 };
 
 const EntityStatus: ResolvedIntlConfig['messages'] = {
@@ -272,11 +281,6 @@ const ConnectorsPage: ResolvedIntlConfig['messages'] = {
     'connectors.main.message2.docPath': `https://www.estuary.dev/#get-in-touch`,
 };
 
-const LoginPage: ResolvedIntlConfig['messages'] = {
-    'login.main.message': `When running locally you can login with whatever name you want.`,
-    'login.oidc.message': `Sign in to continue to ${CommonMessages.productName}.`,
-};
-
 const NoGrants: ResolvedIntlConfig['messages'] = {
     'noGrants.main.message': `Thanks for signing up. Our team is reviewing your account and will get back to you shortly.`,
 };
@@ -319,6 +323,7 @@ const Foo: ResolvedIntlConfig['messages'] = {
     'foo.ctas.discoverAgain': `Regenerate Catalog`,
     'foo.ctas.docs': `Connector Help`,
     'foo.catalogEditor.heading': `Catalog Editor`,
+    'foo.errors.collapseTitle': `Expand to see logs`,
     'foo.endpointConfig.heading': `Connection Configuration`,
     'foo.endpointConfig.errorSummary': `You must provide valid values for all required fields before continuing.`,
     'foo.endpointConfig.detailsHaveErrors': `The Details section has errors.`,
@@ -383,6 +388,7 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreate.collectionSelector.heading': `Collection Selector`,
     'materializationCreate.collectionSelector.instructions': `Choose one or more collections to materizalize.`,
     'materializationCreate.resourceConfig.heading': `Resource Configuration`,
+    'materializationCreate.save.failedErrorTitle': `Materialization Save Failed`,
     'materializationCreate.save.waitMessage': `Please wait while we test, save, and publish your materialization.`,
     'materializationCreate.createNotification.title': `New Materialization Created`,
     'materializationCreate.createNotification.desc': `Your materialization is published and ready to be used.`,

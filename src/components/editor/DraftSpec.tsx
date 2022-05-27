@@ -25,16 +25,26 @@ function DraftSpecEditor({ disabled }: Props) {
         EditorStoreState<DraftSpecQuery>['id']
     >((state) => state.id);
 
-    const { draftSpecs } = useDraftSpecs(id);
+    const { draftSpecs, mutate } = useDraftSpecs(id);
     const [draftSpec, setDraftSpec] = useState<DraftSpecQuery | null>(null);
 
     const handlers = {
-        change: (newVal: any, catalogName: string) => {
+        change: async (newVal: any, catalogName: string) => {
             if (draftSpec) {
-                return updateDraftSpec(id, catalogName, newVal);
-            }
+                const updateResponse = await updateDraftSpec(
+                    id,
+                    catalogName,
+                    newVal
+                );
 
-            return Promise.reject();
+                if (updateResponse.error) {
+                    return Promise.reject();
+                }
+
+                return mutate();
+            } else {
+                return Promise.reject();
+            }
         },
     };
 
@@ -77,8 +87,6 @@ function DraftSpecEditor({ disabled }: Props) {
     if (draftSpec) {
         return (
             <EditorWithFileSelector
-                value={draftSpec.spec}
-                path={draftSpec.catalog_name}
                 onChange={handlers.change}
                 disabled={disabled}
             />

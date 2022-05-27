@@ -1,34 +1,50 @@
 import { Alert } from '@mui/material';
 import { createEntityDraft } from 'api/drafts';
-import { createDraftSpec, generateDraftSpec } from 'api/draftSpecs';
+import { createDraftSpec } from 'api/draftSpecs';
 import { createPublication } from 'api/publications';
-import { encryptConfig } from 'api/sops';
 import DraftErrors from 'components/shared/Entity/Error/DraftErrors';
 import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import SharedProgress, {
     ProgressStates,
+    SharedProgressProps,
 } from 'components/tables/RowActions/Shared/Progress';
-import useConnectorTag from 'hooks/useConnectorTag';
-import useLiveSpecsExt from 'hooks/useLiveSpecsExt';
+import {
+    LiveSpecsExtQueryWithSpec,
+    useLiveSpecsExtWithSpec,
+} from 'hooks/useLiveSpecsExt';
 import usePublications from 'hooks/usePublications';
-import produce from 'immer';
 import { useEffect, useState } from 'react';
 import { jobSucceeded } from 'services/supabase';
+import { ENTITY } from 'types';
 
-interface Props {
+export interface UpdateEntityProps {
     entity: LiveSpecsExtQuery;
     onFinish: (response: any) => void;
-    enabling: boolean;
+    generateNewSpec: (
+        spec: LiveSpecsExtQueryWithSpec['spec']
+    ) => any | Promise<void>;
+    generateNewSpecType: (entity: LiveSpecsExtQuery) => ENTITY | null;
+    runningMessageID: SharedProgressProps['runningMessageID'];
+    successMessageID: SharedProgressProps['successMessageID'];
 }
 
-function DisableEnableProgress({ enabling, entity, onFinish }: Props) {
+function UpdateEntity({
+    generateNewSpec,
+    generateNewSpecType,
+    entity,
+    onFinish,
+    runningMessageID,
+    successMessageID,
+}: UpdateEntityProps) {
     const [state, setState] = useState<ProgressStates>(ProgressStates.RUNNING);
     const [error, setError] = useState<any | null>(null);
     const [draftId, setDraftId] = useState<string | null>(null);
     const [pubID, setPubID] = useState<string | null>(null);
 
-    const { connectorTag } = useConnectorTag(entity.connector_id);
-    const { liveSpecs } = useLiveSpecsExt(entity.last_pub_id, true);
+    const { liveSpecs } = useLiveSpecsExtWithSpec(
+        entity.last_pub_id,
+        entity.spec_type
+    );
 
     useEffect(() => {
         const failed = (response: any) => {
@@ -37,10 +53,10 @@ function DisableEnableProgress({ enabling, entity, onFinish }: Props) {
             onFinish(response);
         };
 
-        if (liveSpecs.length > 0 && connectorTag) {
-            const makeDisableCall = async (
+        if (liveSpecs.length > 0) {
+            const updateEntity = async (
                 targetEntity: LiveSpecsExtQuery,
-                spec: any
+                spec: LiveSpecsExtQueryWithSpec['spec']
             ) => {
                 const entityName = targetEntity.catalog_name;
 
@@ -49,31 +65,14 @@ function DisableEnableProgress({ enabling, entity, onFinish }: Props) {
                     return failed(draftsResponse);
                 }
 
-                const encryptedEndpointConfig = await encryptConfig(
-                    connectorTag.endpoint_spec_schema,
-                    spec.endpoint.connector.config
-                );
-                if (encryptedEndpointConfig.error) {
-                    return failed(encryptedEndpointConfig);
-                }
-
                 const newDraftId = draftsResponse.data[0].id;
                 setDraftId(newDraftId);
-
-                const draftSpec = generateDraftSpec(
-                    encryptedEndpointConfig.data,
-                    `${entity.connector_image_name}${entity.connector_image_tag}`
-                );
-
-                draftSpec.bindings = spec.bindings ? spec.bindings : [];
-                draftSpec.shards = spec.shards ? { ...spec.shards } : {};
-                draftSpec.shards.disable = !enabling;
 
                 const draftSpecsResponse = await createDraftSpec(
                     newDraftId,
                     entityName,
-                    draftSpec,
-                    'capture'
+                    generateNewSpec(spec),
+                    generateNewSpecType(targetEntity)
                 );
                 if (draftSpecsResponse.error) {
                     return failed(draftSpecsResponse);
@@ -89,18 +88,12 @@ function DisableEnableProgress({ enabling, entity, onFinish }: Props) {
                 setPubID(publishResponse.data[0].id);
             };
 
-            const updatedSpec = produce(liveSpecs[0].spec, (spec) => {
-                // TODO (typing) this is only optional because the hook takes an option
-                if (spec) {
-                    delete spec.endpoint.connector.config.sops;
-                }
-            });
-            void makeDisableCall(entity, updatedSpec);
+            void updateEntity(entity, liveSpecs[0].spec);
         }
 
         // We only want to run the useEffect after the data is fetched
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [connectorTag, liveSpecs]);
+    }, [liveSpecs]);
 
     const { publication } = usePublications(pubID, true);
     useEffect(() => {
@@ -125,17 +118,17 @@ function DisableEnableProgress({ enabling, entity, onFinish }: Props) {
                     severity="error"
                     sx={{
                         maxHeight: 100,
-                        overflowY: 'scroll',
+                        overflowY: 'auto',
                     }}
                 >
                     <DraftErrors draftId={draftId} />
                 </Alert>
             )}
             state={state}
-            successMessageID={enabling ? 'common.enabled' : 'common.disabled'}
-            runningMessageID={enabling ? 'common.enabling' : 'common.disabling'}
+            runningMessageID={runningMessageID}
+            successMessageID={successMessageID}
         />
     );
 }
 
-export default DisableEnableProgress;
+export default UpdateEntity;

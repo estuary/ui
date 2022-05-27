@@ -21,9 +21,9 @@ export interface LiveSpecsExtQuery {
     last_pub_user_avatar_url: string;
     last_pub_user_email: string;
     last_pub_user_full_name: string;
-    reads_from: string[];
     spec_type: string;
     updated_at: string;
+    reads_from: string[];
 }
 
 const queryColumns = [
@@ -84,7 +84,9 @@ function MaterializationsTable() {
                     }}
                     columns={tableColumns}
                     query={liveSpecQuery}
-                    renderTableRows={(data) => <Rows data={data} />}
+                    renderTableRows={(data, showEntityStatus) => (
+                        <Rows data={data} showEntityStatus={showEntityStatus} />
+                    )}
                     setPagination={setPagination}
                     setSearchQuery={setSearchQuery}
                     sortDirection={sortDirection}
@@ -93,6 +95,8 @@ function MaterializationsTable() {
                     setColumnToSort={setColumnToSort}
                     header="materializationsTable.title"
                     filterLabel="entityTable.filterLabel"
+                    showEntityStatus={true}
+                    enableSelection
                 />
             </ZustandProvider>
         </Box>
