@@ -177,7 +177,7 @@ const EntityStatus: ResolvedIntlConfig['messages'] = {
 const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.title': `Entity Table`,
 
-    'entityTable.filterLabel': `Filter Namespaces`,
+    'entityTable.filterLabel': `Filter`,
     'entityTable.data.entity': `Name`,
     'entityTable.data.connectorType': `Type`,
     'entityTable.data.lastUpdated': `Last Updated`,

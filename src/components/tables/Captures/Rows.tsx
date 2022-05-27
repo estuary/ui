@@ -17,6 +17,7 @@ import {
 import { useZustandStore } from 'hooks/useZustand';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { CONNECTOR_TITLE } from 'services/supabase';
 import { getPathWithParam } from 'utils/misc-utils';
 
 interface RowsProps {
@@ -39,7 +40,7 @@ export const tableColumns = [
         headerIntlKey: 'entityTable.data.entity',
     },
     {
-        field: 'connector_open_graph->en-US->>title',
+        field: CONNECTOR_TITLE,
         headerIntlKey: 'entityTable.data.connectorType',
     },
     {

@@ -60,7 +60,11 @@ function CapturesTable() {
             filter: (query) => {
                 return defaultTableFilter<LiveSpecsExtQuery>(
                     query,
-                    ['catalog_name'],
+                    [
+                        'catalog_name',
+                        'last_pub_user_full_name',
+                        'connector_open_graph->en-US->>title',
+                    ],
                     searchQuery,
                     columnToSort,
                     sortDirection,
