@@ -83,7 +83,7 @@ const Navigation = ({ open, width, onNavigationToggle }: Props) => {
                         sx={{
                             pt: 1,
                             pb: 0.25,
-                            pl: '5px',
+                            pl: '7px',
                             display: 'flex',
                             flexGrow: 1,
                             alignItems: 'center',
@@ -101,7 +101,7 @@ const Navigation = ({ open, width, onNavigationToggle }: Props) => {
                                     flexShrink: 0,
                                 }}
                             >
-                                <Logo width={24} />
+                                <Logo width={20} />
                             </IconButton>
                         ) : (
                             <Tooltip
@@ -121,13 +121,13 @@ const Navigation = ({ open, width, onNavigationToggle }: Props) => {
                                         flexShrink: 0,
                                     }}
                                 >
-                                    <Logo width={24} />
+                                    <Logo width={20} />
                                 </IconButton>
                             </Tooltip>
                         )}
 
                         <Typography
-                            sx={{ width: 136, ml: '20px', flexShrink: 0 }}
+                            sx={{ width: 136, ml: '22px', flexShrink: 0 }}
                         >
                             <FormattedMessage id="company" />
                         </Typography>
