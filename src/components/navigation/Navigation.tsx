@@ -129,7 +129,7 @@ const Navigation = ({ open, width, onNavigationToggle }: Props) => {
                         <Typography
                             sx={{ width: 136, ml: '20px', flexShrink: 0 }}
                         >
-                            <FormattedMessage id="mainMenu.label" />
+                            <FormattedMessage id="company" />
                         </Typography>
                     </Box>
                     <List
