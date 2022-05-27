@@ -118,7 +118,7 @@ const Navigation: ResolvedIntlConfig['messages'] = {
 };
 
 const Header: ResolvedIntlConfig['messages'] = {
-    'mainMenu.label': `Main Menu`,
+    'mainMenu.tooltip': `Open Main Menu`,
 
     'helpMenu.ariaLabel': `Open Help Menu`,
     'helpMenu.tooltip': `Helpful Links`,
