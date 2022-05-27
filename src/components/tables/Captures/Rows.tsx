@@ -39,7 +39,7 @@ export const tableColumns = [
         headerIntlKey: 'entityTable.data.entity',
     },
     {
-        field: null,
+        field: 'connector_open_graph->en-US->>title',
         headerIntlKey: 'entityTable.data.connectorType',
     },
     {
