@@ -3,56 +3,58 @@ import {
     CONNECTOR_RECOMMENDED,
     TABLES,
 } from 'services/supabase';
-import { CONNECTOR_TYPES, OpenGraph } from 'types';
+import { OpenGraph } from 'types';
 import { useQuery, useSelect } from './supabase-swr/';
 
 export interface ConnectorTagQuery {
-    id: string;
-    connector_id: string;
-    image_tag: string;
-    protocol: CONNECTOR_TYPES;
-    title: string;
-    connectors: {
-        detail: string;
+    connector_tags: {
+        documentation_url: string;
+        protocol: string;
+        image_tag: string;
         image_name: string;
-        image: OpenGraph['image'];
-        recommended: OpenGraph['recommended'];
-        title: OpenGraph['title'];
-    };
-    // !!! FILTERS ONLY !!!
-    [CONNECTOR_RECOMMENDED]: string;
-    [CONNECTOR_NAME]: string;
+        id: string;
+        title: string;
+    }[];
+    id: string;
+    detail: string;
+    updated_at: string;
+    image_name: string;
+    image: OpenGraph['image'];
+    recommended: OpenGraph['image'];
+    title: OpenGraph['title'];
+    // FILTERING TYPES HACK
+    ['connector_tags.protocol']: undefined;
+    [CONNECTOR_NAME]: undefined;
+    [CONNECTOR_RECOMMENDED]: undefined;
 }
 
-export const CONNECTOR_TAG_QUERY = `
+const CONNECTOR_QUERY = `
     id,
-    connector_id,
-    image_tag,
-    protocol,
-    endpoint_spec_schema->>title,
-    connectors(
-        detail,
-        image_name,
-        open_graph->en-US->>image,
-        ${CONNECTOR_RECOMMENDED},
-        ${CONNECTOR_NAME}
+    detail,
+    updated_at,
+    image_name,
+    open_graph->en-US->>image,
+    ${CONNECTOR_RECOMMENDED},
+    ${CONNECTOR_NAME},
+    connector_tags !inner(
+        documentation_url,
+        protocol,
+        image_tag,
+        id,
+        endpoint_spec_schema->>title
     )
 `;
 
 function useConnectorTags(protocol: string | null) {
     const connectorTagsQuery = useQuery<ConnectorTagQuery>(
-        TABLES.CONNECTOR_TAGS,
+        TABLES.CONNECTORS,
         {
-            columns: CONNECTOR_TAG_QUERY,
-            filter: (query) => query.eq('protocol', protocol as string),
-            // .order('open_graph->en-US->>recommended', {
-            //     ascending: true,
-            //     foreignTable: 'connectors',
-            // })
-            // .order(CONNECTOR_NAME, {
-            //     ascending: true,
-            //     foreignTable: 'connectors',
-            // }),
+            columns: CONNECTOR_QUERY,
+            filter: (query) =>
+                query
+                    .eq('connector_tags.protocol', protocol as string)
+                    .order(CONNECTOR_RECOMMENDED)
+                    .order(CONNECTOR_NAME),
         },
         [protocol]
     );

@@ -30,7 +30,7 @@
         "@mui/utils": "^5.6.1",
         "@mui/x-data-grid": "^5.10.0",
         "@supabase/postgrest-js": "^0.37.2",
-        "@supabase/supabase-js": "^1.35.2",
+        "@supabase/supabase-js": "^1.35.3",
         "@supabase/ui": "^0.36.5",
         "ansicolor": "^1.1.100",
         "date-fns": "^2.28.0",

@@ -86,9 +86,9 @@ function DetailsForm({ connectorTags, accessGrants }: Props) {
                 response.push({
                     const: {
                         id: connector.id,
-                        iconPath: connector.connectors.image,
+                        iconPath: connector.image,
                     },
-                    title: connector.connectors.title,
+                    title: connector.title,
                 });
             });
         }

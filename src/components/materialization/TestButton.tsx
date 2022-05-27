@@ -131,10 +131,7 @@ function MaterializeTestButton({
             });
             setDraftId(null);
 
-            const {
-                connectors: { image_name },
-                image_tag,
-            } = connectorInfo;
+            const { image_tag, image_name } = connectorInfo.connector_tags[0];
 
             const draftsResponse = await createEntityDraft(entityName);
             if (draftsResponse.error) {
