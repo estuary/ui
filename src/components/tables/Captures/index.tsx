@@ -9,21 +9,9 @@ import { useQuery } from 'hooks/supabase-swr';
 import { ZustandProvider } from 'hooks/useZustand';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
-import { ENTITY } from 'types';
+import { LiveSpecsExtBaseQuery } from 'types';
 
-export interface LiveSpecsExtQuery {
-    catalog_name: string;
-    connector_image_name: string | null;
-    connector_image_tag: string | null;
-    image: string;
-    title: string;
-    id: string;
-    last_pub_id: string;
-    last_pub_user_avatar_url: string | null;
-    last_pub_user_email: string;
-    last_pub_user_full_name: string | null;
-    spec_type: ENTITY;
-    updated_at: string;
+export interface LiveSpecsExtQuery extends LiveSpecsExtBaseQuery {
     writes_to: string[];
 }
 
@@ -85,12 +73,12 @@ function CapturesTable() {
                     noExistingDataContentIds={{
                         header: 'captures.message1',
                         message: 'captures.message2',
-                        docLink: 'captures.message2.docLink',
-                        docPath: 'captures.message2.docPath',
                     }}
                     columns={tableColumns}
                     query={liveSpecQuery}
-                    renderTableRows={(data) => <Rows data={data} />}
+                    renderTableRows={(data, showEntityStatus) => (
+                        <Rows data={data} showEntityStatus={showEntityStatus} />
+                    )}
                     setPagination={setPagination}
                     setSearchQuery={setSearchQuery}
                     sortDirection={sortDirection}
@@ -104,6 +92,7 @@ function CapturesTable() {
                     rowSelectorProps={{
                         showMaterialize: true,
                     }}
+                    showEntityStatus={true}
                 />
             </ZustandProvider>
         </Box>

@@ -52,8 +52,6 @@ function ConnectorsTable() {
                     noExistingDataContentIds={{
                         header: 'connectors.main.message1',
                         message: 'connectors.main.message2',
-                        docLink: 'connectors.main.message2.docLink',
-                        docPath: 'connectors.main.message2.docPath',
                     }}
                     columns={tableColumns}
                     query={liveSpecQuery}

@@ -25,7 +25,8 @@ export const client = <Response, Request = {}>(
         headersInit['Content-Type'] = 'application/json';
     }
 
-    config.headers = headersInit;
+    // TODO: Revisit this logic. It was intended to be a placeholder for the initial auth gateway wiring.
+    config.headers = customConfig.headers ? customConfig.headers : headersInit;
 
     const fetchPromise = window
         .fetch(endpoint, config)

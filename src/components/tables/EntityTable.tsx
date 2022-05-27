@@ -20,7 +20,7 @@ import {
     Typography,
 } from '@mui/material';
 import { PostgrestError } from '@supabase/supabase-js';
-import ExternalLink from 'components/shared/ExternalLink';
+import MessageWithLink from 'components/content/MessageWithLink';
 import RowSelector, {
     RowSelectorProps,
 } from 'components/tables/RowActions/RowSelector';
@@ -64,7 +64,7 @@ interface Props {
         headerIntlKey: string | null;
     }[];
     query: Query<any>;
-    renderTableRows: (data: any) => ReactNode;
+    renderTableRows: (data: any, showEntityStatus: boolean) => ReactNode;
     setPagination: (data: any) => void;
     setSearchQuery: (data: any) => void;
     sortDirection: SortDirection;
@@ -76,12 +76,13 @@ interface Props {
     filterLabel: string;
     enableSelection?: boolean;
     rowSelectorProps?: RowSelectorProps;
+    tableDescriptionId?: string;
     noExistingDataContentIds: {
         header: string;
         message: string;
-        docLink: string;
-        docPath: string;
+        disableDoclink?: boolean;
     };
+    showEntityStatus?: boolean;
 }
 
 interface TableState {
@@ -117,6 +118,8 @@ function EntityTable({
     filterLabel,
     enableSelection,
     rowSelectorProps,
+    showEntityStatus = false,
+    tableDescriptionId,
 }: Props) {
     const [page, setPage] = useState(0);
     const isFiltering = useRef(false);
@@ -174,22 +177,13 @@ function EntityTable({
                     <FormattedMessage id="entityTable.unmatchedFilter.message" />
                 );
             default: {
-                const { message, docLink, docPath } = noExistingDataContentIds;
+                const { disableDoclink, message } = noExistingDataContentIds;
 
-                return (
-                    <FormattedMessage
-                        id={message}
-                        values={{
-                            docLink: (
-                                <ExternalLink
-                                    link={intl.formatMessage({ id: docPath })}
-                                >
-                                    <FormattedMessage id={docLink} />
-                                </ExternalLink>
-                            ),
-                        }}
-                    />
-                );
+                if (disableDoclink) {
+                    <FormattedMessage id={message} />;
+                }
+
+                return <MessageWithLink messageID={message} />;
             }
         }
     };
@@ -248,6 +242,7 @@ function EntityTable({
                     >
                         <FormattedMessage id={header} />
                     </Typography>
+
                     {headerLink ? (
                         <Link target="_blank" rel="noopener" href={headerLink}>
                             <IconButton size="small">
@@ -256,6 +251,12 @@ function EntityTable({
                         </Link>
                     ) : null}
                 </Stack>
+
+                {tableDescriptionId ? (
+                    <Box>
+                        <MessageWithLink messageID={tableDescriptionId} />
+                    </Box>
+                ) : null}
 
                 <Toolbar
                     disableGutters
@@ -352,8 +353,8 @@ function EntityTable({
                         </TableHead>
 
                         <TableBody>
-                            {selectData && selectData.length > 0 ? (
-                                renderTableRows(selectData)
+                            {selectData ? (
+                                renderTableRows(selectData, showEntityStatus)
                             ) : (
                                 <TableRow>
                                     <TableCell colSpan={columns.length}>

@@ -7,8 +7,11 @@ import {
     Divider,
     IconButton,
     Paper,
+    Stack,
+    Typography,
 } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
+import MessageWithLink from 'components/content/MessageWithLink';
 import KeyValueList, { KeyValue } from 'components/shared/KeyValueList';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -67,12 +70,16 @@ function Error({ error, hideTitle }: ErrorProps) {
                         </AlertTitle>
                     ) : null}
 
-                    <FormattedMessage id="error.message" tagName={Box} />
-
                     <Box>
-                        <FormattedMessage id="error.messageLabel" tagName="b" />{' '}
-                        {error.message}
+                        <MessageWithLink messageID="error.message" />
                     </Box>
+
+                    <Stack direction="row" spacing={1}>
+                        <Typography sx={{ fontWeight: 'bold' }}>
+                            <MessageWithLink messageID="error.messageLabel" />
+                        </Typography>
+                        <Typography>{error.message}</Typography>
+                    </Stack>
 
                     <Divider />
                     <IconButton

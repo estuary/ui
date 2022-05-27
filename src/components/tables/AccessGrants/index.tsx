@@ -50,8 +50,7 @@ function AccessGrantsTable() {
                     noExistingDataContentIds={{
                         header: 'accessGrants.message1',
                         message: 'accessGrants.message2',
-                        docLink: 'accessGrants.message2.docLink',
-                        docPath: 'accessGrants.message2.docPath',
+                        disableDoclink: true,
                     }}
                     columns={tableColumns}
                     query={rolesQuery}
@@ -65,6 +64,7 @@ function AccessGrantsTable() {
                     header="accessGrantsTable.title"
                     headerLink="https://docs.estuary.dev/reference/authentication/"
                     filterLabel="accessGrantsTable.filterLabel"
+                    tableDescriptionId="admin.roles.message"
                 />
             </ZustandProvider>
         </Box>

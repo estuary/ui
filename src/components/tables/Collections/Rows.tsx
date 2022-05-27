@@ -10,10 +10,12 @@ import { useState } from 'react';
 
 interface RowProps {
     row: LiveSpecsExtQuery;
+    showEntityStatus: boolean;
 }
 
 interface RowsProps {
     data: LiveSpecsExtQuery[];
+    showEntityStatus: boolean;
 }
 
 export const tableColumns = [
@@ -35,13 +37,16 @@ export const tableColumns = [
     },
 ];
 
-function Row({ row }: RowProps) {
+function Row({ row, showEntityStatus }: RowProps) {
     const [detailsExpanded, setDetailsExpanded] = useState(false);
 
     return (
         <>
             <TableRow key={`Entity-${row.id}`}>
-                <EntityName name={row.catalog_name} />
+                <EntityName
+                    name={row.catalog_name}
+                    showEntityStatus={showEntityStatus}
+                />
 
                 <TimeStamp time={row.updated_at} />
 
@@ -71,11 +76,15 @@ function Row({ row }: RowProps) {
     );
 }
 
-function Rows({ data }: RowsProps) {
+function Rows({ data, showEntityStatus }: RowsProps) {
     return (
         <>
             {data.map((row) => (
-                <Row row={row} key={row.id} />
+                <Row
+                    row={row}
+                    showEntityStatus={showEntityStatus}
+                    key={row.id}
+                />
             ))}
         </>
     );

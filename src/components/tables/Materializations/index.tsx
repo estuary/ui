@@ -9,21 +9,10 @@ import { useQuery } from 'hooks/supabase-swr';
 import { ZustandProvider } from 'hooks/useZustand';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
+import { LiveSpecsExtBaseQuery } from 'types';
 
-export interface LiveSpecsExtQuery {
-    catalog_name: string;
-    connector_image_name: string;
-    connector_image_tag: string;
-    image: string;
-    title: string;
-    id: string;
-    last_pub_id: string;
-    last_pub_user_avatar_url: string;
-    last_pub_user_email: string;
-    last_pub_user_full_name: string;
+export interface LiveSpecsExtQuery extends LiveSpecsExtBaseQuery {
     reads_from: string[];
-    spec_type: string;
-    updated_at: string;
 }
 
 const queryColumns = [
@@ -84,12 +73,12 @@ function MaterializationsTable() {
                     noExistingDataContentIds={{
                         header: 'materializations.message1',
                         message: 'materializations.message2',
-                        docLink: 'materializations.message2.docLink',
-                        docPath: 'materializations.message2.docPath',
                     }}
                     columns={tableColumns}
                     query={liveSpecQuery}
-                    renderTableRows={(data) => <Rows data={data} />}
+                    renderTableRows={(data, showEntityStatus) => (
+                        <Rows data={data} showEntityStatus={showEntityStatus} />
+                    )}
                     setPagination={setPagination}
                     setSearchQuery={setSearchQuery}
                     sortDirection={sortDirection}
@@ -99,6 +88,7 @@ function MaterializationsTable() {
                     header="materializationsTable.title"
                     headerLink="https://docs.estuary.dev/concepts/#materializations"
                     filterLabel="entityTable.filterLabel"
+                    showEntityStatus={true}
                     enableSelection
                 />
             </ZustandProvider>
