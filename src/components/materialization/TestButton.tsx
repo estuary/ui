@@ -104,7 +104,7 @@ function MaterializeTestButton({
         specHasErrors = specErrors ? specErrors.length > 0 : false;
 
         const connectorInfo = connectorTags.find(
-            ({ id }: { id: any }) => id === imageTag?.id
+            (connector: any) => connector.connector_tags[0].id === imageTag?.id
         );
 
         if (detailHasErrors || specHasErrors) {
@@ -131,7 +131,8 @@ function MaterializeTestButton({
             });
             setDraftId(null);
 
-            const { image_tag, image_name } = connectorInfo.connector_tags[0];
+            const { image_name } = connectorInfo;
+            const { image_tag } = connectorInfo.connector_tags[0];
 
             const draftsResponse = await createEntityDraft(entityName);
             if (draftsResponse.error) {
