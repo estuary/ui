@@ -17,11 +17,11 @@ import {
 import { usePreFetchData } from 'context/PreFetchData';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useInterval } from 'react-use';
 import getShardList from 'services/shard-client';
 import { shardDetailSelectors } from 'stores/ShardDetail';
 import { ENTITY } from 'types';
-import { getStoredGatewayAuthConfig } from 'utils/env-utils';
 
 interface RowsProps {
     data: LiveSpecsExtQuery[];
@@ -141,49 +141,22 @@ function Rows({ data, showEntityStatus }: RowsProps) {
     >(selectableTableStoreSelectors.selected.set);
 
     const shardDetailStore = useRouteStore();
-    const shards = shardDetailStore(shardDetailSelectors.shards);
     const setShards = shardDetailStore(shardDetailSelectors.setShards);
 
     const { session } = Auth.useUser();
     const { grantDetails } = usePreFetchData();
 
-    useEffect(() => {
-        const gatewayConfig = getStoredGatewayAuthConfig();
+    const getShards = () => {
+        console.log('Interval called');
+        if (session) {
+            console.log('  i:1');
 
-        if (gatewayConfig?.gateway_url && gatewayConfig.token && session) {
-            const gatewayUrl = new URL(gatewayConfig.gateway_url);
-
-            getShardList(
-                gatewayUrl,
-                gatewayConfig.token,
-                data,
-                setShards,
-                session.access_token,
-                grantDetails
-            );
+            getShardList(data, setShards, session.access_token, grantDetails);
         }
-    }, [data, setShards, session, grantDetails]);
+    };
 
-    useEffect(() => {
-        const refreshInterval = setInterval(() => {
-            const gatewayConfig = getStoredGatewayAuthConfig();
-
-            if (gatewayConfig?.gateway_url && gatewayConfig.token && session) {
-                const gatewayUrl = new URL(gatewayConfig.gateway_url);
-
-                getShardList(
-                    gatewayUrl,
-                    gatewayConfig.token,
-                    data,
-                    setShards,
-                    session.access_token,
-                    grantDetails
-                );
-            }
-        }, 30000);
-
-        return () => clearInterval(refreshInterval);
-    }, [shards, data, setShards, session, grantDetails]);
+    getShards();
+    useInterval(getShards, 30000);
 
     return (
         <>

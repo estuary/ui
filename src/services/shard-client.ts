@@ -4,6 +4,7 @@ import getGatewayAuthConfig from 'services/gateway-auth-config';
 import { SetShards } from 'stores/ShardDetail';
 import { LiveSpecsExtBaseQuery } from 'types';
 import {
+    getStoredGatewayAuthConfig,
     removeGatewayAuthConfig,
     storeGatewayAuthConfig,
 } from 'utils/env-utils';
@@ -15,50 +16,59 @@ enum ErrorFlags {
 }
 
 const getShardList = <T extends LiveSpecsExtBaseQuery>(
-    baseUrl: URL,
-    authToken: string,
     specs: T[],
     setShards: SetShards,
     sessionKey: string,
     grantDetails: CombinedGrantsExtQuery[]
 ) => {
-    const shardClient = new ShardClient(baseUrl, authToken);
-    const taskSelector = new ShardSelector();
+    console.log('    i:2');
+    const gatewayConfig = getStoredGatewayAuthConfig();
 
-    specs
-        .map((spec) => spec.catalog_name)
-        .forEach((name) => taskSelector.task(name));
+    if (gatewayConfig?.gateway_url && gatewayConfig.token) {
+        const authToken = gatewayConfig.token;
+        const baseUrl = new URL(gatewayConfig.gateway_url);
+        const shardClient = new ShardClient(baseUrl, authToken);
+        const taskSelector = new ShardSelector();
 
-    shardClient
-        .list(taskSelector)
-        .then((result) => {
-            const shards = result.unwrap();
+        specs
+            .map((spec) => spec.catalog_name)
+            .forEach((name) => taskSelector.task(name));
 
-            if (shards.length > 0) {
-                setShards(shards);
-            }
-        })
-        .catch((error: string) => {
-            if (
-                error.includes(ErrorFlags.TOKEN_INVALID) ||
-                error.includes(ErrorFlags.TOKEN_NOT_FOUND) ||
-                error.includes(ErrorFlags.OPERATION_INVALID)
-            ) {
-                removeGatewayAuthConfig();
+        shardClient
+            .list(taskSelector)
+            .then((result) => {
+                console.log('      i:3');
+                const shards = result.unwrap();
 
-                const prefixes: string[] = grantDetails.map(
-                    ({ object_role }) => object_role
-                );
+                if (shards.length > 0) {
+                    setShards(shards);
+                }
+            })
+            .catch((error: string) => {
+                console.log('      i:4');
+                if (
+                    error.includes(ErrorFlags.TOKEN_INVALID) ||
+                    error.includes(ErrorFlags.TOKEN_NOT_FOUND) ||
+                    error.includes(ErrorFlags.OPERATION_INVALID)
+                ) {
+                    removeGatewayAuthConfig();
 
-                getGatewayAuthConfig(prefixes, sessionKey)
-                    .then(([response]) => {
-                        storeGatewayAuthConfig(response);
-                    })
-                    .catch((configError) => Promise.reject(configError));
-            }
+                    const prefixes: string[] = grantDetails.map(
+                        ({ object_role }) => object_role
+                    );
 
-            return Promise.reject(error);
-        });
+                    getGatewayAuthConfig(prefixes, sessionKey)
+                        .then(([response]) => {
+                            storeGatewayAuthConfig(response);
+                        })
+                        .catch((configError) => Promise.reject(configError));
+                }
+
+                return Promise.reject(error);
+            });
+    } else {
+        throw Error('Unable to fetch shards due to missing data');
+    }
 };
 
 export default getShardList;
