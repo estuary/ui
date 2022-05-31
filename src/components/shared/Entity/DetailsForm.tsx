@@ -85,7 +85,7 @@ function DetailsForm({ connectorTags, accessGrants }: Props) {
             connectorTags.forEach((connector) => {
                 response.push({
                     const: {
-                        id: connector.id,
+                        id: connector.connector_tags[0].id,
                         iconPath: connector.image,
                     },
                     title: connector.title,
