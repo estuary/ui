@@ -27,15 +27,17 @@ import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { ShardDetails, shardDetailSelectors } from 'stores/ShardDetail';
+import { ENTITY } from 'types';
 
 interface Props {
     lastPubId: string;
     disableLogs?: boolean;
+    entityType?: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
 }
 
 const NEW_LINE = '\r\n';
 
-function CaptureDetails({ lastPubId, disableLogs }: Props) {
+function CaptureDetails({ lastPubId, disableLogs, entityType }: Props) {
     useBrowserTitle('browserTitle.captureDetails');
     const theme = useTheme();
 
@@ -84,12 +86,12 @@ function CaptureDetails({ lastPubId, disableLogs }: Props) {
         if (specs && specs.length > 0) {
             setShardDetails(
                 getShardDetails(
-                    specs.find(({ spec_type }) => spec_type === 'capture')
+                    specs.find(({ spec_type }) => spec_type === entityType)
                         ?.catalog_name
                 )
             );
         }
-    }, [specs, getShardDetails, setShardDetails]);
+    }, [specs, getShardDetails, setShardDetails, entityType]);
 
     const handlers = {
         mount: (editor: monacoEditor.editor.IStandaloneCodeEditor) => {

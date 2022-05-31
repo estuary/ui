@@ -2,6 +2,7 @@ import { Collapse, TableCell, TableRow } from '@mui/material';
 import CaptureDetails from 'components/capture/Details';
 import { createEditorStore } from 'components/editor/Store';
 import { ZustandProvider } from 'hooks/useZustand';
+import { ENTITY } from 'types';
 
 interface Props {
     detailsExpanded: boolean;
@@ -9,6 +10,7 @@ interface Props {
     storeName?: string;
     colSpan: number;
     disableLogs?: boolean;
+    entityType?: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
 }
 
 function DetailsPanel({
@@ -17,6 +19,7 @@ function DetailsPanel({
     storeName = 'liveSpecEditor',
     colSpan,
     disableLogs,
+    entityType,
 }: Props) {
     return (
         <TableRow>
@@ -32,6 +35,7 @@ function DetailsPanel({
                         <CaptureDetails
                             lastPubId={id}
                             disableLogs={disableLogs}
+                            entityType={entityType}
                         />
                     </ZustandProvider>
                 </Collapse>
