@@ -140,19 +140,6 @@ export const getInitialState = (
                     spec.id ? spec.id.includes(catalogNamespace) : undefined
                 );
 
-                const testError = selectedShard?.status.find(
-                    ({ code }) => code === 'FAILED'
-                )?.errors;
-
-                testError?.forEach((err) => {
-                    const [message, json] = err.split('{');
-
-                    console.log('MESSAGE');
-                    console.log(message);
-                    console.log('JSON');
-                    console.log(json);
-                });
-
                 const shardDetails: ShardDetails = selectedShard
                     ? {
                           id: selectedShard.spec.id,
