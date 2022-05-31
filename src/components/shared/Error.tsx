@@ -76,7 +76,7 @@ function Error({ error, hideTitle }: ErrorProps) {
 
                     <Stack direction="row" spacing={1}>
                         <Typography sx={{ fontWeight: 'bold' }}>
-                            <MessageWithLink messageID="error.messageLabel" />
+                            <FormattedMessage id="error.messageLabel" />
                         </Typography>
                         <Typography>{error.message}</Typography>
                     </Stack>

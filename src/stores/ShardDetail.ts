@@ -16,6 +16,11 @@ export interface ShardStatusIndicator {
     color: string;
 }
 
+export interface ShardDetails {
+    id: string | undefined;
+    errors: string[] | undefined;
+}
+
 export interface ShardDetailStore {
     shards: Shard[];
     setShards: SetShards;
@@ -23,6 +28,7 @@ export interface ShardDetailStore {
     getShardStatusIndicators: (
         catalogNamespace: string
     ) => ShardStatusIndicator[];
+    getShardDetails: (catalogNamespace: string) => ShardDetails | null;
 }
 
 const defaultStatusColor = slate[25];
@@ -126,6 +132,28 @@ export const getInitialState = (
                 return [defaultStatusIndicator];
             }
         },
+        getShardDetails: (catalogNamespace) => {
+            const { shards } = get();
+
+            if (shards.length > 0) {
+                const selectedShard = shards.find(({ spec }) =>
+                    spec.id ? spec.id.includes(catalogNamespace) : undefined
+                );
+
+                const shardDetails: ShardDetails | null = selectedShard
+                    ? {
+                          id: selectedShard.spec.id,
+                          errors: selectedShard.status.find(
+                              ({ code }) => code === 'FAILED'
+                          )?.errors,
+                      }
+                    : null;
+
+                return shardDetails;
+            } else {
+                return null;
+            }
+        },
     };
 };
 
@@ -135,4 +163,5 @@ export const shardDetailSelectors = {
     getShardStatusColor: (state: ShardDetailStore) => state.getShardStatusColor,
     getShardStatusIndicators: (state: ShardDetailStore) =>
         state.getShardStatusIndicators,
+    getShardDetails: (state: ShardDetailStore) => state.getShardDetails,
 };

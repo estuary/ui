@@ -23,6 +23,7 @@ import { useNavigate } from 'react-router-dom';
 import getShardList from 'services/shard-client';
 import { CONNECTOR_TITLE } from 'services/supabase';
 import { shardDetailSelectors } from 'stores/ShardDetail';
+import { ENTITY } from 'types';
 import { getStoredGatewayAuthConfig } from 'utils/env-utils';
 import { getPathWithParam } from 'utils/misc-utils';
 
@@ -137,6 +138,7 @@ function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
                 detailsExpanded={detailsExpanded}
                 id={row.last_pub_id}
                 colSpan={tableColumns.length}
+                entityType={ENTITY.CAPTURE}
             />
         </>
     );

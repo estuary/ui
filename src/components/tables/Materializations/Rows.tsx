@@ -20,6 +20,7 @@ import { useZustandStore } from 'hooks/useZustand';
 import { useEffect, useState } from 'react';
 import getShardList from 'services/shard-client';
 import { shardDetailSelectors } from 'stores/ShardDetail';
+import { ENTITY } from 'types';
 import { getStoredGatewayAuthConfig } from 'utils/env-utils';
 
 interface RowsProps {
@@ -122,6 +123,7 @@ function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
                 detailsExpanded={detailsExpanded}
                 id={row.last_pub_id}
                 colSpan={tableColumns.length}
+                entityType={ENTITY.MATERIALIZATION}
             />
         </>
     );
