@@ -16,6 +16,11 @@ export interface ShardStatusIndicator {
     color: string;
 }
 
+export interface ShardDetails {
+    id: string | undefined;
+    errors: string[] | undefined;
+}
+
 export interface ShardDetailStore {
     shards: Shard[];
     setShards: SetShards;
@@ -23,6 +28,7 @@ export interface ShardDetailStore {
     getShardStatusIndicators: (
         catalogNamespace: string
     ) => ShardStatusIndicator[];
+    getShardDetails: (catalogNamespace: string) => ShardDetails;
 }
 
 const defaultStatusColor = slate[25];
@@ -126,6 +132,41 @@ export const getInitialState = (
                 return [defaultStatusIndicator];
             }
         },
+        getShardDetails: (catalogNamespace) => {
+            const { shards } = get();
+
+            if (shards.length > 0) {
+                const selectedShard = shards.find(({ spec }) =>
+                    spec.id ? spec.id.includes(catalogNamespace) : undefined
+                );
+
+                const testError = selectedShard?.status.find(
+                    ({ code }) => code === 'FAILED'
+                )?.errors;
+
+                testError?.forEach((err) => {
+                    const [message, json] = err.split('{');
+
+                    console.log('MESSAGE');
+                    console.log(message);
+                    console.log('JSON');
+                    console.log(json);
+                });
+
+                const shardDetails: ShardDetails = selectedShard
+                    ? {
+                          id: selectedShard.spec.id,
+                          errors: selectedShard.status.find(
+                              ({ code }) => code === 'FAILED'
+                          )?.errors,
+                      }
+                    : { id: '', errors: [] };
+
+                return shardDetails;
+            } else {
+                return { id: '', errors: [] };
+            }
+        },
     };
 };
 
@@ -135,4 +176,5 @@ export const shardDetailSelectors = {
     getShardStatusColor: (state: ShardDetailStore) => state.getShardStatusColor,
     getShardStatusIndicators: (state: ShardDetailStore) =>
         state.getShardStatusIndicators,
+    getShardDetails: (state: ShardDetailStore) => state.getShardDetails,
 };
