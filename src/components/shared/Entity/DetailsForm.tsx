@@ -86,6 +86,7 @@ function DetailsForm({ connectorTags, accessGrants }: Props) {
                 response.push({
                     const: {
                         id: connector.connector_tags[0].id,
+                        imagePath: `${connector.image_name}${connector.connector_tags[0].image_tag}`,
                         iconPath: connector.image,
                     },
                     title: connector.title,
