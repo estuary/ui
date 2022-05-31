@@ -28,7 +28,7 @@ export interface ShardDetailStore {
     getShardStatusIndicators: (
         catalogNamespace: string
     ) => ShardStatusIndicator[];
-    getShardDetails: (catalogNamespace: string) => ShardDetails;
+    getShardDetails: (catalogNamespace: string) => ShardDetails | null;
 }
 
 const defaultStatusColor = slate[25];
@@ -140,18 +140,18 @@ export const getInitialState = (
                     spec.id ? spec.id.includes(catalogNamespace) : undefined
                 );
 
-                const shardDetails: ShardDetails = selectedShard
+                const shardDetails: ShardDetails | null = selectedShard
                     ? {
                           id: selectedShard.spec.id,
                           errors: selectedShard.status.find(
                               ({ code }) => code === 'FAILED'
                           )?.errors,
                       }
-                    : { id: '', errors: [] };
+                    : null;
 
                 return shardDetails;
             } else {
-                return { id: '', errors: [] };
+                return null;
             }
         },
     };
