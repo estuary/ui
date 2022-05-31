@@ -173,7 +173,7 @@ function CaptureDetails({ lastPubId, disableLogs, entityType }: Props) {
                                 <span
                                     style={{ marginRight: 8, fontWeight: 500 }}
                                 >
-                                    <FormattedMessage id="captureDetails.shardDetails.title" />
+                                    <FormattedMessage id="captureDetails.shardDetails.id.label" />
                                 </span>
 
                                 <span>{shardDetails.id}</span>
