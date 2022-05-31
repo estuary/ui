@@ -1,5 +1,4 @@
 import { TableRow } from '@mui/material';
-import { Auth } from '@supabase/ui';
 import Actions from 'components/tables/cells/Actions';
 import ChipList from 'components/tables/cells/ChipList';
 import Connector from 'components/tables/cells/Connector';
@@ -14,12 +13,10 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
-import { usePreFetchData } from 'context/PreFetchData';
 import { useRouteStore } from 'hooks/useRouteStore';
+import useShardsList from 'hooks/useShardsList';
 import { useZustandStore } from 'hooks/useZustand';
-import { useState } from 'react';
-import { useInterval } from 'react-use';
-import getShardList from 'services/shard-client';
+import { useEffect, useState } from 'react';
 import { shardDetailSelectors } from 'stores/ShardDetail';
 import { ENTITY } from 'types';
 
@@ -143,20 +140,13 @@ function Rows({ data, showEntityStatus }: RowsProps) {
     const shardDetailStore = useRouteStore();
     const setShards = shardDetailStore(shardDetailSelectors.setShards);
 
-    const { session } = Auth.useUser();
-    const { grantDetails } = usePreFetchData();
+    const { data: shardsData } = useShardsList(data);
 
-    const getShards = () => {
-        console.log('Interval called');
-        if (session) {
-            console.log('  i:1');
-
-            getShardList(data, setShards, session.access_token, grantDetails);
+    useEffect(() => {
+        if (shardsData && shardsData.shards.length > 0) {
+            setShards(shardsData.shards);
         }
-    };
-
-    getShards();
-    useInterval(getShards, 30000);
+    }, [setShards, shardsData]);
 
     return (
         <>
