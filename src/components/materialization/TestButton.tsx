@@ -2,6 +2,7 @@ import { Button, SxProps, Theme } from '@mui/material';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec, generateDraftSpec } from 'api/draftSpecs';
 import { createPublication } from 'api/publications';
+import { encryptConfig } from 'api/sops';
 import { EditorStoreState } from 'components/editor/Store';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
@@ -68,9 +69,9 @@ function MaterializeTestButton({
     const endpointConfig = entityCreateStore(
         entityCreateStoreSelectors.endpointConfig.data
     );
-    // const endpointSchema = entityCreateStore(
-    //     entityCreateStoreSelectors.endpointSchema
-    // );
+    const endpointSchema = entityCreateStore(
+        entityCreateStoreSelectors.endpointSchema
+    );
     const [detailErrors, specErrors] = entityCreateStore(
         entityCreateStoreSelectors.errors
     );
@@ -128,22 +129,22 @@ function MaterializeTestButton({
                 });
             }
 
-            // const encryptedEndpointConfig = await encryptConfig(
-            //     endpointSchema,
-            //     endpointConfig
-            // );
-            // if (encryptedEndpointConfig.error) {
-            //     return onFailure({
-            //         error: {
-            //             title: 'captureCreate.test.failedConfigEncryptTitle',
-            //             error: encryptedEndpointConfig.error,
-            //         },
-            //     });
-            // }
+            const encryptedEndpointConfig = await encryptConfig(
+                endpointSchema,
+                endpointConfig
+            );
+            if (encryptedEndpointConfig.error) {
+                return onFailure({
+                    error: {
+                        title: 'captureCreate.test.failedConfigEncryptTitle',
+                        error: encryptedEndpointConfig.error,
+                    },
+                });
+            }
 
             const newDraftId = draftsResponse.data[0].id;
             const draftSpec = generateDraftSpec(
-                endpointConfig, //encryptedEndpointConfig.data,
+                encryptedEndpointConfig.data,
                 imageTag.imagePath,
                 resourceConfig
             );
