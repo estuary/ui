@@ -7,7 +7,7 @@ import {
     getStoredGatewayAuthConfig,
     removeGatewayAuthConfig,
     storeGatewayAuthConfig,
-} from 'utils/env-utils';
+} from 'utils/localStorage-utils';
 
 enum ErrorFlags {
     TOKEN_NOT_FOUND = 'Unauthenticated',
