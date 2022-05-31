@@ -1,14 +1,15 @@
 import { Box, Button, TableCell, TableRow } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
 import ConnectorName from 'components/ConnectorName';
-import { Connector } from 'components/tables/Connectors';
 import Link from 'components/tables/Link';
+import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
 import { FormattedDate, FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
+import { CONNECTOR_NAME } from 'services/supabase';
 import { getPathWithParam } from 'utils/misc-utils';
 
 interface Props {
-    data: Connector[];
+    data: ConnectorWithTagDetailQuery[];
 }
 const columnStyling = {
     minWidth: '10%',
@@ -17,7 +18,7 @@ const columnStyling = {
 
 export const tableColumns = [
     {
-        field: null,
+        field: CONNECTOR_NAME,
         headerIntlKey: 'connectorTable.data.title',
     },
     {
@@ -36,10 +37,6 @@ export const tableColumns = [
         field: null,
         headerIntlKey: 'connectorTable.data.documentation_url',
     },
-    {
-        field: null,
-        headerIntlKey: 'connectorTable.data.actions',
-    },
 ];
 
 function Rows({ data }: Props) {
@@ -53,30 +50,14 @@ function Rows({ data }: Props) {
                         <TableCell align="left" style={columnStyling}>
                             <ConnectorName
                                 iconSize={40}
-                                connector={row.open_graph}
+                                connector={row.title}
+                                iconPath={row.image}
                             />
                         </TableCell>
                         <TableCell style={columnStyling}>
                             {row.image_name}
                         </TableCell>
                         <TableCell style={columnStyling}>
-                            {row.connector_tags[0].protocol}
-                        </TableCell>
-                        <TableCell style={columnStyling}>
-                            <FormattedDate
-                                day="numeric"
-                                month="long"
-                                year="numeric"
-                                value={row.updated_at}
-                            />
-                        </TableCell>
-                        <TableCell style={columnStyling}>
-                            <Link
-                                path={row.connector_tags[0].documentation_url}
-                                messageId="captureCreate.config.source.doclink"
-                            />
-                        </TableCell>
-                        <TableCell>
                             <Box
                                 sx={{
                                     display: 'flex',
@@ -130,6 +111,20 @@ function Rows({ data }: Props) {
                                     )}
                                 </Button>
                             </Box>
+                        </TableCell>
+                        <TableCell style={columnStyling}>
+                            <FormattedDate
+                                day="numeric"
+                                month="long"
+                                year="numeric"
+                                value={row.updated_at}
+                            />
+                        </TableCell>
+                        <TableCell style={columnStyling}>
+                            <Link
+                                path={row.connector_tags[0].documentation_url}
+                                messageId="captureCreate.config.source.doclink"
+                            />
                         </TableCell>
                     </TableRow>
                 ) : null;

@@ -10,11 +10,6 @@ export const stripPathing = (stringVal: string) => {
     );
 };
 
-// TODO (i18n) should support trying to grab correct locale
-export const getConnectorName = (connectorObject: OpenGraph) => {
-    return connectorObject['en-US'].title;
-};
-
 export const getConnectorIcon = (connectorObject: OpenGraph) => {
     return connectorObject['en-US'].image;
 };

@@ -21,6 +21,7 @@ import { useZustandStore } from 'hooks/useZustand';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import getShardList from 'services/shard-client';
+import { CONNECTOR_TITLE } from 'services/supabase';
 import { shardDetailSelectors } from 'stores/ShardDetail';
 import { getStoredGatewayAuthConfig } from 'utils/env-utils';
 import { getPathWithParam } from 'utils/misc-utils';
@@ -47,7 +48,7 @@ export const tableColumns = [
         headerIntlKey: 'entityTable.data.entity',
     },
     {
-        field: null,
+        field: CONNECTOR_TITLE,
         headerIntlKey: 'entityTable.data.connectorType',
     },
     {
@@ -107,7 +108,8 @@ function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
                 />
 
                 <Connector
-                    openGraph={row.connector_open_graph}
+                    connectorImage={row.image}
+                    connectorName={row.title}
                     imageTag={`${row.connector_image_name}${row.connector_image_tag}`}
                 />
 

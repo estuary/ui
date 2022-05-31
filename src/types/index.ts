@@ -36,10 +36,9 @@ export interface BaseComponentProps {
 }
 
 export interface OpenGraph {
-    'en-US': {
-        image: string;
-        title: string;
-    };
+    image: string;
+    recommended: boolean | null;
+    title: string;
 }
 
 export interface JobStatus {
@@ -58,19 +57,25 @@ export interface LiveSpecsExtBaseQuery {
     catalog_name: string;
     connector_image_name: string | null;
     connector_image_tag: string | null;
-    connector_open_graph: OpenGraph;
+    image: string;
+    title: string;
     id: string;
     last_pub_id: string;
     last_pub_user_avatar_url: string | null;
     last_pub_user_email: string;
     last_pub_user_full_name: string | null;
-    spec_type: string;
+    spec_type: ENTITY;
     updated_at: string;
 }
 
 export interface GatewayAuthTokenResponse {
     gateway_url: URL;
     token: string;
+}
+
+export enum CONNECTOR_TYPES {
+    CAPTURE = 'capture',
+    MATERIALIZATION = 'materialization',
 }
 
 export enum ENTITY {

@@ -9,20 +9,9 @@ import { useQuery } from 'hooks/supabase-swr';
 import { ZustandProvider } from 'hooks/useZustand';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
-import { ENTITY, OpenGraph } from 'types';
+import { LiveSpecsExtBaseQuery } from 'types';
 
-export interface LiveSpecsExtQuery {
-    catalog_name: string;
-    connector_image_name: string | null;
-    connector_image_tag: string | null;
-    connector_open_graph: OpenGraph;
-    id: string;
-    last_pub_id: string;
-    last_pub_user_avatar_url: string | null;
-    last_pub_user_email: string;
-    last_pub_user_full_name: string | null;
-    spec_type: ENTITY;
-    updated_at: string;
+export interface LiveSpecsExtQuery extends LiveSpecsExtBaseQuery {
     writes_to: string[];
 }
 
@@ -30,7 +19,8 @@ const queryColumns = [
     'catalog_name',
     'connector_image_name',
     'connector_image_tag',
-    'connector_open_graph',
+    'connector_open_graph->en-US->>image',
+    'connector_open_graph->en-US->>title',
     'id',
     'last_pub_id',
     'last_pub_user_avatar_url',
@@ -58,7 +48,11 @@ function CapturesTable() {
             filter: (query) => {
                 return defaultTableFilter<LiveSpecsExtQuery>(
                     query,
-                    ['catalog_name'],
+                    [
+                        'catalog_name',
+                        'last_pub_user_full_name',
+                        'connector_open_graph->en-US->>title',
+                    ],
                     searchQuery,
                     columnToSort,
                     sortDirection,
@@ -92,6 +86,7 @@ function CapturesTable() {
                     columnToSort={columnToSort}
                     setColumnToSort={setColumnToSort}
                     header="captureTable.header"
+                    headerLink="https://docs.estuary.dev/concepts/#captures"
                     filterLabel="entityTable.filterLabel"
                     enableSelection
                     rowSelectorProps={{

@@ -44,7 +44,7 @@ export const tableColumns = [
         headerIntlKey: 'entityTable.data.entity',
     },
     {
-        field: null,
+        field: 'connector_open_graph->en-US->>title',
         headerIntlKey: 'data.type',
     },
     {
@@ -93,7 +93,8 @@ function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
                 />
 
                 <Connector
-                    openGraph={row.connector_open_graph}
+                    connectorImage={row.image}
+                    connectorName={row.title}
                     imageTag={`${row.connector_image_name}${row.connector_image_tag}`}
                 />
 

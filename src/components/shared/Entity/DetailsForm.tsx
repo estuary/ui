@@ -5,7 +5,7 @@ import { routeDetails } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
 import { CATALOG_NAME_SCOPE } from 'forms/renderers/CatalogName';
 import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
-import { ConnectorTagQuery } from 'hooks/useConnectorTags';
+import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
@@ -19,10 +19,9 @@ import {
 } from 'services/jsonforms';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 import { Grants } from 'types';
-import { getConnectorName } from 'utils/misc-utils';
 
 interface Props {
-    connectorTags: ConnectorTagQuery[];
+    connectorTags: ConnectorWithTagDetailQuery[];
     accessGrants: Grants[];
 }
 
@@ -87,10 +86,9 @@ function DetailsForm({ connectorTags, accessGrants }: Props) {
                 response.push({
                     const: {
                         id: connector.id,
-                        iconPath:
-                            connector.connectors.open_graph['en-US'].image,
+                        iconPath: connector.image,
                     },
-                    title: getConnectorName(connector.connectors.open_graph),
+                    title: connector.title,
                 });
             });
         }

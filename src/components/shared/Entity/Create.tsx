@@ -14,7 +14,7 @@ import { useClient } from 'hooks/supabase-swr';
 import { usePrompt } from 'hooks/useBlocker';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
-import useConnectorTags from 'hooks/useConnectorTags';
+import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
@@ -52,7 +52,7 @@ function EntityCreate({
     });
 
     const { connectorTags, error: connectorTagsError } =
-        useConnectorTags(connectorType); //'capture'
+        useConnectorWithTagDetail(connectorType); //'capture'
     const hasConnectors = connectorTags.length > 0;
 
     const entityCreateStore = useRouteStore();

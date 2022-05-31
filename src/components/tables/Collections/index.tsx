@@ -36,7 +36,7 @@ function CollectionsTable() {
             filter: (query) => {
                 return defaultTableFilter<LiveSpecsQuery>(
                     query,
-                    ['catalog_name'],
+                    ['catalog_name', 'last_pub_user_full_name'],
                     searchQuery,
                     columnToSort,
                     sortDirection,
@@ -70,6 +70,7 @@ function CollectionsTable() {
                     columnToSort={columnToSort}
                     setColumnToSort={setColumnToSort}
                     header="collectionsTable.title"
+                    headerLink="https://docs.estuary.dev/concepts/#collections"
                     filterLabel="entityTable.filterLabel"
                 />
             </ZustandProvider>

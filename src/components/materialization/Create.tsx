@@ -9,7 +9,7 @@ import LogDialogActions from 'components/shared/Entity/LogDialogActions';
 import PageContainer from 'components/shared/PageContainer';
 import { useClient } from 'hooks/supabase-swr';
 import { usePrompt } from 'hooks/useBlocker';
-import useConnectorTags from 'hooks/useConnectorTags';
+import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
@@ -27,7 +27,7 @@ function MaterializationCreate() {
 
     // Supabase
     const supabaseClient = useClient();
-    const { connectorTags } = useConnectorTags(connectorType);
+    const { connectorTags } = useConnectorWithTagDetail(connectorType);
     const hasConnectors = connectorTags.length > 0;
 
     const entityCreateStore = useRouteStore();
