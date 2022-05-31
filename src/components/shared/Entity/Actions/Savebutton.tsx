@@ -62,13 +62,16 @@ function EntityCreateSaveButton({ disabled, formId, onFailure }: Props) {
     const messagePrefix = useEntityCreateStore(
         entityCreateStoreSelectors.messagePrefix
     );
+    const logToken = useEntityCreateStore(
+        entityCreateStoreSelectors.formState.logToken
+    );
 
     const waitForPublishToFinish = () => {
         console.log('wait for finish');
         resetFormState(FormStatus.SAVING);
         return startSubscription(
             supabaseClient.from(
-                `${TABLES.PUBLICATIONS}:draft_id=eq.${draftId}`
+                `${TABLES.PUBLICATIONS}:draft_id=eq.${draftId},logs_token=eq.${logToken}`
             ),
             (payload: any) => {
                 setPubId(payload.id);
