@@ -11,13 +11,13 @@ interface Props {
 
 function EndpointConfigHeader({ docsPath }: Props) {
     const entityCreateStore = useRouteStore();
-    const configErrors = entityCreateStore(
-        entityCreateStoreSelectors.endpointConfig.errors
+    const endpointConfigHasErrors = entityCreateStore(
+        entityCreateStoreSelectors.endpointConfig.hasErrors
     );
 
     return (
         <>
-            {configErrors.length > 0 ? (
+            {endpointConfigHasErrors ? (
                 <ErrorOutlineIcon color="error" sx={{ pr: 1 }} />
             ) : null}
 

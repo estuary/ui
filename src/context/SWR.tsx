@@ -100,7 +100,8 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
                             logoutRoutes.path,
                             logoutRoutes.params.reason,
                             LogoutReasons.JWT
-                        )
+                        ),
+                        { replace: true }
                     );
                 })
                 .catch(() => {});

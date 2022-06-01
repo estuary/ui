@@ -1,13 +1,15 @@
-import { Alert, Box, Snackbar, Typography } from '@mui/material';
+import { Box, Divider, Stack, Typography } from '@mui/material';
 import { Auth } from '@supabase/ui';
 import { logoutRoutes } from 'app/Unauthenticated';
 import FullPageDialog from 'components/fullPage/Dialog';
+import LoginNotifications from 'components/login/Notifications';
+import OIDCs from 'components/login/OIDCs';
 import ExternalLink from 'components/shared/ExternalLink';
 import { useClient } from 'hooks/supabase-swr';
 import useBrowserTitle from 'hooks/useBrowserTitle';
+import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
-import useConstant from 'use-constant';
 import { getLoginSettings, getUrls } from 'utils/env-utils';
 
 export enum LogoutReasons {
@@ -21,47 +23,48 @@ const Login = () => {
     const [searchParams] = useSearchParams();
     const reason = searchParams.get(logoutRoutes.params.reason);
 
-    const redirectTo = useConstant(
-        () => `${window.location.origin}` // `${window.location.origin}${routeDetails.registration.path}`
-    );
     const supabaseClient = useClient();
     const loginSettings = getLoginSettings();
 
+    // TODO (notification manager) We should realy make a stand alone component to handle all possible notifications
+    const [notificationMessage, setNotificationMessage] = useState<
+        string | undefined
+    >(reason === LogoutReasons.JWT ? 'login.jwtExpired' : undefined);
+
     return (
         <>
-            <Snackbar
-                open={reason === LogoutReasons.JWT}
-                anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'center',
-                }}
-                autoHideDuration={10000}
-            >
-                <Alert severity="error">
-                    Your JWT Token expired. Please login again.
-                </Alert>
-            </Snackbar>
+            <LoginNotifications notificationMessage={notificationMessage} />
             <FullPageDialog>
                 <Box>
-                    <Typography align="center" sx={{ mb: 5 }}>
+                    <Typography align="center" sx={{ mb: 4 }}>
                         <FormattedMessage id="login.oidc.message" />
                     </Typography>
 
-                    <Box>
-                        <Auth
-                            providers={['google']}
-                            supabaseClient={supabaseClient}
-                            socialColors={true}
-                            onlyThirdPartyProviders={!loginSettings.showEmail}
-                            redirectTo={redirectTo}
-                            style={{
-                                minWidth: 310,
-                                padding: 12,
-                                backgroundColor: '#FFFFFF',
-                                borderRadius: 10,
-                            }}
-                        />
-                    </Box>
+                    <Stack direction="column" spacing={2}>
+                        <Box>
+                            <OIDCs onError={setNotificationMessage} />
+                        </Box>
+
+                        <Divider flexItem>
+                            <FormattedMessage id="login.separator" />
+                        </Divider>
+
+                        <Box>
+                            <Auth
+                                providers={[]}
+                                supabaseClient={supabaseClient}
+                                onlyThirdPartyProviders={
+                                    !loginSettings.showEmail
+                                }
+                                style={{
+                                    minWidth: 310,
+                                    padding: 12,
+                                    backgroundColor: '#FFFFFF',
+                                    borderRadius: 10,
+                                }}
+                            />
+                        </Box>
+                    </Stack>
 
                     <Typography align="center" sx={{ mt: 4 }}>
                         <FormattedMessage

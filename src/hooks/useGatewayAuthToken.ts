@@ -6,10 +6,12 @@ import useSWR from 'swr';
 import { GatewayAuthTokenResponse } from 'types';
 import {
     getGatewayAuthTokenSettings,
-    getStoredGatewayAuthConfig,
     getSupabaseAnonymousKey,
-    storeGatewayAuthConfig,
 } from 'utils/env-utils';
+import {
+    getStoredGatewayAuthConfig,
+    storeGatewayAuthConfig,
+} from 'utils/localStorage-utils';
 
 interface CombinedGrantsExtQuery {
     id: string;

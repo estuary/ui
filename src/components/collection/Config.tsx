@@ -1,5 +1,4 @@
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import { Grid } from '@mui/material';
 import { routeDetails } from 'app/Authenticated';
 import ExpandableResourceConfig from 'components/collection/ExpandableResourceConfig';
 import CollectionSelector from 'components/collection/Selector';
@@ -29,8 +28,8 @@ function CollectionConfig() {
         routeDetails.materializations.create.params.specID
     );
 
-    const getErrors = entityCreateStore(
-        entityCreateStoreSelectors.resourceConfig.getErrors
+    const resourceConfigHasErrors = entityCreateStore(
+        entityCreateStoreSelectors.resourceConfig.hasErrors
     );
 
     const { liveSpecs } = useLiveSpecsExtWithOutSpec(specID, ENTITY.CAPTURE);
@@ -46,8 +45,7 @@ function CollectionConfig() {
             <WrapperWithHeader
                 header={
                     <>
-                        {' '}
-                        {getErrors().length > 0 ? (
+                        {resourceConfigHasErrors ? (
                             <ErrorOutlineIcon color="error" sx={{ pr: 1 }} />
                         ) : null}
                         <FormattedMessage id="materializationCreate.collections.heading" />
@@ -56,29 +54,15 @@ function CollectionConfig() {
             >
                 <>
                     <CollectionSelector />
-                    <Grid
-                        container
-                        spacing={1}
-                        columns={{ xs: 4, sm: 8, md: 12, lg: 12 }}
-                    >
-                        {collections.map((collection: any, index: number) => {
-                            return (
-                                <Grid
-                                    item
-                                    key={`CollectionResourceConfig-${index}`}
-                                    xs={4}
-                                    sm={4}
-                                    md={4}
-                                    lg={3}
-                                >
-                                    <ExpandableResourceConfig
-                                        collectionName={collection}
-                                        id={imageTag.id}
-                                    />
-                                </Grid>
-                            );
-                        })}
-                    </Grid>
+                    {collections.map((collection: any, index: number) => {
+                        return (
+                            <ExpandableResourceConfig
+                                collectionName={collection}
+                                id={imageTag.id}
+                                key={`CollectionResourceConfig-${index}`}
+                            />
+                        );
+                    })}
                 </>
             </WrapperWithHeader>
         );

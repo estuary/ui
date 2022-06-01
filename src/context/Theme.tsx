@@ -56,8 +56,8 @@ const tonalOffset = 0.1;
 const xl = 1800;
 const lg = 1200;
 const md = 900;
-const sm = 600;
-const xs = 500;
+const sm = 650;
+const xs = 0;
 
 // Color Palettes
 // TODO: Balance the light mode color palette.
@@ -158,6 +158,13 @@ const themeSettings = createTheme({
         },
     },
     components: {
+        MuiCssBaseline: {
+            styleOverrides: {
+                body: {
+                    minWidth: sm,
+                },
+            },
+        },
         MuiAppBar: {
             ...baseBackground,
         },

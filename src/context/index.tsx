@@ -1,4 +1,3 @@
-import ConfirmationModalContextProvider from 'context/Confirmation';
 import SwrConfigProvider from 'context/SWR';
 import { BaseComponentProps } from 'types';
 import ClientProvider from './Client';
@@ -14,11 +13,7 @@ const AppProviders = ({ children }: BaseComponentProps) => {
                 <AppRouter>
                     <SwrConfigProvider>
                         <UserProvider>
-                            <ThemeProvider>
-                                <ConfirmationModalContextProvider>
-                                    {children}
-                                </ConfirmationModalContextProvider>
-                            </ThemeProvider>
+                            <ThemeProvider>{children}</ThemeProvider>
                         </UserProvider>
                     </SwrConfigProvider>
                 </AppRouter>

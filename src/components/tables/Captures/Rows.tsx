@@ -1,5 +1,4 @@
 import { TableRow } from '@mui/material';
-import { Auth } from '@supabase/ui';
 import { routeDetails } from 'app/Authenticated';
 import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import Actions from 'components/tables/cells/Actions';
@@ -15,16 +14,14 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
-import { usePreFetchData } from 'context/PreFetchData';
 import { useRouteStore } from 'hooks/useRouteStore';
+import useShardsList from 'hooks/useShardsList';
 import { useZustandStore } from 'hooks/useZustand';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import getShardList from 'services/shard-client';
 import { CONNECTOR_TITLE } from 'services/supabase';
 import { shardDetailSelectors } from 'stores/ShardDetail';
 import { ENTITY } from 'types';
-import { getStoredGatewayAuthConfig } from 'utils/env-utils';
 import { getPathWithParam } from 'utils/misc-utils';
 
 interface RowsProps {
@@ -156,49 +153,15 @@ function Rows({ data, showEntityStatus }: RowsProps) {
     >(selectableTableStoreSelectors.selected.set);
 
     const shardDetailStore = useRouteStore();
-    const shards = shardDetailStore(shardDetailSelectors.shards);
     const setShards = shardDetailStore(shardDetailSelectors.setShards);
 
-    const { session } = Auth.useUser();
-    const { grantDetails } = usePreFetchData();
+    const { data: shardsData } = useShardsList(data);
 
     useEffect(() => {
-        const gatewayConfig = getStoredGatewayAuthConfig();
-
-        if (gatewayConfig?.gateway_url && gatewayConfig.token && session) {
-            const gatewayUrl = new URL(gatewayConfig.gateway_url);
-
-            getShardList(
-                gatewayUrl,
-                gatewayConfig.token,
-                data,
-                setShards,
-                session.access_token,
-                grantDetails
-            );
+        if (shardsData && shardsData.shards.length > 0) {
+            setShards(shardsData.shards);
         }
-    }, [data, setShards, session, grantDetails]);
-
-    useEffect(() => {
-        const refreshInterval = setInterval(() => {
-            const gatewayConfig = getStoredGatewayAuthConfig();
-
-            if (gatewayConfig?.gateway_url && gatewayConfig.token && session) {
-                const gatewayUrl = new URL(gatewayConfig.gateway_url);
-
-                getShardList(
-                    gatewayUrl,
-                    gatewayConfig.token,
-                    data,
-                    setShards,
-                    session.access_token,
-                    grantDetails
-                );
-            }
-        }, 30000);
-
-        return () => clearInterval(refreshInterval);
-    }, [shards, data, setShards, session, grantDetails]);
+    }, [setShards, shardsData]);
 
     return (
         <>

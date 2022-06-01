@@ -1,7 +1,9 @@
 import { useQuery, useSelect } from 'hooks/supabase-swr';
 import { createContext, useContext } from 'react';
+import { useLocalStorage } from 'react-use';
 import { TABLES } from 'services/supabase';
 import { BaseComponentProps } from 'types';
+import { LocalStorageKeys } from 'utils/localStorage-utils';
 
 // TODO: Determine an approach that results in a single combined grants query of in the Authenticated app component.
 export interface CombinedGrantsExtQuery {
@@ -16,6 +18,9 @@ interface PreFetchData {
 const PreFetchDataContext = createContext<PreFetchData | null>(null);
 
 const PreFetchDataProvider = ({ children }: BaseComponentProps) => {
+    // TODO (context) create a local storage context provider
+    useLocalStorage(LocalStorageKeys.CONNECTOR_TAG_SELECTOR, ':dev');
+
     const combinedGrantsQuery = useQuery<CombinedGrantsExtQuery>(
         TABLES.COMBINED_GRANTS_EXT,
         { columns: `id, object_role` },
