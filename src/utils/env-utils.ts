@@ -36,13 +36,9 @@ export const getAPIPath = () => {
 
 export const getLoginSettings = () => {
     const showEmail = process.env.REACT_APP_SHOW_EMAIL_LOGIN === ENABLED;
-    const showOIDC = process.env.REACT_APP_SHOW_OIDC_LOGIN === ENABLED;
-    const showGoogle = process.env.REACT_APP_SHOW_OIDC_LOGIN_GOOGLE === ENABLED;
 
     return {
         showEmail,
-        showOIDC,
-        showGoogle,
     };
 };
 
