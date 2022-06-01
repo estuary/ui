@@ -49,7 +49,6 @@ import {
 } from 'forms/renderers/CollapsibleGroup';
 import { ConnectorType, connectorTypeTester } from 'forms/renderers/Connectors';
 import { NullType, nullTypeTester } from 'forms/renderers/NullType';
-import { forEach } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 import keys from 'lodash/keys';
 import startCase from 'lodash/startCase';
@@ -284,33 +283,15 @@ const generateUISchema = (
     // a layout, it means we lose the ability to have uischemas that apply to the nested elements.
 
     if (isCombinator(jsonSchema)) {
-        const combinatorList = jsonSchema.anyOf ?? jsonSchema.oneOf ?? [];
-        let hasProperties = false;
+        const controlObject: ControlElement = createControlElement(currentRef);
 
-        forEach(combinatorList, (el: any) => {
-            if (el.$ref) {
-                hasProperties = true;
-            } else if (el.properties) {
-                hasProperties = !isEmpty(el.properties);
-            }
-
-            return hasProperties;
-        });
-
-        // TS cannot figure out that hte ofrEach above alters this variable
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        if (combinatorList.length === 0 || hasProperties) {
-            const controlObject: ControlElement =
-                createControlElement(currentRef);
-
-            if (jsonSchema.title) {
-                controlObject.label = jsonSchema.title;
-            }
-
-            schemaElements.push(controlObject);
-
-            return controlObject;
+        if (jsonSchema.title) {
+            controlObject.label = jsonSchema.title;
         }
+
+        schemaElements.push(controlObject);
+
+        return controlObject;
     }
 
     const types = deriveTypes(jsonSchema);
