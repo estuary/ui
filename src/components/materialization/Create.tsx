@@ -116,10 +116,10 @@ function MaterializationCreate() {
                 helpers.jobFailed(failureTitle);
             });
         },
-        publications: () => {
+        publications: (newDraftId: string) => {
             return waitFor.base(
                 supabaseClient.from(
-                    `${TABLES.PUBLICATIONS}:draft_id=eq.${draftId}`
+                    `${TABLES.PUBLICATIONS}:draft_id=eq.${newDraftId}`
                 ),
                 () => {
                     setFormState({

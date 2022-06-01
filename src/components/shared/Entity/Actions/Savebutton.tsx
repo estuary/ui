@@ -7,7 +7,7 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { startSubscription, TABLES } from 'services/supabase';
+import { endSubscription, startSubscription, TABLES } from 'services/supabase';
 import {
     entityCreateStoreSelectors,
     formInProgress,
@@ -62,41 +62,52 @@ function EntityCreateSaveButton({ disabled, formId, onFailure }: Props) {
     const messagePrefix = useEntityCreateStore(
         entityCreateStoreSelectors.messagePrefix
     );
-    const logToken = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.logToken
-    );
 
-    const waitForPublishToFinish = () => {
-        console.log('wait for finish');
+    const waitForPublishToFinish = (logToken: string) => {
         resetFormState(FormStatus.SAVING);
-        return startSubscription(
+        console.log('wait for finish');
+        const subscription = startSubscription(
             supabaseClient.from(
-                `${TABLES.PUBLICATIONS}:draft_id=eq.${draftId},logs_token=eq.${logToken}`
+                `${TABLES.PUBLICATIONS}:draft_id=eq.${draftId}`
             ),
-            (payload: any) => {
-                setPubId(payload.id);
-                setFormState({
-                    status: FormStatus.SUCCESS,
-                    exitWhenLogsClose: true,
-                });
+            async (payload: any) => {
+                if (payload.logs_token === logToken) {
+                    setPubId(payload.id);
+                    setFormState({
+                        status: FormStatus.SUCCESS,
+                        exitWhenLogsClose: true,
+                    });
 
-                showNotification({
-                    description: intl.formatMessage({
-                        id: `${messagePrefix}.createNotification.desc`,
-                    }),
-                    severity: 'success',
-                    title: intl.formatMessage({
-                        id: `${messagePrefix}.createNotification.title`,
-                    }),
-                });
+                    showNotification({
+                        description: intl.formatMessage({
+                            id: `${messagePrefix}.createNotification.desc`,
+                        }),
+                        severity: 'success',
+                        title: intl.formatMessage({
+                            id: `${messagePrefix}.createNotification.title`,
+                        }),
+                    });
+
+                    await endSubscription(subscription);
+                }
             },
-            () => {
-                console.log('wait for finish - failure');
-                onFailure({
-                    error: { title: `${messagePrefix}.save.failedErrorTitle` },
-                });
-            }
+            async (payload: any) => {
+                console.log('Paload', payload);
+                if (payload.logs_token === logToken) {
+                    console.log('wait for finish - failure');
+                    onFailure({
+                        error: {
+                            title: `${messagePrefix}.save.failedErrorTitle`,
+                        },
+                    });
+
+                    await endSubscription(subscription);
+                }
+            },
+            true
         );
+
+        return subscription;
     };
 
     const save = async (event: React.MouseEvent<HTMLElement>) => {
@@ -104,13 +115,16 @@ function EntityCreateSaveButton({ disabled, formId, onFailure }: Props) {
 
         console.log('save');
         resetFormState(FormStatus.SAVING);
-        const publicationsSubscription = waitForPublishToFinish();
+
         console.log('save:pubstarted');
         console.log('save:creating');
         const response = await createPublication(
             draftId,
             false,
             entityDescription
+        );
+        const publicationsSubscription = waitForPublishToFinish(
+            response.data[0].logs_token
         );
         console.log('save:created', response);
         if (response.error) {
