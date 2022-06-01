@@ -100,7 +100,8 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
                             logoutRoutes.path,
                             logoutRoutes.params.reason,
                             LogoutReasons.JWT
-                        )
+                        ),
+                        { replace: true }
                     );
                 })
                 .catch(() => {});
@@ -120,6 +121,7 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
         <SWRConfig value={options}>
             <SWRConfig
                 value={{
+                    onSuccess: errorHandler,
                     onError: errorHandler,
                 }}
             >
