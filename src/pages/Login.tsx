@@ -41,6 +41,7 @@ const Login = () => {
         string | undefined
     >(reason === LogoutReasons.JWT ? 'login.jwtExpired' : undefined);
 
+    // TODO (auth) We need to get the logins configurable again now that we'll be using custom buttons
     const handlers = {
         google: async () => {
             const response = await supabaseClient.auth.signIn(
