@@ -4,7 +4,7 @@ import CaptureCreate from 'components/capture/Create';
 import { createEditorStore, DraftSpecEditorKey } from 'components/editor/Store';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import MaterializationCreate from 'components/materialization/Create';
-import { PreFetchDataProvider } from 'context/PreFetchData';
+import AuthenticatedOnlyContext from 'context/Authenticated';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import { RouteStoreProvider } from 'hooks/useRouteStore';
@@ -99,7 +99,7 @@ const Authenticated = () => {
         return <NoGrantsFound />;
     } else {
         return (
-            <PreFetchDataProvider>
+            <AuthenticatedOnlyContext>
                 <Routes>
                     <Route
                         path={routeDetails.registration.path}
@@ -198,7 +198,7 @@ const Authenticated = () => {
                         />
                     </Route>
                 </Routes>
-            </PreFetchDataProvider>
+            </AuthenticatedOnlyContext>
         );
     }
 };
