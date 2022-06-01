@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Divider, Stack, Typography } from '@mui/material';
 import { Auth } from '@supabase/ui';
 import { logoutRoutes } from 'app/Unauthenticated';
 import FullPageDialog from 'components/fullPage/Dialog';
@@ -41,7 +41,13 @@ const Login = () => {
                     </Typography>
 
                     <Stack direction="column" spacing={2}>
-                        <OIDCs onError={setNotificationMessage} />
+                        <Box>
+                            <OIDCs onError={setNotificationMessage} />
+                        </Box>
+
+                        <Divider flexItem>
+                            <FormattedMessage id="login.separator" />
+                        </Divider>
 
                         <Box>
                             <Auth
