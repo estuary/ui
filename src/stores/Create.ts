@@ -2,7 +2,7 @@ import { JsonFormsCore } from '@jsonforms/core';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
-import { isEqual, map } from 'lodash';
+import { forEach, isEqual, map } from 'lodash';
 import { Stores } from 'stores/Repo';
 import { GetState } from 'zustand';
 import { NamedSet } from 'zustand/middleware';
@@ -71,11 +71,13 @@ export interface CreateEntityStore {
     //Spec
     endpointConfig: JsonFormsData;
     setEndpointConfig: (endpointConfig: JsonFormsData) => void;
+    endpointConfigHasErrors: boolean;
 
     // Resource Config
     resourceConfig: { [key: string]: ResourceConfig };
     setResourceConfig: (key: string, value?: ResourceConfig) => void;
     getResourceConfigErrors: () => any[];
+    resourceConfigHasErrors: boolean;
 
     // Collection Selector
     collections: string[] | null;
@@ -154,19 +156,41 @@ export const getInitialStateData = (
     | 'collections'
     | 'resourceConfig'
     | 'messagePrefix'
+    | 'resourceConfigHasErrors'
+    | 'endpointConfigHasErrors'
 > => {
     return {
         messagePrefix,
         details: initialCreateStates.details(),
         endpointConfig: initialCreateStates.endpointConfig(),
+        endpointConfigHasErrors: false,
         connectors: initialCreateStates.connectors(),
         formState: initialCreateStates.formState(),
         endpointSchema: initialCreateStates.endpointSchema(),
         resourceConfig: initialCreateStates.resourceConfig(),
+        resourceConfigHasErrors: false,
+
         collections: includeCollections
             ? initialCreateStates.collections()
             : null,
     };
+};
+
+const formHasErrors = (stateConfig: any) => {
+    let hasErrors = false;
+    if (Object.keys(stateConfig).length > 0) {
+        forEach(stateConfig, (config) => {
+            const { errors } = config;
+
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            if (errors && errors.length > 0) {
+                hasErrors = true;
+            }
+
+            return !hasErrors;
+        });
+    }
+    return hasErrors;
 };
 
 export const getInitialCreateState = (
@@ -204,6 +228,9 @@ export const getInitialCreateState = (
             set(
                 produce((state) => {
                     state.endpointConfig = endpointConfig;
+                    state.endpointConfigHasErrors =
+                        endpointConfig.errors &&
+                        endpointConfig.errors.length > 0;
                 }),
                 false,
                 'Endpoint config changed'
@@ -280,6 +307,10 @@ export const getInitialCreateState = (
                 produce((state) => {
                     state.resourceConfig[key] =
                         value ?? getDefaultJsonFormsData();
+
+                    state.resourceConfigHasErrors = formHasErrors(
+                        state.resourceConfig
+                    );
                 }),
                 false,
                 'Resource Config Changed'
@@ -361,6 +392,7 @@ export const entityCreateStoreSelectors = {
         data: (state: CreateEntityStore) => state.endpointConfig.data,
         set: (state: CreateEntityStore) => state.setEndpointConfig,
         errors: (state: CreateEntityStore) => state.endpointConfig.errors,
+        hasErrors: (state: CreateEntityStore) => state.endpointConfigHasErrors,
     },
     formState: {
         showLogs: (state: CreateEntityStore) => state.formState.showLogs,
@@ -378,6 +410,7 @@ export const entityCreateStoreSelectors = {
         get: (state: CreateEntityStore) => state.resourceConfig,
         set: (state: CreateEntityStore) => state.setResourceConfig,
         getErrors: (state: CreateEntityStore) => state.getResourceConfigErrors,
+        hasErrors: (state: CreateEntityStore) => state.resourceConfigHasErrors,
     },
 
     connectors: (state: CreateEntityStore) => state.connectors,
