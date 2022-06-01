@@ -1,6 +1,10 @@
 import { Box, Tooltip, Typography } from '@mui/material';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { shardDetailSelectors, ShardStatusIndicator } from 'stores/ShardDetail';
+import { CSSProperties } from 'react';
+import {
+    shardDetailSelectors,
+    ShardStatusIndicatorText,
+} from 'stores/ShardDetail';
 
 interface Props {
     name: string;
@@ -11,19 +15,29 @@ function EntityStatus({ name }: Props) {
     const getShardStatusColor = shardDetailStore(
         shardDetailSelectors.getShardStatusColor
     );
-    const getShardStatusIndicators = shardDetailStore(
-        shardDetailSelectors.getShardStatusIndicators
+    const getShardStatusIndicatorText = shardDetailStore(
+        shardDetailSelectors.getShardStatusIndicatorText
     );
     const evaluateShardProcessingState = shardDetailStore(
         shardDetailSelectors.evaluateShardProcessingState
     );
 
-    const statusIndicators: ShardStatusIndicator[] =
-        getShardStatusIndicators(name);
+    const statusIndicators: ShardStatusIndicatorText[] =
+        getShardStatusIndicatorText(name);
+
+    const taskDisabled: boolean = evaluateShardProcessingState(name);
+
+    const statusIndicatorStyle: CSSProperties = {
+        border: taskDisabled ? `solid 2px ${getShardStatusColor(name)}` : 0,
+        backgroundColor: taskDisabled ? '' : getShardStatusColor(name),
+        borderRadius: 50,
+        display: 'inline-block',
+        verticalAlign: 'middle',
+    };
 
     return (
         <Tooltip
-            title={statusIndicators.map(({ text, color }, index) => (
+            title={statusIndicators.map((text, index) => (
                 <Box
                     key={`${index}-shard-status-tooltip`}
                     sx={{
@@ -32,31 +46,15 @@ function EntityStatus({ name }: Props) {
                         alignItems: 'center',
                     }}
                 >
-                    {text === 'DISABLED' ? (
-                        <span
-                            style={{
-                                height: 12,
-                                width: 12,
-                                border: `solid 2px ${color}`,
-                                borderRadius: 50,
-                                display: 'inline-block',
-                                verticalAlign: 'middle',
-                                marginRight: 4,
-                            }}
-                        />
-                    ) : (
-                        <span
-                            style={{
-                                height: 12,
-                                width: 12,
-                                backgroundColor: color,
-                                borderRadius: 50,
-                                display: 'inline-block',
-                                verticalAlign: 'middle',
-                                marginRight: 4,
-                            }}
-                        />
-                    )}
+                    <span
+                        style={{
+                            height: 12,
+                            width: 12,
+                            marginRight: 4,
+                            ...statusIndicatorStyle,
+                        }}
+                    />
+
                     <Typography
                         variant="caption"
                         sx={{ display: 'inline-block' }}
@@ -67,31 +65,14 @@ function EntityStatus({ name }: Props) {
             ))}
             placement="bottom-start"
         >
-            {evaluateShardProcessingState(name) ? (
-                <span
-                    style={{
-                        height: 16,
-                        width: 16,
-                        border: `solid 2px ${getShardStatusColor(name)}`,
-                        borderRadius: 50,
-                        display: 'inline-block',
-                        verticalAlign: 'middle',
-                        marginRight: 12,
-                    }}
-                />
-            ) : (
-                <span
-                    style={{
-                        height: 16,
-                        width: 16,
-                        backgroundColor: getShardStatusColor(name),
-                        borderRadius: 50,
-                        display: 'inline-block',
-                        verticalAlign: 'middle',
-                        marginRight: 12,
-                    }}
-                />
-            )}
+            <span
+                style={{
+                    height: 16,
+                    width: 16,
+                    marginRight: 12,
+                    ...statusIndicatorStyle,
+                }}
+            />
         </Tooltip>
     );
 }

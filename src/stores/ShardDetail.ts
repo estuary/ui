@@ -11,10 +11,10 @@ export type SetShards = (shards: Shard[]) => void;
 // TODO: Follow-up with team. Determine fallback status to display in tooltip.
 type DefaultTooltipMessage = 'No shard status found.';
 
-export interface ShardStatusIndicator {
-    text: ReplicaStatusCode | DefaultTooltipMessage | 'DISABLED';
-    color: string;
-}
+export type ShardStatusIndicatorText =
+    | ReplicaStatusCode
+    | DefaultTooltipMessage
+    | 'DISABLED';
 
 export interface ShardDetails {
     id: string | undefined;
@@ -25,39 +25,29 @@ export interface ShardDetailStore {
     shards: Shard[];
     setShards: SetShards;
     getShardStatusColor: (catalogNamespace: string) => string;
-    getShardStatusIndicators: (
+    getShardStatusIndicatorText: (
         catalogNamespace: string
-    ) => ShardStatusIndicator[];
+    ) => ShardStatusIndicatorText[];
     getShardDetails: (catalogNamespace: string) => ShardDetails | null;
     evaluateShardProcessingState: (catalogNamespace: string) => boolean;
 }
 
 const defaultStatusColor = slate[25];
-const defaultStatusIndicator: ShardStatusIndicator = {
-    text: 'No shard status found.',
-    color: defaultStatusColor,
-};
-
-const evaluateSingleShardStatus = (
-    statusCode: ReplicaStatusCode | undefined
-): string => {
-    switch (statusCode) {
-        case 'PRIMARY':
-            return successMain;
-        case 'IDLE':
-        case 'STANDBY':
-        case 'BACKFILL':
-            return warningMain;
-        case 'FAILED':
-            return errorMain;
-        default:
-            return defaultStatusColor;
-    }
-};
 
 const evaluateShardStatus = ({ status }: Shard): string => {
     if (status.length === 1) {
-        return evaluateSingleShardStatus(status[0].code);
+        switch (status[0].code) {
+            case 'PRIMARY':
+                return successMain;
+            case 'IDLE':
+            case 'STANDBY':
+            case 'BACKFILL':
+                return warningMain;
+            case 'FAILED':
+                return errorMain;
+            default:
+                return defaultStatusColor;
+        }
     } else if (status.length > 1) {
         const statusCodes: (ReplicaStatusCode | undefined)[] = status.map(
             ({ code }) => code
@@ -112,7 +102,7 @@ export const getInitialState = (
                 return defaultStatusColor;
             }
         },
-        getShardStatusIndicators: (catalogNamespace) => {
+        getShardStatusIndicatorText: (catalogNamespace) => {
             const { shards } = get();
 
             if (shards.length > 0) {
@@ -120,28 +110,23 @@ export const getInitialState = (
                     spec.id ? spec.id.includes(catalogNamespace) : undefined
                 );
 
-                let statusIndicator: ShardStatusIndicator[] = [
-                    defaultStatusIndicator,
+                let statusIndicator: ShardStatusIndicatorText[] = [
+                    'No shard status found.',
                 ];
 
                 if (selectedShard) {
                     if (selectedShard.spec.disable) {
-                        statusIndicator = [
-                            { text: 'DISABLED', color: defaultStatusColor },
-                        ];
+                        statusIndicator = ['DISABLED'];
                     } else if (selectedShard.status.length > 0) {
                         statusIndicator = selectedShard.status.map(
-                            ({ code }) => ({
-                                text: code ?? 'No shard status found.',
-                                color: evaluateSingleShardStatus(code),
-                            })
+                            ({ code }) => code ?? 'No shard status found.'
                         );
                     }
                 }
 
                 return statusIndicator;
             } else {
-                return [defaultStatusIndicator];
+                return ['No shard status found.'];
             }
         },
         getShardDetails: (catalogNamespace) => {
@@ -186,8 +171,8 @@ export const shardDetailSelectors = {
     shards: (state: ShardDetailStore) => state.shards,
     setShards: (state: ShardDetailStore) => state.setShards,
     getShardStatusColor: (state: ShardDetailStore) => state.getShardStatusColor,
-    getShardStatusIndicators: (state: ShardDetailStore) =>
-        state.getShardStatusIndicators,
+    getShardStatusIndicatorText: (state: ShardDetailStore) =>
+        state.getShardStatusIndicatorText,
     getShardDetails: (state: ShardDetailStore) => state.getShardDetails,
     evaluateShardProcessingState: (state: ShardDetailStore) =>
         state.evaluateShardProcessingState,
