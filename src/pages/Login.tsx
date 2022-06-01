@@ -42,12 +42,8 @@ const Login = () => {
                 </Alert>
             </Snackbar>
             <FullPageDialog>
-                <Box
-                    sx={{
-                        justifyItems: 'center',
-                    }}
-                >
-                    <Typography sx={{ mb: 5 }}>
+                <Box>
+                    <Typography align="center" sx={{ mb: 5 }}>
                         <FormattedMessage id="login.oidc.message" />
                     </Typography>
 
