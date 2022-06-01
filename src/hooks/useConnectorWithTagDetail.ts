@@ -53,8 +53,6 @@ function useConnectorWithTagDetail(protocol: string | null) {
         LocalStorageKeys.CONNECTOR_TAG_SELECTOR
     );
 
-    console.log('useConnectorWithTagDetail', tagSelector);
-
     const connectorTagsQuery = useQuery<ConnectorWithTagDetailQuery>(
         TABLES.CONNECTORS,
         {

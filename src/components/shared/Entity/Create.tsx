@@ -51,9 +51,11 @@ function EntityCreate({
         adminOnly: true,
     });
 
-    const { connectorTags, error: connectorTagsError } =
-        useConnectorWithTagDetail(connectorType); //'capture'
-    const hasConnectors = connectorTags.length > 0;
+    const {
+        connectorTags,
+        error: connectorTagsError,
+        isValidating,
+    } = useConnectorWithTagDetail(connectorType);
 
     const entityCreateStore = useRouteStore();
     const imageTag = entityCreateStore(
@@ -172,20 +174,20 @@ function EntityCreate({
                     </Collapse>
 
                     <form id={formID}>
-                        {hasConnectors ? (
+                        {!isValidating && connectorTags.length === 0 ? (
+                            <Alert severity="warning">
+                                <FormattedMessage
+                                    id={`${messagePrefix}.missingConnectors`}
+                                />
+                            </Alert>
+                        ) : connectorTags.length > 0 ? (
                             <ErrorBoundryWrapper>
                                 <DetailsForm
                                     connectorTags={connectorTags}
                                     accessGrants={combinedGrants}
                                 />
                             </ErrorBoundryWrapper>
-                        ) : (
-                            <Alert severity="warning">
-                                <FormattedMessage
-                                    id={`${messagePrefix}.missingConnectors`}
-                                />
-                            </Alert>
-                        )}
+                        ) : null}
 
                         {imageTag?.id ? (
                             <ErrorBoundryWrapper>
