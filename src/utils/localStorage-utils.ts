@@ -1,7 +1,8 @@
 import { GatewayAuthTokenResponse } from 'types';
 
 export enum LocalStorageKeys {
-    GATEWAY = 'gateway-auth-config',
+    GATEWAY = 'estuary.gateway-auth-config',
+    CONNECTOR_TAG_SELECTOR = 'estuary.connector-image_tag-selector',
 }
 
 export const storeGatewayAuthConfig = ({

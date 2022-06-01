@@ -1,4 +1,4 @@
-import { Collapse } from '@mui/material';
+import { Alert, Collapse } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { routeDetails } from 'app/Authenticated';
 import CollectionConfig from 'components/collection/Config';
@@ -179,7 +179,13 @@ function EntityCreate({
                                     accessGrants={combinedGrants}
                                 />
                             </ErrorBoundryWrapper>
-                        ) : null}
+                        ) : (
+                            <Alert severity="warning">
+                                <FormattedMessage
+                                    id={`${messagePrefix}.missingConnectors`}
+                                />
+                            </Alert>
+                        )}
 
                         {imageTag?.id ? (
                             <ErrorBoundryWrapper>
