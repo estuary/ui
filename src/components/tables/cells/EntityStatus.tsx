@@ -1,10 +1,7 @@
 import { Box, Tooltip, Typography } from '@mui/material';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { CSSProperties } from 'react';
-import {
-    shardDetailSelectors,
-    ShardStatusIndicatorText,
-} from 'stores/ShardDetail';
+import { shardDetailSelectors, ShardStatus } from 'stores/ShardDetail';
 
 interface Props {
     name: string;
@@ -15,15 +12,14 @@ function EntityStatus({ name }: Props) {
     const getShardStatusColor = shardDetailStore(
         shardDetailSelectors.getShardStatusColor
     );
-    const getShardStatusIndicatorText = shardDetailStore(
-        shardDetailSelectors.getShardStatusIndicatorText
+    const getShardStatus = shardDetailStore(
+        shardDetailSelectors.getShardStatus
     );
     const evaluateShardProcessingState = shardDetailStore(
         shardDetailSelectors.evaluateShardProcessingState
     );
 
-    const statusIndicators: ShardStatusIndicatorText[] =
-        getShardStatusIndicatorText(name);
+    const shardStatuses: ShardStatus[] = getShardStatus(name);
 
     const taskDisabled: boolean = evaluateShardProcessingState(name);
 
@@ -37,7 +33,7 @@ function EntityStatus({ name }: Props) {
 
     return (
         <Tooltip
-            title={statusIndicators.map((text, index) => (
+            title={shardStatuses.map((status, index) => (
                 <Box
                     key={`${index}-shard-status-tooltip`}
                     sx={{
@@ -59,7 +55,7 @@ function EntityStatus({ name }: Props) {
                         variant="caption"
                         sx={{ display: 'inline-block' }}
                     >
-                        {text}
+                        {status}
                     </Typography>
                 </Box>
             ))}

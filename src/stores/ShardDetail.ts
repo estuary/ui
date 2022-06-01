@@ -11,7 +11,7 @@ export type SetShards = (shards: Shard[]) => void;
 // TODO: Follow-up with team. Determine fallback status to display in tooltip.
 type DefaultTooltipMessage = 'No shard status found.';
 
-export type ShardStatusIndicatorText =
+export type ShardStatus =
     | ReplicaStatusCode
     | DefaultTooltipMessage
     | 'DISABLED';
@@ -25,9 +25,7 @@ export interface ShardDetailStore {
     shards: Shard[];
     setShards: SetShards;
     getShardStatusColor: (catalogNamespace: string) => string;
-    getShardStatusIndicatorText: (
-        catalogNamespace: string
-    ) => ShardStatusIndicatorText[];
+    getShardStatus: (catalogNamespace: string) => ShardStatus[];
     getShardDetails: (catalogNamespace: string) => ShardDetails | null;
     evaluateShardProcessingState: (catalogNamespace: string) => boolean;
 }
@@ -102,7 +100,7 @@ export const getInitialState = (
                 return defaultStatusColor;
             }
         },
-        getShardStatusIndicatorText: (catalogNamespace) => {
+        getShardStatus: (catalogNamespace) => {
             const { shards } = get();
 
             if (shards.length > 0) {
@@ -110,9 +108,7 @@ export const getInitialState = (
                     spec.id ? spec.id.includes(catalogNamespace) : undefined
                 );
 
-                let statusIndicator: ShardStatusIndicatorText[] = [
-                    'No shard status found.',
-                ];
+                let statusIndicator: ShardStatus[] = ['No shard status found.'];
 
                 if (selectedShard) {
                     if (selectedShard.spec.disable) {
@@ -171,8 +167,7 @@ export const shardDetailSelectors = {
     shards: (state: ShardDetailStore) => state.shards,
     setShards: (state: ShardDetailStore) => state.setShards,
     getShardStatusColor: (state: ShardDetailStore) => state.getShardStatusColor,
-    getShardStatusIndicatorText: (state: ShardDetailStore) =>
-        state.getShardStatusIndicatorText,
+    getShardStatus: (state: ShardDetailStore) => state.getShardStatus,
     getShardDetails: (state: ShardDetailStore) => state.getShardDetails,
     evaluateShardProcessingState: (state: ShardDetailStore) =>
         state.evaluateShardProcessingState,
