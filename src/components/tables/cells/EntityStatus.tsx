@@ -14,6 +14,9 @@ function EntityStatus({ name }: Props) {
     const getShardStatusIndicators = shardDetailStore(
         shardDetailSelectors.getShardStatusIndicators
     );
+    const evaluateShardProcessingState = shardDetailStore(
+        shardDetailSelectors.evaluateShardProcessingState
+    );
 
     const statusIndicators: ShardStatusIndicator[] =
         getShardStatusIndicators(name);
@@ -29,18 +32,31 @@ function EntityStatus({ name }: Props) {
                         alignItems: 'center',
                     }}
                 >
-                    <span
-                        style={{
-                            height: 12,
-                            width: 12,
-                            backgroundColor: color,
-                            borderRadius: 50,
-                            display: 'inline-block',
-                            verticalAlign: 'middle',
-                            marginRight: 4,
-                        }}
-                    />
-
+                    {text === 'DISABLED' ? (
+                        <span
+                            style={{
+                                height: 12,
+                                width: 12,
+                                border: `solid 2px ${color}`,
+                                borderRadius: 50,
+                                display: 'inline-block',
+                                verticalAlign: 'middle',
+                                marginRight: 4,
+                            }}
+                        />
+                    ) : (
+                        <span
+                            style={{
+                                height: 12,
+                                width: 12,
+                                backgroundColor: color,
+                                borderRadius: 50,
+                                display: 'inline-block',
+                                verticalAlign: 'middle',
+                                marginRight: 4,
+                            }}
+                        />
+                    )}
                     <Typography
                         variant="caption"
                         sx={{ display: 'inline-block' }}
@@ -51,17 +67,31 @@ function EntityStatus({ name }: Props) {
             ))}
             placement="bottom-start"
         >
-            <span
-                style={{
-                    height: 16,
-                    width: 16,
-                    backgroundColor: getShardStatusColor(name),
-                    borderRadius: 50,
-                    display: 'inline-block',
-                    verticalAlign: 'middle',
-                    marginRight: 12,
-                }}
-            />
+            {evaluateShardProcessingState(name) ? (
+                <span
+                    style={{
+                        height: 16,
+                        width: 16,
+                        border: `solid 2px ${getShardStatusColor(name)}`,
+                        borderRadius: 50,
+                        display: 'inline-block',
+                        verticalAlign: 'middle',
+                        marginRight: 12,
+                    }}
+                />
+            ) : (
+                <span
+                    style={{
+                        height: 16,
+                        width: 16,
+                        backgroundColor: getShardStatusColor(name),
+                        borderRadius: 50,
+                        display: 'inline-block',
+                        verticalAlign: 'middle',
+                        marginRight: 12,
+                    }}
+                />
+            )}
         </Tooltip>
     );
 }

@@ -12,7 +12,7 @@ export type SetShards = (shards: Shard[]) => void;
 type DefaultTooltipMessage = 'No shard status found.';
 
 export interface ShardStatusIndicator {
-    text: ReplicaStatusCode | DefaultTooltipMessage;
+    text: ReplicaStatusCode | DefaultTooltipMessage | 'DISABLED';
     color: string;
 }
 
@@ -29,6 +29,7 @@ export interface ShardDetailStore {
         catalogNamespace: string
     ) => ShardStatusIndicator[];
     getShardDetails: (catalogNamespace: string) => ShardDetails | null;
+    evaluateShardProcessingState: (catalogNamespace: string) => boolean;
 }
 
 const defaultStatusColor = slate[25];
@@ -119,13 +120,24 @@ export const getInitialState = (
                     spec.id ? spec.id.includes(catalogNamespace) : undefined
                 );
 
-                const statusIndicator: ShardStatusIndicator[] =
-                    selectedShard && selectedShard.status.length > 0
-                        ? selectedShard.status.map(({ code }) => ({
-                              text: code ?? 'No shard status found.',
-                              color: evaluateSingleShardStatus(code),
-                          }))
-                        : [defaultStatusIndicator];
+                let statusIndicator: ShardStatusIndicator[] = [
+                    defaultStatusIndicator,
+                ];
+
+                if (selectedShard) {
+                    if (selectedShard.spec.disable) {
+                        statusIndicator = [
+                            { text: 'DISABLED', color: defaultStatusColor },
+                        ];
+                    } else if (selectedShard.status.length > 0) {
+                        statusIndicator = selectedShard.status.map(
+                            ({ code }) => ({
+                                text: code ?? 'No shard status found.',
+                                color: evaluateSingleShardStatus(code),
+                            })
+                        );
+                    }
+                }
 
                 return statusIndicator;
             } else {
@@ -154,6 +166,19 @@ export const getInitialState = (
                 return null;
             }
         },
+        evaluateShardProcessingState: (catalogNamespace) => {
+            const { shards } = get();
+
+            if (shards.length > 0) {
+                const selectedShard = shards.find(({ spec }) =>
+                    spec.id ? spec.id.includes(catalogNamespace) : undefined
+                );
+
+                return !!selectedShard?.spec.disable;
+            } else {
+                return false;
+            }
+        },
     };
 };
 
@@ -164,4 +189,6 @@ export const shardDetailSelectors = {
     getShardStatusIndicators: (state: ShardDetailStore) =>
         state.getShardStatusIndicators,
     getShardDetails: (state: ShardDetailStore) => state.getShardDetails,
+    evaluateShardProcessingState: (state: ShardDetailStore) =>
+        state.evaluateShardProcessingState,
 };
