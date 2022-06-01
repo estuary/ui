@@ -121,7 +121,6 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
         <SWRConfig value={options}>
             <SWRConfig
                 value={{
-                    onSuccess: errorHandler,
                     onError: errorHandler,
                 }}
             >
