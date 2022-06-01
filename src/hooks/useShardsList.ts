@@ -44,7 +44,6 @@ const useShardsList = <T extends LiveSpecsExtBaseQuery>(specs: T[]) => {
             .forEach((name) => taskSelector.task(name));
 
         const fetcher = (_url: string) => {
-            console.log('foo', taskSelector);
             return shardClient
                 .list(taskSelector)
                 .then((result) => {
