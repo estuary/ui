@@ -288,7 +288,9 @@ const generateUISchema = (
         let hasProperties = false;
 
         forEach(combinatorList, (el: any) => {
-            if (el.properties) {
+            if (el.$ref) {
+                hasProperties = true;
+            } else if (el.properties) {
                 hasProperties = !isEmpty(el.properties);
             }
 
@@ -297,7 +299,7 @@ const generateUISchema = (
 
         // TS cannot figure out that hte ofrEach above alters this variable
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        if (hasProperties) {
+        if (combinatorList.length === 0 || hasProperties) {
             const controlObject: ControlElement =
                 createControlElement(currentRef);
 
