@@ -329,9 +329,12 @@ const Foo: ResolvedIntlConfig['messages'] = {
     'foo.endpointConfig.heading': `Connection Configuration`,
     'foo.endpointConfig.errorSummary': `You must provide valid values for all required fields before continuing.`,
     'foo.endpointConfig.detailsHaveErrors': `The Details section has errors.`,
-    'foo.endpointConfig.endpointConfigMissing': `Please select a connector.`,
+    'foo.endpointConfig.entityNameMissing': `Provide a name to continue.`,
+    'foo.endpointConfig.connectorMissing': `Select a connector to continue.`,
+    'foo.endpointConfig.endpointConfigMissing': `The Connection Configuration section is empty.`,
     'foo.endpointConfig.endpointConfigHaveErrors': `The Connection Configuration section has errors.`,
-    'foo.endpointConfig.resourceConfigHaveErrors': `The Output Configuration section has errors.`,
+    'foo.endpointConfig.resourceConfigHaveErrors': `The Collections Resource Configuration section has errors.`,
+    'foo.endpointConfig.collectionsMissing': `Select a collection to continue.`,
 };
 
 const MonacoEditor: ResolvedIntlConfig['messages'] = {
