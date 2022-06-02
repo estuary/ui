@@ -7,7 +7,6 @@ import useSWR from 'swr';
 import { LiveSpecsExtBaseQuery } from 'types';
 import {
     getStoredGatewayAuthConfig,
-    removeGatewayAuthConfig,
     storeGatewayAuthConfig,
 } from 'utils/localStorage-utils';
 
@@ -45,22 +44,27 @@ const useShardsList = <T extends LiveSpecsExtBaseQuery>(specs: T[]) => {
             .forEach((name) => taskSelector.task(name));
 
         const fetcher = (_url: string) => {
-            return shardClient
-                .list(taskSelector)
-                .then((result) => {
-                    const shards = result.unwrap();
+            return shardClient.list(taskSelector).then((result) => {
+                const shards = result.unwrap();
 
-                    return {
-                        shards: shards.length > 0 ? shards : [],
-                    };
-                })
-                .catch((error: string) => {
+                return {
+                    shards: shards.length > 0 ? shards : [],
+                };
+            });
+        };
+
+        return useSWR(
+            gatewayConfig?.gateway_url ?? '__missing_gatewway_url__',
+            fetcher,
+            {
+                errorRetryInterval: INTERVAL / 2,
+                refreshInterval: INTERVAL,
+                revalidateOnFocus: false, //We're already refreshing and these status do not change often
+                onError: (error: string) => {
                     if (
                         error.includes(ErrorFlags.TOKEN_INVALID) ||
                         error.includes(ErrorFlags.TOKEN_NOT_FOUND)
                     ) {
-                        removeGatewayAuthConfig();
-
                         const prefixes: string[] = grantDetails.map(
                             ({ object_role }) => object_role
                         );
@@ -75,16 +79,7 @@ const useShardsList = <T extends LiveSpecsExtBaseQuery>(specs: T[]) => {
                     }
 
                     return Promise.reject(error);
-                });
-        };
-
-        return useSWR(
-            gatewayConfig?.gateway_url ?? '__missing_gatewway_url__',
-            fetcher,
-            {
-                errorRetryInterval: INTERVAL / 2,
-                refreshInterval: INTERVAL,
-                revalidateOnFocus: false, //We're already refreshing and these status do not change often
+                },
             }
         );
     } else {
