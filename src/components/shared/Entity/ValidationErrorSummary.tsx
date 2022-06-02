@@ -41,7 +41,7 @@ function ValidationErrorSummary() {
     if (isEmpty(entityName)) {
         filteredErrorsList.push({
             title: intl.formatMessage({
-                id: 'foo.endpointConfig.entitynameMissing',
+                id: 'foo.endpointConfig.entityNameMissing',
             }),
         });
     }
