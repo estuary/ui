@@ -30,6 +30,7 @@ const useShardsList = <T extends LiveSpecsExtBaseQuery>(specs: T[]) => {
         if (gatewayConfig?.gateway_url && gatewayConfig.token) {
             const authToken = gatewayConfig.token;
             const baseUrl = new URL(gatewayConfig.gateway_url);
+
             return new ShardClient(baseUrl, authToken);
         } else {
             return null;
@@ -56,8 +57,7 @@ const useShardsList = <T extends LiveSpecsExtBaseQuery>(specs: T[]) => {
                 .catch((error: string) => {
                     if (
                         error.includes(ErrorFlags.TOKEN_INVALID) ||
-                        error.includes(ErrorFlags.TOKEN_NOT_FOUND) ||
-                        error.includes(ErrorFlags.OPERATION_INVALID)
+                        error.includes(ErrorFlags.TOKEN_NOT_FOUND)
                     ) {
                         removeGatewayAuthConfig();
 
