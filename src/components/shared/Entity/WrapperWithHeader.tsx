@@ -5,10 +5,11 @@ import { ReactNode, useState } from 'react';
 interface Props {
     header: ReactNode;
     children: ReactNode;
+    defaultExpand?: boolean;
 }
 
-function WrapperWithHeader({ header, children }: Props) {
-    const [expanded, setExpanded] = useState(true);
+function WrapperWithHeader({ header, children, defaultExpand }: Props) {
+    const [expanded, setExpanded] = useState(defaultExpand ?? true);
     const handlers = {
         change: () => {
             setExpanded(!expanded);

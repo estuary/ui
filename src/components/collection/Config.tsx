@@ -31,6 +31,9 @@ function CollectionConfig() {
     const resourceConfigHasErrors = entityCreateStore(
         entityCreateStoreSelectors.resourceConfig.hasErrors
     );
+    const collectionsHasErrors = entityCreateStore(
+        entityCreateStoreSelectors.collectionsHasErrors
+    );
 
     const { liveSpecs } = useLiveSpecsExtWithOutSpec(specID, ENTITY.CAPTURE);
 
@@ -45,7 +48,7 @@ function CollectionConfig() {
             <WrapperWithHeader
                 header={
                     <>
-                        {resourceConfigHasErrors ? (
+                        {resourceConfigHasErrors || collectionsHasErrors ? (
                             <ErrorOutlineIcon color="error" sx={{ pr: 1 }} />
                         ) : null}
                         <FormattedMessage id="materializationCreate.collections.heading" />
