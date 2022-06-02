@@ -34,7 +34,9 @@ function DetailsPanel({
                         storeName={storeName}
                     >
                         <Grid container spacing={2}>
-                            <ShardDetails entityType={entityType} />
+                            {entityType && (
+                                <ShardDetails entityType={entityType} />
+                            )}
 
                             <EditorAndLogs
                                 lastPubId={id}
