@@ -37,7 +37,7 @@ interface Props {
 
 const NEW_LINE = '\r\n';
 
-function CaptureDetails({ lastPubId, disableLogs, entityType }: Props) {
+function EditorAndLogs({ lastPubId, disableLogs, entityType }: Props) {
     useBrowserTitle('browserTitle.captureDetails');
     const theme = useTheme();
 
@@ -205,4 +205,4 @@ function CaptureDetails({ lastPubId, disableLogs, entityType }: Props) {
     }
 }
 
-export default CaptureDetails;
+export default EditorAndLogs;

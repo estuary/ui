@@ -1,5 +1,5 @@
 import { Collapse, TableCell, TableRow } from '@mui/material';
-import CaptureDetails from 'components/capture/EditorAndLogs';
+import EditorAndLogs from 'components/capture/EditorAndLogs';
 import { createEditorStore } from 'components/editor/Store';
 import { ZustandProvider } from 'hooks/useZustand';
 import { ENTITY } from 'types';
@@ -32,7 +32,7 @@ function DetailsPanel({
                         createStore={createEditorStore}
                         storeName={storeName}
                     >
-                        <CaptureDetails
+                        <EditorAndLogs
                             lastPubId={id}
                             disableLogs={disableLogs}
                             entityType={entityType}
