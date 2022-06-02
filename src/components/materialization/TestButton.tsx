@@ -165,7 +165,7 @@ function MaterializeTestButton({
             }
 
             resetFormState(FormStatus.TESTING);
-            const publicationsSubscription = subscription(true);
+            const publicationsSubscription = subscription(newDraftId);
             const dryRunResponse = await createPublication(newDraftId, true);
 
             if (dryRunResponse.error) {

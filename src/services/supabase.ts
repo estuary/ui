@@ -182,6 +182,13 @@ export const endSubscription = (subscription: RealtimeSubscription) => {
         .catch(() => {});
 };
 
+export const endAllSubscriptions = () => {
+    return supabaseClient
+        .removeAllSubscriptions()
+        .then(() => {})
+        .catch(() => {});
+};
+
 export const startSubscription = (
     query: any,
     success: Function,
