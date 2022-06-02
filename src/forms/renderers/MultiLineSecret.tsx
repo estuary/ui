@@ -78,7 +78,7 @@ const MultiLineSecretRenderer = (props: any) => {
                         sx={{ whiteSpace: 'nowrap' }}
                         onClick={() => setIsUploadOpen(!isUploadOpen)}
                     >
-                        Upload Secret
+                        Use File (ex: .pem)
                     </Button>
                 </Box>
             </Stack>
