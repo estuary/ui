@@ -48,6 +48,11 @@ import {
     collapsibleGroupTester,
 } from 'forms/renderers/CollapsibleGroup';
 import { ConnectorType, connectorTypeTester } from 'forms/renderers/Connectors';
+import {
+    MultiLineSecret,
+    multiLineSecretTester,
+    MULTI_LINE_SECRET,
+} from 'forms/renderers/MultiLineSecret';
 import { NullType, nullTypeTester } from 'forms/renderers/NullType';
 import isEmpty from 'lodash/isEmpty';
 import keys from 'lodash/keys';
@@ -69,6 +74,7 @@ export const defaultRenderers = [
     { renderer: CollapsibleGroup, tester: collapsibleGroupTester },
     { renderer: ConnectorType, tester: connectorTypeTester },
     { renderer: CatalogName, tester: catalogNameTypeTester },
+    { renderer: MultiLineSecret, tester: multiLineSecretTester },
 ];
 
 export const showValidation = (_val: any): ValidationMode => {
@@ -368,11 +374,15 @@ const generateUISchema = (
     }
 
     // If we've gotten here, then the schema appears to be for a scalar value. For most of these, we
-    // just create a default Control, but we first check if we should turn the input into a password
-    // input. This overrides other settings to keep things secure. Then we check if we need to set
-    // the `multi` option based on whether the json schema contains a `multiline` annotation.
+    // just create a default Control, but we first we check if the control is a special multi line secret (usually a PEM key)
+    // Then check if we should turn the input into a password input. This overrides other settings
+    // to keep things secure. Then we check if we need to set the `multi` option based on whether the
+    // json schema contains a `multiline` annotation.
+
     const controlObject: ControlElement = createControlElement(currentRef);
-    if (isSecretText(jsonSchema)) {
+    if (isSecretText(jsonSchema) && isMultilineText(jsonSchema)) {
+        addOption(controlObject, 'format', MULTI_LINE_SECRET);
+    } else if (isSecretText(jsonSchema)) {
         addOption(controlObject, 'format', 'password');
     } else if (isMultilineText(jsonSchema)) {
         addOption(controlObject, 'multi', true);
