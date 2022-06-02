@@ -183,7 +183,7 @@ export const getInitialStateData = (
         collections: includeCollections
             ? initialCreateStates.collections()
             : null,
-        collectionsHasErrors: false,
+        collectionsHasErrors: includeCollections, // This defaults to true because collections starts empty
     };
 };
 
