@@ -1,5 +1,5 @@
 import { Collapse, TableCell, TableRow } from '@mui/material';
-import EditorAndLogs from 'components/capture/EditorAndLogs';
+import EditorAndLogs from 'components/tables/Details/EditorAndLogs';
 import { createEditorStore } from 'components/editor/Store';
 import { ZustandProvider } from 'hooks/useZustand';
 import { ENTITY } from 'types';
