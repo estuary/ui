@@ -1,8 +1,9 @@
-import { Collapse, TableCell, TableRow } from '@mui/material';
+import { Collapse, Grid, TableCell, TableRow } from '@mui/material';
 import EditorAndLogs from 'components/tables/Details/EditorAndLogs';
 import { createEditorStore } from 'components/editor/Store';
 import { ZustandProvider } from 'hooks/useZustand';
 import { ENTITY } from 'types';
+import ShardDetails from 'components/tables/Details/ShardDetails';
 
 interface Props {
     detailsExpanded: boolean;
@@ -32,11 +33,14 @@ function DetailsPanel({
                         createStore={createEditorStore}
                         storeName={storeName}
                     >
-                        <EditorAndLogs
-                            lastPubId={id}
-                            disableLogs={disableLogs}
-                            entityType={entityType}
-                        />
+                        <Grid container spacing={2}>
+                            <ShardDetails entityType={entityType} />
+
+                            <EditorAndLogs
+                                lastPubId={id}
+                                disableLogs={disableLogs}
+                            />
+                        </Grid>
                     </ZustandProvider>
                 </Collapse>
             </TableCell>
