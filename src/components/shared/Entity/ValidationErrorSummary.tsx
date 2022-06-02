@@ -29,10 +29,6 @@ function ValidationErrorSummary() {
     );
     const resourceConfigErrors = getResourceConfigErrors();
 
-    const displayValidation = entityCreateStore(
-        entityCreateStoreSelectors.formState.displayValidation
-    );
-
     const filteredDetailErrors = map(detailErrors, 'instancePath');
     const filteredSpecErrors = map(specErrors, 'instancePath');
     const filteredResourceConfigErrors = map(
@@ -101,10 +97,7 @@ function ValidationErrorSummary() {
     }
 
     return (
-        <Collapse
-            in={displayValidation && filteredErrorsList.length > 0}
-            timeout="auto"
-        >
+        <Collapse in={filteredErrorsList.length > 0} timeout="auto">
             <Alert severity="error">
                 <AlertTitle>
                     <FormattedMessage id="foo.endpointConfig.errorSummary" />
