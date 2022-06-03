@@ -139,7 +139,6 @@ function CaptureCreate() {
                 `${TABLES.DISCOVERS}:draft_id=eq.${discoverDraftId}`
             ),
             (payload: any) => {
-                console.log('success generating preview!!!!!!');
                 setDraftId(payload.draft_id);
                 setFormState({
                     status: FormStatus.GENERATED,
