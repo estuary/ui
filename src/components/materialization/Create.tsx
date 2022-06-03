@@ -1,8 +1,9 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { routeDetails } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
+import MaterializeGenerateButton from 'components/materialization/GenerateButton';
+import MaterializeSaveButton from 'components/materialization/SaveButton';
 import MaterializeTestButton from 'components/materialization/TestButton';
-import EntityCreateSaveButton from 'components/shared/Entity/Actions/Savebutton';
 import EntityCreate from 'components/shared/Entity/Create';
 import FooHeader from 'components/shared/Entity/Header';
 import PageContainer from 'components/shared/PageContainer';
@@ -131,17 +132,17 @@ function MaterializationCreate() {
     };
 
     // Form Event Handlers
-    // const handlers = {
-    //     closeLogs: () => {
-    //         setFormState({
-    //             showLogs: false,
-    //         });
+    const handlers = {
+        closeLogs: () => {
+            setFormState({
+                showLogs: false,
+            });
 
-    //         if (exitWhenLogsClose) {
-    //             helpers.exit();
-    //         }
-    //     },
-    // };
+            if (exitWhenLogsClose) {
+                helpers.exit();
+            }
+        },
+    };
 
     usePrompt('confirm.loseData', !exitWhenLogsClose && hasChanges(), () => {
         resetState();
@@ -156,18 +157,24 @@ function MaterializationCreate() {
                 showCollections
                 Header={
                     <FooHeader
-                        GenerateButton={<>Not IMplemented Yet</>}
+                        GenerateButton={
+                            <MaterializeGenerateButton
+                                disabled={!hasConnectors}
+                                onFailure={helpers.callFailed}
+                            />
+                        }
                         TestButton={
                             <MaterializeTestButton
                                 disabled={!hasConnectors}
-                                onFailure={helpers.callFailed}
-                                subscription={waitFor.publications}
+                                callFailed={helpers.callFailed}
+                                closeLogs={waitFor.publications}
                             />
                         }
                         SaveButton={
-                            <EntityCreateSaveButton
+                            <MaterializeSaveButton
                                 disabled={!draftId}
-                                onFailure={helpers.callFailed}
+                                callFailed={helpers.callFailed}
+                                closeLogs={handlers.closeLogs}
                             />
                         }
                         heading={

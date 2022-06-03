@@ -14,8 +14,8 @@ interface Props {
     disabled: boolean;
 }
 
-function MaterializeTestButton({ callFailed, closeLogs, disabled }: Props) {
-    console.log('testbutton');
+function MaterializeSaveButton({ callFailed, closeLogs, disabled }: Props) {
+    console.log('savebutton');
     const entityCreateStore = useRouteStore();
     const showLogs = entityCreateStore(
         entityCreateStoreSelectors.formState.showLogs
@@ -38,17 +38,16 @@ function MaterializeTestButton({ callFailed, closeLogs, disabled }: Props) {
     return (
         <>
             <LogDialog
-                open={formStatus === FormStatus.TESTING && showLogs}
+                open={formStatus === FormStatus.SAVING && showLogs}
                 token={logToken}
                 title={
                     <FormattedMessage
-                        id={`${messagePrefix}.test.waitMessage`}
+                        id={`${messagePrefix}.save.waitMessage`}
                     />
                 }
                 actionComponent={<LogDialogActions close={closeLogs} />}
             />
             <EntityCreateSaveButton
-                dryRun
                 disabled={disabled || !draftId}
                 onFailure={callFailed}
             />
@@ -56,4 +55,4 @@ function MaterializeTestButton({ callFailed, closeLogs, disabled }: Props) {
     );
 }
 
-export default MaterializeTestButton;
+export default MaterializeSaveButton;
