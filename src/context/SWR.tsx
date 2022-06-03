@@ -21,6 +21,8 @@ export const singleCallSettings = {
     revalidateOnReconnect: false,
 };
 
+export const DEFAULT_POLLING = 2500;
+
 const middleware: IMiddleware = {
     cache: () => {
         // When initializing, we restore the data from `localStorage` into a map.
