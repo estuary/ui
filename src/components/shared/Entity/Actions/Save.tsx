@@ -159,7 +159,6 @@ function EntityCreateSave({ disabled, dryRun, onFailure }: Props) {
         <Button
             onClick={save}
             disabled={disabled || isSaving || formActive}
-            type="submit"
             sx={buttonSx}
         >
             <FormattedMessage

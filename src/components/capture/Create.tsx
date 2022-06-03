@@ -48,10 +48,6 @@ function CaptureCreate() {
     const setFormState = useEntityCreateStore(
         entityCreateStoreSelectors.formState.set
     );
-    const resetFormState = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.reset
-    );
-
     const exitWhenLogsClose = useEntityCreateStore(
         entityCreateStoreSelectors.formState.exitWhenLogsClose
     );
@@ -136,28 +132,22 @@ function CaptureCreate() {
         },
     };
 
-    const waitFor = {
-        base: (query: any, success: Function, failureTitle: string) => {
-            resetFormState(FormStatus.TESTING);
-            return startSubscription(query, success, () => {
-                helpers.jobFailed(failureTitle);
-            });
-        },
-        discovers: (discoverDraftId: string) => {
-            setDraftId(null);
-            return waitFor.base(
-                supabaseClient.from(
-                    `${TABLES.DISCOVERS}:draft_id=eq.${discoverDraftId}`
-                ),
-                (payload: any) => {
-                    setFormState({
-                        status: FormStatus.TESTED,
-                    });
-                    setDraftId(payload.draft_id);
-                },
-                `${messagePrefix}.test.failedErrorTitle`
-            );
-        },
+    const discoversSubscription = (discoverDraftId: string) => {
+        setDraftId(null);
+        return startSubscription(
+            supabaseClient.from(
+                `${TABLES.DISCOVERS}:draft_id=eq.${discoverDraftId}`
+            ),
+            (payload: any) => {
+                setFormState({
+                    status: FormStatus.GENERATED,
+                });
+                setDraftId(payload.draft_id);
+            },
+            () => {
+                helpers.jobFailed(`${messagePrefix}.test.failedErrorTitle`);
+            }
+        );
     };
 
     usePrompt('confirm.loseData', !exitWhenLogsClose && hasChanges(), () => {
@@ -177,8 +167,8 @@ function CaptureCreate() {
                         GenerateButton={
                             <CaptureGenerateButton
                                 disabled={!hasConnectors}
-                                onFailure={helpers.callFailed}
-                                subscription={waitFor.discovers}
+                                callFailed={helpers.callFailed}
+                                subscription={discoversSubscription}
                             />
                         }
                         TestButton={

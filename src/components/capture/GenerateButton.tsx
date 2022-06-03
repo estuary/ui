@@ -13,11 +13,11 @@ import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 
 interface Props {
     disabled: boolean;
-    onFailure: Function;
+    callFailed: Function;
     subscription: Function;
 }
 
-function CaptureGenerateButton({ disabled, onFailure, subscription }: Props) {
+function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
@@ -65,6 +65,8 @@ function CaptureGenerateButton({ disabled, onFailure, subscription }: Props) {
         entityCreateStoreSelectors.details.hasErrors
     );
 
+    console.log('genbn', formActive);
+
     const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
         resetFormState(FormStatus.GENERATING);
@@ -75,14 +77,14 @@ function CaptureGenerateButton({ disabled, onFailure, subscription }: Props) {
             endpointConfigHasErrors
         ) {
             return setFormState({
-                status: FormStatus.GENERATED,
+                status: FormStatus.FAILED,
                 displayValidation: true,
             });
         } else {
             resetEditorState();
             const draftsResponse = await createEntityDraft(entityName);
             if (draftsResponse.error) {
-                return onFailure({
+                return callFailed({
                     error: {
                         title: 'captureCreate.generate.failedErrorTitle',
                         error: draftsResponse.error,
@@ -95,7 +97,7 @@ function CaptureGenerateButton({ disabled, onFailure, subscription }: Props) {
                 endpointConfigData
             );
             if (encryptedEndpointConfig.error) {
-                return onFailure({
+                return callFailed({
                     error: {
                         title: 'captureCreate.generate.failedConfigEncryptTitle',
                         error: encryptedEndpointConfig.error,
@@ -113,7 +115,7 @@ function CaptureGenerateButton({ disabled, onFailure, subscription }: Props) {
                 draftsResponse.data[0].id
             );
             if (discoverResponse.error) {
-                return onFailure(
+                return callFailed(
                     {
                         error: {
                             title: 'captureCreate.generate.failedErrorTitle',
@@ -134,7 +136,6 @@ function CaptureGenerateButton({ disabled, onFailure, subscription }: Props) {
         <Button
             onClick={generateCatalog}
             disabled={disabled || isSaving || formActive}
-            type="submit"
             sx={buttonSx}
         >
             <FormattedMessage

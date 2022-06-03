@@ -283,6 +283,8 @@ export const getInitialCreateState = (
                         ...formState,
                         ...newState,
                     };
+                    state.isIdle = formIdle(state.formState);
+                    state.isActive = formActive(state.formState);
                 }),
                 false,
                 'Form State changed'
@@ -298,6 +300,8 @@ export const getInitialCreateState = (
                     );
                     state.formState = formState;
                     state.formState.status = status;
+                    state.isIdle = formIdle(status);
+                    state.isActive = formActive(status);
                 }),
                 false,
                 'Form State Reset'

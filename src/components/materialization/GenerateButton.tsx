@@ -14,10 +14,10 @@ import { ENTITY } from 'types';
 
 interface Props {
     disabled: boolean;
-    onFailure: Function;
+    callFailed: Function;
 }
 
-function MaterializeGenerateButton({ disabled, onFailure }: Props) {
+function MaterializeGenerateButton({ disabled, callFailed }: Props) {
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
@@ -103,7 +103,7 @@ function MaterializeGenerateButton({ disabled, onFailure }: Props) {
 
             const draftsResponse = await createEntityDraft(entityName);
             if (draftsResponse.error) {
-                return onFailure({
+                return callFailed({
                     error: {
                         title: 'materializationCreate.test.failure.errorTitle',
                         error: draftsResponse.error,
@@ -116,7 +116,7 @@ function MaterializeGenerateButton({ disabled, onFailure }: Props) {
                 endpointConfigData
             );
             if (encryptedEndpointConfig.error) {
-                return onFailure({
+                return callFailed({
                     error: {
                         title: 'captureCreate.test.failedConfigEncryptTitle',
                         error: encryptedEndpointConfig.error,
@@ -138,7 +138,7 @@ function MaterializeGenerateButton({ disabled, onFailure }: Props) {
                 ENTITY.MATERIALIZATION
             );
             if (draftSpecsResponse.error) {
-                return onFailure({
+                return callFailed({
                     error: {
                         title: 'materializationCreate.test.failure.errorTitle',
                         error: draftSpecsResponse.error,
@@ -157,7 +157,6 @@ function MaterializeGenerateButton({ disabled, onFailure }: Props) {
         <Button
             onClick={generateCatalog}
             disabled={disabled || isSaving || formActive}
-            type="submit"
             sx={buttonSx}
         >
             <FormattedMessage

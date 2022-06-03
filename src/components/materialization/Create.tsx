@@ -102,27 +102,6 @@ function MaterializationCreate() {
         },
     };
 
-    // const waitFor = {
-    //     base: (query: any, success: Function, failureTitle: string) => {
-    //         return startSubscription(query, success, () => {
-    //             helpers.jobFailed(failureTitle);
-    //         });
-    //     },
-    //     publications: (newDraftId: string) => {
-    //         return waitFor.base(
-    //             supabaseClient.from(
-    //                 `${TABLES.PUBLICATIONS}:draft_id=eq.${newDraftId}`
-    //             ),
-    //             () => {
-    //                 setFormState({
-    //                     status: FormStatus.INIT,
-    //                 });
-    //             },
-    //             'materializationCreate.test.failure.errorTitle'
-    //         );
-    //     },
-    // };
-
     // Form Event Handlers
     const handlers = {
         closeLogs: () => {
@@ -151,7 +130,7 @@ function MaterializationCreate() {
                         GenerateButton={
                             <MaterializeGenerateButton
                                 disabled={!hasConnectors}
-                                onFailure={helpers.callFailed}
+                                callFailed={helpers.callFailed}
                             />
                         }
                         TestButton={

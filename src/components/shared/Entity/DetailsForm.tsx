@@ -17,7 +17,7 @@ import {
     defaultRenderers,
     showValidation,
 } from 'services/jsonforms';
-import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
+import { entityCreateStoreSelectors } from 'stores/Create';
 import { Grants } from 'types';
 
 interface Props {
@@ -50,9 +50,7 @@ function DetailsForm({ connectorTags, accessGrants }: Props) {
     const displayValidation = useEntityCreateStore(
         entityCreateStoreSelectors.formState.displayValidation
     );
-    const status = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.status
-    );
+    const isActive = useEntityCreateStore(entityCreateStoreSelectors.isActive);
 
     useEffect(() => {
         if (connectorID) {
@@ -189,11 +187,7 @@ function DetailsForm({ connectorTags, accessGrants }: Props) {
                             renderers={defaultRenderers}
                             cells={materialCells}
                             config={defaultOptions}
-                            readonly={
-                                isSaving ||
-                                status === FormStatus.TESTING ||
-                                status === FormStatus.SAVING
-                            }
+                            readonly={isSaving || isActive}
                             validationMode={showValidation(displayValidation)}
                             onChange={setDetails}
                         />

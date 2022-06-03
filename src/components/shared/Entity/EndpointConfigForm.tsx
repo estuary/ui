@@ -12,7 +12,7 @@ import {
     generateCategoryUiSchema,
     showValidation,
 } from 'services/jsonforms';
-import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
+import { entityCreateStoreSelectors } from 'stores/Create';
 import useConstant from 'use-constant';
 
 type Props = {
@@ -32,12 +32,10 @@ function EndpointConfigForm({ endpointSchema }: Props) {
     const displayValidation = useEntityCreateStore(
         entityCreateStoreSelectors.formState.displayValidation
     );
-    const formStateStatus = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.status
-    );
     const setEndpointSchema = useEntityCreateStore(
         entityCreateStoreSelectors.setEndpointSchema
     );
+    const isActive = useEntityCreateStore(entityCreateStoreSelectors.isActive);
 
     useEffect(() => {
         setEndpointSchema(endpointSchema);
@@ -77,10 +75,7 @@ function EndpointConfigForm({ endpointSchema }: Props) {
                     renderers={defaultRenderers}
                     cells={materialCells}
                     config={defaultOptions}
-                    readonly={
-                        formStateStatus === FormStatus.TESTING ||
-                        formStateStatus === FormStatus.SAVING
-                    }
+                    readonly={isActive}
                     validationMode={showValidationVal}
                     onChange={setSpec}
                     ajv={setDefaultsValidator}
