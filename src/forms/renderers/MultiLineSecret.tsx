@@ -17,7 +17,7 @@ export const multiLineSecretTester: RankedTester = rankWith(
 
 // This is blank on purpose. For right now we can just show null settings are nothing
 const MultiLineSecretRenderer = (props: any) => {
-    const { handleChange, path } = props;
+    const { handleChange, path, uischema } = props;
 
     const [isUploadOpen, setIsUploadOpen] = useState(false);
 
@@ -47,9 +47,8 @@ const MultiLineSecretRenderer = (props: any) => {
         [handleChange, path]
     );
 
-    // Make it a password again
-    // eslint-disable-next-line react/destructuring-assignment
-    props.uischema.options.format = 'password';
+    // Make it a password again so the input is masked
+    uischema.options.format = 'password';
 
     return (
         <>
