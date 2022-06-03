@@ -388,9 +388,10 @@ const generateUISchema = (
     } else if (isMultilineText(jsonSchema)) {
         addOption(controlObject, 'multi', true);
     } else if (isDateTimeText(jsonSchema)) {
-        if (controlObject.options) {
-            controlObject.options.dateTimeFormat = 'YYYY-MM-DDThh:mm:ssZ';
-            controlObject.options.dateTimeSaveFormat = 'YYYY-MM-DDThh:mm:ssZ';
+        const newControl = addOption(controlObject, 'format', 'date-time');
+        if (newControl.options) {
+            newControl.options.dateTimeFormat = 'YYYY-MM-DDThh:mm:ssZ';
+            newControl.options.dateTimeSaveFormat = 'YYYY-MM-DDThh:mm:ssZ';
         }
     }
 
