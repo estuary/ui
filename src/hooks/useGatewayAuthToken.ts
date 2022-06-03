@@ -1,7 +1,7 @@
 import { Auth } from '@supabase/ui';
 import { isBefore } from 'date-fns';
 import { useQuery, useSelect } from 'hooks/supabase-swr';
-import { decodeJwt } from 'jose';
+import { decodeJwt, JWTPayload } from 'jose';
 import { client } from 'services/client';
 import { TABLES } from 'services/supabase';
 import useSWR from 'swr';
@@ -57,7 +57,13 @@ const useGatewayAuthToken = () => {
 
     const gatewayConfig = getStoredGatewayAuthConfig();
 
-    const jwt = gatewayConfig ? decodeJwt(gatewayConfig.token) : undefined;
+    let jwt: JWTPayload | undefined;
+
+    try {
+        jwt = gatewayConfig ? decodeJwt(gatewayConfig.token) : undefined;
+    } catch {
+        jwt = undefined;
+    }
 
     let tokenExpired = true;
 
