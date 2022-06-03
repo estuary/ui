@@ -2,12 +2,13 @@ import { Auth } from '@supabase/ui';
 import { usePreFetchData } from 'context/PreFetchData';
 import { ShardClient, ShardSelector } from 'data-plane-gateway';
 import { useMemo } from 'react';
+import { useLocalStorage } from 'react-use';
 import getGatewayAuthConfig from 'services/gateway-auth-config';
 import useSWR from 'swr';
 import { LiveSpecsExtBaseQuery } from 'types';
 import {
     getStoredGatewayAuthConfig,
-    storeGatewayAuthConfig,
+    LocalStorageKeys,
 } from 'utils/localStorage-utils';
 
 enum ErrorFlags {
@@ -23,7 +24,10 @@ const useShardsList = <T extends LiveSpecsExtBaseQuery>(specs: T[]) => {
     const { session } = Auth.useUser();
     const { grantDetails } = usePreFetchData();
 
-    const gatewayConfig = getStoredGatewayAuthConfig();
+    const [gatewayConfig, setGatewayConfig] = useLocalStorage(
+        LocalStorageKeys.GATEWAY,
+        getStoredGatewayAuthConfig()
+    );
 
     const shardClient = useMemo(() => {
         if (gatewayConfig?.gateway_url && gatewayConfig.token) {
@@ -71,7 +75,7 @@ const useShardsList = <T extends LiveSpecsExtBaseQuery>(specs: T[]) => {
 
                         getGatewayAuthConfig(prefixes, session.access_token)
                             .then(([response]) => {
-                                storeGatewayAuthConfig(response);
+                                setGatewayConfig(response);
                             })
                             .catch((configError) =>
                                 Promise.reject(configError)
