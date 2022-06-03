@@ -13,17 +13,11 @@ import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 
 interface Props {
     disabled: boolean;
-    formId: string;
     onFailure: Function;
     subscription: Function;
 }
 
-function CaptureGenerateButton({
-    disabled,
-    formId,
-    onFailure,
-    subscription,
-}: Props) {
+function CaptureGenerateButton({ disabled, onFailure, subscription }: Props) {
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
@@ -73,7 +67,7 @@ function CaptureGenerateButton({
 
     const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
-        resetFormState(FormStatus.GENERATING_PREVIEW);
+        resetFormState(FormStatus.GENERATING);
 
         if (
             isEmpty(endpointConfigData) ||
@@ -81,7 +75,7 @@ function CaptureGenerateButton({
             endpointConfigHasErrors
         ) {
             return setFormState({
-                status: FormStatus.GENERATED_PREVIEW,
+                status: FormStatus.GENERATED,
                 displayValidation: true,
             });
         } else {
@@ -140,7 +134,6 @@ function CaptureGenerateButton({
         <Button
             onClick={generateCatalog}
             disabled={disabled || isSaving || formActive}
-            form={formId}
             type="submit"
             sx={buttonSx}
         >

@@ -20,7 +20,6 @@ import { startSubscription, TABLES } from 'services/supabase';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 import { getPathWithParam } from 'utils/misc-utils';
 
-const FORM_ID = 'newCaptureForm';
 const connectorType = 'capture';
 
 function CaptureCreate() {
@@ -170,7 +169,6 @@ function CaptureCreate() {
             <EntityCreate
                 title="browserTitle.captureCreate"
                 connectorType={connectorType}
-                formID={FORM_ID}
                 Header={
                     <FooHeader
                         heading={
@@ -179,7 +177,6 @@ function CaptureCreate() {
                         GenerateButton={
                             <CaptureGenerateButton
                                 disabled={!hasConnectors}
-                                formId={FORM_ID}
                                 onFailure={helpers.callFailed}
                                 subscription={waitFor.discovers}
                             />

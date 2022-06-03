@@ -50,8 +50,8 @@ export enum FormStatus {
     TESTING = 'testing',
     TESTED = 'tested',
 
-    GENERATING_PREVIEW = 'Generating Preview',
-    GENERATED_PREVIEW = 'Generated Preview',
+    GENERATING = 'Generating Preview',
+    GENERATED = 'Generated Preview',
 
     SUCCESS = 'success',
     FAILED = 'failed',
@@ -60,7 +60,7 @@ export enum FormStatus {
 export const formActive = (formStateStatus: FormStatus) => {
     return (
         formStateStatus === FormStatus.TESTING ||
-        formStateStatus === FormStatus.GENERATING_PREVIEW ||
+        formStateStatus === FormStatus.GENERATING ||
         formStateStatus === FormStatus.SAVING
     );
 };
@@ -70,7 +70,7 @@ const formIdle = (formStateStatus: FormStatus) => {
         formStateStatus === FormStatus.TESTED ||
         formStateStatus === FormStatus.INIT ||
         formStateStatus === FormStatus.SAVED ||
-        formStateStatus === FormStatus.GENERATED_PREVIEW
+        formStateStatus === FormStatus.GENERATED
     );
 };
 

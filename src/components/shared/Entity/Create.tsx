@@ -25,7 +25,6 @@ import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 interface Props {
     title: string;
     connectorType: 'capture' | 'materialization';
-    formID: string;
     Header: any;
     showCollections?: boolean;
 }
@@ -33,7 +32,6 @@ interface Props {
 function EntityCreate({
     title,
     connectorType,
-    formID,
     showCollections,
     Header,
 }: Props) {
@@ -160,34 +158,32 @@ function EntityCreate({
                         )}
                     </Collapse>
 
-                    <form id={formID}>
-                        {!isValidating && connectorTags.length === 0 ? (
-                            <Alert severity="warning">
-                                <FormattedMessage
-                                    id={`${messagePrefix}.missingConnectors`}
-                                />
-                            </Alert>
-                        ) : connectorTags.length > 0 ? (
-                            <ErrorBoundryWrapper>
-                                <DetailsForm
-                                    connectorTags={connectorTags}
-                                    accessGrants={combinedGrants}
-                                />
-                            </ErrorBoundryWrapper>
-                        ) : null}
+                    {!isValidating && connectorTags.length === 0 ? (
+                        <Alert severity="warning">
+                            <FormattedMessage
+                                id={`${messagePrefix}.missingConnectors`}
+                            />
+                        </Alert>
+                    ) : connectorTags.length > 0 ? (
+                        <ErrorBoundryWrapper>
+                            <DetailsForm
+                                connectorTags={connectorTags}
+                                accessGrants={combinedGrants}
+                            />
+                        </ErrorBoundryWrapper>
+                    ) : null}
 
-                        {imageTag?.id ? (
-                            <ErrorBoundryWrapper>
-                                <EndpointConfig connectorImage={imageTag.id} />
-                            </ErrorBoundryWrapper>
-                        ) : null}
+                    {imageTag?.id ? (
+                        <ErrorBoundryWrapper>
+                            <EndpointConfig connectorImage={imageTag.id} />
+                        </ErrorBoundryWrapper>
+                    ) : null}
 
-                        {showCollections && imageTag?.id ? (
-                            <ErrorBoundryWrapper>
-                                <CollectionConfig />
-                            </ErrorBoundryWrapper>
-                        ) : null}
-                    </form>
+                    {showCollections && imageTag?.id ? (
+                        <ErrorBoundryWrapper>
+                            <CollectionConfig />
+                        </ErrorBoundryWrapper>
+                    ) : null}
 
                     <ErrorBoundryWrapper>
                         <CatalogEditor

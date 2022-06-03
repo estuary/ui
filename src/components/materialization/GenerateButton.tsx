@@ -78,7 +78,7 @@ function MaterializeGenerateButton({ disabled, onFailure }: Props) {
 
     const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
-        resetFormState(FormStatus.GENERATING_PREVIEW);
+        resetFormState(FormStatus.GENERATING);
 
         if (
             resourceConfigHasErrors ||
@@ -97,7 +97,7 @@ function MaterializeGenerateButton({ disabled, onFailure }: Props) {
         } else {
             resetEditorState();
             setFormState({
-                status: FormStatus.GENERATING_PREVIEW,
+                status: FormStatus.GENERATING,
             });
             setDraftId(null);
 

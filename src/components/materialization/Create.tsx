@@ -18,7 +18,6 @@ import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 
-const FORM_ID = 'newMaterializationForm';
 const connectorType = 'materialization';
 
 function MaterializationCreate() {
@@ -146,7 +145,6 @@ function MaterializationCreate() {
             <EntityCreate
                 title="browserTitle.materializationCreate"
                 connectorType={connectorType}
-                formID={FORM_ID}
                 showCollections
                 Header={
                     <FooHeader
