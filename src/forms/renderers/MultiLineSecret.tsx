@@ -76,7 +76,7 @@ const MultiLineSecretRenderer = (props: any) => {
                         sx={{ whiteSpace: 'nowrap' }}
                         onClick={() => setIsUploadOpen(!isUploadOpen)}
                     >
-                        Use file (.pem)
+                        Use secret from file
                     </Button>
                 </Box>
             </Stack>
@@ -102,6 +102,7 @@ const MultiLineSecretRenderer = (props: any) => {
                     '.der',
                     '.pfx',
                     '.spc',
+                    '',
                 ]}
                 clearOnUnmount={true}
                 showPreviews={false}
@@ -131,7 +132,6 @@ const MultiLineSecretRenderer = (props: any) => {
             />
         </>
     );
-    // return <Input style={{ width: '100%' }} type="file" />;
 };
 
 export const MultiLineSecret = withJsonFormsControlProps(
