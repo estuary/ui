@@ -70,6 +70,7 @@ function Row({ row, showEntityStatus }: RowProps) {
                 detailsExpanded={detailsExpanded}
                 id={row.last_pub_id}
                 colSpan={tableColumns.length}
+                browserTitleKey="collectionDetails"
                 disableLogs
             />
         </>

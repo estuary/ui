@@ -15,11 +15,15 @@ import { FormattedMessage } from 'react-intl';
 
 interface Props {
     lastPubId: string;
+    browserTitleKey:
+        | 'captureDetails'
+        | 'materializationDetails'
+        | 'collectionDetails';
     disableLogs?: boolean;
 }
 
-function EditorAndLogs({ lastPubId, disableLogs }: Props) {
-    useBrowserTitle('browserTitle.captureDetails');
+function EditorAndLogs({ lastPubId, browserTitleKey, disableLogs }: Props) {
+    useBrowserTitle(`browserTitle.${browserTitleKey}`);
 
     const { publicationSpecs, error: pubSpecsError } =
         usePublicationSpecs(lastPubId);
@@ -58,7 +62,7 @@ function EditorAndLogs({ lastPubId, disableLogs }: Props) {
                 <Grid item xs={6}>
                     {pubsError ? (
                         <Alert variant="filled" severity="warning">
-                            <FormattedMessage id="captureDetails.logs.notFound" />
+                            <FormattedMessage id="detailsPanel.logs.notFound" />
                         </Alert>
                     ) : !disableLogs && publications !== null ? (
                         <Logs

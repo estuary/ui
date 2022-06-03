@@ -11,7 +11,6 @@ import {
     useTheme,
 } from '@mui/material';
 import { EditorStoreState } from 'components/editor/Store';
-import useBrowserTitle from 'hooks/useBrowserTitle';
 import { PublicationSpecQuery } from 'hooks/usePublicationSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
@@ -28,7 +27,6 @@ interface Props {
 const NEW_LINE = '\r\n';
 
 function EditorAndLogs({ entityType }: Props) {
-    useBrowserTitle('browserTitle.captureDetails');
     const theme = useTheme();
 
     const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(
@@ -82,7 +80,7 @@ function EditorAndLogs({ entityType }: Props) {
                                     expandIcon={<ExpandMoreIcon />}
                                 >
                                     <Typography>
-                                        <FormattedMessage id="captureDetails.shardDetails.errorTitle" />
+                                        <FormattedMessage id="detailsPanel.shardDetails.errorTitle" />
                                     </Typography>
                                 </AccordionSummary>
 
@@ -127,7 +125,7 @@ function EditorAndLogs({ entityType }: Props) {
                         }}
                     >
                         <span style={{ marginRight: 8, fontWeight: 500 }}>
-                            <FormattedMessage id="captureDetails.shardDetails.id.label" />
+                            <FormattedMessage id="detailsPanel.shardDetails.id.label" />
                         </span>
 
                         <span>{shardDetails.id}</span>

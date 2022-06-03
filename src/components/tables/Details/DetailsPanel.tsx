@@ -10,6 +10,10 @@ interface Props {
     id: string;
     storeName?: string;
     colSpan: number;
+    browserTitleKey:
+        | 'captureDetails'
+        | 'materializationDetails'
+        | 'collectionDetails';
     disableLogs?: boolean;
     entityType?: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
 }
@@ -19,6 +23,7 @@ function DetailsPanel({
     id,
     storeName = 'liveSpecEditor',
     colSpan,
+    browserTitleKey,
     disableLogs,
     entityType,
 }: Props) {
@@ -40,6 +45,7 @@ function DetailsPanel({
 
                             <EditorAndLogs
                                 lastPubId={id}
+                                browserTitleKey={browserTitleKey}
                                 disableLogs={disableLogs}
                             />
                         </Grid>
