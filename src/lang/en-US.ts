@@ -210,13 +210,14 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.captureDetails': `Capture Details`,
     'routeTitle.captures': `Captures`,
     'routeTitle.collections': `Collections`,
+    'routeTitle.collectionDetails': `Collection Details`,
     'routeTitle.connectors': `Connectors`,
     'routeTitle.error.pageNotFound': `Page Not Found`,
     'routeTitle.login': `Login`,
     'routeTitle.loginLoading': `Checking Credentials`,
     'routeTitle.noGrants': `Access Denied`,
     'routeTitle.materializationCreate': `Create Materialization`,
-    'routeTitle.materializationEdit': `Materialization Details`,
+    'routeTitle.materializationDetails': `Materialization Details`,
     'routeTitle.materializations': `Materializations`,
     'routeTitle.registration': `Registration`,
 };
@@ -229,13 +230,14 @@ const BrowserTitles: ResolvedIntlConfig['messages'] = {
     'browserTitle.captureDetails': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureDetails']}`,
     'browserTitle.captures': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captures']}`,
     'browserTitle.collections': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.collections']}`,
+    'browserTitle.collectionDetails': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.collectionDetails']}`,
     'browserTitle.connectors': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.connectors']}`,
     'browserTitle.error.pageNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.pageNotFound']}`,
     'browserTitle.login': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.login']}`,
     'browserTitle.noGrants': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.noGrants']}`,
     'browserTitle.loginLoading': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.loginLoading']}`,
     'browserTitle.materializationCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationCreate']}`,
-    'browserTitle.materializationEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationEdit']}`,
+    'browserTitle.materializationDetails': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationDetails']}`,
     'browserTitle.materializations': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializations']}`,
     'browserTitle.registration': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.registration']}`,
 };
@@ -366,11 +368,11 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreate.createNotification.desc': `Your new capture is published and ready to be used.`,
 };
 
-const CaptureDetails: ResolvedIntlConfig['messages'] = {
-    'captureDetails.logs.title': `Logs`,
-    'captureDetails.logs.notFound': `Logs for this build cannot be found. This is likely a permissions issue. You don't have permissions to view other users' logs by default.`,
-    'captureDetails.shardDetails.id.label': `Shard ID:`,
-    'captureDetails.shardDetails.errorTitle': `Shard Replica Processing Errors`,
+const DetailsPanel: ResolvedIntlConfig['messages'] = {
+    'detailsPanel.logs.title': `Logs`,
+    'detailsPanel.logs.notFound': `Logs for this build cannot be found. This is likely a permissions issue. You don't have permissions to view other users' logs by default.`,
+    'detailsPanel.shardDetails.id.label': `Shard ID:`,
+    'detailsPanel.shardDetails.errorTitle': `Shard Replica Processing Errors`,
 };
 
 const MaterializationCreate: ResolvedIntlConfig['messages'] = {
@@ -430,7 +432,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...Foo,
     ...Captures,
     ...CaptureCreate,
-    ...CaptureDetails,
+    ...DetailsPanel,
     ...MaterializationCreate,
 };
 

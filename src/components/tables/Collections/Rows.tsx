@@ -5,7 +5,7 @@ import EntityName from 'components/tables/cells/EntityName';
 import ExpandDetails from 'components/tables/cells/ExpandDetails';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import UserName from 'components/tables/cells/UserName';
-import DetailsPanel from 'components/tables/DetailsPanel';
+import DetailsPanel from 'components/tables/Details/DetailsPanel';
 import { useState } from 'react';
 
 interface RowProps {
@@ -70,6 +70,7 @@ function Row({ row, showEntityStatus }: RowProps) {
                 detailsExpanded={detailsExpanded}
                 id={row.last_pub_id}
                 colSpan={tableColumns.length}
+                browserTitleKey="collectionDetails"
                 disableLogs
             />
         </>
