@@ -9,7 +9,7 @@ import ExpandDetails from 'components/tables/cells/ExpandDetails';
 import RowSelect from 'components/tables/cells/RowSelect';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import UserName from 'components/tables/cells/UserName';
-import DetailsPanel from 'components/tables/DetailsPanel';
+import DetailsPanel from 'components/tables/Details/DetailsPanel';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
@@ -135,6 +135,7 @@ function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
                 detailsExpanded={detailsExpanded}
                 id={row.last_pub_id}
                 colSpan={tableColumns.length}
+                browserTitleKey="captureDetails"
                 entityType={ENTITY.CAPTURE}
             />
         </>

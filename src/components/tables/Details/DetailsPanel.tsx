@@ -1,14 +1,19 @@
-import { Collapse, TableCell, TableRow } from '@mui/material';
-import CaptureDetails from 'components/capture/Details';
+import { Collapse, Grid, TableCell, TableRow } from '@mui/material';
+import EditorAndLogs from 'components/tables/Details/EditorAndLogs';
 import { createEditorStore } from 'components/editor/Store';
 import { ZustandProvider } from 'hooks/useZustand';
 import { ENTITY } from 'types';
+import ShardInformation from 'components/tables/Details/ShardInformation';
 
 interface Props {
     detailsExpanded: boolean;
     id: string;
     storeName?: string;
     colSpan: number;
+    browserTitleKey:
+        | 'captureDetails'
+        | 'materializationDetails'
+        | 'collectionDetails';
     disableLogs?: boolean;
     entityType?: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
 }
@@ -18,6 +23,7 @@ function DetailsPanel({
     id,
     storeName = 'liveSpecEditor',
     colSpan,
+    browserTitleKey,
     disableLogs,
     entityType,
 }: Props) {
@@ -32,11 +38,17 @@ function DetailsPanel({
                         createStore={createEditorStore}
                         storeName={storeName}
                     >
-                        <CaptureDetails
-                            lastPubId={id}
-                            disableLogs={disableLogs}
-                            entityType={entityType}
-                        />
+                        <Grid container spacing={2}>
+                            {entityType && (
+                                <ShardInformation entityType={entityType} />
+                            )}
+
+                            <EditorAndLogs
+                                lastPubId={id}
+                                browserTitleKey={browserTitleKey}
+                                disableLogs={disableLogs}
+                            />
+                        </Grid>
                     </ZustandProvider>
                 </Collapse>
             </TableCell>
