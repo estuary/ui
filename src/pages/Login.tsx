@@ -9,8 +9,10 @@ import { useClient } from 'hooks/supabase-swr';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { useEffectOnce, useLocalStorage } from 'react-use';
 import { useSearchParams } from 'react-router-dom';
 import { getLoginSettings, getUrls } from 'utils/env-utils';
+import { LocalStorageKeys } from 'utils/localStorage-utils';
 
 export enum LogoutReasons {
     JWT = 'jwt_expired',
@@ -20,13 +22,17 @@ const urls = getUrls();
 const Login = () => {
     useBrowserTitle('browserTitle.login');
 
+    const { 2: clearGatewayConfig } = useLocalStorage(LocalStorageKeys.GATEWAY);
+
+    useEffectOnce(() => clearGatewayConfig());
+
     const [searchParams] = useSearchParams();
     const reason = searchParams.get(logoutRoutes.params.reason);
 
     const supabaseClient = useClient();
     const loginSettings = getLoginSettings();
 
-    // TODO (notification manager) We should realy make a stand alone component to handle all possible notifications
+    // TODO (notification manager) We should really make a stand alone component to handle all possible notifications
     const [notificationMessage, setNotificationMessage] = useState<
         string | undefined
     >(reason === LogoutReasons.JWT ? 'login.jwtExpired' : undefined);
