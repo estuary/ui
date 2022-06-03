@@ -1,11 +1,11 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { routeDetails } from 'app/Authenticated';
 import CaptureGenerateButton from 'components/capture/GenerateButton';
+import CaptureSaveButton from 'components/capture/SaveButton';
+import CaptureTestButton from 'components/capture/TestButton';
 import { EditorStoreState } from 'components/editor/Store';
-import EntityCreateSaveButton from 'components/shared/Entity/Actions/Savebutton';
 import EntityCreate from 'components/shared/Entity/Create';
 import FooHeader from 'components/shared/Entity/Header';
-import LogDialogActions from 'components/shared/Entity/LogDialogActions';
 import PageContainer from 'components/shared/PageContainer';
 import { useClient } from 'hooks/supabase-swr';
 import { usePrompt } from 'hooks/useBlocker';
@@ -175,6 +175,9 @@ function CaptureCreate() {
                 formID={FORM_ID}
                 Header={
                     <FooHeader
+                        heading={
+                            <FormattedMessage id={`${messagePrefix}.heading`} />
+                        }
                         GenerateButton={
                             <CaptureGenerateButton
                                 disabled={!hasConnectors}
@@ -184,32 +187,20 @@ function CaptureCreate() {
                             />
                         }
                         TestButton={
-                            <EntityCreateSaveButton
-                                dryRun
-                                disabled={!hasConnectors || !draftId}
-                                formId={FORM_ID}
-                                onFailure={helpers.callFailed}
+                            <CaptureTestButton
+                                closeLogs={handlers.closeLogs}
+                                callFailed={helpers.callFailed}
+                                disabled={!hasConnectors}
                             />
                         }
                         SaveButton={
-                            <EntityCreateSaveButton
+                            <CaptureSaveButton
+                                closeLogs={handlers.closeLogs}
+                                callFailed={helpers.callFailed}
                                 disabled={!draftId}
-                                formId={FORM_ID}
-                                onFailure={helpers.callFailed}
+                                materialize={handlers.materializeCollections}
                             />
                         }
-                        heading={
-                            <FormattedMessage id={`${messagePrefix}.heading`} />
-                        }
-                    />
-                }
-                logAction={
-                    <LogDialogActions
-                        close={handlers.closeLogs}
-                        materialize={{
-                            action: handlers.materializeCollections,
-                            title: 'captureCreate.ctas.materialize',
-                        }}
                     />
                 }
             />

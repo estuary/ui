@@ -7,7 +7,6 @@ import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
 import EntityError from 'components/shared/Entity/Error';
-import LogDialog from 'components/shared/Entity/LogDialog';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { useClient } from 'hooks/supabase-swr';
@@ -18,7 +17,7 @@ import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
-import { ReactNode, useEffect } from 'react';
+import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
@@ -28,7 +27,6 @@ interface Props {
     connectorType: 'capture' | 'materialization';
     formID: string;
     Header: any;
-    logAction: ReactNode;
     showCollections?: boolean;
 }
 
@@ -36,7 +34,6 @@ function EntityCreate({
     title,
     connectorType,
     formID,
-    logAction,
     showCollections,
     Header,
 }: Props) {
@@ -68,9 +65,6 @@ function EntityCreate({
     );
     const messagePrefix = entityCreateStore(
         entityCreateStoreSelectors.messagePrefix
-    );
-    const showLogs = entityCreateStore(
-        entityCreateStoreSelectors.formState.showLogs
     );
     const logToken = entityCreateStore(
         entityCreateStoreSelectors.formState.logToken
@@ -145,17 +139,6 @@ function EntityCreate({
 
     return (
         <>
-            <LogDialog
-                open={showLogs}
-                token={logToken}
-                title={
-                    <FormattedMessage
-                        id={`${messagePrefix}.save.waitMessage`}
-                    />
-                }
-                actionComponent={logAction}
-            />
-
             {Header}
 
             {connectorTagsError ? (

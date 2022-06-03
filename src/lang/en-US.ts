@@ -69,11 +69,11 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.register': `Sign up`,
     'cta.clickHere': `Click here`,
     'cta.details': `Details`,
-    'cta.testConfig': `Test Configuration`,
     'cta.saveEntity': `Save and publish`,
     'cta.restart': `Restart`,
     'cta.enable': `Enable`,
     'cta.disable': `Disable`,
+    'cta.testConfig': `Test Catalog`,
     'cta.generateCatalog': `Generate Catalog`,
     'cta.regenerateCatalog': `Regenerate Catalog`,
 };
@@ -353,7 +353,6 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreate.editor.default': `Before you can edit the capture specification, you must fill out the Connection Configuration section and click "Test Configuration." `,
     'captureCreate.finalReview.instructions': `The following catalog was generated from the details you provided. To make changes, you can enter new values in the form above and click Regenenerate Catalog, or you can edit the YAML file directly. Click Save and Publish to proceed.`,
 
-    'captureCreate.test.waitMessage': `Attempting to connect to the source. Please wait`,
     'captureCreate.test.failedErrorTitle': `Configuration Test Failed`,
     'captureCreate.test.serverUnreachable': `Unable to reach server while testing configuration.`,
 
@@ -366,6 +365,10 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
 
     'captureCreate.createNotification.title': `New Capture Created`,
     'captureCreate.createNotification.desc': `Your new capture is published and ready to be used.`,
+
+    'captureCreate.test.waitMessage': `Please wait while we test your capture.`,
+    'captureCreate.testNotification.title': `Test Successful`,
+    'captureCreate.testNotification.desc': `Your capture succeeded in a dry run and can be saved.`,
 };
 
 const DetailsPanel: ResolvedIntlConfig['messages'] = {
@@ -390,17 +393,25 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreate.save.failure.errorTitle': `Materialization Save Failed`,
     'materializationCreate.save.serverUnreachable': `Unable to reach server while saving materialization`,
     'materializationCreate.tenant.label': `Prefix`,
+
     'materializationCreate.test.failure.errorTitle': `Configuration Test Failed`,
     'materializationCreate.test.failedConfigEncryptTitle': `Configuration Encryption Failed`,
     'materializationCreate.test.serverUnreachable': `Unable to reach server while testing configuration`,
     'materializationCreate.test.inProgress': `Please wait while we try to connect to the destination.`,
+
     'materializationCreate.collectionSelector.heading': `Collection Selector`,
     'materializationCreate.collectionSelector.instructions': `Choose one or more collections to materialize.`,
+
     'materializationCreate.resourceConfig.heading': `Resource Configuration`,
     'materializationCreate.save.failedErrorTitle': `Materialization Save Failed`,
     'materializationCreate.save.waitMessage': `Please wait while we test, save, and publish your materialization.`,
+
     'materializationCreate.createNotification.title': `New Materialization Created`,
     'materializationCreate.createNotification.desc': `Your materialization is published and ready to be used.`,
+
+    'materializationCreate.test.waitMessage': `Please wait while we test your materialization.`,
+    'materializationCreate.testNotification.title': `Test Successful`,
+    'materializationCreate.testNotification.desc': `Your materialization succeeded in a dry run and can be saved.`,
 };
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {

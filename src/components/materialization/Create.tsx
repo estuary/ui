@@ -5,7 +5,6 @@ import MaterializeTestButton from 'components/materialization/TestButton';
 import EntityCreateSaveButton from 'components/shared/Entity/Actions/Savebutton';
 import EntityCreate from 'components/shared/Entity/Create';
 import FooHeader from 'components/shared/Entity/Header';
-import LogDialogActions from 'components/shared/Entity/LogDialogActions';
 import PageContainer from 'components/shared/PageContainer';
 import { useClient } from 'hooks/supabase-swr';
 import { usePrompt } from 'hooks/useBlocker';
@@ -132,17 +131,17 @@ function MaterializationCreate() {
     };
 
     // Form Event Handlers
-    const handlers = {
-        closeLogs: () => {
-            setFormState({
-                showLogs: false,
-            });
+    // const handlers = {
+    //     closeLogs: () => {
+    //         setFormState({
+    //             showLogs: false,
+    //         });
 
-            if (exitWhenLogsClose) {
-                helpers.exit();
-            }
-        },
-    };
+    //         if (exitWhenLogsClose) {
+    //             helpers.exit();
+    //         }
+    //     },
+    // };
 
     usePrompt('confirm.loseData', !exitWhenLogsClose && hasChanges(), () => {
         resetState();
@@ -163,14 +162,12 @@ function MaterializationCreate() {
                                 disabled={!hasConnectors}
                                 onFailure={helpers.callFailed}
                                 subscription={waitFor.publications}
-                                formId={FORM_ID}
                             />
                         }
                         SaveButton={
                             <EntityCreateSaveButton
                                 disabled={!draftId}
                                 onFailure={helpers.callFailed}
-                                formId={FORM_ID}
                             />
                         }
                         heading={
@@ -178,7 +175,6 @@ function MaterializationCreate() {
                         }
                     />
                 }
-                logAction={<LogDialogActions close={handlers.closeLogs} />}
             />
         </PageContainer>
     );

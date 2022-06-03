@@ -12,10 +12,16 @@ interface Props {
     closeLogs: Function;
     callFailed: Function;
     disabled: boolean;
+    materialize: Function;
 }
 
-function CaptureTestButton({ callFailed, closeLogs, disabled }: Props) {
-    console.log('testbutton');
+function CaptureSaveButton({
+    callFailed,
+    closeLogs,
+    disabled,
+    materialize,
+}: Props) {
+    console.log('savebutton');
     const entityCreateStore = useRouteStore();
     const showLogs = entityCreateStore(
         entityCreateStoreSelectors.formState.showLogs
@@ -38,17 +44,24 @@ function CaptureTestButton({ callFailed, closeLogs, disabled }: Props) {
     return (
         <>
             <LogDialog
-                open={formStatus === FormStatus.TESTING && showLogs}
+                open={formStatus === FormStatus.SAVING && showLogs}
                 token={logToken}
                 title={
                     <FormattedMessage
-                        id={`${messagePrefix}.test.waitMessage`}
+                        id={`${messagePrefix}.save.waitMessage`}
                     />
                 }
-                actionComponent={<LogDialogActions close={closeLogs} />}
+                actionComponent={
+                    <LogDialogActions
+                        close={closeLogs}
+                        materialize={{
+                            action: materialize,
+                            title: 'captureCreate.ctas.materialize',
+                        }}
+                    />
+                }
             />
             <EntityCreateSaveButton
-                dryRun
                 disabled={disabled || !draftId}
                 onFailure={callFailed}
             />
@@ -56,4 +69,4 @@ function CaptureTestButton({ callFailed, closeLogs, disabled }: Props) {
     );
 }
 
-export default CaptureTestButton;
+export default CaptureSaveButton;

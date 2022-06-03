@@ -19,19 +19,15 @@ import useNotificationStore, {
 
 interface Props {
     disabled: boolean;
-    formId: string;
     onFailure: Function;
     dryRun?: boolean;
 }
 
-function EntityCreateSaveButton({
-    disabled,
-    dryRun,
-    formId,
-    onFailure,
-}: Props) {
+function EntityCreateSaveButton({ disabled, dryRun, onFailure }: Props) {
     const intl = useIntl();
     const supabaseClient = useClient();
+
+    const status = dryRun ? FormStatus.TESTING : FormStatus.SAVING;
 
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
@@ -69,28 +65,38 @@ function EntityCreateSaveButton({
         entityCreateStoreSelectors.messagePrefix
     );
 
-    const waitForPublishToFinish = (logToken: string) => {
-        resetFormState(FormStatus.SAVING);
+    const waitForPublishToFinish = (logTokenVal: string) => {
+        resetFormState(status);
         console.log('wait for finish');
         const subscription = startSubscription(
             supabaseClient.from(
                 `${TABLES.PUBLICATIONS}:draft_id=eq.${draftId}`
             ),
             async (payload: any) => {
-                if (payload.logs_token === logToken) {
+                if (payload.logs_token === logTokenVal) {
                     setPubId(payload.id);
                     setFormState({
                         status: FormStatus.SUCCESS,
-                        exitWhenLogsClose: true,
+                        exitWhenLogsClose: !dryRun,
                     });
+
+                    let description, title;
+
+                    if (!dryRun) {
+                        description = `${messagePrefix}.createNotification.desc`;
+                        title = `${messagePrefix}.createNotification.title`;
+                    } else {
+                        description = `${messagePrefix}.testNotification.desc`;
+                        title = `${messagePrefix}.testNotification.title`;
+                    }
 
                     showNotification({
                         description: intl.formatMessage({
-                            id: `${messagePrefix}.createNotification.desc`,
+                            id: description,
                         }),
                         severity: 'success',
                         title: intl.formatMessage({
-                            id: `${messagePrefix}.createNotification.title`,
+                            id: title,
                         }),
                     });
 
@@ -99,7 +105,7 @@ function EntityCreateSaveButton({
             },
             async (payload: any) => {
                 console.log('Paload', payload);
-                if (payload.logs_token === logToken) {
+                if (payload.logs_token === logTokenVal) {
                     console.log('wait for finish - failure');
                     onFailure({
                         error: {
@@ -120,7 +126,7 @@ function EntityCreateSaveButton({
         event.preventDefault();
 
         console.log('save');
-        resetFormState(FormStatus.SAVING);
+        resetFormState(status);
 
         console.log('save:pubstarted');
         console.log('save:creating');
@@ -157,7 +163,6 @@ function EntityCreateSaveButton({
         <Button
             onClick={save}
             disabled={disabled || isSaving || formInProgress(formStateStatus)}
-            form={formId}
             type="submit"
             sx={buttonSx}
         >

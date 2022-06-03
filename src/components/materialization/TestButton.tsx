@@ -18,19 +18,13 @@ import { ENTITY } from 'types';
 
 interface Props {
     disabled: boolean;
-    formId: string;
     onFailure: Function;
     subscription: Function;
 }
 
 const buttonSx: SxProps<Theme> = { ml: 1, borderRadius: 5 };
 
-function MaterializeTestButton({
-    disabled,
-    formId,
-    onFailure,
-    subscription,
-}: Props) {
+function MaterializeTestButton({ disabled, onFailure, subscription }: Props) {
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
@@ -196,7 +190,6 @@ function MaterializeTestButton({
         <Button
             onClick={test}
             disabled={disabled || isSaving || formInProgress(formStateStatus)}
-            form={formId}
             type="submit"
             sx={buttonSx}
         >
