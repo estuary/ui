@@ -13,6 +13,7 @@ import { ReactNode } from 'react';
 import { entityCreateStoreSelectors, formInProgress } from 'stores/Create';
 
 interface Props {
+    GenerateButton: ReactNode;
     TestButton: ReactNode;
     SaveButton: ReactNode;
     heading: ReactNode;
@@ -20,7 +21,7 @@ interface Props {
 
 export const buttonSx: SxProps<Theme> = { ml: 1, borderRadius: 5 };
 
-function FooHeader({ TestButton, SaveButton, heading }: Props) {
+function FooHeader({ GenerateButton, TestButton, SaveButton, heading }: Props) {
     const entityCreateStore = useRouteStore();
     const formStateStatus = entityCreateStore(
         entityCreateStoreSelectors.formState.status
@@ -43,6 +44,8 @@ function FooHeader({ TestButton, SaveButton, heading }: Props) {
                         ml: 'auto',
                     }}
                 >
+                    {GenerateButton}
+
                     {TestButton}
 
                     {SaveButton}

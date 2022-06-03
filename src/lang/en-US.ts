@@ -69,10 +69,13 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.register': `Sign up`,
     'cta.clickHere': `Click here`,
     'cta.details': `Details`,
+    'cta.testConfig': `Test Configuration`,
     'cta.saveEntity': `Save and publish`,
     'cta.restart': `Restart`,
     'cta.enable': `Enable`,
     'cta.disable': `Disable`,
+    'cta.generateCatalog': `Generate Catalog`,
+    'cta.regenerateCatalog': `Regenerate Catalog`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
@@ -317,8 +320,6 @@ const Collections: ResolvedIntlConfig['messages'] = {
 };
 
 const Foo: ResolvedIntlConfig['messages'] = {
-    'foo.ctas.discover': `Test Configuration`,
-    'foo.ctas.discoverAgain': `Regenerate Catalog`,
     'foo.ctas.docs': `Connector Help`,
     'foo.catalogEditor.heading': `Catalog Editor`,
     'foo.errors.collapseTitle': `Expand to see logs`,
@@ -351,13 +352,18 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreate.save.failed': `Capture creation failed. See below for details:`,
     'captureCreate.editor.default': `Before you can edit the capture specification, you must fill out the Connection Configuration section and click "Test Configuration." `,
     'captureCreate.finalReview.instructions': `The following catalog was generated from the details you provided. To make changes, you can enter new values in the form above and click Regenenerate Catalog, or you can edit the YAML file directly. Click Save and Publish to proceed.`,
+
     'captureCreate.test.waitMessage': `Attempting to connect to the source. Please wait`,
     'captureCreate.test.failedErrorTitle': `Configuration Test Failed`,
-    'captureCreate.test.failedConfigEncryptTitle': `Configuration Encryption Failed`,
     'captureCreate.test.serverUnreachable': `Unable to reach server while testing configuration.`,
+
     'captureCreate.save.failedErrorTitle': `Capture Save Failed`,
     'captureCreate.save.serverUnreachable': `Unable to reach server while saving capture`,
     'captureCreate.save.waitMessage': `Please wait while we test, save, and publish your capture.`,
+
+    'captureCreate.generate.failedConfigEncryptTitle': `Configuration Encryption Failed`,
+    'captureCreate.generate.failedErrorTitle': `Generating Catalog Failed`,
+
     'captureCreate.createNotification.title': `New Capture Created`,
     'captureCreate.createNotification.desc': `Your new capture is published and ready to be used.`,
 };

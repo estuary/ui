@@ -1,6 +1,6 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { routeDetails } from 'app/Authenticated';
-import TestButton from 'components/capture/TestButton';
+import CaptureGenerateButton from 'components/capture/GenerateButton';
 import { EditorStoreState } from 'components/editor/Store';
 import EntityCreateSaveButton from 'components/shared/Entity/Actions/Savebutton';
 import EntityCreate from 'components/shared/Entity/Create';
@@ -175,12 +175,20 @@ function CaptureCreate() {
                 formID={FORM_ID}
                 Header={
                     <FooHeader
-                        TestButton={
-                            <TestButton
+                        GenerateButton={
+                            <CaptureGenerateButton
                                 disabled={!hasConnectors}
                                 formId={FORM_ID}
                                 onFailure={helpers.callFailed}
                                 subscription={waitFor.discovers}
+                            />
+                        }
+                        TestButton={
+                            <EntityCreateSaveButton
+                                dryRun
+                                disabled={!hasConnectors || !draftId}
+                                formId={FORM_ID}
+                                onFailure={helpers.callFailed}
                             />
                         }
                         SaveButton={

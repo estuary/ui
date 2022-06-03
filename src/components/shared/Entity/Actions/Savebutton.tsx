@@ -21,9 +21,15 @@ interface Props {
     disabled: boolean;
     formId: string;
     onFailure: Function;
+    dryRun?: boolean;
 }
 
-function EntityCreateSaveButton({ disabled, formId, onFailure }: Props) {
+function EntityCreateSaveButton({
+    disabled,
+    dryRun,
+    formId,
+    onFailure,
+}: Props) {
     const intl = useIntl();
     const supabaseClient = useClient();
 
@@ -120,7 +126,7 @@ function EntityCreateSaveButton({ disabled, formId, onFailure }: Props) {
         console.log('save:creating');
         const response = await createPublication(
             draftId,
-            false,
+            dryRun ?? false,
             entityDescription
         );
         const publicationsSubscription = waitForPublishToFinish(
@@ -155,7 +161,9 @@ function EntityCreateSaveButton({ disabled, formId, onFailure }: Props) {
             type="submit"
             sx={buttonSx}
         >
-            <FormattedMessage id="cta.saveEntity" />
+            <FormattedMessage
+                id={dryRun === true ? 'cta.testConfig' : 'cta.saveEntity'}
+            />
         </Button>
     );
 }

@@ -22,7 +22,7 @@ interface Props {
     subscription: Function;
 }
 
-function CaptureTestButton({
+function CaptureGenerateButton({
     disabled,
     formId,
     onFailure,
@@ -75,9 +75,9 @@ function CaptureTestButton({
         entityCreateStoreSelectors.details.hasErrors
     );
 
-    const test = async (event: React.MouseEvent<HTMLElement>) => {
+    const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
-        resetFormState(FormStatus.TESTING);
+        resetFormState(FormStatus.GENERATING_PREVIEW);
 
         if (
             isEmpty(endpointConfigData) ||
@@ -94,7 +94,7 @@ function CaptureTestButton({
             if (draftsResponse.error) {
                 return onFailure({
                     error: {
-                        title: 'captureCreate.test.failedErrorTitle',
+                        title: 'captureCreate.generate.failedErrorTitle',
                         error: draftsResponse.error,
                     },
                 });
@@ -107,7 +107,7 @@ function CaptureTestButton({
             if (encryptedEndpointConfig.error) {
                 return onFailure({
                     error: {
-                        title: 'captureCreate.test.failedConfigEncryptTitle',
+                        title: 'captureCreate.generate.failedConfigEncryptTitle',
                         error: encryptedEndpointConfig.error,
                     },
                 });
@@ -126,7 +126,7 @@ function CaptureTestButton({
                 return onFailure(
                     {
                         error: {
-                            title: 'captureCreate.test.failedErrorTitle',
+                            title: 'captureCreate.generate.failedErrorTitle',
                             error: discoverResponse.error,
                         },
                     },
@@ -142,20 +142,17 @@ function CaptureTestButton({
 
     return (
         <Button
-            onClick={test}
-            disabled={
-                disabled ||
-                !draftId ||
-                isSaving ||
-                formInProgress(formStateStatus)
-            }
+            onClick={generateCatalog}
+            disabled={disabled || isSaving || formInProgress(formStateStatus)}
             form={formId}
             type="submit"
             sx={buttonSx}
         >
-            <FormattedMessage id="foo.ctas.discover" />
+            <FormattedMessage
+                id={draftId ? 'cta.regenerateCatalog' : 'cta.generateCatalog'}
+            />
         </Button>
     );
 }
 
-export default CaptureTestButton;
+export default CaptureGenerateButton;

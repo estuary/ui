@@ -157,6 +157,7 @@ function MaterializationCreate() {
                 showCollections
                 Header={
                     <FooHeader
+                        GenerateButton={<>Not IMplemented Yet</>}
                         TestButton={
                             <MaterializeTestButton
                                 disabled={!hasConnectors}
