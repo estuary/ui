@@ -22,20 +22,20 @@ type Props = {
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
 
 function EndpointConfigForm({ endpointSchema }: Props) {
-    const entityCreateStore = useRouteStore();
-    const setSpec = entityCreateStore(
+    const useEntityCreateStore = useRouteStore();
+    const setSpec = useEntityCreateStore(
         entityCreateStoreSelectors.endpointConfig.set
     );
-    const formData = entityCreateStore(
+    const formData = useEntityCreateStore(
         entityCreateStoreSelectors.endpointConfig.data
     );
-    const displayValidation = entityCreateStore(
+    const displayValidation = useEntityCreateStore(
         entityCreateStoreSelectors.formState.displayValidation
     );
-    const formStateStatus = entityCreateStore(
+    const formStateStatus = useEntityCreateStore(
         entityCreateStoreSelectors.formState.status
     );
-    const setEndpointSchema = entityCreateStore(
+    const setEndpointSchema = useEntityCreateStore(
         entityCreateStoreSelectors.setEndpointSchema
     );
 

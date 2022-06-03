@@ -54,25 +54,29 @@ function EntityCreate({
         isValidating,
     } = useConnectorWithTagDetail(connectorType);
 
-    const entityCreateStore = useRouteStore();
-    const imageTag = entityCreateStore(
+    const useEntityCreateStore = useRouteStore();
+    const imageTag = useEntityCreateStore(
         entityCreateStoreSelectors.details.connectorTag
     );
-    const hasChanges = entityCreateStore(entityCreateStoreSelectors.hasChanges);
-    const resetState = entityCreateStore(entityCreateStoreSelectors.resetState);
-    const setFormState = entityCreateStore(
+    const hasChanges = useEntityCreateStore(
+        entityCreateStoreSelectors.hasChanges
+    );
+    const resetState = useEntityCreateStore(
+        entityCreateStoreSelectors.resetState
+    );
+    const setFormState = useEntityCreateStore(
         entityCreateStoreSelectors.formState.set
     );
-    const messagePrefix = entityCreateStore(
+    const messagePrefix = useEntityCreateStore(
         entityCreateStoreSelectors.messagePrefix
     );
-    const logToken = entityCreateStore(
+    const logToken = useEntityCreateStore(
         entityCreateStoreSelectors.formState.logToken
     );
-    const formSubmitError = entityCreateStore(
+    const formSubmitError = useEntityCreateStore(
         entityCreateStoreSelectors.formState.error
     );
-    const exitWhenLogsClose = entityCreateStore(
+    const exitWhenLogsClose = useEntityCreateStore(
         entityCreateStoreSelectors.formState.exitWhenLogsClose
     );
 

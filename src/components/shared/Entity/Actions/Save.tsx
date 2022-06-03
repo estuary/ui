@@ -8,11 +8,7 @@ import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { endSubscription, startSubscription, TABLES } from 'services/supabase';
-import {
-    entityCreateStoreSelectors,
-    formInProgress,
-    FormStatus,
-} from 'stores/Create';
+import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
@@ -58,11 +54,11 @@ function EntityCreateSave({ disabled, dryRun, onFailure }: Props) {
     const resetFormState = useEntityCreateStore(
         entityCreateStoreSelectors.formState.reset
     );
-    const formStateStatus = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.status
-    );
     const messagePrefix = useEntityCreateStore(
         entityCreateStoreSelectors.messagePrefix
+    );
+    const formActive = useEntityCreateStore(
+        entityCreateStoreSelectors.isActive
     );
 
     const waitForPublishToFinish = (logTokenVal: string) => {
@@ -162,7 +158,7 @@ function EntityCreateSave({ disabled, dryRun, onFailure }: Props) {
     return (
         <Button
             onClick={save}
-            disabled={disabled || isSaving || formInProgress(formStateStatus)}
+            disabled={disabled || isSaving || formActive}
             type="submit"
             sx={buttonSx}
         >

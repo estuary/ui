@@ -42,19 +42,35 @@ export interface FormState {
 }
 
 export enum FormStatus {
+    INIT = 'idle',
+
     SAVING = 'saving',
+    SAVED = 'saved',
+
     TESTING = 'testing',
-    IDLE = 'idle',
+    TESTED = 'tested',
+
+    GENERATING_PREVIEW = 'Generating Preview',
+    GENERATED_PREVIEW = 'Generated Preview',
+
     SUCCESS = 'success',
     FAILED = 'failed',
-    GENERATING_PREVIEW = 'Generating Preview',
 }
 
-export const formInProgress = (formStateStatus: FormStatus) => {
+export const formActive = (formStateStatus: FormStatus) => {
     return (
         formStateStatus === FormStatus.TESTING ||
         formStateStatus === FormStatus.GENERATING_PREVIEW ||
         formStateStatus === FormStatus.SAVING
+    );
+};
+
+const formIdle = (formStateStatus: FormStatus) => {
+    return (
+        formStateStatus === FormStatus.TESTED ||
+        formStateStatus === FormStatus.INIT ||
+        formStateStatus === FormStatus.SAVED ||
+        formStateStatus === FormStatus.GENERATED_PREVIEW
     );
 };
 
@@ -96,6 +112,8 @@ export interface CreateEntityStore {
     setConnectors: (val: CreateEntityStore['connectors']) => void;
     endpointSchema: { [key: string]: any };
     setEndpointSchema: (val: CreateEntityStore['endpointSchema']) => void;
+    isIdle: boolean;
+    isActive: boolean;
 
     //Content
     messagePrefix: Stores;
@@ -133,7 +151,7 @@ export const initialCreateStates = {
     formState: (): FormState => {
         return {
             displayValidation: false,
-            status: FormStatus.IDLE,
+            status: FormStatus.INIT,
             showLogs: false,
             exitWhenLogsClose: false,
             logToken: null,
@@ -162,8 +180,13 @@ export const getInitialStateData = (
     | 'endpointConfigHasErrors'
     | 'detailsFormHasErrors'
     | 'collectionsHasErrors'
+    | 'isIdle'
+    | 'isActive'
 > => {
     return {
+        isIdle: true,
+        isActive: false,
+
         messagePrefix,
         details: initialCreateStates.details(),
         detailsFormHasErrors: false,
@@ -225,6 +248,9 @@ export const getInitialCreateState = (
                             );
                         state.endpointConfig = endpointConfig;
                         state.formState = formState;
+
+                        state.isIdle = formIdle(formState.status);
+                        state.isActive = formActive(formState.status);
                     }
 
                     state.details = details;
@@ -440,6 +466,8 @@ export const entityCreateStoreSelectors = {
         state.collectionsHasErrors,
 
     messagePrefix: (state: CreateEntityStore) => state.messagePrefix,
+    isActive: (state: CreateEntityStore) => state.isActive,
+    isIdle: (state: CreateEntityStore) => state.isIdle,
 
     resetState: (state: CreateEntityStore) => state.resetState,
     hasChanges: (state: CreateEntityStore) => state.hasChanges,

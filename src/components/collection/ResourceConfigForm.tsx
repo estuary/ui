@@ -21,18 +21,18 @@ function NewMaterializationResourceConfigForm({
     resourceSchema,
     collectionName,
 }: Props) {
-    const entityCreateStore = useRouteStore();
+    const useEntityCreateStore = useRouteStore();
 
-    const setConfig = entityCreateStore(
+    const setConfig = useEntityCreateStore(
         entityCreateStoreSelectors.resourceConfig.set
     );
-    const formData = entityCreateStore(
+    const formData = useEntityCreateStore(
         (state: any) => state.resourceConfig[collectionName].data
     );
-    const displayValidation = entityCreateStore(
+    const displayValidation = useEntityCreateStore(
         entityCreateStoreSelectors.formState.displayValidation
     );
-    const status = entityCreateStore(
+    const status = useEntityCreateStore(
         entityCreateStoreSelectors.formState.status
     );
 

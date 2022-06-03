@@ -15,17 +15,17 @@ interface Props {
 }
 
 function EntityTestButton({ callFailed, closeLogs, disabled }: Props) {
-    const entityCreateStore = useRouteStore();
-    const showLogs = entityCreateStore(
+    const useEntityCreateStore = useRouteStore();
+    const showLogs = useEntityCreateStore(
         entityCreateStoreSelectors.formState.showLogs
     );
-    const logToken = entityCreateStore(
+    const logToken = useEntityCreateStore(
         entityCreateStoreSelectors.formState.logToken
     );
-    const formStatus = entityCreateStore(
+    const formStatus = useEntityCreateStore(
         entityCreateStoreSelectors.formState.status
     );
-    const messagePrefix = entityCreateStore(
+    const messagePrefix = useEntityCreateStore(
         entityCreateStoreSelectors.messagePrefix
     );
 

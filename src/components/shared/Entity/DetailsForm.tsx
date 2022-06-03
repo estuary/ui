@@ -37,18 +37,20 @@ function DetailsForm({ connectorTags, accessGrants }: Props) {
         EditorStoreState<DraftSpecQuery>['isSaving']
     >((state) => state.isSaving);
 
-    const entityCreateStore = useRouteStore();
-    const messagePrefix = entityCreateStore(
+    const useEntityCreateStore = useRouteStore();
+    const messagePrefix = useEntityCreateStore(
         entityCreateStoreSelectors.messagePrefix
     );
-    const formData = entityCreateStore(entityCreateStoreSelectors.details.data);
-    const setDetails = entityCreateStore(
+    const formData = useEntityCreateStore(
+        entityCreateStoreSelectors.details.data
+    );
+    const setDetails = useEntityCreateStore(
         entityCreateStoreSelectors.details.set
     );
-    const displayValidation = entityCreateStore(
+    const displayValidation = useEntityCreateStore(
         entityCreateStoreSelectors.formState.displayValidation
     );
-    const status = entityCreateStore(
+    const status = useEntityCreateStore(
         entityCreateStoreSelectors.formState.status
     );
 

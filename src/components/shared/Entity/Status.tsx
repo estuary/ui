@@ -4,18 +4,20 @@ import { FormattedMessage } from 'react-intl';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 
 function Status() {
-    const entityCreateStore = useRouteStore();
+    const useEntityCreateStore = useRouteStore();
 
-    const formStatus = entityCreateStore(
+    const formStatus = useEntityCreateStore(
         entityCreateStoreSelectors.formState.status
     );
+
+    const isActive = useEntityCreateStore(entityCreateStoreSelectors.isActive);
 
     let messageKey;
     if (formStatus === FormStatus.SUCCESS) {
         messageKey = 'common.success';
     } else if (formStatus === FormStatus.FAILED) {
         messageKey = 'common.fail';
-    } else if (formStatus !== FormStatus.IDLE) {
+    } else if (isActive) {
         messageKey = 'common.running';
     }
 

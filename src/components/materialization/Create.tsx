@@ -16,7 +16,6 @@ import { useZustandStore } from 'hooks/useZustand';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
-import { startSubscription, TABLES } from 'services/supabase';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 
 const FORM_ID = 'newMaterializationForm';
@@ -30,21 +29,25 @@ function MaterializationCreate() {
     const { connectorTags } = useConnectorWithTagDetail(connectorType);
     const hasConnectors = connectorTags.length > 0;
 
-    const entityCreateStore = useRouteStore();
-    const imageTag = entityCreateStore(
+    const useEntityCreateStore = useRouteStore();
+    const imageTag = useEntityCreateStore(
         entityCreateStoreSelectors.details.connectorTag
     );
-    const hasChanges = entityCreateStore(entityCreateStoreSelectors.hasChanges);
-    const resetState = entityCreateStore(entityCreateStoreSelectors.resetState);
-    const setFormState = entityCreateStore(
+    const hasChanges = useEntityCreateStore(
+        entityCreateStoreSelectors.hasChanges
+    );
+    const resetState = useEntityCreateStore(
+        entityCreateStoreSelectors.resetState
+    );
+    const setFormState = useEntityCreateStore(
         entityCreateStoreSelectors.formState.set
     );
-    const messagePrefix = entityCreateStore(
+    const messagePrefix = useEntityCreateStore(
         entityCreateStoreSelectors.messagePrefix
     );
 
     // Form State
-    const exitWhenLogsClose = entityCreateStore(
+    const exitWhenLogsClose = useEntityCreateStore(
         entityCreateStoreSelectors.formState.exitWhenLogsClose
     );
 
@@ -75,8 +78,8 @@ function MaterializationCreate() {
             };
 
             if (subscription) {
-                helpers
-                    .doneSubscribing(subscription)
+                supabaseClient
+                    .removeSubscription(subscription)
                     .then(() => {
                         setFailureState();
                     })
@@ -84,16 +87,6 @@ function MaterializationCreate() {
             } else {
                 setFailureState();
             }
-        },
-        doneSubscribing: (subscription: RealtimeSubscription) => {
-            return supabaseClient
-                .removeSubscription(subscription)
-                .then(() => {
-                    setFormState({
-                        status: FormStatus.IDLE,
-                    });
-                })
-                .catch(() => {});
         },
         exit: () => {
             resetState();
@@ -110,26 +103,26 @@ function MaterializationCreate() {
         },
     };
 
-    const waitFor = {
-        base: (query: any, success: Function, failureTitle: string) => {
-            return startSubscription(query, success, () => {
-                helpers.jobFailed(failureTitle);
-            });
-        },
-        publications: (newDraftId: string) => {
-            return waitFor.base(
-                supabaseClient.from(
-                    `${TABLES.PUBLICATIONS}:draft_id=eq.${newDraftId}`
-                ),
-                () => {
-                    setFormState({
-                        status: FormStatus.IDLE,
-                    });
-                },
-                'materializationCreate.test.failure.errorTitle'
-            );
-        },
-    };
+    // const waitFor = {
+    //     base: (query: any, success: Function, failureTitle: string) => {
+    //         return startSubscription(query, success, () => {
+    //             helpers.jobFailed(failureTitle);
+    //         });
+    //     },
+    //     publications: (newDraftId: string) => {
+    //         return waitFor.base(
+    //             supabaseClient.from(
+    //                 `${TABLES.PUBLICATIONS}:draft_id=eq.${newDraftId}`
+    //             ),
+    //             () => {
+    //                 setFormState({
+    //                     status: FormStatus.INIT,
+    //                 });
+    //             },
+    //             'materializationCreate.test.failure.errorTitle'
+    //         );
+    //     },
+    // };
 
     // Form Event Handlers
     const handlers = {
@@ -167,7 +160,7 @@ function MaterializationCreate() {
                             <EntityTestButton
                                 disabled={!hasConnectors}
                                 callFailed={helpers.callFailed}
-                                closeLogs={waitFor.publications}
+                                closeLogs={handlers.closeLogs}
                             />
                         }
                         SaveButton={

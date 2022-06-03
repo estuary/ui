@@ -12,14 +12,14 @@ import { entityCreateStoreSelectors } from 'stores/Create';
 import { ENTITY } from 'types';
 
 function CollectionConfig() {
-    const entityCreateStore = useRouteStore();
-    const imageTag = entityCreateStore(
+    const useEntityCreateStore = useRouteStore();
+    const imageTag = useEntityCreateStore(
         entityCreateStoreSelectors.details.connectorTag
     );
-    const collections = entityCreateStore(
+    const collections = useEntityCreateStore(
         entityCreateStoreSelectors.collections
     );
-    const prefillCollections = entityCreateStore(
+    const prefillCollections = useEntityCreateStore(
         entityCreateStoreSelectors.prefillCollections
     );
 
@@ -28,10 +28,10 @@ function CollectionConfig() {
         routeDetails.materializations.create.params.specID
     );
 
-    const resourceConfigHasErrors = entityCreateStore(
+    const resourceConfigHasErrors = useEntityCreateStore(
         entityCreateStoreSelectors.resourceConfig.hasErrors
     );
-    const collectionsHasErrors = entityCreateStore(
+    const collectionsHasErrors = useEntityCreateStore(
         entityCreateStoreSelectors.collectionsHasErrors
     );
 

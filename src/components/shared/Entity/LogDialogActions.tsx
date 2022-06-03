@@ -13,13 +13,9 @@ interface Props {
 }
 
 function LogDialogActions({ close, materialize }: Props) {
-    console.log('Dialog Actions', {
-        close,
-        materialize,
-    });
-    const entityCreateStore = useRouteStore();
+    const useEntityCreateStore = useRouteStore();
 
-    const formStatus = entityCreateStore(
+    const formStatus = useEntityCreateStore(
         entityCreateStoreSelectors.formState.status
     );
 

@@ -9,11 +9,7 @@ import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
-import {
-    entityCreateStoreSelectors,
-    formInProgress,
-    FormStatus,
-} from 'stores/Create';
+import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 
 interface Props {
     disabled: boolean;
@@ -43,35 +39,35 @@ function CaptureGenerateButton({
         EditorStoreState<DraftSpecQuery>['resetState']
     >((state) => state.resetState);
 
-    const entityCreateStore = useRouteStore();
+    const useEntityCreateStore = useRouteStore();
 
-    const formStateStatus = entityCreateStore(
-        entityCreateStoreSelectors.formState.status
+    const formActive = useEntityCreateStore(
+        entityCreateStoreSelectors.isActive
     );
-    const setFormState = entityCreateStore(
+    const setFormState = useEntityCreateStore(
         entityCreateStoreSelectors.formState.set
     );
-    const resetFormState = entityCreateStore(
+    const resetFormState = useEntityCreateStore(
         entityCreateStoreSelectors.formState.reset
     );
 
-    const entityName = entityCreateStore(
+    const entityName = useEntityCreateStore(
         entityCreateStoreSelectors.details.entityName
     );
-    const imageTag = entityCreateStore(
+    const imageTag = useEntityCreateStore(
         entityCreateStoreSelectors.details.connectorTag
     );
-    const endpointConfigData = entityCreateStore(
+    const endpointConfigData = useEntityCreateStore(
         entityCreateStoreSelectors.endpointConfig.data
     );
-    const endpointSchema = entityCreateStore(
+    const endpointSchema = useEntityCreateStore(
         entityCreateStoreSelectors.endpointSchema
     );
 
-    const endpointConfigHasErrors = entityCreateStore(
+    const endpointConfigHasErrors = useEntityCreateStore(
         entityCreateStoreSelectors.endpointConfig.hasErrors
     );
-    const detailsFormsHasErrors = entityCreateStore(
+    const detailsFormsHasErrors = useEntityCreateStore(
         entityCreateStoreSelectors.details.hasErrors
     );
 
@@ -85,7 +81,7 @@ function CaptureGenerateButton({
             endpointConfigHasErrors
         ) {
             return setFormState({
-                status: FormStatus.IDLE,
+                status: FormStatus.GENERATED_PREVIEW,
                 displayValidation: true,
             });
         } else {
@@ -143,7 +139,7 @@ function CaptureGenerateButton({
     return (
         <Button
             onClick={generateCatalog}
-            disabled={disabled || isSaving || formInProgress(formStateStatus)}
+            disabled={disabled || isSaving || formActive}
             form={formId}
             type="submit"
             sx={buttonSx}

@@ -9,11 +9,7 @@ import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
-import {
-    entityCreateStoreSelectors,
-    formInProgress,
-    FormStatus,
-} from 'stores/Create';
+import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 import { ENTITY } from 'types';
 
 interface Props {
@@ -42,41 +38,41 @@ function MaterializeGenerateButton({ disabled, onFailure }: Props) {
         EditorStoreState<DraftSpecQuery>['setId']
     >((state) => state.setId);
 
-    const entityCreateStore = useRouteStore();
+    const useEntityCreateStore = useRouteStore();
 
-    const formStateStatus = entityCreateStore(
-        entityCreateStoreSelectors.formState.status
+    const formActive = useEntityCreateStore(
+        entityCreateStoreSelectors.isActive
     );
-    const setFormState = entityCreateStore(
+    const setFormState = useEntityCreateStore(
         entityCreateStoreSelectors.formState.set
     );
-    const resetFormState = entityCreateStore(
+    const resetFormState = useEntityCreateStore(
         entityCreateStoreSelectors.formState.reset
     );
 
-    const entityName = entityCreateStore(
+    const entityName = useEntityCreateStore(
         entityCreateStoreSelectors.details.entityName
     );
-    const imageTag = entityCreateStore(
+    const imageTag = useEntityCreateStore(
         entityCreateStoreSelectors.details.connectorTag
     );
-    const endpointConfigData = entityCreateStore(
+    const endpointConfigData = useEntityCreateStore(
         entityCreateStoreSelectors.endpointConfig.data
     );
-    const endpointSchema = entityCreateStore(
+    const endpointSchema = useEntityCreateStore(
         entityCreateStoreSelectors.endpointSchema
     );
-    const resourceConfig = entityCreateStore(
+    const resourceConfig = useEntityCreateStore(
         entityCreateStoreSelectors.resourceConfig.get
     );
 
-    const endpointConfigHasErrors = entityCreateStore(
+    const endpointConfigHasErrors = useEntityCreateStore(
         entityCreateStoreSelectors.endpointConfig.hasErrors
     );
-    const detailsFormsHasErrors = entityCreateStore(
+    const detailsFormsHasErrors = useEntityCreateStore(
         entityCreateStoreSelectors.details.hasErrors
     );
-    const resourceConfigHasErrors = entityCreateStore(
+    const resourceConfigHasErrors = useEntityCreateStore(
         entityCreateStoreSelectors.resourceConfig.hasErrors
     );
 
@@ -90,12 +86,12 @@ function MaterializeGenerateButton({ disabled, onFailure }: Props) {
             endpointConfigHasErrors
         ) {
             setFormState({
-                status: FormStatus.IDLE,
+                status: FormStatus.FAILED,
                 displayValidation: true,
             });
         } else if (isEmpty(endpointConfigData)) {
             setFormState({
-                status: FormStatus.IDLE,
+                status: FormStatus.FAILED,
                 displayValidation: true,
             });
         } else {
@@ -152,7 +148,7 @@ function MaterializeGenerateButton({ disabled, onFailure }: Props) {
 
             setDraftId(newDraftId);
             setFormState({
-                status: FormStatus.IDLE,
+                status: FormStatus.INIT,
             });
         }
     };
@@ -160,7 +156,7 @@ function MaterializeGenerateButton({ disabled, onFailure }: Props) {
     return (
         <Button
             onClick={generateCatalog}
-            disabled={disabled || isSaving || formInProgress(formStateStatus)}
+            disabled={disabled || isSaving || formActive}
             type="submit"
             sx={buttonSx}
         >

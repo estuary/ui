@@ -32,24 +32,28 @@ function CaptureCreate() {
     const hasConnectors = connectorTags.length > 0;
 
     // Form store
-    const entityCreateStore = useRouteStore();
-    const messagePrefix = entityCreateStore(
+    const useEntityCreateStore = useRouteStore();
+    const messagePrefix = useEntityCreateStore(
         entityCreateStoreSelectors.messagePrefix
     );
-    const imageTag = entityCreateStore(
+    const imageTag = useEntityCreateStore(
         entityCreateStoreSelectors.details.connectorTag
     );
-    const hasChanges = entityCreateStore(entityCreateStoreSelectors.hasChanges);
-    const resetState = entityCreateStore(entityCreateStoreSelectors.resetState);
+    const hasChanges = useEntityCreateStore(
+        entityCreateStoreSelectors.hasChanges
+    );
+    const resetState = useEntityCreateStore(
+        entityCreateStoreSelectors.resetState
+    );
 
-    const setFormState = entityCreateStore(
+    const setFormState = useEntityCreateStore(
         entityCreateStoreSelectors.formState.set
     );
-    const resetFormState = entityCreateStore(
+    const resetFormState = useEntityCreateStore(
         entityCreateStoreSelectors.formState.reset
     );
 
-    const exitWhenLogsClose = entityCreateStore(
+    const exitWhenLogsClose = useEntityCreateStore(
         entityCreateStoreSelectors.formState.exitWhenLogsClose
     );
 
@@ -84,8 +88,8 @@ function CaptureCreate() {
                 });
             };
             if (subscription) {
-                helpers
-                    .doneSubscribing(subscription)
+                supabaseClient
+                    .removeSubscription(subscription)
                     .then(() => {
                         setFailureState();
                     })
@@ -93,12 +97,6 @@ function CaptureCreate() {
             } else {
                 setFailureState();
             }
-        },
-        doneSubscribing: (subscription: RealtimeSubscription) => {
-            return supabaseClient
-                .removeSubscription(subscription)
-                .then(() => {})
-                .catch(() => {});
         },
         exit: () => {
             resetState();
@@ -154,7 +152,7 @@ function CaptureCreate() {
                 ),
                 (payload: any) => {
                     setFormState({
-                        status: FormStatus.IDLE,
+                        status: FormStatus.TESTED,
                     });
                     setDraftId(payload.draft_id);
                 },
