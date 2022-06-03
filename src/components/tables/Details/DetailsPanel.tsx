@@ -4,16 +4,13 @@ import { createEditorStore } from 'components/editor/Store';
 import { ZustandProvider } from 'hooks/useZustand';
 import { ENTITY } from 'types';
 import ShardInformation from 'components/tables/Details/ShardInformation';
+import { tableBorderSx } from 'context/Theme';
 
 interface Props {
     detailsExpanded: boolean;
     id: string;
     storeName?: string;
     colSpan: number;
-    browserTitleKey:
-        | 'captureDetails'
-        | 'materializationDetails'
-        | 'collectionDetails';
     disableLogs?: boolean;
     entityType?: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
 }
@@ -23,14 +20,17 @@ function DetailsPanel({
     id,
     storeName = 'liveSpecEditor',
     colSpan,
-    browserTitleKey,
     disableLogs,
     entityType,
 }: Props) {
     return (
         <TableRow>
             <TableCell
-                sx={detailsExpanded ? null : { pb: 0, pt: 0 }}
+                sx={
+                    detailsExpanded
+                        ? tableBorderSx
+                        : { pb: 0, pt: 0, ...tableBorderSx }
+                }
                 colSpan={colSpan}
             >
                 <Collapse in={detailsExpanded} unmountOnExit>
@@ -45,7 +45,6 @@ function DetailsPanel({
 
                             <EditorAndLogs
                                 lastPubId={id}
-                                browserTitleKey={browserTitleKey}
                                 disableLogs={disableLogs}
                             />
                         </Grid>

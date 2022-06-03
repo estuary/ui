@@ -4,7 +4,6 @@ import { DEFAULT_TOTAL_HEIGHT } from 'components/editor/MonacoEditor';
 import { EditorStoreState } from 'components/editor/Store';
 import Logs from 'components/Logs';
 import Error from 'components/shared/Error';
-import useBrowserTitle from 'hooks/useBrowserTitle';
 import usePublications from 'hooks/usePublications';
 import usePublicationSpecs, {
     PublicationSpecQuery,
@@ -15,16 +14,10 @@ import { FormattedMessage } from 'react-intl';
 
 interface Props {
     lastPubId: string;
-    browserTitleKey:
-        | 'captureDetails'
-        | 'materializationDetails'
-        | 'collectionDetails';
     disableLogs?: boolean;
 }
 
-function EditorAndLogs({ lastPubId, browserTitleKey, disableLogs }: Props) {
-    useBrowserTitle(`browserTitle.${browserTitleKey}`);
-
+function EditorAndLogs({ lastPubId, disableLogs }: Props) {
     const { publicationSpecs, error: pubSpecsError } =
         usePublicationSpecs(lastPubId);
     const { publication: publications, error: pubsError } =
