@@ -120,7 +120,6 @@ function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
                 detailsExpanded={detailsExpanded}
                 id={row.last_pub_id}
                 colSpan={tableColumns.length}
-                browserTitleKey="materializationDetails"
                 entityType={ENTITY.MATERIALIZATION}
             />
         </>
