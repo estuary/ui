@@ -1,5 +1,5 @@
 import { EditorStoreState } from 'components/editor/Store';
-import EntityCreateSaveButton from 'components/shared/Entity/Actions/Savebutton';
+import EntityCreateSave from 'components/shared/Entity/Actions/Save';
 import LogDialog from 'components/shared/Entity/LogDialog';
 import LogDialogActions from 'components/shared/Entity/LogDialogActions';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
@@ -14,8 +14,7 @@ interface Props {
     disabled: boolean;
 }
 
-function MaterializeSaveButton({ callFailed, closeLogs, disabled }: Props) {
-    console.log('savebutton');
+function EntityTestButton({ callFailed, closeLogs, disabled }: Props) {
     const entityCreateStore = useRouteStore();
     const showLogs = entityCreateStore(
         entityCreateStoreSelectors.formState.showLogs
@@ -38,16 +37,17 @@ function MaterializeSaveButton({ callFailed, closeLogs, disabled }: Props) {
     return (
         <>
             <LogDialog
-                open={formStatus === FormStatus.SAVING && showLogs}
+                open={formStatus === FormStatus.TESTING && showLogs}
                 token={logToken}
                 title={
                     <FormattedMessage
-                        id={`${messagePrefix}.save.waitMessage`}
+                        id={`${messagePrefix}.test.waitMessage`}
                     />
                 }
                 actionComponent={<LogDialogActions close={closeLogs} />}
             />
-            <EntityCreateSaveButton
+            <EntityCreateSave
+                dryRun
                 disabled={disabled || !draftId}
                 onFailure={callFailed}
             />
@@ -55,4 +55,4 @@ function MaterializeSaveButton({ callFailed, closeLogs, disabled }: Props) {
     );
 }
 
-export default MaterializeSaveButton;
+export default EntityTestButton;

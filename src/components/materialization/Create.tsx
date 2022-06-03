@@ -2,8 +2,8 @@ import { RealtimeSubscription } from '@supabase/supabase-js';
 import { routeDetails } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
 import MaterializeGenerateButton from 'components/materialization/GenerateButton';
-import MaterializeSaveButton from 'components/materialization/SaveButton';
-import MaterializeTestButton from 'components/materialization/TestButton';
+import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
+import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
 import FooHeader from 'components/shared/Entity/Header';
 import PageContainer from 'components/shared/PageContainer';
@@ -164,14 +164,14 @@ function MaterializationCreate() {
                             />
                         }
                         TestButton={
-                            <MaterializeTestButton
+                            <EntityTestButton
                                 disabled={!hasConnectors}
                                 callFailed={helpers.callFailed}
                                 closeLogs={waitFor.publications}
                             />
                         }
                         SaveButton={
-                            <MaterializeSaveButton
+                            <EntitySaveButton
                                 disabled={!draftId}
                                 callFailed={helpers.callFailed}
                                 closeLogs={handlers.closeLogs}

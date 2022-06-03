@@ -23,7 +23,7 @@ interface Props {
     dryRun?: boolean;
 }
 
-function EntityCreateSaveButton({ disabled, dryRun, onFailure }: Props) {
+function EntityCreateSave({ disabled, dryRun, onFailure }: Props) {
     const intl = useIntl();
     const supabaseClient = useClient();
 
@@ -173,4 +173,4 @@ function EntityCreateSaveButton({ disabled, dryRun, onFailure }: Props) {
     );
 }
 
-export default EntityCreateSaveButton;
+export default EntityCreateSave;

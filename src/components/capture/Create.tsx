@@ -1,9 +1,9 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { routeDetails } from 'app/Authenticated';
 import CaptureGenerateButton from 'components/capture/GenerateButton';
-import CaptureSaveButton from 'components/capture/SaveButton';
-import CaptureTestButton from 'components/capture/TestButton';
 import { EditorStoreState } from 'components/editor/Store';
+import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
+import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
 import FooHeader from 'components/shared/Entity/Header';
 import PageContainer from 'components/shared/PageContainer';
@@ -187,14 +187,14 @@ function CaptureCreate() {
                             />
                         }
                         TestButton={
-                            <CaptureTestButton
+                            <EntityTestButton
                                 closeLogs={handlers.closeLogs}
                                 callFailed={helpers.callFailed}
                                 disabled={!hasConnectors}
                             />
                         }
                         SaveButton={
-                            <CaptureSaveButton
+                            <EntitySaveButton
                                 closeLogs={handlers.closeLogs}
                                 callFailed={helpers.callFailed}
                                 disabled={!draftId}

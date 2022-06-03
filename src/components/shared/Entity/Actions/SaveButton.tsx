@@ -1,5 +1,5 @@
 import { EditorStoreState } from 'components/editor/Store';
-import EntityCreateSaveButton from 'components/shared/Entity/Actions/Savebutton';
+import EntityCreateSave from 'components/shared/Entity/Actions/Save';
 import LogDialog from 'components/shared/Entity/LogDialog';
 import LogDialogActions from 'components/shared/Entity/LogDialogActions';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
@@ -12,10 +12,16 @@ interface Props {
     closeLogs: Function;
     callFailed: Function;
     disabled: boolean;
+    materialize?: Function;
 }
 
-function CaptureTestButton({ callFailed, closeLogs, disabled }: Props) {
-    console.log('testbutton');
+function EntitySaveButton({
+    callFailed,
+    closeLogs,
+    disabled,
+    materialize,
+}: Props) {
+    console.log('savebutton');
     const entityCreateStore = useRouteStore();
     const showLogs = entityCreateStore(
         entityCreateStoreSelectors.formState.showLogs
@@ -38,17 +44,28 @@ function CaptureTestButton({ callFailed, closeLogs, disabled }: Props) {
     return (
         <>
             <LogDialog
-                open={formStatus === FormStatus.TESTING && showLogs}
+                open={formStatus === FormStatus.SAVING && showLogs}
                 token={logToken}
                 title={
                     <FormattedMessage
-                        id={`${messagePrefix}.test.waitMessage`}
+                        id={`${messagePrefix}.save.waitMessage`}
                     />
                 }
-                actionComponent={<LogDialogActions close={closeLogs} />}
+                actionComponent={
+                    <LogDialogActions
+                        close={closeLogs}
+                        materialize={
+                            materialize
+                                ? {
+                                      action: materialize,
+                                      title: `${messagePrefix}.ctas.materialize`,
+                                  }
+                                : undefined
+                        }
+                    />
+                }
             />
-            <EntityCreateSaveButton
-                dryRun
+            <EntityCreateSave
                 disabled={disabled || !draftId}
                 onFailure={callFailed}
             />
@@ -56,4 +73,4 @@ function CaptureTestButton({ callFailed, closeLogs, disabled }: Props) {
     );
 }
 
-export default CaptureTestButton;
+export default EntitySaveButton;
