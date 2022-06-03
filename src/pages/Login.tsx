@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
 import { getLoginSettings, getUrls } from 'utils/env-utils';
+import { removeGatewayAuthConfig } from 'utils/localStorage-utils';
 
 export enum LogoutReasons {
     JWT = 'jwt_expired',
@@ -19,6 +20,8 @@ const urls = getUrls();
 
 const Login = () => {
     useBrowserTitle('browserTitle.login');
+
+    removeGatewayAuthConfig();
 
     const [searchParams] = useSearchParams();
     const reason = searchParams.get(logoutRoutes.params.reason);
