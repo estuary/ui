@@ -65,8 +65,6 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
         entityCreateStoreSelectors.details.hasErrors
     );
 
-    console.log('genbn', formActive);
-
     const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
         resetFormState(FormStatus.GENERATING);

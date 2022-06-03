@@ -37,7 +37,11 @@ function EntityTestButton({ callFailed, closeLogs, disabled }: Props) {
     return (
         <>
             <LogDialog
-                open={formStatus === FormStatus.TESTING && showLogs}
+                open={
+                    (formStatus === FormStatus.TESTING ||
+                        formStatus === FormStatus.TESTED) &&
+                    showLogs
+                }
                 token={logToken}
                 title={
                     <FormattedMessage

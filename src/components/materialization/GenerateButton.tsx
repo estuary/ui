@@ -96,9 +96,6 @@ function MaterializeGenerateButton({ disabled, callFailed }: Props) {
             });
         } else {
             resetEditorState();
-            setFormState({
-                status: FormStatus.GENERATING,
-            });
             setDraftId(null);
 
             const draftsResponse = await createEntityDraft(entityName);

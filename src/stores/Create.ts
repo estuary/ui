@@ -283,8 +283,8 @@ export const getInitialCreateState = (
                         ...formState,
                         ...newState,
                     };
-                    state.isIdle = formIdle(state.formState);
-                    state.isActive = formActive(state.formState);
+                    state.isIdle = formIdle(state.formState.status);
+                    state.isActive = formActive(state.formState.status);
                 }),
                 false,
                 'Form State changed'

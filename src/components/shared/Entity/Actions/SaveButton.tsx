@@ -43,7 +43,11 @@ function EntitySaveButton({
     return (
         <>
             <LogDialog
-                open={formStatus === FormStatus.SAVING && showLogs}
+                open={
+                    (formStatus === FormStatus.SAVING ||
+                        formStatus === FormStatus.SAVED) &&
+                    showLogs
+                }
                 token={logToken}
                 title={
                     <FormattedMessage

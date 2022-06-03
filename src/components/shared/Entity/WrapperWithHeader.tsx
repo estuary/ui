@@ -1,20 +1,28 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 
 interface Props {
     header: ReactNode;
     children: ReactNode;
-    defaultExpand?: boolean;
+    forceClose?: boolean;
 }
 
-function WrapperWithHeader({ header, children, defaultExpand }: Props) {
-    const [expanded, setExpanded] = useState(defaultExpand ?? true);
+function WrapperWithHeader({ header, children, forceClose }: Props) {
+    const [expanded, setExpanded] = useState(true);
     const handlers = {
         change: () => {
             setExpanded(!expanded);
         },
     };
+
+    useEffect(() => {
+        console.log('1');
+        if (forceClose) {
+            console.log('3');
+            setExpanded(false);
+        }
+    }, [forceClose]);
 
     return (
         <Accordion
