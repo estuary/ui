@@ -2,7 +2,7 @@ import { JsonFormsCore } from '@jsonforms/core';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
-import { forEach, isEqual, map } from 'lodash';
+import { forEach, isEmpty, isEqual, map } from 'lodash';
 import { Stores } from 'stores/Repo';
 import { GetState } from 'zustand';
 import { NamedSet } from 'zustand/middleware';
@@ -67,6 +67,7 @@ export interface CreateEntityStore {
     //Details
     details: Details;
     setDetails: (details: Details) => void;
+    detailsFormHasErrors: boolean;
 
     //Spec
     endpointConfig: JsonFormsData;
@@ -83,6 +84,7 @@ export interface CreateEntityStore {
     collections: string[] | null;
     setCollections: (collections: string[]) => void;
     prefillCollections: (collections: LiveSpecsExtQuery[]) => void;
+    collectionsHasErrors: boolean;
 
     //Form State
     formState: FormState;
@@ -158,21 +160,30 @@ export const getInitialStateData = (
     | 'messagePrefix'
     | 'resourceConfigHasErrors'
     | 'endpointConfigHasErrors'
+    | 'detailsFormHasErrors'
+    | 'collectionsHasErrors'
 > => {
     return {
         messagePrefix,
         details: initialCreateStates.details(),
+        detailsFormHasErrors: false,
+
         endpointConfig: initialCreateStates.endpointConfig(),
         endpointConfigHasErrors: false,
+
         connectors: initialCreateStates.connectors(),
+
         formState: initialCreateStates.formState(),
+
         endpointSchema: initialCreateStates.endpointSchema(),
+
         resourceConfig: initialCreateStates.resourceConfig(),
         resourceConfigHasErrors: false,
 
         collections: includeCollections
             ? initialCreateStates.collections()
             : null,
+        collectionsHasErrors: includeCollections, // This defaults to true because collections starts empty
     };
 };
 
@@ -181,7 +192,6 @@ const formHasErrors = (stateConfig: any) => {
     if (Object.keys(stateConfig).length > 0) {
         forEach(stateConfig, (config) => {
             const { errors } = config;
-
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             if (errors && errors.length > 0) {
                 hasErrors = true;
@@ -218,6 +228,8 @@ export const getInitialCreateState = (
                     }
 
                     state.details = details;
+                    state.detailsFormHasErrors =
+                        details.errors && details.errors.length > 0;
                 }),
                 false,
                 'Details changed'
@@ -340,6 +352,7 @@ export const getInitialCreateState = (
             set(
                 produce((state) => {
                     state.collections = value;
+                    state.collectionsHasErrors = isEmpty(value);
                 }),
                 false,
                 'Collections Changed'
@@ -361,6 +374,8 @@ export const getInitialCreateState = (
 
                     state.collections = collections;
                     state.resourceConfig = configs;
+                    state.collectionsHasErrors = isEmpty(collections);
+                    state.resourceConfigHasErrors = formHasErrors(configs);
                 }),
                 false,
                 'Collections Prefilled'
@@ -386,6 +401,7 @@ export const entityCreateStoreSelectors = {
         description: (state: CreateEntityStore) =>
             state.details.data.description,
         set: (state: CreateEntityStore) => state.setDetails,
+        hasErrors: (state: CreateEntityStore) => state.detailsFormHasErrors,
     },
     endpointConfig: {
         id: (state: CreateEntityStore) => state.endpointConfig.data.id,
@@ -420,6 +436,8 @@ export const entityCreateStoreSelectors = {
     collections: (state: CreateEntityStore) => state.collections,
     setCollections: (state: CreateEntityStore) => state.setCollections,
     prefillCollections: (state: CreateEntityStore) => state.prefillCollections,
+    collectionsHasErrors: (state: CreateEntityStore) =>
+        state.collectionsHasErrors,
 
     messagePrefix: (state: CreateEntityStore) => state.messagePrefix,
 

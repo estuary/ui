@@ -67,21 +67,23 @@ function CaptureTestButton({
     const endpointSchema = entityCreateStore(
         entityCreateStoreSelectors.endpointSchema
     );
-    const [detailErrors, specErrors] = entityCreateStore(
-        entityCreateStoreSelectors.errors
+
+    const endpointConfigHasErrors = entityCreateStore(
+        entityCreateStoreSelectors.endpointConfig.hasErrors
+    );
+    const detailsFormsHasErrors = entityCreateStore(
+        entityCreateStoreSelectors.details.hasErrors
     );
 
     const test = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
         resetFormState(FormStatus.TESTING);
 
-        let detailHasErrors = false;
-        let specHasErrors = false;
-
-        // TODO (linting) - this was to make TS/Linting happy
-        detailHasErrors = detailErrors ? detailErrors.length > 0 : false;
-        specHasErrors = specErrors ? specErrors.length > 0 : false;
-        if (isEmpty(endpointConfigData) || detailHasErrors || specHasErrors) {
+        if (
+            isEmpty(endpointConfigData) ||
+            detailsFormsHasErrors ||
+            endpointConfigHasErrors
+        ) {
             return setFormState({
                 status: FormStatus.IDLE,
                 displayValidation: true,

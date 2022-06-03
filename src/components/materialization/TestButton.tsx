@@ -72,15 +72,23 @@ function MaterializeTestButton({
     const endpointSchema = entityCreateStore(
         entityCreateStoreSelectors.endpointSchema
     );
-    const [detailErrors, specErrors] = entityCreateStore(
-        entityCreateStoreSelectors.errors
-    );
+
     const messagePrefix = entityCreateStore(
         entityCreateStoreSelectors.messagePrefix
     );
 
     const setFormState = entityCreateStore(
         entityCreateStoreSelectors.formState.set
+    );
+
+    const resourceConfigHasErrors = entityCreateStore(
+        entityCreateStoreSelectors.resourceConfig.hasErrors
+    );
+    const endpointConfigHasErrors = entityCreateStore(
+        entityCreateStoreSelectors.endpointConfig.hasErrors
+    );
+    const detailsFormsHasErrors = entityCreateStore(
+        entityCreateStoreSelectors.details.hasErrors
     );
 
     // Editor state
@@ -94,14 +102,11 @@ function MaterializeTestButton({
         event.preventDefault();
         resetFormState(FormStatus.TESTING);
 
-        let detailHasErrors = false;
-        let specHasErrors = false;
-
-        // TODO - this was to make TS/Linting happy
-        detailHasErrors = detailErrors ? detailErrors.length > 0 : false;
-        specHasErrors = specErrors ? specErrors.length > 0 : false;
-
-        if (detailHasErrors || specHasErrors) {
+        if (
+            resourceConfigHasErrors ||
+            detailsFormsHasErrors ||
+            endpointConfigHasErrors
+        ) {
             setFormState({
                 status: FormStatus.IDLE,
                 displayValidation: true,

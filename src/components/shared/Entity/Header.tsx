@@ -25,6 +25,9 @@ function FooHeader({ TestButton, SaveButton, heading }: Props) {
     const formStateStatus = entityCreateStore(
         entityCreateStoreSelectors.formState.status
     );
+    const displayValidation = entityCreateStore(
+        entityCreateStoreSelectors.formState.displayValidation
+    );
 
     return (
         <>
@@ -49,7 +52,10 @@ function FooHeader({ TestButton, SaveButton, heading }: Props) {
             <Collapse in={formInProgress(formStateStatus)} unmountOnExit>
                 <LinearProgress sx={{ mb: 2 }} />
             </Collapse>
-            <ValidationErrorSummary />
+
+            <Collapse in={displayValidation} unmountOnExit>
+                <ValidationErrorSummary />
+            </Collapse>
         </>
     );
 }
