@@ -14,8 +14,7 @@ import { EditorStoreState } from 'components/editor/Store';
 import { PublicationSpecQuery } from 'hooks/usePublicationSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
-import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { ShardDetails, shardDetailSelectors } from 'stores/ShardDetail';
 import { ENTITY } from 'types';
@@ -28,10 +27,6 @@ const NEW_LINE = '\r\n';
 
 function ShardInformation({ entityType }: Props) {
     const theme = useTheme();
-
-    const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(
-        null
-    );
 
     const [shardDetails, setShardDetails] = useState<ShardDetails | null>(null);
 
@@ -55,12 +50,6 @@ function ShardInformation({ entityType }: Props) {
             );
         }
     }, [specs, getShardDetails, setShardDetails, entityType]);
-
-    const handlers = {
-        mount: (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
-            editorRef.current = editor;
-        },
-    };
 
     return (
         shardDetails && (
@@ -101,7 +90,6 @@ function ShardInformation({ entityType }: Props) {
                                                     enabled: false,
                                                 },
                                             }}
-                                            onMount={handlers.mount}
                                             value={shardDetails.errors
                                                 .join(NEW_LINE)
                                                 .split(/\\n/)
