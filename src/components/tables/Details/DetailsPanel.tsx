@@ -4,6 +4,7 @@ import { createEditorStore } from 'components/editor/Store';
 import { ZustandProvider } from 'hooks/useZustand';
 import { ENTITY } from 'types';
 import ShardInformation from 'components/tables/Details/ShardInformation';
+import { tableBorderSx } from 'context/Theme';
 
 interface Props {
     detailsExpanded: boolean;
@@ -25,7 +26,11 @@ function DetailsPanel({
     return (
         <TableRow>
             <TableCell
-                sx={detailsExpanded ? null : { pb: 0, pt: 0 }}
+                sx={
+                    detailsExpanded
+                        ? tableBorderSx
+                        : { pb: 0, pt: 0, ...tableBorderSx }
+                }
                 colSpan={colSpan}
             >
                 <Collapse in={detailsExpanded} unmountOnExit>
