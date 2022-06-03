@@ -3,7 +3,7 @@ import EditorAndLogs from 'components/tables/Details/EditorAndLogs';
 import { createEditorStore } from 'components/editor/Store';
 import { ZustandProvider } from 'hooks/useZustand';
 import { ENTITY } from 'types';
-import ShardDetails from 'components/tables/Details/ShardDetails';
+import ShardInformation from 'components/tables/Details/ShardInformation';
 
 interface Props {
     detailsExpanded: boolean;
@@ -40,7 +40,7 @@ function DetailsPanel({
                     >
                         <Grid container spacing={2}>
                             {entityType && (
-                                <ShardDetails entityType={entityType} />
+                                <ShardInformation entityType={entityType} />
                             )}
 
                             <EditorAndLogs

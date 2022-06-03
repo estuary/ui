@@ -26,7 +26,7 @@ interface Props {
 
 const NEW_LINE = '\r\n';
 
-function EditorAndLogs({ entityType }: Props) {
+function ShardInformation({ entityType }: Props) {
     const theme = useTheme();
 
     const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(
@@ -136,4 +136,4 @@ function EditorAndLogs({ entityType }: Props) {
     );
 }
 
-export default EditorAndLogs;
+export default ShardInformation;
