@@ -24,20 +24,19 @@ const MultiLineSecretRenderer = (props: any) => {
     const submitFile = useCallback(
         (acceptedFiles) => {
             if (acceptedFiles) {
-                acceptedFiles.forEach((file: File) => {
+                const uploadDone = (inputValue: string | null) => {
+                    handleChange(path, inputValue);
+                    setIsUploadOpen(false);
+                };
+
+                acceptedFiles.forEach(async (file: File) => {
                     const reader = new FileReader();
 
-                    reader.onabort = () => {
-                        console.log('file reading was aborted');
-                    };
-                    reader.onerror = () => {
-                        console.log('file reading has failed');
-                    };
-                    reader.onload = (event) => {
-                        const fileTextValue = event.target?.result ?? null;
-
-                        handleChange(path, fileTextValue);
-                        setIsUploadOpen(false);
+                    reader.onabort = () => uploadDone(null);
+                    reader.onerror = () => uploadDone(null);
+                    reader.onloadend = () => {
+                        const result = reader.result ?? null;
+                        uploadDone(result as string);
                     };
                     reader.readAsText(file);
                 });
@@ -78,7 +77,7 @@ const MultiLineSecretRenderer = (props: any) => {
                         sx={{ whiteSpace: 'nowrap' }}
                         onClick={() => setIsUploadOpen(!isUploadOpen)}
                     >
-                        Use File (ex: .pem)
+                        Use file (.pem)
                     </Button>
                 </Box>
             </Stack>
@@ -87,31 +86,37 @@ const MultiLineSecretRenderer = (props: any) => {
                 open={isUploadOpen}
                 onSave={submitFile}
                 filesLimit={1}
+                // List taken from -> https://pki-tutorial.readthedocs.io/en/latest/mime.html
                 acceptedFiles={[
-                    // List taken fromhttps://pki-tutorial.readthedocs.io/en/latest/mime.html
-                    'application/pkcs8', //                .p8  .key
-                    'application/pkcs10', //               .p10 .csr
-                    'application/pkix-cert', //            .cer
-                    'application/pkix-crl ', //            .crl
-                    'application/pkcs7-mime', //           .p7c
-
-                    'application/x-x509-ca-cert', //       .crt .der
-                    'application/x-x509-user-cert', //     .crt
-                    'application/x-pkcs7-crl', //          .crl
-
-                    'application/x-pem-file', //           .pem
-                    'application/x-pkcs12', //             .p12 .pfx
-
-                    'application/x-pkcs7-certificates', // .p7b .spc
-                    'application/x-pkcs7-certreqresp', //  .p7r
-                    'text/plain',
+                    '.pem',
+                    '.p8',
+                    '.p10',
+                    '.p12',
+                    '.key',
+                    '.csr',
+                    '.cer',
+                    '.cr1',
+                    '.crt',
+                    '.p7c',
+                    '.p7b',
+                    '.p7r',
+                    '.der',
+                    '.pfx',
+                    '.spc',
                 ]}
-                showAlerts={false}
+                clearOnUnmount={true}
                 showPreviews={false}
                 showPreviewsInDropzone={true}
                 useChipsForPreview={true}
-                maxFileSize={5000000}
+                maxFileSize={5000000} //bytes
                 onClose={() => setIsUploadOpen(false)}
+                alertSnackbarProps={{
+                    anchorOrigin: {
+                        horizontal: 'center',
+                        vertical: 'top',
+                    },
+                    autoHideDuration: 6000,
+                }}
                 dialogProps={{
                     open: isUploadOpen,
                     sx: {
