@@ -57,14 +57,6 @@ const middleware: IMiddleware = {
             },
         };
 
-        // Before unloading the app, we write back all the data into `localStorage`.
-        window.addEventListener('beforeunload', () => {
-            const appCache = JSON.stringify(
-                Array.from(loggingMap.data.entries())
-            );
-            localStorage.setItem('app-cache', appCache);
-        });
-
         // We still use the map for write & read for performance.
         return loggingMap;
     },
