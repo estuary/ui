@@ -36,7 +36,7 @@ function LogDialogActions({ close, materialize }: Props) {
 
                 {materialize ? (
                     <Button
-                        disabled={formStatus !== FormStatus.SUCCESS}
+                        disabled={formStatus !== FormStatus.SAVED}
                         onClick={materialize.action}
                     >
                         <FormattedMessage id={materialize.title} />

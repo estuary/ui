@@ -72,7 +72,7 @@ function EntityCreateSave({ disabled, dryRun, onFailure }: Props) {
                 if (payload.logs_token === logTokenVal) {
                     setPubId(payload.id);
                     setFormState({
-                        status: FormStatus.SUCCESS,
+                        status: dryRun ? FormStatus.TESTED : FormStatus.SAVED,
                         exitWhenLogsClose: !dryRun,
                     });
 
