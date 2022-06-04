@@ -56,7 +56,7 @@ export enum FormStatus {
     FAILED = 'failed',
 }
 
-export const formActive = (formStateStatus: FormStatus) => {
+const formActive = (formStateStatus: FormStatus) => {
     return (
         formStateStatus === FormStatus.TESTING ||
         formStateStatus === FormStatus.GENERATING ||
