@@ -53,7 +53,6 @@ export enum FormStatus {
     GENERATING = 'Generating Preview',
     GENERATED = 'Generated Preview',
 
-    SUCCESS = 'success',
     FAILED = 'failed',
 }
 

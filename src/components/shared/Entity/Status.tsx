@@ -13,7 +13,7 @@ function Status() {
     const isActive = useEntityCreateStore(entityCreateStoreSelectors.isActive);
 
     let messageKey;
-    if (formStatus === FormStatus.SUCCESS) {
+    if (formStatus === FormStatus.TESTED || formStatus === FormStatus.SAVED) {
         messageKey = 'common.success';
     } else if (formStatus === FormStatus.FAILED) {
         messageKey = 'common.fail';
