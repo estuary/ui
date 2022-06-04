@@ -17,9 +17,7 @@ function WrapperWithHeader({ header, children, forceClose }: Props) {
     };
 
     useEffect(() => {
-        console.log('1');
         if (forceClose) {
-            console.log('3');
             setExpanded(false);
         }
     }, [forceClose]);
