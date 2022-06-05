@@ -353,7 +353,7 @@ function EntityTable({
                         </TableHead>
 
                         <TableBody>
-                            {selectData ? (
+                            {selectData && selectData.length > 0 ? (
                                 renderTableRows(selectData, showEntityStatus)
                             ) : (
                                 <TableRow>
@@ -365,7 +365,7 @@ function EntityTable({
                                                 py: 4,
                                             }}
                                         >
-                                            <Box width={485}>
+                                            <Box width={450}>
                                                 {isValidating ||
                                                 tableState.status ===
                                                     TableStatuses.LOADING ? (
@@ -385,7 +385,7 @@ function EntityTable({
                                                                 )}
                                                             />
                                                         </Typography>
-                                                        <Typography>
+                                                        <Typography component="div">
                                                             {getEmptyTableMessage(
                                                                 tableState.status
                                                             )}
