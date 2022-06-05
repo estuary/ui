@@ -1,12 +1,4 @@
-import Editor from '@monaco-editor/react';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
-    Accordion,
-    AccordionDetails,
-    AccordionSummary,
-    Alert,
-    AlertTitle,
-    Box,
     Grid,
     Table,
     TableBody,
@@ -20,6 +12,7 @@ import {
     useTheme,
 } from '@mui/material';
 import { EditorStoreState } from 'components/editor/Store';
+import ShardErrors from 'components/tables/Details/ShardErrors';
 import StatusIndicatorAndLabel from 'components/tables/Details/StatusIndicatorAndLabel';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { PublicationSpecQuery } from 'hooks/usePublicationSpecs';
@@ -29,13 +22,10 @@ import { MouseEvent, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { shardDetailSelectors } from 'stores/ShardDetail';
 import { ENTITY } from 'types';
-import { getShardDetails } from 'utils/shard-utils';
 
 interface Props {
     entityType?: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
 }
-
-const NEW_LINE = '\r\n';
 
 function ShardInformation({ entityType }: Props) {
     const theme = useTheme();
@@ -84,80 +74,12 @@ function ShardInformation({ entityType }: Props) {
         newPage: number
     ) => setPage(newPage);
 
-    console.log('TASK');
-    console.log(shards);
-
     // A shard error component may be needed. If a failed shard is present, an error alert will appear above the shard information table with
     // the ID of the erroring shard(s) as the accordion summary text. The alert will have a title whose text will come from the lang file
     // (i.e., 'detailsPanel.shardDetails.errorTitle').
     return shards.length > 0 ? (
         <>
-            {getShardDetails(shards).filter(({ errors }) => !!errors).length >
-                0 && (
-                <Grid item xs={12}>
-                    <Alert
-                        severity="error"
-                        sx={{
-                            '& .MuiAlert-message': {
-                                width: '100%',
-                            },
-                        }}
-                    >
-                        <AlertTitle>
-                            <Typography>
-                                <FormattedMessage id="detailsPanel.shardDetails.errorTitle" />
-                            </Typography>
-                        </AlertTitle>
-
-                        {getShardDetails(shards).map(
-                            (shardErrors) =>
-                                shardErrors.id &&
-                                shardErrors.errors && (
-                                    <Accordion key={shardErrors.id}>
-                                        <AccordionSummary
-                                            expandIcon={<ExpandMoreIcon />}
-                                        >
-                                            <Typography>
-                                                {shardErrors.id}
-                                            </Typography>
-                                        </AccordionSummary>
-
-                                        <AccordionDetails>
-                                            <Box sx={{ height: 250 }}>
-                                                <Editor
-                                                    defaultLanguage=""
-                                                    theme={
-                                                        theme.palette.mode ===
-                                                        'light'
-                                                            ? 'vs'
-                                                            : 'vs-dark'
-                                                    }
-                                                    options={{
-                                                        lineNumbers: 'off',
-                                                        readOnly: true,
-                                                        scrollBeyondLastLine:
-                                                            false,
-                                                        minimap: {
-                                                            enabled: false,
-                                                        },
-                                                    }}
-                                                    value={shardErrors.errors
-                                                        .join(NEW_LINE)
-                                                        .split(/\\n/)
-                                                        .join(NEW_LINE)
-                                                        .replaceAll(
-                                                            /\\"/g,
-                                                            '"'
-                                                        )}
-                                                />
-                                            </Box>
-                                        </AccordionDetails>
-                                    </Accordion>
-                                )
-                        )}
-                    </Alert>
-                </Grid>
-            )}
+            <ShardErrors shards={shards} />
 
             <Grid item xs={12}>
                 <TableContainer>
