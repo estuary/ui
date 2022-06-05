@@ -23,11 +23,12 @@ import { EditorStoreState } from 'components/editor/Store';
 import StatusIndicatorAndLabel from 'components/tables/Details/StatusIndicatorAndLabel';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { PublicationSpecQuery } from 'hooks/usePublicationSpecs';
-import { useRouteStore } from 'hooks/useRouteStore';
+// import { useRouteStore } from 'hooks/useRouteStore';
+import useShardsList from 'hooks/useShardsList';
 import { useZustandStore } from 'hooks/useZustand';
 import { MouseEvent, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { shardDetailSelectors } from 'stores/ShardDetail';
+// import { shardDetailSelectors } from 'stores/ShardDetail';
 import { ENTITY } from 'types';
 import { getShardDetails } from 'utils/shard-utils';
 
@@ -42,10 +43,7 @@ function ShardInformation({ entityType }: Props) {
 
     const [page, setPage] = useState(0);
 
-    const [taskShards, setTaskShards] = useState<Shard[]>([]);
-
-    const shardDetailStore = useRouteStore();
-    const getTaskShards = shardDetailStore(shardDetailSelectors.getTaskShards);
+    const [shards, setShards] = useState<Shard[]>([]);
 
     const specs = useZustandStore<
         EditorStoreState<PublicationSpecQuery>,
@@ -66,32 +64,33 @@ function ShardInformation({ entityType }: Props) {
         },
     ];
 
+    const selectedSpec = specs
+        ? [specs.find(({ spec_type }) => spec_type === entityType)]
+        : [];
+
+    const { data: shardsData } = useShardsList(selectedSpec);
+
     useEffect(() => {
-        if (specs && specs.length > 0) {
-            setTaskShards(
-                getTaskShards(
-                    specs.find(({ spec_type }) => spec_type === entityType)
-                        ?.catalog_name
-                )
-            );
+        if (shardsData && shardsData.shards.length > 0) {
+            setShards(shardsData.shards);
         }
-    }, [specs, getTaskShards, setTaskShards, entityType]);
+    }, [setShards, shardsData]);
 
     const changePage = (
         event: MouseEvent<HTMLButtonElement> | null,
         newPage: number
     ) => setPage(newPage);
 
-    const failedShardDetails = getShardDetails(taskShards).filter(
-        ({ errors }) => !!errors
-    );
+    console.log('TASK');
+    console.log(shards);
 
     // A shard error component may be needed. If a failed shard is present, an error alert will appear above the shard information table with
     // the ID of the erroring shard(s) as the accordion summary text. The alert will have a title whose text will come from the lang file
     // (i.e., 'detailsPanel.shardDetails.errorTitle').
-    return taskShards.length > 0 ? (
+    return shards.length > 0 ? (
         <>
-            {failedShardDetails.length > 0 && (
+            {getShardDetails(shards).filter(({ errors }) => !!errors).length >
+                0 && (
                 <Grid item xs={12}>
                     <Alert
                         severity="error"
@@ -107,7 +106,7 @@ function ShardInformation({ entityType }: Props) {
                             </Typography>
                         </AlertTitle>
 
-                        {getShardDetails(taskShards).map(
+                        {getShardDetails(shards).map(
                             (shardErrors) =>
                                 shardErrors.id &&
                                 shardErrors.errors && (
@@ -182,7 +181,7 @@ function ShardInformation({ entityType }: Props) {
                         </TableHead>
 
                         <TableBody>
-                            {taskShards.map((shard) => (
+                            {shards.map((shard) => (
                                 <TableRow
                                     key={shard.spec.id}
                                     sx={{
@@ -198,7 +197,7 @@ function ShardInformation({ entityType }: Props) {
                         <TableFooter>
                             <TableRow>
                                 <TablePagination
-                                    count={taskShards.length}
+                                    count={shards.length}
                                     rowsPerPageOptions={[3]}
                                     rowsPerPage={3}
                                     page={page}
