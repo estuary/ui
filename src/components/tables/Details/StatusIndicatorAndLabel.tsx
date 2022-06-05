@@ -55,7 +55,7 @@ function StatusIndicatorAndLabel({ shard }: Props) {
     const taskDisabled: boolean = evaluateShardProcessingState(id);
 
     return (
-        <TableCell width={200}>
+        <TableCell width={250}>
             <span
                 style={{
                     height: 16,

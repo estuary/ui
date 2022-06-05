@@ -199,6 +199,7 @@ function ShardInformation({ entityType }: Props) {
                             <TableRow>
                                 <TablePagination
                                     count={taskShards.length}
+                                    rowsPerPageOptions={[3]}
                                     rowsPerPage={3}
                                     page={page}
                                     onPageChange={changePage}
