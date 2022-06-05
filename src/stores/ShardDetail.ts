@@ -129,20 +129,15 @@ export const getInitialState = (
             const { shards } = get();
 
             if (shards.length > 0) {
-                return shards.filter(({ spec }) =>
-                    spec.id ? spec.id.includes(catalogNamespace) : undefined
-                );
+                return shards.filter(({ spec }) => {
+                    const labels = spec.labels ? spec.labels.labels : [];
 
-                // const shardDetails: ShardDetails[] | null = taskShards.map(
-                //     (shard) => ({
-                //         id: shard.spec.id,
-                //         errors: shard.status.find(
-                //             ({ code }) => code === 'FAILED'
-                //         )?.errors,
-                //     })
-                // );
+                    const shardCatalogName = labels?.find(
+                        (label) => label.name === 'estuary.dev/task-name'
+                    )?.value;
 
-                // return shardDetails;
+                    return shardCatalogName === catalogNamespace;
+                });
             } else {
                 return [];
             }

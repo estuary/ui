@@ -23,12 +23,11 @@ import { EditorStoreState } from 'components/editor/Store';
 import StatusIndicatorAndLabel from 'components/tables/Details/StatusIndicatorAndLabel';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { PublicationSpecQuery } from 'hooks/usePublicationSpecs';
-// import { useRouteStore } from 'hooks/useRouteStore';
-import useShardsList from 'hooks/useShardsList';
+import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
 import { MouseEvent, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-// import { shardDetailSelectors } from 'stores/ShardDetail';
+import { shardDetailSelectors } from 'stores/ShardDetail';
 import { ENTITY } from 'types';
 import { getShardDetails } from 'utils/shard-utils';
 
@@ -44,6 +43,11 @@ function ShardInformation({ entityType }: Props) {
     const [page, setPage] = useState(0);
 
     const [shards, setShards] = useState<Shard[]>([]);
+
+    const useShardDetailStore = useRouteStore();
+    const getTaskShards = useShardDetailStore(
+        shardDetailSelectors.getTaskShards
+    );
 
     const specs = useZustandStore<
         EditorStoreState<PublicationSpecQuery>,
@@ -64,20 +68,19 @@ function ShardInformation({ entityType }: Props) {
         },
     ];
 
-    const selectedSpec = specs
-        ? [specs.find(({ spec_type }) => spec_type === entityType)]
-        : [];
-
-    const { data: shardsData } = useShardsList(selectedSpec);
-
     useEffect(() => {
-        if (shardsData && shardsData.shards.length > 0) {
-            setShards(shardsData.shards);
+        if (specs && specs.length > 0) {
+            setShards(
+                getTaskShards(
+                    specs.find(({ spec_type }) => spec_type === entityType)
+                        ?.catalog_name
+                )
+            );
         }
-    }, [setShards, shardsData]);
+    }, [specs, setShards, getTaskShards, entityType]);
 
     const changePage = (
-        event: MouseEvent<HTMLButtonElement> | null,
+        _event: MouseEvent<HTMLButtonElement> | null,
         newPage: number
     ) => setPage(newPage);
 
