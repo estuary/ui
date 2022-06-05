@@ -74,9 +74,6 @@ function ShardInformation({ entityType }: Props) {
         newPage: number
     ) => setPage(newPage);
 
-    // A shard error component may be needed. If a failed shard is present, an error alert will appear above the shard information table with
-    // the ID of the erroring shard(s) as the accordion summary text. The alert will have a title whose text will come from the lang file
-    // (i.e., 'detailsPanel.shardDetails.errorTitle').
     return shards.length > 0 ? (
         <>
             <ShardErrors shards={shards} />

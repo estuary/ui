@@ -27,9 +27,6 @@ function ShardErrors({ shards }: Props) {
     console.log('TASK');
     console.log(shards);
 
-    // A shard error component may be needed. If a failed shard is present, an error alert will appear above the shard information table with
-    // the ID of the erroring shard(s) as the accordion summary text. The alert will have a title whose text will come from the lang file
-    // (i.e., 'detailsPanel.shardDetails.errorTitle').
     return getShardDetails(shards).filter(({ errors }) => !!errors).length >
         0 ? (
         <Grid item xs={12}>
