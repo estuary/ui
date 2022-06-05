@@ -29,6 +29,7 @@ import { MouseEvent, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { shardDetailSelectors } from 'stores/ShardDetail';
 import { ENTITY } from 'types';
+import { getShardDetails } from 'utils/shard-utils';
 
 interface Props {
     entityType?: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
@@ -81,15 +82,16 @@ function ShardInformation({ entityType }: Props) {
         newPage: number
     ) => setPage(newPage);
 
+    const failedShardDetails = getShardDetails(taskShards).filter(
+        ({ errors }) => !!errors
+    );
+
     // A shard error component may be needed. If a failed shard is present, an error alert will appear above the shard information table with
     // the ID of the erroring shard(s) as the accordion summary text. The alert will have a title whose text will come from the lang file
     // (i.e., 'detailsPanel.shardDetails.errorTitle').
     return taskShards.length > 0 ? (
         <>
-            {taskShards.map(
-                (shard) =>
-                    shard.status.find(({ code }) => code === 'FAILED')?.errors
-            ).length > 0 && (
+            {failedShardDetails.length > 0 && (
                 <Grid item xs={12}>
                     <Alert
                         severity="error"
@@ -104,60 +106,53 @@ function ShardInformation({ entityType }: Props) {
                                 <FormattedMessage id="detailsPanel.shardDetails.errorTitle" />
                             </Typography>
                         </AlertTitle>
-                        {taskShards
-                            .map((shard) => ({
-                                id: shard.spec.id,
-                                errors: shard.status.find(
-                                    ({ code }) => code === 'FAILED'
-                                )?.errors,
-                            }))
-                            .map(
-                                (shardErrors) =>
-                                    shardErrors.id &&
-                                    shardErrors.errors && (
-                                        <Accordion key={shardErrors.id}>
-                                            <AccordionSummary
-                                                expandIcon={<ExpandMoreIcon />}
-                                            >
-                                                <Typography>
-                                                    {shardErrors.id}
-                                                </Typography>
-                                            </AccordionSummary>
 
-                                            <AccordionDetails>
-                                                <Box sx={{ height: 250 }}>
-                                                    <Editor
-                                                        defaultLanguage=""
-                                                        theme={
-                                                            theme.palette
-                                                                .mode ===
-                                                            'light'
-                                                                ? 'vs'
-                                                                : 'vs-dark'
-                                                        }
-                                                        options={{
-                                                            lineNumbers: 'off',
-                                                            readOnly: true,
-                                                            scrollBeyondLastLine:
-                                                                false,
-                                                            minimap: {
-                                                                enabled: false,
-                                                            },
-                                                        }}
-                                                        value={shardErrors.errors
-                                                            .join(NEW_LINE)
-                                                            .split(/\\n/)
-                                                            .join(NEW_LINE)
-                                                            .replaceAll(
-                                                                /\\"/g,
-                                                                '"'
-                                                            )}
-                                                    />
-                                                </Box>
-                                            </AccordionDetails>
-                                        </Accordion>
-                                    )
-                            )}
+                        {getShardDetails(taskShards).map(
+                            (shardErrors) =>
+                                shardErrors.id &&
+                                shardErrors.errors && (
+                                    <Accordion key={shardErrors.id}>
+                                        <AccordionSummary
+                                            expandIcon={<ExpandMoreIcon />}
+                                        >
+                                            <Typography>
+                                                {shardErrors.id}
+                                            </Typography>
+                                        </AccordionSummary>
+
+                                        <AccordionDetails>
+                                            <Box sx={{ height: 250 }}>
+                                                <Editor
+                                                    defaultLanguage=""
+                                                    theme={
+                                                        theme.palette.mode ===
+                                                        'light'
+                                                            ? 'vs'
+                                                            : 'vs-dark'
+                                                    }
+                                                    options={{
+                                                        lineNumbers: 'off',
+                                                        readOnly: true,
+                                                        scrollBeyondLastLine:
+                                                            false,
+                                                        minimap: {
+                                                            enabled: false,
+                                                        },
+                                                    }}
+                                                    value={shardErrors.errors
+                                                        .join(NEW_LINE)
+                                                        .split(/\\n/)
+                                                        .join(NEW_LINE)
+                                                        .replaceAll(
+                                                            /\\"/g,
+                                                            '"'
+                                                        )}
+                                                />
+                                            </Box>
+                                        </AccordionDetails>
+                                    </Accordion>
+                                )
+                        )}
                     </Alert>
                 </Grid>
             )}
