@@ -5,18 +5,29 @@ import {
     AccordionDetails,
     AccordionSummary,
     Alert,
+    AlertTitle,
     Box,
     Grid,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableFooter,
+    TableHead,
+    TablePagination,
+    TableRow,
     Typography,
     useTheme,
 } from '@mui/material';
 import { EditorStoreState } from 'components/editor/Store';
+import StatusIndicatorAndLabel from 'components/tables/Details/StatusIndicatorAndLabel';
+import { Shard } from 'data-plane-gateway/types/shard_client';
 import { PublicationSpecQuery } from 'hooks/usePublicationSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
-import { useEffect, useState } from 'react';
+import { MouseEvent, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { ShardDetails, shardDetailSelectors } from 'stores/ShardDetail';
+import { shardDetailSelectors } from 'stores/ShardDetail';
 import { ENTITY } from 'types';
 
 interface Props {
@@ -28,100 +39,182 @@ const NEW_LINE = '\r\n';
 function ShardInformation({ entityType }: Props) {
     const theme = useTheme();
 
-    const [shardDetails, setShardDetails] = useState<ShardDetails | null>(null);
+    const [page, setPage] = useState(0);
+
+    const [taskShards, setTaskShards] = useState<Shard[]>([]);
 
     const shardDetailStore = useRouteStore();
-    const getShardDetails = shardDetailStore(
-        shardDetailSelectors.getShardDetails
-    );
+    const getTaskShards = shardDetailStore(shardDetailSelectors.getTaskShards);
 
     const specs = useZustandStore<
         EditorStoreState<PublicationSpecQuery>,
         EditorStoreState<PublicationSpecQuery>['specs']
     >((state) => state.specs);
 
+    const columns: {
+        field: string | null;
+        headerIntlKey: string | null;
+    }[] = [
+        {
+            field: 'status',
+            headerIntlKey: 'detailsPanel.shardDetails.status.label',
+        },
+        {
+            field: 'id',
+            headerIntlKey: 'detailsPanel.shardDetails.id.label',
+        },
+    ];
+
     useEffect(() => {
         if (specs && specs.length > 0) {
-            setShardDetails(
-                getShardDetails(
+            setTaskShards(
+                getTaskShards(
                     specs.find(({ spec_type }) => spec_type === entityType)
                         ?.catalog_name
                 )
             );
         }
-    }, [specs, getShardDetails, setShardDetails, entityType]);
+    }, [specs, getTaskShards, setTaskShards, entityType]);
 
-    return (
-        shardDetails && (
-            <>
-                {shardDetails.errors && (
-                    <Grid item xs={12}>
-                        <Alert
-                            severity="error"
-                            sx={{
-                                '& .MuiAlert-message': {
-                                    width: '100%',
-                                },
-                            }}
-                        >
-                            <Accordion>
-                                <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                >
-                                    <Typography>
-                                        <FormattedMessage id="detailsPanel.shardDetails.errorTitle" />
-                                    </Typography>
-                                </AccordionSummary>
+    const changePage = (
+        event: MouseEvent<HTMLButtonElement> | null,
+        newPage: number
+    ) => setPage(newPage);
 
-                                <AccordionDetails>
-                                    <Box sx={{ height: 250 }}>
-                                        <Editor
-                                            defaultLanguage=""
-                                            theme={
-                                                theme.palette.mode === 'light'
-                                                    ? 'vs'
-                                                    : 'vs-dark'
-                                            }
-                                            options={{
-                                                lineNumbers: 'off',
-                                                readOnly: true,
-                                                scrollBeyondLastLine: false,
-                                                minimap: {
-                                                    enabled: false,
-                                                },
-                                            }}
-                                            value={shardDetails.errors
-                                                .join(NEW_LINE)
-                                                .split(/\\n/)
-                                                .join(NEW_LINE)
-                                                .replaceAll(/\\"/g, '"')}
-                                        />
-                                    </Box>
-                                </AccordionDetails>
-                            </Accordion>
-                        </Alert>
-                    </Grid>
-                )}
-
+    // A shard error component may be needed. If a failed shard is present, an error alert will appear above the shard information table with
+    // the ID of the erroring shard(s) as the accordion summary text. The alert will have a title whose text will come from the lang file
+    // (i.e., 'detailsPanel.shardDetails.errorTitle').
+    return taskShards.length > 0 ? (
+        <>
+            {taskShards.map(
+                (shard) =>
+                    shard.status.find(({ code }) => code === 'FAILED')?.errors
+            ).length > 0 && (
                 <Grid item xs={12}>
-                    <Box
+                    <Alert
+                        severity="error"
                         sx={{
-                            px: 1,
-                            py: 2,
-                            bgcolor: 'background.paper',
-                            borderRadius: '2px',
+                            '& .MuiAlert-message': {
+                                width: '100%',
+                            },
                         }}
                     >
-                        <span style={{ marginRight: 8, fontWeight: 500 }}>
-                            <FormattedMessage id="detailsPanel.shardDetails.id.label" />
-                        </span>
+                        <AlertTitle>
+                            <Typography>
+                                <FormattedMessage id="detailsPanel.shardDetails.errorTitle" />
+                            </Typography>
+                        </AlertTitle>
+                        {taskShards
+                            .map((shard) => ({
+                                id: shard.spec.id,
+                                errors: shard.status.find(
+                                    ({ code }) => code === 'FAILED'
+                                )?.errors,
+                            }))
+                            .map(
+                                (shardErrors) =>
+                                    shardErrors.id &&
+                                    shardErrors.errors && (
+                                        <Accordion key={shardErrors.id}>
+                                            <AccordionSummary
+                                                expandIcon={<ExpandMoreIcon />}
+                                            >
+                                                <Typography>
+                                                    {shardErrors.id}
+                                                </Typography>
+                                            </AccordionSummary>
 
-                        <span>{shardDetails.id}</span>
-                    </Box>
+                                            <AccordionDetails>
+                                                <Box sx={{ height: 250 }}>
+                                                    <Editor
+                                                        defaultLanguage=""
+                                                        theme={
+                                                            theme.palette
+                                                                .mode ===
+                                                            'light'
+                                                                ? 'vs'
+                                                                : 'vs-dark'
+                                                        }
+                                                        options={{
+                                                            lineNumbers: 'off',
+                                                            readOnly: true,
+                                                            scrollBeyondLastLine:
+                                                                false,
+                                                            minimap: {
+                                                                enabled: false,
+                                                            },
+                                                        }}
+                                                        value={shardErrors.errors
+                                                            .join(NEW_LINE)
+                                                            .split(/\\n/)
+                                                            .join(NEW_LINE)
+                                                            .replaceAll(
+                                                                /\\"/g,
+                                                                '"'
+                                                            )}
+                                                    />
+                                                </Box>
+                                            </AccordionDetails>
+                                        </Accordion>
+                                    )
+                            )}
+                    </Alert>
                 </Grid>
-            </>
-        )
-    );
+            )}
+
+            <Grid item xs={12}>
+                <TableContainer>
+                    <Table>
+                        <TableHead>
+                            <TableRow
+                                sx={{
+                                    background:
+                                        theme.palette.background.default,
+                                }}
+                            >
+                                {columns.map((column, index) => (
+                                    <TableCell key={`${column.field}-${index}`}>
+                                        <Typography>
+                                            {column.headerIntlKey && (
+                                                <FormattedMessage
+                                                    id={column.headerIntlKey}
+                                                />
+                                            )}
+                                        </Typography>
+                                    </TableCell>
+                                ))}
+                            </TableRow>
+                        </TableHead>
+
+                        <TableBody>
+                            {taskShards.map((shard) => (
+                                <TableRow
+                                    key={shard.spec.id}
+                                    sx={{
+                                        background:
+                                            theme.palette.background.paper,
+                                    }}
+                                >
+                                    <StatusIndicatorAndLabel shard={shard} />
+                                </TableRow>
+                            ))}
+                        </TableBody>
+
+                        <TableFooter>
+                            <TableRow>
+                                <TablePagination
+                                    count={taskShards.length}
+                                    rowsPerPage={3}
+                                    page={page}
+                                    onPageChange={changePage}
+                                />
+                            </TableRow>
+                        </TableFooter>
+                    </Table>
+                </TableContainer>
+            </Grid>
+        </>
+    ) : null;
 }
 
 export default ShardInformation;

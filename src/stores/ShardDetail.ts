@@ -26,7 +26,7 @@ export interface ShardDetailStore {
     setShards: SetShards;
     getShardStatusColor: (catalogNamespace: string) => string;
     getShardStatus: (catalogNamespace: string) => ShardStatus[];
-    getShardDetails: (catalogNamespace: string) => ShardDetails | null;
+    getTaskShards: (catalogNamespace: string) => Shard[];
     evaluateShardProcessingState: (catalogNamespace: string) => boolean;
 }
 
@@ -125,26 +125,26 @@ export const getInitialState = (
                 return ['No shard status found.'];
             }
         },
-        getShardDetails: (catalogNamespace) => {
+        getTaskShards: (catalogNamespace) => {
             const { shards } = get();
 
             if (shards.length > 0) {
-                const selectedShard = shards.find(({ spec }) =>
+                return shards.filter(({ spec }) =>
                     spec.id ? spec.id.includes(catalogNamespace) : undefined
                 );
 
-                const shardDetails: ShardDetails | null = selectedShard
-                    ? {
-                          id: selectedShard.spec.id,
-                          errors: selectedShard.status.find(
-                              ({ code }) => code === 'FAILED'
-                          )?.errors,
-                      }
-                    : null;
+                // const shardDetails: ShardDetails[] | null = taskShards.map(
+                //     (shard) => ({
+                //         id: shard.spec.id,
+                //         errors: shard.status.find(
+                //             ({ code }) => code === 'FAILED'
+                //         )?.errors,
+                //     })
+                // );
 
-                return shardDetails;
+                // return shardDetails;
             } else {
-                return null;
+                return [];
             }
         },
         evaluateShardProcessingState: (catalogNamespace) => {
@@ -168,7 +168,7 @@ export const shardDetailSelectors = {
     setShards: (state: ShardDetailStore) => state.setShards,
     getShardStatusColor: (state: ShardDetailStore) => state.getShardStatusColor,
     getShardStatus: (state: ShardDetailStore) => state.getShardStatus,
-    getShardDetails: (state: ShardDetailStore) => state.getShardDetails,
+    getTaskShards: (state: ShardDetailStore) => state.getTaskShards,
     evaluateShardProcessingState: (state: ShardDetailStore) =>
         state.evaluateShardProcessingState,
 };

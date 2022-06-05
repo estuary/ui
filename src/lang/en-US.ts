@@ -365,7 +365,8 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
 const DetailsPanel: ResolvedIntlConfig['messages'] = {
     'detailsPanel.logs.title': `Logs`,
     'detailsPanel.logs.notFound': `Logs for this build cannot be found. This is likely a permissions issue. You don't have permissions to view other users' logs by default.`,
-    'detailsPanel.shardDetails.id.label': `Shard ID:`,
+    'detailsPanel.shardDetails.status.label': `Status`,
+    'detailsPanel.shardDetails.id.label': `ID`,
     'detailsPanel.shardDetails.errorTitle': `Shard Replica Processing Errors`,
 };
 
