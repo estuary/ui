@@ -89,8 +89,7 @@ function ShardInformation({ entityType }: Props) {
                         <TableHead>
                             <TableRow
                                 sx={{
-                                    background:
-                                        theme.palette.background.default,
+                                    background: theme.palette.background.paper,
                                 }}
                             >
                                 <TableCell colSpan={columns.length}>
@@ -151,8 +150,7 @@ function ShardInformation({ entityType }: Props) {
                                 <TableRow
                                     key={shard.spec.id}
                                     sx={{
-                                        background:
-                                            theme.palette.background.paper,
+                                        background: '#252526', // This is the hex code for the monaco editor background in dark mode.
                                     }}
                                 >
                                     <StatusIndicatorAndLabel shard={shard} />
