@@ -13,7 +13,6 @@ import { NamedSet } from 'zustand/middleware';
 // TODO: Determine a way to access an interface property with a function type.
 export type SetShards = (shards: Shard[]) => void;
 
-// TODO: Rename this type to ShardStatusCode
 export enum ShardStatusMessageIds {
     PRIMARY = 'shardStatus.primary',
     FAILED = 'shardStatus.failed',
