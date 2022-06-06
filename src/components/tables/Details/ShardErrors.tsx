@@ -24,9 +24,6 @@ const NEW_LINE = '\r\n';
 function ShardErrors({ shards }: Props) {
     const theme = useTheme();
 
-    console.log('TASK');
-    console.log(shards);
-
     return getShardDetails(shards).filter(({ errors }) => !!errors).length >
         0 ? (
         <Grid item xs={12}>

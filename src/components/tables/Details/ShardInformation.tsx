@@ -88,6 +88,17 @@ function ShardInformation({ entityType }: Props) {
                                         theme.palette.background.default,
                                 }}
                             >
+                                <TableCell colSpan={columns.length}>
+                                    <Typography align="center">
+                                        <FormattedMessage id="detailsPanel.shardDetails.title" />
+                                    </Typography>
+                                </TableCell>
+                            </TableRow>
+                            <TableRow
+                                sx={{
+                                    background: theme.palette.background.paper,
+                                }}
+                            >
                                 {columns.map((column, index) => (
                                     <TableCell key={`${column.field}-${index}`}>
                                         <Typography>
