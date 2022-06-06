@@ -8,7 +8,7 @@ interface Props {
     shard: Shard;
 }
 
-const getShardStatus = ({ status }: Shard): ShardStatus => {
+const getShardStatus = ({ spec, status }: Shard): ShardStatus => {
     if (status.length === 1) {
         return status[0].code ?? 'No shard status found.';
     } else if (status.length > 1) {
@@ -30,7 +30,7 @@ const getShardStatus = ({ status }: Shard): ShardStatus => {
             return 'No shard status found.';
         }
     } else {
-        return 'No shard status found.';
+        return spec.disable ? 'DISABLED' : 'No shard status found.';
     }
 };
 
