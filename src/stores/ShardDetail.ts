@@ -25,10 +25,10 @@ export type ShardStatus =
 // The additional hex string corresponds to slate[25].
 export type ShardStatusColor = SemanticColor | '#EEF8FF';
 
-// TODO: Rename this interface to ShardStatus
-export interface ShardStatusIndicator {
+export interface TaskShardDetails {
     statusCode: ShardStatus;
     color: ShardStatusColor;
+    disabled?: boolean;
 }
 
 export interface ShardDetails {
@@ -40,16 +40,16 @@ export interface ShardDetailStore {
     shards: Shard[];
     setShards: SetShards;
     getTaskShards: (catalogNamespace: string, shards: Shard[]) => Shard[];
-    getTaskStatusColor: (taskShards: Shard[]) => ShardStatusIndicator[];
+    getTaskShardDetails: (taskShards: Shard[]) => TaskShardDetails[];
     getShardStatusColor: (shardId: string) => ShardStatusColor;
     getShardStatus: (shardId: string) => ShardStatus;
     getShardDetails: (shards: Shard[]) => ShardDetails[];
-    evaluateShardProcessingState: (catalogNamespace: string) => boolean;
+    evaluateShardProcessingState: (shardId: string) => boolean;
 }
 
 export const defaultStatusColor: ShardStatusColor = '#EEF8FF';
 
-const defaultStatusIndicator: ShardStatusIndicator = {
+const defaultTaskShardDetail: TaskShardDetails = {
     statusCode: 'No shard status found.',
     color: defaultStatusColor,
 };
@@ -94,10 +94,7 @@ const evaluateShardStatus = ({ status }: Shard): ShardStatusColor => {
 };
 
 // TODO: Rename this function to evaluateShardStatus.
-const evaluateTaskShardStatus = ({
-    spec,
-    status,
-}: Shard): ShardStatusIndicator => {
+const evaluateTaskShardStatus = ({ spec, status }: Shard): TaskShardDetails => {
     if (status.length === 1) {
         switch (status[0].code) {
             case 'PRIMARY':
@@ -141,6 +138,7 @@ const evaluateTaskShardStatus = ({
         return {
             statusCode: spec.disable ? 'DISABLED' : 'No shard status found.',
             color: defaultStatusColor,
+            disabled: spec.disable,
         };
     }
 };
@@ -199,7 +197,7 @@ export const getInitialState = (
                   })
                 : [];
         },
-        getTaskStatusColor: (taskShards) => {
+        getTaskShardDetails: (taskShards) => {
             if (taskShards.length > 0) {
                 const statusIndicators = taskShards.map((shard) =>
                     evaluateTaskShardStatus(shard)
@@ -207,9 +205,9 @@ export const getInitialState = (
 
                 return statusIndicators.length > 0
                     ? statusIndicators
-                    : [defaultStatusIndicator];
+                    : [defaultTaskShardDetail];
             } else {
-                return [defaultStatusIndicator];
+                return [defaultTaskShardDetail];
             }
         },
         getShardStatusColor: (shardId) => {
@@ -249,12 +247,12 @@ export const getInitialState = (
                     ?.errors,
             }));
         },
-        evaluateShardProcessingState: (catalogNamespace) => {
+        evaluateShardProcessingState: (shardId) => {
             const { shards } = get();
 
             if (shards.length > 0) {
                 const selectedShard = shards.find(({ spec }) =>
-                    spec.id ? spec.id.includes(catalogNamespace) : undefined
+                    spec.id ? spec.id === shardId : undefined
                 );
 
                 return !!selectedShard?.spec.disable;
@@ -269,7 +267,7 @@ export const shardDetailSelectors = {
     shards: (state: ShardDetailStore) => state.shards,
     setShards: (state: ShardDetailStore) => state.setShards,
     getTaskShards: (state: ShardDetailStore) => state.getTaskShards,
-    getTaskStatusColor: (state: ShardDetailStore) => state.getTaskStatusColor,
+    getTaskShardDetails: (state: ShardDetailStore) => state.getTaskShardDetails,
     getShardStatusColor: (state: ShardDetailStore) => state.getShardStatusColor,
     getShardStatus: (state: ShardDetailStore) => state.getShardStatus,
     getShardDetails: (state: ShardDetailStore) => state.getShardDetails,

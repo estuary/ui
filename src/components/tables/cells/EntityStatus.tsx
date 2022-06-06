@@ -8,16 +8,14 @@ import {
     shardDetailSelectors,
     ShardStatus,
     ShardStatusColor,
-    ShardStatusIndicator,
+    TaskShardDetails,
 } from 'stores/ShardDetail';
 
 interface Props {
     name: string;
 }
 
-function evaluateTaskStatus(
-    statuses: ShardStatusIndicator[]
-): ShardStatusColor {
+function evaluateTaskStatus(statuses: TaskShardDetails[]): ShardStatusColor {
     if (statuses.length === 1) {
         return statuses[0].color;
     } else if (statuses.length > 1) {
@@ -45,41 +43,48 @@ function evaluateTaskStatus(
 }
 
 function EntityStatus({ name }: Props) {
-    const [shardStatuses, setShardStatuses] = useState<ShardStatusIndicator[]>(
-        []
-    );
-    const [taskStatusColor, setTaskStatusColor] =
+    const [taskShardDetails, setTaskShardDetails] = useState<
+        TaskShardDetails[]
+    >([]);
+    const [compositeStatusColor, setCompositeStatusColor] =
         useState<ShardStatusColor>(defaultStatusColor);
+    const [taskDisabled, setTaskDisabled] = useState<boolean>(false);
 
     const shardDetailStore = useRouteStore();
 
     const shards: Shard[] = shardDetailStore(shardDetailSelectors.shards);
 
     const getTaskShards = shardDetailStore(shardDetailSelectors.getTaskShards);
-    const getTaskStatusColor = shardDetailStore(
-        shardDetailSelectors.getTaskStatusColor
+    const getTaskShardDetails = shardDetailStore(
+        shardDetailSelectors.getTaskShardDetails
     );
-    const evaluateShardProcessingState = shardDetailStore(
-        shardDetailSelectors.evaluateShardProcessingState
-    );
-
-    const taskDisabled: boolean = evaluateShardProcessingState(name);
 
     useEffect(() => {
         const taskShards: Shard[] = getTaskShards(name, shards);
 
-        const shardStatusList: ShardStatusIndicator[] =
-            getTaskStatusColor(taskShards);
+        const shardDetails: TaskShardDetails[] =
+            getTaskShardDetails(taskShards);
 
-        const compositeStatus = evaluateTaskStatus(shardStatusList);
+        const statusColor = evaluateTaskStatus(shardDetails);
 
-        setShardStatuses(shardStatusList);
-        setTaskStatusColor(compositeStatus);
-    }, [getTaskShards, getTaskStatusColor, setShardStatuses, name, shards]);
+        const disabled =
+            shardDetails.filter((shard) => !shard.disabled).length === 0;
+
+        setTaskShardDetails(shardDetails);
+        setCompositeStatusColor(statusColor);
+        setTaskDisabled(disabled);
+    }, [
+        getTaskShards,
+        getTaskShardDetails,
+        setTaskShardDetails,
+        setTaskDisabled,
+        name,
+        shards,
+    ]);
 
     return (
         <Tooltip
-            title={shardStatuses.map((status, index) => (
+            title={taskShardDetails.map((shard, index) => (
                 <Box
                     key={`${index}-shard-status-tooltip`}
                     sx={{
@@ -93,10 +98,10 @@ function EntityStatus({ name }: Props) {
                             height: 12,
                             width: 12,
                             marginRight: 4,
-                            border: taskDisabled
-                                ? `solid 2px ${status.color}`
+                            border: shard.disabled
+                                ? `solid 2px ${shard.color}`
                                 : 0,
-                            backgroundColor: taskDisabled ? '' : status.color,
+                            backgroundColor: shard.disabled ? '' : shard.color,
                             borderRadius: 50,
                             display: 'inline-block',
                             verticalAlign: 'middle',
@@ -107,7 +112,7 @@ function EntityStatus({ name }: Props) {
                         variant="caption"
                         sx={{ display: 'inline-block' }}
                     >
-                        {status.statusCode}
+                        {shard.statusCode}
                     </Typography>
                 </Box>
             ))}
@@ -118,8 +123,10 @@ function EntityStatus({ name }: Props) {
                     height: 16,
                     width: 16,
                     marginRight: 12,
-                    border: taskDisabled ? `solid 2px ${taskStatusColor}` : 0,
-                    backgroundColor: taskDisabled ? '' : taskStatusColor,
+                    border: taskDisabled
+                        ? `solid 2px ${compositeStatusColor}`
+                        : 0,
+                    backgroundColor: taskDisabled ? '' : compositeStatusColor,
                     borderRadius: 50,
                     display: 'inline-block',
                     verticalAlign: 'middle',
