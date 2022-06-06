@@ -39,10 +39,6 @@ function StatusIndicatorAndLabel({ shard }: Props) {
 
     const shardDetailStore = useRouteStore();
 
-    // TODO (shards) This is here to force a re-render
-    const shards = shardDetailStore(shardDetailSelectors.shards);
-    console.log('forcing re-render with shards', shards);
-
     const getShardStatusColor = shardDetailStore(
         shardDetailSelectors.getShardStatusColor
     );

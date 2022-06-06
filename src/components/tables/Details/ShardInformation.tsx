@@ -32,9 +32,10 @@ function ShardInformation({ entityType }: Props) {
 
     const [page, setPage] = useState(0);
 
-    const [shards, setShards] = useState<Shard[]>([]);
+    const [taskShards, setTaskShards] = useState<Shard[]>([]);
 
     const useShardDetailStore = useRouteStore();
+    const shards = useShardDetailStore(shardDetailSelectors.shards);
     const getTaskShards = useShardDetailStore(
         shardDetailSelectors.getTaskShards
     );
@@ -60,23 +61,24 @@ function ShardInformation({ entityType }: Props) {
 
     useEffect(() => {
         if (specs && specs.length > 0) {
-            setShards(
+            setTaskShards(
                 getTaskShards(
                     specs.find(({ spec_type }) => spec_type === entityType)
-                        ?.catalog_name
+                        ?.catalog_name,
+                    shards
                 )
             );
         }
-    }, [specs, setShards, getTaskShards, entityType]);
+    }, [setTaskShards, getTaskShards, entityType, specs, shards]);
 
     const changePage = (
         _event: MouseEvent<HTMLButtonElement> | null,
         newPage: number
     ) => setPage(newPage);
 
-    return shards.length > 0 ? (
+    return taskShards.length > 0 ? (
         <>
-            <ShardErrors shards={shards} />
+            <ShardErrors shards={taskShards} />
 
             <Grid item xs={12}>
                 <TableContainer>
@@ -114,7 +116,7 @@ function ShardInformation({ entityType }: Props) {
                         </TableHead>
 
                         <TableBody>
-                            {shards.map((shard) => (
+                            {taskShards.map((shard) => (
                                 <TableRow
                                     key={shard.spec.id}
                                     sx={{
@@ -134,7 +136,7 @@ function ShardInformation({ entityType }: Props) {
                         <TableFooter>
                             <TableRow>
                                 <TablePagination
-                                    count={shards.length}
+                                    count={taskShards.length}
                                     rowsPerPageOptions={[3]}
                                     rowsPerPage={3}
                                     page={page}
