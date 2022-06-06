@@ -24,9 +24,10 @@ export interface ShardDetails {
 export interface ShardDetailStore {
     shards: Shard[];
     setShards: SetShards;
+    getTaskShards: (catalogNamespace: string) => Shard[];
     getShardStatusColor: (catalogNamespace: string) => string;
     getShardStatus: (catalogNamespace: string) => ShardStatus[];
-    getTaskShards: (catalogNamespace: string) => Shard[];
+    getShardDetails: (shards: Shard[]) => ShardDetails[];
     evaluateShardProcessingState: (catalogNamespace: string) => boolean;
 }
 
@@ -85,6 +86,23 @@ export const getInitialState = (
                 'Shard List Set'
             );
         },
+        getTaskShards: (catalogNamespace) => {
+            const { shards } = get();
+
+            if (shards.length > 0) {
+                return shards.filter(({ spec }) => {
+                    const labels = spec.labels ? spec.labels.labels : [];
+
+                    const shardCatalogName = labels?.find(
+                        (label) => label.name === 'estuary.dev/task-name'
+                    )?.value;
+
+                    return shardCatalogName === catalogNamespace;
+                });
+            } else {
+                return [];
+            }
+        },
         getShardStatusColor: (catalogNamespace) => {
             const { shards } = get();
 
@@ -125,22 +143,12 @@ export const getInitialState = (
                 return ['No shard status found.'];
             }
         },
-        getTaskShards: (catalogNamespace) => {
-            const { shards } = get();
-
-            if (shards.length > 0) {
-                return shards.filter(({ spec }) => {
-                    const labels = spec.labels ? spec.labels.labels : [];
-
-                    const shardCatalogName = labels?.find(
-                        (label) => label.name === 'estuary.dev/task-name'
-                    )?.value;
-
-                    return shardCatalogName === catalogNamespace;
-                });
-            } else {
-                return [];
-            }
+        getShardDetails: (shards: Shard[]): ShardDetails[] => {
+            return shards.map((shard) => ({
+                id: shard.spec.id,
+                errors: shard.status.find(({ code }) => code === 'FAILED')
+                    ?.errors,
+            }));
         },
         evaluateShardProcessingState: (catalogNamespace) => {
             const { shards } = get();
@@ -161,9 +169,10 @@ export const getInitialState = (
 export const shardDetailSelectors = {
     shards: (state: ShardDetailStore) => state.shards,
     setShards: (state: ShardDetailStore) => state.setShards,
+    getTaskShards: (state: ShardDetailStore) => state.getTaskShards,
     getShardStatusColor: (state: ShardDetailStore) => state.getShardStatusColor,
     getShardStatus: (state: ShardDetailStore) => state.getShardStatus,
-    getTaskShards: (state: ShardDetailStore) => state.getTaskShards,
+    getShardDetails: (state: ShardDetailStore) => state.getShardDetails,
     evaluateShardProcessingState: (state: ShardDetailStore) =>
         state.evaluateShardProcessingState,
 };

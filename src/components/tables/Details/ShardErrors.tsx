@@ -12,8 +12,9 @@ import {
     useTheme,
 } from '@mui/material';
 import { Shard } from 'data-plane-gateway/types/shard_client';
+import { useRouteStore } from 'hooks/useRouteStore';
 import { FormattedMessage } from 'react-intl';
-import { getShardDetails } from 'utils/shard-utils';
+import { ShardDetails, shardDetailSelectors } from 'stores/ShardDetail';
 
 interface Props {
     shards: Shard[];
@@ -24,8 +25,14 @@ const NEW_LINE = '\r\n';
 function ShardErrors({ shards }: Props) {
     const theme = useTheme();
 
-    return getShardDetails(shards).filter(({ errors }) => !!errors).length >
-        0 ? (
+    const useShardDetailStore = useRouteStore();
+    const getShardDetails = useShardDetailStore(
+        shardDetailSelectors.getShardDetails
+    );
+
+    return getShardDetails(shards).filter(
+        ({ errors }: ShardDetails) => !!errors
+    ).length > 0 ? (
         <Grid item xs={12}>
             <Alert
                 severity="error"
@@ -42,14 +49,14 @@ function ShardErrors({ shards }: Props) {
                 </AlertTitle>
 
                 {getShardDetails(shards).map(
-                    (shardErrors) =>
-                        shardErrors.id &&
-                        shardErrors.errors && (
-                            <Accordion key={shardErrors.id}>
+                    (shardDetails: ShardDetails) =>
+                        shardDetails.id &&
+                        shardDetails.errors && (
+                            <Accordion key={shardDetails.id}>
                                 <AccordionSummary
                                     expandIcon={<ExpandMoreIcon />}
                                 >
-                                    <Typography>{shardErrors.id}</Typography>
+                                    <Typography>{shardDetails.id}</Typography>
                                 </AccordionSummary>
 
                                 <AccordionDetails>
@@ -69,7 +76,7 @@ function ShardErrors({ shards }: Props) {
                                                     enabled: false,
                                                 },
                                             }}
-                                            value={shardErrors.errors
+                                            value={shardDetails.errors
                                                 .join(NEW_LINE)
                                                 .split(/\\n/)
                                                 .join(NEW_LINE)
