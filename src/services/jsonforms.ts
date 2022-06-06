@@ -80,12 +80,23 @@ const addOption = (elem: ControlElement | Layout, key: string, value: any) => {
         elem.options = {};
     }
     elem.options[key] = value;
+
+    return elem;
 };
 
 const isMultilineText = (schema: JsonSchema): boolean => {
     if (schema.type === 'string' && Object.hasOwn(schema, 'multiline')) {
         // eslint-disable-next-line @typescript-eslint/dot-notation
         return schema['multiline'] === true;
+    } else {
+        return false;
+    }
+};
+
+const isDateTimeText = (schema: JsonSchema): boolean => {
+    if (schema.type === 'string' && Object.hasOwn(schema, 'format')) {
+        // eslint-disable-next-line @typescript-eslint/dot-notation
+        return schema['format'] === 'date-time';
     } else {
         return false;
     }
@@ -376,6 +387,12 @@ const generateUISchema = (
         addOption(controlObject, 'format', 'password');
     } else if (isMultilineText(jsonSchema)) {
         addOption(controlObject, 'multi', true);
+    } else if (isDateTimeText(jsonSchema)) {
+        const newControl = addOption(controlObject, 'format', 'date-time');
+        if (newControl.options) {
+            newControl.options.dateTimeFormat = 'YYYY-MM-DDThh:mm:ssZ';
+            newControl.options.dateTimeSaveFormat = 'YYYY-MM-DDThh:mm:ssZ';
+        }
     }
 
     switch (types[0]) {
