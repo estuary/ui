@@ -62,15 +62,15 @@ const defaultTaskShardDetail: TaskShardDetails = {
 const evaluateTaskShardStatus = ({ spec, status }: Shard): TaskShardDetails => {
     if (status.length === 1) {
         switch (status[0].code) {
-            case 'PRIMARY':
-                return {
-                    messageId: ShardStatusMessageIds.PRIMARY,
-                    color: successMain,
-                };
             case 'FAILED':
                 return {
                     messageId: ShardStatusMessageIds.FAILED,
                     color: errorMain,
+                };
+            case 'PRIMARY':
+                return {
+                    messageId: ShardStatusMessageIds.PRIMARY,
+                    color: successMain,
                 };
             case 'IDLE':
                 return {
@@ -98,15 +98,15 @@ const evaluateTaskShardStatus = ({ spec, status }: Shard): TaskShardDetails => {
             ({ code }) => code
         );
 
-        if (statusCodes.find((code) => code === 'PRIMARY')) {
-            return {
-                messageId: ShardStatusMessageIds.PRIMARY,
-                color: successMain,
-            };
-        } else if (statusCodes.find((code) => code === 'FAILED')) {
+        if (statusCodes.find((code) => code === 'FAILED')) {
             return {
                 messageId: ShardStatusMessageIds.FAILED,
                 color: errorMain,
+            };
+        } else if (statusCodes.find((code) => code === 'PRIMARY')) {
+            return {
+                messageId: ShardStatusMessageIds.PRIMARY,
+                color: successMain,
             };
         } else if (statusCodes.find((code) => code === 'IDLE')) {
             return {
@@ -160,10 +160,10 @@ const evaluateShardStatusColor = ({ status }: Shard): ShardStatusColor => {
             ({ code }) => code
         );
 
-        if (statusCodes.find((code) => code === 'PRIMARY')) {
-            return successMain;
-        } else if (statusCodes.find((code) => code === 'FAILED')) {
+        if (statusCodes.find((code) => code === 'FAILED')) {
             return errorMain;
+        } else if (statusCodes.find((code) => code === 'PRIMARY')) {
+            return successMain;
         } else if (
             statusCodes.find(
                 (code) =>
@@ -185,10 +185,10 @@ const evaluateShardStatusCode = ({
 }: Shard): ShardStatusMessageIds => {
     if (status.length === 1) {
         switch (status[0].code) {
-            case 'PRIMARY':
-                return ShardStatusMessageIds.PRIMARY;
             case 'FAILED':
                 return ShardStatusMessageIds.FAILED;
+            case 'PRIMARY':
+                return ShardStatusMessageIds.PRIMARY;
             case 'IDLE':
                 return ShardStatusMessageIds.IDLE;
             case 'STANDBY':
@@ -203,10 +203,10 @@ const evaluateShardStatusCode = ({
             ({ code }) => code
         );
 
-        if (statusCodes.find((code) => code === 'PRIMARY')) {
-            return ShardStatusMessageIds.PRIMARY;
-        } else if (statusCodes.find((code) => code === 'FAILED')) {
+        if (statusCodes.find((code) => code === 'FAILED')) {
             return ShardStatusMessageIds.FAILED;
+        } else if (statusCodes.find((code) => code === 'PRIMARY')) {
+            return ShardStatusMessageIds.PRIMARY;
         } else if (statusCodes.find((code) => code === 'IDLE')) {
             return ShardStatusMessageIds.IDLE;
         } else if (statusCodes.find((code) => code === 'STANDBY')) {
@@ -276,17 +276,17 @@ export const getInitialState = (
                 if (
                     statusMessageIds.find(
                         (messageId) =>
-                            messageId === ShardStatusMessageIds.PRIMARY
-                    )
-                ) {
-                    return successMain;
-                } else if (
-                    statusMessageIds.find(
-                        (messageId) =>
                             messageId === ShardStatusMessageIds.FAILED
                     )
                 ) {
                     return errorMain;
+                } else if (
+                    statusMessageIds.find(
+                        (messageId) =>
+                            messageId === ShardStatusMessageIds.PRIMARY
+                    )
+                ) {
+                    return successMain;
                 } else if (
                     statusMessageIds.find(
                         (messageId) =>
