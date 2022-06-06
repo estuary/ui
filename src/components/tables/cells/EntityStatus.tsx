@@ -2,6 +2,7 @@ import { Box, Tooltip, Typography } from '@mui/material';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useEffect, useState } from 'react';
+import { FormattedMessage } from 'react-intl';
 import {
     defaultStatusColor,
     shardDetailSelectors,
@@ -87,7 +88,7 @@ function EntityStatus({ name }: Props) {
                         variant="caption"
                         sx={{ display: 'inline-block' }}
                     >
-                        {shard.statusCode}
+                        <FormattedMessage id={shard.messageId} />
                     </Typography>
                 </Box>
             ))}

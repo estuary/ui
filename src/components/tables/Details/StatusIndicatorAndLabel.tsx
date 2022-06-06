@@ -1,6 +1,7 @@
 import { TableCell, Typography } from '@mui/material';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { useRouteStore } from 'hooks/useRouteStore';
+import { FormattedMessage } from 'react-intl';
 import { shardDetailSelectors } from 'stores/ShardDetail';
 
 interface Props {
@@ -15,14 +16,14 @@ function StatusIndicatorAndLabel({ shard }: Props) {
     const getShardStatusColor = shardDetailStore(
         shardDetailSelectors.getShardStatusColor
     );
-    const getShardStatus = shardDetailStore(
-        shardDetailSelectors.getShardStatus
+    const getShardStatusMessageId = shardDetailStore(
+        shardDetailSelectors.getShardStatusMessageId
     );
     const evaluateShardProcessingState = shardDetailStore(
         shardDetailSelectors.evaluateShardProcessingState
     );
 
-    const status = getShardStatus(id);
+    const statusMessageId = getShardStatusMessageId(id);
 
     const taskDisabled: boolean = evaluateShardProcessingState(id);
 
@@ -46,7 +47,7 @@ function StatusIndicatorAndLabel({ shard }: Props) {
             />
 
             <Typography component="span" sx={{ verticalAlign: 'middle' }}>
-                {status}
+                <FormattedMessage id={statusMessageId} />
             </Typography>
         </TableCell>
     );

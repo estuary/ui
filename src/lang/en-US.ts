@@ -399,6 +399,16 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreate.createNotification.desc': `Your materialization is published and ready to be used.`,
 };
 
+const ShardStatus: ResolvedIntlConfig['messages'] = {
+    'shardStatus.primary': `PRIMARY`,
+    'shardStatus.failed': `FAILED`,
+    'shardStatus.idle': `IDLE`,
+    'shardStatus.standby': `STANDBY`,
+    'shardStatus.backfill': `BACKFILL`,
+    'shardStatus.disabled': `DISABLED`,
+    'shardStatus.none': `No shard status found.`,
+};
+
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
     ...CTAs,
@@ -430,6 +440,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CaptureCreate,
     ...DetailsPanel,
     ...MaterializationCreate,
+    ...ShardStatus,
 };
 
 export default enUSMessages;

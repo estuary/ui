@@ -13,20 +13,22 @@ import { NamedSet } from 'zustand/middleware';
 // TODO: Determine a way to access an interface property with a function type.
 export type SetShards = (shards: Shard[]) => void;
 
-// TODO: Follow-up with team. Determine fallback status to display in tooltip.
-type DefaultTooltipMessage = 'No shard status found.';
-
 // TODO: Rename this type to ShardStatusCode
-export type ShardStatus =
-    | ReplicaStatusCode
-    | DefaultTooltipMessage
-    | 'DISABLED';
+export enum ShardStatusMessageIds {
+    PRIMARY = 'shardStatus.primary',
+    FAILED = 'shardStatus.failed',
+    IDLE = 'shardStatus.idle',
+    STANDBY = 'shardStatus.standby',
+    BACKFILL = 'shardStatus.backfill',
+    DISABLED = 'shardStatus.disabled',
+    NONE = 'shardStatus.none',
+}
 
 // The additional hex string corresponds to slate[25].
 export type ShardStatusColor = SemanticColor | '#EEF8FF';
 
 export interface TaskShardDetails {
-    statusCode: ShardStatus;
+    messageId: ShardStatusMessageIds;
     color: ShardStatusColor;
     disabled?: boolean;
 }
@@ -46,14 +48,14 @@ export interface ShardDetailStore {
     ) => ShardStatusColor;
     getShardDetails: (shards: Shard[]) => ShardDetails[];
     getShardStatusColor: (shardId: string) => ShardStatusColor;
-    getShardStatus: (shardId: string) => ShardStatus;
+    getShardStatusMessageId: (shardId: string) => ShardStatusMessageIds;
     evaluateShardProcessingState: (shardId: string) => boolean;
 }
 
 export const defaultStatusColor: ShardStatusColor = '#EEF8FF';
 
 const defaultTaskShardDetail: TaskShardDetails = {
-    statusCode: 'No shard status found.',
+    messageId: ShardStatusMessageIds.NONE,
     color: defaultStatusColor,
 };
 
@@ -61,18 +63,33 @@ const evaluateTaskShardStatus = ({ spec, status }: Shard): TaskShardDetails => {
     if (status.length === 1) {
         switch (status[0].code) {
             case 'PRIMARY':
-                return { statusCode: 'PRIMARY', color: successMain };
+                return {
+                    messageId: ShardStatusMessageIds.PRIMARY,
+                    color: successMain,
+                };
             case 'FAILED':
-                return { statusCode: 'FAILED', color: errorMain };
+                return {
+                    messageId: ShardStatusMessageIds.FAILED,
+                    color: errorMain,
+                };
             case 'IDLE':
-                return { statusCode: 'IDLE', color: warningMain };
+                return {
+                    messageId: ShardStatusMessageIds.IDLE,
+                    color: warningMain,
+                };
             case 'STANDBY':
-                return { statusCode: 'STANDBY', color: warningMain };
+                return {
+                    messageId: ShardStatusMessageIds.STANDBY,
+                    color: warningMain,
+                };
             case 'BACKFILL':
-                return { statusCode: 'BACKFILL', color: warningMain };
+                return {
+                    messageId: ShardStatusMessageIds.BACKFILL,
+                    color: warningMain,
+                };
             default:
                 return {
-                    statusCode: 'No shard status found.',
+                    messageId: ShardStatusMessageIds.NONE,
                     color: defaultStatusColor,
                 };
         }
@@ -82,24 +99,41 @@ const evaluateTaskShardStatus = ({ spec, status }: Shard): TaskShardDetails => {
         );
 
         if (statusCodes.find((code) => code === 'PRIMARY')) {
-            return { statusCode: 'PRIMARY', color: successMain };
+            return {
+                messageId: ShardStatusMessageIds.PRIMARY,
+                color: successMain,
+            };
         } else if (statusCodes.find((code) => code === 'FAILED')) {
-            return { statusCode: 'FAILED', color: errorMain };
+            return {
+                messageId: ShardStatusMessageIds.FAILED,
+                color: errorMain,
+            };
         } else if (statusCodes.find((code) => code === 'IDLE')) {
-            return { statusCode: 'IDLE', color: warningMain };
+            return {
+                messageId: ShardStatusMessageIds.IDLE,
+                color: warningMain,
+            };
         } else if (statusCodes.find((code) => code === 'STANDBY')) {
-            return { statusCode: 'STANDBY', color: warningMain };
+            return {
+                messageId: ShardStatusMessageIds.STANDBY,
+                color: warningMain,
+            };
         } else if (statusCodes.find((code) => code === 'BACKFILL')) {
-            return { statusCode: 'BACKFILL', color: warningMain };
+            return {
+                messageId: ShardStatusMessageIds.BACKFILL,
+                color: warningMain,
+            };
         } else {
             return {
-                statusCode: 'No shard status found.',
+                messageId: ShardStatusMessageIds.NONE,
                 color: defaultStatusColor,
             };
         }
     } else {
         return {
-            statusCode: spec.disable ? 'DISABLED' : 'No shard status found.',
+            messageId: spec.disable
+                ? ShardStatusMessageIds.DISABLED
+                : ShardStatusMessageIds.NONE,
             color: defaultStatusColor,
             disabled: spec.disable,
         };
@@ -145,29 +179,47 @@ const evaluateShardStatusColor = ({ status }: Shard): ShardStatusColor => {
     }
 };
 
-const evaluateShardStatusCode = ({ spec, status }: Shard): ShardStatus => {
+const evaluateShardStatusCode = ({
+    spec,
+    status,
+}: Shard): ShardStatusMessageIds => {
     if (status.length === 1) {
-        return status[0].code ?? 'No shard status found.';
+        switch (status[0].code) {
+            case 'PRIMARY':
+                return ShardStatusMessageIds.PRIMARY;
+            case 'FAILED':
+                return ShardStatusMessageIds.FAILED;
+            case 'IDLE':
+                return ShardStatusMessageIds.IDLE;
+            case 'STANDBY':
+                return ShardStatusMessageIds.STANDBY;
+            case 'BACKFILL':
+                return ShardStatusMessageIds.BACKFILL;
+            default:
+                return ShardStatusMessageIds.NONE;
+        }
     } else if (status.length > 1) {
         const statusCodes: (ReplicaStatusCode | undefined)[] = status.map(
             ({ code }) => code
         );
 
         if (statusCodes.find((code) => code === 'PRIMARY')) {
-            return 'PRIMARY';
+            return ShardStatusMessageIds.PRIMARY;
         } else if (statusCodes.find((code) => code === 'FAILED')) {
-            return 'FAILED';
+            return ShardStatusMessageIds.FAILED;
         } else if (statusCodes.find((code) => code === 'IDLE')) {
-            return 'IDLE';
+            return ShardStatusMessageIds.IDLE;
         } else if (statusCodes.find((code) => code === 'STANDBY')) {
-            return 'STANDBY';
+            return ShardStatusMessageIds.STANDBY;
         } else if (statusCodes.find((code) => code === 'BACKFILL')) {
-            return 'BACKFILL';
+            return ShardStatusMessageIds.BACKFILL;
         } else {
-            return 'No shard status found.';
+            return ShardStatusMessageIds.NONE;
         }
     } else {
-        return spec.disable ? 'DISABLED' : 'No shard status found.';
+        return spec.disable
+            ? ShardStatusMessageIds.DISABLED
+            : ShardStatusMessageIds.NONE;
     }
 };
 
@@ -216,20 +268,31 @@ export const getInitialState = (
             if (taskShardDetails.length === 1) {
                 return taskShardDetails[0].color;
             } else if (taskShardDetails.length > 1) {
-                const statusCodes: ShardStatus[] = taskShardDetails.map(
-                    ({ statusCode }) => statusCode
-                );
+                const statusMessageIds: ShardStatusMessageIds[] =
+                    taskShardDetails.map(
+                        ({ messageId: statusCode }) => statusCode
+                    );
 
-                if (statusCodes.find((code) => code === 'PRIMARY')) {
+                if (
+                    statusMessageIds.find(
+                        (messageId) =>
+                            messageId === ShardStatusMessageIds.PRIMARY
+                    )
+                ) {
                     return successMain;
-                } else if (statusCodes.find((code) => code === 'FAILED')) {
+                } else if (
+                    statusMessageIds.find(
+                        (messageId) =>
+                            messageId === ShardStatusMessageIds.FAILED
+                    )
+                ) {
                     return errorMain;
                 } else if (
-                    statusCodes.find(
-                        (code) =>
-                            code === 'IDLE' ||
-                            code === 'STANDBY' ||
-                            code === 'BACKFILL'
+                    statusMessageIds.find(
+                        (messageId) =>
+                            messageId === ShardStatusMessageIds.IDLE ||
+                            messageId === ShardStatusMessageIds.STANDBY ||
+                            messageId === ShardStatusMessageIds.BACKFILL
                     )
                 ) {
                     return warningMain;
@@ -262,7 +325,7 @@ export const getInitialState = (
                 return defaultStatusColor;
             }
         },
-        getShardStatus: (shardId) => {
+        getShardStatusMessageId: (shardId) => {
             const { shards } = get();
 
             if (shards.length > 0) {
@@ -272,9 +335,9 @@ export const getInitialState = (
 
                 return selectedShard
                     ? evaluateShardStatusCode(selectedShard)
-                    : 'No shard status found.';
+                    : ShardStatusMessageIds.NONE;
             } else {
-                return 'No shard status found.';
+                return ShardStatusMessageIds.NONE;
             }
         },
         evaluateShardProcessingState: (shardId) => {
@@ -301,7 +364,8 @@ export const shardDetailSelectors = {
     getTaskStatusColor: (state: ShardDetailStore) => state.getTaskStatusColor,
     getShardDetails: (state: ShardDetailStore) => state.getShardDetails,
     getShardStatusColor: (state: ShardDetailStore) => state.getShardStatusColor,
-    getShardStatus: (state: ShardDetailStore) => state.getShardStatus,
+    getShardStatusMessageId: (state: ShardDetailStore) =>
+        state.getShardStatusMessageId,
     evaluateShardProcessingState: (state: ShardDetailStore) =>
         state.evaluateShardProcessingState,
 };
