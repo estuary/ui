@@ -1,4 +1,5 @@
 import {
+    Box,
     Grid,
     Table,
     TableBody,
@@ -12,6 +13,7 @@ import {
     useTheme,
 } from '@mui/material';
 import { EditorStoreState } from 'components/editor/Store';
+import ExternalLink from 'components/shared/ExternalLink';
 import ShardErrors from 'components/tables/Details/ShardErrors';
 import StatusIndicatorAndLabel from 'components/tables/Details/StatusIndicatorAndLabel';
 import { Shard } from 'data-plane-gateway/types/shard_client';
@@ -19,7 +21,7 @@ import { PublicationSpecQuery } from 'hooks/usePublicationSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
 import { MouseEvent, useEffect, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { shardDetailSelectors } from 'stores/ShardDetail';
 import { ENTITY } from 'types';
 
@@ -29,6 +31,7 @@ interface Props {
 
 function ShardInformation({ entityType }: Props) {
     const theme = useTheme();
+    const intl = useIntl();
 
     const [page, setPage] = useState(0);
 
@@ -91,9 +94,37 @@ function ShardInformation({ entityType }: Props) {
                                 }}
                             >
                                 <TableCell colSpan={columns.length}>
-                                    <Typography align="center">
-                                        <FormattedMessage id="detailsPanel.shardDetails.title" />
-                                    </Typography>
+                                    <Box
+                                        sx={{
+                                            width: '100%',
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                        }}
+                                    >
+                                        <Typography
+                                            component="span"
+                                            align="center"
+                                            sx={{ width: '100%' }}
+                                        >
+                                            <FormattedMessage id="detailsPanel.shardDetails.title" />
+                                        </Typography>
+
+                                        <Box
+                                            sx={{
+                                                minWidth: 'max-content',
+                                                position: 'sticky',
+                                                right: 0,
+                                            }}
+                                        >
+                                            <ExternalLink
+                                                link={intl.formatMessage({
+                                                    id: 'detailsPanel.shardDetails.docPath',
+                                                })}
+                                            >
+                                                <FormattedMessage id="detailsPanel.shardDetails.docLink" />
+                                            </ExternalLink>
+                                        </Box>
+                                    </Box>
                                 </TableCell>
                             </TableRow>
                             <TableRow
