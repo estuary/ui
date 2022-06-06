@@ -1,45 +1,16 @@
 import { Box, Tooltip, Typography } from '@mui/material';
-import { errorMain, successMain, warningMain } from 'context/Theme';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useEffect, useState } from 'react';
 import {
     defaultStatusColor,
     shardDetailSelectors,
-    ShardStatus,
     ShardStatusColor,
     TaskShardDetails,
 } from 'stores/ShardDetail';
 
 interface Props {
     name: string;
-}
-
-function evaluateTaskStatus(statuses: TaskShardDetails[]): ShardStatusColor {
-    if (statuses.length === 1) {
-        return statuses[0].color;
-    } else if (statuses.length > 1) {
-        const statusCodes: ShardStatus[] = statuses.map(
-            ({ statusCode }) => statusCode
-        );
-
-        if (statusCodes.find((code) => code === 'PRIMARY')) {
-            return successMain;
-        } else if (statusCodes.find((code) => code === 'FAILED')) {
-            return errorMain;
-        } else if (
-            statusCodes.find(
-                (code) =>
-                    code === 'IDLE' || code === 'STANDBY' || code === 'BACKFILL'
-            )
-        ) {
-            return warningMain;
-        } else {
-            return defaultStatusColor;
-        }
-    } else {
-        return defaultStatusColor;
-    }
 }
 
 function EntityStatus({ name }: Props) {
@@ -58,6 +29,9 @@ function EntityStatus({ name }: Props) {
     const getTaskShardDetails = shardDetailStore(
         shardDetailSelectors.getTaskShardDetails
     );
+    const getTaskStatusColor = shardDetailStore(
+        shardDetailSelectors.getTaskStatusColor
+    );
 
     useEffect(() => {
         const taskShards: Shard[] = getTaskShards(name, shards);
@@ -65,7 +39,7 @@ function EntityStatus({ name }: Props) {
         const shardDetails: TaskShardDetails[] =
             getTaskShardDetails(taskShards);
 
-        const statusColor = evaluateTaskStatus(shardDetails);
+        const statusColor: ShardStatusColor = getTaskStatusColor(shardDetails);
 
         const disabled =
             shardDetails.filter((shard) => !shard.disabled).length === 0;
@@ -78,6 +52,7 @@ function EntityStatus({ name }: Props) {
         getTaskShardDetails,
         setTaskShardDetails,
         setTaskDisabled,
+        getTaskStatusColor,
         name,
         shards,
     ]);

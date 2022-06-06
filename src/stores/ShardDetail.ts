@@ -41,6 +41,9 @@ export interface ShardDetailStore {
     setShards: SetShards;
     getTaskShards: (catalogNamespace: string, shards: Shard[]) => Shard[];
     getTaskShardDetails: (taskShards: Shard[]) => TaskShardDetails[];
+    getTaskStatusColor: (
+        taskShardDetails: TaskShardDetails[]
+    ) => ShardStatusColor;
     getShardStatusColor: (shardId: string) => ShardStatusColor;
     getShardStatus: (shardId: string) => ShardStatus;
     getShardDetails: (shards: Shard[]) => ShardDetails[];
@@ -210,6 +213,34 @@ export const getInitialState = (
                 return [defaultTaskShardDetail];
             }
         },
+        getTaskStatusColor: (taskShardDetails) => {
+            if (taskShardDetails.length === 1) {
+                return taskShardDetails[0].color;
+            } else if (taskShardDetails.length > 1) {
+                const statusCodes: ShardStatus[] = taskShardDetails.map(
+                    ({ statusCode }) => statusCode
+                );
+
+                if (statusCodes.find((code) => code === 'PRIMARY')) {
+                    return successMain;
+                } else if (statusCodes.find((code) => code === 'FAILED')) {
+                    return errorMain;
+                } else if (
+                    statusCodes.find(
+                        (code) =>
+                            code === 'IDLE' ||
+                            code === 'STANDBY' ||
+                            code === 'BACKFILL'
+                    )
+                ) {
+                    return warningMain;
+                } else {
+                    return defaultStatusColor;
+                }
+            } else {
+                return defaultStatusColor;
+            }
+        },
         getShardStatusColor: (shardId) => {
             const { shards } = get();
 
@@ -268,6 +299,7 @@ export const shardDetailSelectors = {
     setShards: (state: ShardDetailStore) => state.setShards,
     getTaskShards: (state: ShardDetailStore) => state.getTaskShards,
     getTaskShardDetails: (state: ShardDetailStore) => state.getTaskShardDetails,
+    getTaskStatusColor: (state: ShardDetailStore) => state.getTaskStatusColor,
     getShardStatusColor: (state: ShardDetailStore) => state.getShardStatusColor,
     getShardStatus: (state: ShardDetailStore) => state.getShardStatus,
     getShardDetails: (state: ShardDetailStore) => state.getShardDetails,
