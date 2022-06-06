@@ -29,6 +29,8 @@ interface Props {
     entityType?: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
 }
 
+const rowsPerPage = 3;
+
 function ShardInformation({ entityType }: Props) {
     const theme = useTheme();
     const intl = useIntl();
@@ -146,28 +148,37 @@ function ShardInformation({ entityType }: Props) {
                         </TableHead>
 
                         <TableBody>
-                            {taskShards.map((shard) => (
-                                <TableRow
-                                    key={shard.spec.id}
-                                    sx={{
-                                        background: '#252526', // This is the hex code for the monaco editor background in dark mode.
-                                    }}
-                                >
-                                    <StatusIndicatorAndLabel shard={shard} />
+                            {taskShards
+                                .slice(
+                                    page * rowsPerPage,
+                                    page * rowsPerPage + rowsPerPage
+                                )
+                                .map((shard) => (
+                                    <TableRow
+                                        key={shard.spec.id}
+                                        sx={{
+                                            background: '#252526', // This is the hex code for the monaco editor background in dark mode.
+                                        }}
+                                    >
+                                        <StatusIndicatorAndLabel
+                                            shard={shard}
+                                        />
 
-                                    <TableCell>
-                                        <Typography>{shard.spec.id}</Typography>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
+                                        <TableCell>
+                                            <Typography>
+                                                {shard.spec.id}
+                                            </Typography>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
                         </TableBody>
 
                         <TableFooter>
                             <TableRow>
                                 <TablePagination
                                     count={taskShards.length}
-                                    rowsPerPageOptions={[3]}
-                                    rowsPerPage={3}
+                                    rowsPerPageOptions={[rowsPerPage]}
+                                    rowsPerPage={rowsPerPage}
                                     page={page}
                                     onPageChange={changePage}
                                 />
