@@ -112,6 +112,10 @@ function ShardInformation({ entityType }: Props) {
                                     }}
                                 >
                                     <StatusIndicatorAndLabel shard={shard} />
+
+                                    <TableCell>
+                                        <Typography>{shard.spec.id}</Typography>
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
