@@ -7,6 +7,7 @@ import {
     defaultStatusColor,
     shardDetailSelectors,
     ShardStatus,
+    ShardStatusColor,
     ShardStatusIndicator,
 } from 'stores/ShardDetail';
 
@@ -14,7 +15,9 @@ interface Props {
     name: string;
 }
 
-function evaluateTaskStatus(statuses: ShardStatusIndicator[]): string {
+function evaluateTaskStatus(
+    statuses: ShardStatusIndicator[]
+): ShardStatusColor {
     if (statuses.length === 1) {
         return statuses[0].color;
     } else if (statuses.length > 1) {
@@ -46,7 +49,7 @@ function EntityStatus({ name }: Props) {
         []
     );
     const [taskStatusColor, setTaskStatusColor] =
-        useState<string>(defaultStatusColor);
+        useState<ShardStatusColor>(defaultStatusColor);
 
     const shardDetailStore = useRouteStore();
 

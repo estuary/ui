@@ -1,4 +1,9 @@
-import { errorMain, slate, successMain, warningMain } from 'context/Theme';
+import {
+    errorMain,
+    SemanticColor,
+    successMain,
+    warningMain,
+} from 'context/Theme';
 import { ReplicaStatusCode } from 'data-plane-gateway/types/gen/consumer/protocol/consumer';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import produce from 'immer';
@@ -17,11 +22,13 @@ export type ShardStatus =
     | DefaultTooltipMessage
     | 'DISABLED';
 
+// The additional hex string corresponds to slate[25].
+export type ShardStatusColor = SemanticColor | '#EEF8FF';
+
 // TODO: Rename this interface to ShardStatus
-// TODO: Consider narrowing the type of the color property.
 export interface ShardStatusIndicator {
     statusCode: ShardStatus;
-    color: string;
+    color: ShardStatusColor;
 }
 
 export interface ShardDetails {
@@ -34,13 +41,13 @@ export interface ShardDetailStore {
     setShards: SetShards;
     getTaskShards: (catalogNamespace: string, shards: Shard[]) => Shard[];
     getTaskStatusColor: (taskShards: Shard[]) => ShardStatusIndicator[];
-    getShardStatusColor: (shardId: string) => string;
+    getShardStatusColor: (shardId: string) => ShardStatusColor;
     getShardStatus: (catalogNamespace: string) => ShardStatus[];
     getShardDetails: (shards: Shard[]) => ShardDetails[];
     evaluateShardProcessingState: (catalogNamespace: string) => boolean;
 }
 
-export const defaultStatusColor = slate[25];
+export const defaultStatusColor: ShardStatusColor = '#EEF8FF';
 
 const defaultStatusIndicator: ShardStatusIndicator = {
     statusCode: 'No shard status found.',
@@ -48,7 +55,7 @@ const defaultStatusIndicator: ShardStatusIndicator = {
 };
 
 // TODO: Rename this function to evaluateShardStatusColor
-const evaluateShardStatus = ({ status }: Shard): string => {
+const evaluateShardStatus = ({ status }: Shard): ShardStatusColor => {
     if (status.length === 1) {
         switch (status[0].code) {
             case 'PRIMARY':

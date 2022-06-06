@@ -39,10 +39,12 @@ export const slate = {
 };
 
 // Status Colors
-export const errorMain = '#CA3B55';
-export const warningMain = '#F5D75E';
-export const infoMain = '#4FD6FF';
-export const successMain = '#40B763';
+export type SemanticColor = '#40B763' | '#F5D75E' | '#CA3B55' | '#4FD6FF';
+
+export const successMain: SemanticColor = '#40B763';
+export const warningMain: SemanticColor = '#F5D75E';
+export const errorMain: SemanticColor = '#CA3B55';
+export const infoMain: SemanticColor = '#4FD6FF';
 
 // Color modifiers
 const contrastThreshold = 4;
