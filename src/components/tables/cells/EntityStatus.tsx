@@ -63,11 +63,7 @@ function EntityStatus({ name }: Props) {
             title={taskShardDetails.map((shard, index) => (
                 <Box
                     key={`${index}-shard-status-tooltip`}
-                    sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                    }}
+                    sx={{ display: 'flex', alignItems: 'center' }}
                 >
                     <span
                         style={{
