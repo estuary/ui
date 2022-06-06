@@ -1,38 +1,11 @@
 import { TableCell, Typography } from '@mui/material';
-import { ReplicaStatusCode } from 'data-plane-gateway/types/gen/consumer/protocol/consumer';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { shardDetailSelectors, ShardStatus } from 'stores/ShardDetail';
+import { shardDetailSelectors } from 'stores/ShardDetail';
 
 interface Props {
     shard: Shard;
 }
-
-const getShardStatus = ({ spec, status }: Shard): ShardStatus => {
-    if (status.length === 1) {
-        return status[0].code ?? 'No shard status found.';
-    } else if (status.length > 1) {
-        const statusCodes: (ReplicaStatusCode | undefined)[] = status.map(
-            ({ code }) => code
-        );
-
-        if (statusCodes.find((code) => code === 'PRIMARY')) {
-            return 'PRIMARY';
-        } else if (statusCodes.find((code) => code === 'FAILED')) {
-            return 'FAILED';
-        } else if (statusCodes.find((code) => code === 'IDLE')) {
-            return 'IDLE';
-        } else if (statusCodes.find((code) => code === 'STANDBY')) {
-            return 'STANDBY';
-        } else if (statusCodes.find((code) => code === 'BACKFILL')) {
-            return 'BACKFILL';
-        } else {
-            return 'No shard status found.';
-        }
-    } else {
-        return spec.disable ? 'DISABLED' : 'No shard status found.';
-    }
-};
 
 function StatusIndicatorAndLabel({ shard }: Props) {
     const { id } = shard.spec;
@@ -42,11 +15,14 @@ function StatusIndicatorAndLabel({ shard }: Props) {
     const getShardStatusColor = shardDetailStore(
         shardDetailSelectors.getShardStatusColor
     );
+    const getShardStatus = shardDetailStore(
+        shardDetailSelectors.getShardStatus
+    );
     const evaluateShardProcessingState = shardDetailStore(
         shardDetailSelectors.evaluateShardProcessingState
     );
 
-    const status = getShardStatus(shard);
+    const status = getShardStatus(id);
 
     const taskDisabled: boolean = evaluateShardProcessingState(id);
 

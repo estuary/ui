@@ -42,7 +42,7 @@ export interface ShardDetailStore {
     getTaskShards: (catalogNamespace: string, shards: Shard[]) => Shard[];
     getTaskStatusColor: (taskShards: Shard[]) => ShardStatusIndicator[];
     getShardStatusColor: (shardId: string) => ShardStatusColor;
-    getShardStatus: (catalogNamespace: string) => ShardStatus[];
+    getShardStatus: (shardId: string) => ShardStatus;
     getShardDetails: (shards: Shard[]) => ShardDetails[];
     evaluateShardProcessingState: (catalogNamespace: string) => boolean;
 }
@@ -145,6 +145,32 @@ const evaluateTaskShardStatus = ({
     }
 };
 
+const evaluateShardStatusCode = ({ spec, status }: Shard): ShardStatus => {
+    if (status.length === 1) {
+        return status[0].code ?? 'No shard status found.';
+    } else if (status.length > 1) {
+        const statusCodes: (ReplicaStatusCode | undefined)[] = status.map(
+            ({ code }) => code
+        );
+
+        if (statusCodes.find((code) => code === 'PRIMARY')) {
+            return 'PRIMARY';
+        } else if (statusCodes.find((code) => code === 'FAILED')) {
+            return 'FAILED';
+        } else if (statusCodes.find((code) => code === 'IDLE')) {
+            return 'IDLE';
+        } else if (statusCodes.find((code) => code === 'STANDBY')) {
+            return 'STANDBY';
+        } else if (statusCodes.find((code) => code === 'BACKFILL')) {
+            return 'BACKFILL';
+        } else {
+            return 'No shard status found.';
+        }
+    } else {
+        return spec.disable ? 'DISABLED' : 'No shard status found.';
+    }
+};
+
 export const getInitialState = (
     set: NamedSet<ShardDetailStore>,
     get: GetState<ShardDetailStore>
@@ -201,29 +227,19 @@ export const getInitialState = (
                 return defaultStatusColor;
             }
         },
-        getShardStatus: (catalogNamespace) => {
+        getShardStatus: (shardId) => {
             const { shards } = get();
 
             if (shards.length > 0) {
                 const selectedShard = shards.find(({ spec }) =>
-                    spec.id ? spec.id.includes(catalogNamespace) : undefined
+                    spec.id ? spec.id === shardId : undefined
                 );
 
-                let statusIndicator: ShardStatus[] = ['No shard status found.'];
-
-                if (selectedShard) {
-                    if (selectedShard.spec.disable) {
-                        statusIndicator = ['DISABLED'];
-                    } else if (selectedShard.status.length > 0) {
-                        statusIndicator = selectedShard.status.map(
-                            ({ code }) => code ?? 'No shard status found.'
-                        );
-                    }
-                }
-
-                return statusIndicator;
+                return selectedShard
+                    ? evaluateShardStatusCode(selectedShard)
+                    : 'No shard status found.';
             } else {
-                return ['No shard status found.'];
+                return 'No shard status found.';
             }
         },
         getShardDetails: (shards: Shard[]): ShardDetails[] => {
