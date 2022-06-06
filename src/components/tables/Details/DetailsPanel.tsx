@@ -5,7 +5,6 @@ import { ZustandProvider } from 'hooks/useZustand';
 import { ENTITY } from 'types';
 import ShardInformation from 'components/tables/Details/ShardInformation';
 import { tableBorderSx } from 'context/Theme';
-// import { PublicationSpecQuery } from 'hooks/usePublicationSpecs';
 
 interface Props {
     detailsExpanded: boolean;
@@ -24,11 +23,6 @@ function DetailsPanel({
     disableLogs,
     entityType,
 }: Props) {
-    // const specs = useZustandStore<
-    //     EditorStoreState<PublicationSpecQuery>,
-    //     EditorStoreState<PublicationSpecQuery>['specs']
-    // >((state) => state.specs);
-
     return (
         <TableRow>
             <TableCell
