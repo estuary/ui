@@ -7,7 +7,6 @@ import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
 import EntityError from 'components/shared/Entity/Error';
-import LogDialog from 'components/shared/Entity/LogDialog';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { useClient } from 'hooks/supabase-swr';
@@ -18,7 +17,7 @@ import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
-import { ReactNode, useEffect } from 'react';
+import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
@@ -26,17 +25,13 @@ import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 interface Props {
     title: string;
     connectorType: 'capture' | 'materialization';
-    formID: string;
     Header: any;
-    logAction: ReactNode;
     showCollections?: boolean;
 }
 
 function EntityCreate({
     title,
     connectorType,
-    formID,
-    logAction,
     showCollections,
     Header,
 }: Props) {
@@ -57,28 +52,29 @@ function EntityCreate({
         isValidating,
     } = useConnectorWithTagDetail(connectorType);
 
-    const entityCreateStore = useRouteStore();
-    const imageTag = entityCreateStore(
+    const useEntityCreateStore = useRouteStore();
+    const imageTag = useEntityCreateStore(
         entityCreateStoreSelectors.details.connectorTag
     );
-    const hasChanges = entityCreateStore(entityCreateStoreSelectors.hasChanges);
-    const resetState = entityCreateStore(entityCreateStoreSelectors.resetState);
-    const setFormState = entityCreateStore(
+    const hasChanges = useEntityCreateStore(
+        entityCreateStoreSelectors.hasChanges
+    );
+    const resetState = useEntityCreateStore(
+        entityCreateStoreSelectors.resetState
+    );
+    const setFormState = useEntityCreateStore(
         entityCreateStoreSelectors.formState.set
     );
-    const messagePrefix = entityCreateStore(
+    const messagePrefix = useEntityCreateStore(
         entityCreateStoreSelectors.messagePrefix
     );
-    const showLogs = entityCreateStore(
-        entityCreateStoreSelectors.formState.showLogs
-    );
-    const logToken = entityCreateStore(
+    const logToken = useEntityCreateStore(
         entityCreateStoreSelectors.formState.logToken
     );
-    const formSubmitError = entityCreateStore(
+    const formSubmitError = useEntityCreateStore(
         entityCreateStoreSelectors.formState.error
     );
-    const exitWhenLogsClose = entityCreateStore(
+    const exitWhenLogsClose = useEntityCreateStore(
         entityCreateStoreSelectors.formState.exitWhenLogsClose
     );
 
@@ -145,17 +141,6 @@ function EntityCreate({
 
     return (
         <>
-            <LogDialog
-                open={showLogs}
-                token={logToken}
-                title={
-                    <FormattedMessage
-                        id={`${messagePrefix}.save.waitMessage`}
-                    />
-                }
-                actionComponent={logAction}
-            />
-
             {Header}
 
             {connectorTagsError ? (
@@ -173,34 +158,32 @@ function EntityCreate({
                         )}
                     </Collapse>
 
-                    <form id={formID}>
-                        {!isValidating && connectorTags.length === 0 ? (
-                            <Alert severity="warning">
-                                <FormattedMessage
-                                    id={`${messagePrefix}.missingConnectors`}
-                                />
-                            </Alert>
-                        ) : connectorTags.length > 0 ? (
-                            <ErrorBoundryWrapper>
-                                <DetailsForm
-                                    connectorTags={connectorTags}
-                                    accessGrants={combinedGrants}
-                                />
-                            </ErrorBoundryWrapper>
-                        ) : null}
+                    {!isValidating && connectorTags.length === 0 ? (
+                        <Alert severity="warning">
+                            <FormattedMessage
+                                id={`${messagePrefix}.missingConnectors`}
+                            />
+                        </Alert>
+                    ) : connectorTags.length > 0 ? (
+                        <ErrorBoundryWrapper>
+                            <DetailsForm
+                                connectorTags={connectorTags}
+                                accessGrants={combinedGrants}
+                            />
+                        </ErrorBoundryWrapper>
+                    ) : null}
 
-                        {imageTag?.id ? (
-                            <ErrorBoundryWrapper>
-                                <EndpointConfig connectorImage={imageTag.id} />
-                            </ErrorBoundryWrapper>
-                        ) : null}
+                    {imageTag?.id ? (
+                        <ErrorBoundryWrapper>
+                            <EndpointConfig connectorImage={imageTag.id} />
+                        </ErrorBoundryWrapper>
+                    ) : null}
 
-                        {showCollections && imageTag?.id ? (
-                            <ErrorBoundryWrapper>
-                                <CollectionConfig />
-                            </ErrorBoundryWrapper>
-                        ) : null}
-                    </form>
+                    {showCollections && imageTag?.id ? (
+                        <ErrorBoundryWrapper>
+                            <CollectionConfig />
+                        </ErrorBoundryWrapper>
+                    ) : null}
 
                     <ErrorBoundryWrapper>
                         <CatalogEditor

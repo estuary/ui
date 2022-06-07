@@ -10,9 +10,10 @@ import {
 import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { ReactNode } from 'react';
-import { entityCreateStoreSelectors, formInProgress } from 'stores/Create';
+import { entityCreateStoreSelectors } from 'stores/Create';
 
 interface Props {
+    GenerateButton: ReactNode;
     TestButton: ReactNode;
     SaveButton: ReactNode;
     heading: ReactNode;
@@ -20,12 +21,12 @@ interface Props {
 
 export const buttonSx: SxProps<Theme> = { ml: 1, borderRadius: 5 };
 
-function FooHeader({ TestButton, SaveButton, heading }: Props) {
-    const entityCreateStore = useRouteStore();
-    const formStateStatus = entityCreateStore(
-        entityCreateStoreSelectors.formState.status
+function FooHeader({ GenerateButton, TestButton, SaveButton, heading }: Props) {
+    const useEntityCreateStore = useRouteStore();
+    const formActive = useEntityCreateStore(
+        entityCreateStoreSelectors.isActive
     );
-    const displayValidation = entityCreateStore(
+    const displayValidation = useEntityCreateStore(
         entityCreateStoreSelectors.formState.displayValidation
     );
 
@@ -43,13 +44,15 @@ function FooHeader({ TestButton, SaveButton, heading }: Props) {
                         ml: 'auto',
                     }}
                 >
+                    {GenerateButton}
+
                     {TestButton}
 
                     {SaveButton}
                 </Stack>
             </Toolbar>
 
-            <Collapse in={formInProgress(formStateStatus)} unmountOnExit>
+            <Collapse in={formActive} unmountOnExit>
                 <LinearProgress sx={{ mb: 2 }} />
             </Collapse>
 

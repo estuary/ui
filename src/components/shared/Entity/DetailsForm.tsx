@@ -17,7 +17,7 @@ import {
     defaultRenderers,
     showValidation,
 } from 'services/jsonforms';
-import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
+import { entityCreateStoreSelectors } from 'stores/Create';
 import { Grants } from 'types';
 
 interface Props {
@@ -37,20 +37,20 @@ function DetailsForm({ connectorTags, accessGrants }: Props) {
         EditorStoreState<DraftSpecQuery>['isSaving']
     >((state) => state.isSaving);
 
-    const entityCreateStore = useRouteStore();
-    const messagePrefix = entityCreateStore(
+    const useEntityCreateStore = useRouteStore();
+    const messagePrefix = useEntityCreateStore(
         entityCreateStoreSelectors.messagePrefix
     );
-    const formData = entityCreateStore(entityCreateStoreSelectors.details.data);
-    const setDetails = entityCreateStore(
+    const formData = useEntityCreateStore(
+        entityCreateStoreSelectors.details.data
+    );
+    const setDetails = useEntityCreateStore(
         entityCreateStoreSelectors.details.set
     );
-    const displayValidation = entityCreateStore(
+    const displayValidation = useEntityCreateStore(
         entityCreateStoreSelectors.formState.displayValidation
     );
-    const status = entityCreateStore(
-        entityCreateStoreSelectors.formState.status
-    );
+    const isActive = useEntityCreateStore(entityCreateStoreSelectors.isActive);
 
     useEffect(() => {
         if (connectorID) {
@@ -140,16 +140,16 @@ function DetailsForm({ connectorTags, accessGrants }: Props) {
                 elements: [
                     {
                         label: intl.formatMessage({
-                            id: 'entityName.label',
+                            id: 'connector.label',
                         }),
-                        scope: `#/properties/${CATALOG_NAME_SCOPE}`,
+                        scope: `#/properties/${CONNECTOR_IMAGE_SCOPE}`,
                         type: 'Control',
                     },
                     {
                         label: intl.formatMessage({
-                            id: 'connector.label',
+                            id: 'entityName.label',
                         }),
-                        scope: `#/properties/${CONNECTOR_IMAGE_SCOPE}`,
+                        scope: `#/properties/${CATALOG_NAME_SCOPE}`,
                         type: 'Control',
                     },
                     {
@@ -187,11 +187,7 @@ function DetailsForm({ connectorTags, accessGrants }: Props) {
                             renderers={defaultRenderers}
                             cells={materialCells}
                             config={defaultOptions}
-                            readonly={
-                                isSaving ||
-                                status === FormStatus.TESTING ||
-                                status === FormStatus.SAVING
-                            }
+                            readonly={isSaving || isActive}
                             validationMode={showValidation(displayValidation)}
                             onChange={setDetails}
                         />

@@ -10,7 +10,7 @@ import {
     defaultRenderers,
     showValidation,
 } from 'services/jsonforms';
-import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
+import { entityCreateStoreSelectors } from 'stores/Create';
 
 type Props = {
     resourceSchema: any;
@@ -21,20 +21,18 @@ function NewMaterializationResourceConfigForm({
     resourceSchema,
     collectionName,
 }: Props) {
-    const entityCreateStore = useRouteStore();
+    const useEntityCreateStore = useRouteStore();
 
-    const setConfig = entityCreateStore(
+    const setConfig = useEntityCreateStore(
         entityCreateStoreSelectors.resourceConfig.set
     );
-    const formData = entityCreateStore(
+    const formData = useEntityCreateStore(
         (state: any) => state.resourceConfig[collectionName].data
     );
-    const displayValidation = entityCreateStore(
+    const displayValidation = useEntityCreateStore(
         entityCreateStoreSelectors.formState.displayValidation
     );
-    const status = entityCreateStore(
-        entityCreateStoreSelectors.formState.status
-    );
+    const isActive = useEntityCreateStore(entityCreateStoreSelectors.isActive);
 
     // Resolve Refs & Hydrate the object
     //  This will hydrate the default values for us as we don't want JSONForms to
@@ -64,10 +62,7 @@ function NewMaterializationResourceConfigForm({
                 renderers={defaultRenderers}
                 cells={materialCells}
                 config={defaultOptions}
-                readonly={
-                    status === FormStatus.TESTING ||
-                    status === FormStatus.SAVING
-                }
+                readonly={isActive}
                 validationMode={showValidationVal}
                 onChange={handlers.onChange}
                 ajv={setDefaultsValidator}

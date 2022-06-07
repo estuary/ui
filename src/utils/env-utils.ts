@@ -59,16 +59,6 @@ export const getUrls = () => {
     }
 };
 
-export const getSWRSettings = () => {
-    const logCache = process.env.REACT_APP_SWR_LOG_CACHE === ENABLED;
-    const logRequests = process.env.REACT_APP_SWR_LOG_REQUESTS === ENABLED;
-
-    return {
-        logCache,
-        logRequests,
-    };
-};
-
 type Settings = {
     appID: string | null;
     idUser: {

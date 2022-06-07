@@ -1,36 +1,23 @@
-import { Button, SxProps, Theme } from '@mui/material';
+import { Button } from '@mui/material';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec, generateDraftSpec } from 'api/draftSpecs';
-import { createPublication } from 'api/publications';
 import { encryptConfig } from 'api/sops';
 import { EditorStoreState } from 'components/editor/Store';
+import { buttonSx } from 'components/shared/Entity/Header';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
-import {
-    entityCreateStoreSelectors,
-    formInProgress,
-    FormStatus,
-} from 'stores/Create';
+import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 import { ENTITY } from 'types';
 
 interface Props {
     disabled: boolean;
-    formId: string;
-    onFailure: Function;
-    subscription: Function;
+    callFailed: Function;
 }
 
-const buttonSx: SxProps<Theme> = { ml: 1, borderRadius: 5 };
-
-function MaterializeTestButton({
-    disabled,
-    formId,
-    onFailure,
-    subscription,
-}: Props) {
+function MaterializeGenerateButton({ disabled, callFailed }: Props) {
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
@@ -46,61 +33,52 @@ function MaterializeTestButton({
         EditorStoreState<DraftSpecQuery>['resetState']
     >((state) => state.resetState);
 
-    const entityCreateStore = useRouteStore();
-
-    // Materializations store
-    const resourceConfig = entityCreateStore(
-        entityCreateStoreSelectors.resourceConfig.get
-    );
-    const formStateStatus = entityCreateStore(
-        entityCreateStoreSelectors.formState.status
-    );
-    const resetFormState = entityCreateStore(
-        entityCreateStoreSelectors.formState.reset
-    );
-
-    // Form store
-    const entityName = entityCreateStore(
-        entityCreateStoreSelectors.details.entityName
-    );
-    const imageTag = entityCreateStore(
-        entityCreateStoreSelectors.details.connectorTag
-    );
-    const endpointConfig = entityCreateStore(
-        entityCreateStoreSelectors.endpointConfig.data
-    );
-    const endpointSchema = entityCreateStore(
-        entityCreateStoreSelectors.endpointSchema
-    );
-
-    const messagePrefix = entityCreateStore(
-        entityCreateStoreSelectors.messagePrefix
-    );
-
-    const setFormState = entityCreateStore(
-        entityCreateStoreSelectors.formState.set
-    );
-
-    const resourceConfigHasErrors = entityCreateStore(
-        entityCreateStoreSelectors.resourceConfig.hasErrors
-    );
-    const endpointConfigHasErrors = entityCreateStore(
-        entityCreateStoreSelectors.endpointConfig.hasErrors
-    );
-    const detailsFormsHasErrors = entityCreateStore(
-        entityCreateStoreSelectors.details.hasErrors
-    );
-
-    // Editor state
-
     const setDraftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setId']
     >((state) => state.setId);
 
-    const test = async (event: React.MouseEvent<HTMLElement>) => {
+    const useEntityCreateStore = useRouteStore();
+
+    const formActive = useEntityCreateStore(
+        entityCreateStoreSelectors.isActive
+    );
+    const setFormState = useEntityCreateStore(
+        entityCreateStoreSelectors.formState.set
+    );
+    const resetFormState = useEntityCreateStore(
+        entityCreateStoreSelectors.formState.reset
+    );
+
+    const entityName = useEntityCreateStore(
+        entityCreateStoreSelectors.details.entityName
+    );
+    const imageTag = useEntityCreateStore(
+        entityCreateStoreSelectors.details.connectorTag
+    );
+    const endpointConfigData = useEntityCreateStore(
+        entityCreateStoreSelectors.endpointConfig.data
+    );
+    const endpointSchema = useEntityCreateStore(
+        entityCreateStoreSelectors.endpointSchema
+    );
+    const resourceConfig = useEntityCreateStore(
+        entityCreateStoreSelectors.resourceConfig.get
+    );
+
+    const endpointConfigHasErrors = useEntityCreateStore(
+        entityCreateStoreSelectors.endpointConfig.hasErrors
+    );
+    const detailsFormsHasErrors = useEntityCreateStore(
+        entityCreateStoreSelectors.details.hasErrors
+    );
+    const resourceConfigHasErrors = useEntityCreateStore(
+        entityCreateStoreSelectors.resourceConfig.hasErrors
+    );
+
+    const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
-        resetFormState(FormStatus.TESTING);
+        resetFormState(FormStatus.GENERATING);
 
         if (
             resourceConfigHasErrors ||
@@ -108,25 +86,21 @@ function MaterializeTestButton({
             endpointConfigHasErrors
         ) {
             setFormState({
-                status: FormStatus.IDLE,
+                status: FormStatus.FAILED,
                 displayValidation: true,
             });
-        } else if (isEmpty(resourceConfig)) {
-            // TODO: Handle the scenario where no collections are present.
+        } else if (isEmpty(endpointConfigData)) {
             setFormState({
-                status: FormStatus.IDLE,
+                status: FormStatus.FAILED,
                 displayValidation: true,
             });
         } else {
             resetEditorState();
-            setFormState({
-                status: FormStatus.GENERATING_PREVIEW,
-            });
             setDraftId(null);
 
             const draftsResponse = await createEntityDraft(entityName);
             if (draftsResponse.error) {
-                return onFailure({
+                return callFailed({
                     error: {
                         title: 'materializationCreate.test.failure.errorTitle',
                         error: draftsResponse.error,
@@ -136,10 +110,10 @@ function MaterializeTestButton({
 
             const encryptedEndpointConfig = await encryptConfig(
                 endpointSchema,
-                endpointConfig
+                endpointConfigData
             );
             if (encryptedEndpointConfig.error) {
-                return onFailure({
+                return callFailed({
                     error: {
                         title: 'captureCreate.test.failedConfigEncryptTitle',
                         error: encryptedEndpointConfig.error,
@@ -161,7 +135,7 @@ function MaterializeTestButton({
                 ENTITY.MATERIALIZATION
             );
             if (draftSpecsResponse.error) {
-                return onFailure({
+                return callFailed({
                     error: {
                         title: 'materializationCreate.test.failure.errorTitle',
                         error: draftSpecsResponse.error,
@@ -169,42 +143,24 @@ function MaterializeTestButton({
                 });
             }
 
-            resetFormState(FormStatus.TESTING);
-            const publicationsSubscription = subscription(newDraftId);
-            const dryRunResponse = await createPublication(newDraftId, true);
-
-            if (dryRunResponse.error) {
-                return onFailure(
-                    {
-                        error: {
-                            title: `${messagePrefix}.test.failure.errorTitle`,
-                            error: dryRunResponse.error,
-                        },
-                    },
-                    publicationsSubscription
-                );
-            }
-
-            setDraftId(dryRunResponse.data[0].draft_id);
+            setDraftId(newDraftId);
             setFormState({
-                status: FormStatus.IDLE,
+                status: FormStatus.INIT,
             });
         }
     };
 
     return (
         <Button
-            onClick={test}
-            disabled={disabled || isSaving || formInProgress(formStateStatus)}
-            form={formId}
-            type="submit"
+            onClick={generateCatalog}
+            disabled={disabled || isSaving || formActive}
             sx={buttonSx}
         >
             <FormattedMessage
-                id={draftId ? 'foo.ctas.discoverAgain' : 'foo.ctas.discover'}
+                id={draftId ? 'cta.regenerateCatalog' : 'cta.generateCatalog'}
             />
         </Button>
     );
 }
 
-export default MaterializeTestButton;
+export default MaterializeGenerateButton;
