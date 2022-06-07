@@ -1,6 +1,7 @@
 import {
     Box,
     Grid,
+    SxProps,
     Table,
     TableBody,
     TableCell,
@@ -9,6 +10,7 @@ import {
     TableHead,
     TablePagination,
     TableRow,
+    Theme,
     Typography,
     useTheme,
 } from '@mui/material';
@@ -81,6 +83,10 @@ function ShardInformation({ entityType }: Props) {
         newPage: number
     ) => setPage(newPage);
 
+    const tableHeaderFooterSx: SxProps<Theme> = {
+        background: theme.palette.background.paper,
+    };
+
     return taskShards.length > 0 ? (
         <>
             <ShardErrors shards={taskShards} />
@@ -89,11 +95,7 @@ function ShardInformation({ entityType }: Props) {
                 <TableContainer>
                     <Table>
                         <TableHead>
-                            <TableRow
-                                sx={{
-                                    background: theme.palette.background.paper,
-                                }}
-                            >
+                            <TableRow sx={{ ...tableHeaderFooterSx }}>
                                 <TableCell colSpan={columns.length}>
                                     <Box
                                         sx={{
@@ -128,11 +130,7 @@ function ShardInformation({ entityType }: Props) {
                                     </Box>
                                 </TableCell>
                             </TableRow>
-                            <TableRow
-                                sx={{
-                                    background: theme.palette.background.paper,
-                                }}
-                            >
+                            <TableRow sx={{ ...tableHeaderFooterSx }}>
                                 {columns.map((column, index) => (
                                     <TableCell key={`${column.field}-${index}`}>
                                         <Typography>
@@ -156,9 +154,7 @@ function ShardInformation({ entityType }: Props) {
                                 .map((shard) => (
                                     <TableRow
                                         key={shard.spec.id}
-                                        sx={{
-                                            background: '#252526', // This is the hex code for the monaco editor background in dark mode.
-                                        }}
+                                        sx={{ background: '#252526' }} // This is the hex code for the monaco editor background in dark mode.
                                     >
                                         <StatusIndicatorAndLabel
                                             shard={shard}
@@ -174,7 +170,7 @@ function ShardInformation({ entityType }: Props) {
                         </TableBody>
 
                         <TableFooter>
-                            <TableRow>
+                            <TableRow sx={{ ...tableHeaderFooterSx }}>
                                 <TablePagination
                                     count={taskShards.length}
                                     rowsPerPageOptions={[rowsPerPage]}
