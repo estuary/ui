@@ -11,15 +11,15 @@ interface Props {
 function StatusIndicatorAndLabel({ shard }: Props) {
     const { id } = shard.spec;
 
-    const shardDetailStore = useRouteStore();
+    const useShardDetailStore = useRouteStore();
 
-    const getShardStatusColor = shardDetailStore(
+    const getShardStatusColor = useShardDetailStore(
         shardDetailSelectors.getShardStatusColor
     );
-    const getShardStatusMessageId = shardDetailStore(
+    const getShardStatusMessageId = useShardDetailStore(
         shardDetailSelectors.getShardStatusMessageId
     );
-    const evaluateShardProcessingState = shardDetailStore(
+    const evaluateShardProcessingState = useShardDetailStore(
         shardDetailSelectors.evaluateShardProcessingState
     );
 

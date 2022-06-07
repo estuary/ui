@@ -22,15 +22,17 @@ function EntityStatus({ name }: Props) {
         useState<ShardStatusColor>(defaultStatusColor);
     const [taskDisabled, setTaskDisabled] = useState<boolean>(false);
 
-    const shardDetailStore = useRouteStore();
+    const useShardDetailStore = useRouteStore();
 
-    const shards: Shard[] = shardDetailStore(shardDetailSelectors.shards);
+    const shards: Shard[] = useShardDetailStore(shardDetailSelectors.shards);
 
-    const getTaskShards = shardDetailStore(shardDetailSelectors.getTaskShards);
-    const getTaskShardDetails = shardDetailStore(
+    const getTaskShards = useShardDetailStore(
+        shardDetailSelectors.getTaskShards
+    );
+    const getTaskShardDetails = useShardDetailStore(
         shardDetailSelectors.getTaskShardDetails
     );
-    const getTaskStatusColor = shardDetailStore(
+    const getTaskStatusColor = useShardDetailStore(
         shardDetailSelectors.getTaskStatusColor
     );
 
