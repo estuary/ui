@@ -14,7 +14,7 @@ type Props = {
     icon: ReactNode;
     identifier: string;
     tooltip: string;
-    verticalOrigin: 'top' | 'bottom';
+    verticalOrigin: number;
     children: ReactNode;
 };
 
@@ -79,9 +79,9 @@ const IconMenu = ({
                 onClick={handlers.close}
                 transformOrigin={{
                     horizontal: 'left',
-                    vertical: verticalOrigin,
+                    vertical: 'bottom',
                 }}
-                anchorOrigin={{ horizontal: 'right', vertical: verticalOrigin }}
+                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 PaperProps={{
                     elevation: 0,
                     sx: {
@@ -98,8 +98,7 @@ const IconMenu = ({
                             height: 10,
                             position: 'absolute',
                             left: -5,
-                            top: verticalOrigin === 'top' ? '48px' : '',
-                            bottom: verticalOrigin === 'bottom' ? '22px' : '',
+                            bottom: `${verticalOrigin}px`,
                             transform: 'translateY(-50%) rotate(45deg)',
                             width: 10,
                             zIndex: 0,
