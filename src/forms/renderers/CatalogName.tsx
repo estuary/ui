@@ -42,7 +42,6 @@ export const catalogNameTypeTester: RankedTester = rankWith(
     scopeEndsWith(CATALOG_NAME_SCOPE)
 );
 
-// This is blank on purpose. For right now we can just show null settings are nothing
 const CatalogNameTypeRenderer = (
     props: ControlProps & OwnPropsOfEnum & WithOptionLabel
 ) => {
