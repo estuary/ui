@@ -1,5 +1,6 @@
+import { DEFAULT_POLLING } from 'context/SWR';
 import { TABLES } from 'services/supabase';
-import { getSWRConfig } from 'utils/misc-utils';
+import { SWRConfiguration } from 'swr';
 import { useQuery, useSelect } from './supabase-swr/';
 
 interface DraftErrorsQuery {
@@ -20,7 +21,9 @@ function useDraftSpecErrors(draftId?: string | null, enablePolling?: boolean) {
         [draftId]
     );
 
-    const options = getSWRConfig(enablePolling);
+    const options: SWRConfiguration = {
+        refreshInterval: enablePolling ? DEFAULT_POLLING : undefined,
+    };
 
     const { data, error, mutate, isValidating } = useSelect(
         draftId ? draftErrorsQuery : null,

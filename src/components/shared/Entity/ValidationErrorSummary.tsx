@@ -8,23 +8,23 @@ import { entityCreateStoreSelectors } from 'stores/Create';
 function ValidationErrorSummary() {
     const intl = useIntl();
 
-    const entityCreateStore = useRouteStore();
-    const [detailErrors, specErrors] = entityCreateStore(
+    const useEntityCreateStore = useRouteStore();
+    const [detailErrors, specErrors] = useEntityCreateStore(
         entityCreateStoreSelectors.errors
     );
-    const entityName = entityCreateStore(
+    const entityName = useEntityCreateStore(
         entityCreateStoreSelectors.details.entityName
     );
-    const imageTag = entityCreateStore(
+    const imageTag = useEntityCreateStore(
         entityCreateStoreSelectors.details.connectorTag
     );
-    const endpointSchema = entityCreateStore(
+    const endpointSchema = useEntityCreateStore(
         entityCreateStoreSelectors.endpointConfig.data
     );
-    const collections = entityCreateStore(
+    const collections = useEntityCreateStore(
         entityCreateStoreSelectors.collections
     );
-    const getResourceConfigErrors = entityCreateStore(
+    const getResourceConfigErrors = useEntityCreateStore(
         entityCreateStoreSelectors.resourceConfig.getErrors
     );
     const resourceConfigErrors = getResourceConfigErrors();

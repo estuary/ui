@@ -9,25 +9,15 @@ import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
-import {
-    entityCreateStoreSelectors,
-    formInProgress,
-    FormStatus,
-} from 'stores/Create';
+import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 
 interface Props {
     disabled: boolean;
-    formId: string;
-    onFailure: Function;
+    callFailed: Function;
     subscription: Function;
 }
 
-function CaptureTestButton({
-    disabled,
-    formId,
-    onFailure,
-    subscription,
-}: Props) {
+function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
@@ -43,41 +33,41 @@ function CaptureTestButton({
         EditorStoreState<DraftSpecQuery>['resetState']
     >((state) => state.resetState);
 
-    const entityCreateStore = useRouteStore();
+    const useEntityCreateStore = useRouteStore();
 
-    const formStateStatus = entityCreateStore(
-        entityCreateStoreSelectors.formState.status
+    const formActive = useEntityCreateStore(
+        entityCreateStoreSelectors.isActive
     );
-    const setFormState = entityCreateStore(
+    const setFormState = useEntityCreateStore(
         entityCreateStoreSelectors.formState.set
     );
-    const resetFormState = entityCreateStore(
+    const resetFormState = useEntityCreateStore(
         entityCreateStoreSelectors.formState.reset
     );
 
-    const entityName = entityCreateStore(
+    const entityName = useEntityCreateStore(
         entityCreateStoreSelectors.details.entityName
     );
-    const imageTag = entityCreateStore(
+    const imageTag = useEntityCreateStore(
         entityCreateStoreSelectors.details.connectorTag
     );
-    const endpointConfigData = entityCreateStore(
+    const endpointConfigData = useEntityCreateStore(
         entityCreateStoreSelectors.endpointConfig.data
     );
-    const endpointSchema = entityCreateStore(
+    const endpointSchema = useEntityCreateStore(
         entityCreateStoreSelectors.endpointSchema
     );
 
-    const endpointConfigHasErrors = entityCreateStore(
+    const endpointConfigHasErrors = useEntityCreateStore(
         entityCreateStoreSelectors.endpointConfig.hasErrors
     );
-    const detailsFormsHasErrors = entityCreateStore(
+    const detailsFormsHasErrors = useEntityCreateStore(
         entityCreateStoreSelectors.details.hasErrors
     );
 
-    const test = async (event: React.MouseEvent<HTMLElement>) => {
+    const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
-        resetFormState(FormStatus.TESTING);
+        resetFormState(FormStatus.GENERATING);
 
         if (
             isEmpty(endpointConfigData) ||
@@ -85,16 +75,16 @@ function CaptureTestButton({
             endpointConfigHasErrors
         ) {
             return setFormState({
-                status: FormStatus.IDLE,
+                status: FormStatus.FAILED,
                 displayValidation: true,
             });
         } else {
             resetEditorState();
             const draftsResponse = await createEntityDraft(entityName);
             if (draftsResponse.error) {
-                return onFailure({
+                return callFailed({
                     error: {
-                        title: 'captureCreate.test.failedErrorTitle',
+                        title: 'captureCreate.generate.failedErrorTitle',
                         error: draftsResponse.error,
                     },
                 });
@@ -105,9 +95,9 @@ function CaptureTestButton({
                 endpointConfigData
             );
             if (encryptedEndpointConfig.error) {
-                return onFailure({
+                return callFailed({
                     error: {
-                        title: 'captureCreate.test.failedConfigEncryptTitle',
+                        title: 'captureCreate.generate.failedConfigEncryptTitle',
                         error: encryptedEndpointConfig.error,
                     },
                 });
@@ -123,10 +113,10 @@ function CaptureTestButton({
                 draftsResponse.data[0].id
             );
             if (discoverResponse.error) {
-                return onFailure(
+                return callFailed(
                     {
                         error: {
-                            title: 'captureCreate.test.failedErrorTitle',
+                            title: 'captureCreate.generate.failedErrorTitle',
                             error: discoverResponse.error,
                         },
                     },
@@ -142,17 +132,15 @@ function CaptureTestButton({
 
     return (
         <Button
-            onClick={test}
-            disabled={disabled || isSaving || formInProgress(formStateStatus)}
-            form={formId}
-            type="submit"
+            onClick={generateCatalog}
+            disabled={disabled || isSaving || formActive}
             sx={buttonSx}
         >
             <FormattedMessage
-                id={draftId ? 'foo.ctas.discoverAgain' : 'foo.ctas.discover'}
+                id={draftId ? 'cta.regenerateCatalog' : 'cta.generateCatalog'}
             />
         </Button>
     );
 }
 
-export default CaptureTestButton;
+export default CaptureGenerateButton;

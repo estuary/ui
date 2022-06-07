@@ -1,11 +1,11 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { routeDetails } from 'app/Authenticated';
-import TestButton from 'components/capture/TestButton';
+import CaptureGenerateButton from 'components/capture/GenerateButton';
 import { EditorStoreState } from 'components/editor/Store';
-import EntityCreateSaveButton from 'components/shared/Entity/Actions/Savebutton';
+import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
+import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
 import FooHeader from 'components/shared/Entity/Header';
-import LogDialogActions from 'components/shared/Entity/LogDialogActions';
 import PageContainer from 'components/shared/PageContainer';
 import { useClient } from 'hooks/supabase-swr';
 import { usePrompt } from 'hooks/useBlocker';
@@ -20,7 +20,6 @@ import { startSubscription, TABLES } from 'services/supabase';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 import { getPathWithParam } from 'utils/misc-utils';
 
-const FORM_ID = 'newCaptureForm';
 const connectorType = 'capture';
 
 function CaptureCreate() {
@@ -32,24 +31,24 @@ function CaptureCreate() {
     const hasConnectors = connectorTags.length > 0;
 
     // Form store
-    const entityCreateStore = useRouteStore();
-    const messagePrefix = entityCreateStore(
+    const useEntityCreateStore = useRouteStore();
+    const messagePrefix = useEntityCreateStore(
         entityCreateStoreSelectors.messagePrefix
     );
-    const imageTag = entityCreateStore(
+    const imageTag = useEntityCreateStore(
         entityCreateStoreSelectors.details.connectorTag
     );
-    const hasChanges = entityCreateStore(entityCreateStoreSelectors.hasChanges);
-    const resetState = entityCreateStore(entityCreateStoreSelectors.resetState);
+    const hasChanges = useEntityCreateStore(
+        entityCreateStoreSelectors.hasChanges
+    );
+    const resetState = useEntityCreateStore(
+        entityCreateStoreSelectors.resetState
+    );
 
-    const setFormState = entityCreateStore(
+    const setFormState = useEntityCreateStore(
         entityCreateStoreSelectors.formState.set
     );
-    const resetFormState = entityCreateStore(
-        entityCreateStoreSelectors.formState.reset
-    );
-
-    const exitWhenLogsClose = entityCreateStore(
+    const exitWhenLogsClose = useEntityCreateStore(
         entityCreateStoreSelectors.formState.exitWhenLogsClose
     );
 
@@ -84,8 +83,8 @@ function CaptureCreate() {
                 });
             };
             if (subscription) {
-                helpers
-                    .doneSubscribing(subscription)
+                supabaseClient
+                    .removeSubscription(subscription)
                     .then(() => {
                         setFailureState();
                     })
@@ -93,12 +92,6 @@ function CaptureCreate() {
             } else {
                 setFailureState();
             }
-        },
-        doneSubscribing: (subscription: RealtimeSubscription) => {
-            return supabaseClient
-                .removeSubscription(subscription)
-                .then(() => {})
-                .catch(() => {});
         },
         exit: () => {
             resetState();
@@ -139,28 +132,22 @@ function CaptureCreate() {
         },
     };
 
-    const waitFor = {
-        base: (query: any, success: Function, failureTitle: string) => {
-            resetFormState(FormStatus.TESTING);
-            return startSubscription(query, success, () => {
-                helpers.jobFailed(failureTitle);
-            });
-        },
-        discovers: (discoverDraftId: string) => {
-            setDraftId(null);
-            return waitFor.base(
-                supabaseClient.from(
-                    `${TABLES.DISCOVERS}:draft_id=eq.${discoverDraftId}`
-                ),
-                (payload: any) => {
-                    setFormState({
-                        status: FormStatus.IDLE,
-                    });
-                    setDraftId(payload.draft_id);
-                },
-                `${messagePrefix}.test.failedErrorTitle`
-            );
-        },
+    const discoversSubscription = (discoverDraftId: string) => {
+        setDraftId(null);
+        return startSubscription(
+            supabaseClient.from(
+                `${TABLES.DISCOVERS}:draft_id=eq.${discoverDraftId}`
+            ),
+            (payload: any) => {
+                setDraftId(payload.draft_id);
+                setFormState({
+                    status: FormStatus.GENERATED,
+                });
+            },
+            () => {
+                helpers.jobFailed(`${messagePrefix}.test.failedErrorTitle`);
+            }
+        );
     };
 
     usePrompt('confirm.loseData', !exitWhenLogsClose && hasChanges(), () => {
@@ -172,36 +159,33 @@ function CaptureCreate() {
             <EntityCreate
                 title="browserTitle.captureCreate"
                 connectorType={connectorType}
-                formID={FORM_ID}
                 Header={
                     <FooHeader
-                        TestButton={
-                            <TestButton
-                                disabled={!hasConnectors}
-                                formId={FORM_ID}
-                                onFailure={helpers.callFailed}
-                                subscription={waitFor.discovers}
-                            />
-                        }
-                        SaveButton={
-                            <EntityCreateSaveButton
-                                disabled={!draftId}
-                                formId={FORM_ID}
-                                onFailure={helpers.callFailed}
-                            />
-                        }
                         heading={
                             <FormattedMessage id={`${messagePrefix}.heading`} />
                         }
-                    />
-                }
-                logAction={
-                    <LogDialogActions
-                        close={handlers.closeLogs}
-                        materialize={{
-                            action: handlers.materializeCollections,
-                            title: 'captureCreate.ctas.materialize',
-                        }}
+                        GenerateButton={
+                            <CaptureGenerateButton
+                                disabled={!hasConnectors}
+                                callFailed={helpers.callFailed}
+                                subscription={discoversSubscription}
+                            />
+                        }
+                        TestButton={
+                            <EntityTestButton
+                                closeLogs={handlers.closeLogs}
+                                callFailed={helpers.callFailed}
+                                disabled={!hasConnectors}
+                            />
+                        }
+                        SaveButton={
+                            <EntitySaveButton
+                                closeLogs={handlers.closeLogs}
+                                callFailed={helpers.callFailed}
+                                disabled={!draftId}
+                                materialize={handlers.materializeCollections}
+                            />
+                        }
                     />
                 }
             />

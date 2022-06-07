@@ -15,14 +15,14 @@ function CollectionSelector() {
 
     const { liveSpecs: collectionData, error } = useLiveSpecs('collection');
 
-    const entityCreateStore = useRouteStore();
-    const collections = entityCreateStore(
+    const useEntityCreateStore = useRouteStore();
+    const collections = useEntityCreateStore(
         entityCreateStoreSelectors.collections
     );
-    const setCollections = entityCreateStore(
+    const setCollections = useEntityCreateStore(
         entityCreateStoreSelectors.setCollections
     );
-    const setResourceConfig = entityCreateStore(
+    const setResourceConfig = useEntityCreateStore(
         entityCreateStoreSelectors.resourceConfig.set
     );
 

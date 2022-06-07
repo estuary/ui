@@ -1,6 +1,7 @@
+import { DEFAULT_POLLING } from 'context/SWR';
 import { TABLES } from 'services/supabase';
+import { SWRConfiguration } from 'swr';
 import { JobStatus } from 'types';
-import { getSWRConfig } from 'utils/misc-utils';
 import { useQuery, useSelectSingle } from './supabase-swr/';
 
 export interface Publications {
@@ -21,7 +22,9 @@ function usePublications(lastPubId: string | null, enablePolling?: boolean) {
         [lastPubId]
     );
 
-    const options = getSWRConfig(enablePolling);
+    const options: SWRConfiguration = {
+        refreshInterval: enablePolling ? DEFAULT_POLLING : undefined,
+    };
 
     const { data, error } = useSelectSingle(
         lastPubId ? publicationsQuery : null,
