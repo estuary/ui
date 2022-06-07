@@ -46,7 +46,7 @@ jobs:
                   node-version: 16
 
             - name: Get Deps
-              uses: bahmutov/npm-install@v1
+              run: npm install
 
             - name: Linting
               run: npm run lint
@@ -68,7 +68,7 @@ jobs:
                   node-version: 16
 
             - name: Get Deps
-              uses: bahmutov/npm-install@v1
+              run: npm install
 
             - name: Type Checking
               run: npm run typecheck
@@ -89,7 +89,7 @@ jobs:
                   node-version: 16
 
             - name: Get Deps
-              uses: bahmutov/npm-install@v1
+              run: npm install
 
             - name: Run jest
               run: npm run test
@@ -119,7 +119,7 @@ jobs:
                   node-version: 16
 
             - name: Get Deps
-              uses: bahmutov/npm-install@v1
+              run: npm install
 
             - name: Create a release build
               run: npm run build
