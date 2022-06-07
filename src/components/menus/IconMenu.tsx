@@ -14,7 +14,7 @@ type Props = {
     icon: ReactNode;
     identifier: string;
     tooltip: string;
-    verticalOrigin: number;
+    verticalOffset: number;
     children: ReactNode;
 };
 
@@ -23,7 +23,7 @@ const IconMenu = ({
     tooltip,
     ariaLabel,
     icon,
-    verticalOrigin,
+    verticalOffset,
     children,
 }: Props) => {
     const [anchorEl, setAnchorEl] =
@@ -98,7 +98,7 @@ const IconMenu = ({
                             height: 10,
                             position: 'absolute',
                             left: -5,
-                            bottom: `${verticalOrigin}px`,
+                            bottom: `${verticalOffset}px`,
                             transform: 'translateY(-50%) rotate(45deg)',
                             width: 10,
                             zIndex: 0,
