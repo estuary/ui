@@ -140,16 +140,16 @@ function DetailsForm({ connectorTags, accessGrants }: Props) {
                 elements: [
                     {
                         label: intl.formatMessage({
-                            id: 'entityName.label',
+                            id: 'connector.label',
                         }),
-                        scope: `#/properties/${CATALOG_NAME_SCOPE}`,
+                        scope: `#/properties/${CONNECTOR_IMAGE_SCOPE}`,
                         type: 'Control',
                     },
                     {
                         label: intl.formatMessage({
-                            id: 'connector.label',
+                            id: 'entityName.label',
                         }),
-                        scope: `#/properties/${CONNECTOR_IMAGE_SCOPE}`,
+                        scope: `#/properties/${CATALOG_NAME_SCOPE}`,
                         type: 'Control',
                     },
                     {
