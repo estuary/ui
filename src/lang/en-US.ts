@@ -67,6 +67,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.logout': `Logout`,
     'cta.materialize': `Materialize`,
     'cta.register': `Sign up`,
+    'cta.resetPassword': `Reset Password`,
     'cta.clickHere': `Click here`,
     'cta.details': `Details`,
     'cta.saveEntity': `Save and publish`,
@@ -154,6 +155,13 @@ const PageNotFound: ResolvedIntlConfig['messages'] = {
     'pageNotFound.message': `Try searching for a page below or go directly to your {dashboard}.`,
 };
 
+const PasswordReset: ResolvedIntlConfig['messages'] = {
+    'email.description': `The email address associated with your ${CommonMessages.productName} Account`,
+    'email.label': `Email`,
+    'password.description': `Pleasae provide a safe and secure password`,
+    'password.label': `Password`,
+};
+
 const Registration: ResolvedIntlConfig['messages'] = {
     'register.heading': `We're currently accepting Beta partners.`,
     'register.main.message': `Please enter your information and our team will approve your account.`,
@@ -220,6 +228,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.materializationCreate': `Create Materialization`,
     'routeTitle.materializations': `Materializations`,
     'routeTitle.registration': `Registration`,
+    'routeTitle.passwordReset': `Password Reset`,
 };
 
 const BrowserTitles: ResolvedIntlConfig['messages'] = {
@@ -237,6 +246,7 @@ const BrowserTitles: ResolvedIntlConfig['messages'] = {
     'browserTitle.materializationCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationCreate']}`,
     'browserTitle.materializations': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializations']}`,
     'browserTitle.registration': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.registration']}`,
+    'browserTitle.passwordReset': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.passwordReset']}`,
 };
 
 const LogsDialog: ResolvedIntlConfig['messages'] = {
@@ -430,6 +440,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...EntityTable,
     ...Home,
     ...PageNotFound,
+    ...PasswordReset,
     ...Registration,
     ...AdminPage,
     ...MonacoEditor,

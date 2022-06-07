@@ -16,6 +16,7 @@ import Connectors from 'pages/Connectors';
 import PageNotFound from 'pages/error/PageNotFound';
 import Home from 'pages/Home';
 import Materializations from 'pages/Materializations';
+import PasswordReset from 'pages/PasswordReset';
 import Registration from 'pages/Registration';
 import { Route, Routes } from 'react-router';
 import { Stores } from 'stores/Repo';
@@ -74,9 +75,19 @@ export const routeDetails = {
             },
         },
     },
-    registration: {
-        title: 'routeTitle.registration',
-        path: '/register',
+    user: {
+        title: 'routeTitle.user',
+        path: '/user',
+        passwordReset: {
+            title: 'routeTitle.passwordReset',
+            path: 'passwordReset',
+            fullPath: '/user/passwordReset',
+        },
+        registration: {
+            title: 'routeTitle.registration',
+            path: 'register',
+            fullPath: '/user/register',
+        },
     },
     pageNotFound: {
         title: 'routeTitle.error.pageNotFound',
@@ -96,15 +107,35 @@ const Authenticated = () => {
     if (isValidating) {
         return <FullPageSpinner />;
     } else if (combinedGrants.length === 0) {
-        return <NoGrantsFound />;
+        return (
+            <Routes>
+                <Route path={routeDetails.user.path}>
+                    <Route
+                        path={routeDetails.user.passwordReset.path}
+                        element={<PasswordReset />}
+                    />
+                    <Route
+                        path={routeDetails.user.registration.path}
+                        element={<Registration />}
+                    />
+                </Route>
+                <Route path="*" element={<NoGrantsFound />} />
+            </Routes>
+        );
     } else {
         return (
             <AuthenticatedOnlyContext>
                 <Routes>
-                    <Route
-                        path={routeDetails.registration.path}
-                        element={<Registration />}
-                    />
+                    <Route path={routeDetails.user.path}>
+                        <Route
+                            path={routeDetails.user.passwordReset.path}
+                            element={<PasswordReset />}
+                        />
+                        <Route
+                            path={routeDetails.user.registration.path}
+                            element={<Registration />}
+                        />
+                    </Route>
                     <Route element={<AppLayout />}>
                         <Route
                             path={routeDetails.home.path}
