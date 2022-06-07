@@ -24,7 +24,7 @@ jobs:
                   node-version: 16
 
             - name: Get Deps
-              uses: bahmutov/npm-install@v1
+              run: npm install
 
             - name: Prettier...ing
               run: npm run format
