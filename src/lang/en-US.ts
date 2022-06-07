@@ -374,8 +374,12 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
 const DetailsPanel: ResolvedIntlConfig['messages'] = {
     'detailsPanel.logs.title': `Logs`,
     'detailsPanel.logs.notFound': `Logs for this build cannot be found. This is likely a permissions issue. You don't have permissions to view other users' logs by default.`,
-    'detailsPanel.shardDetails.id.label': `Shard ID:`,
+    'detailsPanel.shardDetails.title': `Shard Information`,
+    'detailsPanel.shardDetails.status.label': `Status`,
+    'detailsPanel.shardDetails.id.label': `ID`,
     'detailsPanel.shardDetails.errorTitle': `Shard Replica Processing Errors`,
+    'detailsPanel.shardDetails.docLink': `Shard Help`,
+    'detailsPanel.shardDetails.docPath': `https://docs.estuary.dev/concepts/advanced/shards/`,
 };
 
 const MaterializationCreate: ResolvedIntlConfig['messages'] = {
@@ -414,6 +418,16 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreate.testNotification.desc': `Your materialization succeeded in a dry run and can be saved.`,
 };
 
+const ShardStatus: ResolvedIntlConfig['messages'] = {
+    'shardStatus.primary': `PRIMARY`,
+    'shardStatus.failed': `FAILED`,
+    'shardStatus.idle': `IDLE`,
+    'shardStatus.standby': `STANDBY`,
+    'shardStatus.backfill': `BACKFILL`,
+    'shardStatus.disabled': `DISABLED`,
+    'shardStatus.none': `No shard status found.`,
+};
+
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
     ...CTAs,
@@ -445,6 +459,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CaptureCreate,
     ...DetailsPanel,
     ...MaterializationCreate,
+    ...ShardStatus,
 };
 
 export default enUSMessages;

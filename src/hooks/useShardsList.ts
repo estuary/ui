@@ -58,12 +58,14 @@ const useShardsList = <T extends LiveSpecsExtBaseQuery>(specs: T[]) => {
         };
 
         return useSWR(
-            gatewayConfig?.gateway_url ?? '__missing_gatewway_url__',
+            specs.length > 0
+                ? gatewayConfig?.gateway_url ?? '__missing_gateway_url__'
+                : null,
             fetcher,
             {
                 errorRetryInterval: INTERVAL / 2,
                 refreshInterval: INTERVAL,
-                revalidateOnFocus: false, //We're already refreshing and these status do not change often
+                revalidateOnFocus: false, // We're already refreshing and these status do not change often
                 onError: (error: string) => {
                     if (
                         error.includes(ErrorFlags.TOKEN_INVALID) ||
