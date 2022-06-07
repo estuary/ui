@@ -10,8 +10,8 @@ interface Props {
 }
 
 function EndpointConfigHeader({ docsPath }: Props) {
-    const entityCreateStore = useRouteStore();
-    const endpointConfigHasErrors = entityCreateStore(
+    const useEntityCreateStore = useRouteStore();
+    const endpointConfigHasErrors = useEntityCreateStore(
         entityCreateStoreSelectors.endpointConfig.hasErrors
     );
 

@@ -12,7 +12,7 @@ import {
     generateCategoryUiSchema,
     showValidation,
 } from 'services/jsonforms';
-import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
+import { entityCreateStoreSelectors } from 'stores/Create';
 import useConstant from 'use-constant';
 
 type Props = {
@@ -22,22 +22,20 @@ type Props = {
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
 
 function EndpointConfigForm({ endpointSchema }: Props) {
-    const entityCreateStore = useRouteStore();
-    const setSpec = entityCreateStore(
+    const useEntityCreateStore = useRouteStore();
+    const setSpec = useEntityCreateStore(
         entityCreateStoreSelectors.endpointConfig.set
     );
-    const formData = entityCreateStore(
+    const formData = useEntityCreateStore(
         entityCreateStoreSelectors.endpointConfig.data
     );
-    const displayValidation = entityCreateStore(
+    const displayValidation = useEntityCreateStore(
         entityCreateStoreSelectors.formState.displayValidation
     );
-    const formStateStatus = entityCreateStore(
-        entityCreateStoreSelectors.formState.status
-    );
-    const setEndpointSchema = entityCreateStore(
+    const setEndpointSchema = useEntityCreateStore(
         entityCreateStoreSelectors.setEndpointSchema
     );
+    const isActive = useEntityCreateStore(entityCreateStoreSelectors.isActive);
 
     useEffect(() => {
         setEndpointSchema(endpointSchema);
@@ -77,10 +75,7 @@ function EndpointConfigForm({ endpointSchema }: Props) {
                     renderers={defaultRenderers}
                     cells={materialCells}
                     config={defaultOptions}
-                    readonly={
-                        formStateStatus === FormStatus.TESTING ||
-                        formStateStatus === FormStatus.SAVING
-                    }
+                    readonly={isActive}
                     validationMode={showValidationVal}
                     onChange={setSpec}
                     ajv={setDefaultsValidator}

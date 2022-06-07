@@ -13,9 +13,9 @@ interface Props {
 }
 
 function LogDialogActions({ close, materialize }: Props) {
-    const entityCreateStore = useRouteStore();
+    const useEntityCreateStore = useRouteStore();
 
-    const formStatus = entityCreateStore(
+    const formStatus = useEntityCreateStore(
         entityCreateStoreSelectors.formState.status
     );
 
@@ -36,7 +36,7 @@ function LogDialogActions({ close, materialize }: Props) {
 
                 {materialize ? (
                     <Button
-                        disabled={formStatus !== FormStatus.SUCCESS}
+                        disabled={formStatus !== FormStatus.SAVED}
                         onClick={materialize.action}
                     >
                         <FormattedMessage id={materialize.title} />
