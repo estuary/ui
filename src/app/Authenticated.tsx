@@ -13,12 +13,14 @@ import Admin from 'pages/Admin';
 import Captures from 'pages/Captures';
 import Collections from 'pages/Collections';
 import Connectors from 'pages/Connectors';
+import TestJsonForms from 'pages/dev/TestJsonForms';
 import PageNotFound from 'pages/error/PageNotFound';
 import Home from 'pages/Home';
 import Materializations from 'pages/Materializations';
 import Registration from 'pages/Registration';
 import { Route, Routes } from 'react-router';
 import { Stores } from 'stores/Repo';
+import { isProduction } from 'utils/env-utils';
 
 export const routeDetails = {
     admin: {
@@ -192,6 +194,12 @@ const Authenticated = () => {
                             path={routeDetails.admin.path}
                             element={<Admin />}
                         />
+                        {!isProduction && (
+                            <Route
+                                path="test/jsonforms"
+                                element={<TestJsonForms />}
+                            />
+                        )}
                         <Route
                             path={routeDetails.pageNotFound.path}
                             element={<PageNotFound />}
