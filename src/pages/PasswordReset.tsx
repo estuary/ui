@@ -1,4 +1,4 @@
-import { JsonFormsCore } from '@jsonforms/core';
+import { createAjv, JsonFormsCore } from '@jsonforms/core';
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Box, Button, Typography } from '@mui/material';
@@ -6,10 +6,16 @@ import { Auth } from '@supabase/ui';
 import FullPageDialog from 'components/fullPage/Dialog';
 import { useClient } from 'hooks/supabase-swr';
 import useBrowserTitle from 'hooks/useBrowserTitle';
-import React, { useState } from 'react';
+import { isEmpty } from 'lodash';
+import React, { useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
-import { defaultOptions, defaultRenderers } from 'services/jsonforms';
+import { defaultAjvSettings } from 'services/ajv';
+import {
+    defaultOptions,
+    defaultRenderers,
+    showValidation,
+} from 'services/jsonforms';
 import { getUserDetails } from 'services/supabase';
 
 const PasswordReset = () => {
@@ -19,14 +25,17 @@ const PasswordReset = () => {
     const accessToken = searchParams.get('access_token');
 
     const supabaseClient = useClient();
-    const intl = useIntl();
-    const { user } = Auth.useUser();
 
+    const intl = useIntl();
+
+    const { user } = Auth.useUser();
     const { email: authEmail } = getUserDetails(user);
+
+    const showErrors = useRef(false);
 
     const [formData, setFormData] = useState({
         email: authEmail,
-        password: '',
+        password: null,
     });
 
     const [formState, setFormState] = useState<
@@ -52,7 +61,14 @@ const PasswordReset = () => {
                     id: 'password.description',
                 }),
                 type: 'string',
+                minLength: 7,
             },
+            // confirmPassword: {
+            //     const: {
+            //         $data: '1/password',
+            //     },
+            //     type: 'string',
+            // },
         },
         required: ['email', 'password'],
         type: 'object',
@@ -80,6 +96,16 @@ const PasswordReset = () => {
                     format: 'password',
                 },
             },
+            // {
+            //     label: intl.formatMessage({
+            //         id: 'confirmPassword.label',
+            //     }),
+            //     scope: `#/properties/confirmPassword`,
+            //     type: 'Control',
+            //     options: {
+            //         format: 'password',
+            //     },
+            // },
         ],
         type: 'VerticalLayout',
     };
@@ -92,22 +118,34 @@ const PasswordReset = () => {
                 formState,
             });
 
-            const res = await supabaseClient.auth.api.updateUser(
-                accessToken ?? '__missing__',
-                {
-                    password: formState.data.password,
-                }
-            );
-
-            console.log('Response from update =', res);
-
-            if (res.error) {
-                throw new Error('Unable to update password');
+            if (!isEmpty(formState.errors)) {
+                showErrors.current = true;
             } else {
-                throw new Error('Updated Password');
+                showErrors.current = false;
+
+                const res = await supabaseClient.auth.api.updateUser(
+                    accessToken ?? '__missing__',
+                    {
+                        password: formState.data.password,
+                    }
+                );
+
+                console.log('Response from update =', res);
+
+                if (res.error) {
+                    throw new Error('Unable to update password');
+                } else {
+                    throw new Error('Updated Password');
+                }
             }
         },
     };
+
+    const ajv = createAjv({
+        ...defaultAjvSettings,
+        allErrors: true,
+        $data: true,
+    });
 
     return (
         <FullPageDialog>
@@ -121,10 +159,10 @@ const PasswordReset = () => {
                     }}
                 >
                     <Typography variant="h6" align="center" sx={{ mb: 1.5 }}>
-                        <FormattedMessage id="register.heading" />
+                        <FormattedMessage id="passwordReset.heading" />
                     </Typography>
 
-                    <FormattedMessage id="register.main.message" />
+                    <FormattedMessage id="passwordReset.main" />
                 </Box>
 
                 <form
@@ -140,10 +178,14 @@ const PasswordReset = () => {
                     <JsonForms
                         schema={schema}
                         uischema={uiSchema}
+                        ajv={ajv}
                         data={formData}
                         renderers={defaultRenderers}
                         cells={materialCells}
                         config={defaultOptions}
+                        validationMode={
+                            showErrors.current ? showValidation() : undefined
+                        }
                         onChange={(state) => {
                             console.log('Made a call!', {
                                 state,
@@ -154,7 +196,12 @@ const PasswordReset = () => {
                         }}
                     />
 
-                    <Button type="submit">
+                    <Button
+                        type="submit"
+                        sx={{
+                            mt: 2,
+                        }}
+                    >
                         <FormattedMessage id="cta.resetPassword" />
                     </Button>
                 </form>

@@ -156,10 +156,13 @@ const PageNotFound: ResolvedIntlConfig['messages'] = {
 };
 
 const PasswordReset: ResolvedIntlConfig['messages'] = {
+    'passwordReset.heading': `Password Reset`,
+    'passwordReset.main': `Enter your new password below.`,
     'email.description': `The email address associated with your ${CommonMessages.productName} Account`,
     'email.label': `Email`,
     'password.description': `Pleasae provide a safe and secure password`,
     'password.label': `Password`,
+    'confirmPassword.label': `Confirm Password`,
 };
 
 const Registration: ResolvedIntlConfig['messages'] = {
