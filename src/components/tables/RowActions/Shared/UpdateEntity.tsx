@@ -3,6 +3,8 @@ import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec } from 'api/draftSpecs';
 import { createPublication } from 'api/publications';
 import DraftErrors from 'components/shared/Entity/Error/DraftErrors';
+import ErrorLogs from 'components/shared/Entity/Error/Logs';
+import Error from 'components/shared/Error';
 import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import SharedProgress, {
     ProgressStates,
@@ -40,6 +42,7 @@ function UpdateEntity({
     const [error, setError] = useState<any | null>(null);
     const [draftId, setDraftId] = useState<string | null>(null);
     const [pubID, setPubID] = useState<string | null>(null);
+    const [logToken, setLogToken] = useState<string | null>(null);
 
     const { liveSpecs } = useLiveSpecsExtWithSpec(
         entity.last_pub_id,
@@ -85,6 +88,7 @@ function UpdateEntity({
                 if (publishResponse.error) {
                     return failed(publishResponse);
                 }
+                setLogToken(publishResponse.data[0].logs_token);
                 setPubID(publishResponse.data[0].id);
             };
 
@@ -112,18 +116,33 @@ function UpdateEntity({
         <SharedProgress
             name={entity.catalog_name}
             error={error}
-            renderError={() => (
-                <Alert
-                    icon={false}
-                    severity="error"
-                    sx={{
-                        maxHeight: 100,
-                        overflowY: 'auto',
-                    }}
-                >
-                    <DraftErrors draftId={draftId} />
-                </Alert>
+            renderError={(errorProvided: any) => (
+                <>
+                    {errorProvided?.message ? (
+                        <Error error={errorProvided} hideTitle={true} />
+                    ) : null}
+                    <Alert
+                        icon={false}
+                        severity="error"
+                        sx={{
+                            maxHeight: 100,
+                            overflowY: 'auto',
+                        }}
+                    >
+                        <DraftErrors draftId={draftId} />
+                    </Alert>
+                </>
             )}
+            renderLogs={() => {
+                <ErrorLogs
+                    logToken={logToken}
+                    height={150}
+                    logProps={{
+                        disableIntervalFetching: true,
+                        fetchAll: true,
+                    }}
+                />;
+            }}
             state={state}
             runningMessageID={runningMessageID}
             successMessageID={successMessageID}

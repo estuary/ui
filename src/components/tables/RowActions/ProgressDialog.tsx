@@ -4,6 +4,7 @@ import {
     DialogContent,
     DialogTitle,
     Stack,
+    Typography,
 } from '@mui/material';
 import { ReactNode, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -42,9 +43,11 @@ function ProgressDialog({
     return (
         <>
             <DialogTitle>
-                <FormattedMessage
-                    id={done ? 'common.done' : 'common.inProgress'}
-                />
+                <Typography component="div">
+                    <FormattedMessage
+                        id={done ? 'common.done' : 'common.inProgress'}
+                    />
+                </Typography>
             </DialogTitle>
             <DialogContent>
                 <Stack direction="column" spacing={2}>

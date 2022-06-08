@@ -14,6 +14,7 @@ export interface SharedProgressProps {
     name: string;
     error: any | null;
     renderError?: Function;
+    renderLogs?: Function;
     successMessageID: string;
     runningMessageID: string;
     state: ProgressStates;
@@ -23,6 +24,7 @@ function SharedProgress({
     name,
     error,
     renderError,
+    renderLogs,
     state,
     successMessageID,
     runningMessageID,
@@ -52,13 +54,18 @@ function SharedProgress({
                     }
                 />
             </Stack>
-            {state === ProgressStates.FAILED && error !== null ? (
-                renderError ? (
-                    renderError(error)
-                ) : (
-                    <Error error={error} hideTitle={true} />
-                )
-            ) : null}
+            <Box sx={{ my: 3 }}>
+                {state === ProgressStates.FAILED && error !== null ? (
+                    renderError ? (
+                        renderError(error)
+                    ) : (
+                        <Error error={error} hideTitle={true} />
+                    )
+                ) : null}
+            </Box>
+            {state !== ProgressStates.RUNNING && renderLogs
+                ? renderLogs()
+                : null}
         </Box>
     );
 }
