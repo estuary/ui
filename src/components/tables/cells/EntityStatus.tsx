@@ -1,58 +1,84 @@
 import { Box, Tooltip, Typography } from '@mui/material';
+import { Shard } from 'data-plane-gateway/types/shard_client';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { CSSProperties } from 'react';
-import { shardDetailSelectors, ShardStatus } from 'stores/ShardDetail';
+import { useEffect, useState } from 'react';
+import { FormattedMessage } from 'react-intl';
+import {
+    defaultStatusColor,
+    shardDetailSelectors,
+    ShardStatusColor,
+    TaskShardDetails,
+} from 'stores/ShardDetail';
 
 interface Props {
     name: string;
 }
 
 function EntityStatus({ name }: Props) {
-    const shardDetailStore = useRouteStore();
+    const [taskShardDetails, setTaskShardDetails] = useState<
+        TaskShardDetails[]
+    >([]);
+    const [compositeStatusColor, setCompositeStatusColor] =
+        useState<ShardStatusColor>(defaultStatusColor);
+    const [taskDisabled, setTaskDisabled] = useState<boolean>(false);
 
-    // TODO (shards) This is here to force a re-render
-    const shards = shardDetailStore(shardDetailSelectors.shards);
-    console.log('forcing re-render with shards', shards);
+    const useShardDetailStore = useRouteStore();
 
-    const getShardStatusColor = shardDetailStore(
-        shardDetailSelectors.getShardStatusColor
+    const shards: Shard[] = useShardDetailStore(shardDetailSelectors.shards);
+
+    const getTaskShards = useShardDetailStore(
+        shardDetailSelectors.getTaskShards
     );
-    const getShardStatus = shardDetailStore(
-        shardDetailSelectors.getShardStatus
+    const getTaskShardDetails = useShardDetailStore(
+        shardDetailSelectors.getTaskShardDetails
     );
-    const evaluateShardProcessingState = shardDetailStore(
-        shardDetailSelectors.evaluateShardProcessingState
+    const getTaskStatusColor = useShardDetailStore(
+        shardDetailSelectors.getTaskStatusColor
     );
 
-    const shardStatuses: ShardStatus[] = getShardStatus(name);
+    useEffect(() => {
+        const taskShards: Shard[] = getTaskShards(name, shards);
 
-    const taskDisabled: boolean = evaluateShardProcessingState(name);
+        const shardDetails: TaskShardDetails[] =
+            getTaskShardDetails(taskShards);
 
-    const statusIndicatorStyle: CSSProperties = {
-        border: taskDisabled ? `solid 2px ${getShardStatusColor(name)}` : 0,
-        backgroundColor: taskDisabled ? '' : getShardStatusColor(name),
-        borderRadius: 50,
-        display: 'inline-block',
-        verticalAlign: 'middle',
-    };
+        const statusColor: ShardStatusColor = getTaskStatusColor(shardDetails);
+
+        const disabled =
+            shardDetails.filter((shard) => !shard.disabled).length === 0;
+
+        setTaskShardDetails(shardDetails);
+        setCompositeStatusColor(statusColor);
+        setTaskDisabled(disabled);
+    }, [
+        getTaskShards,
+        getTaskShardDetails,
+        setTaskShardDetails,
+        setTaskDisabled,
+        getTaskStatusColor,
+        name,
+        shards,
+    ]);
 
     return (
         <Tooltip
-            title={shardStatuses.map((status, index) => (
+            title={taskShardDetails.map((shard, index) => (
                 <Box
                     key={`${index}-shard-status-tooltip`}
-                    sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                    }}
+                    sx={{ display: 'flex', alignItems: 'center' }}
                 >
                     <span
                         style={{
                             height: 12,
                             width: 12,
                             marginRight: 4,
-                            ...statusIndicatorStyle,
+                            border: shard.disabled
+                                ? `solid 2px ${shard.color}`
+                                : 0,
+                            backgroundColor: shard.disabled ? '' : shard.color,
+                            borderRadius: 50,
+                            display: 'inline-block',
+                            verticalAlign: 'middle',
                         }}
                     />
 
@@ -60,7 +86,7 @@ function EntityStatus({ name }: Props) {
                         variant="caption"
                         sx={{ display: 'inline-block' }}
                     >
-                        {status}
+                        <FormattedMessage id={shard.messageId} />
                     </Typography>
                 </Box>
             ))}
@@ -71,7 +97,13 @@ function EntityStatus({ name }: Props) {
                     height: 16,
                     width: 16,
                     marginRight: 12,
-                    ...statusIndicatorStyle,
+                    border: taskDisabled
+                        ? `solid 2px ${compositeStatusColor}`
+                        : 0,
+                    backgroundColor: taskDisabled ? '' : compositeStatusColor,
+                    borderRadius: 50,
+                    display: 'inline-block',
+                    verticalAlign: 'middle',
                 }}
             />
         </Tooltip>

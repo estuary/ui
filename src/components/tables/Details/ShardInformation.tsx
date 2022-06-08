@@ -1,38 +1,50 @@
-import Editor from '@monaco-editor/react';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
-    Accordion,
-    AccordionDetails,
-    AccordionSummary,
-    Alert,
     Box,
     Grid,
+    SxProps,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableFooter,
+    TableHead,
+    TablePagination,
+    TableRow,
+    Theme,
     Typography,
     useTheme,
 } from '@mui/material';
 import { EditorStoreState } from 'components/editor/Store';
+import ExternalLink from 'components/shared/ExternalLink';
+import ShardErrors from 'components/tables/Details/ShardErrors';
+import StatusIndicatorAndLabel from 'components/tables/Details/StatusIndicatorAndLabel';
+import { Shard } from 'data-plane-gateway/types/shard_client';
 import { PublicationSpecQuery } from 'hooks/usePublicationSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
-import { useEffect, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { ShardDetails, shardDetailSelectors } from 'stores/ShardDetail';
+import { MouseEvent, useEffect, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
+import { shardDetailSelectors } from 'stores/ShardDetail';
 import { ENTITY } from 'types';
 
 interface Props {
     entityType?: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
 }
 
-const NEW_LINE = '\r\n';
+const rowsPerPage = 3;
 
 function ShardInformation({ entityType }: Props) {
     const theme = useTheme();
+    const intl = useIntl();
 
-    const [shardDetails, setShardDetails] = useState<ShardDetails | null>(null);
+    const [page, setPage] = useState(0);
 
-    const shardDetailStore = useRouteStore();
-    const getShardDetails = shardDetailStore(
-        shardDetailSelectors.getShardDetails
+    const [taskShards, setTaskShards] = useState<Shard[]>([]);
+
+    const useShardDetailStore = useRouteStore();
+    const shards = useShardDetailStore(shardDetailSelectors.shards);
+    const getTaskShards = useShardDetailStore(
+        shardDetailSelectors.getTaskShards
     );
 
     const specs = useZustandStore<
@@ -40,88 +52,139 @@ function ShardInformation({ entityType }: Props) {
         EditorStoreState<PublicationSpecQuery>['specs']
     >((state) => state.specs);
 
+    const columns: {
+        field: string | null;
+        headerIntlKey: string | null;
+    }[] = [
+        {
+            field: 'status',
+            headerIntlKey: 'detailsPanel.shardDetails.status.label',
+        },
+        {
+            field: 'id',
+            headerIntlKey: 'detailsPanel.shardDetails.id.label',
+        },
+    ];
+
     useEffect(() => {
         if (specs && specs.length > 0) {
-            setShardDetails(
-                getShardDetails(
+            setTaskShards(
+                getTaskShards(
                     specs.find(({ spec_type }) => spec_type === entityType)
-                        ?.catalog_name
+                        ?.catalog_name,
+                    shards
                 )
             );
         }
-    }, [specs, getShardDetails, setShardDetails, entityType]);
+    }, [setTaskShards, getTaskShards, entityType, specs, shards]);
 
-    return (
-        shardDetails && (
-            <>
-                {shardDetails.errors && (
-                    <Grid item xs={12}>
-                        <Alert
-                            severity="error"
-                            sx={{
-                                '& .MuiAlert-message': {
-                                    width: '100%',
-                                },
-                            }}
-                        >
-                            <Accordion>
-                                <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                >
-                                    <Typography>
-                                        <FormattedMessage id="detailsPanel.shardDetails.errorTitle" />
-                                    </Typography>
-                                </AccordionSummary>
+    const changePage = (
+        _event: MouseEvent<HTMLButtonElement> | null,
+        newPage: number
+    ) => setPage(newPage);
 
-                                <AccordionDetails>
-                                    <Box sx={{ height: 250 }}>
-                                        <Editor
-                                            defaultLanguage=""
-                                            theme={
-                                                theme.palette.mode === 'light'
-                                                    ? 'vs'
-                                                    : 'vs-dark'
-                                            }
-                                            options={{
-                                                lineNumbers: 'off',
-                                                readOnly: true,
-                                                scrollBeyondLastLine: false,
-                                                minimap: {
-                                                    enabled: false,
-                                                },
+    const tableHeaderFooterSx: SxProps<Theme> = {
+        background: theme.palette.background.paper,
+    };
+
+    return taskShards.length > 0 ? (
+        <>
+            <ShardErrors shards={taskShards} />
+
+            <Grid item xs={12}>
+                <TableContainer>
+                    <Table>
+                        <TableHead>
+                            <TableRow sx={{ ...tableHeaderFooterSx }}>
+                                <TableCell colSpan={columns.length}>
+                                    <Box
+                                        sx={{
+                                            width: '100%',
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                        }}
+                                    >
+                                        <Typography
+                                            component="span"
+                                            align="center"
+                                            sx={{ width: '100%' }}
+                                        >
+                                            <FormattedMessage id="detailsPanel.shardDetails.title" />
+                                        </Typography>
+
+                                        <Box
+                                            sx={{
+                                                minWidth: 'max-content',
+                                                position: 'sticky',
+                                                right: 0,
                                             }}
-                                            value={shardDetails.errors
-                                                .join(NEW_LINE)
-                                                .split(/\\n/)
-                                                .join(NEW_LINE)
-                                                .replaceAll(/\\"/g, '"')}
-                                        />
+                                        >
+                                            <ExternalLink
+                                                link={intl.formatMessage({
+                                                    id: 'detailsPanel.shardDetails.docPath',
+                                                })}
+                                            >
+                                                <FormattedMessage id="detailsPanel.shardDetails.docLink" />
+                                            </ExternalLink>
+                                        </Box>
                                     </Box>
-                                </AccordionDetails>
-                            </Accordion>
-                        </Alert>
-                    </Grid>
-                )}
+                                </TableCell>
+                            </TableRow>
+                            <TableRow sx={{ ...tableHeaderFooterSx }}>
+                                {columns.map((column, index) => (
+                                    <TableCell key={`${column.field}-${index}`}>
+                                        <Typography>
+                                            {column.headerIntlKey && (
+                                                <FormattedMessage
+                                                    id={column.headerIntlKey}
+                                                />
+                                            )}
+                                        </Typography>
+                                    </TableCell>
+                                ))}
+                            </TableRow>
+                        </TableHead>
 
-                <Grid item xs={12}>
-                    <Box
-                        sx={{
-                            px: 1,
-                            py: 2,
-                            bgcolor: 'background.paper',
-                            borderRadius: '2px',
-                        }}
-                    >
-                        <span style={{ marginRight: 8, fontWeight: 500 }}>
-                            <FormattedMessage id="detailsPanel.shardDetails.id.label" />
-                        </span>
+                        <TableBody>
+                            {taskShards
+                                .slice(
+                                    page * rowsPerPage,
+                                    page * rowsPerPage + rowsPerPage
+                                )
+                                .map((shard) => (
+                                    <TableRow
+                                        key={shard.spec.id}
+                                        sx={{ background: '#252526' }} // This is the hex code for the monaco editor background in dark mode.
+                                    >
+                                        <StatusIndicatorAndLabel
+                                            shard={shard}
+                                        />
 
-                        <span>{shardDetails.id}</span>
-                    </Box>
-                </Grid>
-            </>
-        )
-    );
+                                        <TableCell>
+                                            <Typography>
+                                                {shard.spec.id}
+                                            </Typography>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                        </TableBody>
+
+                        <TableFooter>
+                            <TableRow sx={{ ...tableHeaderFooterSx }}>
+                                <TablePagination
+                                    count={taskShards.length}
+                                    rowsPerPageOptions={[rowsPerPage]}
+                                    rowsPerPage={rowsPerPage}
+                                    page={page}
+                                    onPageChange={changePage}
+                                />
+                            </TableRow>
+                        </TableFooter>
+                    </Table>
+                </TableContainer>
+            </Grid>
+        </>
+    ) : null;
 }
 
 export default ShardInformation;
