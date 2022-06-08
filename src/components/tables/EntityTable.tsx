@@ -194,6 +194,11 @@ function EntityTable({
     };
 
     const resetSelection = () => {
+        if (enableSelection) {
+            setAll(false);
+
+            resetRows();
+        }
         enableSelection ? setAll(false) : null;
     };
 
@@ -206,7 +211,6 @@ function EntityTable({
                 isFiltering.current = hasQuery;
 
                 resetSelection();
-                resetRows();
                 setSearchQuery(hasQuery ? filterQuery : null);
             },
             750
@@ -215,7 +219,6 @@ function EntityTable({
             const isAsc = columnToSort === column && sortDirection === 'asc';
 
             resetSelection();
-            resetRows();
             setSortDirection(isAsc ? 'desc' : 'asc');
             setColumnToSort(column);
         },
@@ -227,7 +230,6 @@ function EntityTable({
             newPage: number
         ) => {
             resetSelection();
-            resetRows();
             setPagination(getPagination(newPage, rowsPerPage));
             setPage(newPage);
         },
@@ -235,7 +237,6 @@ function EntityTable({
             const newLimit = parseInt(event.target.value, 10);
 
             resetSelection();
-            resetRows();
             setRowsPerPage(newLimit);
             setPagination(getPagination(0, newLimit));
             setPage(0);
