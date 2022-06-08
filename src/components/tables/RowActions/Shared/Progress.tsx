@@ -22,6 +22,8 @@ export interface SharedProgressProps {
     state: ProgressStates;
 }
 
+const wrapperStyling = { ml: 3, width: '100%' };
+
 function SharedProgress({
     name,
     error,
@@ -61,7 +63,7 @@ function SharedProgress({
                     }
                 />
             </Stack>
-            <Box sx={{ m: 3 }}>
+            <Box sx={wrapperStyling}>
                 {state === ProgressStates.FAILED && error !== null ? (
                     renderError ? (
                         renderError(error)
@@ -70,7 +72,7 @@ function SharedProgress({
                     )
                 ) : null}
             </Box>
-            <Box sx={{ ml: 3, width: '100%' }}>
+            <Box sx={wrapperStyling}>
                 {state !== ProgressStates.RUNNING && logToken !== null ? (
                     renderLogs ? (
                         renderLogs(logToken)
