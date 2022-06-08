@@ -199,7 +199,6 @@ function EntityTable({
 
             resetRows();
         }
-        enableSelection ? setAll(false) : null;
     };
 
     const handlers = {
