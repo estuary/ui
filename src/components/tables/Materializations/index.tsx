@@ -87,7 +87,7 @@ function MaterializationsTable() {
                     setColumnToSort={setColumnToSort}
                     header="materializationsTable.title"
                     headerLink="https://docs.estuary.dev/concepts/#materializations"
-                    filterLabel="entityTable.filterLabel"
+                    filterLabel="materializationsTable.filterLabel"
                     showEntityStatus={true}
                     enableSelection
                 />

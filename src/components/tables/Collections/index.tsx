@@ -71,7 +71,7 @@ function CollectionsTable() {
                     setColumnToSort={setColumnToSort}
                     header="collectionsTable.title"
                     headerLink="https://docs.estuary.dev/concepts/#collections"
-                    filterLabel="entityTable.filterLabel"
+                    filterLabel="collectionsTable.filterLabel"
                 />
             </ZustandProvider>
         </Box>
