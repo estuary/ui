@@ -87,7 +87,7 @@ function CapturesTable() {
                     setColumnToSort={setColumnToSort}
                     header="captureTable.header"
                     headerLink="https://docs.estuary.dev/concepts/#captures"
-                    filterLabel="entityTable.filterLabel"
+                    filterLabel="capturesTable.filterLabel"
                     enableSelection
                     rowSelectorProps={{
                         showMaterialize: true,
