@@ -195,7 +195,6 @@ const EntityStatus: ResolvedIntlConfig['messages'] = {
 const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.title': `Entity Table`,
 
-    'entityTable.filterLabel': `Filter collections`,
     'entityTable.data.entity': `Name`,
     'entityTable.data.connectorType': `Type`,
     'entityTable.data.lastUpdated': `Last Updated`,
@@ -303,6 +302,7 @@ const Captures: ResolvedIntlConfig['messages'] = {
     'captureTable.header': `Captures`,
     'capturesTable.title': `Your Captures`,
     'capturesTable.cta.new': `New Capture`,
+    'capturesTable.filterLabel': `Filter captures`,
     'capturesTable.disableEnable.confirm': `All items listed below will be {setting}.`,
     'capturesTable.delete.confirm': `All items listed below will be deleted forever. Please review before continuing.`,
     'capturesTable.ctaGroup.aria': `capture table available actions`,
@@ -317,6 +317,7 @@ const Captures: ResolvedIntlConfig['messages'] = {
 const Materializations: ResolvedIntlConfig['messages'] = {
     'materializationsTable.title': `Materializations`,
     'materializationsTable.cta.new': `New Materialization`,
+    'materializationsTable.filterLabel': `Filter materializations`,
     'materializations.message1': `Click "New Materialization" to get started.`,
     'materializations.message2': `You'll be guided through the process of defining, testing, and publishing a {docLink}.`,
     'materializations.message2.docLink': `materialization`,
@@ -326,6 +327,7 @@ const Materializations: ResolvedIntlConfig['messages'] = {
 const Collections: ResolvedIntlConfig['messages'] = {
     'collectionsTable.title': `Collections`,
     'collectionsTable.detailsCTA': `Details`,
+    'collectionsTable.filterLabel': `Filter collections`,
     'collections.message1': `You currently have no collections. Click the Captures icon on the menu bar to get started.`,
     'collections.message2': `Captures connect to outside systems, pull in data, and generate {docLink} within Flow.`,
     'collections.message2.docLink': `collections`,

@@ -63,6 +63,7 @@ export const getInitialState = (
                 produce(({ selected }) => {
                     if (isSelected) {
                         const { rows } = get();
+
                         rows.forEach((value, key) => {
                             selected.set(key, null);
                         });
