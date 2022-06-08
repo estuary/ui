@@ -195,7 +195,7 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.data.userFullName': `User`,
     'entityTable.data.capability': `Capability`,
     'entityTable.data.objectRole': `Object`,
-    'entityTable.data.lastPubUserFullName': `Published By`,
+    'entityTable.data.lastPubUserFullName': `Last Updated By`,
 
     'entityTable.unmatchedFilter.header': `No results found.`,
     'entityTable.unmatchedFilter.message': `We couldn't find any data matching your search. Please try a different filter.`,
