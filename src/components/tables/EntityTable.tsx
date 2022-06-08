@@ -134,6 +134,11 @@ function EntityTable({
         SelectableTableStore['setRows']
     >(selectableTableStoreSelectors.rows.set);
 
+    const resetRows = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['removeRows']
+    >(selectableTableStoreSelectors.rows.reset);
+
     const setAll = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['setAllSelected']
@@ -197,15 +202,20 @@ function EntityTable({
             (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
                 const filterQuery = event.target.value;
                 const hasQuery = Boolean(filterQuery && filterQuery.length > 0);
+
                 isFiltering.current = hasQuery;
+
                 resetSelection();
+                resetRows();
                 setSearchQuery(hasQuery ? filterQuery : null);
             },
             750
         ),
-        sortRequest: (event: React.MouseEvent<unknown>, column: any) => {
+        sortRequest: (_event: React.MouseEvent<unknown>, column: any) => {
             const isAsc = columnToSort === column && sortDirection === 'asc';
+
             resetSelection();
+            resetRows();
             setSortDirection(isAsc ? 'desc' : 'asc');
             setColumnToSort(column);
         },
@@ -213,10 +223,11 @@ function EntityTable({
             handlers.sortRequest(event, column);
         },
         changePage: (
-            event: MouseEvent<HTMLButtonElement> | null,
+            _event: MouseEvent<HTMLButtonElement> | null,
             newPage: number
         ) => {
             resetSelection();
+            resetRows();
             setPagination(getPagination(newPage, rowsPerPage));
             setPage(newPage);
         },
@@ -224,6 +235,7 @@ function EntityTable({
             const newLimit = parseInt(event.target.value, 10);
 
             resetSelection();
+            resetRows();
             setRowsPerPage(newLimit);
             setPagination(getPagination(0, newLimit));
             setPage(0);
