@@ -88,7 +88,7 @@ function RowActionButton({
             <Button onClick={() => handlers.action()}>
                 <FormattedMessage id={messageID} />
             </Button>
-            <Dialog open={showProgress} maxWidth="lg">
+            <Dialog open={showProgress} maxWidth="lg" fullWidth>
                 {targets.length > 0 ? (
                     <ProgressDialog
                         selectedEntities={targets}

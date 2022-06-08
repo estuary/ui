@@ -1,6 +1,7 @@
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { Box, CircularProgress, ListItemText, Stack } from '@mui/material';
+import ErrorLogs from 'components/shared/Entity/Error/Logs';
 import Error from 'components/shared/Error';
 import { FormattedMessage } from 'react-intl';
 
@@ -13,6 +14,7 @@ export enum ProgressStates {
 export interface SharedProgressProps {
     name: string;
     error: any | null;
+    logToken: string | null;
     renderError?: Function;
     renderLogs?: Function;
     successMessageID: string;
@@ -23,6 +25,7 @@ export interface SharedProgressProps {
 function SharedProgress({
     name,
     error,
+    logToken,
     renderError,
     renderLogs,
     state,
@@ -54,7 +57,7 @@ function SharedProgress({
                     }
                 />
             </Stack>
-            <Box sx={{ my: 3 }}>
+            <Box sx={{ my: 3, ml: 3 }}>
                 {state === ProgressStates.FAILED && error !== null ? (
                     renderError ? (
                         renderError(error)
@@ -63,9 +66,22 @@ function SharedProgress({
                     )
                 ) : null}
             </Box>
-            {state !== ProgressStates.RUNNING && renderLogs
-                ? renderLogs()
-                : null}
+            <Box sx={{ my: 3, ml: 3 }}>
+                {state !== ProgressStates.RUNNING && logToken !== null ? (
+                    renderLogs ? (
+                        renderLogs(logToken)
+                    ) : (
+                        <ErrorLogs
+                            logToken={logToken}
+                            height={150}
+                            logProps={{
+                                disableIntervalFetching: true,
+                                fetchAll: true,
+                            }}
+                        />
+                    )
+                ) : null}
+            </Box>
         </Box>
     );
 }

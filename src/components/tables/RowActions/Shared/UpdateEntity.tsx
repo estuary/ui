@@ -3,7 +3,6 @@ import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec } from 'api/draftSpecs';
 import { createPublication } from 'api/publications';
 import DraftErrors from 'components/shared/Entity/Error/DraftErrors';
-import ErrorLogs from 'components/shared/Entity/Error/Logs';
 import Error from 'components/shared/Error';
 import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import SharedProgress, {
@@ -88,7 +87,6 @@ function UpdateEntity({
                 if (publishResponse.error) {
                     return failed(publishResponse);
                 }
-                setLogToken(publishResponse.data[0].logs_token);
                 setPubID(publishResponse.data[0].id);
             };
 
@@ -104,9 +102,11 @@ function UpdateEntity({
         const done = jobSucceeded(publication?.job_status);
         if (done === true) {
             setState(ProgressStates.SUCCESS);
+            setLogToken(publication?.logs_token ?? null);
             onFinish(publication);
         } else if (done === false) {
             setState(ProgressStates.FAILED);
+            setLogToken(publication?.logs_token ?? null);
             setError({});
             onFinish(publication);
         }
@@ -116,6 +116,7 @@ function UpdateEntity({
         <SharedProgress
             name={entity.catalog_name}
             error={error}
+            logToken={logToken}
             renderError={(errorProvided: any) => (
                 <>
                     {errorProvided?.message ? (
@@ -133,16 +134,6 @@ function UpdateEntity({
                     </Alert>
                 </>
             )}
-            renderLogs={() => {
-                <ErrorLogs
-                    logToken={logToken}
-                    height={150}
-                    logProps={{
-                        disableIntervalFetching: true,
-                        fetchAll: true,
-                    }}
-                />;
-            }}
             state={state}
             runningMessageID={runningMessageID}
             successMessageID={successMessageID}
