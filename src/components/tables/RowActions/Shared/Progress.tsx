@@ -33,7 +33,11 @@ function SharedProgress({
     runningMessageID,
 }: SharedProgressProps) {
     return (
-        <Box>
+        <Box
+            sx={{
+                pr: 3,
+            }}
+        >
             <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
                 {state === ProgressStates.FAILED ? (
                     <ErrorOutlineIcon color="error" />
@@ -57,7 +61,7 @@ function SharedProgress({
                     }
                 />
             </Stack>
-            <Box sx={{ my: 3, ml: 3 }}>
+            <Box sx={{ m: 3 }}>
                 {state === ProgressStates.FAILED && error !== null ? (
                     renderError ? (
                         renderError(error)
@@ -66,7 +70,7 @@ function SharedProgress({
                     )
                 ) : null}
             </Box>
-            <Box sx={{ my: 3, ml: 3 }}>
+            <Box sx={{ ml: 3, width: '100%' }}>
                 {state !== ProgressStates.RUNNING && logToken !== null ? (
                     renderLogs ? (
                         renderLogs(logToken)

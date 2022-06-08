@@ -30,7 +30,6 @@ function ErrorLogs({
             <Accordion
                 defaultExpanded={defaultOpen ?? false}
                 TransitionProps={{ unmountOnExit: true }}
-                disableGutters
             >
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography>
