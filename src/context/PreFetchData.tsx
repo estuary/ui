@@ -15,11 +15,12 @@ interface PreFetchData {
     grantDetails: CombinedGrantsExtQuery[];
 }
 
+const CONNECTOR_VERSION = ':v1';
 const PreFetchDataContext = createContext<PreFetchData | null>(null);
 
 const PreFetchDataProvider = ({ children }: BaseComponentProps) => {
     // TODO (context) create a local storage context provider
-    useLocalStorage(LocalStorageKeys.CONNECTOR_TAG_SELECTOR, ':dev');
+    useLocalStorage(LocalStorageKeys.CONNECTOR_TAG_SELECTOR, CONNECTOR_VERSION);
 
     const combinedGrantsQuery = useQuery<CombinedGrantsExtQuery>(
         TABLES.COMBINED_GRANTS_EXT,
