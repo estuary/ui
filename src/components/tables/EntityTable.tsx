@@ -211,6 +211,8 @@ function EntityTable({
 
                 resetSelection();
                 setSearchQuery(hasQuery ? filterQuery : null);
+                setPagination(getPagination(0, rowsPerPage));
+                setPage(0);
             },
             750
         ),
