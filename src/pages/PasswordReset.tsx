@@ -7,9 +7,9 @@ import FullPageDialog from 'components/fullPage/Dialog';
 import { useClient } from 'hooks/supabase-swr';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { isEmpty } from 'lodash';
+import { useSnackbar } from 'notistack';
 import React, { useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useSearchParams } from 'react-router-dom';
 import { defaultAjvSettings } from 'services/ajv';
 import {
     defaultOptions,
@@ -21,14 +21,11 @@ import { getUserDetails } from 'services/supabase';
 const PasswordReset = () => {
     useBrowserTitle('browserTitle.passwordReset');
 
-    const [searchParams] = useSearchParams();
-    const accessToken = searchParams.get('access_token');
-
+    const { enqueueSnackbar } = useSnackbar();
     const supabaseClient = useClient();
-
     const intl = useIntl();
 
-    const { user } = Auth.useUser();
+    const { user, session } = Auth.useUser();
     const { email: authEmail } = getUserDetails(user);
 
     const showErrors = useRef(false);
@@ -41,10 +38,7 @@ const PasswordReset = () => {
     const [formState, setFormState] = useState<
         Pick<JsonFormsCore, 'data' | 'errors'>
     >({
-        data: {
-            email: '',
-            password: '',
-        },
+        data: formData,
         errors: [],
     });
 
@@ -63,12 +57,6 @@ const PasswordReset = () => {
                 type: 'string',
                 minLength: 7,
             },
-            // confirmPassword: {
-            //     const: {
-            //         $data: '1/password',
-            //     },
-            //     type: 'string',
-            // },
         },
         required: ['email', 'password'],
         type: 'object',
@@ -96,16 +84,6 @@ const PasswordReset = () => {
                     format: 'password',
                 },
             },
-            // {
-            //     label: intl.formatMessage({
-            //         id: 'confirmPassword.label',
-            //     }),
-            //     scope: `#/properties/confirmPassword`,
-            //     type: 'Control',
-            //     options: {
-            //         format: 'password',
-            //     },
-            // },
         ],
         type: 'VerticalLayout',
     };
@@ -124,7 +102,7 @@ const PasswordReset = () => {
                 showErrors.current = false;
 
                 const res = await supabaseClient.auth.api.updateUser(
-                    accessToken ?? '__missing__',
+                    session?.access_token ?? '__unknown__',
                     {
                         password: formState.data.password,
                     }
@@ -135,7 +113,23 @@ const PasswordReset = () => {
                 if (res.error) {
                     throw new Error('Unable to update password');
                 } else {
-                    throw new Error('Updated Password');
+                    await supabaseClient.auth
+                        .signOut()
+                        .then(() => {
+                            enqueueSnackbar(
+                                intl.formatMessage({
+                                    id: 'login.passwordReset',
+                                }),
+                                {
+                                    anchorOrigin: {
+                                        vertical: 'top',
+                                        horizontal: 'center',
+                                    },
+                                    variant: 'success',
+                                }
+                            );
+                        })
+                        .catch(() => {});
                 }
             }
         },

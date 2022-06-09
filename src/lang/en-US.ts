@@ -182,7 +182,9 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
     'login.oidc.message': `Sign in to continue to ${CommonMessages.productName}.`,
     'login.documentAcknowledgement': `By accessing ${CommonMessages.productName} you agree to our {terms} and {privacy}.`,
     'login.jwtExpired': 'Your authorization has expired. Please sign in again.',
+    'login.passwordReset': 'Your password was updated. Please sign in again.',
     'login.separator': 'or continue with',
+    'login.loginFailed.title': 'Login Error',
     'login.loginFailed.google': 'Failed to sign in with Google',
 };
 

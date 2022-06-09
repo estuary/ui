@@ -7,6 +7,7 @@ export interface Notification {
     title: string;
     description: string;
     severity: AlertColor;
+    position?: 'top' | 'bottom';
 }
 
 export interface NotificationState {
@@ -57,4 +58,8 @@ export default useNotificationStore;
 
 export const notificationStoreSelectors = {
     showNotification: (state: NotificationState) => state.showNotification,
+    hideNotification: (state: NotificationState) => state.hideNotification,
+    notification: (state: NotificationState) => state.notification,
+    updateNotificationHistory: (state: NotificationState) =>
+        state.updateNotificationHistory,
 };

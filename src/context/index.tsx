@@ -1,3 +1,4 @@
+import Notifications from 'context/Notifications';
 import SwrConfigProvider from 'context/SWR';
 import { BaseComponentProps } from 'types';
 import ClientProvider from './Client';
@@ -9,15 +10,17 @@ import { UserProvider } from './User';
 const AppProviders = ({ children }: BaseComponentProps) => {
     return (
         <ContentProvider>
-            <ClientProvider>
-                <AppRouter>
-                    <SwrConfigProvider>
-                        <UserProvider>
-                            <ThemeProvider>{children}</ThemeProvider>
-                        </UserProvider>
-                    </SwrConfigProvider>
-                </AppRouter>
-            </ClientProvider>
+            <ThemeProvider>
+                <ClientProvider>
+                    <AppRouter>
+                        <Notifications>
+                            <SwrConfigProvider>
+                                <UserProvider>{children}</UserProvider>
+                            </SwrConfigProvider>
+                        </Notifications>
+                    </AppRouter>
+                </ClientProvider>
+            </ThemeProvider>
         </ContentProvider>
     );
 };
