@@ -3,6 +3,7 @@ import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec } from 'api/draftSpecs';
 import { createPublication } from 'api/publications';
 import DraftErrors from 'components/shared/Entity/Error/DraftErrors';
+import Error from 'components/shared/Error';
 import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import SharedProgress, {
     ProgressStates,
@@ -40,6 +41,7 @@ function UpdateEntity({
     const [error, setError] = useState<any | null>(null);
     const [draftId, setDraftId] = useState<string | null>(null);
     const [pubID, setPubID] = useState<string | null>(null);
+    const [logToken, setLogToken] = useState<string | null>(null);
 
     const { liveSpecs } = useLiveSpecsExtWithSpec(
         entity.last_pub_id,
@@ -100,9 +102,11 @@ function UpdateEntity({
         const done = jobSucceeded(publication?.job_status);
         if (done === true) {
             setState(ProgressStates.SUCCESS);
+            setLogToken(publication?.logs_token ?? null);
             onFinish(publication);
         } else if (done === false) {
             setState(ProgressStates.FAILED);
+            setLogToken(publication?.logs_token ?? null);
             setError({});
             onFinish(publication);
         }
@@ -112,17 +116,23 @@ function UpdateEntity({
         <SharedProgress
             name={entity.catalog_name}
             error={error}
-            renderError={() => (
-                <Alert
-                    icon={false}
-                    severity="error"
-                    sx={{
-                        maxHeight: 100,
-                        overflowY: 'auto',
-                    }}
-                >
-                    <DraftErrors draftId={draftId} />
-                </Alert>
+            logToken={logToken}
+            renderError={(errorProvided: any) => (
+                <>
+                    {errorProvided?.message ? (
+                        <Error error={errorProvided} hideTitle={true} />
+                    ) : null}
+                    <Alert
+                        icon={false}
+                        severity="error"
+                        sx={{
+                            maxHeight: 100,
+                            overflowY: 'auto',
+                        }}
+                    >
+                        <DraftErrors draftId={draftId} />
+                    </Alert>
+                </>
             )}
             state={state}
             runningMessageID={runningMessageID}

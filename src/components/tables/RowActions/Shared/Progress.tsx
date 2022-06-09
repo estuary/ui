@@ -1,6 +1,7 @@
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { Box, CircularProgress, ListItemText, Stack } from '@mui/material';
+import ErrorLogs from 'components/shared/Entity/Error/Logs';
 import Error from 'components/shared/Error';
 import { FormattedMessage } from 'react-intl';
 
@@ -13,22 +14,32 @@ export enum ProgressStates {
 export interface SharedProgressProps {
     name: string;
     error: any | null;
+    logToken: string | null;
     renderError?: Function;
+    renderLogs?: Function;
     successMessageID: string;
     runningMessageID: string;
     state: ProgressStates;
 }
 
+const wrapperStyling = { ml: 3, width: '100%' };
+
 function SharedProgress({
     name,
     error,
+    logToken,
     renderError,
+    renderLogs,
     state,
     successMessageID,
     runningMessageID,
 }: SharedProgressProps) {
     return (
-        <Box>
+        <Box
+            sx={{
+                pr: 3,
+            }}
+        >
             <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
                 {state === ProgressStates.FAILED ? (
                     <ErrorOutlineIcon color="error" />
@@ -52,13 +63,31 @@ function SharedProgress({
                     }
                 />
             </Stack>
-            {state === ProgressStates.FAILED && error !== null ? (
-                renderError ? (
-                    renderError(error)
-                ) : (
-                    <Error error={error} hideTitle={true} />
-                )
-            ) : null}
+            <Box sx={wrapperStyling}>
+                {state === ProgressStates.FAILED && error !== null ? (
+                    renderError ? (
+                        renderError(error)
+                    ) : (
+                        <Error error={error} hideTitle={true} />
+                    )
+                ) : null}
+            </Box>
+            <Box sx={wrapperStyling}>
+                {state !== ProgressStates.RUNNING && logToken !== null ? (
+                    renderLogs ? (
+                        renderLogs(logToken)
+                    ) : (
+                        <ErrorLogs
+                            logToken={logToken}
+                            height={150}
+                            logProps={{
+                                disableIntervalFetching: true,
+                                fetchAll: true,
+                            }}
+                        />
+                    )
+                ) : null}
+            </Box>
         </Box>
     );
 }
