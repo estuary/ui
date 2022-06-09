@@ -1,6 +1,8 @@
 import { Box } from '@mui/material';
-import GoogleAuthButton from 'components/login/OIDCs/Google';
+import { Provider } from '@supabase/supabase-js';
+import { useClient } from 'hooks/supabase-swr';
 import { useSnackbar } from 'notistack';
+import GoogleButton from 'react-google-button';
 import { useIntl } from 'react-intl';
 import useConstant from 'use-constant';
 
@@ -8,11 +10,13 @@ function OIDCs() {
     const redirectTo = useConstant(
         () => `${window.location.origin}` // `${window.location.origin}${routeDetails.registration.path}`
     );
+
+    const supabaseClient = useClient();
     const intl = useIntl();
 
     const { enqueueSnackbar } = useSnackbar();
 
-    const loginFailed = (key: string) => {
+    const loginFailed = (key: Provider) => {
         enqueueSnackbar(
             intl.formatMessage({
                 id: `login.loginFailed.${key}`,
@@ -28,6 +32,22 @@ function OIDCs() {
         );
     };
 
+    const login = async (provider: Provider) => {
+        try {
+            const { error } = await supabaseClient.auth.signIn(
+                {
+                    provider,
+                },
+                {
+                    redirectTo,
+                }
+            );
+            if (error) loginFailed(provider);
+        } catch (error: unknown) {
+            loginFailed(provider);
+        }
+    };
+
     return (
         <Box
             sx={{
@@ -35,10 +55,7 @@ function OIDCs() {
                 justifyContent: 'center',
             }}
         >
-            <GoogleAuthButton
-                onError={() => loginFailed('google')}
-                redirectPath={redirectTo}
-            />
+            <GoogleButton onClick={() => login('google')} />
         </Box>
     );
 }

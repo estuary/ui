@@ -21,6 +21,10 @@ const supabaseSettings = {
     anonKey: process.env.REACT_APP_SUPABASE_ANON_KEY,
 };
 
+// Related to the AUth stuff
+export const supabaseAuthError = 'error_description';
+export const userNotFound = 'User not found';
+
 // Little helper string that fetches the name from open graph
 export const CONNECTOR_NAME = `open_graph->en-US->>title`;
 export const CONNECTOR_RECOMMENDED = `open_graph->en-US->>recommended`;

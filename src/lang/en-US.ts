@@ -183,9 +183,10 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
     'login.documentAcknowledgement': `By accessing ${CommonMessages.productName} you agree to our {terms} and {privacy}.`,
     'login.jwtExpired': 'Your authorization has expired. Please sign in again.',
     'login.passwordReset': 'Your password was updated. Please sign in again.',
+    'login.passwordReset.failed': 'Update failed.',
     'login.separator': 'or continue with',
-    'login.loginFailed.title': 'Login Error',
     'login.loginFailed.google': 'Failed to sign in with Google',
+    'login.userNotFound': 'User not found. Please sign up below.',
 };
 
 const EntityStatus: ResolvedIntlConfig['messages'] = {

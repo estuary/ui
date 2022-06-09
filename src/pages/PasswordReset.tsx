@@ -1,13 +1,14 @@
 import { createAjv, JsonFormsCore } from '@jsonforms/core';
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
-import { Box, Button, Typography } from '@mui/material';
+import { Alert, Box, Button, Typography } from '@mui/material';
+import { ApiError } from '@supabase/supabase-js';
 import { Auth } from '@supabase/ui';
 import FullPageDialog from 'components/fullPage/Dialog';
 import { useClient } from 'hooks/supabase-swr';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { isEmpty } from 'lodash';
-import { useSnackbar } from 'notistack';
+import { useSnackbar, VariantType } from 'notistack';
 import React, { useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { defaultAjvSettings } from 'services/ajv';
@@ -30,6 +31,7 @@ const PasswordReset = () => {
 
     const showErrors = useRef(false);
 
+    const [submitError, setSubmitError] = useState<ApiError | null>(null);
     const [formData, setFormData] = useState({
         email: authEmail,
         password: null,
@@ -55,7 +57,7 @@ const PasswordReset = () => {
                     id: 'password.description',
                 }),
                 type: 'string',
-                minLength: 7,
+                minLength: 8, // This needs to stay in sync with the setting in Supabase
             },
         },
         required: ['email', 'password'],
@@ -88,13 +90,25 @@ const PasswordReset = () => {
         type: 'VerticalLayout',
     };
 
+    const displayNotification = (id: string, variant: VariantType) => {
+        enqueueSnackbar(
+            intl.formatMessage({
+                id,
+            }),
+            {
+                anchorOrigin: {
+                    vertical: 'top',
+                    horizontal: 'center',
+                },
+                variant,
+            }
+        );
+    };
+
     const handlers = {
         submit: async (event: React.FormEvent<HTMLFormElement>) => {
             event.preventDefault();
-
-            console.log('Submit password reset', {
-                formState,
-            });
+            setSubmitError(null);
 
             if (!isEmpty(formState.errors)) {
                 showErrors.current = true;
@@ -108,25 +122,16 @@ const PasswordReset = () => {
                     }
                 );
 
-                console.log('Response from update =', res);
-
                 if (res.error) {
-                    throw new Error('Unable to update password');
+                    displayNotification('login.passwordReset', 'success');
+                    setSubmitError(res.error);
                 } else {
                     await supabaseClient.auth
                         .signOut()
                         .then(() => {
-                            enqueueSnackbar(
-                                intl.formatMessage({
-                                    id: 'login.passwordReset',
-                                }),
-                                {
-                                    anchorOrigin: {
-                                        vertical: 'top',
-                                        horizontal: 'center',
-                                    },
-                                    variant: 'success',
-                                }
+                            displayNotification(
+                                'login.passwordReset',
+                                'success'
                             );
                         })
                         .catch(() => {});
@@ -158,6 +163,17 @@ const PasswordReset = () => {
 
                     <FormattedMessage id="passwordReset.main" />
                 </Box>
+
+                {submitError && (
+                    <Alert
+                        severity="error"
+                        sx={{
+                            mb: 5,
+                        }}
+                    >
+                        <Typography>{submitError.message}</Typography>
+                    </Alert>
+                )}
 
                 <form
                     onSubmit={handlers.submit}

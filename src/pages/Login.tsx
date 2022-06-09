@@ -42,6 +42,7 @@ const Login = () => {
                             providers={[]}
                             supabaseClient={supabaseClient}
                             onlyThirdPartyProviders={!loginSettings.showEmail}
+                            magicLink
                             style={{
                                 minWidth: 310,
                                 padding: 12,
