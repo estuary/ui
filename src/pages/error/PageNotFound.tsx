@@ -8,7 +8,7 @@ import {
     Paper,
     Typography,
 } from '@mui/material';
-import { routeDetails } from 'app/Authenticated';
+import { authenticatedRoutes } from 'app/Authenticated';
 import PageContainer from 'components/shared/PageContainer';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { useState } from 'react';
@@ -24,40 +24,44 @@ const PageNotFound = () => {
 
     const pages: { name: string; route: string }[] = [
         {
-            name: intl.formatMessage({ id: routeDetails.collections.title }),
-            route: routeDetails.collections.path,
-        },
-        {
-            name: intl.formatMessage({ id: routeDetails.captures.title }),
-            route: routeDetails.captures.path,
+            name: intl.formatMessage({
+                id: authenticatedRoutes.collections.title,
+            }),
+            route: authenticatedRoutes.collections.path,
         },
         {
             name: intl.formatMessage({
-                id: routeDetails.captures.create.title,
+                id: authenticatedRoutes.captures.title,
             }),
-            route: routeDetails.captures.create.fullPath,
+            route: authenticatedRoutes.captures.path,
         },
         {
             name: intl.formatMessage({
-                id: routeDetails.materializations.title,
+                id: authenticatedRoutes.captures.create.title,
             }),
-            route: routeDetails.materializations.path,
+            route: authenticatedRoutes.captures.create.fullPath,
         },
         {
             name: intl.formatMessage({
-                id: routeDetails.materializations.create.title,
+                id: authenticatedRoutes.materializations.title,
             }),
-            route: routeDetails.materializations.create.path,
+            route: authenticatedRoutes.materializations.path,
         },
         {
             name: intl.formatMessage({
-                id: routeDetails.connectors.title,
+                id: authenticatedRoutes.materializations.create.title,
             }),
-            route: routeDetails.connectors.path,
+            route: authenticatedRoutes.materializations.create.path,
         },
         {
-            name: intl.formatMessage({ id: routeDetails.admin.title }),
-            route: routeDetails.admin.path,
+            name: intl.formatMessage({
+                id: authenticatedRoutes.connectors.title,
+            }),
+            route: authenticatedRoutes.connectors.path,
+        },
+        {
+            name: intl.formatMessage({ id: authenticatedRoutes.admin.title }),
+            route: authenticatedRoutes.admin.path,
         },
     ];
 

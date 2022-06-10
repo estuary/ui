@@ -14,6 +14,11 @@ import {
     showValidation,
 } from 'services/jsonforms';
 
+// TODO (routes) This is hardcoded because unauthenticated routes is not yet invoked
+//   need to move the routes to a single location. Also... just need to make the route
+//   settings in all JSON probably.
+const redirectTo = `${window.location.origin}/auth`;
+
 const MagicLink = () => {
     const { enqueueSnackbar } = useSnackbar();
     const supabaseClient = useClient();
@@ -83,9 +88,14 @@ const MagicLink = () => {
             setLoading(true);
 
             const { error } = await supabaseClient.auth
-                .signIn({
-                    email: formData.email,
-                })
+                .signIn(
+                    {
+                        email: formData.email,
+                    },
+                    {
+                        redirectTo,
+                    }
+                )
                 .finally(() => {
                     setLoading(false);
                 });

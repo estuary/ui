@@ -4,13 +4,11 @@ import { useClient } from 'hooks/supabase-swr';
 import { useSnackbar } from 'notistack';
 import GoogleButton from 'react-google-button';
 import { useIntl } from 'react-intl';
-import useConstant from 'use-constant';
+
+// TODO (routes) This is hardcoded because unauthenticated routes... (same as MagicLink)
+const redirectTo = `${window.location.origin}/auth`;
 
 function OIDCs() {
-    const redirectTo = useConstant(
-        () => `${window.location.origin}` // `${window.location.origin}${routeDetails.registration.path}`
-    );
-
     const supabaseClient = useClient();
     const intl = useIntl();
 

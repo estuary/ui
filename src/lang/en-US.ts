@@ -68,7 +68,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.materialize': `Materialize`,
     'cta.register': `Sign up`,
     'cta.resetPassword': `Reset Password`,
-    'cta.magicLink': `Login with magic link`,
+    'cta.magicLink': `Sign in with magic link`,
     'cta.clickHere': `Click here`,
     'cta.details': `Details`,
     'cta.saveEntity': `Save and publish`,
@@ -187,12 +187,13 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
 
     'login.passwordReset': 'You should not need to reset your password.',
 
-    'login.magicLink': 'Check your email for link.',
+    'login.magicLink': 'Magic link sent. Please check your email.',
     'login.magicLink.failed': 'Failed. Please try again.',
     'login.email.description': `Any valid email you want to use to sign in with`,
     'login.email.label': `Email`,
 
     'login.separator': 'or',
+    'login.loginFailed': 'Failed to sign in',
     'login.loginFailed.google': 'Failed to sign in with Google',
     'login.userNotFound': 'User not found. Please sign up below.',
 };

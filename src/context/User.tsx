@@ -1,5 +1,5 @@
 import { Auth } from '@supabase/ui';
-import { logoutRoutes } from 'app/Unauthenticated';
+import { unauthenticatedRoutes } from 'app/Unauthenticated';
 import { useClient } from 'hooks/supabase-swr';
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
@@ -15,6 +15,7 @@ export const UserProvider = ({ children }: BaseComponentProps) => {
 
     useEffectOnce(() => {
         supabaseClient.auth.onAuthStateChange((event) => {
+            console.log('onAuthStateChange >>> ', event);
             if (event === 'PASSWORD_RECOVERY') {
                 enqueueSnackbar(
                     intl.formatMessage({
@@ -29,7 +30,7 @@ export const UserProvider = ({ children }: BaseComponentProps) => {
                     }
                 );
             } else if (event === 'SIGNED_OUT') {
-                navigate(logoutRoutes.path, { replace: true });
+                navigate(unauthenticatedRoutes.path, { replace: true });
             }
         });
     });

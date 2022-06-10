@@ -1,6 +1,6 @@
 import AddIcon from '@mui/icons-material/Add';
 import { Box, Button, SxProps, Theme, Toolbar } from '@mui/material';
-import { routeDetails } from 'app/Authenticated';
+import { authenticatedRoutes } from 'app/Authenticated';
 import PageContainer from 'components/shared/PageContainer';
 import MaterializationsTable from 'components/tables/Materializations';
 import useBrowserTitle from 'hooks/useBrowserTitle';
@@ -24,7 +24,9 @@ const Materializations = () => {
                     justifyContent: 'space-between',
                 }}
             >
-                <NavLink to={routeDetails.materializations.create.fullPath}>
+                <NavLink
+                    to={authenticatedRoutes.materializations.create.fullPath}
+                >
                     <Button size="large" startIcon={<AddIcon />}>
                         <FormattedMessage id="materializationsTable.cta.new" />
                     </Button>

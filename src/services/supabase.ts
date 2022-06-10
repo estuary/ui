@@ -24,6 +24,7 @@ const supabaseSettings = {
 // Related to the AUth stuff
 export const supabaseAuthError = 'error_description';
 export const userNotFound = 'User not found';
+export const foo = 'Confirmation+Token+not+found';
 
 // Little helper string that fetches the name from open graph
 export const CONNECTOR_NAME = `open_graph->en-US->>title`;
