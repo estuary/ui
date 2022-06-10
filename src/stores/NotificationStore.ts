@@ -7,7 +7,6 @@ export interface Notification {
     title: string;
     description: string;
     severity: AlertColor;
-    position?: 'top' | 'bottom';
 }
 
 export interface NotificationState {
