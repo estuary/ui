@@ -156,6 +156,7 @@ const PageNotFound: ResolvedIntlConfig['messages'] = {
     'pageNotFound.message': `Try searching for a page below or go directly to your {dashboard}.`,
 };
 
+// TODO (password reset) not active
 const PasswordReset: ResolvedIntlConfig['messages'] = {
     'passwordReset.heading': `Password Reset`,
     'passwordReset.main': `Enter your new password below.`,
