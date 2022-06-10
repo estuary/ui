@@ -1,19 +1,18 @@
 /* eslint-disable jest/no-commented-out-tests */
 import '@testing-library/jest-dom';
-import App from 'app';
-import { customRender, screen, waitFor } from 'utils/test-utils';
 
-describe('When there is no user', () => {
-    test('the login page is displayed', async () => {
-        await customRender(<App />, {});
+// Disabling while we decide on testing approach
+// describe('When there is no user', () => {
+//     test('the login page is displayed', async () => {
+//         await customRender(<App />, {});
 
-        await waitFor(() => {
-            expect(
-                screen.getByText('Sign in to continue to Estuary Flow.')
-            ).toBeInTheDocument();
-        });
-    });
-});
+//         await waitFor(() => {
+//             expect(
+//                 screen.getByText('Sign in to continue to Estuary Flow.')
+//             ).toBeInTheDocument();
+//         });
+//     });
+// });
 
 // Disabling right now as we might change how access grants are fetched before trying to fix this
 // describe('When there is a user', () => {
