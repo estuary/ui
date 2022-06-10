@@ -238,7 +238,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.error.pageNotFound': `Page Not Found`,
     'routeTitle.login': `Login`,
     'routeTitle.loginLoading': `Checking Credentials`,
-    'routeTitle.noGrants': `Access Denied`,
+    'routeTitle.noGrants': `Signed Up`,
     'routeTitle.materializationCreate': `Create Materialization`,
     'routeTitle.materializations': `Materializations`,
     'routeTitle.registration': `Registration`,

@@ -124,6 +124,9 @@ const Authenticated = () => {
         return (
             <AuthenticatedOnlyContext>
                 <Routes>
+                    {/* TODO (routes) Need to make sure the auth path is handle in any routes. This should be worked into
+                            the move of making routes in JSON objects
+                    */}
                     <Route
                         path={unauthenticatedRoutes.auth.path}
                         element={<Auth />}
