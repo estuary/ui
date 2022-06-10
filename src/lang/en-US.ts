@@ -184,8 +184,7 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
     'login.documentAcknowledgement': `By accessing ${CommonMessages.productName} you agree to our {terms} and {privacy}.`,
     'login.jwtExpired': 'Your authorization has expired. Please sign in again.',
 
-    'login.passwordReset': 'Your password was updated. Please sign in again.',
-    'login.passwordReset.failed': 'Update failed.',
+    'login.passwordReset': 'You should not need to reset your password.',
 
     'login.magicLink': 'Check your email for link.',
     'login.magicLink.failed': 'Failed. Please try again.',

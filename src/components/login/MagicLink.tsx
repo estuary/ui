@@ -82,16 +82,19 @@ const MagicLink = () => {
             setShowErrors(false);
             setLoading(true);
 
-            const { error } = await supabaseClient.auth.signIn({
-                email: formData.email,
-            });
+            const { error } = await supabaseClient.auth
+                .signIn({
+                    email: formData.email,
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
             if (error) {
                 setSubmitError(error);
                 return;
             }
 
             displayNotification('login.magicLink', 'success');
-            setLoading(false);
         },
     };
 

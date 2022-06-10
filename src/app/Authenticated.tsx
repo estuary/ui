@@ -17,7 +17,6 @@ import TestJsonForms from 'pages/dev/TestJsonForms';
 import PageNotFound from 'pages/error/PageNotFound';
 import Home from 'pages/Home';
 import Materializations from 'pages/Materializations';
-import PasswordReset from 'pages/PasswordReset';
 import Registration from 'pages/Registration';
 import { Route, Routes } from 'react-router';
 import { Stores } from 'stores/Repo';
@@ -80,11 +79,6 @@ export const routeDetails = {
     user: {
         title: 'routeTitle.user',
         path: '/user',
-        passwordReset: {
-            title: 'routeTitle.passwordReset',
-            path: 'passwordReset',
-            fullPath: '/user/passwordReset',
-        },
         registration: {
             title: 'routeTitle.registration',
             path: 'register',
@@ -113,10 +107,6 @@ const Authenticated = () => {
             <Routes>
                 <Route path={routeDetails.user.path}>
                     <Route
-                        path={routeDetails.user.passwordReset.path}
-                        element={<PasswordReset />}
-                    />
-                    <Route
                         path={routeDetails.user.registration.path}
                         element={<Registration />}
                     />
@@ -128,16 +118,6 @@ const Authenticated = () => {
         return (
             <AuthenticatedOnlyContext>
                 <Routes>
-                    <Route path={routeDetails.user.path}>
-                        <Route
-                            path={routeDetails.user.passwordReset.path}
-                            element={<PasswordReset />}
-                        />
-                        <Route
-                            path={routeDetails.user.registration.path}
-                            element={<Registration />}
-                        />
-                    </Route>
                     <Route element={<AppLayout />}>
                         <Route
                             path={routeDetails.home.path}
