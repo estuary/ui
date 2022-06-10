@@ -1,9 +1,8 @@
 import { Box, Divider, Stack, Typography } from '@mui/material';
-import { Auth } from '@supabase/ui';
 import FullPageDialog from 'components/fullPage/Dialog';
+import MagicLink from 'components/login/MagicLink';
 import OIDCs from 'components/login/OIDCs';
 import ExternalLink from 'components/shared/ExternalLink';
-import { useClient } from 'hooks/supabase-swr';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { FormattedMessage } from 'react-intl';
 import { useEffectOnce, useLocalStorage } from 'react-use';
@@ -11,15 +10,13 @@ import { getLoginSettings, getUrls } from 'utils/env-utils';
 import { LocalStorageKeys } from 'utils/localStorage-utils';
 
 const urls = getUrls();
+const loginSettings = getLoginSettings();
 
 const Login = () => {
     useBrowserTitle('browserTitle.login');
 
     const { 2: clearGatewayConfig } = useLocalStorage(LocalStorageKeys.GATEWAY);
     useEffectOnce(() => clearGatewayConfig());
-
-    const supabaseClient = useClient();
-    const loginSettings = getLoginSettings();
 
     return (
         <FullPageDialog>
@@ -33,27 +30,20 @@ const Login = () => {
                         <OIDCs />
                     </Box>
 
-                    <Divider flexItem>
-                        <FormattedMessage id="login.separator" />
-                    </Divider>
+                    {loginSettings.showEmail && (
+                        <>
+                            <Divider flexItem>
+                                <FormattedMessage id="login.separator" />
+                            </Divider>
 
-                    <Box>
-                        <Auth
-                            providers={[]}
-                            supabaseClient={supabaseClient}
-                            onlyThirdPartyProviders={!loginSettings.showEmail}
-                            magicLink
-                            style={{
-                                minWidth: 310,
-                                padding: 12,
-                                backgroundColor: '#FFFFFF',
-                                borderRadius: 10,
-                            }}
-                        />
-                    </Box>
+                            <Box>
+                                <MagicLink />
+                            </Box>
+                        </>
+                    )}
                 </Stack>
 
-                <Typography align="center" sx={{ mt: 4 }}>
+                <Typography align="center" sx={{ mt: 6 }}>
                     <FormattedMessage
                         id="login.documentAcknowledgement"
                         values={{

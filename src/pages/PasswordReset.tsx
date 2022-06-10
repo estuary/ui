@@ -1,4 +1,4 @@
-import { createAjv, JsonFormsCore } from '@jsonforms/core';
+import { JsonFormsCore } from '@jsonforms/core';
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Alert, Box, Button, Typography } from '@mui/material';
@@ -11,7 +11,6 @@ import { isEmpty } from 'lodash';
 import { useSnackbar, VariantType } from 'notistack';
 import React, { useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { defaultAjvSettings } from 'services/ajv';
 import {
     defaultOptions,
     defaultRenderers,
@@ -123,7 +122,7 @@ const PasswordReset = () => {
                 );
 
                 if (res.error) {
-                    displayNotification('login.passwordReset', 'success');
+                    displayNotification('login.passwordReset.failed', 'error');
                     setSubmitError(res.error);
                 } else {
                     await supabaseClient.auth
@@ -139,12 +138,6 @@ const PasswordReset = () => {
             }
         },
     };
-
-    const ajv = createAjv({
-        ...defaultAjvSettings,
-        allErrors: true,
-        $data: true,
-    });
 
     return (
         <FullPageDialog>
@@ -188,7 +181,6 @@ const PasswordReset = () => {
                     <JsonForms
                         schema={schema}
                         uischema={uiSchema}
-                        ajv={ajv}
                         data={formData}
                         renderers={defaultRenderers}
                         cells={materialCells}
@@ -197,10 +189,6 @@ const PasswordReset = () => {
                             showErrors.current ? showValidation() : undefined
                         }
                         onChange={(state) => {
-                            console.log('Made a call!', {
-                                state,
-                                setFormData,
-                            });
                             setFormData(state.data);
                             setFormState(state);
                         }}

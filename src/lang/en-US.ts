@@ -68,6 +68,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.materialize': `Materialize`,
     'cta.register': `Sign up`,
     'cta.resetPassword': `Reset Password`,
+    'cta.magicLink': `Login with magic link`,
     'cta.clickHere': `Click here`,
     'cta.details': `Details`,
     'cta.saveEntity': `Save and publish`,
@@ -182,9 +183,16 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
     'login.oidc.message': `Sign in to continue to ${CommonMessages.productName}.`,
     'login.documentAcknowledgement': `By accessing ${CommonMessages.productName} you agree to our {terms} and {privacy}.`,
     'login.jwtExpired': 'Your authorization has expired. Please sign in again.',
+
     'login.passwordReset': 'Your password was updated. Please sign in again.',
     'login.passwordReset.failed': 'Update failed.',
-    'login.separator': 'or continue with',
+
+    'login.magicLink': 'Check your email for link.',
+    'login.magicLink.failed': 'Failed. Please try again.',
+    'login.email.description': `Any valid email you want to use to sign in with`,
+    'login.email.label': `Email`,
+
+    'login.separator': 'or',
     'login.loginFailed.google': 'Failed to sign in with Google',
     'login.userNotFound': 'User not found. Please sign up below.',
 };
