@@ -29,7 +29,7 @@ export const UserProvider = ({ children }: BaseComponentProps) => {
                     }
                 );
             } else if (event === 'SIGNED_OUT') {
-                navigate(logoutRoutes.path);
+                navigate(logoutRoutes.path, { replace: true });
             }
         });
     });

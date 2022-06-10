@@ -7,11 +7,9 @@ import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import MenuItem from '@mui/material/MenuItem';
 import { Auth } from '@supabase/ui';
-import { logoutRoutes } from 'app/Unauthenticated';
 import UserAvatar from 'components/shared/UserAvatar';
 import { useClient } from 'hooks/supabase-swr';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useNavigate } from 'react-router';
 import { getUserDetails } from 'services/supabase';
 import IconMenu from './IconMenu';
 
@@ -24,19 +22,13 @@ const nonInteractiveMenuStyling: SxProps = {
 const UserMenu = () => {
     const intl = useIntl();
     const supabaseClient = useClient();
-    const navigate = useNavigate();
 
     const { user } = Auth.useUser();
     const { userName, email, emailVerified, avatar } = getUserDetails(user);
 
     const handlers = {
         logout: async () => {
-            await supabaseClient.auth
-                .signOut()
-                .then(() => {
-                    navigate(logoutRoutes.path, { replace: true });
-                })
-                .catch(() => {});
+            await supabaseClient.auth.signOut();
         },
     };
 
