@@ -9,10 +9,10 @@ import { devtools } from 'zustand/middleware';
 
 export enum Stores {
     EMPTY = '',
-    CAPTURE_CREATE = 'captureCreate',
-    CAPTURE_SHARD_DETAIL = 'captureShardDetail',
-    MATERIALIZATION_CREATE = 'materializationCreate',
-    MATERIALIZATION_SHARD_DETAIL = 'materializationShardDetail',
+    CAPTURE_CREATE = 'capture-create',
+    CAPTURE_SHARD_DETAIL = 'capture-shard-detail',
+    MATERIALIZATION_CREATE = 'materialization-create',
+    MATERIALIZATION_SHARD_DETAIL = 'materialization-shard-detail',
 }
 
 // TODO (typing) : Need to get the map typed and get the selectors passing back types

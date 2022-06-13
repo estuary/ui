@@ -4,12 +4,15 @@ import EntityTable, {
     getPagination,
     SortDirection,
 } from 'components/tables/EntityTable';
-import { createSelectableTableStore } from 'components/tables/Store';
+import {
+    SelectableTableStore,
+    selectableTableStoreSelectors,
+} from 'components/tables/Store';
 import { useQuery } from 'hooks/supabase-swr';
-import { ZustandProvider } from 'hooks/useZustand';
+import { CaptureStoreNames, useZustandStore } from 'hooks/useZustand';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
-import { LiveSpecsExtBaseQuery } from 'types';
+import { ENTITY, LiveSpecsExtBaseQuery } from 'types';
 
 export interface LiveSpecsExtQuery extends LiveSpecsExtBaseQuery {
     writes_to: string[];
@@ -40,6 +43,14 @@ function CapturesTable() {
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
     const [columnToSort, setColumnToSort] = useState<any>('updated_at');
 
+    const successfulTransformations = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['successfulTransformations']
+    >(
+        CaptureStoreNames.SELECT_TABLE,
+        selectableTableStoreSelectors.successfulTransformations.get
+    );
+
     const liveSpecQuery = useQuery<LiveSpecsExtQuery>(
         TABLES.LIVE_SPECS_EXT,
         {
@@ -60,41 +71,44 @@ function CapturesTable() {
                 ).eq('spec_type', 'capture');
             },
         },
-        [pagination, searchQuery, columnToSort, sortDirection]
+        [
+            pagination,
+            searchQuery,
+            columnToSort,
+            sortDirection,
+            successfulTransformations,
+        ]
     );
 
     return (
         <Box>
-            <ZustandProvider
-                createStore={createSelectableTableStore}
-                storeName="Captures-Selectable-Table"
-            >
-                <EntityTable
-                    noExistingDataContentIds={{
-                        header: 'captures.message1',
-                        message: 'captures.message2',
-                    }}
-                    columns={tableColumns}
-                    query={liveSpecQuery}
-                    renderTableRows={(data, showEntityStatus) => (
-                        <Rows data={data} showEntityStatus={showEntityStatus} />
-                    )}
-                    setPagination={setPagination}
-                    setSearchQuery={setSearchQuery}
-                    sortDirection={sortDirection}
-                    setSortDirection={setSortDirection}
-                    columnToSort={columnToSort}
-                    setColumnToSort={setColumnToSort}
-                    header="captureTable.header"
-                    headerLink="https://docs.estuary.dev/concepts/#captures"
-                    filterLabel="capturesTable.filterLabel"
-                    enableSelection
-                    rowSelectorProps={{
-                        showMaterialize: true,
-                    }}
-                    showEntityStatus={true}
-                />
-            </ZustandProvider>
+            <EntityTable
+                noExistingDataContentIds={{
+                    header: 'captures.message1',
+                    message: 'captures.message2',
+                }}
+                columns={tableColumns}
+                query={liveSpecQuery}
+                renderTableRows={(data, showEntityStatus) => (
+                    <Rows data={data} showEntityStatus={showEntityStatus} />
+                )}
+                setPagination={setPagination}
+                setSearchQuery={setSearchQuery}
+                sortDirection={sortDirection}
+                setSortDirection={setSortDirection}
+                columnToSort={columnToSort}
+                setColumnToSort={setColumnToSort}
+                header="captureTable.header"
+                headerLink="https://docs.estuary.dev/concepts/#captures"
+                filterLabel="capturesTable.filterLabel"
+                enableSelection
+                entityType={ENTITY.CAPTURE}
+                rowSelectorProps={{
+                    entityType: ENTITY.CAPTURE,
+                    showMaterialize: true,
+                }}
+                showEntityStatus={true}
+            />
         </Box>
     );
 }

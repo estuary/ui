@@ -7,21 +7,27 @@ import useConstant from 'use-constant';
 import { StateSelector, StoreApi, useStore } from 'zustand';
 
 interface ZustandProviderProps {
-    createStore: (storeName: string) => unknown;
-    storeName: string;
+    storeOptions: { [storeName: string]: (storeName: string) => unknown };
     children: ReactNode;
+}
+
+export enum CaptureStoreNames {
+    SELECT_TABLE = 'Captures-Selectable-Table',
+    DRAFT_SPEC_EDITOR = 'draftSpecEditor-Captures',
+}
+
+export enum MaterializationStoreNames {
+    SELECT_TABLE = 'Materializations-Selectable-Table',
+    DRAFT_SPEC_EDITOR = 'draftSpecEditor-Materializations',
 }
 
 export const ZustandContext = reactCreateContext<any | null>(null);
 export const ZustandProvider = ({
-    createStore,
-    storeName,
+    storeOptions,
     children,
 }: ZustandProviderProps) => {
-    const store = useConstant(() => createStore(storeName));
-
     return (
-        <ZustandContext.Provider value={store}>
+        <ZustandContext.Provider value={storeOptions}>
             {children}
         </ZustandContext.Provider>
     );
@@ -32,10 +38,15 @@ export const ZustandProvider = ({
 //   where this would be good is the tables as any tables currently needs
 //   the store even if they don't allow for selection
 export const useZustandStore = <S extends Object, U>(
+    storeName: string,
     selector: StateSelector<S, U>,
     equalityFn?: any
 ) => {
-    const store = useContext(ZustandContext);
+    const storeOptions = useContext(ZustandContext);
+    const createStore = storeOptions[storeName];
+
+    const store = useConstant(() => createStore(storeName));
+
     return useStore<StoreApi<S>, ReturnType<typeof selector>>(
         store,
         selector,

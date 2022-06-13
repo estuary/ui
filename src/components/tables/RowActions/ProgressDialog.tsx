@@ -46,6 +46,7 @@ function ProgressDialog({
                     id={done ? 'common.done' : 'common.inProgress'}
                 />
             </DialogTitle>
+
             <DialogContent>
                 <Stack direction="column" spacing={2}>
                     {selectedEntities.length > 0
@@ -55,6 +56,7 @@ function ProgressDialog({
                         : null}
                 </Stack>
             </DialogContent>
+
             <DialogActions>
                 <Button onClick={onClose} disabled={!done}>
                     <FormattedMessage id="cta.close" />
