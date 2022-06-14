@@ -1,5 +1,5 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
-import { routeDetails } from 'app/Authenticated';
+import { authenticatedRoutes } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
 import MaterializeGenerateButton from 'components/materialization/GenerateButton';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
@@ -90,7 +90,7 @@ function MaterializationCreate() {
         exit: () => {
             resetState();
 
-            navigate(routeDetails.materializations.path);
+            navigate(authenticatedRoutes.materializations.path);
         },
         jobFailed: (errorTitle: string) => {
             setFormState({

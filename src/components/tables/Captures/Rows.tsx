@@ -1,5 +1,5 @@
 import { TableRow } from '@mui/material';
-import { routeDetails } from 'app/Authenticated';
+import { authenticatedRoutes } from 'app/Authenticated';
 import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import Actions from 'components/tables/cells/Actions';
 import ChipList from 'components/tables/cells/ChipList';
@@ -76,8 +76,8 @@ function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
         clickMaterialize: () => {
             navigate(
                 getPathWithParam(
-                    routeDetails.materializations.create.fullPath,
-                    routeDetails.materializations.create.params.specID,
+                    authenticatedRoutes.materializations.create.fullPath,
+                    authenticatedRoutes.materializations.create.params.specID,
                     row.id
                 )
             );

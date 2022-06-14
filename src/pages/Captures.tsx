@@ -1,6 +1,6 @@
 import AddIcon from '@mui/icons-material/Add';
 import { Box, Button, SxProps, Theme, Toolbar } from '@mui/material';
-import { routeDetails } from 'app/Authenticated';
+import { authenticatedRoutes } from 'app/Authenticated';
 import PageContainer from 'components/shared/PageContainer';
 import CapturesTable from 'components/tables/Captures';
 import useBrowserTitle from 'hooks/useBrowserTitle';
@@ -24,7 +24,7 @@ const Capture = () => {
                     justifyContent: 'space-between',
                 }}
             >
-                <NavLink to={routeDetails.captures.create.fullPath}>
+                <NavLink to={authenticatedRoutes.captures.create.fullPath}>
                     <Button size="large" startIcon={<AddIcon />}>
                         <FormattedMessage id="capturesTable.cta.new" />
                     </Button>

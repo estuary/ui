@@ -1,5 +1,5 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
-import { routeDetails } from 'app/Authenticated';
+import { authenticatedRoutes } from 'app/Authenticated';
 import CaptureGenerateButton from 'components/capture/GenerateButton';
 import { EditorStoreState } from 'components/editor/Store';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
@@ -96,7 +96,7 @@ function CaptureCreate() {
         exit: () => {
             resetState();
 
-            navigate(routeDetails.captures.path);
+            navigate(authenticatedRoutes.captures.path);
         },
         jobFailed: (errorTitle: string) => {
             setFormState({
@@ -124,8 +124,8 @@ function CaptureCreate() {
             helpers.exit();
             navigate(
                 getPathWithParam(
-                    routeDetails.materializations.create.fullPath,
-                    routeDetails.materializations.create.params.specID,
+                    authenticatedRoutes.materializations.create.fullPath,
+                    authenticatedRoutes.materializations.create.params.specID,
                     pubId
                 )
             );

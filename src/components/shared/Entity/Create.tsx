@@ -1,6 +1,6 @@
 import { Alert, Collapse } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
-import { routeDetails } from 'app/Authenticated';
+import { authenticatedRoutes } from 'app/Authenticated';
 import CollectionConfig from 'components/collection/Config';
 import { EditorStoreState } from 'components/editor/Store';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
@@ -125,7 +125,7 @@ function EntityCreate({
         exit: () => {
             resetState();
 
-            navigate(routeDetails.captures.path);
+            navigate(authenticatedRoutes.captures.path);
         },
         jobFailed: (errorTitle: string) => {
             setFormState({

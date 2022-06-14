@@ -57,4 +57,8 @@ export default useNotificationStore;
 
 export const notificationStoreSelectors = {
     showNotification: (state: NotificationState) => state.showNotification,
+    hideNotification: (state: NotificationState) => state.hideNotification,
+    notification: (state: NotificationState) => state.notification,
+    updateNotificationHistory: (state: NotificationState) =>
+        state.updateNotificationHistory,
 };

@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import { routeDetails } from 'app/Authenticated';
+import { authenticatedRoutes } from 'app/Authenticated';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
@@ -36,8 +36,9 @@ function Materialize({ selectableTableStoreName }: Props) {
             if (selectedRowsArray.length > 0) {
                 navigate(
                     getPathWithParam(
-                        routeDetails.materializations.create.fullPath,
-                        routeDetails.materializations.create.params.specID,
+                        authenticatedRoutes.materializations.create.fullPath,
+                        authenticatedRoutes.materializations.create.params
+                            .specID,
                         selectedRowsArray
                     )
                 );

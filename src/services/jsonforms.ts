@@ -77,8 +77,13 @@ export const defaultRenderers = [
     { renderer: MultiLineSecret, tester: multiLineSecretTester },
 ];
 
-export const showValidation = (_val: any): ValidationMode => {
+// TODO (json forms) Value being passed in is not used right now... need to decide if it is needed
+//   added the hideValidation just to match the style. This should be a single function
+export const showValidation = (_val?: any): ValidationMode => {
     return 'ValidateAndShow';
+};
+export const hideValidation = (_val?: any): ValidationMode => {
+    return 'ValidateAndHide';
 };
 
 const addOption = (elem: ControlElement | Layout, key: string, value: any) => {

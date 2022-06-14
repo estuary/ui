@@ -1,4 +1,5 @@
 import NoGrantsFound from 'app/NoGrantsFound';
+import { unauthenticatedRoutes } from 'app/Unauthenticated';
 import AppLayout from 'AppLayout';
 import CaptureCreate from 'components/capture/Create';
 import FullPageSpinner from 'components/fullPage/Spinner';
@@ -7,8 +8,8 @@ import AuthenticatedOnlyContext from 'context/Authenticated';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import { RouteStoreProvider } from 'hooks/useRouteStore';
-import { ZustandProvider } from 'hooks/useZustand';
 import Admin from 'pages/Admin';
+import Auth from 'pages/Auth';
 import Captures from 'pages/Captures';
 import Collections from 'pages/Collections';
 import Connectors from 'pages/Connectors';
@@ -21,7 +22,7 @@ import { Route, Routes } from 'react-router';
 import { Stores } from 'stores/Repo';
 import { isProduction } from 'utils/env-utils';
 
-export const routeDetails = {
+export const authenticatedRoutes = {
     admin: {
         title: 'routeTitle.admin',
         path: '/admin',
@@ -75,9 +76,14 @@ export const routeDetails = {
             },
         },
     },
-    registration: {
-        title: 'routeTitle.registration',
-        path: '/register',
+    user: {
+        title: 'routeTitle.user',
+        path: '/user',
+        registration: {
+            title: 'routeTitle.registration',
+            path: 'register',
+            fullPath: '/user/register',
+        },
     },
     pageNotFound: {
         title: 'routeTitle.error.pageNotFound',
@@ -97,109 +103,126 @@ const Authenticated = () => {
     if (isValidating) {
         return <FullPageSpinner />;
     } else if (combinedGrants.length === 0) {
-        return <NoGrantsFound />;
+        return (
+            <Routes>
+                <Route
+                    path={unauthenticatedRoutes.auth.path}
+                    element={<Auth />}
+                />
+                <Route path={authenticatedRoutes.user.path}>
+                    <Route
+                        path={authenticatedRoutes.user.registration.path}
+                        element={<Registration />}
+                    />
+                </Route>
+                <Route path="*" element={<NoGrantsFound />} />
+            </Routes>
+        );
     } else {
         return (
             <AuthenticatedOnlyContext>
-                <ZustandProvider>
-                    <Routes>
+                <Routes>
+                    {/* TODO (routes) Need to make sure the auth path is handle in any routes. This should be worked into
+                            the move of making routes in JSON objects
+                    */}
+                    <Route
+                        path={unauthenticatedRoutes.auth.path}
+                        element={<Auth />}
+                    />
+                    <Route element={<AppLayout />}>
                         <Route
-                            path={routeDetails.registration.path}
-                            element={<Registration />}
+                            path={authenticatedRoutes.home.path}
+                            element={<Home />}
                         />
-                        <Route element={<AppLayout />}>
+
+                        <Route
+                            path={authenticatedRoutes.connectors.path}
+                            element={<Connectors />}
+                        />
+
+                        <Route
+                            path={authenticatedRoutes.collections.path}
+                            element={<Collections />}
+                        />
+
+                        <Route path={authenticatedRoutes.captures.path}>
                             <Route
-                                path={routeDetails.home.path}
-                                element={<Home />}
+                                path=""
+                                element={
+                                    <RouteStoreProvider
+                                        routeStoreKey={
+                                            authenticatedRoutes.captures.store
+                                                .key
+                                        }
+                                    >
+                                        <Captures />
+                                    </RouteStoreProvider>
+                                }
                             />
-
                             <Route
-                                path={routeDetails.connectors.path}
-                                element={<Connectors />}
-                            />
-
-                            <Route
-                                path={routeDetails.collections.path}
-                                element={<Collections />}
-                            />
-
-                            <Route path={routeDetails.captures.path}>
-                                <Route
-                                    path=""
-                                    element={
-                                        <RouteStoreProvider
-                                            routeStoreKey={
-                                                routeDetails.captures.store.key
-                                            }
-                                        >
-                                            <Captures />
-                                        </RouteStoreProvider>
-                                    }
-                                />
-                                <Route
-                                    path={routeDetails.captures.create.path}
-                                    element={
-                                        <RouteStoreProvider
-                                            routeStoreKey={
-                                                routeDetails.captures.create
-                                                    .store.key
-                                            }
-                                        >
-                                            <CaptureCreate />
-                                        </RouteStoreProvider>
-                                    }
-                                />
-                            </Route>
-
-                            <Route path={routeDetails.materializations.path}>
-                                <Route
-                                    path=""
-                                    element={
-                                        <RouteStoreProvider
-                                            routeStoreKey={
-                                                routeDetails.materializations
-                                                    .store.key
-                                            }
-                                        >
-                                            <Materializations />
-                                        </RouteStoreProvider>
-                                    }
-                                />
-                                <Route
-                                    path={
-                                        routeDetails.materializations.create
-                                            .path
-                                    }
-                                    element={
-                                        <RouteStoreProvider
-                                            routeStoreKey={
-                                                routeDetails.materializations
-                                                    .create.store.key
-                                            }
-                                        >
-                                            <MaterializationCreate />
-                                        </RouteStoreProvider>
-                                    }
-                                />
-                            </Route>
-
-                            <Route
-                                path={routeDetails.admin.path}
-                                element={<Admin />}
-                            />
-                            {!isProduction && (
-                                <Route
-                                    path="test/jsonforms"
-                                    element={<TestJsonForms />}
-                                />
-                            )}
-                            <Route
-                                path={routeDetails.pageNotFound.path}
-                                element={<PageNotFound />}
+                                path={authenticatedRoutes.captures.create.path}
+                                element={
+                                    <RouteStoreProvider
+                                        routeStoreKey={
+                                            authenticatedRoutes.captures.create
+                                                .store.key
+                                        }
+                                    >
+                                        ==
+                                        <CaptureCreate />
+                                    </RouteStoreProvider>
+                                }
                             />
                         </Route>
-                    </Routes>
-                </ZustandProvider>
+
+                        <Route path={authenticatedRoutes.materializations.path}>
+                            <Route
+                                path=""
+                                element={
+                                    <RouteStoreProvider
+                                        routeStoreKey={
+                                            authenticatedRoutes.materializations
+                                                .store.key
+                                        }
+                                    >
+                                        <Materializations />
+                                    </RouteStoreProvider>
+                                }
+                            />
+                            <Route
+                                path={
+                                    authenticatedRoutes.materializations.create
+                                        .path
+                                }
+                                element={
+                                    <RouteStoreProvider
+                                        routeStoreKey={
+                                            authenticatedRoutes.materializations
+                                                .create.store.key
+                                        }
+                                    >
+                                        <MaterializationCreate />
+                                    </RouteStoreProvider>
+                                }
+                            />
+                        </Route>
+
+                        <Route
+                            path={authenticatedRoutes.admin.path}
+                            element={<Admin />}
+                        />
+                        {!isProduction && (
+                            <Route
+                                path="test/jsonforms"
+                                element={<TestJsonForms />}
+                            />
+                        )}
+                        <Route
+                            path={authenticatedRoutes.pageNotFound.path}
+                            element={<PageNotFound />}
+                        />
+                    </Route>
+                </Routes>
             </AuthenticatedOnlyContext>
         );
     }

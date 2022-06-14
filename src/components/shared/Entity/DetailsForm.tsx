@@ -1,7 +1,7 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Alert, Stack, Typography } from '@mui/material';
-import { routeDetails } from 'app/Authenticated';
+import { authenticatedRoutes } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
 import { CATALOG_NAME_SCOPE } from 'forms/renderers/CatalogName';
 import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
@@ -34,7 +34,7 @@ function DetailsForm({
     const intl = useIntl();
     const [searchParams] = useSearchParams();
     const connectorID = searchParams.get(
-        routeDetails.captures.create.params.connectorID
+        authenticatedRoutes.captures.create.params.connectorID
     );
 
     const isSaving = useZustandStore<

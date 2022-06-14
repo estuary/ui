@@ -15,7 +15,7 @@ import {
     useTheme,
 } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
-import { routeDetails } from 'app/Authenticated';
+import { authenticatedRoutes } from 'app/Authenticated';
 import HelpMenu from 'components/menus/HelpMenu';
 import UserMenu from 'components/menus/UserMenu';
 import Logo from 'components/navigation/Logo';
@@ -147,32 +147,32 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                     >
                         <ListItemLink
                             icon={<InputIcon sx={listItemIconSx} />}
-                            title={routeDetails.captures.title}
-                            link={routeDetails.captures.path}
+                            title={authenticatedRoutes.captures.title}
+                            link={authenticatedRoutes.captures.path}
                         />
                         <ListItemLink
                             icon={
                                 <FormatListNumberedIcon sx={listItemIconSx} />
                             }
-                            title={routeDetails.collections.title}
-                            link={routeDetails.collections.path}
+                            title={authenticatedRoutes.collections.title}
+                            link={authenticatedRoutes.collections.path}
                         />
                         <ListItemLink
                             icon={<StorageIcon sx={listItemIconSx} />}
-                            title={routeDetails.materializations.title}
-                            link={routeDetails.materializations.path}
+                            title={authenticatedRoutes.materializations.title}
+                            link={authenticatedRoutes.materializations.path}
                         />
                         <ListItemLink
                             icon={<CableIcon sx={listItemIconSx} />}
-                            title={routeDetails.connectors.title}
-                            link={routeDetails.connectors.path}
+                            title={authenticatedRoutes.connectors.title}
+                            link={authenticatedRoutes.connectors.path}
                         />
                         <ListItemLink
                             icon={
                                 <AdminPanelSettingsIcon sx={listItemIconSx} />
                             }
-                            title={routeDetails.admin.title}
-                            link={routeDetails.admin.path}
+                            title={authenticatedRoutes.admin.title}
+                            link={authenticatedRoutes.admin.path}
                         />
                     </List>
                 </Box>

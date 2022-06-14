@@ -1,5 +1,5 @@
 import { Box, Button, TableCell, TableRow } from '@mui/material';
-import { routeDetails } from 'app/Authenticated';
+import { authenticatedRoutes } from 'app/Authenticated';
 import ConnectorName from 'components/ConnectorName';
 import Link from 'components/tables/Link';
 import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
@@ -78,10 +78,11 @@ function Rows({ data }: Props) {
                                         ) {
                                             navigate(
                                                 getPathWithParam(
-                                                    routeDetails.captures.create
-                                                        .fullPath,
-                                                    routeDetails.captures.create
-                                                        .params.connectorID,
+                                                    authenticatedRoutes.captures
+                                                        .create.fullPath,
+                                                    authenticatedRoutes.captures
+                                                        .create.params
+                                                        .connectorID,
                                                     row.connector_tags[0].id
                                                 )
                                             );
@@ -91,10 +92,10 @@ function Rows({ data }: Props) {
                                         ) {
                                             navigate(
                                                 getPathWithParam(
-                                                    routeDetails
+                                                    authenticatedRoutes
                                                         .materializations.create
                                                         .fullPath,
-                                                    routeDetails
+                                                    authenticatedRoutes
                                                         .materializations.create
                                                         .params.connectorID,
                                                     row.connector_tags[0].id
