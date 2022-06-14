@@ -6,11 +6,7 @@ import Saving from 'components/editor/Status/Saving';
 import ServerDiff from 'components/editor/Status/ServerDiff';
 import { EditorStatus, EditorStoreState } from 'components/editor/Store';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import {
-    CaptureStoreNames,
-    MaterializationStoreNames,
-    useZustandStore,
-} from 'hooks/useZustand';
+import { DraftEditorStoreNames, useZustandStore } from 'hooks/useZustand';
 import { debounce } from 'lodash';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useCallback, useRef, useState } from 'react';
@@ -18,9 +14,7 @@ import { useIntl } from 'react-intl';
 import { stringifyJSON } from 'services/stringify';
 
 export interface Props {
-    draftEditorStoreName:
-        | CaptureStoreNames.DRAFT_SPEC_EDITOR
-        | MaterializationStoreNames.DRAFT_SPEC_EDITOR;
+    draftEditorStoreName: DraftEditorStoreNames;
     disabled?: boolean;
     onChange?: (newVal: any, path: string, specType: string) => any;
     height?: number;

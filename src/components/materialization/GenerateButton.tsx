@@ -6,11 +6,7 @@ import { EditorStoreState } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
-import {
-    CaptureStoreNames,
-    MaterializationStoreNames,
-    useZustandStore,
-} from 'hooks/useZustand';
+import { DraftEditorStoreNames, useZustandStore } from 'hooks/useZustand';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
@@ -19,9 +15,7 @@ import { ENTITY } from 'types';
 interface Props {
     disabled: boolean;
     callFailed: Function;
-    draftEditorStoreName:
-        | CaptureStoreNames.DRAFT_SPEC_EDITOR
-        | MaterializationStoreNames.DRAFT_SPEC_EDITOR;
+    draftEditorStoreName: DraftEditorStoreNames;
 }
 
 function MaterializeGenerateButton({

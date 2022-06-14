@@ -15,7 +15,7 @@ import {
 } from 'components/tables/Store';
 import { useRouteStore } from 'hooks/useRouteStore';
 import useShardsList from 'hooks/useShardsList';
-import { MaterializationStoreNames, useZustandStore } from 'hooks/useZustand';
+import { SelectTableStoreNames, useZustandStore } from 'hooks/useZustand';
 import { useEffect, useState } from 'react';
 import { shardDetailSelectors } from 'stores/ShardDetail';
 import { ENTITY } from 'types';
@@ -131,7 +131,7 @@ function Rows({ data, showEntityStatus }: RowsProps) {
         SelectableTableStore,
         SelectableTableStore['selected']
     >(
-        MaterializationStoreNames.SELECT_TABLE,
+        SelectTableStoreNames.MATERIALIZATION,
         selectableTableStoreSelectors.selected.get
     );
 
@@ -139,7 +139,7 @@ function Rows({ data, showEntityStatus }: RowsProps) {
         SelectableTableStore,
         SelectableTableStore['setSelected']
     >(
-        MaterializationStoreNames.SELECT_TABLE,
+        SelectTableStoreNames.MATERIALIZATION,
         selectableTableStoreSelectors.selected.set
     );
 

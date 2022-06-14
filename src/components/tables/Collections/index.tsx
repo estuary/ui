@@ -5,7 +5,7 @@ import EntityTable, {
     SortDirection,
 } from 'components/tables/EntityTable';
 import { useQuery } from 'hooks/supabase-swr';
-import { CollectionStoreNames } from 'hooks/useZustand';
+import { SelectTableStoreNames } from 'hooks/useZustand';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
 
@@ -67,7 +67,7 @@ function CollectionsTable() {
                 header="collectionsTable.title"
                 headerLink="https://docs.estuary.dev/concepts/#collections"
                 filterLabel="collectionsTable.filterLabel"
-                selectableTableStoreName={CollectionStoreNames.SELECT_TABLE}
+                selectableTableStoreName={SelectTableStoreNames.COLLECTION}
             />
         </Box>
     );

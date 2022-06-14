@@ -1,10 +1,8 @@
 import EditorWithFileSelector from 'components/editor/EditorWithFileSelector';
-import { CaptureStoreNames, MaterializationStoreNames } from 'hooks/useZustand';
+import { DraftEditorStoreNames } from 'hooks/useZustand';
 
 interface Props {
-    draftEditorStoreName:
-        | CaptureStoreNames.DRAFT_SPEC_EDITOR
-        | MaterializationStoreNames.DRAFT_SPEC_EDITOR;
+    draftEditorStoreName: DraftEditorStoreNames;
 }
 
 function LiveSpecEditor({ draftEditorStoreName }: Props) {

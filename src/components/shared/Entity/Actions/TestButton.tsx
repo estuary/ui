@@ -4,11 +4,7 @@ import LogDialog from 'components/shared/Entity/LogDialog';
 import LogDialogActions from 'components/shared/Entity/LogDialogActions';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
-import {
-    CaptureStoreNames,
-    MaterializationStoreNames,
-    useZustandStore,
-} from 'hooks/useZustand';
+import { DraftEditorStoreNames, useZustandStore } from 'hooks/useZustand';
 import { FormattedMessage } from 'react-intl';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 
@@ -16,9 +12,7 @@ interface Props {
     closeLogs: Function;
     callFailed: Function;
     disabled: boolean;
-    draftEditorStoreName:
-        | CaptureStoreNames.DRAFT_SPEC_EDITOR
-        | MaterializationStoreNames.DRAFT_SPEC_EDITOR;
+    draftEditorStoreName: DraftEditorStoreNames;
 }
 
 function EntityTestButton({

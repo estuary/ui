@@ -6,11 +6,7 @@ import {
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
 import { useConfirmationModalContext } from 'context/Confirmation';
-import {
-    CaptureStoreNames,
-    MaterializationStoreNames,
-    useZustandStore,
-} from 'hooks/useZustand';
+import { SelectTableStoreNames, useZustandStore } from 'hooks/useZustand';
 import { ReactNode, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
@@ -23,8 +19,8 @@ interface Props {
     ) => ReactNode;
     messageID: string;
     selectableTableStoreName:
-        | CaptureStoreNames.SELECT_TABLE
-        | MaterializationStoreNames.SELECT_TABLE;
+        | SelectTableStoreNames.CAPTURE
+        | SelectTableStoreNames.MATERIALIZATION;
 }
 
 function RowActionButton({

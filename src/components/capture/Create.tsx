@@ -12,7 +12,7 @@ import { usePrompt } from 'hooks/useBlocker';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { CaptureStoreNames, useZustandStore } from 'hooks/useZustand';
+import { DraftEditorStoreNames, useZustandStore } from 'hooks/useZustand';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
@@ -56,17 +56,17 @@ function CaptureCreate() {
     const setDraftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setId']
-    >(CaptureStoreNames.DRAFT_SPEC_EDITOR, (state) => state.setId);
+    >(DraftEditorStoreNames.CAPTURE, (state) => state.setId);
 
     const pubId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['pubId']
-    >(CaptureStoreNames.DRAFT_SPEC_EDITOR, (state) => state.pubId);
+    >(DraftEditorStoreNames.CAPTURE, (state) => state.pubId);
 
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
-    >(CaptureStoreNames.DRAFT_SPEC_EDITOR, (state) => state.id);
+    >(DraftEditorStoreNames.CAPTURE, (state) => state.id);
 
     // Reset the catalog if the connector changes
     useEffect(() => {
@@ -170,7 +170,7 @@ function CaptureCreate() {
                                 callFailed={helpers.callFailed}
                                 subscription={discoversSubscription}
                                 draftEditorStoreName={
-                                    CaptureStoreNames.DRAFT_SPEC_EDITOR
+                                    DraftEditorStoreNames.CAPTURE
                                 }
                             />
                         }
@@ -180,7 +180,7 @@ function CaptureCreate() {
                                 callFailed={helpers.callFailed}
                                 disabled={!hasConnectors}
                                 draftEditorStoreName={
-                                    CaptureStoreNames.DRAFT_SPEC_EDITOR
+                                    DraftEditorStoreNames.CAPTURE
                                 }
                             />
                         }
@@ -190,14 +190,14 @@ function CaptureCreate() {
                                 callFailed={helpers.callFailed}
                                 disabled={!draftId}
                                 draftEditorStoreName={
-                                    CaptureStoreNames.DRAFT_SPEC_EDITOR
+                                    DraftEditorStoreNames.CAPTURE
                                 }
                                 materialize={handlers.materializeCollections}
                             />
                         }
                     />
                 }
-                draftEditorStoreName={CaptureStoreNames.DRAFT_SPEC_EDITOR}
+                draftEditorStoreName={DraftEditorStoreNames.CAPTURE}
             />
         </PageContainer>
     );

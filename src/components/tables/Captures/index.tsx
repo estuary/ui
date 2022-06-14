@@ -9,7 +9,7 @@ import {
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
 import { useQuery } from 'hooks/supabase-swr';
-import { CaptureStoreNames, useZustandStore } from 'hooks/useZustand';
+import { SelectTableStoreNames, useZustandStore } from 'hooks/useZustand';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
 import { LiveSpecsExtBaseQuery } from 'types';
@@ -47,7 +47,7 @@ function CapturesTable() {
         SelectableTableStore,
         SelectableTableStore['successfulTransformations']
     >(
-        CaptureStoreNames.SELECT_TABLE,
+        SelectTableStoreNames.CAPTURE,
         selectableTableStoreSelectors.successfulTransformations.get
     );
 
@@ -103,11 +103,11 @@ function CapturesTable() {
                 filterLabel="capturesTable.filterLabel"
                 enableSelection
                 rowSelectorProps={{
-                    selectableTableStoreName: CaptureStoreNames.SELECT_TABLE,
+                    selectableTableStoreName: SelectTableStoreNames.CAPTURE,
                     showMaterialize: true,
                 }}
                 showEntityStatus={true}
-                selectableTableStoreName={CaptureStoreNames.SELECT_TABLE}
+                selectableTableStoreName={SelectTableStoreNames.CAPTURE}
             />
         </Box>
     );

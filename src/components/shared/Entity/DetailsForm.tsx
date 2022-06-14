@@ -8,11 +8,7 @@ import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
 import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
-import {
-    CaptureStoreNames,
-    MaterializationStoreNames,
-    useZustandStore,
-} from 'hooks/useZustand';
+import { DraftEditorStoreNames, useZustandStore } from 'hooks/useZustand';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
@@ -27,9 +23,7 @@ import { Grants } from 'types';
 interface Props {
     connectorTags: ConnectorWithTagDetailQuery[];
     accessGrants: Grants[];
-    draftEditorStoreName:
-        | CaptureStoreNames.DRAFT_SPEC_EDITOR
-        | MaterializationStoreNames.DRAFT_SPEC_EDITOR;
+    draftEditorStoreName: DraftEditorStoreNames;
 }
 
 function DetailsForm({

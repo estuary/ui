@@ -5,17 +5,11 @@ import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import Error from 'components/shared/Error';
 import useConnectorTag from 'hooks/useConnectorTag';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import {
-    CaptureStoreNames,
-    MaterializationStoreNames,
-    useZustandStore,
-} from 'hooks/useZustand';
+import { DraftEditorStoreNames, useZustandStore } from 'hooks/useZustand';
 
 interface Props {
     connectorImage: string;
-    draftEditorStoreName:
-        | CaptureStoreNames.DRAFT_SPEC_EDITOR
-        | MaterializationStoreNames.DRAFT_SPEC_EDITOR;
+    draftEditorStoreName: DraftEditorStoreNames;
 }
 
 function EndpointConfig({ connectorImage, draftEditorStoreName }: Props) {

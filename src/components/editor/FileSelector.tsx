@@ -8,18 +8,12 @@ import {
 import { EditorStoreState } from 'components/editor/Store';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { PublicationSpecQuery } from 'hooks/usePublicationSpecs';
-import {
-    CaptureStoreNames,
-    MaterializationStoreNames,
-    useZustandStore,
-} from 'hooks/useZustand';
+import { DraftEditorStoreNames, useZustandStore } from 'hooks/useZustand';
 import { useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
-    draftEditorStoreName:
-        | CaptureStoreNames.DRAFT_SPEC_EDITOR
-        | MaterializationStoreNames.DRAFT_SPEC_EDITOR;
+    draftEditorStoreName: DraftEditorStoreNames;
 }
 
 const initialState = {

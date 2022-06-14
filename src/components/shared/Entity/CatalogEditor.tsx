@@ -4,19 +4,13 @@ import { EditorStoreState } from 'components/editor/Store';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
-import {
-    CaptureStoreNames,
-    MaterializationStoreNames,
-    useZustandStore,
-} from 'hooks/useZustand';
+import { DraftEditorStoreNames, useZustandStore } from 'hooks/useZustand';
 import { FormattedMessage } from 'react-intl';
 import { entityCreateStoreSelectors } from 'stores/Create';
 
 interface Props {
     messageId: string;
-    draftEditorStoreName:
-        | CaptureStoreNames.DRAFT_SPEC_EDITOR
-        | MaterializationStoreNames.DRAFT_SPEC_EDITOR;
+    draftEditorStoreName: DraftEditorStoreNames;
 }
 
 function CatalogEditor({ messageId, draftEditorStoreName }: Props) {

@@ -29,14 +29,7 @@ import {
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
 import { Query, useSelect } from 'hooks/supabase-swr';
-import {
-    CaptureStoreNames,
-    CollectionStoreNames,
-    ConnectorStoreNames,
-    MaterializationStoreNames,
-    AccessGrantsStoreNames,
-    useZustandStore,
-} from 'hooks/useZustand';
+import { SelectTableStoreNames, useZustandStore } from 'hooks/useZustand';
 import { debounce } from 'lodash';
 import {
     ChangeEvent,
@@ -90,12 +83,7 @@ interface Props {
         disableDoclink?: boolean;
     };
     showEntityStatus?: boolean;
-    selectableTableStoreName:
-        | AccessGrantsStoreNames.SELECT_TABLE
-        | CaptureStoreNames.SELECT_TABLE
-        | CollectionStoreNames.SELECT_TABLE
-        | ConnectorStoreNames.SELECT_TABLE
-        | MaterializationStoreNames.SELECT_TABLE;
+    selectableTableStoreName: SelectTableStoreNames;
 }
 
 interface TableState {

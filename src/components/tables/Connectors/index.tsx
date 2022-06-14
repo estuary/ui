@@ -9,7 +9,7 @@ import {
     ConnectorWithTagDetailQuery,
     CONNECTOR_WITH_TAG_QUERY,
 } from 'hooks/useConnectorWithTagDetail';
-import { ConnectorStoreNames } from 'hooks/useZustand';
+import { SelectTableStoreNames } from 'hooks/useZustand';
 import { useState } from 'react';
 import { CONNECTOR_NAME, defaultTableFilter, TABLES } from 'services/supabase';
 
@@ -60,7 +60,7 @@ function ConnectorsTable() {
                 header="connectorTable.title"
                 headerLink="https://docs.estuary.dev/concepts/#connectors"
                 filterLabel="connectorTable.filterLabel"
-                selectableTableStoreName={ConnectorStoreNames.SELECT_TABLE}
+                selectableTableStoreName={SelectTableStoreNames.CONNECTOR}
             />
         </Box>
     );

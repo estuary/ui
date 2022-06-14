@@ -8,19 +8,13 @@ import usePublications from 'hooks/usePublications';
 import usePublicationSpecs, {
     PublicationSpecQuery,
 } from 'hooks/usePublicationSpecs';
-import {
-    CaptureStoreNames,
-    MaterializationStoreNames,
-    useZustandStore,
-} from 'hooks/useZustand';
+import { DraftEditorStoreNames, useZustandStore } from 'hooks/useZustand';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
     lastPubId: string;
-    draftEditorStoreName:
-        | CaptureStoreNames.DRAFT_SPEC_EDITOR
-        | MaterializationStoreNames.DRAFT_SPEC_EDITOR;
+    draftEditorStoreName: DraftEditorStoreNames;
     disableLogs?: boolean;
 }
 

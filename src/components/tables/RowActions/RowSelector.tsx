@@ -9,23 +9,19 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
-import {
-    CaptureStoreNames,
-    MaterializationStoreNames,
-    useZustandStore,
-} from 'hooks/useZustand';
+import { SelectTableStoreNames, useZustandStore } from 'hooks/useZustand';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface RowSelectorProps {
     selectableTableStoreName?:
-        | CaptureStoreNames.SELECT_TABLE
-        | MaterializationStoreNames.SELECT_TABLE;
+        | SelectTableStoreNames.CAPTURE
+        | SelectTableStoreNames.MATERIALIZATION;
     showMaterialize?: boolean;
 }
 
 function RowSelector({
-    selectableTableStoreName = CaptureStoreNames.SELECT_TABLE,
+    selectableTableStoreName = SelectTableStoreNames.CAPTURE,
     showMaterialize,
 }: RowSelectorProps) {
     const intl = useIntl();

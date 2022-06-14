@@ -1,14 +1,14 @@
 import DisableEnableConfirmation from 'components/tables/RowActions/DisableEnable/Confirmation';
 import RowActionButton from 'components/tables/RowActions/Shared/Button';
 import UpdateEntity from 'components/tables/RowActions/Shared/UpdateEntity';
-import { CaptureStoreNames, MaterializationStoreNames } from 'hooks/useZustand';
+import { SelectTableStoreNames } from 'hooks/useZustand';
 import produce from 'immer';
 
 export interface DisableEnableButtonProps {
     enabling: boolean;
     selectableTableStoreName:
-        | CaptureStoreNames.SELECT_TABLE
-        | MaterializationStoreNames.SELECT_TABLE;
+        | SelectTableStoreNames.CAPTURE
+        | SelectTableStoreNames.MATERIALIZATION;
 }
 
 function DisableEnableButton({

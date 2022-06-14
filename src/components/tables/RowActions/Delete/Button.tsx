@@ -1,12 +1,12 @@
 import DeleteConfirmation from 'components/tables/RowActions/Delete/Confirmation';
 import RowActionButton from 'components/tables/RowActions/Shared/Button';
 import UpdateEntity from 'components/tables/RowActions/Shared/UpdateEntity';
-import { CaptureStoreNames, MaterializationStoreNames } from 'hooks/useZustand';
+import { SelectTableStoreNames } from 'hooks/useZustand';
 
 interface Props {
     selectableTableStoreName:
-        | CaptureStoreNames.SELECT_TABLE
-        | MaterializationStoreNames.SELECT_TABLE;
+        | SelectTableStoreNames.CAPTURE
+        | SelectTableStoreNames.MATERIALIZATION;
 }
 
 function DeleteButton({ selectableTableStoreName }: Props) {

@@ -1,6 +1,6 @@
 import { Collapse, Grid, TableCell, TableRow } from '@mui/material';
 import EditorAndLogs from 'components/tables/Details/EditorAndLogs';
-import { CaptureStoreNames, MaterializationStoreNames } from 'hooks/useZustand';
+import { DraftEditorStoreNames } from 'hooks/useZustand';
 import { ENTITY } from 'types';
 import ShardInformation from 'components/tables/Details/ShardInformation';
 import { tableBorderSx } from 'context/Theme';
@@ -11,9 +11,7 @@ interface Props {
     colSpan: number;
     disableLogs?: boolean;
     entityType?: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
-    draftEditorStoreName?:
-        | CaptureStoreNames.DRAFT_SPEC_EDITOR
-        | MaterializationStoreNames.DRAFT_SPEC_EDITOR;
+    draftEditorStoreName?: DraftEditorStoreNames;
 }
 
 function DetailsPanel({
@@ -22,7 +20,7 @@ function DetailsPanel({
     colSpan,
     disableLogs,
     entityType,
-    draftEditorStoreName = CaptureStoreNames.DRAFT_SPEC_EDITOR,
+    draftEditorStoreName = DraftEditorStoreNames.CAPTURE,
 }: Props) {
     return (
         <TableRow>

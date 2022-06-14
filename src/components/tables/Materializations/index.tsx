@@ -9,7 +9,7 @@ import {
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
 import { useQuery } from 'hooks/supabase-swr';
-import { MaterializationStoreNames, useZustandStore } from 'hooks/useZustand';
+import { SelectTableStoreNames, useZustandStore } from 'hooks/useZustand';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
 import { LiveSpecsExtBaseQuery } from 'types';
@@ -47,7 +47,7 @@ function MaterializationsTable() {
         SelectableTableStore,
         SelectableTableStore['successfulTransformations']
     >(
-        MaterializationStoreNames.SELECT_TABLE,
+        SelectTableStoreNames.MATERIALIZATION,
         selectableTableStoreSelectors.successfulTransformations.get
     );
 
@@ -103,9 +103,7 @@ function MaterializationsTable() {
                 filterLabel="materializationsTable.filterLabel"
                 showEntityStatus={true}
                 enableSelection
-                selectableTableStoreName={
-                    MaterializationStoreNames.SELECT_TABLE
-                }
+                selectableTableStoreName={SelectTableStoreNames.MATERIALIZATION}
             />
         </Box>
     );

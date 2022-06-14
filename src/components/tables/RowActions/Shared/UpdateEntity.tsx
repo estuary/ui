@@ -18,11 +18,7 @@ import {
     useLiveSpecsExtWithSpec,
 } from 'hooks/useLiveSpecsExt';
 import usePublications from 'hooks/usePublications';
-import {
-    CaptureStoreNames,
-    MaterializationStoreNames,
-    useZustandStore,
-} from 'hooks/useZustand';
+import { SelectTableStoreNames, useZustandStore } from 'hooks/useZustand';
 import { useEffect, useState } from 'react';
 import { jobSucceeded } from 'services/supabase';
 import { ENTITY } from 'types';
@@ -37,8 +33,8 @@ export interface UpdateEntityProps {
     runningMessageID: SharedProgressProps['runningMessageID'];
     successMessageID: SharedProgressProps['successMessageID'];
     selectableStoreName:
-        | CaptureStoreNames.SELECT_TABLE
-        | MaterializationStoreNames.SELECT_TABLE;
+        | SelectTableStoreNames.CAPTURE
+        | SelectTableStoreNames.MATERIALIZATION;
 }
 
 function UpdateEntity({

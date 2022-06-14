@@ -5,7 +5,7 @@ import EntityTable, {
     SortDirection,
 } from 'components/tables/EntityTable';
 import { useQuery } from 'hooks/supabase-swr';
-import { AccessGrantsStoreNames } from 'hooks/useZustand';
+import { SelectTableStoreNames } from 'hooks/useZustand';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
 
@@ -60,7 +60,7 @@ function AccessGrantsTable() {
                 headerLink="https://docs.estuary.dev/reference/authentication/"
                 filterLabel="accessGrantsTable.filterLabel"
                 tableDescriptionId="admin.roles.message"
-                selectableTableStoreName={AccessGrantsStoreNames.SELECT_TABLE}
+                selectableTableStoreName={SelectTableStoreNames.ACCESS_GRANTS}
             />
         </Box>
     );

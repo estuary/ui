@@ -12,7 +12,7 @@ import { usePrompt } from 'hooks/useBlocker';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { MaterializationStoreNames, useZustandStore } from 'hooks/useZustand';
+import { DraftEditorStoreNames, useZustandStore } from 'hooks/useZustand';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
@@ -54,12 +54,12 @@ function MaterializationCreate() {
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
-    >(MaterializationStoreNames.DRAFT_SPEC_EDITOR, (state) => state.id);
+    >(DraftEditorStoreNames.MATERIALIZATION, (state) => state.id);
 
     const setDraftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setId']
-    >(MaterializationStoreNames.DRAFT_SPEC_EDITOR, (state) => state.setId);
+    >(DraftEditorStoreNames.MATERIALIZATION, (state) => state.setId);
 
     // Reset the catalog if the connector changes
     useEffect(() => {
@@ -132,7 +132,7 @@ function MaterializationCreate() {
                                 disabled={!hasConnectors}
                                 callFailed={helpers.callFailed}
                                 draftEditorStoreName={
-                                    MaterializationStoreNames.DRAFT_SPEC_EDITOR
+                                    DraftEditorStoreNames.MATERIALIZATION
                                 }
                             />
                         }
@@ -142,7 +142,7 @@ function MaterializationCreate() {
                                 callFailed={helpers.callFailed}
                                 closeLogs={handlers.closeLogs}
                                 draftEditorStoreName={
-                                    MaterializationStoreNames.DRAFT_SPEC_EDITOR
+                                    DraftEditorStoreNames.MATERIALIZATION
                                 }
                             />
                         }
@@ -152,7 +152,7 @@ function MaterializationCreate() {
                                 callFailed={helpers.callFailed}
                                 closeLogs={handlers.closeLogs}
                                 draftEditorStoreName={
-                                    MaterializationStoreNames.DRAFT_SPEC_EDITOR
+                                    DraftEditorStoreNames.MATERIALIZATION
                                 }
                             />
                         }
@@ -161,9 +161,7 @@ function MaterializationCreate() {
                         }
                     />
                 }
-                draftEditorStoreName={
-                    MaterializationStoreNames.DRAFT_SPEC_EDITOR
-                }
+                draftEditorStoreName={DraftEditorStoreNames.MATERIALIZATION}
             />
         </PageContainer>
     );
