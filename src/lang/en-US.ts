@@ -67,6 +67,8 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.logout': `Logout`,
     'cta.materialize': `Materialize`,
     'cta.register': `Sign up`,
+    'cta.resetPassword': `Reset Password`,
+    'cta.magicLink': `Sign in with magic link`,
     'cta.clickHere': `Click here`,
     'cta.details': `Details`,
     'cta.saveEntity': `Save and publish`,
@@ -154,6 +156,17 @@ const PageNotFound: ResolvedIntlConfig['messages'] = {
     'pageNotFound.message': `Try searching for a page below or go directly to your {dashboard}.`,
 };
 
+// TODO (password reset) not active
+const PasswordReset: ResolvedIntlConfig['messages'] = {
+    'passwordReset.heading': `Password Reset`,
+    'passwordReset.main': `Enter your new password below.`,
+    'email.description': `The email address associated with your ${CommonMessages.productName} Account`,
+    'email.label': `Email`,
+    'password.description': `Pleasae provide a safe and secure password`,
+    'password.label': `Password`,
+    'confirmPassword.label': `Confirm Password`,
+};
+
 const Registration: ResolvedIntlConfig['messages'] = {
     'register.heading': `We're currently accepting Beta partners.`,
     'register.main.message': `Please enter your information and our team will approve your account.`,
@@ -171,8 +184,18 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
     'login.oidc.message': `Sign in to continue to ${CommonMessages.productName}.`,
     'login.documentAcknowledgement': `By accessing ${CommonMessages.productName} you agree to our {terms} and {privacy}.`,
     'login.jwtExpired': 'Your authorization has expired. Please sign in again.',
-    'login.separator': 'or continue with',
+
+    'login.passwordReset': 'You should not need to reset your password.',
+
+    'login.magicLink': 'Magic link sent. Please check your email.',
+    'login.magicLink.failed': 'Failed. Please try again.',
+    'login.email.description': `Any valid email you want to use to sign in with`,
+    'login.email.label': `Email`,
+
+    'login.separator': 'or',
+    'login.loginFailed': 'Failed to sign in',
     'login.loginFailed.google': 'Failed to sign in with Google',
+    'login.userNotFound': 'User not found. Please sign up below.',
 };
 
 const EntityStatus: ResolvedIntlConfig['messages'] = {
@@ -215,10 +238,11 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.error.pageNotFound': `Page Not Found`,
     'routeTitle.login': `Login`,
     'routeTitle.loginLoading': `Checking Credentials`,
-    'routeTitle.noGrants': `Access Denied`,
+    'routeTitle.noGrants': `Signed Up`,
     'routeTitle.materializationCreate': `Create Materialization`,
     'routeTitle.materializations': `Materializations`,
     'routeTitle.registration': `Registration`,
+    'routeTitle.passwordReset': `Password Reset`,
 };
 
 const BrowserTitles: ResolvedIntlConfig['messages'] = {
@@ -236,6 +260,7 @@ const BrowserTitles: ResolvedIntlConfig['messages'] = {
     'browserTitle.materializationCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationCreate']}`,
     'browserTitle.materializations': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializations']}`,
     'browserTitle.registration': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.registration']}`,
+    'browserTitle.passwordReset': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.passwordReset']}`,
 };
 
 const LogsDialog: ResolvedIntlConfig['messages'] = {
@@ -446,6 +471,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...EntityTable,
     ...Home,
     ...PageNotFound,
+    ...PasswordReset,
     ...Registration,
     ...AdminPage,
     ...MonacoEditor,

@@ -1,12 +1,10 @@
-import { logoutRoutes } from 'app/Unauthenticated';
 import useClient from 'hooks/supabase-swr/hooks/useClient';
 import LRU from 'lru-cache';
-import { LogoutReasons } from 'pages/Login';
-import { useNavigate } from 'react-router';
+import { useSnackbar } from 'notistack';
+import { useIntl } from 'react-intl';
 import { ERROR_MESSAGES } from 'services/supabase';
 import { SWRConfig } from 'swr';
 import { BaseComponentProps } from 'types';
-import { getPathWithParam } from 'utils/misc-utils';
 
 export const singleCallSettings = {
     revalidateIfStale: false,
@@ -18,7 +16,8 @@ export const DEFAULT_POLLING = 2500;
 
 const SwrConfigProvider = ({ children }: BaseComponentProps) => {
     const supabaseClient = useClient();
-    const navigate = useNavigate();
+    const intl = useIntl();
+    const { enqueueSnackbar } = useSnackbar();
 
     const cache = () => {
         return new LRU({
@@ -26,19 +25,23 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
         });
     };
 
-    const errorHandler = (error: any) => {
+    const errorHandler = async (error: any) => {
         // Handle JWT tokens expiring
         if (error.message === ERROR_MESSAGES.jwtExpired) {
-            supabaseClient.auth
+            await supabaseClient.auth
                 .signOut()
                 .then(() => {
-                    navigate(
-                        getPathWithParam(
-                            logoutRoutes.path,
-                            logoutRoutes.params.reason,
-                            LogoutReasons.JWT
-                        ),
-                        { replace: true }
+                    enqueueSnackbar(
+                        intl.formatMessage({
+                            id: 'login.jwtExpired',
+                        }),
+                        {
+                            anchorOrigin: {
+                                vertical: 'top',
+                                horizontal: 'center',
+                            },
+                            variant: 'error',
+                        }
                     );
                 })
                 .catch(() => {});

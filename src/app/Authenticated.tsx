@@ -1,4 +1,5 @@
 import NoGrantsFound from 'app/NoGrantsFound';
+import { unauthenticatedRoutes } from 'app/Unauthenticated';
 import AppLayout from 'AppLayout';
 import CaptureCreate from 'components/capture/Create';
 import { createEditorStore, DraftSpecEditorKey } from 'components/editor/Store';
@@ -10,6 +11,7 @@ import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import { RouteStoreProvider } from 'hooks/useRouteStore';
 import { ZustandProvider } from 'hooks/useZustand';
 import Admin from 'pages/Admin';
+import Auth from 'pages/Auth';
 import Captures from 'pages/Captures';
 import Collections from 'pages/Collections';
 import Connectors from 'pages/Connectors';
@@ -22,7 +24,7 @@ import { Route, Routes } from 'react-router';
 import { Stores } from 'stores/Repo';
 import { isProduction } from 'utils/env-utils';
 
-export const routeDetails = {
+export const authenticatedRoutes = {
     admin: {
         title: 'routeTitle.admin',
         path: '/admin',
@@ -76,9 +78,14 @@ export const routeDetails = {
             },
         },
     },
-    registration: {
-        title: 'routeTitle.registration',
-        path: '/register',
+    user: {
+        title: 'routeTitle.user',
+        path: '/user',
+        registration: {
+            title: 'routeTitle.registration',
+            path: 'register',
+            fullPath: '/user/register',
+        },
     },
     pageNotFound: {
         title: 'routeTitle.error.pageNotFound',
@@ -98,38 +105,56 @@ const Authenticated = () => {
     if (isValidating) {
         return <FullPageSpinner />;
     } else if (combinedGrants.length === 0) {
-        return <NoGrantsFound />;
+        return (
+            <Routes>
+                <Route
+                    path={unauthenticatedRoutes.auth.path}
+                    element={<Auth />}
+                />
+                <Route path={authenticatedRoutes.user.path}>
+                    <Route
+                        path={authenticatedRoutes.user.registration.path}
+                        element={<Registration />}
+                    />
+                </Route>
+                <Route path="*" element={<NoGrantsFound />} />
+            </Routes>
+        );
     } else {
         return (
             <AuthenticatedOnlyContext>
                 <Routes>
+                    {/* TODO (routes) Need to make sure the auth path is handle in any routes. This should be worked into
+                            the move of making routes in JSON objects
+                    */}
                     <Route
-                        path={routeDetails.registration.path}
-                        element={<Registration />}
+                        path={unauthenticatedRoutes.auth.path}
+                        element={<Auth />}
                     />
                     <Route element={<AppLayout />}>
                         <Route
-                            path={routeDetails.home.path}
+                            path={authenticatedRoutes.home.path}
                             element={<Home />}
                         />
 
                         <Route
-                            path={routeDetails.connectors.path}
+                            path={authenticatedRoutes.connectors.path}
                             element={<Connectors />}
                         />
 
                         <Route
-                            path={routeDetails.collections.path}
+                            path={authenticatedRoutes.collections.path}
                             element={<Collections />}
                         />
 
-                        <Route path={routeDetails.captures.path}>
+                        <Route path={authenticatedRoutes.captures.path}>
                             <Route
                                 path=""
                                 element={
                                     <RouteStoreProvider
                                         routeStoreKey={
-                                            routeDetails.captures.store.key
+                                            authenticatedRoutes.captures.store
+                                                .key
                                         }
                                     >
                                         <Captures />
@@ -137,12 +162,12 @@ const Authenticated = () => {
                                 }
                             />
                             <Route
-                                path={routeDetails.captures.create.path}
+                                path={authenticatedRoutes.captures.create.path}
                                 element={
                                     <RouteStoreProvider
                                         routeStoreKey={
-                                            routeDetails.captures.create.store
-                                                .key
+                                            authenticatedRoutes.captures.create
+                                                .store.key
                                         }
                                     >
                                         <ZustandProvider
@@ -156,14 +181,14 @@ const Authenticated = () => {
                             />
                         </Route>
 
-                        <Route path={routeDetails.materializations.path}>
+                        <Route path={authenticatedRoutes.materializations.path}>
                             <Route
                                 path=""
                                 element={
                                     <RouteStoreProvider
                                         routeStoreKey={
-                                            routeDetails.materializations.store
-                                                .key
+                                            authenticatedRoutes.materializations
+                                                .store.key
                                         }
                                     >
                                         <Materializations />
@@ -171,12 +196,15 @@ const Authenticated = () => {
                                 }
                             />
                             <Route
-                                path={routeDetails.materializations.create.path}
+                                path={
+                                    authenticatedRoutes.materializations.create
+                                        .path
+                                }
                                 element={
                                     <RouteStoreProvider
                                         routeStoreKey={
-                                            routeDetails.materializations.create
-                                                .store.key
+                                            authenticatedRoutes.materializations
+                                                .create.store.key
                                         }
                                     >
                                         <ZustandProvider
@@ -191,7 +219,7 @@ const Authenticated = () => {
                         </Route>
 
                         <Route
-                            path={routeDetails.admin.path}
+                            path={authenticatedRoutes.admin.path}
                             element={<Admin />}
                         />
                         {!isProduction && (
@@ -201,7 +229,7 @@ const Authenticated = () => {
                             />
                         )}
                         <Route
-                            path={routeDetails.pageNotFound.path}
+                            path={authenticatedRoutes.pageNotFound.path}
                             element={<PageNotFound />}
                         />
                     </Route>

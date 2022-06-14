@@ -1,5 +1,5 @@
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import { routeDetails } from 'app/Authenticated';
+import { authenticatedRoutes } from 'app/Authenticated';
 import ExpandableResourceConfig from 'components/collection/ExpandableResourceConfig';
 import CollectionSelector from 'components/collection/Selector';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
@@ -25,7 +25,7 @@ function CollectionConfig() {
 
     const [searchParams] = useSearchParams();
     const specID = searchParams.get(
-        routeDetails.materializations.create.params.specID
+        authenticatedRoutes.materializations.create.params.specID
     );
 
     const resourceConfigHasErrors = useEntityCreateStore(
