@@ -8,7 +8,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { useInterval } from 'react-use';
 import { DEFAULT_POLLING_INTERVAL, RPCS } from 'services/supabase';
 
-interface Props {
+export interface LogProps {
     token: string | null;
     height?: number;
     defaultMessage?: string;
@@ -36,7 +36,7 @@ function Logs({
     height,
     disableIntervalFetching,
     fetchAll,
-}: Props) {
+}: LogProps) {
     const theme = useTheme();
     const supabaseClient = useClient();
     const intl = useIntl();
@@ -56,6 +56,10 @@ function Logs({
                 id: 'logs.default',
             }),
     ]);
+
+    const displayRestart =
+        !disableIntervalFetching && MAX_EMPTY_CALLS < emptyResponses;
+    const heightVal = height ?? 200;
 
     const fetchLogs = async () => {
         const queryParams = {
@@ -110,11 +114,7 @@ function Logs({
 
     return (
         <Box>
-            <Collapse
-                in={
-                    !disableIntervalFetching && MAX_EMPTY_CALLS < emptyResponses
-                }
-            >
+            <Collapse in={displayRestart}>
                 <Paper
                     elevation={0}
                     sx={{
@@ -135,7 +135,7 @@ function Logs({
                 </Paper>
             </Collapse>
             <Editor
-                height={`${height ?? 200}px`}
+                height={`${heightVal}px`}
                 defaultLanguage=""
                 theme={theme.palette.mode === 'light' ? 'vs' : 'vs-dark'}
                 options={{

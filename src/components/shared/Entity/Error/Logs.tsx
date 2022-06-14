@@ -6,16 +6,25 @@ import {
     Box,
     Typography,
 } from '@mui/material';
-import Logs from 'components/Logs';
+import Logs, { type LogProps } from 'components/Logs';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { FormattedMessage } from 'react-intl';
 
 export interface ErrorLogsProps {
     logToken?: string | null;
     defaultOpen?: boolean;
+    height?: number;
+    logProps?: Omit<LogProps, 'token' | 'height'>;
 }
 
-function ErrorLogs({ logToken, defaultOpen }: ErrorLogsProps) {
+function ErrorLogs({
+    logToken,
+    defaultOpen,
+    height,
+    logProps,
+}: ErrorLogsProps) {
+    const heightVal = height ?? 250;
+
     if (logToken) {
         return (
             <Accordion
@@ -31,11 +40,15 @@ function ErrorLogs({ logToken, defaultOpen }: ErrorLogsProps) {
                     <Box
                         sx={{
                             width: '100%',
-                            height: 250,
+                            height: heightVal,
                         }}
                     >
                         <ErrorBoundryWrapper>
-                            <Logs token={logToken} />
+                            <Logs
+                                {...logProps}
+                                token={logToken}
+                                height={heightVal}
+                            />
                         </ErrorBoundryWrapper>
                     </Box>
                 </AccordionDetails>
