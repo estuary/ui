@@ -43,10 +43,7 @@ function UpdateEntity({
     const [pubID, setPubID] = useState<string | null>(null);
     const [logToken, setLogToken] = useState<string | null>(null);
 
-    const { liveSpecs } = useLiveSpecsExtWithSpec(
-        entity.last_pub_id,
-        entity.spec_type
-    );
+    const { liveSpecs } = useLiveSpecsExtWithSpec(entity.id, entity.spec_type);
 
     useEffect(() => {
         const failed = (response: any) => {
