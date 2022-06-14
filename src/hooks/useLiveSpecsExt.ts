@@ -58,9 +58,7 @@ function useLiveSpecsExt(
 
                       return query
                           .eq('spec_type', specType)
-                          .or(
-                              `id.in.(${draftArray}),last_pub_id.in.(${draftArray})`
-                          );
+                          .or(`id.in.(${draftArray})`);
                   }
                 : undefined,
         },
