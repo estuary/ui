@@ -4,9 +4,8 @@ import EntityTable, {
     getPagination,
     SortDirection,
 } from 'components/tables/EntityTable';
-import { createSelectableTableStore } from 'components/tables/Store';
 import { useQuery } from 'hooks/supabase-swr';
-import { ZustandProvider } from 'hooks/useZustand';
+import { CollectionStoreNames } from 'hooks/useZustand';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
 
@@ -49,31 +48,27 @@ function CollectionsTable() {
 
     return (
         <Box>
-            <ZustandProvider
-                createStore={createSelectableTableStore}
-                storeName="Collections-Selectable-Table"
-            >
-                <EntityTable
-                    noExistingDataContentIds={{
-                        header: 'collections.message1',
-                        message: 'collections.message2',
-                    }}
-                    columns={tableColumns}
-                    query={liveSpecQuery}
-                    renderTableRows={(data, showEntityStatus) => (
-                        <Rows data={data} showEntityStatus={showEntityStatus} />
-                    )}
-                    setPagination={setPagination}
-                    setSearchQuery={setSearchQuery}
-                    sortDirection={sortDirection}
-                    setSortDirection={setSortDirection}
-                    columnToSort={columnToSort}
-                    setColumnToSort={setColumnToSort}
-                    header="collectionsTable.title"
-                    headerLink="https://docs.estuary.dev/concepts/#collections"
-                    filterLabel="collectionsTable.filterLabel"
-                />
-            </ZustandProvider>
+            <EntityTable
+                noExistingDataContentIds={{
+                    header: 'collections.message1',
+                    message: 'collections.message2',
+                }}
+                columns={tableColumns}
+                query={liveSpecQuery}
+                renderTableRows={(data, showEntityStatus) => (
+                    <Rows data={data} showEntityStatus={showEntityStatus} />
+                )}
+                setPagination={setPagination}
+                setSearchQuery={setSearchQuery}
+                sortDirection={sortDirection}
+                setSortDirection={setSortDirection}
+                columnToSort={columnToSort}
+                setColumnToSort={setColumnToSort}
+                header="collectionsTable.title"
+                headerLink="https://docs.estuary.dev/concepts/#collections"
+                filterLabel="collectionsTable.filterLabel"
+                selectableTableStoreName={CollectionStoreNames.SELECT_TABLE}
+            />
         </Box>
     );
 }

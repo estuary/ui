@@ -1,5 +1,7 @@
+import { createEditorStore } from 'components/editor/Store';
+import { createSelectableTableStore } from 'components/tables/Store';
 import {
-    createContext as reactCreateContext,
+    createContext as createReactContext,
     ReactNode,
     useContext,
 } from 'react';
@@ -7,7 +9,6 @@ import useConstant from 'use-constant';
 import { StateSelector, StoreApi, useStore } from 'zustand';
 
 interface ZustandProviderProps {
-    storeOptions: { [storeName: string]: (storeName: string) => unknown };
     children: ReactNode;
 }
 
@@ -21,11 +22,47 @@ export enum MaterializationStoreNames {
     DRAFT_SPEC_EDITOR = 'draftSpecEditor-Materializations',
 }
 
-export const ZustandContext = reactCreateContext<any | null>(null);
-export const ZustandProvider = ({
-    storeOptions,
-    children,
-}: ZustandProviderProps) => {
+export enum AccessGrantsStoreNames {
+    SELECT_TABLE = 'AccessGrants-Selectable-Table',
+}
+
+export enum CollectionStoreNames {
+    SELECT_TABLE = 'Collections-Selectable-Table',
+}
+
+export enum ConnectorStoreNames {
+    SELECT_TABLE = 'Connectors-Selectable-Table',
+}
+
+const stores = {
+    [CaptureStoreNames.SELECT_TABLE]: createSelectableTableStore(
+        CaptureStoreNames.SELECT_TABLE
+    ),
+    [CaptureStoreNames.DRAFT_SPEC_EDITOR]: createEditorStore(
+        CaptureStoreNames.DRAFT_SPEC_EDITOR
+    ),
+    [MaterializationStoreNames.SELECT_TABLE]: createSelectableTableStore(
+        MaterializationStoreNames.SELECT_TABLE
+    ),
+    [MaterializationStoreNames.DRAFT_SPEC_EDITOR]: createEditorStore(
+        MaterializationStoreNames.DRAFT_SPEC_EDITOR
+    ),
+    [AccessGrantsStoreNames.SELECT_TABLE]: createSelectableTableStore(
+        AccessGrantsStoreNames.SELECT_TABLE
+    ),
+    [CollectionStoreNames.SELECT_TABLE]: createSelectableTableStore(
+        CollectionStoreNames.SELECT_TABLE
+    ),
+    [ConnectorStoreNames.SELECT_TABLE]: createSelectableTableStore(
+        ConnectorStoreNames.SELECT_TABLE
+    ),
+};
+
+export const ZustandContext = createReactContext<any | null>(null);
+
+export const ZustandProvider = ({ children }: ZustandProviderProps) => {
+    const storeOptions = useConstant(() => stores);
+
     return (
         <ZustandContext.Provider value={storeOptions}>
             {children}
@@ -43,9 +80,7 @@ export const useZustandStore = <S extends Object, U>(
     equalityFn?: any
 ) => {
     const storeOptions = useContext(ZustandContext);
-    const createStore = storeOptions[storeName];
-
-    const store = useConstant(() => createStore(storeName));
+    const store = storeOptions[storeName];
 
     return useStore<StoreApi<S>, ReturnType<typeof selector>>(
         store,

@@ -1,19 +1,13 @@
 import NoGrantsFound from 'app/NoGrantsFound';
 import AppLayout from 'AppLayout';
 import CaptureCreate from 'components/capture/Create';
-import { createEditorStore } from 'components/editor/Store';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import MaterializationCreate from 'components/materialization/Create';
-import { createSelectableTableStore } from 'components/tables/Store';
 import AuthenticatedOnlyContext from 'context/Authenticated';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import { RouteStoreProvider } from 'hooks/useRouteStore';
-import {
-    CaptureStoreNames,
-    MaterializationStoreNames,
-    ZustandProvider,
-} from 'hooks/useZustand';
+import { ZustandProvider } from 'hooks/useZustand';
 import Admin from 'pages/Admin';
 import Captures from 'pages/Captures';
 import Collections from 'pages/Collections';
@@ -107,18 +101,7 @@ const Authenticated = () => {
     } else {
         return (
             <AuthenticatedOnlyContext>
-                <ZustandProvider
-                    storeOptions={{
-                        [CaptureStoreNames.SELECT_TABLE]:
-                            createSelectableTableStore,
-                        [CaptureStoreNames.DRAFT_SPEC_EDITOR]:
-                            createEditorStore,
-                        [MaterializationStoreNames.SELECT_TABLE]:
-                            createSelectableTableStore,
-                        [MaterializationStoreNames.DRAFT_SPEC_EDITOR]:
-                            createEditorStore,
-                    }}
-                >
+                <ZustandProvider>
                     <Routes>
                         <Route
                             path={routeDetails.registration.path}

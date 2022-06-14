@@ -6,7 +6,11 @@ import Saving from 'components/editor/Status/Saving';
 import ServerDiff from 'components/editor/Status/ServerDiff';
 import { EditorStatus, EditorStoreState } from 'components/editor/Store';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { useZustandStore } from 'hooks/useZustand';
+import {
+    CaptureStoreNames,
+    MaterializationStoreNames,
+    useZustandStore,
+} from 'hooks/useZustand';
 import { debounce } from 'lodash';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useCallback, useRef, useState } from 'react';
@@ -14,6 +18,9 @@ import { useIntl } from 'react-intl';
 import { stringifyJSON } from 'services/stringify';
 
 export interface Props {
+    draftEditorStoreName:
+        | CaptureStoreNames.DRAFT_SPEC_EDITOR
+        | MaterializationStoreNames.DRAFT_SPEC_EDITOR;
     disabled?: boolean;
     onChange?: (newVal: any, path: string, specType: string) => any;
     height?: number;
@@ -26,6 +33,7 @@ export const DEFAULT_TOTAL_HEIGHT = DEFAULT_TOOLBAR_HEIGHT + DEFAULT_HEIGHT;
 const ICON_SIZE = 15;
 
 function MonacoEditor({
+    draftEditorStoreName,
     disabled,
     height = DEFAULT_HEIGHT,
     onChange,
@@ -40,22 +48,22 @@ function MonacoEditor({
     const serverUpdate = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['serverUpdate']
-    >((state) => state.serverUpdate);
+    >(draftEditorStoreName, (state) => state.serverUpdate);
 
     const currentCatalog = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['currentCatalog']
-    >((state) => state.currentCatalog);
+    >(draftEditorStoreName, (state) => state.currentCatalog);
 
     const status = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['status']
-    >((state) => state.status);
+    >(draftEditorStoreName, (state) => state.status);
 
     const setStatus = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setStatus']
-    >((state) => state.setStatus);
+    >(draftEditorStoreName, (state) => state.setStatus);
 
     const [showServerDiff, setShowServerDiff] = useState(false);
 

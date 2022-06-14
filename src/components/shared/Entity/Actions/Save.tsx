@@ -5,7 +5,11 @@ import { buttonSx } from 'components/shared/Entity/Header';
 import { useClient } from 'hooks/supabase-swr';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { useZustandStore } from 'hooks/useZustand';
+import {
+    CaptureStoreNames,
+    MaterializationStoreNames,
+    useZustandStore,
+} from 'hooks/useZustand';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { endSubscription, startSubscription, TABLES } from 'services/supabase';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
@@ -16,10 +20,18 @@ import useNotificationStore, {
 interface Props {
     disabled: boolean;
     onFailure: Function;
+    draftEditorStoreName:
+        | CaptureStoreNames.DRAFT_SPEC_EDITOR
+        | MaterializationStoreNames.DRAFT_SPEC_EDITOR;
     dryRun?: boolean;
 }
 
-function EntityCreateSave({ disabled, dryRun, onFailure }: Props) {
+function EntityCreateSave({
+    disabled,
+    dryRun,
+    onFailure,
+    draftEditorStoreName,
+}: Props) {
     const intl = useIntl();
     const supabaseClient = useClient();
 
@@ -28,17 +40,17 @@ function EntityCreateSave({ disabled, dryRun, onFailure }: Props) {
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
-    >((state) => state.id);
+    >(draftEditorStoreName, (state) => state.id);
 
     const setPubId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setPubId']
-    >((state) => state.setPubId);
+    >(draftEditorStoreName, (state) => state.setPubId);
 
     const isSaving = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['isSaving']
-    >((state) => state.isSaving);
+    >(draftEditorStoreName, (state) => state.isSaving);
 
     const showNotification = useNotificationStore(
         notificationStoreSelectors.showNotification

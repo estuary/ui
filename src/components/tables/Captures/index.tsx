@@ -12,7 +12,7 @@ import { useQuery } from 'hooks/supabase-swr';
 import { CaptureStoreNames, useZustandStore } from 'hooks/useZustand';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
-import { ENTITY, LiveSpecsExtBaseQuery } from 'types';
+import { LiveSpecsExtBaseQuery } from 'types';
 
 export interface LiveSpecsExtQuery extends LiveSpecsExtBaseQuery {
     writes_to: string[];
@@ -102,12 +102,12 @@ function CapturesTable() {
                 headerLink="https://docs.estuary.dev/concepts/#captures"
                 filterLabel="capturesTable.filterLabel"
                 enableSelection
-                entityType={ENTITY.CAPTURE}
                 rowSelectorProps={{
-                    entityType: ENTITY.CAPTURE,
+                    selectableTableStoreName: CaptureStoreNames.SELECT_TABLE,
                     showMaterialize: true,
                 }}
                 showEntityStatus={true}
+                selectableTableStoreName={CaptureStoreNames.SELECT_TABLE}
             />
         </Box>
     );

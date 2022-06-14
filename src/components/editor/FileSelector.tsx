@@ -8,9 +8,19 @@ import {
 import { EditorStoreState } from 'components/editor/Store';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { PublicationSpecQuery } from 'hooks/usePublicationSpecs';
-import { useZustandStore } from 'hooks/useZustand';
+import {
+    CaptureStoreNames,
+    MaterializationStoreNames,
+    useZustandStore,
+} from 'hooks/useZustand';
 import { useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+
+interface Props {
+    draftEditorStoreName:
+        | CaptureStoreNames.DRAFT_SPEC_EDITOR
+        | MaterializationStoreNames.DRAFT_SPEC_EDITOR;
+}
 
 const initialState = {
     columns: {
@@ -50,30 +60,30 @@ const columns: GridColDef[] = [
     },
 ];
 
-function EditorFileSelector() {
+function EditorFileSelector({ draftEditorStoreName }: Props) {
     const initDone = useRef(false);
 
     const isSaving = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['isSaving']
-    >((state) => state.isSaving);
+    >(draftEditorStoreName, (state) => state.isSaving);
 
     const isEditing = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['isEditing']
-    >((state) => state.isEditing);
+    >(draftEditorStoreName, (state) => state.isEditing);
 
     const setCurrentCatalog = useZustandStore<
         EditorStoreState<PublicationSpecQuery | DraftSpecQuery>,
         EditorStoreState<
             PublicationSpecQuery | DraftSpecQuery
         >['setCurrentCatalog']
-    >((state) => state.setCurrentCatalog);
+    >(draftEditorStoreName, (state) => state.setCurrentCatalog);
 
     const specs = useZustandStore<
         EditorStoreState<PublicationSpecQuery | DraftSpecQuery>,
         EditorStoreState<PublicationSpecQuery | DraftSpecQuery>['specs']
-    >((state) => state.specs);
+    >(draftEditorStoreName, (state) => state.specs);
 
     const [selectionModel, setSelectionModel] = useState<GridSelectionModel>(
         []

@@ -1,8 +1,15 @@
 import DeleteConfirmation from 'components/tables/RowActions/Delete/Confirmation';
 import RowActionButton from 'components/tables/RowActions/Shared/Button';
 import UpdateEntity from 'components/tables/RowActions/Shared/UpdateEntity';
+import { CaptureStoreNames, MaterializationStoreNames } from 'hooks/useZustand';
 
-function DeleteButton() {
+interface Props {
+    selectableTableStoreName:
+        | CaptureStoreNames.SELECT_TABLE
+        | MaterializationStoreNames.SELECT_TABLE;
+}
+
+function DeleteButton({ selectableTableStoreName }: Props) {
     const generator = () => null;
 
     return (
@@ -17,9 +24,11 @@ function DeleteButton() {
                     runningMessageID="common.deleting"
                     generateNewSpec={generator}
                     generateNewSpecType={generator}
+                    selectableStoreName={selectableTableStoreName}
                 />
             )}
             messageID="cta.delete"
+            selectableTableStoreName={selectableTableStoreName}
         />
     );
 }

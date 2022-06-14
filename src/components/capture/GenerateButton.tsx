@@ -6,7 +6,11 @@ import { EditorStoreState } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { useZustandStore } from 'hooks/useZustand';
+import {
+    CaptureStoreNames,
+    MaterializationStoreNames,
+    useZustandStore,
+} from 'hooks/useZustand';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
@@ -15,23 +19,31 @@ interface Props {
     disabled: boolean;
     callFailed: Function;
     subscription: Function;
+    draftEditorStoreName:
+        | CaptureStoreNames.DRAFT_SPEC_EDITOR
+        | MaterializationStoreNames.DRAFT_SPEC_EDITOR;
 }
 
-function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
+function CaptureGenerateButton({
+    disabled,
+    callFailed,
+    subscription,
+    draftEditorStoreName,
+}: Props) {
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
-    >((state) => state.id);
+    >(draftEditorStoreName, (state) => state.id);
 
     const isSaving = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['isSaving']
-    >((state) => state.isSaving);
+    >(draftEditorStoreName, (state) => state.isSaving);
 
     const resetEditorState = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['resetState']
-    >((state) => state.resetState);
+    >(draftEditorStoreName, (state) => state.resetState);
 
     const useEntityCreateStore = useRouteStore();
 

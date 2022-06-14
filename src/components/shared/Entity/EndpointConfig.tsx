@@ -5,19 +5,26 @@ import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import Error from 'components/shared/Error';
 import useConnectorTag from 'hooks/useConnectorTag';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { useZustandStore } from 'hooks/useZustand';
+import {
+    CaptureStoreNames,
+    MaterializationStoreNames,
+    useZustandStore,
+} from 'hooks/useZustand';
 
 interface Props {
     connectorImage: string;
+    draftEditorStoreName:
+        | CaptureStoreNames.DRAFT_SPEC_EDITOR
+        | MaterializationStoreNames.DRAFT_SPEC_EDITOR;
 }
 
-function EndpointConfig({ connectorImage }: Props) {
+function EndpointConfig({ connectorImage, draftEditorStoreName }: Props) {
     const { connectorTag, error } = useConnectorTag(connectorImage);
 
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
-    >((state) => state.id);
+    >(draftEditorStoreName, (state) => state.id);
 
     if (error) {
         return <Error error={error} />;

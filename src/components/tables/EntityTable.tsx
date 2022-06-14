@@ -29,7 +29,14 @@ import {
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
 import { Query, useSelect } from 'hooks/supabase-swr';
-import { useZustandStore } from 'hooks/useZustand';
+import {
+    CaptureStoreNames,
+    CollectionStoreNames,
+    ConnectorStoreNames,
+    MaterializationStoreNames,
+    AccessGrantsStoreNames,
+    useZustandStore,
+} from 'hooks/useZustand';
 import { debounce } from 'lodash';
 import {
     ChangeEvent,
@@ -83,6 +90,12 @@ interface Props {
         disableDoclink?: boolean;
     };
     showEntityStatus?: boolean;
+    selectableTableStoreName:
+        | AccessGrantsStoreNames.SELECT_TABLE
+        | CaptureStoreNames.SELECT_TABLE
+        | CollectionStoreNames.SELECT_TABLE
+        | ConnectorStoreNames.SELECT_TABLE
+        | MaterializationStoreNames.SELECT_TABLE;
 }
 
 interface TableState {
@@ -120,6 +133,7 @@ function EntityTable({
     rowSelectorProps,
     showEntityStatus = false,
     tableDescriptionId,
+    selectableTableStoreName,
 }: Props) {
     const [page, setPage] = useState(0);
     const isFiltering = useRef(false);
@@ -132,17 +146,17 @@ function EntityTable({
     const setRows = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['setRows']
-    >(selectableTableStoreSelectors.rows.set);
+    >(selectableTableStoreName, selectableTableStoreSelectors.rows.set);
 
     const resetRows = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['removeRows']
-    >(selectableTableStoreSelectors.rows.reset);
+    >(selectableTableStoreName, selectableTableStoreSelectors.rows.reset);
 
     const setAll = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['setAllSelected']
-    >(selectableTableStoreSelectors.selected.setAll);
+    >(selectableTableStoreName, selectableTableStoreSelectors.selected.setAll);
 
     const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
     const [tableState, setTableState] = useState<TableState>({

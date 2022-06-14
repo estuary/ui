@@ -1,7 +1,6 @@
 import { Collapse, Grid, TableCell, TableRow } from '@mui/material';
 import EditorAndLogs from 'components/tables/Details/EditorAndLogs';
-import { createEditorStore } from 'components/editor/Store';
-import { ZustandProvider } from 'hooks/useZustand';
+import { CaptureStoreNames, MaterializationStoreNames } from 'hooks/useZustand';
 import { ENTITY } from 'types';
 import ShardInformation from 'components/tables/Details/ShardInformation';
 import { tableBorderSx } from 'context/Theme';
@@ -9,19 +8,21 @@ import { tableBorderSx } from 'context/Theme';
 interface Props {
     detailsExpanded: boolean;
     id: string;
-    storeName?: string;
     colSpan: number;
     disableLogs?: boolean;
     entityType?: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
+    draftEditorStoreName?:
+        | CaptureStoreNames.DRAFT_SPEC_EDITOR
+        | MaterializationStoreNames.DRAFT_SPEC_EDITOR;
 }
 
 function DetailsPanel({
     detailsExpanded,
     id,
-    storeName = 'liveSpecEditor',
     colSpan,
     disableLogs,
     entityType,
+    draftEditorStoreName = CaptureStoreNames.DRAFT_SPEC_EDITOR,
 }: Props) {
     return (
         <TableRow>
@@ -34,21 +35,17 @@ function DetailsPanel({
                 colSpan={colSpan}
             >
                 <Collapse in={detailsExpanded} unmountOnExit>
-                    <ZustandProvider
-                        createStore={createEditorStore}
-                        storeName={storeName}
-                    >
-                        <Grid container spacing={2}>
-                            {entityType && (
-                                <ShardInformation entityType={entityType} />
-                            )}
+                    <Grid container spacing={2}>
+                        {entityType && (
+                            <ShardInformation entityType={entityType} />
+                        )}
 
-                            <EditorAndLogs
-                                lastPubId={id}
-                                disableLogs={disableLogs}
-                            />
-                        </Grid>
-                    </ZustandProvider>
+                        <EditorAndLogs
+                            lastPubId={id}
+                            disableLogs={disableLogs}
+                            draftEditorStoreName={draftEditorStoreName}
+                        />
+                    </Grid>
                 </Collapse>
             </TableCell>
         </TableRow>

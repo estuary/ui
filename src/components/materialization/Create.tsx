@@ -12,7 +12,7 @@ import { usePrompt } from 'hooks/useBlocker';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { useZustandStore } from 'hooks/useZustand';
+import { MaterializationStoreNames, useZustandStore } from 'hooks/useZustand';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
@@ -54,12 +54,12 @@ function MaterializationCreate() {
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
-    >((state) => state.id);
+    >(MaterializationStoreNames.DRAFT_SPEC_EDITOR, (state) => state.id);
 
     const setDraftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setId']
-    >((state) => state.setId);
+    >(MaterializationStoreNames.DRAFT_SPEC_EDITOR, (state) => state.setId);
 
     // Reset the catalog if the connector changes
     useEffect(() => {
@@ -131,6 +131,9 @@ function MaterializationCreate() {
                             <MaterializeGenerateButton
                                 disabled={!hasConnectors}
                                 callFailed={helpers.callFailed}
+                                draftEditorStoreName={
+                                    MaterializationStoreNames.DRAFT_SPEC_EDITOR
+                                }
                             />
                         }
                         TestButton={
@@ -138,6 +141,9 @@ function MaterializationCreate() {
                                 disabled={!hasConnectors}
                                 callFailed={helpers.callFailed}
                                 closeLogs={handlers.closeLogs}
+                                draftEditorStoreName={
+                                    MaterializationStoreNames.DRAFT_SPEC_EDITOR
+                                }
                             />
                         }
                         SaveButton={
@@ -145,12 +151,18 @@ function MaterializationCreate() {
                                 disabled={!draftId}
                                 callFailed={helpers.callFailed}
                                 closeLogs={handlers.closeLogs}
+                                draftEditorStoreName={
+                                    MaterializationStoreNames.DRAFT_SPEC_EDITOR
+                                }
                             />
                         }
                         heading={
                             <FormattedMessage id={`${messagePrefix}.heading`} />
                         }
                     />
+                }
+                draftEditorStoreName={
+                    MaterializationStoreNames.DRAFT_SPEC_EDITOR
                 }
             />
         </PageContainer>

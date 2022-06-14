@@ -4,9 +4,8 @@ import EntityTable, {
     getPagination,
     SortDirection,
 } from 'components/tables/EntityTable';
-import { createSelectableTableStore } from 'components/tables/Store';
 import { useQuery } from 'hooks/supabase-swr';
-import { ZustandProvider } from 'hooks/useZustand';
+import { AccessGrantsStoreNames } from 'hooks/useZustand';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
 
@@ -42,31 +41,27 @@ function AccessGrantsTable() {
 
     return (
         <Box>
-            <ZustandProvider
-                createStore={createSelectableTableStore}
-                storeName="AccessGrants-Selectable-Table"
-            >
-                <EntityTable
-                    noExistingDataContentIds={{
-                        header: 'accessGrants.message1',
-                        message: 'accessGrants.message2',
-                        disableDoclink: true,
-                    }}
-                    columns={tableColumns}
-                    query={rolesQuery}
-                    renderTableRows={(data) => <Rows data={data} />}
-                    setPagination={setPagination}
-                    setSearchQuery={setSearchQuery}
-                    sortDirection={sortDirection}
-                    setSortDirection={setSortDirection}
-                    columnToSort={columnToSort}
-                    setColumnToSort={setColumnToSort}
-                    header="accessGrantsTable.title"
-                    headerLink="https://docs.estuary.dev/reference/authentication/"
-                    filterLabel="accessGrantsTable.filterLabel"
-                    tableDescriptionId="admin.roles.message"
-                />
-            </ZustandProvider>
+            <EntityTable
+                noExistingDataContentIds={{
+                    header: 'accessGrants.message1',
+                    message: 'accessGrants.message2',
+                    disableDoclink: true,
+                }}
+                columns={tableColumns}
+                query={rolesQuery}
+                renderTableRows={(data) => <Rows data={data} />}
+                setPagination={setPagination}
+                setSearchQuery={setSearchQuery}
+                sortDirection={sortDirection}
+                setSortDirection={setSortDirection}
+                columnToSort={columnToSort}
+                setColumnToSort={setColumnToSort}
+                header="accessGrantsTable.title"
+                headerLink="https://docs.estuary.dev/reference/authentication/"
+                filterLabel="accessGrantsTable.filterLabel"
+                tableDescriptionId="admin.roles.message"
+                selectableTableStoreName={AccessGrantsStoreNames.SELECT_TABLE}
+            />
         </Box>
     );
 }

@@ -4,19 +4,26 @@ import { EditorStoreState } from 'components/editor/Store';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { useZustandStore } from 'hooks/useZustand';
+import {
+    CaptureStoreNames,
+    MaterializationStoreNames,
+    useZustandStore,
+} from 'hooks/useZustand';
 import { FormattedMessage } from 'react-intl';
 import { entityCreateStoreSelectors } from 'stores/Create';
 
 interface Props {
     messageId: string;
+    draftEditorStoreName:
+        | CaptureStoreNames.DRAFT_SPEC_EDITOR
+        | MaterializationStoreNames.DRAFT_SPEC_EDITOR;
 }
 
-function CatalogEditor({ messageId }: Props) {
+function CatalogEditor({ messageId, draftEditorStoreName }: Props) {
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
-    >((state) => state.id);
+    >(draftEditorStoreName, (state) => state.id);
 
     const useEntityCreateStore = useRouteStore();
     const formActive = useEntityCreateStore(
@@ -34,7 +41,10 @@ function CatalogEditor({ messageId }: Props) {
                     </Typography>
 
                     <Paper variant="outlined" sx={{ p: 1 }}>
-                        <DraftSpecEditor disabled={formActive} />
+                        <DraftSpecEditor
+                            draftEditorStoreName={draftEditorStoreName}
+                            disabled={formActive}
+                        />
                     </Paper>
                 </>
             </WrapperWithHeader>

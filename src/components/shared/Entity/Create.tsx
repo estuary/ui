@@ -16,7 +16,11 @@ import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { useZustandStore } from 'hooks/useZustand';
+import {
+    CaptureStoreNames,
+    MaterializationStoreNames,
+    useZustandStore,
+} from 'hooks/useZustand';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
@@ -26,14 +30,18 @@ interface Props {
     title: string;
     connectorType: 'capture' | 'materialization';
     Header: any;
+    draftEditorStoreName:
+        | CaptureStoreNames.DRAFT_SPEC_EDITOR
+        | MaterializationStoreNames.DRAFT_SPEC_EDITOR;
     showCollections?: boolean;
 }
 
 function EntityCreate({
     title,
     connectorType,
-    showCollections,
     Header,
+    draftEditorStoreName,
+    showCollections,
 }: Props) {
     useBrowserTitle(title); //'browserTitle.captureCreate'
 
@@ -82,12 +90,12 @@ function EntityCreate({
     const setDraftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setId']
-    >((state) => state.setId);
+    >(draftEditorStoreName, (state) => state.setId);
 
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
-    >((state) => state.id);
+    >(draftEditorStoreName, (state) => state.id);
 
     // Reset the cataolg if the connector changes
     useEffect(() => {
@@ -169,13 +177,17 @@ function EntityCreate({
                             <DetailsForm
                                 connectorTags={connectorTags}
                                 accessGrants={combinedGrants}
+                                draftEditorStoreName={draftEditorStoreName}
                             />
                         </ErrorBoundryWrapper>
                     ) : null}
 
                     {imageTag?.id ? (
                         <ErrorBoundryWrapper>
-                            <EndpointConfig connectorImage={imageTag.id} />
+                            <EndpointConfig
+                                connectorImage={imageTag.id}
+                                draftEditorStoreName={draftEditorStoreName}
+                            />
                         </ErrorBoundryWrapper>
                     ) : null}
 
@@ -188,6 +200,7 @@ function EntityCreate({
                     <ErrorBoundryWrapper>
                         <CatalogEditor
                             messageId={`${messagePrefix}.finalReview.instructions`}
+                            draftEditorStoreName={draftEditorStoreName}
                         />
                     </ErrorBoundryWrapper>
                 </>
