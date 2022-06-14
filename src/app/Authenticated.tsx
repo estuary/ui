@@ -168,7 +168,6 @@ const Authenticated = () => {
                                                 .store.key
                                         }
                                     >
-                                        ==
                                         <CaptureCreate />
                                     </RouteStoreProvider>
                                 }
