@@ -1,4 +1,5 @@
 import { User } from '@supabase/supabase-js';
+import filterObject from 'filter-obj';
 import LogRocket from 'logrocket';
 import setupLogRocketReact from 'logrocket-react';
 import { getUserDetails } from 'services/supabase';
@@ -56,21 +57,10 @@ const getAllowedKeys = (obj: ParsedBody) => {
 
     const originalIsArray = Array.isArray(obj);
     const copy = originalIsArray ? obj : [obj];
-    const response = [];
+    const response: any[] = [];
 
     copy.forEach((el) => {
-        console.log('Looking in', el);
-        const filteredObject: any = {};
-
-        Object.keys(obj)
-            .filter((key) => allowedKeys.includes(key))
-            .forEach((key) => {
-                filteredObject[key] = el[key];
-            });
-
-        console.log('Going to push', { copy, filteredObject });
-
-        response.push(filteredObject);
+        response.push(filterObject(el, allowedKeys));
     });
 
     return originalIsArray ? copy : copy[0];
