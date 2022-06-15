@@ -14,6 +14,7 @@ import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import PageContainer from 'components/shared/PageContainer';
 import { jsonFormsPadding } from 'context/Theme';
 import { useState } from 'react';
+import { setDefaultsValidator } from 'services/ajv';
 import { defaultOptions, defaultRenderers } from 'services/jsonforms';
 
 const TestJsonForms = () => {
@@ -69,6 +70,13 @@ const TestJsonForms = () => {
                                 cells={materialCells}
                                 config={defaultOptions}
                                 validationMode="ValidateAndShow"
+                                onChange={(state) =>
+                                    console.log(
+                                        'This is the new state of the form',
+                                        state
+                                    )
+                                }
+                                ajv={setDefaultsValidator}
                             />
                         </Box>
                     </StyledEngineProvider>
