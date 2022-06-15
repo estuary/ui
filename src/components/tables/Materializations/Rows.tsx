@@ -143,16 +143,28 @@ function Rows({ data, showEntityStatus }: RowsProps) {
         selectableTableStoreSelectors.selected.set
     );
 
+    const successfulTransformations = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['successfulTransformations']
+    >(
+        SelectTableStoreNames.CAPTURE,
+        selectableTableStoreSelectors.successfulTransformations.get
+    );
+
     const shardDetailStore = useRouteStore();
     const setShards = shardDetailStore(shardDetailSelectors.setShards);
 
-    const { data: shardsData } = useShardsList(data);
+    const { data: shardsData, mutate: mutateShardsList } = useShardsList(data);
 
     useEffect(() => {
         if (shardsData && shardsData.shards.length > 0) {
             setShards(shardsData.shards);
         }
     }, [setShards, shardsData]);
+
+    useEffect(() => {
+        mutateShardsList().catch(() => {});
+    }, [mutateShardsList, successfulTransformations]);
 
     return (
         <>
