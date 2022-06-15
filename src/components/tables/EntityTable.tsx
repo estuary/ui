@@ -126,7 +126,11 @@ function EntityTable({
     const [page, setPage] = useState(0);
     const isFiltering = useRef(false);
 
-    const { data: useSelectResponse, isValidating } = useSelect(query);
+    const {
+        data: useSelectResponse,
+        isValidating,
+        mutate: mutateSelectData,
+    } = useSelect(query);
     const selectData = useSelectResponse ? useSelectResponse.data : null;
 
     const intl = useIntl();
@@ -146,6 +150,14 @@ function EntityTable({
         SelectableTableStore['setAllSelected']
     >(selectableTableStoreName, selectableTableStoreSelectors.selected.setAll);
 
+    const successfulTransformations = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['successfulTransformations']
+    >(
+        SelectTableStoreNames.CAPTURE,
+        selectableTableStoreSelectors.successfulTransformations.get
+    );
+
     const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
     const [tableState, setTableState] = useState<TableState>({
         status: TableStatuses.LOADING,
@@ -161,6 +173,10 @@ function EntityTable({
             setTableState({ status: TableStatuses.NO_EXISTING_DATA });
         }
     }, [selectData, setRows, enableSelection]);
+
+    useEffect(() => {
+        mutateSelectData().catch(() => {});
+    }, [mutateSelectData, successfulTransformations]);
 
     const getEmptyTableHeader = (tableStatus: TableStatuses): string => {
         switch (tableStatus) {

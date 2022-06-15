@@ -4,12 +4,8 @@ import EntityTable, {
     getPagination,
     SortDirection,
 } from 'components/tables/EntityTable';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'components/tables/Store';
 import { useQuery } from 'hooks/supabase-swr';
-import { SelectTableStoreNames, useZustandStore } from 'hooks/useZustand';
+import { SelectTableStoreNames } from 'hooks/useZustand';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
 import { LiveSpecsExtBaseQuery } from 'types';
@@ -43,14 +39,6 @@ function CapturesTable() {
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
     const [columnToSort, setColumnToSort] = useState<any>('updated_at');
 
-    const successfulTransformations = useZustandStore<
-        SelectableTableStore,
-        SelectableTableStore['successfulTransformations']
-    >(
-        SelectTableStoreNames.CAPTURE,
-        selectableTableStoreSelectors.successfulTransformations.get
-    );
-
     const liveSpecQuery = useQuery<LiveSpecsExtQuery>(
         TABLES.LIVE_SPECS_EXT,
         {
@@ -71,13 +59,7 @@ function CapturesTable() {
                 ).eq('spec_type', 'capture');
             },
         },
-        [
-            pagination,
-            searchQuery,
-            columnToSort,
-            sortDirection,
-            successfulTransformations,
-        ]
+        [pagination, searchQuery, columnToSort, sortDirection]
     );
 
     return (
