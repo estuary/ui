@@ -54,6 +54,10 @@ const maskHeaderKeys = ['apikey', 'Authorization'];
 
 type ParsedBody = [{ [k: string]: any }] | { [k: string]: any } | undefined;
 
+// This is the main function tha twill go through the parsed body and handle the keys.
+//      You provied a parsed body, the keys you want to process, and the action
+//      'mask'   - the keys you provided will be masked out
+//      'filter' - the keys you provided will be put into a new object
 const processBody = (
     obj: ParsedBody,
     keys: typeof allowedKeys | typeof maskHeaderKeys,
