@@ -26,7 +26,6 @@ const MASKED = '**MASKED**';
 export const MISSING = '**MISSING**';
 
 export enum CustomEvents {
-    WS_SUB = 'Supabase_Subscription',
     CAPTURE_TEST = 'Capture_Test',
     CAPTURE_CREATE = 'Capture_Create',
     MATERIALIZATION_CREATE = 'Materialization_Create',
