@@ -22,10 +22,7 @@ interface Settings {
     network?: any;
 }
 
-const logRocketSettings = getLogRocketSettings();
-
-const MASKED = '**MASKED**';
-export const MISSING = '**MISSING**';
+type ParsedBody = [{ [k: string]: any }] | { [k: string]: any } | undefined;
 
 export enum CustomEvents {
     CAPTURE_TEST = 'Capture_Test',
@@ -34,13 +31,24 @@ export enum CustomEvents {
     MATERIALIZATION_TEST = 'Materialization_Test',
 }
 
+const logRocketSettings = getLogRocketSettings();
+
+export const MISSING = '**MISSING**';
+export const MASKED = '**MASKED**';
+
+// for endspoints where we want nothing ever logged
 const maskEverythingURLs = ['config-encryption.estuary.dev'];
 const shouldMaskEverything = (url: string) =>
     maskEverythingURLs.some((el) => url.includes(el));
 
+// for endpoints where we do not want to mess with the request at all
 const ignoreURLs = ['lr-in-prod'];
 const shouldIgnore = (url: string) => ignoreURLs.some((el) => url.includes(el));
 
+// The headers we never want to have logged
+const maskHeaderKeys = ['apikey', 'Authorization'];
+
+//The keys in requests/responses we are okay with logging
 const allowedKeys = [
     'id',
     'draft_id',
@@ -50,9 +58,6 @@ const allowedKeys = [
     'object_role',
     'title',
 ];
-const maskHeaderKeys = ['apikey', 'Authorization'];
-
-type ParsedBody = [{ [k: string]: any }] | { [k: string]: any } | undefined;
 
 // This is the main function tha twill go through the parsed body and handle the keys.
 //      You provied a parsed body, the keys you want to process, and the action
@@ -109,6 +114,7 @@ const parseBody = (body: any): ParsedBody => {
     return formattedContent;
 };
 
+// Go through the request and handle the skipping, masking, filtering
 const maskContent = (requestResponse: any) => {
     // Sometimes we just want to pass along the content exactly as is
     if (shouldIgnore(requestResponse.url)) {
