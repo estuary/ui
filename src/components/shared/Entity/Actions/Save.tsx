@@ -8,7 +8,7 @@ import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
 import LogRocket from 'logrocket';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { CustomEvents, MISSING } from 'services/logrocket';
+import { CustomEvents } from 'services/logrocket';
 import { endSubscription, startSubscription, TABLES } from 'services/supabase';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 import useNotificationStore, {
@@ -21,6 +21,16 @@ interface Props {
     logEvent: CustomEvents;
     dryRun?: boolean;
 }
+
+const trackEvent = (logEvent: Props['logEvent'], payload: any) => {
+    LogRocket.track(logEvent, {
+        id: payload.id,
+        draft_id: payload.draft_id,
+        dry_run: payload.dry_run,
+        logs_token: payload.logs_token,
+        status: payload.job_status.type,
+    });
+};
 
 function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
     const intl = useIntl();
@@ -102,26 +112,14 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
                         }),
                     });
 
-                    LogRocket.track(logEvent, {
-                        id: payload.id,
-                        draft_id: payload.draft_id,
-                        dry_run: payload.dry_run,
-                        logs_token: payload.logs_token,
-                        status: payload.job_status.type,
-                    });
+                    trackEvent(logEvent, payload);
 
                     await endSubscription(subscription);
                 }
             },
             async (payload: any) => {
                 if (payload.logs_token === logTokenVal) {
-                    LogRocket.track(logEvent, {
-                        id: payload.id,
-                        draft_id: payload.draft_id,
-                        dry_run: payload.dry_run,
-                        logs_token: payload.logs_token,
-                        status: payload.job_status?.type ?? MISSING,
-                    });
+                    trackEvent(logEvent, payload);
 
                     onFailure({
                         error: {
