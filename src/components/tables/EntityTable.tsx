@@ -29,7 +29,7 @@ import {
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
 import { Query, useSelect } from 'hooks/supabase-swr';
-import { useZustandStore } from 'hooks/useZustand';
+import { SelectTableStoreNames, useZustandStore } from 'hooks/useZustand';
 import { debounce } from 'lodash';
 import {
     ChangeEvent,
@@ -83,6 +83,7 @@ interface Props {
         disableDoclink?: boolean;
     };
     showEntityStatus?: boolean;
+    selectableTableStoreName: SelectTableStoreNames;
 }
 
 interface TableState {
@@ -120,11 +121,16 @@ function EntityTable({
     rowSelectorProps,
     showEntityStatus = false,
     tableDescriptionId,
+    selectableTableStoreName,
 }: Props) {
     const [page, setPage] = useState(0);
     const isFiltering = useRef(false);
 
-    const { data: useSelectResponse, isValidating } = useSelect(query);
+    const {
+        data: useSelectResponse,
+        isValidating,
+        mutate: mutateSelectData,
+    } = useSelect(query);
     const selectData = useSelectResponse ? useSelectResponse.data : null;
 
     const intl = useIntl();
@@ -132,17 +138,25 @@ function EntityTable({
     const setRows = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['setRows']
-    >(selectableTableStoreSelectors.rows.set);
+    >(selectableTableStoreName, selectableTableStoreSelectors.rows.set);
 
     const resetRows = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['removeRows']
-    >(selectableTableStoreSelectors.rows.reset);
+    >(selectableTableStoreName, selectableTableStoreSelectors.rows.reset);
 
     const setAll = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['setAllSelected']
-    >(selectableTableStoreSelectors.selected.setAll);
+    >(selectableTableStoreName, selectableTableStoreSelectors.selected.setAll);
+
+    const successfulTransformations = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['successfulTransformations']
+    >(
+        selectableTableStoreName,
+        selectableTableStoreSelectors.successfulTransformations.get
+    );
 
     const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
     const [tableState, setTableState] = useState<TableState>({
@@ -159,6 +173,10 @@ function EntityTable({
             setTableState({ status: TableStatuses.NO_EXISTING_DATA });
         }
     }, [selectData, setRows, enableSelection]);
+
+    useEffect(() => {
+        mutateSelectData().catch(() => {});
+    }, [mutateSelectData, successfulTransformations]);
 
     const getEmptyTableHeader = (tableStatus: TableStatuses): string => {
         switch (tableStatus) {

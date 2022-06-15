@@ -4,9 +4,8 @@ import EntityTable, {
     SortDirection,
 } from 'components/tables/EntityTable';
 import Rows, { tableColumns } from 'components/tables/Materializations/Rows';
-import { createSelectableTableStore } from 'components/tables/Store';
 import { useQuery } from 'hooks/supabase-swr';
-import { ZustandProvider } from 'hooks/useZustand';
+import { SelectTableStoreNames } from 'hooks/useZustand';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
 import { LiveSpecsExtBaseQuery } from 'types';
@@ -65,33 +64,29 @@ function MaterializationsTable() {
 
     return (
         <Box>
-            <ZustandProvider
-                createStore={createSelectableTableStore}
-                storeName="Materializations-Selectable-Table"
-            >
-                <EntityTable
-                    noExistingDataContentIds={{
-                        header: 'materializations.message1',
-                        message: 'materializations.message2',
-                    }}
-                    columns={tableColumns}
-                    query={liveSpecQuery}
-                    renderTableRows={(data, showEntityStatus) => (
-                        <Rows data={data} showEntityStatus={showEntityStatus} />
-                    )}
-                    setPagination={setPagination}
-                    setSearchQuery={setSearchQuery}
-                    sortDirection={sortDirection}
-                    setSortDirection={setSortDirection}
-                    columnToSort={columnToSort}
-                    setColumnToSort={setColumnToSort}
-                    header="materializationsTable.title"
-                    headerLink="https://docs.estuary.dev/concepts/#materializations"
-                    filterLabel="materializationsTable.filterLabel"
-                    showEntityStatus={true}
-                    enableSelection
-                />
-            </ZustandProvider>
+            <EntityTable
+                noExistingDataContentIds={{
+                    header: 'materializations.message1',
+                    message: 'materializations.message2',
+                }}
+                columns={tableColumns}
+                query={liveSpecQuery}
+                renderTableRows={(data, showEntityStatus) => (
+                    <Rows data={data} showEntityStatus={showEntityStatus} />
+                )}
+                setPagination={setPagination}
+                setSearchQuery={setSearchQuery}
+                sortDirection={sortDirection}
+                setSortDirection={setSortDirection}
+                columnToSort={columnToSort}
+                setColumnToSort={setColumnToSort}
+                header="materializationsTable.title"
+                headerLink="https://docs.estuary.dev/concepts/#materializations"
+                filterLabel="materializationsTable.filterLabel"
+                showEntityStatus={true}
+                enableSelection
+                selectableTableStoreName={SelectTableStoreNames.MATERIALIZATION}
+            />
         </Box>
     );
 }

@@ -2,14 +2,12 @@ import NoGrantsFound from 'app/NoGrantsFound';
 import { unauthenticatedRoutes } from 'app/Unauthenticated';
 import AppLayout from 'AppLayout';
 import CaptureCreate from 'components/capture/Create';
-import { createEditorStore, DraftSpecEditorKey } from 'components/editor/Store';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import MaterializationCreate from 'components/materialization/Create';
 import AuthenticatedOnlyContext from 'context/Authenticated';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import { RouteStoreProvider } from 'hooks/useRouteStore';
-import { ZustandProvider } from 'hooks/useZustand';
 import Admin from 'pages/Admin';
 import Auth from 'pages/Auth';
 import Captures from 'pages/Captures';
@@ -170,12 +168,7 @@ const Authenticated = () => {
                                                 .store.key
                                         }
                                     >
-                                        <ZustandProvider
-                                            createStore={createEditorStore}
-                                            storeName={`${DraftSpecEditorKey}-Captures`}
-                                        >
-                                            <CaptureCreate />
-                                        </ZustandProvider>
+                                        <CaptureCreate />
                                     </RouteStoreProvider>
                                 }
                             />
@@ -207,12 +200,7 @@ const Authenticated = () => {
                                                 .create.store.key
                                         }
                                     >
-                                        <ZustandProvider
-                                            createStore={createEditorStore}
-                                            storeName={`${DraftSpecEditorKey}-Materializations`}
-                                        >
-                                            <MaterializationCreate />
-                                        </ZustandProvider>
+                                        <MaterializationCreate />
                                     </RouteStoreProvider>
                                 }
                             />

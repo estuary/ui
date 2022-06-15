@@ -9,15 +9,21 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
-import { useZustandStore } from 'hooks/useZustand';
+import { SelectTableStoreNames, useZustandStore } from 'hooks/useZustand';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface RowSelectorProps {
+    selectableTableStoreName?:
+        | SelectTableStoreNames.CAPTURE
+        | SelectTableStoreNames.MATERIALIZATION;
     showMaterialize?: boolean;
 }
 
-function RowSelector({ showMaterialize }: RowSelectorProps) {
+function RowSelector({
+    selectableTableStoreName = SelectTableStoreNames.CAPTURE,
+    showMaterialize,
+}: RowSelectorProps) {
     const intl = useIntl();
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -26,12 +32,12 @@ function RowSelector({ showMaterialize }: RowSelectorProps) {
     const selectedRows = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['selected']
-    >(selectableTableStoreSelectors.selected.get);
+    >(selectableTableStoreName, selectableTableStoreSelectors.selected.get);
 
     const setAll = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['setAllSelected']
-    >(selectableTableStoreSelectors.selected.setAll);
+    >(selectableTableStoreName, selectableTableStoreSelectors.selected.setAll);
 
     const hasSelections = selectedRows.size > 0;
 
@@ -82,12 +88,24 @@ function RowSelector({ showMaterialize }: RowSelectorProps) {
                 disableElevation
                 disabled={!hasSelections}
             >
-                <DisableEnableButton enabling={true} />
-                <DisableEnableButton enabling={false} />
-                <DeleteButton />
+                <DisableEnableButton
+                    selectableTableStoreName={selectableTableStoreName}
+                    enabling={true}
+                />
+                <DisableEnableButton
+                    selectableTableStoreName={selectableTableStoreName}
+                    enabling={false}
+                />
+                <DeleteButton
+                    selectableTableStoreName={selectableTableStoreName}
+                />
             </ButtonGroup>
 
-            {showMaterialize ? <Materialize /> : null}
+            {showMaterialize ? (
+                <Materialize
+                    selectableTableStoreName={selectableTableStoreName}
+                />
+            ) : null}
 
             <Menu
                 id="row-selector-menu"

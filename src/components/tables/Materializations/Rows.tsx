@@ -15,7 +15,7 @@ import {
 } from 'components/tables/Store';
 import { useRouteStore } from 'hooks/useRouteStore';
 import useShardsList from 'hooks/useShardsList';
-import { useZustandStore } from 'hooks/useZustand';
+import { SelectTableStoreNames, useZustandStore } from 'hooks/useZustand';
 import { useEffect, useState } from 'react';
 import { shardDetailSelectors } from 'stores/ShardDetail';
 import { ENTITY } from 'types';
@@ -130,23 +130,41 @@ function Rows({ data, showEntityStatus }: RowsProps) {
     const selected = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['selected']
-    >(selectableTableStoreSelectors.selected.get);
+    >(
+        SelectTableStoreNames.MATERIALIZATION,
+        selectableTableStoreSelectors.selected.get
+    );
 
     const setRow = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['setSelected']
-    >(selectableTableStoreSelectors.selected.set);
+    >(
+        SelectTableStoreNames.MATERIALIZATION,
+        selectableTableStoreSelectors.selected.set
+    );
+
+    const successfulTransformations = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['successfulTransformations']
+    >(
+        SelectTableStoreNames.MATERIALIZATION,
+        selectableTableStoreSelectors.successfulTransformations.get
+    );
 
     const shardDetailStore = useRouteStore();
     const setShards = shardDetailStore(shardDetailSelectors.setShards);
 
-    const { data: shardsData } = useShardsList(data);
+    const { data: shardsData, mutate: mutateShardsList } = useShardsList(data);
 
     useEffect(() => {
         if (shardsData && shardsData.shards.length > 0) {
             setShards(shardsData.shards);
         }
     }, [setShards, shardsData]);
+
+    useEffect(() => {
+        mutateShardsList().catch(() => {});
+    }, [mutateShardsList, successfulTransformations]);
 
     return (
         <>

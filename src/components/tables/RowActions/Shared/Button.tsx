@@ -6,7 +6,7 @@ import {
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
 import { useConfirmationModalContext } from 'context/Confirmation';
-import { useZustandStore } from 'hooks/useZustand';
+import { SelectTableStoreNames, useZustandStore } from 'hooks/useZustand';
 import { ReactNode, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
@@ -18,12 +18,16 @@ interface Props {
         onFinish: (response: any) => void
     ) => ReactNode;
     messageID: string;
+    selectableTableStoreName:
+        | SelectTableStoreNames.CAPTURE
+        | SelectTableStoreNames.MATERIALIZATION;
 }
 
 function RowActionButton({
     confirmationMessage,
     messageID,
     renderProgress,
+    selectableTableStoreName,
 }: Props) {
     const confirmationModalContext = useConfirmationModalContext();
 
@@ -33,17 +37,17 @@ function RowActionButton({
     const selectedRows = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['selected']
-    >(selectableTableStoreSelectors.selected.get);
+    >(selectableTableStoreName, selectableTableStoreSelectors.selected.get);
 
     const setAllSelected = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['setAllSelected']
-    >(selectableTableStoreSelectors.selected.setAll);
+    >(selectableTableStoreName, selectableTableStoreSelectors.selected.setAll);
 
     const rows = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['rows']
-    >(selectableTableStoreSelectors.rows.get);
+    >(selectableTableStoreName, selectableTableStoreSelectors.rows.get);
 
     const hasSelections = selectedRows.size > 0;
 

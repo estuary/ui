@@ -2,28 +2,29 @@ import { updateDraftSpec } from 'api/draftSpecs';
 import EditorWithFileSelector from 'components/editor/EditorWithFileSelector';
 import { EditorStoreState } from 'components/editor/Store';
 import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { useZustandStore } from 'hooks/useZustand';
+import { DraftEditorStoreNames, useZustandStore } from 'hooks/useZustand';
 import { useEffect, useState } from 'react';
 
 export interface Props {
+    draftEditorStoreName: DraftEditorStoreNames;
     disabled?: boolean;
 }
 
-function DraftSpecEditor({ disabled }: Props) {
+function DraftSpecEditor({ draftEditorStoreName, disabled }: Props) {
     const currentCatalog = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['currentCatalog']
-    >((state) => state.currentCatalog);
+    >(draftEditorStoreName, (state) => state.currentCatalog);
 
     const setSpecs = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setSpecs']
-    >((state) => state.setSpecs);
+    >(draftEditorStoreName, (state) => state.setSpecs);
 
     const id = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
-    >((state) => state.id);
+    >(draftEditorStoreName, (state) => state.id);
 
     const { draftSpecs, mutate } = useDraftSpecs(id);
     const [draftSpec, setDraftSpec] = useState<DraftSpecQuery | null>(null);
@@ -87,6 +88,7 @@ function DraftSpecEditor({ disabled }: Props) {
     if (draftSpec) {
         return (
             <EditorWithFileSelector
+                draftEditorStoreName={draftEditorStoreName}
                 onChange={handlers.change}
                 disabled={disabled}
             />
