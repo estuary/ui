@@ -5,6 +5,8 @@ import {
     User,
 } from '@supabase/supabase-js';
 import { isEmpty } from 'lodash';
+import LogRocket from 'logrocket';
+import { CustomEvents } from 'services/logrocket';
 import { JobStatus } from 'types';
 
 if (
@@ -197,12 +199,20 @@ export const startSubscription = (
 ) => {
     const subscription = query
         .on('*', async (payload: any) => {
-            console.log('WS: ', payload);
             const response = payload.new
                 ? payload.new
                 : payload.record
                 ? payload.record
                 : null;
+
+            LogRocket.track(CustomEvents.WS_SUB, {
+                id: response.id,
+                logs_token: response.logs_token,
+                eventType: payload.eventType,
+                status: response.job_status.type,
+                table: payload.table,
+            });
+
             if (response) {
                 if (response.job_status.type !== 'queued') {
                     if (response.job_status.type === 'success') {

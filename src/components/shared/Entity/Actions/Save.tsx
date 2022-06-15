@@ -6,7 +6,9 @@ import { useClient } from 'hooks/supabase-swr';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
+import LogRocket from 'logrocket';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { CustomEvents, MISSING } from 'services/logrocket';
 import { endSubscription, startSubscription, TABLES } from 'services/supabase';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 import useNotificationStore, {
@@ -16,10 +18,11 @@ import useNotificationStore, {
 interface Props {
     disabled: boolean;
     onFailure: Function;
+    logEvent: CustomEvents;
     dryRun?: boolean;
 }
 
-function EntityCreateSave({ disabled, dryRun, onFailure }: Props) {
+function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
     const intl = useIntl();
     const supabaseClient = useClient();
 
@@ -63,16 +66,19 @@ function EntityCreateSave({ disabled, dryRun, onFailure }: Props) {
 
     const waitForPublishToFinish = (logTokenVal: string) => {
         resetFormState(status);
-        console.log('wait for finish');
         const subscription = startSubscription(
             supabaseClient.from(
                 `${TABLES.PUBLICATIONS}:draft_id=eq.${draftId}`
             ),
             async (payload: any) => {
                 if (payload.logs_token === logTokenVal) {
+                    const formStatus = dryRun
+                        ? FormStatus.TESTED
+                        : FormStatus.SAVED;
+
                     setPubId(payload.id);
                     setFormState({
-                        status: dryRun ? FormStatus.TESTED : FormStatus.SAVED,
+                        status: formStatus,
                         exitWhenLogsClose: !dryRun,
                     });
 
@@ -96,13 +102,27 @@ function EntityCreateSave({ disabled, dryRun, onFailure }: Props) {
                         }),
                     });
 
+                    LogRocket.track(logEvent, {
+                        id: payload.id,
+                        draft_id: payload.draft_id,
+                        dry_run: payload.dry_run,
+                        logs_token: payload.logs_token,
+                        status: payload.job_status.type,
+                    });
+
                     await endSubscription(subscription);
                 }
             },
             async (payload: any) => {
-                console.log('Paload', payload);
                 if (payload.logs_token === logTokenVal) {
-                    console.log('wait for finish - failure');
+                    LogRocket.track(logEvent, {
+                        id: payload.id,
+                        draft_id: payload.draft_id,
+                        dry_run: payload.dry_run,
+                        logs_token: payload.logs_token,
+                        status: payload.job_status?.type ?? MISSING,
+                    });
+
                     onFailure({
                         error: {
                             title: `${messagePrefix}.save.failedErrorTitle`,
@@ -121,11 +141,8 @@ function EntityCreateSave({ disabled, dryRun, onFailure }: Props) {
     const save = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
 
-        console.log('save');
         resetFormState(status);
 
-        console.log('save:pubstarted');
-        console.log('save:creating');
         const response = await createPublication(
             draftId,
             dryRun ?? false,
@@ -134,9 +151,7 @@ function EntityCreateSave({ disabled, dryRun, onFailure }: Props) {
         const publicationsSubscription = waitForPublishToFinish(
             response.data[0].logs_token
         );
-        console.log('save:created', response);
         if (response.error) {
-            console.log('save:created:failed', response);
             onFailure(
                 {
                     error: {
@@ -147,7 +162,6 @@ function EntityCreateSave({ disabled, dryRun, onFailure }: Props) {
                 publicationsSubscription
             );
         } else {
-            console.log('save:created:success', response);
             setFormState({
                 logToken: response.data[0].logs_token,
                 showLogs: true,

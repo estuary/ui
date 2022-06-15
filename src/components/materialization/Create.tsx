@@ -16,6 +16,7 @@ import { useZustandStore } from 'hooks/useZustand';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
+import { CustomEvents } from 'services/logrocket';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 
 const connectorType = 'materialization';
@@ -138,6 +139,7 @@ function MaterializationCreate() {
                                 disabled={!hasConnectors}
                                 callFailed={helpers.callFailed}
                                 closeLogs={handlers.closeLogs}
+                                logEvent={CustomEvents.MATERIALIZATION_TEST}
                             />
                         }
                         SaveButton={
@@ -145,6 +147,7 @@ function MaterializationCreate() {
                                 disabled={!draftId}
                                 callFailed={helpers.callFailed}
                                 closeLogs={handlers.closeLogs}
+                                logEvent={CustomEvents.MATERIALIZATION_CREATE}
                             />
                         }
                         heading={

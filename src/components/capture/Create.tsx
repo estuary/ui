@@ -16,6 +16,7 @@ import { useZustandStore } from 'hooks/useZustand';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
+import { CustomEvents } from 'services/logrocket';
 import { startSubscription, TABLES } from 'services/supabase';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 import { getPathWithParam } from 'utils/misc-utils';
@@ -176,6 +177,7 @@ function CaptureCreate() {
                                 closeLogs={handlers.closeLogs}
                                 callFailed={helpers.callFailed}
                                 disabled={!hasConnectors}
+                                logEvent={CustomEvents.CAPTURE_TEST}
                             />
                         }
                         SaveButton={
@@ -184,6 +186,7 @@ function CaptureCreate() {
                                 callFailed={helpers.callFailed}
                                 disabled={!draftId}
                                 materialize={handlers.materializeCollections}
+                                logEvent={CustomEvents.CAPTURE_CREATE}
                             />
                         }
                     />

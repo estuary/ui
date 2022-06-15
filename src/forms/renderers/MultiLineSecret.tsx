@@ -102,6 +102,8 @@ const MultiLineSecretRenderer = (props: any) => {
                     '.der',
                     '.pfx',
                     '.spc',
+                    // Additions
+                    '.json',
                     '',
                 ]}
                 clearOnUnmount={true}

@@ -6,12 +6,14 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
 import { FormattedMessage } from 'react-intl';
+import { CustomEvents } from 'services/logrocket';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 
 interface Props {
     closeLogs: Function;
     callFailed: Function;
     disabled: boolean;
+    logEvent: CustomEvents.CAPTURE_CREATE | CustomEvents.MATERIALIZATION_CREATE;
     materialize?: Function;
 }
 
@@ -20,6 +22,7 @@ function EntitySaveButton({
     closeLogs,
     disabled,
     materialize,
+    logEvent,
 }: Props) {
     const useEntityCreateStore = useRouteStore();
     const showLogs = useEntityCreateStore(
@@ -71,6 +74,7 @@ function EntitySaveButton({
             <EntityCreateSave
                 disabled={disabled || !draftId}
                 onFailure={callFailed}
+                logEvent={logEvent}
             />
         </>
     );

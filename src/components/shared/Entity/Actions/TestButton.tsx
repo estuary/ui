@@ -6,15 +6,22 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useZustandStore } from 'hooks/useZustand';
 import { FormattedMessage } from 'react-intl';
+import { CustomEvents } from 'services/logrocket';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 
 interface Props {
     closeLogs: Function;
     callFailed: Function;
     disabled: boolean;
+    logEvent: CustomEvents.CAPTURE_TEST | CustomEvents.MATERIALIZATION_TEST;
 }
 
-function EntityTestButton({ callFailed, closeLogs, disabled }: Props) {
+function EntityTestButton({
+    callFailed,
+    closeLogs,
+    disabled,
+    logEvent,
+}: Props) {
     const useEntityCreateStore = useRouteStore();
     const showLogs = useEntityCreateStore(
         entityCreateStoreSelectors.formState.showLogs
@@ -54,6 +61,7 @@ function EntityTestButton({ callFailed, closeLogs, disabled }: Props) {
                 dryRun
                 disabled={disabled || !draftId}
                 onFailure={callFailed}
+                logEvent={logEvent}
             />
         </>
     );
