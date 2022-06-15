@@ -1,5 +1,6 @@
 import { User } from '@supabase/supabase-js';
 import filterObject from 'filter-obj';
+import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 import setupLogRocketReact from 'logrocket-react';
 import { getUserDetails } from 'services/supabase';
@@ -47,47 +48,51 @@ const allowedKeys = [
     'catalog_name',
     'capture_name',
     'object_role',
+    'title',
 ];
 const maskHeaderKeys = ['apikey', 'Authorization'];
 
 type ParsedBody = [{ [k: string]: any }] | { [k: string]: any } | undefined;
 
-const getAllowedKeys = (obj: ParsedBody) => {
+const processBody = (
+    obj: ParsedBody,
+    keys: typeof allowedKeys | typeof maskHeaderKeys,
+    action: 'mask' | 'filter'
+) => {
     if (!obj) return obj;
 
     const originalIsArray = Array.isArray(obj);
-    const copy = originalIsArray ? obj : [obj];
     const response: any[] = [];
 
-    copy.forEach((el) => {
-        response.push(filterObject(el, allowedKeys));
-    });
-
-    return originalIsArray ? copy : copy[0];
-};
-
-const maskKeysInObject = (keys: typeof maskHeaderKeys, obj: ParsedBody) => {
-    if (!obj) return obj;
-
-    const originalIsArray = Array.isArray(obj);
-    const response = originalIsArray ? obj : [obj];
-
-    response.forEach((el) => {
-        keys.forEach((key) => {
-            if (el[key]) {
-                el[key] = MASKED;
-            }
+    if (action === 'filter') {
+        (originalIsArray ? obj : [obj]).forEach((el) => {
+            const filteredBody = filterObject(el, allowedKeys);
+            response.push(filteredBody);
         });
-    });
+    } else {
+        // Loop through all the elements and then loop through all the keys
+        //      to mask the ones that are not allowed.
+        response.forEach((el) => {
+            keys.forEach((key) => {
+                if (el[key]) {
+                    el[key] = MASKED;
+                }
+            });
+        });
+    }
 
     return originalIsArray ? response : response[0];
 };
 
+// Used to parse the body of a request/response. Will handle very basic use of just
+//  a string or object body. To keep stuff safe if we cannot parse the string we
+//  set everything to masked.
 const parseBody = (body: any): ParsedBody => {
     let formattedContent;
 
     if (typeof body === 'string') {
         try {
+            // If the body has length parse it otherwise leave it as a blank string
             formattedContent = body.length > 0 ? JSON.parse(body) : '';
         } catch (error: unknown) {
             // If the JSON messes up getting parsed just be safe and mask everything
@@ -113,12 +118,21 @@ const maskContent = (requestResponse: any) => {
         return requestResponse;
     }
 
-    requestResponse.body = getAllowedKeys(parseBody(requestResponse.body));
+    // If there is a body filter the objecy so only specific values make it through
+    if (requestResponse?.body && !isEmpty(requestResponse.body)) {
+        requestResponse.body = processBody(
+            parseBody(requestResponse.body),
+            allowedKeys,
+            'filter'
+        );
+    }
 
-    if (requestResponse?.headers) {
-        requestResponse.headers = maskKeysInObject(
+    // If there are headers go ahead and mask the values.
+    if (requestResponse?.headers && !isEmpty(requestResponse.headers)) {
+        requestResponse.headers = processBody(
+            requestResponse.headers,
             maskHeaderKeys,
-            requestResponse.headers
+            'mask'
         );
     }
 
