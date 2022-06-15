@@ -80,7 +80,7 @@ function MonacoEditor({
 
     const updateValue = () => {
         const currentValue = editorRef.current?.getValue();
-        console.log('Updating', currentValue);
+
         if (onChange && currentValue) {
             setStatus(EditorStatus.EDITING);
 
@@ -91,7 +91,6 @@ function MonacoEditor({
                 setStatus(EditorStatus.INVALID);
             }
 
-            console.log('checking parsed', parsedVal);
             if (parsedVal) {
                 setStatus(EditorStatus.SAVING);
                 onChange(
