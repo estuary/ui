@@ -39,12 +39,44 @@ const shouldMaskEverything = (url: string) =>
 const ignoreURLs = ['lr-in-prod'];
 const shouldIgnore = (url: string) => ignoreURLs.some((el) => url.includes(el));
 
-const maskBodyKeys = ['endpoint_config'];
+const allowedKeys = [
+    'id',
+    'draft_id',
+    'logs_token',
+    'catalog_name',
+    'capture_name',
+    'object_role',
+];
 const maskHeaderKeys = ['apikey', 'Authorization'];
-const maskKeysInObject = (
-    keys: typeof maskBodyKeys | typeof maskHeaderKeys,
-    obj: [{ [k: string]: any }] | { [k: string]: any } | undefined
-) => {
+
+type ParsedBody = [{ [k: string]: any }] | { [k: string]: any } | undefined;
+
+const getAllowedKeys = (obj: ParsedBody) => {
+    if (!obj) return obj;
+
+    const originalIsArray = Array.isArray(obj);
+    const copy = originalIsArray ? obj : [obj];
+    const response = [];
+
+    copy.forEach((el) => {
+        console.log('Looking in', el);
+        const filteredObject: any = {};
+
+        Object.keys(obj)
+            .filter((key) => allowedKeys.includes(key))
+            .forEach((key) => {
+                filteredObject[key] = el[key];
+            });
+
+        console.log('Going to push', { copy, filteredObject });
+
+        response.push(filteredObject);
+    });
+
+    return originalIsArray ? copy : copy[0];
+};
+
+const maskKeysInObject = (keys: typeof maskHeaderKeys, obj: ParsedBody) => {
     if (!obj) return obj;
 
     const originalIsArray = Array.isArray(obj);
@@ -61,7 +93,7 @@ const maskKeysInObject = (
     return originalIsArray ? response : response[0];
 };
 
-const parseBody = (body: any) => {
+const parseBody = (body: any): ParsedBody => {
     let formattedContent;
 
     if (typeof body === 'string') {
@@ -91,10 +123,7 @@ const maskContent = (requestResponse: any) => {
         return requestResponse;
     }
 
-    requestResponse.body = maskKeysInObject(
-        maskBodyKeys,
-        parseBody(requestResponse.body)
-    );
+    requestResponse.body = getAllowedKeys(parseBody(requestResponse.body));
 
     if (requestResponse?.headers) {
         requestResponse.headers = maskKeysInObject(
