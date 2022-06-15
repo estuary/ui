@@ -154,7 +154,7 @@ function EntityTable({
         SelectableTableStore,
         SelectableTableStore['successfulTransformations']
     >(
-        SelectTableStoreNames.CAPTURE,
+        selectableTableStoreName,
         selectableTableStoreSelectors.successfulTransformations.get
     );
 
