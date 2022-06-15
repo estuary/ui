@@ -147,7 +147,7 @@ function Rows({ data, showEntityStatus }: RowsProps) {
         SelectableTableStore,
         SelectableTableStore['successfulTransformations']
     >(
-        SelectTableStoreNames.CAPTURE,
+        SelectTableStoreNames.MATERIALIZATION,
         selectableTableStoreSelectors.successfulTransformations.get
     );
 
