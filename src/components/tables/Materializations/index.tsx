@@ -83,6 +83,10 @@ function MaterializationsTable() {
                 header="materializationsTable.title"
                 headerLink="https://docs.estuary.dev/concepts/#materializations"
                 filterLabel="materializationsTable.filterLabel"
+                rowSelectorProps={{
+                    selectableTableStoreName:
+                        SelectTableStoreNames.MATERIALIZATION,
+                }}
                 showEntityStatus={true}
                 enableSelection
                 selectableTableStoreName={SelectTableStoreNames.MATERIALIZATION}
