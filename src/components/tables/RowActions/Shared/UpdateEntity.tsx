@@ -60,10 +60,7 @@ function UpdateEntity({
         selectableTableStoreSelectors.successfulTransformations.increment
     );
 
-    const { liveSpecs } = useLiveSpecsExtWithSpec(
-        entity.last_pub_id,
-        entity.spec_type
-    );
+    const { liveSpecs } = useLiveSpecsExtWithSpec(entity.id, entity.spec_type);
 
     useEffect(() => {
         const failed = (response: any) => {
