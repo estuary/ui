@@ -10,10 +10,15 @@ import SharedProgress, {
     SharedProgressProps,
 } from 'components/tables/RowActions/Shared/Progress';
 import {
+    SelectableTableStore,
+    selectableTableStoreSelectors,
+} from 'components/tables/Store';
+import {
     LiveSpecsExtQueryWithSpec,
     useLiveSpecsExtWithSpec,
 } from 'hooks/useLiveSpecsExt';
 import usePublications from 'hooks/usePublications';
+import { SelectTableStoreNames, useZustandStore } from 'hooks/useZustand';
 import { useEffect, useState } from 'react';
 import { jobSucceeded } from 'services/supabase';
 import { ENTITY } from 'types';
@@ -27,6 +32,9 @@ export interface UpdateEntityProps {
     generateNewSpecType: (entity: LiveSpecsExtQuery) => ENTITY | null;
     runningMessageID: SharedProgressProps['runningMessageID'];
     successMessageID: SharedProgressProps['successMessageID'];
+    selectableStoreName:
+        | SelectTableStoreNames.CAPTURE
+        | SelectTableStoreNames.MATERIALIZATION;
 }
 
 function UpdateEntity({
@@ -36,12 +44,21 @@ function UpdateEntity({
     onFinish,
     runningMessageID,
     successMessageID,
+    selectableStoreName,
 }: UpdateEntityProps) {
     const [state, setState] = useState<ProgressStates>(ProgressStates.RUNNING);
     const [error, setError] = useState<any | null>(null);
     const [draftId, setDraftId] = useState<string | null>(null);
     const [pubID, setPubID] = useState<string | null>(null);
     const [logToken, setLogToken] = useState<string | null>(null);
+
+    const incrementSuccessfulTransformations = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['incrementSuccessfulTransformations']
+    >(
+        selectableStoreName,
+        selectableTableStoreSelectors.successfulTransformations.increment
+    );
 
     const { liveSpecs } = useLiveSpecsExtWithSpec(entity.id, entity.spec_type);
 
@@ -96,18 +113,25 @@ function UpdateEntity({
 
     const { publication } = usePublications(pubID, true);
     useEffect(() => {
-        const done = jobSucceeded(publication?.job_status);
-        if (done === true) {
+        const success = jobSucceeded(publication?.job_status);
+
+        if (success === true) {
             setState(ProgressStates.SUCCESS);
             setLogToken(publication?.logs_token ?? null);
             onFinish(publication);
-        } else if (done === false) {
+        } else if (success === false) {
             setState(ProgressStates.FAILED);
             setLogToken(publication?.logs_token ?? null);
             setError({});
             onFinish(publication);
         }
     }, [onFinish, publication]);
+
+    useEffect(() => {
+        if (state === ProgressStates.SUCCESS) {
+            incrementSuccessfulTransformations();
+        }
+    }, [state, incrementSuccessfulTransformations]);
 
     return (
         <SharedProgress

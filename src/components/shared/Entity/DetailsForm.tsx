@@ -8,7 +8,7 @@ import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
 import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { useZustandStore } from 'hooks/useZustand';
+import { DraftEditorStoreNames, useZustandStore } from 'hooks/useZustand';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
@@ -23,9 +23,14 @@ import { Grants } from 'types';
 interface Props {
     connectorTags: ConnectorWithTagDetailQuery[];
     accessGrants: Grants[];
+    draftEditorStoreName: DraftEditorStoreNames;
 }
 
-function DetailsForm({ connectorTags, accessGrants }: Props) {
+function DetailsForm({
+    connectorTags,
+    accessGrants,
+    draftEditorStoreName,
+}: Props) {
     const intl = useIntl();
     const [searchParams] = useSearchParams();
     const connectorID = searchParams.get(
@@ -35,7 +40,7 @@ function DetailsForm({ connectorTags, accessGrants }: Props) {
     const isSaving = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['isSaving']
-    >((state) => state.isSaving);
+    >(draftEditorStoreName, (state) => state.isSaving);
 
     const useEntityCreateStore = useRouteStore();
     const messagePrefix = useEntityCreateStore(

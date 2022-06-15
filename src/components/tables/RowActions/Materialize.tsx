@@ -4,18 +4,24 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
-import { useZustandStore } from 'hooks/useZustand';
+import { SelectTableStoreNames, useZustandStore } from 'hooks/useZustand';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router';
 import { getPathWithParam } from 'utils/misc-utils';
 
-function Materialize() {
+interface Props {
+    selectableTableStoreName:
+        | SelectTableStoreNames.CAPTURE
+        | SelectTableStoreNames.MATERIALIZATION;
+}
+
+function Materialize({ selectableTableStoreName }: Props) {
     const navigate = useNavigate();
 
     const selectedRows = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['selected']
-    >(selectableTableStoreSelectors.selected.get);
+    >(selectableTableStoreName, selectableTableStoreSelectors.selected.get);
 
     const hasSelections = selectedRows.size > 0;
 

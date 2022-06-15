@@ -1,13 +1,20 @@
 import DisableEnableConfirmation from 'components/tables/RowActions/DisableEnable/Confirmation';
 import RowActionButton from 'components/tables/RowActions/Shared/Button';
 import UpdateEntity from 'components/tables/RowActions/Shared/UpdateEntity';
+import { SelectTableStoreNames } from 'hooks/useZustand';
 import produce from 'immer';
 
 export interface DisableEnableButtonProps {
     enabling: boolean;
+    selectableTableStoreName:
+        | SelectTableStoreNames.CAPTURE
+        | SelectTableStoreNames.MATERIALIZATION;
 }
 
-function DisableEnableButton({ enabling }: DisableEnableButtonProps) {
+function DisableEnableButton({
+    enabling,
+    selectableTableStoreName,
+}: DisableEnableButtonProps) {
     const messages = {
         running: enabling ? 'common.enabling' : 'common.disabling',
         success: enabling ? 'common.enabled' : 'common.disabled',
@@ -16,7 +23,10 @@ function DisableEnableButton({ enabling }: DisableEnableButtonProps) {
     return (
         <RowActionButton
             confirmationMessage={
-                <DisableEnableConfirmation enabling={enabling} />
+                <DisableEnableConfirmation
+                    enabling={enabling}
+                    selectableTableStoreName={selectableTableStoreName}
+                />
             }
             renderProgress={(item, index, onFinish) => (
                 <UpdateEntity
@@ -34,9 +44,11 @@ function DisableEnableButton({ enabling }: DisableEnableButtonProps) {
                         });
                     }}
                     generateNewSpecType={(entity) => entity.spec_type}
+                    selectableStoreName={selectableTableStoreName}
                 />
             )}
             messageID={enabling ? 'cta.enable' : 'cta.disable'}
+            selectableTableStoreName={selectableTableStoreName}
         />
     );
 }

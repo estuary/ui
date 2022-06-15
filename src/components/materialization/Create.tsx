@@ -12,7 +12,7 @@ import { usePrompt } from 'hooks/useBlocker';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { useZustandStore } from 'hooks/useZustand';
+import { DraftEditorStoreNames, useZustandStore } from 'hooks/useZustand';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
@@ -55,12 +55,12 @@ function MaterializationCreate() {
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
-    >((state) => state.id);
+    >(DraftEditorStoreNames.MATERIALIZATION, (state) => state.id);
 
     const setDraftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setId']
-    >((state) => state.setId);
+    >(DraftEditorStoreNames.MATERIALIZATION, (state) => state.setId);
 
     // Reset the catalog if the connector changes
     useEffect(() => {
@@ -132,6 +132,9 @@ function MaterializationCreate() {
                             <MaterializeGenerateButton
                                 disabled={!hasConnectors}
                                 callFailed={helpers.callFailed}
+                                draftEditorStoreName={
+                                    DraftEditorStoreNames.MATERIALIZATION
+                                }
                             />
                         }
                         TestButton={
@@ -140,6 +143,9 @@ function MaterializationCreate() {
                                 callFailed={helpers.callFailed}
                                 closeLogs={handlers.closeLogs}
                                 logEvent={CustomEvents.MATERIALIZATION_TEST}
+                                draftEditorStoreName={
+                                    DraftEditorStoreNames.MATERIALIZATION
+                                }
                             />
                         }
                         SaveButton={
@@ -148,6 +154,9 @@ function MaterializationCreate() {
                                 callFailed={helpers.callFailed}
                                 closeLogs={handlers.closeLogs}
                                 logEvent={CustomEvents.MATERIALIZATION_CREATE}
+                                draftEditorStoreName={
+                                    DraftEditorStoreNames.MATERIALIZATION
+                                }
                             />
                         }
                         heading={
@@ -155,6 +164,7 @@ function MaterializationCreate() {
                         }
                     />
                 }
+                draftEditorStoreName={DraftEditorStoreNames.MATERIALIZATION}
             />
         </PageContainer>
     );

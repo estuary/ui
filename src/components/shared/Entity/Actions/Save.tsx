@@ -5,7 +5,7 @@ import { buttonSx } from 'components/shared/Entity/Header';
 import { useClient } from 'hooks/supabase-swr';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { useZustandStore } from 'hooks/useZustand';
+import { DraftEditorStoreNames, useZustandStore } from 'hooks/useZustand';
 import LogRocket from 'logrocket';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
@@ -20,6 +20,7 @@ interface Props {
     onFailure: Function;
     logEvent: CustomEvents;
     dryRun?: boolean;
+    draftEditorStoreName: DraftEditorStoreNames;
 }
 
 const trackEvent = (logEvent: Props['logEvent'], payload: any) => {
@@ -32,7 +33,13 @@ const trackEvent = (logEvent: Props['logEvent'], payload: any) => {
     });
 };
 
-function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
+function EntityCreateSave({
+    disabled,
+    dryRun,
+    onFailure,
+    draftEditorStoreName,
+    logEvent,
+}: Props) {
     const intl = useIntl();
     const supabaseClient = useClient();
 
@@ -41,17 +48,17 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
-    >((state) => state.id);
+    >(draftEditorStoreName, (state) => state.id);
 
     const setPubId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setPubId']
-    >((state) => state.setPubId);
+    >(draftEditorStoreName, (state) => state.setPubId);
 
     const isSaving = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['isSaving']
-    >((state) => state.isSaving);
+    >(draftEditorStoreName, (state) => state.isSaving);
 
     const showNotification = useNotificationStore(
         notificationStoreSelectors.showNotification

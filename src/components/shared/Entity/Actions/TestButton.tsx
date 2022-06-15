@@ -4,7 +4,7 @@ import LogDialog from 'components/shared/Entity/LogDialog';
 import LogDialogActions from 'components/shared/Entity/LogDialogActions';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { useZustandStore } from 'hooks/useZustand';
+import { DraftEditorStoreNames, useZustandStore } from 'hooks/useZustand';
 import { FormattedMessage } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
@@ -14,6 +14,7 @@ interface Props {
     callFailed: Function;
     disabled: boolean;
     logEvent: CustomEvents.CAPTURE_TEST | CustomEvents.MATERIALIZATION_TEST;
+    draftEditorStoreName: DraftEditorStoreNames;
 }
 
 function EntityTestButton({
@@ -21,6 +22,7 @@ function EntityTestButton({
     closeLogs,
     disabled,
     logEvent,
+    draftEditorStoreName,
 }: Props) {
     const useEntityCreateStore = useRouteStore();
     const showLogs = useEntityCreateStore(
@@ -39,7 +41,7 @@ function EntityTestButton({
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
-    >((state) => state.id);
+    >(draftEditorStoreName, (state) => state.id);
 
     return (
         <>
@@ -62,6 +64,7 @@ function EntityTestButton({
                 disabled={disabled || !draftId}
                 onFailure={callFailed}
                 logEvent={logEvent}
+                draftEditorStoreName={draftEditorStoreName}
             />
         </>
     );

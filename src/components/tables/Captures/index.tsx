@@ -4,9 +4,8 @@ import EntityTable, {
     getPagination,
     SortDirection,
 } from 'components/tables/EntityTable';
-import { createSelectableTableStore } from 'components/tables/Store';
 import { useQuery } from 'hooks/supabase-swr';
-import { ZustandProvider } from 'hooks/useZustand';
+import { SelectTableStoreNames } from 'hooks/useZustand';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
 import { LiveSpecsExtBaseQuery } from 'types';
@@ -65,36 +64,33 @@ function CapturesTable() {
 
     return (
         <Box>
-            <ZustandProvider
-                createStore={createSelectableTableStore}
-                storeName="Captures-Selectable-Table"
-            >
-                <EntityTable
-                    noExistingDataContentIds={{
-                        header: 'captures.message1',
-                        message: 'captures.message2',
-                    }}
-                    columns={tableColumns}
-                    query={liveSpecQuery}
-                    renderTableRows={(data, showEntityStatus) => (
-                        <Rows data={data} showEntityStatus={showEntityStatus} />
-                    )}
-                    setPagination={setPagination}
-                    setSearchQuery={setSearchQuery}
-                    sortDirection={sortDirection}
-                    setSortDirection={setSortDirection}
-                    columnToSort={columnToSort}
-                    setColumnToSort={setColumnToSort}
-                    header="captureTable.header"
-                    headerLink="https://docs.estuary.dev/concepts/#captures"
-                    filterLabel="capturesTable.filterLabel"
-                    enableSelection
-                    rowSelectorProps={{
-                        showMaterialize: true,
-                    }}
-                    showEntityStatus={true}
-                />
-            </ZustandProvider>
+            <EntityTable
+                noExistingDataContentIds={{
+                    header: 'captures.message1',
+                    message: 'captures.message2',
+                }}
+                columns={tableColumns}
+                query={liveSpecQuery}
+                renderTableRows={(data, showEntityStatus) => (
+                    <Rows data={data} showEntityStatus={showEntityStatus} />
+                )}
+                setPagination={setPagination}
+                setSearchQuery={setSearchQuery}
+                sortDirection={sortDirection}
+                setSortDirection={setSortDirection}
+                columnToSort={columnToSort}
+                setColumnToSort={setColumnToSort}
+                header="captureTable.header"
+                headerLink="https://docs.estuary.dev/concepts/#captures"
+                filterLabel="capturesTable.filterLabel"
+                enableSelection
+                rowSelectorProps={{
+                    selectableTableStoreName: SelectTableStoreNames.CAPTURE,
+                    showMaterialize: true,
+                }}
+                showEntityStatus={true}
+                selectableTableStoreName={SelectTableStoreNames.CAPTURE}
+            />
         </Box>
     );
 }

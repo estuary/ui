@@ -16,6 +16,9 @@ export interface SelectableTableStore {
     ) => void;
     setAllSelected: (isSelected: boolean) => void;
 
+    successfulTransformations: number;
+    incrementSuccessfulTransformations: () => void;
+
     resetState: () => void;
 }
 
@@ -26,15 +29,18 @@ export const initialCreateStates = {
     selected: () => {
         return new Map();
     },
+    successfulTransformations: 0,
 };
 
 export const getInitialStateData = (): Pick<
     SelectableTableStore,
-    'selected' | 'rows'
+    'selected' | 'rows' | 'successfulTransformations'
 > => {
     return {
         selected: initialCreateStates.selected(),
         rows: initialCreateStates.rows(),
+        successfulTransformations:
+            initialCreateStates.successfulTransformations,
     };
 };
 
@@ -98,6 +104,16 @@ export const getInitialState = (
             );
         },
 
+        incrementSuccessfulTransformations: () => {
+            set(
+                produce((state) => {
+                    state.successfulTransformations += 1;
+                }),
+                false,
+                'Successful Transformations Incremented'
+            );
+        },
+
         resetState: () => {
             set(getInitialStateData(), false, 'Resetting State');
         },
@@ -120,5 +136,10 @@ export const selectableTableStoreSelectors = {
         get: (state: SelectableTableStore) => state.selected,
         set: (state: SelectableTableStore) => state.setSelected,
         setAll: (state: SelectableTableStore) => state.setAllSelected,
+    },
+    successfulTransformations: {
+        get: (state: SelectableTableStore) => state.successfulTransformations,
+        increment: (state: SelectableTableStore) =>
+            state.incrementSuccessfulTransformations,
     },
 };

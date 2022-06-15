@@ -12,7 +12,7 @@ import { usePrompt } from 'hooks/useBlocker';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { useZustandStore } from 'hooks/useZustand';
+import { DraftEditorStoreNames, useZustandStore } from 'hooks/useZustand';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
@@ -57,19 +57,19 @@ function CaptureCreate() {
     const setDraftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setId']
-    >((state) => state.setId);
+    >(DraftEditorStoreNames.CAPTURE, (state) => state.setId);
 
     const pubId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['pubId']
-    >((state) => state.pubId);
+    >(DraftEditorStoreNames.CAPTURE, (state) => state.pubId);
 
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
-    >((state) => state.id);
+    >(DraftEditorStoreNames.CAPTURE, (state) => state.id);
 
-    // Reset the cataolg if the connector changes
+    // Reset the catalog if the connector changes
     useEffect(() => {
         setDraftId(null);
     }, [imageTag, setDraftId]);
@@ -170,6 +170,9 @@ function CaptureCreate() {
                                 disabled={!hasConnectors}
                                 callFailed={helpers.callFailed}
                                 subscription={discoversSubscription}
+                                draftEditorStoreName={
+                                    DraftEditorStoreNames.CAPTURE
+                                }
                             />
                         }
                         TestButton={
@@ -178,6 +181,9 @@ function CaptureCreate() {
                                 callFailed={helpers.callFailed}
                                 disabled={!hasConnectors}
                                 logEvent={CustomEvents.CAPTURE_TEST}
+                                draftEditorStoreName={
+                                    DraftEditorStoreNames.CAPTURE
+                                }
                             />
                         }
                         SaveButton={
@@ -185,12 +191,16 @@ function CaptureCreate() {
                                 closeLogs={handlers.closeLogs}
                                 callFailed={helpers.callFailed}
                                 disabled={!draftId}
+                                draftEditorStoreName={
+                                    DraftEditorStoreNames.CAPTURE
+                                }
                                 materialize={handlers.materializeCollections}
                                 logEvent={CustomEvents.CAPTURE_CREATE}
                             />
                         }
                     />
                 }
+                draftEditorStoreName={DraftEditorStoreNames.CAPTURE}
             />
         </PageContainer>
     );
