@@ -50,12 +50,16 @@ export const generateDraftSpec = (
 
     if (resources) {
         Object.keys(resources).forEach((collectionName) => {
-            draftSpec.bindings.push({
-                source: collectionName,
-                resource: {
-                    ...resources[collectionName].data,
-                },
-            });
+            const resourceConfig = resources[collectionName].data;
+
+            if (Object.keys(resourceConfig).length > 0) {
+                draftSpec.bindings.push({
+                    source: collectionName,
+                    resource: {
+                        ...resourceConfig,
+                    },
+                });
+            }
         });
     }
 

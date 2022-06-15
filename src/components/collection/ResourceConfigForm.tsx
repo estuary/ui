@@ -23,6 +23,9 @@ function NewMaterializationResourceConfigForm({
 }: Props) {
     const useEntityCreateStore = useRouteStore();
 
+    const collections: string[] = useEntityCreateStore(
+        entityCreateStoreSelectors.collections
+    );
     const setConfig = useEntityCreateStore(
         entityCreateStoreSelectors.resourceConfig.set
     );
@@ -38,11 +41,13 @@ function NewMaterializationResourceConfigForm({
     //  This will hydrate the default values for us as we don't want JSONForms to
     //  directly update the state object as it caused issues when switching connectors.
     useEffect(() => {
-        setConfig(collectionName, {
-            data: createJSONFormDefaults(resourceSchema),
-            errors: [],
-        });
-    }, [collectionName, resourceSchema, setConfig]);
+        if (!collections.includes(collectionName)) {
+            setConfig(collectionName, {
+                data: createJSONFormDefaults(resourceSchema),
+                errors: [],
+            });
+        }
+    }, [collectionName, resourceSchema, collections, setConfig]);
 
     const uiSchema = custom_generateDefaultUISchema(resourceSchema);
     const showValidationVal = showValidation(displayValidation);
