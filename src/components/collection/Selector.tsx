@@ -16,7 +16,7 @@ function CollectionSelector() {
     const { liveSpecs: collectionData, error } = useLiveSpecs('collection');
 
     const useEntityCreateStore = useRouteStore();
-    const collections = useEntityCreateStore(
+    const collections: string[] = useEntityCreateStore(
         entityCreateStoreSelectors.collections
     );
     const setCollections = useEntityCreateStore(
@@ -29,7 +29,16 @@ function CollectionSelector() {
     const handlers = {
         updateCollections: (event: React.SyntheticEvent, value: any) => {
             setCollections(value);
-            setResourceConfig(value[value.length - 1]);
+
+            if (collections.length > value.length) {
+                const removedCollection = collections.find(
+                    (collection) => !value.includes(collection)
+                );
+
+                setResourceConfig(removedCollection);
+            } else {
+                setResourceConfig(value[value.length - 1]);
+            }
         },
         validateSelection: () => {
             setMissingInput(collections.length === 0);
