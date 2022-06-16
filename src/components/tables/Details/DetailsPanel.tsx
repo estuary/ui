@@ -1,9 +1,10 @@
 import { Collapse, Grid, TableCell, TableRow } from '@mui/material';
 import EditorAndLogs from 'components/tables/Details/EditorAndLogs';
-import { LiveSpecEditorStoreNames } from 'hooks/useZustand';
+import { LiveSpecEditorStoreNames, ZustandProvider } from 'hooks/useZustand';
 import { ENTITY } from 'types';
 import ShardInformation from 'components/tables/Details/ShardInformation';
 import { tableBorderSx } from 'context/Theme';
+import { createEditorStore } from 'components/editor/Store';
 
 interface Props {
     detailsExpanded: boolean;
@@ -31,19 +32,28 @@ function DetailsPanel({
                 colSpan={colSpan}
             >
                 <Collapse in={detailsExpanded} unmountOnExit>
-                    <Grid container spacing={2}>
-                        {entityType && (
-                            <ShardInformation entityType={entityType} />
-                        )}
-
-                        <EditorAndLogs
-                            lastPubId={id}
-                            disableLogs={disableLogs}
-                            liveSpecEditorStoreName={
+                    <ZustandProvider
+                        storeSlice={{
+                            storeName: LiveSpecEditorStoreNames.GENERAL,
+                            createStore: createEditorStore(
                                 LiveSpecEditorStoreNames.GENERAL
-                            }
-                        />
-                    </Grid>
+                            ),
+                        }}
+                    >
+                        <Grid container spacing={2}>
+                            {entityType && (
+                                <ShardInformation entityType={entityType} />
+                            )}
+
+                            <EditorAndLogs
+                                lastPubId={id}
+                                disableLogs={disableLogs}
+                                liveSpecEditorStoreName={
+                                    LiveSpecEditorStoreNames.GENERAL
+                                }
+                            />
+                        </Grid>
+                    </ZustandProvider>
                 </Collapse>
             </TableCell>
         </TableRow>
