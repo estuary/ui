@@ -75,9 +75,10 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.restart': `Restart`,
     'cta.enable': `Enable`,
     'cta.disable': `Disable`,
-    'cta.testConfig': `Test Catalog`,
-    'cta.generateCatalog': `Generate Catalog`,
-    'cta.regenerateCatalog': `Regenerate Catalog`,
+    'cta.testConfig': `Test`,
+    'cta.generateCatalog.capture': `Discover Endpoint`,
+    'cta.generateCatalog.materialization': `Prepare Materialization`,
+    'cta.expandToEdit': `Expand to edit`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
@@ -350,13 +351,13 @@ const Foo: ResolvedIntlConfig['messages'] = {
     'foo.ctas.docs': `Connector Help`,
     'foo.catalogEditor.heading': `Catalog Editor`,
     'foo.errors.collapseTitle': `Expand to see logs`,
-    'foo.endpointConfig.heading': `Connection Configuration`,
+    'foo.endpointConfig.heading': `Endpoint Configuration`,
     'foo.endpointConfig.errorSummary': `You must provide valid values for all required fields before continuing.`,
     'foo.endpointConfig.detailsHaveErrors': `The Details section has errors.`,
     'foo.endpointConfig.entityNameMissing': `Provide a name to continue.`,
     'foo.endpointConfig.connectorMissing': `Select a connector to continue.`,
-    'foo.endpointConfig.endpointConfigMissing': `The Connection Configuration section is empty.`,
-    'foo.endpointConfig.endpointConfigHaveErrors': `The Connection Configuration section has errors.`,
+    'foo.endpointConfig.endpointConfigMissing': `The Endpoint Configuration section is empty.`,
+    'foo.endpointConfig.endpointConfigHaveErrors': `The Endpoint Configuration section has errors.`,
     'foo.endpointConfig.resourceConfigHaveErrors': `The Collections Resource Configuration section has errors.`,
     'foo.endpointConfig.collectionsMissing': `Select a collection to continue.`,
 };

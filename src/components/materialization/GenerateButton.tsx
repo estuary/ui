@@ -23,11 +23,6 @@ function MaterializeGenerateButton({
     callFailed,
     draftEditorStoreName,
 }: Props) {
-    const draftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['id']
-    >(draftEditorStoreName, (state) => state.id);
-
     const isSaving = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['isSaving']
@@ -161,9 +156,7 @@ function MaterializeGenerateButton({
             disabled={disabled || isSaving || formActive}
             sx={buttonSx}
         >
-            <FormattedMessage
-                id={draftId ? 'cta.regenerateCatalog' : 'cta.generateCatalog'}
-            />
+            <FormattedMessage id="cta.generateCatalog.materialization" />
         </Button>
     );
 }
