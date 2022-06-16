@@ -85,25 +85,6 @@ const MultiLineSecretRenderer = (props: any) => {
                 open={isUploadOpen}
                 onSave={submitFile}
                 filesLimit={1}
-                // List taken from -> https://pki-tutorial.readthedocs.io/en/latest/mime.html
-                acceptedFiles={[
-                    '.pem',
-                    '.p8',
-                    '.p10',
-                    '.p12',
-                    '.key',
-                    '.csr',
-                    '.cer',
-                    '.cr1',
-                    '.crt',
-                    '.p7c',
-                    '.p7b',
-                    '.p7r',
-                    '.der',
-                    '.pfx',
-                    '.spc',
-                    '',
-                ]}
                 clearOnUnmount={true}
                 showPreviews={false}
                 showPreviewsInDropzone={true}

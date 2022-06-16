@@ -34,7 +34,6 @@ const Auth = () => {
             storeSession: true,
         })
         .then(async (response) => {
-            console.log('auth handler', response);
             if (response.error) {
                 await failed(response.error.message);
             }

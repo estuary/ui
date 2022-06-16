@@ -50,10 +50,11 @@ function EndpointConfigForm({ endpointSchema }: Props) {
             custom_generateDefaultUISchema(endpointSchema)
         );
 
-        console.log('Schema generated for the endpoint config form', {
-            input: endpointSchema,
-            output: generatedSchema,
-        });
+        // Uncomment for logging if you need to debug creating a schema
+        // console.log('Schema generated for the endpoint config form', {
+        //     input: endpointSchema,
+        //     output: generatedSchema,
+        // });
 
         return generatedSchema;
     });

@@ -6,7 +6,9 @@ import { useClient } from 'hooks/supabase-swr';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { DraftEditorStoreNames, useZustandStore } from 'hooks/useZustand';
+import LogRocket from 'logrocket';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { CustomEvents } from 'services/logrocket';
 import { endSubscription, startSubscription, TABLES } from 'services/supabase';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 import useNotificationStore, {
@@ -16,15 +18,27 @@ import useNotificationStore, {
 interface Props {
     disabled: boolean;
     onFailure: Function;
-    draftEditorStoreName: DraftEditorStoreNames;
+    logEvent: CustomEvents;
     dryRun?: boolean;
+    draftEditorStoreName: DraftEditorStoreNames;
 }
+
+const trackEvent = (logEvent: Props['logEvent'], payload: any) => {
+    LogRocket.track(logEvent, {
+        id: payload.id,
+        draft_id: payload.draft_id,
+        dry_run: payload.dry_run,
+        logs_token: payload.logs_token,
+        status: payload.job_status.type,
+    });
+};
 
 function EntityCreateSave({
     disabled,
     dryRun,
     onFailure,
     draftEditorStoreName,
+    logEvent,
 }: Props) {
     const intl = useIntl();
     const supabaseClient = useClient();
@@ -69,16 +83,19 @@ function EntityCreateSave({
 
     const waitForPublishToFinish = (logTokenVal: string) => {
         resetFormState(status);
-        console.log('wait for finish');
         const subscription = startSubscription(
             supabaseClient.from(
                 `${TABLES.PUBLICATIONS}:draft_id=eq.${draftId}`
             ),
             async (payload: any) => {
                 if (payload.logs_token === logTokenVal) {
+                    const formStatus = dryRun
+                        ? FormStatus.TESTED
+                        : FormStatus.SAVED;
+
                     setPubId(payload.id);
                     setFormState({
-                        status: dryRun ? FormStatus.TESTED : FormStatus.SAVED,
+                        status: formStatus,
                         exitWhenLogsClose: !dryRun,
                     });
 
@@ -102,13 +119,15 @@ function EntityCreateSave({
                         }),
                     });
 
+                    trackEvent(logEvent, payload);
+
                     await endSubscription(subscription);
                 }
             },
             async (payload: any) => {
-                console.log('Paload', payload);
                 if (payload.logs_token === logTokenVal) {
-                    console.log('wait for finish - failure');
+                    trackEvent(logEvent, payload);
+
                     onFailure({
                         error: {
                             title: `${messagePrefix}.save.failedErrorTitle`,
@@ -127,11 +146,8 @@ function EntityCreateSave({
     const save = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
 
-        console.log('save');
         resetFormState(status);
 
-        console.log('save:pubstarted');
-        console.log('save:creating');
         const response = await createPublication(
             draftId,
             dryRun ?? false,
@@ -140,9 +156,7 @@ function EntityCreateSave({
         const publicationsSubscription = waitForPublishToFinish(
             response.data[0].logs_token
         );
-        console.log('save:created', response);
         if (response.error) {
-            console.log('save:created:failed', response);
             onFailure(
                 {
                     error: {
@@ -153,7 +167,6 @@ function EntityCreateSave({
                 publicationsSubscription
             );
         } else {
-            console.log('save:created:success', response);
             setFormState({
                 logToken: response.data[0].logs_token,
                 showLogs: true,

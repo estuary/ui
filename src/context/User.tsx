@@ -15,7 +15,6 @@ export const UserProvider = ({ children }: BaseComponentProps) => {
 
     useEffectOnce(() => {
         supabaseClient.auth.onAuthStateChange((event) => {
-            console.log('onAuthStateChange >>> ', event);
             if (event === 'PASSWORD_RECOVERY') {
                 enqueueSnackbar(
                     intl.formatMessage({
