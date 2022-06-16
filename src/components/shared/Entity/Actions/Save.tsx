@@ -5,7 +5,7 @@ import { buttonSx } from 'components/shared/Entity/Header';
 import { useClient } from 'hooks/supabase-swr';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { DraftEditorStoreNames, useZustandStore } from 'hooks/useZustand';
+import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { endSubscription, startSubscription, TABLES } from 'services/supabase';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';

@@ -5,7 +5,7 @@ import EntityTable, {
     SortDirection,
 } from 'components/tables/EntityTable';
 import { useQuery } from 'hooks/supabase-swr';
-import { SelectTableStoreNames } from 'hooks/useZustand';
+import { SelectTableStoreNames } from 'context/Zustand';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
 

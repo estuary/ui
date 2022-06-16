@@ -1,6 +1,6 @@
 import { Collapse, Grid, TableCell, TableRow } from '@mui/material';
 import EditorAndLogs from 'components/tables/Details/EditorAndLogs';
-import { LiveSpecEditorStoreNames, ZustandProvider } from 'hooks/useZustand';
+import { LiveSpecEditorStoreNames, ZustandProvider } from 'context/Zustand';
 import { ENTITY } from 'types';
 import ShardInformation from 'components/tables/Details/ShardInformation';
 import { tableBorderSx } from 'context/Theme';

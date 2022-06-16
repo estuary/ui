@@ -10,7 +10,7 @@ import {
     DraftEditorStoreNames,
     LiveSpecEditorStoreNames,
     useZustandStore,
-} from 'hooks/useZustand';
+} from 'context/Zustand';
 import { debounce } from 'lodash';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useCallback, useRef, useState } from 'react';

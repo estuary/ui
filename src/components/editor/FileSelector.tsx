@@ -12,7 +12,7 @@ import {
     DraftEditorStoreNames,
     LiveSpecEditorStoreNames,
     useZustandStore,
-} from 'hooks/useZustand';
+} from 'context/Zustand';
 import { useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 

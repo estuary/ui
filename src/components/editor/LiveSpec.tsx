@@ -1,5 +1,5 @@
 import EditorWithFileSelector from 'components/editor/EditorWithFileSelector';
-import { LiveSpecEditorStoreNames } from 'hooks/useZustand';
+import { LiveSpecEditorStoreNames } from 'context/Zustand';
 
 interface Props {
     liveSpecEditorStoreName: LiveSpecEditorStoreNames;

@@ -18,7 +18,7 @@ import {
     useLiveSpecsExtWithSpec,
 } from 'hooks/useLiveSpecsExt';
 import usePublications from 'hooks/usePublications';
-import { SelectTableStoreNames, useZustandStore } from 'hooks/useZustand';
+import { SelectTableStoreNames, useZustandStore } from 'context/Zustand';
 import { useEffect, useState } from 'react';
 import { jobSucceeded } from 'services/supabase';
 import { ENTITY } from 'types';

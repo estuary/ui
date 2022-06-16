@@ -4,7 +4,7 @@ import { EditorStoreState } from 'components/editor/Store';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { DraftEditorStoreNames, useZustandStore } from 'hooks/useZustand';
+import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
 import { FormattedMessage } from 'react-intl';
 import { entityCreateStoreSelectors } from 'stores/Create';
 

@@ -16,7 +16,7 @@ import {
 } from 'components/tables/Store';
 import { useRouteStore } from 'hooks/useRouteStore';
 import useShardsList from 'hooks/useShardsList';
-import { SelectTableStoreNames, useZustandStore } from 'hooks/useZustand';
+import { SelectTableStoreNames, useZustandStore } from 'context/Zustand';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CONNECTOR_TITLE } from 'services/supabase';

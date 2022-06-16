@@ -21,7 +21,7 @@ import StatusIndicatorAndLabel from 'components/tables/Details/StatusIndicatorAn
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { PublicationSpecQuery } from 'hooks/usePublicationSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { LiveSpecEditorStoreNames, useZustandStore } from 'hooks/useZustand';
+import { LiveSpecEditorStoreNames, useZustandStore } from 'context/Zustand';
 import { MouseEvent, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { shardDetailSelectors } from 'stores/ShardDetail';

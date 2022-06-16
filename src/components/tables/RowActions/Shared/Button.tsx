@@ -6,7 +6,7 @@ import {
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
 import { useConfirmationModalContext } from 'context/Confirmation';
-import { SelectTableStoreNames, useZustandStore } from 'hooks/useZustand';
+import { SelectTableStoreNames, useZustandStore } from 'context/Zustand';
 import { ReactNode, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 

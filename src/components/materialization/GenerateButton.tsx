@@ -6,7 +6,7 @@ import { EditorStoreState } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { DraftEditorStoreNames, useZustandStore } from 'hooks/useZustand';
+import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';

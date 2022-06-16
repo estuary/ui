@@ -2,7 +2,7 @@ import { updateDraftSpec } from 'api/draftSpecs';
 import EditorWithFileSelector from 'components/editor/EditorWithFileSelector';
 import { EditorStoreState } from 'components/editor/Store';
 import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { DraftEditorStoreNames, useZustandStore } from 'hooks/useZustand';
+import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
 import { useEffect, useState } from 'react';
 
 export interface Props {

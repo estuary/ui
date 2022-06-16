@@ -8,7 +8,7 @@ import usePublications from 'hooks/usePublications';
 import usePublicationSpecs, {
     PublicationSpecQuery,
 } from 'hooks/usePublicationSpecs';
-import { LiveSpecEditorStoreNames, useZustandStore } from 'hooks/useZustand';
+import { LiveSpecEditorStoreNames, useZustandStore } from 'context/Zustand';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 
