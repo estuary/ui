@@ -17,6 +17,10 @@ export enum DraftEditorStoreNames {
     MATERIALIZATION = 'draftSpecEditor-Materializations',
 }
 
+export enum LiveSpecEditorStoreNames {
+    GENERAL = 'liveSpecEditor',
+}
+
 export enum SelectTableStoreNames {
     ACCESS_GRANTS = 'AccessGrants-Selectable-Table',
     CAPTURE = 'Captures-Selectable-Table',
@@ -25,11 +29,10 @@ export enum SelectTableStoreNames {
     MATERIALIZATION = 'Materializations-Selectable-Table',
 }
 
-export enum MaterializationStoreNames {
-    DRAFT_SPEC_EDITOR = 'draftSpecEditor-Materializations',
-}
-
-type StoreName = DraftEditorStoreNames | SelectTableStoreNames;
+type StoreName =
+    | DraftEditorStoreNames
+    | LiveSpecEditorStoreNames
+    | SelectTableStoreNames;
 
 const stores = {
     [DraftEditorStoreNames.CAPTURE]: createEditorStore(
@@ -37,6 +40,9 @@ const stores = {
     ),
     [DraftEditorStoreNames.MATERIALIZATION]: createEditorStore(
         DraftEditorStoreNames.MATERIALIZATION
+    ),
+    [LiveSpecEditorStoreNames.GENERAL]: createEditorStore(
+        LiveSpecEditorStoreNames.GENERAL
     ),
     [SelectTableStoreNames.ACCESS_GRANTS]: createSelectableTableStore(
         SelectTableStoreNames.ACCESS_GRANTS

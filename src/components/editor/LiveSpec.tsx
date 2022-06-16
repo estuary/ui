@@ -1,14 +1,14 @@
 import EditorWithFileSelector from 'components/editor/EditorWithFileSelector';
-import { DraftEditorStoreNames } from 'hooks/useZustand';
+import { LiveSpecEditorStoreNames } from 'hooks/useZustand';
 
 interface Props {
-    draftEditorStoreName: DraftEditorStoreNames;
+    liveSpecEditorStoreName: LiveSpecEditorStoreNames;
 }
 
-function LiveSpecEditor({ draftEditorStoreName }: Props) {
+function LiveSpecEditor({ liveSpecEditorStoreName }: Props) {
     return (
         <EditorWithFileSelector
-            draftEditorStoreName={draftEditorStoreName}
+            editorStoreName={liveSpecEditorStoreName}
             disabled={true}
         />
     );
