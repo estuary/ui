@@ -77,7 +77,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.disable': `Disable`,
     'cta.testConfig': `Test`,
     'cta.generateCatalog.capture': `Discover Endpoint`,
-    'cta.generateCatalog.materialization': `Prepare Materialization`,
+    'cta.generateCatalog.materialization': `Validate Endpoint Config`,
     'cta.expandToEdit': `Expand to edit`,
 };
 
@@ -347,7 +347,7 @@ const Collections: ResolvedIntlConfig['messages'] = {
     'collections.message2.docPath': `https://docs.estuary.dev/concepts/collections/`,
 };
 
-const entityCreateHeader = `Catalog Editor`;
+const entityCreateHeader = `Endpoint Config`;
 const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.catalogEditor.heading': `Catalog Editor`,
     'entityCreate.ctas.docs': `Connector Help`,
