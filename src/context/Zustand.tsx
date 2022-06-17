@@ -51,9 +51,6 @@ const stores = {
     [DraftEditorStoreNames.MATERIALIZATION]: createEditorStore(
         DraftEditorStoreNames.MATERIALIZATION
     ),
-    // [LiveSpecEditorStoreNames.GENERAL]: createEditorStore(
-    //     LiveSpecEditorStoreNames.GENERAL
-    // ),
     [SelectTableStoreNames.ACCESS_GRANTS]: createSelectableTableStore(
         SelectTableStoreNames.ACCESS_GRANTS
     ),
