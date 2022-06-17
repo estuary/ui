@@ -5,7 +5,7 @@ import { buttonSx } from 'components/shared/Entity/Header';
 import { useClient } from 'hooks/supabase-swr';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { DraftEditorStoreNames, useZustandStore } from 'hooks/useZustand';
+import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
 import LogRocket from 'logrocket';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';

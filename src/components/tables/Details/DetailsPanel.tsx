@@ -1,9 +1,14 @@
 import { Collapse, Grid, TableCell, TableRow } from '@mui/material';
 import EditorAndLogs from 'components/tables/Details/EditorAndLogs';
-import { DraftEditorStoreNames } from 'hooks/useZustand';
+import { LiveSpecEditorStoreNames } from 'context/Zustand';
 import { ENTITY } from 'types';
 import ShardInformation from 'components/tables/Details/ShardInformation';
 import { tableBorderSx } from 'context/Theme';
+import { createEditorStore } from 'components/editor/Store';
+import {
+    LocalZustandProvider,
+    useLocalZustandStore,
+} from 'context/LocalZustand';
 
 interface Props {
     detailsExpanded: boolean;
@@ -11,7 +16,6 @@ interface Props {
     colSpan: number;
     disableLogs?: boolean;
     entityType?: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
-    draftEditorStoreName?: DraftEditorStoreNames;
 }
 
 function DetailsPanel({
@@ -20,7 +24,6 @@ function DetailsPanel({
     colSpan,
     disableLogs,
     entityType,
-    draftEditorStoreName = DraftEditorStoreNames.CAPTURE,
 }: Props) {
     return (
         <TableRow>
@@ -33,17 +36,29 @@ function DetailsPanel({
                 colSpan={colSpan}
             >
                 <Collapse in={detailsExpanded} unmountOnExit>
-                    <Grid container spacing={2}>
-                        {entityType && (
-                            <ShardInformation entityType={entityType} />
+                    <LocalZustandProvider
+                        createStore={createEditorStore(
+                            LiveSpecEditorStoreNames.GENERAL
                         )}
+                    >
+                        <Grid container spacing={2}>
+                            {entityType && (
+                                <ShardInformation
+                                    useZustandStore={useLocalZustandStore}
+                                    entityType={entityType}
+                                />
+                            )}
 
-                        <EditorAndLogs
-                            lastPubId={id}
-                            disableLogs={disableLogs}
-                            draftEditorStoreName={draftEditorStoreName}
-                        />
-                    </Grid>
+                            <EditorAndLogs
+                                lastPubId={id}
+                                disableLogs={disableLogs}
+                                liveSpecEditorStoreName={
+                                    LiveSpecEditorStoreNames.GENERAL
+                                }
+                                useZustandStore={useLocalZustandStore}
+                            />
+                        </Grid>
+                    </LocalZustandProvider>
                 </Collapse>
             </TableCell>
         </TableRow>

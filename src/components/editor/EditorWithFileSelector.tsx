@@ -15,7 +15,7 @@ const MIN_RESIZE_WIDTH = 25;
 const INITIAL_SELECTOR_WIDTH = 250;
 
 function EditorWithFileSelector(props: Props) {
-    const { height, draftEditorStoreName } = props;
+    const { height, editorStoreName, useZustandStore } = props;
     const heightVal = (height ?? DEFAULT_HEIGHT) + DEFAULT_TOOLBAR_HEIGHT;
 
     return (
@@ -35,7 +35,8 @@ function EditorWithFileSelector(props: Props) {
                 >
                     <div className="pane-content" style={{ height: heightVal }}>
                         <EditorFileSelector
-                            draftEditorStoreName={draftEditorStoreName}
+                            editorStoreName={editorStoreName}
+                            useZustandStore={useZustandStore}
                         />
                     </div>
                 </ReflexElement>
@@ -56,7 +57,8 @@ function EditorWithFileSelector(props: Props) {
                     <div className="pane-content">
                         <MonacoEditor
                             {...props}
-                            draftEditorStoreName={draftEditorStoreName}
+                            editorStoreName={editorStoreName}
+                            useZustandStore={useZustandStore}
                         />
                     </div>
                 </ReflexElement>

@@ -4,7 +4,7 @@ import LogDialog from 'components/shared/Entity/LogDialog';
 import LogDialogActions from 'components/shared/Entity/LogDialogActions';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { DraftEditorStoreNames, useZustandStore } from 'hooks/useZustand';
+import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
 import { FormattedMessage } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';

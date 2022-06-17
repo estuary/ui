@@ -4,7 +4,7 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
-import { SelectTableStoreNames, useZustandStore } from 'hooks/useZustand';
+import { SelectTableStoreNames, useZustandStore } from 'context/Zustand';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router';
 import { getPathWithParam } from 'utils/misc-utils';

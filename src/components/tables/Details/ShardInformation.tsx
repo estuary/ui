@@ -21,23 +21,20 @@ import StatusIndicatorAndLabel from 'components/tables/Details/StatusIndicatorAn
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { PublicationSpecQuery } from 'hooks/usePublicationSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { DraftEditorStoreNames, useZustandStore } from 'hooks/useZustand';
+import { LiveSpecEditorStoreNames, UseZustandStore } from 'context/Zustand';
 import { MouseEvent, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { shardDetailSelectors } from 'stores/ShardDetail';
 import { ENTITY } from 'types';
 
 interface Props {
+    useZustandStore: UseZustandStore;
     entityType?: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
-    draftEditorStoreName?: DraftEditorStoreNames;
 }
 
 const rowsPerPage = 3;
 
-function ShardInformation({
-    entityType,
-    draftEditorStoreName = DraftEditorStoreNames.CAPTURE,
-}: Props) {
+function ShardInformation({ useZustandStore, entityType }: Props) {
     const theme = useTheme();
     const intl = useIntl();
 
@@ -54,7 +51,7 @@ function ShardInformation({
     const specs = useZustandStore<
         EditorStoreState<PublicationSpecQuery>,
         EditorStoreState<PublicationSpecQuery>['specs']
-    >(draftEditorStoreName, (state) => state.specs);
+    >(LiveSpecEditorStoreNames.GENERAL, (state) => state.specs);
 
     const columns: {
         field: string | null;
