@@ -349,6 +349,7 @@ const Collections: ResolvedIntlConfig['messages'] = {
 
 const entityCreateHeader = `Catalog Editor`;
 const EntityCreate: ResolvedIntlConfig['messages'] = {
+    'entityCreate.catalogEditor.heading': `Catalog Editor`,
     'entityCreate.ctas.docs': `Connector Help`,
     'entityCreate.errors.collapseTitle': `Expand to see logs`,
     'entityCreate.endpointConfig.heading': `${entityCreateHeader}`,
