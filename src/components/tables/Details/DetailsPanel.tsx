@@ -1,10 +1,14 @@
 import { Collapse, Grid, TableCell, TableRow } from '@mui/material';
 import EditorAndLogs from 'components/tables/Details/EditorAndLogs';
-import { LiveSpecEditorStoreNames, ZustandProvider } from 'context/Zustand';
+import { LiveSpecEditorStoreNames } from 'context/Zustand';
 import { ENTITY } from 'types';
 import ShardInformation from 'components/tables/Details/ShardInformation';
 import { tableBorderSx } from 'context/Theme';
 import { createEditorStore } from 'components/editor/Store';
+import {
+    LocalZustandProvider,
+    useLocalZustandStore,
+} from 'context/LocalZustand';
 
 interface Props {
     detailsExpanded: boolean;
@@ -32,17 +36,17 @@ function DetailsPanel({
                 colSpan={colSpan}
             >
                 <Collapse in={detailsExpanded} unmountOnExit>
-                    <ZustandProvider
-                        storeSlice={{
-                            storeName: LiveSpecEditorStoreNames.GENERAL,
-                            createStore: createEditorStore(
-                                LiveSpecEditorStoreNames.GENERAL
-                            ),
-                        }}
+                    <LocalZustandProvider
+                        createStore={createEditorStore(
+                            LiveSpecEditorStoreNames.GENERAL
+                        )}
                     >
                         <Grid container spacing={2}>
                             {entityType && (
-                                <ShardInformation entityType={entityType} />
+                                <ShardInformation
+                                    useZustandStore={useLocalZustandStore}
+                                    entityType={entityType}
+                                />
                             )}
 
                             <EditorAndLogs
@@ -51,9 +55,10 @@ function DetailsPanel({
                                 liveSpecEditorStoreName={
                                     LiveSpecEditorStoreNames.GENERAL
                                 }
+                                useZustandStore={useLocalZustandStore}
                             />
                         </Grid>
-                    </ZustandProvider>
+                    </LocalZustandProvider>
                 </Collapse>
             </TableCell>
         </TableRow>

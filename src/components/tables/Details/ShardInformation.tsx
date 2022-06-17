@@ -21,19 +21,20 @@ import StatusIndicatorAndLabel from 'components/tables/Details/StatusIndicatorAn
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { PublicationSpecQuery } from 'hooks/usePublicationSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { LiveSpecEditorStoreNames, useZustandStore } from 'context/Zustand';
+import { LiveSpecEditorStoreNames, UseZustandStore } from 'context/Zustand';
 import { MouseEvent, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { shardDetailSelectors } from 'stores/ShardDetail';
 import { ENTITY } from 'types';
 
 interface Props {
+    useZustandStore: UseZustandStore;
     entityType?: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
 }
 
 const rowsPerPage = 3;
 
-function ShardInformation({ entityType }: Props) {
+function ShardInformation({ useZustandStore, entityType }: Props) {
     const theme = useTheme();
     const intl = useIntl();
 

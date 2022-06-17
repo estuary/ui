@@ -8,19 +8,21 @@ import usePublications from 'hooks/usePublications';
 import usePublicationSpecs, {
     PublicationSpecQuery,
 } from 'hooks/usePublicationSpecs';
-import { LiveSpecEditorStoreNames, useZustandStore } from 'context/Zustand';
+import { LiveSpecEditorStoreNames, UseZustandStore } from 'context/Zustand';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
     lastPubId: string;
     liveSpecEditorStoreName: LiveSpecEditorStoreNames;
+    useZustandStore: UseZustandStore;
     disableLogs?: boolean;
 }
 
 function EditorAndLogs({
     lastPubId,
     liveSpecEditorStoreName,
+    useZustandStore,
     disableLogs,
 }: Props) {
     const { publicationSpecs, error: pubSpecsError } =
@@ -56,6 +58,7 @@ function EditorAndLogs({
                 <Grid item xs={disableLogs ? 12 : 6}>
                     <LiveSpecEditor
                         liveSpecEditorStoreName={liveSpecEditorStoreName}
+                        useZustandStore={useZustandStore}
                     />
                 </Grid>
 

@@ -88,9 +88,10 @@ function DraftSpecEditor({ draftEditorStoreName, disabled }: Props) {
     if (draftSpec) {
         return (
             <EditorWithFileSelector
-                editorStoreName={draftEditorStoreName}
-                onChange={handlers.change}
                 disabled={disabled}
+                editorStoreName={draftEditorStoreName}
+                useZustandStore={useZustandStore}
+                onChange={handlers.change}
             />
         );
     } else {

@@ -11,13 +11,14 @@ import { PublicationSpecQuery } from 'hooks/usePublicationSpecs';
 import {
     DraftEditorStoreNames,
     LiveSpecEditorStoreNames,
-    useZustandStore,
+    UseZustandStore,
 } from 'context/Zustand';
 import { useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
     editorStoreName: DraftEditorStoreNames | LiveSpecEditorStoreNames;
+    useZustandStore: UseZustandStore;
 }
 
 const initialState = {
@@ -58,7 +59,7 @@ const columns: GridColDef[] = [
     },
 ];
 
-function EditorFileSelector({ editorStoreName }: Props) {
+function EditorFileSelector({ editorStoreName, useZustandStore }: Props) {
     const initDone = useRef(false);
 
     const isSaving = useZustandStore<

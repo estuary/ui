@@ -25,10 +25,16 @@ export enum SelectTableStoreNames {
     MATERIALIZATION = 'Materializations-Selectable-Table',
 }
 
-type StoreName =
+export type StoreName =
     | DraftEditorStoreNames
     | LiveSpecEditorStoreNames
     | SelectTableStoreNames;
+
+export type UseZustandStore = <S extends Object, U>(
+    storeName: StoreName,
+    selector: StateSelector<S, U>,
+    equalityFn?: any
+) => U;
 
 interface ZustandProviderProps {
     children: ReactNode;
@@ -45,9 +51,9 @@ const stores = {
     [DraftEditorStoreNames.MATERIALIZATION]: createEditorStore(
         DraftEditorStoreNames.MATERIALIZATION
     ),
-    [LiveSpecEditorStoreNames.GENERAL]: createEditorStore(
-        LiveSpecEditorStoreNames.GENERAL
-    ),
+    // [LiveSpecEditorStoreNames.GENERAL]: createEditorStore(
+    //     LiveSpecEditorStoreNames.GENERAL
+    // ),
     [SelectTableStoreNames.ACCESS_GRANTS]: createSelectableTableStore(
         SelectTableStoreNames.ACCESS_GRANTS
     ),

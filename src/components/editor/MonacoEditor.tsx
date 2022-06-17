@@ -9,7 +9,7 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import {
     DraftEditorStoreNames,
     LiveSpecEditorStoreNames,
-    useZustandStore,
+    UseZustandStore,
 } from 'context/Zustand';
 import { debounce } from 'lodash';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
@@ -19,6 +19,7 @@ import { stringifyJSON } from 'services/stringify';
 
 export interface Props {
     editorStoreName: DraftEditorStoreNames | LiveSpecEditorStoreNames;
+    useZustandStore: UseZustandStore;
     disabled?: boolean;
     onChange?: (newVal: any, path: string, specType: string) => any;
     height?: number;
@@ -32,6 +33,7 @@ const ICON_SIZE = 15;
 
 function MonacoEditor({
     editorStoreName,
+    useZustandStore,
     disabled,
     height = DEFAULT_HEIGHT,
     onChange,
