@@ -197,12 +197,12 @@ export const startSubscription = (
 ) => {
     const subscription = query
         .on('*', async (payload: any) => {
-            console.log('WS: ', payload);
             const response = payload.new
                 ? payload.new
                 : payload.record
                 ? payload.record
                 : null;
+
             if (response) {
                 if (response.job_status.type !== 'queued') {
                     if (response.job_status.type === 'success') {
