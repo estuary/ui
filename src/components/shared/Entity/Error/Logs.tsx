@@ -33,7 +33,7 @@ function ErrorLogs({
             >
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography>
-                        <FormattedMessage id="foo.errors.collapseTitle" />
+                        <FormattedMessage id="entityCreate.errors.collapseTitle" />
                     </Typography>
                 </AccordionSummary>
                 <AccordionDetails>

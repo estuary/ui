@@ -347,19 +347,19 @@ const Collections: ResolvedIntlConfig['messages'] = {
     'collections.message2.docPath': `https://docs.estuary.dev/concepts/collections/`,
 };
 
-const Foo: ResolvedIntlConfig['messages'] = {
-    'foo.ctas.docs': `Connector Help`,
-    'foo.catalogEditor.heading': `Catalog Editor`,
-    'foo.errors.collapseTitle': `Expand to see logs`,
-    'foo.endpointConfig.heading': `Endpoint Configuration`,
-    'foo.endpointConfig.errorSummary': `You must provide valid values for all required fields before continuing.`,
-    'foo.endpointConfig.detailsHaveErrors': `The Details section has errors.`,
-    'foo.endpointConfig.entityNameMissing': `Provide a name to continue.`,
-    'foo.endpointConfig.connectorMissing': `Select a connector to continue.`,
-    'foo.endpointConfig.endpointConfigMissing': `The Endpoint Configuration section is empty.`,
-    'foo.endpointConfig.endpointConfigHaveErrors': `The Endpoint Configuration section has errors.`,
-    'foo.endpointConfig.resourceConfigHaveErrors': `The Collections Resource Configuration section has errors.`,
-    'foo.endpointConfig.collectionsMissing': `Select a collection to continue.`,
+const entityCreateHeader = `Catalog Editor`;
+const EntityCreate: ResolvedIntlConfig['messages'] = {
+    'entityCreate.ctas.docs': `Connector Help`,
+    'entityCreate.errors.collapseTitle': `Expand to see logs`,
+    'entityCreate.endpointConfig.heading': `${entityCreateHeader}`,
+    'entityCreate.endpointConfig.errorSummary': `You must provide valid values for all required fields before continuing.`,
+    'entityCreate.endpointConfig.detailsHaveErrors': `The Details section has errors.`,
+    'entityCreate.endpointConfig.entityNameMissing': `Provide a name to continue.`,
+    'entityCreate.endpointConfig.connectorMissing': `Select a connector to continue.`,
+    'entityCreate.endpointConfig.endpointConfigMissing': `The ${entityCreateHeader} section is empty.`,
+    'entityCreate.endpointConfig.endpointConfigHaveErrors': `The ${entityCreateHeader} section has errors.`,
+    'entityCreate.endpointConfig.resourceConfigHaveErrors': `The Collections Resource Configuration section has errors.`,
+    'entityCreate.endpointConfig.collectionsMissing': `Select a collection to continue.`,
 };
 
 const MonacoEditor: ResolvedIntlConfig['messages'] = {
@@ -483,7 +483,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...AccessGrants,
     ...Collections,
     ...Materializations,
-    ...Foo,
+    ...EntityCreate,
     ...Captures,
     ...CaptureCreate,
     ...DetailsPanel,

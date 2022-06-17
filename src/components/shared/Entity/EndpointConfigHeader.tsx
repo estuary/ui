@@ -22,7 +22,7 @@ function EndpointConfigHeader({ docsPath }: Props) {
             ) : null}
 
             <Typography>
-                <FormattedMessage id="foo.endpointConfig.heading" />
+                <FormattedMessage id="entityCreate.endpointConfig.heading" />
             </Typography>
 
             {docsPath && docsPath.length > 0 ? (
@@ -35,7 +35,7 @@ function EndpointConfigHeader({ docsPath }: Props) {
                         }}
                     />
                     <ExternalLink link={docsPath}>
-                        <FormattedMessage id="foo.ctas.docs" />
+                        <FormattedMessage id="entityCreate.ctas.docs" />
                     </ExternalLink>
                 </>
             ) : null}

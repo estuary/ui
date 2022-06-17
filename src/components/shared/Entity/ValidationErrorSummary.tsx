@@ -41,7 +41,7 @@ function ValidationErrorSummary() {
     if (isEmpty(entityName)) {
         filteredErrorsList.push({
             title: intl.formatMessage({
-                id: 'foo.endpointConfig.entityNameMissing',
+                id: 'entityCreate.endpointConfig.entityNameMissing',
             }),
         });
     }
@@ -50,7 +50,7 @@ function ValidationErrorSummary() {
     if (isEmpty(imageTag.id)) {
         filteredErrorsList.push({
             title: intl.formatMessage({
-                id: 'foo.endpointConfig.connectorMissing',
+                id: 'entityCreate.endpointConfig.connectorMissing',
             }),
         });
     }
@@ -60,7 +60,7 @@ function ValidationErrorSummary() {
         if (filteredDetailErrors.length > 0) {
             filteredErrorsList.push({
                 title: intl.formatMessage({
-                    id: 'foo.endpointConfig.detailsHaveErrors',
+                    id: 'entityCreate.endpointConfig.detailsHaveErrors',
                 }),
             });
         }
@@ -69,13 +69,13 @@ function ValidationErrorSummary() {
         if (isEmpty(endpointSchema)) {
             filteredErrorsList.push({
                 title: intl.formatMessage({
-                    id: 'foo.endpointConfig.endpointConfigMissing',
+                    id: 'entityCreate.endpointConfig.endpointConfigMissing',
                 }),
             });
         } else if (filteredSpecErrors.length > 0) {
             filteredErrorsList.push({
                 title: intl.formatMessage({
-                    id: 'foo.endpointConfig.endpointConfigHaveErrors',
+                    id: 'entityCreate.endpointConfig.endpointConfigHaveErrors',
                 }),
             });
         }
@@ -84,13 +84,13 @@ function ValidationErrorSummary() {
         if (!collections || collections.length === 0) {
             filteredErrorsList.push({
                 title: intl.formatMessage({
-                    id: 'foo.endpointConfig.collectionsMissing',
+                    id: 'entityCreate.endpointConfig.collectionsMissing',
                 }),
             });
         } else if (collections && filteredResourceConfigErrors.length > 0) {
             filteredErrorsList.push({
                 title: intl.formatMessage({
-                    id: 'foo.endpointConfig.resourceConfigHaveErrors',
+                    id: 'entityCreate.endpointConfig.resourceConfigHaveErrors',
                 }),
             });
         }
@@ -100,7 +100,7 @@ function ValidationErrorSummary() {
         <Collapse in={filteredErrorsList.length > 0} timeout="auto">
             <Alert severity="error">
                 <AlertTitle>
-                    <FormattedMessage id="foo.endpointConfig.errorSummary" />
+                    <FormattedMessage id="entityCreate.endpointConfig.errorSummary" />
                 </AlertTitle>
                 <KeyValueList data={filteredErrorsList} />
             </Alert>
