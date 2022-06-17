@@ -4,9 +4,9 @@ import { createEntityDraft } from 'api/drafts';
 import { encryptConfig } from 'api/sops';
 import { EditorStoreState } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
+import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
@@ -98,7 +98,7 @@ function CaptureGenerateButton({
             if (encryptedEndpointConfig.error) {
                 return callFailed({
                     error: {
-                        title: 'captureCreate.generate.failedConfigEncryptTitle',
+                        title: 'entityCreate.sops.failedTitle',
                         error: encryptedEndpointConfig.error,
                     },
                 });
