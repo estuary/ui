@@ -31,6 +31,8 @@ const stickySx: SxProps<Theme> = {
     width: 'calc(100% + 32px)',
 };
 
+const stickyThreshold = 1;
+
 function FooHeader({ GenerateButton, TestButton, SaveButton, heading }: Props) {
     const useEntityCreateStore = useRouteStore();
     const formActive = useEntityCreateStore(
@@ -41,7 +43,7 @@ function FooHeader({ GenerateButton, TestButton, SaveButton, heading }: Props) {
     );
 
     const { inView, ref } = useInView({
-        threshold: [1],
+        threshold: [stickyThreshold],
     });
 
     return (
@@ -56,7 +58,7 @@ function FooHeader({ GenerateButton, TestButton, SaveButton, heading }: Props) {
                           }
                         : {}),
                     position: 'sticky',
-                    top: -1,
+                    top: -stickyThreshold,
                     zIndex: zIndexIncrement,
                 }}
             >
