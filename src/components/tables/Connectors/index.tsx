@@ -9,7 +9,7 @@ import {
     ConnectorWithTagDetailQuery,
     CONNECTOR_WITH_TAG_QUERY,
 } from 'hooks/useConnectorWithTagDetail';
-import { SelectTableStoreNames } from 'hooks/useZustand';
+import { SelectTableStoreNames } from 'context/Zustand';
 import { useState } from 'react';
 import { CONNECTOR_NAME, defaultTableFilter, TABLES } from 'services/supabase';
 

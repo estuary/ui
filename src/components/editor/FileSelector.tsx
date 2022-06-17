@@ -8,12 +8,17 @@ import {
 import { EditorStoreState } from 'components/editor/Store';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { PublicationSpecQuery } from 'hooks/usePublicationSpecs';
-import { DraftEditorStoreNames, useZustandStore } from 'hooks/useZustand';
+import {
+    DraftEditorStoreNames,
+    LiveSpecEditorStoreNames,
+    UseZustandStore,
+} from 'context/Zustand';
 import { useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
-    draftEditorStoreName: DraftEditorStoreNames;
+    editorStoreName: DraftEditorStoreNames | LiveSpecEditorStoreNames;
+    useZustandStore: UseZustandStore;
 }
 
 const initialState = {
@@ -54,30 +59,30 @@ const columns: GridColDef[] = [
     },
 ];
 
-function EditorFileSelector({ draftEditorStoreName }: Props) {
+function EditorFileSelector({ editorStoreName, useZustandStore }: Props) {
     const initDone = useRef(false);
 
     const isSaving = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['isSaving']
-    >(draftEditorStoreName, (state) => state.isSaving);
+    >(editorStoreName, (state) => state.isSaving);
 
     const isEditing = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['isEditing']
-    >(draftEditorStoreName, (state) => state.isEditing);
+    >(editorStoreName, (state) => state.isEditing);
 
     const setCurrentCatalog = useZustandStore<
         EditorStoreState<PublicationSpecQuery | DraftSpecQuery>,
         EditorStoreState<
             PublicationSpecQuery | DraftSpecQuery
         >['setCurrentCatalog']
-    >(draftEditorStoreName, (state) => state.setCurrentCatalog);
+    >(editorStoreName, (state) => state.setCurrentCatalog);
 
     const specs = useZustandStore<
         EditorStoreState<PublicationSpecQuery | DraftSpecQuery>,
         EditorStoreState<PublicationSpecQuery | DraftSpecQuery>['specs']
-    >(draftEditorStoreName, (state) => state.specs);
+    >(editorStoreName, (state) => state.specs);
 
     const [selectionModel, setSelectionModel] = useState<GridSelectionModel>(
         []

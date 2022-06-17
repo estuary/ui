@@ -8,19 +8,21 @@ import usePublications from 'hooks/usePublications';
 import usePublicationSpecs, {
     PublicationSpecQuery,
 } from 'hooks/usePublicationSpecs';
-import { DraftEditorStoreNames, useZustandStore } from 'hooks/useZustand';
+import { LiveSpecEditorStoreNames, UseZustandStore } from 'context/Zustand';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
     lastPubId: string;
-    draftEditorStoreName: DraftEditorStoreNames;
+    liveSpecEditorStoreName: LiveSpecEditorStoreNames;
+    useZustandStore: UseZustandStore;
     disableLogs?: boolean;
 }
 
 function EditorAndLogs({
     lastPubId,
-    draftEditorStoreName,
+    liveSpecEditorStoreName,
+    useZustandStore,
     disableLogs,
 }: Props) {
     const { publicationSpecs, error: pubSpecsError } =
@@ -31,12 +33,12 @@ function EditorAndLogs({
     const setSpecs = useZustandStore<
         EditorStoreState<PublicationSpecQuery>,
         EditorStoreState<PublicationSpecQuery>['setSpecs']
-    >(draftEditorStoreName, (state) => state.setSpecs);
+    >(liveSpecEditorStoreName, (state) => state.setSpecs);
 
     const setId = useZustandStore<
         EditorStoreState<PublicationSpecQuery>,
         EditorStoreState<PublicationSpecQuery>['setId']
-    >(draftEditorStoreName, (state) => state.setId);
+    >(liveSpecEditorStoreName, (state) => state.setId);
 
     useEffect(() => {
         setId(lastPubId);
@@ -55,7 +57,8 @@ function EditorAndLogs({
             <>
                 <Grid item xs={disableLogs ? 12 : 6}>
                     <LiveSpecEditor
-                        draftEditorStoreName={draftEditorStoreName}
+                        liveSpecEditorStoreName={liveSpecEditorStoreName}
+                        useZustandStore={useZustandStore}
                     />
                 </Grid>
 

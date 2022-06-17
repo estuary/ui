@@ -29,7 +29,7 @@ import {
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
 import { Query, useSelect } from 'hooks/supabase-swr';
-import { SelectTableStoreNames, useZustandStore } from 'hooks/useZustand';
+import { SelectTableStoreNames, useZustandStore } from 'context/Zustand';
 import { debounce } from 'lodash';
 import {
     ChangeEvent,

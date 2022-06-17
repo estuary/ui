@@ -5,7 +5,7 @@ import EntityTable, {
 } from 'components/tables/EntityTable';
 import Rows, { tableColumns } from 'components/tables/Materializations/Rows';
 import { useQuery } from 'hooks/supabase-swr';
-import { SelectTableStoreNames } from 'hooks/useZustand';
+import { SelectTableStoreNames } from 'context/Zustand';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
 import { LiveSpecsExtBaseQuery } from 'types';

@@ -1,7 +1,7 @@
 import DisableEnableConfirmation from 'components/tables/RowActions/DisableEnable/Confirmation';
 import RowActionButton from 'components/tables/RowActions/Shared/Button';
 import UpdateEntity from 'components/tables/RowActions/Shared/UpdateEntity';
-import { SelectTableStoreNames } from 'hooks/useZustand';
+import { SelectTableStoreNames } from 'context/Zustand';
 import produce from 'immer';
 
 export interface DisableEnableButtonProps {

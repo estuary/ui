@@ -8,13 +8,13 @@ import {
 import useConstant from 'use-constant';
 import { StateSelector, StoreApi, useStore } from 'zustand';
 
-interface ZustandProviderProps {
-    children: ReactNode;
-}
-
 export enum DraftEditorStoreNames {
     CAPTURE = 'draftSpecEditor-Captures',
     MATERIALIZATION = 'draftSpecEditor-Materializations',
+}
+
+export enum LiveSpecEditorStoreNames {
+    GENERAL = 'liveSpecEditor',
 }
 
 export enum SelectTableStoreNames {
@@ -25,11 +25,24 @@ export enum SelectTableStoreNames {
     MATERIALIZATION = 'Materializations-Selectable-Table',
 }
 
-export enum MaterializationStoreNames {
-    DRAFT_SPEC_EDITOR = 'draftSpecEditor-Materializations',
-}
+export type StoreName =
+    | DraftEditorStoreNames
+    | LiveSpecEditorStoreNames
+    | SelectTableStoreNames;
 
-type StoreName = DraftEditorStoreNames | SelectTableStoreNames;
+export type UseZustandStore = <S extends Object, U>(
+    storeName: StoreName,
+    selector: StateSelector<S, U>,
+    equalityFn?: any
+) => U;
+
+interface ZustandProviderProps {
+    children: ReactNode;
+    storeSlice?: {
+        storeName: string;
+        createStore: (key: string) => unknown;
+    };
+}
 
 const stores = {
     [DraftEditorStoreNames.CAPTURE]: createEditorStore(
@@ -57,8 +70,19 @@ const stores = {
 
 export const ZustandContext = createReactContext<any | null>(null);
 
-export const ZustandProvider = ({ children }: ZustandProviderProps) => {
-    const storeOptions = useConstant(() => stores);
+export const ZustandProvider = ({
+    children,
+    storeSlice,
+}: ZustandProviderProps) => {
+    const storeOptions = useConstant(() => {
+        if (storeSlice) {
+            const { storeName, createStore } = storeSlice;
+
+            return { [storeName]: createStore };
+        } else {
+            return stores;
+        }
+    });
 
     return (
         <ZustandContext.Provider value={storeOptions}>
