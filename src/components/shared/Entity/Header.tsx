@@ -8,7 +8,7 @@ import {
     Typography,
 } from '@mui/material';
 import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
-import { slate, tableBorderSx, zIndexIncrement } from 'context/Theme';
+import { slate, stickyHeaderIndex, tableBorderSx } from 'context/Theme';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { ReactNode } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -59,7 +59,7 @@ function FooHeader({ GenerateButton, TestButton, SaveButton, heading }: Props) {
                         : {}),
                     position: 'sticky',
                     top: -stickyThreshold,
-                    zIndex: zIndexIncrement,
+                    zIndex: stickyHeaderIndex,
                 }}
             >
                 <Typography variant="h6" noWrap>

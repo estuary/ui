@@ -1,6 +1,6 @@
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { Button } from '@mui/material';
-import { zIndexIncrement } from 'context/Theme';
+import { headerLinkIndex } from 'context/Theme';
 import { ReactNode } from 'react';
 
 interface Props {
@@ -26,7 +26,7 @@ const ExternalLink = ({ children, link, hideIcon }: Props) => {
             sx={{
                 padding: 0,
                 fontWeight: 700,
-                zIndex: zIndexIncrement + zIndexIncrement,
+                zIndex: headerLinkIndex,
             }}
         >
             {children}
