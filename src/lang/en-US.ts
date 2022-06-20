@@ -197,8 +197,8 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
     'login.email.description': `Any valid email you want to use to sign in with`,
     'login.email.label': `Email`,
 
-    'login.token.description': `Token can be found in Magic Link email`,
-    'login.token.label': `Token`,
+    'login.token.description': `This can be found in the magic link email`,
+    'login.token.label': `OTP`,
 
     'login.separator': 'or',
     'login.loginFailed': 'Failed to sign in',

@@ -22,15 +22,11 @@ const MagicLink = () => {
             description: intl.formatMessage({
                 id: 'login.email.description',
             }),
-            minLength: 5,
-            type: 'string',
-        },
-        element: {
-            label: intl.formatMessage({
+            title: intl.formatMessage({
                 id: 'login.email.label',
             }),
-            scope: `#/properties/email`,
-            type: 'Control',
+            minLength: 5,
+            type: 'string',
         },
     };
 
@@ -39,15 +35,11 @@ const MagicLink = () => {
             description: intl.formatMessage({
                 id: 'login.token.description',
             }),
-            secret: true,
-            type: 'string',
-        },
-        element: {
-            label: intl.formatMessage({
+            title: intl.formatMessage({
                 id: 'login.token.label',
             }),
-            scope: `#/properties/token`,
-            type: 'Control',
+            secret: true,
+            type: 'string',
         },
     };
 
