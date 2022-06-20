@@ -4,9 +4,9 @@ import { createDraftSpec, generateDraftSpec } from 'api/draftSpecs';
 import { encryptConfig } from 'api/sops';
 import { EditorStoreState } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
+import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
@@ -23,11 +23,6 @@ function MaterializeGenerateButton({
     callFailed,
     draftEditorStoreName,
 }: Props) {
-    const draftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['id']
-    >(draftEditorStoreName, (state) => state.id);
-
     const isSaving = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['isSaving']
@@ -107,7 +102,7 @@ function MaterializeGenerateButton({
             if (draftsResponse.error) {
                 return callFailed({
                     error: {
-                        title: 'materializationCreate.test.failure.errorTitle',
+                        title: 'materializationCreate.generate.failure.errorTitle',
                         error: draftsResponse.error,
                     },
                 });
@@ -120,7 +115,7 @@ function MaterializeGenerateButton({
             if (encryptedEndpointConfig.error) {
                 return callFailed({
                     error: {
-                        title: 'captureCreate.test.failedConfigEncryptTitle',
+                        title: 'entityCreate.sops.failedTitle',
                         error: encryptedEndpointConfig.error,
                     },
                 });
@@ -142,7 +137,7 @@ function MaterializeGenerateButton({
             if (draftSpecsResponse.error) {
                 return callFailed({
                     error: {
-                        title: 'materializationCreate.test.failure.errorTitle',
+                        title: 'materializationCreate.generate.failure.errorTitle',
                         error: draftSpecsResponse.error,
                     },
                 });
@@ -161,9 +156,7 @@ function MaterializeGenerateButton({
             disabled={disabled || isSaving || formActive}
             sx={buttonSx}
         >
-            <FormattedMessage
-                id={draftId ? 'cta.regenerateCatalog' : 'cta.generateCatalog'}
-            />
+            <FormattedMessage id="cta.generateCatalog.materialization" />
         </Button>
     );
 }

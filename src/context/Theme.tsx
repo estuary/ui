@@ -115,7 +115,12 @@ const darkMode: PaletteOptions = {
     tonalOffset,
 };
 
+// TODO (zindex) We should make a helper or something to help manage zindex.
+//  It doesn't come up often but happens enough it would be nice to handle better.
 export const zIndexIncrement = 5;
+export const headerLinkIndex = zIndexIncrement + zIndexIncrement;
+export const stickyHeaderIndex =
+    zIndexIncrement + zIndexIncrement + zIndexIncrement;
 const buttonHoverIndex = zIndexIncrement;
 const chipDeleteIndex = buttonHoverIndex + zIndexIncrement;
 

@@ -1,5 +1,5 @@
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
+import { Accordion, AccordionDetails } from '@mui/material';
+import Header from 'components/shared/Entity/WrapperWithHeader/Header';
 import { ReactNode, useEffect, useState } from 'react';
 
 interface Props {
@@ -30,9 +30,7 @@ function WrapperWithHeader({ header, children, forceClose }: Props) {
                 mt: 2,
             }}
         >
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                {header}
-            </AccordionSummary>
+            <Header expanded={expanded}>{header}</Header>
             <AccordionDetails>{children}</AccordionDetails>
         </Accordion>
     );

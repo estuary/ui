@@ -75,9 +75,10 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.restart': `Restart`,
     'cta.enable': `Enable`,
     'cta.disable': `Disable`,
-    'cta.testConfig': `Test Catalog`,
-    'cta.generateCatalog': `Generate Catalog`,
-    'cta.regenerateCatalog': `Regenerate Catalog`,
+    'cta.testConfig': `Test`,
+    'cta.generateCatalog.capture': `Discover Endpoint`,
+    'cta.generateCatalog.materialization': `Discover Endpoint`,
+    'cta.expandToEdit': `Expand to edit`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
@@ -346,19 +347,21 @@ const Collections: ResolvedIntlConfig['messages'] = {
     'collections.message2.docPath': `https://docs.estuary.dev/concepts/collections/`,
 };
 
-const Foo: ResolvedIntlConfig['messages'] = {
-    'foo.ctas.docs': `Connector Help`,
-    'foo.catalogEditor.heading': `Catalog Editor`,
-    'foo.errors.collapseTitle': `Expand to see logs`,
-    'foo.endpointConfig.heading': `Connection Configuration`,
-    'foo.endpointConfig.errorSummary': `You must provide valid values for all required fields before continuing.`,
-    'foo.endpointConfig.detailsHaveErrors': `The Details section has errors.`,
-    'foo.endpointConfig.entityNameMissing': `Provide a name to continue.`,
-    'foo.endpointConfig.connectorMissing': `Select a connector to continue.`,
-    'foo.endpointConfig.endpointConfigMissing': `The Connection Configuration section is empty.`,
-    'foo.endpointConfig.endpointConfigHaveErrors': `The Connection Configuration section has errors.`,
-    'foo.endpointConfig.resourceConfigHaveErrors': `The Collections Resource Configuration section has errors.`,
-    'foo.endpointConfig.collectionsMissing': `Select a collection to continue.`,
+const entityCreateHeader = `Endpoint Config`;
+const EntityCreate: ResolvedIntlConfig['messages'] = {
+    'entityCreate.catalogEditor.heading': `Catalog Editor`,
+    'entityCreate.ctas.docs': `Connector Help`,
+    'entityCreate.errors.collapseTitle': `Expand to see logs`,
+    'entityCreate.sops.failedTitle': `Configuration Encryption Failed`,
+    'entityCreate.endpointConfig.heading': `${entityCreateHeader}`,
+    'entityCreate.endpointConfig.errorSummary': `You must provide valid values for all required fields before continuing.`,
+    'entityCreate.endpointConfig.detailsHaveErrors': `The Details section has errors.`,
+    'entityCreate.endpointConfig.entityNameMissing': `Provide a name to continue.`,
+    'entityCreate.endpointConfig.connectorMissing': `Select a connector to continue.`,
+    'entityCreate.endpointConfig.endpointConfigMissing': `The ${entityCreateHeader} section is empty.`,
+    'entityCreate.endpointConfig.endpointConfigHaveErrors': `The ${entityCreateHeader} section has errors.`,
+    'entityCreate.endpointConfig.resourceConfigHaveErrors': `The Collections Resource Configuration section has errors.`,
+    'entityCreate.endpointConfig.collectionsMissing': `Select a collection to continue.`,
 };
 
 const MonacoEditor: ResolvedIntlConfig['messages'] = {
@@ -370,14 +373,14 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreate.heading': `${RouteTitles['routeTitle.captureCreate']}`,
     'captureCreate.details.heading': `Capture Details`,
     'captureCreate.ctas.materialize': `Materialize Collections`,
-    'captureCreate.instructions': `Provide a unique name and specify a source system for your capture. Fill in the required details and click "Test Configuration" to test the connection.`,
+    'captureCreate.instructions': `Provide a unique name and specify a source system for your capture. Fill in the required details and click "${CTAs['cta.generateCatalog.capture']}" to test the connection.`,
     'captureCreate.missingConnectors': `No connectors are installed. You must install a source connector to create a capture.`,
     'captureCreate.noAccessGrants': `You do not have the necessary ${CommonMessages['terms.permissions']} to create a capture. Please contact an administrator.`,
     'captureCreate.tenant.label': `Prefix`,
     'captureCreate.config.source.doclink': `Connector Help`,
     'captureCreate.config.source.homepage': `Home`,
     'captureCreate.save.failed': `Capture creation failed. See below for details:`,
-    'captureCreate.editor.default': `Before you can edit the capture specification, you must fill out the Connection Configuration section and click "Test Configuration." `,
+    'captureCreate.editor.default': `Before you can edit the capture specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.capture']}." `,
     'captureCreate.finalReview.instructions': `The following catalog was generated from the details you provided. To make changes, you can enter new values in the form above and click Regenenerate Catalog, or you can edit the YAML file directly. Click Save and Publish to proceed.`,
 
     'captureCreate.test.failedErrorTitle': `Configuration Test Failed`,
@@ -387,7 +390,6 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreate.save.serverUnreachable': `Unable to reach server while saving capture`,
     'captureCreate.save.waitMessage': `Please wait while we test, save, and publish your capture.`,
 
-    'captureCreate.generate.failedConfigEncryptTitle': `Configuration Encryption Failed`,
     'captureCreate.generate.failedErrorTitle': `Generating Catalog Failed`,
 
     'captureCreate.createNotification.title': `New Capture Created`,
@@ -413,11 +415,10 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreate.details.heading': `Materialization Details`,
     'materializationCreate.collections.heading': `Output Collections`,
     'materializationCreate.config.source.doclink': `Connector Help`,
-    'materializationCreate.cta.test': `Test Configuration`,
-    'materializationCreate.editor.default': `Before you can edit the materialization specification, you must fill out the Connection Configuration section and click "Test Configuration".`,
+    'materializationCreate.editor.default': `Before you can edit the materialization specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.materialization']}".`,
     'materializationCreate.finalReview.instructions': `The following catalog was generated from the details you provided. To make changes, you can enter new values in the form above and click Regenenerate Catalog, or you can edit the YAML file directly. Click Save and Publish to proceed.`,
     'materializationCreate.heading': `New Materialization`,
-    'materializationCreate.instructions': `Provide a unique name and specify a destination system for your materialization. Fill in the required details and click "Test Configuration".`,
+    'materializationCreate.instructions': `Provide a unique name and specify a destination system for your materialization. Fill in the required details and click "${CTAs['cta.generateCatalog.materialization']}".`,
     'materializationCreate.missingConnectors': `No connectors installed. A materialization connector must be installed before a materialization can be created.`,
     'materializationCreate.noAccessGrants': `You do not have the necessary ${CommonMessages['terms.permissions']} to create a materialization. Please contact an administrator.`,
     'materializationCreate.save.failure': `Materialization creation failed. See below for details:`,
@@ -425,8 +426,8 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreate.save.serverUnreachable': `Unable to reach server while saving materialization`,
     'materializationCreate.tenant.label': `Prefix`,
 
-    'materializationCreate.test.failure.errorTitle': `Configuration Test Failed`,
-    'materializationCreate.test.failedConfigEncryptTitle': `Configuration Encryption Failed`,
+    'materializationCreate.generate.failure.errorTitle': `Materialization Preparation Failed`,
+
     'materializationCreate.test.serverUnreachable': `Unable to reach server while testing configuration`,
     'materializationCreate.test.inProgress': `Please wait while we try to connect to the destination.`,
 
@@ -482,7 +483,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...AccessGrants,
     ...Collections,
     ...Materializations,
-    ...Foo,
+    ...EntityCreate,
     ...Captures,
     ...CaptureCreate,
     ...DetailsPanel,

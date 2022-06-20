@@ -8,8 +8,10 @@ import {
     Typography,
 } from '@mui/material';
 import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
+import { slate, stickyHeaderIndex, tableBorderSx } from 'context/Theme';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { ReactNode } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { entityCreateStoreSelectors } from 'stores/Create';
 
 interface Props {
@@ -21,6 +23,16 @@ interface Props {
 
 export const buttonSx: SxProps<Theme> = { ml: 1, borderRadius: 5 };
 
+const stickySx: SxProps<Theme> = {
+    ...tableBorderSx,
+    background: slate[700],
+    ml: '-16px',
+    px: '16px',
+    width: 'calc(100% + 32px)',
+};
+
+const stickyThreshold = 1;
+
 function FooHeader({ GenerateButton, TestButton, SaveButton, heading }: Props) {
     const useEntityCreateStore = useRouteStore();
     const formActive = useEntityCreateStore(
@@ -30,9 +42,26 @@ function FooHeader({ GenerateButton, TestButton, SaveButton, heading }: Props) {
         entityCreateStoreSelectors.formState.displayValidation
     );
 
+    const { inView, ref } = useInView({
+        threshold: [stickyThreshold],
+    });
+
     return (
         <>
-            <Toolbar disableGutters>
+            <Toolbar
+                ref={ref}
+                disableGutters
+                sx={{
+                    ...(!inView
+                        ? {
+                              ...stickySx,
+                          }
+                        : {}),
+                    position: 'sticky',
+                    top: -stickyThreshold,
+                    zIndex: stickyHeaderIndex,
+                }}
+            >
                 <Typography variant="h6" noWrap>
                     {heading}
                 </Typography>
@@ -41,7 +70,12 @@ function FooHeader({ GenerateButton, TestButton, SaveButton, heading }: Props) {
                     direction="row"
                     alignItems="center"
                     sx={{
-                        ml: 'auto',
+                        'ml': 'auto',
+                        '& > button': {
+                            textOverflow: 'ellipsis',
+                            overflow: 'hidden',
+                            whiteSpace: 'nowrap',
+                        },
                     }}
                 >
                     {GenerateButton}

@@ -27,7 +27,9 @@ function CatalogEditor({ messageId, draftEditorStoreName }: Props) {
     if (draftId) {
         return (
             <WrapperWithHeader
-                header={<FormattedMessage id="foo.catalogEditor.heading" />}
+                header={
+                    <FormattedMessage id="entityCreate.catalogEditor.heading" />
+                }
             >
                 <>
                     <Typography sx={{ mb: 2 }}>
