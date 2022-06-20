@@ -85,7 +85,9 @@ const MagicLinkInputs = ({ onSubmit, schema, uiSchema }: Props) => {
                 return;
             }
 
-            displayNotification('login.magicLink', 'success');
+            if (!hasToken) {
+                displayNotification('login.magicLink', 'success');
+            }
         },
     };
 
