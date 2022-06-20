@@ -6,13 +6,13 @@ import {
     GridSelectionModel,
 } from '@mui/x-data-grid';
 import { EditorStoreState } from 'components/editor/Store';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { PublicationSpecQuery } from 'hooks/usePublicationSpecs';
 import {
     DraftEditorStoreNames,
     LiveSpecEditorStoreNames,
     UseZustandStore,
 } from 'context/Zustand';
+import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { PublicationSpecQuery } from 'hooks/usePublicationSpecs';
 import { useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
@@ -105,12 +105,17 @@ function EditorFileSelector({ editorStoreName, useZustandStore }: Props) {
                 hideFooter
                 disableColumnSelector
                 loading={isSaving}
-                onSelectionModelChange={(newSelectionModel) => {
+                onSelectionModelChange={(newSelectionModel, details) => {
+                    console.log('Selection model', {
+                        newSelectionModel,
+                        details,
+                    });
                     if (!isEditing) {
                         setSelectionModel(newSelectionModel);
                     }
                 }}
                 onRowClick={(params: any) => {
+                    console.log('file clicked', params);
                     if (!isEditing) {
                         setCurrentCatalog(params.row);
                     }

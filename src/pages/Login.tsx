@@ -43,7 +43,7 @@ const Login = () => {
                     )}
                 </Stack>
 
-                <Typography align="center" sx={{ mt: 6 }}>
+                <Typography align="center" sx={{ mt: 4 }}>
                     <FormattedMessage
                         id="login.documentAcknowledgement"
                         values={{
