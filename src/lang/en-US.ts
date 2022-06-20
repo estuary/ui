@@ -77,7 +77,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.disable': `Disable`,
     'cta.testConfig': `Test`,
     'cta.generateCatalog.capture': `Discover Endpoint`,
-    'cta.generateCatalog.materialization': `Prepare Materialization`,
+    'cta.generateCatalog.materialization': `Discover Endpoint`,
     'cta.expandToEdit': `Expand to edit`,
 };
 
