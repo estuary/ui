@@ -70,7 +70,12 @@ function FooHeader({ GenerateButton, TestButton, SaveButton, heading }: Props) {
                     direction="row"
                     alignItems="center"
                     sx={{
-                        ml: 'auto',
+                        'ml': 'auto',
+                        '& > button': {
+                            textOverflow: 'ellipsis',
+                            overflow: 'hidden',
+                            whiteSpace: 'nowrap',
+                        },
                     }}
                 >
                     {GenerateButton}
