@@ -1,18 +1,10 @@
-import { materialCells } from '@jsonforms/material-renderers';
-import { JsonForms } from '@jsonforms/react';
-import { Alert, Button, Typography } from '@mui/material';
-import { ApiError } from '@supabase/supabase-js';
+import { Button, Stack } from '@mui/material';
+import MagicLinkInputs from 'components/login/MagicLinkInputs';
 import { useClient } from 'hooks/supabase-swr';
-import { isEmpty } from 'lodash';
-import { useSnackbar, VariantType } from 'notistack';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import {
-    defaultOptions,
-    defaultRenderers,
-    hideValidation,
-    showValidation,
-} from 'services/jsonforms';
+import { custom_generateDefaultUISchema } from 'services/jsonforms';
+import useConstant from 'use-constant';
 
 // TODO (routes) This is hardcoded because unauthenticated routes is not yet invoked
 //   need to move the routes to a single location. Also... just need to make the route
@@ -20,144 +12,115 @@ import {
 const redirectTo = `${window.location.origin}/auth`;
 
 const MagicLink = () => {
-    const { enqueueSnackbar } = useSnackbar();
+    const [showTokenValidation, setShowTokenValidation] = useState(false);
+
     const supabaseClient = useClient();
     const intl = useIntl();
 
-    const [showErrors, setShowErrors] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const email = {
+        schema: {
+            description: intl.formatMessage({
+                id: 'login.email.description',
+            }),
+            title: intl.formatMessage({
+                id: 'login.email.label',
+            }),
+            minLength: 5,
+            type: 'string',
+        },
+    };
 
-    const [submitError, setSubmitError] = useState<ApiError | null>(null);
-    const [formData, setFormData] = useState<{ email: string | undefined }>({
-        email: undefined,
-    });
-    const [formErrors, setFormErrors] = useState<any[] | undefined>([]);
+    const token = {
+        schema: {
+            description: intl.formatMessage({
+                id: 'login.token.description',
+            }),
+            title: intl.formatMessage({
+                id: 'login.token.label',
+            }),
+            secret: true,
+            type: 'string',
+        },
+    };
 
-    const schema = {
+    const verifySchema = {
         properties: {
-            email: {
-                description: intl.formatMessage({
-                    id: 'login.email.description',
-                }),
-                minLength: 5,
-                type: 'string',
-            },
+            email: email.schema,
+            token: token.schema,
+        },
+        required: ['email', 'token'],
+        type: 'object',
+    };
+    const verifyUiSchema = useConstant(() =>
+        custom_generateDefaultUISchema(verifySchema)
+    );
+
+    const requestSchema = {
+        properties: {
+            email: email.schema,
         },
         required: ['email'],
         type: 'object',
     };
+    const requestUiSchema = useConstant(() =>
+        custom_generateDefaultUISchema(requestSchema)
+    );
 
-    const uiSchema = {
-        elements: [
-            {
-                label: intl.formatMessage({
-                    id: 'login.email.label',
-                }),
-                scope: `#/properties/email`,
-                type: 'Control',
-            },
-        ],
-        type: 'VerticalLayout',
-    };
-
-    const displayNotification = (id: string, variant: VariantType) => {
-        enqueueSnackbar(
-            intl.formatMessage({
-                id,
-            }),
-            {
-                anchorOrigin: {
-                    vertical: 'top',
-                    horizontal: 'center',
-                },
-                variant,
-            }
-        );
-    };
-
-    const handlers = {
-        submit: async (event: React.FormEvent<HTMLFormElement>) => {
-            event.preventDefault();
-            if (!isEmpty(formErrors) || isEmpty(formData.email)) {
-                setShowErrors(true);
-                return;
-            }
-
-            setSubmitError(null);
-            setShowErrors(false);
-            setLoading(true);
-
-            const { error } = await supabaseClient.auth
-                .signIn(
-                    {
-                        email: formData.email,
-                    },
-                    {
-                        redirectTo,
-                    }
-                )
-                .finally(() => {
-                    setLoading(false);
-                });
-            if (error) {
-                setSubmitError(error);
-                return;
-            }
-
-            displayNotification('login.magicLink', 'success');
-        },
-    };
+    custom_generateDefaultUISchema;
 
     return (
-        <>
-            {submitError && (
-                <Alert
-                    severity="error"
-                    sx={{
-                        mb: 5,
+        <Stack direction="column" spacing={1}>
+            {showTokenValidation ? (
+                <MagicLinkInputs
+                    onSubmit={(formData: { email: string; token: string }) => {
+                        return supabaseClient.auth.verifyOTP(
+                            {
+                                email: formData.email,
+                                token: formData.token,
+                                type: 'magiclink',
+                            },
+                            {
+                                redirectTo,
+                            }
+                        );
                     }}
-                >
-                    <Typography>{submitError.message}</Typography>
-                </Alert>
+                    schema={verifySchema}
+                    uiSchema={verifyUiSchema}
+                />
+            ) : (
+                <MagicLinkInputs
+                    onSubmit={(formData: { email: string }) => {
+                        return supabaseClient.auth.signIn(
+                            {
+                                email: formData.email,
+                            },
+                            {
+                                redirectTo,
+                            }
+                        );
+                    }}
+                    schema={requestSchema}
+                    uiSchema={requestUiSchema}
+                />
             )}
 
-            <form
-                onSubmit={handlers.submit}
-                style={{
-                    width: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
+            <Button
+                variant="text"
+                onClick={() => setShowTokenValidation(!showTokenValidation)}
+                sx={{
+                    alignSelf: 'center',
+                    width: 'auto',
                 }}
             >
-                <JsonForms
-                    readonly={loading}
-                    schema={schema}
-                    uischema={uiSchema}
-                    data={formData}
-                    renderers={defaultRenderers}
-                    cells={materialCells}
-                    config={defaultOptions}
-                    validationMode={
-                        showErrors ? showValidation() : hideValidation()
+                <FormattedMessage
+                    id={
+                        showTokenValidation
+                            ? 'login.magicLink.requestOTP'
+                            : 'login.magicLink.verifyOTP'
                     }
-                    onChange={(state) => {
-                        setFormData(state.data);
-                        setFormErrors(state.errors);
-                    }}
                 />
-
-                <Button
-                    type="submit"
-                    sx={{
-                        mt: 2,
-                    }}
-                >
-                    <FormattedMessage id="cta.magicLink" />
-                </Button>
-            </form>
-        </>
+            </Button>
+        </Stack>
     );
 };
 

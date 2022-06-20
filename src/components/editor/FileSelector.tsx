@@ -6,13 +6,13 @@ import {
     GridSelectionModel,
 } from '@mui/x-data-grid';
 import { EditorStoreState } from 'components/editor/Store';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { PublicationSpecQuery } from 'hooks/usePublicationSpecs';
 import {
     DraftEditorStoreNames,
     LiveSpecEditorStoreNames,
     UseZustandStore,
 } from 'context/Zustand';
+import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { PublicationSpecQuery } from 'hooks/usePublicationSpecs';
 import { useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 

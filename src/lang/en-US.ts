@@ -69,6 +69,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.register': `Sign up`,
     'cta.resetPassword': `Reset Password`,
     'cta.magicLink': `Sign in with magic link`,
+    'cta.verifyOTP': `Sign in with OTP`,
     'cta.clickHere': `Click here`,
     'cta.details': `Details`,
     'cta.saveEntity': `Save and publish`,
@@ -190,8 +191,14 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
 
     'login.magicLink': 'Magic link sent. Please check your email.',
     'login.magicLink.failed': 'Failed. Please try again.',
+    'login.magicLink.verifyOTP': 'Already have an OTP?',
+    'login.magicLink.requestOTP': 'Request a magic link',
+
     'login.email.description': `Any valid email you want to use to sign in with`,
     'login.email.label': `Email`,
+
+    'login.token.description': `This can be found in the magic link email`,
+    'login.token.label': `OTP`,
 
     'login.separator': 'or',
     'login.loginFailed': 'Failed to sign in',
