@@ -105,17 +105,12 @@ function EditorFileSelector({ editorStoreName, useZustandStore }: Props) {
                 hideFooter
                 disableColumnSelector
                 loading={isSaving}
-                onSelectionModelChange={(newSelectionModel, details) => {
-                    console.log('Selection model', {
-                        newSelectionModel,
-                        details,
-                    });
+                onSelectionModelChange={(newSelectionModel) => {
                     if (!isEditing) {
                         setSelectionModel(newSelectionModel);
                     }
                 }}
                 onRowClick={(params: any) => {
-                    console.log('file clicked', params);
                     if (!isEditing) {
                         setCurrentCatalog(params.row);
                     }
