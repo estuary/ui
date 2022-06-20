@@ -191,7 +191,7 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
 
     'login.magicLink': 'Magic link sent. Please check your email.',
     'login.magicLink.failed': 'Failed. Please try again.',
-    'login.magicLink.verifyOTP': 'I already have an OTP',
+    'login.magicLink.verifyOTP': 'Already have an OTP?',
     'login.magicLink.requestOTP': 'Request a magic link',
 
     'login.email.description': `Any valid email you want to use to sign in with`,
