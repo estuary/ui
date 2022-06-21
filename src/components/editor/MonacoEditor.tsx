@@ -53,6 +53,11 @@ function MonacoEditor({
         EditorStoreState<DraftSpecQuery>['currentCatalog']
     >(editorStoreName, (state) => state.currentCatalog);
 
+    // TODO (editor store) Should just fetch these directly from the store?
+    const catalogName = currentCatalog?.catalog_name ?? null;
+    const catalogSpec = currentCatalog?.spec ?? null;
+    const catalogType = currentCatalog?.spec_type ?? null;
+
     const status = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['status']
@@ -97,13 +102,9 @@ function MonacoEditor({
                 setStatus(EditorStatus.INVALID);
             }
 
-            if (parsedVal) {
+            if (parsedVal && catalogName && catalogType) {
                 setStatus(EditorStatus.SAVING);
-                onChange(
-                    parsedVal,
-                    currentCatalog.catalog_name,
-                    currentCatalog.spec_type
-                )
+                onChange(parsedVal, catalogName, catalogType)
                     .then(() => {
                         setStatus(EditorStatus.SAVED);
                     })
@@ -118,12 +119,12 @@ function MonacoEditor({
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const debouncedChange = useCallback(debounce(updateValue, 750), [
-        currentCatalog.catalog_name,
+        catalogName,
     ]);
 
     const specAsString = useMemo(
-        () => stringifyJSON(currentCatalog.spec),
-        [currentCatalog.spec]
+        () => stringifyJSON(catalogSpec),
+        [catalogSpec]
     );
 
     const handlers = {
@@ -141,7 +142,7 @@ function MonacoEditor({
         },
     };
 
-    if (currentCatalog.catalog_name && specAsString) {
+    if (catalogName && specAsString) {
         return (
             <Paper sx={{ width: '100%' }} variant="outlined">
                 <Box
@@ -193,7 +194,7 @@ function MonacoEditor({
                         saveViewState={false}
                         defaultValue={specAsString}
                         value={specAsString}
-                        path={currentCatalog.catalog_name}
+                        path={catalogName}
                         options={{
                             readOnly: disabled ? disabled : false,
                             minimap: {
