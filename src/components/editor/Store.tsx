@@ -1,3 +1,4 @@
+import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import produce from 'immer';
 import { devtoolsOptions } from 'utils/store-utils';
 import create from 'zustand';
@@ -26,7 +27,7 @@ export interface EditorStoreState<T> {
     pubId: string | null;
     setPubId: (newVal: EditorStoreState<T>['pubId']) => void;
 
-    currentCatalog: any;
+    currentCatalog: DraftSpecQuery | null;
     setCurrentCatalog: (newVal: EditorStoreState<T>['currentCatalog']) => void;
 
     // TODO (typing) : This needs typed. Using the T here made the checks in setSpecs break
