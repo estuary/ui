@@ -44,10 +44,12 @@ function usePublicationSpecs(
                     ? query.eq('live_spec_id', liveSpecId)
                     : query.eq('pub_id', lastPubId as string),
         },
-        [lastPubId]
+        [lastPubId, liveSpecId]
     );
 
-    const { data, error } = useSelect(lastPubId ? publicationsQuery : null);
+    const { data, error } = useSelect(
+        lastPubId || liveSpecId ? publicationsQuery : null
+    );
 
     return {
         publicationSpecs: data ? data.data : [],
