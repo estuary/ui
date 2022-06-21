@@ -5,16 +5,15 @@ import Saved from 'components/editor/Status/Saved';
 import Saving from 'components/editor/Status/Saving';
 import ServerDiff from 'components/editor/Status/ServerDiff';
 import { EditorStatus, EditorStoreState } from 'components/editor/Store';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import {
     DraftEditorStoreNames,
     LiveSpecEditorStoreNames,
     UseZustandStore,
 } from 'context/Zustand';
+import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { debounce } from 'lodash';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
-import { useCallback, useRef, useState } from 'react';
-import { useIntl } from 'react-intl';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { stringifyJSON } from 'services/stringify';
 
 export interface Props {
@@ -39,7 +38,6 @@ function MonacoEditor({
     onChange,
     toolbarHeight = DEFAULT_TOOLBAR_HEIGHT,
 }: Props) {
-    const intl = useIntl();
     const theme = useTheme();
     const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(
         null
@@ -119,9 +117,14 @@ function MonacoEditor({
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    const debouncedChange = useCallback(debounce(updateValue, 1000), [
-        currentCatalog,
+    const debouncedChange = useCallback(debounce(updateValue, 750), [
+        currentCatalog.catalog_name,
     ]);
+
+    const specAsString = useMemo(
+        () => stringifyJSON(currentCatalog.spec),
+        [currentCatalog.spec]
+    );
 
     const handlers = {
         change: () => {
@@ -138,7 +141,7 @@ function MonacoEditor({
         },
     };
 
-    if (currentCatalog?.spec) {
+    if (currentCatalog.catalog_name && specAsString) {
         return (
             <Paper sx={{ width: '100%' }} variant="outlined">
                 <Box
@@ -187,10 +190,9 @@ function MonacoEditor({
                         theme={
                             theme.palette.mode === 'light' ? 'vs' : 'vs-dark'
                         }
-                        defaultValue={intl.formatMessage({
-                            id: 'common.loading',
-                        })}
-                        value={stringifyJSON(currentCatalog.spec)}
+                        saveViewState={false}
+                        defaultValue={specAsString}
+                        value={specAsString}
                         path={currentCatalog.catalog_name}
                         options={{
                             readOnly: disabled ? disabled : false,
