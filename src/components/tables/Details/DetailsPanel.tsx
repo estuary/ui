@@ -12,7 +12,7 @@ import {
 
 interface Props {
     detailsExpanded: boolean;
-    id: string;
+    lastPubId: string;
     colSpan: number;
     disableLogs?: boolean;
     entityType?: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
@@ -20,7 +20,7 @@ interface Props {
 
 function DetailsPanel({
     detailsExpanded,
-    id,
+    lastPubId,
     colSpan,
     disableLogs,
     entityType,
@@ -50,7 +50,7 @@ function DetailsPanel({
                             )}
 
                             <EditorAndLogs
-                                lastPubId={id}
+                                lastPubId={lastPubId}
                                 disableLogs={disableLogs}
                                 liveSpecEditorStoreName={
                                     LiveSpecEditorStoreNames.GENERAL

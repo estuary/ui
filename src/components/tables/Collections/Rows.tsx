@@ -68,7 +68,7 @@ function Row({ row, showEntityStatus }: RowProps) {
 
             <DetailsPanel
                 detailsExpanded={detailsExpanded}
-                id={row.last_pub_id}
+                lastPubId={row.last_pub_id}
                 colSpan={tableColumns.length}
                 disableLogs
             />
