@@ -31,12 +31,18 @@ const PUB_SPEC_QUERY = `
     )
 `;
 
-function usePublicationSpecs(lastPubId: string | null) {
+function usePublicationSpecs(
+    lastPubId: string | null,
+    liveSpecId: string | undefined
+) {
     const publicationsQuery = useQuery<PublicationSpecQuery>(
         TABLES.PUBLICATION_SPECS,
         {
             columns: PUB_SPEC_QUERY,
-            filter: (query) => query.eq('pub_id', lastPubId as string),
+            filter: (query) =>
+                liveSpecId
+                    ? query.eq('live_spec_id', liveSpecId)
+                    : query.eq('pub_id', lastPubId as string),
         },
         [lastPubId]
     );

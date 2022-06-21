@@ -16,6 +16,7 @@ interface Props {
     lastPubId: string;
     liveSpecEditorStoreName: LiveSpecEditorStoreNames;
     useZustandStore: UseZustandStore;
+    liveSpecId?: string;
     disableLogs?: boolean;
 }
 
@@ -23,10 +24,13 @@ function EditorAndLogs({
     lastPubId,
     liveSpecEditorStoreName,
     useZustandStore,
+    liveSpecId,
     disableLogs,
 }: Props) {
-    const { publicationSpecs, error: pubSpecsError } =
-        usePublicationSpecs(lastPubId);
+    const { publicationSpecs, error: pubSpecsError } = usePublicationSpecs(
+        lastPubId,
+        liveSpecId
+    );
     const { publication: publications, error: pubsError } =
         usePublications(lastPubId);
 
