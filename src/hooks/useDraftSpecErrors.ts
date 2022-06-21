@@ -10,6 +10,7 @@ interface DraftErrorsQuery {
 }
 
 const DRAFT_SPEC_COLS = ['scope', 'detail', 'draft_id'];
+const defaultResponse: DraftErrorsQuery[] = [];
 
 function useDraftSpecErrors(draftId?: string | null, enablePolling?: boolean) {
     const draftErrorsQuery = useQuery<DraftErrorsQuery>(
@@ -31,7 +32,7 @@ function useDraftSpecErrors(draftId?: string | null, enablePolling?: boolean) {
     );
 
     return {
-        draftSpecErrors: data ? data.data : [],
+        draftSpecErrors: data ? data.data : defaultResponse,
         error,
         mutate,
         isValidating,

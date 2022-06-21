@@ -10,6 +10,7 @@ interface Props {
     adminOnly?: boolean;
     singleCall?: boolean;
 }
+const defaultResponse: Grants[] = [];
 
 function useCombinedGrantsExt({ adminOnly, singleCall }: Props) {
     const { user } = Auth.useUser();
@@ -37,7 +38,7 @@ function useCombinedGrantsExt({ adminOnly, singleCall }: Props) {
     );
 
     return {
-        combinedGrants: data ? data.data : [],
+        combinedGrants: data ? data.data : defaultResponse,
         error,
         mutate,
         isValidating,

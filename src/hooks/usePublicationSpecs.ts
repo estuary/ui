@@ -30,6 +30,7 @@ const PUB_SPEC_QUERY = `
         connector_image_tag
     )
 `;
+const defaultResponse: PublicationSpecQuery[] = [];
 
 function usePublicationSpecs(lastPubId: string | null) {
     const publicationsQuery = useQuery<PublicationSpecQuery>(
@@ -44,7 +45,7 @@ function usePublicationSpecs(lastPubId: string | null) {
     const { data, error } = useSelect(lastPubId ? publicationsQuery : null);
 
     return {
-        publicationSpecs: data ? data.data : [],
+        publicationSpecs: data ? data.data : defaultResponse,
         error,
     };
 }

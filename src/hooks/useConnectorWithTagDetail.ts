@@ -47,6 +47,7 @@ export const CONNECTOR_WITH_TAG_QUERY = `
         endpoint_spec_schema->>title
     )
 `;
+const defaultResponse: ConnectorWithTagDetailQuery[] = [];
 
 function useConnectorWithTagDetail(protocol: string | null) {
     const [tagSelector] = useLocalStorage(
@@ -72,7 +73,7 @@ function useConnectorWithTagDetail(protocol: string | null) {
     );
 
     return {
-        connectorTags: data ? data.data : [],
+        connectorTags: data ? data.data : defaultResponse,
         error,
         mutate,
         isValidating,

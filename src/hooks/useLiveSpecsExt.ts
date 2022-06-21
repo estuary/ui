@@ -21,30 +21,33 @@ export interface LiveSpecsExtQueryWithSpec extends LiveSpecsExtQuery {
     spec: any;
 }
 
+const defaultResponse: LiveSpecsExtQuery[] = [];
 const queryColumns = ['id', 'writes_to', 'spec_type'];
 const queryColumnsWithSpec = queryColumns.concat(['spec']);
 
-type DraftID = string[] | string | null;
+type EntityID = string[] | string | null;
 
 // TODO (typing) Initially this was all one function but something was messed up
 //    with handling if/if not the spec was returned. So made two different wrapper
 //     functions for the hook
 
 function useLiveSpecsExt(
-    draftId: DraftID,
+    draftId: EntityID,
     specType: ENTITY,
     includeSpec: true
 ): Response<LiveSpecsExtQueryWithSpec>;
 function useLiveSpecsExt(
-    draftId: DraftID,
+    draftId: EntityID,
     specType: ENTITY,
     includeSpec?: false
 ): Response<LiveSpecsExtQuery>;
 function useLiveSpecsExt(
-    draftId: DraftID,
+    draftId: EntityID,
     specType: ENTITY,
     includeSpec?: boolean
 ): Response<LiveSpecsExtQuery> | Response<LiveSpecsExtQueryWithSpec> {
+    console.log('useLiveSpec');
+
     const draftSpecQuery = useQuery<
         LiveSpecsExtQueryWithSpec | LiveSpecsExtQuery
     >(
@@ -70,7 +73,7 @@ function useLiveSpecsExt(
     );
 
     return {
-        liveSpecs: data ? data.data : [],
+        liveSpecs: data ? data.data : defaultResponse,
         error,
         mutate,
         isValidating,
@@ -78,15 +81,55 @@ function useLiveSpecsExt(
 }
 
 export function useLiveSpecsExtWithSpec(
-    draftId: DraftID,
+    draftId: EntityID,
     specType: ENTITY
 ): Response<LiveSpecsExtQueryWithSpec> {
     return useLiveSpecsExt(draftId, specType, true);
 }
 
 export function useLiveSpecsExtWithOutSpec(
-    draftId: DraftID,
+    draftId: EntityID,
     specType: ENTITY
 ): Response<LiveSpecsExtQuery> {
     return useLiveSpecsExt(draftId, specType, false);
+}
+
+export function useLiveSpecsExtByLastPubId(
+    lastPubId: EntityID,
+    specType: ENTITY
+): Response<LiveSpecsExtQuery> | Response<LiveSpecsExtQueryWithSpec> {
+    console.log('useLiveSpecsExtByLastPubId');
+
+    const draftSpecQuery = useQuery<
+        LiveSpecsExtQueryWithSpec | LiveSpecsExtQuery
+    >(
+        TABLES.LIVE_SPECS_EXT,
+        {
+            columns: queryColumns,
+            filter: lastPubId
+                ? (query) => {
+                      const draftArray =
+                          typeof lastPubId === 'string'
+                              ? [lastPubId]
+                              : lastPubId;
+
+                      return query
+                          .eq('spec_type', specType)
+                          .or(`last_pub_id.in.(${draftArray})`);
+                  }
+                : undefined,
+        },
+        [lastPubId]
+    );
+
+    const { data, error, mutate, isValidating } = useSelect(
+        lastPubId ? draftSpecQuery : null
+    );
+
+    return {
+        liveSpecs: data ? data.data : defaultResponse,
+        error,
+        mutate,
+        isValidating,
+    };
 }
