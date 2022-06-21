@@ -3,7 +3,10 @@ import { authenticatedRoutes } from 'app/Authenticated';
 import ExpandableResourceConfig from 'components/collection/ExpandableResourceConfig';
 import CollectionSelector from 'components/collection/Selector';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
-import { useLiveSpecsExtWithOutSpec } from 'hooks/useLiveSpecsExt';
+import {
+    useLiveSpecsExtByLastPubId,
+    useLiveSpecsExtWithOutSpec,
+} from 'hooks/useLiveSpecsExt';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -27,6 +30,9 @@ function CollectionConfig() {
     const specID = searchParams.get(
         authenticatedRoutes.materializations.create.params.specID
     );
+    const lastPubId = searchParams.get(
+        authenticatedRoutes.materializations.create.params.lastPubId
+    );
 
     const resourceConfigHasErrors = useEntityCreateStore(
         entityCreateStoreSelectors.resourceConfig.hasErrors
@@ -36,12 +42,28 @@ function CollectionConfig() {
     );
 
     const { liveSpecs } = useLiveSpecsExtWithOutSpec(specID, ENTITY.CAPTURE);
+    const { liveSpecs: liveSpecsByLastPub } = useLiveSpecsExtByLastPubId(
+        lastPubId,
+        ENTITY.CAPTURE
+    );
 
     useEffect(() => {
+        console.log('config ue: livespecs', {
+            liveSpecs,
+        });
         if (liveSpecs.length > 0) {
             prefillCollections(liveSpecs);
         }
     }, [liveSpecs, prefillCollections]);
+
+    useEffect(() => {
+        console.log('config ue: livespecs_lastPub', {
+            liveSpecsByLastPub,
+        });
+        if (liveSpecsByLastPub.length > 0) {
+            prefillCollections(liveSpecsByLastPub);
+        }
+    }, [liveSpecsByLastPub, prefillCollections]);
 
     if (imageTag) {
         return (
