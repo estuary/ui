@@ -48,18 +48,12 @@ function CollectionConfig() {
     );
 
     useEffect(() => {
-        console.log('config ue: livespecs', {
-            liveSpecs,
-        });
         if (liveSpecs.length > 0) {
             prefillCollections(liveSpecs);
         }
     }, [liveSpecs, prefillCollections]);
 
     useEffect(() => {
-        console.log('config ue: livespecs_lastPub', {
-            liveSpecsByLastPub,
-        });
         if (liveSpecsByLastPub.length > 0) {
             prefillCollections(liveSpecsByLastPub);
         }
