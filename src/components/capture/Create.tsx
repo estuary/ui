@@ -126,7 +126,7 @@ function CaptureCreate() {
             navigate(
                 getPathWithParam(
                     authenticatedRoutes.materializations.create.fullPath,
-                    authenticatedRoutes.materializations.create.paramsliveSpecId
+                    authenticatedRoutes.materializations.create.params
                         .lastPubId,
                     pubId
                 )
