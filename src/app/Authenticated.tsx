@@ -71,9 +71,9 @@ export const authenticatedRoutes = {
                 key: Stores.MATERIALIZATION_CREATE,
             },
             params: {
-                connectorID: 'connectorID',
+                connectorId: 'connectorId',
                 liveSpecId: 'liveSpecId', // live spec ID
-                lastPubId: 'lastPubID', // last published ID
+                lastPubId: 'lastPubId', // last published ID
             },
         },
     },
