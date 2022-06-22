@@ -28,7 +28,7 @@ function CollectionConfig() {
 
     const [searchParams] = useSearchParams();
     const specID = searchParams.get(
-        authenticatedRoutes.materializations.create.params.specID
+        authenticatedRoutes.materializations.create.params.liveSpecId
     );
     const lastPubId = searchParams.get(
         authenticatedRoutes.materializations.create.params.lastPubId

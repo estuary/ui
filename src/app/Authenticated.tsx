@@ -72,7 +72,7 @@ export const authenticatedRoutes = {
             },
             params: {
                 connectorID: 'connectorID',
-                specID: 'specID', // live spec ID
+                liveSpecId: 'liveSpecId', // live spec ID
                 lastPubId: 'lastPubID', // last published ID
             },
         },
