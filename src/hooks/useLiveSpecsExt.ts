@@ -94,6 +94,13 @@ export function useLiveSpecsExtWithOutSpec(
     return useLiveSpecsExt(draftId, specType, false);
 }
 
+// TODO (hooks) Leaving this here for now.
+//      Starting to think of patterns for Supabase hooks to reduce duplication.
+//      I am thinking something like this might work. Where you have a base hook
+//      `useFooBar` and then there are "extensions" of that hook like
+//      `useFooBarByFizzFuzz` or `useFooBarWithFizzBuzz`.
+//      Not sure if these would all live in a file or folder or what.
+
 export function useLiveSpecsExtByLastPubId(
     lastPubId: EntityID,
     specType: ENTITY
