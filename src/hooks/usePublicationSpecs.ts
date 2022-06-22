@@ -30,6 +30,7 @@ const PUB_SPEC_QUERY = `
         connector_image_tag
     )
 `;
+const defaultResponse: PublicationSpecQuery[] = [];
 
 function usePublicationSpecs(
     lastPubId: string | null,
@@ -52,7 +53,7 @@ function usePublicationSpecs(
     );
 
     return {
-        publicationSpecs: data ? data.data : [],
+        publicationSpecs: data ? data.data : defaultResponse,
         error,
     };
 }

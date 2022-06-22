@@ -9,13 +9,13 @@ export interface DraftSpecQuery {
 }
 
 const DRAFT_SPEC_COLS = ['catalog_name', 'spec_type', 'spec', 'draft_id'];
-const DRAFT_SPEC_QUERY = DRAFT_SPEC_COLS.join(', ');
+const defaultResponse: DraftSpecQuery[] = [];
 
 function useDraftSpecs(draftId: string | null) {
     const draftSpecQuery = useQuery<DraftSpecQuery>(
         TABLES.DRAFT_SPECS,
         {
-            columns: DRAFT_SPEC_QUERY,
+            columns: DRAFT_SPEC_COLS,
             filter: (query) => query.eq('draft_id', draftId as string),
         },
         [draftId]
@@ -26,7 +26,7 @@ function useDraftSpecs(draftId: string | null) {
     );
 
     return {
-        draftSpecs: data ? data.data : [],
+        draftSpecs: data ? data.data : defaultResponse,
         error,
         mutate,
         isValidating,

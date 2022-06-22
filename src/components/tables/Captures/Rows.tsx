@@ -14,9 +14,9 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
+import { SelectTableStoreNames, useZustandStore } from 'context/Zustand';
 import { useRouteStore } from 'hooks/useRouteStore';
 import useShardsList from 'hooks/useShardsList';
-import { SelectTableStoreNames, useZustandStore } from 'context/Zustand';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CONNECTOR_TITLE } from 'services/supabase';
@@ -77,7 +77,8 @@ function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
             navigate(
                 getPathWithParam(
                     authenticatedRoutes.materializations.create.fullPath,
-                    authenticatedRoutes.materializations.create.params.specID,
+                    authenticatedRoutes.materializations.create.params
+                        .liveSpecId,
                     row.id
                 )
             );
