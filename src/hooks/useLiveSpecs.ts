@@ -8,6 +8,7 @@ interface LiveSpecsQuery {
 }
 
 const queryColumns = ['catalog_name', 'spec_type'];
+const defaultResponse: LiveSpecsQuery[] = [];
 
 function useLiveSpecs(specType: string) {
     const draftSpecQuery = useQuery<LiveSpecsQuery>(
@@ -22,7 +23,7 @@ function useLiveSpecs(specType: string) {
     const { data, error } = useSelect(draftSpecQuery);
 
     return {
-        liveSpecs: data ? data.data : [],
+        liveSpecs: data ? data.data : defaultResponse,
         error,
     };
 }

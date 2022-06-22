@@ -97,7 +97,7 @@ function Rows({ data }: Props) {
                                                         .fullPath,
                                                     authenticatedRoutes
                                                         .materializations.create
-                                                        .params.connectorID,
+                                                        .params.connectorId,
                                                     row.connector_tags[0].id
                                                 )
                                             );

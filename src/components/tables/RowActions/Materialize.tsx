@@ -38,7 +38,7 @@ function Materialize({ selectableTableStoreName }: Props) {
                     getPathWithParam(
                         authenticatedRoutes.materializations.create.fullPath,
                         authenticatedRoutes.materializations.create.params
-                            .specID,
+                            .liveSpecId,
                         selectedRowsArray
                     )
                 );
