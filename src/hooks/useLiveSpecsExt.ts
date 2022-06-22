@@ -46,8 +46,6 @@ function useLiveSpecsExt(
     specType: ENTITY,
     includeSpec?: boolean
 ): Response<LiveSpecsExtQuery> | Response<LiveSpecsExtQueryWithSpec> {
-    console.log('useLiveSpec');
-
     const draftSpecQuery = useQuery<
         LiveSpecsExtQueryWithSpec | LiveSpecsExtQuery
     >(
@@ -105,8 +103,6 @@ export function useLiveSpecsExtByLastPubId(
     lastPubId: EntityID,
     specType: ENTITY
 ): Response<LiveSpecsExtQuery> | Response<LiveSpecsExtQueryWithSpec> {
-    console.log('useLiveSpecsExtByLastPubId');
-
     const draftSpecQuery = useQuery<
         LiveSpecsExtQueryWithSpec | LiveSpecsExtQuery
     >(
