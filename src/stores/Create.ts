@@ -2,7 +2,7 @@ import { JsonFormsCore } from '@jsonforms/core';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
-import { difference, forEach, isEmpty, isEqual, map } from 'lodash';
+import { difference, forEach, has, isEmpty, isEqual, map, omit } from 'lodash';
 import { Stores } from 'stores/Repo';
 import { GetState } from 'zustand';
 import { NamedSet } from 'zustand/middleware';
@@ -94,6 +94,7 @@ export interface CreateEntityStore {
     setResourceConfig: (key: string | [string], value?: ResourceConfig) => void;
     getResourceConfigErrors: () => any[];
     resourceConfigHasErrors: boolean;
+    resourceConfigUpdating: boolean;
 
     // Collection Selector
     collections: string[] | null;
@@ -175,6 +176,7 @@ export const getInitialStateData = (
     | 'resourceConfig'
     | 'messagePrefix'
     | 'resourceConfigHasErrors'
+    | 'resourceConfigUpdating'
     | 'endpointConfigHasErrors'
     | 'detailsFormHasErrors'
     | 'collectionsHasErrors'
@@ -200,6 +202,7 @@ export const getInitialStateData = (
 
         resourceConfig: initialCreateStates.resourceConfig(),
         resourceConfigHasErrors: false,
+        resourceConfigUpdating: false,
 
         collections: includeCollections
             ? initialCreateStates.collections()
@@ -279,6 +282,7 @@ export const getInitialCreateState = (
         setEndpointConfig: (endpointConfig) => {
             set(
                 produce((state) => {
+                    state.resourceConfigUpdating;
                     state.endpointConfig = endpointConfig;
                     state.endpointConfigHasErrors =
                         endpointConfig.errors &&
@@ -369,9 +373,12 @@ export const getInitialCreateState = (
                             state.resourceConfig
                         );
                     } else {
-                        const newResourceKey = key;
+                        const newResourceKeyList = key;
                         const [removedCollections, newCollections] =
-                            whatChanged(newResourceKey, state.resourceConfig);
+                            whatChanged(
+                                newResourceKeyList,
+                                state.resourceConfig
+                            );
 
                         // Set defaults on new configs
                         newCollections.forEach((element) => {
@@ -379,23 +386,24 @@ export const getInitialCreateState = (
                                 getDefaultJsonFormsData();
                         });
 
-                        // Remove any configs that are no longer needed
-                        removedCollections.forEach((element) => {
-                            if (element === state.currentCollection) {
-                                state.currentCollection = newResourceKey[0];
-                            }
-
-                            // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-                            delete state.resourceConfig[element];
-                        });
+                        // Remove any configs that are no longer needed and set new default if needed
+                        state.resourceConfig = omit(
+                            state.resourceConfig,
+                            removedCollections
+                        );
+                        if (
+                            !has(state.resourceConfig, state.currentCollection)
+                        ) {
+                            state.currentCollection = newResourceKeyList[0];
+                        }
 
                         // Befor updating collections see if this is the first collection and auto select it
                         if (state.collections.length === 0) {
-                            state.currentCollection = newResourceKey[0];
+                            state.currentCollection = newResourceKeyList[0];
                         }
 
                         // Update the collections with the new array
-                        state.collections = newResourceKey;
+                        state.collections = newResourceKeyList;
 
                         // Check for errors
                         state.resourceConfigHasErrors = formHasErrors(

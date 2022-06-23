@@ -71,9 +71,9 @@ function BindingSelector() {
                 rowCount={collections.length}
                 hideFooter
                 disableColumnSelector
-                // onSelectionModelChange={(newSelectionModel) => {
-                //     setSelectionModel(newSelectionModel);
-                // }}
+                onSelectionModelChange={(newSelectionModel) => {
+                    setSelectionModel(newSelectionModel);
+                }}
                 onRowClick={(params: any) => {
                     setCurrentCollection(params.row);
                 }}
