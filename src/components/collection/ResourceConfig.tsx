@@ -19,8 +19,9 @@ function NewMaterializationResourceConfig({
         return <Error error={error} />;
     } else if (connectorTag) {
         return (
-            <Box sx={{ mb: 5 }}>
-                <Typography variant="h5" sx={{ mb: 2 }}>
+            <Box sx={{ p: 1 }}>
+                <Typography variant="h6" sx={{ mb: 2 }}>
+                    {collectionName}{' '}
                     <FormattedMessage id="materializationCreate.resourceConfig.heading" />
                 </Typography>
 

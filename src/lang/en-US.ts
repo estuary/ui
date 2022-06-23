@@ -369,6 +369,9 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.endpointConfig.endpointConfigHaveErrors': `The ${entityCreateHeader} section has errors.`,
     'entityCreate.endpointConfig.resourceConfigHaveErrors': `The Collections Resource Configuration section has errors.`,
     'entityCreate.endpointConfig.collectionsMissing': `Select a collection to continue.`,
+    'entityCreate.bindingsConfig.collectionsLabel': `Available ${CommonMessages['terms.collections']}`,
+    'entityCreate.bindingsConfig.noRows': `Please select from the ${CommonMessages['terms.collections']} above to begin.`,
+    'entityCreate.bindingsConfig.noRowsTitle': `No selection`,
 };
 
 const MonacoEditor: ResolvedIntlConfig['messages'] = {

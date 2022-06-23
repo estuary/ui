@@ -2,7 +2,7 @@ import { JsonFormsCore } from '@jsonforms/core';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
-import { forEach, isEmpty, isEqual, map } from 'lodash';
+import { difference, forEach, isEmpty, isEqual, map } from 'lodash';
 import { Stores } from 'stores/Repo';
 import { GetState } from 'zustand';
 import { NamedSet } from 'zustand/middleware';
@@ -91,15 +91,16 @@ export interface CreateEntityStore {
 
     // Resource Config
     resourceConfig: { [key: string]: ResourceConfig };
-    setResourceConfig: (key: string, value?: ResourceConfig) => void;
+    setResourceConfig: (key: string | [string], value?: ResourceConfig) => void;
     getResourceConfigErrors: () => any[];
     resourceConfigHasErrors: boolean;
 
     // Collection Selector
     collections: string[] | null;
-    setCollections: (collections: string[]) => void;
     prefillCollections: (collections: LiveSpecsExtQuery[]) => void;
     collectionsHasErrors: boolean;
+    currentCollection: string | null;
+    setCurrentCollection: (collections: string) => void;
 
     //Form State
     formState: FormState;
@@ -122,12 +123,9 @@ export interface CreateEntityStore {
 }
 
 export const initialCreateStates = {
-    collections: () => {
-        return [];
-    },
-    connectors: () => {
-        return [];
-    },
+    collections: () => [],
+    currentCollection: () => null,
+    connectors: () => [],
     details: (): Details => {
         return {
             data: {
@@ -173,6 +171,7 @@ export const getInitialStateData = (
     | 'formState'
     | 'endpointSchema'
     | 'collections'
+    | 'currentCollection'
     | 'resourceConfig'
     | 'messagePrefix'
     | 'resourceConfigHasErrors'
@@ -205,6 +204,7 @@ export const getInitialStateData = (
         collections: includeCollections
             ? initialCreateStates.collections()
             : null,
+        currentCollection: initialCreateStates.currentCollection(),
         collectionsHasErrors: includeCollections, // This defaults to true because collections starts empty
     };
 };
@@ -346,12 +346,49 @@ export const getInitialCreateState = (
         setResourceConfig: (key, value) => {
             set(
                 produce((state) => {
-                    state.resourceConfig[key] =
-                        value ?? getDefaultJsonFormsData();
+                    if (typeof key === 'string') {
+                        state.resourceConfig[key] =
+                            value ?? getDefaultJsonFormsData();
 
-                    state.resourceConfigHasErrors = formHasErrors(
-                        state.resourceConfig
-                    );
+                        state.resourceConfigHasErrors = formHasErrors(
+                            state.resourceConfig
+                        );
+                    } else {
+                        const newResourceKey = key;
+                        const currentCollections = Object.keys(
+                            state.resourceConfig
+                        );
+                        const removedCollections = difference(
+                            currentCollections,
+                            newResourceKey
+                        );
+                        const newCollections = difference(
+                            newResourceKey,
+                            currentCollections
+                        );
+
+                        newCollections.forEach((element) => {
+                            state.resourceConfig[element] =
+                                getDefaultJsonFormsData();
+                        });
+
+                        removedCollections.forEach((element) => {
+                            if (element === state.currentCollection) {
+                                state.currentCollection = newResourceKey[0];
+                            }
+
+                            // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+                            delete state.resourceConfig[element];
+                        });
+
+                        state.resourceConfigHasErrors = formHasErrors(
+                            state.resourceConfig
+                        );
+
+                        state.collections = newResourceKey;
+                        state.collectionsHasErrors =
+                            state.collections.length > 0;
+                    }
                 }),
                 false,
                 'Resource Config Changed'
@@ -377,14 +414,13 @@ export const getInitialCreateState = (
             return response;
         },
 
-        setCollections: (value) => {
+        setCurrentCollection: (value) => {
             set(
                 produce((state) => {
-                    state.collections = value;
-                    state.collectionsHasErrors = isEmpty(value);
+                    state.currentCollection = value;
                 }),
                 false,
-                'Collections Changed'
+                'Current Collection Changed'
             );
         },
 
@@ -463,7 +499,9 @@ export const entityCreateStoreSelectors = {
     setEndpointSchema: (state: CreateEntityStore) => state.setEndpointSchema,
 
     collections: (state: CreateEntityStore) => state.collections,
-    setCollections: (state: CreateEntityStore) => state.setCollections,
+    currentCollection: (state: CreateEntityStore) => state.currentCollection,
+    setCurrentCollection: (state: CreateEntityStore) =>
+        state.setCurrentCollection,
     prefillCollections: (state: CreateEntityStore) => state.prefillCollections,
     collectionsHasErrors: (state: CreateEntityStore) =>
         state.collectionsHasErrors,

@@ -9,7 +9,9 @@ import useConstant from 'use-constant';
 function CollectionSelector() {
     const intl = useIntl();
     const collectionsLabel = useConstant(() =>
-        intl.formatMessage({ id: 'terms.collections' })
+        intl.formatMessage({
+            id: 'entityCreate.bindingsConfig.collectionsLabel',
+        })
     );
     const [missingInput, setMissingInput] = useState(false);
 
@@ -19,26 +21,13 @@ function CollectionSelector() {
     const collections: string[] = useEntityCreateStore(
         entityCreateStoreSelectors.collections
     );
-    const setCollections = useEntityCreateStore(
-        entityCreateStoreSelectors.setCollections
-    );
     const setResourceConfig = useEntityCreateStore(
         entityCreateStoreSelectors.resourceConfig.set
     );
 
     const handlers = {
         updateCollections: (event: React.SyntheticEvent, value: any) => {
-            setCollections(value);
-
-            if (collections.length > value.length) {
-                const removedCollection = collections.find(
-                    (collection) => !value.includes(collection)
-                );
-
-                setResourceConfig(removedCollection);
-            } else {
-                setResourceConfig(value[value.length - 1]);
-            }
+            setResourceConfig(value);
         },
         validateSelection: () => {
             setMissingInput(collections.length === 0);
@@ -46,7 +35,7 @@ function CollectionSelector() {
     };
 
     return collectionData.length > 0 && !error ? (
-        <Box sx={{ mb: 5 }}>
+        <Box>
             <Typography variant="h5" sx={{ mb: 1 }}>
                 <FormattedMessage id="materializationCreate.collectionSelector.heading" />
             </Typography>

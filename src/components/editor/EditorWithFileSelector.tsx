@@ -1,69 +1,32 @@
-import Box from '@mui/material/Box';
 import EditorFileSelector from 'components/editor/FileSelector';
+import ListAndDetails from 'components/editor/ListAndDetails';
 import MonacoEditor, {
-    DEFAULT_HEIGHT,
-    DEFAULT_TOOLBAR_HEIGHT,
     Props as MonacoEditorProps,
 } from 'components/editor/MonacoEditor';
-import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
 
 export interface Props extends MonacoEditorProps {
     height?: number;
 }
 
-const MIN_RESIZE_WIDTH = 25;
-const INITIAL_SELECTOR_WIDTH = 250;
-
 function EditorWithFileSelector(props: Props) {
-    const { height, editorStoreName, useZustandStore } = props;
-    const heightVal = (height ?? DEFAULT_HEIGHT) + DEFAULT_TOOLBAR_HEIGHT;
+    const { editorStoreName, useZustandStore } = props;
 
     return (
-        <Box
-            sx={{
-                bgcolor: 'background.paper',
-                height: `${heightVal}px`,
-                overflow: 'hidden',
-                mb: 2,
-            }}
-        >
-            <ReflexContainer orientation="vertical">
-                <ReflexElement
-                    className="left-pane"
-                    size={INITIAL_SELECTOR_WIDTH}
-                    minSize={MIN_RESIZE_WIDTH}
-                >
-                    <div className="pane-content" style={{ height: heightVal }}>
-                        <EditorFileSelector
-                            editorStoreName={editorStoreName}
-                            useZustandStore={useZustandStore}
-                        />
-                    </div>
-                </ReflexElement>
-
-                <ReflexSplitter
-                    style={{
-                        width: 4,
-                    }}
+        <ListAndDetails
+            list={
+                <EditorFileSelector
+                    editorStoreName={editorStoreName}
+                    useZustandStore={useZustandStore}
                 />
-
-                <ReflexElement
-                    className="right-pane"
-                    minSize={MIN_RESIZE_WIDTH}
-                    style={{
-                        overflow: 'hidden',
-                    }}
-                >
-                    <div className="pane-content">
-                        <MonacoEditor
-                            {...props}
-                            editorStoreName={editorStoreName}
-                            useZustandStore={useZustandStore}
-                        />
-                    </div>
-                </ReflexElement>
-            </ReflexContainer>
-        </Box>
+            }
+            details={
+                <MonacoEditor
+                    {...props}
+                    editorStoreName={editorStoreName}
+                    useZustandStore={useZustandStore}
+                />
+            }
+        />
     );
 }
 

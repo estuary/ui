@@ -1,7 +1,6 @@
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { authenticatedRoutes } from 'app/Authenticated';
-import ExpandableResourceConfig from 'components/collection/ExpandableResourceConfig';
-import CollectionSelector from 'components/collection/Selector';
+import BindingsMultiEditor from 'components/editor/Bindings';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import {
     useLiveSpecsExtByLastPubId,
@@ -18,9 +17,6 @@ function CollectionConfig() {
     const useEntityCreateStore = useRouteStore();
     const imageTag = useEntityCreateStore(
         entityCreateStoreSelectors.details.connectorTag
-    );
-    const collections = useEntityCreateStore(
-        entityCreateStoreSelectors.collections
     );
     const prefillCollections = useEntityCreateStore(
         entityCreateStoreSelectors.prefillCollections
@@ -71,18 +67,7 @@ function CollectionConfig() {
                     </>
                 }
             >
-                <>
-                    <CollectionSelector />
-                    {collections.map((collection: any, index: number) => {
-                        return (
-                            <ExpandableResourceConfig
-                                collectionName={collection}
-                                id={imageTag.id}
-                                key={`CollectionResourceConfig-${index}`}
-                            />
-                        );
-                    })}
-                </>
+                <BindingsMultiEditor />
             </WrapperWithHeader>
         );
     } else {
