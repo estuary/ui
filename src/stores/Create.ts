@@ -225,6 +225,21 @@ const formHasErrors = (stateConfig: any) => {
     return hasErrors;
 };
 
+const whatChanged = (
+    key: CreateEntityStore['collections'],
+    resourceConfig: ResourceConfig
+) => {
+    const newResourceKey = key;
+    const currentCollections = Object.keys(resourceConfig);
+    const removedCollections = difference(
+        currentCollections,
+        newResourceKey ?? []
+    );
+    const newCollections = difference(newResourceKey, currentCollections);
+
+    return [removedCollections, newCollections];
+};
+
 export const getInitialCreateState = (
     set: NamedSet<CreateEntityStore>,
     get: GetState<CreateEntityStore>,
@@ -355,17 +370,8 @@ export const getInitialCreateState = (
                         );
                     } else {
                         const newResourceKey = key;
-                        const currentCollections = Object.keys(
-                            state.resourceConfig
-                        );
-                        const removedCollections = difference(
-                            currentCollections,
-                            newResourceKey
-                        );
-                        const newCollections = difference(
-                            newResourceKey,
-                            currentCollections
-                        );
+                        const [removedCollections, newCollections] =
+                            whatChanged(newResourceKey, state.resourceConfig);
 
                         // Set defaults on new configs
                         newCollections.forEach((element) => {
