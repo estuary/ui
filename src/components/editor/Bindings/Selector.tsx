@@ -4,6 +4,8 @@ import {
     GridColDef,
     GridRenderCellParams,
     GridSelectionModel,
+    gridStringOrNumberComparator,
+    GridValueGetterParams,
 } from '@mui/x-data-grid';
 import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
 import { useRouteStore } from 'hooks/useRouteStore';
@@ -26,16 +28,17 @@ const getRowId = (collectionName: any) => {
 
 const columns: GridColDef[] = [
     {
-        field: 'row',
+        field: 'name',
         flex: 1,
         headerName: 'Collection',
         renderCell: (params: GridRenderCellParams) => (
-            <ListItemText primary={params.row} />
+            <ListItemText primary={params.formattedValue.name} />
         ),
-    },
-    {
-        field: 'spec_type',
-        headerName: 'Type',
+        sortComparator: (v1: any, v2: any, param1: any, param2: any) =>
+            gridStringOrNumberComparator(v1.name, v2.name, param1, param2),
+        valueGetter: (params: GridValueGetterParams) => ({
+            name: params.row,
+        }),
     },
 ];
 
