@@ -367,11 +367,13 @@ export const getInitialCreateState = (
                             currentCollections
                         );
 
+                        // Set defaults on new configs
                         newCollections.forEach((element) => {
                             state.resourceConfig[element] =
                                 getDefaultJsonFormsData();
                         });
 
+                        // Remove any configs that are no longer needed
                         removedCollections.forEach((element) => {
                             if (element === state.currentCollection) {
                                 state.currentCollection = newResourceKey[0];
@@ -381,11 +383,18 @@ export const getInitialCreateState = (
                             delete state.resourceConfig[element];
                         });
 
+                        // Befor updating collections see if this is the first collection and auto select it
+                        if (state.collections.length === 0) {
+                            state.currentCollection = newResourceKey[0];
+                        }
+
+                        // Update the collections with the new array
+                        state.collections = newResourceKey;
+
+                        // Check for errors
                         state.resourceConfigHasErrors = formHasErrors(
                             state.resourceConfig
                         );
-
-                        state.collections = newResourceKey;
                         state.collectionsHasErrors =
                             state.collections.length > 0;
                     }

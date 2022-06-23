@@ -8,7 +8,7 @@ import {
 import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { isEmpty } from 'lodash';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { entityCreateStoreSelectors } from 'stores/Create';
 
@@ -40,8 +40,6 @@ const columns: GridColDef[] = [
 ];
 
 function BindingSelector() {
-    const initDone = useRef(false);
-
     const useEntityCreateStore = useRouteStore();
     const collections = useEntityCreateStore(
         entityCreateStoreSelectors.collections
@@ -56,13 +54,6 @@ function BindingSelector() {
     const [selectionModel, setSelectionModel] = useState<GridSelectionModel>(
         []
     );
-
-    useEffect(() => {
-        if (!initDone.current && collections.length > 0) {
-            initDone.current = true;
-            setSelectionModel(getRowId(collections[0]));
-        }
-    }, [initDone, collections]);
 
     useEffect(() => {
         if (!isEmpty(currentCollection)) setSelectionModel(currentCollection);
