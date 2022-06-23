@@ -1,4 +1,4 @@
-import CollectionSelector from 'components/collection/Selector';
+import CollectionSelector from 'components/collection/Picker';
 import BindingsEditor from 'components/editor/Bindings/Editor';
 import BindingSelector from 'components/editor/Bindings/Selector';
 import ListAndDetails from 'components/editor/ListAndDetails';
