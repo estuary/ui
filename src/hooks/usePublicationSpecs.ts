@@ -4,7 +4,7 @@ import { useQuery, useSelect } from './supabase-swr/';
 
 interface PublicationSpecConfig {
     lastPubId: string | null;
-    omittedSpecType?: ENTITY;
+    specTypes?: ENTITY[];
     liveSpecId?: string;
 }
 
@@ -42,7 +42,7 @@ const defaultResponse: PublicationSpecQuery[] = [];
 
 function usePublicationSpecs({
     lastPubId,
-    omittedSpecType,
+    specTypes,
     liveSpecId,
 }: PublicationSpecConfig) {
     const publicationsQuery = useQuery<PublicationSpecQuery>(
@@ -54,9 +54,10 @@ function usePublicationSpecs({
                     ? query.eq('live_spec_id', liveSpecId)
                     : query
                           .eq('pub_id', lastPubId as string)
-                          .neq(
+                          .filter(
                               'live_specs.spec_type',
-                              omittedSpecType as string
+                              'in',
+                              `(${specTypes})`
                           ),
         },
         [lastPubId, liveSpecId]

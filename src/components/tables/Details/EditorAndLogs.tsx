@@ -17,7 +17,7 @@ interface Props {
     lastPubId: string;
     liveSpecEditorStoreName: LiveSpecEditorStoreNames;
     useZustandStore: UseZustandStore;
-    omittedSpecType?: ENTITY;
+    specTypes?: ENTITY[];
     liveSpecId?: string;
     disableLogs?: boolean;
 }
@@ -26,13 +26,13 @@ function EditorAndLogs({
     lastPubId,
     liveSpecEditorStoreName,
     useZustandStore,
-    omittedSpecType,
+    specTypes,
     liveSpecId,
     disableLogs,
 }: Props) {
     const { publicationSpecs, error: pubSpecsError } = usePublicationSpecs({
         lastPubId,
-        omittedSpecType,
+        specTypes,
         liveSpecId,
     });
     const { publication: publications, error: pubsError } =
@@ -71,7 +71,7 @@ function EditorAndLogs({
                 </Grid>
 
                 <Grid item xs={6}>
-                    {pubsError ? (
+                    {pubsError && !disableLogs ? (
                         <Alert variant="filled" severity="warning">
                             <FormattedMessage id="detailsPanel.logs.notFound" />
                         </Alert>
