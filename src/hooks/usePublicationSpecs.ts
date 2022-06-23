@@ -1,5 +1,12 @@
 import { TABLES } from 'services/supabase';
+import { ENTITY } from 'types';
 import { useQuery, useSelect } from './supabase-swr/';
+
+interface PublicationSpecConfig {
+    lastPubId: string | null;
+    omittedSpecType?: ENTITY;
+    liveSpecId?: string;
+}
 
 export interface PublicationSpecQuery {
     pub_id: string;
@@ -14,13 +21,14 @@ export interface PublicationSpecQuery {
         connector_image_name: string;
         connector_image_tag: string;
     }[];
+    ['live_specs.spec_type']: string;
 }
 
 const PUB_SPEC_QUERY = `
     pub_id,
     live_spec_id,
     published_at,
-    live_specs (
+    live_specs !inner(
         id, 
         catalog_name,
         last_pub_id,
@@ -32,10 +40,11 @@ const PUB_SPEC_QUERY = `
 `;
 const defaultResponse: PublicationSpecQuery[] = [];
 
-function usePublicationSpecs(
-    lastPubId: string | null,
-    liveSpecId: string | undefined
-) {
+function usePublicationSpecs({
+    lastPubId,
+    omittedSpecType,
+    liveSpecId,
+}: PublicationSpecConfig) {
     const publicationsQuery = useQuery<PublicationSpecQuery>(
         TABLES.PUBLICATION_SPECS,
         {
@@ -43,7 +52,12 @@ function usePublicationSpecs(
             filter: (query) =>
                 liveSpecId
                     ? query.eq('live_spec_id', liveSpecId)
-                    : query.eq('pub_id', lastPubId as string),
+                    : query
+                          .eq('pub_id', lastPubId as string)
+                          .neq(
+                              'live_specs.spec_type',
+                              omittedSpecType as string
+                          ),
         },
         [lastPubId, liveSpecId]
     );

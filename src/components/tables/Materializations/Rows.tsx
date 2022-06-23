@@ -121,6 +121,7 @@ function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
                 lastPubId={row.last_pub_id}
                 colSpan={tableColumns.length}
                 entityType={ENTITY.MATERIALIZATION}
+                omittedSpecType={ENTITY.CAPTURE}
             />
         </>
     );

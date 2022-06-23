@@ -11,11 +11,13 @@ import usePublicationSpecs, {
 import { LiveSpecEditorStoreNames, UseZustandStore } from 'context/Zustand';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { ENTITY } from 'types';
 
 interface Props {
     lastPubId: string;
     liveSpecEditorStoreName: LiveSpecEditorStoreNames;
     useZustandStore: UseZustandStore;
+    omittedSpecType?: ENTITY;
     liveSpecId?: string;
     disableLogs?: boolean;
 }
@@ -24,13 +26,15 @@ function EditorAndLogs({
     lastPubId,
     liveSpecEditorStoreName,
     useZustandStore,
+    omittedSpecType,
     liveSpecId,
     disableLogs,
 }: Props) {
-    const { publicationSpecs, error: pubSpecsError } = usePublicationSpecs(
+    const { publicationSpecs, error: pubSpecsError } = usePublicationSpecs({
         lastPubId,
-        liveSpecId
-    );
+        omittedSpecType,
+        liveSpecId,
+    });
     const { publication: publications, error: pubsError } =
         usePublications(lastPubId);
 
