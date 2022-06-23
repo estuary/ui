@@ -19,6 +19,8 @@ import { authenticatedRoutes } from 'app/Authenticated';
 import HelpMenu from 'components/menus/HelpMenu';
 import UserMenu from 'components/menus/UserMenu';
 import Logo from 'components/navigation/Logo';
+import ModeSwitch from 'components/navigation/ModeSwitch';
+import { darkNavPaperBackground, lightNavPaperBackground } from 'context/Theme';
 import { FormattedMessage, useIntl } from 'react-intl';
 import ListItemLink from './ListItemLink';
 
@@ -65,6 +67,11 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
         onNavigationToggle(false);
     };
 
+    const paperBackground =
+        theme.palette.mode === 'dark'
+            ? darkNavPaperBackground
+            : lightNavPaperBackground;
+
     return (
         <MuiDrawer
             anchor="left"
@@ -78,11 +85,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                     transition: (paperTheme) =>
                         `${paperTheme.transitions.duration.shortest}ms`,
                     width,
-                    background:
-                        'linear-gradient(179.6deg, rgba(99, 138, 169, 0.24) 0%, rgba(13, 43, 67, 0.2) 76.56%, rgba(13, 43, 67, 0.1) 100%)',
-                    boxShadow: '0px 4px 24px -1px rgba(0, 0, 0, 0.2)',
-                    borderRadius: '0px 10px 10px 0px',
-                    backdropFilter: 'blur(20px)',
+                    ...paperBackground,
                 },
                 'transition': (drawerTheme) =>
                     `${drawerTheme.transitions.duration.shortest}ms`,
@@ -182,7 +185,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
 
                     <HelpMenu />
 
-                    {/* <Box
+                    <Box
                         sx={{
                             pt: 0.25,
                             pb: 1,
@@ -196,7 +199,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                         <Typography sx={{ width: 136, ml: 2, flexShrink: 0 }}>
                             <FormattedMessage id="modeSwitch.label" />
                         </Typography>
-                    </Box> */}
+                    </Box>
                 </Box>
             </Box>
         </MuiDrawer>

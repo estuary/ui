@@ -65,7 +65,7 @@ const xs = 0;
 // TODO: Balance the light mode color palette.
 const lightMode: PaletteOptions = {
     background: {
-        default: teal[800],
+        default: slate[100],
     },
     contrastThreshold,
     error: {
@@ -76,18 +76,18 @@ const lightMode: PaletteOptions = {
     },
     mode: 'light',
     primary: {
-        main: teal[300],
+        main: slate[15],
         dark: teal[500],
     },
     secondary: {
-        main: slate[50],
+        main: slate[25],
     },
     success: {
         main: successMain,
     },
     text: {
-        primary: slate[15],
-        secondary: teal[50],
+        primary: slate[600],
+        secondary: slate[800],
     },
     tonalOffset,
     warning: {
@@ -131,6 +131,45 @@ export const tableBorderSx: SxProps<Theme> = {
 
 export const outlineSx: SxProps<Theme> = {
     border: `1px solid ${slate[200]}`,
+};
+
+export const darkNavPaperBackground = {
+    background:
+        'linear-gradient(179.6deg, rgba(99, 138, 169, 0.24) 0%, rgba(13, 43, 67, 0.2) 76.56%, rgba(13, 43, 67, 0.1) 100%)',
+    boxShadow: '0px 4px 24px -1px rgba(0, 0, 0, 0.2)',
+    borderRadius: '0px 10px 10px 0px',
+    backdropFilter: 'blur(20px)',
+};
+
+export const lightNavPaperBackground = {
+    background:
+        'linear-gradient(179.6deg, rgba(205, 251, 251, 0.4) 0%, rgba(230, 255, 255, 0.32) 100%)',
+    boxShadow: '0px 4px 24px -1px rgba(4, 25, 42, 0.2)',
+    backdropFilter: 'blur(20px)',
+    borderRadius: '0px 10px 10px 0px',
+};
+
+export const darkPagePaperBackground = {
+    background:
+        'linear-gradient(160deg, rgba(172, 199, 220, 0.18) 2.23%, rgba(70, 111, 143, 0.16) 40%)',
+    boxShadow: '0px 4px 30px -1px rgba(0, 0, 0, 0.25)',
+    borderRadius: '10px',
+    backdropFilter: 'blur(20px)',
+};
+
+export const lightPagePaperBackground = {
+    background:
+        'linear-gradient(159.03deg, rgba(205, 251, 251, 0.4) 20%, rgba(230, 255, 255, 0.32) 60%)',
+    boxShadow: '0px 4px 24px -1px rgba(4, 25, 42, 0.2)',
+    backdropFilter: 'blur(20px)',
+    borderRadius: '10px',
+};
+
+export const darkDialogPaperBackground = {
+    background:
+        'linear-gradient(159.03deg, rgba(172, 199, 220, 0.18) 2.23%, rgba(172, 199, 220, 0.12) 40.69%)',
+    boxShadow: '0px 4px 24px -1px rgba(0, 0, 0, 0.2)',
+    borderRadius: 5,
 };
 
 // TODO (theme) Figure out how to make these composable
