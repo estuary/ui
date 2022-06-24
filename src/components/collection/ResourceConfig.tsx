@@ -9,10 +9,7 @@ interface Props {
     collectionName: string;
 }
 
-function NewMaterializationResourceConfig({
-    connectorImage,
-    collectionName,
-}: Props) {
+function ResourceConfig({ connectorImage, collectionName }: Props) {
     const { connectorTag, error } = useConnectorTag(connectorImage);
 
     if (error) {
@@ -38,4 +35,4 @@ function NewMaterializationResourceConfig({
     }
 }
 
-export default NewMaterializationResourceConfig;
+export default ResourceConfig;

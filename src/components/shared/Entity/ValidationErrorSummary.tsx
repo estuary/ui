@@ -22,7 +22,7 @@ function ValidationErrorSummary() {
         entityCreateStoreSelectors.endpointConfig.data
     );
     const collections = useEntityCreateStore(
-        entityCreateStoreSelectors.collections
+        entityCreateStoreSelectors.collections.get
     );
     const getResourceConfigErrors = useEntityCreateStore(
         entityCreateStoreSelectors.resourceConfig.getErrors

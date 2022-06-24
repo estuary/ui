@@ -19,7 +19,7 @@ function CollectionConfig() {
         entityCreateStoreSelectors.details.connectorTag
     );
     const prefillCollections = useEntityCreateStore(
-        entityCreateStoreSelectors.prefillCollections
+        entityCreateStoreSelectors.collections.prefill
     );
 
     const [searchParams] = useSearchParams();
@@ -34,7 +34,7 @@ function CollectionConfig() {
         entityCreateStoreSelectors.resourceConfig.hasErrors
     );
     const collectionsHasErrors = useEntityCreateStore(
-        entityCreateStoreSelectors.collectionsHasErrors
+        entityCreateStoreSelectors.collections.hasErrors
     );
 
     const { liveSpecs } = useLiveSpecsExtWithOutSpec(specID, ENTITY.CAPTURE);

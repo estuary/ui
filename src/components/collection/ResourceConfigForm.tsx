@@ -2,7 +2,7 @@ import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { StyledEngineProvider } from '@mui/material';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { createJSONFormDefaults, setDefaultsValidator } from 'services/ajv';
 import {
     custom_generateDefaultUISchema,
@@ -17,14 +17,12 @@ type Props = {
     collectionName: string;
 };
 
-function NewMaterializationResourceConfigForm({
-    resourceSchema,
-    collectionName,
-}: Props) {
+function ResourceConfigForm({ resourceSchema, collectionName }: Props) {
+    const name = useRef(collectionName);
     const useEntityCreateStore = useRouteStore();
 
     const collections: string[] = useEntityCreateStore(
-        entityCreateStoreSelectors.collections
+        entityCreateStoreSelectors.collections.get
     );
     const setConfig = useEntityCreateStore(
         entityCreateStoreSelectors.resourceConfig.set
@@ -49,12 +47,17 @@ function NewMaterializationResourceConfigForm({
         }
     }, [collectionName, resourceSchema, collections, setConfig]);
 
+    useEffect(() => {
+        name.current = collectionName;
+    }, [collectionName]);
+
     const uiSchema = custom_generateDefaultUISchema(resourceSchema);
     const showValidationVal = showValidation(displayValidation);
 
     const handlers = {
-        onChange: (form: any) => {
-            setConfig(collectionName, form);
+        onChange: (configName: string, form: any) => {
+            console.log('Updating config', { configName, form });
+            setConfig(configName, form);
         },
     };
 
@@ -69,11 +72,13 @@ function NewMaterializationResourceConfigForm({
                 config={defaultOptions}
                 readonly={isActive}
                 validationMode={showValidationVal}
-                onChange={handlers.onChange}
+                onChange={(state) => {
+                    handlers.onChange(name.current, state);
+                }}
                 ajv={setDefaultsValidator}
             />
         </StyledEngineProvider>
     );
 }
 
-export default NewMaterializationResourceConfigForm;
+export default ResourceConfigForm;

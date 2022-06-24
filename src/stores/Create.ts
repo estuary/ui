@@ -516,18 +516,19 @@ export const entityCreateStoreSelectors = {
         getErrors: (state: CreateEntityStore) => state.getResourceConfigErrors,
         hasErrors: (state: CreateEntityStore) => state.resourceConfigHasErrors,
     },
+    collections: {
+        get: (state: CreateEntityStore) => state.collections,
+        prefill: (state: CreateEntityStore) => state.prefillCollections,
+        hasErrors: (state: CreateEntityStore) => state.collectionsHasErrors,
+        current: {
+            get: (state: CreateEntityStore) => state.currentCollection,
+            set: (state: CreateEntityStore) => state.setCurrentCollection,
+        },
+    },
 
     connectors: (state: CreateEntityStore) => state.connectors,
     endpointSchema: (state: CreateEntityStore) => state.endpointSchema,
     setEndpointSchema: (state: CreateEntityStore) => state.setEndpointSchema,
-
-    collections: (state: CreateEntityStore) => state.collections,
-    currentCollection: (state: CreateEntityStore) => state.currentCollection,
-    setCurrentCollection: (state: CreateEntityStore) =>
-        state.setCurrentCollection,
-    prefillCollections: (state: CreateEntityStore) => state.prefillCollections,
-    collectionsHasErrors: (state: CreateEntityStore) =>
-        state.collectionsHasErrors,
 
     messagePrefix: (state: CreateEntityStore) => state.messagePrefix,
     isActive: (state: CreateEntityStore) => state.isActive,

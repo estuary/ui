@@ -9,8 +9,9 @@ import {
 import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { isEmpty } from 'lodash';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { useUnmount } from 'react-use';
 import { entityCreateStoreSelectors } from 'stores/Create';
 
 const initialState = {
@@ -38,15 +39,17 @@ const columns: GridColDef[] = [
 ];
 
 function BindingSelector() {
+    const onSelectTimeOut = useRef<number | null>(null);
+
     const useEntityCreateStore = useRouteStore();
     const collections = useEntityCreateStore(
-        entityCreateStoreSelectors.collections
+        entityCreateStoreSelectors.collections.get
     );
     const currentCollection = useEntityCreateStore(
-        entityCreateStoreSelectors.currentCollection
+        entityCreateStoreSelectors.collections.current.get
     );
     const setCurrentCollection = useEntityCreateStore(
-        entityCreateStoreSelectors.setCurrentCollection
+        entityCreateStoreSelectors.collections.current.set
     );
 
     const [selectionModel, setSelectionModel] = useState<GridSelectionModel>(
@@ -56,6 +59,10 @@ function BindingSelector() {
     useEffect(() => {
         if (!isEmpty(currentCollection)) setSelectionModel(currentCollection);
     }, [currentCollection]);
+
+    useUnmount(() => {
+        if (onSelectTimeOut.current) clearTimeout(onSelectTimeOut.current);
+    });
 
     if (collections) {
         return (
@@ -73,7 +80,17 @@ function BindingSelector() {
                     setSelectionModel(newSelectionModel);
                 }}
                 onRowClick={(params: any) => {
-                    setCurrentCollection(params.row);
+                    setCurrentCollection(null);
+
+                    // This is hacky but it works. I thin kwe should find a more
+                    //  elegant solution. This is here so that we clear out the
+                    //  current collection before switching.
+                    //  If a user is typing quickly in a form and then selects a
+                    //  different binding VERY quickly it could cause the updates
+                    //  to go into the wrong form.
+                    onSelectTimeOut.current = window.setTimeout(() => {
+                        setCurrentCollection(params.row);
+                    });
                 }}
                 getRowId={getRowId}
                 selectionModel={selectionModel}

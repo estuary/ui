@@ -19,7 +19,7 @@ function CollectionPicker() {
 
     const useEntityCreateStore = useRouteStore();
     const collections: string[] = useEntityCreateStore(
-        entityCreateStoreSelectors.collections
+        entityCreateStoreSelectors.collections.get
     );
     const setResourceConfig = useEntityCreateStore(
         entityCreateStoreSelectors.resourceConfig.set

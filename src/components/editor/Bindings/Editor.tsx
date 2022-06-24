@@ -1,4 +1,4 @@
-import NewMaterializationResourceConfig from 'components/collection/ResourceConfig';
+import ResourceConfig from 'components/collection/ResourceConfig';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { FormattedMessage } from 'react-intl';
 import { entityCreateStoreSelectors } from 'stores/Create';
@@ -9,12 +9,12 @@ function BindingsEditor() {
         entityCreateStoreSelectors.details.connectorTag
     );
     const currentCollection = useEntityCreateStore(
-        entityCreateStoreSelectors.currentCollection
+        entityCreateStoreSelectors.collections.current.get
     );
 
     if (currentCollection) {
         return (
-            <NewMaterializationResourceConfig
+            <ResourceConfig
                 connectorImage={imageTag.id}
                 collectionName={currentCollection}
             />
