@@ -29,7 +29,7 @@ export const indigo = {
     100: '#B8C6F9',
     200: '#97AAEC',
     300: '#798FDF',
-    400: '#5D76D2',
+    400: '#5072EB',
     500: '#3F59B8',
     600: '#27419F',
     700: '#132C85',
@@ -88,18 +88,18 @@ const lightMode: PaletteOptions = {
     },
     mode: 'light',
     primary: {
-        main: slate[500],
-        dark: teal[500],
+        main: indigo[400],
+        dark: indigo[500],
     },
     secondary: {
-        main: slate[25],
+        main: indigo[600],
     },
     success: {
         main: successMain,
     },
     text: {
         primary: slate[600],
-        secondary: slate[800],
+        secondary: indigo[800],
     },
     tonalOffset,
     warning: {
@@ -261,8 +261,10 @@ const themeSettings = createTheme({
             defaultProps: {
                 variant: 'contained',
                 disableElevation: true,
-                sx: {
-                    borderRadius: 5,
+            },
+            styleOverrides: {
+                root: {
+                    borderRadius: 10,
                 },
             },
         },

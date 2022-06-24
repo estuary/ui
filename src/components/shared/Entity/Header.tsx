@@ -21,7 +21,7 @@ interface Props {
     heading: ReactNode;
 }
 
-export const buttonSx: SxProps<Theme> = { ml: 1, borderRadius: 5 };
+export const buttonSx: SxProps<Theme> = { ml: 1 };
 
 const stickySx: SxProps<Theme> = {
     ...tableBorderSx,
