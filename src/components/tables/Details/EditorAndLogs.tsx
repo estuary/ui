@@ -11,11 +11,14 @@ import usePublicationSpecs, {
 import { LiveSpecEditorStoreNames, UseZustandStore } from 'context/Zustand';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { ENTITY } from 'types';
 
 interface Props {
     lastPubId: string;
     liveSpecEditorStoreName: LiveSpecEditorStoreNames;
     useZustandStore: UseZustandStore;
+    specTypes?: ENTITY[];
+    liveSpecId?: string;
     disableLogs?: boolean;
 }
 
@@ -23,10 +26,15 @@ function EditorAndLogs({
     lastPubId,
     liveSpecEditorStoreName,
     useZustandStore,
+    specTypes,
+    liveSpecId,
     disableLogs,
 }: Props) {
-    const { publicationSpecs, error: pubSpecsError } =
-        usePublicationSpecs(lastPubId);
+    const { publicationSpecs, error: pubSpecsError } = usePublicationSpecs({
+        lastPubId,
+        specTypes,
+        liveSpecId,
+    });
     const { publication: publications, error: pubsError } =
         usePublications(lastPubId);
 
@@ -63,7 +71,7 @@ function EditorAndLogs({
                 </Grid>
 
                 <Grid item xs={6}>
-                    {pubsError ? (
+                    {pubsError && !disableLogs ? (
                         <Alert variant="filled" severity="warning">
                             <FormattedMessage id="detailsPanel.logs.notFound" />
                         </Alert>
