@@ -24,6 +24,18 @@ export const teal = {
     800: '#015556',
 };
 
+export const indigo = {
+    50: '#D6DFFF',
+    100: '#B8C6F9',
+    200: '#97AAEC',
+    300: '#798FDF',
+    400: '#5D76D2',
+    500: '#3F59B8',
+    600: '#27419F',
+    700: '#132C85',
+    800: '#051B6C',
+};
+
 export const slate = {
     15: '#F6FAFF',
     25: '#EEF8FF',
@@ -65,7 +77,7 @@ const xs = 0;
 // TODO: Balance the light mode color palette.
 const lightMode: PaletteOptions = {
     background: {
-        default: slate[100],
+        default: slate[50],
     },
     contrastThreshold,
     error: {
@@ -76,7 +88,7 @@ const lightMode: PaletteOptions = {
     },
     mode: 'light',
     primary: {
-        main: slate[15],
+        main: slate[500],
         dark: teal[500],
     },
     secondary: {
@@ -142,8 +154,7 @@ export const darkNavPaperBackground = {
 };
 
 export const lightNavPaperBackground = {
-    background:
-        'linear-gradient(179.6deg, rgba(205, 251, 251, 0.4) 0%, rgba(230, 255, 255, 0.32) 100%)',
+    background: 'rgba(255, 255, 255, 0.4)',
     boxShadow: '0px 4px 24px -1px rgba(4, 25, 42, 0.2)',
     backdropFilter: 'blur(20px)',
     borderRadius: '0px 10px 10px 0px',
@@ -153,16 +164,15 @@ export const darkPagePaperBackground = {
     background:
         'linear-gradient(160deg, rgba(172, 199, 220, 0.18) 2.23%, rgba(70, 111, 143, 0.16) 40%)',
     boxShadow: '0px 4px 30px -1px rgba(0, 0, 0, 0.25)',
-    borderRadius: '10px',
+    borderRadius: 5,
     backdropFilter: 'blur(20px)',
 };
 
 export const lightPagePaperBackground = {
-    background:
-        'linear-gradient(159.03deg, rgba(205, 251, 251, 0.4) 20%, rgba(230, 255, 255, 0.32) 60%)',
+    background: 'rgba(255, 255, 255, 0.4)',
     boxShadow: '0px 4px 24px -1px rgba(4, 25, 42, 0.2)',
     backdropFilter: 'blur(20px)',
-    borderRadius: '10px',
+    borderRadius: 5,
 };
 
 export const darkDialogPaperBackground = {
