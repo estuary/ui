@@ -1,6 +1,7 @@
 import { Box } from '@mui/material';
-import { useState } from 'react';
 import { Outlet } from 'react-router';
+import { useLocalStorage } from 'react-use';
+import { LocalStorageKeys } from 'utils/localStorage-utils';
 import Navigation from './components/navigation/Navigation';
 
 export enum Widths {
@@ -10,13 +11,19 @@ export enum Widths {
 }
 
 function AppLayout() {
-    const [navigationOpen, setNavigationOpen] = useState(false);
-    const [navWidth, setNavigationWidth] = useState<Widths>(Widths.RAIL);
+    const [navigationConfig, setNavigationConfig] = useLocalStorage(
+        LocalStorageKeys.NAVIGATION_SETTINGS,
+        { open: true, width: Widths.FULL }
+    );
+
+    const navigationOpen = navigationConfig?.open ?? true;
+    const navigationWidth: Widths = navigationConfig?.width ?? Widths.FULL;
 
     const toggleNavigationDrawer = () => {
-        setNavigationWidth(navigationOpen ? Widths.RAIL : Widths.FULL);
-
-        setNavigationOpen(!navigationOpen);
+        setNavigationConfig({
+            open: !navigationOpen,
+            width: navigationOpen ? Widths.RAIL : Widths.FULL,
+        });
     };
 
     return (
@@ -24,12 +31,12 @@ function AppLayout() {
             <Box>
                 <Navigation
                     open={navigationOpen}
+                    width={navigationWidth}
                     onNavigationToggle={toggleNavigationDrawer}
-                    width={navWidth}
                 />
             </Box>
 
-            <Box sx={{ ml: `${navWidth}px` }}>
+            <Box sx={{ ml: `${navigationWidth}px` }}>
                 <Outlet />
             </Box>
         </Box>
