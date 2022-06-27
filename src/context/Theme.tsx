@@ -5,10 +5,13 @@ import {
     Theme,
     ThemeOptions,
     ThemeProvider as MUIThemeProvider,
+    useMediaQuery,
 } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import React from 'react';
+import { useLocalStorage } from 'react-use';
 import { BaseComponentProps } from 'types';
+import { LocalStorageKeys } from 'utils/localStorage-utils';
 
 // Colors
 export const teal = {
@@ -307,29 +310,34 @@ const ColorModeContext = React.createContext({
 
 // TODO: Enable color mode toggling once light mode colors are refined.
 const ThemeProvider = ({ children }: BaseComponentProps) => {
-    // const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+    const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
-    const [mode, setMode] = React.useState<PaletteOptions>(darkMode);
+    const [palette, setPalette] = useLocalStorage(
+        LocalStorageKeys.COLOR_MODE,
+        prefersDarkMode ? darkMode : lightMode
+    );
+
+    const [mode, setMode] = React.useState(palette?.mode ?? 'light');
 
     const toggler = React.useMemo(() => {
         return () => {
-            setMode((prevMode: any) =>
-                prevMode === lightMode ? darkMode : lightMode
-            );
+            setPalette(() => (mode === 'light' ? darkMode : lightMode));
         };
-    }, []);
+    }, [setPalette, mode]);
 
     const generatedTheme = React.useMemo(() => {
+        setMode(palette?.mode ?? 'light');
+
         return createTheme({
             ...themeSettings,
-            palette: mode,
+            palette,
             components: {
                 ...themeSettings.components,
                 MuiAccordion: {
                     styleOverrides: {
                         root: {
                             backgroundColor:
-                                mode.mode === 'dark'
+                                palette?.mode === 'dark'
                                     ? 'transparent'
                                     : 'rgba(255, 255, 255, 0.6)',
                             boxShadow: '0px 4px 10px -1px rgba(4, 25, 42, 0.2)',
@@ -343,17 +351,17 @@ const ThemeProvider = ({ children }: BaseComponentProps) => {
                     styleOverrides: {
                         root: {
                             backgroundColor:
-                                mode.mode === 'dark'
+                                palette?.mode === 'dark'
                                     ? 'transparent'
                                     : 'rgba(216, 233, 245, 0.4)',
                             boxShadow: 'none',
-                            color: mode.text?.primary,
+                            color: palette?.text?.primary,
                         },
                     },
                 },
             },
         });
-    }, [mode]);
+    }, [setMode, palette]);
 
     return (
         <ColorModeContext.Provider value={{ toggleColorMode: toggler }}>
