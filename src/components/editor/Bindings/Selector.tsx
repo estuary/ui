@@ -52,10 +52,7 @@ function BindingSelector() {
                     return (
                         <>
                             <ErrorOutlineIcon color="error" sx={{ pr: 1 }} />
-                            <ListItemText
-                                primary={params.row}
-                                secondary="has errors"
-                            />
+                            <ListItemText primary={params.row} />
                         </>
                     );
                 }

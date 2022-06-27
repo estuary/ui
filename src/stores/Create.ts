@@ -426,10 +426,7 @@ export const getInitialCreateState = (
                         if (
                             !has(state.resourceConfig, state.currentCollection)
                         ) {
-                            state.currentCollection =
-                                newResourceKeyList[
-                                    newResourceKeyList.length - 1
-                                ];
+                            state.currentCollection = newResourceKeyList[0];
                         } else {
                             state.currentCollection =
                                 newResourceKeyList[
