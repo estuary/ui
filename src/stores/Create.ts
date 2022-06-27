@@ -130,11 +130,14 @@ const populateHasErrors = (
     state.collectionsHasErrors = isEmpty(collections ?? get().collections);
     state.detailsFormHasErrors = !isEmpty(detailErrors ?? get().details.errors);
 
-    state.hasErrors =
+    state.hasErrors = Boolean(
         state.collectionsHasErrors ||
-        state.detailsFormHasErrors ||
-        endpointConfigHasErrors ||
-        resourceConfigHasErrors;
+            state.detailsFormHasErrors ||
+            endpointConfigHasErrors ||
+            resourceConfigHasErrors
+    );
+
+    state.displayValidation = state.hasErrors;
 };
 
 const populateEndpointConfigErrors = (
@@ -146,8 +149,10 @@ const populateEndpointConfigErrors = (
     state.endpointConfigErrors = endpointConfigErrors;
     state.endpointConfigHasErrors = !isEmpty(endpointConfigErrors);
     populateHasErrors(get, state, {
-        endpoint: endpointConfig,
+        endpoint: !isEmpty(endpointConfigErrors),
     });
+
+    return !isEmpty(endpointConfigErrors);
 };
 
 const populateResourceConfigErrors = (
@@ -167,8 +172,12 @@ const populateResourceConfigErrors = (
         // TODO (errors) Need to populate this object with something?
         resourceConfigErrors = [{}];
     }
+
+    console.log('>>>>>', { resourceConfig, resourceConfigErrors });
     state.resourceConfigErrors = resourceConfigErrors;
     state.resourceConfigHasErrors = !isEmpty(resourceConfigErrors);
+
+    return !isEmpty(resourceConfigErrors);
 };
 
 export interface CreateEntityStore {
@@ -282,14 +291,14 @@ export const getInitialStateData = (
     return {
         isIdle: true,
         isActive: false,
-        hasErrors: false,
+        hasErrors: true,
 
         messagePrefix,
         details: initialCreateStates.details(),
-        detailsFormHasErrors: false,
+        detailsFormHasErrors: true,
 
         endpointConfig: initialCreateStates.endpointConfig(),
-        endpointConfigHasErrors: false,
+        endpointConfigHasErrors: true,
         endpointConfigErrors: [],
 
         connectors: initialCreateStates.connectors(),
@@ -300,7 +309,7 @@ export const getInitialStateData = (
 
         resourceConfig: initialCreateStates.resourceConfig(),
         resourceConfigErrors: [],
-        resourceConfigHasErrors: false,
+        resourceConfigHasErrors: true,
 
         collections: includeCollections
             ? initialCreateStates.collections()
@@ -436,8 +445,12 @@ export const getInitialCreateState = (
                         state.resourceConfig[key] =
                             value ?? getDefaultJsonFormsData();
 
+                        const hasErrors = populateResourceConfigErrors(
+                            state.resourceConfig,
+                            state
+                        );
                         populateHasErrors(get, state, {
-                            resource: state.resourceConfig,
+                            resource: hasErrors,
                         });
                     } else {
                         const newResourceKeyList = key;
@@ -454,10 +467,11 @@ export const getInitialCreateState = (
                         });
 
                         // Remove any configs that are no longer needed and set new default if needed
-                        state.resourceConfig = omit(
+                        const newResourceConfig = omit(
                             state.resourceConfig,
                             removedCollections
                         );
+                        state.resourceConfig = newResourceConfig;
 
                         // If selected removed set to first. Otherwise set to last added
                         if (
@@ -479,15 +493,15 @@ export const getInitialCreateState = (
                         // Update the collections with the new array
                         state.collections = newResourceKeyList;
 
-                        populateResourceConfigErrors(
-                            state.resourceConfig,
+                        const hasErrors = populateResourceConfigErrors(
+                            newResourceConfig,
                             state
                         );
                         populateHasErrors(
                             get,
                             state,
                             {
-                                resource: state.resourceConfig,
+                                resource: hasErrors,
                             },
                             newResourceKeyList
                         );
@@ -523,12 +537,15 @@ export const getInitialCreateState = (
 
                     state.collections = collections;
                     state.resourceConfig = configs;
-                    populateResourceConfigErrors(configs, state);
+                    const hasErrors = populateResourceConfigErrors(
+                        configs,
+                        state
+                    );
                     populateHasErrors(
                         get,
                         state,
                         {
-                            resource: configs,
+                            resource: hasErrors,
                         },
                         collections
                     );

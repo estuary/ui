@@ -19,9 +19,10 @@ function ResourceConfigErrors() {
     return (
         <SectionError
             errors={filteredResourceConfigErrors}
-            errorMessage="entityCreate.endpointConfig.resourceConfigHaveErrors"
+            errorMessage="entityCreate.endpointConfig.resourceConfigInvalid"
             config={collections}
             configEmptyMessage="entityCreate.endpointConfig.collectionsMissing"
+            title="entityCreate.endpointConfig.resourceConfigHaveErrors"
         />
     );
 }

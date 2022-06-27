@@ -1,4 +1,4 @@
-import { List, ListItemText } from '@mui/material';
+import { List, ListItemText, Typography } from '@mui/material';
 
 export type KeyValue = {
     title: string;
@@ -13,16 +13,20 @@ interface Props {
 function KeyValueList({ data, sectionTitle }: Props) {
     if (data.length > 0) {
         return (
-            <List dense>
-                <ListItemText primary={sectionTitle} />
-                {data.map(({ title, val }, index) => (
-                    <ListItemText
-                        key={`${title}-keyValueList-${index}`}
-                        primary={title}
-                        secondary={val}
-                    />
-                ))}
-            </List>
+            <>
+                {sectionTitle ? (
+                    <Typography variant="subtitle1">{sectionTitle}</Typography>
+                ) : null}
+                <List dense sx={{ ml: 2, pt: 0 }}>
+                    {data.map(({ title, val }, index) => (
+                        <ListItemText
+                            key={`${title}-keyValueList-${index}`}
+                            primary={title}
+                            secondary={val}
+                        />
+                    ))}
+                </List>
+            </>
         );
     } else {
         return null;

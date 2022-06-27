@@ -7,6 +7,7 @@ interface Props {
     errorMessage?: string;
     config?: any;
     configEmptyMessage?: string;
+    title?: string;
 }
 
 function SectionError({
@@ -14,6 +15,7 @@ function SectionError({
     errors,
     errorMessage,
     configEmptyMessage,
+    title,
 }: Props) {
     const intl = useIntl();
     const filteredErrorsList: any[] = [];
@@ -40,7 +42,12 @@ function SectionError({
         }
     }
 
-    return <KeyValueList data={filteredErrorsList} />;
+    return (
+        <KeyValueList
+            data={filteredErrorsList}
+            sectionTitle={intl.formatMessage({ id: title })}
+        />
+    );
 }
 
 export default SectionError;

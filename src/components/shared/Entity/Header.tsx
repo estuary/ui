@@ -1,4 +1,5 @@
 import {
+    Box,
     Collapse,
     LinearProgress,
     Stack,
@@ -87,9 +88,11 @@ function FooHeader({ GenerateButton, TestButton, SaveButton, heading }: Props) {
                 <LinearProgress sx={{ mb: 2 }} />
             </Collapse>
 
-            <ValidationErrorSummary
-                hasErrorsSelector={entityCreateStoreSelectors.hasErrors}
-            />
+            <Box sx={{ maxHeight: 200, overflowY: 'auto' }}>
+                <ValidationErrorSummary
+                    hasErrorsSelector={entityCreateStoreSelectors.hasErrors}
+                />
+            </Box>
         </>
     );
 }

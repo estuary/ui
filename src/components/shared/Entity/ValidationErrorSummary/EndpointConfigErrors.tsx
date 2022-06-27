@@ -11,14 +11,12 @@ function EndpointConfigErrors() {
         entityCreateStoreSelectors.endpointConfig.data
     );
 
-    console.log('endpoint config', endpointErrors);
-
     return (
         <SectionError
             errors={endpointErrors}
-            errorMessage="entityCreate.endpointConfig.detailsHaveErrors"
             config={endpointSchema}
             configEmptyMessage="entityCreate.endpointConfig.endpointConfigMissing"
+            title="entityCreate.endpointConfig.endpointConfigHaveErrors"
         />
     );
 }
