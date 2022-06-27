@@ -186,6 +186,12 @@ export const darkDialogPaperBackground = {
     borderRadius: 5,
 };
 
+export const lightDialogPaperBackground = {
+    background: 'rgba(255, 255, 255, 0.4)',
+    boxShadow: '0px 4px 24px -1px rgba(4, 25, 42, 0.2)',
+    borderRadius: 5,
+};
+
 export const getEntityTableRowSx = (
     theme: Theme,
     detailsExpanded: boolean

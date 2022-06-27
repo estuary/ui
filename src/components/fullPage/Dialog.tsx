@@ -1,6 +1,9 @@
-import { Box, Paper } from '@mui/material';
+import { Box, Paper, useTheme } from '@mui/material';
 import CompanyLogo from 'components/CompanyLogo';
-import { darkDialogPaperBackground } from 'context/Theme';
+import {
+    darkDialogPaperBackground,
+    lightDialogPaperBackground,
+} from 'context/Theme';
 import { ReactNode } from 'react';
 
 interface Props {
@@ -8,6 +11,13 @@ interface Props {
 }
 
 function FullPageDialog({ children }: Props) {
+    const theme = useTheme();
+
+    const dialogBackground =
+        theme.palette.mode === 'dark'
+            ? darkDialogPaperBackground
+            : lightDialogPaperBackground;
+
     return (
         <Box
             sx={{
@@ -28,7 +38,7 @@ function FullPageDialog({ children }: Props) {
                     alignItems: 'center',
                     justifyContent: 'center',
                     p: 3,
-                    ...darkDialogPaperBackground,
+                    ...dialogBackground,
                 }}
             >
                 <CompanyLogo />
