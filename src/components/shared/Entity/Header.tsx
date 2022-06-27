@@ -7,7 +7,6 @@ import {
     Toolbar,
     Typography,
 } from '@mui/material';
-import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
 import { slate, stickyHeaderIndex, tableBorderSx } from 'context/Theme';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { ReactNode } from 'react';
@@ -37,9 +36,6 @@ function FooHeader({ GenerateButton, TestButton, SaveButton, heading }: Props) {
     const useEntityCreateStore = useRouteStore();
     const formActive = useEntityCreateStore(
         entityCreateStoreSelectors.isActive
-    );
-    const displayValidation = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.displayValidation
     );
 
     const { inView, ref } = useInView({
@@ -88,10 +84,6 @@ function FooHeader({ GenerateButton, TestButton, SaveButton, heading }: Props) {
 
             <Collapse in={formActive} unmountOnExit>
                 <LinearProgress sx={{ mb: 2 }} />
-            </Collapse>
-
-            <Collapse in={displayValidation} unmountOnExit>
-                <ValidationErrorSummary />
             </Collapse>
         </>
     );

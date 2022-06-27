@@ -83,25 +83,17 @@ const filterErrors = (
 ) => {
     const response = map(list, 'message');
 
-    console.log('filter', response);
+    console.log('filter', { list, response });
 
     return response;
 };
 
-const fetchErrors = (configParent: any) => {
+const fetchErrors = ({ errors }: any) => {
     let response: any[] = [];
 
-    if (configParent.errors) {
-        const errors = configParent.errors;
-        if (errors && errors.length > 0) {
-            response = response.concat(errors);
-        }
+    if (errors && errors.length > 0) {
+        response = response.concat(errors);
     }
-
-    console.log('fetchErrors = ', {
-        configParent,
-        response,
-    });
 
     return response;
 };
@@ -125,29 +117,41 @@ const populateErrorProps = (
     state: CreateEntityStore,
     get: GetState<CreateEntityStore>
 ) => {
-    state.resourceConfigErrors = filterErrors(
-        map(get().resourceConfig, fetchErrors)
-    );
-    state.resourceConfigHasErrors = !isEmpty(get().resourceConfigErrors);
+    const {
+        collections,
+        details,
+        endpointConfig,
+        resourceConfig,
+        collectionsHasErrors,
+        resourceConfigHasErrors,
+        detailsFormHasErrors,
+    } = get();
 
-    state.endpointConfigErrors = filterErrors(
-        fetchErrors(get().endpointConfig)
-    );
-    state.endpointConfigHasErrors = !isEmpty(get().endpointConfigErrors);
+    let resourceConfigErrors: any[] = [];
+    if (Object.keys(resourceConfig).length > 0) {
+        map(resourceConfig, (config) => {
+            const { errors } = config;
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            if (errors && errors.length > 0) {
+                resourceConfigErrors = resourceConfigErrors.concat(errors);
+            }
+        });
+    } else {
+        // TODO (errors) Need to populate this object with something?
+        resourceConfigErrors = [{}];
+    }
+    state.resourceConfigErrors = resourceConfigErrors;
+    state.resourceConfigHasErrors = !isEmpty(resourceConfigErrors);
 
-    state.collectionsHasErrors = isEmpty(get().collections);
-    state.detailsFormHasErrors = !isEmpty(get().details.errors);
+    const endpointConfigErrors = filterErrors(fetchErrors(endpointConfig));
+    state.endpointConfigErrors = endpointConfigErrors;
+    state.endpointConfigHasErrors = !isEmpty(endpointConfigErrors);
+
+    state.collectionsHasErrors = isEmpty(collections);
+    state.detailsFormHasErrors = !isEmpty(details.errors);
 
     state.hasErrors =
-        get().collectionsHasErrors ||
-        get().resourceConfigHasErrors ||
-        get().detailsFormHasErrors;
-
-    // console.log('store', [
-    //     state.collectionsHasErrors,
-    //     state.resourceConfigHasErrors,
-    //     state.details.errors,
-    // ]);
+        collectionsHasErrors || resourceConfigHasErrors || detailsFormHasErrors;
 };
 
 export interface CreateEntityStore {

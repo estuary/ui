@@ -56,7 +56,6 @@ function ResourceConfigForm({ resourceSchema, collectionName }: Props) {
 
     const handlers = {
         onChange: (configName: string, form: any) => {
-            console.log('Updating config', { configName, form });
             setConfig(configName, form);
         },
     };

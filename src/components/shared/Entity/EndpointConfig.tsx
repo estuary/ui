@@ -1,11 +1,14 @@
 import { EditorStoreState } from 'components/editor/Store';
 import EndpointConfigForm from 'components/shared/Entity/EndpointConfigForm';
 import EndpointConfigHeader from 'components/shared/Entity/EndpointConfigHeader';
+import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
+import EndpointConfigErrors from 'components/shared/Entity/ValidationErrorSummary/EndpointConfigErrors';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import Error from 'components/shared/Error';
+import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
 import useConnectorTag from 'hooks/useConnectorTag';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
+import { entityCreateStoreSelectors } from 'stores/Create';
 
 interface Props {
     connectorImage: string;
@@ -32,6 +35,14 @@ function EndpointConfig({ connectorImage, draftEditorStoreName }: Props) {
                     />
                 }
             >
+                <ValidationErrorSummary
+                    hideIcon={true}
+                    headerMessageId="entityCreate.endpointConfig.endpointConfigHaveErrors"
+                    ErrorComponent={EndpointConfigErrors}
+                    hasErrorsSelector={
+                        entityCreateStoreSelectors.endpointConfig.hasErrors
+                    }
+                />
                 <EndpointConfigForm
                     endpointSchema={connectorTag.endpoint_spec_schema}
                 />

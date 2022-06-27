@@ -361,7 +361,7 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.errors.collapseTitle': `Expand to see logs`,
     'entityCreate.sops.failedTitle': `Configuration Encryption Failed`,
     'entityCreate.endpointConfig.heading': `${entityCreateHeader}`,
-    'entityCreate.endpointConfig.errorSummary': `You must provide valid values for all required fields before continuing.`,
+    'entityCreate.endpointConfig.errorSummary': `There are issues with the form.`,
     'entityCreate.endpointConfig.detailsHaveErrors': `The Details section has errors.`,
     'entityCreate.endpointConfig.entityNameMissing': `Provide a name to continue.`,
     'entityCreate.endpointConfig.connectorMissing': `Select a connector to continue.`,

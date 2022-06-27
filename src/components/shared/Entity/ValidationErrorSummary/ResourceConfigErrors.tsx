@@ -19,7 +19,6 @@ function ResourceConfigErrors() {
     return (
         <SectionError
             errors={filteredResourceConfigErrors}
-            errorMessage="entityCreate.endpointConfig.resourceConfigHaveErrors"
             config={collections}
             configEmptyMessage="entityCreate.endpointConfig.collectionsMissing"
         />
