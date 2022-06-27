@@ -98,7 +98,7 @@ const lightMode: PaletteOptions = {
         main: successMain,
     },
     text: {
-        primary: slate[600],
+        primary: slate[800],
         secondary: indigo[800],
     },
     tonalOffset,
@@ -323,6 +323,35 @@ const ThemeProvider = ({ children }: BaseComponentProps) => {
         return createTheme({
             ...themeSettings,
             palette: mode,
+            components: {
+                ...themeSettings.components,
+                MuiAccordion: {
+                    styleOverrides: {
+                        root: {
+                            backgroundColor:
+                                mode.mode === 'dark'
+                                    ? 'transparent'
+                                    : 'rgba(255, 255, 255, 0.6)',
+                            boxShadow: '0px 4px 10px -1px rgba(4, 25, 42, 0.2)',
+                            borderRadius: 10,
+                            overflow: 'hidden',
+                        },
+                    },
+                },
+
+                MuiAppBar: {
+                    styleOverrides: {
+                        root: {
+                            backgroundColor:
+                                mode.mode === 'dark'
+                                    ? 'transparent'
+                                    : 'rgba(216, 233, 245, 0.4)',
+                            boxShadow: 'none',
+                            color: mode.text?.primary,
+                        },
+                    },
+                },
+            },
         });
     }, [mode]);
 
