@@ -24,18 +24,15 @@ function ValidationErrorSummary() {
     const collections = useEntityCreateStore(
         entityCreateStoreSelectors.collections.get
     );
-    const getResourceConfigErrors = useEntityCreateStore(
-        entityCreateStoreSelectors.resourceConfig.getErrors
-    );
-    const resourceConfigErrors = getResourceConfigErrors();
 
     const filteredDetailErrors = map(detailErrors, 'instancePath');
     const filteredSpecErrors = map(specErrors, 'instancePath');
-    const filteredResourceConfigErrors = map(
-        resourceConfigErrors,
-        'instancePath'
+    const filteredResourceConfigErrors = useEntityCreateStore(
+        entityCreateStoreSelectors.resourceConfig.errors
     );
     const filteredErrorsList: KeyValue[] = [];
+
+    console.log('filteredResourceConfigErrors', filteredResourceConfigErrors);
 
     // Check for a name
     if (isEmpty(entityName)) {

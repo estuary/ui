@@ -78,6 +78,71 @@ const getDefaultJsonFormsData = () => ({
     errors: [],
 });
 
+const filterErrors = (list: ResourceConfig['errors']) => {
+    return map(list, 'message');
+};
+
+const fetchErrors = (configParent: any) => {
+    let response: any[] = [];
+
+    if (Object.keys(configParent).length > 0) {
+        map(configParent, (config) => {
+            const { errors } = config;
+            console.log('  > ', errors);
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            if (errors && errors.length > 0) {
+                response = response.concat(errors);
+            }
+        });
+    } else {
+        // TODO (errors) Need to populate this object with something?
+        response = [{}];
+    }
+
+    return response;
+};
+
+const formHasErrors = (stateConfig: any) => {
+    let hasErrors = false;
+    if (Object.keys(stateConfig).length > 0) {
+        forEach(stateConfig, (config) => {
+            const { errors } = config;
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            if (errors && errors.length > 0) {
+                hasErrors = true;
+            }
+
+            return !hasErrors;
+        });
+    }
+    return hasErrors;
+};
+
+const whatChanged = (
+    key: CreateEntityStore['collections'],
+    resourceConfig: ResourceConfig
+) => {
+    const newResourceKey = key;
+    const currentCollections = Object.keys(resourceConfig);
+    const removedCollections = difference(
+        currentCollections,
+        newResourceKey ?? []
+    );
+    const newCollections = difference(newResourceKey, currentCollections);
+
+    return [removedCollections, newCollections];
+};
+
+const populateErrorProps = (state: CreateEntityStore) => {
+    // Populate error array
+    state.resourceConfigErrors = filterErrors(
+        fetchErrors(state.resourceConfig)
+    );
+
+    state.collectionsHasErrors = isEmpty(state.collections);
+    state.resourceConfigHasErrors = state.resourceConfigErrors.length > 0;
+};
+
 export interface CreateEntityStore {
     //Details
     details: Details;
@@ -92,9 +157,8 @@ export interface CreateEntityStore {
     // Resource Config
     resourceConfig: { [key: string]: ResourceConfig };
     setResourceConfig: (key: string | [string], value?: ResourceConfig) => void;
-    getResourceConfigErrors: () => any[];
     resourceConfigHasErrors: boolean;
-    resourceConfigUpdating: boolean;
+    resourceConfigErrors: string[];
 
     // Collection Selector
     collections: string[] | null;
@@ -174,9 +238,9 @@ export const getInitialStateData = (
     | 'collections'
     | 'currentCollection'
     | 'resourceConfig'
+    | 'resourceConfigErrors'
     | 'messagePrefix'
     | 'resourceConfigHasErrors'
-    | 'resourceConfigUpdating'
     | 'endpointConfigHasErrors'
     | 'detailsFormHasErrors'
     | 'collectionsHasErrors'
@@ -201,8 +265,8 @@ export const getInitialStateData = (
         endpointSchema: initialCreateStates.endpointSchema(),
 
         resourceConfig: initialCreateStates.resourceConfig(),
+        resourceConfigErrors: [],
         resourceConfigHasErrors: false,
-        resourceConfigUpdating: false,
 
         collections: includeCollections
             ? initialCreateStates.collections()
@@ -210,37 +274,6 @@ export const getInitialStateData = (
         currentCollection: initialCreateStates.currentCollection(),
         collectionsHasErrors: includeCollections, // This defaults to true because collections starts empty
     };
-};
-
-const formHasErrors = (stateConfig: any) => {
-    let hasErrors = false;
-    if (Object.keys(stateConfig).length > 0) {
-        forEach(stateConfig, (config) => {
-            const { errors } = config;
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            if (errors && errors.length > 0) {
-                hasErrors = true;
-            }
-
-            return !hasErrors;
-        });
-    }
-    return hasErrors;
-};
-
-const whatChanged = (
-    key: CreateEntityStore['collections'],
-    resourceConfig: ResourceConfig
-) => {
-    const newResourceKey = key;
-    const currentCollections = Object.keys(resourceConfig);
-    const removedCollections = difference(
-        currentCollections,
-        newResourceKey ?? []
-    );
-    const newCollections = difference(newResourceKey, currentCollections);
-
-    return [removedCollections, newCollections];
 };
 
 export const getInitialCreateState = (
@@ -282,11 +315,10 @@ export const getInitialCreateState = (
         setEndpointConfig: (endpointConfig) => {
             set(
                 produce((state) => {
-                    state.resourceConfigUpdating;
                     state.endpointConfig = endpointConfig;
-                    state.endpointConfigHasErrors =
-                        endpointConfig.errors &&
-                        endpointConfig.errors.length > 0;
+                    state.endpointConfigHasErrors = isEmpty(
+                        endpointConfig.errors
+                    );
                 }),
                 false,
                 'Endpoint config changed'
@@ -369,9 +401,7 @@ export const getInitialCreateState = (
                         state.resourceConfig[key] =
                             value ?? getDefaultJsonFormsData();
 
-                        state.resourceConfigHasErrors = formHasErrors(
-                            state.resourceConfig
-                        );
+                        populateErrorProps(state);
                     } else {
                         const newResourceKeyList = key;
                         const [removedCollections, newCollections] =
@@ -391,10 +421,20 @@ export const getInitialCreateState = (
                             state.resourceConfig,
                             removedCollections
                         );
+
+                        // If selected removed set to first. Otherwise set to last added
                         if (
                             !has(state.resourceConfig, state.currentCollection)
                         ) {
-                            state.currentCollection = newResourceKeyList[0];
+                            state.currentCollection =
+                                newResourceKeyList[
+                                    newResourceKeyList.length - 1
+                                ];
+                        } else {
+                            state.currentCollection =
+                                newResourceKeyList[
+                                    newResourceKeyList.length - 1
+                                ];
                         }
 
                         // Befor updating collections see if this is the first collection and auto select it
@@ -405,36 +445,12 @@ export const getInitialCreateState = (
                         // Update the collections with the new array
                         state.collections = newResourceKeyList;
 
-                        // Check for errors
-                        state.resourceConfigHasErrors = formHasErrors(
-                            state.resourceConfig
-                        );
-                        state.collectionsHasErrors =
-                            state.collections.length > 0;
+                        populateErrorProps(state);
                     }
                 }),
                 false,
                 'Resource Config Changed'
             );
-        },
-        getResourceConfigErrors: () => {
-            const { resourceConfig } = get();
-            let response: any[] = [];
-
-            if (Object.keys(resourceConfig).length > 0) {
-                map(resourceConfig, (config) => {
-                    const { errors } = config;
-                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                    if (errors && errors.length > 0) {
-                        response = response.concat(errors);
-                    }
-                });
-            } else {
-                // TODO (errors) Need to populate this object with something?
-                response = [{}];
-            }
-
-            return response;
         },
 
         setCurrentCollection: (value) => {
@@ -513,7 +529,7 @@ export const entityCreateStoreSelectors = {
     resourceConfig: {
         get: (state: CreateEntityStore) => state.resourceConfig,
         set: (state: CreateEntityStore) => state.setResourceConfig,
-        getErrors: (state: CreateEntityStore) => state.getResourceConfigErrors,
+        errors: (state: CreateEntityStore) => state.resourceConfigErrors,
         hasErrors: (state: CreateEntityStore) => state.resourceConfigHasErrors,
     },
     collections: {
