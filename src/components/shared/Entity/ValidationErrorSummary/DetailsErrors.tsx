@@ -34,7 +34,14 @@ function DetailsErrors() {
         });
     }
 
-    return <KeyValueList data={filteredErrorsList} />;
+    return (
+        <KeyValueList
+            data={filteredErrorsList}
+            sectionTitle={intl.formatMessage({
+                id: 'entityCreate.endpointConfig.detailsHaveErrors',
+            })}
+        />
+    );
 }
 
 export default DetailsErrors;

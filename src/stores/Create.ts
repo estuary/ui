@@ -113,20 +113,47 @@ const whatChanged = (
     return [removedCollections, newCollections];
 };
 
-const populateErrorProps = (
+const populateHasErrors = (
+    get: any,
+    state: any,
+    configs: {
+        resource?: any;
+        endpoint?: any;
+    },
+    collections?: any,
+    detailErrors?: any
+) => {
+    const { resource, endpoint } = configs;
+    const resourceConfigHasErrors = resource ?? get().resourceConfigHasErrors;
+    const endpointConfigHasErrors = endpoint ?? get().endpointConfigHasErrors;
+
+    state.collectionsHasErrors = isEmpty(collections ?? get().collections);
+    state.detailsFormHasErrors = !isEmpty(detailErrors ?? get().details.errors);
+
+    state.hasErrors =
+        state.collectionsHasErrors ||
+        state.detailsFormHasErrors ||
+        endpointConfigHasErrors ||
+        resourceConfigHasErrors;
+};
+
+const populateEndpointConfigErrors = (
+    endpointConfig: any,
     state: CreateEntityStore,
     get: GetState<CreateEntityStore>
 ) => {
-    const {
-        collections,
-        details,
-        endpointConfig,
-        resourceConfig,
-        collectionsHasErrors,
-        resourceConfigHasErrors,
-        detailsFormHasErrors,
-    } = get();
+    const endpointConfigErrors = filterErrors(fetchErrors(endpointConfig));
+    state.endpointConfigErrors = endpointConfigErrors;
+    state.endpointConfigHasErrors = !isEmpty(endpointConfigErrors);
+    populateHasErrors(get, state, {
+        endpoint: endpointConfig,
+    });
+};
 
+const populateResourceConfigErrors = (
+    resourceConfig: any,
+    state: CreateEntityStore
+) => {
     let resourceConfigErrors: any[] = [];
     if (Object.keys(resourceConfig).length > 0) {
         map(resourceConfig, (config) => {
@@ -142,16 +169,6 @@ const populateErrorProps = (
     }
     state.resourceConfigErrors = resourceConfigErrors;
     state.resourceConfigHasErrors = !isEmpty(resourceConfigErrors);
-
-    const endpointConfigErrors = filterErrors(fetchErrors(endpointConfig));
-    state.endpointConfigErrors = endpointConfigErrors;
-    state.endpointConfigHasErrors = !isEmpty(endpointConfigErrors);
-
-    state.collectionsHasErrors = isEmpty(collections);
-    state.detailsFormHasErrors = !isEmpty(details.errors);
-
-    state.hasErrors =
-        collectionsHasErrors || resourceConfigHasErrors || detailsFormHasErrors;
 };
 
 export interface CreateEntityStore {
@@ -314,6 +331,11 @@ export const getInitialCreateState = (
                                 messagePrefix
                             );
                         state.endpointConfig = endpointConfig;
+                        populateEndpointConfigErrors(
+                            endpointConfig,
+                            state,
+                            get
+                        );
 
                         state.formState = formState;
                         state.isIdle = formIdle(formState.status);
@@ -321,8 +343,6 @@ export const getInitialCreateState = (
                     }
 
                     state.details = details;
-
-                    populateErrorProps(state, get);
                 }),
                 false,
                 'Details changed'
@@ -333,7 +353,7 @@ export const getInitialCreateState = (
             set(
                 produce((state) => {
                     state.endpointConfig = endpointConfig;
-                    populateErrorProps(state, get);
+                    populateEndpointConfigErrors(endpointConfig, state, get);
                 }),
                 false,
                 'Endpoint config changed'
@@ -415,6 +435,10 @@ export const getInitialCreateState = (
                     if (typeof key === 'string') {
                         state.resourceConfig[key] =
                             value ?? getDefaultJsonFormsData();
+
+                        populateHasErrors(get, state, {
+                            resource: state.resourceConfig,
+                        });
                     } else {
                         const newResourceKeyList = key;
                         const [removedCollections, newCollections] =
@@ -454,9 +478,20 @@ export const getInitialCreateState = (
 
                         // Update the collections with the new array
                         state.collections = newResourceKeyList;
-                    }
 
-                    populateErrorProps(state, get);
+                        populateResourceConfigErrors(
+                            state.resourceConfig,
+                            state
+                        );
+                        populateHasErrors(
+                            get,
+                            state,
+                            {
+                                resource: state.resourceConfig,
+                            },
+                            newResourceKeyList
+                        );
+                    }
                 }),
                 false,
                 'Resource Config Changed'
@@ -488,7 +523,15 @@ export const getInitialCreateState = (
 
                     state.collections = collections;
                     state.resourceConfig = configs;
-                    populateErrorProps(state, get);
+                    populateResourceConfigErrors(configs, state);
+                    populateHasErrors(
+                        get,
+                        state,
+                        {
+                            resource: configs,
+                        },
+                        collections
+                    );
                 }),
                 false,
                 'Collections Prefilled'

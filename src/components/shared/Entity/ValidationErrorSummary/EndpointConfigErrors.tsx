@@ -16,6 +16,7 @@ function EndpointConfigErrors() {
     return (
         <SectionError
             errors={endpointErrors}
+            errorMessage="entityCreate.endpointConfig.detailsHaveErrors"
             config={endpointSchema}
             configEmptyMessage="entityCreate.endpointConfig.endpointConfigMissing"
         />

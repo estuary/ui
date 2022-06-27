@@ -7,12 +7,14 @@ export type KeyValue = {
 
 interface Props {
     data: KeyValue[];
+    sectionTitle?: string;
 }
 
-function KeyValueList({ data }: Props) {
+function KeyValueList({ data, sectionTitle }: Props) {
     if (data.length > 0) {
         return (
             <List dense>
+                <ListItemText primary={sectionTitle} />
                 {data.map(({ title, val }, index) => (
                     <ListItemText
                         key={`${title}-keyValueList-${index}`}

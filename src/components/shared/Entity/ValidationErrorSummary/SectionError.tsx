@@ -4,11 +4,17 @@ import { useIntl } from 'react-intl';
 
 interface Props {
     errors: any;
+    errorMessage?: string;
     config?: any;
     configEmptyMessage?: string;
 }
 
-function SectionError({ config, errors, configEmptyMessage }: Props) {
+function SectionError({
+    config,
+    errors,
+    errorMessage,
+    configEmptyMessage,
+}: Props) {
     const intl = useIntl();
     const filteredErrorsList: any[] = [];
 
@@ -19,11 +25,19 @@ function SectionError({ config, errors, configEmptyMessage }: Props) {
             }),
         });
     } else if (errors.length > 0) {
-        errors.forEach((error: any) => {
+        if (errorMessage) {
             filteredErrorsList.push({
-                title: error.message,
+                title: intl.formatMessage({
+                    id: errorMessage,
+                }),
             });
-        });
+        } else {
+            errors.forEach((error: any) => {
+                filteredErrorsList.push({
+                    title: error.message,
+                });
+            });
+        }
     }
 
     return <KeyValueList data={filteredErrorsList} />;

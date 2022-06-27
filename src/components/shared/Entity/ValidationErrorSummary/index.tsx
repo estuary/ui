@@ -1,10 +1,13 @@
 import { Alert, AlertTitle, Collapse } from '@mui/material';
+import DetailsErrors from 'components/shared/Entity/ValidationErrorSummary/DetailsErrors';
+import EndpointConfigErrors from 'components/shared/Entity/ValidationErrorSummary/EndpointConfigErrors';
+import ResourceConfigErrors from 'components/shared/Entity/ValidationErrorSummary/ResourceConfigErrors';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { FormattedMessage } from 'react-intl';
 import { entityCreateStoreSelectors } from 'stores/Create';
 
 interface Props {
-    ErrorComponent?: any | null;
+    ErrorComponent?: any | boolean;
     hideIcon?: boolean;
     headerMessageId?: string;
     hasErrorsSelector: Function;
@@ -38,7 +41,15 @@ function ValidationErrorSummary({
                     />
                 </AlertTitle>
 
-                {ErrorComponent ? <ErrorComponent /> : null}
+                {ErrorComponent === false ? null : ErrorComponent ? (
+                    <ErrorComponent />
+                ) : (
+                    <>
+                        <DetailsErrors />
+                        <EndpointConfigErrors />
+                        <ResourceConfigErrors />
+                    </>
+                )}
             </Alert>
         </Collapse>
     );

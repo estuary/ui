@@ -3,8 +3,6 @@ import { JsonForms } from '@jsonforms/react';
 import { Alert, Stack, Typography } from '@mui/material';
 import { authenticatedRoutes } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
-import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
-import DetailsErrors from 'components/shared/Entity/ValidationErrorSummary/DetailsErrors';
 import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
 import { CATALOG_NAME_SCOPE } from 'forms/renderers/CatalogName';
 import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
@@ -178,13 +176,6 @@ function DetailsForm({
             <Typography variant="h5" sx={{ mb: 1 }}>
                 <FormattedMessage id={`${messagePrefix}.details.heading`} />
             </Typography>
-
-            <ValidationErrorSummary
-                hideIcon={true}
-                headerMessageId="entityCreate.endpointConfig.detailsHaveErrors"
-                ErrorComponent={DetailsErrors}
-                hasErrorsSelector={entityCreateStoreSelectors.details.hasErrors}
-            />
 
             <Typography sx={{ mb: 2 }}>
                 <FormattedMessage id={`${messagePrefix}.instructions`} />
