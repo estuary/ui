@@ -1,10 +1,9 @@
-import { Box, Tooltip, Typography } from '@mui/material';
+import { Box, Tooltip, Typography, useTheme } from '@mui/material';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
-    defaultStatusColor,
     shardDetailSelectors,
     ShardStatusColor,
     TaskShardDetails,
@@ -15,6 +14,11 @@ interface Props {
 }
 
 function EntityStatus({ name }: Props) {
+    const theme = useTheme();
+
+    const defaultStatusColor: ShardStatusColor =
+        theme.palette.mode === 'dark' ? '#EEF8FF' : '#04192A';
+
     const [taskShardDetails, setTaskShardDetails] = useState<
         TaskShardDetails[]
     >([]);
@@ -39,10 +43,15 @@ function EntityStatus({ name }: Props) {
     useEffect(() => {
         const taskShards: Shard[] = getTaskShards(name, shards);
 
-        const shardDetails: TaskShardDetails[] =
-            getTaskShardDetails(taskShards);
+        const shardDetails: TaskShardDetails[] = getTaskShardDetails(
+            taskShards,
+            defaultStatusColor
+        );
 
-        const statusColor: ShardStatusColor = getTaskStatusColor(shardDetails);
+        const statusColor: ShardStatusColor = getTaskStatusColor(
+            shardDetails,
+            defaultStatusColor
+        );
 
         const disabled =
             shardDetails.filter((shard) => !shard.disabled).length === 0;
@@ -58,6 +67,7 @@ function EntityStatus({ name }: Props) {
         getTaskStatusColor,
         name,
         shards,
+        defaultStatusColor,
     ]);
 
     return (

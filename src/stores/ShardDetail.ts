@@ -23,8 +23,8 @@ export enum ShardStatusMessageIds {
     NONE = 'shardStatus.none',
 }
 
-// The additional hex string corresponds to slate[25].
-export type ShardStatusColor = SemanticColor | '#EEF8FF';
+// The hex string additions correspond to slate[25] | slate[800].
+export type ShardStatusColor = SemanticColor | '#EEF8FF' | '#04192A';
 
 export interface TaskShardDetails {
     messageId: ShardStatusMessageIds;
@@ -41,24 +41,27 @@ export interface ShardDetailStore {
     shards: Shard[];
     setShards: SetShards;
     getTaskShards: (catalogNamespace: string, shards: Shard[]) => Shard[];
-    getTaskShardDetails: (taskShards: Shard[]) => TaskShardDetails[];
+    getTaskShardDetails: (
+        taskShards: Shard[],
+        defaultStatusColor: ShardStatusColor
+    ) => TaskShardDetails[];
     getTaskStatusColor: (
-        taskShardDetails: TaskShardDetails[]
+        taskShardDetails: TaskShardDetails[],
+        defaultStatusColor: ShardStatusColor
     ) => ShardStatusColor;
     getShardDetails: (shards: Shard[]) => ShardDetails[];
-    getShardStatusColor: (shardId: string) => ShardStatusColor;
+    getShardStatusColor: (
+        shardId: string,
+        defaultStatusColor: ShardStatusColor
+    ) => ShardStatusColor;
     getShardStatusMessageId: (shardId: string) => ShardStatusMessageIds;
     evaluateShardProcessingState: (shardId: string) => boolean;
 }
 
-export const defaultStatusColor: ShardStatusColor = '#EEF8FF';
-
-const defaultTaskShardDetail: TaskShardDetails = {
-    messageId: ShardStatusMessageIds.NONE,
-    color: defaultStatusColor,
-};
-
-const evaluateTaskShardStatus = ({ spec, status }: Shard): TaskShardDetails => {
+const evaluateTaskShardStatus = (
+    { spec, status }: Shard,
+    defaultStatusColor: ShardStatusColor
+): TaskShardDetails => {
     if (status.length === 1) {
         switch (status[0].code) {
             case 'FAILED':
@@ -140,7 +143,10 @@ const evaluateTaskShardStatus = ({ spec, status }: Shard): TaskShardDetails => {
 };
 
 // TODO: Consider unifying this function with the one below in a similar fashion as evaluateTaskShardStatus.
-const evaluateShardStatusColor = ({ status }: Shard): ShardStatusColor => {
+const evaluateShardStatusColor = (
+    { status }: Shard,
+    defaultStatusColor: ShardStatusColor
+): ShardStatusColor => {
     if (status.length === 1) {
         switch (status[0].code) {
             case 'PRIMARY':
@@ -250,10 +256,15 @@ export const getInitialState = (
                   })
                 : [];
         },
-        getTaskShardDetails: (taskShards) => {
+        getTaskShardDetails: (taskShards, defaultStatusColor) => {
+            const defaultTaskShardDetail = {
+                messageId: ShardStatusMessageIds.NONE,
+                color: defaultStatusColor,
+            };
+
             if (taskShards.length > 0) {
                 const statusIndicators = taskShards.map((shard) =>
-                    evaluateTaskShardStatus(shard)
+                    evaluateTaskShardStatus(shard, defaultStatusColor)
                 );
 
                 return statusIndicators.length > 0
@@ -263,7 +274,7 @@ export const getInitialState = (
                 return [defaultTaskShardDetail];
             }
         },
-        getTaskStatusColor: (taskShardDetails) => {
+        getTaskStatusColor: (taskShardDetails, defaultStatusColor) => {
             if (taskShardDetails.length === 1) {
                 return taskShardDetails[0].color;
             } else if (taskShardDetails.length > 1) {
@@ -309,7 +320,7 @@ export const getInitialState = (
                     ?.errors,
             }));
         },
-        getShardStatusColor: (shardId) => {
+        getShardStatusColor: (shardId, defaultStatusColor) => {
             const { shards } = get();
 
             if (shards.length > 0) {
@@ -318,7 +329,10 @@ export const getInitialState = (
                 );
 
                 return selectedShard
-                    ? evaluateShardStatusColor(selectedShard)
+                    ? evaluateShardStatusColor(
+                          selectedShard,
+                          defaultStatusColor
+                      )
                     : defaultStatusColor;
             } else {
                 return defaultStatusColor;
