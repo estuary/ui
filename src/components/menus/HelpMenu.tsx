@@ -12,7 +12,6 @@ function HelpMenu() {
             icon={<HelpIcon />}
             identifier="help-menu"
             tooltip={intl.formatMessage({ id: 'helpMenu.tooltip' })}
-            verticalOffset={9}
         >
             <ExternalLinkMenuItem
                 link={intl.formatMessage({ id: 'helpMenu.docs.link' })}

@@ -45,7 +45,6 @@ const UserMenu = () => {
                 }
                 identifier="account-menu"
                 tooltip={intl.formatMessage({ id: 'accountMenu.tooltip' })}
-                verticalOffset={20}
             >
                 <MenuItem sx={nonInteractiveMenuStyling}>
                     <ListItemIcon>
