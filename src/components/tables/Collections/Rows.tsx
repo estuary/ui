@@ -6,7 +6,7 @@ import ExpandDetails from 'components/tables/cells/ExpandDetails';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import UserName from 'components/tables/cells/UserName';
 import DetailsPanel from 'components/tables/Details/DetailsPanel';
-import { getExpandedRowBgColor } from 'context/Theme';
+import { getEntityTableRowSx } from 'context/Theme';
 import { useState } from 'react';
 
 interface RowProps {
@@ -47,12 +47,7 @@ function Row({ row, showEntityStatus }: RowProps) {
         <>
             <TableRow
                 key={`Entity-${row.id}`}
-                sx={{
-                    bgcolor: detailsExpanded
-                        ? getExpandedRowBgColor(theme)
-                        : null,
-                    cursor: 'pointer',
-                }}
+                sx={getEntityTableRowSx(theme, detailsExpanded)}
             >
                 <EntityName
                     name={row.catalog_name}

@@ -19,7 +19,7 @@ import { SelectTableStoreNames, useZustandStore } from 'context/Zustand';
 import { useEffect, useState } from 'react';
 import { shardDetailSelectors } from 'stores/ShardDetail';
 import { ENTITY } from 'types';
-import { getExpandedRowBgColor } from 'context/Theme';
+import { getEntityTableRowSx } from 'context/Theme';
 
 interface RowsProps {
     data: LiveSpecsExtQuery[];
@@ -81,12 +81,7 @@ function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
                 hover
                 onClick={() => handlers.clickRow(row.id)}
                 selected={isSelected}
-                sx={{
-                    background: detailsExpanded
-                        ? getExpandedRowBgColor(theme)
-                        : null,
-                    cursor: 'pointer',
-                }}
+                sx={getEntityTableRowSx(theme, detailsExpanded)}
             >
                 <RowSelect isSelected={isSelected} name={row.catalog_name} />
 

@@ -14,7 +14,7 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
-import { getExpandedRowBgColor } from 'context/Theme';
+import { getEntityTableRowSx } from 'context/Theme';
 import { SelectTableStoreNames, useZustandStore } from 'context/Zustand';
 import { useRouteStore } from 'hooks/useRouteStore';
 import useShardsList from 'hooks/useShardsList';
@@ -96,12 +96,7 @@ function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
                 hover
                 onClick={() => handlers.clickRow(row.id)}
                 selected={isSelected}
-                sx={{
-                    bgcolor: detailsExpanded
-                        ? getExpandedRowBgColor(theme)
-                        : null,
-                    cursor: 'pointer',
-                }}
+                sx={getEntityTableRowSx(theme, detailsExpanded)}
             >
                 <RowSelect isSelected={isSelected} name={row.catalog_name} />
 

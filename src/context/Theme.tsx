@@ -186,8 +186,17 @@ export const darkDialogPaperBackground = {
     borderRadius: 5,
 };
 
-export const getExpandedRowBgColor = (theme: Theme) => {
-    return theme.palette.mode === 'dark' ? slate[800] : slate[50];
+export const getEntityTableRowSx = (
+    theme: Theme,
+    detailsExpanded: boolean
+): SxProps<Theme> => {
+    const expandedRowBgColor =
+        theme.palette.mode === 'dark' ? slate[800] : slate[50];
+
+    return {
+        background: detailsExpanded ? expandedRowBgColor : null,
+        cursor: 'pointer',
+    };
 };
 
 // TODO (theme) Figure out how to make these composable
