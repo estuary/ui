@@ -81,6 +81,7 @@ const xs = 0;
 const lightMode: PaletteOptions = {
     background: {
         default: slate[50],
+        paper: slate[50],
     },
     contrastThreshold,
     error: {
@@ -183,6 +184,10 @@ export const darkDialogPaperBackground = {
         'linear-gradient(159.03deg, rgba(172, 199, 220, 0.18) 2.23%, rgba(172, 199, 220, 0.12) 40.69%)',
     boxShadow: '0px 4px 24px -1px rgba(0, 0, 0, 0.2)',
     borderRadius: 5,
+};
+
+export const getExpandedRowBgColor = (theme: Theme) => {
+    return theme.palette.mode === 'dark' ? slate[800] : slate[50];
 };
 
 // TODO (theme) Figure out how to make these composable
@@ -340,13 +345,12 @@ const ThemeProvider = ({ children }: BaseComponentProps) => {
                                 palette?.mode === 'dark'
                                     ? 'transparent'
                                     : 'rgba(255, 255, 255, 0.6)',
-                            boxShadow: '0px 4px 10px -1px rgba(4, 25, 42, 0.2)',
+                            boxShadow: 'none',
                             borderRadius: 10,
                             overflow: 'hidden',
                         },
                     },
                 },
-
                 MuiAppBar: {
                     styleOverrides: {
                         root: {

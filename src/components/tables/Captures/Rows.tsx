@@ -1,4 +1,4 @@
-import { TableRow } from '@mui/material';
+import { TableRow, useTheme } from '@mui/material';
 import { authenticatedRoutes } from 'app/Authenticated';
 import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import Actions from 'components/tables/cells/Actions';
@@ -14,6 +14,7 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
+import { getExpandedRowBgColor } from 'context/Theme';
 import { SelectTableStoreNames, useZustandStore } from 'context/Zustand';
 import { useRouteStore } from 'hooks/useRouteStore';
 import useShardsList from 'hooks/useShardsList';
@@ -69,6 +70,7 @@ export const tableColumns = [
 
 function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
     const navigate = useNavigate();
+    const theme = useTheme();
 
     const [detailsExpanded, setDetailsExpanded] = useState(false);
 
@@ -95,7 +97,9 @@ function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
                 onClick={() => handlers.clickRow(row.id)}
                 selected={isSelected}
                 sx={{
-                    background: detailsExpanded ? '#04192A' : null,
+                    bgcolor: detailsExpanded
+                        ? getExpandedRowBgColor(theme)
+                        : null,
                     cursor: 'pointer',
                 }}
             >
