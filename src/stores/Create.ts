@@ -81,20 +81,26 @@ const getDefaultJsonFormsData = () => ({
 const filterErrors = (
     list: ResourceConfig['errors'] | Details['errors'] | JsonFormsData['errors']
 ) => {
-    return map(list, 'message');
+    const response = map(list, 'message');
+
+    console.log('filter', response);
+
+    return response;
 };
 
 const fetchErrors = (configParent: any) => {
     let response: any[] = [];
 
-    console.log('fetchErrors = ', configParent);
-
-    map(configParent, (config) => {
-        const { errors } = config;
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (configParent.errors) {
+        const errors = configParent.errors;
         if (errors && errors.length > 0) {
             response = response.concat(errors);
         }
+    }
+
+    console.log('fetchErrors = ', {
+        configParent,
+        response,
     });
 
     return response;
@@ -115,30 +121,33 @@ const whatChanged = (
     return [removedCollections, newCollections];
 };
 
-const populateErrorProps = (state: CreateEntityStore) => {
+const populateErrorProps = (
+    state: CreateEntityStore,
+    get: GetState<CreateEntityStore>
+) => {
     state.resourceConfigErrors = filterErrors(
-        map(state.resourceConfig, fetchErrors)
+        map(get().resourceConfig, fetchErrors)
     );
-    state.resourceConfigHasErrors = !isEmpty(state.resourceConfigErrors);
+    state.resourceConfigHasErrors = !isEmpty(get().resourceConfigErrors);
 
     state.endpointConfigErrors = filterErrors(
-        fetchErrors(state.endpointConfig)
+        fetchErrors(get().endpointConfig)
     );
-    state.endpointConfigHasErrors = !isEmpty(state.endpointConfigErrors);
+    state.endpointConfigHasErrors = !isEmpty(get().endpointConfigErrors);
 
-    state.collectionsHasErrors = isEmpty(state.collections);
-    state.detailsFormHasErrors = !isEmpty(state.details.errors);
+    state.collectionsHasErrors = isEmpty(get().collections);
+    state.detailsFormHasErrors = !isEmpty(get().details.errors);
 
     state.hasErrors =
-        state.collectionsHasErrors ||
-        state.resourceConfigHasErrors ||
-        state.detailsFormHasErrors;
+        get().collectionsHasErrors ||
+        get().resourceConfigHasErrors ||
+        get().detailsFormHasErrors;
 
-    console.log('store', [
-        state.collectionsHasErrors,
-        state.resourceConfigHasErrors,
-        state.details.errors,
-    ]);
+    // console.log('store', [
+    //     state.collectionsHasErrors,
+    //     state.resourceConfigHasErrors,
+    //     state.details.errors,
+    // ]);
 };
 
 export interface CreateEntityStore {
@@ -309,7 +318,7 @@ export const getInitialCreateState = (
 
                     state.details = details;
 
-                    populateErrorProps(state);
+                    populateErrorProps(state, get);
                 }),
                 false,
                 'Details changed'
@@ -320,7 +329,7 @@ export const getInitialCreateState = (
             set(
                 produce((state) => {
                     state.endpointConfig = endpointConfig;
-                    populateErrorProps(state);
+                    populateErrorProps(state, get);
                 }),
                 false,
                 'Endpoint config changed'
@@ -443,7 +452,7 @@ export const getInitialCreateState = (
                         state.collections = newResourceKeyList;
                     }
 
-                    populateErrorProps(state);
+                    populateErrorProps(state, get);
                 }),
                 false,
                 'Resource Config Changed'
@@ -475,7 +484,7 @@ export const getInitialCreateState = (
 
                     state.collections = collections;
                     state.resourceConfig = configs;
-                    populateErrorProps(state);
+                    populateErrorProps(state, get);
                 }),
                 false,
                 'Collections Prefilled'
@@ -490,8 +499,6 @@ export const getInitialCreateState = (
             );
         },
     };
-
-    populateErrorProps(response);
 
     return response;
 };
