@@ -2,7 +2,7 @@
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import EmailIcon from '@mui/icons-material/Email';
 import Logout from '@mui/icons-material/Logout';
-import { Stack, SxProps, Typography } from '@mui/material';
+import { Stack, SxProps, Theme, Typography } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import MenuItem from '@mui/material/MenuItem';
@@ -13,13 +13,17 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { getUserDetails } from 'services/supabase';
 import IconMenu from './IconMenu';
 
+interface Props {
+    iconSx: SxProps<Theme>;
+}
+
 const nonInteractiveMenuStyling: SxProps = {
     '&:hover': {
         cursor: 'revert',
     },
 };
 
-const UserMenu = () => {
+const UserMenu = ({ iconSx }: Props) => {
     const intl = useIntl();
     const supabaseClient = useClient();
 
@@ -48,17 +52,19 @@ const UserMenu = () => {
             >
                 <MenuItem sx={nonInteractiveMenuStyling}>
                     <ListItemIcon>
-                        <AccountCircleIcon fontSize="small" />
+                        <AccountCircleIcon fontSize="small" sx={iconSx} />
                     </ListItemIcon>
                     {userName}
                 </MenuItem>
+
                 <MenuItem sx={nonInteractiveMenuStyling}>
                     <ListItemIcon>
-                        <EmailIcon fontSize="small" />
+                        <EmailIcon fontSize="small" sx={iconSx} />
                     </ListItemIcon>
 
                     <Stack spacing={0}>
                         <Typography>{email}</Typography>
+
                         {emailVerified ? (
                             <Typography variant="caption">
                                 <FormattedMessage id="accountMenu.emailVerified" />
@@ -68,14 +74,16 @@ const UserMenu = () => {
                 </MenuItem>
 
                 <Divider />
+
                 <MenuItem
                     onClick={() => {
                         void handlers.logout();
                     }}
                 >
                     <ListItemIcon>
-                        <Logout fontSize="small" />
+                        <Logout fontSize="small" sx={iconSx} />
                     </ListItemIcon>
+
                     <FormattedMessage id="cta.logout" />
                 </MenuItem>
             </IconMenu>

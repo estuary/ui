@@ -55,7 +55,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
     const intl = useIntl();
 
     const theme = useTheme();
-    const listItemIconSx: SxProps<Theme> = {
+    const iconSx: SxProps<Theme> = {
         color: theme.palette.text.primary,
     };
 
@@ -149,31 +149,27 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                         })}
                     >
                         <ListItemLink
-                            icon={<InputIcon sx={listItemIconSx} />}
+                            icon={<InputIcon sx={iconSx} />}
                             title={authenticatedRoutes.captures.title}
                             link={authenticatedRoutes.captures.path}
                         />
                         <ListItemLink
-                            icon={
-                                <FormatListNumberedIcon sx={listItemIconSx} />
-                            }
+                            icon={<FormatListNumberedIcon sx={iconSx} />}
                             title={authenticatedRoutes.collections.title}
                             link={authenticatedRoutes.collections.path}
                         />
                         <ListItemLink
-                            icon={<StorageIcon sx={listItemIconSx} />}
+                            icon={<StorageIcon sx={iconSx} />}
                             title={authenticatedRoutes.materializations.title}
                             link={authenticatedRoutes.materializations.path}
                         />
                         <ListItemLink
-                            icon={<CableIcon sx={listItemIconSx} />}
+                            icon={<CableIcon sx={iconSx} />}
                             title={authenticatedRoutes.connectors.title}
                             link={authenticatedRoutes.connectors.path}
                         />
                         <ListItemLink
-                            icon={
-                                <AdminPanelSettingsIcon sx={listItemIconSx} />
-                            }
+                            icon={<AdminPanelSettingsIcon sx={iconSx} />}
                             title={authenticatedRoutes.admin.title}
                             link={authenticatedRoutes.admin.path}
                         />
@@ -181,9 +177,9 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                 </Box>
 
                 <Box sx={{ pl: 1 }}>
-                    <UserMenu />
+                    <UserMenu iconSx={iconSx} />
 
-                    <HelpMenu />
+                    <HelpMenu iconSx={iconSx} />
 
                     <Box
                         sx={{
