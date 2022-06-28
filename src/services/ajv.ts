@@ -34,13 +34,18 @@ export const setDefaultsValidator = (function () {
 function setJSONFormDefaults(jsonSchema: any, formData: any) {
     const hydrateAndValidate = setDefaultsValidator.compile(jsonSchema);
     hydrateAndValidate(formData);
+    return hydrateAndValidate;
 }
 
 export function createJSONFormDefaults(jsonSchema: any): Object {
     // We start with an empty object, and then validate it to set any default values.
     // Note that this requires all parent properties to also specify a `default` in the json
     // schema.
-    const defaultValues = {};
-    setJSONFormDefaults(jsonSchema, defaultValues);
-    return defaultValues;
+    const data = {};
+    const ajvResponse = setJSONFormDefaults(jsonSchema, data);
+    const errors =
+        ajvResponse.errors && ajvResponse.errors.length > 0
+            ? ajvResponse.errors
+            : [];
+    return { data, errors };
 }

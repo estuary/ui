@@ -32,9 +32,7 @@ function EndpointConfig({ connectorImage, draftEditorStoreName }: Props) {
                     />
                 }
             >
-                <EndpointConfigForm
-                    endpointSchema={connectorTag.endpoint_spec_schema}
-                />
+                <EndpointConfigForm />
             </WrapperWithHeader>
         );
     } else {

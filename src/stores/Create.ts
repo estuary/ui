@@ -3,6 +3,7 @@ import { PostgrestError } from '@supabase/postgrest-js';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
 import { difference, has, isEmpty, isEqual, map, omit } from 'lodash';
+import { createJSONFormDefaults } from 'services/ajv';
 import { Stores } from 'stores/Repo';
 import { GetState } from 'zustand';
 import { NamedSet } from 'zustand/middleware';
@@ -75,14 +76,7 @@ const formIdle = (formStateStatus: FormStatus) => {
 
 const getDefaultJsonFormsData = () => ({
     data: {},
-    errors: [
-        {
-            keyword: 'default',
-            instancePath: 'default',
-            schemaPath: 'default',
-            params: {},
-        },
-    ],
+    errors: [],
 });
 
 const filterErrors = (
@@ -217,6 +211,8 @@ export interface CreateEntityStore {
     setConnectors: (val: CreateEntityStore['connectors']) => void;
     endpointSchema: { [key: string]: any };
     setEndpointSchema: (val: CreateEntityStore['endpointSchema']) => void;
+    resourceSchema: { [key: string]: any };
+    setResourceSchema: (val: CreateEntityStore['resourceSchema']) => void;
     isIdle: boolean;
     isActive: boolean;
     hasErrors: boolean;
@@ -245,6 +241,9 @@ export const initialCreateStates = {
         };
     },
     endpointSchema: () => {
+        return {};
+    },
+    resourceSchema: () => {
         return {};
     },
     endpointConfig: (): JsonFormsData => {
@@ -277,6 +276,7 @@ export const getInitialStateData = (
     | 'connectors'
     | 'formState'
     | 'endpointSchema'
+    | 'resourceSchema'
     | 'collections'
     | 'currentCollection'
     | 'resourceConfig'
@@ -308,6 +308,7 @@ export const getInitialStateData = (
         formState: initialCreateStates.formState(),
 
         endpointSchema: initialCreateStates.endpointSchema(),
+        resourceSchema: initialCreateStates.resourceSchema(),
 
         resourceConfig: initialCreateStates.resourceConfig(),
         resourceConfigErrors: [],
@@ -440,12 +441,23 @@ export const getInitialCreateState = (
                 'Setting endpointSchema'
             );
         },
+        setResourceSchema: (val) => {
+            set(
+                produce((state) => {
+                    state.resourceSchema = val;
+                }),
+                false,
+                'Setting resourceSchema'
+            );
+        },
         setResourceConfig: (key, value) => {
             set(
                 produce((state) => {
+                    const { resourceSchema } = get();
+
                     if (typeof key === 'string') {
                         state.resourceConfig[key] =
-                            value ?? getDefaultJsonFormsData();
+                            value ?? createJSONFormDefaults(resourceSchema);
 
                         const hasErrors = populateResourceConfigErrors(
                             state.resourceConfig,
@@ -465,7 +477,7 @@ export const getInitialCreateState = (
                         // Set defaults on new configs
                         newCollections.forEach((element) => {
                             state.resourceConfig[element] =
-                                getDefaultJsonFormsData();
+                                createJSONFormDefaults(resourceSchema);
                         });
 
                         // Remove any configs that are no longer needed and set new default if needed
@@ -529,15 +541,18 @@ export const getInitialCreateState = (
                 produce((state) => {
                     const collections: string[] = [];
                     const configs = {};
+                    const { resourceSchema } = get();
 
                     value.forEach((collection) => {
                         collection.writes_to.forEach((writes_to) => {
                             collections.push(writes_to);
-                            configs[writes_to] = getDefaultJsonFormsData();
+                            configs[writes_to] =
+                                createJSONFormDefaults(resourceSchema);
                         });
                     });
 
                     state.collections = collections;
+                    state.currentCollection = collections[0];
                     state.resourceConfig = configs;
                     const hasErrors = populateResourceConfigErrors(
                         configs,
@@ -618,6 +633,8 @@ export const entityCreateStoreSelectors = {
     connectors: (state: CreateEntityStore) => state.connectors,
     endpointSchema: (state: CreateEntityStore) => state.endpointSchema,
     setEndpointSchema: (state: CreateEntityStore) => state.setEndpointSchema,
+    resourceSchema: (state: CreateEntityStore) => state.resourceSchema,
+    setResourceSchema: (state: CreateEntityStore) => state.setResourceSchema,
 
     messagePrefix: (state: CreateEntityStore) => state.messagePrefix,
     isActive: (state: CreateEntityStore) => state.isActive,

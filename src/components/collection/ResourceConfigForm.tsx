@@ -3,7 +3,7 @@ import { JsonForms } from '@jsonforms/react';
 import { StyledEngineProvider } from '@mui/material';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useEffect, useRef } from 'react';
-import { createJSONFormDefaults, setDefaultsValidator } from 'services/ajv';
+import { setDefaultsValidator } from 'services/ajv';
 import {
     custom_generateDefaultUISchema,
     defaultOptions,
@@ -21,9 +21,6 @@ function ResourceConfigForm({ resourceSchema, collectionName }: Props) {
     const name = useRef(collectionName);
     const useEntityCreateStore = useRouteStore();
 
-    const collections: string[] = useEntityCreateStore(
-        entityCreateStoreSelectors.collections.get
-    );
     const setConfig = useEntityCreateStore(
         entityCreateStoreSelectors.resourceConfig.set
     );
@@ -34,18 +31,6 @@ function ResourceConfigForm({ resourceSchema, collectionName }: Props) {
         entityCreateStoreSelectors.formState.displayValidation
     );
     const isActive = useEntityCreateStore(entityCreateStoreSelectors.isActive);
-
-    // Resolve Refs & Hydrate the object
-    //  This will hydrate the default values for us as we don't want JSONForms to
-    //  directly update the state object as it caused issues when switching connectors.
-    useEffect(() => {
-        if (!collections.includes(collectionName)) {
-            setConfig(collectionName, {
-                data: createJSONFormDefaults(resourceSchema),
-                errors: [],
-            });
-        }
-    }, [collectionName, resourceSchema, collections, setConfig]);
 
     useEffect(() => {
         name.current = collectionName;

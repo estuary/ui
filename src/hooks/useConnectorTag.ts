@@ -45,7 +45,7 @@ function useConnectorTag(connectorImage: string | null) {
     );
 
     const { data, error } = useSelectSingle(
-        connectorImage ? connectorTagsQuery : null
+        connectorImage && connectorImage.length > 0 ? connectorTagsQuery : null
     );
 
     return {
