@@ -62,7 +62,7 @@ export const errorMain: SemanticColor = '#CA3B55';
 export const infoMain: SemanticColor = '#4FD6FF';
 
 // Color modifiers
-const contrastThreshold = 4;
+const contrastThreshold = 5;
 const tonalOffset = 0.1;
 
 // Borders

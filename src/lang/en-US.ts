@@ -114,7 +114,7 @@ const ErrorBoundry: ResolvedIntlConfig['messages'] = {
 
 const ConfirmationDialog: ResolvedIntlConfig['messages'] = {
     'confirm.title': `Are you sure?`,
-    'confirm.loseData': `You have unsaved worked. If you continue you will lose your changes.`,
+    'confirm.loseData': `You have unsaved work. If you continue, you will lose your changes.`,
 };
 
 const FullPage: ResolvedIntlConfig['messages'] = {
