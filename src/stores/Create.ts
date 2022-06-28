@@ -75,7 +75,14 @@ const formIdle = (formStateStatus: FormStatus) => {
 
 const getDefaultJsonFormsData = () => ({
     data: {},
-    errors: [],
+    errors: [
+        {
+            keyword: 'default',
+            instancePath: 'default',
+            schemaPath: 'default',
+            params: {},
+        },
+    ],
 });
 
 const filterErrors = (
