@@ -88,11 +88,7 @@ const getDefaultJsonFormsData = () => ({
 const filterErrors = (
     list: ResourceConfig['errors'] | Details['errors'] | JsonFormsData['errors']
 ) => {
-    const response = map(list, 'message');
-
-    console.log('filter', { list, response });
-
-    return response;
+    return map(list, 'message');
 };
 
 const fetchErrors = ({ errors }: any) => {
@@ -180,7 +176,6 @@ const populateResourceConfigErrors = (
         resourceConfigErrors = [{}];
     }
 
-    console.log('>>>>>', { resourceConfig, resourceConfigErrors });
     state.resourceConfigErrors = resourceConfigErrors;
     state.resourceConfigHasErrors = !isEmpty(resourceConfigErrors);
 

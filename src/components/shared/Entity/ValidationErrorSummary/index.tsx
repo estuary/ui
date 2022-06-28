@@ -25,8 +25,6 @@ function ValidationErrorSummary({
     );
     const hasErrors = useEntityCreateStore(hasErrorsSelector);
 
-    console.log('valerrsum', { hasErrors, displayValidation });
-
     return displayValidation ? (
         <Collapse in={Boolean(hasErrors)} timeout="auto" unmountOnExit>
             <Alert severity="error" icon={hideIcon ?? undefined}>
