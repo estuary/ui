@@ -23,8 +23,10 @@ function EntityError({ logToken, error, title, draftId }: Props) {
                     }}
                 >
                     <Error error={error} hideTitle={true} />
+
                     {draftId ? <DraftErrors draftId={draftId} /> : null}
                 </Box>
+
                 <ErrorLogs logToken={logToken} />
             </Stack>
         </HeaderSummary>

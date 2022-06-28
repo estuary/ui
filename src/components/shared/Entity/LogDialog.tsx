@@ -5,6 +5,7 @@ import {
     DialogTitle,
 } from '@mui/material';
 import ErrorLogs from 'components/shared/Entity/Error/Logs';
+import { slate } from 'context/Theme';
 import { ReactNode } from 'react';
 
 interface Props {
@@ -19,7 +20,23 @@ const TITLE_ID = 'logs-dialog-title';
 
 function LogDialog({ open, token, actionComponent, title }: Props) {
     return (
-        <Dialog open={open} maxWidth="lg" fullWidth aria-labelledby={TITLE_ID}>
+        <Dialog
+            open={open}
+            maxWidth="lg"
+            fullWidth
+            aria-labelledby={TITLE_ID}
+            sx={{
+                '& .MuiDialog-paper': {
+                    backgroundColor: (themes) =>
+                        themes.palette.mode === 'dark' ? slate[800] : slate[25],
+                    borderRadius: 5,
+                    backgroundImage: (themes) =>
+                        themes.palette.mode === 'dark'
+                            ? 'linear-gradient(160deg, rgba(99, 138, 169, 0.24) 0%, rgba(13, 43, 67, 0.22) 75%, rgba(13, 43, 67, 0.18) 100%)'
+                            : 'linear-gradient(160deg, rgba(246, 250, 255, 0.4) 0%, rgba(216, 233, 245, 0.4) 75%, rgba(172, 199, 220, 0.4) 100%)',
+                },
+            }}
+        >
             <DialogTitle id={TITLE_ID}>{title}</DialogTitle>
 
             <DialogContent
@@ -29,6 +46,7 @@ function LogDialog({ open, token, actionComponent, title }: Props) {
             >
                 <ErrorLogs logToken={token} defaultOpen />
             </DialogContent>
+
             <DialogActions
                 sx={{
                     display: 'flex',

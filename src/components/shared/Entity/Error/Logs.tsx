@@ -36,6 +36,7 @@ function ErrorLogs({
                         <FormattedMessage id="entityCreate.errors.collapseTitle" />
                     </Typography>
                 </AccordionSummary>
+
                 <AccordionDetails>
                     <Box
                         sx={{

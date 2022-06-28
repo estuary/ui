@@ -9,7 +9,7 @@ interface Props extends BaseComponentProps {
 
 function HeaderSummary({ severity, title, children }: Props) {
     return (
-        <Box sx={{ width: '100%' }}>
+        <Box sx={{ width: '100%', mb: 2 }}>
             <Alert
                 icon={false}
                 sx={{
