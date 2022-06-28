@@ -1,8 +1,5 @@
 import { Alert, Container, Paper, Snackbar, useTheme } from '@mui/material';
-import {
-    darkPagePaperBackground,
-    lightPagePaperBackground,
-} from 'context/Theme';
+import { darkGlassBkgWithBlur, lightGlassBkgWithBlur } from 'context/Theme';
 import { ReactNode, useEffect, useState } from 'react';
 import useNotificationStore, {
     NotificationState,
@@ -23,8 +20,8 @@ function PageContainer({ children }: Props) {
     const theme = useTheme();
     const backgroundSx =
         theme.palette.mode === 'dark'
-            ? darkPagePaperBackground
-            : lightPagePaperBackground;
+            ? darkGlassBkgWithBlur
+            : lightGlassBkgWithBlur;
 
     const notification = useNotificationStore(selectors.notification);
 
@@ -69,6 +66,7 @@ function PageContainer({ children }: Props) {
                 sx={{
                     padding: 2,
                     width: '100%',
+                    borderRadius: 5,
                     ...backgroundSx,
                 }}
                 variant="outlined"

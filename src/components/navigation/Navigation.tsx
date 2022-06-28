@@ -20,7 +20,7 @@ import HelpMenu from 'components/menus/HelpMenu';
 import UserMenu from 'components/menus/UserMenu';
 import Logo from 'components/navigation/Logo';
 import ModeSwitch from 'components/navigation/ModeSwitch';
-import { darkNavPaperBackground, lightNavPaperBackground } from 'context/Theme';
+import { darkGlassBkgWithBlur, lightGlassBkgWithBlur } from 'context/Theme';
 import { FormattedMessage, useIntl } from 'react-intl';
 import ListItemLink from './ListItemLink';
 
@@ -69,8 +69,8 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
 
     const paperBackground =
         theme.palette.mode === 'dark'
-            ? darkNavPaperBackground
-            : lightNavPaperBackground;
+            ? darkGlassBkgWithBlur
+            : lightGlassBkgWithBlur;
 
     return (
         <MuiDrawer
@@ -85,6 +85,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                     transition: (paperTheme) =>
                         `${paperTheme.transitions.duration.shortest}ms`,
                     width,
+                    borderRadius: '0px 10px 10px 0px',
                     ...paperBackground,
                 },
                 'transition': (drawerTheme) =>

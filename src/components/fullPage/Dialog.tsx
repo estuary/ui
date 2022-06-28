@@ -1,8 +1,8 @@
 import { Box, Paper, useTheme } from '@mui/material';
 import CompanyLogo from 'components/CompanyLogo';
 import {
-    darkDialogPaperBackground,
-    lightDialogPaperBackground,
+    darkGlassBkgWithoutBlur,
+    lightGlassBkgWithoutBlur,
 } from 'context/Theme';
 import { ReactNode } from 'react';
 
@@ -15,8 +15,8 @@ function FullPageDialog({ children }: Props) {
 
     const dialogBackground =
         theme.palette.mode === 'dark'
-            ? darkDialogPaperBackground
-            : lightDialogPaperBackground;
+            ? darkGlassBkgWithoutBlur
+            : lightGlassBkgWithoutBlur;
 
     return (
         <Box
