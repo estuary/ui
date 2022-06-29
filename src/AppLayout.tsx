@@ -13,16 +13,17 @@ export enum Widths {
 function AppLayout() {
     const [navigationConfig, setNavigationConfig] = useLocalStorage(
         LocalStorageKeys.NAVIGATION_SETTINGS,
-        { open: true, width: Widths.FULL }
+        { open: true, width: 'FULL' }
     );
 
     const navigationOpen = navigationConfig?.open ?? true;
-    const navigationWidth: Widths = navigationConfig?.width ?? Widths.FULL;
+    const navigationWidth: Widths =
+        navigationConfig?.width === 'RAIL' ? Widths.RAIL : Widths.FULL;
 
     const toggleNavigationDrawer = () => {
         setNavigationConfig({
             open: !navigationOpen,
-            width: navigationOpen ? Widths.RAIL : Widths.FULL,
+            width: navigationOpen ? 'RAIL' : 'FULL',
         });
     };
 
