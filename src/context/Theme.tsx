@@ -220,6 +220,13 @@ const themeSettings = createTheme({
         },
     },
     components: {
+        MuiAlert: {
+            styleOverrides: {
+                root: {
+                    borderRadius: 10,
+                },
+            },
+        },
         MuiCssBaseline: {
             styleOverrides: {
                 body: {

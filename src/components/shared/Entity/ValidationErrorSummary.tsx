@@ -1,4 +1,4 @@
-import { Alert, AlertTitle, Collapse } from '@mui/material';
+import { Alert, AlertTitle, Collapse, useTheme } from '@mui/material';
 import KeyValueList, { KeyValue } from 'components/shared/KeyValueList';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { isEmpty, map } from 'lodash';
@@ -7,6 +7,7 @@ import { entityCreateStoreSelectors } from 'stores/Create';
 
 function ValidationErrorSummary() {
     const intl = useIntl();
+    const theme = useTheme();
 
     const useEntityCreateStore = useRouteStore();
     const [detailErrors, specErrors] = useEntityCreateStore(
@@ -98,10 +99,15 @@ function ValidationErrorSummary() {
 
     return (
         <Collapse in={filteredErrorsList.length > 0} timeout="auto">
-            <Alert severity="error">
+            <Alert
+                severity="error"
+                variant={theme.palette.mode === 'dark' ? 'standard' : 'filled'}
+                sx={{ mb: 2 }}
+            >
                 <AlertTitle>
                     <FormattedMessage id="entityCreate.endpointConfig.errorSummary" />
                 </AlertTitle>
+
                 <KeyValueList data={filteredErrorsList} />
             </Alert>
         </Collapse>

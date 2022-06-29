@@ -1,4 +1,4 @@
-import { Alert, AlertProps, AlertTitle, Box } from '@mui/material';
+import { Alert, AlertProps, AlertTitle, Box, useTheme } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 import { BaseComponentProps } from 'types';
 
@@ -8,6 +8,8 @@ interface Props extends BaseComponentProps {
 }
 
 function HeaderSummary({ severity, title, children }: Props) {
+    const theme = useTheme();
+
     return (
         <Box sx={{ width: '100%', mb: 2 }}>
             <Alert
@@ -17,6 +19,7 @@ function HeaderSummary({ severity, title, children }: Props) {
                     '& .MuiAlert-message': { width: '100%' },
                 }}
                 severity={severity}
+                variant={theme.palette.mode === 'dark' ? 'standard' : 'filled'}
             >
                 <AlertTitle>
                     <FormattedMessage id={title} />
