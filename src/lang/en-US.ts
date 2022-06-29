@@ -145,7 +145,7 @@ const Header: ResolvedIntlConfig['messages'] = {
     'accountMenu.tooltip': `My Account`,
     'accountMenu.emailVerified': `verified`,
 
-    'modeSwitch.label': `Color Mode`,
+    'modeSwitch.label': `Toggle Color Mode`,
 };
 
 const Home: ResolvedIntlConfig['messages'] = {
