@@ -407,20 +407,23 @@ export const getInitialCreateState = (
         },
 
         hasChanges: () => {
-            const { details, endpointConfig } = get();
+            const { details, endpointConfig, resourceConfig } = get();
             const {
                 details: initialDetails,
-                endpointConfig: initialendpointConfig,
+                endpointConfig: initialEndpointConfig,
+                resourceConfig: initialResourceConfig,
             } = getInitialStateData(includeCollections, messagePrefix);
 
             return !isEqual(
                 {
                     details: details.data,
                     endpointConfig: endpointConfig.data,
+                    resourceConfig: resourceConfig.data,
                 },
                 {
                     details: initialDetails.data,
-                    endpointConfig: initialendpointConfig.data,
+                    endpointConfig: initialEndpointConfig.data,
+                    resourceConfig: initialResourceConfig.data,
                 }
             );
         },
