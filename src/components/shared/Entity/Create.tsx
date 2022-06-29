@@ -27,6 +27,7 @@ import { FormattedMessage } from 'react-intl';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 import { ENTITY } from 'types';
+import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     title: string;
@@ -53,6 +54,15 @@ function EntityCreate({
     const { combinedGrants } = useCombinedGrantsExt({
         adminOnly: true,
     });
+
+    // Check for properties being passed in
+    const [searchParams] = useSearchParams();
+    const specId = searchParams.get(
+        authenticatedRoutes.materializations.create.params.liveSpecId
+    );
+    const lastPubId = searchParams.get(
+        authenticatedRoutes.materializations.create.params.lastPubId
+    );
 
     const {
         connectorTags,
@@ -91,6 +101,9 @@ function EntityCreate({
     const setResourceSchema = useEntityCreateStore(
         entityCreateStoreSelectors.setResourceSchema
     );
+    const prefillCollections = useEntityCreateStore(
+        entityCreateStoreSelectors.collections.prefill
+    );
 
     //Editor state
     const setDraftId = useZustandStore<
@@ -108,20 +121,8 @@ function EntityCreate({
         setDraftId(null);
     }, [imageTag, setDraftId]);
 
-    // Once we have a connector populate the store
     const { connectorTag } = useConnectorTag(imageTag.id);
-
-    const prefillCollections = useEntityCreateStore(
-        entityCreateStoreSelectors.collections.prefill
-    );
-    const [searchParams] = useSearchParams();
-    const specID = searchParams.get(
-        authenticatedRoutes.materializations.create.params.liveSpecId
-    );
-    const lastPubId = searchParams.get(
-        authenticatedRoutes.materializations.create.params.lastPubId
-    );
-    const { liveSpecs } = useLiveSpecsExtWithOutSpec(specID, ENTITY.CAPTURE);
+    const { liveSpecs } = useLiveSpecsExtWithOutSpec(specId, ENTITY.CAPTURE);
     const { liveSpecs: liveSpecsByLastPub } = useLiveSpecsExtByLastPubId(
         lastPubId,
         ENTITY.CAPTURE
@@ -237,7 +238,7 @@ function EntityCreate({
                         </ErrorBoundryWrapper>
                     ) : null}
 
-                    {showCollections && imageTag?.id ? (
+                    {showCollections && hasLength(imageTag?.id) ? (
                         <ErrorBoundryWrapper>
                             <CollectionConfig />
                         </ErrorBoundryWrapper>

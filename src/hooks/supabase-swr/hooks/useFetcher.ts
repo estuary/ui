@@ -79,8 +79,10 @@ function useFetcher<Data>(
 ): FetcherSingle<Data | null>;
 function useFetcher(type: FetcherType.CSV): FetcherSingle<string>;
 function useFetcher(type: FetcherType) {
+    console.log('useFetcher', type);
     const client = useClient();
     return useMemo(() => {
+        console.log('     userFetcher:useMemo', type);
         return createFetcher(client, type as any);
     }, [client, type]) as any;
 }

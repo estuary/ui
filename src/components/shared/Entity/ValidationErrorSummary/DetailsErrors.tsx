@@ -1,8 +1,8 @@
 import KeyValueList from 'components/shared/KeyValueList';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { isEmpty } from 'lodash';
 import { useIntl } from 'react-intl';
 import { entityCreateStoreSelectors } from 'stores/Create';
+import { hasLength } from 'utils/misc-utils';
 
 function DetailsErrors() {
     const intl = useIntl();
@@ -17,7 +17,7 @@ function DetailsErrors() {
 
     const filteredErrorsList: any[] = [];
 
-    if (isEmpty(entityName)) {
+    if (!hasLength(entityName)) {
         filteredErrorsList.push({
             title: intl.formatMessage({
                 id: 'entityCreate.endpointConfig.entityNameMissing',
@@ -26,7 +26,7 @@ function DetailsErrors() {
     }
 
     // Check if there is a connector
-    if (isEmpty(imageTag.id)) {
+    if (!hasLength(imageTag.id)) {
         filteredErrorsList.push({
             title: intl.formatMessage({
                 id: 'entityCreate.endpointConfig.connectorMissing',

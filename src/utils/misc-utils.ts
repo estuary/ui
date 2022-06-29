@@ -54,3 +54,7 @@ export const pathToTree = (data: string[]): TreeNode[] => {
     }
     return tree;
 };
+
+export const hasLength = (val: string | any[] | null | undefined) => {
+    return val && val.length > 0;
+};

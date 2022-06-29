@@ -1,3 +1,5 @@
+import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
+import { useCallback } from 'react';
 import { useLocalStorage } from 'react-use';
 import { TABLES } from 'services/supabase';
 import { LocalStorageKeys } from 'utils/localStorage-utils';
@@ -26,20 +28,27 @@ export const CONNECTOR_TAG_QUERY = `
 `;
 
 function useConnectorTag(connectorImage: string | null) {
+    console.log('useConnectorTag');
+
     const [tagSelector] = useLocalStorage(
         LocalStorageKeys.CONNECTOR_TAG_SELECTOR
+    );
+
+    const filter = useCallback(
+        (query: PostgrestFilterBuilder<ConnectorTag>) =>
+            query
+                .eq('image_tag', tagSelector as string)
+                .or(
+                    `id.eq.${connectorImage},connector_id.eq.${connectorImage}`
+                ),
+        [connectorImage, tagSelector]
     );
 
     const connectorTagsQuery = useQuery<ConnectorTag>(
         TABLES.CONNECTOR_TAGS,
         {
             columns: CONNECTOR_TAG_QUERY,
-            filter: (query) =>
-                query
-                    .eq('image_tag', tagSelector as string)
-                    .or(
-                        `id.eq.${connectorImage},connector_id.eq.${connectorImage}`
-                    ),
+            filter,
         },
         [connectorImage]
     );

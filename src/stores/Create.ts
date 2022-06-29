@@ -499,7 +499,7 @@ export const getInitialCreateState = (
                                 ];
                         }
 
-                        // Befor updating collections see if this is the first collection and auto select it
+                        // Before updating collections see if this is the first collection and auto select it
                         if (state.collections.length === 0) {
                             state.currentCollection = newResourceKeyList[0];
                         }
