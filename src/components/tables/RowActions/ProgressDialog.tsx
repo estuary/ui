@@ -60,7 +60,7 @@ function ProgressDialog({
                 </Stack>
             </DialogContent>
 
-            <DialogActions sx={{ p: '16px 24px' }}>
+            <DialogActions sx={{ p: '1rem 1.5rem' }}>
                 <Button onClick={onClose} disabled={!done}>
                     <FormattedMessage id="cta.close" />
                 </Button>
