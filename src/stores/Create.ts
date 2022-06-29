@@ -487,15 +487,18 @@ export const getInitialCreateState = (
                                 createJSONFormDefaults(resourceSchema);
                         });
 
-                        // Remove any configs that are no longer needed and set new default if needed
+                        // Remove any configs that are no longer needed
                         const newResourceConfig = omit(
                             state.resourceConfig,
                             removedCollections
                         );
                         state.resourceConfig = newResourceConfig;
 
-                        // If selected removed set to first. Otherwise set to last added
+                        // If previous state had no collections set to first
+                        // If selected item is removed set to first.
+                        // If adding new ones set to last
                         if (
+                            state.collections.length === 0 ||
                             !has(state.resourceConfig, state.currentCollection)
                         ) {
                             state.currentCollection = newResourceKeyList[0];
@@ -506,14 +509,10 @@ export const getInitialCreateState = (
                                 ];
                         }
 
-                        // Before updating collections see if this is the first collection and auto select it
-                        if (state.collections.length === 0) {
-                            state.currentCollection = newResourceKeyList[0];
-                        }
-
                         // Update the collections with the new array
                         state.collections = newResourceKeyList;
 
+                        // See if the recently updated configs have errors
                         const hasErrors = populateResourceConfigErrors(
                             newResourceConfig,
                             state
