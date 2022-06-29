@@ -316,21 +316,23 @@ const ColorModeContext = React.createContext({
 const ThemeProvider = ({ children }: BaseComponentProps) => {
     const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
-    const [palette, setPalette] = useLocalStorage(
+    const [mode, setMode] = useLocalStorage(
         LocalStorageKeys.COLOR_MODE,
-        prefersDarkMode ? darkMode : lightMode
+        prefersDarkMode ? 'dark' : 'light'
     );
 
-    const [mode, setMode] = React.useState(palette?.mode ?? 'light');
+    const [palette, setPalette] = React.useState(
+        mode === 'dark' ? darkMode : lightMode
+    );
 
     const toggler = React.useMemo(() => {
         return () => {
-            setPalette(() => (mode === 'light' ? darkMode : lightMode));
+            setMode(() => (palette.mode === 'light' ? 'dark' : 'light'));
         };
-    }, [setPalette, mode]);
+    }, [setMode, palette]);
 
     const generatedTheme = React.useMemo(() => {
-        setMode(palette?.mode ?? 'light');
+        setPalette(mode === 'dark' ? darkMode : lightMode);
 
         return createTheme({
             ...themeSettings,
@@ -341,7 +343,7 @@ const ThemeProvider = ({ children }: BaseComponentProps) => {
                     styleOverrides: {
                         root: {
                             'backgroundColor':
-                                palette?.mode === 'dark'
+                                palette.mode === 'dark'
                                     ? 'transparent'
                                     : 'rgba(255, 255, 255, 0.6)',
                             'boxShadow': 'none',
@@ -357,17 +359,17 @@ const ThemeProvider = ({ children }: BaseComponentProps) => {
                     styleOverrides: {
                         root: {
                             backgroundColor:
-                                palette?.mode === 'dark'
+                                palette.mode === 'dark'
                                     ? 'transparent'
                                     : 'rgba(216, 233, 245, 0.4)',
                             boxShadow: 'none',
-                            color: palette?.text?.primary,
+                            color: palette.text?.primary,
                         },
                     },
                 },
             },
         });
-    }, [setMode, palette]);
+    }, [setPalette, palette, mode]);
 
     return (
         <ColorModeContext.Provider value={{ toggleColorMode: toggler }}>
