@@ -121,6 +121,9 @@ const populateHasErrors = (
     detailErrors?: any
 ) => {
     const { resource, endpoint } = configs;
+
+    // We can just pull these since these values are updated when
+    //  the config itself is updated
     const resourceConfigHasErrors = resource ?? get().resourceConfigHasErrors;
     const endpointConfigHasErrors = endpoint ?? get().endpointConfigHasErrors;
 
