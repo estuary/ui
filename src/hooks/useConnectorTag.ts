@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { useLocalStorage } from 'react-use';
 import { TABLES } from 'services/supabase';
 import { LocalStorageKeys } from 'utils/localStorage-utils';
+import { hasLength } from 'utils/misc-utils';
 import { useQuery, useSelectSingle } from './supabase-swr/';
 
 interface ConnectorTag {
@@ -52,7 +53,7 @@ function useConnectorTag(connectorImage: string | null) {
     );
 
     const { data, error } = useSelectSingle(
-        connectorImage && connectorImage.length > 0 ? connectorTagsQuery : null
+        hasLength(connectorImage) ? connectorTagsQuery : null
     );
 
     return {
