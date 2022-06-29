@@ -122,7 +122,8 @@ function Logs({
                     sx={{
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'space-around',
+                        justifyContent: 'space-between',
+                        px: 1,
                     }}
                 >
                     <FormattedMessage id="logs.toManyEmpty" />
