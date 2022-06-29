@@ -369,9 +369,9 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
 
     'entityCreate.endpointConfig.entityNameMissing': `Name missing`,
     'entityCreate.endpointConfig.connectorMissing': `Connector missing`,
-    'entityCreate.endpointConfig.endpointConfigMissing': `${entityCreateHeader} is empty.`,
-    'entityCreate.endpointConfig.collectionsMissing': `Collection(s) missing`,
-    'entityCreate.endpointConfig.resourceConfigInvalid': `Resource Config(s) invalid`,
+    'entityCreate.endpointConfig.endpointConfigMissing': `${entityCreateHeader} empty`,
+    'entityCreate.endpointConfig.collectionsMissing': `${CommonMessages['terms.collections']} missing`,
+    'entityCreate.endpointConfig.resourceConfigInvalid': `Resource Config invalid`,
 
     'entityCreate.bindingsConfig.collectionsLabel': `Available ${CommonMessages['terms.collections']}`,
     'entityCreate.bindingsConfig.noRows': `Please select from the ${CommonMessages['terms.collections']} above to begin.`,
