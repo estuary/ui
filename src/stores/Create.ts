@@ -355,6 +355,7 @@ export const getInitialCreateState = (
                     }
 
                     state.details = details;
+                    populateHasErrors(get, state, {}, null, details.errors);
                 }),
                 false,
                 'Details changed'

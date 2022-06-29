@@ -13,11 +13,10 @@ import {
 import { entityCreateStoreSelectors } from 'stores/Create';
 
 type Props = {
-    resourceSchema: any;
     collectionName: string;
 };
 
-function ResourceConfigForm({ resourceSchema, collectionName }: Props) {
+function ResourceConfigForm({ collectionName }: Props) {
     const name = useRef(collectionName);
     const useEntityCreateStore = useRouteStore();
 
@@ -31,6 +30,9 @@ function ResourceConfigForm({ resourceSchema, collectionName }: Props) {
         entityCreateStoreSelectors.formState.displayValidation
     );
     const isActive = useEntityCreateStore(entityCreateStoreSelectors.isActive);
+    const resourceSchema = useEntityCreateStore(
+        entityCreateStoreSelectors.resourceSchema
+    );
 
     useEffect(() => {
         name.current = collectionName;
