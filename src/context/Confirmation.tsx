@@ -1,9 +1,9 @@
 import {
+    Box,
     Button,
     Dialog,
     DialogActions,
     DialogContent,
-    DialogContentText,
     DialogTitle,
 } from '@mui/material';
 import { slate } from 'context/Theme';
@@ -83,7 +83,7 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
                 aria-labelledby={LABEL_ID}
                 aria-describedby={DESCRIPTION_ID}
                 sx={{
-                    '& .MuiPaper-root': {
+                    '& .MuiPaper-root.MuiDialog-paper': {
                         backgroundColor: (themes) =>
                             themes.palette.mode === 'dark'
                                 ? slate[800]
@@ -101,13 +101,13 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
                 </DialogTitle>
 
                 <DialogContent>
-                    <DialogContentText id={DESCRIPTION_ID} color="text.primary">
+                    <Box id={DESCRIPTION_ID} color="text.primary">
                         {typeof settings.message === 'string' ? (
                             <FormattedMessage id={settings.message} />
                         ) : (
                             settings.message
                         )}
-                    </DialogContentText>
+                    </Box>
                 </DialogContent>
 
                 <DialogActions sx={{ p: '16px 24px' }}>

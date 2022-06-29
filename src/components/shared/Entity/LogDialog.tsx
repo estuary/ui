@@ -35,6 +35,12 @@ function LogDialog({ open, token, actionComponent, title }: Props) {
                             ? 'linear-gradient(160deg, rgba(99, 138, 169, 0.24) 0%, rgba(13, 43, 67, 0.22) 75%, rgba(13, 43, 67, 0.18) 100%)'
                             : 'linear-gradient(160deg, rgba(246, 250, 255, 0.4) 0%, rgba(216, 233, 245, 0.4) 75%, rgba(172, 199, 220, 0.4) 100%)',
                 },
+                '& .MuiAccordionSummary-root': {
+                    backgroundColor: (theme) =>
+                        theme.palette.mode === 'dark'
+                            ? 'transparent'
+                            : slate[50],
+                },
             }}
         >
             <DialogTitle id={TITLE_ID}>{title}</DialogTitle>

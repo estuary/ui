@@ -6,6 +6,7 @@ import {
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
 import { useConfirmationModalContext } from 'context/Confirmation';
+import { slate } from 'context/Theme';
 import { SelectTableStoreNames, useZustandStore } from 'context/Zustand';
 import { ReactNode, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -92,7 +93,24 @@ function RowActionButton({
             <Button onClick={() => handlers.action()}>
                 <FormattedMessage id={messageID} />
             </Button>
-            <Dialog open={showProgress} maxWidth="lg">
+
+            <Dialog
+                open={showProgress}
+                maxWidth="lg"
+                sx={{
+                    '& .MuiPaper-root.MuiDialog-paper': {
+                        backgroundColor: (themes) =>
+                            themes.palette.mode === 'dark'
+                                ? slate[800]
+                                : slate[25],
+                        borderRadius: 5,
+                        backgroundImage: (themes) =>
+                            themes.palette.mode === 'dark'
+                                ? 'linear-gradient(160deg, rgba(99, 138, 169, 0.24) 0%, rgba(13, 43, 67, 0.22) 75%, rgba(13, 43, 67, 0.18) 100%)'
+                                : 'linear-gradient(160deg, rgba(246, 250, 255, 0.4) 0%, rgba(216, 233, 245, 0.4) 75%, rgba(172, 199, 220, 0.4) 100%)',
+                    },
+                }}
+            >
                 {targets.length > 0 ? (
                     <ProgressDialog
                         selectedEntities={targets}
