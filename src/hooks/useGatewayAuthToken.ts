@@ -38,7 +38,7 @@ const fetcher = (
 
 const useGatewayAuthToken = () => {
     const { session } = Auth.useUser();
-    console.log('useGatewayAuthToken');
+
     const { combinedGrants: grants } = useCombinedGrantsExt({});
 
     const prefixes: string[] = grants.map(({ object_role }) => object_role);

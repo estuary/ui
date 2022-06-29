@@ -12,10 +12,6 @@ function ResourceConfigErrors() {
         entityCreateStoreSelectors.resourceConfig.errors
     );
 
-    console.log('resource config errors', {
-        filteredResourceConfigErrors,
-    });
-
     return (
         <SectionError
             errors={filteredResourceConfigErrors}

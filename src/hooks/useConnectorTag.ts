@@ -28,8 +28,6 @@ export const CONNECTOR_TAG_QUERY = `
 `;
 
 function useConnectorTag(connectorImage: string | null) {
-    console.log('useConnectorTag');
-
     const [tagSelector] = useLocalStorage(
         LocalStorageKeys.CONNECTOR_TAG_SELECTOR
     );
