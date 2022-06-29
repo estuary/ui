@@ -1,6 +1,5 @@
 import ResourceConfig from 'components/collection/ResourceConfig';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { FormattedMessage } from 'react-intl';
 import { entityCreateStoreSelectors } from 'stores/Create';
 
 function BindingsEditor() {
@@ -12,9 +11,7 @@ function BindingsEditor() {
     if (currentCollection) {
         return <ResourceConfig collectionName={currentCollection} />;
     } else {
-        return (
-            <FormattedMessage id="entityCreate.bindingsConfig.noRowsTitle" />
-        );
+        return null;
     }
 }
 

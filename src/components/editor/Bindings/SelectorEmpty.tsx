@@ -4,7 +4,9 @@ import { FormattedMessage } from 'react-intl';
 function SelectorEmpty() {
     return (
         <Alert severity="info">
-            <AlertTitle>No selection made</AlertTitle>
+            <AlertTitle>
+                <FormattedMessage id="entityCreate.bindingsConfig.noRowsTitle" />
+            </AlertTitle>
             <FormattedMessage id="entityCreate.bindingsConfig.noRows" />
         </Alert>
     );
