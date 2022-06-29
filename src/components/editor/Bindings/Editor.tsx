@@ -5,20 +5,12 @@ import { entityCreateStoreSelectors } from 'stores/Create';
 
 function BindingsEditor() {
     const useEntityCreateStore = useRouteStore();
-    const imageTag = useEntityCreateStore(
-        entityCreateStoreSelectors.details.connectorTag
-    );
     const currentCollection = useEntityCreateStore(
         entityCreateStoreSelectors.collections.current.get
     );
 
     if (currentCollection) {
-        return (
-            <ResourceConfig
-                connectorImage={imageTag.id}
-                collectionName={currentCollection}
-            />
-        );
+        return <ResourceConfig collectionName={currentCollection} />;
     } else {
         return (
             <FormattedMessage id="entityCreate.bindingsConfig.noRowsTitle" />
