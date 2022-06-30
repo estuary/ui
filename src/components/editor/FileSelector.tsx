@@ -6,6 +6,7 @@ import {
     GridSelectionModel,
 } from '@mui/x-data-grid';
 import { EditorStoreState } from 'components/editor/Store';
+import { slate } from 'context/Theme';
 import {
     DraftEditorStoreNames,
     LiveSpecEditorStoreNames,
@@ -119,12 +120,19 @@ function EditorFileSelector({ editorStoreName, useZustandStore }: Props) {
                 selectionModel={selectionModel}
                 initialState={initialState}
                 sx={{
-                    '& .MuiDataGrid-row ': {
+                    '& .MuiDataGrid-row': {
                         cursor: 'pointer',
+                    },
+                    '& .MuiDataGrid-cell': {
+                        borderBottom: `1px solid ${slate[200]}`,
+                    },
+                    '& .MuiDataGrid-columnHeaders': {
+                        borderBottom: `1px solid ${slate[200]}`,
                     },
                     '& .MuiDataGrid-columnSeparator': {
                         display: 'none',
                     },
+                    'border': `1px solid ${slate[200]}`,
                 }}
             />
         );

@@ -6,6 +6,7 @@ import {
     Typography,
 } from '@mui/material';
 import ResourceConfig from 'components/collection/ResourceConfig';
+import { slate } from 'context/Theme';
 
 interface Props {
     collectionName: string;
@@ -15,7 +16,15 @@ interface Props {
 function ExpandableResourceConfig({ collectionName, id }: Props) {
     return (
         <Accordion defaultExpanded={true}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                sx={{
+                    backgroundColor: (theme) =>
+                        theme.palette.mode === 'dark'
+                            ? 'transparent'
+                            : slate[50],
+                }}
+            >
                 <Typography
                     sx={{
                         wordBreak: 'break-all',
@@ -24,6 +33,7 @@ function ExpandableResourceConfig({ collectionName, id }: Props) {
                     {collectionName}
                 </Typography>
             </AccordionSummary>
+
             <AccordionDetails>
                 <ResourceConfig
                     connectorImage={id}

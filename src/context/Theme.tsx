@@ -5,10 +5,13 @@ import {
     Theme,
     ThemeOptions,
     ThemeProvider as MUIThemeProvider,
+    useMediaQuery,
 } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import React from 'react';
+import { useLocalStorage } from 'react-use';
 import { BaseComponentProps } from 'types';
+import { LocalStorageKeys } from 'utils/localStorage-utils';
 
 // Colors
 export const teal = {
@@ -22,6 +25,18 @@ export const teal = {
     600: '#1C8789',
     700: '#0C6E70',
     800: '#015556',
+};
+
+export const indigo = {
+    50: '#D6DFFF',
+    100: '#B8C6F9',
+    200: '#97AAEC',
+    300: '#798FDF',
+    400: '#5072EB',
+    500: '#3F59B8',
+    600: '#27419F',
+    700: '#132C85',
+    800: '#051B6C',
 };
 
 export const slate = {
@@ -47,7 +62,7 @@ export const errorMain: SemanticColor = '#CA3B55';
 export const infoMain: SemanticColor = '#4FD6FF';
 
 // Color modifiers
-const contrastThreshold = 4;
+const contrastThreshold = 5;
 const tonalOffset = 0.1;
 
 // Borders
@@ -65,7 +80,8 @@ const xs = 0;
 // TODO: Balance the light mode color palette.
 const lightMode: PaletteOptions = {
     background: {
-        default: teal[800],
+        default: slate[50],
+        paper: slate[50],
     },
     contrastThreshold,
     error: {
@@ -76,18 +92,18 @@ const lightMode: PaletteOptions = {
     },
     mode: 'light',
     primary: {
-        main: teal[300],
-        dark: teal[500],
+        main: indigo[400],
+        dark: indigo[500],
     },
     secondary: {
-        main: slate[50],
+        main: indigo[600],
     },
     success: {
         main: successMain,
     },
     text: {
-        primary: slate[15],
-        secondary: teal[50],
+        primary: slate[800],
+        secondary: indigo[800],
     },
     tonalOffset,
     warning: {
@@ -133,6 +149,45 @@ export const outlineSx: SxProps<Theme> = {
     border: `1px solid ${slate[200]}`,
 };
 
+export const darkGlassBkgWithBlur = {
+    background:
+        'linear-gradient(160deg, rgba(99, 138, 169, 0.24) 0%, rgba(13, 43, 67, 0.22) 75%, rgba(13, 43, 67, 0.18) 100%)',
+    boxShadow: '0px 4px 24px -1px rgba(4, 25, 42, 0.2)',
+    backdropFilter: 'blur(20px)',
+};
+
+export const darkGlassBkgWithoutBlur = {
+    background:
+        'linear-gradient(160deg, rgba(172, 199, 220, 0.18) 2%, rgba(172, 199, 220, 0.12) 40%)',
+    boxShadow: '0px 4px 24px -1px rgba(4, 25, 42, 0.2)',
+    borderRadius: 5,
+};
+
+export const lightGlassBkgWithBlur = {
+    background: 'rgba(255, 255, 255, 0.4)',
+    boxShadow: '0px 4px 24px -1px rgba(4, 25, 42, 0.2)',
+    backdropFilter: 'blur(20px)',
+};
+
+export const lightGlassBkgWithoutBlur = {
+    background: 'rgba(255, 255, 255, 0.4)',
+    boxShadow: '0px 4px 24px -1px rgba(4, 25, 42, 0.2)',
+    borderRadius: 5,
+};
+
+export const getEntityTableRowSx = (
+    theme: Theme,
+    detailsExpanded: boolean
+): SxProps<Theme> => {
+    const expandedRowBgColor =
+        theme.palette.mode === 'dark' ? slate[800] : slate[50];
+
+    return {
+        background: detailsExpanded ? expandedRowBgColor : null,
+        cursor: 'pointer',
+    };
+};
+
 // TODO (theme) Figure out how to make these composable
 export const truncateTextSx: SxProps<Theme> = {
     whiteSpace: 'nowrap',
@@ -165,18 +220,19 @@ const themeSettings = createTheme({
         },
     },
     components: {
+        MuiAlert: {
+            styleOverrides: {
+                root: {
+                    borderRadius: 10,
+                },
+            },
+        },
         MuiCssBaseline: {
             styleOverrides: {
                 body: {
                     minWidth: sm,
                 },
             },
-        },
-        MuiAppBar: {
-            ...baseBackground,
-        },
-        MuiAccordion: {
-            ...baseBackground,
         },
         MuiBadge: {
             defaultProps: {
@@ -212,8 +268,10 @@ const themeSettings = createTheme({
             defaultProps: {
                 variant: 'contained',
                 disableElevation: true,
-                sx: {
-                    borderRadius: 5,
+            },
+            styleOverrides: {
+                root: {
+                    borderRadius: 10,
                 },
             },
         },
@@ -256,24 +314,62 @@ const ColorModeContext = React.createContext({
 
 // TODO: Enable color mode toggling once light mode colors are refined.
 const ThemeProvider = ({ children }: BaseComponentProps) => {
-    // const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+    const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
-    const [mode, setMode] = React.useState<PaletteOptions>(darkMode);
+    const [mode, setMode] = useLocalStorage(
+        LocalStorageKeys.COLOR_MODE,
+        prefersDarkMode ? 'dark' : 'light'
+    );
+
+    const [palette, setPalette] = React.useState(
+        mode === 'dark' ? darkMode : lightMode
+    );
 
     const toggler = React.useMemo(() => {
         return () => {
-            setMode((prevMode: any) =>
-                prevMode === lightMode ? darkMode : lightMode
-            );
+            setMode(() => (palette.mode === 'light' ? 'dark' : 'light'));
         };
-    }, []);
+    }, [setMode, palette]);
 
     const generatedTheme = React.useMemo(() => {
+        setPalette(mode === 'dark' ? darkMode : lightMode);
+
         return createTheme({
             ...themeSettings,
-            palette: mode,
+            palette,
+            components: {
+                ...themeSettings.components,
+                MuiAccordion: {
+                    styleOverrides: {
+                        root: {
+                            'backgroundColor':
+                                palette.mode === 'dark'
+                                    ? 'transparent'
+                                    : 'rgba(255, 255, 255, 0.6)',
+                            'boxShadow': 'none',
+                            'borderRadius': 10,
+                            'overflow': 'hidden',
+                            '&:last-of-type': {
+                                borderRadius: 10,
+                            },
+                        },
+                    },
+                },
+                MuiAppBar: {
+                    styleOverrides: {
+                        root: {
+                            backgroundColor:
+                                palette.mode === 'dark'
+                                    ? 'transparent'
+                                    : 'rgba(216, 233, 245, 0.4)',
+                            boxShadow: 'none',
+                            color: palette.text?.primary,
+                        },
+                    },
+                },
+            },
         });
-    }, [mode]);
+    }, [setPalette, palette, mode]);
 
     return (
         <ColorModeContext.Provider value={{ toggleColorMode: toggler }}>

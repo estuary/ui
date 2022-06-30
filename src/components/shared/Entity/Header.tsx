@@ -21,11 +21,12 @@ interface Props {
     heading: ReactNode;
 }
 
-export const buttonSx: SxProps<Theme> = { ml: 1, borderRadius: 5 };
+export const buttonSx: SxProps<Theme> = { ml: 1 };
 
 const stickySx: SxProps<Theme> = {
     ...tableBorderSx,
-    background: slate[700],
+    background: (theme) =>
+        theme.palette.mode === 'dark' ? slate[700] : slate[25],
     ml: '-16px',
     px: '16px',
     width: 'calc(100% + 32px)',

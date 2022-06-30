@@ -1,6 +1,8 @@
 import Box from '@mui/material/Box';
 import { useIntl } from 'react-intl';
-import logo from 'images/pictorial-mark.png';
+import darkLogo from 'images/pictorial-marks/pictorial-mark__slate.png';
+import lightLogo from 'images/pictorial-marks/pictorial-mark__white.png';
+import { useTheme } from '@mui/material';
 
 type Props = {
     width: number;
@@ -8,11 +10,12 @@ type Props = {
 
 const Logo = ({ width }: Props) => {
     const intl = useIntl();
+    const theme = useTheme();
 
     return (
         <Box sx={{ display: 'flex', alignItems: 'center', px: '3px' }}>
             <img
-                src={logo}
+                src={theme.palette.mode === 'dark' ? lightLogo : darkLogo}
                 alt={intl.formatMessage({ id: 'company' })}
                 width={width}
             />

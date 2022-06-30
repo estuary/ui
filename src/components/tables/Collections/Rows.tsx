@@ -1,4 +1,4 @@
-import { TableRow } from '@mui/material';
+import { TableRow, useTheme } from '@mui/material';
 import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import Actions from 'components/tables/cells/Actions';
 import EntityName from 'components/tables/cells/EntityName';
@@ -6,6 +6,7 @@ import ExpandDetails from 'components/tables/cells/ExpandDetails';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import UserName from 'components/tables/cells/UserName';
 import DetailsPanel from 'components/tables/Details/DetailsPanel';
+import { getEntityTableRowSx } from 'context/Theme';
 import { useState } from 'react';
 
 interface RowProps {
@@ -38,11 +39,16 @@ export const tableColumns = [
 ];
 
 function Row({ row, showEntityStatus }: RowProps) {
+    const theme = useTheme();
+
     const [detailsExpanded, setDetailsExpanded] = useState(false);
 
     return (
         <>
-            <TableRow key={`Entity-${row.id}`}>
+            <TableRow
+                key={`Entity-${row.id}`}
+                sx={getEntityTableRowSx(theme, detailsExpanded)}
+            >
                 <EntityName
                     name={row.catalog_name}
                     showEntityStatus={showEntityStatus}

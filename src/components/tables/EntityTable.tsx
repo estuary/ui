@@ -278,7 +278,12 @@ function EntityTable({
                     {headerLink ? (
                         <Link target="_blank" rel="noopener" href={headerLink}>
                             <IconButton size="small">
-                                <HelpIcon />
+                                <HelpIcon
+                                    sx={{
+                                        color: (theme) =>
+                                            theme.palette.text.primary,
+                                    }}
+                                />
                             </IconButton>
                         </Link>
                     ) : null}

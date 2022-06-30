@@ -9,6 +9,7 @@ import {
     TextField,
     Theme,
     Typography,
+    useTheme,
 } from '@mui/material';
 import { Auth } from '@supabase/ui';
 import FullPageDialog from 'components/fullPage/Dialog';
@@ -41,6 +42,7 @@ const Registration = () => {
     useBrowserTitle('browserTitle.registration');
 
     const intl = useIntl();
+    const theme = useTheme();
     const { user } = Auth.useUser();
 
     const { email: authEmail, userName: authUserName } = getUserDetails(user);
@@ -62,8 +64,10 @@ const Registration = () => {
     const textFieldSx: SxProps<Theme> = {
         width: 250,
         mb: 3,
-        backgroundColor: slate[800],
-        label: { color: slate[50] },
+        backgroundColor: theme.palette.background.default,
+        label: {
+            color: theme.palette.mode === 'dark' ? slate[50] : 'text.primary',
+        },
     };
 
     const handlers = {

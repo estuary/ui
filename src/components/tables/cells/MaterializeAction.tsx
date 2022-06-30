@@ -12,7 +12,7 @@ function MaterializeAction({ onClick, disabled }: Props) {
             size="small"
             disabled={disabled}
             onClick={onClick}
-            sx={{ mr: 1, borderRadius: 5 }}
+            sx={{ mr: 1 }}
         >
             <FormattedMessage id="capturesTable.cta.materialize" />
         </Button>

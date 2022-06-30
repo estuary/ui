@@ -1,18 +1,22 @@
 import HelpIcon from '@mui/icons-material/Help';
+import { SxProps, Theme } from '@mui/material';
 import ExternalLinkMenuItem from 'components/shared/ExternalLinkMenuItem';
 import { FormattedMessage, useIntl } from 'react-intl';
 import IconMenu from './IconMenu';
 
-function HelpMenu() {
+interface Props {
+    iconSx: SxProps<Theme>;
+}
+
+function HelpMenu({ iconSx }: Props) {
     const intl = useIntl();
 
     return (
         <IconMenu
             ariaLabel={intl.formatMessage({ id: 'helpMenu.ariaLabel' })}
-            icon={<HelpIcon />}
+            icon={<HelpIcon sx={iconSx} />}
             identifier="help-menu"
             tooltip={intl.formatMessage({ id: 'helpMenu.tooltip' })}
-            verticalOffset={9}
         >
             <ExternalLinkMenuItem
                 link={intl.formatMessage({ id: 'helpMenu.docs.link' })}
