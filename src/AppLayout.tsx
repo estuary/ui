@@ -1,6 +1,7 @@
 import { Box } from '@mui/material';
-import { useState } from 'react';
 import { Outlet } from 'react-router';
+import { useLocalStorage } from 'react-use';
+import { LocalStorageKeys } from 'utils/localStorage-utils';
 import Navigation from './components/navigation/Navigation';
 
 export enum Widths {
@@ -10,13 +11,18 @@ export enum Widths {
 }
 
 function AppLayout() {
-    const [navigationOpen, setNavigationOpen] = useState(true);
-    const [navWidth, setNavigationWidth] = useState<Widths>(Widths.FULL);
+    const [navigationConfig, setNavigationConfig] = useLocalStorage(
+        LocalStorageKeys.NAVIGATION_SETTINGS,
+        { open: true }
+    );
+
+    const navigationOpen = navigationConfig?.open ?? true;
+    const navigationWidth: Widths = navigationConfig?.open
+        ? Widths.FULL
+        : Widths.RAIL;
 
     const toggleNavigationDrawer = () => {
-        setNavigationWidth(navigationOpen ? Widths.RAIL : Widths.FULL);
-
-        setNavigationOpen(!navigationOpen);
+        setNavigationConfig({ open: !navigationOpen });
     };
 
     return (
@@ -24,12 +30,12 @@ function AppLayout() {
             <Box>
                 <Navigation
                     open={navigationOpen}
+                    width={navigationWidth}
                     onNavigationToggle={toggleNavigationDrawer}
-                    width={navWidth}
                 />
             </Box>
 
-            <Box sx={{ ml: `${navWidth}px` }}>
+            <Box sx={{ ml: `${navigationWidth}px` }}>
                 <Outlet />
             </Box>
         </Box>

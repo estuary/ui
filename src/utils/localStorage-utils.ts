@@ -2,6 +2,7 @@ import { GatewayAuthTokenResponse } from 'types';
 
 export enum LocalStorageKeys {
     COLOR_MODE = 'estuary.color-mode',
+    NAVIGATION_SETTINGS = 'estuary.navigation-settings',
     GATEWAY = 'estuary.gateway-auth-config',
     CONNECTOR_TAG_SELECTOR = 'estuary.connector-image_tag-selector',
 }
