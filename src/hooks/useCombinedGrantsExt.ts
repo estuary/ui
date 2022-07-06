@@ -29,7 +29,7 @@ function useCombinedGrantsExt({ adminOnly, singleCall }: Props) {
                 return queryBuilder.eq('user_id', user?.id ?? DEFAULT_FILTER);
             },
         },
-        [adminOnly, user]
+        [adminOnly, singleCall]
     );
 
     const { data, error, mutate, isValidating } = useSelect(
