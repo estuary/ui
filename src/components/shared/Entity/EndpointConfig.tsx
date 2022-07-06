@@ -3,9 +3,9 @@ import EndpointConfigForm from 'components/shared/Entity/EndpointConfigForm';
 import EndpointConfigHeader from 'components/shared/Entity/EndpointConfigHeader';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import Error from 'components/shared/Error';
+import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
 import useConnectorTag from 'hooks/useConnectorTag';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
 
 interface Props {
     connectorImage: string;
@@ -32,9 +32,7 @@ function EndpointConfig({ connectorImage, draftEditorStoreName }: Props) {
                     />
                 }
             >
-                <EndpointConfigForm
-                    endpointSchema={connectorTag.endpoint_spec_schema}
-                />
+                <EndpointConfigForm />
             </WrapperWithHeader>
         );
     } else {

@@ -6,10 +6,12 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { entityCreateStoreSelectors } from 'stores/Create';
 import useConstant from 'use-constant';
 
-function CollectionSelector() {
+function CollectionPicker() {
     const intl = useIntl();
     const collectionsLabel = useConstant(() =>
-        intl.formatMessage({ id: 'terms.collections' })
+        intl.formatMessage({
+            id: 'entityCreate.bindingsConfig.collectionsLabel',
+        })
     );
     const [missingInput, setMissingInput] = useState(false);
 
@@ -17,10 +19,7 @@ function CollectionSelector() {
 
     const useEntityCreateStore = useRouteStore();
     const collections: string[] = useEntityCreateStore(
-        entityCreateStoreSelectors.collections
-    );
-    const setCollections = useEntityCreateStore(
-        entityCreateStoreSelectors.setCollections
+        entityCreateStoreSelectors.collections.get
     );
     const setResourceConfig = useEntityCreateStore(
         entityCreateStoreSelectors.resourceConfig.set
@@ -28,17 +27,7 @@ function CollectionSelector() {
 
     const handlers = {
         updateCollections: (event: React.SyntheticEvent, value: any) => {
-            setCollections(value);
-
-            if (collections.length > value.length) {
-                const removedCollection = collections.find(
-                    (collection) => !value.includes(collection)
-                );
-
-                setResourceConfig(removedCollection);
-            } else {
-                setResourceConfig(value[value.length - 1]);
-            }
+            setResourceConfig(value);
         },
         validateSelection: () => {
             setMissingInput(collections.length === 0);
@@ -46,7 +35,7 @@ function CollectionSelector() {
     };
 
     return collectionData.length > 0 && !error ? (
-        <Box sx={{ mb: 5 }}>
+        <Box>
             <Typography variant="h5" sx={{ mb: 1 }}>
                 <FormattedMessage id="materializationCreate.collectionSelector.heading" />
             </Typography>
@@ -83,4 +72,4 @@ function CollectionSelector() {
     ) : null;
 }
 
-export default CollectionSelector;
+export default CollectionPicker;

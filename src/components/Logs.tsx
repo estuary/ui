@@ -1,6 +1,7 @@
 import Editor from '@monaco-editor/react';
 import { Box, Button, Collapse, Paper, useTheme } from '@mui/material';
 import { parse } from 'ansicolor';
+import { zIndexIncrement } from 'context/Theme';
 import { useClient } from 'hooks/supabase-swr';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useRef, useState } from 'react';
@@ -116,12 +117,15 @@ function Logs({
 
     return (
         <Box>
-            <Collapse in={displayRestart}>
+            <Collapse in={displayRestart} sx={{ position: 'relative' }}>
                 <Paper
                     elevation={0}
                     sx={{
                         display: 'flex',
                         alignItems: 'center',
+                        position: 'absolute',
+                        zIndex: zIndexIncrement,
+                        width: '100%',
                         justifyContent: 'space-between',
                         px: 1,
                     }}

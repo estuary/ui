@@ -2,8 +2,8 @@ import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { StyledEngineProvider } from '@mui/material';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { useEffect } from 'react';
-import { createJSONFormDefaults, setDefaultsValidator } from 'services/ajv';
+import { useEffect, useRef } from 'react';
+import { setDefaultsValidator } from 'services/ajv';
 import {
     custom_generateDefaultUISchema,
     defaultOptions,
@@ -13,19 +13,13 @@ import {
 import { entityCreateStoreSelectors } from 'stores/Create';
 
 type Props = {
-    resourceSchema: any;
     collectionName: string;
 };
 
-function NewMaterializationResourceConfigForm({
-    resourceSchema,
-    collectionName,
-}: Props) {
+function ResourceConfigForm({ collectionName }: Props) {
+    const name = useRef(collectionName);
     const useEntityCreateStore = useRouteStore();
 
-    const collections: string[] = useEntityCreateStore(
-        entityCreateStoreSelectors.collections
-    );
     const setConfig = useEntityCreateStore(
         entityCreateStoreSelectors.resourceConfig.set
     );
@@ -36,25 +30,20 @@ function NewMaterializationResourceConfigForm({
         entityCreateStoreSelectors.formState.displayValidation
     );
     const isActive = useEntityCreateStore(entityCreateStoreSelectors.isActive);
+    const resourceSchema = useEntityCreateStore(
+        entityCreateStoreSelectors.resourceSchema
+    );
 
-    // Resolve Refs & Hydrate the object
-    //  This will hydrate the default values for us as we don't want JSONForms to
-    //  directly update the state object as it caused issues when switching connectors.
     useEffect(() => {
-        if (!collections.includes(collectionName)) {
-            setConfig(collectionName, {
-                data: createJSONFormDefaults(resourceSchema),
-                errors: [],
-            });
-        }
-    }, [collectionName, resourceSchema, collections, setConfig]);
+        name.current = collectionName;
+    }, [collectionName]);
 
     const uiSchema = custom_generateDefaultUISchema(resourceSchema);
     const showValidationVal = showValidation(displayValidation);
 
     const handlers = {
-        onChange: (form: any) => {
-            setConfig(collectionName, form);
+        onChange: (configName: string, form: any) => {
+            setConfig(configName, form);
         },
     };
 
@@ -69,11 +58,13 @@ function NewMaterializationResourceConfigForm({
                 config={defaultOptions}
                 readonly={isActive}
                 validationMode={showValidationVal}
-                onChange={handlers.onChange}
+                onChange={(state) => {
+                    handlers.onChange(name.current, state);
+                }}
                 ajv={setDefaultsValidator}
             />
         </StyledEngineProvider>
     );
 }
 
-export default NewMaterializationResourceConfigForm;
+export default ResourceConfigForm;

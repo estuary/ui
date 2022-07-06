@@ -1,7 +1,7 @@
-import { useQuery, useSelect } from 'hooks/supabase-swr';
+import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
+import { isEmpty } from 'lodash';
 import { createContext, useContext } from 'react';
 import { useLocalStorage } from 'react-use';
-import { TABLES } from 'services/supabase';
 import { BaseComponentProps } from 'types';
 import { LocalStorageKeys } from 'utils/localStorage-utils';
 
@@ -22,15 +22,10 @@ const PreFetchDataProvider = ({ children }: BaseComponentProps) => {
     // TODO (context) create a local storage context provider
     useLocalStorage(LocalStorageKeys.CONNECTOR_TAG_SELECTOR, CONNECTOR_VERSION);
 
-    const combinedGrantsQuery = useQuery<CombinedGrantsExtQuery>(
-        TABLES.COMBINED_GRANTS_EXT,
-        { columns: `id, object_role` },
-        []
-    );
-    const { data: grants } = useSelect(combinedGrantsQuery);
+    const { combinedGrants: grants } = useCombinedGrantsExt({});
 
-    const value: PreFetchData | null = grants?.data
-        ? { grantDetails: grants.data }
+    const value: PreFetchData | null = !isEmpty(grants)
+        ? { grantDetails: grants }
         : null;
 
     return (

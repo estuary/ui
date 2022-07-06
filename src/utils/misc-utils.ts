@@ -16,3 +16,7 @@ export const getConnectorIcon = (connectorObject: OpenGraph) => {
 export const getPathWithParam = (path: string, param: any, val: any) => {
     return `${path}?${param}=${val}`;
 };
+
+export const hasLength = (val: string | any[] | null | undefined) => {
+    return val && val.length > 0;
+};

@@ -28,8 +28,8 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
-import { Query, useSelect } from 'hooks/supabase-swr';
 import { SelectTableStoreNames, useZustandStore } from 'context/Zustand';
+import { Query, useSelect } from 'hooks/supabase-swr';
 import { debounce } from 'lodash';
 import {
     ChangeEvent,
@@ -203,7 +203,7 @@ function EntityTable({
                 const { disableDoclink, message } = noExistingDataContentIds;
 
                 if (disableDoclink) {
-                    <FormattedMessage id={message} />;
+                    return <FormattedMessage id={message} />;
                 }
 
                 return <MessageWithLink messageID={message} />;

@@ -361,14 +361,21 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.errors.collapseTitle': `Expand to see logs`,
     'entityCreate.sops.failedTitle': `Configuration Encryption Failed`,
     'entityCreate.endpointConfig.heading': `${entityCreateHeader}`,
-    'entityCreate.endpointConfig.errorSummary': `You must provide valid values for all required fields before continuing.`,
-    'entityCreate.endpointConfig.detailsHaveErrors': `The Details section has errors.`,
-    'entityCreate.endpointConfig.entityNameMissing': `Provide a name to continue.`,
-    'entityCreate.endpointConfig.connectorMissing': `Select a connector to continue.`,
-    'entityCreate.endpointConfig.endpointConfigMissing': `The ${entityCreateHeader} section is empty.`,
-    'entityCreate.endpointConfig.endpointConfigHaveErrors': `The ${entityCreateHeader} section has errors.`,
-    'entityCreate.endpointConfig.resourceConfigHaveErrors': `The Collections Resource Configuration section has errors.`,
-    'entityCreate.endpointConfig.collectionsMissing': `Select a collection to continue.`,
+    'entityCreate.endpointConfig.errorSummary': `There are issues with the form.`,
+
+    'entityCreate.endpointConfig.detailsHaveErrors': `The Details section has errors:`,
+    'entityCreate.endpointConfig.resourceConfigHaveErrors': `The Collections Resource Configuration section has errors:`,
+    'entityCreate.endpointConfig.endpointConfigHaveErrors': `The ${entityCreateHeader} section has errors:`,
+
+    'entityCreate.endpointConfig.entityNameMissing': `Name missing`,
+    'entityCreate.endpointConfig.connectorMissing': `Connector missing`,
+    'entityCreate.endpointConfig.endpointConfigMissing': `${entityCreateHeader} empty`,
+    'entityCreate.endpointConfig.collectionsMissing': `${CommonMessages['terms.collections']} missing`,
+    'entityCreate.endpointConfig.resourceConfigInvalid': `Resource Config invalid`,
+
+    'entityCreate.bindingsConfig.collectionsLabel': `Available ${CommonMessages['terms.collections']}`,
+    'entityCreate.bindingsConfig.noRows': `Please select from the ${CommonMessages['terms.collections']} above to begin.`,
+    'entityCreate.bindingsConfig.noRowsTitle': `No selection made`,
 };
 
 const MonacoEditor: ResolvedIntlConfig['messages'] = {

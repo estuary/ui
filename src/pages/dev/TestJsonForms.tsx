@@ -74,7 +74,6 @@ const TestJsonForms = () => {
                     height="500px"
                     defaultLanguage="json"
                     onChange={(val) => {
-                        console.log('hey');
                         setSchemaInput(val);
                     }}
                 />

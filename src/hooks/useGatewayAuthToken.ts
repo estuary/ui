@@ -1,9 +1,8 @@
 import { Auth } from '@supabase/ui';
 import { isBefore } from 'date-fns';
-import { useQuery, useSelect } from 'hooks/supabase-swr';
+import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import { decodeJwt, JWTPayload } from 'jose';
 import { client } from 'services/client';
-import { TABLES } from 'services/supabase';
 import useSWR from 'swr';
 import { GatewayAuthTokenResponse } from 'types';
 import {
@@ -14,11 +13,6 @@ import {
     getStoredGatewayAuthConfig,
     storeGatewayAuthConfig,
 } from 'utils/localStorage-utils';
-
-interface CombinedGrantsExtQuery {
-    id: string;
-    object_role: string;
-}
 
 const { gatewayAuthTokenEndpoint } = getGatewayAuthTokenSettings();
 
@@ -45,15 +39,9 @@ const fetcher = (
 const useGatewayAuthToken = () => {
     const { session } = Auth.useUser();
 
-    const combinedGrantsQuery = useQuery<CombinedGrantsExtQuery>(
-        TABLES.COMBINED_GRANTS_EXT,
-        { columns: `id, object_role` },
-        []
-    );
-    const { data: grants } = useSelect(combinedGrantsQuery);
+    const { combinedGrants: grants } = useCombinedGrantsExt({});
 
-    const prefixes: string[] =
-        grants?.data.map(({ object_role }) => object_role) ?? [];
+    const prefixes: string[] = grants.map(({ object_role }) => object_role);
 
     const gatewayConfig = getStoredGatewayAuthConfig();
 

@@ -6,3 +6,5 @@ export { default as useSelectMaybeSingle } from './hooks/useSelectMaybeSingle';
 export { default as useSelectSingle } from './hooks/useSelectSingle';
 export * from './query';
 export * from './types';
+
+export const NO_DEPS = [];

@@ -1,4 +1,5 @@
 import {
+    Box,
     Collapse,
     LinearProgress,
     Stack,
@@ -38,9 +39,6 @@ function FooHeader({ GenerateButton, TestButton, SaveButton, heading }: Props) {
     const useEntityCreateStore = useRouteStore();
     const formActive = useEntityCreateStore(
         entityCreateStoreSelectors.isActive
-    );
-    const displayValidation = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.displayValidation
     );
 
     const { inView, ref } = useInView({
@@ -91,9 +89,11 @@ function FooHeader({ GenerateButton, TestButton, SaveButton, heading }: Props) {
                 <LinearProgress sx={{ mb: 2 }} />
             </Collapse>
 
-            <Collapse in={displayValidation} unmountOnExit>
-                <ValidationErrorSummary />
-            </Collapse>
+            <Box sx={{ maxHeight: 200, overflowY: 'auto' }}>
+                <ValidationErrorSummary
+                    hasErrorsSelector={entityCreateStoreSelectors.hasErrors}
+                />
+            </Box>
         </>
     );
 }
