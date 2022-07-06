@@ -22,7 +22,7 @@ export interface SharedProgressProps {
     state: ProgressStates;
 }
 
-const wrapperStyling = { ml: 3, width: '100%' };
+const wrapperStyling = { mb: 1, ml: 3, width: '100%' };
 
 function SharedProgress({
     name,
@@ -48,6 +48,7 @@ function SharedProgress({
                 ) : (
                     <CircularProgress color="info" size={18} />
                 )}
+
                 <ListItemText
                     primary={name}
                     secondary={
@@ -63,6 +64,7 @@ function SharedProgress({
                     }
                 />
             </Stack>
+
             <Box sx={wrapperStyling}>
                 {state === ProgressStates.FAILED && error !== null ? (
                     renderError ? (
@@ -72,6 +74,7 @@ function SharedProgress({
                     )
                 ) : null}
             </Box>
+
             <Box sx={wrapperStyling}>
                 {state !== ProgressStates.RUNNING && logToken !== null ? (
                     renderLogs ? (

@@ -24,12 +24,16 @@ const Capture = () => {
                     justifyContent: 'space-between',
                 }}
             >
-                <NavLink to={authenticatedRoutes.captures.create.fullPath}>
+                <NavLink
+                    style={{ textDecoration: 'none' }}
+                    to={authenticatedRoutes.captures.create.fullPath}
+                >
                     <Button size="large" startIcon={<AddIcon />}>
                         <FormattedMessage id="capturesTable.cta.new" />
                     </Button>
                 </NavLink>
             </Toolbar>
+
             <Box sx={boxStyling}>
                 <CapturesTable />
             </Box>

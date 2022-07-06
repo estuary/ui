@@ -43,7 +43,7 @@ function ProgressDialog({
     return (
         <>
             <DialogTitle>
-                <Typography component="div">
+                <Typography component="div" variant="h6">
                     <FormattedMessage
                         id={done ? 'common.done' : 'common.inProgress'}
                     />
@@ -60,7 +60,7 @@ function ProgressDialog({
                 </Stack>
             </DialogContent>
 
-            <DialogActions>
+            <DialogActions sx={{ p: '1rem 1.5rem' }}>
                 <Button onClick={onClose} disabled={!done}>
                     <FormattedMessage id="cta.close" />
                 </Button>

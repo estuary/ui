@@ -113,6 +113,8 @@ function Logs({
             : null
     );
 
+    // TODO: Use error color on the restart collapsible paper segment.
+
     return (
         <Box>
             <Collapse in={displayRestart} sx={{ position: 'relative' }}>
@@ -121,23 +123,25 @@ function Logs({
                     sx={{
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'space-around',
                         position: 'absolute',
                         zIndex: zIndexIncrement,
                         width: '100%',
+                        justifyContent: 'space-between',
+                        px: 1,
                     }}
                 >
                     <FormattedMessage id="logs.toManyEmpty" />
+
                     <Button
-                        sx={{
-                            ml: 'auto',
-                        }}
+                        color="secondary"
+                        variant="text"
                         onClick={handlers.reset}
                     >
                         <FormattedMessage id="cta.restart" />
                     </Button>
                 </Paper>
             </Collapse>
+
             <Editor
                 height={`${heightVal}px`}
                 defaultLanguage=""

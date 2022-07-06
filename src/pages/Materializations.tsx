@@ -25,6 +25,7 @@ const Materializations = () => {
                 }}
             >
                 <NavLink
+                    style={{ textDecoration: 'none' }}
                     to={authenticatedRoutes.materializations.create.fullPath}
                 >
                     <Button size="large" startIcon={<AddIcon />}>
@@ -32,6 +33,7 @@ const Materializations = () => {
                     </Button>
                 </NavLink>
             </Toolbar>
+
             <Box sx={boxStyling}>
                 <MaterializationsTable />
             </Box>

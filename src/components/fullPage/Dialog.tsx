@@ -1,5 +1,9 @@
-import { Box, Paper } from '@mui/material';
+import { Box, Paper, useTheme } from '@mui/material';
 import CompanyLogo from 'components/CompanyLogo';
+import {
+    darkGlassBkgWithoutBlur,
+    lightGlassBkgWithoutBlur,
+} from 'context/Theme';
 import { ReactNode } from 'react';
 
 interface Props {
@@ -7,6 +11,13 @@ interface Props {
 }
 
 function FullPageDialog({ children }: Props) {
+    const theme = useTheme();
+
+    const dialogBackground =
+        theme.palette.mode === 'dark'
+            ? darkGlassBkgWithoutBlur
+            : lightGlassBkgWithoutBlur;
+
     return (
         <Box
             sx={{
@@ -27,10 +38,7 @@ function FullPageDialog({ children }: Props) {
                     alignItems: 'center',
                     justifyContent: 'center',
                     p: 3,
-                    background:
-                        'linear-gradient(159.03deg, rgba(172, 199, 220, 0.18) 2.23%, rgba(172, 199, 220, 0.12) 40.69%)',
-                    boxShadow: '0px 4px 24px -1px rgba(0, 0, 0, 0.2)',
-                    borderRadius: 5,
+                    ...dialogBackground,
                 }}
             >
                 <CompanyLogo />

@@ -6,7 +6,9 @@ import {
     PopoverProps,
     Tooltip,
     Typography,
+    useTheme,
 } from '@mui/material';
+import { indigo } from 'context/Theme';
 import React, { ReactNode } from 'react';
 
 type Props = {
@@ -14,7 +16,6 @@ type Props = {
     icon: ReactNode;
     identifier: string;
     tooltip: string;
-    verticalOffset: number;
     children: ReactNode;
 };
 
@@ -23,9 +24,10 @@ const IconMenu = ({
     tooltip,
     ariaLabel,
     icon,
-    verticalOffset,
     children,
 }: Props) => {
+    const theme = useTheme();
+
     const [anchorEl, setAnchorEl] =
         React.useState<PopoverProps['anchorEl']>(null);
 
@@ -39,6 +41,9 @@ const IconMenu = ({
             setAnchorEl(null);
         },
     };
+
+    const menuBgColor =
+        theme.palette.mode === 'dark' ? 'primary.dark' : indigo[200];
 
     const id = `${identifier}-button`;
     const controls = `${identifier}-menu`;
@@ -92,13 +97,13 @@ const IconMenu = ({
                             width: 32,
                         },
                         '&:before': {
-                            bgcolor: 'primary.dark',
+                            bgcolor: menuBgColor,
                             content: '""',
                             display: 'block',
                             height: 10,
                             position: 'absolute',
                             left: -5,
-                            bottom: `${verticalOffset}px`,
+                            bottom: 22,
                             transform: 'translateY(-50%) rotate(45deg)',
                             width: 10,
                             zIndex: 0,
@@ -106,7 +111,7 @@ const IconMenu = ({
                         'filter': 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
                         'mt': 1.5,
                         'overflow': 'visible',
-                        'bgcolor': 'primary.dark',
+                        'bgcolor': menuBgColor,
                         'borderRadius': '0px 10px 10px 0px',
                     },
                 }}

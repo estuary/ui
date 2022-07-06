@@ -1,4 +1,4 @@
-import { TableRow } from '@mui/material';
+import { TableRow, useTheme } from '@mui/material';
 import Actions from 'components/tables/cells/Actions';
 import ChipList from 'components/tables/cells/ChipList';
 import Connector from 'components/tables/cells/Connector';
@@ -19,6 +19,7 @@ import { SelectTableStoreNames, useZustandStore } from 'context/Zustand';
 import { useEffect, useState } from 'react';
 import { shardDetailSelectors } from 'stores/ShardDetail';
 import { ENTITY } from 'types';
+import { getEntityTableRowSx } from 'context/Theme';
 
 interface RowsProps {
     data: LiveSpecsExtQuery[];
@@ -64,6 +65,8 @@ export const tableColumns = [
 ];
 
 function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
+    const theme = useTheme();
+
     const [detailsExpanded, setDetailsExpanded] = useState(false);
 
     const handlers = {
@@ -78,10 +81,7 @@ function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
                 hover
                 onClick={() => handlers.clickRow(row.id)}
                 selected={isSelected}
-                sx={{
-                    background: detailsExpanded ? '#04192A' : null,
-                    cursor: 'pointer',
-                }}
+                sx={getEntityTableRowSx(theme, detailsExpanded)}
             >
                 <RowSelect isSelected={isSelected} name={row.catalog_name} />
 

@@ -26,6 +26,7 @@ import { MouseEvent, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { shardDetailSelectors } from 'stores/ShardDetail';
 import { ENTITY } from 'types';
+import { slate } from 'context/Theme';
 
 interface Props {
     useZustandStore: UseZustandStore;
@@ -155,7 +156,12 @@ function ShardInformation({ useZustandStore, entityType }: Props) {
                                 .map((shard) => (
                                     <TableRow
                                         key={shard.spec.id}
-                                        sx={{ background: '#252526' }} // This is the hex code for the monaco editor background in dark mode.
+                                        sx={{
+                                            background:
+                                                theme.palette.mode === 'dark'
+                                                    ? '#252526'
+                                                    : slate[15],
+                                        }} // This is the hex code for the monaco editor background in dark mode.
                                     >
                                         <StatusIndicatorAndLabel
                                             shard={shard}
