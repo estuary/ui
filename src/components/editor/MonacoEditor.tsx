@@ -90,30 +90,51 @@ function MonacoEditor({
     // }, [serverUpdate]);
 
     const updateValue = () => {
+        console.log('editor:update');
         const currentValue = editorRef.current?.getValue();
-
+        console.log('editor:update:current', {
+            currentValue,
+        });
         if (onChange && currentValue) {
             setStatus(EditorStatus.EDITING);
 
             let parsedVal;
             try {
                 parsedVal = JSON.parse(currentValue);
+                console.log('editor:update:parsed');
             } catch {
                 setStatus(EditorStatus.INVALID);
             }
 
             if (parsedVal && catalogName && catalogType) {
+                console.log('editor:update:saving', {
+                    parsedVal,
+                    catalogName,
+                    catalogType,
+                });
                 setStatus(EditorStatus.SAVING);
                 onChange(parsedVal, catalogName, catalogType)
                     .then(() => {
+                        console.log('editor:update:saving:success');
                         setStatus(EditorStatus.SAVED);
                     })
                     .catch(() => {
+                        console.log('editor:update:saving:failed');
                         setStatus(EditorStatus.SAVE_FAILED);
                     });
             } else {
+                console.log('editor:update:invalid', {
+                    parsedVal,
+                    catalogName,
+                    catalogType,
+                });
                 setStatus(EditorStatus.INVALID);
             }
+        } else {
+            console.log('editor:update:missing', {
+                onChange,
+                currentValue,
+            });
         }
     };
 
@@ -128,13 +149,19 @@ function MonacoEditor({
     );
 
     const handlers = {
-        change: () => {
+        change: (value: any, ev: any) => {
+            console.log('handlers:change', {
+                status,
+                value,
+                ev,
+            });
             if (status !== EditorStatus.EDITING) {
                 setStatus(EditorStatus.EDITING);
             }
             debouncedChange();
         },
         mount: (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
+            console.log('handlers:mount');
             editorRef.current = editor;
         },
         merge: () => {
