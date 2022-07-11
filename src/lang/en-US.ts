@@ -1,4 +1,5 @@
-// We DO NOT need this file sorted as it makes it easier for folks to update/see changes
+// We DO NOT need this file sorted as it makes it easier for folks to update/see
+// changes
 import { ResolvedIntlConfig } from 'react-intl/src/types';
 
 const CommonMessages: ResolvedIntlConfig['messages'] = {
@@ -247,6 +248,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.login': `Login`,
     'routeTitle.loginLoading': `Checking Credentials`,
     'routeTitle.noGrants': `Signed Up`,
+    'routeTitle.oauth': `OAuth`,
     'routeTitle.materializationCreate': `Create Materialization`,
     'routeTitle.materializations': `Materializations`,
     'routeTitle.registration': `Registration`,

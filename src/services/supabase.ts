@@ -55,6 +55,10 @@ export enum TABLES {
     USER_GRANTS = 'user_grants',
 }
 
+export enum FUNCTIONS {
+    OAUTH = 'oauth',
+}
+
 export enum RPCS {
     VIEW_LOGS = 'view_logs',
 }
@@ -68,7 +72,9 @@ export const DEFAULT_POLLING_INTERVAL = 500;
 
 export const defaultTableFilter = <Data>(
     query: PostgrestFilterBuilder<Data>,
-    searchParam: Array<keyof Data | any>, // TODO (typing) added any because of how Supabase handles keys. Hoping Supabase 2.0 fixes https://github.com/supabase/supabase-js/issues/170
+    searchParam: Array<keyof Data | any>, // TODO (typing) added any because of how Supabase
+    // handles keys. Hoping Supabase 2.0 fixes
+    // https://github.com/supabase/supabase-js/issues/170
     searchQuery: string | null,
     columnToSort: keyof Data,
     sortDirection: string,
@@ -175,6 +181,20 @@ export const updateSupabase = (
     return makeCall();
 };
 
+// Invoke supabase edge functions. Mainly consumed in src/api folder
+export const invokeSupabase = (
+    fn: FUNCTIONS,
+    body: any
+): PromiseLike<CallSupabaseResponse> => {
+    const invocation = supabaseClient.functions.invoke(fn, { body });
+
+    const makeCall = () => {
+        return invocation.then(handleSuccess, handleFailure);
+    };
+
+    return makeCall();
+};
+
 export const endSubscription = (subscription: RealtimeSubscription) => {
     return supabaseClient
         .removeSubscription(subscription)
@@ -216,7 +236,8 @@ export const startSubscription = (
                     }
                 }
             } else {
-                // TODO (error handling) Do not know how this path could happen but wanted to be safe
+                // TODO (error handling) Do not know how this path could
+                // happen but wanted to be safe
                 failure(payload);
             }
         })
