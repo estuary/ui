@@ -211,12 +211,12 @@ const Authenticated = () => {
                             path={authenticatedRoutes.admin.path}
                             element={<Admin />}
                         />
-                        {!isProduction && (
+                        {!isProduction ? (
                             <Route
                                 path="test/jsonforms"
                                 element={<TestJsonForms />}
                             />
-                        )}
+                        ) : null}
                         <Route
                             path={authenticatedRoutes.pageNotFound.path}
                             element={<PageNotFound />}

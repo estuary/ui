@@ -30,7 +30,7 @@ const Login = () => {
                         <OIDCs />
                     </Box>
 
-                    {loginSettings.showEmail && (
+                    {loginSettings.showEmail ? (
                         <>
                             <Divider flexItem>
                                 <FormattedMessage id="login.separator" />
@@ -40,7 +40,7 @@ const Login = () => {
                                 <MagicLink />
                             </Box>
                         </>
-                    )}
+                    ) : null}
                 </Stack>
 
                 <Typography align="center" sx={{ mt: 4 }}>

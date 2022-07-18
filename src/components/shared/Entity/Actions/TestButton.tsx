@@ -47,9 +47,10 @@ function EntityTestButton({
         <>
             <LogDialog
                 open={
-                    (formStatus === FormStatus.TESTING ||
-                        formStatus === FormStatus.TESTED) &&
-                    showLogs
+                    formStatus === FormStatus.TESTING ||
+                    formStatus === FormStatus.TESTED
+                        ? showLogs
+                        : null
                 }
                 token={logToken}
                 title={

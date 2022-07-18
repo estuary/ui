@@ -1,14 +1,14 @@
 import { Collapse, Grid, TableCell, TableRow } from '@mui/material';
-import EditorAndLogs from 'components/tables/Details/EditorAndLogs';
-import { LiveSpecEditorStoreNames } from 'context/Zustand';
-import { ENTITY } from 'types';
-import ShardInformation from 'components/tables/Details/ShardInformation';
-import { tableBorderSx } from 'context/Theme';
 import { createEditorStore } from 'components/editor/Store';
+import EditorAndLogs from 'components/tables/Details/EditorAndLogs';
+import ShardInformation from 'components/tables/Details/ShardInformation';
 import {
     LocalZustandProvider,
     useLocalZustandStore,
 } from 'context/LocalZustand';
+import { tableBorderSx } from 'context/Theme';
+import { LiveSpecEditorStoreNames } from 'context/Zustand';
+import { ENTITY } from 'types';
 
 interface Props {
     detailsExpanded: boolean;
@@ -46,12 +46,12 @@ function DetailsPanel({
                         )}
                     >
                         <Grid container spacing={2}>
-                            {entityType && (
+                            {entityType ? (
                                 <ShardInformation
                                     useZustandStore={useLocalZustandStore}
                                     entityType={entityType}
                                 />
-                            )}
+                            ) : null}
 
                             <EditorAndLogs
                                 lastPubId={lastPubId}

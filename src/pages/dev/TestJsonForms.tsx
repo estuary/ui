@@ -68,7 +68,9 @@ const TestJsonForms = () => {
                     justifyContent: 'center',
                 }}
             >
-                {error !== null && <Alert severity="error">{error}</Alert>}
+                {error !== null ? (
+                    <Alert severity="error">{error}</Alert>
+                ) : null}
 
                 <Editor
                     height="500px"
