@@ -58,7 +58,7 @@ export interface OwnOneOfProps extends OwnPropsOfControl {
     indexOfFittingSchema?: number;
 }
 
-export const Custom_MaterialOneOfRenderer = ({
+export const Custom_MaterialOneOfRenderer_Format = ({
     handleChange,
     schema,
     path,
@@ -201,9 +201,9 @@ export const Custom_MaterialOneOfRenderer = ({
 
 export const FORMAT_SCOPE = 'format';
 
-export const materialOneOfControlTester: RankedTester = rankWith(
+export const materialOneOfControlTester_Format: RankedTester = rankWith(
     10,
     scopeEndsWith(FORMAT_SCOPE)
 );
 
-export default withJsonFormsOneOfProps(Custom_MaterialOneOfRenderer);
+export default withJsonFormsOneOfProps(Custom_MaterialOneOfRenderer_Format);
