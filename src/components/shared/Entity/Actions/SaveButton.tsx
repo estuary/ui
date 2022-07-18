@@ -52,7 +52,7 @@ function EntitySaveButton({
                     formStatus === FormStatus.SAVING ||
                     formStatus === FormStatus.SAVED
                         ? showLogs
-                        : null
+                        : false
                 }
                 token={logToken}
                 title={
