@@ -56,7 +56,7 @@ import {
 import { NullType, nullTypeTester } from 'forms/renderers/NullType';
 import MaterialOneOfRenderer, {
     materialOneOfControlTester,
-} from 'forms/renderers/Overrides/material/complex/MaterialoneOfRenderer';
+} from 'forms/renderers/Overrides/material/complex/MaterialoneOfRenderer_Format';
 import isEmpty from 'lodash/isEmpty';
 import keys from 'lodash/keys';
 import startCase from 'lodash/startCase';

@@ -10,7 +10,7 @@ We have to check after every JSONForms update if these need updated.
 
 # Current Customizations
 
-1. Default subschema values in the OneOf renderer
+1. A oneOf renderer for the parser format property
 
 # Upcoming Customizations
 

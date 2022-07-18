@@ -31,11 +31,11 @@ import {
     CombinatorRendererProps,
     createCombinatorRenderInfos,
     createDefaultValue,
-    isOneOfControl,
     JsonSchema,
     OwnPropsOfControl,
     RankedTester,
     rankWith,
+    scopeEndsWith,
 } from '@jsonforms/core';
 import { JsonFormsDispatch, withJsonFormsOneOfProps } from '@jsonforms/react';
 import {
@@ -49,9 +49,9 @@ import {
     Tab,
     Tabs,
 } from '@mui/material';
+import { has } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 import { useCallback, useState } from 'react';
-import { createJSONFormDefaults } from 'services/ajv';
 import CombinatorProperties from './CombinatorProperties';
 
 export interface OwnOneOfProps extends OwnPropsOfControl {
@@ -81,6 +81,9 @@ export const Custom_MaterialOneOfRenderer = ({
     const cancel = useCallback(() => {
         setOpen(false);
     }, [setOpen]);
+
+    // const descriminator = schemaClone.discriminator?.propertyName ?? null;
+
     const oneOfRenderInfos = createCombinatorRenderInfos(
         (schema as JsonSchema).oneOf,
         rootSchema,
@@ -90,33 +93,30 @@ export const Custom_MaterialOneOfRenderer = ({
         uischemas
     );
 
+    // Run through the elements and clear out the ones without elements
+    oneOfRenderInfos.map((renderer) => {
+        const { uischema: rendererUischema } = renderer as any;
+        rendererUischema.elements = rendererUischema.elements.filter(
+            (el: any) => el !== null
+        );
+        return renderer;
+    });
+
     const openNewTab = (newIndex: number) => {
         const tabSchema = oneOfRenderInfos[newIndex].schema;
-        const { properties, required } = tabSchema;
-        const propertyKeys = Object.keys(properties ?? {});
-        let defaultVal = null;
+        const { properties: tabSchemaProps } = tabSchema;
+        const defaultVal: {
+            formatter: string;
+            settings?: any;
+        } = {
+            formatter: tabSchemaProps?.formatter.default ?? '',
+        };
 
-        if (
-            required?.length === 1 &&
-            propertyKeys.length === 1 &&
-            properties?.[required[0]]
-        ) {
-            const onlyOneRequired = properties[required[0]];
-            const foo = propertyKeys[0];
-            defaultVal = {};
-            if (onlyOneRequired.properties) {
-                defaultVal[foo] = createJSONFormDefaults(
-                    onlyOneRequired.properties
-                );
-            } else {
-                defaultVal[foo] = onlyOneRequired.default;
-            }
+        if (has(tabSchemaProps, 'settings')) {
+            defaultVal.settings = {};
         }
 
-        handleChange(
-            path,
-            defaultVal !== null ? defaultVal : createDefaultValue(tabSchema)
-        );
+        handleChange(path, defaultVal);
         setSelectedIndex(newIndex);
     };
 
@@ -129,7 +129,7 @@ export const Custom_MaterialOneOfRenderer = ({
     const handleTabChange = useCallback(
         (_event: any, newOneOfIndex: number) => {
             setNewSelectedIndex(newOneOfIndex);
-            if (isEmpty(data)) {
+            if (isEmpty(data) || !has(data, 'settings')) {
                 openNewTab(newOneOfIndex);
             } else {
                 setOpen(true);
@@ -145,7 +145,6 @@ export const Custom_MaterialOneOfRenderer = ({
                 combinatorKeyword="oneOf"
                 path={path}
             />
-            <b>This is the custom one!</b>
             <Tabs value={selectedIndex} onChange={handleTabChange}>
                 {oneOfRenderInfos.map((oneOfRenderInfo) => (
                     <Tab
@@ -200,9 +199,11 @@ export const Custom_MaterialOneOfRenderer = ({
     );
 };
 
+export const FORMAT_SCOPE = 'format';
+
 export const materialOneOfControlTester: RankedTester = rankWith(
-    4,
-    isOneOfControl
+    10,
+    scopeEndsWith(FORMAT_SCOPE)
 );
 
 export default withJsonFormsOneOfProps(Custom_MaterialOneOfRenderer);
