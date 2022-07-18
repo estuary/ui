@@ -85,7 +85,7 @@ export const Custom_MaterialOneOfRenderer_Format = ({
     // const descriminator = schemaClone.discriminator?.propertyName ?? null;
 
     const oneOfRenderInfos = createCombinatorRenderInfos(
-        (schema as JsonSchema).oneOf,
+        (schema as JsonSchema).oneOf as JsonSchema[],
         rootSchema,
         'oneOf',
         uischema,
