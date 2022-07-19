@@ -28,9 +28,11 @@
   THE SOFTWARE.
 */
 import {
+    and,
     CombinatorRendererProps,
     createCombinatorRenderInfos,
     createDefaultValue,
+    isOneOfControl,
     JsonSchema,
     OwnPropsOfControl,
     RankedTester,
@@ -201,7 +203,7 @@ export const FORMAT_SCOPE = 'format';
 
 export const materialOneOfControlTester_Format: RankedTester = rankWith(
     10,
-    scopeEndsWith(FORMAT_SCOPE)
+    and(scopeEndsWith(FORMAT_SCOPE), isOneOfControl)
 );
 
 export default withJsonFormsOneOfProps(Custom_MaterialOneOfRenderer_Format);
