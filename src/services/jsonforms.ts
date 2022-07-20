@@ -144,7 +144,7 @@ export const generateCategoryUiSchema = (uiSchema: any) => {
         elements: [
             {
                 type: 'Category',
-                label: 'Basic Information',
+                label: 'Basic Config',
                 elements: [
                     {
                         type: 'VerticalLayout',
@@ -163,7 +163,7 @@ export const generateCategoryUiSchema = (uiSchema: any) => {
                 elements: [
                     {
                         type: 'VerticalLayout',
-                        elements: [element],
+                        elements: element.elements,
                     },
                 ],
             });
@@ -269,6 +269,8 @@ const generateUISchema = (
     layoutType: string,
     rootSchema?: JsonSchema
 ): UISchemaElement => {
+    console.log('----------------------------------------');
+    console.log(`generateUISchema for ${jsonSchema.title}`);
     if (!isEmpty(jsonSchema) && jsonSchema.$ref !== undefined) {
         return generateUISchema(
             resolveSchema(
@@ -287,6 +289,7 @@ const generateUISchema = (
     // Always create a Group for "advanced" configuration objects, so that we can collapse it and
     // see the label.
     if (isCombinator(jsonSchema) && isAdvancedConfig(jsonSchema)) {
+        console.log('  generateUISchema:isAdvancedConfig');
         const group: GroupLayout = {
             type: 'Group',
             elements: [createControlElement(currentRef)],
@@ -305,6 +308,7 @@ const generateUISchema = (
     // a layout, it means we lose the ability to have uischemas that apply to the nested elements.
 
     if (isCombinator(jsonSchema)) {
+        console.log('  generateUISchema:isCombinator');
         const controlObject: ControlElement = createControlElement(currentRef);
 
         if (jsonSchema.title) {
@@ -326,6 +330,7 @@ const generateUISchema = (
     }
 
     if (types.length > 1) {
+        console.log('  generateUISchema:multiplleTypes');
         const controlObject: ControlElement = createControlElement(currentRef);
         schemaElements.push(controlObject);
         return controlObject;
@@ -335,6 +340,7 @@ const generateUISchema = (
         (currentRef === '#' && types[0] === 'object') ||
         jsonSchema.properties !== undefined
     ) {
+        console.log('  generateUISchema:currentRef=#');
         let layout: Layout | GroupLayout;
 
         if (currentRef === '#') {
@@ -395,14 +401,22 @@ const generateUISchema = (
     // to keep things secure. Then we check if we need to set the `multi` option based on whether the
     // json schema contains a `multiline` annotation.
 
+    console.log('  generateUISchema:checkingTypes');
     const controlObject: ControlElement = createControlElement(currentRef);
     if (isSecretText(jsonSchema) && isMultilineText(jsonSchema)) {
+        console.log(
+            `    generateUISchema:checkingTypes:multiLineSecret:${jsonSchema.title}`
+        );
         addOption(controlObject, 'format', MULTI_LINE_SECRET);
     } else if (isSecretText(jsonSchema)) {
+        console.log('    generateUISchema:checkingTypes:secret');
         addOption(controlObject, 'format', 'password');
     } else if (isMultilineText(jsonSchema)) {
+        console.log('    generateUISchema:checkingTypes:multiLine');
         addOption(controlObject, 'multi', true);
     } else if (isDateTimeText(jsonSchema)) {
+        console.log('    generateUISchema:checkingTypes:date');
+
         const newControl = addOption(controlObject, 'format', 'date-time');
         if (newControl.options) {
             newControl.options.dateTimeFormat = 'YYYY-MM-DDThh:mm:ssZ';

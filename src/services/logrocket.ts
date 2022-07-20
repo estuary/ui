@@ -27,6 +27,7 @@ type ParsedBody = [{ [k: string]: any }] | { [k: string]: any } | undefined;
 export enum CustomEvents {
     CAPTURE_TEST = 'Capture_Test',
     CAPTURE_CREATE = 'Capture_Create',
+    CAPTURE_DISCOVER = 'Capture_Discover',
     MATERIALIZATION_CREATE = 'Materialization_Create',
     MATERIALIZATION_TEST = 'Materialization_Test',
 }
