@@ -51,7 +51,7 @@ import {
     Tab,
     Tabs,
 } from '@mui/material';
-import { has } from 'lodash';
+import { forIn, keys } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 import { useCallback, useState } from 'react';
 import CombinatorProperties from './CombinatorProperties';
@@ -93,7 +93,9 @@ export const Custom_MaterialOneOfRenderer_Format = ({
         uischemas
     );
 
-    // Run through the elements and clear out the ones without elements
+    const descriminator = (schema as any).discriminator.propertyName;
+
+    // Customization: Run through the elements and clear out the ones without elements
     oneOfRenderInfos.map((renderer) => {
         const { uischema: rendererUischema } = renderer as any;
         rendererUischema.elements = rendererUischema.elements.filter(
@@ -105,16 +107,22 @@ export const Custom_MaterialOneOfRenderer_Format = ({
     const openNewTab = (newIndex: number) => {
         const tabSchema = oneOfRenderInfos[newIndex].schema;
         const { properties: tabSchemaProps } = tabSchema;
-        const defaultVal: {
-            formatter: string;
-            settings?: any;
-        } = {
-            formatter: tabSchemaProps?.formatter.default ?? '',
-        };
 
-        if (has(tabSchemaProps, 'settings')) {
-            defaultVal.settings = {};
-        }
+        // Customization: Handle setting the oneOf descriminator properly
+        // Go through all the props and set them into the object.
+        //  If it is the descriminator then try to set the default
+        //      value, then the const, and finally default to an empty string.
+        //  If it is any other value then go ahead and create the value
+        const defaultVal: {
+            [k: string]: any;
+        } = {};
+        forIn(tabSchemaProps, (val: any, key: string) => {
+            if (key === descriminator) {
+                defaultVal[key] = val.default ?? val.const ?? '';
+            } else {
+                defaultVal[key] = createDefaultValue(val);
+            }
+        });
 
         handleChange(path, defaultVal);
         setSelectedIndex(newIndex);
@@ -129,7 +137,13 @@ export const Custom_MaterialOneOfRenderer_Format = ({
     const handleTabChange = useCallback(
         (_event: any, newOneOfIndex: number) => {
             setNewSelectedIndex(newOneOfIndex);
-            if (isEmpty(data) || !has(data, 'settings')) {
+            // Customization: do not prompt user if they are only
+            //  overwriting the descriminator as it is a single property.
+            const keysInData = keys(data);
+            if (
+                (keysInData.length === 1 && keysInData[0] === descriminator) ||
+                isEmpty(data)
+            ) {
                 openNewTab(newOneOfIndex);
             } else {
                 setOpen(true);
