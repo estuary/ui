@@ -54,9 +54,9 @@ import {
     MULTI_LINE_SECRET,
 } from 'forms/renderers/MultiLineSecret';
 import { NullType, nullTypeTester } from 'forms/renderers/NullType';
-import MaterialOneOfRenderer_Format, {
-    materialOneOfControlTester_Format,
-} from 'forms/renderers/Overrides/material/complex/MaterialOneOfRenderer_Format';
+import MaterialOneOfRenderer_Discriminator, {
+    materialOneOfControlTester_Discriminator,
+} from 'forms/renderers/Overrides/material/complex/MaterialOneOfRenderer_Discriminator';
 import isEmpty from 'lodash/isEmpty';
 import keys from 'lodash/keys';
 import startCase from 'lodash/startCase';
@@ -74,8 +74,8 @@ export const defaultRenderers = [
     ...materialRenderers,
     // These are basically the same as JSONForm's but with tweaks to default functionality
     {
-        renderer: MaterialOneOfRenderer_Format,
-        tester: materialOneOfControlTester_Format,
+        renderer: MaterialOneOfRenderer_Discriminator,
+        tester: materialOneOfControlTester_Discriminator,
     },
 
     // Custom types

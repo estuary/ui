@@ -37,7 +37,7 @@ import {
     OwnPropsOfControl,
     RankedTester,
     rankWith,
-    scopeEndsWith,
+    schemaMatches,
 } from '@jsonforms/core';
 import { JsonFormsDispatch, withJsonFormsOneOfProps } from '@jsonforms/react';
 import {
@@ -60,7 +60,9 @@ export interface OwnOneOfProps extends OwnPropsOfControl {
     indexOfFittingSchema?: number;
 }
 
-export const Custom_MaterialOneOfRenderer_Format = ({
+const discriminator = 'discriminator';
+
+export const Custom_MaterialOneOfRenderer_Discriminator = ({
     handleChange,
     schema,
     path,
@@ -93,7 +95,7 @@ export const Custom_MaterialOneOfRenderer_Format = ({
         uischemas
     );
 
-    const descriminator = (schema as any).discriminator.propertyName;
+    const descriminatorProperty = (schema as any)[discriminator].propertyName;
 
     // Customization: Run through the elements and clear out the ones without elements
     oneOfRenderInfos.map((renderer) => {
@@ -117,11 +119,10 @@ export const Custom_MaterialOneOfRenderer_Format = ({
             [k: string]: any;
         } = {};
         forIn(tabSchemaProps, (val: any, key: string) => {
-            if (key === descriminator) {
-                defaultVal[key] = val.default ?? val.const ?? '';
-            } else {
-                defaultVal[key] = createDefaultValue(val);
-            }
+            defaultVal[key] =
+                key === descriminatorProperty
+                    ? val.default ?? val.const ?? ''
+                    : createDefaultValue(val);
         });
 
         handleChange(path, defaultVal);
@@ -141,7 +142,8 @@ export const Custom_MaterialOneOfRenderer_Format = ({
             //  overwriting the descriminator as it is a single property.
             const keysInData = keys(data);
             if (
-                (keysInData.length === 1 && keysInData[0] === descriminator) ||
+                (keysInData.length === 1 &&
+                    keysInData[0] === descriminatorProperty) ||
                 isEmpty(data)
             ) {
                 openNewTab(newOneOfIndex);
@@ -213,11 +215,14 @@ export const Custom_MaterialOneOfRenderer_Format = ({
     );
 };
 
-export const FORMAT_SCOPE = 'format';
-
-export const materialOneOfControlTester_Format: RankedTester = rankWith(
+export const materialOneOfControlTester_Discriminator: RankedTester = rankWith(
     10,
-    and(scopeEndsWith(FORMAT_SCOPE), isOneOfControl)
+    and(
+        isOneOfControl,
+        schemaMatches((schema) => schema.hasOwnProperty(discriminator))
+    )
 );
 
-export default withJsonFormsOneOfProps(Custom_MaterialOneOfRenderer_Format);
+export default withJsonFormsOneOfProps(
+    Custom_MaterialOneOfRenderer_Discriminator
+);
