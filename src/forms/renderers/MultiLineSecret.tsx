@@ -7,17 +7,19 @@ import { withJsonFormsControlProps } from '@jsonforms/react';
 import { Box, Button, Stack } from '@mui/material';
 import { useCallback, useState } from 'react';
 import { DropzoneDialog } from 'react-mui-dropzone';
-
-export const MULTI_LINE_SECRET = 'multiLineSecret';
+import { Formats, Options } from 'types/jsonforms';
 
 export const multiLineSecretTester: RankedTester = rankWith(
-    999,
-    and(optionIs('format', MULTI_LINE_SECRET))
+    10,
+    and(
+        optionIs(Options.format, Formats.password),
+        optionIs(Options.multi, true)
+    )
 );
 
 // This is blank on purpose. For right now we can just show null settings are nothing
 const MultiLineSecretRenderer = (props: any) => {
-    const { handleChange, path, uischema } = props;
+    const { handleChange, path } = props;
 
     const [isUploadOpen, setIsUploadOpen] = useState(false);
 
@@ -46,9 +48,6 @@ const MultiLineSecretRenderer = (props: any) => {
         },
         [handleChange, path]
     );
-
-    // Make it a password again so the input is masked
-    uischema.options.format = 'password';
 
     return (
         <>
