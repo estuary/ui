@@ -48,7 +48,7 @@ function ListAndDetails({ list, details, height }: Props) {
                     className="right-pane"
                     minSize={MIN_RESIZE_WIDTH}
                     style={{
-                        overflow: 'hidden',
+                        overflow: 'auto',
                     }}
                 >
                     <div className="pane-content">{details}</div>
