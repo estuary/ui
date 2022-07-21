@@ -23,7 +23,7 @@ function FullPageError({ errors }: Props) {
                     <AlertTitle>
                         <FormattedMessage id="fullpage.error" />
                     </AlertTitle>
-                    {errors.length > 0 && (
+                    {errors.length > 0 ? (
                         <List dense>
                             {errors.map((error, index: number) => {
                                 return (
@@ -34,7 +34,7 @@ function FullPageError({ errors }: Props) {
                                 );
                             })}
                         </List>
-                    )}
+                    ) : null}
                 </Alert>
             </Box>
         </Backdrop>

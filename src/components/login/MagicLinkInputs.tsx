@@ -93,7 +93,7 @@ const MagicLinkInputs = ({ onSubmit, schema, uiSchema }: Props) => {
 
     return (
         <>
-            {submitError && (
+            {submitError ? (
                 <Alert
                     severity="error"
                     sx={{
@@ -102,7 +102,7 @@ const MagicLinkInputs = ({ onSubmit, schema, uiSchema }: Props) => {
                 >
                     <Typography>{submitError.message}</Typography>
                 </Alert>
-            )}
+            ) : null}
 
             <form
                 onSubmit={handlers.submit}
