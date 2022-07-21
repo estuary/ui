@@ -437,25 +437,23 @@ function EntityTable({
                         </TableBody>
 
                         {selectData &&
-                            selectData.length > 0 &&
-                            useSelectResponse?.count && (
-                                <TableFooter>
-                                    <TableRow>
-                                        <TablePagination
-                                            rowsPerPageOptions={
-                                                rowsPerPageOptions
-                                            }
-                                            count={useSelectResponse.count}
-                                            rowsPerPage={rowsPerPage}
-                                            page={page}
-                                            onPageChange={handlers.changePage}
-                                            onRowsPerPageChange={
-                                                handlers.changeRowsPerPage
-                                            }
-                                        />
-                                    </TableRow>
-                                </TableFooter>
-                            )}
+                        selectData.length > 0 &&
+                        useSelectResponse?.count ? (
+                            <TableFooter>
+                                <TableRow>
+                                    <TablePagination
+                                        rowsPerPageOptions={rowsPerPageOptions}
+                                        count={useSelectResponse.count}
+                                        rowsPerPage={rowsPerPage}
+                                        page={page}
+                                        onPageChange={handlers.changePage}
+                                        onRowsPerPageChange={
+                                            handlers.changeRowsPerPage
+                                        }
+                                    />
+                                </TableRow>
+                            </TableFooter>
+                        ) : null}
                     </Table>
                 </TableContainer>
             </Box>

@@ -159,7 +159,7 @@ const PasswordReset = () => {
                     <FormattedMessage id="passwordReset.main" />
                 </Box>
 
-                {submitError && (
+                {submitError ? (
                     <Alert
                         severity="error"
                         sx={{
@@ -168,7 +168,7 @@ const PasswordReset = () => {
                     >
                         <Typography>{submitError.message}</Typography>
                     </Alert>
-                )}
+                ) : null}
 
                 <form
                     onSubmit={handlers.submit}

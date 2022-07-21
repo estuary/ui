@@ -18,15 +18,15 @@ import { EditorStoreState } from 'components/editor/Store';
 import ExternalLink from 'components/shared/ExternalLink';
 import ShardErrors from 'components/tables/Details/ShardErrors';
 import StatusIndicatorAndLabel from 'components/tables/Details/StatusIndicatorAndLabel';
+import { slate } from 'context/Theme';
+import { LiveSpecEditorStoreNames, UseZustandStore } from 'context/Zustand';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { PublicationSpecQuery } from 'hooks/usePublicationSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { LiveSpecEditorStoreNames, UseZustandStore } from 'context/Zustand';
 import { MouseEvent, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { shardDetailSelectors } from 'stores/ShardDetail';
 import { ENTITY } from 'types';
-import { slate } from 'context/Theme';
 
 interface Props {
     useZustandStore: UseZustandStore;
@@ -136,11 +136,11 @@ function ShardInformation({ useZustandStore, entityType }: Props) {
                                 {columns.map((column, index) => (
                                     <TableCell key={`${column.field}-${index}`}>
                                         <Typography>
-                                            {column.headerIntlKey && (
+                                            {column.headerIntlKey ? (
                                                 <FormattedMessage
                                                     id={column.headerIntlKey}
                                                 />
-                                            )}
+                                            ) : null}
                                         </Typography>
                                     </TableCell>
                                 ))}

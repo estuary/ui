@@ -2,9 +2,9 @@ import { EditorStoreState } from 'components/editor/Store';
 import EntityCreateSave from 'components/shared/Entity/Actions/Save';
 import LogDialog from 'components/shared/Entity/LogDialog';
 import LogDialogActions from 'components/shared/Entity/LogDialogActions';
+import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
 import { FormattedMessage } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
@@ -47,9 +47,10 @@ function EntityTestButton({
         <>
             <LogDialog
                 open={
-                    (formStatus === FormStatus.TESTING ||
-                        formStatus === FormStatus.TESTED) &&
-                    showLogs
+                    formStatus === FormStatus.TESTING ||
+                    formStatus === FormStatus.TESTED
+                        ? showLogs
+                        : false
                 }
                 token={logToken}
                 title={

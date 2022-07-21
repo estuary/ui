@@ -203,14 +203,14 @@ function EntityCreate({
             ) : (
                 <>
                     <Collapse in={formSubmitError !== null}>
-                        {formSubmitError && (
+                        {formSubmitError ? (
                             <EntityError
                                 title={formSubmitError.title}
                                 error={formSubmitError.error}
                                 logToken={logToken}
                                 draftId={draftId}
                             />
-                        )}
+                        ) : null}
                     </Collapse>
 
                     {!isValidating && connectorTags.length === 0 ? (
