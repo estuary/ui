@@ -121,7 +121,7 @@ function EntityCreate({
         setDraftId(null);
     }, [imageTag, setDraftId]);
 
-    const { connectorTag } = useConnectorTag(imageTag?.id ?? null);
+    const { connectorTag } = useConnectorTag(imageTag.id);
     const { liveSpecs } = useLiveSpecsExtWithOutSpec(specId, ENTITY.CAPTURE);
     const { liveSpecs: liveSpecsByLastPub } = useLiveSpecsExtByLastPubId(
         lastPubId,
