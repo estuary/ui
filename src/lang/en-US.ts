@@ -377,7 +377,7 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.bindingsConfig.noRows': `Please select from the ${CommonMessages['terms.collections']} above to begin.`,
     'entityCreate.bindingsConfig.noRowsTitle': `No selection made`,
 
-    'entityCreate.connector.label': `Connector Search`,
+    'entityCreate.connector.label': `${CommonMessages['connector.label']} Search`,
 };
 
 const MonacoEditor: ResolvedIntlConfig['messages'] = {
