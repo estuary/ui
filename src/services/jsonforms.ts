@@ -171,7 +171,9 @@ export const generateCategoryUiSchema = (uiSchema: any) => {
                 elements: [
                     {
                         type: 'VerticalLayout',
-                        elements: element.elements,
+                        elements: element.elements
+                            ? element.elements
+                            : [element],
                     },
                 ],
             });
