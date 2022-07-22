@@ -145,7 +145,7 @@ function DetailsForm({
                 elements: [
                     {
                         label: intl.formatMessage({
-                            id: 'connector.label',
+                            id: 'entityCreate.connector.label',
                         }),
                         scope: `#/properties/${CONNECTOR_IMAGE_SCOPE}`,
                         type: 'Control',

@@ -336,9 +336,13 @@ export const getInitialCreateState = (
         setDetails: (details) => {
             set(
                 produce((state) => {
-                    if (
+                    if (!details.data.connectorImage) {
+                        details.data.connectorImage =
+                            initialCreateStates.details().data.connectorImage;
+                        state.endpointConfig = {};
+                    } else if (
                         state.details.data.connectorImage?.id !==
-                        details.data.connectorImage?.id
+                        details.data.connectorImage.id
                     ) {
                         const { endpointConfig, formState } =
                             getInitialStateData(
@@ -358,6 +362,7 @@ export const getInitialCreateState = (
                     }
 
                     state.details = details;
+
                     populateHasErrors(get, state, {}, null, details.errors);
                 }),
                 false,

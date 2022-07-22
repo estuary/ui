@@ -134,11 +134,17 @@ const darkMode: PaletteOptions = {
 // TODO (zindex) We should make a helper or something to help manage zindex.
 //  It doesn't come up often but happens enough it would be nice to handle better.
 export const zIndexIncrement = 5;
-export const headerLinkIndex = zIndexIncrement + zIndexIncrement;
-export const stickyHeaderIndex =
-    zIndexIncrement + zIndexIncrement + zIndexIncrement;
-const buttonHoverIndex = zIndexIncrement;
+
+// Need to make the sticky header be on top
+export const stickyHeaderIndex = zIndexIncrement * 20;
+export const headerLinkIndex = zIndexIncrement * 30;
+
+// Makes sure the hovering styling can be seen
+const buttonHoverIndex = zIndexIncrement * 4;
+// To make the delete in a multi select to work
 const chipDeleteIndex = buttonHoverIndex + zIndexIncrement;
+// JSONForms accordion is hardcoded to 20 so making this "1 higher"
+const accordionButton = zIndexIncrement * 5;
 
 // Styles
 export const tableBorderSx: SxProps<Theme> = {
@@ -258,7 +264,7 @@ const themeSettings = createTheme({
                         width: '100%',
                         zIndex: buttonHoverIndex,
                     },
-                    '& 	.MuiChip-deleteIcon': {
+                    '& .MuiChip-deleteIcon': {
                         zIndex: chipDeleteIndex,
                     },
                 },
@@ -340,6 +346,13 @@ const ThemeProvider = ({ children }: BaseComponentProps) => {
             components: {
                 ...themeSettings.components,
                 MuiAccordion: {
+                    defaultProps: {
+                        sx: {
+                            '& .MuiIconButton-root': {
+                                zIndex: accordionButton,
+                            },
+                        },
+                    },
                     styleOverrides: {
                         root: {
                             'backgroundColor':

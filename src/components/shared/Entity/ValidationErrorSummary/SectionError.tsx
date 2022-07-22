@@ -1,6 +1,7 @@
 import KeyValueList from 'components/shared/KeyValueList';
 import { isEmpty } from 'lodash';
 import { useIntl } from 'react-intl';
+import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     errors: any;
@@ -26,7 +27,7 @@ function SectionError({
                 id: configEmptyMessage,
             }),
         });
-    } else if (errors.length > 0) {
+    } else if (hasLength(errors)) {
         if (errorMessage) {
             filteredErrorsList.push({
                 title: intl.formatMessage({

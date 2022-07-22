@@ -13,6 +13,7 @@ import { usePrompt } from 'hooks/useBlocker';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
+import LogRocket from 'logrocket';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
@@ -22,6 +23,16 @@ import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 import { getPathWithParam } from 'utils/misc-utils';
 
 const connectorType = 'capture';
+
+const trackEvent = (payload: any) => {
+    LogRocket.track(CustomEvents.CAPTURE_DISCOVER, {
+        name: payload.capture_name,
+        id: payload.id,
+        draft_id: payload.draft_id,
+        logs_token: payload.logs_token,
+        status: payload.job_status.type,
+    });
+};
 
 function CaptureCreate() {
     const navigate = useNavigate();
@@ -145,9 +156,11 @@ function CaptureCreate() {
                 setFormState({
                     status: FormStatus.GENERATED,
                 });
+                trackEvent(payload);
             },
-            () => {
+            (payload: any) => {
                 helpers.jobFailed(`${messagePrefix}.test.failedErrorTitle`);
+                trackEvent(payload);
             }
         );
     };
