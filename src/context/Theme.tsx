@@ -143,8 +143,8 @@ export const headerLinkIndex = zIndexIncrement * 30;
 const buttonHoverIndex = zIndexIncrement * 4;
 // To make the delete in a multi select to work
 const chipDeleteIndex = buttonHoverIndex + zIndexIncrement;
-// JSONForms accordian is hardcoded to 20 so making this "1 higher"
-const accordianButton = zIndexIncrement * 5;
+// JSONForms accordi0n is hardcoded to 20 so making this "1 higher"
+const accordionButton = zIndexIncrement * 5;
 
 // Styles
 export const tableBorderSx: SxProps<Theme> = {
@@ -349,7 +349,7 @@ const ThemeProvider = ({ children }: BaseComponentProps) => {
                     defaultProps: {
                         sx: {
                             '& .MuiIconButton-root': {
-                                zIndex: accordianButton,
+                                zIndex: accordionButton,
                             },
                         },
                     },
