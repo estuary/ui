@@ -59,6 +59,10 @@ export enum RPCS {
     VIEW_LOGS = 'view_logs',
 }
 
+export enum FUNCTIONS {
+    OAUTH = 'oauth',
+}
+
 export const supabaseClient = createClient(
     supabaseSettings.url,
     supabaseSettings.anonKey
@@ -235,4 +239,18 @@ export const jobSucceeded = (jobStatus?: JobStatus) => {
     } else {
         return null;
     }
+};
+
+// Invoke supabase edge functions.
+export const invokeSupabase = (
+    fn: FUNCTIONS,
+    body: any
+): PromiseLike<CallSupabaseResponse> => {
+    const invocation = supabaseClient.functions.invoke(fn, { body });
+
+    const makeCall = () => {
+        return invocation.then(handleSuccess, handleFailure);
+    };
+
+    return makeCall();
 };
