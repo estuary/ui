@@ -6,6 +6,7 @@
 export enum Options {
     multi = 'multi',
     format = 'format',
+    multiLineSecret = 'multiLineSecret',
 }
 
 export enum Formats {
