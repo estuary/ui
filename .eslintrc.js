@@ -30,5 +30,10 @@ module.exports = {
 
         // Just do not agree with this one
         'no-negated-condition': 'off',
+
+        // TODO: Determine desired settings for the rules below. Updated on 7/25/2022.
+        'react/iframe-missing-sandbox': 'off',
+        'react/jsx-no-leaked-render': 'off',
+        'no-constant-binary-expression': 'off',
     },
 };
