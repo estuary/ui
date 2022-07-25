@@ -1,4 +1,4 @@
-import { and, optionIs, RankedTester, rankWith } from '@jsonforms/core';
+import { optionIs, RankedTester, rankWith } from '@jsonforms/core';
 import {
     MaterialInputControl,
     MuiInputText,
@@ -7,14 +7,11 @@ import { withJsonFormsControlProps } from '@jsonforms/react';
 import { Box, Button, Stack } from '@mui/material';
 import { useCallback, useState } from 'react';
 import { DropzoneDialog } from 'react-mui-dropzone';
-import { Formats, Options } from 'types/jsonforms';
+import { Options } from 'types/jsonforms';
 
 export const multiLineSecretTester: RankedTester = rankWith(
     10,
-    and(
-        optionIs(Options.format, Formats.password),
-        optionIs(Options.multi, true)
-    )
+    optionIs(Options.multiLineSecret, true)
 );
 
 // This is blank on purpose. For right now we can just show null settings are nothing

@@ -438,10 +438,10 @@ const generateUISchema = (
     }
 
     // If we've gotten here, then the schema appears to be for a scalar value. For most of these, we
-    // just create a default Control. However, we need to handle some. Multiline Secrets (ex: PEM Key)
-    // need to have both the format and multi option set. This is why they are checked as two different
-    // statements. Right now we do not support a multiline, password, date... hence the password/multi check
-    // being in one big else block
+    // just create a default Control. We want to check for date first to make sure that renders correctly.
+    // Then we check if it is password. If it is we set the proper format. While inside that we check for
+    // multi line and set the format option so the MutliLineSecret renderer will pick it up.
+    // After that we check if it is just multiline.
 
     const controlObject: ControlElement = createControlElement(currentRef);
     if (isDateTimeText(jsonSchema)) {
@@ -454,13 +454,13 @@ const generateUISchema = (
             newControl.options.dateTimeFormat = Patterns.dateTime;
             newControl.options.dateTimeSaveFormat = Patterns.dateTime;
         }
-    } else {
-        if (isSecretText(jsonSchema)) {
-            addOption(controlObject, Options.format, Formats.password);
-        }
+    } else if (isSecretText(jsonSchema)) {
+        addOption(controlObject, Options.format, Formats.password);
         if (isMultilineText(jsonSchema)) {
-            addOption(controlObject, Options.multi, true);
+            addOption(controlObject, Options.multiLineSecret, true);
         }
+    } else if (isMultilineText(jsonSchema)) {
+        addOption(controlObject, Options.multi, true);
     }
 
     switch (types[0]) {
