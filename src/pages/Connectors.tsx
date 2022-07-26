@@ -5,6 +5,7 @@ import {
     type SxProps,
     type Theme,
 } from '@mui/material';
+import GridWrapper from 'components/layout/GridWrapper';
 import PageContainer from 'components/shared/PageContainer';
 import ConnectorsTable from 'components/tables/Connectors';
 import useBrowserTitle from 'hooks/useBrowserTitle';
@@ -29,6 +30,8 @@ const Connectors = () => {
             <Box sx={boxStyling}>
                 <ConnectorsTable />
             </Box>
+
+            <GridWrapper />
         </PageContainer>
     );
 };
