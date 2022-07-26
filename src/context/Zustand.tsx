@@ -6,7 +6,7 @@ import {
     useContext,
 } from 'react';
 import useConstant from 'use-constant';
-import { StateSelector, StoreApi, useStore } from 'zustand';
+import { StoreApi, useStore } from 'zustand';
 
 export enum DraftEditorStoreNames {
     CAPTURE = 'draftSpecEditor-Captures',
@@ -32,7 +32,7 @@ export type StoreName =
 
 export type UseZustandStore = <S extends Object, U>(
     storeName: StoreName,
-    selector: StateSelector<S, U>,
+    selector: (state: S) => U,
     equalityFn?: any
 ) => U;
 
@@ -97,7 +97,7 @@ export const ZustandProvider = ({
 //   the store even if they don't allow for selection
 export const useZustandStore = <S extends Object, U>(
     storeName: StoreName,
-    selector: StateSelector<S, U>,
+    selector: (state: S) => U,
     equalityFn?: any
 ) => {
     const storeOptions = useContext(ZustandContext);
