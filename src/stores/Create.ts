@@ -5,7 +5,7 @@ import produce from 'immer';
 import { difference, has, isEmpty, isEqual, map, omit } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
 import { Stores } from 'stores/Repo';
-import { GetState } from 'zustand';
+import { StoreApi } from 'zustand';
 import { NamedSet } from 'zustand/middleware';
 
 export interface Details extends Pick<JsonFormsCore, 'data' | 'errors'> {
@@ -143,7 +143,7 @@ const populateHasErrors = (
 const populateEndpointConfigErrors = (
     endpointConfig: any,
     state: CreateEntityStore,
-    get: GetState<CreateEntityStore>
+    get: StoreApi<CreateEntityStore>['getState']
 ) => {
     const endpointConfigErrors = filterErrors(fetchErrors(endpointConfig));
     state.endpointConfigErrors = endpointConfigErrors;
@@ -327,7 +327,7 @@ export const getInitialStateData = (
 
 export const getInitialCreateState = (
     set: NamedSet<CreateEntityStore>,
-    get: GetState<CreateEntityStore>,
+    get: StoreApi<CreateEntityStore>['getState'],
     includeCollections: boolean,
     messagePrefix: Stores
 ): CreateEntityStore => {
