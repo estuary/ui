@@ -5,12 +5,18 @@ import {
     ReactNode,
     useContext,
 } from 'react';
+import { createEndpointConfigStore } from 'stores/EndpointConfig';
 import useConstant from 'use-constant';
 import { StoreApi, useStore } from 'zustand';
 
 export enum DraftEditorStoreNames {
     CAPTURE = 'draftSpecEditor-Captures',
     MATERIALIZATION = 'draftSpecEditor-Materializations',
+}
+
+export enum EndpointConfigStoreNames {
+    CAPTURE_CREATE = 'Capture-Create-Endpoint-Config',
+    MATERIALIZATION_CREATE = 'Materialization-Create-Endpoint-Config',
 }
 
 export enum LiveSpecEditorStoreNames {
@@ -27,6 +33,7 @@ export enum SelectTableStoreNames {
 
 export type StoreName =
     | DraftEditorStoreNames
+    | EndpointConfigStoreNames
     | LiveSpecEditorStoreNames
     | SelectTableStoreNames;
 
@@ -51,6 +58,13 @@ const stores = {
     [DraftEditorStoreNames.MATERIALIZATION]: createEditorStore(
         DraftEditorStoreNames.MATERIALIZATION
     ),
+    [EndpointConfigStoreNames.CAPTURE_CREATE]: createEndpointConfigStore(
+        EndpointConfigStoreNames.CAPTURE_CREATE
+    ),
+    [EndpointConfigStoreNames.MATERIALIZATION_CREATE]:
+        createEndpointConfigStore(
+            EndpointConfigStoreNames.MATERIALIZATION_CREATE
+        ),
     [SelectTableStoreNames.ACCESS_GRANTS]: createSelectableTableStore(
         SelectTableStoreNames.ACCESS_GRANTS
     ),

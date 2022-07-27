@@ -1,3 +1,4 @@
+import { EndpointConfigStoreNames } from 'context/Zustand';
 import produce from 'immer';
 import { isEmpty, map } from 'lodash';
 import { JsonFormsData } from 'types';
@@ -87,7 +88,7 @@ const getInitialState = (
     },
 });
 
-export const createEndpointConfigStore = (key: string) => {
+export const createEndpointConfigStore = (key: EndpointConfigStoreNames) => {
     return create<EndpointConfigState>()(
         devtools((set, get) => getInitialState(set, get), devtoolsOptions(key))
     );
