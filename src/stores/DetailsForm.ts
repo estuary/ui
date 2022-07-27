@@ -1,5 +1,6 @@
 import { JsonFormsCore } from '@jsonforms/core';
 import { PostgrestError } from '@supabase/postgrest-js';
+import { DetailsFormStoreNames } from 'context/Zustand';
 import produce from 'immer';
 import { devtoolsOptions, populateHasErrors } from 'utils/store-utils';
 import create, { StoreApi } from 'zustand';
@@ -191,7 +192,7 @@ const getInitialState = (
     },
 });
 
-export const createDetailsFormStore = (key: string) => {
+export const createDetailsFormStore = (key: DetailsFormStoreNames) => {
     return create<DetailsFormState>()(
         devtools((set, get) => getInitialState(set, get), devtoolsOptions(key))
     );

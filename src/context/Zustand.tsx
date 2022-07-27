@@ -5,10 +5,16 @@ import {
     ReactNode,
     useContext,
 } from 'react';
+import { createDetailsFormStore } from 'stores/DetailsForm';
 import { createEndpointConfigStore } from 'stores/EndpointConfig';
 import { createResourceConfigStore } from 'stores/ResourceConfig';
 import useConstant from 'use-constant';
 import { StoreApi, useStore } from 'zustand';
+
+export enum DetailsFormStoreNames {
+    CAPTURE_CREATE = 'Capture-Create-Details-Form',
+    MATERIALIZATION_CREATE = 'Materialization-Create-Details-Form',
+}
 
 export enum DraftEditorStoreNames {
     CAPTURE = 'draftSpecEditor-Captures',
@@ -37,6 +43,7 @@ export enum SelectTableStoreNames {
 }
 
 export type StoreName =
+    | DetailsFormStoreNames
     | DraftEditorStoreNames
     | EndpointConfigStoreNames
     | LiveSpecEditorStoreNames
@@ -58,6 +65,14 @@ interface ZustandProviderProps {
 }
 
 const stores = {
+    // Details Form Store
+    [DetailsFormStoreNames.CAPTURE_CREATE]: createDetailsFormStore(
+        DetailsFormStoreNames.CAPTURE_CREATE
+    ),
+    [DetailsFormStoreNames.MATERIALIZATION_CREATE]: createDetailsFormStore(
+        DetailsFormStoreNames.MATERIALIZATION_CREATE
+    ),
+
     // Draft Editor Store
     [DraftEditorStoreNames.CAPTURE]: createEditorStore(
         DraftEditorStoreNames.CAPTURE
