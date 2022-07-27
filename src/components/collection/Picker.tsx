@@ -1,10 +1,8 @@
 import { Autocomplete, Box, TextField, Typography } from '@mui/material';
 import { ResourceConfigStoreNames, useZustandStore } from 'context/Zustand';
 import useLiveSpecs from 'hooks/useLiveSpecs';
-import { useRouteStore } from 'hooks/useRouteStore';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { entityCreateStoreSelectors } from 'stores/Create';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 import useConstant from 'use-constant';
 
@@ -23,10 +21,10 @@ function CollectionPicker({ resourceConfigStoreName }: Props) {
 
     const { liveSpecs: collectionData, error } = useLiveSpecs('collection');
 
-    const useEntityCreateStore = useRouteStore();
-    const collections: string[] = useEntityCreateStore(
-        entityCreateStoreSelectors.collections.get
-    );
+    const collections = useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['collections']
+    >(resourceConfigStoreName, (state) => state.collections);
 
     const setResourceConfig = useZustandStore<
         ResourceConfigState,
@@ -38,11 +36,11 @@ function CollectionPicker({ resourceConfigStoreName }: Props) {
             setResourceConfig(value);
         },
         validateSelection: () => {
-            setMissingInput(collections.length === 0);
+            setMissingInput(!collections || collections.length === 0);
         },
     };
 
-    return collectionData.length > 0 && !error ? (
+    return collections && collectionData.length > 0 && !error ? (
         <Box>
             <Typography variant="h5" sx={{ mb: 1 }}>
                 <FormattedMessage id="materializationCreate.collectionSelector.heading" />

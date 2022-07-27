@@ -12,6 +12,7 @@ import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import {
     DraftEditorStoreNames,
     EndpointConfigStoreNames,
+    ResourceConfigStoreNames,
     useZustandStore,
 } from 'context/Zustand';
 import { useClient } from 'hooks/supabase-swr';
@@ -30,6 +31,7 @@ import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
+import { ResourceConfigState } from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
@@ -39,6 +41,7 @@ interface Props {
     Header: any;
     draftEditorStoreName: DraftEditorStoreNames;
     endpointConfigStoreName: EndpointConfigStoreNames;
+    resourceConfigStoreName?: ResourceConfigStoreNames;
     showCollections?: boolean;
 }
 
@@ -48,6 +51,7 @@ function EntityCreate({
     Header,
     draftEditorStoreName,
     endpointConfigStoreName,
+    resourceConfigStoreName,
     showCollections,
 }: Props) {
     useBrowserTitle(title); //'browserTitle.captureCreate'
@@ -104,12 +108,15 @@ function EntityCreate({
     const setEndpointSchema = useEntityCreateStore(
         entityCreateStoreSelectors.setEndpointSchema
     );
-    const setResourceSchema = useEntityCreateStore(
-        entityCreateStoreSelectors.setResourceSchema
-    );
-    const prefillCollections = useEntityCreateStore(
-        entityCreateStoreSelectors.collections.prefill
-    );
+    const setResourceSchema = useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['setResourceSchema']
+    >(resourceConfigStoreName, (state) => state.setResourceSchema);
+
+    const prefillCollections = useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['preFillCollections']
+    >(resourceConfigStoreName, (state) => state.preFillCollections);
 
     //Editor state
     const setDraftId = useZustandStore<
@@ -247,9 +254,15 @@ function EntityCreate({
                         </ErrorBoundryWrapper>
                     ) : null}
 
-                    {showCollections && hasLength(imageTag?.id) ? (
+                    {showCollections &&
+                    resourceConfigStoreName &&
+                    hasLength(imageTag?.id) ? (
                         <ErrorBoundryWrapper>
-                            <CollectionConfig />
+                            <CollectionConfig
+                                resourceConfigStoreName={
+                                    resourceConfigStoreName
+                                }
+                            />
                         </ErrorBoundryWrapper>
                     ) : null}
 

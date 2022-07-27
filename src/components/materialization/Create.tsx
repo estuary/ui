@@ -10,6 +10,7 @@ import PageContainer from 'components/shared/PageContainer';
 import {
     DraftEditorStoreNames,
     EndpointConfigStoreNames,
+    ResourceConfigStoreNames,
     useZustandStore,
 } from 'context/Zustand';
 import { useClient } from 'hooks/supabase-swr';
@@ -142,6 +143,9 @@ function MaterializationCreate() {
                                 endpointConfigStoreName={
                                     EndpointConfigStoreNames.MATERIALIZATION_CREATE
                                 }
+                                resourceConfigStoreName={
+                                    ResourceConfigStoreNames.MATERIALIZATION_CREATE
+                                }
                             />
                         }
                         TestButton={
@@ -174,6 +178,9 @@ function MaterializationCreate() {
                 draftEditorStoreName={DraftEditorStoreNames.MATERIALIZATION}
                 endpointConfigStoreName={
                     EndpointConfigStoreNames.MATERIALIZATION_CREATE
+                }
+                resourceConfigStoreName={
+                    ResourceConfigStoreNames.MATERIALIZATION_CREATE
                 }
             />
         </PageContainer>
