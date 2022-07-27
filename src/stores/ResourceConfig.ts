@@ -28,7 +28,7 @@ export interface ResourceConfigState {
     collectionErrorsExist: boolean;
 
     currentCollection: string | null;
-    setCurrentCollection: (collections: string) => void;
+    setCurrentCollection: (collections: string | null) => void;
 
     // Resource Config
     resourceConfig: ResourceConfigDictionary;

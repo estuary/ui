@@ -1,6 +1,7 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { StyledEngineProvider } from '@mui/material';
+import { ResourceConfigStoreNames, useZustandStore } from 'context/Zustand';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useEffect, useRef } from 'react';
 import { setDefaultsValidator } from 'services/ajv';
@@ -11,28 +12,41 @@ import {
     showValidation,
 } from 'services/jsonforms';
 import { entityCreateStoreSelectors } from 'stores/Create';
+import { ResourceConfigState } from 'stores/ResourceConfig';
 
 type Props = {
     collectionName: string;
+    resourceConfigStoreName: ResourceConfigStoreNames;
 };
 
-function ResourceConfigForm({ collectionName }: Props) {
+function ResourceConfigForm({
+    collectionName,
+    resourceConfigStoreName,
+}: Props) {
     const name = useRef(collectionName);
     const useEntityCreateStore = useRouteStore();
 
-    const setConfig = useEntityCreateStore(
-        entityCreateStoreSelectors.resourceConfig.set
-    );
-    const formData = useEntityCreateStore(
-        (state: any) => state.resourceConfig[collectionName].data
-    );
+    const setConfig = useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['setResourceConfig']
+    >(resourceConfigStoreName, (state) => state.setResourceConfig);
+
+    const resourceConfig = useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['resourceConfig']
+    >(resourceConfigStoreName, (state) => state.resourceConfig);
+
+    const formData = resourceConfig[collectionName].data;
+
     const displayValidation = useEntityCreateStore(
         entityCreateStoreSelectors.formState.displayValidation
     );
     const isActive = useEntityCreateStore(entityCreateStoreSelectors.isActive);
-    const resourceSchema = useEntityCreateStore(
-        entityCreateStoreSelectors.resourceSchema
-    );
+
+    const resourceSchema = useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['resourceSchema']
+    >(resourceConfigStoreName, (state) => state.resourceSchema);
 
     useEffect(() => {
         name.current = collectionName;

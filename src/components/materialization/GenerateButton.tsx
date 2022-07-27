@@ -7,6 +7,7 @@ import { buttonSx } from 'components/shared/Entity/Header';
 import {
     DraftEditorStoreNames,
     EndpointConfigStoreNames,
+    ResourceConfigStoreNames,
     useZustandStore,
 } from 'context/Zustand';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
@@ -15,6 +16,7 @@ import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
 import { EndpointConfigState } from 'stores/EndpointConfig';
+import { ResourceConfigState } from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
 
 interface Props {
@@ -22,6 +24,7 @@ interface Props {
     callFailed: Function;
     draftEditorStoreName: DraftEditorStoreNames;
     endpointConfigStoreName: EndpointConfigStoreNames;
+    resourceConfigStoreName: ResourceConfigStoreNames;
 }
 
 function MaterializeGenerateButton({
@@ -29,6 +32,7 @@ function MaterializeGenerateButton({
     callFailed,
     draftEditorStoreName,
     endpointConfigStoreName,
+    resourceConfigStoreName,
 }: Props) {
     const isSaving = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
@@ -74,9 +78,10 @@ function MaterializeGenerateButton({
         EndpointConfigState['endpointSchema']
     >(endpointConfigStoreName, (state) => state.endpointSchema);
 
-    const resourceConfig = useEntityCreateStore(
-        entityCreateStoreSelectors.resourceConfig.get
-    );
+    const resourceConfig = useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['resourceConfig']
+    >(resourceConfigStoreName, (state) => state.resourceConfig);
 
     const endpointConfigHasErrors = useZustandStore<
         EndpointConfigState,
@@ -86,9 +91,10 @@ function MaterializeGenerateButton({
     const detailsFormsHasErrors = useEntityCreateStore(
         entityCreateStoreSelectors.details.hasErrors
     );
-    const resourceConfigHasErrors = useEntityCreateStore(
-        entityCreateStoreSelectors.resourceConfig.hasErrors
-    );
+    const resourceConfigHasErrors = useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['resourceConfigErrorsExist']
+    >(resourceConfigStoreName, (state) => state.resourceConfigErrorsExist);
 
     const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
