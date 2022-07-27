@@ -1,4 +1,11 @@
+import { JsonFormsCore } from '@jsonforms/core';
 import { ReactNode } from 'react';
+
+export interface JsonFormsData extends Pick<JsonFormsCore, 'data' | 'errors'> {
+    data: {
+        [key: string]: any;
+    };
+}
 
 export type StoreSelector<T> = Record<string, (state: T) => any>;
 
