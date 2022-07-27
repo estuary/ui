@@ -7,12 +7,16 @@ import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
 import FooHeader from 'components/shared/Entity/Header';
 import PageContainer from 'components/shared/PageContainer';
+import {
+    DraftEditorStoreNames,
+    EndpointConfigStoreNames,
+    useZustandStore,
+} from 'context/Zustand';
 import { useClient } from 'hooks/supabase-swr';
 import { usePrompt } from 'hooks/useBlocker';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
@@ -135,6 +139,9 @@ function MaterializationCreate() {
                                 draftEditorStoreName={
                                     DraftEditorStoreNames.MATERIALIZATION
                                 }
+                                endpointConfigStoreName={
+                                    EndpointConfigStoreNames.MATERIALIZATION_CREATE
+                                }
                             />
                         }
                         TestButton={
@@ -165,6 +172,9 @@ function MaterializationCreate() {
                     />
                 }
                 draftEditorStoreName={DraftEditorStoreNames.MATERIALIZATION}
+                endpointConfigStoreName={
+                    EndpointConfigStoreNames.MATERIALIZATION_CREATE
+                }
             />
         </PageContainer>
     );

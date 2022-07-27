@@ -4,24 +4,31 @@ import { createDraftSpec, generateDraftSpec } from 'api/draftSpecs';
 import { encryptConfig } from 'api/sops';
 import { EditorStoreState } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
-import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
+import {
+    DraftEditorStoreNames,
+    EndpointConfigStoreNames,
+    useZustandStore,
+} from 'context/Zustand';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
+import { EndpointConfigState } from 'stores/EndpointConfig';
 import { ENTITY } from 'types';
 
 interface Props {
     disabled: boolean;
     callFailed: Function;
     draftEditorStoreName: DraftEditorStoreNames;
+    endpointConfigStoreName: EndpointConfigStoreNames;
 }
 
 function MaterializeGenerateButton({
     disabled,
     callFailed,
     draftEditorStoreName,
+    endpointConfigStoreName,
 }: Props) {
     const isSaving = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
@@ -56,19 +63,26 @@ function MaterializeGenerateButton({
     const imageTag = useEntityCreateStore(
         entityCreateStoreSelectors.details.connectorTag
     );
-    const endpointConfigData = useEntityCreateStore(
-        entityCreateStoreSelectors.endpointConfig.data
-    );
-    const endpointSchema = useEntityCreateStore(
-        entityCreateStoreSelectors.endpointSchema
-    );
+
+    const endpointConfigData = useZustandStore<
+        EndpointConfigState,
+        EndpointConfigState['endpointConfig']['data']
+    >(endpointConfigStoreName, (state) => state.endpointConfig.data);
+
+    const endpointSchema = useZustandStore<
+        EndpointConfigState,
+        EndpointConfigState['endpointSchema']
+    >(endpointConfigStoreName, (state) => state.endpointSchema);
+
     const resourceConfig = useEntityCreateStore(
         entityCreateStoreSelectors.resourceConfig.get
     );
 
-    const endpointConfigHasErrors = useEntityCreateStore(
-        entityCreateStoreSelectors.endpointConfig.hasErrors
-    );
+    const endpointConfigHasErrors = useZustandStore<
+        EndpointConfigState,
+        EndpointConfigState['endpointConfigErrorsExist']
+    >(endpointConfigStoreName, (state) => state.endpointConfigErrorsExist);
+
     const detailsFormsHasErrors = useEntityCreateStore(
         entityCreateStoreSelectors.details.hasErrors
     );

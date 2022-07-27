@@ -9,7 +9,11 @@ import EndpointConfig from 'components/shared/Entity/EndpointConfig';
 import EntityError from 'components/shared/Entity/Error';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
+import {
+    DraftEditorStoreNames,
+    EndpointConfigStoreNames,
+    useZustandStore,
+} from 'context/Zustand';
 import { useClient } from 'hooks/supabase-swr';
 import { usePrompt } from 'hooks/useBlocker';
 import useBrowserTitle from 'hooks/useBrowserTitle';
@@ -34,6 +38,7 @@ interface Props {
     connectorType: 'capture' | 'materialization';
     Header: any;
     draftEditorStoreName: DraftEditorStoreNames;
+    endpointConfigStoreName: EndpointConfigStoreNames;
     showCollections?: boolean;
 }
 
@@ -42,6 +47,7 @@ function EntityCreate({
     connectorType,
     Header,
     draftEditorStoreName,
+    endpointConfigStoreName,
     showCollections,
 }: Props) {
     useBrowserTitle(title); //'browserTitle.captureCreate'
@@ -234,6 +240,9 @@ function EntityCreate({
                             <EndpointConfig
                                 connectorImage={imageTag.id}
                                 draftEditorStoreName={draftEditorStoreName}
+                                endpointConfigStoreName={
+                                    endpointConfigStoreName
+                                }
                             />
                         </ErrorBoundryWrapper>
                     ) : null}

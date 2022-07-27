@@ -7,7 +7,11 @@ import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
 import FooHeader from 'components/shared/Entity/Header';
 import PageContainer from 'components/shared/PageContainer';
-import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
+import {
+    DraftEditorStoreNames,
+    EndpointConfigStoreNames,
+    useZustandStore,
+} from 'context/Zustand';
 import { useClient } from 'hooks/supabase-swr';
 import { usePrompt } from 'hooks/useBlocker';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
@@ -187,6 +191,9 @@ function CaptureCreate() {
                                 draftEditorStoreName={
                                     DraftEditorStoreNames.CAPTURE
                                 }
+                                endpointConfigStoreName={
+                                    EndpointConfigStoreNames.CAPTURE_CREATE
+                                }
                             />
                         }
                         TestButton={
@@ -215,6 +222,9 @@ function CaptureCreate() {
                     />
                 }
                 draftEditorStoreName={DraftEditorStoreNames.CAPTURE}
+                endpointConfigStoreName={
+                    EndpointConfigStoreNames.CAPTURE_CREATE
+                }
             />
         </PageContainer>
     );
