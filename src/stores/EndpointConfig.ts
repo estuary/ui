@@ -1,7 +1,7 @@
 import produce from 'immer';
 import { isEmpty, map } from 'lodash';
 import { JsonFormsData } from 'types';
-import { devtoolsOptions } from 'utils/store-utils';
+import { devtoolsOptions, populateHasErrors } from 'utils/store-utils';
 import create, { StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 
@@ -28,36 +28,6 @@ const fetchErrors = ({ errors }: JsonFormsData): JsonFormsData['errors'] => {
 
 const filterErrors = (list: JsonFormsData['errors']): (string | undefined)[] =>
     map(list, 'message');
-
-const populateHasErrors = (
-    get: any,
-    state: any,
-    configs: {
-        resource?: any;
-        endpoint?: any;
-    },
-    collections?: any,
-    detailErrors?: any
-) => {
-    const { resource, endpoint } = configs;
-
-    // We can just pull these since these values are updated when
-    // the config itself is updated
-    const resourceConfigHasErrors = resource ?? get().resourceConfigHasErrors;
-    const endpointConfigHasErrors = endpoint ?? get().endpointConfigHasErrors;
-
-    state.collectionsHasErrors = isEmpty(collections ?? get().collections);
-    state.detailsFormHasErrors = !isEmpty(detailErrors ?? get().details.errors);
-
-    state.hasErrors = Boolean(
-        state.collectionsHasErrors ||
-            state.detailsFormHasErrors ||
-            endpointConfigHasErrors ||
-            resourceConfigHasErrors
-    );
-
-    state.displayValidation = state.hasErrors;
-};
 
 const populateEndpointConfigErrors = (
     endpointConfig: JsonFormsData,
