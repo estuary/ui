@@ -246,7 +246,9 @@ export const invokeSupabase = (
     fn: FUNCTIONS,
     body: any
 ): PromiseLike<CallSupabaseResponse> => {
-    const invocation = supabaseClient.functions.invoke(fn, { body });
+    const invocation = supabaseClient.functions.invoke(fn, {
+        body: JSON.stringify(body),
+    });
 
     const makeCall = () => {
         return invocation.then(handleSuccess, handleFailure);

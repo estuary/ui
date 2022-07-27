@@ -9,6 +9,7 @@ export const authURL = (connectorId: string) => {
     return invokeSupabase(FUNCTIONS.OAUTH, {
         operation: OPERATIONS.AUTH_URL,
         connector_id: connectorId,
+        redirect_uri: `${window.location.origin}/oauth`,
     });
 };
 

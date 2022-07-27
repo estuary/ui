@@ -5,6 +5,7 @@ import CaptureCreate from 'components/capture/Create';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import MaterializationCreate from 'components/materialization/Create';
 import AuthenticatedOnlyContext from 'context/Authenticated';
+import { OAuthPopup } from 'hooks/forks/react-use-oauth2/components';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import { RouteStoreProvider } from 'hooks/useRouteStore';
@@ -23,6 +24,9 @@ import { Stores } from 'stores/Repo';
 import { isProduction } from 'utils/env-utils';
 
 export const authenticatedRoutes = {
+    oauth: {
+        path: '/oauth',
+    },
     admin: {
         title: 'routeTitle.admin',
         path: '/admin',
@@ -129,6 +133,10 @@ const Authenticated = () => {
                     <Route
                         path={unauthenticatedRoutes.auth.path}
                         element={<Auth />}
+                    />
+                    <Route
+                        path={authenticatedRoutes.oauth.path}
+                        element={<OAuthPopup />}
                     />
                     <Route element={<AppLayout />}>
                         <Route
