@@ -6,6 +6,7 @@ import {
     useContext,
 } from 'react';
 import { createEndpointConfigStore } from 'stores/EndpointConfig';
+import { createResourceConfigStore } from 'stores/ResourceConfig';
 import useConstant from 'use-constant';
 import { StoreApi, useStore } from 'zustand';
 
@@ -23,6 +24,10 @@ export enum LiveSpecEditorStoreNames {
     GENERAL = 'liveSpecEditor',
 }
 
+export enum ResourceConfigStoreNames {
+    MATERIALIZATION_CREATE = 'Materialization-Create-Endpoint-Config',
+}
+
 export enum SelectTableStoreNames {
     ACCESS_GRANTS = 'AccessGrants-Selectable-Table',
     CAPTURE = 'Captures-Selectable-Table',
@@ -35,6 +40,7 @@ export type StoreName =
     | DraftEditorStoreNames
     | EndpointConfigStoreNames
     | LiveSpecEditorStoreNames
+    | ResourceConfigStoreNames
     | SelectTableStoreNames;
 
 export type UseZustandStore = <S extends Object, U>(
@@ -52,12 +58,15 @@ interface ZustandProviderProps {
 }
 
 const stores = {
+    // Draft Editor Store
     [DraftEditorStoreNames.CAPTURE]: createEditorStore(
         DraftEditorStoreNames.CAPTURE
     ),
     [DraftEditorStoreNames.MATERIALIZATION]: createEditorStore(
         DraftEditorStoreNames.MATERIALIZATION
     ),
+
+    // Endpoint Config Store
     [EndpointConfigStoreNames.CAPTURE_CREATE]: createEndpointConfigStore(
         EndpointConfigStoreNames.CAPTURE_CREATE
     ),
@@ -65,6 +74,14 @@ const stores = {
         createEndpointConfigStore(
             EndpointConfigStoreNames.MATERIALIZATION_CREATE
         ),
+
+    // Resource Config Store
+    [ResourceConfigStoreNames.MATERIALIZATION_CREATE]:
+        createResourceConfigStore(
+            ResourceConfigStoreNames.MATERIALIZATION_CREATE
+        ),
+
+    // Select Table Store
     [SelectTableStoreNames.ACCESS_GRANTS]: createSelectableTableStore(
         SelectTableStoreNames.ACCESS_GRANTS
     ),

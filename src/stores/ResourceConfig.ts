@@ -1,3 +1,4 @@
+import { ResourceConfigStoreNames } from 'context/Zustand';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
 import { difference, has, isEmpty, map, omit } from 'lodash';
@@ -243,7 +244,7 @@ const getInitialState = (
     },
 });
 
-export const createResourceConfigStore = (key: string) => {
+export const createResourceConfigStore = (key: ResourceConfigStoreNames) => {
     return create<ResourceConfigState>()(
         devtools((set, get) => getInitialState(set, get), devtoolsOptions(key))
     );
