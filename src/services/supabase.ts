@@ -125,19 +125,19 @@ export const getUserDetails = (user: User | null) => {
     };
 };
 
-export interface CallSupabaseResponse {
+export interface CallSupabaseResponse<T> {
     error?: PostgrestError;
-    data: any;
+    data: T | null;
 }
 
-const handleSuccess = (response: any) => {
+const handleSuccess = <T>(response: any) => {
     return response.error
         ? {
               data: null,
               error: response.error,
           }
         : {
-              data: response.data,
+              data: response.data as T,
           };
 };
 
@@ -151,7 +151,7 @@ const handleFailure = (error: any) => {
 export const insertSupabase = (
     table: TABLES,
     data: any
-): PromiseLike<CallSupabaseResponse> => {
+): PromiseLike<CallSupabaseResponse<any>> => {
     const query = supabaseClient.from(table);
 
     const makeCall = () => {
@@ -166,7 +166,7 @@ export const updateSupabase = (
     table: TABLES,
     data: any,
     matchData: any
-): PromiseLike<CallSupabaseResponse> => {
+): PromiseLike<CallSupabaseResponse<any>> => {
     const query = supabaseClient.from(table);
 
     const makeCall = () => {
@@ -242,17 +242,20 @@ export const jobSucceeded = (jobStatus?: JobStatus) => {
 };
 
 // Invoke supabase edge functions.
-export const invokeSupabase = (
+export function invokeSupabase<T>(
     fn: FUNCTIONS,
     body: any
-): PromiseLike<CallSupabaseResponse> => {
-    const invocation = supabaseClient.functions.invoke(fn, {
+): PromiseLike<CallSupabaseResponse<T>> {
+    const invocation = supabaseClient.functions.invoke<T>(fn, {
         body: JSON.stringify(body),
     });
 
     const makeCall = () => {
-        return invocation.then(handleSuccess, handleFailure);
+        return invocation.then<
+            CallSupabaseResponse<T>,
+            CallSupabaseResponse<T>
+        >(handleSuccess, handleFailure);
     };
 
     return makeCall();
-};
+}

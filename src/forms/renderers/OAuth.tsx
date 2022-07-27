@@ -20,17 +20,22 @@ const OAuthproviderRenderer = (props: any) => {
     const { options } = uischema;
     const provider = options[Options.oauthProvider];
     const [authUrlResponse, setAuthUrlResponse] = useState<string | null>(null);
+    const [authStateResponse, setAuthStateResponse] = useState<string | null>(
+        null
+    );
     const [displayOAuthPopUp, setDisplayOAuthPopUp] = useState(false);
 
     useAsync(async () => {
+        console.log('oauth async called');
         const fetchAuthURL = await authURL('06:dc:4a:f6:f0:00:5c:00');
 
         if (fetchAuthURL.error) {
-            console.log('fail');
-            return;
+            console.log('fail', fetchAuthURL.error);
+        } else if (fetchAuthURL.data) {
+            console.log('got oauth stuff back', fetchAuthURL.data);
+            setAuthUrlResponse(fetchAuthURL.data.url);
+            setAuthStateResponse(fetchAuthURL.data.state);
         }
-
-        setAuthUrlResponse(fetchAuthURL.data.url);
     }, [provider]);
 
     return (
@@ -39,8 +44,13 @@ const OAuthproviderRenderer = (props: any) => {
             {provider === 'google' ? (
                 <GoogleButton onClick={() => setDisplayOAuthPopUp(true)} />
             ) : null}
-            {displayOAuthPopUp && hasLength(authUrlResponse) ? (
-                <OAuthRequest url={authUrlResponse ?? ''} />
+            {displayOAuthPopUp &&
+            hasLength(authUrlResponse) &&
+            hasLength(authStateResponse) ? (
+                <OAuthRequest
+                    url={authUrlResponse ?? ''}
+                    state={authStateResponse ?? ''}
+                />
             ) : null}
         </>
     );

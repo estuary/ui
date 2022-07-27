@@ -1,13 +1,12 @@
+/* eslint-disable @typescript-eslint/no-invalid-void-type */
 import { useCallback, useRef, useState } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import {
-    DEFAULT_EXCHANGE_CODE_FOR_TOKEN_METHOD,
     OAUTH_RESPONSE,
     OAUTH_STATE_KEY,
     POPUP_HEIGHT,
     POPUP_WIDTH,
 } from './constants';
-import { objectToQuery, queryToObject } from './tools';
 
 export type AuthTokenPayload = {
     token_type: string;
@@ -17,70 +16,12 @@ export type AuthTokenPayload = {
     refresh_token: string;
 };
 
-export type ResponseTypeBasedProps<TData> =
-    | {
-          responseType: 'code';
-          exchangeCodeForTokenServerURL: string;
-          exchangeCodeForTokenMethod?: 'POST' | 'GET';
-          onSuccess?: (
-              payload: TData
-          ) => void | Promise<any> | PromiseLike<any>; // TODO as this payload will be custom
-          // TODO Adjust payload type
-      }
-    | {
-          responseType: 'token';
-          onSuccess?: (
-              payload: TData
-          ) => void | Promise<any> | PromiseLike<any>; // TODO Adjust payload type
-      };
-
 export type Oauth2Props<TData = AuthTokenPayload> = {
     authorizeUrl: string;
-    clientId?: string;
-    redirectUri?: string;
+    state: string;
     scope?: string;
-    extraQueryParameters?: Record<string, any>;
     onError?: (error: string) => void | Promise<any> | PromiseLike<any>;
-} & ResponseTypeBasedProps<TData>;
-
-const enhanceAuthorizeUrl = (
-    authorizeUrl: string,
-    clientId: string | undefined,
-    redirectUri: string | undefined,
-    scope: string,
-    state: string,
-    responseType: Oauth2Props['responseType'],
-    extraQueryParametersRef: React.MutableRefObject<
-        Oauth2Props['extraQueryParameters']
-    >
-) => {
-    if (redirectUri && clientId) {
-        const query = objectToQuery({
-            response_type: responseType,
-            client_id: clientId,
-            redirect_uri: redirectUri,
-            scope,
-            state,
-            ...extraQueryParametersRef.current,
-        });
-
-        return `${authorizeUrl}?${query}`;
-    }
-
-    return authorizeUrl;
-};
-
-// https://medium.com/@dazcyril/generating-cryptographic-random-state-in-javascript-in-the-browser-c538b3daae50
-const generateState = () => {
-    const validChars =
-        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let array = new Uint8Array(40) as any;
-    window.crypto.getRandomValues(array);
-    array = array.map((x: number) =>
-        validChars.codePointAt(x % validChars.length)
-    );
-    const randomState = String.fromCharCode.apply(null, array);
-    return randomState;
+    onSuccess?: (payload: TData) => void | Promise<any> | PromiseLike<any>;
 };
 
 const saveState = (state: string) => {
@@ -122,38 +63,9 @@ const cleanup = (
 
 export type State<TData = AuthTokenPayload> = TData | null;
 
-const formatExchangeCodeForTokenServerURL = (
-    exchangeCodeForTokenServerURL: string,
-    clientId: string,
-    code: string,
-    redirectUri: string
-) => {
-    const url = exchangeCodeForTokenServerURL.split('?')[0];
-    const anySearchParameters = queryToObject(
-        exchangeCodeForTokenServerURL.split('?')[1]
-    );
-    return `${url}?${objectToQuery({
-        ...anySearchParameters,
-        client_id: clientId,
-        grant_type: 'authorization_code',
-        code,
-        redirect_uri: redirectUri,
-    })}`;
-};
-
 const useOAuth2 = <TData = AuthTokenPayload>(props: Oauth2Props<TData>) => {
-    const {
-        authorizeUrl,
-        clientId,
-        redirectUri,
-        scope = '',
-        responseType,
-        extraQueryParameters = {},
-        onSuccess,
-        onError,
-    } = props;
+    const { authorizeUrl, state, onSuccess, onError } = props;
 
-    const extraQueryParametersRef = useRef(extraQueryParameters);
     const popupRef = useRef<Window | null>();
     const intervalRef = useRef<any>();
     const [{ loading, error }, setUI] = useState({
@@ -161,47 +73,32 @@ const useOAuth2 = <TData = AuthTokenPayload>(props: Oauth2Props<TData>) => {
         error: null,
     });
     const [data, setData] = useLocalStorageState<State>(
-        `${responseType}-${authorizeUrl}-${clientId}-${scope}`,
+        `estuary.connector.oauth`,
         {
             defaultValue: null,
         }
     );
 
-    const exchangeCodeForTokenServerURL =
-        responseType === 'code' && props.exchangeCodeForTokenServerURL;
-    const exchangeCodeForTokenMethod =
-        responseType === 'code' && props.exchangeCodeForTokenMethod;
-
     const getAuth = useCallback(() => {
-        console.log('get auth called');
         // 1. Init
+        setData(null);
         setUI({
             loading: true,
             error: null,
         });
 
         // 2. Generate and save state
-        const state = generateState();
         saveState(state);
 
         // 3. Open popup
-        popupRef.current = openPopup(
-            enhanceAuthorizeUrl(
-                authorizeUrl,
-                clientId,
-                redirectUri,
-                scope,
-                state,
-                responseType,
-                extraQueryParametersRef
-            )
-        );
+        popupRef.current = openPopup(authorizeUrl);
 
         // 4. Register message listener
         async function handleMessageListener(message: MessageEvent<any>) {
             try {
                 const type = message.data?.type;
                 if (type === OAUTH_RESPONSE) {
+                    console.log('message came in', message);
                     const errorMaybe = message.data?.error;
                     if (errorMaybe) {
                         setUI({
@@ -209,27 +106,9 @@ const useOAuth2 = <TData = AuthTokenPayload>(props: Oauth2Props<TData>) => {
                             error: errorMaybe || 'Unknown Error',
                         });
                         if (onError) await onError(errorMaybe);
+                        cleanup(intervalRef, popupRef, handleMessageListener);
                     } else {
-                        let payload = message.data?.payload;
-                        if (
-                            responseType === 'code' &&
-                            exchangeCodeForTokenServerURL
-                        ) {
-                            const response = await fetch(
-                                formatExchangeCodeForTokenServerURL(
-                                    exchangeCodeForTokenServerURL,
-                                    clientId ?? '',
-                                    payload?.code,
-                                    redirectUri ?? ''
-                                ),
-                                {
-                                    method: exchangeCodeForTokenMethod
-                                        ? exchangeCodeForTokenMethod
-                                        : DEFAULT_EXCHANGE_CODE_FOR_TOKEN_METHOD,
-                                }
-                            );
-                            payload = await response.json();
-                        }
+                        const payload = message.data?.payload;
                         setUI({
                             loading: false,
                             error: null,
@@ -238,16 +117,19 @@ const useOAuth2 = <TData = AuthTokenPayload>(props: Oauth2Props<TData>) => {
                         if (onSuccess) {
                             await onSuccess(payload);
                         }
+                        cleanup(intervalRef, popupRef, handleMessageListener);
                     }
                 }
+
+                // Not the best approach but just need to be safe since so much can go wrong
+                // eslint-disable-next-line @typescript-eslint/no-implicit-any-catch
             } catch (genericError: any) {
+                console.log('catch');
                 console.error(genericError);
                 setUI({
                     loading: false,
                     error: genericError.toString(),
                 });
-            } finally {
-                // Clear stuff ...
                 cleanup(intervalRef, popupRef, handleMessageListener);
             }
         }
@@ -277,19 +159,7 @@ const useOAuth2 = <TData = AuthTokenPayload>(props: Oauth2Props<TData>) => {
             window.removeEventListener('message', handleMessageListener);
             if (intervalRef.current) clearInterval(intervalRef.current);
         };
-    }, [
-        authorizeUrl,
-        clientId,
-        redirectUri,
-        scope,
-        responseType,
-        exchangeCodeForTokenServerURL,
-        exchangeCodeForTokenMethod,
-        onSuccess,
-        onError,
-        setUI,
-        setData,
-    ]);
+    }, [authorizeUrl, onError, onSuccess, setData, state]);
 
     return { data, loading, error, getAuth };
 };

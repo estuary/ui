@@ -42,6 +42,8 @@ const OAuthPopup = (props: Props) => {
             window.opener.postMessage({
                 type: OAUTH_RESPONSE,
                 error: 'OAuth error: State mismatch.',
+                payload,
+                stateFoo: sessionStorage.getItem(OAUTH_STATE_KEY),
             });
         }
     }, []);
