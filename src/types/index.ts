@@ -7,6 +7,10 @@ export interface JsonFormsData extends Pick<JsonFormsCore, 'data' | 'errors'> {
     };
 }
 
+export interface Schema {
+    [key: string]: any;
+}
+
 export type StoreSelector<T> = Record<string, (state: T) => any>;
 
 export interface BaseHook<T> {

@@ -3,7 +3,7 @@ import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
 import { difference, has, isEmpty, map, omit } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
-import { JsonFormsData } from 'types';
+import { JsonFormsData, Schema } from 'types';
 import { devtoolsOptions, populateHasErrors } from 'utils/store-utils';
 import create, { StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -16,10 +16,6 @@ export interface ResourceConfig {
 
 interface ResourceConfigDictionary {
     [key: string]: ResourceConfig;
-}
-
-export interface ResourceSchema {
-    [key: string]: any;
 }
 
 // TODO: Determine whether the resourceConfig state property should be made plural. It is a dictionary of individual resource configs, so I am leaning "yes."
@@ -45,7 +41,7 @@ export interface ResourceConfigState {
     resourceConfigErrors: (string | undefined)[];
 
     // Resource Schema
-    resourceSchema: ResourceSchema;
+    resourceSchema: Schema;
     setResourceSchema: (val: ResourceConfigState['resourceSchema']) => void;
 }
 

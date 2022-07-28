@@ -33,8 +33,9 @@ import { FormattedMessage } from 'react-intl';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { entityCreateStoreSelectors } from 'stores/Create';
 import { DetailsFormState, FormStatus } from 'stores/DetailsForm';
-import { ResourceConfigState, ResourceSchema } from 'stores/ResourceConfig';
-import { ENTITY } from 'types';
+import { EndpointConfigState } from 'stores/EndpointConfig';
+import { ResourceConfigState } from 'stores/ResourceConfig';
+import { ENTITY, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
@@ -122,9 +123,10 @@ function EntityCreate({
         DetailsFormState['formState']['exitWhenLogsClose']
     >(detailsFormStoreName, (state) => state.formState.exitWhenLogsClose);
 
-    const setEndpointSchema = useEntityCreateStore(
-        entityCreateStoreSelectors.setEndpointSchema
-    );
+    const setEndpointSchema = useZustandStore<
+        EndpointConfigState,
+        EndpointConfigState['setEndpointSchema']
+    >(endpointConfigStoreName, (state) => state.setEndpointSchema);
 
     // TODO: Determine proper placement for this logic.
     const setResourceSchema = useZustandStore<
@@ -170,11 +172,12 @@ function EntityCreate({
 
     useEffect(() => {
         if (connectorTag) {
-            setEndpointSchema(connectorTag.endpoint_spec_schema);
-
             // TODO: Repair temporary typing.
+            setEndpointSchema(
+                connectorTag.endpoint_spec_schema as unknown as Schema
+            );
             setResourceSchema(
-                connectorTag.resource_spec_schema as unknown as ResourceSchema
+                connectorTag.resource_spec_schema as unknown as Schema
             );
 
             // We wanna make sure we do these after the schemas are set as

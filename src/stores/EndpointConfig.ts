@@ -1,7 +1,7 @@
 import { EndpointConfigStoreNames } from 'context/Zustand';
 import produce from 'immer';
 import { isEmpty, map } from 'lodash';
-import { JsonFormsData } from 'types';
+import { JsonFormsData, Schema } from 'types';
 import { devtoolsOptions, populateHasErrors } from 'utils/store-utils';
 import create, { StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -13,7 +13,7 @@ export interface EndpointConfigState {
     endpointConfigErrorsExist: boolean;
     endpointConfigErrors: (string | undefined)[];
 
-    endpointSchema: { [key: string]: any };
+    endpointSchema: Schema;
     setEndpointSchema: (val: EndpointConfigState['endpointSchema']) => void;
 }
 
