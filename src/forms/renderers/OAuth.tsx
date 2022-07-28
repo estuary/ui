@@ -1,4 +1,4 @@
-import { RankedTester, rankWith } from '@jsonforms/core';
+import { ControlProps, RankedTester, rankWith } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
 import { Alert } from '@mui/material';
 import { accessToken, authURL } from 'api/oauth';
@@ -8,16 +8,22 @@ import { isEmpty } from 'lodash';
 import GoogleButton from 'react-google-button';
 import { Options } from 'types/jsonforms';
 
+const NO_PROVIDER = 'noProviderFound';
+
 export const oAuthProviderTester: RankedTester = rankWith(
     1000,
     optionExists(Options.oauthProvider)
 );
 
 // This is blank on purpose. For right now we can just show null settings are nothing
-const OAuthproviderRenderer = (props: any) => {
-    const { data, path, handleChange, uischema } = props;
+const OAuthproviderRenderer = ({
+    data,
+    path,
+    handleChange,
+    uischema,
+}: ControlProps) => {
     const { options } = uischema;
-    const provider = options[Options.oauthProvider];
+    const provider = options ? options[Options.oauthProvider] : NO_PROVIDER;
 
     const onError = (error_: any) => {
         console.log('Error', error_);
