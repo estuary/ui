@@ -188,7 +188,7 @@ const getInitialState = (
     resetFormState: (status) => {
         set(
             produce((state: DetailsFormState) => {
-                state.formState = initialFormState;
+                state.formState = { ...initialFormState };
                 state.formState.status = status;
                 state.isIdle = formIdle(status);
                 state.isActive = formActive(status);
