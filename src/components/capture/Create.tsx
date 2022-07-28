@@ -62,29 +62,35 @@ function CaptureCreate() {
         DetailsFormState['details']['data']['connectorImage']
     >(detailsFormStoreName, (state) => state.details.data.connectorImage);
 
-    const hasChanges = useEntityCreateStore(
-        entityCreateStoreSelectors.hasChanges
-    );
+    const setFormState = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['setFormState']
+    >(detailsFormStoreName, (state) => state.setFormState);
 
-    const resetEndpointConfigState = useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['resetState']
-    >(EndpointConfigStoreNames.CAPTURE_CREATE, (state) => state.resetState);
+    const detailsFormChanged = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['stateChanged']
+    >(detailsFormStoreName, (state) => state.stateChanged);
 
     const resetDetailsFormState = useZustandStore<
         DetailsFormState,
         DetailsFormState['resetState']
     >(detailsFormStoreName, (state) => state.resetState);
 
-    const setFormState = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['setFormState']
-    >(detailsFormStoreName, (state) => state.setFormState);
-
     const exitWhenLogsClose = useZustandStore<
         DetailsFormState,
         DetailsFormState['formState']['exitWhenLogsClose']
     >(detailsFormStoreName, (state) => state.formState.exitWhenLogsClose);
+
+    const resetEndpointConfigState = useZustandStore<
+        EndpointConfigState,
+        EndpointConfigState['resetState']
+    >(EndpointConfigStoreNames.CAPTURE_CREATE, (state) => state.resetState);
+
+    const endpointConfigChanged = useZustandStore<
+        EndpointConfigState,
+        EndpointConfigState['stateChanged']
+    >(EndpointConfigStoreNames.CAPTURE_CREATE, (state) => state.stateChanged);
 
     //Editor state
     const setDraftId = useZustandStore<
@@ -192,9 +198,13 @@ function CaptureCreate() {
         );
     };
 
-    usePrompt('confirm.loseData', !exitWhenLogsClose && hasChanges(), () => {
-        resetState();
-    });
+    usePrompt(
+        'confirm.loseData',
+        !exitWhenLogsClose && (detailsFormChanged() || endpointConfigChanged()),
+        () => {
+            resetState();
+        }
+    );
 
     return (
         <PageContainer>

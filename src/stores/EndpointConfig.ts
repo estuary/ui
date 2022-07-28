@@ -1,6 +1,6 @@
 import { EndpointConfigStoreNames } from 'context/Zustand';
 import produce from 'immer';
-import { isEmpty, map } from 'lodash';
+import { isEmpty, isEqual, map } from 'lodash';
 import { JsonFormsData, Schema } from 'types';
 import { devtoolsOptions, populateHasErrors } from 'utils/store-utils';
 import create, { StoreApi } from 'zustand';
@@ -17,6 +17,7 @@ export interface EndpointConfigState {
     setEndpointSchema: (val: EndpointConfigState['endpointSchema']) => void;
 
     // Misc.
+    stateChanged: () => boolean;
     resetState: () => void;
 }
 
@@ -88,6 +89,13 @@ const getInitialState = (
             false,
             'Endpoint Schema Set'
         );
+    },
+
+    stateChanged: () => {
+        const { endpointConfig } = get();
+        const { endpointConfig: initialEndpointConfig } = getInitialStateData();
+
+        return !isEqual(endpointConfig.data, initialEndpointConfig.data);
     },
 
     resetState: () => {

@@ -46,10 +46,6 @@ function MaterializationCreate() {
         DetailsFormState['details']['data']['connectorImage']
     >(detailsFormStoreName, (state) => state.details.data.connectorImage);
 
-    const hasChanges = useEntityCreateStore(
-        entityCreateStoreSelectors.hasChanges
-    );
-
     const messagePrefix = useEntityCreateStore(
         entityCreateStoreSelectors.messagePrefix
     );
@@ -62,6 +58,14 @@ function MaterializationCreate() {
         (state) => state.resetState
     );
 
+    const endpointConfigChanged = useZustandStore<
+        EndpointConfigState,
+        EndpointConfigState['stateChanged']
+    >(
+        EndpointConfigStoreNames.MATERIALIZATION_CREATE,
+        (state) => state.stateChanged
+    );
+
     const resetResourceConfigState = useZustandStore<
         ResourceConfigState,
         ResourceConfigState['resetState']
@@ -70,10 +74,23 @@ function MaterializationCreate() {
         (state) => state.resetState
     );
 
+    const resourceConfigChanged = useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['stateChanged']
+    >(
+        ResourceConfigStoreNames.MATERIALIZATION_CREATE,
+        (state) => state.stateChanged
+    );
+
     const resetDetailsFormState = useZustandStore<
         DetailsFormState,
         DetailsFormState['resetState']
     >(detailsFormStoreName, (state) => state.resetState);
+
+    const detailsFormChanged = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['stateChanged']
+    >(detailsFormStoreName, (state) => state.stateChanged);
 
     // Form State
     const setFormState = useZustandStore<
@@ -157,9 +174,16 @@ function MaterializationCreate() {
         },
     };
 
-    usePrompt('confirm.loseData', !exitWhenLogsClose && hasChanges(), () => {
-        resetState();
-    });
+    usePrompt(
+        'confirm.loseData',
+        !exitWhenLogsClose &&
+            (endpointConfigChanged() ||
+                resourceConfigChanged() ||
+                detailsFormChanged()),
+        () => {
+            resetState();
+        }
+    );
 
     return (
         <PageContainer>

@@ -1,7 +1,7 @@
 import { ResourceConfigStoreNames } from 'context/Zustand';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
-import { difference, has, isEmpty, map, omit } from 'lodash';
+import { difference, has, isEmpty, isEqual, map, omit } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
 import { JsonFormsData, Schema } from 'types';
 import { devtoolsOptions, populateHasErrors } from 'utils/store-utils';
@@ -45,6 +45,7 @@ export interface ResourceConfigState {
     setResourceSchema: (val: ResourceConfigState['resourceSchema']) => void;
 
     // Misc.
+    stateChanged: () => boolean;
     resetState: () => void;
 }
 
@@ -244,6 +245,13 @@ const getInitialState = (
             false,
             'Reset Schema Set'
         );
+    },
+
+    stateChanged: () => {
+        const { resourceConfig } = get();
+        const { resourceConfig: initialResourceConfig } = getInitialStateData();
+
+        return !isEqual(resourceConfig.data, initialResourceConfig.data);
     },
 
     resetState: () => {

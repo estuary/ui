@@ -2,6 +2,7 @@ import { JsonFormsCore } from '@jsonforms/core';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { DetailsFormStoreNames } from 'context/Zustand';
 import produce from 'immer';
+import { isEqual } from 'lodash';
 import { devtoolsOptions, populateHasErrors } from 'utils/store-utils';
 import create, { StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -65,6 +66,7 @@ export interface DetailsFormState {
     isActive: boolean;
 
     // Misc.
+    stateChanged: () => boolean;
     resetState: () => void;
 }
 
@@ -192,6 +194,13 @@ const getInitialState = (
             false,
             'Form State Reset'
         );
+    },
+
+    stateChanged: () => {
+        const { details } = get();
+        const { details: initialDetails } = getInitialStateData();
+
+        return !isEqual(details.data, initialDetails.data);
     },
 
     resetState: () => {
