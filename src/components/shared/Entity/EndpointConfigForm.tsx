@@ -7,7 +7,6 @@ import {
     EndpointConfigStoreNames,
     useZustandStore,
 } from 'context/Zustand';
-import { useRouteStore } from 'hooks/useRouteStore';
 import { isEmpty } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import { createJSONFormDefaults, setDefaultsValidator } from 'services/ajv';
@@ -18,7 +17,6 @@ import {
     generateCategoryUiSchema,
     showValidation,
 } from 'services/jsonforms';
-import { entityCreateStoreSelectors } from 'stores/Create';
 import { DetailsFormState } from 'stores/DetailsForm';
 import { EndpointConfigState } from 'stores/EndpointConfig';
 
@@ -33,7 +31,6 @@ function EndpointConfigForm({
     endpointConfigStoreName,
     detailsFormStoreName,
 }: Props) {
-    const useEntityCreateStore = useRouteStore();
     const setSpec = useZustandStore<
         EndpointConfigState,
         EndpointConfigState['setEndpointConfig']
@@ -49,10 +46,15 @@ function EndpointConfigForm({
         DetailsFormState['formState']['displayValidation']
     >(detailsFormStoreName, (state) => state.formState.displayValidation);
 
-    const endpointSchema = useEntityCreateStore(
-        entityCreateStoreSelectors.endpointSchema
-    );
-    const isActive = useEntityCreateStore(entityCreateStoreSelectors.isActive);
+    const endpointSchema = useZustandStore<
+        EndpointConfigState,
+        EndpointConfigState['endpointSchema']
+    >(endpointConfigStoreName, (state) => state.endpointSchema);
+
+    const isActive = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['isActive']
+    >(detailsFormStoreName, (state) => state.isActive);
 
     useEffect(() => {
         if (!isEmpty(endpointSchema)) {
