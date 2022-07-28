@@ -63,6 +63,9 @@ export interface DetailsFormState {
     // Form Status
     isIdle: boolean;
     isActive: boolean;
+
+    // Misc.
+    resetState: () => void;
 }
 
 const formActive = (status: FormStatus) => {
@@ -189,6 +192,10 @@ const getInitialState = (
             false,
             'Form State Reset'
         );
+    },
+
+    resetState: () => {
+        set(getInitialStateData(), false, 'Details Form State Reset');
     },
 });
 

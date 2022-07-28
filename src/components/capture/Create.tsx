@@ -26,6 +26,7 @@ import { CustomEvents } from 'services/logrocket';
 import { startSubscription, TABLES } from 'services/supabase';
 import { entityCreateStoreSelectors } from 'stores/Create';
 import { DetailsFormState, FormStatus } from 'stores/DetailsForm';
+import { EndpointConfigState } from 'stores/EndpointConfig';
 import { getPathWithParam } from 'utils/misc-utils';
 
 const connectorType = 'capture';
@@ -64,9 +65,16 @@ function CaptureCreate() {
     const hasChanges = useEntityCreateStore(
         entityCreateStoreSelectors.hasChanges
     );
-    const resetState = useEntityCreateStore(
-        entityCreateStoreSelectors.resetState
-    );
+
+    const resetEndpointConfigState = useZustandStore<
+        EndpointConfigState,
+        EndpointConfigState['resetState']
+    >(EndpointConfigStoreNames.CAPTURE_CREATE, (state) => state.resetState);
+
+    const resetDetailsFormState = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['resetState']
+    >(detailsFormStoreName, (state) => state.resetState);
 
     const setFormState = useZustandStore<
         DetailsFormState,
@@ -98,6 +106,11 @@ function CaptureCreate() {
     useEffect(() => {
         setDraftId(null);
     }, [imageTag, setDraftId]);
+
+    const resetState = () => {
+        resetEndpointConfigState();
+        resetDetailsFormState();
+    };
 
     const helpers = {
         callFailed: (formState: any, subscription?: RealtimeSubscription) => {

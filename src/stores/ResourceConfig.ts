@@ -43,6 +43,9 @@ export interface ResourceConfigState {
     // Resource Schema
     resourceSchema: Schema;
     setResourceSchema: (val: ResourceConfigState['resourceSchema']) => void;
+
+    // Misc.
+    resetState: () => void;
 }
 
 const populateResourceConfigErrors = (
@@ -235,12 +238,16 @@ const getInitialState = (
 
     setResourceSchema: (val) => {
         set(
-            produce((state) => {
+            produce((state: ResourceConfigState) => {
                 state.resourceSchema = val;
             }),
             false,
             'Reset Schema Set'
         );
+    },
+
+    resetState: () => {
+        set(getInitialStateData(), false, 'Resource Config State Reset');
     },
 });
 

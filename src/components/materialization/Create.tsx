@@ -25,6 +25,8 @@ import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import { entityCreateStoreSelectors } from 'stores/Create';
 import { DetailsFormState, FormStatus } from 'stores/DetailsForm';
+import { EndpointConfigState } from 'stores/EndpointConfig';
+import { ResourceConfigState } from 'stores/ResourceConfig';
 
 const connectorType = 'materialization';
 
@@ -47,13 +49,31 @@ function MaterializationCreate() {
     const hasChanges = useEntityCreateStore(
         entityCreateStoreSelectors.hasChanges
     );
-    const resetState = useEntityCreateStore(
-        entityCreateStoreSelectors.resetState
-    );
 
     const messagePrefix = useEntityCreateStore(
         entityCreateStoreSelectors.messagePrefix
     );
+
+    const resetEndpointConfigState = useZustandStore<
+        EndpointConfigState,
+        EndpointConfigState['resetState']
+    >(
+        EndpointConfigStoreNames.MATERIALIZATION_CREATE,
+        (state) => state.resetState
+    );
+
+    const resetResourceConfigState = useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['resetState']
+    >(
+        ResourceConfigStoreNames.MATERIALIZATION_CREATE,
+        (state) => state.resetState
+    );
+
+    const resetDetailsFormState = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['resetState']
+    >(detailsFormStoreName, (state) => state.resetState);
 
     // Form State
     const setFormState = useZustandStore<
@@ -81,6 +101,12 @@ function MaterializationCreate() {
     useEffect(() => {
         setDraftId(null);
     }, [imageTag, setDraftId]);
+
+    const resetState = () => {
+        resetEndpointConfigState();
+        resetResourceConfigState();
+        resetDetailsFormState();
+    };
 
     const helpers = {
         callFailed: (formState: any, subscription?: RealtimeSubscription) => {

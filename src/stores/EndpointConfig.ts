@@ -15,6 +15,9 @@ export interface EndpointConfigState {
 
     endpointSchema: Schema;
     setEndpointSchema: (val: EndpointConfigState['endpointSchema']) => void;
+
+    // Misc.
+    resetState: () => void;
 }
 
 const fetchErrors = ({ errors }: JsonFormsData): JsonFormsData['errors'] => {
@@ -85,6 +88,10 @@ const getInitialState = (
             false,
             'Endpoint Schema Set'
         );
+    },
+
+    resetState: () => {
+        set(getInitialStateData(), false, 'Endpoint Config State Reset');
     },
 });
 
