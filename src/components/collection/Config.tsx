@@ -41,7 +41,9 @@ function CollectionConfig({ resourceConfigStoreName }: Props) {
                     </>
                 }
             >
-                <BindingsMultiEditor />
+                <BindingsMultiEditor
+                    resourceConfigStoreName={resourceConfigStoreName}
+                />
             </WrapperWithHeader>
         );
     } else {

@@ -10,6 +10,10 @@ import {
 } from '@mui/material';
 import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
 import { slate, stickyHeaderIndex, tableBorderSx } from 'context/Theme';
+import {
+    EndpointConfigStoreNames,
+    ResourceConfigStoreNames,
+} from 'context/Zustand';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { ReactNode } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -20,6 +24,8 @@ interface Props {
     TestButton: ReactNode;
     SaveButton: ReactNode;
     heading: ReactNode;
+    endpointConfigStoreName: EndpointConfigStoreNames;
+    resourceConfigStoreName?: ResourceConfigStoreNames;
 }
 
 export const buttonSx: SxProps<Theme> = { ml: 1 };
@@ -35,7 +41,14 @@ const stickySx: SxProps<Theme> = {
 
 const stickyThreshold = 1;
 
-function FooHeader({ GenerateButton, TestButton, SaveButton, heading }: Props) {
+function FooHeader({
+    GenerateButton,
+    TestButton,
+    SaveButton,
+    heading,
+    endpointConfigStoreName,
+    resourceConfigStoreName,
+}: Props) {
     const useEntityCreateStore = useRouteStore();
     const formActive = useEntityCreateStore(
         entityCreateStoreSelectors.isActive
@@ -92,6 +105,8 @@ function FooHeader({ GenerateButton, TestButton, SaveButton, heading }: Props) {
             <Box sx={{ maxHeight: 200, overflowY: 'auto' }}>
                 <ValidationErrorSummary
                     hasErrorsSelector={entityCreateStoreSelectors.hasErrors}
+                    endpointConfigStoreName={endpointConfigStoreName}
+                    resourceConfigStoreName={resourceConfigStoreName}
                 />
             </Box>
         </>

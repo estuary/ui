@@ -173,6 +173,12 @@ function MaterializationCreate() {
                         heading={
                             <FormattedMessage id={`${messagePrefix}.heading`} />
                         }
+                        endpointConfigStoreName={
+                            EndpointConfigStoreNames.MATERIALIZATION_CREATE
+                        }
+                        resourceConfigStoreName={
+                            ResourceConfigStoreNames.MATERIALIZATION_CREATE
+                        }
                     />
                 }
                 draftEditorStoreName={DraftEditorStoreNames.MATERIALIZATION}

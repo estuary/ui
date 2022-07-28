@@ -13,7 +13,12 @@ function BindingsEditor({ resourceConfigStoreName }: Props) {
     >(resourceConfigStoreName, (state) => state.currentCollection);
 
     if (currentCollection) {
-        return <ResourceConfig collectionName={currentCollection} />;
+        return (
+            <ResourceConfig
+                collectionName={currentCollection}
+                resourceConfigStoreName={resourceConfigStoreName}
+            />
+        );
     } else {
         return null;
     }

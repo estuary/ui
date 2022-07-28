@@ -219,6 +219,9 @@ function CaptureCreate() {
                                 logEvent={CustomEvents.CAPTURE_CREATE}
                             />
                         }
+                        endpointConfigStoreName={
+                            EndpointConfigStoreNames.CAPTURE_CREATE
+                        }
                     />
                 }
                 draftEditorStoreName={DraftEditorStoreNames.CAPTURE}

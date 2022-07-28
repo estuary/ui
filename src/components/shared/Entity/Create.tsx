@@ -31,7 +31,7 @@ import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
-import { ResourceConfigState } from 'stores/ResourceConfig';
+import { ResourceConfigState, ResourceSchema } from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
@@ -108,15 +108,25 @@ function EntityCreate({
     const setEndpointSchema = useEntityCreateStore(
         entityCreateStoreSelectors.setEndpointSchema
     );
+
+    // TODO: Determine proper placement for this logic.
     const setResourceSchema = useZustandStore<
         ResourceConfigState,
         ResourceConfigState['setResourceSchema']
-    >(resourceConfigStoreName, (state) => state.setResourceSchema);
+    >(
+        resourceConfigStoreName ??
+            ResourceConfigStoreNames.MATERIALIZATION_CREATE,
+        (state) => state.setResourceSchema
+    );
 
     const prefillCollections = useZustandStore<
         ResourceConfigState,
         ResourceConfigState['preFillCollections']
-    >(resourceConfigStoreName, (state) => state.preFillCollections);
+    >(
+        resourceConfigStoreName ??
+            ResourceConfigStoreNames.MATERIALIZATION_CREATE,
+        (state) => state.preFillCollections
+    );
 
     //Editor state
     const setDraftId = useZustandStore<
@@ -129,7 +139,7 @@ function EntityCreate({
         EditorStoreState<DraftSpecQuery>['id']
     >(draftEditorStoreName, (state) => state.id);
 
-    // Reset the cataolg if the connector changes
+    // Reset the catalog if the connector changes
     useEffect(() => {
         setDraftId(null);
     }, [imageTag, setDraftId]);
@@ -144,7 +154,12 @@ function EntityCreate({
     useEffect(() => {
         if (connectorTag) {
             setEndpointSchema(connectorTag.endpoint_spec_schema);
-            setResourceSchema(connectorTag.resource_spec_schema);
+
+            // TODO: Repair temporary typing.
+            setResourceSchema(
+                connectorTag.resource_spec_schema as unknown as ResourceSchema
+            );
+
             // We wanna make sure we do these after the schemas are set as
             //  as they are dependent on them.
             if (liveSpecs.length > 0) {

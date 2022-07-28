@@ -18,6 +18,10 @@ interface ResourceConfigDictionary {
     [key: string]: ResourceConfig;
 }
 
+export interface ResourceSchema {
+    [key: string]: any;
+}
+
 // TODO: Determine whether the resourceConfig state property should be made plural. It is a dictionary of individual resource configs, so I am leaning "yes."
 // TODO: Determine if it is possible to break out the collection selector segment of the store. Feels like an anti-pattern of this new approach.
 export interface ResourceConfigState {
@@ -41,7 +45,7 @@ export interface ResourceConfigState {
     resourceConfigErrors: (string | undefined)[];
 
     // Resource Schema
-    resourceSchema: { [key: string]: any };
+    resourceSchema: ResourceSchema;
     setResourceSchema: (val: ResourceConfigState['resourceSchema']) => void;
 }
 
