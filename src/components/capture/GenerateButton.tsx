@@ -96,11 +96,16 @@ function CaptureGenerateButton({
                 endpointSchema,
                 endpointConfigData
             );
-            if (encryptedEndpointConfig.data.error) {
+            if (
+                encryptedEndpointConfig.error ||
+                encryptedEndpointConfig.data.error
+            ) {
                 return callFailed({
                     error: {
                         title: 'entityCreate.sops.failedTitle',
-                        error: encryptedEndpointConfig.data.error,
+                        error:
+                            encryptedEndpointConfig.error ??
+                            encryptedEndpointConfig.data.error,
                     },
                 });
             }

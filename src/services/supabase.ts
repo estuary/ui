@@ -242,20 +242,8 @@ export const jobSucceeded = (jobStatus?: JobStatus) => {
 };
 
 // Invoke supabase edge functions.
-export function invokeSupabase<T>(
-    fn: FUNCTIONS,
-    body: any
-): PromiseLike<CallSupabaseResponse<T>> {
-    const invocation = supabaseClient.functions.invoke<T>(fn, {
+export function invokeSupabase<T>(fn: FUNCTIONS, body: any) {
+    return supabaseClient.functions.invoke<T>(fn, {
         body: JSON.stringify(body),
     });
-
-    const makeCall = () => {
-        return invocation.then<
-            CallSupabaseResponse<T>,
-            CallSupabaseResponse<T>
-        >(handleSuccess, handleFailure);
-    };
-
-    return makeCall();
 }

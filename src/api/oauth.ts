@@ -39,7 +39,7 @@ export const encryptConfig = (
 ) => {
     return invokeSupabase<any>(FUNCTIONS.OAUTH, {
         operation: OPERATIONS.ENCRYPT_CONFIG,
-        connectorId,
+        connector_id: connectorId,
         config,
         schema,
     });
