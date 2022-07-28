@@ -1,12 +1,15 @@
 import { ControlProps, RankedTester, rankWith } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
-import { Alert } from '@mui/material';
+import { Alert, Stack, Typography } from '@mui/material';
 import { accessToken, authURL } from 'api/oauth';
+import FullPageSpinner from 'components/fullPage/Spinner';
 import { optionExists } from 'forms/renderers/Overrides/testers/testers';
 import { useOAuth2 } from 'hooks/forks/react-use-oauth2/components';
 import { isEmpty } from 'lodash';
+import { useState } from 'react';
 import GoogleButton from 'react-google-button';
 import { Options } from 'types/jsonforms';
+import { hasLength } from 'utils/misc-utils';
 
 const NO_PROVIDER = 'noProviderFound';
 
@@ -23,23 +26,24 @@ const OAuthproviderRenderer = ({
     uischema,
 }: ControlProps) => {
     const { options } = uischema;
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const provider = options ? options[Options.oauthProvider] : NO_PROVIDER;
 
     const onError = (error_: any) => {
-        console.log('Error', error_);
+        setErrorMessage(error_);
     };
 
     const onSuccess = async (payload: any) => {
         const tokenResponse = await accessToken(payload.state, payload.code);
 
         if (tokenResponse.error) {
-            console.log('failed access token call', tokenResponse.error);
+            setErrorMessage(tokenResponse.error.message);
         } else if (tokenResponse.data) {
             handleChange(path, tokenResponse.data);
         }
     };
 
-    const { loading, error, getAuth } = useOAuth2({
+    const { loading, getAuth } = useOAuth2({
         onSuccess,
         onError,
     });
@@ -48,28 +52,31 @@ const OAuthproviderRenderer = ({
         const fetchAuthURL = await authURL('06:dc:4a:f6:f0:00:5c:00');
 
         if (fetchAuthURL.error) {
-            console.log('fail', fetchAuthURL.error);
+            setErrorMessage(fetchAuthURL.error.message);
         } else if (fetchAuthURL.data) {
-            const authProperties = getAuth(
-                fetchAuthURL.data.url,
-                fetchAuthURL.data.state
-            );
-            console.log('fetching done', authProperties);
+            // This kicks off the call and the success is handled with the onSuccess/onError
+            getAuth(fetchAuthURL.data.url, fetchAuthURL.data.state);
         }
     };
 
-    console.log({ loading, error, getAuth });
-    console.log('oauth data', data);
-
     return (
         <>
-            {!isEmpty(data) ? (
-                <Alert severity="success">Authenticated</Alert>
+            {hasLength(errorMessage) ? (
+                <Alert severity="error">{errorMessage}</Alert>
             ) : null}
-            Use the button below to enable OAuth
-            {provider === 'google' ? (
-                <GoogleButton disabled={loading} onClick={openPopUp} />
-            ) : null}
+
+            <Typography>Authenticate your {` ${provider} `} account</Typography>
+
+            <Stack direction="row" spacing={2}>
+                {provider === 'google' ? (
+                    <GoogleButton disabled={loading} onClick={openPopUp} />
+                ) : null}
+                {!isEmpty(data) ? (
+                    <Alert severity="success">Authenticated</Alert>
+                ) : null}
+            </Stack>
+
+            {loading ? <FullPageSpinner /> : null}
         </>
     );
 };

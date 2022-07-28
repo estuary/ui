@@ -16,9 +16,8 @@ export type AuthTokenPayload = {
 };
 
 export type Oauth2Props<TData = AuthTokenPayload> = {
-    scope?: string;
-    onError?: (error: string) => void | Promise<any> | PromiseLike<any>;
-    onSuccess?: (payload: TData) => void | Promise<any> | PromiseLike<any>;
+    onError: (error: string) => void | Promise<any> | PromiseLike<any>;
+    onSuccess: (payload: TData) => void | Promise<any> | PromiseLike<any>;
 };
 
 const saveState = (state: string) => {
@@ -65,18 +64,12 @@ const useOAuth2 = <TData = AuthTokenPayload>(props: Oauth2Props<TData>) => {
 
     const popupRef = useRef<Window | null>();
     const intervalRef = useRef<any>();
-    const [{ loading, error }, setUI] = useState({
-        loading: false,
-        error: null,
-    });
+    const [loading, setLoading] = useState(false);
 
     const getAuth = useCallback(
         (authorizeUrl: string, state: string) => {
             // 1. Init
-            setUI({
-                loading: true,
-                error: null,
-            });
+            setLoading(true);
 
             // 2. Generate and save state
             saveState(state);
@@ -89,52 +82,35 @@ const useOAuth2 = <TData = AuthTokenPayload>(props: Oauth2Props<TData>) => {
                 try {
                     const type = message.data?.type;
                     if (type === OAUTH_RESPONSE) {
-                        console.log('message came in', message);
                         const errorMaybe = message.data?.error;
                         if (errorMaybe) {
-                            if (onError) await onError(errorMaybe);
-                            setUI({
-                                loading: false,
-                                error: errorMaybe || 'Unknown Error',
-                            });
+                            await onError(errorMaybe);
                         } else {
                             const payload = message.data?.payload;
-                            if (onSuccess) {
-                                await onSuccess(payload);
-                            }
-                            setUI({
-                                loading: false,
-                                error: null,
-                            });
+                            await onSuccess(payload);
                         }
                         cleanup(intervalRef, popupRef, handleMessageListener);
+                        setLoading(false);
                     }
 
                     // Not the best approach but just need to be safe since so much can go wrong
                     // eslint-disable-next-line @typescript-eslint/no-implicit-any-catch
                 } catch (genericError: any) {
-                    console.log('catch');
-                    console.error(genericError);
-                    setUI({
-                        loading: false,
-                        error: genericError.toString(),
-                    });
+                    await onError(genericError.toString());
+                    setLoading(false);
                     cleanup(intervalRef, popupRef, handleMessageListener);
                 }
             }
             window.addEventListener('message', handleMessageListener);
 
             // 4. Begin interval to check if popup was closed forcefully by the user
-            intervalRef.current = setInterval(() => {
+            intervalRef.current = setInterval(async () => {
                 const popupClosed =
                     !popupRef.current?.window || popupRef.current.window.closed;
                 if (popupClosed) {
                     // Popup was closed before completing auth...
-                    setUI((ui) => ({
-                        ...ui,
-                        loading: false,
-                    }));
-                    console.warn(
+                    setLoading(false);
+                    await onError(
                         'Warning: Popup was closed before completing authentication.'
                     );
                     clearInterval(intervalRef.current);
@@ -155,7 +131,7 @@ const useOAuth2 = <TData = AuthTokenPayload>(props: Oauth2Props<TData>) => {
         [onError, onSuccess]
     );
 
-    return { loading, error, getAuth };
+    return { loading, getAuth };
 };
 
 export default useOAuth2;
