@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import { useCallback, useRef, useState } from 'react';
-import useLocalStorageState from 'use-local-storage-state';
 import {
     OAUTH_RESPONSE,
     OAUTH_STATE_KEY,
@@ -17,8 +16,6 @@ export type AuthTokenPayload = {
 };
 
 export type Oauth2Props<TData = AuthTokenPayload> = {
-    authorizeUrl: string;
-    state: string;
     scope?: string;
     onError?: (error: string) => void | Promise<any> | PromiseLike<any>;
     onSuccess?: (payload: TData) => void | Promise<any> | PromiseLike<any>;
@@ -64,7 +61,7 @@ const cleanup = (
 export type State<TData = AuthTokenPayload> = TData | null;
 
 const useOAuth2 = <TData = AuthTokenPayload>(props: Oauth2Props<TData>) => {
-    const { authorizeUrl, state, onSuccess, onError } = props;
+    const { onSuccess, onError } = props;
 
     const popupRef = useRef<Window | null>();
     const intervalRef = useRef<any>();
@@ -72,96 +69,93 @@ const useOAuth2 = <TData = AuthTokenPayload>(props: Oauth2Props<TData>) => {
         loading: false,
         error: null,
     });
-    const [data, setData] = useLocalStorageState<State>(
-        `estuary.connector.oauth`,
-        {
-            defaultValue: null,
-        }
-    );
 
-    const getAuth = useCallback(() => {
-        // 1. Init
-        setData(null);
-        setUI({
-            loading: true,
-            error: null,
-        });
+    const getAuth = useCallback(
+        (authorizeUrl: string, state: string) => {
+            // 1. Init
+            setUI({
+                loading: true,
+                error: null,
+            });
 
-        // 2. Generate and save state
-        saveState(state);
+            // 2. Generate and save state
+            saveState(state);
 
-        // 3. Open popup
-        popupRef.current = openPopup(authorizeUrl);
+            // 3. Open popup
+            popupRef.current = openPopup(authorizeUrl);
 
-        // 4. Register message listener
-        async function handleMessageListener(message: MessageEvent<any>) {
-            try {
-                const type = message.data?.type;
-                if (type === OAUTH_RESPONSE) {
-                    console.log('message came in', message);
-                    const errorMaybe = message.data?.error;
-                    if (errorMaybe) {
-                        setUI({
-                            loading: false,
-                            error: errorMaybe || 'Unknown Error',
-                        });
-                        if (onError) await onError(errorMaybe);
-                        cleanup(intervalRef, popupRef, handleMessageListener);
-                    } else {
-                        const payload = message.data?.payload;
-                        setUI({
-                            loading: false,
-                            error: null,
-                        });
-                        setData(payload);
-                        if (onSuccess) {
-                            await onSuccess(payload);
+            // 4. Register message listener
+            async function handleMessageListener(message: MessageEvent<any>) {
+                try {
+                    const type = message.data?.type;
+                    if (type === OAUTH_RESPONSE) {
+                        console.log('message came in', message);
+                        const errorMaybe = message.data?.error;
+                        if (errorMaybe) {
+                            if (onError) await onError(errorMaybe);
+                            setUI({
+                                loading: false,
+                                error: errorMaybe || 'Unknown Error',
+                            });
+                        } else {
+                            const payload = message.data?.payload;
+                            if (onSuccess) {
+                                await onSuccess(payload);
+                            }
+                            setUI({
+                                loading: false,
+                                error: null,
+                            });
                         }
                         cleanup(intervalRef, popupRef, handleMessageListener);
                     }
+
+                    // Not the best approach but just need to be safe since so much can go wrong
+                    // eslint-disable-next-line @typescript-eslint/no-implicit-any-catch
+                } catch (genericError: any) {
+                    console.log('catch');
+                    console.error(genericError);
+                    setUI({
+                        loading: false,
+                        error: genericError.toString(),
+                    });
+                    cleanup(intervalRef, popupRef, handleMessageListener);
                 }
-
-                // Not the best approach but just need to be safe since so much can go wrong
-                // eslint-disable-next-line @typescript-eslint/no-implicit-any-catch
-            } catch (genericError: any) {
-                console.log('catch');
-                console.error(genericError);
-                setUI({
-                    loading: false,
-                    error: genericError.toString(),
-                });
-                cleanup(intervalRef, popupRef, handleMessageListener);
             }
-        }
-        window.addEventListener('message', handleMessageListener);
+            window.addEventListener('message', handleMessageListener);
 
-        // 4. Begin interval to check if popup was closed forcefully by the user
-        intervalRef.current = setInterval(() => {
-            const popupClosed =
-                !popupRef.current?.window || popupRef.current.window.closed;
-            if (popupClosed) {
-                // Popup was closed before completing auth...
-                setUI((ui) => ({
-                    ...ui,
-                    loading: false,
-                }));
-                console.warn(
-                    'Warning: Popup was closed before completing authentication.'
-                );
-                clearInterval(intervalRef.current);
-                removeState();
+            // 4. Begin interval to check if popup was closed forcefully by the user
+            intervalRef.current = setInterval(() => {
+                const popupClosed =
+                    !popupRef.current?.window || popupRef.current.window.closed;
+                if (popupClosed) {
+                    // Popup was closed before completing auth...
+                    setUI((ui) => ({
+                        ...ui,
+                        loading: false,
+                    }));
+                    console.warn(
+                        'Warning: Popup was closed before completing authentication.'
+                    );
+                    clearInterval(intervalRef.current);
+                    removeState();
+                    window.removeEventListener(
+                        'message',
+                        handleMessageListener
+                    );
+                }
+            }, 250);
+
+            // 5. Remove listener(s) on unmount
+            return () => {
                 window.removeEventListener('message', handleMessageListener);
-            }
-        }, 250);
+                if (intervalRef.current) clearInterval(intervalRef.current);
+            };
+        },
+        [onError, onSuccess]
+    );
 
-        // 5. Remove listener(s) on unmount
-        return () => {
-            window.removeEventListener('message', handleMessageListener);
-            if (intervalRef.current) clearInterval(intervalRef.current);
-        };
-    }, [authorizeUrl, onError, onSuccess, setData, state]);
-
-    return { data, loading, error, getAuth };
+    return { loading, error, getAuth };
 };
 
 export default useOAuth2;

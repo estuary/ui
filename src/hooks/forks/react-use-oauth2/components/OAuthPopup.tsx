@@ -1,11 +1,12 @@
 import FullPageSpinner from 'components/fullPage/Spinner';
 import { useEffect } from 'react';
+import { base64RemovePadding } from 'utils/misc-utils';
 import { OAUTH_RESPONSE, OAUTH_STATE_KEY } from './constants';
 import { queryToObject } from './tools';
 
 const checkState = (receivedState: string) => {
     const state = sessionStorage.getItem(OAUTH_STATE_KEY);
-    return state === receivedState;
+    return base64RemovePadding(state) === base64RemovePadding(receivedState);
 };
 
 type Props = {
