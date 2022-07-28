@@ -13,6 +13,13 @@ type Props = {
     Component?: React.ReactElement;
 };
 
+const sendMessage = (body: any) => {
+    window.opener.postMessage({
+        ...body,
+        type: OAUTH_RESPONSE,
+    });
+};
+
 const OAuthPopup = (props: Props) => {
     const { Component = <FullPageSpinner /> } = props;
 
@@ -30,18 +37,15 @@ const OAuthPopup = (props: Props) => {
         }
 
         if (error) {
-            window.opener.postMessage({
-                type: OAUTH_RESPONSE,
+            sendMessage({
                 error: decodeURI(error) || 'OAuth error: An error has occured.',
             });
         } else if (state && checkState(state)) {
-            window.opener.postMessage({
-                type: OAUTH_RESPONSE,
+            sendMessage({
                 payload,
             });
         } else {
-            window.opener.postMessage({
-                type: OAUTH_RESPONSE,
+            sendMessage({
                 error: 'OAuth error: State mismatch.',
             });
         }
