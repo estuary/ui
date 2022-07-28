@@ -1,5 +1,4 @@
 import { Alert, Collapse } from '@mui/material';
-import { RealtimeSubscription } from '@supabase/supabase-js';
 import { authenticatedRoutes } from 'app/Authenticated';
 import CollectionConfig from 'components/collection/Config';
 import { EditorStoreState } from 'components/editor/Store';
@@ -16,8 +15,6 @@ import {
     ResourceConfigStoreNames,
     useZustandStore,
 } from 'context/Zustand';
-import { useClient } from 'hooks/supabase-swr';
-import { usePrompt } from 'hooks/useBlocker';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useConnectorTag from 'hooks/useConnectorTag';
@@ -30,9 +27,9 @@ import {
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { entityCreateStoreSelectors } from 'stores/Create';
-import { DetailsFormState, FormStatus } from 'stores/DetailsForm';
+import { DetailsFormState } from 'stores/DetailsForm';
 import { EndpointConfigState } from 'stores/EndpointConfig';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 import { ENTITY, Schema } from 'types';
@@ -61,11 +58,7 @@ function EntityCreate({
 }: Props) {
     useBrowserTitle(title); //'browserTitle.captureCreate'
 
-    // misc hooks
-    const navigate = useNavigate();
-
     // Supabase stuff
-    const supabaseClient = useClient();
     const { combinedGrants } = useCombinedGrantsExt({
         adminOnly: true,
     });
@@ -92,18 +85,6 @@ function EntityCreate({
         DetailsFormState['details']['data']['connectorImage']
     >(detailsFormStoreName, (state) => state.details.data.connectorImage);
 
-    const hasChanges = useEntityCreateStore(
-        entityCreateStoreSelectors.hasChanges
-    );
-    const resetState = useEntityCreateStore(
-        entityCreateStoreSelectors.resetState
-    );
-
-    const setFormState = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['setFormState']
-    >(detailsFormStoreName, (state) => state.setFormState);
-
     const messagePrefix = useEntityCreateStore(
         entityCreateStoreSelectors.messagePrefix
     );
@@ -117,11 +98,6 @@ function EntityCreate({
         DetailsFormState,
         DetailsFormState['formState']['error']
     >(detailsFormStoreName, (state) => state.formState.error);
-
-    const exitWhenLogsClose = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['formState']['exitWhenLogsClose']
-    >(detailsFormStoreName, (state) => state.formState.exitWhenLogsClose);
 
     const setEndpointSchema = useZustandStore<
         EndpointConfigState,
@@ -196,51 +172,6 @@ function EntityCreate({
         setEndpointSchema,
         setResourceSchema,
     ]);
-
-    usePrompt('confirm.loseData', !exitWhenLogsClose && hasChanges(), () => {
-        resetState();
-    });
-
-    const helpers = {
-        callFailed: (formState: any, subscription?: RealtimeSubscription) => {
-            const setFailureState = () => {
-                setFormState({
-                    status: FormStatus.FAILED,
-                    exitWhenLogsClose: false,
-                    ...formState,
-                });
-            };
-            if (subscription) {
-                helpers
-                    .doneSubscribing(subscription)
-                    .then(() => {
-                        setFailureState();
-                    })
-                    .catch(() => {});
-            } else {
-                setFailureState();
-            }
-        },
-        doneSubscribing: (subscription: RealtimeSubscription) => {
-            return supabaseClient
-                .removeSubscription(subscription)
-                .then(() => {})
-                .catch(() => {});
-        },
-        exit: () => {
-            resetState();
-
-            navigate(authenticatedRoutes.captures.path);
-        },
-        jobFailed: (errorTitle: string) => {
-            setFormState({
-                error: {
-                    title: errorTitle,
-                },
-                status: FormStatus.FAILED,
-            });
-        },
-    };
 
     return (
         <>
