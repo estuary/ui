@@ -40,7 +40,7 @@ const OAuthproviderRenderer = ({
 
         if (tokenResponse.error) {
             setErrorMessage(tokenResponse.error.message);
-        } else if (tokenResponse.data) {
+        } else if (!isEmpty(tokenResponse.data)) {
             handleChange(path, {
                 ...tokenResponse.data,
                 client_id: '-insertedByServer-',
@@ -65,7 +65,7 @@ const OAuthproviderRenderer = ({
 
         if (fetchAuthURL.error) {
             setErrorMessage(fetchAuthURL.error.message);
-        } else if (fetchAuthURL.data) {
+        } else if (!isEmpty(fetchAuthURL.data)) {
             // This kicks off the call and the success is handled with the onSuccess/onError
             getAuth(fetchAuthURL.data.url, fetchAuthURL.data.state);
         }
