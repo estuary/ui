@@ -61,12 +61,15 @@ function CaptureGenerateButton({
         DetailsFormState['resetFormState']
     >(detailsFormStoreName, (state) => state.resetFormState);
 
-    const entityName = useEntityCreateStore(
-        entityCreateStoreSelectors.details.entityName
-    );
-    const imageTag = useEntityCreateStore(
-        entityCreateStoreSelectors.details.connectorTag
-    );
+    const entityName = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['details']['data']['entityName']
+    >(detailsFormStoreName, (state) => state.details.data.entityName);
+
+    const imageTag = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['details']['data']['connectorImage']
+    >(detailsFormStoreName, (state) => state.details.data.connectorImage);
 
     const endpointConfigData = useZustandStore<
         EndpointConfigState,
@@ -83,9 +86,10 @@ function CaptureGenerateButton({
         EndpointConfigState['endpointConfigErrorsExist']
     >(endpointConfigStoreName, (state) => state.endpointConfigErrorsExist);
 
-    const detailsFormsHasErrors = useEntityCreateStore(
-        entityCreateStoreSelectors.details.hasErrors
-    );
+    const detailsFormsHasErrors = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['detailsFormErrorsExist']
+    >(detailsFormStoreName, (state) => state.detailsFormErrorsExist);
 
     const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
@@ -131,7 +135,7 @@ function CaptureGenerateButton({
             const discoverResponse = await discover(
                 entityName,
                 encryptedEndpointConfig.data,
-                imageTag.id,
+                imageTag ? imageTag.id : '',
                 draftsResponse.data[0].id
             );
             if (discoverResponse.error) {

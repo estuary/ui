@@ -1,19 +1,25 @@
 import KeyValueList from 'components/shared/KeyValueList';
-import { useRouteStore } from 'hooks/useRouteStore';
+import { DetailsFormStoreNames, useZustandStore } from 'context/Zustand';
 import { useIntl } from 'react-intl';
-import { entityCreateStoreSelectors } from 'stores/Create';
+import { DetailsFormState } from 'stores/DetailsForm';
 import { hasLength } from 'utils/misc-utils';
 
-function DetailsErrors() {
+interface Props {
+    detailsFormStoreName: DetailsFormStoreNames;
+}
+
+function DetailsErrors({ detailsFormStoreName }: Props) {
     const intl = useIntl();
 
-    const useEntityCreateStore = useRouteStore();
-    const entityName = useEntityCreateStore(
-        entityCreateStoreSelectors.details.entityName
-    );
-    const imageTag = useEntityCreateStore(
-        entityCreateStoreSelectors.details.connectorTag
-    );
+    const entityName = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['details']['data']['entityName']
+    >(detailsFormStoreName, (state) => state.details.data.entityName);
+
+    const imageTag = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['details']['data']['connectorImage']
+    >(detailsFormStoreName, (state) => state.details.data.connectorImage);
 
     const filteredErrorsList: any[] = [];
 
@@ -26,7 +32,7 @@ function DetailsErrors() {
     }
 
     // Check if there is a connector
-    if (!hasLength(imageTag.id)) {
+    if (!hasLength(imageTag ? imageTag.id : '')) {
         filteredErrorsList.push({
             title: intl.formatMessage({
                 id: 'entityCreate.endpointConfig.connectorMissing',

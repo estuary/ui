@@ -72,9 +72,11 @@ function EntityCreateSave({
     );
 
     const useEntityCreateStore = useRouteStore();
-    const entityDescription = useEntityCreateStore(
-        entityCreateStoreSelectors.details.description
-    );
+
+    const entityDescription = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['details']['data']['description']
+    >(detailsFormStoreName, (state) => state.details.data.description);
 
     const setFormState = useZustandStore<
         DetailsFormState,

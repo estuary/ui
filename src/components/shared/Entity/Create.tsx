@@ -85,9 +85,12 @@ function EntityCreate({
     } = useConnectorWithTagDetail(connectorType);
 
     const useEntityCreateStore = useRouteStore();
-    const imageTag = useEntityCreateStore(
-        entityCreateStoreSelectors.details.connectorTag
-    );
+
+    const imageTag = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['details']['data']['connectorImage']
+    >(detailsFormStoreName, (state) => state.details.data.connectorImage);
+
     const hasChanges = useEntityCreateStore(
         entityCreateStoreSelectors.hasChanges
     );
@@ -158,7 +161,7 @@ function EntityCreate({
         setDraftId(null);
     }, [imageTag, setDraftId]);
 
-    const { connectorTag } = useConnectorTag(imageTag.id);
+    const { connectorTag } = useConnectorTag(imageTag ? imageTag.id : null);
     const { liveSpecs } = useLiveSpecsExtWithOutSpec(specId, ENTITY.CAPTURE);
     const { liveSpecs: liveSpecsByLastPub } = useLiveSpecsExtByLastPubId(
         lastPubId,

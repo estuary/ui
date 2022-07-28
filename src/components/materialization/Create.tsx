@@ -39,9 +39,11 @@ function MaterializationCreate() {
     const detailsFormStoreName = DetailsFormStoreNames.MATERIALIZATION_CREATE;
 
     const useEntityCreateStore = useRouteStore();
-    const imageTag = useEntityCreateStore(
-        entityCreateStoreSelectors.details.connectorTag
-    );
+    const imageTag = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['details']['data']['connectorImage']
+    >(detailsFormStoreName, (state) => state.details.data.connectorImage);
+
     const hasChanges = useEntityCreateStore(
         entityCreateStoreSelectors.hasChanges
     );

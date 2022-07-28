@@ -53,12 +53,16 @@ function DetailsForm({
     const messagePrefix = useEntityCreateStore(
         entityCreateStoreSelectors.messagePrefix
     );
-    const formData = useEntityCreateStore(
-        entityCreateStoreSelectors.details.data
-    );
-    const setDetails = useEntityCreateStore(
-        entityCreateStoreSelectors.details.set
-    );
+
+    const formData = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['details']['data']
+    >(detailsFormStoreName, (state) => state.details.data);
+
+    const setDetails = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['setDetails']
+    >(detailsFormStoreName, (state) => state.setDetails);
 
     const displayValidation = useZustandStore<
         DetailsFormState,

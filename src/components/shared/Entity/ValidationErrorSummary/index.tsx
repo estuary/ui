@@ -56,7 +56,9 @@ function ValidationErrorSummary({
                     <ErrorComponent />
                 ) : (
                     <>
-                        <DetailsErrors />
+                        <DetailsErrors
+                            detailsFormStoreName={detailsFormStoreName}
+                        />
 
                         <EndpointConfigErrors
                             endpointConfigStoreName={endpointConfigStoreName}

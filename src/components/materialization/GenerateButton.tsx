@@ -69,12 +69,15 @@ function MaterializeGenerateButton({
         DetailsFormState['resetFormState']
     >(detailsFormStoreName, (state) => state.resetFormState);
 
-    const entityName = useEntityCreateStore(
-        entityCreateStoreSelectors.details.entityName
-    );
-    const imageTag = useEntityCreateStore(
-        entityCreateStoreSelectors.details.connectorTag
-    );
+    const entityName = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['details']['data']['entityName']
+    >(detailsFormStoreName, (state) => state.details.data.entityName);
+
+    const imageTag = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['details']['data']['connectorImage']
+    >(detailsFormStoreName, (state) => state.details.data.connectorImage);
 
     const endpointConfigData = useZustandStore<
         EndpointConfigState,
@@ -96,9 +99,11 @@ function MaterializeGenerateButton({
         EndpointConfigState['endpointConfigErrorsExist']
     >(endpointConfigStoreName, (state) => state.endpointConfigErrorsExist);
 
-    const detailsFormsHasErrors = useEntityCreateStore(
-        entityCreateStoreSelectors.details.hasErrors
-    );
+    const detailsFormsHasErrors = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['detailsFormErrorsExist']
+    >(detailsFormStoreName, (state) => state.detailsFormErrorsExist);
+
     const resourceConfigHasErrors = useZustandStore<
         ResourceConfigState,
         ResourceConfigState['resourceConfigErrorsExist']
@@ -152,7 +157,7 @@ function MaterializeGenerateButton({
             const newDraftId = draftsResponse.data[0].id;
             const draftSpec = generateDraftSpec(
                 encryptedEndpointConfig.data,
-                imageTag.imagePath,
+                imageTag ? imageTag.iconPath : '',
                 resourceConfig
             );
 

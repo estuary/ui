@@ -6,9 +6,8 @@ import {
     ResourceConfigStoreNames,
     useZustandStore,
 } from 'context/Zustand';
-import { useRouteStore } from 'hooks/useRouteStore';
 import { FormattedMessage } from 'react-intl';
-import { entityCreateStoreSelectors } from 'stores/Create';
+import { DetailsFormState } from 'stores/DetailsForm';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 
 interface Props {
@@ -20,10 +19,10 @@ function CollectionConfig({
     resourceConfigStoreName,
     detailsFormStoreName,
 }: Props) {
-    const useEntityCreateStore = useRouteStore();
-    const imageTag = useEntityCreateStore(
-        entityCreateStoreSelectors.details.connectorTag
-    );
+    const imageTag = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['details']['data']['connectorImage']
+    >(detailsFormStoreName, (state) => state.details.data.connectorImage);
 
     const resourceConfigHasErrors = useZustandStore<
         ResourceConfigState,
