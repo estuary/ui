@@ -15,6 +15,8 @@ export interface Details extends Pick<JsonFormsCore, 'data' | 'errors'> {
         connectorImage?: {
             id: string;
             iconPath: string;
+            imagePath: string;
+            connectorId: string;
         };
     };
 }
@@ -235,8 +237,10 @@ export const initialCreateStates = {
         return {
             data: {
                 connectorImage: {
+                    connectorId: '',
                     id: '',
                     iconPath: '',
+                    imagePath: '',
                 },
                 entityName: '',
             },

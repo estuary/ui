@@ -1,3 +1,4 @@
+// Heavily edited version of https://github.com/tasoskakour/react-use-oauth2
 import FullPageSpinner from 'components/fullPage/Spinner';
 import { useEffect } from 'react';
 import { base64RemovePadding } from 'utils/misc-utils';
@@ -33,8 +34,7 @@ const OAuthPopup = (props: Props) => {
             ...queryToObject(window.location.search.split('?')[1]),
             ...queryToObject(window.location.hash.split('#')[1]),
         };
-        const state = payload.state;
-        const error = payload.error;
+        const { error, state } = payload;
 
         if (!window.opener) {
             throw new Error('No window opener');

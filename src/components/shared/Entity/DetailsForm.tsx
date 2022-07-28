@@ -90,6 +90,7 @@ function DetailsForm({
             connectorTags.forEach((connector) => {
                 response.push({
                     const: {
+                        connectorId: connector.id,
                         id: connector.connector_tags[0].id,
                         imagePath: `${connector.image_name}${connector.connector_tags[0].image_tag}`,
                         iconPath: connector.image,

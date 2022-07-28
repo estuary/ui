@@ -1,6 +1,8 @@
+// Heavily edited version of https://github.com/tasoskakour/react-use-oauth2
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import { useCallback, useRef, useState } from 'react';
 import {
+    MESSAGE_KEY,
     OAUTH_RESPONSE,
     OAUTH_STATE_KEY,
     POPUP_HEIGHT,
@@ -35,7 +37,7 @@ const openPopup = (url: string) => {
     const left = window.outerWidth / 2 + window.screenX - POPUP_WIDTH / 2;
     return window.open(
         url,
-        'OAuth2 Popup',
+        'Estuary OAuth',
         `height=${POPUP_HEIGHT},width=${POPUP_WIDTH},top=${top},left=${left}`
     );
 };
@@ -54,7 +56,7 @@ const cleanup = (
     clearInterval(intervalRef.current);
     closePopup(popupRef);
     removeState();
-    window.removeEventListener('message', handleMessageListener);
+    window.removeEventListener(MESSAGE_KEY, handleMessageListener);
 };
 
 export type State<TData = AuthTokenPayload> = TData | null;
@@ -101,7 +103,7 @@ const useOAuth2 = <TData = AuthTokenPayload>(props: Oauth2Props<TData>) => {
                     cleanup(intervalRef, popupRef, handleMessageListener);
                 }
             }
-            window.addEventListener('message', handleMessageListener);
+            window.addEventListener(MESSAGE_KEY, handleMessageListener);
 
             // 4. Begin interval to check if popup was closed forcefully by the user
             intervalRef.current = setInterval(async () => {
@@ -116,7 +118,7 @@ const useOAuth2 = <TData = AuthTokenPayload>(props: Oauth2Props<TData>) => {
                     clearInterval(intervalRef.current);
                     removeState();
                     window.removeEventListener(
-                        'message',
+                        MESSAGE_KEY,
                         handleMessageListener
                     );
                 }
@@ -124,7 +126,7 @@ const useOAuth2 = <TData = AuthTokenPayload>(props: Oauth2Props<TData>) => {
 
             // 5. Remove listener(s) on unmount
             return () => {
-                window.removeEventListener('message', handleMessageListener);
+                window.removeEventListener(MESSAGE_KEY, handleMessageListener);
                 if (intervalRef.current) clearInterval(intervalRef.current);
             };
         },
