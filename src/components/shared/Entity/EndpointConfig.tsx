@@ -4,6 +4,7 @@ import EndpointConfigHeader from 'components/shared/Entity/EndpointConfigHeader'
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import Error from 'components/shared/Error';
 import {
+    DetailsFormStoreNames,
     DraftEditorStoreNames,
     EndpointConfigStoreNames,
     useZustandStore,
@@ -15,12 +16,14 @@ interface Props {
     connectorImage: string;
     draftEditorStoreName: DraftEditorStoreNames;
     endpointConfigStoreName: EndpointConfigStoreNames;
+    detailsFormStoreName: DetailsFormStoreNames;
 }
 
 function EndpointConfig({
     connectorImage,
     draftEditorStoreName,
     endpointConfigStoreName,
+    detailsFormStoreName,
 }: Props) {
     const { connectorTag, error } = useConnectorTag(connectorImage);
 
@@ -44,6 +47,7 @@ function EndpointConfig({
             >
                 <EndpointConfigForm
                     endpointConfigStoreName={endpointConfigStoreName}
+                    detailsFormStoreName={detailsFormStoreName}
                 />
             </WrapperWithHeader>
         );

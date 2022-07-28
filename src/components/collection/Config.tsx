@@ -1,7 +1,11 @@
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import BindingsMultiEditor from 'components/editor/Bindings';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
-import { ResourceConfigStoreNames, useZustandStore } from 'context/Zustand';
+import {
+    DetailsFormStoreNames,
+    ResourceConfigStoreNames,
+    useZustandStore,
+} from 'context/Zustand';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { FormattedMessage } from 'react-intl';
 import { entityCreateStoreSelectors } from 'stores/Create';
@@ -9,9 +13,13 @@ import { ResourceConfigState } from 'stores/ResourceConfig';
 
 interface Props {
     resourceConfigStoreName: ResourceConfigStoreNames;
+    detailsFormStoreName: DetailsFormStoreNames;
 }
 
-function CollectionConfig({ resourceConfigStoreName }: Props) {
+function CollectionConfig({
+    resourceConfigStoreName,
+    detailsFormStoreName,
+}: Props) {
     const useEntityCreateStore = useRouteStore();
     const imageTag = useEntityCreateStore(
         entityCreateStoreSelectors.details.connectorTag
@@ -43,6 +51,7 @@ function CollectionConfig({ resourceConfigStoreName }: Props) {
             >
                 <BindingsMultiEditor
                     resourceConfigStoreName={resourceConfigStoreName}
+                    detailsFormStoreName={detailsFormStoreName}
                 />
             </WrapperWithHeader>
         );

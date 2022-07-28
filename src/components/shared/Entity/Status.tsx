@@ -1,14 +1,21 @@
 import { Typography } from '@mui/material';
+import { DetailsFormStoreNames, useZustandStore } from 'context/Zustand';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { FormattedMessage } from 'react-intl';
-import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
+import { entityCreateStoreSelectors } from 'stores/Create';
+import { DetailsFormState, FormStatus } from 'stores/DetailsForm';
 
-function Status() {
+interface Props {
+    detailsFormStoreName: DetailsFormStoreNames;
+}
+
+function Status({ detailsFormStoreName }: Props) {
     const useEntityCreateStore = useRouteStore();
 
-    const formStatus = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.status
-    );
+    const formStatus = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['formState']['status']
+    >(detailsFormStoreName, (state) => state.formState.status);
 
     const isActive = useEntityCreateStore(entityCreateStoreSelectors.isActive);
 

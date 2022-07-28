@@ -5,6 +5,7 @@ import { encryptConfig } from 'api/sops';
 import { EditorStoreState } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
 import {
+    DetailsFormStoreNames,
     DraftEditorStoreNames,
     EndpointConfigStoreNames,
     useZustandStore,
@@ -13,7 +14,8 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
-import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
+import { entityCreateStoreSelectors } from 'stores/Create';
+import { DetailsFormState, FormStatus } from 'stores/DetailsForm';
 import { EndpointConfigState } from 'stores/EndpointConfig';
 
 interface Props {
@@ -22,6 +24,7 @@ interface Props {
     subscription: Function;
     draftEditorStoreName: DraftEditorStoreNames;
     endpointConfigStoreName: EndpointConfigStoreNames;
+    detailsFormStoreName: DetailsFormStoreNames;
 }
 
 function CaptureGenerateButton({
@@ -30,6 +33,7 @@ function CaptureGenerateButton({
     subscription,
     draftEditorStoreName,
     endpointConfigStoreName,
+    detailsFormStoreName,
 }: Props) {
     const isSaving = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
@@ -46,12 +50,16 @@ function CaptureGenerateButton({
     const formActive = useEntityCreateStore(
         entityCreateStoreSelectors.isActive
     );
-    const setFormState = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.set
-    );
-    const resetFormState = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.reset
-    );
+
+    const setFormState = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['setFormState']
+    >(detailsFormStoreName, (state) => state.setFormState);
+
+    const resetFormState = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['resetFormState']
+    >(detailsFormStoreName, (state) => state.resetFormState);
 
     const entityName = useEntityCreateStore(
         entityCreateStoreSelectors.details.entityName

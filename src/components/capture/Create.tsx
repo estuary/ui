@@ -8,6 +8,7 @@ import EntityCreate from 'components/shared/Entity/Create';
 import FooHeader from 'components/shared/Entity/Header';
 import PageContainer from 'components/shared/PageContainer';
 import {
+    DetailsFormStoreNames,
     DraftEditorStoreNames,
     EndpointConfigStoreNames,
     useZustandStore,
@@ -23,7 +24,8 @@ import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import { startSubscription, TABLES } from 'services/supabase';
-import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
+import { entityCreateStoreSelectors } from 'stores/Create';
+import { DetailsFormState, FormStatus } from 'stores/DetailsForm';
 import { getPathWithParam } from 'utils/misc-utils';
 
 const connectorType = 'capture';
@@ -47,6 +49,8 @@ function CaptureCreate() {
     const hasConnectors = connectorTags.length > 0;
 
     // Form store
+    const detailsFormStoreName = DetailsFormStoreNames.CAPTURE_CREATE;
+
     const useEntityCreateStore = useRouteStore();
     const messagePrefix = useEntityCreateStore(
         entityCreateStoreSelectors.messagePrefix
@@ -61,12 +65,15 @@ function CaptureCreate() {
         entityCreateStoreSelectors.resetState
     );
 
-    const setFormState = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.set
-    );
-    const exitWhenLogsClose = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.exitWhenLogsClose
-    );
+    const setFormState = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['setFormState']
+    >(detailsFormStoreName, (state) => state.setFormState);
+
+    const exitWhenLogsClose = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['formState']['exitWhenLogsClose']
+    >(detailsFormStoreName, (state) => state.formState.exitWhenLogsClose);
 
     //Editor state
     const setDraftId = useZustandStore<
@@ -194,6 +201,7 @@ function CaptureCreate() {
                                 endpointConfigStoreName={
                                     EndpointConfigStoreNames.CAPTURE_CREATE
                                 }
+                                detailsFormStoreName={detailsFormStoreName}
                             />
                         }
                         TestButton={
@@ -205,6 +213,7 @@ function CaptureCreate() {
                                 draftEditorStoreName={
                                     DraftEditorStoreNames.CAPTURE
                                 }
+                                detailsFormStoreName={detailsFormStoreName}
                             />
                         }
                         SaveButton={
@@ -217,17 +226,20 @@ function CaptureCreate() {
                                 }
                                 materialize={handlers.materializeCollections}
                                 logEvent={CustomEvents.CAPTURE_CREATE}
+                                detailsFormStoreName={detailsFormStoreName}
                             />
                         }
                         endpointConfigStoreName={
                             EndpointConfigStoreNames.CAPTURE_CREATE
                         }
+                        detailsFormStoreName={detailsFormStoreName}
                     />
                 }
                 draftEditorStoreName={DraftEditorStoreNames.CAPTURE}
                 endpointConfigStoreName={
                     EndpointConfigStoreNames.CAPTURE_CREATE
                 }
+                detailsFormStoreName={detailsFormStoreName}
             />
         </PageContainer>
     );

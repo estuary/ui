@@ -5,6 +5,7 @@ import { encryptConfig } from 'api/sops';
 import { EditorStoreState } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
 import {
+    DetailsFormStoreNames,
     DraftEditorStoreNames,
     EndpointConfigStoreNames,
     ResourceConfigStoreNames,
@@ -14,7 +15,8 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
-import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
+import { entityCreateStoreSelectors } from 'stores/Create';
+import { DetailsFormState, FormStatus } from 'stores/DetailsForm';
 import { EndpointConfigState } from 'stores/EndpointConfig';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
@@ -25,6 +27,7 @@ interface Props {
     draftEditorStoreName: DraftEditorStoreNames;
     endpointConfigStoreName: EndpointConfigStoreNames;
     resourceConfigStoreName: ResourceConfigStoreNames;
+    detailsFormStoreName: DetailsFormStoreNames;
 }
 
 function MaterializeGenerateButton({
@@ -33,6 +36,7 @@ function MaterializeGenerateButton({
     draftEditorStoreName,
     endpointConfigStoreName,
     resourceConfigStoreName,
+    detailsFormStoreName,
 }: Props) {
     const isSaving = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
@@ -54,12 +58,16 @@ function MaterializeGenerateButton({
     const formActive = useEntityCreateStore(
         entityCreateStoreSelectors.isActive
     );
-    const setFormState = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.set
-    );
-    const resetFormState = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.reset
-    );
+
+    const setFormState = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['setFormState']
+    >(detailsFormStoreName, (state) => state.setFormState);
+
+    const resetFormState = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['resetFormState']
+    >(detailsFormStoreName, (state) => state.resetFormState);
 
     const entityName = useEntityCreateStore(
         entityCreateStoreSelectors.details.entityName

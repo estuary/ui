@@ -11,6 +11,7 @@ import {
 import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
 import { slate, stickyHeaderIndex, tableBorderSx } from 'context/Theme';
 import {
+    DetailsFormStoreNames,
     EndpointConfigStoreNames,
     ResourceConfigStoreNames,
 } from 'context/Zustand';
@@ -25,6 +26,7 @@ interface Props {
     SaveButton: ReactNode;
     heading: ReactNode;
     endpointConfigStoreName: EndpointConfigStoreNames;
+    detailsFormStoreName: DetailsFormStoreNames;
     resourceConfigStoreName?: ResourceConfigStoreNames;
 }
 
@@ -47,6 +49,7 @@ function FooHeader({
     SaveButton,
     heading,
     endpointConfigStoreName,
+    detailsFormStoreName,
     resourceConfigStoreName,
 }: Props) {
     const useEntityCreateStore = useRouteStore();
@@ -106,6 +109,7 @@ function FooHeader({
                 <ValidationErrorSummary
                     hasErrorsSelector={entityCreateStoreSelectors.hasErrors}
                     endpointConfigStoreName={endpointConfigStoreName}
+                    detailsFormStoreName={detailsFormStoreName}
                     resourceConfigStoreName={resourceConfigStoreName}
                 />
             </Box>

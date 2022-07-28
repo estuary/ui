@@ -10,6 +10,7 @@ import EntityError from 'components/shared/Entity/Error';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import {
+    DetailsFormStoreNames,
     DraftEditorStoreNames,
     EndpointConfigStoreNames,
     ResourceConfigStoreNames,
@@ -30,7 +31,8 @@ import { useRouteStore } from 'hooks/useRouteStore';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
+import { entityCreateStoreSelectors } from 'stores/Create';
+import { DetailsFormState, FormStatus } from 'stores/DetailsForm';
 import { ResourceConfigState, ResourceSchema } from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
 import { hasLength } from 'utils/misc-utils';
@@ -41,6 +43,7 @@ interface Props {
     Header: any;
     draftEditorStoreName: DraftEditorStoreNames;
     endpointConfigStoreName: EndpointConfigStoreNames;
+    detailsFormStoreName: DetailsFormStoreNames;
     resourceConfigStoreName?: ResourceConfigStoreNames;
     showCollections?: boolean;
 }
@@ -51,6 +54,7 @@ function EntityCreate({
     Header,
     draftEditorStoreName,
     endpointConfigStoreName,
+    detailsFormStoreName,
     resourceConfigStoreName,
     showCollections,
 }: Props) {
@@ -90,21 +94,31 @@ function EntityCreate({
     const resetState = useEntityCreateStore(
         entityCreateStoreSelectors.resetState
     );
-    const setFormState = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.set
-    );
+
+    const setFormState = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['setFormState']
+    >(detailsFormStoreName, (state) => state.setFormState);
+
     const messagePrefix = useEntityCreateStore(
         entityCreateStoreSelectors.messagePrefix
     );
-    const logToken = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.logToken
-    );
-    const formSubmitError = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.error
-    );
-    const exitWhenLogsClose = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.exitWhenLogsClose
-    );
+
+    const logToken = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['formState']['logToken']
+    >(detailsFormStoreName, (state) => state.formState.logToken);
+
+    const formSubmitError = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['formState']['error']
+    >(detailsFormStoreName, (state) => state.formState.error);
+
+    const exitWhenLogsClose = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['formState']['exitWhenLogsClose']
+    >(detailsFormStoreName, (state) => state.formState.exitWhenLogsClose);
+
     const setEndpointSchema = useEntityCreateStore(
         entityCreateStoreSelectors.setEndpointSchema
     );
@@ -253,6 +267,7 @@ function EntityCreate({
                                 connectorTags={connectorTags}
                                 accessGrants={combinedGrants}
                                 draftEditorStoreName={draftEditorStoreName}
+                                detailsFormStoreName={detailsFormStoreName}
                             />
                         </ErrorBoundryWrapper>
                     ) : null}
@@ -265,6 +280,7 @@ function EntityCreate({
                                 endpointConfigStoreName={
                                     endpointConfigStoreName
                                 }
+                                detailsFormStoreName={detailsFormStoreName}
                             />
                         </ErrorBoundryWrapper>
                     ) : null}
@@ -277,6 +293,7 @@ function EntityCreate({
                                 resourceConfigStoreName={
                                     resourceConfigStoreName
                                 }
+                                detailsFormStoreName={detailsFormStoreName}
                             />
                         </ErrorBoundryWrapper>
                     ) : null}

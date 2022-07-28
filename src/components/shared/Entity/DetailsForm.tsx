@@ -3,7 +3,11 @@ import { JsonForms } from '@jsonforms/react';
 import { Alert, Stack, Typography } from '@mui/material';
 import { authenticatedRoutes } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
-import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
+import {
+    DetailsFormStoreNames,
+    DraftEditorStoreNames,
+    useZustandStore,
+} from 'context/Zustand';
 import { CATALOG_NAME_SCOPE } from 'forms/renderers/CatalogName';
 import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
 import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
@@ -18,18 +22,21 @@ import {
     showValidation,
 } from 'services/jsonforms';
 import { entityCreateStoreSelectors } from 'stores/Create';
+import { DetailsFormState } from 'stores/DetailsForm';
 import { Grants } from 'types';
 
 interface Props {
     connectorTags: ConnectorWithTagDetailQuery[];
     accessGrants: Grants[];
     draftEditorStoreName: DraftEditorStoreNames;
+    detailsFormStoreName: DetailsFormStoreNames;
 }
 
 function DetailsForm({
     connectorTags,
     accessGrants,
     draftEditorStoreName,
+    detailsFormStoreName,
 }: Props) {
     const intl = useIntl();
     const [searchParams] = useSearchParams();
@@ -52,9 +59,12 @@ function DetailsForm({
     const setDetails = useEntityCreateStore(
         entityCreateStoreSelectors.details.set
     );
-    const displayValidation = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.displayValidation
-    );
+
+    const displayValidation = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['formState']['displayValidation']
+    >(detailsFormStoreName, (state) => state.formState.displayValidation);
+
     const isActive = useEntityCreateStore(entityCreateStoreSelectors.isActive);
 
     useEffect(() => {

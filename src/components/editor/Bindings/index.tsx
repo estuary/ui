@@ -2,13 +2,20 @@ import CollectionSelector from 'components/collection/Picker';
 import BindingsEditor from 'components/editor/Bindings/Editor';
 import BindingSelector from 'components/editor/Bindings/Selector';
 import ListAndDetails from 'components/editor/ListAndDetails';
-import { ResourceConfigStoreNames } from 'context/Zustand';
+import {
+    DetailsFormStoreNames,
+    ResourceConfigStoreNames,
+} from 'context/Zustand';
 
 interface Props {
     resourceConfigStoreName: ResourceConfigStoreNames;
+    detailsFormStoreName: DetailsFormStoreNames;
 }
 
-function BindingsMultiEditor({ resourceConfigStoreName }: Props) {
+function BindingsMultiEditor({
+    resourceConfigStoreName,
+    detailsFormStoreName,
+}: Props) {
     return (
         <>
             <CollectionSelector
@@ -24,6 +31,7 @@ function BindingsMultiEditor({ resourceConfigStoreName }: Props) {
                 details={
                     <BindingsEditor
                         resourceConfigStoreName={resourceConfigStoreName}
+                        detailsFormStoreName={detailsFormStoreName}
                     />
                 }
             />

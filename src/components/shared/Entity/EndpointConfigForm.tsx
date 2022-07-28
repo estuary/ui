@@ -2,7 +2,11 @@ import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Box, StyledEngineProvider } from '@mui/material';
 import { jsonFormsPadding } from 'context/Theme';
-import { EndpointConfigStoreNames, useZustandStore } from 'context/Zustand';
+import {
+    DetailsFormStoreNames,
+    EndpointConfigStoreNames,
+    useZustandStore,
+} from 'context/Zustand';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { isEmpty } from 'lodash';
 import { useEffect, useMemo } from 'react';
@@ -15,15 +19,20 @@ import {
     showValidation,
 } from 'services/jsonforms';
 import { entityCreateStoreSelectors } from 'stores/Create';
+import { DetailsFormState } from 'stores/DetailsForm';
 import { EndpointConfigState } from 'stores/EndpointConfig';
 
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
 
 interface Props {
     endpointConfigStoreName: EndpointConfigStoreNames;
+    detailsFormStoreName: DetailsFormStoreNames;
 }
 
-function EndpointConfigForm({ endpointConfigStoreName }: Props) {
+function EndpointConfigForm({
+    endpointConfigStoreName,
+    detailsFormStoreName,
+}: Props) {
     const useEntityCreateStore = useRouteStore();
     const setSpec = useZustandStore<
         EndpointConfigState,
@@ -35,9 +44,11 @@ function EndpointConfigForm({ endpointConfigStoreName }: Props) {
         EndpointConfigState['endpointConfig']['data']
     >(endpointConfigStoreName, (state) => state.endpointConfig.data);
 
-    const displayValidation = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.displayValidation
-    );
+    const displayValidation = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['formState']['displayValidation']
+    >(detailsFormStoreName, (state) => state.formState.displayValidation);
+
     const endpointSchema = useEntityCreateStore(
         entityCreateStoreSelectors.endpointSchema
     );

@@ -8,6 +8,7 @@ import EntityCreate from 'components/shared/Entity/Create';
 import FooHeader from 'components/shared/Entity/Header';
 import PageContainer from 'components/shared/PageContainer';
 import {
+    DetailsFormStoreNames,
     DraftEditorStoreNames,
     EndpointConfigStoreNames,
     ResourceConfigStoreNames,
@@ -22,7 +23,8 @@ import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
-import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
+import { entityCreateStoreSelectors } from 'stores/Create';
+import { DetailsFormState, FormStatus } from 'stores/DetailsForm';
 
 const connectorType = 'materialization';
 
@@ -34,6 +36,8 @@ function MaterializationCreate() {
     const { connectorTags } = useConnectorWithTagDetail(connectorType);
     const hasConnectors = connectorTags.length > 0;
 
+    const detailsFormStoreName = DetailsFormStoreNames.MATERIALIZATION_CREATE;
+
     const useEntityCreateStore = useRouteStore();
     const imageTag = useEntityCreateStore(
         entityCreateStoreSelectors.details.connectorTag
@@ -44,17 +48,21 @@ function MaterializationCreate() {
     const resetState = useEntityCreateStore(
         entityCreateStoreSelectors.resetState
     );
-    const setFormState = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.set
-    );
+
     const messagePrefix = useEntityCreateStore(
         entityCreateStoreSelectors.messagePrefix
     );
 
     // Form State
-    const exitWhenLogsClose = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.exitWhenLogsClose
-    );
+    const setFormState = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['setFormState']
+    >(detailsFormStoreName, (state) => state.setFormState);
+
+    const exitWhenLogsClose = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['formState']['exitWhenLogsClose']
+    >(detailsFormStoreName, (state) => state.formState.exitWhenLogsClose);
 
     // Editor state
     const draftId = useZustandStore<
@@ -146,6 +154,7 @@ function MaterializationCreate() {
                                 resourceConfigStoreName={
                                     ResourceConfigStoreNames.MATERIALIZATION_CREATE
                                 }
+                                detailsFormStoreName={detailsFormStoreName}
                             />
                         }
                         TestButton={
@@ -157,6 +166,7 @@ function MaterializationCreate() {
                                 draftEditorStoreName={
                                     DraftEditorStoreNames.MATERIALIZATION
                                 }
+                                detailsFormStoreName={detailsFormStoreName}
                             />
                         }
                         SaveButton={
@@ -168,6 +178,7 @@ function MaterializationCreate() {
                                 draftEditorStoreName={
                                     DraftEditorStoreNames.MATERIALIZATION
                                 }
+                                detailsFormStoreName={detailsFormStoreName}
                             />
                         }
                         heading={
@@ -179,6 +190,7 @@ function MaterializationCreate() {
                         resourceConfigStoreName={
                             ResourceConfigStoreNames.MATERIALIZATION_CREATE
                         }
+                        detailsFormStoreName={detailsFormStoreName}
                     />
                 }
                 draftEditorStoreName={DraftEditorStoreNames.MATERIALIZATION}
@@ -188,6 +200,7 @@ function MaterializationCreate() {
                 resourceConfigStoreName={
                     ResourceConfigStoreNames.MATERIALIZATION_CREATE
                 }
+                detailsFormStoreName={detailsFormStoreName}
             />
         </PageContainer>
     );

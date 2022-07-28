@@ -3,15 +3,18 @@ import DetailsErrors from 'components/shared/Entity/ValidationErrorSummary/Detai
 import EndpointConfigErrors from 'components/shared/Entity/ValidationErrorSummary/EndpointConfigErrors';
 import ResourceConfigErrors from 'components/shared/Entity/ValidationErrorSummary/ResourceConfigErrors';
 import {
+    DetailsFormStoreNames,
     EndpointConfigStoreNames,
     ResourceConfigStoreNames,
+    useZustandStore,
 } from 'context/Zustand';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { FormattedMessage } from 'react-intl';
-import { entityCreateStoreSelectors } from 'stores/Create';
+import { DetailsFormState } from 'stores/DetailsForm';
 
 interface Props {
     endpointConfigStoreName: EndpointConfigStoreNames;
+    detailsFormStoreName: DetailsFormStoreNames;
     resourceConfigStoreName?: ResourceConfigStoreNames;
     ErrorComponent?: any | boolean;
     hideIcon?: boolean;
@@ -21,6 +24,7 @@ interface Props {
 
 function ValidationErrorSummary({
     endpointConfigStoreName,
+    detailsFormStoreName,
     resourceConfigStoreName,
     headerMessageId,
     hideIcon,
@@ -28,9 +32,12 @@ function ValidationErrorSummary({
     hasErrorsSelector,
 }: Props) {
     const useEntityCreateStore = useRouteStore();
-    const displayValidation = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.displayValidation
-    );
+
+    const displayValidation = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['formState']['displayValidation']
+    >(detailsFormStoreName, (state) => state.formState.displayValidation);
+
     const hasErrors = useEntityCreateStore(hasErrorsSelector);
 
     return displayValidation ? (

@@ -2,15 +2,20 @@ import { Button } from '@mui/material';
 import { createPublication } from 'api/publications';
 import { EditorStoreState } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
+import {
+    DetailsFormStoreNames,
+    DraftEditorStoreNames,
+    useZustandStore,
+} from 'context/Zustand';
 import { useClient } from 'hooks/supabase-swr';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
-import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
 import LogRocket from 'logrocket';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
 import { endSubscription, startSubscription, TABLES } from 'services/supabase';
-import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
+import { entityCreateStoreSelectors } from 'stores/Create';
+import { DetailsFormState, FormStatus } from 'stores/DetailsForm';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
@@ -21,6 +26,7 @@ interface Props {
     logEvent: CustomEvents;
     dryRun?: boolean;
     draftEditorStoreName: DraftEditorStoreNames;
+    detailsFormStoreName: DetailsFormStoreNames;
 }
 
 const trackEvent = (logEvent: Props['logEvent'], payload: any) => {
@@ -39,6 +45,7 @@ function EntityCreateSave({
     onFailure,
     draftEditorStoreName,
     logEvent,
+    detailsFormStoreName,
 }: Props) {
     const intl = useIntl();
     const supabaseClient = useClient();
@@ -68,12 +75,17 @@ function EntityCreateSave({
     const entityDescription = useEntityCreateStore(
         entityCreateStoreSelectors.details.description
     );
-    const setFormState = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.set
-    );
-    const resetFormState = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.reset
-    );
+
+    const setFormState = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['setFormState']
+    >(detailsFormStoreName, (state) => state.setFormState);
+
+    const resetFormState = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['resetFormState']
+    >(detailsFormStoreName, (state) => state.resetFormState);
+
     const messagePrefix = useEntityCreateStore(
         entityCreateStoreSelectors.messagePrefix
     );

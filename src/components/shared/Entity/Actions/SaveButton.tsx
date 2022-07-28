@@ -2,12 +2,17 @@ import { EditorStoreState } from 'components/editor/Store';
 import EntityCreateSave from 'components/shared/Entity/Actions/Save';
 import LogDialog from 'components/shared/Entity/LogDialog';
 import LogDialogActions from 'components/shared/Entity/LogDialogActions';
-import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
+import {
+    DetailsFormStoreNames,
+    DraftEditorStoreNames,
+    useZustandStore,
+} from 'context/Zustand';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { FormattedMessage } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
-import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
+import { entityCreateStoreSelectors } from 'stores/Create';
+import { DetailsFormState, FormStatus } from 'stores/DetailsForm';
 
 interface Props {
     closeLogs: Function;
@@ -15,6 +20,7 @@ interface Props {
     disabled: boolean;
     logEvent: CustomEvents.CAPTURE_CREATE | CustomEvents.MATERIALIZATION_CREATE;
     draftEditorStoreName: DraftEditorStoreNames;
+    detailsFormStoreName: DetailsFormStoreNames;
     materialize?: Function;
 }
 
@@ -25,17 +31,25 @@ function EntitySaveButton({
     draftEditorStoreName,
     materialize,
     logEvent,
+    detailsFormStoreName,
 }: Props) {
     const useEntityCreateStore = useRouteStore();
-    const showLogs = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.showLogs
-    );
-    const logToken = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.logToken
-    );
-    const formStatus = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.status
-    );
+
+    const showLogs = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['formState']['showLogs']
+    >(detailsFormStoreName, (state) => state.formState.showLogs);
+
+    const logToken = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['formState']['logToken']
+    >(detailsFormStoreName, (state) => state.formState.logToken);
+
+    const formStatus = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['formState']['status']
+    >(detailsFormStoreName, (state) => state.formState.status);
+
     const messagePrefix = useEntityCreateStore(
         entityCreateStoreSelectors.messagePrefix
     );
@@ -63,6 +77,7 @@ function EntitySaveButton({
                 actionComponent={
                     <LogDialogActions
                         close={closeLogs}
+                        detailsFormStoreName={detailsFormStoreName}
                         materialize={
                             materialize
                                 ? {
@@ -79,6 +94,7 @@ function EntitySaveButton({
                 onFailure={callFailed}
                 logEvent={logEvent}
                 draftEditorStoreName={draftEditorStoreName}
+                detailsFormStoreName={detailsFormStoreName}
             />
         </>
     );

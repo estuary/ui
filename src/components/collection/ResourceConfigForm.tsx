@@ -1,7 +1,11 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { StyledEngineProvider } from '@mui/material';
-import { ResourceConfigStoreNames, useZustandStore } from 'context/Zustand';
+import {
+    DetailsFormStoreNames,
+    ResourceConfigStoreNames,
+    useZustandStore,
+} from 'context/Zustand';
 import { useRouteStore } from 'hooks/useRouteStore';
 import { useEffect, useRef } from 'react';
 import { setDefaultsValidator } from 'services/ajv';
@@ -12,16 +16,19 @@ import {
     showValidation,
 } from 'services/jsonforms';
 import { entityCreateStoreSelectors } from 'stores/Create';
+import { DetailsFormState } from 'stores/DetailsForm';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 
 type Props = {
     collectionName: string;
     resourceConfigStoreName: ResourceConfigStoreNames;
+    detailsFormStoreName: DetailsFormStoreNames;
 };
 
 function ResourceConfigForm({
     collectionName,
     resourceConfigStoreName,
+    detailsFormStoreName,
 }: Props) {
     const name = useRef(collectionName);
     const useEntityCreateStore = useRouteStore();
@@ -38,9 +45,11 @@ function ResourceConfigForm({
 
     const formData = resourceConfig[collectionName].data;
 
-    const displayValidation = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.displayValidation
-    );
+    const displayValidation = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['formState']['displayValidation']
+    >(detailsFormStoreName, (state) => state.formState.displayValidation);
+
     const isActive = useEntityCreateStore(entityCreateStoreSelectors.isActive);
 
     const resourceSchema = useZustandStore<
