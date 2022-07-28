@@ -41,7 +41,12 @@ const OAuthproviderRenderer = ({
         if (tokenResponse.error) {
             setErrorMessage(tokenResponse.error.message);
         } else if (tokenResponse.data) {
-            handleChange(path, tokenResponse.data);
+            handleChange(path, {
+                ...tokenResponse.data,
+                client_id: '-insertedByServer-',
+                client_secret: '-insertedByServer-',
+                refresh_token: 'travisneedstoremovethis',
+            });
         }
     };
 

@@ -1,7 +1,7 @@
 import { Button } from '@mui/material';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec, generateDraftSpec } from 'api/draftSpecs';
-import { encryptConfig } from 'api/sops';
+import { encryptConfig } from 'api/oauth';
 import { EditorStoreState } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
 import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
@@ -109,14 +109,15 @@ function MaterializeGenerateButton({
             }
 
             const encryptedEndpointConfig = await encryptConfig(
+                imageTag.connectorId,
                 endpointSchema,
                 endpointConfigData
             );
-            if (encryptedEndpointConfig.error) {
+            if (encryptedEndpointConfig.data.error) {
                 return callFailed({
                     error: {
                         title: 'entityCreate.sops.failedTitle',
-                        error: encryptedEndpointConfig.error,
+                        error: encryptedEndpointConfig.data.error,
                     },
                 });
             }
