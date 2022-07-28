@@ -2,8 +2,8 @@ import { JsonFormsCore } from '@jsonforms/core';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { DetailsFormStoreNames } from 'context/Zustand';
 import produce from 'immer';
-import { isEqual } from 'lodash';
-import { devtoolsOptions, populateHasErrors } from 'utils/store-utils';
+import { isEmpty, isEqual } from 'lodash';
+import { devtoolsOptions } from 'utils/store-utils';
 import create, { StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 
@@ -152,7 +152,9 @@ const getInitialState = (
 
                 state.details = details;
 
-                populateHasErrors(get, state, {}, null, details.errors);
+                state.detailsFormErrorsExist = !isEmpty(
+                    details.errors ?? get().details.errors
+                );
             }),
             false,
             'Details Changed'

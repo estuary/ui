@@ -2,7 +2,7 @@ import { EndpointConfigStoreNames } from 'context/Zustand';
 import produce from 'immer';
 import { isEmpty, isEqual, map } from 'lodash';
 import { JsonFormsData, Schema } from 'types';
-import { devtoolsOptions, populateHasErrors } from 'utils/store-utils';
+import { devtoolsOptions } from 'utils/store-utils';
 import create, { StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 
@@ -36,19 +36,12 @@ const filterErrors = (list: JsonFormsData['errors']): (string | undefined)[] =>
 
 const populateEndpointConfigErrors = (
     endpointConfig: JsonFormsData,
-    state: EndpointConfigState,
-    get: StoreApi<EndpointConfigState>['getState']
-) => {
+    state: EndpointConfigState
+): void => {
     const endpointConfigErrors = filterErrors(fetchErrors(endpointConfig));
 
     state.endpointConfigErrors = endpointConfigErrors;
     state.endpointConfigErrorsExist = !isEmpty(endpointConfigErrors);
-
-    populateHasErrors(get, state, {
-        endpoint: !isEmpty(endpointConfigErrors),
-    });
-
-    return !isEmpty(endpointConfigErrors);
 };
 
 const getInitialStateData = (): Pick<
@@ -74,7 +67,7 @@ const getInitialState = (
         set(
             produce((state) => {
                 state.endpointConfig = endpointConfig;
-                populateEndpointConfigErrors(endpointConfig, state, get);
+                populateEndpointConfigErrors(endpointConfig, state);
             }),
             false,
             'Endpoint Config Changed'

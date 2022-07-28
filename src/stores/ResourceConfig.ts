@@ -4,7 +4,7 @@ import produce from 'immer';
 import { difference, has, isEmpty, isEqual, map, omit } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
 import { JsonFormsData, Schema } from 'types';
-import { devtoolsOptions, populateHasErrors } from 'utils/store-utils';
+import { devtoolsOptions } from 'utils/store-utils';
 import create, { StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 
@@ -52,7 +52,7 @@ export interface ResourceConfigState {
 const populateResourceConfigErrors = (
     resourceConfig: ResourceConfigDictionary,
     state: ResourceConfigState
-) => {
+): void => {
     let resourceConfigErrors: any[] = [];
 
     if (Object.keys(resourceConfig).length > 0) {
@@ -73,8 +73,6 @@ const populateResourceConfigErrors = (
 
     state.resourceConfigErrors = resourceConfigErrors;
     state.resourceConfigErrorsExist = !isEmpty(resourceConfigErrors);
-
-    return !isEmpty(resourceConfigErrors);
 };
 
 const whatChanged = (
@@ -138,16 +136,9 @@ const getInitialState = (
 
                 state.resourceConfig = configs;
 
-                const hasErrors = populateResourceConfigErrors(configs, state);
+                populateResourceConfigErrors(configs, state);
 
-                populateHasErrors(
-                    get,
-                    state,
-                    {
-                        resource: hasErrors,
-                    },
-                    collections
-                );
+                state.collectionErrorsExist = isEmpty(collections);
             }),
             false,
             'Collections Pre-filled'
@@ -173,13 +164,7 @@ const getInitialState = (
                     state.resourceConfig[key] =
                         value ?? createJSONFormDefaults(resourceSchema);
 
-                    const hasErrors = populateResourceConfigErrors(
-                        state.resourceConfig,
-                        state
-                    );
-                    populateHasErrors(get, state, {
-                        resource: hasErrors,
-                    });
+                    populateResourceConfigErrors(state.resourceConfig, state);
                 } else {
                     const newResourceKeyList = key;
                     const [removedCollections, newCollections] = whatChanged(
@@ -218,18 +203,7 @@ const getInitialState = (
                     state.collections = newResourceKeyList;
 
                     // See if the recently updated configs have errors
-                    const hasErrors = populateResourceConfigErrors(
-                        newResourceConfig,
-                        state
-                    );
-                    populateHasErrors(
-                        get,
-                        state,
-                        {
-                            resource: hasErrors,
-                        },
-                        newResourceKeyList
-                    );
+                    populateResourceConfigErrors(newResourceConfig, state);
                 }
             }),
             false,
