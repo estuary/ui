@@ -14,11 +14,12 @@ import {
     DetailsFormStoreNames,
     EndpointConfigStoreNames,
     ResourceConfigStoreNames,
+    useZustandStore,
 } from 'context/Zustand';
-import { useRouteStore } from 'hooks/useRouteStore';
 import { ReactNode } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { entityCreateStoreSelectors } from 'stores/Create';
+import { DetailsFormState } from 'stores/DetailsForm';
 
 interface Props {
     GenerateButton: ReactNode;
@@ -52,10 +53,10 @@ function FooHeader({
     detailsFormStoreName,
     resourceConfigStoreName,
 }: Props) {
-    const useEntityCreateStore = useRouteStore();
-    const formActive = useEntityCreateStore(
-        entityCreateStoreSelectors.isActive
-    );
+    const formActive = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['isActive']
+    >(detailsFormStoreName, (state) => state.isActive);
 
     const { inView, ref } = useInView({
         threshold: [stickyThreshold],

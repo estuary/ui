@@ -69,7 +69,10 @@ function DetailsForm({
         DetailsFormState['formState']['displayValidation']
     >(detailsFormStoreName, (state) => state.formState.displayValidation);
 
-    const isActive = useEntityCreateStore(entityCreateStoreSelectors.isActive);
+    const isActive = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['isActive']
+    >(detailsFormStoreName, (state) => state.isActive);
 
     useEffect(() => {
         if (connectorID) {

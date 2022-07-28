@@ -6,7 +6,6 @@ import {
     ResourceConfigStoreNames,
     useZustandStore,
 } from 'context/Zustand';
-import { useRouteStore } from 'hooks/useRouteStore';
 import { useEffect, useRef } from 'react';
 import { setDefaultsValidator } from 'services/ajv';
 import {
@@ -15,7 +14,6 @@ import {
     defaultRenderers,
     showValidation,
 } from 'services/jsonforms';
-import { entityCreateStoreSelectors } from 'stores/Create';
 import { DetailsFormState } from 'stores/DetailsForm';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 
@@ -31,7 +29,6 @@ function ResourceConfigForm({
     detailsFormStoreName,
 }: Props) {
     const name = useRef(collectionName);
-    const useEntityCreateStore = useRouteStore();
 
     const setConfig = useZustandStore<
         ResourceConfigState,
@@ -50,7 +47,10 @@ function ResourceConfigForm({
         DetailsFormState['formState']['displayValidation']
     >(detailsFormStoreName, (state) => state.formState.displayValidation);
 
-    const isActive = useEntityCreateStore(entityCreateStoreSelectors.isActive);
+    const isActive = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['isActive']
+    >(detailsFormStoreName, (state) => state.isActive);
 
     const resourceSchema = useZustandStore<
         ResourceConfigState,

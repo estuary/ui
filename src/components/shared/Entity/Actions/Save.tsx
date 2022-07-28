@@ -91,9 +91,10 @@ function EntityCreateSave({
     const messagePrefix = useEntityCreateStore(
         entityCreateStoreSelectors.messagePrefix
     );
-    const formActive = useEntityCreateStore(
-        entityCreateStoreSelectors.isActive
-    );
+    const formActive = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['isActive']
+    >(detailsFormStoreName, (state) => state.isActive);
 
     const waitForPublishToFinish = (logTokenVal: string) => {
         resetFormState(status);

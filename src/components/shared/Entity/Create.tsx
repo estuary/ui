@@ -308,6 +308,7 @@ function EntityCreate({
                         <CatalogEditor
                             messageId={`${messagePrefix}.finalReview.instructions`}
                             draftEditorStoreName={draftEditorStoreName}
+                            detailsFormStoreName={detailsFormStoreName}
                         />
                     </ErrorBoundryWrapper>
                 </>

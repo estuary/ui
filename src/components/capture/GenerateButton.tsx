@@ -11,10 +11,8 @@ import {
     useZustandStore,
 } from 'context/Zustand';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { useRouteStore } from 'hooks/useRouteStore';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
-import { entityCreateStoreSelectors } from 'stores/Create';
 import { DetailsFormState, FormStatus } from 'stores/DetailsForm';
 import { EndpointConfigState } from 'stores/EndpointConfig';
 
@@ -45,11 +43,10 @@ function CaptureGenerateButton({
         EditorStoreState<DraftSpecQuery>['resetState']
     >(draftEditorStoreName, (state) => state.resetState);
 
-    const useEntityCreateStore = useRouteStore();
-
-    const formActive = useEntityCreateStore(
-        entityCreateStoreSelectors.isActive
-    );
+    const formActive = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['isActive']
+    >(detailsFormStoreName, (state) => state.isActive);
 
     const setFormState = useZustandStore<
         DetailsFormState,
