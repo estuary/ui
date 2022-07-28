@@ -8,7 +8,6 @@ import {
     ResourceConfigStoreNames,
     useZustandStore,
 } from 'context/Zustand';
-import { useRouteStore } from 'hooks/useRouteStore';
 import { FormattedMessage } from 'react-intl';
 import { DetailsFormState } from 'stores/DetailsForm';
 
@@ -19,7 +18,7 @@ interface Props {
     ErrorComponent?: any | boolean;
     hideIcon?: boolean;
     headerMessageId?: string;
-    hasErrorsSelector: Function;
+    errorsExist: boolean;
 }
 
 function ValidationErrorSummary({
@@ -29,19 +28,15 @@ function ValidationErrorSummary({
     headerMessageId,
     hideIcon,
     ErrorComponent,
-    hasErrorsSelector,
+    errorsExist,
 }: Props) {
-    const useEntityCreateStore = useRouteStore();
-
     const displayValidation = useZustandStore<
         DetailsFormState,
         DetailsFormState['formState']['displayValidation']
     >(detailsFormStoreName, (state) => state.formState.displayValidation);
 
-    const hasErrors = useEntityCreateStore(hasErrorsSelector);
-
     return displayValidation ? (
-        <Collapse in={Boolean(hasErrors)} timeout="auto" unmountOnExit>
+        <Collapse in={errorsExist} timeout="auto" unmountOnExit>
             <Alert severity="error" icon={hideIcon ?? undefined}>
                 <AlertTitle>
                     <FormattedMessage

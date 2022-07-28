@@ -50,7 +50,9 @@ function CaptureCreate() {
     const hasConnectors = connectorTags.length > 0;
 
     // Form store
+    const draftEditorStoreName = DraftEditorStoreNames.CAPTURE;
     const detailsFormStoreName = DetailsFormStoreNames.CAPTURE_CREATE;
+    const endpointConfigStoreName = EndpointConfigStoreNames.CAPTURE_CREATE;
 
     const useEntityCreateStore = useRouteStore();
     const messagePrefix = useEntityCreateStore(
@@ -82,31 +84,41 @@ function CaptureCreate() {
         DetailsFormState['formState']['exitWhenLogsClose']
     >(detailsFormStoreName, (state) => state.formState.exitWhenLogsClose);
 
+    const detailsFormErrorsExist = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['detailsFormErrorsExist']
+    >(detailsFormStoreName, (state) => state.detailsFormErrorsExist);
+
+    const endpointConfigErrorsExist = useZustandStore<
+        EndpointConfigState,
+        EndpointConfigState['endpointConfigErrorsExist']
+    >(endpointConfigStoreName, (state) => state.endpointConfigErrorsExist);
+
     const resetEndpointConfigState = useZustandStore<
         EndpointConfigState,
         EndpointConfigState['resetState']
-    >(EndpointConfigStoreNames.CAPTURE_CREATE, (state) => state.resetState);
+    >(endpointConfigStoreName, (state) => state.resetState);
 
     const endpointConfigChanged = useZustandStore<
         EndpointConfigState,
         EndpointConfigState['stateChanged']
-    >(EndpointConfigStoreNames.CAPTURE_CREATE, (state) => state.stateChanged);
+    >(endpointConfigStoreName, (state) => state.stateChanged);
 
     //Editor state
     const setDraftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setId']
-    >(DraftEditorStoreNames.CAPTURE, (state) => state.setId);
+    >(draftEditorStoreName, (state) => state.setId);
 
     const pubId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['pubId']
-    >(DraftEditorStoreNames.CAPTURE, (state) => state.pubId);
+    >(draftEditorStoreName, (state) => state.pubId);
 
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
-    >(DraftEditorStoreNames.CAPTURE, (state) => state.id);
+    >(draftEditorStoreName, (state) => state.id);
 
     // Reset the catalog if the connector changes
     useEffect(() => {
@@ -216,16 +228,17 @@ function CaptureCreate() {
                         heading={
                             <FormattedMessage id={`${messagePrefix}.heading`} />
                         }
+                        formErrorsExist={
+                            detailsFormErrorsExist || endpointConfigErrorsExist
+                        }
                         GenerateButton={
                             <CaptureGenerateButton
                                 disabled={!hasConnectors}
                                 callFailed={helpers.callFailed}
                                 subscription={discoversSubscription}
-                                draftEditorStoreName={
-                                    DraftEditorStoreNames.CAPTURE
-                                }
+                                draftEditorStoreName={draftEditorStoreName}
                                 endpointConfigStoreName={
-                                    EndpointConfigStoreNames.CAPTURE_CREATE
+                                    endpointConfigStoreName
                                 }
                                 detailsFormStoreName={detailsFormStoreName}
                             />
@@ -236,9 +249,7 @@ function CaptureCreate() {
                                 callFailed={helpers.callFailed}
                                 disabled={!hasConnectors}
                                 logEvent={CustomEvents.CAPTURE_TEST}
-                                draftEditorStoreName={
-                                    DraftEditorStoreNames.CAPTURE
-                                }
+                                draftEditorStoreName={draftEditorStoreName}
                                 detailsFormStoreName={detailsFormStoreName}
                             />
                         }
@@ -247,24 +258,18 @@ function CaptureCreate() {
                                 closeLogs={handlers.closeLogs}
                                 callFailed={helpers.callFailed}
                                 disabled={!draftId}
-                                draftEditorStoreName={
-                                    DraftEditorStoreNames.CAPTURE
-                                }
+                                draftEditorStoreName={draftEditorStoreName}
                                 materialize={handlers.materializeCollections}
                                 logEvent={CustomEvents.CAPTURE_CREATE}
                                 detailsFormStoreName={detailsFormStoreName}
                             />
                         }
-                        endpointConfigStoreName={
-                            EndpointConfigStoreNames.CAPTURE_CREATE
-                        }
+                        endpointConfigStoreName={endpointConfigStoreName}
                         detailsFormStoreName={detailsFormStoreName}
                     />
                 }
-                draftEditorStoreName={DraftEditorStoreNames.CAPTURE}
-                endpointConfigStoreName={
-                    EndpointConfigStoreNames.CAPTURE_CREATE
-                }
+                draftEditorStoreName={draftEditorStoreName}
+                endpointConfigStoreName={endpointConfigStoreName}
                 detailsFormStoreName={detailsFormStoreName}
             />
         </PageContainer>

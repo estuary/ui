@@ -18,7 +18,6 @@ import {
 } from 'context/Zustand';
 import { ReactNode } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { entityCreateStoreSelectors } from 'stores/Create';
 import { DetailsFormState } from 'stores/DetailsForm';
 
 interface Props {
@@ -26,6 +25,7 @@ interface Props {
     TestButton: ReactNode;
     SaveButton: ReactNode;
     heading: ReactNode;
+    formErrorsExist: boolean;
     endpointConfigStoreName: EndpointConfigStoreNames;
     detailsFormStoreName: DetailsFormStoreNames;
     resourceConfigStoreName?: ResourceConfigStoreNames;
@@ -49,6 +49,7 @@ function FooHeader({
     TestButton,
     SaveButton,
     heading,
+    formErrorsExist,
     endpointConfigStoreName,
     detailsFormStoreName,
     resourceConfigStoreName,
@@ -108,7 +109,7 @@ function FooHeader({
 
             <Box sx={{ maxHeight: 200, overflowY: 'auto' }}>
                 <ValidationErrorSummary
-                    hasErrorsSelector={entityCreateStoreSelectors.hasErrors}
+                    errorsExist={formErrorsExist}
                     endpointConfigStoreName={endpointConfigStoreName}
                     detailsFormStoreName={detailsFormStoreName}
                     resourceConfigStoreName={resourceConfigStoreName}
