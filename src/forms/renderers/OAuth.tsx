@@ -69,7 +69,7 @@ const OAuthproviderRenderer = ({
     };
 
     const removeCofig = () => {
-        handleChange(path, {});
+        handleChange(path, undefined);
     };
 
     return (
