@@ -86,6 +86,9 @@ const OAuthproviderRenderer = ({
             </Typography>
 
             <Stack direction="row" spacing={2}>
+                <Alert severity="warning">
+                    Under Development - do not use in prod
+                </Alert>
                 {provider === 'google' ? (
                     <GoogleButton disabled={loading} onClick={openPopUp} />
                 ) : null}
