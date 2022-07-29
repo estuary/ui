@@ -17,8 +17,8 @@ import {
     generateCategoryUiSchema,
     showValidation,
 } from 'services/jsonforms';
-import { DetailsFormState } from 'stores/DetailsForm';
 import { EndpointConfigState } from 'stores/EndpointConfig';
+import { DetailsFormState } from 'stores/MiniCreate';
 
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
 

@@ -1,7 +1,7 @@
 import { Typography } from '@mui/material';
 import { DetailsFormStoreNames, useZustandStore } from 'context/Zustand';
 import { FormattedMessage } from 'react-intl';
-import { DetailsFormState, FormStatus } from 'stores/DetailsForm';
+import { DetailsFormState, FormStatus } from 'stores/MiniCreate';
 
 interface Props {
     detailsFormStoreName: DetailsFormStoreNames;

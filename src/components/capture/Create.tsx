@@ -25,8 +25,8 @@ import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import { startSubscription, TABLES } from 'services/supabase';
 import { entityCreateStoreSelectors } from 'stores/Create';
-import { DetailsFormState, FormStatus } from 'stores/DetailsForm';
 import { EndpointConfigState } from 'stores/EndpointConfig';
+import { DetailsFormState, FormStatus } from 'stores/MiniCreate';
 import { getPathWithParam } from 'utils/misc-utils';
 
 const connectorType = 'capture';

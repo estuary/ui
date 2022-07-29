@@ -12,7 +12,7 @@ import { useRouteStore } from 'hooks/useRouteStore';
 import { FormattedMessage } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
 import { entityCreateStoreSelectors } from 'stores/Create';
-import { DetailsFormState, FormStatus } from 'stores/DetailsForm';
+import { DetailsFormState, FormStatus } from 'stores/MiniCreate';
 
 interface Props {
     closeLogs: Function;

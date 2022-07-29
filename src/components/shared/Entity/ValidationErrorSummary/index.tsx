@@ -9,7 +9,7 @@ import {
     useZustandStore,
 } from 'context/Zustand';
 import { FormattedMessage } from 'react-intl';
-import { DetailsFormState } from 'stores/DetailsForm';
+import { DetailsFormState } from 'stores/MiniCreate';
 
 interface Props {
     endpointConfigStoreName: EndpointConfigStoreNames;

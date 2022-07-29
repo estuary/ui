@@ -18,7 +18,7 @@ import {
 } from 'context/Zustand';
 import { ReactNode } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { DetailsFormState } from 'stores/DetailsForm';
+import { DetailsFormState } from 'stores/MiniCreate';
 
 interface Props {
     GenerateButton: ReactNode;

@@ -2,7 +2,7 @@ import { Box, Button, Stack } from '@mui/material';
 import Status from 'components/shared/Entity/Status';
 import { DetailsFormStoreNames, useZustandStore } from 'context/Zustand';
 import { FormattedMessage } from 'react-intl';
-import { DetailsFormState, FormStatus } from 'stores/DetailsForm';
+import { DetailsFormState, FormStatus } from 'stores/MiniCreate';
 
 interface Props {
     close: any;

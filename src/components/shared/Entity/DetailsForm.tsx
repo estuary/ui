@@ -22,7 +22,7 @@ import {
     showValidation,
 } from 'services/jsonforms';
 import { entityCreateStoreSelectors } from 'stores/Create';
-import { DetailsFormState } from 'stores/DetailsForm';
+import { DetailsFormState } from 'stores/MiniCreate';
 import { Grants } from 'types';
 
 interface Props {

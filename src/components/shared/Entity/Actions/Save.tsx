@@ -15,7 +15,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
 import { endSubscription, startSubscription, TABLES } from 'services/supabase';
 import { entityCreateStoreSelectors } from 'stores/Create';
-import { DetailsFormState, FormStatus } from 'stores/DetailsForm';
+import { DetailsFormState, FormStatus } from 'stores/MiniCreate';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';

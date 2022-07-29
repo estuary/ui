@@ -9,7 +9,7 @@ import {
 } from 'context/Zustand';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { FormattedMessage } from 'react-intl';
-import { DetailsFormState } from 'stores/DetailsForm';
+import { DetailsFormState } from 'stores/MiniCreate';
 
 interface Props {
     messageId: string;

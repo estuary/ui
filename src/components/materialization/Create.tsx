@@ -24,8 +24,8 @@ import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import { entityCreateStoreSelectors } from 'stores/Create';
-import { DetailsFormState, FormStatus } from 'stores/DetailsForm';
 import { EndpointConfigState } from 'stores/EndpointConfig';
+import { DetailsFormState, FormStatus } from 'stores/MiniCreate';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 
 const connectorType = 'materialization';

@@ -1,7 +1,7 @@
 import KeyValueList from 'components/shared/KeyValueList';
 import { DetailsFormStoreNames, useZustandStore } from 'context/Zustand';
 import { useIntl } from 'react-intl';
-import { DetailsFormState } from 'stores/DetailsForm';
+import { DetailsFormState } from 'stores/MiniCreate';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {

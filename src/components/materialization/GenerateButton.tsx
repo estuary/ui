@@ -14,8 +14,8 @@ import {
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
-import { DetailsFormState, FormStatus } from 'stores/DetailsForm';
 import { EndpointConfigState } from 'stores/EndpointConfig';
+import { DetailsFormState, FormStatus } from 'stores/MiniCreate';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
 

@@ -13,8 +13,8 @@ import {
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
-import { DetailsFormState, FormStatus } from 'stores/DetailsForm';
 import { EndpointConfigState } from 'stores/EndpointConfig';
+import { DetailsFormState, FormStatus } from 'stores/MiniCreate';
 
 interface Props {
     disabled: boolean;

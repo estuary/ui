@@ -14,7 +14,7 @@ import {
     defaultRenderers,
     showValidation,
 } from 'services/jsonforms';
-import { DetailsFormState } from 'stores/DetailsForm';
+import { DetailsFormState } from 'stores/MiniCreate';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 
 type Props = {

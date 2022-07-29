@@ -5,8 +5,8 @@ import {
     ReactNode,
     useContext,
 } from 'react';
-import { createDetailsFormStore } from 'stores/DetailsForm';
 import { createEndpointConfigStore } from 'stores/EndpointConfig';
+import { createDetailsFormStore } from 'stores/MiniCreate';
 import { createResourceConfigStore } from 'stores/ResourceConfig';
 import useConstant from 'use-constant';
 import { StoreApi, useStore } from 'zustand';
