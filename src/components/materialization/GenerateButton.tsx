@@ -8,14 +8,16 @@ import {
     DetailsFormStoreNames,
     DraftEditorStoreNames,
     EndpointConfigStoreNames,
+    FormStateStoreNames,
     ResourceConfigStoreNames,
     useZustandStore,
 } from 'context/Zustand';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
+import { DetailsFormState } from 'stores/DetailsForm';
 import { EndpointConfigState } from 'stores/EndpointConfig';
-import { CreateState, FormStatus } from 'stores/MiniCreate';
+import { EntityFormState, FormStatus } from 'stores/FormState';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
 
@@ -25,6 +27,7 @@ interface Props {
     draftEditorStoreName: DraftEditorStoreNames;
     endpointConfigStoreName: EndpointConfigStoreNames;
     resourceConfigStoreName: ResourceConfigStoreNames;
+    formStateStoreName: FormStateStoreNames;
     detailsFormStoreName: DetailsFormStoreNames;
 }
 
@@ -34,8 +37,26 @@ function MaterializeGenerateButton({
     draftEditorStoreName,
     endpointConfigStoreName,
     resourceConfigStoreName,
+    formStateStoreName,
     detailsFormStoreName,
 }: Props) {
+    // Details Form Store
+    const entityName = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['details']['data']['entityName']
+    >(detailsFormStoreName, (state) => state.details.data.entityName);
+
+    const imageTag = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['details']['data']['connectorImage']
+    >(detailsFormStoreName, (state) => state.details.data.connectorImage);
+
+    const detailsFormsHasErrors = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['detailsFormErrorsExist']
+    >(detailsFormStoreName, (state) => state.detailsFormErrorsExist);
+
+    // Draft Editor Store
     const isSaving = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['isSaving']
@@ -51,55 +72,43 @@ function MaterializeGenerateButton({
         EditorStoreState<DraftSpecQuery>['setId']
     >(draftEditorStoreName, (state) => state.setId);
 
-    const formActive = useZustandStore<CreateState, CreateState['isActive']>(
-        detailsFormStoreName,
-        (state) => state.isActive
-    );
-
-    const setFormState = useZustandStore<
-        CreateState,
-        CreateState['setFormState']
-    >(detailsFormStoreName, (state) => state.setFormState);
-
-    const resetFormState = useZustandStore<
-        CreateState,
-        CreateState['resetFormState']
-    >(detailsFormStoreName, (state) => state.resetFormState);
-
-    const entityName = useZustandStore<
-        CreateState,
-        CreateState['details']['data']['entityName']
-    >(detailsFormStoreName, (state) => state.details.data.entityName);
-
-    const imageTag = useZustandStore<
-        CreateState,
-        CreateState['details']['data']['connectorImage']
-    >(detailsFormStoreName, (state) => state.details.data.connectorImage);
-
+    // Endpoint Config Store
     const endpointConfigData = useZustandStore<
         EndpointConfigState,
         EndpointConfigState['endpointConfig']['data']
     >(endpointConfigStoreName, (state) => state.endpointConfig.data);
-
-    const endpointSchema = useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['endpointSchema']
-    >(endpointConfigStoreName, (state) => state.endpointSchema);
-
-    const resourceConfig = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['resourceConfig']
-    >(resourceConfigStoreName, (state) => state.resourceConfig);
 
     const endpointConfigHasErrors = useZustandStore<
         EndpointConfigState,
         EndpointConfigState['endpointConfigErrorsExist']
     >(endpointConfigStoreName, (state) => state.endpointConfigErrorsExist);
 
-    const detailsFormsHasErrors = useZustandStore<
-        CreateState,
-        CreateState['detailsFormErrorsExist']
-    >(detailsFormStoreName, (state) => state.detailsFormErrorsExist);
+    const endpointSchema = useZustandStore<
+        EndpointConfigState,
+        EndpointConfigState['endpointSchema']
+    >(endpointConfigStoreName, (state) => state.endpointSchema);
+
+    // Form State Store
+    const formActive = useZustandStore<
+        EntityFormState,
+        EntityFormState['isActive']
+    >(formStateStoreName, (state) => state.isActive);
+
+    const setFormState = useZustandStore<
+        EntityFormState,
+        EntityFormState['setFormState']
+    >(formStateStoreName, (state) => state.setFormState);
+
+    const resetFormState = useZustandStore<
+        EntityFormState,
+        EntityFormState['resetFormState']
+    >(formStateStoreName, (state) => state.resetFormState);
+
+    // Resource Config Store
+    const resourceConfig = useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['resourceConfig']
+    >(resourceConfigStoreName, (state) => state.resourceConfig);
 
     const resourceConfigHasErrors = useZustandStore<
         ResourceConfigState,

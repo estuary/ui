@@ -5,14 +5,16 @@ import ResourceConfigErrors from 'components/shared/Entity/ValidationErrorSummar
 import {
     DetailsFormStoreNames,
     EndpointConfigStoreNames,
+    FormStateStoreNames,
     ResourceConfigStoreNames,
     useZustandStore,
 } from 'context/Zustand';
 import { FormattedMessage } from 'react-intl';
-import { CreateState } from 'stores/MiniCreate';
+import { EntityFormState } from 'stores/FormState';
 
 interface Props {
     endpointConfigStoreName: EndpointConfigStoreNames;
+    formStateStoreName: FormStateStoreNames;
     detailsFormStoreName: DetailsFormStoreNames;
     resourceConfigStoreName?: ResourceConfigStoreNames;
     ErrorComponent?: any | boolean;
@@ -23,6 +25,7 @@ interface Props {
 
 function ValidationErrorSummary({
     endpointConfigStoreName,
+    formStateStoreName,
     detailsFormStoreName,
     resourceConfigStoreName,
     headerMessageId,
@@ -31,9 +34,9 @@ function ValidationErrorSummary({
     errorsExist,
 }: Props) {
     const displayValidation = useZustandStore<
-        CreateState,
-        CreateState['formState']['displayValidation']
-    >(detailsFormStoreName, (state) => state.formState.displayValidation);
+        EntityFormState,
+        EntityFormState['formState']['displayValidation']
+    >(formStateStoreName, (state) => state.formState.displayValidation);
 
     return displayValidation ? (
         <Collapse in={errorsExist} timeout="auto" unmountOnExit>

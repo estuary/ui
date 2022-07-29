@@ -6,6 +6,7 @@ import { EditorStoreState } from 'components/editor/Store';
 import {
     DetailsFormStoreNames,
     DraftEditorStoreNames,
+    FormStateStoreNames,
     useZustandStore,
 } from 'context/Zustand';
 import { CATALOG_NAME_SCOPE } from 'forms/renderers/CatalogName';
@@ -22,13 +23,15 @@ import {
     showValidation,
 } from 'services/jsonforms';
 import { entityCreateStoreSelectors } from 'stores/Create';
-import { CreateState } from 'stores/MiniCreate';
+import { DetailsFormState } from 'stores/DetailsForm';
+import { EntityFormState } from 'stores/FormState';
 import { Grants } from 'types';
 
 interface Props {
     connectorTags: ConnectorWithTagDetailQuery[];
     accessGrants: Grants[];
     draftEditorStoreName: DraftEditorStoreNames;
+    formStateStoreName: FormStateStoreNames;
     detailsFormStoreName: DetailsFormStoreNames;
 }
 
@@ -36,6 +39,7 @@ function DetailsForm({
     connectorTags,
     accessGrants,
     draftEditorStoreName,
+    formStateStoreName,
     detailsFormStoreName,
 }: Props) {
     const intl = useIntl();
@@ -44,35 +48,38 @@ function DetailsForm({
         authenticatedRoutes.captures.create.params.connectorID
     );
 
-    const isSaving = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['isSaving']
-    >(draftEditorStoreName, (state) => state.isSaving);
-
     const useEntityCreateStore = useRouteStore();
     const messagePrefix = useEntityCreateStore(
         entityCreateStoreSelectors.messagePrefix
     );
 
+    // Details Form Store
     const formData = useZustandStore<
-        CreateState,
-        CreateState['details']['data']
+        DetailsFormState,
+        DetailsFormState['details']['data']
     >(detailsFormStoreName, (state) => state.details.data);
 
-    const setDetails = useZustandStore<CreateState, CreateState['setDetails']>(
-        detailsFormStoreName,
-        (state) => state.setDetails
-    );
+    const setDetails = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['setDetails']
+    >(detailsFormStoreName, (state) => state.setDetails);
 
+    // Draft Editor Store
+    const isSaving = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['isSaving']
+    >(draftEditorStoreName, (state) => state.isSaving);
+
+    // Form State Store
     const displayValidation = useZustandStore<
-        CreateState,
-        CreateState['formState']['displayValidation']
-    >(detailsFormStoreName, (state) => state.formState.displayValidation);
+        EntityFormState,
+        EntityFormState['formState']['displayValidation']
+    >(formStateStoreName, (state) => state.formState.displayValidation);
 
-    const isActive = useZustandStore<CreateState, CreateState['isActive']>(
-        detailsFormStoreName,
-        (state) => state.isActive
-    );
+    const isActive = useZustandStore<
+        EntityFormState,
+        EntityFormState['isActive']
+    >(formStateStoreName, (state) => state.isActive);
 
     useEffect(() => {
         if (connectorID) {

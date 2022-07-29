@@ -3,34 +3,34 @@ import DraftSpecEditor from 'components/editor/DraftSpec';
 import { EditorStoreState } from 'components/editor/Store';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import {
-    DetailsFormStoreNames,
     DraftEditorStoreNames,
+    FormStateStoreNames,
     useZustandStore,
 } from 'context/Zustand';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { FormattedMessage } from 'react-intl';
-import { CreateState } from 'stores/MiniCreate';
+import { EntityFormState } from 'stores/FormState';
 
 interface Props {
     messageId: string;
     draftEditorStoreName: DraftEditorStoreNames;
-    detailsFormStoreName: DetailsFormStoreNames;
+    formStateStoreName: FormStateStoreNames;
 }
 
 function CatalogEditor({
     messageId,
     draftEditorStoreName,
-    detailsFormStoreName,
+    formStateStoreName,
 }: Props) {
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
     >(draftEditorStoreName, (state) => state.id);
 
-    const formActive = useZustandStore<CreateState, CreateState['isActive']>(
-        detailsFormStoreName,
-        (state) => state.isActive
-    );
+    const formActive = useZustandStore<
+        EntityFormState,
+        EntityFormState['isActive']
+    >(formStateStoreName, (state) => state.isActive);
 
     if (draftId) {
         return (

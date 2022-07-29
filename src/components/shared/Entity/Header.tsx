@@ -13,12 +13,13 @@ import { slate, stickyHeaderIndex, tableBorderSx } from 'context/Theme';
 import {
     DetailsFormStoreNames,
     EndpointConfigStoreNames,
+    FormStateStoreNames,
     ResourceConfigStoreNames,
     useZustandStore,
 } from 'context/Zustand';
 import { ReactNode } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { CreateState } from 'stores/MiniCreate';
+import { EntityFormState } from 'stores/FormState';
 
 interface Props {
     GenerateButton: ReactNode;
@@ -27,6 +28,7 @@ interface Props {
     heading: ReactNode;
     formErrorsExist: boolean;
     endpointConfigStoreName: EndpointConfigStoreNames;
+    formStateStoreName: FormStateStoreNames;
     detailsFormStoreName: DetailsFormStoreNames;
     resourceConfigStoreName?: ResourceConfigStoreNames;
 }
@@ -51,13 +53,14 @@ function FooHeader({
     heading,
     formErrorsExist,
     endpointConfigStoreName,
+    formStateStoreName,
     detailsFormStoreName,
     resourceConfigStoreName,
 }: Props) {
-    const formActive = useZustandStore<CreateState, CreateState['isActive']>(
-        detailsFormStoreName,
-        (state) => state.isActive
-    );
+    const formActive = useZustandStore<
+        EntityFormState,
+        EntityFormState['isActive']
+    >(formStateStoreName, (state) => state.isActive);
 
     const { inView, ref } = useInView({
         threshold: [stickyThreshold],
@@ -111,6 +114,7 @@ function FooHeader({
                 <ValidationErrorSummary
                     errorsExist={formErrorsExist}
                     endpointConfigStoreName={endpointConfigStoreName}
+                    formStateStoreName={formStateStoreName}
                     detailsFormStoreName={detailsFormStoreName}
                     resourceConfigStoreName={resourceConfigStoreName}
                 />

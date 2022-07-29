@@ -5,8 +5,9 @@ import {
     ReactNode,
     useContext,
 } from 'react';
+import { createDetailsFormStore } from 'stores/DetailsForm';
 import { createEndpointConfigStore } from 'stores/EndpointConfig';
-import { createEntityCreateStore } from 'stores/MiniCreate';
+import { createFormStateStore } from 'stores/FormState';
 import { createResourceConfigStore } from 'stores/ResourceConfig';
 import useConstant from 'use-constant';
 import { StoreApi, useStore } from 'zustand';
@@ -24,6 +25,11 @@ export enum DraftEditorStoreNames {
 export enum EndpointConfigStoreNames {
     CAPTURE_CREATE = 'Capture-Create-Endpoint-Config',
     MATERIALIZATION_CREATE = 'Materialization-Create-Endpoint-Config',
+}
+
+export enum FormStateStoreNames {
+    CAPTURE_CREATE = 'Capture-Create-Form-State',
+    MATERIALIZATION_CREATE = 'Materialization-Create-Form-State',
 }
 
 export enum LiveSpecEditorStoreNames {
@@ -46,6 +52,7 @@ export type StoreName =
     | DetailsFormStoreNames
     | DraftEditorStoreNames
     | EndpointConfigStoreNames
+    | FormStateStoreNames
     | LiveSpecEditorStoreNames
     | ResourceConfigStoreNames
     | SelectTableStoreNames;
@@ -66,10 +73,10 @@ interface ZustandProviderProps {
 
 const stores = {
     // Details Form Store
-    [DetailsFormStoreNames.CAPTURE_CREATE]: createEntityCreateStore(
+    [DetailsFormStoreNames.CAPTURE_CREATE]: createDetailsFormStore(
         DetailsFormStoreNames.CAPTURE_CREATE
     ),
-    [DetailsFormStoreNames.MATERIALIZATION_CREATE]: createEntityCreateStore(
+    [DetailsFormStoreNames.MATERIALIZATION_CREATE]: createDetailsFormStore(
         DetailsFormStoreNames.MATERIALIZATION_CREATE
     ),
 
@@ -89,6 +96,14 @@ const stores = {
         createEndpointConfigStore(
             EndpointConfigStoreNames.MATERIALIZATION_CREATE
         ),
+
+    // Form State Store
+    [FormStateStoreNames.CAPTURE_CREATE]: createFormStateStore(
+        FormStateStoreNames.CAPTURE_CREATE
+    ),
+    [FormStateStoreNames.MATERIALIZATION_CREATE]: createFormStateStore(
+        FormStateStoreNames.MATERIALIZATION_CREATE
+    ),
 
     // Resource Config Store
     [ResourceConfigStoreNames.MATERIALIZATION_CREATE]:

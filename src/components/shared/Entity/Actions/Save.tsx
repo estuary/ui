@@ -5,6 +5,7 @@ import { buttonSx } from 'components/shared/Entity/Header';
 import {
     DetailsFormStoreNames,
     DraftEditorStoreNames,
+    FormStateStoreNames,
     useZustandStore,
 } from 'context/Zustand';
 import { useClient } from 'hooks/supabase-swr';
@@ -15,7 +16,8 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
 import { endSubscription, startSubscription, TABLES } from 'services/supabase';
 import { entityCreateStoreSelectors } from 'stores/Create';
-import { CreateState, FormStatus } from 'stores/MiniCreate';
+import { DetailsFormState } from 'stores/DetailsForm';
+import { EntityFormState, FormStatus } from 'stores/FormState';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
@@ -26,6 +28,7 @@ interface Props {
     logEvent: CustomEvents;
     dryRun?: boolean;
     draftEditorStoreName: DraftEditorStoreNames;
+    formStateStoreName: FormStateStoreNames;
     detailsFormStoreName: DetailsFormStoreNames;
 }
 
@@ -45,6 +48,7 @@ function EntityCreateSave({
     onFailure,
     draftEditorStoreName,
     logEvent,
+    formStateStoreName,
     detailsFormStoreName,
 }: Props) {
     const intl = useIntl();
@@ -52,6 +56,7 @@ function EntityCreateSave({
 
     const status = dryRun ? FormStatus.TESTING : FormStatus.SAVING;
 
+    // Draft Editor Store
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
@@ -67,33 +72,37 @@ function EntityCreateSave({
         EditorStoreState<DraftSpecQuery>['isSaving']
     >(draftEditorStoreName, (state) => state.isSaving);
 
+    // Details Form Store
+    const entityDescription = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['details']['data']['description']
+    >(detailsFormStoreName, (state) => state.details.data.description);
+
+    // Form State Store
+    const setFormState = useZustandStore<
+        EntityFormState,
+        EntityFormState['setFormState']
+    >(formStateStoreName, (state) => state.setFormState);
+
+    const resetFormState = useZustandStore<
+        EntityFormState,
+        EntityFormState['resetFormState']
+    >(formStateStoreName, (state) => state.resetFormState);
+
+    const formActive = useZustandStore<
+        EntityFormState,
+        EntityFormState['isActive']
+    >(formStateStoreName, (state) => state.isActive);
+
+    // Notification Store
     const showNotification = useNotificationStore(
         notificationStoreSelectors.showNotification
     );
 
     const useEntityCreateStore = useRouteStore();
 
-    const entityDescription = useZustandStore<
-        CreateState,
-        CreateState['details']['data']['description']
-    >(detailsFormStoreName, (state) => state.details.data.description);
-
-    const setFormState = useZustandStore<
-        CreateState,
-        CreateState['setFormState']
-    >(detailsFormStoreName, (state) => state.setFormState);
-
-    const resetFormState = useZustandStore<
-        CreateState,
-        CreateState['resetFormState']
-    >(detailsFormStoreName, (state) => state.resetFormState);
-
     const messagePrefix = useEntityCreateStore(
         entityCreateStoreSelectors.messagePrefix
-    );
-    const formActive = useZustandStore<CreateState, CreateState['isActive']>(
-        detailsFormStoreName,
-        (state) => state.isActive
     );
 
     const waitForPublishToFinish = (logTokenVal: string) => {

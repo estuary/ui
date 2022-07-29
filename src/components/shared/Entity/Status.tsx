@@ -1,22 +1,22 @@
 import { Typography } from '@mui/material';
-import { DetailsFormStoreNames, useZustandStore } from 'context/Zustand';
+import { FormStateStoreNames, useZustandStore } from 'context/Zustand';
 import { FormattedMessage } from 'react-intl';
-import { CreateState, FormStatus } from 'stores/MiniCreate';
+import { EntityFormState, FormStatus } from 'stores/FormState';
 
 interface Props {
-    detailsFormStoreName: DetailsFormStoreNames;
+    formStateStoreName: FormStateStoreNames;
 }
 
-function Status({ detailsFormStoreName }: Props) {
+function Status({ formStateStoreName }: Props) {
     const formStatus = useZustandStore<
-        CreateState,
-        CreateState['formState']['status']
-    >(detailsFormStoreName, (state) => state.formState.status);
+        EntityFormState,
+        EntityFormState['formState']['status']
+    >(formStateStoreName, (state) => state.formState.status);
 
-    const isActive = useZustandStore<CreateState, CreateState['isActive']>(
-        detailsFormStoreName,
-        (state) => state.isActive
-    );
+    const isActive = useZustandStore<
+        EntityFormState,
+        EntityFormState['isActive']
+    >(formStateStoreName, (state) => state.isActive);
 
     let messageKey;
     if (formStatus === FormStatus.TESTED || formStatus === FormStatus.SAVED) {

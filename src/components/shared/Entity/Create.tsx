@@ -12,6 +12,7 @@ import {
     DetailsFormStoreNames,
     DraftEditorStoreNames,
     EndpointConfigStoreNames,
+    FormStateStoreNames,
     ResourceConfigStoreNames,
     useZustandStore,
 } from 'context/Zustand';
@@ -29,8 +30,9 @@ import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
 import { entityCreateStoreSelectors } from 'stores/Create';
+import { DetailsFormState } from 'stores/DetailsForm';
 import { EndpointConfigState } from 'stores/EndpointConfig';
-import { CreateState } from 'stores/MiniCreate';
+import { EntityFormState } from 'stores/FormState';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 import { ENTITY, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
@@ -41,6 +43,7 @@ interface Props {
     Header: any;
     draftEditorStoreName: DraftEditorStoreNames;
     endpointConfigStoreName: EndpointConfigStoreNames;
+    formStateStoreName: FormStateStoreNames;
     detailsFormStoreName: DetailsFormStoreNames;
     resourceConfigStoreName?: ResourceConfigStoreNames;
     showCollections?: boolean;
@@ -52,6 +55,7 @@ function EntityCreate({
     Header,
     draftEditorStoreName,
     endpointConfigStoreName,
+    formStateStoreName,
     detailsFormStoreName,
     resourceConfigStoreName,
     showCollections,
@@ -79,31 +83,45 @@ function EntityCreate({
     } = useConnectorWithTagDetail(connectorType);
 
     const useEntityCreateStore = useRouteStore();
-
-    const imageTag = useZustandStore<
-        CreateState,
-        CreateState['details']['data']['connectorImage']
-    >(detailsFormStoreName, (state) => state.details.data.connectorImage);
-
     const messagePrefix = useEntityCreateStore(
         entityCreateStoreSelectors.messagePrefix
     );
 
-    const logToken = useZustandStore<
-        CreateState,
-        CreateState['formState']['logToken']
-    >(detailsFormStoreName, (state) => state.formState.logToken);
+    // Details Form Store
+    const imageTag = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['details']['data']['connectorImage']
+    >(detailsFormStoreName, (state) => state.details.data.connectorImage);
 
-    const formSubmitError = useZustandStore<
-        CreateState,
-        CreateState['formState']['error']
-    >(detailsFormStoreName, (state) => state.formState.error);
+    // Draft Editor Store
+    const setDraftId = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['setId']
+    >(draftEditorStoreName, (state) => state.setId);
 
+    const draftId = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['id']
+    >(draftEditorStoreName, (state) => state.id);
+
+    // Endpoint Config Store
     const setEndpointSchema = useZustandStore<
         EndpointConfigState,
         EndpointConfigState['setEndpointSchema']
     >(endpointConfigStoreName, (state) => state.setEndpointSchema);
 
+    // Form State Store
+    const logToken = useZustandStore<
+        EntityFormState,
+        EntityFormState['formState']['logToken']
+    >(formStateStoreName, (state) => state.formState.logToken);
+
+    const formSubmitError = useZustandStore<
+        EntityFormState,
+        EntityFormState['formState']['error']
+    >(formStateStoreName, (state) => state.formState.error);
+
+    // Resource Config Store
     // TODO: Determine proper placement for this logic.
     const setResourceSchema = useZustandStore<
         ResourceConfigState,
@@ -122,17 +140,6 @@ function EntityCreate({
             ResourceConfigStoreNames.MATERIALIZATION_CREATE,
         (state) => state.preFillCollections
     );
-
-    //Editor state
-    const setDraftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['setId']
-    >(draftEditorStoreName, (state) => state.setId);
-
-    const draftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['id']
-    >(draftEditorStoreName, (state) => state.id);
 
     // Reset the catalog if the connector changes
     useEffect(() => {
@@ -204,6 +211,7 @@ function EntityCreate({
                                 connectorTags={connectorTags}
                                 accessGrants={combinedGrants}
                                 draftEditorStoreName={draftEditorStoreName}
+                                formStateStoreName={formStateStoreName}
                                 detailsFormStoreName={detailsFormStoreName}
                             />
                         </ErrorBoundryWrapper>
@@ -217,7 +225,7 @@ function EntityCreate({
                                 endpointConfigStoreName={
                                     endpointConfigStoreName
                                 }
-                                detailsFormStoreName={detailsFormStoreName}
+                                formStateStoreName={formStateStoreName}
                             />
                         </ErrorBoundryWrapper>
                     ) : null}
@@ -230,6 +238,7 @@ function EntityCreate({
                                 resourceConfigStoreName={
                                     resourceConfigStoreName
                                 }
+                                formStateStoreName={formStateStoreName}
                                 detailsFormStoreName={detailsFormStoreName}
                             />
                         </ErrorBoundryWrapper>
@@ -239,7 +248,7 @@ function EntityCreate({
                         <CatalogEditor
                             messageId={`${messagePrefix}.finalReview.instructions`}
                             draftEditorStoreName={draftEditorStoreName}
-                            detailsFormStoreName={detailsFormStoreName}
+                            formStateStoreName={formStateStoreName}
                         />
                     </ErrorBoundryWrapper>
                 </>

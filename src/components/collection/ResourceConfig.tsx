@@ -1,21 +1,18 @@
 import { Box, Typography } from '@mui/material';
 import ResourceConfigForm from 'components/collection/ResourceConfigForm';
-import {
-    DetailsFormStoreNames,
-    ResourceConfigStoreNames,
-} from 'context/Zustand';
+import { FormStateStoreNames, ResourceConfigStoreNames } from 'context/Zustand';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
     collectionName: string;
     resourceConfigStoreName: ResourceConfigStoreNames;
-    detailsFormStoreName: DetailsFormStoreNames;
+    formStateStoreName: FormStateStoreNames;
 }
 
 function ResourceConfig({
     collectionName,
     resourceConfigStoreName,
-    detailsFormStoreName,
+    formStateStoreName,
 }: Props) {
     return (
         <Box sx={{ p: 1 }}>
@@ -27,7 +24,7 @@ function ResourceConfig({
                 <ResourceConfigForm
                     collectionName={collectionName}
                     resourceConfigStoreName={resourceConfigStoreName}
-                    detailsFormStoreName={detailsFormStoreName}
+                    formStateStoreName={formStateStoreName}
                 />
             </Box>
         </Box>

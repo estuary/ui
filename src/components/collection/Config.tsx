@@ -3,27 +3,32 @@ import BindingsMultiEditor from 'components/editor/Bindings';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import {
     DetailsFormStoreNames,
+    FormStateStoreNames,
     ResourceConfigStoreNames,
     useZustandStore,
 } from 'context/Zustand';
 import { FormattedMessage } from 'react-intl';
-import { CreateState } from 'stores/MiniCreate';
+import { DetailsFormState } from 'stores/DetailsForm';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 
 interface Props {
     resourceConfigStoreName: ResourceConfigStoreNames;
     detailsFormStoreName: DetailsFormStoreNames;
+    formStateStoreName: FormStateStoreNames;
 }
 
 function CollectionConfig({
     resourceConfigStoreName,
     detailsFormStoreName,
+    formStateStoreName,
 }: Props) {
+    // Details Form Store
     const imageTag = useZustandStore<
-        CreateState,
-        CreateState['details']['data']['connectorImage']
+        DetailsFormState,
+        DetailsFormState['details']['data']['connectorImage']
     >(detailsFormStoreName, (state) => state.details.data.connectorImage);
 
+    // Resource Config Store
     const resourceConfigHasErrors = useZustandStore<
         ResourceConfigState,
         ResourceConfigState['resourceConfigErrorsExist']
@@ -36,6 +41,7 @@ function CollectionConfig({
 
     const hasErrors = resourceConfigHasErrors || collectionsHasErrors;
 
+    // TODO: Determine whether this if condition is necessary.
     if (imageTag) {
         return (
             <WrapperWithHeader
@@ -50,7 +56,7 @@ function CollectionConfig({
             >
                 <BindingsMultiEditor
                     resourceConfigStoreName={resourceConfigStoreName}
-                    detailsFormStoreName={detailsFormStoreName}
+                    formStateStoreName={formStateStoreName}
                 />
             </WrapperWithHeader>
         );

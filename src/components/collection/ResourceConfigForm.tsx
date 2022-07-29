@@ -2,7 +2,7 @@ import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { StyledEngineProvider } from '@mui/material';
 import {
-    DetailsFormStoreNames,
+    FormStateStoreNames,
     ResourceConfigStoreNames,
     useZustandStore,
 } from 'context/Zustand';
@@ -14,22 +14,23 @@ import {
     defaultRenderers,
     showValidation,
 } from 'services/jsonforms';
-import { CreateState } from 'stores/MiniCreate';
+import { EntityFormState } from 'stores/FormState';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 
 type Props = {
     collectionName: string;
     resourceConfigStoreName: ResourceConfigStoreNames;
-    detailsFormStoreName: DetailsFormStoreNames;
+    formStateStoreName: FormStateStoreNames;
 };
 
 function ResourceConfigForm({
     collectionName,
     resourceConfigStoreName,
-    detailsFormStoreName,
+    formStateStoreName,
 }: Props) {
     const name = useRef(collectionName);
 
+    // Resource Config Store
     const setConfig = useZustandStore<
         ResourceConfigState,
         ResourceConfigState['setResourceConfig']
@@ -42,20 +43,21 @@ function ResourceConfigForm({
 
     const formData = resourceConfig[collectionName].data;
 
-    const displayValidation = useZustandStore<
-        CreateState,
-        CreateState['formState']['displayValidation']
-    >(detailsFormStoreName, (state) => state.formState.displayValidation);
-
-    const isActive = useZustandStore<CreateState, CreateState['isActive']>(
-        detailsFormStoreName,
-        (state) => state.isActive
-    );
-
     const resourceSchema = useZustandStore<
         ResourceConfigState,
         ResourceConfigState['resourceSchema']
     >(resourceConfigStoreName, (state) => state.resourceSchema);
+
+    // Form State Store
+    const displayValidation = useZustandStore<
+        EntityFormState,
+        EntityFormState['formState']['displayValidation']
+    >(formStateStoreName, (state) => state.formState.displayValidation);
+
+    const isActive = useZustandStore<
+        EntityFormState,
+        EntityFormState['isActive']
+    >(formStateStoreName, (state) => state.isActive);
 
     useEffect(() => {
         name.current = collectionName;

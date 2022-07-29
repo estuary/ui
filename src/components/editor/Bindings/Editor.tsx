@@ -1,6 +1,6 @@
 import ResourceConfig from 'components/collection/ResourceConfig';
 import {
-    DetailsFormStoreNames,
+    FormStateStoreNames,
     ResourceConfigStoreNames,
     useZustandStore,
 } from 'context/Zustand';
@@ -8,12 +8,12 @@ import { ResourceConfigState } from 'stores/ResourceConfig';
 
 interface Props {
     resourceConfigStoreName: ResourceConfigStoreNames;
-    detailsFormStoreName: DetailsFormStoreNames;
+    formStateStoreName: FormStateStoreNames;
 }
 
 function BindingsEditor({
     resourceConfigStoreName,
-    detailsFormStoreName,
+    formStateStoreName,
 }: Props) {
     const currentCollection = useZustandStore<
         ResourceConfigState,
@@ -25,7 +25,7 @@ function BindingsEditor({
             <ResourceConfig
                 collectionName={currentCollection}
                 resourceConfigStoreName={resourceConfigStoreName}
-                detailsFormStoreName={detailsFormStoreName}
+                formStateStoreName={formStateStoreName}
             />
         );
     } else {

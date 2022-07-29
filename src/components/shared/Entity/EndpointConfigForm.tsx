@@ -3,8 +3,8 @@ import { JsonForms } from '@jsonforms/react';
 import { Box, StyledEngineProvider } from '@mui/material';
 import { jsonFormsPadding } from 'context/Theme';
 import {
-    DetailsFormStoreNames,
     EndpointConfigStoreNames,
+    FormStateStoreNames,
     useZustandStore,
 } from 'context/Zustand';
 import { isEmpty } from 'lodash';
@@ -18,19 +18,20 @@ import {
     showValidation,
 } from 'services/jsonforms';
 import { EndpointConfigState } from 'stores/EndpointConfig';
-import { CreateState } from 'stores/MiniCreate';
+import { EntityFormState } from 'stores/FormState';
 
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
 
 interface Props {
     endpointConfigStoreName: EndpointConfigStoreNames;
-    detailsFormStoreName: DetailsFormStoreNames;
+    formStateStoreName: FormStateStoreNames;
 }
 
 function EndpointConfigForm({
     endpointConfigStoreName,
-    detailsFormStoreName,
+    formStateStoreName,
 }: Props) {
+    // Endpoint Config Store
     const setSpec = useZustandStore<
         EndpointConfigState,
         EndpointConfigState['setEndpointConfig']
@@ -41,20 +42,21 @@ function EndpointConfigForm({
         EndpointConfigState['endpointConfig']['data']
     >(endpointConfigStoreName, (state) => state.endpointConfig.data);
 
-    const displayValidation = useZustandStore<
-        CreateState,
-        CreateState['formState']['displayValidation']
-    >(detailsFormStoreName, (state) => state.formState.displayValidation);
-
     const endpointSchema = useZustandStore<
         EndpointConfigState,
         EndpointConfigState['endpointSchema']
     >(endpointConfigStoreName, (state) => state.endpointSchema);
 
-    const isActive = useZustandStore<CreateState, CreateState['isActive']>(
-        detailsFormStoreName,
-        (state) => state.isActive
-    );
+    // Form State Store
+    const displayValidation = useZustandStore<
+        EntityFormState,
+        EntityFormState['formState']['displayValidation']
+    >(formStateStoreName, (state) => state.formState.displayValidation);
+
+    const isActive = useZustandStore<
+        EntityFormState,
+        EntityFormState['isActive']
+    >(formStateStoreName, (state) => state.isActive);
 
     useEffect(() => {
         if (!isEmpty(endpointSchema)) {

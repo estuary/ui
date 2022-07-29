@@ -8,13 +8,15 @@ import {
     DetailsFormStoreNames,
     DraftEditorStoreNames,
     EndpointConfigStoreNames,
+    FormStateStoreNames,
     useZustandStore,
 } from 'context/Zustand';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
+import { DetailsFormState } from 'stores/DetailsForm';
 import { EndpointConfigState } from 'stores/EndpointConfig';
-import { CreateState, FormStatus } from 'stores/MiniCreate';
+import { EntityFormState, FormStatus } from 'stores/FormState';
 
 interface Props {
     disabled: boolean;
@@ -22,6 +24,7 @@ interface Props {
     subscription: Function;
     draftEditorStoreName: DraftEditorStoreNames;
     endpointConfigStoreName: EndpointConfigStoreNames;
+    formStateStoreName: FormStateStoreNames;
     detailsFormStoreName: DetailsFormStoreNames;
 }
 
@@ -31,8 +34,10 @@ function CaptureGenerateButton({
     subscription,
     draftEditorStoreName,
     endpointConfigStoreName,
+    formStateStoreName,
     detailsFormStoreName,
 }: Props) {
+    // Editor Store
     const isSaving = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['isSaving']
@@ -43,31 +48,39 @@ function CaptureGenerateButton({
         EditorStoreState<DraftSpecQuery>['resetState']
     >(draftEditorStoreName, (state) => state.resetState);
 
-    const formActive = useZustandStore<CreateState, CreateState['isActive']>(
-        detailsFormStoreName,
-        (state) => state.isActive
-    );
+    // Form State Store
+    const formActive = useZustandStore<
+        EntityFormState,
+        EntityFormState['isActive']
+    >(formStateStoreName, (state) => state.isActive);
 
     const setFormState = useZustandStore<
-        CreateState,
-        CreateState['setFormState']
-    >(detailsFormStoreName, (state) => state.setFormState);
+        EntityFormState,
+        EntityFormState['setFormState']
+    >(formStateStoreName, (state) => state.setFormState);
 
     const resetFormState = useZustandStore<
-        CreateState,
-        CreateState['resetFormState']
-    >(detailsFormStoreName, (state) => state.resetFormState);
+        EntityFormState,
+        EntityFormState['resetFormState']
+    >(formStateStoreName, (state) => state.resetFormState);
 
+    // Details Form Store
     const entityName = useZustandStore<
-        CreateState,
-        CreateState['details']['data']['entityName']
+        DetailsFormState,
+        DetailsFormState['details']['data']['entityName']
     >(detailsFormStoreName, (state) => state.details.data.entityName);
 
+    const detailsFormsHasErrors = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['detailsFormErrorsExist']
+    >(detailsFormStoreName, (state) => state.detailsFormErrorsExist);
+
     const imageTag = useZustandStore<
-        CreateState,
-        CreateState['details']['data']['connectorImage']
+        DetailsFormState,
+        DetailsFormState['details']['data']['connectorImage']
     >(detailsFormStoreName, (state) => state.details.data.connectorImage);
 
+    // Endpoint Config Store
     const endpointConfigData = useZustandStore<
         EndpointConfigState,
         EndpointConfigState['endpointConfig']['data']
@@ -82,11 +95,6 @@ function CaptureGenerateButton({
         EndpointConfigState,
         EndpointConfigState['endpointConfigErrorsExist']
     >(endpointConfigStoreName, (state) => state.endpointConfigErrorsExist);
-
-    const detailsFormsHasErrors = useZustandStore<
-        CreateState,
-        CreateState['detailsFormErrorsExist']
-    >(detailsFormStoreName, (state) => state.detailsFormErrorsExist);
 
     const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();

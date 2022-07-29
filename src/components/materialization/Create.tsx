@@ -11,6 +11,7 @@ import {
     DetailsFormStoreNames,
     DraftEditorStoreNames,
     EndpointConfigStoreNames,
+    FormStateStoreNames,
     ResourceConfigStoreNames,
     useZustandStore,
 } from 'context/Zustand';
@@ -24,8 +25,9 @@ import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import { entityCreateStoreSelectors } from 'stores/Create';
+import { DetailsFormState } from 'stores/DetailsForm';
 import { EndpointConfigState } from 'stores/EndpointConfig';
-import { CreateState, FormStatus } from 'stores/MiniCreate';
+import { EntityFormState, FormStatus } from 'stores/FormState';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 
 const connectorType = 'materialization';
@@ -38,40 +40,50 @@ function MaterializationCreate() {
     const { connectorTags } = useConnectorWithTagDetail(connectorType);
     const hasConnectors = connectorTags.length > 0;
 
-    const draftEditorStoreName = DraftEditorStoreNames.MATERIALIZATION;
-
+    // Details Form Store
     const detailsFormStoreName = DetailsFormStoreNames.MATERIALIZATION_CREATE;
 
-    const endpointConfigStoreName =
-        EndpointConfigStoreNames.MATERIALIZATION_CREATE;
-
-    const resourceConfigStoreName =
-        ResourceConfigStoreNames.MATERIALIZATION_CREATE;
-
-    const useEntityCreateStore = useRouteStore();
     const imageTag = useZustandStore<
-        CreateState,
-        CreateState['details']['data']['connectorImage']
+        DetailsFormState,
+        DetailsFormState['details']['data']['connectorImage']
     >(detailsFormStoreName, (state) => state.details.data.connectorImage);
 
-    const messagePrefix = useEntityCreateStore(
-        entityCreateStoreSelectors.messagePrefix
-    );
-
     const detailsFormErrorsExist = useZustandStore<
-        CreateState,
-        CreateState['detailsFormErrorsExist']
+        DetailsFormState,
+        DetailsFormState['detailsFormErrorsExist']
     >(detailsFormStoreName, (state) => state.detailsFormErrorsExist);
+
+    const resetDetailsFormState = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['resetState']
+    >(detailsFormStoreName, (state) => state.resetState);
+
+    const detailsFormChanged = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['stateChanged']
+    >(detailsFormStoreName, (state) => state.stateChanged);
+
+    // Draft Editor Store
+    const draftEditorStoreName = DraftEditorStoreNames.MATERIALIZATION;
+
+    const draftId = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['id']
+    >(draftEditorStoreName, (state) => state.id);
+
+    const setDraftId = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['setId']
+    >(draftEditorStoreName, (state) => state.setId);
+
+    // Endpoint Config Store
+    const endpointConfigStoreName =
+        EndpointConfigStoreNames.MATERIALIZATION_CREATE;
 
     const endpointConfigErrorsExist = useZustandStore<
         EndpointConfigState,
         EndpointConfigState['endpointConfigErrorsExist']
     >(endpointConfigStoreName, (state) => state.endpointConfigErrorsExist);
-
-    const resourceConfigErrorsExist = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['resourceConfigErrorsExist']
-    >(resourceConfigStoreName, (state) => state.resourceConfigErrorsExist);
 
     const resetEndpointConfigState = useZustandStore<
         EndpointConfigState,
@@ -83,6 +95,28 @@ function MaterializationCreate() {
         EndpointConfigState['stateChanged']
     >(endpointConfigStoreName, (state) => state.stateChanged);
 
+    // Form State Store
+    const formStateStoreName = FormStateStoreNames.MATERIALIZATION_CREATE;
+
+    const setFormState = useZustandStore<
+        EntityFormState,
+        EntityFormState['setFormState']
+    >(formStateStoreName, (state) => state.setFormState);
+
+    const exitWhenLogsClose = useZustandStore<
+        EntityFormState,
+        EntityFormState['formState']['exitWhenLogsClose']
+    >(formStateStoreName, (state) => state.formState.exitWhenLogsClose);
+
+    // Resource Config Store
+    const resourceConfigStoreName =
+        ResourceConfigStoreNames.MATERIALIZATION_CREATE;
+
+    const resourceConfigErrorsExist = useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['resourceConfigErrorsExist']
+    >(resourceConfigStoreName, (state) => state.resourceConfigErrorsExist);
+
     const resetResourceConfigState = useZustandStore<
         ResourceConfigState,
         ResourceConfigState['resetState']
@@ -93,37 +127,12 @@ function MaterializationCreate() {
         ResourceConfigState['stateChanged']
     >(resourceConfigStoreName, (state) => state.stateChanged);
 
-    const resetDetailsFormState = useZustandStore<
-        CreateState,
-        CreateState['resetState']
-    >(detailsFormStoreName, (state) => state.resetState);
+    //
+    const useEntityCreateStore = useRouteStore();
 
-    const detailsFormChanged = useZustandStore<
-        CreateState,
-        CreateState['stateChanged']
-    >(detailsFormStoreName, (state) => state.stateChanged);
-
-    // Form State
-    const setFormState = useZustandStore<
-        CreateState,
-        CreateState['setFormState']
-    >(detailsFormStoreName, (state) => state.setFormState);
-
-    const exitWhenLogsClose = useZustandStore<
-        CreateState,
-        CreateState['formState']['exitWhenLogsClose']
-    >(detailsFormStoreName, (state) => state.formState.exitWhenLogsClose);
-
-    // Editor state
-    const draftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['id']
-    >(draftEditorStoreName, (state) => state.id);
-
-    const setDraftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['setId']
-    >(draftEditorStoreName, (state) => state.setId);
+    const messagePrefix = useEntityCreateStore(
+        entityCreateStoreSelectors.messagePrefix
+    );
 
     // Reset the catalog if the connector changes
     useEffect(() => {
@@ -215,6 +224,7 @@ function MaterializationCreate() {
                                 resourceConfigStoreName={
                                     resourceConfigStoreName
                                 }
+                                formStateStoreName={formStateStoreName}
                                 detailsFormStoreName={detailsFormStoreName}
                             />
                         }
@@ -225,6 +235,7 @@ function MaterializationCreate() {
                                 closeLogs={handlers.closeLogs}
                                 logEvent={CustomEvents.MATERIALIZATION_TEST}
                                 draftEditorStoreName={draftEditorStoreName}
+                                formStateStoreName={formStateStoreName}
                                 detailsFormStoreName={detailsFormStoreName}
                             />
                         }
@@ -235,6 +246,7 @@ function MaterializationCreate() {
                                 closeLogs={handlers.closeLogs}
                                 logEvent={CustomEvents.MATERIALIZATION_CREATE}
                                 draftEditorStoreName={draftEditorStoreName}
+                                formStateStoreName={formStateStoreName}
                                 detailsFormStoreName={detailsFormStoreName}
                             />
                         }
@@ -248,12 +260,14 @@ function MaterializationCreate() {
                         }
                         endpointConfigStoreName={endpointConfigStoreName}
                         resourceConfigStoreName={resourceConfigStoreName}
+                        formStateStoreName={formStateStoreName}
                         detailsFormStoreName={detailsFormStoreName}
                     />
                 }
                 draftEditorStoreName={draftEditorStoreName}
                 endpointConfigStoreName={endpointConfigStoreName}
                 resourceConfigStoreName={resourceConfigStoreName}
+                formStateStoreName={formStateStoreName}
                 detailsFormStoreName={detailsFormStoreName}
             />
         </PageContainer>
