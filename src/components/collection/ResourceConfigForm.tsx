@@ -14,7 +14,7 @@ import {
     defaultRenderers,
     showValidation,
 } from 'services/jsonforms';
-import { DetailsFormState } from 'stores/MiniCreate';
+import { CreateState } from 'stores/MiniCreate';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 
 type Props = {
@@ -43,14 +43,14 @@ function ResourceConfigForm({
     const formData = resourceConfig[collectionName].data;
 
     const displayValidation = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['formState']['displayValidation']
+        CreateState,
+        CreateState['formState']['displayValidation']
     >(detailsFormStoreName, (state) => state.formState.displayValidation);
 
-    const isActive = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['isActive']
-    >(detailsFormStoreName, (state) => state.isActive);
+    const isActive = useZustandStore<CreateState, CreateState['isActive']>(
+        detailsFormStoreName,
+        (state) => state.isActive
+    );
 
     const resourceSchema = useZustandStore<
         ResourceConfigState,

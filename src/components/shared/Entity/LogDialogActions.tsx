@@ -2,7 +2,7 @@ import { Box, Button, Stack } from '@mui/material';
 import Status from 'components/shared/Entity/Status';
 import { DetailsFormStoreNames, useZustandStore } from 'context/Zustand';
 import { FormattedMessage } from 'react-intl';
-import { DetailsFormState, FormStatus } from 'stores/MiniCreate';
+import { CreateState, FormStatus } from 'stores/MiniCreate';
 
 interface Props {
     close: any;
@@ -15,8 +15,8 @@ interface Props {
 
 function LogDialogActions({ close, materialize, detailsFormStoreName }: Props) {
     const formStatus = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['formState']['status']
+        CreateState,
+        CreateState['formState']['status']
     >(detailsFormStoreName, (state) => state.formState.status);
 
     return (

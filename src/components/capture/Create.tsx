@@ -26,7 +26,7 @@ import { CustomEvents } from 'services/logrocket';
 import { startSubscription, TABLES } from 'services/supabase';
 import { entityCreateStoreSelectors } from 'stores/Create';
 import { EndpointConfigState } from 'stores/EndpointConfig';
-import { DetailsFormState, FormStatus } from 'stores/MiniCreate';
+import { CreateState, FormStatus } from 'stores/MiniCreate';
 import { getPathWithParam } from 'utils/misc-utils';
 
 const connectorType = 'capture';
@@ -60,33 +60,33 @@ function CaptureCreate() {
     );
 
     const imageTag = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['details']['data']['connectorImage']
+        CreateState,
+        CreateState['details']['data']['connectorImage']
     >(detailsFormStoreName, (state) => state.details.data.connectorImage);
 
     const setFormState = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['setFormState']
+        CreateState,
+        CreateState['setFormState']
     >(detailsFormStoreName, (state) => state.setFormState);
 
     const detailsFormChanged = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['stateChanged']
+        CreateState,
+        CreateState['stateChanged']
     >(detailsFormStoreName, (state) => state.stateChanged);
 
     const resetDetailsFormState = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['resetState']
+        CreateState,
+        CreateState['resetState']
     >(detailsFormStoreName, (state) => state.resetState);
 
     const exitWhenLogsClose = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['formState']['exitWhenLogsClose']
+        CreateState,
+        CreateState['formState']['exitWhenLogsClose']
     >(detailsFormStoreName, (state) => state.formState.exitWhenLogsClose);
 
     const detailsFormErrorsExist = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['detailsFormErrorsExist']
+        CreateState,
+        CreateState['detailsFormErrorsExist']
     >(detailsFormStoreName, (state) => state.detailsFormErrorsExist);
 
     const endpointConfigErrorsExist = useZustandStore<

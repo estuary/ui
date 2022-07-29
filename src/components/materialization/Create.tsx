@@ -25,7 +25,7 @@ import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import { entityCreateStoreSelectors } from 'stores/Create';
 import { EndpointConfigState } from 'stores/EndpointConfig';
-import { DetailsFormState, FormStatus } from 'stores/MiniCreate';
+import { CreateState, FormStatus } from 'stores/MiniCreate';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 
 const connectorType = 'materialization';
@@ -50,8 +50,8 @@ function MaterializationCreate() {
 
     const useEntityCreateStore = useRouteStore();
     const imageTag = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['details']['data']['connectorImage']
+        CreateState,
+        CreateState['details']['data']['connectorImage']
     >(detailsFormStoreName, (state) => state.details.data.connectorImage);
 
     const messagePrefix = useEntityCreateStore(
@@ -59,8 +59,8 @@ function MaterializationCreate() {
     );
 
     const detailsFormErrorsExist = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['detailsFormErrorsExist']
+        CreateState,
+        CreateState['detailsFormErrorsExist']
     >(detailsFormStoreName, (state) => state.detailsFormErrorsExist);
 
     const endpointConfigErrorsExist = useZustandStore<
@@ -94,24 +94,24 @@ function MaterializationCreate() {
     >(resourceConfigStoreName, (state) => state.stateChanged);
 
     const resetDetailsFormState = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['resetState']
+        CreateState,
+        CreateState['resetState']
     >(detailsFormStoreName, (state) => state.resetState);
 
     const detailsFormChanged = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['stateChanged']
+        CreateState,
+        CreateState['stateChanged']
     >(detailsFormStoreName, (state) => state.stateChanged);
 
     // Form State
     const setFormState = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['setFormState']
+        CreateState,
+        CreateState['setFormState']
     >(detailsFormStoreName, (state) => state.setFormState);
 
     const exitWhenLogsClose = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['formState']['exitWhenLogsClose']
+        CreateState,
+        CreateState['formState']['exitWhenLogsClose']
     >(detailsFormStoreName, (state) => state.formState.exitWhenLogsClose);
 
     // Editor state

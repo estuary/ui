@@ -1,7 +1,7 @@
 import { Typography } from '@mui/material';
 import { DetailsFormStoreNames, useZustandStore } from 'context/Zustand';
 import { FormattedMessage } from 'react-intl';
-import { DetailsFormState, FormStatus } from 'stores/MiniCreate';
+import { CreateState, FormStatus } from 'stores/MiniCreate';
 
 interface Props {
     detailsFormStoreName: DetailsFormStoreNames;
@@ -9,14 +9,14 @@ interface Props {
 
 function Status({ detailsFormStoreName }: Props) {
     const formStatus = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['formState']['status']
+        CreateState,
+        CreateState['formState']['status']
     >(detailsFormStoreName, (state) => state.formState.status);
 
-    const isActive = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['isActive']
-    >(detailsFormStoreName, (state) => state.isActive);
+    const isActive = useZustandStore<CreateState, CreateState['isActive']>(
+        detailsFormStoreName,
+        (state) => state.isActive
+    );
 
     let messageKey;
     if (formStatus === FormStatus.TESTED || formStatus === FormStatus.SAVED) {

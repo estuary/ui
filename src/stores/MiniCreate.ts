@@ -45,7 +45,7 @@ export enum FormStatus {
     FAILED = 'FAILED',
 }
 
-export interface DetailsFormState {
+export interface CreateState {
     // Form Data
     details: Details;
     setDetails: (details: Details) => void;
@@ -54,7 +54,7 @@ export interface DetailsFormState {
 
     // Connectors
     connectors: { [key: string]: any }[];
-    setConnectors: (val: DetailsFormState['connectors']) => void;
+    setConnectors: (val: CreateState['connectors']) => void;
 
     // Form State
     formState: FormState;
@@ -97,7 +97,7 @@ const initialFormState = {
 };
 
 const getInitialStateData = (): Pick<
-    DetailsFormState,
+    CreateState,
     | 'details'
     | 'detailsFormErrorsExist'
     | 'connectors'
@@ -126,14 +126,14 @@ const getInitialStateData = (): Pick<
 });
 
 const getInitialState = (
-    set: NamedSet<DetailsFormState>,
-    get: StoreApi<DetailsFormState>['getState']
-): DetailsFormState => ({
+    set: NamedSet<CreateState>,
+    get: StoreApi<CreateState>['getState']
+): CreateState => ({
     ...getInitialStateData(),
 
     setDetails: (details) => {
         set(
-            produce((state: DetailsFormState) => {
+            produce((state: CreateState) => {
                 if (!details.data.connectorImage) {
                     // TODO: Reset the endpoint config form in the effect of the calling component.
 
@@ -163,7 +163,7 @@ const getInitialState = (
 
     setConnectors: (val) => {
         set(
-            produce((state: DetailsFormState) => {
+            produce((state: CreateState) => {
                 state.connectors = val;
             }),
             false,
@@ -173,7 +173,7 @@ const getInitialState = (
 
     setFormState: (newState) => {
         set(
-            produce((state: DetailsFormState) => {
+            produce((state: CreateState) => {
                 const { formState } = get();
 
                 state.formState = { ...formState, ...newState };
@@ -187,7 +187,7 @@ const getInitialState = (
 
     resetFormState: (status) => {
         set(
-            produce((state: DetailsFormState) => {
+            produce((state: CreateState) => {
                 state.formState = { ...initialFormState };
                 state.formState.status = status;
                 state.isIdle = formIdle(status);
@@ -211,7 +211,7 @@ const getInitialState = (
 });
 
 export const createDetailsFormStore = (key: DetailsFormStoreNames) => {
-    return create<DetailsFormState>()(
+    return create<CreateState>()(
         devtools((set, get) => getInitialState(set, get), devtoolsOptions(key))
     );
 };

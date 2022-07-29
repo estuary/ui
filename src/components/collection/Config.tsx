@@ -7,7 +7,7 @@ import {
     useZustandStore,
 } from 'context/Zustand';
 import { FormattedMessage } from 'react-intl';
-import { DetailsFormState } from 'stores/MiniCreate';
+import { CreateState } from 'stores/MiniCreate';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 
 interface Props {
@@ -20,8 +20,8 @@ function CollectionConfig({
     detailsFormStoreName,
 }: Props) {
     const imageTag = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['details']['data']['connectorImage']
+        CreateState,
+        CreateState['details']['data']['connectorImage']
     >(detailsFormStoreName, (state) => state.details.data.connectorImage);
 
     const resourceConfigHasErrors = useZustandStore<

@@ -22,7 +22,7 @@ import {
     showValidation,
 } from 'services/jsonforms';
 import { entityCreateStoreSelectors } from 'stores/Create';
-import { DetailsFormState } from 'stores/MiniCreate';
+import { CreateState } from 'stores/MiniCreate';
 import { Grants } from 'types';
 
 interface Props {
@@ -55,24 +55,24 @@ function DetailsForm({
     );
 
     const formData = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['details']['data']
+        CreateState,
+        CreateState['details']['data']
     >(detailsFormStoreName, (state) => state.details.data);
 
-    const setDetails = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['setDetails']
-    >(detailsFormStoreName, (state) => state.setDetails);
+    const setDetails = useZustandStore<CreateState, CreateState['setDetails']>(
+        detailsFormStoreName,
+        (state) => state.setDetails
+    );
 
     const displayValidation = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['formState']['displayValidation']
+        CreateState,
+        CreateState['formState']['displayValidation']
     >(detailsFormStoreName, (state) => state.formState.displayValidation);
 
-    const isActive = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['isActive']
-    >(detailsFormStoreName, (state) => state.isActive);
+    const isActive = useZustandStore<CreateState, CreateState['isActive']>(
+        detailsFormStoreName,
+        (state) => state.isActive
+    );
 
     useEffect(() => {
         if (connectorID) {

@@ -9,7 +9,7 @@ import {
     useZustandStore,
 } from 'context/Zustand';
 import { FormattedMessage } from 'react-intl';
-import { DetailsFormState } from 'stores/MiniCreate';
+import { CreateState } from 'stores/MiniCreate';
 
 interface Props {
     endpointConfigStoreName: EndpointConfigStoreNames;
@@ -31,8 +31,8 @@ function ValidationErrorSummary({
     errorsExist,
 }: Props) {
     const displayValidation = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['formState']['displayValidation']
+        CreateState,
+        CreateState['formState']['displayValidation']
     >(detailsFormStoreName, (state) => state.formState.displayValidation);
 
     return displayValidation ? (

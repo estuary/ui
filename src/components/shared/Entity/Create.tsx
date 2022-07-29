@@ -30,7 +30,7 @@ import { FormattedMessage } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
 import { entityCreateStoreSelectors } from 'stores/Create';
 import { EndpointConfigState } from 'stores/EndpointConfig';
-import { DetailsFormState } from 'stores/MiniCreate';
+import { CreateState } from 'stores/MiniCreate';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 import { ENTITY, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
@@ -81,8 +81,8 @@ function EntityCreate({
     const useEntityCreateStore = useRouteStore();
 
     const imageTag = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['details']['data']['connectorImage']
+        CreateState,
+        CreateState['details']['data']['connectorImage']
     >(detailsFormStoreName, (state) => state.details.data.connectorImage);
 
     const messagePrefix = useEntityCreateStore(
@@ -90,13 +90,13 @@ function EntityCreate({
     );
 
     const logToken = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['formState']['logToken']
+        CreateState,
+        CreateState['formState']['logToken']
     >(detailsFormStoreName, (state) => state.formState.logToken);
 
     const formSubmitError = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['formState']['error']
+        CreateState,
+        CreateState['formState']['error']
     >(detailsFormStoreName, (state) => state.formState.error);
 
     const setEndpointSchema = useZustandStore<

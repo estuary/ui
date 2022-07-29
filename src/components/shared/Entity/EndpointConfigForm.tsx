@@ -18,7 +18,7 @@ import {
     showValidation,
 } from 'services/jsonforms';
 import { EndpointConfigState } from 'stores/EndpointConfig';
-import { DetailsFormState } from 'stores/MiniCreate';
+import { CreateState } from 'stores/MiniCreate';
 
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
 
@@ -42,8 +42,8 @@ function EndpointConfigForm({
     >(endpointConfigStoreName, (state) => state.endpointConfig.data);
 
     const displayValidation = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['formState']['displayValidation']
+        CreateState,
+        CreateState['formState']['displayValidation']
     >(detailsFormStoreName, (state) => state.formState.displayValidation);
 
     const endpointSchema = useZustandStore<
@@ -51,10 +51,10 @@ function EndpointConfigForm({
         EndpointConfigState['endpointSchema']
     >(endpointConfigStoreName, (state) => state.endpointSchema);
 
-    const isActive = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['isActive']
-    >(detailsFormStoreName, (state) => state.isActive);
+    const isActive = useZustandStore<CreateState, CreateState['isActive']>(
+        detailsFormStoreName,
+        (state) => state.isActive
+    );
 
     useEffect(() => {
         if (!isEmpty(endpointSchema)) {

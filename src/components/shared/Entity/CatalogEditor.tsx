@@ -9,7 +9,7 @@ import {
 } from 'context/Zustand';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { FormattedMessage } from 'react-intl';
-import { DetailsFormState } from 'stores/MiniCreate';
+import { CreateState } from 'stores/MiniCreate';
 
 interface Props {
     messageId: string;
@@ -27,10 +27,10 @@ function CatalogEditor({
         EditorStoreState<DraftSpecQuery>['id']
     >(draftEditorStoreName, (state) => state.id);
 
-    const formActive = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['isActive']
-    >(detailsFormStoreName, (state) => state.isActive);
+    const formActive = useZustandStore<CreateState, CreateState['isActive']>(
+        detailsFormStoreName,
+        (state) => state.isActive
+    );
 
     if (draftId) {
         return (

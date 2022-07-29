@@ -1,7 +1,7 @@
 import KeyValueList from 'components/shared/KeyValueList';
 import { DetailsFormStoreNames, useZustandStore } from 'context/Zustand';
 import { useIntl } from 'react-intl';
-import { DetailsFormState } from 'stores/MiniCreate';
+import { CreateState } from 'stores/MiniCreate';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
@@ -12,13 +12,13 @@ function DetailsErrors({ detailsFormStoreName }: Props) {
     const intl = useIntl();
 
     const entityName = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['details']['data']['entityName']
+        CreateState,
+        CreateState['details']['data']['entityName']
     >(detailsFormStoreName, (state) => state.details.data.entityName);
 
     const imageTag = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['details']['data']['connectorImage']
+        CreateState,
+        CreateState['details']['data']['connectorImage']
     >(detailsFormStoreName, (state) => state.details.data.connectorImage);
 
     const filteredErrorsList: any[] = [];

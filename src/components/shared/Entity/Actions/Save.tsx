@@ -15,7 +15,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
 import { endSubscription, startSubscription, TABLES } from 'services/supabase';
 import { entityCreateStoreSelectors } from 'stores/Create';
-import { DetailsFormState, FormStatus } from 'stores/MiniCreate';
+import { CreateState, FormStatus } from 'stores/MiniCreate';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
@@ -74,27 +74,27 @@ function EntityCreateSave({
     const useEntityCreateStore = useRouteStore();
 
     const entityDescription = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['details']['data']['description']
+        CreateState,
+        CreateState['details']['data']['description']
     >(detailsFormStoreName, (state) => state.details.data.description);
 
     const setFormState = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['setFormState']
+        CreateState,
+        CreateState['setFormState']
     >(detailsFormStoreName, (state) => state.setFormState);
 
     const resetFormState = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['resetFormState']
+        CreateState,
+        CreateState['resetFormState']
     >(detailsFormStoreName, (state) => state.resetFormState);
 
     const messagePrefix = useEntityCreateStore(
         entityCreateStoreSelectors.messagePrefix
     );
-    const formActive = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['isActive']
-    >(detailsFormStoreName, (state) => state.isActive);
+    const formActive = useZustandStore<CreateState, CreateState['isActive']>(
+        detailsFormStoreName,
+        (state) => state.isActive
+    );
 
     const waitForPublishToFinish = (logTokenVal: string) => {
         resetFormState(status);

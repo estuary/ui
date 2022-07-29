@@ -15,7 +15,7 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import { EndpointConfigState } from 'stores/EndpointConfig';
-import { DetailsFormState, FormStatus } from 'stores/MiniCreate';
+import { CreateState, FormStatus } from 'stores/MiniCreate';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
 
@@ -51,29 +51,29 @@ function MaterializeGenerateButton({
         EditorStoreState<DraftSpecQuery>['setId']
     >(draftEditorStoreName, (state) => state.setId);
 
-    const formActive = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['isActive']
-    >(detailsFormStoreName, (state) => state.isActive);
+    const formActive = useZustandStore<CreateState, CreateState['isActive']>(
+        detailsFormStoreName,
+        (state) => state.isActive
+    );
 
     const setFormState = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['setFormState']
+        CreateState,
+        CreateState['setFormState']
     >(detailsFormStoreName, (state) => state.setFormState);
 
     const resetFormState = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['resetFormState']
+        CreateState,
+        CreateState['resetFormState']
     >(detailsFormStoreName, (state) => state.resetFormState);
 
     const entityName = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['details']['data']['entityName']
+        CreateState,
+        CreateState['details']['data']['entityName']
     >(detailsFormStoreName, (state) => state.details.data.entityName);
 
     const imageTag = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['details']['data']['connectorImage']
+        CreateState,
+        CreateState['details']['data']['connectorImage']
     >(detailsFormStoreName, (state) => state.details.data.connectorImage);
 
     const endpointConfigData = useZustandStore<
@@ -97,8 +97,8 @@ function MaterializeGenerateButton({
     >(endpointConfigStoreName, (state) => state.endpointConfigErrorsExist);
 
     const detailsFormsHasErrors = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['detailsFormErrorsExist']
+        CreateState,
+        CreateState['detailsFormErrorsExist']
     >(detailsFormStoreName, (state) => state.detailsFormErrorsExist);
 
     const resourceConfigHasErrors = useZustandStore<

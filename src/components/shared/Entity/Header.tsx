@@ -18,7 +18,7 @@ import {
 } from 'context/Zustand';
 import { ReactNode } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { DetailsFormState } from 'stores/MiniCreate';
+import { CreateState } from 'stores/MiniCreate';
 
 interface Props {
     GenerateButton: ReactNode;
@@ -54,10 +54,10 @@ function FooHeader({
     detailsFormStoreName,
     resourceConfigStoreName,
 }: Props) {
-    const formActive = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['isActive']
-    >(detailsFormStoreName, (state) => state.isActive);
+    const formActive = useZustandStore<CreateState, CreateState['isActive']>(
+        detailsFormStoreName,
+        (state) => state.isActive
+    );
 
     const { inView, ref } = useInView({
         threshold: [stickyThreshold],

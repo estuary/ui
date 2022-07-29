@@ -12,7 +12,7 @@ import { useRouteStore } from 'hooks/useRouteStore';
 import { FormattedMessage } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
 import { entityCreateStoreSelectors } from 'stores/Create';
-import { DetailsFormState, FormStatus } from 'stores/MiniCreate';
+import { CreateState, FormStatus } from 'stores/MiniCreate';
 
 interface Props {
     closeLogs: Function;
@@ -36,18 +36,18 @@ function EntitySaveButton({
     const useEntityCreateStore = useRouteStore();
 
     const showLogs = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['formState']['showLogs']
+        CreateState,
+        CreateState['formState']['showLogs']
     >(detailsFormStoreName, (state) => state.formState.showLogs);
 
     const logToken = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['formState']['logToken']
+        CreateState,
+        CreateState['formState']['logToken']
     >(detailsFormStoreName, (state) => state.formState.logToken);
 
     const formStatus = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['formState']['status']
+        CreateState,
+        CreateState['formState']['status']
     >(detailsFormStoreName, (state) => state.formState.status);
 
     const messagePrefix = useEntityCreateStore(
