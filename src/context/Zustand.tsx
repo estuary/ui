@@ -37,7 +37,7 @@ export enum LiveSpecEditorStoreNames {
 }
 
 export enum ResourceConfigStoreNames {
-    MATERIALIZATION_CREATE = 'Materialization-Create-Endpoint-Config',
+    MATERIALIZATION_CREATE = 'Materialization-Create-Resource-Config',
 }
 
 export enum SelectTableStoreNames {
