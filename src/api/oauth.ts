@@ -34,8 +34,9 @@ export const accessToken = (state: string, code: string) => {
 
 export const encryptConfig = (
     connectorId: string,
-    config: any,
-    schema: any
+
+    schema: any,
+    config: any
 ) => {
     return invokeSupabase<any>(FUNCTIONS.OAUTH, {
         operation: OPERATIONS.ENCRYPT_CONFIG,

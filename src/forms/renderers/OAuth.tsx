@@ -43,9 +43,6 @@ const OAuthproviderRenderer = ({
         } else if (!isEmpty(tokenResponse.data)) {
             handleChange(path, {
                 ...tokenResponse.data,
-                client_id: '-insertedByServer-',
-                client_secret: '-insertedByServer-',
-                refresh_token: 'travisneedstoremovethis',
             });
         }
     };
