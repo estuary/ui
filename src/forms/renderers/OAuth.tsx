@@ -1,6 +1,6 @@
 import { ControlProps, RankedTester, rankWith } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
-import { Alert, Stack, Typography } from '@mui/material';
+import { Alert, Button, Stack, Typography } from '@mui/material';
 import { accessToken, authURL } from 'api/oauth';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import { optionExists } from 'forms/renderers/Overrides/testers/testers';
@@ -68,20 +68,32 @@ const OAuthproviderRenderer = ({
         }
     };
 
+    const removeCofig = () => {
+        handleChange(path, {});
+    };
+
     return (
         <>
             {hasLength(errorMessage) ? (
                 <Alert severity="error">{errorMessage}</Alert>
             ) : null}
 
-            <Typography>Authenticate your {` ${provider} `} account</Typography>
+            <Typography>
+                Authenticate your {` ${provider} `} account by clicking below. A
+                pop up will open and you can approve access on the
+                provider&apos; site. No data will be accessed during
+                authorization.
+            </Typography>
 
             <Stack direction="row" spacing={2}>
                 {provider === 'google' ? (
                     <GoogleButton disabled={loading} onClick={openPopUp} />
                 ) : null}
                 {!isEmpty(data) ? (
-                    <Alert severity="success">Authenticated</Alert>
+                    <>
+                        <Alert severity="success">Authenticated</Alert>
+                        <Button onClick={removeCofig}>Remove</Button>
+                    </>
                 ) : null}
             </Stack>
 
