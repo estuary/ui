@@ -206,11 +206,11 @@ const getInitialState = (
     },
 
     resetState: () => {
-        set(getInitialStateData(), false, 'Details Form State Reset');
+        set(getInitialStateData(), false, 'Create State Reset');
     },
 });
 
-export const createDetailsFormStore = (key: DetailsFormStoreNames) => {
+export const createEntityCreateStore = (key: DetailsFormStoreNames) => {
     return create<CreateState>()(
         devtools((set, get) => getInitialState(set, get), devtoolsOptions(key))
     );

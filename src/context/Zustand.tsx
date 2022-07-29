@@ -6,7 +6,7 @@ import {
     useContext,
 } from 'react';
 import { createEndpointConfigStore } from 'stores/EndpointConfig';
-import { createDetailsFormStore } from 'stores/MiniCreate';
+import { createEntityCreateStore } from 'stores/MiniCreate';
 import { createResourceConfigStore } from 'stores/ResourceConfig';
 import useConstant from 'use-constant';
 import { StoreApi, useStore } from 'zustand';
@@ -66,10 +66,10 @@ interface ZustandProviderProps {
 
 const stores = {
     // Details Form Store
-    [DetailsFormStoreNames.CAPTURE_CREATE]: createDetailsFormStore(
+    [DetailsFormStoreNames.CAPTURE_CREATE]: createEntityCreateStore(
         DetailsFormStoreNames.CAPTURE_CREATE
     ),
-    [DetailsFormStoreNames.MATERIALIZATION_CREATE]: createDetailsFormStore(
+    [DetailsFormStoreNames.MATERIALIZATION_CREATE]: createEntityCreateStore(
         DetailsFormStoreNames.MATERIALIZATION_CREATE
     ),
 
