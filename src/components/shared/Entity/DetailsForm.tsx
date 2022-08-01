@@ -6,6 +6,7 @@ import { EditorStoreState } from 'components/editor/Store';
 import {
     DetailsFormStoreNames,
     DraftEditorStoreNames,
+    EndpointConfigStoreNames,
     FormStateStoreNames,
     useZustandStore,
 } from 'context/Zustand';
@@ -23,7 +24,8 @@ import {
     showValidation,
 } from 'services/jsonforms';
 import { entityCreateStoreSelectors } from 'stores/Create';
-import { DetailsFormState } from 'stores/DetailsForm';
+import { Details, DetailsFormState } from 'stores/DetailsForm';
+import { EndpointConfigState } from 'stores/EndpointConfig';
 import { EntityFormState } from 'stores/FormState';
 import { Grants } from 'types';
 
@@ -33,6 +35,7 @@ interface Props {
     draftEditorStoreName: DraftEditorStoreNames;
     formStateStoreName: FormStateStoreNames;
     detailsFormStoreName: DetailsFormStoreNames;
+    endpointConfigStoreName: EndpointConfigStoreNames;
 }
 
 function DetailsForm({
@@ -41,6 +44,7 @@ function DetailsForm({
     draftEditorStoreName,
     formStateStoreName,
     detailsFormStoreName,
+    endpointConfigStoreName,
 }: Props) {
     const intl = useIntl();
     const [searchParams] = useSearchParams();
@@ -59,6 +63,8 @@ function DetailsForm({
         DetailsFormState['details']['data']
     >(detailsFormStoreName, (state) => state.details.data);
 
+    const { connectorImage: originalConnectorImage } = formData;
+
     const setDetails = useZustandStore<
         DetailsFormState,
         DetailsFormState['setDetails']
@@ -69,6 +75,12 @@ function DetailsForm({
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['isSaving']
     >(draftEditorStoreName, (state) => state.isSaving);
+
+    // Endpoint Config Store
+    const resetEndpointConfig = useZustandStore<
+        EndpointConfigState,
+        EndpointConfigState['resetState']
+    >(endpointConfigStoreName, (state) => state.resetState);
 
     // Form State Store
     const displayValidation = useZustandStore<
@@ -81,9 +93,14 @@ function DetailsForm({
         EntityFormState['isActive']
     >(formStateStoreName, (state) => state.isActive);
 
+    const resetFormState = useZustandStore<
+        EntityFormState,
+        EntityFormState['resetState']
+    >(formStateStoreName, (state) => state.resetState);
+
     useEffect(() => {
         if (connectorID) {
-            setDetails({
+            const detailsWithConnector = {
                 data: {
                     entityName: '',
                     connectorImage: {
@@ -91,9 +108,18 @@ function DetailsForm({
                         iconPath: '',
                     },
                 },
-            });
+            };
+
+            setDetails(detailsWithConnector);
+
+            if (
+                originalConnectorImage?.id !==
+                detailsWithConnector.data.connectorImage.id
+            ) {
+                resetFormState();
+            }
         }
-    }, [connectorID, setDetails]);
+    }, [setDetails, resetFormState, connectorID, originalConnectorImage]);
 
     const accessGrantsOneOf = useMemo(() => {
         const response = [] as string[];
@@ -195,6 +221,14 @@ function DetailsForm({
         type: 'VerticalLayout',
     };
 
+    const updateDetails = (details: Details) => {
+        if (!details.data.connectorImage) {
+            resetEndpointConfig();
+        }
+
+        setDetails(details);
+    };
+
     return (
         <>
             <Typography variant="h5" sx={{ mb: 1 }}>
@@ -218,7 +252,7 @@ function DetailsForm({
                             config={defaultOptions}
                             readonly={isSaving || isActive}
                             validationMode={showValidation(displayValidation)}
-                            onChange={setDetails}
+                            onChange={updateDetails}
                         />
                     ) : (
                         <Alert severity="warning">

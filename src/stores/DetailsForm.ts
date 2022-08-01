@@ -62,22 +62,9 @@ const getInitialState = (
         set(
             produce((state: DetailsFormState) => {
                 if (!details.data.connectorImage) {
-                    // TODO: Reset the endpoint config form in the effect of the calling component.
-
                     details.data.connectorImage =
                         getInitialStateData().details.data.connectorImage;
                 }
-
-                // else if (
-                //     state.details.data.connectorImage?.id !==
-                //     details.data.connectorImage.id
-                // ) {
-                //     const { status } = initialFormState;
-
-                //     state.formState = initialFormState;
-                //     state.isIdle = formIdle(status);
-                //     state.isActive = formActive(status);
-                // }
 
                 state.details = details;
 

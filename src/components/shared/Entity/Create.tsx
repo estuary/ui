@@ -213,6 +213,9 @@ function EntityCreate({
                                 draftEditorStoreName={draftEditorStoreName}
                                 formStateStoreName={formStateStoreName}
                                 detailsFormStoreName={detailsFormStoreName}
+                                endpointConfigStoreName={
+                                    endpointConfigStoreName
+                                }
                             />
                         </ErrorBoundryWrapper>
                     ) : null}
