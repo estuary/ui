@@ -111,13 +111,6 @@ function DetailsForm({
                     },
                 },
             });
-
-            // if (
-            //     originalConnectorImage?.id !==
-            //     detailsWithConnector.data.connectorImage.id
-            // ) {
-            //     resetFormState();
-            // }
         }
     }, [setDetails, connectorID]);
 
