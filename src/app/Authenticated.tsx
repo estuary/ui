@@ -7,7 +7,6 @@ import MaterializationCreate from 'components/materialization/Create';
 import AuthenticatedOnlyContext from 'context/Authenticated';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
-import { RouteStoreProvider } from 'hooks/useRouteStore';
 import Admin from 'pages/Admin';
 import Auth from 'pages/Auth';
 import Captures from 'pages/Captures';
@@ -19,7 +18,6 @@ import Home from 'pages/Home';
 import Materializations from 'pages/Materializations';
 import Registration from 'pages/Registration';
 import { Route, Routes } from 'react-router';
-import { Stores } from 'stores/Repo';
 import { isProduction } from 'utils/env-utils';
 
 export const authenticatedRoutes = {
@@ -34,9 +32,6 @@ export const authenticatedRoutes = {
     captures: {
         title: 'routeTitle.captures',
         path: '/captures',
-        store: {
-            key: Stores.CAPTURE_SHARD_DETAIL,
-        },
         create: {
             title: 'routeTitle.captureCreate',
             path: `create`,
@@ -57,9 +52,6 @@ export const authenticatedRoutes = {
     materializations: {
         title: 'routeTitle.materializations',
         path: '/materializations',
-        store: {
-            key: Stores.MATERIALIZATION_SHARD_DETAIL,
-        },
         create: {
             title: 'routeTitle.materializationCreate',
             path: 'create',
@@ -141,19 +133,7 @@ const Authenticated = () => {
                         />
 
                         <Route path={authenticatedRoutes.captures.path}>
-                            <Route
-                                path=""
-                                element={
-                                    <RouteStoreProvider
-                                        routeStoreKey={
-                                            authenticatedRoutes.captures.store
-                                                .key
-                                        }
-                                    >
-                                        <Captures />
-                                    </RouteStoreProvider>
-                                }
-                            />
+                            <Route path="" element={<Captures />} />
                             <Route
                                 path={authenticatedRoutes.captures.create.path}
                                 element={<CaptureCreate />}
@@ -161,19 +141,7 @@ const Authenticated = () => {
                         </Route>
 
                         <Route path={authenticatedRoutes.materializations.path}>
-                            <Route
-                                path=""
-                                element={
-                                    <RouteStoreProvider
-                                        routeStoreKey={
-                                            authenticatedRoutes.materializations
-                                                .store.key
-                                        }
-                                    >
-                                        <Materializations />
-                                    </RouteStoreProvider>
-                                }
-                            />
+                            <Route path="" element={<Materializations />} />
                             <Route
                                 path={
                                     authenticatedRoutes.materializations.create

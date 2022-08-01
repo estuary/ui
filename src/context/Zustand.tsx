@@ -9,6 +9,7 @@ import { createDetailsFormStore } from 'stores/DetailsForm';
 import { createEndpointConfigStore } from 'stores/EndpointConfig';
 import { createFormStateStore } from 'stores/FormState';
 import { createResourceConfigStore } from 'stores/ResourceConfig';
+import { createShardDetailStore } from 'stores/ShardDetail';
 import { MessagePrefixes } from 'types';
 import useConstant from 'use-constant';
 import { StoreApi, useStore } from 'zustand';
@@ -49,6 +50,11 @@ export enum SelectTableStoreNames {
     MATERIALIZATION = 'Materializations-Selectable-Table',
 }
 
+export enum ShardDetailStoreNames {
+    CAPTURE = 'Capture-Shard-Detail',
+    MATERIALIZATION = 'Materialization-Shard-Detail',
+}
+
 export type StoreName =
     | DetailsFormStoreNames
     | DraftEditorStoreNames
@@ -56,7 +62,8 @@ export type StoreName =
     | FormStateStoreNames
     | LiveSpecEditorStoreNames
     | ResourceConfigStoreNames
-    | SelectTableStoreNames;
+    | SelectTableStoreNames
+    | ShardDetailStoreNames;
 
 export type UseZustandStore = <S extends Object, U>(
     storeName: StoreName,
@@ -129,6 +136,14 @@ const stores = {
     ),
     [SelectTableStoreNames.MATERIALIZATION]: createSelectableTableStore(
         SelectTableStoreNames.MATERIALIZATION
+    ),
+
+    // Shard Detail Store
+    [ShardDetailStoreNames.CAPTURE]: createShardDetailStore(
+        ShardDetailStoreNames.CAPTURE
+    ),
+    [ShardDetailStoreNames.MATERIALIZATION]: createShardDetailStore(
+        ShardDetailStoreNames.MATERIALIZATION
     ),
 };
 

@@ -3,9 +3,7 @@ import { ReactNode } from 'react';
 
 export enum MessagePrefixes {
     CAPTURE_CREATE = 'captureCreate',
-    CAPTURE_SHARD_DETAIL = 'captureShardDetail',
     MATERIALIZATION_CREATE = 'materializationCreate',
-    MATERIALIZATION_SHARD_DETAIL = 'materializationShardDetail',
 }
 
 export interface JsonFormsData extends Pick<JsonFormsCore, 'data' | 'errors'> {

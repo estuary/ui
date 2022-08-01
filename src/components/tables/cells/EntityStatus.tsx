@@ -1,19 +1,21 @@
 import { Box, Tooltip, Typography, useTheme } from '@mui/material';
+import { ShardDetailStoreNames, useZustandStore } from 'context/Zustand';
 import { Shard } from 'data-plane-gateway/types/shard_client';
-import { useRouteStore } from 'hooks/useRouteStore';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     shardDetailSelectors,
+    ShardDetailStore,
     ShardStatusColor,
     TaskShardDetails,
 } from 'stores/ShardDetail';
 
 interface Props {
     name: string;
+    shardDetailStoreName: ShardDetailStoreNames;
 }
 
-function EntityStatus({ name }: Props) {
+function EntityStatus({ name, shardDetailStoreName }: Props) {
     const theme = useTheme();
 
     const defaultStatusColor: ShardStatusColor =
@@ -26,19 +28,25 @@ function EntityStatus({ name }: Props) {
         useState<ShardStatusColor>(defaultStatusColor);
     const [taskDisabled, setTaskDisabled] = useState<boolean>(false);
 
-    const useShardDetailStore = useRouteStore();
+    const shards = useZustandStore<
+        ShardDetailStore,
+        ShardDetailStore['shards']
+    >(shardDetailStoreName, shardDetailSelectors.shards);
 
-    const shards: Shard[] = useShardDetailStore(shardDetailSelectors.shards);
+    const getTaskShards = useZustandStore<
+        ShardDetailStore,
+        ShardDetailStore['getTaskShards']
+    >(shardDetailStoreName, shardDetailSelectors.getTaskShards);
 
-    const getTaskShards = useShardDetailStore(
-        shardDetailSelectors.getTaskShards
-    );
-    const getTaskShardDetails = useShardDetailStore(
-        shardDetailSelectors.getTaskShardDetails
-    );
-    const getTaskStatusColor = useShardDetailStore(
-        shardDetailSelectors.getTaskStatusColor
-    );
+    const getTaskShardDetails = useZustandStore<
+        ShardDetailStore,
+        ShardDetailStore['getTaskShardDetails']
+    >(shardDetailStoreName, shardDetailSelectors.getTaskShardDetails);
+
+    const getTaskStatusColor = useZustandStore<
+        ShardDetailStore,
+        ShardDetailStore['getTaskStatusColor']
+    >(shardDetailStoreName, shardDetailSelectors.getTaskStatusColor);
 
     useEffect(() => {
         const taskShards: Shard[] = getTaskShards(name, shards);
