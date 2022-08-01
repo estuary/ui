@@ -9,10 +9,8 @@ import {
     useZustandStore,
 } from 'context/Zustand';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { useRouteStore } from 'hooks/useRouteStore';
 import { FormattedMessage } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
-import { entityCreateStoreSelectors } from 'stores/Create';
 import { EntityFormState, FormStatus } from 'stores/FormState';
 
 interface Props {
@@ -41,6 +39,11 @@ function EntityTestButton({
     >(draftEditorStoreName, (state) => state.id);
 
     // Form State Store
+    const messagePrefix = useZustandStore<
+        EntityFormState,
+        EntityFormState['messagePrefix']
+    >(formStateStoreName, (state) => state.messagePrefix);
+
     const showLogs = useZustandStore<
         EntityFormState,
         EntityFormState['formState']['showLogs']
@@ -55,11 +58,6 @@ function EntityTestButton({
         EntityFormState,
         EntityFormState['formState']['status']
     >(formStateStoreName, (state) => state.formState.status);
-
-    const useEntityCreateStore = useRouteStore();
-    const messagePrefix = useEntityCreateStore(
-        entityCreateStoreSelectors.messagePrefix
-    );
 
     return (
         <>

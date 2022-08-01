@@ -41,9 +41,6 @@ export const authenticatedRoutes = {
             title: 'routeTitle.captureCreate',
             path: `create`,
             fullPath: '/captures/create',
-            store: {
-                key: Stores.CAPTURE_CREATE,
-            },
             params: {
                 connectorID: 'connectorID',
             },
@@ -67,9 +64,6 @@ export const authenticatedRoutes = {
             title: 'routeTitle.materializationCreate',
             path: 'create',
             fullPath: '/materializations/create',
-            store: {
-                key: Stores.MATERIALIZATION_CREATE,
-            },
             params: {
                 connectorId: 'connectorId',
                 liveSpecId: 'liveSpecId', // live spec ID
@@ -162,16 +156,7 @@ const Authenticated = () => {
                             />
                             <Route
                                 path={authenticatedRoutes.captures.create.path}
-                                element={
-                                    <RouteStoreProvider
-                                        routeStoreKey={
-                                            authenticatedRoutes.captures.create
-                                                .store.key
-                                        }
-                                    >
-                                        <CaptureCreate />
-                                    </RouteStoreProvider>
-                                }
+                                element={<CaptureCreate />}
                             />
                         </Route>
 
@@ -194,16 +179,7 @@ const Authenticated = () => {
                                     authenticatedRoutes.materializations.create
                                         .path
                                 }
-                                element={
-                                    <RouteStoreProvider
-                                        routeStoreKey={
-                                            authenticatedRoutes.materializations
-                                                .create.store.key
-                                        }
-                                    >
-                                        <MaterializationCreate />
-                                    </RouteStoreProvider>
-                                }
+                                element={<MaterializationCreate />}
                             />
                         </Route>
 

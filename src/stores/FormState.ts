@@ -1,6 +1,7 @@
 import { PostgrestError } from '@supabase/postgrest-js';
 import { FormStateStoreNames } from 'context/Zustand';
 import produce from 'immer';
+import { MessagePrefixes } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
 import create, { StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -44,6 +45,7 @@ export interface EntityFormState {
 
     // Misc.
     resetState: () => void;
+    messagePrefix: MessagePrefixes;
 }
 
 const formActive = (status: FormStatus) => {
@@ -72,21 +74,26 @@ const initialFormState = {
     error: null,
 };
 
-const getInitialStateData = (): Pick<
+const getInitialStateData = (
+    messagePrefix: MessagePrefixes
+): Pick<
     EntityFormState,
-    'formState' | 'isIdle' | 'isActive'
+    'formState' | 'isIdle' | 'isActive' | 'messagePrefix'
 > => ({
     formState: initialFormState,
 
     isIdle: true,
     isActive: false,
+
+    messagePrefix,
 });
 
 const getInitialState = (
     set: NamedSet<EntityFormState>,
-    get: StoreApi<EntityFormState>['getState']
+    get: StoreApi<EntityFormState>['getState'],
+    messagePrefix: MessagePrefixes
 ): EntityFormState => ({
-    ...getInitialStateData(),
+    ...getInitialStateData(messagePrefix),
 
     setFormState: (newState) => {
         set(
@@ -116,12 +123,22 @@ const getInitialState = (
     },
 
     resetState: () => {
-        set(getInitialStateData(), false, 'Entity Form State Reset');
+        set(
+            getInitialStateData(messagePrefix),
+            false,
+            'Entity Form State Reset'
+        );
     },
 });
 
-export const createFormStateStore = (key: FormStateStoreNames) => {
+export const createFormStateStore = (
+    key: FormStateStoreNames,
+    messagePrefix: MessagePrefixes
+) => {
     return create<EntityFormState>()(
-        devtools((set, get) => getInitialState(set, get), devtoolsOptions(key))
+        devtools(
+            (set, get) => getInitialState(set, get, messagePrefix),
+            devtoolsOptions(key)
+        )
     );
 };

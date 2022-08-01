@@ -19,12 +19,10 @@ import { useClient } from 'hooks/supabase-swr';
 import { usePrompt } from 'hooks/useBlocker';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { useRouteStore } from 'hooks/useRouteStore';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
-import { entityCreateStoreSelectors } from 'stores/Create';
 import { DetailsFormState } from 'stores/DetailsForm';
 import { EndpointConfigState } from 'stores/EndpointConfig';
 import { EntityFormState, FormStatus } from 'stores/FormState';
@@ -98,6 +96,11 @@ function MaterializationCreate() {
     // Form State Store
     const formStateStoreName = FormStateStoreNames.MATERIALIZATION_CREATE;
 
+    const messagePrefix = useZustandStore<
+        EntityFormState,
+        EntityFormState['messagePrefix']
+    >(formStateStoreName, (state) => state.messagePrefix);
+
     const setFormState = useZustandStore<
         EntityFormState,
         EntityFormState['setFormState']
@@ -126,13 +129,6 @@ function MaterializationCreate() {
         ResourceConfigState,
         ResourceConfigState['stateChanged']
     >(resourceConfigStoreName, (state) => state.stateChanged);
-
-    //
-    const useEntityCreateStore = useRouteStore();
-
-    const messagePrefix = useEntityCreateStore(
-        entityCreateStoreSelectors.messagePrefix
-    );
 
     // Reset the catalog if the connector changes
     useEffect(() => {

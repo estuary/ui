@@ -10,12 +10,10 @@ import {
 } from 'context/Zustand';
 import { useClient } from 'hooks/supabase-swr';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { useRouteStore } from 'hooks/useRouteStore';
 import LogRocket from 'logrocket';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
 import { endSubscription, startSubscription, TABLES } from 'services/supabase';
-import { entityCreateStoreSelectors } from 'stores/Create';
 import { DetailsFormState } from 'stores/DetailsForm';
 import { EntityFormState, FormStatus } from 'stores/FormState';
 import useNotificationStore, {
@@ -79,6 +77,11 @@ function EntityCreateSave({
     >(detailsFormStoreName, (state) => state.details.data.description);
 
     // Form State Store
+    const messagePrefix = useZustandStore<
+        EntityFormState,
+        EntityFormState['messagePrefix']
+    >(formStateStoreName, (state) => state.messagePrefix);
+
     const setFormState = useZustandStore<
         EntityFormState,
         EntityFormState['setFormState']
@@ -97,12 +100,6 @@ function EntityCreateSave({
     // Notification Store
     const showNotification = useNotificationStore(
         notificationStoreSelectors.showNotification
-    );
-
-    const useEntityCreateStore = useRouteStore();
-
-    const messagePrefix = useEntityCreateStore(
-        entityCreateStoreSelectors.messagePrefix
     );
 
     const waitForPublishToFinish = (logTokenVal: string) => {

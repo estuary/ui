@@ -9,6 +9,7 @@ import { createDetailsFormStore } from 'stores/DetailsForm';
 import { createEndpointConfigStore } from 'stores/EndpointConfig';
 import { createFormStateStore } from 'stores/FormState';
 import { createResourceConfigStore } from 'stores/ResourceConfig';
+import { MessagePrefixes } from 'types';
 import useConstant from 'use-constant';
 import { StoreApi, useStore } from 'zustand';
 
@@ -99,10 +100,12 @@ const stores = {
 
     // Form State Store
     [FormStateStoreNames.CAPTURE_CREATE]: createFormStateStore(
-        FormStateStoreNames.CAPTURE_CREATE
+        FormStateStoreNames.CAPTURE_CREATE,
+        MessagePrefixes.CAPTURE_CREATE
     ),
     [FormStateStoreNames.MATERIALIZATION_CREATE]: createFormStateStore(
-        FormStateStoreNames.MATERIALIZATION_CREATE
+        FormStateStoreNames.MATERIALIZATION_CREATE,
+        MessagePrefixes.MATERIALIZATION_CREATE
     ),
 
     // Resource Config Store

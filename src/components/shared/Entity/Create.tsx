@@ -25,11 +25,9 @@ import {
     useLiveSpecsExtByLastPubId,
     useLiveSpecsExtWithOutSpec,
 } from 'hooks/useLiveSpecsExt';
-import { useRouteStore } from 'hooks/useRouteStore';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
-import { entityCreateStoreSelectors } from 'stores/Create';
 import { DetailsFormState } from 'stores/DetailsForm';
 import { EndpointConfigState } from 'stores/EndpointConfig';
 import { EntityFormState } from 'stores/FormState';
@@ -82,11 +80,6 @@ function EntityCreate({
         isValidating,
     } = useConnectorWithTagDetail(connectorType);
 
-    const useEntityCreateStore = useRouteStore();
-    const messagePrefix = useEntityCreateStore(
-        entityCreateStoreSelectors.messagePrefix
-    );
-
     // Details Form Store
     const imageTag = useZustandStore<
         DetailsFormState,
@@ -111,6 +104,11 @@ function EntityCreate({
     >(endpointConfigStoreName, (state) => state.setEndpointSchema);
 
     // Form State Store
+    const messagePrefix = useZustandStore<
+        EntityFormState,
+        EntityFormState['messagePrefix']
+    >(formStateStoreName, (state) => state.messagePrefix);
+
     const logToken = useZustandStore<
         EntityFormState,
         EntityFormState['formState']['logToken']

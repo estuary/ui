@@ -14,7 +14,6 @@ import { CATALOG_NAME_SCOPE } from 'forms/renderers/CatalogName';
 import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
 import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { useRouteStore } from 'hooks/useRouteStore';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
@@ -23,7 +22,6 @@ import {
     defaultRenderers,
     showValidation,
 } from 'services/jsonforms';
-import { entityCreateStoreSelectors } from 'stores/Create';
 import { Details, DetailsFormState } from 'stores/DetailsForm';
 import { EndpointConfigState } from 'stores/EndpointConfig';
 import { EntityFormState } from 'stores/FormState';
@@ -48,14 +46,13 @@ function DetailsForm({
 }: Props) {
     const intl = useIntl();
     const [searchParams] = useSearchParams();
-    const connectorID = searchParams.get(
-        authenticatedRoutes.captures.create.params.connectorID
-    );
-
-    const useEntityCreateStore = useRouteStore();
-    const messagePrefix = useEntityCreateStore(
-        entityCreateStoreSelectors.messagePrefix
-    );
+    const connectorID =
+        searchParams.get(
+            authenticatedRoutes.captures.create.params.connectorID
+        ) ??
+        searchParams.get(
+            authenticatedRoutes.materializations.create.params.connectorId
+        );
 
     // Details Form Store
     const formData = useZustandStore<
@@ -83,6 +80,11 @@ function DetailsForm({
     >(endpointConfigStoreName, (state) => state.resetState);
 
     // Form State Store
+    const messagePrefix = useZustandStore<
+        EntityFormState,
+        EntityFormState['messagePrefix']
+    >(formStateStoreName, (state) => state.messagePrefix);
+
     const displayValidation = useZustandStore<
         EntityFormState,
         EntityFormState['formState']['displayValidation']
@@ -100,7 +102,7 @@ function DetailsForm({
 
     useEffect(() => {
         if (connectorID) {
-            const detailsWithConnector = {
+            setDetails({
                 data: {
                     entityName: '',
                     connectorImage: {
@@ -108,18 +110,22 @@ function DetailsForm({
                         iconPath: '',
                     },
                 },
-            };
+            });
 
-            setDetails(detailsWithConnector);
-
-            if (
-                originalConnectorImage?.id !==
-                detailsWithConnector.data.connectorImage.id
-            ) {
-                resetFormState();
-            }
+            // if (
+            //     originalConnectorImage?.id !==
+            //     detailsWithConnector.data.connectorImage.id
+            // ) {
+            //     resetFormState();
+            // }
         }
-    }, [setDetails, resetFormState, connectorID, originalConnectorImage]);
+    }, [setDetails, connectorID]);
+
+    useEffect(() => {
+        if (connectorID && originalConnectorImage?.id !== connectorID) {
+            resetFormState();
+        }
+    }, [resetFormState, connectorID, originalConnectorImage]);
 
     const accessGrantsOneOf = useMemo(() => {
         const response = [] as string[];
