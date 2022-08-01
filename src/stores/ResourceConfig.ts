@@ -8,7 +8,6 @@ import { devtoolsOptions } from 'utils/store-utils';
 import create, { StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 
-// TODO: Narrow as many types as possible.
 export interface ResourceConfig {
     [key: string]: JsonFormsData | any[];
     errors: any[];
@@ -19,7 +18,6 @@ interface ResourceConfigDictionary {
 }
 
 // TODO: Determine whether the resourceConfig state property should be made plural. It is a dictionary of individual resource configs, so I am leaning "yes."
-// TODO: Determine if it is possible to break out the collection selector segment of the store. Feels like an anti-pattern of this new approach.
 export interface ResourceConfigState {
     // Collection Selector
     collections: string[] | null;
@@ -66,7 +64,6 @@ const populateResourceConfigErrors = (
             }
         });
     } else {
-        // TODO: Get comment clarity from Travis. What is the motivation for the comment below?
         // TODO (errors) Need to populate this object with something?
         resourceConfigErrors = [{}];
     }
