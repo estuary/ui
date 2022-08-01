@@ -30,6 +30,12 @@ import { ResourceConfigState } from 'stores/ResourceConfig';
 
 const connectorType = 'materialization';
 
+const detailsFormStoreName = DetailsFormStoreNames.MATERIALIZATION_CREATE;
+const draftEditorStoreName = DraftEditorStoreNames.MATERIALIZATION;
+const endpointConfigStoreName = EndpointConfigStoreNames.MATERIALIZATION_CREATE;
+const formStateStoreName = FormStateStoreNames.MATERIALIZATION_CREATE;
+const resourceConfigStoreName = ResourceConfigStoreNames.MATERIALIZATION_CREATE;
+
 function MaterializationCreate() {
     const navigate = useNavigate();
 
@@ -39,8 +45,6 @@ function MaterializationCreate() {
     const hasConnectors = connectorTags.length > 0;
 
     // Details Form Store
-    const detailsFormStoreName = DetailsFormStoreNames.MATERIALIZATION_CREATE;
-
     const imageTag = useZustandStore<
         DetailsFormState,
         DetailsFormState['details']['data']['connectorImage']
@@ -62,8 +66,6 @@ function MaterializationCreate() {
     >(detailsFormStoreName, (state) => state.stateChanged);
 
     // Draft Editor Store
-    const draftEditorStoreName = DraftEditorStoreNames.MATERIALIZATION;
-
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
@@ -75,9 +77,6 @@ function MaterializationCreate() {
     >(draftEditorStoreName, (state) => state.setId);
 
     // Endpoint Config Store
-    const endpointConfigStoreName =
-        EndpointConfigStoreNames.MATERIALIZATION_CREATE;
-
     const endpointConfigErrorsExist = useZustandStore<
         EndpointConfigState,
         EndpointConfigState['endpointConfigErrorsExist']
@@ -94,8 +93,6 @@ function MaterializationCreate() {
     >(endpointConfigStoreName, (state) => state.stateChanged);
 
     // Form State Store
-    const formStateStoreName = FormStateStoreNames.MATERIALIZATION_CREATE;
-
     const messagePrefix = useZustandStore<
         EntityFormState,
         EntityFormState['messagePrefix']
@@ -106,15 +103,17 @@ function MaterializationCreate() {
         EntityFormState['setFormState']
     >(formStateStoreName, (state) => state.setFormState);
 
+    const resetFormState = useZustandStore<
+        EntityFormState,
+        EntityFormState['resetState']
+    >(formStateStoreName, (state) => state.resetState);
+
     const exitWhenLogsClose = useZustandStore<
         EntityFormState,
         EntityFormState['formState']['exitWhenLogsClose']
     >(formStateStoreName, (state) => state.formState.exitWhenLogsClose);
 
     // Resource Config Store
-    const resourceConfigStoreName =
-        ResourceConfigStoreNames.MATERIALIZATION_CREATE;
-
     const resourceConfigErrorsExist = useZustandStore<
         ResourceConfigState,
         ResourceConfigState['resourceConfigErrorsExist']
@@ -139,6 +138,7 @@ function MaterializationCreate() {
         resetEndpointConfigState();
         resetResourceConfigState();
         resetDetailsFormState();
+        resetFormState();
     };
 
     const helpers = {

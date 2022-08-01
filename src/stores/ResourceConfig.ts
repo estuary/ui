@@ -57,7 +57,6 @@ const populateResourceConfigErrors = (
         map(resourceConfig, (config) => {
             const { errors } = config;
 
-            // TODO: Determine whether it is possible for errors to not exist.
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             if (errors && errors.length > 0) {
                 resourceConfigErrors = resourceConfigErrors.concat(errors);

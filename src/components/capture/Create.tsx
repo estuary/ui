@@ -31,6 +31,11 @@ import { getPathWithParam } from 'utils/misc-utils';
 
 const connectorType = 'capture';
 
+const detailsFormStoreName = DetailsFormStoreNames.CAPTURE_CREATE;
+const draftEditorStoreName = DraftEditorStoreNames.CAPTURE;
+const endpointConfigStoreName = EndpointConfigStoreNames.CAPTURE_CREATE;
+const formStateStoreName = FormStateStoreNames.CAPTURE_CREATE;
+
 const trackEvent = (payload: any) => {
     LogRocket.track(CustomEvents.CAPTURE_DISCOVER, {
         name: payload.capture_name,
@@ -49,50 +54,7 @@ function CaptureCreate() {
     const { connectorTags } = useConnectorWithTagDetail(connectorType);
     const hasConnectors = connectorTags.length > 0;
 
-    // Editor Store
-    const draftEditorStoreName = DraftEditorStoreNames.CAPTURE;
-
-    const setDraftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['setId']
-    >(draftEditorStoreName, (state) => state.setId);
-
-    const pubId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['pubId']
-    >(draftEditorStoreName, (state) => state.pubId);
-
-    const draftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['id']
-    >(draftEditorStoreName, (state) => state.id);
-
-    // Form State Store
-    const formStateStoreName = FormStateStoreNames.CAPTURE_CREATE;
-
-    const messagePrefix = useZustandStore<
-        EntityFormState,
-        EntityFormState['messagePrefix']
-    >(formStateStoreName, (state) => state.messagePrefix);
-
-    const setFormState = useZustandStore<
-        EntityFormState,
-        EntityFormState['setFormState']
-    >(formStateStoreName, (state) => state.setFormState);
-
-    const resetDetailsFormState = useZustandStore<
-        EntityFormState,
-        EntityFormState['resetState']
-    >(formStateStoreName, (state) => state.resetState);
-
-    const exitWhenLogsClose = useZustandStore<
-        EntityFormState,
-        EntityFormState['formState']['exitWhenLogsClose']
-    >(formStateStoreName, (state) => state.formState.exitWhenLogsClose);
-
     // Details Form Store
-    const detailsFormStoreName = DetailsFormStoreNames.CAPTURE_CREATE;
-
     const imageTag = useZustandStore<
         DetailsFormState,
         DetailsFormState['details']['data']['connectorImage']
@@ -108,9 +70,23 @@ function CaptureCreate() {
         DetailsFormState['stateChanged']
     >(detailsFormStoreName, (state) => state.stateChanged);
 
-    // Endpoint Config Store
-    const endpointConfigStoreName = EndpointConfigStoreNames.CAPTURE_CREATE;
+    // Draft Editor Store
+    const setDraftId = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['setId']
+    >(draftEditorStoreName, (state) => state.setId);
 
+    const pubId = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['pubId']
+    >(draftEditorStoreName, (state) => state.pubId);
+
+    const draftId = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['id']
+    >(draftEditorStoreName, (state) => state.id);
+
+    // Endpoint Config Store
     const endpointConfigErrorsExist = useZustandStore<
         EndpointConfigState,
         EndpointConfigState['endpointConfigErrorsExist']
@@ -126,6 +102,27 @@ function CaptureCreate() {
         EndpointConfigState['stateChanged']
     >(endpointConfigStoreName, (state) => state.stateChanged);
 
+    // Form State Store
+    const messagePrefix = useZustandStore<
+        EntityFormState,
+        EntityFormState['messagePrefix']
+    >(formStateStoreName, (state) => state.messagePrefix);
+
+    const setFormState = useZustandStore<
+        EntityFormState,
+        EntityFormState['setFormState']
+    >(formStateStoreName, (state) => state.setFormState);
+
+    const resetFormState = useZustandStore<
+        EntityFormState,
+        EntityFormState['resetState']
+    >(formStateStoreName, (state) => state.resetState);
+
+    const exitWhenLogsClose = useZustandStore<
+        EntityFormState,
+        EntityFormState['formState']['exitWhenLogsClose']
+    >(formStateStoreName, (state) => state.formState.exitWhenLogsClose);
+
     // Reset the catalog if the connector changes
     useEffect(() => {
         setDraftId(null);
@@ -133,7 +130,7 @@ function CaptureCreate() {
 
     const resetState = () => {
         resetEndpointConfigState();
-        resetDetailsFormState();
+        resetFormState();
     };
 
     const helpers = {
