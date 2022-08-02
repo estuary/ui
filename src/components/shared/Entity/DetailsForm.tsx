@@ -5,7 +5,6 @@ import { authenticatedRoutes } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
 import {
     DraftEditorStoreNames,
-    EndpointConfigStoreNames,
     FormStateStoreNames,
     useZustandStore,
 } from 'context/Zustand';
@@ -26,7 +25,7 @@ import {
     useDetailsForm_details,
     useDetailsForm_setDetails,
 } from 'stores/DetailsForm';
-import { EndpointConfigState } from 'stores/EndpointConfig';
+import { useEndpointConfigStore_reset } from 'stores/EndpointConfig';
 import { EntityFormState } from 'stores/FormState';
 import { Grants } from 'types';
 
@@ -35,7 +34,6 @@ interface Props {
     accessGrants: Grants[];
     draftEditorStoreName: DraftEditorStoreNames;
     formStateStoreName: FormStateStoreNames;
-    endpointConfigStoreName: EndpointConfigStoreNames;
 }
 
 function DetailsForm({
@@ -43,7 +41,6 @@ function DetailsForm({
     accessGrants,
     draftEditorStoreName,
     formStateStoreName,
-    endpointConfigStoreName,
 }: Props) {
     const intl = useIntl();
     const [searchParams] = useSearchParams();
@@ -68,10 +65,7 @@ function DetailsForm({
     >(draftEditorStoreName, (state) => state.isSaving);
 
     // Endpoint Config Store
-    const resetEndpointConfig = useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['resetState']
-    >(endpointConfigStoreName, (state) => state.resetState);
+    const resetEndpointConfig = useEndpointConfigStore_reset();
 
     // Form State Store
     const messagePrefix = useZustandStore<

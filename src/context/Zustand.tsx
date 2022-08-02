@@ -5,7 +5,6 @@ import {
     ReactNode,
     useContext,
 } from 'react';
-import { createEndpointConfigStore } from 'stores/EndpointConfig';
 import { createFormStateStore } from 'stores/FormState';
 import { createResourceConfigStore } from 'stores/ResourceConfig';
 import { createShardDetailStore } from 'stores/ShardDetail';
@@ -24,8 +23,8 @@ export enum DraftEditorStoreNames {
 }
 
 export enum EndpointConfigStoreNames {
-    CAPTURE_CREATE = 'Capture-Create-Endpoint-Config',
-    MATERIALIZATION_CREATE = 'Materialization-Create-Endpoint-Config',
+    CAPTURE_CREATE = 'capture-create-endpoint-config',
+    MATERIALIZATION_CREATE = 'materialization-create-endpoint-config',
 }
 
 export enum FormStateStoreNames {
@@ -98,16 +97,6 @@ export const ZustandProvider = ({
                 [DraftEditorStoreNames.MATERIALIZATION]: createEditorStore(
                     DraftEditorStoreNames.MATERIALIZATION
                 ),
-
-                // Endpoint Config Store
-                [EndpointConfigStoreNames.CAPTURE_CREATE]:
-                    createEndpointConfigStore(
-                        EndpointConfigStoreNames.CAPTURE_CREATE
-                    ),
-                [EndpointConfigStoreNames.MATERIALIZATION_CREATE]:
-                    createEndpointConfigStore(
-                        EndpointConfigStoreNames.MATERIALIZATION_CREATE
-                    ),
 
                 // Form State Store
                 [FormStateStoreNames.CAPTURE_CREATE]: createFormStateStore(
@@ -184,20 +173,13 @@ export const useZustandStore = <S extends Object, U>(
 
 // TODO (zustand) decide on how we'll store stores that are used
 //  right now only details create uses this approach
-const storeMap = new Map();
-export const registerStores = (
-    storeKeys: DetailsFormStoreNames[],
-    create: Function
-) => {
+const storeMap = new Map<StoreName, any>();
+export const registerStores = (storeKeys: StoreName[], create: Function) => {
     storeKeys.forEach((key) => {
         storeMap.set(key, create);
     });
 };
-export const useZustandStoreMap = <S extends Object, U>(
-    storeName: StoreName,
-    selector: (state: S) => U,
-    equalityFn?: any
-) => {
+const getStore = (storeName: StoreName) => {
     let store = storeMap.get(storeName);
 
     if (typeof store === 'function') {
@@ -205,6 +187,16 @@ export const useZustandStoreMap = <S extends Object, U>(
         storeMap.set(storeName, newStore);
         store = newStore;
     }
+
+    return store;
+};
+
+export const useZustandStoreMap = <S extends Object, U>(
+    storeName: StoreName,
+    selector: (state: S) => U,
+    equalityFn?: any
+) => {
+    const store = getStore(storeName);
 
     return useStore<StoreApi<S>, ReturnType<typeof selector>>(
         store,

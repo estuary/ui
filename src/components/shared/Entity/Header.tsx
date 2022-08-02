@@ -11,7 +11,6 @@ import {
 import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
 import { slate, stickyHeaderIndex, tableBorderSx } from 'context/Theme';
 import {
-    EndpointConfigStoreNames,
     FormStateStoreNames,
     ResourceConfigStoreNames,
     useZustandStore,
@@ -26,7 +25,6 @@ interface Props {
     SaveButton: ReactNode;
     heading: ReactNode;
     formErrorsExist: boolean;
-    endpointConfigStoreName: EndpointConfigStoreNames;
     formStateStoreName: FormStateStoreNames;
     resourceConfigStoreName?: ResourceConfigStoreNames;
 }
@@ -50,7 +48,6 @@ function FooHeader({
     SaveButton,
     heading,
     formErrorsExist,
-    endpointConfigStoreName,
     formStateStoreName,
     resourceConfigStoreName,
 }: Props) {
@@ -110,7 +107,6 @@ function FooHeader({
             <Box sx={{ maxHeight: 200, overflowY: 'auto' }}>
                 <ValidationErrorSummary
                     errorsExist={formErrorsExist}
-                    endpointConfigStoreName={endpointConfigStoreName}
                     formStateStoreName={formStateStoreName}
                     resourceConfigStoreName={resourceConfigStoreName}
                 />

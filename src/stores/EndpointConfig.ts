@@ -1,10 +1,27 @@
-import { EndpointConfigStoreNames } from 'context/Zustand';
+import { useEntityType } from 'components/shared/Entity/EntityContext';
+import {
+    EndpointConfigStoreNames,
+    registerStores,
+    useZustandStoreMap,
+} from 'context/Zustand';
 import produce from 'immer';
 import { isEmpty, isEqual, map } from 'lodash';
-import { JsonFormsData, Schema } from 'types';
+import { ENTITY, JsonFormsData, Schema } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
-import create, { StoreApi } from 'zustand';
+import { createStore, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
+
+const storeName = (entityType: ENTITY): EndpointConfigStoreNames => {
+    switch (entityType) {
+        case ENTITY.CAPTURE:
+            return EndpointConfigStoreNames.CAPTURE_CREATE;
+        case ENTITY.MATERIALIZATION:
+            return EndpointConfigStoreNames.MATERIALIZATION_CREATE;
+        default: {
+            throw new Error('Invalid EndpointConfig store name');
+        }
+    }
+};
 
 export interface EndpointConfigState {
     endpointConfig: JsonFormsData;
@@ -97,7 +114,68 @@ const getInitialState = (
 });
 
 export const createEndpointConfigStore = (key: EndpointConfigStoreNames) => {
-    return create<EndpointConfigState>()(
-        devtools((set, get) => getInitialState(set, get), devtoolsOptions(key))
+    return createStore<EndpointConfigState>()(
+        devtools(getInitialState, devtoolsOptions(key))
     );
 };
+
+export const useEndpointConfigStore_errorsExist = () => {
+    const [entityType] = useEntityType();
+    return useZustandStoreMap<
+        EndpointConfigState,
+        EndpointConfigState['endpointConfigErrorsExist']
+    >(storeName(entityType), (state) => state.endpointConfigErrorsExist);
+};
+
+export const useEndpointConfigStore_reset = () => {
+    const [entityType] = useEntityType();
+    return useZustandStoreMap<
+        EndpointConfigState,
+        EndpointConfigState['resetState']
+    >(storeName(entityType), (state) => state.resetState);
+};
+
+export const useEndpointConfigStore_changed = () => {
+    const [entityType] = useEntityType();
+    return useZustandStoreMap<
+        EndpointConfigState,
+        EndpointConfigState['stateChanged']
+    >(storeName(entityType), (state) => state.stateChanged);
+};
+
+export const useEndpointConfigStore_endpointSchema = () => {
+    const [entityType] = useEntityType();
+    return useZustandStoreMap<
+        EndpointConfigState,
+        EndpointConfigState['endpointSchema']
+    >(storeName(entityType), (state) => state.endpointSchema);
+};
+
+export const useEndpointConfigStore_setEndpointSchema = () => {
+    const [entityType] = useEntityType();
+    return useZustandStoreMap<
+        EndpointConfigState,
+        EndpointConfigState['setEndpointSchema']
+    >(storeName(entityType), (state) => state.setEndpointSchema);
+};
+
+export const useEndpointConfigStore_endpointConfig_data = () => {
+    const [entityType] = useEntityType();
+    return useZustandStoreMap<
+        EndpointConfigState,
+        EndpointConfigState['endpointConfig']['data']
+    >(storeName(entityType), (state) => state.endpointConfig.data);
+};
+
+export const useEndpointConfigStore_setEndpointConfig = () => {
+    const [entityType] = useEntityType();
+    return useZustandStoreMap<
+        EndpointConfigState,
+        EndpointConfigState['setEndpointConfig']
+    >(storeName(entityType), (state) => state.setEndpointConfig);
+};
+
+registerStores(
+    [storeName(ENTITY.CAPTURE), storeName(ENTITY.MATERIALIZATION)],
+    createEndpointConfigStore
+);

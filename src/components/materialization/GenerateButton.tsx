@@ -6,7 +6,6 @@ import { EditorStoreState } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
 import {
     DraftEditorStoreNames,
-    EndpointConfigStoreNames,
     FormStateStoreNames,
     ResourceConfigStoreNames,
     useZustandStore,
@@ -19,7 +18,11 @@ import {
     useDetailsForm_details_entityName,
     useDetailsForm_errorsExist,
 } from 'stores/DetailsForm';
-import { EndpointConfigState } from 'stores/EndpointConfig';
+import {
+    useEndpointConfigStore_endpointConfig_data,
+    useEndpointConfigStore_endpointSchema,
+    useEndpointConfigStore_errorsExist,
+} from 'stores/EndpointConfig';
 import { EntityFormState, FormStatus } from 'stores/FormState';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
@@ -28,7 +31,6 @@ interface Props {
     disabled: boolean;
     callFailed: Function;
     draftEditorStoreName: DraftEditorStoreNames;
-    endpointConfigStoreName: EndpointConfigStoreNames;
     resourceConfigStoreName: ResourceConfigStoreNames;
     formStateStoreName: FormStateStoreNames;
 }
@@ -37,7 +39,6 @@ function MaterializeGenerateButton({
     disabled,
     callFailed,
     draftEditorStoreName,
-    endpointConfigStoreName,
     resourceConfigStoreName,
     formStateStoreName,
 }: Props) {
@@ -63,20 +64,9 @@ function MaterializeGenerateButton({
     >(draftEditorStoreName, (state) => state.setId);
 
     // Endpoint Config Store
-    const endpointConfigData = useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['endpointConfig']['data']
-    >(endpointConfigStoreName, (state) => state.endpointConfig.data);
-
-    const endpointConfigHasErrors = useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['endpointConfigErrorsExist']
-    >(endpointConfigStoreName, (state) => state.endpointConfigErrorsExist);
-
-    const endpointSchema = useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['endpointSchema']
-    >(endpointConfigStoreName, (state) => state.endpointSchema);
+    const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
+    const endpointConfigHasErrors = useEndpointConfigStore_errorsExist();
+    const endpointSchema = useEndpointConfigStore_endpointSchema();
 
     // Form State Store
     const formActive = useZustandStore<

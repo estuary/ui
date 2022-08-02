@@ -10,7 +10,6 @@ import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import {
     DraftEditorStoreNames,
-    EndpointConfigStoreNames,
     FormStateStoreNames,
     ResourceConfigStoreNames,
     useZustandStore,
@@ -28,7 +27,7 @@ import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
 import { useDetailsForm_connectorImage } from 'stores/DetailsForm';
-import { EndpointConfigState } from 'stores/EndpointConfig';
+import { useEndpointConfigStore_setEndpointSchema } from 'stores/EndpointConfig';
 import { EntityFormState } from 'stores/FormState';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 import { ENTITY, Schema } from 'types';
@@ -39,7 +38,6 @@ interface Props {
     connectorType: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
     Header: any;
     draftEditorStoreName: DraftEditorStoreNames;
-    endpointConfigStoreName: EndpointConfigStoreNames;
     formStateStoreName: FormStateStoreNames;
     resourceConfigStoreName?: ResourceConfigStoreNames;
     showCollections?: boolean;
@@ -50,7 +48,6 @@ function EntityCreate({
     connectorType,
     Header,
     draftEditorStoreName,
-    endpointConfigStoreName,
     formStateStoreName,
     resourceConfigStoreName,
     showCollections,
@@ -92,10 +89,7 @@ function EntityCreate({
     >(draftEditorStoreName, (state) => state.id);
 
     // Endpoint Config Store
-    const setEndpointSchema = useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['setEndpointSchema']
-    >(endpointConfigStoreName, (state) => state.setEndpointSchema);
+    const setEndpointSchema = useEndpointConfigStore_setEndpointSchema();
 
     // Form State Store
     const messagePrefix = useZustandStore<
@@ -204,9 +198,6 @@ function EntityCreate({
                                 accessGrants={combinedGrants}
                                 draftEditorStoreName={draftEditorStoreName}
                                 formStateStoreName={formStateStoreName}
-                                endpointConfigStoreName={
-                                    endpointConfigStoreName
-                                }
                             />
                         </ErrorBoundryWrapper>
                     ) : null}
@@ -216,9 +207,6 @@ function EntityCreate({
                             <EndpointConfig
                                 connectorImage={imageTag.id}
                                 draftEditorStoreName={draftEditorStoreName}
-                                endpointConfigStoreName={
-                                    endpointConfigStoreName
-                                }
                                 formStateStoreName={formStateStoreName}
                             />
                         </ErrorBoundryWrapper>

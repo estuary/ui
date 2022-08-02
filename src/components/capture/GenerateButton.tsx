@@ -6,7 +6,6 @@ import { EditorStoreState } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
 import {
     DraftEditorStoreNames,
-    EndpointConfigStoreNames,
     FormStateStoreNames,
     useZustandStore,
 } from 'context/Zustand';
@@ -18,7 +17,11 @@ import {
     useDetailsForm_details_entityName,
     useDetailsForm_errorsExist,
 } from 'stores/DetailsForm';
-import { EndpointConfigState } from 'stores/EndpointConfig';
+import {
+    useEndpointConfigStore_endpointConfig_data,
+    useEndpointConfigStore_endpointSchema,
+    useEndpointConfigStore_errorsExist,
+} from 'stores/EndpointConfig';
 import { EntityFormState, FormStatus } from 'stores/FormState';
 
 interface Props {
@@ -26,7 +29,6 @@ interface Props {
     callFailed: Function;
     subscription: Function;
     draftEditorStoreName: DraftEditorStoreNames;
-    endpointConfigStoreName: EndpointConfigStoreNames;
     formStateStoreName: FormStateStoreNames;
 }
 
@@ -35,7 +37,6 @@ function CaptureGenerateButton({
     callFailed,
     subscription,
     draftEditorStoreName,
-    endpointConfigStoreName,
     formStateStoreName,
 }: Props) {
     // Editor Store
@@ -71,20 +72,9 @@ function CaptureGenerateButton({
     const imageConnectorId = useDetailsForm_connectorImage_connectorId();
 
     // Endpoint Config Store
-    const endpointConfigData = useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['endpointConfig']['data']
-    >(endpointConfigStoreName, (state) => state.endpointConfig.data);
-
-    const endpointSchema = useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['endpointSchema']
-    >(endpointConfigStoreName, (state) => state.endpointSchema);
-
-    const endpointConfigHasErrors = useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['endpointConfigErrorsExist']
-    >(endpointConfigStoreName, (state) => state.endpointConfigErrorsExist);
+    const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
+    const endpointSchema = useEndpointConfigStore_endpointSchema();
+    const endpointConfigHasErrors = useEndpointConfigStore_errorsExist();
 
     const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();

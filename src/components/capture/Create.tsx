@@ -10,7 +10,6 @@ import FooHeader from 'components/shared/Entity/Header';
 import PageContainer from 'components/shared/PageContainer';
 import {
     DraftEditorStoreNames,
-    EndpointConfigStoreNames,
     FormStateStoreNames,
     useZustandStore,
 } from 'context/Zustand';
@@ -29,12 +28,15 @@ import {
     useDetailsForm_connectorImage,
     useDetailsForm_errorsExist,
 } from 'stores/DetailsForm';
-import { EndpointConfigState } from 'stores/EndpointConfig';
+import {
+    useEndpointConfigStore_changed,
+    useEndpointConfigStore_errorsExist,
+    useEndpointConfigStore_reset,
+} from 'stores/EndpointConfig';
 import { EntityFormState, FormStatus } from 'stores/FormState';
 import { getPathWithParam } from 'utils/misc-utils';
 
 const draftEditorStoreName = DraftEditorStoreNames.CAPTURE;
-const endpointConfigStoreName = EndpointConfigStoreNames.CAPTURE_CREATE;
 const formStateStoreName = FormStateStoreNames.CAPTURE_CREATE;
 
 const trackEvent = (payload: any) => {
@@ -79,20 +81,9 @@ function CaptureCreate() {
     >(draftEditorStoreName, (state) => state.id);
 
     // Endpoint Config Store
-    const endpointConfigErrorsExist = useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['endpointConfigErrorsExist']
-    >(endpointConfigStoreName, (state) => state.endpointConfigErrorsExist);
-
-    const resetEndpointConfigState = useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['resetState']
-    >(endpointConfigStoreName, (state) => state.resetState);
-
-    const endpointConfigChanged = useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['stateChanged']
-    >(endpointConfigStoreName, (state) => state.stateChanged);
+    const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
+    const resetEndpointConfigState = useEndpointConfigStore_reset();
+    const endpointConfigChanged = useEndpointConfigStore_changed();
 
     // Form State Store
     const messagePrefix = useZustandStore<
@@ -232,9 +223,6 @@ function CaptureCreate() {
                                 callFailed={helpers.callFailed}
                                 subscription={discoversSubscription}
                                 draftEditorStoreName={draftEditorStoreName}
-                                endpointConfigStoreName={
-                                    endpointConfigStoreName
-                                }
                                 formStateStoreName={formStateStoreName}
                             />
                         }
@@ -259,12 +247,10 @@ function CaptureCreate() {
                                 formStateStoreName={formStateStoreName}
                             />
                         }
-                        endpointConfigStoreName={endpointConfigStoreName}
                         formStateStoreName={formStateStoreName}
                     />
                 }
                 draftEditorStoreName={draftEditorStoreName}
-                endpointConfigStoreName={endpointConfigStoreName}
                 formStateStoreName={formStateStoreName}
             />
         </PageContainer>

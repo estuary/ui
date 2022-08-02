@@ -3,7 +3,6 @@ import DetailsErrors from 'components/shared/Entity/ValidationErrorSummary/Detai
 import EndpointConfigErrors from 'components/shared/Entity/ValidationErrorSummary/EndpointConfigErrors';
 import ResourceConfigErrors from 'components/shared/Entity/ValidationErrorSummary/ResourceConfigErrors';
 import {
-    EndpointConfigStoreNames,
     FormStateStoreNames,
     ResourceConfigStoreNames,
     useZustandStore,
@@ -12,7 +11,6 @@ import { FormattedMessage } from 'react-intl';
 import { EntityFormState } from 'stores/FormState';
 
 interface Props {
-    endpointConfigStoreName: EndpointConfigStoreNames;
     formStateStoreName: FormStateStoreNames;
     resourceConfigStoreName?: ResourceConfigStoreNames;
     ErrorComponent?: any | boolean;
@@ -22,7 +20,6 @@ interface Props {
 }
 
 function ValidationErrorSummary({
-    endpointConfigStoreName,
     formStateStoreName,
     resourceConfigStoreName,
     headerMessageId,
@@ -53,9 +50,7 @@ function ValidationErrorSummary({
                     <>
                         <DetailsErrors />
 
-                        <EndpointConfigErrors
-                            endpointConfigStoreName={endpointConfigStoreName}
-                        />
+                        <EndpointConfigErrors />
 
                         {resourceConfigStoreName ? (
                             <ResourceConfigErrors

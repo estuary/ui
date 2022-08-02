@@ -10,7 +10,6 @@ import FooHeader from 'components/shared/Entity/Header';
 import PageContainer from 'components/shared/PageContainer';
 import {
     DraftEditorStoreNames,
-    EndpointConfigStoreNames,
     FormStateStoreNames,
     ResourceConfigStoreNames,
     useZustandStore,
@@ -29,12 +28,15 @@ import {
     useDetailsForm_errorsExist,
     useDetailsForm_resetFormState,
 } from 'stores/DetailsForm';
-import { EndpointConfigState } from 'stores/EndpointConfig';
+import {
+    useEndpointConfigStore_changed,
+    useEndpointConfigStore_errorsExist,
+    useEndpointConfigStore_reset,
+} from 'stores/EndpointConfig';
 import { EntityFormState, FormStatus } from 'stores/FormState';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 
 const draftEditorStoreName = DraftEditorStoreNames.MATERIALIZATION;
-const endpointConfigStoreName = EndpointConfigStoreNames.MATERIALIZATION_CREATE;
 const formStateStoreName = FormStateStoreNames.MATERIALIZATION_CREATE;
 const resourceConfigStoreName = ResourceConfigStoreNames.MATERIALIZATION_CREATE;
 
@@ -66,20 +68,9 @@ function MaterializationCreate() {
     >(draftEditorStoreName, (state) => state.setId);
 
     // Endpoint Config Store
-    const endpointConfigErrorsExist = useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['endpointConfigErrorsExist']
-    >(endpointConfigStoreName, (state) => state.endpointConfigErrorsExist);
-
-    const resetEndpointConfigState = useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['resetState']
-    >(endpointConfigStoreName, (state) => state.resetState);
-
-    const endpointConfigChanged = useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['stateChanged']
-    >(endpointConfigStoreName, (state) => state.stateChanged);
+    const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
+    const resetEndpointConfigState = useEndpointConfigStore_reset();
+    const endpointConfigChanged = useEndpointConfigStore_changed();
 
     // Form State Store
     const messagePrefix = useZustandStore<
@@ -203,9 +194,6 @@ function MaterializationCreate() {
                                 disabled={!hasConnectors}
                                 callFailed={helpers.callFailed}
                                 draftEditorStoreName={draftEditorStoreName}
-                                endpointConfigStoreName={
-                                    endpointConfigStoreName
-                                }
                                 resourceConfigStoreName={
                                     resourceConfigStoreName
                                 }
@@ -240,13 +228,11 @@ function MaterializationCreate() {
                             endpointConfigErrorsExist ||
                             resourceConfigErrorsExist
                         }
-                        endpointConfigStoreName={endpointConfigStoreName}
                         resourceConfigStoreName={resourceConfigStoreName}
                         formStateStoreName={formStateStoreName}
                     />
                 }
                 draftEditorStoreName={draftEditorStoreName}
-                endpointConfigStoreName={endpointConfigStoreName}
                 resourceConfigStoreName={resourceConfigStoreName}
                 formStateStoreName={formStateStoreName}
             />
