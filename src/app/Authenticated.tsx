@@ -19,7 +19,6 @@ import PageNotFound from 'pages/error/PageNotFound';
 import Home from 'pages/Home';
 import Materializations from 'pages/Materializations';
 import Registration from 'pages/Registration';
-import { Profiler } from 'react';
 import { Route, Routes } from 'react-router';
 import { ENTITY } from 'types';
 import { isProduction } from 'utils/env-utils';
@@ -84,27 +83,6 @@ export const authenticatedRoutes = {
         path: '*',
     },
 };
-let renderCount = 0;
-function onRenderCallback(
-    id: any, // the "id" prop of the Profiler tree that has just committed
-    phase: any, // either "mount" (if the tree just mounted) or "update" (if it re-rendered)
-    actualDuration: any, // time spent rendering the committed update
-    baseDuration: any, // estimated time to render the entire subtree without memoization
-    startTime: any, // when React began rendering this update
-    commitTime: any, // when React committed this update
-    interactions: any // the Set of interactions belonging to this update
-) {
-    renderCount += 1;
-    console.log(`render ${renderCount}`, {
-        id, // the "id" prop of the Profiler tree that has just committed
-        phase, // either "mount" (if the tree just mounted) or "update" (if it re-rendered)
-        actualDuration, // time spent rendering the committed update
-        baseDuration, // estimated time to render the entire subtree without memoization
-        startTime, // when React began rendering this update
-        commitTime, // when React committed this update
-        interactions, // the Set of interactions belonging to this update
-    });
-}
 
 const Authenticated = () => {
     // TODO: Determine whether a context provider or a hook should be used to fetch the initial auth gateway URL and token.
@@ -169,16 +147,11 @@ const Authenticated = () => {
                             <Route
                                 path={authenticatedRoutes.captures.create.path}
                                 element={
-                                    <Profiler
-                                        id="CaptureCreate"
-                                        onRender={onRenderCallback}
+                                    <EntityTypeProvider
+                                        initialValue={ENTITY.CAPTURE}
                                     >
-                                        <EntityTypeProvider
-                                            initialValue={ENTITY.CAPTURE}
-                                        >
-                                            <CaptureCreate />
-                                        </EntityTypeProvider>
-                                    </Profiler>
+                                        <CaptureCreate />
+                                    </EntityTypeProvider>
                                 }
                             />
                         </Route>

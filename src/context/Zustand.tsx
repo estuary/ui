@@ -5,7 +5,6 @@ import {
     ReactNode,
     useContext,
 } from 'react';
-import { createDetailsFormStore } from 'stores/DetailsForm';
 import { createEndpointConfigStore } from 'stores/EndpointConfig';
 import { createFormStateStore } from 'stores/FormState';
 import { createResourceConfigStore } from 'stores/ResourceConfig';
@@ -92,15 +91,6 @@ export const ZustandProvider = ({
             return { [storeName]: createStore };
         } else {
             return {
-                // Details Form Store
-                [DetailsFormStoreNames.CAPTURE_CREATE]: createDetailsFormStore(
-                    DetailsFormStoreNames.CAPTURE_CREATE
-                ),
-                [DetailsFormStoreNames.MATERIALIZATION_CREATE]:
-                    createDetailsFormStore(
-                        DetailsFormStoreNames.MATERIALIZATION_CREATE
-                    ),
-
                 // Draft Editor Store
                 [DraftEditorStoreNames.CAPTURE]: createEditorStore(
                     DraftEditorStoreNames.CAPTURE
@@ -184,6 +174,37 @@ export const useZustandStore = <S extends Object, U>(
 ) => {
     const storeOptions = useContext(ZustandContext);
     const store = storeOptions[storeName];
+
+    return useStore<StoreApi<S>, ReturnType<typeof selector>>(
+        store,
+        selector,
+        equalityFn
+    );
+};
+
+// TODO (zustand) decide on how we'll store stores that are used
+//  right now only details create uses this approach
+const storeMap = new Map();
+export const registerStores = (
+    storeKeys: DetailsFormStoreNames[],
+    create: Function
+) => {
+    storeKeys.forEach((key) => {
+        storeMap.set(key, create);
+    });
+};
+export const useZustandStoreMap = <S extends Object, U>(
+    storeName: StoreName,
+    selector: (state: S) => U,
+    equalityFn?: any
+) => {
+    let store = storeMap.get(storeName);
+
+    if (typeof store === 'function') {
+        const newStore = store(storeName);
+        storeMap.set(storeName, newStore);
+        store = newStore;
+    }
 
     return useStore<StoreApi<S>, ReturnType<typeof selector>>(
         store,
