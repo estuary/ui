@@ -84,7 +84,7 @@ export const getInitialState = (
         set(
             produce((state: DetailsFormState) => {
                 if (details.data.connectorImage.id === '') {
-                    details.data.connectorImage =
+                    state.details.data.connectorImage =
                         getInitialStateData().details.data.connectorImage;
                 }
 
