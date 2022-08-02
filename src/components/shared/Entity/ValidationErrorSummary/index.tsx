@@ -2,31 +2,44 @@ import { Alert, AlertTitle, Collapse } from '@mui/material';
 import DetailsErrors from 'components/shared/Entity/ValidationErrorSummary/DetailsErrors';
 import EndpointConfigErrors from 'components/shared/Entity/ValidationErrorSummary/EndpointConfigErrors';
 import ResourceConfigErrors from 'components/shared/Entity/ValidationErrorSummary/ResourceConfigErrors';
-import { useRouteStore } from 'hooks/useRouteStore';
+import {
+    DetailsFormStoreNames,
+    EndpointConfigStoreNames,
+    FormStateStoreNames,
+    ResourceConfigStoreNames,
+    useZustandStore,
+} from 'context/Zustand';
 import { FormattedMessage } from 'react-intl';
-import { entityCreateStoreSelectors } from 'stores/Create';
+import { EntityFormState } from 'stores/FormState';
 
 interface Props {
+    endpointConfigStoreName: EndpointConfigStoreNames;
+    formStateStoreName: FormStateStoreNames;
+    detailsFormStoreName: DetailsFormStoreNames;
+    resourceConfigStoreName?: ResourceConfigStoreNames;
     ErrorComponent?: any | boolean;
     hideIcon?: boolean;
     headerMessageId?: string;
-    hasErrorsSelector: Function;
+    errorsExist: boolean;
 }
 
 function ValidationErrorSummary({
+    endpointConfigStoreName,
+    formStateStoreName,
+    detailsFormStoreName,
+    resourceConfigStoreName,
     headerMessageId,
     hideIcon,
     ErrorComponent,
-    hasErrorsSelector,
+    errorsExist,
 }: Props) {
-    const useEntityCreateStore = useRouteStore();
-    const displayValidation = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.displayValidation
-    );
-    const hasErrors = useEntityCreateStore(hasErrorsSelector);
+    const displayValidation = useZustandStore<
+        EntityFormState,
+        EntityFormState['formState']['displayValidation']
+    >(formStateStoreName, (state) => state.formState.displayValidation);
 
     return displayValidation ? (
-        <Collapse in={Boolean(hasErrors)} timeout="auto" unmountOnExit>
+        <Collapse in={errorsExist} timeout="auto" unmountOnExit>
             <Alert severity="error" icon={hideIcon ?? undefined}>
                 <AlertTitle>
                     <FormattedMessage
@@ -41,9 +54,21 @@ function ValidationErrorSummary({
                     <ErrorComponent />
                 ) : (
                     <>
-                        <DetailsErrors />
-                        <EndpointConfigErrors />
-                        <ResourceConfigErrors />
+                        <DetailsErrors
+                            detailsFormStoreName={detailsFormStoreName}
+                        />
+
+                        <EndpointConfigErrors
+                            endpointConfigStoreName={endpointConfigStoreName}
+                        />
+
+                        {resourceConfigStoreName ? (
+                            <ResourceConfigErrors
+                                resourceConfigStoreName={
+                                    resourceConfigStoreName
+                                }
+                            />
+                        ) : null}
                     </>
                 )}
             </Alert>

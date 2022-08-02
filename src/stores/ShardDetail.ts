@@ -4,11 +4,13 @@ import {
     successMain,
     warningMain,
 } from 'context/Theme';
+import { ShardDetailStoreNames } from 'context/Zustand';
 import { ReplicaStatusCode } from 'data-plane-gateway/types/gen/consumer/protocol/consumer';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import produce from 'immer';
-import { GetState } from 'zustand';
-import { NamedSet } from 'zustand/middleware';
+import { devtoolsOptions } from 'utils/store-utils';
+import create, { StoreApi } from 'zustand';
+import { devtools, NamedSet } from 'zustand/middleware';
 
 // TODO: Determine a way to access an interface property with a function type.
 export type SetShards = (shards: Shard[]) => void;
@@ -230,7 +232,7 @@ const evaluateShardStatusCode = ({
 
 export const getInitialState = (
     set: NamedSet<ShardDetailStore>,
-    get: GetState<ShardDetailStore>
+    get: StoreApi<ShardDetailStore>['getState']
 ): ShardDetailStore => {
     return {
         shards: [],
@@ -367,6 +369,12 @@ export const getInitialState = (
             }
         },
     };
+};
+
+export const createShardDetailStore = (key: ShardDetailStoreNames) => {
+    return create<ShardDetailStore>()(
+        devtools((set, get) => getInitialState(set, get), devtoolsOptions(key))
+    );
 };
 
 export const shardDetailSelectors = {

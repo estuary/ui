@@ -4,8 +4,8 @@ import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
 import { difference, has, isEmpty, isEqual, map, omit } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
-import { Stores } from 'stores/Repo';
-import { GetState } from 'zustand';
+import { MessagePrefixes } from 'types';
+import { StoreApi } from 'zustand';
 import { NamedSet } from 'zustand/middleware';
 
 export interface Details extends Pick<JsonFormsCore, 'data' | 'errors'> {
@@ -143,7 +143,7 @@ const populateHasErrors = (
 const populateEndpointConfigErrors = (
     endpointConfig: any,
     state: CreateEntityStore,
-    get: GetState<CreateEntityStore>
+    get: StoreApi<CreateEntityStore>['getState']
 ) => {
     const endpointConfigErrors = filterErrors(fetchErrors(endpointConfig));
     state.endpointConfigErrors = endpointConfigErrors;
@@ -221,7 +221,7 @@ export interface CreateEntityStore {
     hasErrors: boolean;
 
     //Content
-    messagePrefix: Stores;
+    messagePrefix: MessagePrefixes;
 
     resetState: () => void;
     hasChanges: () => boolean;
@@ -270,7 +270,7 @@ export const initialCreateStates = {
 
 export const getInitialStateData = (
     includeCollections: boolean,
-    messagePrefix: Stores
+    messagePrefix: MessagePrefixes
 ): Pick<
     CreateEntityStore,
     | 'details'
@@ -327,9 +327,9 @@ export const getInitialStateData = (
 
 export const getInitialCreateState = (
     set: NamedSet<CreateEntityStore>,
-    get: GetState<CreateEntityStore>,
+    get: StoreApi<CreateEntityStore>['getState'],
     includeCollections: boolean,
-    messagePrefix: Stores
+    messagePrefix: MessagePrefixes
 ): CreateEntityStore => {
     const response: CreateEntityStore = {
         ...getInitialStateData(includeCollections, messagePrefix),

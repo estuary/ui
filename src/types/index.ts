@@ -1,4 +1,20 @@
+import { JsonFormsCore } from '@jsonforms/core';
 import { ReactNode } from 'react';
+
+export enum MessagePrefixes {
+    CAPTURE_CREATE = 'captureCreate',
+    MATERIALIZATION_CREATE = 'materializationCreate',
+}
+
+export interface JsonFormsData extends Pick<JsonFormsCore, 'data' | 'errors'> {
+    data: {
+        [key: string]: any;
+    };
+}
+
+export interface Schema {
+    [key: string]: any;
+}
 
 export type StoreSelector<T> = Record<string, (state: T) => any>;
 

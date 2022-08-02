@@ -2,27 +2,35 @@ import { Paper, Typography } from '@mui/material';
 import DraftSpecEditor from 'components/editor/DraftSpec';
 import { EditorStoreState } from 'components/editor/Store';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
+import {
+    DraftEditorStoreNames,
+    FormStateStoreNames,
+    useZustandStore,
+} from 'context/Zustand';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { useRouteStore } from 'hooks/useRouteStore';
-import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
 import { FormattedMessage } from 'react-intl';
-import { entityCreateStoreSelectors } from 'stores/Create';
+import { EntityFormState } from 'stores/FormState';
 
 interface Props {
     messageId: string;
     draftEditorStoreName: DraftEditorStoreNames;
+    formStateStoreName: FormStateStoreNames;
 }
 
-function CatalogEditor({ messageId, draftEditorStoreName }: Props) {
+function CatalogEditor({
+    messageId,
+    draftEditorStoreName,
+    formStateStoreName,
+}: Props) {
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
     >(draftEditorStoreName, (state) => state.id);
 
-    const useEntityCreateStore = useRouteStore();
-    const formActive = useEntityCreateStore(
-        entityCreateStoreSelectors.isActive
-    );
+    const formActive = useZustandStore<
+        EntityFormState,
+        EntityFormState['isActive']
+    >(formStateStoreName, (state) => state.isActive);
 
     if (draftId) {
         return (

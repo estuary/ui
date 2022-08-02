@@ -7,7 +7,10 @@ import {
     useLocalZustandStore,
 } from 'context/LocalZustand';
 import { tableBorderSx } from 'context/Theme';
-import { LiveSpecEditorStoreNames } from 'context/Zustand';
+import {
+    LiveSpecEditorStoreNames,
+    ShardDetailStoreNames,
+} from 'context/Zustand';
 import { ENTITY } from 'types';
 
 interface Props {
@@ -18,6 +21,7 @@ interface Props {
     liveSpecId?: string;
     disableLogs?: boolean;
     entityType?: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
+    shardDetailStoreName?: ShardDetailStoreNames;
 }
 
 function DetailsPanel({
@@ -28,6 +32,7 @@ function DetailsPanel({
     liveSpecId,
     disableLogs,
     entityType,
+    shardDetailStoreName,
 }: Props) {
     return (
         <TableRow>
@@ -46,10 +51,11 @@ function DetailsPanel({
                         )}
                     >
                         <Grid container spacing={2}>
-                            {entityType ? (
+                            {entityType && shardDetailStoreName ? (
                                 <ShardInformation
-                                    useZustandStore={useLocalZustandStore}
+                                    useLocalZustandStore={useLocalZustandStore}
                                     entityType={entityType}
+                                    shardDetailStoreName={shardDetailStoreName}
                                 />
                             ) : null}
 

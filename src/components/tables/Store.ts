@@ -1,7 +1,7 @@
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
 import { devtoolsOptions } from 'utils/store-utils';
-import create, { GetState } from 'zustand';
+import create, { StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 
 export interface SelectableTableStore {
@@ -46,7 +46,7 @@ export const getInitialStateData = (): Pick<
 
 export const getInitialState = (
     set: NamedSet<SelectableTableStore>,
-    get: GetState<SelectableTableStore>
+    get: StoreApi<SelectableTableStore>['getState']
 ): SelectableTableStore => {
     return {
         ...getInitialStateData(),

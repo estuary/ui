@@ -4,18 +4,28 @@ import { createEntityDraft } from 'api/drafts';
 import { encryptConfig } from 'api/sops';
 import { EditorStoreState } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
-import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
+import {
+    DetailsFormStoreNames,
+    DraftEditorStoreNames,
+    EndpointConfigStoreNames,
+    FormStateStoreNames,
+    useZustandStore,
+} from 'context/Zustand';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { useRouteStore } from 'hooks/useRouteStore';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
-import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
+import { DetailsFormState } from 'stores/DetailsForm';
+import { EndpointConfigState } from 'stores/EndpointConfig';
+import { EntityFormState, FormStatus } from 'stores/FormState';
 
 interface Props {
     disabled: boolean;
     callFailed: Function;
     subscription: Function;
     draftEditorStoreName: DraftEditorStoreNames;
+    endpointConfigStoreName: EndpointConfigStoreNames;
+    formStateStoreName: FormStateStoreNames;
+    detailsFormStoreName: DetailsFormStoreNames;
 }
 
 function CaptureGenerateButton({
@@ -23,7 +33,11 @@ function CaptureGenerateButton({
     callFailed,
     subscription,
     draftEditorStoreName,
+    endpointConfigStoreName,
+    formStateStoreName,
+    detailsFormStoreName,
 }: Props) {
+    // Editor Store
     const isSaving = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['isSaving']
@@ -34,37 +48,53 @@ function CaptureGenerateButton({
         EditorStoreState<DraftSpecQuery>['resetState']
     >(draftEditorStoreName, (state) => state.resetState);
 
-    const useEntityCreateStore = useRouteStore();
+    // Form State Store
+    const formActive = useZustandStore<
+        EntityFormState,
+        EntityFormState['isActive']
+    >(formStateStoreName, (state) => state.isActive);
 
-    const formActive = useEntityCreateStore(
-        entityCreateStoreSelectors.isActive
-    );
-    const setFormState = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.set
-    );
-    const resetFormState = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.reset
-    );
+    const setFormState = useZustandStore<
+        EntityFormState,
+        EntityFormState['setFormState']
+    >(formStateStoreName, (state) => state.setFormState);
 
-    const entityName = useEntityCreateStore(
-        entityCreateStoreSelectors.details.entityName
-    );
-    const imageTag = useEntityCreateStore(
-        entityCreateStoreSelectors.details.connectorTag
-    );
-    const endpointConfigData = useEntityCreateStore(
-        entityCreateStoreSelectors.endpointConfig.data
-    );
-    const endpointSchema = useEntityCreateStore(
-        entityCreateStoreSelectors.endpointSchema
-    );
+    const resetFormState = useZustandStore<
+        EntityFormState,
+        EntityFormState['resetFormState']
+    >(formStateStoreName, (state) => state.resetFormState);
 
-    const endpointConfigHasErrors = useEntityCreateStore(
-        entityCreateStoreSelectors.endpointConfig.hasErrors
-    );
-    const detailsFormsHasErrors = useEntityCreateStore(
-        entityCreateStoreSelectors.details.hasErrors
-    );
+    // Details Form Store
+    const entityName = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['details']['data']['entityName']
+    >(detailsFormStoreName, (state) => state.details.data.entityName);
+
+    const detailsFormsHasErrors = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['detailsFormErrorsExist']
+    >(detailsFormStoreName, (state) => state.detailsFormErrorsExist);
+
+    const imageTag = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['details']['data']['connectorImage']
+    >(detailsFormStoreName, (state) => state.details.data.connectorImage);
+
+    // Endpoint Config Store
+    const endpointConfigData = useZustandStore<
+        EndpointConfigState,
+        EndpointConfigState['endpointConfig']['data']
+    >(endpointConfigStoreName, (state) => state.endpointConfig.data);
+
+    const endpointSchema = useZustandStore<
+        EndpointConfigState,
+        EndpointConfigState['endpointSchema']
+    >(endpointConfigStoreName, (state) => state.endpointSchema);
+
+    const endpointConfigHasErrors = useZustandStore<
+        EndpointConfigState,
+        EndpointConfigState['endpointConfigErrorsExist']
+    >(endpointConfigStoreName, (state) => state.endpointConfigErrorsExist);
 
     const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
@@ -110,7 +140,7 @@ function CaptureGenerateButton({
             const discoverResponse = await discover(
                 entityName,
                 encryptedEndpointConfig.data,
-                imageTag.id,
+                imageTag ? imageTag.id : '',
                 draftsResponse.data[0].id
             );
             if (discoverResponse.error) {

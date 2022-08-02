@@ -5,7 +5,7 @@ import {
     useContext,
 } from 'react';
 import useConstant from 'use-constant';
-import { StateSelector, StoreApi, useStore } from 'zustand';
+import { StoreApi, useStore } from 'zustand';
 
 interface LocalZustandProviderProps {
     children: ReactNode;
@@ -33,7 +33,7 @@ export const LocalZustandProvider = ({
 //   the store even if they don't allow for selection
 export const useLocalZustandStore = <S extends Object, U>(
     storeName: StoreName,
-    selector: StateSelector<S, U>,
+    selector: (state: S) => U,
     equalityFn?: any
 ) => {
     const store = useContext(LocalZustandContext);
