@@ -1,23 +1,23 @@
 import { Box, Button, Stack } from '@mui/material';
 import Status from 'components/shared/Entity/Status';
-import { useRouteStore } from 'hooks/useRouteStore';
+import { FormStateStoreNames, useZustandStore } from 'context/Zustand';
 import { FormattedMessage } from 'react-intl';
-import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
+import { EntityFormState, FormStatus } from 'stores/FormState';
 
 interface Props {
     close: any;
+    formStateStoreName: FormStateStoreNames;
     materialize?: {
         action: any;
         title: string;
     };
 }
 
-function LogDialogActions({ close, materialize }: Props) {
-    const useEntityCreateStore = useRouteStore();
-
-    const formStatus = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.status
-    );
+function LogDialogActions({ close, materialize, formStateStoreName }: Props) {
+    const formStatus = useZustandStore<
+        EntityFormState,
+        EntityFormState['formState']['status']
+    >(formStateStoreName, (state) => state.formState.status);
 
     return (
         <>
@@ -26,7 +26,7 @@ function LogDialogActions({ close, materialize }: Props) {
                     pl: 2,
                 }}
             >
-                <Status />
+                <Status formStateStoreName={formStateStoreName} />
             </Box>
 
             <Stack direction="row" spacing={2}>

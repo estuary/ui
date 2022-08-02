@@ -10,16 +10,27 @@ import {
 } from '@mui/material';
 import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
 import { slate, stickyHeaderIndex, tableBorderSx } from 'context/Theme';
-import { useRouteStore } from 'hooks/useRouteStore';
+import {
+    DetailsFormStoreNames,
+    EndpointConfigStoreNames,
+    FormStateStoreNames,
+    ResourceConfigStoreNames,
+    useZustandStore,
+} from 'context/Zustand';
 import { ReactNode } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { entityCreateStoreSelectors } from 'stores/Create';
+import { EntityFormState } from 'stores/FormState';
 
 interface Props {
     GenerateButton: ReactNode;
     TestButton: ReactNode;
     SaveButton: ReactNode;
     heading: ReactNode;
+    formErrorsExist: boolean;
+    endpointConfigStoreName: EndpointConfigStoreNames;
+    formStateStoreName: FormStateStoreNames;
+    detailsFormStoreName: DetailsFormStoreNames;
+    resourceConfigStoreName?: ResourceConfigStoreNames;
 }
 
 export const buttonSx: SxProps<Theme> = { ml: 1 };
@@ -35,11 +46,21 @@ const stickySx: SxProps<Theme> = {
 
 const stickyThreshold = 1;
 
-function FooHeader({ GenerateButton, TestButton, SaveButton, heading }: Props) {
-    const useEntityCreateStore = useRouteStore();
-    const formActive = useEntityCreateStore(
-        entityCreateStoreSelectors.isActive
-    );
+function FooHeader({
+    GenerateButton,
+    TestButton,
+    SaveButton,
+    heading,
+    formErrorsExist,
+    endpointConfigStoreName,
+    formStateStoreName,
+    detailsFormStoreName,
+    resourceConfigStoreName,
+}: Props) {
+    const formActive = useZustandStore<
+        EntityFormState,
+        EntityFormState['isActive']
+    >(formStateStoreName, (state) => state.isActive);
 
     const { inView, ref } = useInView({
         threshold: [stickyThreshold],
@@ -91,7 +112,11 @@ function FooHeader({ GenerateButton, TestButton, SaveButton, heading }: Props) {
 
             <Box sx={{ maxHeight: 200, overflowY: 'auto' }}>
                 <ValidationErrorSummary
-                    hasErrorsSelector={entityCreateStoreSelectors.hasErrors}
+                    errorsExist={formErrorsExist}
+                    endpointConfigStoreName={endpointConfigStoreName}
+                    formStateStoreName={formStateStoreName}
+                    detailsFormStoreName={detailsFormStoreName}
+                    resourceConfigStoreName={resourceConfigStoreName}
                 />
             </Box>
         </>

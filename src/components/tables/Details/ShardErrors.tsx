@@ -11,24 +11,29 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
+import { ShardDetailStoreNames, useZustandStore } from 'context/Zustand';
 import { Shard } from 'data-plane-gateway/types/shard_client';
-import { useRouteStore } from 'hooks/useRouteStore';
 import { FormattedMessage } from 'react-intl';
-import { ShardDetails, shardDetailSelectors } from 'stores/ShardDetail';
+import {
+    ShardDetails,
+    shardDetailSelectors,
+    ShardDetailStore,
+} from 'stores/ShardDetail';
 
 interface Props {
     shards: Shard[];
+    shardDetailStoreName: ShardDetailStoreNames;
 }
 
 const NEW_LINE = '\r\n';
 
-function ShardErrors({ shards }: Props) {
+function ShardErrors({ shards, shardDetailStoreName }: Props) {
     const theme = useTheme();
 
-    const useShardDetailStore = useRouteStore();
-    const getShardDetails = useShardDetailStore(
-        shardDetailSelectors.getShardDetails
-    );
+    const getShardDetails = useZustandStore<
+        ShardDetailStore,
+        ShardDetailStore['getShardDetails']
+    >(shardDetailStoreName, shardDetailSelectors.getShardDetails);
 
     return getShardDetails(shards).filter(
         ({ errors }: ShardDetails) => !!errors

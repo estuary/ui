@@ -1,7 +1,11 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { StyledEngineProvider } from '@mui/material';
-import { useRouteStore } from 'hooks/useRouteStore';
+import {
+    FormStateStoreNames,
+    ResourceConfigStoreNames,
+    useZustandStore,
+} from 'context/Zustand';
 import { useEffect, useRef } from 'react';
 import { setDefaultsValidator } from 'services/ajv';
 import {
@@ -10,29 +14,50 @@ import {
     defaultRenderers,
     showValidation,
 } from 'services/jsonforms';
-import { entityCreateStoreSelectors } from 'stores/Create';
+import { EntityFormState } from 'stores/FormState';
+import { ResourceConfigState } from 'stores/ResourceConfig';
 
 type Props = {
     collectionName: string;
+    resourceConfigStoreName: ResourceConfigStoreNames;
+    formStateStoreName: FormStateStoreNames;
 };
 
-function ResourceConfigForm({ collectionName }: Props) {
+function ResourceConfigForm({
+    collectionName,
+    resourceConfigStoreName,
+    formStateStoreName,
+}: Props) {
     const name = useRef(collectionName);
-    const useEntityCreateStore = useRouteStore();
 
-    const setConfig = useEntityCreateStore(
-        entityCreateStoreSelectors.resourceConfig.set
-    );
-    const formData = useEntityCreateStore(
-        (state: any) => state.resourceConfig[collectionName].data
-    );
-    const displayValidation = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.displayValidation
-    );
-    const isActive = useEntityCreateStore(entityCreateStoreSelectors.isActive);
-    const resourceSchema = useEntityCreateStore(
-        entityCreateStoreSelectors.resourceSchema
-    );
+    // Resource Config Store
+    const setConfig = useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['setResourceConfig']
+    >(resourceConfigStoreName, (state) => state.setResourceConfig);
+
+    const resourceConfig = useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['resourceConfig']
+    >(resourceConfigStoreName, (state) => state.resourceConfig);
+
+    const formData = resourceConfig[collectionName].data;
+
+    const resourceSchema = useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['resourceSchema']
+    >(resourceConfigStoreName, (state) => state.resourceSchema);
+
+    // Form State Store
+    const displayValidation = useZustandStore<
+        EntityFormState,
+        EntityFormState['formState']['displayValidation']
+    >(formStateStoreName, (state) => state.formState.displayValidation);
+
+    const isActive = useZustandStore<
+        EntityFormState,
+        EntityFormState['isActive']
+    >(formStateStoreName, (state) => state.isActive);
 
     useEffect(() => {
         name.current = collectionName;

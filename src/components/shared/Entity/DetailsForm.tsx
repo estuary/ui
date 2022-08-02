@@ -3,12 +3,17 @@ import { JsonForms } from '@jsonforms/react';
 import { Alert, Stack, Typography } from '@mui/material';
 import { authenticatedRoutes } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
-import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
+import {
+    DetailsFormStoreNames,
+    DraftEditorStoreNames,
+    EndpointConfigStoreNames,
+    FormStateStoreNames,
+    useZustandStore,
+} from 'context/Zustand';
 import { CATALOG_NAME_SCOPE } from 'forms/renderers/CatalogName';
 import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
 import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { useRouteStore } from 'hooks/useRouteStore';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
@@ -17,45 +22,83 @@ import {
     defaultRenderers,
     showValidation,
 } from 'services/jsonforms';
-import { entityCreateStoreSelectors } from 'stores/Create';
+import { Details, DetailsFormState } from 'stores/DetailsForm';
+import { EndpointConfigState } from 'stores/EndpointConfig';
+import { EntityFormState } from 'stores/FormState';
 import { Grants } from 'types';
 
 interface Props {
     connectorTags: ConnectorWithTagDetailQuery[];
     accessGrants: Grants[];
     draftEditorStoreName: DraftEditorStoreNames;
+    formStateStoreName: FormStateStoreNames;
+    detailsFormStoreName: DetailsFormStoreNames;
+    endpointConfigStoreName: EndpointConfigStoreNames;
 }
 
 function DetailsForm({
     connectorTags,
     accessGrants,
     draftEditorStoreName,
+    formStateStoreName,
+    detailsFormStoreName,
+    endpointConfigStoreName,
 }: Props) {
     const intl = useIntl();
     const [searchParams] = useSearchParams();
-    const connectorID = searchParams.get(
-        authenticatedRoutes.captures.create.params.connectorID
-    );
+    const connectorID =
+        searchParams.get(
+            authenticatedRoutes.captures.create.params.connectorID
+        ) ??
+        searchParams.get(
+            authenticatedRoutes.materializations.create.params.connectorId
+        );
 
+    // Details Form Store
+    const formData = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['details']['data']
+    >(detailsFormStoreName, (state) => state.details.data);
+
+    const { connectorImage: originalConnectorImage } = formData;
+
+    const setDetails = useZustandStore<
+        DetailsFormState,
+        DetailsFormState['setDetails']
+    >(detailsFormStoreName, (state) => state.setDetails);
+
+    // Draft Editor Store
     const isSaving = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['isSaving']
     >(draftEditorStoreName, (state) => state.isSaving);
 
-    const useEntityCreateStore = useRouteStore();
-    const messagePrefix = useEntityCreateStore(
-        entityCreateStoreSelectors.messagePrefix
-    );
-    const formData = useEntityCreateStore(
-        entityCreateStoreSelectors.details.data
-    );
-    const setDetails = useEntityCreateStore(
-        entityCreateStoreSelectors.details.set
-    );
-    const displayValidation = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.displayValidation
-    );
-    const isActive = useEntityCreateStore(entityCreateStoreSelectors.isActive);
+    // Endpoint Config Store
+    const resetEndpointConfig = useZustandStore<
+        EndpointConfigState,
+        EndpointConfigState['resetState']
+    >(endpointConfigStoreName, (state) => state.resetState);
+
+    // Form State Store
+    const messagePrefix = useZustandStore<
+        EntityFormState,
+        EntityFormState['messagePrefix']
+    >(formStateStoreName, (state) => state.messagePrefix);
+
+    const displayValidation = useZustandStore<
+        EntityFormState,
+        EntityFormState['formState']['displayValidation']
+    >(formStateStoreName, (state) => state.formState.displayValidation);
+
+    const isActive = useZustandStore<
+        EntityFormState,
+        EntityFormState['isActive']
+    >(formStateStoreName, (state) => state.isActive);
+
+    const resetFormState = useZustandStore<
+        EntityFormState,
+        EntityFormState['resetState']
+    >(formStateStoreName, (state) => state.resetState);
 
     useEffect(() => {
         if (connectorID) {
@@ -69,7 +112,13 @@ function DetailsForm({
                 },
             });
         }
-    }, [connectorID, setDetails]);
+    }, [setDetails, connectorID]);
+
+    useEffect(() => {
+        if (connectorID && originalConnectorImage?.id !== connectorID) {
+            resetFormState();
+        }
+    }, [resetFormState, connectorID, originalConnectorImage]);
 
     const accessGrantsOneOf = useMemo(() => {
         const response = [] as string[];
@@ -172,6 +221,14 @@ function DetailsForm({
         type: 'VerticalLayout',
     };
 
+    const updateDetails = (details: Details) => {
+        if (!details.data.connectorImage) {
+            resetEndpointConfig();
+        }
+
+        setDetails(details);
+    };
+
     return (
         <>
             <Typography variant="h5" sx={{ mb: 1 }}>
@@ -195,7 +252,7 @@ function DetailsForm({
                             config={defaultOptions}
                             readonly={isSaving || isActive}
                             validationMode={showValidation(displayValidation)}
-                            onChange={setDetails}
+                            onChange={updateDetails}
                         />
                     ) : (
                         <Alert severity="warning">

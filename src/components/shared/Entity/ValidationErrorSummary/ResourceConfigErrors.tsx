@@ -1,16 +1,21 @@
 import SectionError from 'components/shared/Entity/ValidationErrorSummary/SectionError';
-import { useRouteStore } from 'hooks/useRouteStore';
-import { entityCreateStoreSelectors } from 'stores/Create';
+import { ResourceConfigStoreNames, useZustandStore } from 'context/Zustand';
+import { ResourceConfigState } from 'stores/ResourceConfig';
 
-function ResourceConfigErrors() {
-    const useEntityCreateStore = useRouteStore();
-    const collections = useEntityCreateStore(
-        entityCreateStoreSelectors.collections.get
-    );
+interface Props {
+    resourceConfigStoreName: ResourceConfigStoreNames;
+}
 
-    const filteredResourceConfigErrors = useEntityCreateStore(
-        entityCreateStoreSelectors.resourceConfig.errors
-    );
+function ResourceConfigErrors({ resourceConfigStoreName }: Props) {
+    const collections = useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['collections']
+    >(resourceConfigStoreName, (state) => state.collections);
+
+    const filteredResourceConfigErrors = useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['resourceConfigErrorsExist']
+    >(resourceConfigStoreName, (state) => state.resourceConfigErrorsExist);
 
     return (
         <SectionError

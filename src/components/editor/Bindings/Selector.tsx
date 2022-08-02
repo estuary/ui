@@ -8,11 +8,14 @@ import {
     GridValueGetterParams,
 } from '@mui/x-data-grid';
 import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
-import { useRouteStore } from 'hooks/useRouteStore';
-import { isEmpty } from 'lodash';
+import { ResourceConfigStoreNames, useZustandStore } from 'context/Zustand';
 import { useEffect, useRef, useState } from 'react';
 import { useUnmount } from 'react-use';
-import { entityCreateStoreSelectors } from 'stores/Create';
+import { ResourceConfigState } from 'stores/ResourceConfig';
+
+interface Props {
+    resourceConfigStoreName: ResourceConfigStoreNames;
+}
 
 const initialState = {
     columns: {
@@ -22,19 +25,24 @@ const initialState = {
     },
 };
 
-function BindingSelector() {
+function BindingSelector({ resourceConfigStoreName }: Props) {
     const onSelectTimeOut = useRef<number | null>(null);
 
-    const useEntityCreateStore = useRouteStore();
-    const currentCollection = useEntityCreateStore(
-        entityCreateStoreSelectors.collections.current.get
-    );
-    const setCurrentCollection = useEntityCreateStore(
-        entityCreateStoreSelectors.collections.current.set
-    );
-    const resourceConfig = useEntityCreateStore(
-        entityCreateStoreSelectors.resourceConfig.get
-    );
+    const currentCollection = useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['currentCollection']
+    >(resourceConfigStoreName, (state) => state.currentCollection);
+
+    const setCurrentCollection = useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['setCurrentCollection']
+    >(resourceConfigStoreName, (state) => state.setCurrentCollection);
+
+    const resourceConfig = useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['resourceConfig']
+    >(resourceConfigStoreName, (state) => state.resourceConfig);
+
     const resourceConfigKeys = Object.keys(resourceConfig);
 
     const [selectionModel, setSelectionModel] = useState<GridSelectionModel>(
@@ -64,7 +72,7 @@ function BindingSelector() {
     ];
 
     useEffect(() => {
-        if (!isEmpty(currentCollection)) setSelectionModel(currentCollection);
+        if (currentCollection) setSelectionModel([currentCollection]);
     }, [currentCollection]);
 
     useUnmount(() => {

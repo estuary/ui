@@ -1,13 +1,15 @@
 import { TableCell } from '@mui/material';
 import EntityStatus from 'components/tables/cells/EntityStatus';
 import { tableBorderSx } from 'context/Theme';
+import { ShardDetailStoreNames } from 'context/Zustand';
 
 interface Props {
     name: string;
     showEntityStatus: boolean;
+    shardDetailStoreName?: ShardDetailStoreNames;
 }
 
-function EntityName({ name, showEntityStatus }: Props) {
+function EntityName({ name, showEntityStatus, shardDetailStoreName }: Props) {
     return (
         <TableCell
             sx={{
@@ -16,7 +18,12 @@ function EntityName({ name, showEntityStatus }: Props) {
             }}
         >
             <>
-                {showEntityStatus ? <EntityStatus name={name} /> : null}
+                {showEntityStatus && shardDetailStoreName ? (
+                    <EntityStatus
+                        name={name}
+                        shardDetailStoreName={shardDetailStoreName}
+                    />
+                ) : null}
                 <span
                     style={{
                         verticalAlign: 'middle',
