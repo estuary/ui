@@ -15,6 +15,7 @@ import {
     useZustandStore,
 } from 'context/Zustand';
 import { useClient } from 'hooks/supabase-swr';
+import { usePrompt } from 'hooks/useBlocker';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import LogRocket from 'logrocket';
@@ -24,6 +25,7 @@ import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import { startSubscription, TABLES } from 'services/supabase';
 import {
+    useDetailsForm_changed,
     useDetailsForm_connectorImage,
     useDetailsForm_errorsExist,
 } from 'stores/DetailsForm';
@@ -58,7 +60,7 @@ function CaptureCreate() {
     // Details Form Store
     const imageTag = useDetailsForm_connectorImage();
     const detailsFormErrorsExist = useDetailsForm_errorsExist();
-    // const detailsFormChanged = useDetailsForm_changed();
+    const detailsFormChanged = useDetailsForm_changed();
 
     // Draft Editor Store
     const setDraftId = useZustandStore<
@@ -87,10 +89,10 @@ function CaptureCreate() {
         EndpointConfigState['resetState']
     >(endpointConfigStoreName, (state) => state.resetState);
 
-    // const endpointConfigChanged = useZustandStore<
-    //     EndpointConfigState,
-    //     EndpointConfigState['stateChanged']
-    // >(endpointConfigStoreName, (state) => state.stateChanged);
+    const endpointConfigChanged = useZustandStore<
+        EndpointConfigState,
+        EndpointConfigState['stateChanged']
+    >(endpointConfigStoreName, (state) => state.stateChanged);
 
     // Form State Store
     const messagePrefix = useZustandStore<
@@ -203,13 +205,13 @@ function CaptureCreate() {
         );
     };
 
-    // usePrompt(
-    //     'confirm.loseData',
-    //     !exitWhenLogsClose && (detailsFormChanged() || endpointConfigChanged()),
-    //     () => {
-    //         resetState();
-    //     }
-    // );
+    usePrompt(
+        'confirm.loseData',
+        !exitWhenLogsClose && (detailsFormChanged() || endpointConfigChanged()),
+        () => {
+            resetState();
+        }
+    );
 
     return (
         <PageContainer>
