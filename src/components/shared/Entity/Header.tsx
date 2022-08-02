@@ -11,7 +11,6 @@ import {
 import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
 import { slate, stickyHeaderIndex, tableBorderSx } from 'context/Theme';
 import {
-    DetailsFormStoreNames,
     EndpointConfigStoreNames,
     FormStateStoreNames,
     ResourceConfigStoreNames,
@@ -29,7 +28,6 @@ interface Props {
     formErrorsExist: boolean;
     endpointConfigStoreName: EndpointConfigStoreNames;
     formStateStoreName: FormStateStoreNames;
-    detailsFormStoreName: DetailsFormStoreNames;
     resourceConfigStoreName?: ResourceConfigStoreNames;
 }
 
@@ -54,7 +52,6 @@ function FooHeader({
     formErrorsExist,
     endpointConfigStoreName,
     formStateStoreName,
-    detailsFormStoreName,
     resourceConfigStoreName,
 }: Props) {
     const formActive = useZustandStore<
@@ -115,7 +112,6 @@ function FooHeader({
                     errorsExist={formErrorsExist}
                     endpointConfigStoreName={endpointConfigStoreName}
                     formStateStoreName={formStateStoreName}
-                    detailsFormStoreName={detailsFormStoreName}
                     resourceConfigStoreName={resourceConfigStoreName}
                 />
             </Box>

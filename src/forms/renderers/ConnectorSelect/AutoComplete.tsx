@@ -85,7 +85,7 @@ export const ConnectorAutoComplete = (
             value={currentOption}
             inputValue={inputValue}
             onChange={(_event: any, newValue: EnumOption | null) => {
-                handleChange(path, newValue?.value);
+                handleChange(path, newValue?.value ?? { id: '' });
             }}
             onInputChange={(_event, newInputValue) => {
                 setInputValue(newInputValue);

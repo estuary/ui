@@ -3,7 +3,6 @@ import EntityCreateSave from 'components/shared/Entity/Actions/Save';
 import LogDialog from 'components/shared/Entity/LogDialog';
 import LogDialogActions from 'components/shared/Entity/LogDialogActions';
 import {
-    DetailsFormStoreNames,
     DraftEditorStoreNames,
     FormStateStoreNames,
     useZustandStore,
@@ -19,7 +18,6 @@ interface Props {
     disabled: boolean;
     logEvent: CustomEvents.CAPTURE_CREATE | CustomEvents.MATERIALIZATION_CREATE;
     draftEditorStoreName: DraftEditorStoreNames;
-    detailsFormStoreName: DetailsFormStoreNames;
     formStateStoreName: FormStateStoreNames;
     materialize?: Function;
 }
@@ -32,7 +30,6 @@ function EntitySaveButton({
     materialize,
     logEvent,
     formStateStoreName,
-    detailsFormStoreName,
 }: Props) {
     // Draft Editor Store
     const draftId = useZustandStore<
@@ -97,7 +94,6 @@ function EntitySaveButton({
                 logEvent={logEvent}
                 draftEditorStoreName={draftEditorStoreName}
                 formStateStoreName={formStateStoreName}
-                detailsFormStoreName={detailsFormStoreName}
             />
         </>
     );

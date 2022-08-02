@@ -15,8 +15,8 @@ import useConstant from 'use-constant';
 import { StoreApi, useStore } from 'zustand';
 
 export enum DetailsFormStoreNames {
-    CAPTURE_CREATE = 'Capture-Create-Details-Form',
-    MATERIALIZATION_CREATE = 'Materialization-Create-Details-Form',
+    CAPTURE_CREATE = 'capture-create-details-form',
+    MATERIALIZATION_CREATE = 'materialization-create-details-form',
 }
 
 export enum DraftEditorStoreNames {
@@ -79,74 +79,6 @@ interface ZustandProviderProps {
     };
 }
 
-const stores = {
-    // Details Form Store
-    [DetailsFormStoreNames.CAPTURE_CREATE]: createDetailsFormStore(
-        DetailsFormStoreNames.CAPTURE_CREATE
-    ),
-    [DetailsFormStoreNames.MATERIALIZATION_CREATE]: createDetailsFormStore(
-        DetailsFormStoreNames.MATERIALIZATION_CREATE
-    ),
-
-    // Draft Editor Store
-    [DraftEditorStoreNames.CAPTURE]: createEditorStore(
-        DraftEditorStoreNames.CAPTURE
-    ),
-    [DraftEditorStoreNames.MATERIALIZATION]: createEditorStore(
-        DraftEditorStoreNames.MATERIALIZATION
-    ),
-
-    // Endpoint Config Store
-    [EndpointConfigStoreNames.CAPTURE_CREATE]: createEndpointConfigStore(
-        EndpointConfigStoreNames.CAPTURE_CREATE
-    ),
-    [EndpointConfigStoreNames.MATERIALIZATION_CREATE]:
-        createEndpointConfigStore(
-            EndpointConfigStoreNames.MATERIALIZATION_CREATE
-        ),
-
-    // Form State Store
-    [FormStateStoreNames.CAPTURE_CREATE]: createFormStateStore(
-        FormStateStoreNames.CAPTURE_CREATE,
-        MessagePrefixes.CAPTURE_CREATE
-    ),
-    [FormStateStoreNames.MATERIALIZATION_CREATE]: createFormStateStore(
-        FormStateStoreNames.MATERIALIZATION_CREATE,
-        MessagePrefixes.MATERIALIZATION_CREATE
-    ),
-
-    // Resource Config Store
-    [ResourceConfigStoreNames.MATERIALIZATION_CREATE]:
-        createResourceConfigStore(
-            ResourceConfigStoreNames.MATERIALIZATION_CREATE
-        ),
-
-    // Select Table Store
-    [SelectTableStoreNames.ACCESS_GRANTS]: createSelectableTableStore(
-        SelectTableStoreNames.ACCESS_GRANTS
-    ),
-    [SelectTableStoreNames.CAPTURE]: createSelectableTableStore(
-        SelectTableStoreNames.CAPTURE
-    ),
-    [SelectTableStoreNames.COLLECTION]: createSelectableTableStore(
-        SelectTableStoreNames.COLLECTION
-    ),
-    [SelectTableStoreNames.CONNECTOR]: createSelectableTableStore(
-        SelectTableStoreNames.CONNECTOR
-    ),
-    [SelectTableStoreNames.MATERIALIZATION]: createSelectableTableStore(
-        SelectTableStoreNames.MATERIALIZATION
-    ),
-
-    // Shard Detail Store
-    [ShardDetailStoreNames.CAPTURE]: createShardDetailStore(
-        ShardDetailStoreNames.CAPTURE
-    ),
-    [ShardDetailStoreNames.MATERIALIZATION]: createShardDetailStore(
-        ShardDetailStoreNames.MATERIALIZATION
-    ),
-};
-
 export const ZustandContext = createReactContext<any | null>(null);
 
 export const ZustandProvider = ({
@@ -159,7 +91,78 @@ export const ZustandProvider = ({
 
             return { [storeName]: createStore };
         } else {
-            return stores;
+            return {
+                // Details Form Store
+                [DetailsFormStoreNames.CAPTURE_CREATE]: createDetailsFormStore(
+                    DetailsFormStoreNames.CAPTURE_CREATE
+                ),
+                [DetailsFormStoreNames.MATERIALIZATION_CREATE]:
+                    createDetailsFormStore(
+                        DetailsFormStoreNames.MATERIALIZATION_CREATE
+                    ),
+
+                // Draft Editor Store
+                [DraftEditorStoreNames.CAPTURE]: createEditorStore(
+                    DraftEditorStoreNames.CAPTURE
+                ),
+                [DraftEditorStoreNames.MATERIALIZATION]: createEditorStore(
+                    DraftEditorStoreNames.MATERIALIZATION
+                ),
+
+                // Endpoint Config Store
+                [EndpointConfigStoreNames.CAPTURE_CREATE]:
+                    createEndpointConfigStore(
+                        EndpointConfigStoreNames.CAPTURE_CREATE
+                    ),
+                [EndpointConfigStoreNames.MATERIALIZATION_CREATE]:
+                    createEndpointConfigStore(
+                        EndpointConfigStoreNames.MATERIALIZATION_CREATE
+                    ),
+
+                // Form State Store
+                [FormStateStoreNames.CAPTURE_CREATE]: createFormStateStore(
+                    FormStateStoreNames.CAPTURE_CREATE,
+                    MessagePrefixes.CAPTURE_CREATE
+                ),
+                [FormStateStoreNames.MATERIALIZATION_CREATE]:
+                    createFormStateStore(
+                        FormStateStoreNames.MATERIALIZATION_CREATE,
+                        MessagePrefixes.MATERIALIZATION_CREATE
+                    ),
+
+                // Resource Config Store
+                [ResourceConfigStoreNames.MATERIALIZATION_CREATE]:
+                    createResourceConfigStore(
+                        ResourceConfigStoreNames.MATERIALIZATION_CREATE
+                    ),
+
+                // Select Table Store
+                [SelectTableStoreNames.ACCESS_GRANTS]:
+                    createSelectableTableStore(
+                        SelectTableStoreNames.ACCESS_GRANTS
+                    ),
+                [SelectTableStoreNames.CAPTURE]: createSelectableTableStore(
+                    SelectTableStoreNames.CAPTURE
+                ),
+                [SelectTableStoreNames.COLLECTION]: createSelectableTableStore(
+                    SelectTableStoreNames.COLLECTION
+                ),
+                [SelectTableStoreNames.CONNECTOR]: createSelectableTableStore(
+                    SelectTableStoreNames.CONNECTOR
+                ),
+                [SelectTableStoreNames.MATERIALIZATION]:
+                    createSelectableTableStore(
+                        SelectTableStoreNames.MATERIALIZATION
+                    ),
+
+                // Shard Detail Store
+                [ShardDetailStoreNames.CAPTURE]: createShardDetailStore(
+                    ShardDetailStoreNames.CAPTURE
+                ),
+                [ShardDetailStoreNames.MATERIALIZATION]: createShardDetailStore(
+                    ShardDetailStoreNames.MATERIALIZATION
+                ),
+            };
         }
     });
 

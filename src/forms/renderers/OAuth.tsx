@@ -5,11 +5,10 @@ import { accessToken, authURL } from 'api/oauth';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import { optionExists } from 'forms/renderers/Overrides/testers/testers';
 import { useOAuth2 } from 'hooks/forks/react-use-oauth2/components';
-import { useRouteStore } from 'hooks/useRouteStore';
 import { isEmpty } from 'lodash';
 import { useState } from 'react';
 import GoogleButton from 'react-google-button';
-import { entityCreateStoreSelectors } from 'stores/Create';
+import { useDetailsForm_connectorImage_connectorId } from 'stores/DetailsForm';
 import { Options } from 'types/jsonforms';
 import { hasLength } from 'utils/misc-utils';
 
@@ -52,13 +51,10 @@ const OAuthproviderRenderer = ({
         onError,
     });
 
-    const useEntityCreateStore = useRouteStore();
-    const imageTag = useEntityCreateStore(
-        entityCreateStoreSelectors.details.connectorTag
-    );
+    const imageTag = useDetailsForm_connectorImage_connectorId();
 
     const openPopUp = async () => {
-        const fetchAuthURL = await authURL(imageTag.connectorId);
+        const fetchAuthURL = await authURL(imageTag);
 
         if (fetchAuthURL.error) {
             setErrorMessage(fetchAuthURL.error.message);

@@ -5,7 +5,6 @@ import { encryptConfig } from 'api/oauth';
 import { EditorStoreState } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
 import {
-    DetailsFormStoreNames,
     DraftEditorStoreNames,
     EndpointConfigStoreNames,
     FormStateStoreNames,
@@ -14,7 +13,11 @@ import {
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
-import { DetailsFormState } from 'stores/DetailsForm';
+import {
+    useDetailsForm_connectorImage_connectorId,
+    useDetailsForm_details_entityName,
+    useDetailsForm_errorsExist,
+} from 'stores/DetailsForm';
 import { EndpointConfigState } from 'stores/EndpointConfig';
 import { EntityFormState, FormStatus } from 'stores/FormState';
 
@@ -25,7 +28,6 @@ interface Props {
     draftEditorStoreName: DraftEditorStoreNames;
     endpointConfigStoreName: EndpointConfigStoreNames;
     formStateStoreName: FormStateStoreNames;
-    detailsFormStoreName: DetailsFormStoreNames;
 }
 
 function CaptureGenerateButton({
@@ -35,7 +37,6 @@ function CaptureGenerateButton({
     draftEditorStoreName,
     endpointConfigStoreName,
     formStateStoreName,
-    detailsFormStoreName,
 }: Props) {
     // Editor Store
     const isSaving = useZustandStore<
@@ -65,20 +66,9 @@ function CaptureGenerateButton({
     >(formStateStoreName, (state) => state.resetFormState);
 
     // Details Form Store
-    const entityName = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['details']['data']['entityName']
-    >(detailsFormStoreName, (state) => state.details.data.entityName);
-
-    const detailsFormsHasErrors = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['detailsFormErrorsExist']
-    >(detailsFormStoreName, (state) => state.detailsFormErrorsExist);
-
-    const imageTag = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['details']['data']['connectorImage']
-    >(detailsFormStoreName, (state) => state.details.data.connectorImage);
+    const entityName = useDetailsForm_details_entityName();
+    const detailsFormsHasErrors = useDetailsForm_errorsExist();
+    const imageConnectorId = useDetailsForm_connectorImage_connectorId();
 
     // Endpoint Config Store
     const endpointConfigData = useZustandStore<
@@ -122,7 +112,7 @@ function CaptureGenerateButton({
             }
 
             const encryptedEndpointConfig = await encryptConfig(
-                imageTag.connectorId,
+                imageConnectorId,
                 endpointSchema,
                 endpointConfigData
             );
@@ -146,7 +136,7 @@ function CaptureGenerateButton({
             const discoverResponse = await discover(
                 entityName,
                 encryptedEndpointConfig.data,
-                imageTag ? imageTag.id : '',
+                imageConnectorId,
                 draftsResponse.data[0].id
             );
             if (discoverResponse.error) {

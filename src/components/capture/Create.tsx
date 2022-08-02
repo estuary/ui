@@ -5,10 +5,10 @@ import { EditorStoreState } from 'components/editor/Store';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
+import { useEntityType } from 'components/shared/Entity/EntityContext';
 import FooHeader from 'components/shared/Entity/Header';
 import PageContainer from 'components/shared/PageContainer';
 import {
-    DetailsFormStoreNames,
     DraftEditorStoreNames,
     EndpointConfigStoreNames,
     FormStateStoreNames,
@@ -24,14 +24,15 @@ import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import { startSubscription, TABLES } from 'services/supabase';
-import { DetailsFormState } from 'stores/DetailsForm';
+import {
+    useDetailsForm_changed,
+    useDetailsForm_connectorImage,
+    useDetailsForm_errorsExist,
+} from 'stores/DetailsForm';
 import { EndpointConfigState } from 'stores/EndpointConfig';
 import { EntityFormState, FormStatus } from 'stores/FormState';
 import { getPathWithParam } from 'utils/misc-utils';
 
-const connectorType = 'capture';
-
-const detailsFormStoreName = DetailsFormStoreNames.CAPTURE_CREATE;
 const draftEditorStoreName = DraftEditorStoreNames.CAPTURE;
 const endpointConfigStoreName = EndpointConfigStoreNames.CAPTURE_CREATE;
 const formStateStoreName = FormStateStoreNames.CAPTURE_CREATE;
@@ -49,26 +50,17 @@ const trackEvent = (payload: any) => {
 function CaptureCreate() {
     const navigate = useNavigate();
 
+    const [entityType] = useEntityType();
+
     // Supabase stuff
     const supabaseClient = useClient();
-    const { connectorTags } = useConnectorWithTagDetail(connectorType);
+    const { connectorTags } = useConnectorWithTagDetail(entityType);
     const hasConnectors = connectorTags.length > 0;
 
     // Details Form Store
-    const imageTag = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['details']['data']['connectorImage']
-    >(detailsFormStoreName, (state) => state.details.data.connectorImage);
-
-    const detailsFormErrorsExist = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['detailsFormErrorsExist']
-    >(detailsFormStoreName, (state) => state.detailsFormErrorsExist);
-
-    const detailsFormChanged = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['stateChanged']
-    >(detailsFormStoreName, (state) => state.stateChanged);
+    const imageTag = useDetailsForm_connectorImage();
+    const detailsFormErrorsExist = useDetailsForm_errorsExist();
+    const detailsFormChanged = useDetailsForm_changed();
 
     // Draft Editor Store
     const setDraftId = useZustandStore<
@@ -225,7 +217,7 @@ function CaptureCreate() {
         <PageContainer>
             <EntityCreate
                 title="browserTitle.captureCreate"
-                connectorType={connectorType}
+                connectorType={entityType}
                 Header={
                     <FooHeader
                         heading={
@@ -244,7 +236,6 @@ function CaptureCreate() {
                                     endpointConfigStoreName
                                 }
                                 formStateStoreName={formStateStoreName}
-                                detailsFormStoreName={detailsFormStoreName}
                             />
                         }
                         TestButton={
@@ -255,7 +246,6 @@ function CaptureCreate() {
                                 logEvent={CustomEvents.CAPTURE_TEST}
                                 draftEditorStoreName={draftEditorStoreName}
                                 formStateStoreName={formStateStoreName}
-                                detailsFormStoreName={detailsFormStoreName}
                             />
                         }
                         SaveButton={
@@ -267,18 +257,15 @@ function CaptureCreate() {
                                 materialize={handlers.materializeCollections}
                                 logEvent={CustomEvents.CAPTURE_CREATE}
                                 formStateStoreName={formStateStoreName}
-                                detailsFormStoreName={detailsFormStoreName}
                             />
                         }
                         endpointConfigStoreName={endpointConfigStoreName}
                         formStateStoreName={formStateStoreName}
-                        detailsFormStoreName={detailsFormStoreName}
                     />
                 }
                 draftEditorStoreName={draftEditorStoreName}
                 endpointConfigStoreName={endpointConfigStoreName}
                 formStateStoreName={formStateStoreName}
-                detailsFormStoreName={detailsFormStoreName}
             />
         </PageContainer>
     );
