@@ -8,7 +8,7 @@ import { useOAuth2 } from 'hooks/forks/react-use-oauth2/components';
 import { isEmpty } from 'lodash';
 import { useState } from 'react';
 import GoogleButton from 'react-google-button';
-import { useIntl } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { useDetailsForm_connectorImage_connectorId } from 'stores/DetailsForm';
 import { Options } from 'types/jsonforms';
 import { hasLength } from 'utils/misc-utils';
@@ -56,6 +56,8 @@ const OAuthproviderRenderer = ({
     const imageTag = useDetailsForm_connectorImage_connectorId();
 
     const openPopUp = async () => {
+        setErrorMessage(null);
+
         const fetchAuthURL = await authURL(imageTag);
 
         if (fetchAuthURL.error) {
@@ -74,16 +76,16 @@ const OAuthproviderRenderer = ({
 
     return (
         <>
+            <Typography>
+                <FormattedMessage
+                    id="oauth.instructions"
+                    values={{ provider }}
+                />
+            </Typography>
+
             {hasLength(errorMessage) ? (
                 <Alert severity="error">{errorMessage}</Alert>
             ) : null}
-
-            <Typography>
-                Authenticate your {` ${provider} `} account by clicking below. A
-                pop up will open and you can approve access on the
-                provider&apos; site. No data will be accessed during
-                authorization.
-            </Typography>
 
             <Stack direction="row" spacing={2}>
                 <Alert severity="warning">
