@@ -6,7 +6,7 @@ import FullPageSpinner from 'components/fullPage/Spinner';
 import { optionExists } from 'forms/renderers/Overrides/testers/testers';
 import { useOAuth2 } from 'hooks/forks/react-use-oauth2/components';
 import { isEmpty, startCase } from 'lodash';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import GoogleButton from 'react-google-button';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useDetailsForm_connectorImage_connectorId } from 'stores/DetailsForm';
@@ -31,6 +31,7 @@ const OAuthproviderRenderer = ({
     const { options } = uischema;
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const provider = options ? options[Options.oauthProvider] : NO_PROVIDER;
+    const capitalizedProvider = useMemo(() => startCase(provider), [provider]);
 
     const onError = (error_: any) => {
         setErrorMessage(error_);
@@ -40,7 +41,14 @@ const OAuthproviderRenderer = ({
         const tokenResponse = await accessToken(payload.state, payload.code);
 
         if (tokenResponse.error) {
-            setErrorMessage(tokenResponse.error.message);
+            setErrorMessage(
+                intl.formatMessage(
+                    { id: 'oauth.accessToken.error' },
+                    {
+                        provider: capitalizedProvider,
+                    }
+                )
+            );
         } else if (!isEmpty(tokenResponse.data)) {
             handleChange(path, {
                 ...tokenResponse.data,
@@ -79,7 +87,7 @@ const OAuthproviderRenderer = ({
             <Typography>
                 <FormattedMessage
                     id="oauth.instructions"
-                    values={{ provider: startCase(provider) }}
+                    values={{ provider: capitalizedProvider }}
                 />
             </Typography>
 
