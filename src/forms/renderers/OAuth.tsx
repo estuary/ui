@@ -8,6 +8,7 @@ import { useOAuth2 } from 'hooks/forks/react-use-oauth2/components';
 import { isEmpty } from 'lodash';
 import { useState } from 'react';
 import GoogleButton from 'react-google-button';
+import { useIntl } from 'react-intl';
 import { useDetailsForm_connectorImage_connectorId } from 'stores/DetailsForm';
 import { Options } from 'types/jsonforms';
 import { hasLength } from 'utils/misc-utils';
@@ -26,6 +27,7 @@ const OAuthproviderRenderer = ({
     handleChange,
     uischema,
 }: ControlProps) => {
+    const intl = useIntl();
     const { options } = uischema;
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const provider = options ? options[Options.oauthProvider] : NO_PROVIDER;
@@ -57,7 +59,9 @@ const OAuthproviderRenderer = ({
         const fetchAuthURL = await authURL(imageTag);
 
         if (fetchAuthURL.error) {
-            setErrorMessage(fetchAuthURL.error.message);
+            setErrorMessage(
+                intl.formatMessage({ id: 'oauth.fetchAuthURL.error' })
+            );
         } else if (!isEmpty(fetchAuthURL.data)) {
             // This kicks off the call and the success is handled with the onSuccess/onError
             getAuth(fetchAuthURL.data.url, fetchAuthURL.data.state);
