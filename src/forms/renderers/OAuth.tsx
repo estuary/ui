@@ -5,7 +5,7 @@ import { accessToken, authURL } from 'api/oauth';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import { optionExists } from 'forms/renderers/Overrides/testers/testers';
 import { useOAuth2 } from 'hooks/forks/react-use-oauth2/components';
-import { isEmpty } from 'lodash';
+import { isEmpty, startCase } from 'lodash';
 import { useState } from 'react';
 import GoogleButton from 'react-google-button';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -79,7 +79,7 @@ const OAuthproviderRenderer = ({
             <Typography>
                 <FormattedMessage
                     id="oauth.instructions"
-                    values={{ provider }}
+                    values={{ provider: startCase(provider) }}
                 />
             </Typography>
 
