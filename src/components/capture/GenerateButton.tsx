@@ -13,7 +13,7 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
-    useDetailsForm_connectorImage_connectorId,
+    useDetailsForm_connectorImage_id,
     useDetailsForm_details_entityName,
     useDetailsForm_errorsExist,
 } from 'stores/DetailsForm';
@@ -69,7 +69,7 @@ function CaptureGenerateButton({
     // Details Form Store
     const entityName = useDetailsForm_details_entityName();
     const detailsFormsHasErrors = useDetailsForm_errorsExist();
-    const imageConnectorId = useDetailsForm_connectorImage_connectorId();
+    const imageConnectorId = useDetailsForm_connectorImage_id();
 
     // Endpoint Config Store
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
