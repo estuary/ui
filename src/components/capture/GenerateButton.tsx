@@ -14,6 +14,7 @@ import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
     useDetailsForm_connectorImage_connectorId,
+    useDetailsForm_connectorImage_id,
     useDetailsForm_details_entityName,
     useDetailsForm_errorsExist,
 } from 'stores/DetailsForm';
@@ -69,6 +70,7 @@ function CaptureGenerateButton({
     // Details Form Store
     const entityName = useDetailsForm_details_entityName();
     const detailsFormsHasErrors = useDetailsForm_errorsExist();
+    const imageConnectorTagId = useDetailsForm_connectorImage_id();
     const imageConnectorId = useDetailsForm_connectorImage_connectorId();
 
     // Endpoint Config Store
@@ -126,7 +128,7 @@ function CaptureGenerateButton({
             const discoverResponse = await discover(
                 entityName,
                 encryptedEndpointConfig.data,
-                imageConnectorId,
+                imageConnectorTagId,
                 draftsResponse.data[0].id
             );
             if (discoverResponse.error) {
