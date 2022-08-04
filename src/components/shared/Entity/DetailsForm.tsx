@@ -4,9 +4,7 @@ import { Alert, Stack, Typography } from '@mui/material';
 import { authenticatedRoutes } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
 import {
-    DetailsFormStoreNames,
     DraftEditorStoreNames,
-    EndpointConfigStoreNames,
     FormStateStoreNames,
     useZustandStore,
 } from 'context/Zustand';
@@ -22,8 +20,12 @@ import {
     defaultRenderers,
     showValidation,
 } from 'services/jsonforms';
-import { Details, DetailsFormState } from 'stores/DetailsForm';
-import { EndpointConfigState } from 'stores/EndpointConfig';
+import {
+    Details,
+    useDetailsForm_details,
+    useDetailsForm_setDetails,
+} from 'stores/DetailsForm';
+import { useEndpointConfigStore_reset } from 'stores/EndpointConfig';
 import { EntityFormState } from 'stores/FormState';
 import { Grants } from 'types';
 
@@ -32,8 +34,6 @@ interface Props {
     accessGrants: Grants[];
     draftEditorStoreName: DraftEditorStoreNames;
     formStateStoreName: FormStateStoreNames;
-    detailsFormStoreName: DetailsFormStoreNames;
-    endpointConfigStoreName: EndpointConfigStoreNames;
 }
 
 function DetailsForm({
@@ -41,8 +41,6 @@ function DetailsForm({
     accessGrants,
     draftEditorStoreName,
     formStateStoreName,
-    detailsFormStoreName,
-    endpointConfigStoreName,
 }: Props) {
     const intl = useIntl();
     const [searchParams] = useSearchParams();
@@ -55,17 +53,10 @@ function DetailsForm({
         );
 
     // Details Form Store
-    const formData = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['details']['data']
-    >(detailsFormStoreName, (state) => state.details.data);
-
+    const formData = useDetailsForm_details();
     const { connectorImage: originalConnectorImage } = formData;
 
-    const setDetails = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['setDetails']
-    >(detailsFormStoreName, (state) => state.setDetails);
+    const setDetails = useDetailsForm_setDetails();
 
     // Draft Editor Store
     const isSaving = useZustandStore<
@@ -74,10 +65,7 @@ function DetailsForm({
     >(draftEditorStoreName, (state) => state.isSaving);
 
     // Endpoint Config Store
-    const resetEndpointConfig = useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['resetState']
-    >(endpointConfigStoreName, (state) => state.resetState);
+    const resetEndpointConfig = useEndpointConfigStore_reset();
 
     // Form State Store
     const messagePrefix = useZustandStore<
@@ -108,6 +96,8 @@ function DetailsForm({
                     connectorImage: {
                         id: connectorID,
                         iconPath: '',
+                        connectorId: '',
+                        imagePath: '',
                     },
                 },
             });
@@ -115,7 +105,7 @@ function DetailsForm({
     }, [setDetails, connectorID]);
 
     useEffect(() => {
-        if (connectorID && originalConnectorImage?.id !== connectorID) {
+        if (connectorID && originalConnectorImage.id !== connectorID) {
             resetFormState();
         }
     }, [resetFormState, connectorID, originalConnectorImage]);
@@ -139,6 +129,7 @@ function DetailsForm({
             connectorTags.forEach((connector) => {
                 response.push({
                     const: {
+                        connectorId: connector.id,
                         id: connector.connector_tags[0].id,
                         imagePath: `${connector.image_name}${connector.connector_tags[0].image_tag}`,
                         iconPath: connector.image,
@@ -221,7 +212,7 @@ function DetailsForm({
     };
 
     const updateDetails = (details: Details) => {
-        if (!details.data.connectorImage) {
+        if (details.data.connectorImage.id === '') {
             resetEndpointConfig();
         }
 

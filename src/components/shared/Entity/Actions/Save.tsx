@@ -3,7 +3,6 @@ import { createPublication } from 'api/publications';
 import { EditorStoreState } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
 import {
-    DetailsFormStoreNames,
     DraftEditorStoreNames,
     FormStateStoreNames,
     useZustandStore,
@@ -14,7 +13,7 @@ import LogRocket from 'logrocket';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
 import { endSubscription, startSubscription, TABLES } from 'services/supabase';
-import { DetailsFormState } from 'stores/DetailsForm';
+import { useDetailsForm_details_description } from 'stores/DetailsForm';
 import { EntityFormState, FormStatus } from 'stores/FormState';
 import useNotificationStore, {
     notificationStoreSelectors,
@@ -27,7 +26,6 @@ interface Props {
     dryRun?: boolean;
     draftEditorStoreName: DraftEditorStoreNames;
     formStateStoreName: FormStateStoreNames;
-    detailsFormStoreName: DetailsFormStoreNames;
 }
 
 const trackEvent = (logEvent: Props['logEvent'], payload: any) => {
@@ -47,7 +45,6 @@ function EntityCreateSave({
     draftEditorStoreName,
     logEvent,
     formStateStoreName,
-    detailsFormStoreName,
 }: Props) {
     const intl = useIntl();
     const supabaseClient = useClient();
@@ -71,10 +68,7 @@ function EntityCreateSave({
     >(draftEditorStoreName, (state) => state.isSaving);
 
     // Details Form Store
-    const entityDescription = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['details']['data']['description']
-    >(detailsFormStoreName, (state) => state.details.data.description);
+    const entityDescription = useDetailsForm_details_description();
 
     // Form State Store
     const messagePrefix = useZustandStore<

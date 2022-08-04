@@ -5,12 +5,11 @@ import MaterializeGenerateButton from 'components/materialization/GenerateButton
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
+import { useEntityType } from 'components/shared/Entity/EntityContext';
 import FooHeader from 'components/shared/Entity/Header';
 import PageContainer from 'components/shared/PageContainer';
 import {
-    DetailsFormStoreNames,
     DraftEditorStoreNames,
-    EndpointConfigStoreNames,
     FormStateStoreNames,
     ResourceConfigStoreNames,
     useZustandStore,
@@ -23,47 +22,39 @@ import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
-import { DetailsFormState } from 'stores/DetailsForm';
-import { EndpointConfigState } from 'stores/EndpointConfig';
+import {
+    useDetailsForm_changed,
+    useDetailsForm_connectorImage,
+    useDetailsForm_errorsExist,
+    useDetailsForm_resetFormState,
+} from 'stores/DetailsForm';
+import {
+    useEndpointConfigStore_changed,
+    useEndpointConfigStore_errorsExist,
+    useEndpointConfigStore_reset,
+} from 'stores/EndpointConfig';
 import { EntityFormState, FormStatus } from 'stores/FormState';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 
-const connectorType = 'materialization';
-
-const detailsFormStoreName = DetailsFormStoreNames.MATERIALIZATION_CREATE;
 const draftEditorStoreName = DraftEditorStoreNames.MATERIALIZATION;
-const endpointConfigStoreName = EndpointConfigStoreNames.MATERIALIZATION_CREATE;
 const formStateStoreName = FormStateStoreNames.MATERIALIZATION_CREATE;
 const resourceConfigStoreName = ResourceConfigStoreNames.MATERIALIZATION_CREATE;
 
 function MaterializationCreate() {
     const navigate = useNavigate();
 
+    const [entityType] = useEntityType();
+
     // Supabase
     const supabaseClient = useClient();
-    const { connectorTags } = useConnectorWithTagDetail(connectorType);
+    const { connectorTags } = useConnectorWithTagDetail(entityType);
     const hasConnectors = connectorTags.length > 0;
 
     // Details Form Store
-    const imageTag = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['details']['data']['connectorImage']
-    >(detailsFormStoreName, (state) => state.details.data.connectorImage);
-
-    const detailsFormErrorsExist = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['detailsFormErrorsExist']
-    >(detailsFormStoreName, (state) => state.detailsFormErrorsExist);
-
-    const resetDetailsFormState = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['resetState']
-    >(detailsFormStoreName, (state) => state.resetState);
-
-    const detailsFormChanged = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['stateChanged']
-    >(detailsFormStoreName, (state) => state.stateChanged);
+    const imageTag = useDetailsForm_connectorImage();
+    const detailsFormErrorsExist = useDetailsForm_errorsExist();
+    const detailsFormChanged = useDetailsForm_changed();
+    const resetDetailsFormState = useDetailsForm_resetFormState();
 
     // Draft Editor Store
     const draftId = useZustandStore<
@@ -77,20 +68,9 @@ function MaterializationCreate() {
     >(draftEditorStoreName, (state) => state.setId);
 
     // Endpoint Config Store
-    const endpointConfigErrorsExist = useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['endpointConfigErrorsExist']
-    >(endpointConfigStoreName, (state) => state.endpointConfigErrorsExist);
-
-    const resetEndpointConfigState = useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['resetState']
-    >(endpointConfigStoreName, (state) => state.resetState);
-
-    const endpointConfigChanged = useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['stateChanged']
-    >(endpointConfigStoreName, (state) => state.stateChanged);
+    const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
+    const resetEndpointConfigState = useEndpointConfigStore_reset();
+    const endpointConfigChanged = useEndpointConfigStore_changed();
 
     // Form State Store
     const messagePrefix = useZustandStore<
@@ -205,7 +185,7 @@ function MaterializationCreate() {
         <PageContainer>
             <EntityCreate
                 title="browserTitle.materializationCreate"
-                connectorType={connectorType}
+                connectorType={entityType}
                 showCollections
                 Header={
                     <FooHeader
@@ -214,14 +194,10 @@ function MaterializationCreate() {
                                 disabled={!hasConnectors}
                                 callFailed={helpers.callFailed}
                                 draftEditorStoreName={draftEditorStoreName}
-                                endpointConfigStoreName={
-                                    endpointConfigStoreName
-                                }
                                 resourceConfigStoreName={
                                     resourceConfigStoreName
                                 }
                                 formStateStoreName={formStateStoreName}
-                                detailsFormStoreName={detailsFormStoreName}
                             />
                         }
                         TestButton={
@@ -232,7 +208,6 @@ function MaterializationCreate() {
                                 logEvent={CustomEvents.MATERIALIZATION_TEST}
                                 draftEditorStoreName={draftEditorStoreName}
                                 formStateStoreName={formStateStoreName}
-                                detailsFormStoreName={detailsFormStoreName}
                             />
                         }
                         SaveButton={
@@ -243,7 +218,6 @@ function MaterializationCreate() {
                                 logEvent={CustomEvents.MATERIALIZATION_CREATE}
                                 draftEditorStoreName={draftEditorStoreName}
                                 formStateStoreName={formStateStoreName}
-                                detailsFormStoreName={detailsFormStoreName}
                             />
                         }
                         heading={
@@ -254,17 +228,13 @@ function MaterializationCreate() {
                             endpointConfigErrorsExist ||
                             resourceConfigErrorsExist
                         }
-                        endpointConfigStoreName={endpointConfigStoreName}
                         resourceConfigStoreName={resourceConfigStoreName}
                         formStateStoreName={formStateStoreName}
-                        detailsFormStoreName={detailsFormStoreName}
                     />
                 }
                 draftEditorStoreName={draftEditorStoreName}
-                endpointConfigStoreName={endpointConfigStoreName}
                 resourceConfigStoreName={resourceConfigStoreName}
                 formStateStoreName={formStateStoreName}
-                detailsFormStoreName={detailsFormStoreName}
             />
         </PageContainer>
     );

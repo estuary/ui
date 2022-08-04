@@ -9,9 +9,7 @@ import EntityError from 'components/shared/Entity/Error';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import {
-    DetailsFormStoreNames,
     DraftEditorStoreNames,
-    EndpointConfigStoreNames,
     FormStateStoreNames,
     ResourceConfigStoreNames,
     useZustandStore,
@@ -28,8 +26,8 @@ import {
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
-import { DetailsFormState } from 'stores/DetailsForm';
-import { EndpointConfigState } from 'stores/EndpointConfig';
+import { useDetailsForm_connectorImage } from 'stores/DetailsForm';
+import { useEndpointConfigStore_setEndpointSchema } from 'stores/EndpointConfig';
 import { EntityFormState } from 'stores/FormState';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 import { ENTITY, Schema } from 'types';
@@ -37,12 +35,10 @@ import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     title: string;
-    connectorType: 'capture' | 'materialization';
+    connectorType: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
     Header: any;
     draftEditorStoreName: DraftEditorStoreNames;
-    endpointConfigStoreName: EndpointConfigStoreNames;
     formStateStoreName: FormStateStoreNames;
-    detailsFormStoreName: DetailsFormStoreNames;
     resourceConfigStoreName?: ResourceConfigStoreNames;
     showCollections?: boolean;
 }
@@ -52,9 +48,7 @@ function EntityCreate({
     connectorType,
     Header,
     draftEditorStoreName,
-    endpointConfigStoreName,
     formStateStoreName,
-    detailsFormStoreName,
     resourceConfigStoreName,
     showCollections,
 }: Props) {
@@ -81,10 +75,7 @@ function EntityCreate({
     } = useConnectorWithTagDetail(connectorType);
 
     // Details Form Store
-    const imageTag = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['details']['data']['connectorImage']
-    >(detailsFormStoreName, (state) => state.details.data.connectorImage);
+    const imageTag = useDetailsForm_connectorImage();
 
     // Draft Editor Store
     const setDraftId = useZustandStore<
@@ -98,10 +89,7 @@ function EntityCreate({
     >(draftEditorStoreName, (state) => state.id);
 
     // Endpoint Config Store
-    const setEndpointSchema = useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['setEndpointSchema']
-    >(endpointConfigStoreName, (state) => state.setEndpointSchema);
+    const setEndpointSchema = useEndpointConfigStore_setEndpointSchema();
 
     // Form State Store
     const messagePrefix = useZustandStore<
@@ -144,7 +132,7 @@ function EntityCreate({
         setDraftId(null);
     }, [imageTag, setDraftId]);
 
-    const { connectorTag } = useConnectorTag(imageTag ? imageTag.id : null);
+    const { connectorTag } = useConnectorTag(imageTag.id);
     const { liveSpecs } = useLiveSpecsExtWithOutSpec(specId, ENTITY.CAPTURE);
     const { liveSpecs: liveSpecsByLastPub } = useLiveSpecsExtByLastPubId(
         lastPubId,
@@ -210,22 +198,15 @@ function EntityCreate({
                                 accessGrants={combinedGrants}
                                 draftEditorStoreName={draftEditorStoreName}
                                 formStateStoreName={formStateStoreName}
-                                detailsFormStoreName={detailsFormStoreName}
-                                endpointConfigStoreName={
-                                    endpointConfigStoreName
-                                }
                             />
                         </ErrorBoundryWrapper>
                     ) : null}
 
-                    {imageTag?.id ? (
+                    {imageTag.id ? (
                         <ErrorBoundryWrapper>
                             <EndpointConfig
                                 connectorImage={imageTag.id}
                                 draftEditorStoreName={draftEditorStoreName}
-                                endpointConfigStoreName={
-                                    endpointConfigStoreName
-                                }
                                 formStateStoreName={formStateStoreName}
                             />
                         </ErrorBoundryWrapper>
@@ -233,14 +214,13 @@ function EntityCreate({
 
                     {showCollections &&
                     resourceConfigStoreName &&
-                    hasLength(imageTag?.id) ? (
+                    hasLength(imageTag.id) ? (
                         <ErrorBoundryWrapper>
                             <CollectionConfig
                                 resourceConfigStoreName={
                                     resourceConfigStoreName
                                 }
                                 formStateStoreName={formStateStoreName}
-                                detailsFormStoreName={detailsFormStoreName}
                             />
                         </ErrorBoundryWrapper>
                     ) : null}

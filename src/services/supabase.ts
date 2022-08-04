@@ -59,6 +59,10 @@ export enum RPCS {
     VIEW_LOGS = 'view_logs',
 }
 
+export enum FUNCTIONS {
+    OAUTH = 'oauth',
+}
+
 export const supabaseClient = createClient(
     supabaseSettings.url,
     supabaseSettings.anonKey
@@ -121,19 +125,19 @@ export const getUserDetails = (user: User | null) => {
     };
 };
 
-export interface CallSupabaseResponse {
+export interface CallSupabaseResponse<T> {
     error?: PostgrestError;
-    data: any;
+    data: T | null;
 }
 
-const handleSuccess = (response: any) => {
+const handleSuccess = <T>(response: any) => {
     return response.error
         ? {
               data: null,
               error: response.error,
           }
         : {
-              data: response.data,
+              data: response.data as T,
           };
 };
 
@@ -147,7 +151,7 @@ const handleFailure = (error: any) => {
 export const insertSupabase = (
     table: TABLES,
     data: any
-): PromiseLike<CallSupabaseResponse> => {
+): PromiseLike<CallSupabaseResponse<any>> => {
     const query = supabaseClient.from(table);
 
     const makeCall = () => {
@@ -162,7 +166,7 @@ export const updateSupabase = (
     table: TABLES,
     data: any,
     matchData: any
-): PromiseLike<CallSupabaseResponse> => {
+): PromiseLike<CallSupabaseResponse<any>> => {
     const query = supabaseClient.from(table);
 
     const makeCall = () => {
@@ -236,3 +240,10 @@ export const jobSucceeded = (jobStatus?: JobStatus) => {
         return null;
     }
 };
+
+// Invoke supabase edge functions.
+export function invokeSupabase<T>(fn: FUNCTIONS, body: any) {
+    return supabaseClient.functions.invoke<T>(fn, {
+        body: JSON.stringify(body),
+    });
+}

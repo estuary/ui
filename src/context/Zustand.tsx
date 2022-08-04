@@ -5,8 +5,6 @@ import {
     ReactNode,
     useContext,
 } from 'react';
-import { createDetailsFormStore } from 'stores/DetailsForm';
-import { createEndpointConfigStore } from 'stores/EndpointConfig';
 import { createFormStateStore } from 'stores/FormState';
 import { createResourceConfigStore } from 'stores/ResourceConfig';
 import { createShardDetailStore } from 'stores/ShardDetail';
@@ -15,8 +13,8 @@ import useConstant from 'use-constant';
 import { StoreApi, useStore } from 'zustand';
 
 export enum DetailsFormStoreNames {
-    CAPTURE_CREATE = 'Capture-Create-Details-Form',
-    MATERIALIZATION_CREATE = 'Materialization-Create-Details-Form',
+    CAPTURE_CREATE = 'capture-create-details-form',
+    MATERIALIZATION_CREATE = 'materialization-create-details-form',
 }
 
 export enum DraftEditorStoreNames {
@@ -25,8 +23,8 @@ export enum DraftEditorStoreNames {
 }
 
 export enum EndpointConfigStoreNames {
-    CAPTURE_CREATE = 'Capture-Create-Endpoint-Config',
-    MATERIALIZATION_CREATE = 'Materialization-Create-Endpoint-Config',
+    CAPTURE_CREATE = 'capture-create-endpoint-config',
+    MATERIALIZATION_CREATE = 'materialization-create-endpoint-config',
 }
 
 export enum FormStateStoreNames {
@@ -79,74 +77,6 @@ interface ZustandProviderProps {
     };
 }
 
-const stores = {
-    // Details Form Store
-    [DetailsFormStoreNames.CAPTURE_CREATE]: createDetailsFormStore(
-        DetailsFormStoreNames.CAPTURE_CREATE
-    ),
-    [DetailsFormStoreNames.MATERIALIZATION_CREATE]: createDetailsFormStore(
-        DetailsFormStoreNames.MATERIALIZATION_CREATE
-    ),
-
-    // Draft Editor Store
-    [DraftEditorStoreNames.CAPTURE]: createEditorStore(
-        DraftEditorStoreNames.CAPTURE
-    ),
-    [DraftEditorStoreNames.MATERIALIZATION]: createEditorStore(
-        DraftEditorStoreNames.MATERIALIZATION
-    ),
-
-    // Endpoint Config Store
-    [EndpointConfigStoreNames.CAPTURE_CREATE]: createEndpointConfigStore(
-        EndpointConfigStoreNames.CAPTURE_CREATE
-    ),
-    [EndpointConfigStoreNames.MATERIALIZATION_CREATE]:
-        createEndpointConfigStore(
-            EndpointConfigStoreNames.MATERIALIZATION_CREATE
-        ),
-
-    // Form State Store
-    [FormStateStoreNames.CAPTURE_CREATE]: createFormStateStore(
-        FormStateStoreNames.CAPTURE_CREATE,
-        MessagePrefixes.CAPTURE_CREATE
-    ),
-    [FormStateStoreNames.MATERIALIZATION_CREATE]: createFormStateStore(
-        FormStateStoreNames.MATERIALIZATION_CREATE,
-        MessagePrefixes.MATERIALIZATION_CREATE
-    ),
-
-    // Resource Config Store
-    [ResourceConfigStoreNames.MATERIALIZATION_CREATE]:
-        createResourceConfigStore(
-            ResourceConfigStoreNames.MATERIALIZATION_CREATE
-        ),
-
-    // Select Table Store
-    [SelectTableStoreNames.ACCESS_GRANTS]: createSelectableTableStore(
-        SelectTableStoreNames.ACCESS_GRANTS
-    ),
-    [SelectTableStoreNames.CAPTURE]: createSelectableTableStore(
-        SelectTableStoreNames.CAPTURE
-    ),
-    [SelectTableStoreNames.COLLECTION]: createSelectableTableStore(
-        SelectTableStoreNames.COLLECTION
-    ),
-    [SelectTableStoreNames.CONNECTOR]: createSelectableTableStore(
-        SelectTableStoreNames.CONNECTOR
-    ),
-    [SelectTableStoreNames.MATERIALIZATION]: createSelectableTableStore(
-        SelectTableStoreNames.MATERIALIZATION
-    ),
-
-    // Shard Detail Store
-    [ShardDetailStoreNames.CAPTURE]: createShardDetailStore(
-        ShardDetailStoreNames.CAPTURE
-    ),
-    [ShardDetailStoreNames.MATERIALIZATION]: createShardDetailStore(
-        ShardDetailStoreNames.MATERIALIZATION
-    ),
-};
-
 export const ZustandContext = createReactContext<any | null>(null);
 
 export const ZustandProvider = ({
@@ -159,7 +89,59 @@ export const ZustandProvider = ({
 
             return { [storeName]: createStore };
         } else {
-            return stores;
+            return {
+                // Draft Editor Store
+                [DraftEditorStoreNames.CAPTURE]: createEditorStore(
+                    DraftEditorStoreNames.CAPTURE
+                ),
+                [DraftEditorStoreNames.MATERIALIZATION]: createEditorStore(
+                    DraftEditorStoreNames.MATERIALIZATION
+                ),
+
+                // Form State Store
+                [FormStateStoreNames.CAPTURE_CREATE]: createFormStateStore(
+                    FormStateStoreNames.CAPTURE_CREATE,
+                    MessagePrefixes.CAPTURE_CREATE
+                ),
+                [FormStateStoreNames.MATERIALIZATION_CREATE]:
+                    createFormStateStore(
+                        FormStateStoreNames.MATERIALIZATION_CREATE,
+                        MessagePrefixes.MATERIALIZATION_CREATE
+                    ),
+
+                // Resource Config Store
+                [ResourceConfigStoreNames.MATERIALIZATION_CREATE]:
+                    createResourceConfigStore(
+                        ResourceConfigStoreNames.MATERIALIZATION_CREATE
+                    ),
+
+                // Select Table Store
+                [SelectTableStoreNames.ACCESS_GRANTS]:
+                    createSelectableTableStore(
+                        SelectTableStoreNames.ACCESS_GRANTS
+                    ),
+                [SelectTableStoreNames.CAPTURE]: createSelectableTableStore(
+                    SelectTableStoreNames.CAPTURE
+                ),
+                [SelectTableStoreNames.COLLECTION]: createSelectableTableStore(
+                    SelectTableStoreNames.COLLECTION
+                ),
+                [SelectTableStoreNames.CONNECTOR]: createSelectableTableStore(
+                    SelectTableStoreNames.CONNECTOR
+                ),
+                [SelectTableStoreNames.MATERIALIZATION]:
+                    createSelectableTableStore(
+                        SelectTableStoreNames.MATERIALIZATION
+                    ),
+
+                // Shard Detail Store
+                [ShardDetailStoreNames.CAPTURE]: createShardDetailStore(
+                    ShardDetailStoreNames.CAPTURE
+                ),
+                [ShardDetailStoreNames.MATERIALIZATION]: createShardDetailStore(
+                    ShardDetailStoreNames.MATERIALIZATION
+                ),
+            };
         }
     });
 
@@ -181,6 +163,40 @@ export const useZustandStore = <S extends Object, U>(
 ) => {
     const storeOptions = useContext(ZustandContext);
     const store = storeOptions[storeName];
+
+    return useStore<StoreApi<S>, ReturnType<typeof selector>>(
+        store,
+        selector,
+        equalityFn
+    );
+};
+
+// TODO (zustand) decide on how we'll store stores that are used
+//  right now only details create uses this approach
+const storeMap = new Map<StoreName, any>();
+export const registerStores = (storeKeys: StoreName[], create: Function) => {
+    storeKeys.forEach((key) => {
+        storeMap.set(key, create);
+    });
+};
+const getStore = (storeName: StoreName) => {
+    let store = storeMap.get(storeName);
+
+    if (typeof store === 'function') {
+        const newStore = store(storeName);
+        storeMap.set(storeName, newStore);
+        store = newStore;
+    }
+
+    return store;
+};
+
+export const useZustandStoreMap = <S extends Object, U>(
+    storeName: StoreName,
+    selector: (state: S) => U,
+    equalityFn?: any
+) => {
+    const store = getStore(storeName);
 
     return useStore<StoreApi<S>, ReturnType<typeof selector>>(
         store,

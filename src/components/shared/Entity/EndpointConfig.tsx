@@ -5,7 +5,6 @@ import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import Error from 'components/shared/Error';
 import {
     DraftEditorStoreNames,
-    EndpointConfigStoreNames,
     FormStateStoreNames,
     useZustandStore,
 } from 'context/Zustand';
@@ -15,14 +14,12 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 interface Props {
     connectorImage: string;
     draftEditorStoreName: DraftEditorStoreNames;
-    endpointConfigStoreName: EndpointConfigStoreNames;
     formStateStoreName: FormStateStoreNames;
 }
 
 function EndpointConfig({
     connectorImage,
     draftEditorStoreName,
-    endpointConfigStoreName,
     formStateStoreName,
 }: Props) {
     const { connectorTag, error } = useConnectorTag(connectorImage);
@@ -40,15 +37,11 @@ function EndpointConfig({
                 forceClose={draftId !== null}
                 header={
                     <EndpointConfigHeader
-                        endpointConfigStoreName={endpointConfigStoreName}
                         docsPath={connectorTag.documentation_url}
                     />
                 }
             >
-                <EndpointConfigForm
-                    endpointConfigStoreName={endpointConfigStoreName}
-                    formStateStoreName={formStateStoreName}
-                />
+                <EndpointConfigForm formStateStoreName={formStateStoreName} />
             </WrapperWithHeader>
         );
     } else {

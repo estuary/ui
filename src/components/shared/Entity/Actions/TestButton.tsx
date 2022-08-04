@@ -3,7 +3,6 @@ import EntityCreateSave from 'components/shared/Entity/Actions/Save';
 import LogDialog from 'components/shared/Entity/LogDialog';
 import LogDialogActions from 'components/shared/Entity/LogDialogActions';
 import {
-    DetailsFormStoreNames,
     DraftEditorStoreNames,
     FormStateStoreNames,
     useZustandStore,
@@ -20,7 +19,6 @@ interface Props {
     logEvent: CustomEvents.CAPTURE_TEST | CustomEvents.MATERIALIZATION_TEST;
     draftEditorStoreName: DraftEditorStoreNames;
     formStateStoreName: FormStateStoreNames;
-    detailsFormStoreName: DetailsFormStoreNames;
 }
 
 function EntityTestButton({
@@ -30,7 +28,6 @@ function EntityTestButton({
     logEvent,
     draftEditorStoreName,
     formStateStoreName,
-    detailsFormStoreName,
 }: Props) {
     // Draft Editor Store
     const draftId = useZustandStore<
@@ -88,7 +85,6 @@ function EntityTestButton({
                 logEvent={logEvent}
                 draftEditorStoreName={draftEditorStoreName}
                 formStateStoreName={formStateStoreName}
-                detailsFormStoreName={detailsFormStoreName}
             />
         </>
     );

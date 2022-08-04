@@ -4,7 +4,9 @@ import AppLayout from 'AppLayout';
 import CaptureCreate from 'components/capture/Create';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import MaterializationCreate from 'components/materialization/Create';
+import { EntityTypeProvider } from 'components/shared/Entity/EntityContext';
 import AuthenticatedOnlyContext from 'context/Authenticated';
+import { OAuthPopup } from 'hooks/forks/react-use-oauth2/components';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import Admin from 'pages/Admin';
@@ -18,9 +20,13 @@ import Home from 'pages/Home';
 import Materializations from 'pages/Materializations';
 import Registration from 'pages/Registration';
 import { Route, Routes } from 'react-router';
+import { ENTITY } from 'types';
 import { isProduction } from 'utils/env-utils';
 
 export const authenticatedRoutes = {
+    oauth: {
+        path: '/oauth',
+    },
     admin: {
         title: 'routeTitle.admin',
         path: '/admin',
@@ -116,6 +122,10 @@ const Authenticated = () => {
                         path={unauthenticatedRoutes.auth.path}
                         element={<Auth />}
                     />
+                    <Route
+                        path={authenticatedRoutes.oauth.path}
+                        element={<OAuthPopup />}
+                    />
                     <Route element={<AppLayout />}>
                         <Route
                             path={authenticatedRoutes.home.path}
@@ -136,7 +146,13 @@ const Authenticated = () => {
                             <Route path="" element={<Captures />} />
                             <Route
                                 path={authenticatedRoutes.captures.create.path}
-                                element={<CaptureCreate />}
+                                element={
+                                    <EntityTypeProvider
+                                        initialValue={ENTITY.CAPTURE}
+                                    >
+                                        <CaptureCreate />
+                                    </EntityTypeProvider>
+                                }
                             />
                         </Route>
 
@@ -147,7 +163,13 @@ const Authenticated = () => {
                                     authenticatedRoutes.materializations.create
                                         .path
                                 }
-                                element={<MaterializationCreate />}
+                                element={
+                                    <EntityTypeProvider
+                                        initialValue={ENTITY.MATERIALIZATION}
+                                    >
+                                        <MaterializationCreate />
+                                    </EntityTypeProvider>
+                                }
                             />
                         </Route>
 

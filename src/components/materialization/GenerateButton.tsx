@@ -1,13 +1,11 @@
 import { Button } from '@mui/material';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec, generateDraftSpec } from 'api/draftSpecs';
-import { encryptConfig } from 'api/sops';
+import { encryptConfig } from 'api/oauth';
 import { EditorStoreState } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
 import {
-    DetailsFormStoreNames,
     DraftEditorStoreNames,
-    EndpointConfigStoreNames,
     FormStateStoreNames,
     ResourceConfigStoreNames,
     useZustandStore,
@@ -15,8 +13,16 @@ import {
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
-import { DetailsFormState } from 'stores/DetailsForm';
-import { EndpointConfigState } from 'stores/EndpointConfig';
+import {
+    useDetailsForm_connectorImage_connectorId,
+    useDetailsForm_details_entityName,
+    useDetailsForm_errorsExist,
+} from 'stores/DetailsForm';
+import {
+    useEndpointConfigStore_endpointConfig_data,
+    useEndpointConfigStore_endpointSchema,
+    useEndpointConfigStore_errorsExist,
+} from 'stores/EndpointConfig';
 import { EntityFormState, FormStatus } from 'stores/FormState';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
@@ -25,36 +31,21 @@ interface Props {
     disabled: boolean;
     callFailed: Function;
     draftEditorStoreName: DraftEditorStoreNames;
-    endpointConfigStoreName: EndpointConfigStoreNames;
     resourceConfigStoreName: ResourceConfigStoreNames;
     formStateStoreName: FormStateStoreNames;
-    detailsFormStoreName: DetailsFormStoreNames;
 }
 
 function MaterializeGenerateButton({
     disabled,
     callFailed,
     draftEditorStoreName,
-    endpointConfigStoreName,
     resourceConfigStoreName,
     formStateStoreName,
-    detailsFormStoreName,
 }: Props) {
     // Details Form Store
-    const entityName = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['details']['data']['entityName']
-    >(detailsFormStoreName, (state) => state.details.data.entityName);
-
-    const imageTag = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['details']['data']['connectorImage']
-    >(detailsFormStoreName, (state) => state.details.data.connectorImage);
-
-    const detailsFormsHasErrors = useZustandStore<
-        DetailsFormState,
-        DetailsFormState['detailsFormErrorsExist']
-    >(detailsFormStoreName, (state) => state.detailsFormErrorsExist);
+    const entityName = useDetailsForm_details_entityName();
+    const detailsFormsHasErrors = useDetailsForm_errorsExist();
+    const imageConnectorId = useDetailsForm_connectorImage_connectorId();
 
     // Draft Editor Store
     const isSaving = useZustandStore<
@@ -73,20 +64,9 @@ function MaterializeGenerateButton({
     >(draftEditorStoreName, (state) => state.setId);
 
     // Endpoint Config Store
-    const endpointConfigData = useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['endpointConfig']['data']
-    >(endpointConfigStoreName, (state) => state.endpointConfig.data);
-
-    const endpointConfigHasErrors = useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['endpointConfigErrorsExist']
-    >(endpointConfigStoreName, (state) => state.endpointConfigErrorsExist);
-
-    const endpointSchema = useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['endpointSchema']
-    >(endpointConfigStoreName, (state) => state.endpointSchema);
+    const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
+    const endpointConfigHasErrors = useEndpointConfigStore_errorsExist();
+    const endpointSchema = useEndpointConfigStore_endpointSchema();
 
     // Form State Store
     const formActive = useZustandStore<
@@ -148,14 +128,20 @@ function MaterializeGenerateButton({
             }
 
             const encryptedEndpointConfig = await encryptConfig(
+                imageConnectorId,
                 endpointSchema,
                 endpointConfigData
             );
-            if (encryptedEndpointConfig.error) {
+            if (
+                encryptedEndpointConfig.error ||
+                encryptedEndpointConfig.data.error
+            ) {
                 return callFailed({
                     error: {
                         title: 'entityCreate.sops.failedTitle',
-                        error: encryptedEndpointConfig.error,
+                        error:
+                            encryptedEndpointConfig.error ??
+                            encryptedEndpointConfig.data.error,
                     },
                 });
             }
@@ -163,7 +149,7 @@ function MaterializeGenerateButton({
             const newDraftId = draftsResponse.data[0].id;
             const draftSpec = generateDraftSpec(
                 encryptedEndpointConfig.data,
-                imageTag ? imageTag.iconPath : '',
+                imageConnectorId,
                 resourceConfig
             );
 

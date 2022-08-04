@@ -53,13 +53,14 @@ import {
     multiLineSecretTester,
 } from 'forms/renderers/MultiLineSecret';
 import { NullType, nullTypeTester } from 'forms/renderers/NullType';
+import { oAuthProviderTester, OAuthType } from 'forms/renderers/OAuth';
 import MaterialOneOfRenderer_Discriminator, {
     materialOneOfControlTester_Discriminator,
 } from 'forms/renderers/Overrides/material/complex/MaterialOneOfRenderer_Discriminator';
 import isEmpty from 'lodash/isEmpty';
 import keys from 'lodash/keys';
 import startCase from 'lodash/startCase';
-import { Formats, Options, Patterns } from 'types/jsonforms';
+import { Annotations, Formats, Options, Patterns } from 'types/jsonforms';
 
 /////////////////////////////////////////////////////////
 //  CUSTOM FUNCTIONS AND SETTINGS
@@ -77,9 +78,12 @@ export const defaultRenderers = [
         tester: materialOneOfControlTester_Discriminator,
     },
 
-    // Custom types
-    { renderer: NullType, tester: nullTypeTester },
+    // Custom layouts
+    { renderer: OAuthType, tester: oAuthProviderTester },
     { renderer: CollapsibleGroup, tester: collapsibleGroupTester },
+
+    // Custom controls
+    { renderer: NullType, tester: nullTypeTester },
     { renderer: ConnectorType, tester: connectorTypeTester },
     { renderer: CatalogName, tester: catalogNameTypeTester },
     { renderer: MultiLineSecret, tester: multiLineSecretTester },
@@ -101,6 +105,20 @@ const addOption = (elem: ControlElement | Layout, key: string, value: any) => {
     elem.options[key] = value;
 
     return elem;
+};
+
+const addTitle = (
+    group: GroupLayout,
+    jsonSchema: JsonSchema,
+    schemaName: string
+) => {
+    if (jsonSchema.title) {
+        group.label = jsonSchema.title;
+    } else {
+        group.label = schemaName;
+    }
+
+    return group;
 };
 
 const isMultilineText = (schema: JsonSchema): boolean => {
@@ -137,6 +155,10 @@ const isSecretText = (schema: JsonSchema): boolean => {
 const isAdvancedConfig = (schema: JsonSchema): boolean => {
     // eslint-disable-next-line @typescript-eslint/dot-notation
     return schema['advanced'] === true;
+};
+
+const isOAuthConfig = (schema: JsonSchema): boolean => {
+    return Object.hasOwn(schema, Annotations.oAuthProvider);
 };
 
 const copyAdvancedOption = (elem: Layout, schema: JsonSchema) => {
@@ -294,28 +316,22 @@ const generateUISchema = (
         );
     }
 
-    // Always create a Group for "advanced" configuration objects, so that we can collapse it and
-    // see the label.
     if (isCombinator(jsonSchema) && isAdvancedConfig(jsonSchema)) {
+        // Always create a Group for "advanced" configuration objects, so that we can collapse it and
+        // see the label.
+
         const group: GroupLayout = {
             type: 'Group',
             elements: [createControlElement(currentRef)],
         };
         copyAdvancedOption(group, jsonSchema);
-        if (jsonSchema.title) {
-            group.label = jsonSchema.title;
-        } else {
-            group.label = schemaName;
-        }
-        return group;
-    }
+        return addTitle(group, jsonSchema, schemaName);
+    } else if (isCombinator(jsonSchema)) {
+        // For oneOf/allOf, we just create a control element. This is where things get weird in json
+        // forms, because the _control_ is what causes the tabs to render. Since it's a control and not
+        // a layout, it means we lose the ability to have uischemas that apply to the nested elements.
 
-    // For oneOf/allOf, we just create a control element. This is where things get weird in json
-    // forms, because the _control_ is what causes the tabs to render. Since it's a control and not
-    // a layout, it means we lose the ability to have uischemas that apply to the nested elements.
-
-    if (isCombinator(jsonSchema)) {
-        const controlObject: ControlElement = createControlElement(currentRef);
+        const controlObject = createControlElement(currentRef);
 
         if (jsonSchema.title) {
             controlObject.label = jsonSchema.title;
@@ -324,6 +340,27 @@ const generateUISchema = (
         schemaElements.push(controlObject);
 
         return controlObject;
+    } else if (isOAuthConfig(jsonSchema)) {
+        // Handle OAuth specifically as we need to show an "OAuth CTA" to allow
+        //  users to sign in with the provider. This includes injecting our own
+        //  control in place of the actual properties that would normally be
+        //  displayed.
+
+        const oAuthCTAControl = createControlElement(currentRef);
+        addOption(
+            oAuthCTAControl,
+            Options.oauthProvider,
+            jsonSchema[Annotations.oAuthProvider]
+        );
+        addOption(oAuthCTAControl, Options.oauthFields, jsonSchema.required);
+
+        if (jsonSchema.title) {
+            oAuthCTAControl.label = jsonSchema.title;
+        }
+
+        schemaElements.push(oAuthCTAControl);
+
+        return oAuthCTAControl;
     }
 
     const types = deriveTypes(jsonSchema);
@@ -352,6 +389,7 @@ const generateUISchema = (
         } else {
             layout = createLayout('Group');
         }
+
         // Add the advanced option to the layout, if required
         copyAdvancedOption(layout, jsonSchema);
 
