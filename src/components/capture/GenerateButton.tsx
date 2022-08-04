@@ -20,7 +20,6 @@ import {
 } from 'stores/DetailsForm';
 import {
     useEndpointConfigStore_endpointConfig_data,
-    useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_errorsExist,
 } from 'stores/EndpointConfig';
 import { EntityFormState, FormStatus } from 'stores/FormState';
@@ -75,7 +74,6 @@ function CaptureGenerateButton({
 
     // Endpoint Config Store
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
-    const endpointSchema = useEndpointConfigStore_endpointSchema();
     const endpointConfigHasErrors = useEndpointConfigStore_errorsExist();
 
     const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
@@ -105,7 +103,7 @@ function CaptureGenerateButton({
 
             const encryptedEndpointConfig = await encryptConfig(
                 imageConnectorId,
-                endpointSchema,
+                imageConnectorTagId,
                 endpointConfigData
             );
             if (
