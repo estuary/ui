@@ -196,6 +196,7 @@ export const useZustandStoreMap = <S extends Object, U>(
     selector: (state: S) => U,
     equalityFn?: any
 ) => {
+    console.log('use zustand store', storeName);
     const store = getStore(storeName);
 
     return useStore<StoreApi<S>, ReturnType<typeof selector>>(
