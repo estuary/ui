@@ -52,7 +52,7 @@ const trackEvent = (payload: any) => {
 function CaptureCreate() {
     const navigate = useNavigate();
 
-    const [entityType] = useEntityType();
+    const entityType = useEntityType();
 
     // Supabase stuff
     const supabaseClient = useClient();

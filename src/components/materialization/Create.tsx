@@ -43,7 +43,7 @@ const resourceConfigStoreName = ResourceConfigStoreNames.MATERIALIZATION_CREATE;
 function MaterializationCreate() {
     const navigate = useNavigate();
 
-    const [entityType] = useEntityType();
+    const entityType = useEntityType();
 
     // Supabase
     const supabaseClient = useClient();
