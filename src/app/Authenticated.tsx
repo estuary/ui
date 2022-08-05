@@ -4,7 +4,7 @@ import AppLayout from 'AppLayout';
 import CaptureCreate from 'components/capture/Create';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import MaterializationCreate from 'components/materialization/Create';
-import { EntityTypeProvider } from 'components/shared/Entity/EntityContext';
+import { EntityContextProvider } from 'components/shared/Entity/EntityContext';
 import AuthenticatedOnlyContext from 'context/Authenticated';
 import { OAuthPopup } from 'hooks/forks/react-use-oauth2/components';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
@@ -147,11 +147,11 @@ const Authenticated = () => {
                             <Route
                                 path={authenticatedRoutes.captures.create.path}
                                 element={
-                                    <EntityTypeProvider
-                                        initialValue={ENTITY.CAPTURE}
+                                    <EntityContextProvider
+                                        value={ENTITY.CAPTURE}
                                     >
                                         <CaptureCreate />
-                                    </EntityTypeProvider>
+                                    </EntityContextProvider>
                                 }
                             />
                         </Route>
@@ -164,11 +164,11 @@ const Authenticated = () => {
                                         .path
                                 }
                                 element={
-                                    <EntityTypeProvider
-                                        initialValue={ENTITY.MATERIALIZATION}
+                                    <EntityContextProvider
+                                        value={ENTITY.MATERIALIZATION}
                                     >
                                         <MaterializationCreate />
-                                    </EntityTypeProvider>
+                                    </EntityContextProvider>
                                 }
                             />
                         </Route>
