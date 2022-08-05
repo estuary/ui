@@ -5,7 +5,7 @@ import MaterializeGenerateButton from 'components/materialization/GenerateButton
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
-import { useEntityContext } from 'components/shared/Entity/EntityContext';
+import { useEntityType } from 'components/shared/Entity/EntityContext';
 import FooHeader from 'components/shared/Entity/Header';
 import PageContainer from 'components/shared/PageContainer';
 import {
@@ -43,7 +43,7 @@ const resourceConfigStoreName = ResourceConfigStoreNames.MATERIALIZATION_CREATE;
 function MaterializationCreate() {
     const navigate = useNavigate();
 
-    const entityType = useEntityContext();
+    const entityType = useEntityType();
 
     // Supabase
     const supabaseClient = useClient();

@@ -17,16 +17,16 @@ const EntityContextProvider = ({ children, value }: Props) => {
     );
 };
 
-const useEntityContext = () => {
+const useEntityType = () => {
     const context = useContext(EntityContext);
 
     if (context === null) {
         throw new Error(
-            'useEntityContext must be used within a EntityContextProvider'
+            'useEntityType must be used within a EntityContextProvider'
         );
     }
 
     return context;
 };
 
-export { EntityContextProvider, useEntityContext };
+export { EntityContextProvider, useEntityType };

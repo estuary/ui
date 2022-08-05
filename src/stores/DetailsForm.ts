@@ -1,5 +1,5 @@
 import { JsonFormsCore } from '@jsonforms/core';
-import { useEntityContext } from 'components/shared/Entity/EntityContext';
+import { useEntityType } from 'components/shared/Entity/EntityContext';
 import {
     DetailsFormStoreNames,
     registerStores,
@@ -129,7 +129,7 @@ export const createDetailsFormStore = (key: DetailsFormStoreNames) => {
 
 // Selector hooks
 export const useDetailsForm_connectorImage = () => {
-    const entityType = useEntityContext();
+    const entityType = useEntityType();
     return useZustandStoreMap<
         DetailsFormState,
         DetailsFormState['details']['data']['connectorImage']
@@ -137,7 +137,7 @@ export const useDetailsForm_connectorImage = () => {
 };
 
 export const useDetailsForm_connectorImage_connectorId = () => {
-    const entityType = useEntityContext();
+    const entityType = useEntityType();
     return useZustandStoreMap<
         DetailsFormState,
         DetailsFormState['details']['data']['connectorImage']['connectorId']
@@ -148,7 +148,7 @@ export const useDetailsForm_connectorImage_connectorId = () => {
 };
 
 export const useDetailsForm_connectorImage_id = () => {
-    const entityType = useEntityContext();
+    const entityType = useEntityType();
     return useZustandStoreMap<
         DetailsFormState,
         DetailsFormState['details']['data']['connectorImage']['id']
@@ -156,7 +156,7 @@ export const useDetailsForm_connectorImage_id = () => {
 };
 
 export const useDetailsForm_details = () => {
-    const entityType = useEntityContext();
+    const entityType = useEntityType();
     return useZustandStoreMap<
         DetailsFormState,
         DetailsFormState['details']['data']
@@ -164,7 +164,7 @@ export const useDetailsForm_details = () => {
 };
 
 export const useDetailsForm_details_description = () => {
-    const entityType = useEntityContext();
+    const entityType = useEntityType();
     return useZustandStoreMap<
         DetailsFormState,
         DetailsFormState['details']['data']['description']
@@ -172,7 +172,7 @@ export const useDetailsForm_details_description = () => {
 };
 
 export const useDetailsForm_details_entityName = () => {
-    const entityType = useEntityContext();
+    const entityType = useEntityType();
     return useZustandStoreMap<
         DetailsFormState,
         DetailsFormState['details']['data']['entityName']
@@ -180,7 +180,7 @@ export const useDetailsForm_details_entityName = () => {
 };
 
 export const useDetailsForm_setDetails = () => {
-    const entityType = useEntityContext();
+    const entityType = useEntityType();
     return useZustandStoreMap<DetailsFormState, DetailsFormState['setDetails']>(
         storeName(entityType),
         (state) => state.setDetails
@@ -190,7 +190,7 @@ export const useDetailsForm_setDetails = () => {
 const errorsExistSelector = (state: DetailsFormState) =>
     state.detailsFormErrorsExist;
 export const useDetailsForm_errorsExist = () => {
-    const entityType = useEntityContext();
+    const entityType = useEntityType();
     return useZustandStoreMap<
         DetailsFormState,
         DetailsFormState['detailsFormErrorsExist']
@@ -198,7 +198,7 @@ export const useDetailsForm_errorsExist = () => {
 };
 
 export const useDetailsForm_changed = () => {
-    const entityType = useEntityContext();
+    const entityType = useEntityType();
     return useZustandStoreMap<
         DetailsFormState,
         DetailsFormState['stateChanged']
@@ -206,7 +206,7 @@ export const useDetailsForm_changed = () => {
 };
 
 export const useDetailsForm_resetFormState = () => {
-    const entityType = useEntityContext();
+    const entityType = useEntityType();
     return useZustandStoreMap<DetailsFormState, DetailsFormState['resetState']>(
         storeName(entityType),
         (state) => state.resetState

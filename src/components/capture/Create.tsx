@@ -5,7 +5,7 @@ import { EditorStoreState } from 'components/editor/Store';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
-import { useEntityContext } from 'components/shared/Entity/EntityContext';
+import { useEntityType } from 'components/shared/Entity/EntityContext';
 import FooHeader from 'components/shared/Entity/Header';
 import PageContainer from 'components/shared/PageContainer';
 import {
@@ -52,7 +52,7 @@ const trackEvent = (payload: any) => {
 function CaptureCreate() {
     const navigate = useNavigate();
 
-    const entityType = useEntityContext();
+    const entityType = useEntityType();
 
     // Supabase stuff
     const supabaseClient = useClient();

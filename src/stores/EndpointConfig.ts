@@ -1,4 +1,4 @@
-import { useEntityContext } from 'components/shared/Entity/EntityContext';
+import { useEntityType } from 'components/shared/Entity/EntityContext';
 import {
     EndpointConfigStoreNames,
     registerStores,
@@ -120,7 +120,7 @@ export const createEndpointConfigStore = (key: EndpointConfigStoreNames) => {
 };
 
 export const useEndpointConfigStore_errorsExist = () => {
-    const entityType = useEntityContext();
+    const entityType = useEntityType();
     return useZustandStoreMap<
         EndpointConfigState,
         EndpointConfigState['endpointConfigErrorsExist']
@@ -128,7 +128,7 @@ export const useEndpointConfigStore_errorsExist = () => {
 };
 
 export const useEndpointConfigStore_reset = () => {
-    const entityType = useEntityContext();
+    const entityType = useEntityType();
     return useZustandStoreMap<
         EndpointConfigState,
         EndpointConfigState['resetState']
@@ -136,7 +136,7 @@ export const useEndpointConfigStore_reset = () => {
 };
 
 export const useEndpointConfigStore_changed = () => {
-    const entityType = useEntityContext();
+    const entityType = useEntityType();
     return useZustandStoreMap<
         EndpointConfigState,
         EndpointConfigState['stateChanged']
@@ -144,7 +144,7 @@ export const useEndpointConfigStore_changed = () => {
 };
 
 export const useEndpointConfigStore_endpointSchema = () => {
-    const entityType = useEntityContext();
+    const entityType = useEntityType();
     return useZustandStoreMap<
         EndpointConfigState,
         EndpointConfigState['endpointSchema']
@@ -152,7 +152,7 @@ export const useEndpointConfigStore_endpointSchema = () => {
 };
 
 export const useEndpointConfigStore_setEndpointSchema = () => {
-    const entityType = useEntityContext();
+    const entityType = useEntityType();
     return useZustandStoreMap<
         EndpointConfigState,
         EndpointConfigState['setEndpointSchema']
@@ -160,7 +160,7 @@ export const useEndpointConfigStore_setEndpointSchema = () => {
 };
 
 export const useEndpointConfigStore_endpointConfig_data = () => {
-    const entityType = useEntityContext();
+    const entityType = useEntityType();
     return useZustandStoreMap<
         EndpointConfigState,
         EndpointConfigState['endpointConfig']['data']
@@ -168,7 +168,7 @@ export const useEndpointConfigStore_endpointConfig_data = () => {
 };
 
 export const useEndpointConfigStore_setEndpointConfig = () => {
-    const entityType = useEntityContext();
+    const entityType = useEntityType();
     return useZustandStoreMap<
         EndpointConfigState,
         EndpointConfigState['setEndpointConfig']
