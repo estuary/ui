@@ -19,7 +19,7 @@ interface Props {
     colSpan: number;
     specTypes?: ENTITY[];
     liveSpecId?: string;
-    disableLogs?: boolean;
+    disableLogs?: boolean; // todo (detail logs) We'll start using this again when we have better logs
     entityType?: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
     shardDetailStoreName?: ShardDetailStoreNames;
 }
@@ -30,7 +30,6 @@ function DetailsPanel({
     colSpan,
     specTypes,
     liveSpecId,
-    disableLogs,
     entityType,
     shardDetailStoreName,
 }: Props) {
@@ -63,7 +62,7 @@ function DetailsPanel({
                                 lastPubId={lastPubId}
                                 specTypes={specTypes}
                                 liveSpecId={liveSpecId}
-                                disableLogs={disableLogs}
+                                disableLogs={true}
                                 liveSpecEditorStoreName={
                                     LiveSpecEditorStoreNames.GENERAL
                                 }

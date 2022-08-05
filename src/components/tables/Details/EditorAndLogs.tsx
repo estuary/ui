@@ -4,11 +4,11 @@ import { DEFAULT_TOTAL_HEIGHT } from 'components/editor/MonacoEditor';
 import { EditorStoreState } from 'components/editor/Store';
 import Logs from 'components/Logs';
 import Error from 'components/shared/Error';
+import { LiveSpecEditorStoreNames, UseZustandStore } from 'context/Zustand';
 import usePublications from 'hooks/usePublications';
 import usePublicationSpecs, {
     PublicationSpecQuery,
 } from 'hooks/usePublicationSpecs';
-import { LiveSpecEditorStoreNames, UseZustandStore } from 'context/Zustand';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { ENTITY } from 'types';
@@ -35,8 +35,9 @@ function EditorAndLogs({
         specTypes,
         liveSpecId,
     });
-    const { publication: publications, error: pubsError } =
-        usePublications(lastPubId);
+    const { publication: publications, error: pubsError } = usePublications(
+        !disableLogs ? lastPubId : null
+    );
 
     const setSpecs = useZustandStore<
         EditorStoreState<PublicationSpecQuery>,
