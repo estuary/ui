@@ -19,7 +19,7 @@ interface Props {
     colSpan: number;
     specTypes?: ENTITY[];
     liveSpecId?: string;
-    disableLogs?: boolean; // todo (detail logs) We'll start using this again when we have better logs
+    disableLogs?: boolean; // TODO (detail logs) We'll start using this again when we have better logs
     entityType?: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
     shardDetailStoreName?: ShardDetailStoreNames;
 }
