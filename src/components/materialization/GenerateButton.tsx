@@ -16,6 +16,7 @@ import { FormattedMessage } from 'react-intl';
 import {
     useDetailsForm_connectorImage_connectorId,
     useDetailsForm_connectorImage_id,
+    useDetailsForm_connectorImage_imagePath,
     useDetailsForm_details_entityName,
     useDetailsForm_errorsExist,
 } from 'stores/DetailsForm';
@@ -47,6 +48,7 @@ function MaterializeGenerateButton({
     const detailsFormsHasErrors = useDetailsForm_errorsExist();
     const imageConnectorTagId = useDetailsForm_connectorImage_id();
     const imageConnectorId = useDetailsForm_connectorImage_connectorId();
+    const imagePath = useDetailsForm_connectorImage_imagePath();
 
     // Draft Editor Store
     const isSaving = useZustandStore<
@@ -149,7 +151,7 @@ function MaterializeGenerateButton({
             const newDraftId = draftsResponse.data[0].id;
             const draftSpec = generateDraftSpec(
                 encryptedEndpointConfig.data,
-                imageConnectorTagId,
+                imagePath,
                 resourceConfig
             );
 

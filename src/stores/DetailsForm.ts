@@ -155,6 +155,17 @@ export const useDetailsForm_connectorImage_id = () => {
     >(storeName(entityType), (state) => state.details.data.connectorImage.id);
 };
 
+export const useDetailsForm_connectorImage_imagePath = () => {
+    const entityType = useEntityType();
+    return useZustandStoreMap<
+        DetailsFormState,
+        DetailsFormState['details']['data']['connectorImage']['imagePath']
+    >(
+        storeName(entityType),
+        (state) => state.details.data.connectorImage.imagePath
+    );
+};
+
 export const useDetailsForm_details = () => {
     const entityType = useEntityType();
     return useZustandStoreMap<
