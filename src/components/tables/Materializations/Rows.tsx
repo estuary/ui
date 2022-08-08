@@ -134,6 +134,7 @@ function Row({
                 colSpan={tableColumns.length}
                 entityType={ENTITY.MATERIALIZATION}
                 shardDetailStoreName={shardDetailStoreName}
+                entityName={row.catalog_name}
             />
         </>
     );

@@ -11,6 +11,8 @@ import {
     LiveSpecEditorStoreNames,
     ShardDetailStoreNames,
 } from 'context/Zustand';
+import { concat } from 'lodash';
+import { useMemo } from 'react';
 import { ENTITY } from 'types';
 
 interface Props {
@@ -18,8 +20,8 @@ interface Props {
     lastPubId: string;
     colSpan: number;
     entityType: ENTITY;
+    entityName: string;
     collectionNames?: string[];
-    liveSpecId?: string;
     disableLogs?: boolean; // TODO (detail logs) We'll start using this again when we have better logs
     shardDetailStoreName?: ShardDetailStoreNames;
 }
@@ -28,11 +30,15 @@ function DetailsPanel({
     detailsExpanded,
     lastPubId,
     colSpan,
-    liveSpecId,
     entityType,
     shardDetailStoreName,
     collectionNames,
+    entityName,
 }: Props) {
+    const fullList = useMemo(
+        () => concat([entityName], collectionNames),
+        [collectionNames, entityName]
+    ) as string[];
     return (
         <TableRow>
             <TableCell
@@ -60,15 +66,13 @@ function DetailsPanel({
                             ) : null}
 
                             <EditorAndLogs
-                                collectionNames={collectionNames}
+                                collectionNames={fullList}
                                 lastPubId={lastPubId}
-                                liveSpecId={liveSpecId}
                                 disableLogs={true}
                                 liveSpecEditorStoreName={
                                     LiveSpecEditorStoreNames.GENERAL
                                 }
                                 useZustandStore={useLocalZustandStore}
-                                entityType={entityType}
                             />
                         </Grid>
                     </LocalZustandProvider>

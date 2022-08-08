@@ -148,6 +148,7 @@ function Row({
                 colSpan={tableColumns.length}
                 entityType={ENTITY.CAPTURE}
                 shardDetailStoreName={shardDetailStoreName}
+                entityName={row.catalog_name}
                 collectionNames={row.writes_to}
             />
         </>

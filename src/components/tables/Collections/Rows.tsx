@@ -77,8 +77,8 @@ function Row({ row, showEntityStatus }: RowProps) {
                 detailsExpanded={detailsExpanded}
                 lastPubId={row.last_pub_id}
                 colSpan={tableColumns.length}
-                liveSpecId={row.id}
                 entityType={ENTITY.COLLECTION}
+                entityName={row.catalog_name}
                 disableLogs
             />
         </>
