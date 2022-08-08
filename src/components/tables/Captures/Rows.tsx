@@ -147,8 +147,8 @@ function Row({
                 lastPubId={row.last_pub_id}
                 colSpan={tableColumns.length}
                 entityType={ENTITY.CAPTURE}
-                specTypes={[ENTITY.CAPTURE, ENTITY.COLLECTION]}
                 shardDetailStoreName={shardDetailStoreName}
+                collectionNames={row.writes_to}
             />
         </>
     );

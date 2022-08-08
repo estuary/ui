@@ -2,10 +2,11 @@ import { TABLES } from 'services/supabase';
 import { ENTITY } from 'types';
 import { useQuery, useSelect } from './supabase-swr/';
 
-interface PublicationSpecConfig {
+export interface PublicationSpecConfig {
     lastPubId: string | null;
-    specTypes?: ENTITY[];
+    entityType: ENTITY;
     liveSpecId?: string;
+    collectionNames?: string[];
 }
 
 export interface PublicationSpecQuery {
@@ -22,6 +23,7 @@ export interface PublicationSpecQuery {
         connector_image_tag: string;
     }[];
     ['live_specs.spec_type']: string;
+    ['live_specs.catalog_name']: string;
 }
 
 const PUB_SPEC_QUERY = `
@@ -42,7 +44,7 @@ const defaultResponse: PublicationSpecQuery[] = [];
 
 function usePublicationSpecs({
     lastPubId,
-    specTypes,
+    entityType,
     liveSpecId,
 }: PublicationSpecConfig) {
     const publicationsQuery = useQuery<PublicationSpecQuery>(
@@ -54,11 +56,7 @@ function usePublicationSpecs({
                     ? query.eq('live_spec_id', liveSpecId)
                     : query
                           .eq('pub_id', lastPubId as string)
-                          .filter(
-                              'live_specs.spec_type',
-                              'in',
-                              `(${specTypes})`
-                          ),
+                          .eq('live_specs.spec_type', entityType),
         },
         [lastPubId, liveSpecId]
     );
@@ -69,6 +67,42 @@ function usePublicationSpecs({
 
     return {
         publicationSpecs: data ? data.data : defaultResponse,
+        error,
+    };
+}
+
+export function usePublicationSpecs_relatedCollections({
+    lastPubId,
+    liveSpecId,
+    collectionNames,
+}: Pick<
+    PublicationSpecConfig,
+    'lastPubId' | 'liveSpecId' | 'collectionNames'
+>) {
+    const publicationsQuery = useQuery<PublicationSpecQuery>(
+        TABLES.PUBLICATION_SPECS,
+        {
+            columns: PUB_SPEC_QUERY,
+            filter: (query) => {
+                return query
+                    .filter(
+                        'live_specs.catalog_name',
+                        'in',
+                        `(${collectionNames})`
+                    )
+                    .order('published_at')
+                    .limit(1);
+            },
+        },
+        [lastPubId, liveSpecId, collectionNames]
+    );
+
+    const { data, error } = useSelect(
+        collectionNames ? publicationsQuery : null
+    );
+
+    return {
+        collectionSpecs: data ? data.data : defaultResponse,
         error,
     };
 }

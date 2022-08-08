@@ -17,10 +17,10 @@ interface Props {
     detailsExpanded: boolean;
     lastPubId: string;
     colSpan: number;
-    specTypes?: ENTITY[];
+    entityType: ENTITY;
+    collectionNames?: string[];
     liveSpecId?: string;
     disableLogs?: boolean; // TODO (detail logs) We'll start using this again when we have better logs
-    entityType?: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
     shardDetailStoreName?: ShardDetailStoreNames;
 }
 
@@ -28,10 +28,10 @@ function DetailsPanel({
     detailsExpanded,
     lastPubId,
     colSpan,
-    specTypes,
     liveSpecId,
     entityType,
     shardDetailStoreName,
+    collectionNames,
 }: Props) {
     return (
         <TableRow>
@@ -50,7 +50,8 @@ function DetailsPanel({
                         )}
                     >
                         <Grid container spacing={2}>
-                            {entityType && shardDetailStoreName ? (
+                            {shardDetailStoreName &&
+                            entityType !== ENTITY.COLLECTION ? (
                                 <ShardInformation
                                     useLocalZustandStore={useLocalZustandStore}
                                     entityType={entityType}
@@ -59,14 +60,15 @@ function DetailsPanel({
                             ) : null}
 
                             <EditorAndLogs
+                                collectionNames={collectionNames}
                                 lastPubId={lastPubId}
-                                specTypes={specTypes}
                                 liveSpecId={liveSpecId}
                                 disableLogs={true}
                                 liveSpecEditorStoreName={
                                     LiveSpecEditorStoreNames.GENERAL
                                 }
                                 useZustandStore={useLocalZustandStore}
+                                entityType={entityType}
                             />
                         </Grid>
                     </LocalZustandProvider>

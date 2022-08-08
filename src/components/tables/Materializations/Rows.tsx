@@ -128,11 +128,11 @@ function Row({
             </TableRow>
 
             <DetailsPanel
+                collectionNames={row.reads_from}
                 detailsExpanded={detailsExpanded}
                 lastPubId={row.last_pub_id}
                 colSpan={tableColumns.length}
                 entityType={ENTITY.MATERIALIZATION}
-                specTypes={[ENTITY.MATERIALIZATION]}
                 shardDetailStoreName={shardDetailStoreName}
             />
         </>
