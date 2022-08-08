@@ -31,7 +31,7 @@ const Connectors = () => {
                 <ConnectorsTable />
             </Box>
 
-            <GridWrapper />
+            <GridWrapper cardWidth={250} cardsPerRow={4} gridSpacing={2} />
         </PageContainer>
     );
 };

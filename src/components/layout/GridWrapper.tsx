@@ -11,9 +11,13 @@ import { useNavigate } from 'react-router-dom';
 import { CONNECTOR_NAME, TABLES } from 'services/supabase';
 import { getPathWithParam, hasLength } from 'utils/misc-utils';
 
-const WIDTH = 250;
+interface Props {
+    cardWidth: number;
+    cardsPerRow: number;
+    gridSpacing: number;
+}
 
-function GridWrapper() {
+function GridWrapper({ cardWidth, cardsPerRow, gridSpacing }: Props) {
     const navigate = useNavigate();
 
     const liveSpecQuery = useQuery<ConnectorWithTagDetailQuery>(
@@ -37,7 +41,9 @@ function GridWrapper() {
             container
             spacing={2}
             paddingRight={2}
-            width={WIDTH * 5 + 16 * 6}
+            width={
+                cardWidth * cardsPerRow + 8 * gridSpacing * (cardsPerRow + 1)
+            }
             margin="auto"
         >
             {hasLength(selectData)
@@ -46,7 +52,7 @@ function GridWrapper() {
                           <Paper
                               elevation={0}
                               sx={{
-                                  width: WIDTH,
+                                  width: cardWidth,
                                   height: '100%',
                                   borderRadius: 5,
                                   background: (theme) =>
