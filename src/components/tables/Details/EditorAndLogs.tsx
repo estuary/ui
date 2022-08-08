@@ -5,9 +5,8 @@ import { EditorStoreState } from 'components/editor/Store';
 import Logs from 'components/Logs';
 import Error from 'components/shared/Error';
 import { LiveSpecEditorStoreNames, UseZustandStore } from 'context/Zustand';
-import { useLiveSpecs_spec } from 'hooks/useLiveSpecs';
+import { LiveSpecsQuery_spec, useLiveSpecs_spec } from 'hooks/useLiveSpecs';
 import usePublications from 'hooks/usePublications';
-import { PublicationSpecQuery } from 'hooks/usePublicationSpecs';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
@@ -34,13 +33,13 @@ function EditorAndLogs({
     );
 
     const setSpecs = useZustandStore<
-        EditorStoreState<PublicationSpecQuery>,
-        EditorStoreState<PublicationSpecQuery>['setSpecs']
+        EditorStoreState<LiveSpecsQuery_spec>,
+        EditorStoreState<LiveSpecsQuery_spec>['setSpecs']
     >(liveSpecEditorStoreName, (state) => state.setSpecs);
 
     const setId = useZustandStore<
-        EditorStoreState<PublicationSpecQuery>,
-        EditorStoreState<PublicationSpecQuery>['setId']
+        EditorStoreState<LiveSpecsQuery_spec>,
+        EditorStoreState<LiveSpecsQuery_spec>['setId']
     >(liveSpecEditorStoreName, (state) => state.setId);
 
     useEffect(() => {

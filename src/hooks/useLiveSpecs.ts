@@ -5,7 +5,6 @@ import { useQuery, useSelect } from './supabase-swr/';
 interface LiveSpecsQuery {
     catalog_name: string;
     spec_type: string;
-    spec: object;
 }
 
 const queryColumns = ['catalog_name', 'spec_type'];
@@ -30,9 +29,14 @@ function useLiveSpecs(specType: string) {
     };
 }
 
+export interface LiveSpecsQuery_spec {
+    id: string;
+    catalog_name: string;
+    spec: string;
+}
 const specQuery = ['id', 'catalog_name', 'spec'];
 export function useLiveSpecs_spec(collectionNames?: string[]) {
-    const liveSpecQuery = useQuery<LiveSpecsQuery>(
+    const liveSpecQuery = useQuery<LiveSpecsQuery_spec>(
         TABLES.LIVE_SPECS_EXT,
         {
             columns: specQuery,

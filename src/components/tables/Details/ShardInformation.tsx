@@ -26,7 +26,7 @@ import {
     UseZustandStore,
 } from 'context/Zustand';
 import { Shard } from 'data-plane-gateway/types/shard_client';
-import { PublicationSpecQuery } from 'hooks/usePublicationSpecs';
+import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
 import { MouseEvent, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { shardDetailSelectors, ShardDetailStore } from 'stores/ShardDetail';
@@ -63,8 +63,8 @@ function ShardInformation({
     >(shardDetailStoreName, shardDetailSelectors.getTaskShards);
 
     const specs = useLocalZustandStore<
-        EditorStoreState<PublicationSpecQuery>,
-        EditorStoreState<PublicationSpecQuery>['specs']
+        EditorStoreState<LiveSpecsQuery_spec>,
+        EditorStoreState<LiveSpecsQuery_spec>['specs']
     >(LiveSpecEditorStoreNames.GENERAL, (state) => state.specs);
 
     const columns: {
