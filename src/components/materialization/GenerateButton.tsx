@@ -1,28 +1,55 @@
 import { Button } from '@mui/material';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec, generateDraftSpec } from 'api/draftSpecs';
-import { encryptConfig } from 'api/sops';
+import { encryptConfig } from 'api/oauth';
 import { EditorStoreState } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
-import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
+import {
+    DraftEditorStoreNames,
+    FormStateStoreNames,
+    ResourceConfigStoreNames,
+    useZustandStore,
+} from 'context/Zustand';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { useRouteStore } from 'hooks/useRouteStore';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
-import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
+import {
+    useDetailsForm_connectorImage_connectorId,
+    useDetailsForm_connectorImage_imagePath,
+    useDetailsForm_details_entityName,
+    useDetailsForm_errorsExist,
+} from 'stores/DetailsForm';
+import {
+    useEndpointConfigStore_endpointConfig_data,
+    useEndpointConfigStore_endpointSchema,
+    useEndpointConfigStore_errorsExist,
+} from 'stores/EndpointConfig';
+import { EntityFormState, FormStatus } from 'stores/FormState';
+import { ResourceConfigState } from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
 
 interface Props {
     disabled: boolean;
     callFailed: Function;
     draftEditorStoreName: DraftEditorStoreNames;
+    resourceConfigStoreName: ResourceConfigStoreNames;
+    formStateStoreName: FormStateStoreNames;
 }
 
 function MaterializeGenerateButton({
     disabled,
     callFailed,
     draftEditorStoreName,
+    resourceConfigStoreName,
+    formStateStoreName,
 }: Props) {
+    // Details Form Store
+    const entityName = useDetailsForm_details_entityName();
+    const detailsFormsHasErrors = useDetailsForm_errorsExist();
+    const imageConnectorId = useDetailsForm_connectorImage_connectorId();
+    const imagePath = useDetailsForm_connectorImage_imagePath();
+
+    // Draft Editor Store
     const isSaving = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['isSaving']
@@ -38,43 +65,37 @@ function MaterializeGenerateButton({
         EditorStoreState<DraftSpecQuery>['setId']
     >(draftEditorStoreName, (state) => state.setId);
 
-    const useEntityCreateStore = useRouteStore();
+    // Endpoint Config Store
+    const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
+    const endpointConfigHasErrors = useEndpointConfigStore_errorsExist();
+    const endpointSchema = useEndpointConfigStore_endpointSchema();
 
-    const formActive = useEntityCreateStore(
-        entityCreateStoreSelectors.isActive
-    );
-    const setFormState = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.set
-    );
-    const resetFormState = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.reset
-    );
+    // Form State Store
+    const formActive = useZustandStore<
+        EntityFormState,
+        EntityFormState['isActive']
+    >(formStateStoreName, (state) => state.isActive);
 
-    const entityName = useEntityCreateStore(
-        entityCreateStoreSelectors.details.entityName
-    );
-    const imageTag = useEntityCreateStore(
-        entityCreateStoreSelectors.details.connectorTag
-    );
-    const endpointConfigData = useEntityCreateStore(
-        entityCreateStoreSelectors.endpointConfig.data
-    );
-    const endpointSchema = useEntityCreateStore(
-        entityCreateStoreSelectors.endpointSchema
-    );
-    const resourceConfig = useEntityCreateStore(
-        entityCreateStoreSelectors.resourceConfig.get
-    );
+    const setFormState = useZustandStore<
+        EntityFormState,
+        EntityFormState['setFormState']
+    >(formStateStoreName, (state) => state.setFormState);
 
-    const endpointConfigHasErrors = useEntityCreateStore(
-        entityCreateStoreSelectors.endpointConfig.hasErrors
-    );
-    const detailsFormsHasErrors = useEntityCreateStore(
-        entityCreateStoreSelectors.details.hasErrors
-    );
-    const resourceConfigHasErrors = useEntityCreateStore(
-        entityCreateStoreSelectors.resourceConfig.hasErrors
-    );
+    const resetFormState = useZustandStore<
+        EntityFormState,
+        EntityFormState['resetFormState']
+    >(formStateStoreName, (state) => state.resetFormState);
+
+    // Resource Config Store
+    const resourceConfig = useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['resourceConfig']
+    >(resourceConfigStoreName, (state) => state.resourceConfig);
+
+    const resourceConfigHasErrors = useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['resourceConfigErrorsExist']
+    >(resourceConfigStoreName, (state) => state.resourceConfigErrorsExist);
 
     const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
@@ -109,14 +130,20 @@ function MaterializeGenerateButton({
             }
 
             const encryptedEndpointConfig = await encryptConfig(
+                imageConnectorId,
                 endpointSchema,
                 endpointConfigData
             );
-            if (encryptedEndpointConfig.error) {
+            if (
+                encryptedEndpointConfig.error ||
+                encryptedEndpointConfig.data.error
+            ) {
                 return callFailed({
                     error: {
                         title: 'entityCreate.sops.failedTitle',
-                        error: encryptedEndpointConfig.error,
+                        error:
+                            encryptedEndpointConfig.error ??
+                            encryptedEndpointConfig.data.error,
                     },
                 });
             }
@@ -124,7 +151,7 @@ function MaterializeGenerateButton({
             const newDraftId = draftsResponse.data[0].id;
             const draftSpec = generateDraftSpec(
                 encryptedEndpointConfig.data,
-                imageTag.imagePath,
+                imagePath,
                 resourceConfig
             );
 

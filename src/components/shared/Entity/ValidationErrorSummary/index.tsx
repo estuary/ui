@@ -2,31 +2,38 @@ import { Alert, AlertTitle, Collapse } from '@mui/material';
 import DetailsErrors from 'components/shared/Entity/ValidationErrorSummary/DetailsErrors';
 import EndpointConfigErrors from 'components/shared/Entity/ValidationErrorSummary/EndpointConfigErrors';
 import ResourceConfigErrors from 'components/shared/Entity/ValidationErrorSummary/ResourceConfigErrors';
-import { useRouteStore } from 'hooks/useRouteStore';
+import {
+    FormStateStoreNames,
+    ResourceConfigStoreNames,
+    useZustandStore,
+} from 'context/Zustand';
 import { FormattedMessage } from 'react-intl';
-import { entityCreateStoreSelectors } from 'stores/Create';
+import { EntityFormState } from 'stores/FormState';
 
 interface Props {
+    formStateStoreName: FormStateStoreNames;
+    resourceConfigStoreName?: ResourceConfigStoreNames;
     ErrorComponent?: any | boolean;
     hideIcon?: boolean;
     headerMessageId?: string;
-    hasErrorsSelector: Function;
+    errorsExist: boolean;
 }
 
 function ValidationErrorSummary({
+    formStateStoreName,
+    resourceConfigStoreName,
     headerMessageId,
     hideIcon,
     ErrorComponent,
-    hasErrorsSelector,
+    errorsExist,
 }: Props) {
-    const useEntityCreateStore = useRouteStore();
-    const displayValidation = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.displayValidation
-    );
-    const hasErrors = useEntityCreateStore(hasErrorsSelector);
+    const displayValidation = useZustandStore<
+        EntityFormState,
+        EntityFormState['formState']['displayValidation']
+    >(formStateStoreName, (state) => state.formState.displayValidation);
 
     return displayValidation ? (
-        <Collapse in={Boolean(hasErrors)} timeout="auto" unmountOnExit>
+        <Collapse in={errorsExist} timeout="auto" unmountOnExit>
             <Alert severity="error" icon={hideIcon ?? undefined}>
                 <AlertTitle>
                     <FormattedMessage
@@ -42,8 +49,16 @@ function ValidationErrorSummary({
                 ) : (
                     <>
                         <DetailsErrors />
+
                         <EndpointConfigErrors />
-                        <ResourceConfigErrors />
+
+                        {resourceConfigStoreName ? (
+                            <ResourceConfigErrors
+                                resourceConfigStoreName={
+                                    resourceConfigStoreName
+                                }
+                            />
+                        ) : null}
                     </>
                 )}
             </Alert>

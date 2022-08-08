@@ -4,10 +4,11 @@ import AppLayout from 'AppLayout';
 import CaptureCreate from 'components/capture/Create';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import MaterializationCreate from 'components/materialization/Create';
+import { EntityContextProvider } from 'components/shared/Entity/EntityContext';
 import AuthenticatedOnlyContext from 'context/Authenticated';
+import { OAuthPopup } from 'hooks/forks/react-use-oauth2/components';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
-import { RouteStoreProvider } from 'hooks/useRouteStore';
 import Admin from 'pages/Admin';
 import Auth from 'pages/Auth';
 import Captures from 'pages/Captures';
@@ -19,10 +20,13 @@ import Home from 'pages/Home';
 import Materializations from 'pages/Materializations';
 import Registration from 'pages/Registration';
 import { Route, Routes } from 'react-router';
-import { Stores } from 'stores/Repo';
+import { ENTITY } from 'types';
 import { isProduction } from 'utils/env-utils';
 
 export const authenticatedRoutes = {
+    oauth: {
+        path: '/oauth',
+    },
     admin: {
         title: 'routeTitle.admin',
         path: '/admin',
@@ -34,16 +38,10 @@ export const authenticatedRoutes = {
     captures: {
         title: 'routeTitle.captures',
         path: '/captures',
-        store: {
-            key: Stores.CAPTURE_SHARD_DETAIL,
-        },
         create: {
             title: 'routeTitle.captureCreate',
             path: `create`,
             fullPath: '/captures/create',
-            store: {
-                key: Stores.CAPTURE_CREATE,
-            },
             params: {
                 connectorID: 'connectorID',
             },
@@ -60,16 +58,10 @@ export const authenticatedRoutes = {
     materializations: {
         title: 'routeTitle.materializations',
         path: '/materializations',
-        store: {
-            key: Stores.MATERIALIZATION_SHARD_DETAIL,
-        },
         create: {
             title: 'routeTitle.materializationCreate',
             path: 'create',
             fullPath: '/materializations/create',
-            store: {
-                key: Stores.MATERIALIZATION_CREATE,
-            },
             params: {
                 connectorId: 'connectorId',
                 liveSpecId: 'liveSpecId', // live spec ID
@@ -130,6 +122,10 @@ const Authenticated = () => {
                         path={unauthenticatedRoutes.auth.path}
                         element={<Auth />}
                     />
+                    <Route
+                        path={authenticatedRoutes.oauth.path}
+                        element={<OAuthPopup />}
+                    />
                     <Route element={<AppLayout />}>
                         <Route
                             path={authenticatedRoutes.home.path}
@@ -147,62 +143,32 @@ const Authenticated = () => {
                         />
 
                         <Route path={authenticatedRoutes.captures.path}>
-                            <Route
-                                path=""
-                                element={
-                                    <RouteStoreProvider
-                                        routeStoreKey={
-                                            authenticatedRoutes.captures.store
-                                                .key
-                                        }
-                                    >
-                                        <Captures />
-                                    </RouteStoreProvider>
-                                }
-                            />
+                            <Route path="" element={<Captures />} />
                             <Route
                                 path={authenticatedRoutes.captures.create.path}
                                 element={
-                                    <RouteStoreProvider
-                                        routeStoreKey={
-                                            authenticatedRoutes.captures.create
-                                                .store.key
-                                        }
+                                    <EntityContextProvider
+                                        value={ENTITY.CAPTURE}
                                     >
                                         <CaptureCreate />
-                                    </RouteStoreProvider>
+                                    </EntityContextProvider>
                                 }
                             />
                         </Route>
 
                         <Route path={authenticatedRoutes.materializations.path}>
-                            <Route
-                                path=""
-                                element={
-                                    <RouteStoreProvider
-                                        routeStoreKey={
-                                            authenticatedRoutes.materializations
-                                                .store.key
-                                        }
-                                    >
-                                        <Materializations />
-                                    </RouteStoreProvider>
-                                }
-                            />
+                            <Route path="" element={<Materializations />} />
                             <Route
                                 path={
                                     authenticatedRoutes.materializations.create
                                         .path
                                 }
                                 element={
-                                    <RouteStoreProvider
-                                        routeStoreKey={
-                                            authenticatedRoutes.materializations
-                                                .create.store.key
-                                        }
+                                    <EntityContextProvider
+                                        value={ENTITY.MATERIALIZATION}
                                     >
                                         <MaterializationCreate />
-                                    </RouteStoreProvider>
+                                    </EntityContextProvider>
                                 }
                             />
                         </Route>

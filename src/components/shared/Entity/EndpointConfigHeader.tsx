@@ -1,19 +1,15 @@
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { Divider, Typography } from '@mui/material';
 import ExternalLink from 'components/shared/ExternalLink';
-import { useRouteStore } from 'hooks/useRouteStore';
 import { FormattedMessage } from 'react-intl';
-import { entityCreateStoreSelectors } from 'stores/Create';
+import { useEndpointConfigStore_errorsExist } from 'stores/EndpointConfig';
 
 interface Props {
     docsPath?: string;
 }
 
 function EndpointConfigHeader({ docsPath }: Props) {
-    const useEntityCreateStore = useRouteStore();
-    const endpointConfigHasErrors = useEntityCreateStore(
-        entityCreateStoreSelectors.endpointConfig.hasErrors
-    );
+    const endpointConfigHasErrors = useEndpointConfigStore_errorsExist();
 
     return (
         <>

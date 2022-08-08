@@ -1,5 +1,4 @@
 import { Alert, Collapse } from '@mui/material';
-import { RealtimeSubscription } from '@supabase/supabase-js';
 import { authenticatedRoutes } from 'app/Authenticated';
 import CollectionConfig from 'components/collection/Config';
 import { EditorStoreState } from 'components/editor/Store';
@@ -9,9 +8,12 @@ import EndpointConfig from 'components/shared/Entity/EndpointConfig';
 import EntityError from 'components/shared/Entity/Error';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
-import { useClient } from 'hooks/supabase-swr';
-import { usePrompt } from 'hooks/useBlocker';
+import {
+    DraftEditorStoreNames,
+    FormStateStoreNames,
+    ResourceConfigStoreNames,
+    useZustandStore,
+} from 'context/Zustand';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useConnectorTag from 'hooks/useConnectorTag';
@@ -21,19 +23,23 @@ import {
     useLiveSpecsExtByLastPubId,
     useLiveSpecsExtWithOutSpec,
 } from 'hooks/useLiveSpecsExt';
-import { useRouteStore } from 'hooks/useRouteStore';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
-import { ENTITY } from 'types';
+import { useSearchParams } from 'react-router-dom';
+import { useDetailsForm_connectorImage } from 'stores/DetailsForm';
+import { useEndpointConfigStore_setEndpointSchema } from 'stores/EndpointConfig';
+import { EntityFormState } from 'stores/FormState';
+import { ResourceConfigState } from 'stores/ResourceConfig';
+import { ENTITY, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     title: string;
-    connectorType: 'capture' | 'materialization';
+    connectorType: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
     Header: any;
     draftEditorStoreName: DraftEditorStoreNames;
+    formStateStoreName: FormStateStoreNames;
+    resourceConfigStoreName?: ResourceConfigStoreNames;
     showCollections?: boolean;
 }
 
@@ -42,15 +48,13 @@ function EntityCreate({
     connectorType,
     Header,
     draftEditorStoreName,
+    formStateStoreName,
+    resourceConfigStoreName,
     showCollections,
 }: Props) {
     useBrowserTitle(title); //'browserTitle.captureCreate'
 
-    // misc hooks
-    const navigate = useNavigate();
-
     // Supabase stuff
-    const supabaseClient = useClient();
     const { combinedGrants } = useCombinedGrantsExt({
         adminOnly: true,
     });
@@ -70,42 +74,10 @@ function EntityCreate({
         isValidating,
     } = useConnectorWithTagDetail(connectorType);
 
-    const useEntityCreateStore = useRouteStore();
-    const imageTag = useEntityCreateStore(
-        entityCreateStoreSelectors.details.connectorTag
-    );
-    const hasChanges = useEntityCreateStore(
-        entityCreateStoreSelectors.hasChanges
-    );
-    const resetState = useEntityCreateStore(
-        entityCreateStoreSelectors.resetState
-    );
-    const setFormState = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.set
-    );
-    const messagePrefix = useEntityCreateStore(
-        entityCreateStoreSelectors.messagePrefix
-    );
-    const logToken = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.logToken
-    );
-    const formSubmitError = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.error
-    );
-    const exitWhenLogsClose = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.exitWhenLogsClose
-    );
-    const setEndpointSchema = useEntityCreateStore(
-        entityCreateStoreSelectors.setEndpointSchema
-    );
-    const setResourceSchema = useEntityCreateStore(
-        entityCreateStoreSelectors.setResourceSchema
-    );
-    const prefillCollections = useEntityCreateStore(
-        entityCreateStoreSelectors.collections.prefill
-    );
+    // Details Form Store
+    const imageTag = useDetailsForm_connectorImage();
 
-    //Editor state
+    // Draft Editor Store
     const setDraftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setId']
@@ -116,7 +88,46 @@ function EntityCreate({
         EditorStoreState<DraftSpecQuery>['id']
     >(draftEditorStoreName, (state) => state.id);
 
-    // Reset the cataolg if the connector changes
+    // Endpoint Config Store
+    const setEndpointSchema = useEndpointConfigStore_setEndpointSchema();
+
+    // Form State Store
+    const messagePrefix = useZustandStore<
+        EntityFormState,
+        EntityFormState['messagePrefix']
+    >(formStateStoreName, (state) => state.messagePrefix);
+
+    const logToken = useZustandStore<
+        EntityFormState,
+        EntityFormState['formState']['logToken']
+    >(formStateStoreName, (state) => state.formState.logToken);
+
+    const formSubmitError = useZustandStore<
+        EntityFormState,
+        EntityFormState['formState']['error']
+    >(formStateStoreName, (state) => state.formState.error);
+
+    // Resource Config Store
+    // TODO: Determine proper placement for this logic.
+    const setResourceSchema = useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['setResourceSchema']
+    >(
+        resourceConfigStoreName ??
+            ResourceConfigStoreNames.MATERIALIZATION_CREATE,
+        (state) => state.setResourceSchema
+    );
+
+    const prefillCollections = useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['preFillCollections']
+    >(
+        resourceConfigStoreName ??
+            ResourceConfigStoreNames.MATERIALIZATION_CREATE,
+        (state) => state.preFillCollections
+    );
+
+    // Reset the catalog if the connector changes
     useEffect(() => {
         setDraftId(null);
     }, [imageTag, setDraftId]);
@@ -130,8 +141,14 @@ function EntityCreate({
 
     useEffect(() => {
         if (connectorTag) {
-            setEndpointSchema(connectorTag.endpoint_spec_schema);
-            setResourceSchema(connectorTag.resource_spec_schema);
+            // TODO: Repair temporary typing.
+            setEndpointSchema(
+                connectorTag.endpoint_spec_schema as unknown as Schema
+            );
+            setResourceSchema(
+                connectorTag.resource_spec_schema as unknown as Schema
+            );
+
             // We wanna make sure we do these after the schemas are set as
             //  as they are dependent on them.
             if (liveSpecs.length > 0) {
@@ -148,51 +165,6 @@ function EntityCreate({
         setEndpointSchema,
         setResourceSchema,
     ]);
-
-    usePrompt('confirm.loseData', !exitWhenLogsClose && hasChanges(), () => {
-        resetState();
-    });
-
-    const helpers = {
-        callFailed: (formState: any, subscription?: RealtimeSubscription) => {
-            const setFailureState = () => {
-                setFormState({
-                    status: FormStatus.FAILED,
-                    exitWhenLogsClose: false,
-                    ...formState,
-                });
-            };
-            if (subscription) {
-                helpers
-                    .doneSubscribing(subscription)
-                    .then(() => {
-                        setFailureState();
-                    })
-                    .catch(() => {});
-            } else {
-                setFailureState();
-            }
-        },
-        doneSubscribing: (subscription: RealtimeSubscription) => {
-            return supabaseClient
-                .removeSubscription(subscription)
-                .then(() => {})
-                .catch(() => {});
-        },
-        exit: () => {
-            resetState();
-
-            navigate(authenticatedRoutes.captures.path);
-        },
-        jobFailed: (errorTitle: string) => {
-            setFormState({
-                error: {
-                    title: errorTitle,
-                },
-                status: FormStatus.FAILED,
-            });
-        },
-    };
 
     return (
         <>
@@ -225,22 +197,31 @@ function EntityCreate({
                                 connectorTags={connectorTags}
                                 accessGrants={combinedGrants}
                                 draftEditorStoreName={draftEditorStoreName}
+                                formStateStoreName={formStateStoreName}
                             />
                         </ErrorBoundryWrapper>
                     ) : null}
 
-                    {imageTag?.id ? (
+                    {imageTag.id ? (
                         <ErrorBoundryWrapper>
                             <EndpointConfig
                                 connectorImage={imageTag.id}
                                 draftEditorStoreName={draftEditorStoreName}
+                                formStateStoreName={formStateStoreName}
                             />
                         </ErrorBoundryWrapper>
                     ) : null}
 
-                    {showCollections && hasLength(imageTag?.id) ? (
+                    {showCollections &&
+                    resourceConfigStoreName &&
+                    hasLength(imageTag.id) ? (
                         <ErrorBoundryWrapper>
-                            <CollectionConfig />
+                            <CollectionConfig
+                                resourceConfigStoreName={
+                                    resourceConfigStoreName
+                                }
+                                formStateStoreName={formStateStoreName}
+                            />
                         </ErrorBoundryWrapper>
                     ) : null}
 
@@ -248,6 +229,7 @@ function EntityCreate({
                         <CatalogEditor
                             messageId={`${messagePrefix}.finalReview.instructions`}
                             draftEditorStoreName={draftEditorStoreName}
+                            formStateStoreName={formStateStoreName}
                         />
                     </ErrorBoundryWrapper>
                 </>

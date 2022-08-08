@@ -5,24 +5,39 @@ import { EditorStoreState } from 'components/editor/Store';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
+import { useEntityType } from 'components/shared/Entity/EntityContext';
 import FooHeader from 'components/shared/Entity/Header';
 import PageContainer from 'components/shared/PageContainer';
-import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
+import {
+    DraftEditorStoreNames,
+    FormStateStoreNames,
+    useZustandStore,
+} from 'context/Zustand';
 import { useClient } from 'hooks/supabase-swr';
 import { usePrompt } from 'hooks/useBlocker';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { useRouteStore } from 'hooks/useRouteStore';
 import LogRocket from 'logrocket';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import { startSubscription, TABLES } from 'services/supabase';
-import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
+import {
+    useDetailsForm_changed,
+    useDetailsForm_connectorImage,
+    useDetailsForm_errorsExist,
+} from 'stores/DetailsForm';
+import {
+    useEndpointConfigStore_changed,
+    useEndpointConfigStore_errorsExist,
+    useEndpointConfigStore_reset,
+} from 'stores/EndpointConfig';
+import { EntityFormState, FormStatus } from 'stores/FormState';
 import { getPathWithParam } from 'utils/misc-utils';
 
-const connectorType = 'capture';
+const draftEditorStoreName = DraftEditorStoreNames.CAPTURE;
+const formStateStoreName = FormStateStoreNames.CAPTURE_CREATE;
 
 const trackEvent = (payload: any) => {
     LogRocket.track(CustomEvents.CAPTURE_DISCOVER, {
@@ -37,53 +52,69 @@ const trackEvent = (payload: any) => {
 function CaptureCreate() {
     const navigate = useNavigate();
 
+    const entityType = useEntityType();
+
     // Supabase stuff
     const supabaseClient = useClient();
-    const { connectorTags } = useConnectorWithTagDetail(connectorType);
+    const { connectorTags } = useConnectorWithTagDetail(entityType);
     const hasConnectors = connectorTags.length > 0;
 
-    // Form store
-    const useEntityCreateStore = useRouteStore();
-    const messagePrefix = useEntityCreateStore(
-        entityCreateStoreSelectors.messagePrefix
-    );
-    const imageTag = useEntityCreateStore(
-        entityCreateStoreSelectors.details.connectorTag
-    );
-    const hasChanges = useEntityCreateStore(
-        entityCreateStoreSelectors.hasChanges
-    );
-    const resetState = useEntityCreateStore(
-        entityCreateStoreSelectors.resetState
-    );
+    // Details Form Store
+    const imageTag = useDetailsForm_connectorImage();
+    const detailsFormErrorsExist = useDetailsForm_errorsExist();
+    const detailsFormChanged = useDetailsForm_changed();
 
-    const setFormState = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.set
-    );
-    const exitWhenLogsClose = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.exitWhenLogsClose
-    );
-
-    //Editor state
+    // Draft Editor Store
     const setDraftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setId']
-    >(DraftEditorStoreNames.CAPTURE, (state) => state.setId);
+    >(draftEditorStoreName, (state) => state.setId);
 
     const pubId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['pubId']
-    >(DraftEditorStoreNames.CAPTURE, (state) => state.pubId);
+    >(draftEditorStoreName, (state) => state.pubId);
 
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
-    >(DraftEditorStoreNames.CAPTURE, (state) => state.id);
+    >(draftEditorStoreName, (state) => state.id);
+
+    // Endpoint Config Store
+    const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
+    const resetEndpointConfigState = useEndpointConfigStore_reset();
+    const endpointConfigChanged = useEndpointConfigStore_changed();
+
+    // Form State Store
+    const messagePrefix = useZustandStore<
+        EntityFormState,
+        EntityFormState['messagePrefix']
+    >(formStateStoreName, (state) => state.messagePrefix);
+
+    const setFormState = useZustandStore<
+        EntityFormState,
+        EntityFormState['setFormState']
+    >(formStateStoreName, (state) => state.setFormState);
+
+    const resetFormState = useZustandStore<
+        EntityFormState,
+        EntityFormState['resetState']
+    >(formStateStoreName, (state) => state.resetState);
+
+    const exitWhenLogsClose = useZustandStore<
+        EntityFormState,
+        EntityFormState['formState']['exitWhenLogsClose']
+    >(formStateStoreName, (state) => state.formState.exitWhenLogsClose);
 
     // Reset the catalog if the connector changes
     useEffect(() => {
         setDraftId(null);
     }, [imageTag, setDraftId]);
+
+    const resetState = () => {
+        resetEndpointConfigState();
+        resetFormState();
+    };
 
     const helpers = {
         callFailed: (formState: any, subscription?: RealtimeSubscription) => {
@@ -165,28 +196,34 @@ function CaptureCreate() {
         );
     };
 
-    usePrompt('confirm.loseData', !exitWhenLogsClose && hasChanges(), () => {
-        resetState();
-    });
+    usePrompt(
+        'confirm.loseData',
+        !exitWhenLogsClose && (detailsFormChanged() || endpointConfigChanged()),
+        () => {
+            resetState();
+        }
+    );
 
     return (
         <PageContainer>
             <EntityCreate
                 title="browserTitle.captureCreate"
-                connectorType={connectorType}
+                connectorType={entityType}
                 Header={
                     <FooHeader
                         heading={
                             <FormattedMessage id={`${messagePrefix}.heading`} />
+                        }
+                        formErrorsExist={
+                            detailsFormErrorsExist || endpointConfigErrorsExist
                         }
                         GenerateButton={
                             <CaptureGenerateButton
                                 disabled={!hasConnectors}
                                 callFailed={helpers.callFailed}
                                 subscription={discoversSubscription}
-                                draftEditorStoreName={
-                                    DraftEditorStoreNames.CAPTURE
-                                }
+                                draftEditorStoreName={draftEditorStoreName}
+                                formStateStoreName={formStateStoreName}
                             />
                         }
                         TestButton={
@@ -195,9 +232,8 @@ function CaptureCreate() {
                                 callFailed={helpers.callFailed}
                                 disabled={!hasConnectors}
                                 logEvent={CustomEvents.CAPTURE_TEST}
-                                draftEditorStoreName={
-                                    DraftEditorStoreNames.CAPTURE
-                                }
+                                draftEditorStoreName={draftEditorStoreName}
+                                formStateStoreName={formStateStoreName}
                             />
                         }
                         SaveButton={
@@ -205,16 +241,17 @@ function CaptureCreate() {
                                 closeLogs={handlers.closeLogs}
                                 callFailed={helpers.callFailed}
                                 disabled={!draftId}
-                                draftEditorStoreName={
-                                    DraftEditorStoreNames.CAPTURE
-                                }
+                                draftEditorStoreName={draftEditorStoreName}
                                 materialize={handlers.materializeCollections}
                                 logEvent={CustomEvents.CAPTURE_CREATE}
+                                formStateStoreName={formStateStoreName}
                             />
                         }
+                        formStateStoreName={formStateStoreName}
                     />
                 }
-                draftEditorStoreName={DraftEditorStoreNames.CAPTURE}
+                draftEditorStoreName={draftEditorStoreName}
+                formStateStoreName={formStateStoreName}
             />
         </PageContainer>
     );

@@ -1,15 +1,33 @@
 import ResourceConfig from 'components/collection/ResourceConfig';
-import { useRouteStore } from 'hooks/useRouteStore';
-import { entityCreateStoreSelectors } from 'stores/Create';
+import {
+    FormStateStoreNames,
+    ResourceConfigStoreNames,
+    useZustandStore,
+} from 'context/Zustand';
+import { ResourceConfigState } from 'stores/ResourceConfig';
 
-function BindingsEditor() {
-    const useEntityCreateStore = useRouteStore();
-    const currentCollection = useEntityCreateStore(
-        entityCreateStoreSelectors.collections.current.get
-    );
+interface Props {
+    resourceConfigStoreName: ResourceConfigStoreNames;
+    formStateStoreName: FormStateStoreNames;
+}
+
+function BindingsEditor({
+    resourceConfigStoreName,
+    formStateStoreName,
+}: Props) {
+    const currentCollection = useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['currentCollection']
+    >(resourceConfigStoreName, (state) => state.currentCollection);
 
     if (currentCollection) {
-        return <ResourceConfig collectionName={currentCollection} />;
+        return (
+            <ResourceConfig
+                collectionName={currentCollection}
+                resourceConfigStoreName={resourceConfigStoreName}
+                formStateStoreName={formStateStoreName}
+            />
+        );
     } else {
         return null;
     }

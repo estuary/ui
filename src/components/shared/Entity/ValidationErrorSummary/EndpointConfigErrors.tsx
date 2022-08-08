@@ -1,15 +1,12 @@
 import SectionError from 'components/shared/Entity/ValidationErrorSummary/SectionError';
-import { useRouteStore } from 'hooks/useRouteStore';
-import { entityCreateStoreSelectors } from 'stores/Create';
+import {
+    useEndpointConfigStore_endpointSchema,
+    useEndpointConfigStore_errorsExist,
+} from 'stores/EndpointConfig';
 
 function EndpointConfigErrors() {
-    const useEntityCreateStore = useRouteStore();
-    const endpointErrors = useEntityCreateStore(
-        entityCreateStoreSelectors.endpointConfig.errors
-    );
-    const endpointSchema = useEntityCreateStore(
-        entityCreateStoreSelectors.endpointConfig.data
-    );
+    const endpointErrors = useEndpointConfigStore_errorsExist();
+    const endpointSchema = useEndpointConfigStore_endpointSchema();
 
     return (
         <SectionError

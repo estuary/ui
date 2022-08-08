@@ -104,6 +104,7 @@ const Error: ResolvedIntlConfig['messages'] = {
     'error.detailsLabel': `Details:`,
     'error.hintLabel': `Hint:`,
     'error.descriptionLabel': `Description:`,
+    'error.tryAgain': `Try again and if the issue persists please contact support.`,
 };
 
 const ErrorBoundry: ResolvedIntlConfig['messages'] = {
@@ -472,6 +473,12 @@ const ShardStatus: ResolvedIntlConfig['messages'] = {
     'shardStatus.none': `No shard status found.`,
 };
 
+const OAuth: ResolvedIntlConfig['messages'] = {
+    'oauth.instructions': `Authenticate your {provider} account by clicking below. A pop up will open where you can authorize access. No data will be accessed during authorization.`,
+    'oauth.fetchAuthURL.error': `We were unable to fetch the proper URL to start OAuth. ${Error['error.tryAgain']}`,
+    'oauth.accessToken.error': `There was an issue attempting to get the access token from {provider}. ${Error['error.tryAgain']}`,
+};
+
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
     ...CTAs,
@@ -505,6 +512,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...DetailsPanel,
     ...MaterializationCreate,
     ...ShardStatus,
+    ...OAuth,
 };
 
 export default enUSMessages;

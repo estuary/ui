@@ -1,21 +1,36 @@
 import { Button } from '@mui/material';
 import { discover } from 'api/discovers';
 import { createEntityDraft } from 'api/drafts';
-import { encryptConfig } from 'api/sops';
+import { encryptConfig } from 'api/oauth';
 import { EditorStoreState } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
-import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
+import {
+    DraftEditorStoreNames,
+    FormStateStoreNames,
+    useZustandStore,
+} from 'context/Zustand';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { useRouteStore } from 'hooks/useRouteStore';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
-import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
+import {
+    useDetailsForm_connectorImage_connectorId,
+    useDetailsForm_connectorImage_id,
+    useDetailsForm_details_entityName,
+    useDetailsForm_errorsExist,
+} from 'stores/DetailsForm';
+import {
+    useEndpointConfigStore_endpointConfig_data,
+    useEndpointConfigStore_endpointSchema,
+    useEndpointConfigStore_errorsExist,
+} from 'stores/EndpointConfig';
+import { EntityFormState, FormStatus } from 'stores/FormState';
 
 interface Props {
     disabled: boolean;
     callFailed: Function;
     subscription: Function;
     draftEditorStoreName: DraftEditorStoreNames;
+    formStateStoreName: FormStateStoreNames;
 }
 
 function CaptureGenerateButton({
@@ -23,7 +38,9 @@ function CaptureGenerateButton({
     callFailed,
     subscription,
     draftEditorStoreName,
+    formStateStoreName,
 }: Props) {
+    // Editor Store
     const isSaving = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['isSaving']
@@ -34,37 +51,32 @@ function CaptureGenerateButton({
         EditorStoreState<DraftSpecQuery>['resetState']
     >(draftEditorStoreName, (state) => state.resetState);
 
-    const useEntityCreateStore = useRouteStore();
+    // Form State Store
+    const formActive = useZustandStore<
+        EntityFormState,
+        EntityFormState['isActive']
+    >(formStateStoreName, (state) => state.isActive);
 
-    const formActive = useEntityCreateStore(
-        entityCreateStoreSelectors.isActive
-    );
-    const setFormState = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.set
-    );
-    const resetFormState = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.reset
-    );
+    const setFormState = useZustandStore<
+        EntityFormState,
+        EntityFormState['setFormState']
+    >(formStateStoreName, (state) => state.setFormState);
 
-    const entityName = useEntityCreateStore(
-        entityCreateStoreSelectors.details.entityName
-    );
-    const imageTag = useEntityCreateStore(
-        entityCreateStoreSelectors.details.connectorTag
-    );
-    const endpointConfigData = useEntityCreateStore(
-        entityCreateStoreSelectors.endpointConfig.data
-    );
-    const endpointSchema = useEntityCreateStore(
-        entityCreateStoreSelectors.endpointSchema
-    );
+    const resetFormState = useZustandStore<
+        EntityFormState,
+        EntityFormState['resetFormState']
+    >(formStateStoreName, (state) => state.resetFormState);
 
-    const endpointConfigHasErrors = useEntityCreateStore(
-        entityCreateStoreSelectors.endpointConfig.hasErrors
-    );
-    const detailsFormsHasErrors = useEntityCreateStore(
-        entityCreateStoreSelectors.details.hasErrors
-    );
+    // Details Form Store
+    const entityName = useDetailsForm_details_entityName();
+    const detailsFormsHasErrors = useDetailsForm_errorsExist();
+    const imageConnectorTagId = useDetailsForm_connectorImage_id();
+    const imageConnectorId = useDetailsForm_connectorImage_connectorId();
+
+    // Endpoint Config Store
+    const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
+    const endpointSchema = useEndpointConfigStore_endpointSchema();
+    const endpointConfigHasErrors = useEndpointConfigStore_errorsExist();
 
     const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
@@ -92,14 +104,20 @@ function CaptureGenerateButton({
             }
 
             const encryptedEndpointConfig = await encryptConfig(
+                imageConnectorId,
                 endpointSchema,
                 endpointConfigData
             );
-            if (encryptedEndpointConfig.error) {
+            if (
+                encryptedEndpointConfig.error ||
+                encryptedEndpointConfig.data.error
+            ) {
                 return callFailed({
                     error: {
                         title: 'entityCreate.sops.failedTitle',
-                        error: encryptedEndpointConfig.error,
+                        error:
+                            encryptedEndpointConfig.error ??
+                            encryptedEndpointConfig.data.error,
                     },
                 });
             }
@@ -110,7 +128,7 @@ function CaptureGenerateButton({
             const discoverResponse = await discover(
                 entityName,
                 encryptedEndpointConfig.data,
-                imageTag.id,
+                imageConnectorTagId,
                 draftsResponse.data[0].id
             );
             if (discoverResponse.error) {

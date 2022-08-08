@@ -20,3 +20,7 @@ export const getPathWithParam = (path: string, param: any, val: any) => {
 export const hasLength = (val: string | any[] | null | undefined) => {
     return val && val.length > 0;
 };
+
+export const base64RemovePadding = (state: string | null) => {
+    return state ? state.replace(/[=]{1,2}$/, '') : state;
+};

@@ -19,23 +19,32 @@ import ExternalLink from 'components/shared/ExternalLink';
 import ShardErrors from 'components/tables/Details/ShardErrors';
 import StatusIndicatorAndLabel from 'components/tables/Details/StatusIndicatorAndLabel';
 import { slate } from 'context/Theme';
-import { LiveSpecEditorStoreNames, UseZustandStore } from 'context/Zustand';
+import {
+    LiveSpecEditorStoreNames,
+    ShardDetailStoreNames,
+    useZustandStore,
+    UseZustandStore,
+} from 'context/Zustand';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { PublicationSpecQuery } from 'hooks/usePublicationSpecs';
-import { useRouteStore } from 'hooks/useRouteStore';
 import { MouseEvent, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { shardDetailSelectors } from 'stores/ShardDetail';
+import { shardDetailSelectors, ShardDetailStore } from 'stores/ShardDetail';
 import { ENTITY } from 'types';
 
 interface Props {
-    useZustandStore: UseZustandStore;
+    shardDetailStoreName: ShardDetailStoreNames;
+    useLocalZustandStore: UseZustandStore;
     entityType?: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
 }
 
 const rowsPerPage = 3;
 
-function ShardInformation({ useZustandStore, entityType }: Props) {
+function ShardInformation({
+    shardDetailStoreName,
+    useLocalZustandStore,
+    entityType,
+}: Props) {
     const theme = useTheme();
     const intl = useIntl();
 
@@ -43,13 +52,17 @@ function ShardInformation({ useZustandStore, entityType }: Props) {
 
     const [taskShards, setTaskShards] = useState<Shard[]>([]);
 
-    const useShardDetailStore = useRouteStore();
-    const shards = useShardDetailStore(shardDetailSelectors.shards);
-    const getTaskShards = useShardDetailStore(
-        shardDetailSelectors.getTaskShards
-    );
+    const shards = useZustandStore<
+        ShardDetailStore,
+        ShardDetailStore['shards']
+    >(shardDetailStoreName, shardDetailSelectors.shards);
 
-    const specs = useZustandStore<
+    const getTaskShards = useZustandStore<
+        ShardDetailStore,
+        ShardDetailStore['getTaskShards']
+    >(shardDetailStoreName, shardDetailSelectors.getTaskShards);
+
+    const specs = useLocalZustandStore<
         EditorStoreState<PublicationSpecQuery>,
         EditorStoreState<PublicationSpecQuery>['specs']
     >(LiveSpecEditorStoreNames.GENERAL, (state) => state.specs);
@@ -91,7 +104,10 @@ function ShardInformation({ useZustandStore, entityType }: Props) {
 
     return taskShards.length > 0 ? (
         <>
-            <ShardErrors shards={taskShards} />
+            <ShardErrors
+                shards={taskShards}
+                shardDetailStoreName={shardDetailStoreName}
+            />
 
             <Grid item xs={12}>
                 <TableContainer>
@@ -165,6 +181,9 @@ function ShardInformation({ useZustandStore, entityType }: Props) {
                                     >
                                         <StatusIndicatorAndLabel
                                             shard={shard}
+                                            shardDetailStoreName={
+                                                shardDetailStoreName
+                                            }
                                         />
 
                                         <TableCell>

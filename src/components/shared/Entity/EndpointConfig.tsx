@@ -3,16 +3,25 @@ import EndpointConfigForm from 'components/shared/Entity/EndpointConfigForm';
 import EndpointConfigHeader from 'components/shared/Entity/EndpointConfigHeader';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import Error from 'components/shared/Error';
-import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
+import {
+    DraftEditorStoreNames,
+    FormStateStoreNames,
+    useZustandStore,
+} from 'context/Zustand';
 import useConnectorTag from 'hooks/useConnectorTag';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 
 interface Props {
     connectorImage: string;
     draftEditorStoreName: DraftEditorStoreNames;
+    formStateStoreName: FormStateStoreNames;
 }
 
-function EndpointConfig({ connectorImage, draftEditorStoreName }: Props) {
+function EndpointConfig({
+    connectorImage,
+    draftEditorStoreName,
+    formStateStoreName,
+}: Props) {
     const { connectorTag, error } = useConnectorTag(connectorImage);
 
     const draftId = useZustandStore<
@@ -32,7 +41,7 @@ function EndpointConfig({ connectorImage, draftEditorStoreName }: Props) {
                     />
                 }
             >
-                <EndpointConfigForm />
+                <EndpointConfigForm formStateStoreName={formStateStoreName} />
             </WrapperWithHeader>
         );
     } else {

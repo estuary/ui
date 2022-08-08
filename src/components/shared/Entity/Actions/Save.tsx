@@ -2,15 +2,19 @@ import { Button } from '@mui/material';
 import { createPublication } from 'api/publications';
 import { EditorStoreState } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
+import {
+    DraftEditorStoreNames,
+    FormStateStoreNames,
+    useZustandStore,
+} from 'context/Zustand';
 import { useClient } from 'hooks/supabase-swr';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { useRouteStore } from 'hooks/useRouteStore';
-import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
 import LogRocket from 'logrocket';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
 import { endSubscription, startSubscription, TABLES } from 'services/supabase';
-import { entityCreateStoreSelectors, FormStatus } from 'stores/Create';
+import { useDetailsForm_details_description } from 'stores/DetailsForm';
+import { EntityFormState, FormStatus } from 'stores/FormState';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
@@ -21,6 +25,7 @@ interface Props {
     logEvent: CustomEvents;
     dryRun?: boolean;
     draftEditorStoreName: DraftEditorStoreNames;
+    formStateStoreName: FormStateStoreNames;
 }
 
 const trackEvent = (logEvent: Props['logEvent'], payload: any) => {
@@ -39,12 +44,14 @@ function EntityCreateSave({
     onFailure,
     draftEditorStoreName,
     logEvent,
+    formStateStoreName,
 }: Props) {
     const intl = useIntl();
     const supabaseClient = useClient();
 
     const status = dryRun ? FormStatus.TESTING : FormStatus.SAVING;
 
+    // Draft Editor Store
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
@@ -60,25 +67,33 @@ function EntityCreateSave({
         EditorStoreState<DraftSpecQuery>['isSaving']
     >(draftEditorStoreName, (state) => state.isSaving);
 
+    // Details Form Store
+    const entityDescription = useDetailsForm_details_description();
+
+    // Form State Store
+    const messagePrefix = useZustandStore<
+        EntityFormState,
+        EntityFormState['messagePrefix']
+    >(formStateStoreName, (state) => state.messagePrefix);
+
+    const setFormState = useZustandStore<
+        EntityFormState,
+        EntityFormState['setFormState']
+    >(formStateStoreName, (state) => state.setFormState);
+
+    const resetFormState = useZustandStore<
+        EntityFormState,
+        EntityFormState['resetFormState']
+    >(formStateStoreName, (state) => state.resetFormState);
+
+    const formActive = useZustandStore<
+        EntityFormState,
+        EntityFormState['isActive']
+    >(formStateStoreName, (state) => state.isActive);
+
+    // Notification Store
     const showNotification = useNotificationStore(
         notificationStoreSelectors.showNotification
-    );
-
-    const useEntityCreateStore = useRouteStore();
-    const entityDescription = useEntityCreateStore(
-        entityCreateStoreSelectors.details.description
-    );
-    const setFormState = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.set
-    );
-    const resetFormState = useEntityCreateStore(
-        entityCreateStoreSelectors.formState.reset
-    );
-    const messagePrefix = useEntityCreateStore(
-        entityCreateStoreSelectors.messagePrefix
-    );
-    const formActive = useEntityCreateStore(
-        entityCreateStoreSelectors.isActive
     );
 
     const waitForPublishToFinish = (logTokenVal: string) => {

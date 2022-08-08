@@ -1,19 +1,16 @@
 import KeyValueList from 'components/shared/KeyValueList';
-import { useRouteStore } from 'hooks/useRouteStore';
 import { useIntl } from 'react-intl';
-import { entityCreateStoreSelectors } from 'stores/Create';
+import {
+    useDetailsForm_connectorImage_id,
+    useDetailsForm_details_entityName,
+} from 'stores/DetailsForm';
 import { hasLength } from 'utils/misc-utils';
 
 function DetailsErrors() {
     const intl = useIntl();
 
-    const useEntityCreateStore = useRouteStore();
-    const entityName = useEntityCreateStore(
-        entityCreateStoreSelectors.details.entityName
-    );
-    const imageTag = useEntityCreateStore(
-        entityCreateStoreSelectors.details.connectorTag
-    );
+    const entityName = useDetailsForm_details_entityName();
+    const imageId = useDetailsForm_connectorImage_id();
 
     const filteredErrorsList: any[] = [];
 
@@ -26,7 +23,7 @@ function DetailsErrors() {
     }
 
     // Check if there is a connector
-    if (!hasLength(imageTag.id)) {
+    if (!hasLength(imageId)) {
         filteredErrorsList.push({
             title: intl.formatMessage({
                 id: 'entityCreate.endpointConfig.connectorMissing',

@@ -6,6 +6,9 @@
 export enum Options {
     multi = 'multi',
     format = 'format',
+    oauthProvider = 'oauth_provider',
+    oauthFields = 'oauth_fields',
+    multiLineSecret = 'multiLineSecret',
 }
 
 export enum Formats {
@@ -15,4 +18,12 @@ export enum Formats {
 
 export enum Patterns {
     dateTime = 'YYYY-MM-DDThh:mm:ssZ',
+}
+
+export enum Annotations {
+    advanced = 'advanced',
+    oAuthProvider = 'x-oauth2-provider',
+    multiline = 'multiline',
+    order = 'order',
+    secret = 'secret',
 }
