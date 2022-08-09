@@ -3,9 +3,10 @@ import { withJsonFormsControlProps } from '@jsonforms/react';
 import { Alert, Button, Stack, Typography } from '@mui/material';
 import { accessToken, authURL } from 'api/oauth';
 import FullPageSpinner from 'components/fullPage/Spinner';
+import { getDiscriminator } from 'forms/renderers/Overrides/material/complex/MaterialOneOfRenderer_Discriminator';
 import { optionExists } from 'forms/renderers/Overrides/testers/testers';
 import { useOAuth2 } from 'hooks/forks/react-use-oauth2/components';
-import { isEmpty, startCase } from 'lodash';
+import { every, includes, isEmpty, startCase } from 'lodash';
 import { useMemo, useState } from 'react';
 import GoogleButton from 'react-google-button';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -25,11 +26,31 @@ const OAuthproviderRenderer = ({
     data,
     path,
     handleChange,
+    schema,
     uischema,
 }: ControlProps) => {
     const intl = useIntl();
     const { options } = uischema;
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+    const dataKeys = Object.keys(data);
+    const descriminatorProperty = getDiscriminator(schema);
+    const requiredFields = useMemo(
+        () => (options ? options[Options.oauthFields] : []),
+        [options]
+    );
+    const isAuthorized = useMemo(
+        () =>
+            every(requiredFields, (field: string) => {
+                return field === 'client_id' ||
+                    field === 'client_secret' ||
+                    field === descriminatorProperty
+                    ? true
+                    : includes(dataKeys, field) && hasLength(data[field]);
+            }),
+        [data, dataKeys, descriminatorProperty, requiredFields]
+    );
+
     const provider = options ? options[Options.oauthProvider] : NO_PROVIDER;
     const capitalizedProvider = useMemo(() => startCase(provider), [provider]);
 
@@ -99,10 +120,12 @@ const OAuthproviderRenderer = ({
                 <Alert severity="warning">
                     Under Development - do not use in prod
                 </Alert>
+
                 {provider === 'google' ? (
                     <GoogleButton disabled={loading} onClick={openPopUp} />
                 ) : null}
-                {!isEmpty(data) ? (
+
+                {isAuthorized ? (
                     <>
                         <Alert severity="success">Authenticated</Alert>
                         <Button onClick={removeCofig}>Remove</Button>
