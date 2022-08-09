@@ -96,7 +96,7 @@ const Data: ResolvedIntlConfig['messages'] = {
 
 const Error: ResolvedIntlConfig['messages'] = {
     'error.title': `Error`,
-    'error.message': `This is not something you did wrong. There was a technical issue fetching data. Please {docLink}.`,
+    'error.message': `This is not something you did wrong. There was a technical issue. Please {docLink}.`,
     'error.message.docLink': `contact support`,
     'error.message.docPath': `mailto:support@estuary.dev`,
     'error.codeLabel': `Code:`,

@@ -15,13 +15,13 @@ import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
     useDetailsForm_connectorImage_connectorId,
+    useDetailsForm_connectorImage_id,
     useDetailsForm_connectorImage_imagePath,
     useDetailsForm_details_entityName,
     useDetailsForm_errorsExist,
 } from 'stores/DetailsForm';
 import {
     useEndpointConfigStore_endpointConfig_data,
-    useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_errorsExist,
 } from 'stores/EndpointConfig';
 import { EntityFormState, FormStatus } from 'stores/FormState';
@@ -46,6 +46,7 @@ function MaterializeGenerateButton({
     // Details Form Store
     const entityName = useDetailsForm_details_entityName();
     const detailsFormsHasErrors = useDetailsForm_errorsExist();
+    const imageConnectorTagId = useDetailsForm_connectorImage_id();
     const imageConnectorId = useDetailsForm_connectorImage_connectorId();
     const imagePath = useDetailsForm_connectorImage_imagePath();
 
@@ -68,7 +69,6 @@ function MaterializeGenerateButton({
     // Endpoint Config Store
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
     const endpointConfigHasErrors = useEndpointConfigStore_errorsExist();
-    const endpointSchema = useEndpointConfigStore_endpointSchema();
 
     // Form State Store
     const formActive = useZustandStore<
@@ -131,7 +131,7 @@ function MaterializeGenerateButton({
 
             const encryptedEndpointConfig = await encryptConfig(
                 imageConnectorId,
-                endpointSchema,
+                imageConnectorTagId,
                 endpointConfigData
             );
             if (
