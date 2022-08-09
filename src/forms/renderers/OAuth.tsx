@@ -15,6 +15,9 @@ import { Options } from 'types/jsonforms';
 import { hasLength } from 'utils/misc-utils';
 
 const NO_PROVIDER = 'noProviderFound';
+const CLIENT_ID = 'client_id';
+const CLIENT_SECRET = 'client_secret';
+const INJECTED = '_injectedDuringEncryption_';
 
 export const oAuthProviderTester: RankedTester = rankWith(
     1000,
@@ -42,8 +45,8 @@ const OAuthproviderRenderer = ({
     const isAuthorized = useMemo(
         () =>
             every(requiredFields, (field: string) => {
-                return field === 'client_id' ||
-                    field === 'client_secret' ||
+                return field === CLIENT_ID ||
+                    field === CLIENT_SECRET ||
                     field === descriminatorProperty
                     ? true
                     : includes(dataKeys, field) && hasLength(data[field]);
@@ -71,7 +74,15 @@ const OAuthproviderRenderer = ({
                 )
             );
         } else if (!isEmpty(tokenResponse.data)) {
+            // These are injected by the server/encryption call so just setting
+            //  some value here to pass the validation
+            const fakeDefaults = {
+                [CLIENT_ID]: INJECTED,
+                [CLIENT_SECRET]: INJECTED,
+            };
             handleChange(path, {
+                ...fakeDefaults,
+                ...data,
                 ...tokenResponse.data,
             });
         }
