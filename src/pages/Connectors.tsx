@@ -5,7 +5,7 @@ import {
     type SxProps,
     type Theme,
 } from '@mui/material';
-import GridWrapper from 'components/layout/GridWrapper';
+import ConnectorTile from 'components/ConnectorTile';
 import PageContainer from 'components/shared/PageContainer';
 import ConnectorsTable from 'components/tables/Connectors';
 import useBrowserTitle from 'hooks/useBrowserTitle';
@@ -31,7 +31,7 @@ const Connectors = () => {
                 <ConnectorsTable />
             </Box>
 
-            <GridWrapper cardWidth={250} cardsPerRow={4} gridSpacing={2} />
+            <ConnectorTile cardWidth={250} cardsPerRow={4} gridSpacing={2} />
         </PageContainer>
     );
 };
