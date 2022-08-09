@@ -3,6 +3,7 @@ import { withJsonFormsControlProps } from '@jsonforms/react';
 import { Alert, Button, Stack, Typography } from '@mui/material';
 import { accessToken, authURL } from 'api/oauth';
 import FullPageSpinner from 'components/fullPage/Spinner';
+import { getDiscriminator } from 'forms/renderers/Overrides/material/complex/MaterialOneOfRenderer_Discriminator';
 import { optionExists } from 'forms/renderers/Overrides/testers/testers';
 import { useOAuth2 } from 'hooks/forks/react-use-oauth2/components';
 import { every, includes, isEmpty, startCase } from 'lodash';
@@ -25,6 +26,7 @@ const OAuthproviderRenderer = ({
     data,
     path,
     handleChange,
+    schema,
     uischema,
 }: ControlProps) => {
     const intl = useIntl();
@@ -32,6 +34,7 @@ const OAuthproviderRenderer = ({
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const dataKeys = Object.keys(data);
+    const descriminatorProperty = getDiscriminator(schema);
     const requiredFields = useMemo(
         () => (options ? options[Options.oauthFields] : []),
         [options]
@@ -39,11 +42,13 @@ const OAuthproviderRenderer = ({
     const isAuthorized = useMemo(
         () =>
             every(requiredFields, (field: string) => {
-                return field === 'client_id' || field === 'client_secret'
+                return field === 'client_id' ||
+                    field === 'client_secret' ||
+                    field === descriminatorProperty
                     ? true
-                    : includes(dataKeys, field);
+                    : includes(dataKeys, field) && hasLength(data[field]);
             }),
-        [dataKeys, requiredFields]
+        [data, dataKeys, descriminatorProperty, requiredFields]
     );
 
     const provider = options ? options[Options.oauthProvider] : NO_PROVIDER;
