@@ -13,7 +13,7 @@ import {
     UseZustandStore,
 } from 'context/Zustand';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { PublicationSpecQuery } from 'hooks/usePublicationSpecs';
+import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
 import { useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
@@ -74,15 +74,15 @@ function EditorFileSelector({ editorStoreName, useZustandStore }: Props) {
     >(editorStoreName, (state) => state.isEditing);
 
     const setCurrentCatalog = useZustandStore<
-        EditorStoreState<PublicationSpecQuery | DraftSpecQuery>,
+        EditorStoreState<LiveSpecsQuery_spec | DraftSpecQuery>,
         EditorStoreState<
-            PublicationSpecQuery | DraftSpecQuery
+            LiveSpecsQuery_spec | DraftSpecQuery
         >['setCurrentCatalog']
     >(editorStoreName, (state) => state.setCurrentCatalog);
 
     const specs = useZustandStore<
-        EditorStoreState<PublicationSpecQuery | DraftSpecQuery>,
-        EditorStoreState<PublicationSpecQuery | DraftSpecQuery>['specs']
+        EditorStoreState<LiveSpecsQuery_spec | DraftSpecQuery>,
+        EditorStoreState<LiveSpecsQuery_spec | DraftSpecQuery>['specs']
     >(editorStoreName, (state) => state.specs);
 
     const [selectionModel, setSelectionModel] = useState<GridSelectionModel>(

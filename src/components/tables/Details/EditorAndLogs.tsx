@@ -4,48 +4,42 @@ import { DEFAULT_TOTAL_HEIGHT } from 'components/editor/MonacoEditor';
 import { EditorStoreState } from 'components/editor/Store';
 import Logs from 'components/Logs';
 import Error from 'components/shared/Error';
-import usePublications from 'hooks/usePublications';
-import usePublicationSpecs, {
-    PublicationSpecQuery,
-} from 'hooks/usePublicationSpecs';
 import { LiveSpecEditorStoreNames, UseZustandStore } from 'context/Zustand';
+import { LiveSpecsQuery_spec, useLiveSpecs_spec } from 'hooks/useLiveSpecs';
+import usePublications from 'hooks/usePublications';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { ENTITY } from 'types';
+import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     lastPubId: string;
     liveSpecEditorStoreName: LiveSpecEditorStoreNames;
     useZustandStore: UseZustandStore;
-    specTypes?: ENTITY[];
-    liveSpecId?: string;
     disableLogs?: boolean;
+    collectionNames?: string[];
 }
 
 function EditorAndLogs({
     lastPubId,
     liveSpecEditorStoreName,
     useZustandStore,
-    specTypes,
-    liveSpecId,
     disableLogs,
+    collectionNames,
 }: Props) {
-    const { publicationSpecs, error: pubSpecsError } = usePublicationSpecs({
-        lastPubId,
-        specTypes,
-        liveSpecId,
-    });
-    const { publication: publications, error: pubsError } =
-        usePublications(lastPubId);
+    const { liveSpecs: publicationSpecs, error: pubSpecsError } =
+        useLiveSpecs_spec(collectionNames);
+    const { publication: publications, error: pubsError } = usePublications(
+        !disableLogs ? lastPubId : null
+    );
 
     const setSpecs = useZustandStore<
-        EditorStoreState<PublicationSpecQuery>,
-        EditorStoreState<PublicationSpecQuery>['setSpecs']
+        EditorStoreState<LiveSpecsQuery_spec>,
+        EditorStoreState<LiveSpecsQuery_spec>['setSpecs']
     >(liveSpecEditorStoreName, (state) => state.setSpecs);
 
     const setId = useZustandStore<
-        EditorStoreState<PublicationSpecQuery>,
-        EditorStoreState<PublicationSpecQuery>['setId']
+        EditorStoreState<LiveSpecsQuery_spec>,
+        EditorStoreState<LiveSpecsQuery_spec>['setId']
     >(liveSpecEditorStoreName, (state) => state.setId);
 
     useEffect(() => {
@@ -53,8 +47,8 @@ function EditorAndLogs({
     }, [lastPubId, setId]);
 
     useEffect(() => {
-        if (publicationSpecs.length > 0) {
-            setSpecs(publicationSpecs.map((item) => item.live_specs));
+        if (hasLength(publicationSpecs)) {
+            setSpecs(publicationSpecs);
         }
     }, [publicationSpecs, setSpecs]);
 
