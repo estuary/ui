@@ -24,7 +24,6 @@ export const oAuthProviderTester: RankedTester = rankWith(
     optionExists(Options.oauthProvider)
 );
 
-// This is blank on purpose. For right now we can just show null settings are nothing
 const OAuthproviderRenderer = ({
     data,
     path,
