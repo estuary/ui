@@ -16,7 +16,10 @@ const columnStyling = {
     textOverflow: 'ellipsis',
 };
 
-export const tableColumns = [
+export const tableColumns: {
+    field: keyof ConnectorWithTagDetailQuery | null;
+    headerIntlKey: string;
+}[] = [
     {
         field: CONNECTOR_NAME,
         headerIntlKey: 'connectorTable.data.title',
