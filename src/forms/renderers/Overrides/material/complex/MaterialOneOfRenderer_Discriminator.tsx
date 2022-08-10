@@ -62,6 +62,12 @@ export interface OwnOneOfProps extends OwnPropsOfControl {
 
 const discriminator = 'discriminator';
 
+export const getDiscriminator = (schema: any) => {
+    return (schema as any)[discriminator]
+        ? (schema as any)[discriminator].propertyName
+        : null;
+};
+
 export const Custom_MaterialOneOfRenderer_Discriminator = ({
     handleChange,
     schema,
@@ -95,7 +101,7 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
         uischemas
     );
 
-    const descriminatorProperty = (schema as any)[discriminator].propertyName;
+    const descriminatorProperty = getDiscriminator(schema);
 
     // Customization: Run through the elements and clear out the ones without elements
     oneOfRenderInfos.map((renderer) => {

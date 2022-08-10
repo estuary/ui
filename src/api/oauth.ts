@@ -34,14 +34,14 @@ export const accessToken = (state: string, code: string) => {
 
 export const encryptConfig = (
     connectorId: string,
+    connectorTagId: string,
 
-    schema: any,
     config: any
 ) => {
     return invokeSupabase<any>(FUNCTIONS.OAUTH, {
         operation: OPERATIONS.ENCRYPT_CONFIG,
         connector_id: connectorId,
+        connector_tag_id: connectorTagId,
         config,
-        schema,
     });
 };
