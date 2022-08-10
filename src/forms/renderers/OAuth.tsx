@@ -1,6 +1,6 @@
 import { ControlProps, RankedTester, rankWith } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
-import { Alert, Button, Stack, Typography } from '@mui/material';
+import { Alert, Box, Button, Chip, Stack, Typography } from '@mui/material';
 import { accessToken, authURL } from 'api/oauth';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import { getDiscriminator } from 'forms/renderers/Overrides/material/complex/MaterialOneOfRenderer_Discriminator';
@@ -17,7 +17,7 @@ import { hasLength } from 'utils/misc-utils';
 const NO_PROVIDER = 'noProviderFound';
 const CLIENT_ID = 'client_id';
 const CLIENT_SECRET = 'client_secret';
-const INJECTED = '_injectedDuringEncryption_';
+const INJECTED = '_injectedDuringEncryption_'; //MUST stay in sync with animate-carnival/supabase/functions/oauth/encrypt-config.ts
 
 export const oAuthProviderTester: RankedTester = rankWith(
     1000,
@@ -25,18 +25,16 @@ export const oAuthProviderTester: RankedTester = rankWith(
 );
 
 // This is blank on purpose. For right now we can just show null settings are nothing
-const OAuthproviderRenderer = ({
-    data,
-    path,
-    handleChange,
-    schema,
-    uischema,
-}: ControlProps) => {
+const OAuthproviderRenderer = (props: ControlProps) => {
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    const { data, path, handleChange, schema, uischema } = props;
     const intl = useIntl();
     const { options } = uischema;
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    const dataKeys = Object.keys(data);
+    console.log('errors', props);
+
+    const dataKeys = Object.keys(data ?? {});
     const descriminatorProperty = getDiscriminator(schema);
     const requiredFields = useMemo(
         () => (options ? options[Options.oauthFields] : []),
@@ -115,37 +113,69 @@ const OAuthproviderRenderer = ({
     };
 
     return (
-        <>
-            <Typography>
-                <FormattedMessage
-                    id="oauth.instructions"
-                    values={{ provider: capitalizedProvider }}
-                />
-            </Typography>
-
-            {hasLength(errorMessage) ? (
-                <Alert severity="error">{errorMessage}</Alert>
-            ) : null}
-
-            <Stack direction="row" spacing={2}>
-                <Alert severity="warning">
-                    Under Development - do not use in prod
-                </Alert>
-
-                {provider === 'google' ? (
-                    <GoogleButton disabled={loading} onClick={openPopUp} />
-                ) : null}
-
-                {isAuthorized ? (
-                    <>
-                        <Alert severity="success">Authenticated</Alert>
-                        <Button onClick={removeCofig}>Remove</Button>
-                    </>
-                ) : null}
-            </Stack>
-
+        <Box
+            sx={{
+                mt: 2,
+            }}
+        >
             {loading ? <FullPageSpinner /> : null}
-        </>
+
+            <Stack direction="column" spacing={2}>
+                <Typography>
+                    <FormattedMessage
+                        id="oauth.instructions"
+                        values={{ provider: capitalizedProvider }}
+                    />
+                </Typography>
+
+                <Stack
+                    direction="row"
+                    spacing={2}
+                    sx={{
+                        alignItems: 'center',
+                    }}
+                >
+                    {provider === 'google' ? (
+                        <GoogleButton disabled={loading} onClick={openPopUp} />
+                    ) : (
+                        <Button disabled={loading} onClick={openPopUp}>
+                            <FormattedMessage
+                                id="oauth.authenticate"
+                                values={{ provider: capitalizedProvider }}
+                            />
+                        </Button>
+                    )}
+
+                    {hasLength(errorMessage) ? (
+                        <Alert
+                            severity="error"
+                            sx={{
+                                maxWidth: '50%',
+                            }}
+                        >
+                            {errorMessage}
+                        </Alert>
+                    ) : null}
+
+                    {isAuthorized ? (
+                        <Chip
+                            label={
+                                <FormattedMessage id="oauth.authenticated" />
+                            }
+                            color="success"
+                            onDelete={removeCofig}
+                        />
+                    ) : (
+                        <Chip
+                            label={
+                                <FormattedMessage id="oauth.unauthenticated" />
+                            }
+                            color="warning"
+                        />
+                    )}
+                </Stack>
+            </Stack>
+        </Box>
     );
 };
 
