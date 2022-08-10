@@ -34,6 +34,7 @@ import {
 import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { CONNECTOR_NAME, defaultTableFilter, TABLES } from 'services/supabase';
+import { ENTITY } from 'types';
 import { getPathWithParam, hasLength } from 'utils/misc-utils';
 
 interface Props {
@@ -67,7 +68,7 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
     const intl = useIntl();
     const isFiltering = useRef(false);
 
-    const filterOptions: {
+    const paramFilterOptions: {
         field: keyof ConnectorWithTagDetailQuery;
         message: string;
     }[] = useMemo(
@@ -88,6 +89,34 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
         [intl]
     );
 
+    const protocolFilterOptions: {
+        protocol: ENTITY | null;
+        message: string;
+    }[] = useMemo(
+        () => [
+            {
+                protocol: null,
+                message: intl.formatMessage({
+                    id: 'common.optionsAll',
+                }),
+            },
+            {
+                protocol: ENTITY.CAPTURE,
+                message: intl.formatMessage({
+                    id: 'terms.capture',
+                }),
+            },
+            {
+                protocol: ENTITY.MATERIALIZATION,
+                message: intl.formatMessage({
+                    id: 'terms.materialization',
+                }),
+            },
+        ],
+        [intl]
+    );
+
+    const [protocol, setProtocol] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState<string | null>(null);
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
     const [columnToSort, setColumnToSort] =
@@ -107,11 +136,13 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
                     [columnToSort],
                     searchQuery,
                     columnToSort,
-                    sortDirection
+                    sortDirection,
+                    undefined,
+                    { column: 'connector_tags.protocol', value: protocol }
                 );
             },
         },
-        [searchQuery, columnToSort, sortDirection]
+        [searchQuery, columnToSort, sortDirection, protocol]
     );
 
     const {
@@ -146,17 +177,27 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
             },
             750
         ),
-        setSearchParam: debounce(
+        setFilterParam: debounce(
             (_event: SyntheticEvent, value: string | null) => {
                 setSortDirection('asc');
 
-                const selectedColumn = filterOptions.find(
+                const selectedColumn = paramFilterOptions.find(
                     (option) => option.message === value
                 )?.field;
 
                 setColumnToSort(
                     selectedColumn ? selectedColumn : CONNECTOR_NAME
                 );
+            },
+            750
+        ),
+        setProtocol: debounce(
+            (_event: SyntheticEvent, value: string | null) => {
+                const selectedProtocol = protocolFilterOptions.find(
+                    (option) => option.message === value
+                )?.protocol;
+
+                setProtocol(selectedProtocol ? selectedProtocol : null);
             },
             750
         ),
@@ -204,7 +245,9 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
             <Grid item sx={{ width: '100%' }}>
                 <Toolbar disableGutters sx={{ justifyContent: 'flex-end' }}>
                     <Autocomplete
-                        options={filterOptions.map(({ message }) => message)}
+                        options={paramFilterOptions.map(
+                            ({ message }) => message
+                        )}
                         renderInput={({
                             InputProps,
                             ...params
@@ -224,8 +267,35 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
                             id: 'connectorTable.data.title',
                         })}
                         disableClearable
-                        onChange={handlers.setSearchParam}
+                        onChange={handlers.setFilterParam}
                         sx={{ width: 150, mr: 2 }}
+                    />
+
+                    <Autocomplete
+                        options={protocolFilterOptions.map(
+                            ({ message }) => message
+                        )}
+                        renderInput={({
+                            InputProps,
+                            ...params
+                        }: AutocompleteRenderInputParams) => (
+                            <TextField
+                                {...params}
+                                InputProps={{
+                                    ...InputProps,
+                                    disableUnderline: true,
+                                    sx: testProps,
+                                }}
+                                label="Protocol"
+                                variant="filled"
+                            />
+                        )}
+                        defaultValue={intl.formatMessage({
+                            id: 'common.optionsAll',
+                        })}
+                        disableClearable
+                        onChange={handlers.setProtocol}
+                        sx={{ width: 200, mr: 2 }}
                     />
 
                     <TextField

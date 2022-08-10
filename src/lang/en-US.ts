@@ -22,6 +22,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.fail': `Failed`,
     'common.success': `Success`,
     'common.errors.heading': `Error`,
+    'common.optionsAll': `All`,
     'common.optionsMissing': `No options`,
     'common.noData': `No data to display`,
     'common.loggedOut': `You have been logged out. Please log back in.`,
