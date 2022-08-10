@@ -51,6 +51,10 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'description.label': `Details`,
     'description.description': `Describe your changes or why you're changing things.`,
 
+    // Filter options
+    'sortDirection.ascending': `A to Z`,
+    'sortDirection.descending': `Z to A`,
+
     // Common sections
     'connectionConfig.header': `Connection Config`,
 

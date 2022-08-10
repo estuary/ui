@@ -4,6 +4,7 @@ import {
     AutocompleteRenderInputParams,
     Box,
     Button,
+    FilledInputProps,
     Grid,
     IconButton,
     LinearProgress,
@@ -16,6 +17,7 @@ import {
 import { PostgrestError } from '@supabase/supabase-js';
 import { authenticatedRoutes } from 'app/Authenticated';
 import MessageWithLink from 'components/content/MessageWithLink';
+import { SortDirection } from 'components/tables/EntityTable';
 import { slate } from 'context/Theme';
 import { useQuery, useSelect } from 'hooks/supabase-swr';
 import {
@@ -63,12 +65,23 @@ interface TableState {
     error?: PostgrestError;
 }
 
+const inputProps: Partial<FilledInputProps> = {
+    disableUnderline: true,
+    sx: {
+        borderRadius: 5,
+        backgroundColor: (theme) =>
+            theme.palette.mode === 'dark'
+                ? 'linear-gradient(160deg, rgba(172, 199, 220, 0.18) 2%, rgba(172, 199, 220, 0.12) 40%)'
+                : slate[50],
+    },
+};
+
 function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
     const navigate = useNavigate();
     const intl = useIntl();
     const isFiltering = useRef(false);
 
-    const paramFilterOptions: {
+    const paramOptions: {
         field: keyof ConnectorWithTagDetailQuery;
         message: string;
     }[] = useMemo(
@@ -89,7 +102,7 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
         [intl]
     );
 
-    const protocolFilterOptions: {
+    const protocolOptions: {
         protocol: ENTITY | null;
         message: string;
     }[] = useMemo(
@@ -116,9 +129,30 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
         [intl]
     );
 
+    const sortDirectionOptions: {
+        direction: SortDirection;
+        message: string;
+    }[] = useMemo(
+        () => [
+            {
+                direction: 'asc',
+                message: intl.formatMessage({
+                    id: 'sortDirection.ascending',
+                }),
+            },
+            {
+                direction: 'desc',
+                message: intl.formatMessage({
+                    id: 'sortDirection.descending',
+                }),
+            },
+        ],
+        [intl]
+    );
+
     const [protocol, setProtocol] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState<string | null>(null);
-    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+    const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
     const [columnToSort, setColumnToSort] =
         useState<keyof ConnectorWithTagDetailQuery>(CONNECTOR_NAME);
 
@@ -181,7 +215,7 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
             (_event: SyntheticEvent, value: string | null) => {
                 setSortDirection('asc');
 
-                const selectedColumn = paramFilterOptions.find(
+                const selectedColumn = paramOptions.find(
                     (option) => option.message === value
                 )?.field;
 
@@ -193,11 +227,21 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
         ),
         setProtocol: debounce(
             (_event: SyntheticEvent, value: string | null) => {
-                const selectedProtocol = protocolFilterOptions.find(
+                const selectedProtocol = protocolOptions.find(
                     (option) => option.message === value
                 )?.protocol;
 
                 setProtocol(selectedProtocol ? selectedProtocol : null);
+            },
+            750
+        ),
+        switchSortDirection: debounce(
+            (_event: SyntheticEvent, value: string | null) => {
+                const selectedDirection = sortDirectionOptions.find(
+                    (option) => option.message === value
+                )?.direction;
+
+                setSortDirection(selectedDirection ? selectedDirection : 'asc');
             },
             750
         ),
@@ -230,8 +274,6 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
         }
     };
 
-    const testProps = { borderRadius: 5 };
-
     return (
         <Grid
             container
@@ -245,9 +287,7 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
             <Grid item sx={{ width: '100%' }}>
                 <Toolbar disableGutters sx={{ justifyContent: 'flex-end' }}>
                     <Autocomplete
-                        options={paramFilterOptions.map(
-                            ({ message }) => message
-                        )}
+                        options={paramOptions.map(({ message }) => message)}
                         renderInput={({
                             InputProps,
                             ...params
@@ -256,8 +296,7 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
                                 {...params}
                                 InputProps={{
                                     ...InputProps,
-                                    disableUnderline: true,
-                                    sx: testProps,
+                                    ...inputProps,
                                 }}
                                 label="Filter Param"
                                 variant="filled"
@@ -272,9 +311,7 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
                     />
 
                     <Autocomplete
-                        options={protocolFilterOptions.map(
-                            ({ message }) => message
-                        )}
+                        options={protocolOptions.map(({ message }) => message)}
                         renderInput={({
                             InputProps,
                             ...params
@@ -283,8 +320,7 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
                                 {...params}
                                 InputProps={{
                                     ...InputProps,
-                                    disableUnderline: true,
-                                    sx: testProps,
+                                    ...inputProps,
                                 }}
                                 label="Protocol"
                                 variant="filled"
@@ -298,15 +334,38 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
                         sx={{ width: 200, mr: 2 }}
                     />
 
+                    <Autocomplete
+                        options={sortDirectionOptions.map(
+                            ({ message }) => message
+                        )}
+                        renderInput={({
+                            InputProps,
+                            ...params
+                        }: AutocompleteRenderInputParams) => (
+                            <TextField
+                                {...params}
+                                InputProps={{
+                                    ...InputProps,
+                                    ...inputProps,
+                                }}
+                                label="Sort Direction"
+                                variant="filled"
+                            />
+                        )}
+                        defaultValue={intl.formatMessage({
+                            id: 'sortDirection.ascending',
+                        })}
+                        disableClearable
+                        onChange={handlers.switchSortDirection}
+                        sx={{ width: 125, mr: 2 }}
+                    />
+
                     <TextField
                         label={intl.formatMessage({
                             id: 'connectorTable.filterLabel',
                         })}
                         variant="filled"
-                        InputProps={{
-                            disableUnderline: true,
-                            sx: testProps,
-                        }}
+                        InputProps={inputProps}
                         onChange={handlers.filterTiles}
                         sx={{ width: cardWidth, borderRadius: 5 }}
                     />
