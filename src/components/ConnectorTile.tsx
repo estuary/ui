@@ -422,12 +422,6 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
 
                                 <Button
                                     size="small"
-                                    color={
-                                        row.connector_tags[0].protocol ===
-                                        'capture'
-                                            ? 'primary'
-                                            : 'secondary'
-                                    }
                                     onClick={() => {
                                         if (
                                             row.connector_tags[0].protocol ===
