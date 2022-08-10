@@ -25,14 +25,16 @@ export const oAuthProviderTester: RankedTester = rankWith(
 );
 
 // This is blank on purpose. For right now we can just show null settings are nothing
-const OAuthproviderRenderer = (props: ControlProps) => {
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    const { data, path, handleChange, schema, uischema } = props;
+const OAuthproviderRenderer = ({
+    data,
+    path,
+    handleChange,
+    schema,
+    uischema,
+}: ControlProps) => {
     const intl = useIntl();
     const { options } = uischema;
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-    console.log('errors', props);
 
     const dataKeys = Object.keys(data ?? {});
     const descriminatorProperty = getDiscriminator(schema);
@@ -128,6 +130,17 @@ const OAuthproviderRenderer = (props: ControlProps) => {
                     />
                 </Typography>
 
+                {hasLength(errorMessage) ? (
+                    <Alert
+                        severity="error"
+                        sx={{
+                            maxWidth: '50%',
+                        }}
+                    >
+                        {errorMessage}
+                    </Alert>
+                ) : null}
+
                 <Stack
                     direction="row"
                     spacing={2}
@@ -145,17 +158,6 @@ const OAuthproviderRenderer = (props: ControlProps) => {
                             />
                         </Button>
                     )}
-
-                    {hasLength(errorMessage) ? (
-                        <Alert
-                            severity="error"
-                            sx={{
-                                maxWidth: '50%',
-                            }}
-                        >
-                            {errorMessage}
-                        </Alert>
-                    ) : null}
 
                     {isAuthorized ? (
                         <Chip
