@@ -74,11 +74,7 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
         [searchQuery, columnToSort, sortDirection, protocol]
     );
 
-    const {
-        data: useSelectResponse,
-        isValidating,
-        // mutate: mutateSelectData,
-    } = useSelect(liveSpecQuery);
+    const { data: useSelectResponse, isValidating } = useSelect(liveSpecQuery);
     const selectData = useMemo(
         () => (useSelectResponse ? useSelectResponse.data : []),
         [useSelectResponse]
@@ -209,8 +205,13 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
                                     align="center"
                                     marginBottom={5}
                                 >
-                                    <span style={{ fontWeight: 'bold' }}>
-                                        Last Updated:{' '}
+                                    <span
+                                        style={{
+                                            marginRight: '.5rem',
+                                            fontWeight: 'bold',
+                                        }}
+                                    >
+                                        <FormattedMessage id="entityTable.data.lastUpdatedWithColon" />
                                     </span>
 
                                     <FormattedDate

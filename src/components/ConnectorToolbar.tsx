@@ -182,7 +182,9 @@ function ConnectorToolbar({
                             ...InputProps,
                             ...inputProps,
                         }}
-                        label="Filter Param"
+                        label={intl.formatMessage({
+                            id: 'connectorTable.label.filterBasis',
+                        })}
                         variant="filled"
                     />
                 )}
@@ -206,7 +208,9 @@ function ConnectorToolbar({
                             ...InputProps,
                             ...inputProps,
                         }}
-                        label="Protocol"
+                        label={intl.formatMessage({
+                            id: 'connectorTable.data.protocol',
+                        })}
                         variant="filled"
                     />
                 )}
@@ -230,7 +234,9 @@ function ConnectorToolbar({
                             ...InputProps,
                             ...inputProps,
                         }}
-                        label="Sort Direction"
+                        label={intl.formatMessage({
+                            id: 'connectorTable.label.sortDirection',
+                        })}
                         variant="filled"
                     />
                 )}
