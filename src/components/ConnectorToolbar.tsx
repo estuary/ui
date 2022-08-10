@@ -5,7 +5,6 @@ import {
     TextField,
     Toolbar,
 } from '@mui/material';
-import { SortDirection } from 'components/tables/EntityTable';
 import { slate } from 'context/Theme';
 import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
 import { debounce } from 'lodash';
@@ -19,7 +18,7 @@ import {
 } from 'react';
 import { useIntl } from 'react-intl';
 import { CONNECTOR_NAME } from 'services/supabase';
-import { ENTITY } from 'types';
+import { ENTITY, SortDirection } from 'types';
 
 interface Props {
     cardWidth: number;

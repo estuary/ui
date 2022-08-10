@@ -1,13 +1,11 @@
 import { Box } from '@mui/material';
 import Rows, { tableColumns } from 'components/tables/Collections/Rows';
-import EntityTable, {
-    getPagination,
-    SortDirection,
-} from 'components/tables/EntityTable';
-import { useQuery } from 'hooks/supabase-swr';
+import EntityTable, { getPagination } from 'components/tables/EntityTable';
 import { SelectTableStoreNames } from 'context/Zustand';
+import { useQuery } from 'hooks/supabase-swr';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
+import { SortDirection } from 'types';
 
 export interface LiveSpecsQuery {
     spec_type: string;

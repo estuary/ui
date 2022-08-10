@@ -9,11 +9,8 @@ import {
     Stack,
     Typography,
 } from '@mui/material';
-import { PostgrestError } from '@supabase/supabase-js';
 import { authenticatedRoutes } from 'app/Authenticated';
 import ConnectorToolbar from 'components/ConnectorToolbar';
-import MessageWithLink from 'components/content/MessageWithLink';
-import { SortDirection } from 'components/tables/EntityTable';
 import { slate } from 'context/Theme';
 import { useQuery, useSelect } from 'hooks/supabase-swr';
 import {
@@ -24,7 +21,14 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedDate, FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { CONNECTOR_NAME, defaultTableFilter, TABLES } from 'services/supabase';
+import {
+    SortDirection,
+    TableIntlConfig,
+    TableState,
+    TableStatuses,
+} from 'types';
 import { getPathWithParam, hasLength } from 'utils/misc-utils';
+import { getEmptyTableHeader, getEmptyTableMessage } from 'utils/table-utils';
 
 interface Props {
     cardWidth: number;
@@ -32,25 +36,10 @@ interface Props {
     gridSpacing: number;
 }
 
-enum TableStatuses {
-    LOADING = 'LOADING',
-    DATA_FETCHED = 'DATA_FETCHED',
-    NO_EXISTING_DATA = 'NO_EXISTING_DATA',
-    TECHNICAL_DIFFICULTIES = 'TECHNICAL_DIFFICULTIES',
-    UNMATCHED_FILTER = 'UNMATCHED_FILTER',
-}
-
-type TableStatus =
-    | TableStatuses.LOADING
-    | TableStatuses.DATA_FETCHED
-    | TableStatuses.NO_EXISTING_DATA
-    | TableStatuses.TECHNICAL_DIFFICULTIES
-    | TableStatuses.UNMATCHED_FILTER;
-
-interface TableState {
-    status: TableStatus;
-    error?: PostgrestError;
-}
+const intlConfig: TableIntlConfig = {
+    header: 'connectors.main.message1',
+    message: 'connectors.main.message2',
+};
 
 function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
     const navigate = useNavigate();
@@ -104,33 +93,6 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
             setTableState({ status: TableStatuses.NO_EXISTING_DATA });
         }
     }, [selectData]);
-
-    const getEmptyTableHeader = (tableStatus: TableStatuses): string => {
-        switch (tableStatus) {
-            case TableStatuses.TECHNICAL_DIFFICULTIES:
-                return 'entityTable.technicalDifficulties.header';
-            case TableStatuses.UNMATCHED_FILTER:
-                return 'entityTable.unmatchedFilter.header';
-            default:
-                return 'connectors.main.message1';
-        }
-    };
-
-    const getEmptyTableMessage = (tableStatus: TableStatuses): JSX.Element => {
-        switch (tableStatus) {
-            case TableStatuses.TECHNICAL_DIFFICULTIES:
-                return (
-                    <FormattedMessage id="entityTable.technicalDifficulties.message" />
-                );
-            case TableStatuses.UNMATCHED_FILTER:
-                return (
-                    <FormattedMessage id="entityTable.unmatchedFilter.message" />
-                );
-            default: {
-                return <MessageWithLink messageID="connectors.main.message2" />;
-            }
-        }
-    };
 
     return (
         <Grid
@@ -331,12 +293,18 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
                                 sx={{ mb: 2 }}
                             >
                                 <FormattedMessage
-                                    id={getEmptyTableHeader(tableState.status)}
+                                    id={getEmptyTableHeader(
+                                        tableState.status,
+                                        intlConfig
+                                    )}
                                 />
                             </Typography>
 
                             <Typography component="div" align="center">
-                                {getEmptyTableMessage(tableState.status)}
+                                {getEmptyTableMessage(
+                                    tableState.status,
+                                    intlConfig
+                                )}
                             </Typography>
                         </Paper>
                     )}
