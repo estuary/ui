@@ -1,4 +1,4 @@
-import { DescriptionRounded } from '@mui/icons-material';
+import { Cable, DescriptionRounded } from '@mui/icons-material';
 import {
     Box,
     Button,
@@ -149,16 +149,20 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
                                                 : slate[25],
                                     }}
                                 >
-                                    <img
-                                        src={row.image}
-                                        loading="lazy"
-                                        alt=""
-                                        style={{
-                                            width: 'auto',
-                                            maxHeight: 75,
-                                            padding: '0 1rem',
-                                        }}
-                                    />
+                                    {row.image ? (
+                                        <img
+                                            src={row.image}
+                                            loading="lazy"
+                                            alt=""
+                                            style={{
+                                                width: 'auto',
+                                                maxHeight: 75,
+                                                padding: '0 1rem',
+                                            }}
+                                        />
+                                    ) : (
+                                        <Cable sx={{ fontSize: '4rem' }} />
+                                    )}
                                 </Box>
 
                                 <Box
