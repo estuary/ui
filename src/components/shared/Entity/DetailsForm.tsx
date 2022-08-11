@@ -28,6 +28,7 @@ import {
 import { useEndpointConfigStore_reset } from 'stores/EndpointConfig';
 import { EntityFormState } from 'stores/FormState';
 import { Grants } from 'types';
+import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     connectorTags: ConnectorWithTagDetailQuery[];
@@ -35,6 +36,15 @@ interface Props {
     draftEditorStoreName: DraftEditorStoreNames;
     formStateStoreName: FormStateStoreNames;
 }
+
+const getConnectorImageDetails = (connector: ConnectorWithTagDetailQuery) => {
+    return {
+        connectorId: connector.id,
+        id: connector.connector_tags[0].id,
+        imagePath: `${connector.image_name}${connector.connector_tags[0].image_tag}`,
+        iconPath: connector.image,
+    };
+};
 
 function DetailsForm({
     connectorTags,
@@ -89,22 +99,6 @@ function DetailsForm({
     >(formStateStoreName, (state) => state.resetState);
 
     useEffect(() => {
-        if (connectorID) {
-            setDetails({
-                data: {
-                    entityName: '',
-                    connectorImage: {
-                        id: connectorID,
-                        iconPath: '',
-                        connectorId: '',
-                        imagePath: '',
-                    },
-                },
-            });
-        }
-    }, [setDetails, connectorID]);
-
-    useEffect(() => {
         if (connectorID && originalConnectorImage.id !== connectorID) {
             resetFormState();
         }
@@ -128,12 +122,7 @@ function DetailsForm({
         if (connectorTags.length > 0) {
             connectorTags.forEach((connector) => {
                 response.push({
-                    const: {
-                        connectorId: connector.id,
-                        id: connector.connector_tags[0].id,
-                        imagePath: `${connector.image_name}${connector.connector_tags[0].image_tag}`,
-                        iconPath: connector.image,
-                    },
+                    const: getConnectorImageDetails(connector),
                     title: connector.title,
                 });
             });
@@ -215,9 +204,23 @@ function DetailsForm({
         if (details.data.connectorImage.id === '') {
             resetEndpointConfig();
         }
-
         setDetails(details);
     };
+
+    useEffect(() => {
+        if (connectorID && hasLength(connectorTags)) {
+            connectorTags.forEach((connector) => {
+                if (connector.connector_tags[0].id === connectorID) {
+                    setDetails({
+                        data: {
+                            entityName: '',
+                            connectorImage: getConnectorImageDetails(connector),
+                        },
+                    });
+                }
+            });
+        }
+    }, [setDetails, connectorID, connectorTags]);
 
     return (
         <>
