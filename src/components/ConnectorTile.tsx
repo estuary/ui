@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { authenticatedRoutes } from 'app/Authenticated';
 import ConnectorToolbar from 'components/ConnectorToolbar';
-import { slate } from 'context/Theme';
+import { darkGlassBkgWithoutBlur, slate } from 'context/Theme';
 import { useQuery, useSelect } from 'hooks/supabase-swr';
 import {
     ConnectorWithTagDetailQuery,
@@ -44,6 +44,8 @@ const intlConfig: TableIntlConfig = {
 function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
     const navigate = useNavigate();
     const isFiltering = useRef(false);
+
+    const { background: darkGlassBkg } = darkGlassBkgWithoutBlur;
 
     const [protocol, setProtocol] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState<string | null>(null);
@@ -121,7 +123,7 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
                                 borderRadius: 5,
                                 background: (theme) =>
                                     theme.palette.mode === 'dark'
-                                        ? 'linear-gradient(160deg, rgba(172, 199, 220, 0.18) 2%, rgba(172, 199, 220, 0.12) 40%)'
+                                        ? darkGlassBkg
                                         : slate[50],
                                 padding: 1,
                             }}
@@ -143,7 +145,7 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
                                         borderRadius: 5,
                                         background: (theme) =>
                                             theme.palette.mode === 'dark'
-                                                ? 'linear-gradient(160deg, rgba(172, 199, 220, 0.18) 2%, rgba(172, 199, 220, 0.12) 40%)'
+                                                ? 'rgba(172, 199, 220, 0.30)' // Brighter than desired to improve MySQL visibility.
                                                 : slate[25],
                                     }}
                                 >
@@ -283,7 +285,7 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
                                 borderRadius: 5,
                                 background: (theme) =>
                                     theme.palette.mode === 'dark'
-                                        ? 'linear-gradient(160deg, rgba(172, 199, 220, 0.18) 2%, rgba(172, 199, 220, 0.12) 40%)'
+                                        ? darkGlassBkg
                                         : slate[50],
                                 padding: 1,
                             }}
