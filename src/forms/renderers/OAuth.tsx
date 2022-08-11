@@ -1,6 +1,6 @@
 import { ControlProps, RankedTester, rankWith } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
-import { Alert, Button, Stack, Typography } from '@mui/material';
+import { Alert, Box, Button, Chip, Stack, Typography } from '@mui/material';
 import { accessToken, authURL } from 'api/oauth';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import { getDiscriminator } from 'forms/renderers/Overrides/material/complex/MaterialOneOfRenderer_Discriminator';
@@ -17,14 +17,13 @@ import { hasLength } from 'utils/misc-utils';
 const NO_PROVIDER = 'noProviderFound';
 const CLIENT_ID = 'client_id';
 const CLIENT_SECRET = 'client_secret';
-const INJECTED = '_injectedDuringEncryption_';
+const INJECTED = '_injectedDuringEncryption_'; //MUST stay in sync with animate-carnival/supabase/functions/oauth/encrypt-config.ts
 
 export const oAuthProviderTester: RankedTester = rankWith(
     1000,
     optionExists(Options.oauthProvider)
 );
 
-// This is blank on purpose. For right now we can just show null settings are nothing
 const OAuthproviderRenderer = ({
     data,
     path,
@@ -36,7 +35,7 @@ const OAuthproviderRenderer = ({
     const { options } = uischema;
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    const dataKeys = Object.keys(data);
+    const dataKeys = Object.keys(data ?? {});
     const descriminatorProperty = getDiscriminator(schema);
     const requiredFields = useMemo(
         () => (options ? options[Options.oauthFields] : []),
@@ -54,11 +53,22 @@ const OAuthproviderRenderer = ({
         [data, dataKeys, descriminatorProperty, requiredFields]
     );
 
-    const provider = options ? options[Options.oauthProvider] : NO_PROVIDER;
-    const capitalizedProvider = useMemo(() => startCase(provider), [provider]);
+    const providerVal = options ? options[Options.oauthProvider] : NO_PROVIDER;
+    const provider = useMemo(() => startCase(providerVal), [providerVal]);
 
-    const onError = (error_: any) => {
-        setErrorMessage(error_);
+    const onError = (error: any) => {
+        if (error === 'access_denied') {
+            setErrorMessage(
+                intl.formatMessage(
+                    {
+                        id: 'oauth.authentication.denied',
+                    },
+                    { provider }
+                )
+            );
+        } else {
+            setErrorMessage(error);
+        }
     };
 
     const onSuccess = async (payload: any) => {
@@ -68,9 +78,7 @@ const OAuthproviderRenderer = ({
             setErrorMessage(
                 intl.formatMessage(
                     { id: 'oauth.accessToken.error' },
-                    {
-                        provider: capitalizedProvider,
-                    }
+                    { provider }
                 )
             );
         } else if (!isEmpty(tokenResponse.data)) {
@@ -115,37 +123,69 @@ const OAuthproviderRenderer = ({
     };
 
     return (
-        <>
-            <Typography>
-                <FormattedMessage
-                    id="oauth.instructions"
-                    values={{ provider: capitalizedProvider }}
-                />
-            </Typography>
-
-            {hasLength(errorMessage) ? (
-                <Alert severity="error">{errorMessage}</Alert>
-            ) : null}
-
-            <Stack direction="row" spacing={2}>
-                <Alert severity="warning">
-                    Under Development - do not use in prod
-                </Alert>
-
-                {provider === 'google' ? (
-                    <GoogleButton disabled={loading} onClick={openPopUp} />
-                ) : null}
-
-                {isAuthorized ? (
-                    <>
-                        <Alert severity="success">Authenticated</Alert>
-                        <Button onClick={removeCofig}>Remove</Button>
-                    </>
-                ) : null}
-            </Stack>
-
+        <Box
+            sx={{
+                mt: 2,
+            }}
+        >
             {loading ? <FullPageSpinner /> : null}
-        </>
+
+            <Stack direction="column" spacing={2}>
+                <Typography>
+                    <FormattedMessage
+                        id="oauth.instructions"
+                        values={{ provider }}
+                    />
+                </Typography>
+
+                {hasLength(errorMessage) ? (
+                    <Alert
+                        severity="error"
+                        sx={{
+                            maxWidth: '50%',
+                        }}
+                    >
+                        {errorMessage}
+                    </Alert>
+                ) : null}
+
+                <Stack
+                    direction="row"
+                    spacing={2}
+                    sx={{
+                        alignItems: 'center',
+                    }}
+                >
+                    {providerVal === 'google' ? (
+                        <GoogleButton disabled={loading} onClick={openPopUp} />
+                    ) : (
+                        <Button disabled={loading} onClick={openPopUp}>
+                            <FormattedMessage
+                                id="oauth.authenticate"
+                                values={{ provider }}
+                            />
+                        </Button>
+                    )}
+
+                    {isAuthorized ? (
+                        <Chip
+                            label={
+                                <FormattedMessage id="oauth.authenticated" />
+                            }
+                            color="success"
+                            onDelete={removeCofig}
+                        />
+                    ) : (
+                        <Chip
+                            label={
+                                <FormattedMessage id="oauth.unauthenticated" />
+                            }
+                            color="warning"
+                        />
+                    )}
+                </Stack>
+            </Stack>
+        </Box>
     );
 };
 
