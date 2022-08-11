@@ -99,6 +99,21 @@ function DetailsForm({
     >(formStateStoreName, (state) => state.resetState);
 
     useEffect(() => {
+        if (connectorID && hasLength(connectorTags)) {
+            connectorTags.forEach((connector) => {
+                if (connector.connector_tags[0].id === connectorID) {
+                    setDetails({
+                        data: {
+                            entityName: '',
+                            connectorImage: getConnectorImageDetails(connector),
+                        },
+                    });
+                }
+            });
+        }
+    }, [setDetails, connectorID, connectorTags]);
+
+    useEffect(() => {
         if (connectorID && originalConnectorImage.id !== connectorID) {
             resetFormState();
         }
@@ -206,21 +221,6 @@ function DetailsForm({
         }
         setDetails(details);
     };
-
-    useEffect(() => {
-        if (connectorID && hasLength(connectorTags)) {
-            connectorTags.forEach((connector) => {
-                if (connector.connector_tags[0].id === connectorID) {
-                    setDetails({
-                        data: {
-                            entityName: '',
-                            connectorImage: getConnectorImageDetails(connector),
-                        },
-                    });
-                }
-            });
-        }
-    }, [setDetails, connectorID, connectorTags]);
 
     return (
         <>
