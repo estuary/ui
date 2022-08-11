@@ -99,7 +99,7 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
     return (
         <Grid
             container
-            spacing={2}
+            spacing={gridSpacing}
             paddingRight={2}
             width={
                 cardWidth * cardsPerRow + 8 * gridSpacing * (cardsPerRow + 1)
