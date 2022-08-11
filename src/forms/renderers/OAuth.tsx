@@ -61,7 +61,7 @@ const OAuthproviderRenderer = ({
             setErrorMessage(
                 intl.formatMessage(
                     {
-                        id: 'oauth.authentication.failed',
+                        id: 'oauth.authentication.denied',
                     },
                     { provider }
                 )
