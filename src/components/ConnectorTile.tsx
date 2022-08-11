@@ -187,6 +187,7 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
                                             }
                                             target="_blank"
                                             rel="noopener"
+                                            color="inherit"
                                         >
                                             <DescriptionRounded />
                                         </IconButton>
