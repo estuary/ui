@@ -70,24 +70,6 @@ function ConnectorToolbar({
     const intl = useIntl();
     const isFiltering = useRef(false);
 
-    const paramOptions: {
-        field: keyof ConnectorWithTagDetailQuery;
-        message: string;
-    }[] = useConstant(() => [
-        {
-            field: CONNECTOR_NAME,
-            message: intl.formatMessage({
-                id: 'connectorTable.data.title',
-            }),
-        },
-        {
-            field: 'image_name',
-            message: intl.formatMessage({
-                id: 'connectorTable.data.image_name',
-            }),
-        },
-    ]);
-
     const protocolOptions: {
         protocol: ENTITY | null;
         message: string;
@@ -112,6 +94,24 @@ function ConnectorToolbar({
         },
     ]);
 
+    const sortByOptions: {
+        field: keyof ConnectorWithTagDetailQuery;
+        message: string;
+    }[] = useConstant(() => [
+        {
+            field: CONNECTOR_NAME,
+            message: intl.formatMessage({
+                id: 'connectorTable.data.title',
+            }),
+        },
+        {
+            field: 'image_name',
+            message: intl.formatMessage({
+                id: 'connectorTable.data.image_name',
+            }),
+        },
+    ]);
+
     const sortDirectionOptions: {
         direction: SortDirection;
         message: string;
@@ -131,6 +131,35 @@ function ConnectorToolbar({
     ]);
 
     const handlers = {
+        setProtocol: debounce(
+            (_event: SyntheticEvent, value: string | null) => {
+                const selectedProtocol = protocolOptions.find(
+                    (option) => option.message === value
+                )?.protocol;
+
+                setProtocol(selectedProtocol ? selectedProtocol : null);
+            },
+            750
+        ),
+        setSortBy: debounce((_event: SyntheticEvent, value: string | null) => {
+            setSortDirection('asc');
+
+            const selectedColumn = sortByOptions.find(
+                (option) => option.message === value
+            )?.field;
+
+            setColumnToSort(selectedColumn ? selectedColumn : CONNECTOR_NAME);
+        }, 750),
+        switchSortDirection: debounce(
+            (_event: SyntheticEvent, value: string | null) => {
+                const selectedDirection = sortDirectionOptions.find(
+                    (option) => option.message === value
+                )?.direction;
+
+                setSortDirection(selectedDirection ? selectedDirection : 'asc');
+            },
+            750
+        ),
         filterTiles: debounce(
             (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
                 const filterQuery = event.target.value;
@@ -142,70 +171,10 @@ function ConnectorToolbar({
             },
             750
         ),
-        setFilterParam: debounce(
-            (_event: SyntheticEvent, value: string | null) => {
-                setSortDirection('asc');
-
-                const selectedColumn = paramOptions.find(
-                    (option) => option.message === value
-                )?.field;
-
-                setColumnToSort(
-                    selectedColumn ? selectedColumn : CONNECTOR_NAME
-                );
-            },
-            750
-        ),
-        setProtocol: debounce(
-            (_event: SyntheticEvent, value: string | null) => {
-                const selectedProtocol = protocolOptions.find(
-                    (option) => option.message === value
-                )?.protocol;
-
-                setProtocol(selectedProtocol ? selectedProtocol : null);
-            },
-            750
-        ),
-        switchSortDirection: debounce(
-            (_event: SyntheticEvent, value: string | null) => {
-                const selectedDirection = sortDirectionOptions.find(
-                    (option) => option.message === value
-                )?.direction;
-
-                setSortDirection(selectedDirection ? selectedDirection : 'asc');
-            },
-            750
-        ),
     };
 
     return (
         <Toolbar disableGutters sx={{ justifyContent: 'flex-end' }}>
-            <Autocomplete
-                options={paramOptions.map(({ message }) => message)}
-                renderInput={({
-                    InputProps,
-                    ...params
-                }: AutocompleteRenderInputParams) => (
-                    <TextField
-                        {...params}
-                        InputProps={{
-                            ...InputProps,
-                            ...inputProps,
-                        }}
-                        label={intl.formatMessage({
-                            id: 'connectorTable.label.filterBasis',
-                        })}
-                        variant="filled"
-                    />
-                )}
-                defaultValue={intl.formatMessage({
-                    id: 'connectorTable.data.title',
-                })}
-                disableClearable
-                onChange={handlers.setFilterParam}
-                sx={{ width: 150, mr: 2, ...toolbarSectionSx }}
-            />
-
             <Autocomplete
                 options={protocolOptions.map(({ message }) => message)}
                 renderInput={({
@@ -230,6 +199,32 @@ function ConnectorToolbar({
                 disableClearable
                 onChange={handlers.setProtocol}
                 sx={{ width: 200, mr: 2, ...toolbarSectionSx }}
+            />
+
+            <Autocomplete
+                options={sortByOptions.map(({ message }) => message)}
+                renderInput={({
+                    InputProps,
+                    ...params
+                }: AutocompleteRenderInputParams) => (
+                    <TextField
+                        {...params}
+                        InputProps={{
+                            ...InputProps,
+                            ...inputProps,
+                        }}
+                        label={intl.formatMessage({
+                            id: 'connectorTable.label.sortBy',
+                        })}
+                        variant="filled"
+                    />
+                )}
+                defaultValue={intl.formatMessage({
+                    id: 'connectorTable.data.title',
+                })}
+                disableClearable
+                onChange={handlers.setSortBy}
+                sx={{ width: 150, mr: 2, ...toolbarSectionSx }}
             />
 
             <Autocomplete

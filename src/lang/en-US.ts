@@ -304,7 +304,7 @@ const ConnectorsPage: ResolvedIntlConfig['messages'] = {
     'connectorTable.title': `Installed ${CommonMessages['terms.connectors']}`,
     'connectorTable.title.aria': `Table of all installed ${CommonMessages['terms.connectors']}`,
     'connectorTable.filterLabel': `Search connectors`,
-    'connectorTable.label.filterBasis': `Filter Param`,
+    'connectorTable.label.sortBy': `Sort By`,
     'connectorTable.label.sortDirection': `Sort Direction`,
     'connectorTable.data.title': `Name`,
     'connectorTable.data.image_name': `Image`,
