@@ -156,7 +156,7 @@ export const outlineSx: SxProps<Theme> = {
 };
 
 export const darkGlassBkgColor = 'rgba(172, 199, 220, 0.12)';
-export const darkGlassBkgColorPseudoClass = 'rgba(172, 199, 220, 0.18)';
+export const darkGlassBkgColorIntensified = 'rgba(172, 199, 220, 0.18)';
 
 export const darkGlassBkgWithBlur = {
     background:

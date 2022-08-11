@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import {
     darkGlassBkgColor,
-    darkGlassBkgColorPseudoClass,
+    darkGlassBkgColorIntensified,
     slate,
 } from 'context/Theme';
 import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
@@ -55,7 +55,7 @@ const toolbarSectionSx: SxProps<Theme> = {
     '& .MuiFilledInput-root:hover, .MuiFilledInput-root.Mui-focused': {
         backgroundColor: (theme) =>
             theme.palette.mode === 'dark'
-                ? darkGlassBkgColorPseudoClass
+                ? darkGlassBkgColorIntensified
                 : 'rgba(80, 114, 235, 0.09)',
     },
 };

@@ -11,7 +11,11 @@ import {
 } from '@mui/material';
 import { authenticatedRoutes } from 'app/Authenticated';
 import ConnectorToolbar from 'components/ConnectorToolbar';
-import { darkGlassBkgWithoutBlur, slate } from 'context/Theme';
+import {
+    darkGlassBkgColorIntensified,
+    darkGlassBkgWithoutBlur,
+    slate,
+} from 'context/Theme';
 import { useQuery, useSelect } from 'hooks/supabase-swr';
 import {
     ConnectorWithTagDetailQuery,
@@ -118,14 +122,20 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
                         <Paper
                             elevation={0}
                             sx={{
-                                width: cardWidth,
-                                height: '100%',
-                                borderRadius: 5,
-                                background: (theme) =>
+                                'width': cardWidth,
+                                'height': '100%',
+                                'borderRadius': 5,
+                                'background': (theme) =>
                                     theme.palette.mode === 'dark'
                                         ? darkGlassBkg
                                         : slate[50],
-                                padding: 1,
+                                'padding': 1,
+                                '&:hover': {
+                                    background: (theme) =>
+                                        theme.palette.mode === 'dark'
+                                            ? darkGlassBkgColorIntensified
+                                            : 'rgba(172, 199, 220, 0.45)',
+                                },
                             }}
                         >
                             <Stack
