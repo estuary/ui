@@ -111,15 +111,8 @@ export enum TableStatuses {
     UNMATCHED_FILTER = 'UNMATCHED_FILTER',
 }
 
-type TableStatus =
-    | TableStatuses.LOADING
-    | TableStatuses.DATA_FETCHED
-    | TableStatuses.NO_EXISTING_DATA
-    | TableStatuses.TECHNICAL_DIFFICULTIES
-    | TableStatuses.UNMATCHED_FILTER;
-
 export interface TableState {
-    status: TableStatus;
+    status: TableStatuses;
     error?: PostgrestError;
 }
 
