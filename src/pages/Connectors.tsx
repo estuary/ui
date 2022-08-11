@@ -1,4 +1,5 @@
-import { Toolbar, Typography } from '@mui/material';
+import { Help } from '@mui/icons-material';
+import { IconButton, Link, Stack, Toolbar, Typography } from '@mui/material';
 import ConnectorTiles from 'components/ConnectorTiles';
 import PageContainer from 'components/shared/PageContainer';
 import useBrowserTitle from 'hooks/useBrowserTitle';
@@ -10,9 +11,26 @@ const Connectors = () => {
     return (
         <PageContainer>
             <Toolbar>
-                <Typography>
-                    <FormattedMessage id="connectors.header" />
-                </Typography>
+                <Stack direction="row" spacing={1}>
+                    <Typography variant="h6" align="center">
+                        <FormattedMessage id="connectorTable.title" />
+                    </Typography>
+
+                    <Link
+                        target="_blank"
+                        rel="noopener"
+                        href="https://docs.estuary.dev/concepts/#connectors"
+                    >
+                        <IconButton size="small">
+                            <Help
+                                sx={{
+                                    color: (theme) =>
+                                        theme.palette.text.primary,
+                                }}
+                            />
+                        </IconButton>
+                    </Link>
+                </Stack>
             </Toolbar>
 
             <ConnectorTiles cardWidth={250} cardsPerRow={4} gridSpacing={2} />
