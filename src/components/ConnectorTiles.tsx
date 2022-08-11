@@ -1,4 +1,4 @@
-import { Cable, DescriptionRounded } from '@mui/icons-material';
+import { Cable, Help } from '@mui/icons-material';
 import {
     Box,
     Button,
@@ -8,6 +8,8 @@ import {
     Paper,
     Stack,
     Typography,
+    useMediaQuery,
+    useTheme,
 } from '@mui/material';
 import { authenticatedRoutes } from 'app/Authenticated';
 import ConnectorToolbar from 'components/ConnectorToolbar';
@@ -48,6 +50,9 @@ const intlConfig: TableIntlConfig = {
 function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
     const navigate = useNavigate();
     const isFiltering = useRef(false);
+
+    const theme = useTheme();
+    const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
     const { background: darkGlassBkg } = darkGlassBkgWithoutBlur;
 
@@ -96,19 +101,22 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
         }
     }, [selectData]);
 
+    const gridContainerWidth = belowMd
+        ? '100%'
+        : cardWidth * cardsPerRow + 8 * gridSpacing * (cardsPerRow + 1);
+
     return (
         <Grid
             container
             spacing={gridSpacing}
             paddingRight={2}
-            width={
-                cardWidth * cardsPerRow + 8 * gridSpacing * (cardsPerRow + 1)
-            }
+            width={gridContainerWidth}
             margin="auto"
         >
-            <Grid item sx={{ width: '100%' }}>
+            <Grid item xs={12}>
                 <ConnectorToolbar
                     cardWidth={cardWidth}
+                    belowMd={belowMd}
                     setColumnToSort={setColumnToSort}
                     setProtocol={setProtocol}
                     setSortDirection={setSortDirection}
@@ -118,20 +126,19 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
 
             {hasLength(selectData) ? (
                 selectData.map((row, index) => (
-                    <Grid key={index} item>
+                    <Grid key={index} item xs={6} md={12 / cardsPerRow}>
                         <Paper
                             elevation={0}
                             sx={{
-                                'width': cardWidth,
                                 'height': '100%',
                                 'borderRadius': 5,
-                                'background': (theme) =>
+                                'background':
                                     theme.palette.mode === 'dark'
                                         ? darkGlassBkg
                                         : slate[50],
                                 'padding': 1,
                                 '&:hover': {
-                                    background: (theme) =>
+                                    background:
                                         theme.palette.mode === 'dark'
                                             ? darkGlassBkgColorIntensified
                                             : 'rgba(172, 199, 220, 0.45)',
@@ -153,7 +160,7 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
                                         alignItems: 'center',
                                         marginBottom: 2,
                                         borderRadius: 5,
-                                        background: (theme) =>
+                                        background:
                                             theme.palette.mode === 'dark'
                                                 ? 'rgba(172, 199, 220, 0.30)' // Brighter than desired to improve MySQL visibility.
                                                 : slate[25],
@@ -203,7 +210,7 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
                                             rel="noopener"
                                             color="inherit"
                                         >
-                                            <DescriptionRounded />
+                                            <Help />
                                         </IconButton>
                                     </Box>
                                 </Box>
@@ -298,7 +305,7 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
                             sx={{
                                 height: '100%',
                                 borderRadius: 5,
-                                background: (theme) =>
+                                background:
                                     theme.palette.mode === 'dark'
                                         ? darkGlassBkg
                                         : slate[50],

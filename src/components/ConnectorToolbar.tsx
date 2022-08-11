@@ -2,6 +2,7 @@ import {
     Autocomplete,
     AutocompleteRenderInputParams,
     FilledInputProps,
+    Grid,
     SxProps,
     TextField,
     Theme,
@@ -28,6 +29,7 @@ import useConstant from 'use-constant';
 
 interface Props {
     cardWidth: number;
+    belowMd: boolean;
     setColumnToSort: Dispatch<
         SetStateAction<keyof ConnectorWithTagDetailQuery>
     >;
@@ -61,7 +63,8 @@ const toolbarSectionSx: SxProps<Theme> = {
 };
 
 function ConnectorToolbar({
-    cardWidth,
+    // cardWidth,
+    // belowMd,
     setColumnToSort,
     setProtocol,
     setSortDirection,
@@ -69,6 +72,15 @@ function ConnectorToolbar({
 }: Props) {
     const intl = useIntl();
     const isFiltering = useRef(false);
+
+    // const protocolLayout: Partial<ClassNameMap> = useConstant(() =>
+    //     belowMd
+    //         ? {
+    //               width: '0',
+    //               flexBasis: '100%',
+    //           }
+    //         : {}
+    // );
 
     const protocolOptions: {
         protocol: ENTITY | null;
@@ -174,94 +186,115 @@ function ConnectorToolbar({
     };
 
     return (
-        <Toolbar disableGutters sx={{ justifyContent: 'flex-end' }}>
-            <Autocomplete
-                options={protocolOptions.map(({ message }) => message)}
-                renderInput={({
-                    InputProps,
-                    ...params
-                }: AutocompleteRenderInputParams) => (
+        <Toolbar disableGutters sx={{ flexDirection: 'column' }}>
+            <Grid container sx={{ mb: 2, justifyContent: 'flex-end' }}>
+                <Autocomplete
+                    options={protocolOptions.map(({ message }) => message)}
+                    renderInput={({
+                        InputProps,
+                        ...params
+                    }: AutocompleteRenderInputParams) => (
+                        <TextField
+                            {...params}
+                            InputProps={{
+                                ...InputProps,
+                                ...inputProps,
+                            }}
+                            label={intl.formatMessage({
+                                id: 'connectorTable.data.protocol',
+                            })}
+                            variant="filled"
+                        />
+                    )}
+                    defaultValue={intl.formatMessage({
+                        id: 'common.optionsAll',
+                    })}
+                    disableClearable
+                    onChange={handlers.setProtocol}
+                    sx={{ width: 200, ...toolbarSectionSx }}
+                />
+            </Grid>
+
+            <Grid
+                container
+                spacing={2}
+                wrap="nowrap"
+                sx={{ justifyContent: 'flex-end' }}
+            >
+                <Grid item xs={3} md={2}>
+                    <Autocomplete
+                        options={sortByOptions.map(({ message }) => message)}
+                        renderInput={({
+                            InputProps,
+                            ...params
+                        }: AutocompleteRenderInputParams) => (
+                            <TextField
+                                {...params}
+                                InputProps={{
+                                    ...InputProps,
+                                    ...inputProps,
+                                }}
+                                label={intl.formatMessage({
+                                    id: 'connectorTable.label.sortBy',
+                                })}
+                                variant="filled"
+                            />
+                        )}
+                        defaultValue={intl.formatMessage({
+                            id: 'connectorTable.data.title',
+                        })}
+                        disableClearable
+                        onChange={handlers.setSortBy}
+                        sx={toolbarSectionSx}
+                    />
+                </Grid>
+
+                <Grid item xs={4} md={2}>
+                    <Autocomplete
+                        options={sortDirectionOptions.map(
+                            ({ message }) => message
+                        )}
+                        renderInput={({
+                            InputProps,
+                            ...params
+                        }: AutocompleteRenderInputParams) => (
+                            <TextField
+                                {...params}
+                                InputProps={{
+                                    ...InputProps,
+                                    ...inputProps,
+                                }}
+                                label={intl.formatMessage({
+                                    id: 'connectorTable.label.sortDirection',
+                                })}
+                                variant="filled"
+                            />
+                        )}
+                        defaultValue={intl.formatMessage({
+                            id: 'sortDirection.ascending',
+                        })}
+                        disableClearable
+                        onChange={handlers.switchSortDirection}
+                        sx={toolbarSectionSx}
+                    />
+                </Grid>
+
+                <Grid item xs={5} md={3}>
                     <TextField
-                        {...params}
-                        InputProps={{
-                            ...InputProps,
-                            ...inputProps,
-                        }}
                         label={intl.formatMessage({
-                            id: 'connectorTable.data.protocol',
+                            id: 'connectorTable.filterLabel',
                         })}
                         variant="filled"
-                    />
-                )}
-                defaultValue={intl.formatMessage({
-                    id: 'common.optionsAll',
-                })}
-                disableClearable
-                onChange={handlers.setProtocol}
-                sx={{ width: 200, mr: 2, ...toolbarSectionSx }}
-            />
-
-            <Autocomplete
-                options={sortByOptions.map(({ message }) => message)}
-                renderInput={({
-                    InputProps,
-                    ...params
-                }: AutocompleteRenderInputParams) => (
-                    <TextField
-                        {...params}
-                        InputProps={{
-                            ...InputProps,
-                            ...inputProps,
+                        InputProps={inputProps}
+                        onChange={handlers.filterTiles}
+                        sx={{
+                            width: '100%',
+                            borderRadius: 5,
+                            ...toolbarSectionSx,
                         }}
-                        label={intl.formatMessage({
-                            id: 'connectorTable.label.sortBy',
-                        })}
-                        variant="filled"
                     />
-                )}
-                defaultValue={intl.formatMessage({
-                    id: 'connectorTable.data.title',
-                })}
-                disableClearable
-                onChange={handlers.setSortBy}
-                sx={{ width: 150, mr: 2, ...toolbarSectionSx }}
-            />
-
-            <Autocomplete
-                options={sortDirectionOptions.map(({ message }) => message)}
-                renderInput={({
-                    InputProps,
-                    ...params
-                }: AutocompleteRenderInputParams) => (
-                    <TextField
-                        {...params}
-                        InputProps={{
-                            ...InputProps,
-                            ...inputProps,
-                        }}
-                        label={intl.formatMessage({
-                            id: 'connectorTable.label.sortDirection',
-                        })}
-                        variant="filled"
-                    />
-                )}
-                defaultValue={intl.formatMessage({
-                    id: 'sortDirection.ascending',
-                })}
-                disableClearable
-                onChange={handlers.switchSortDirection}
-                sx={{ width: 125, mr: 2, ...toolbarSectionSx }}
-            />
-
-            <TextField
-                label={intl.formatMessage({
-                    id: 'connectorTable.filterLabel',
-                })}
-                variant="filled"
-                InputProps={inputProps}
-                onChange={handlers.filterTiles}
-                sx={{ width: cardWidth, borderRadius: 5, ...toolbarSectionSx }}
-            />
+                </Grid>
+            </Grid>
         </Toolbar>
     );
 }
