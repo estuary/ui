@@ -476,6 +476,7 @@ const ShardStatus: ResolvedIntlConfig['messages'] = {
 const OAuth: ResolvedIntlConfig['messages'] = {
     'oauth.instructions': `Authenticate your {provider} account by clicking below. A pop up will open where you can authorize access. No data will be accessed during authorization.`,
     'oauth.fetchAuthURL.error': `We were unable to fetch the proper URL to start OAuth. ${Error['error.tryAgain']}`,
+    'oauth.authentication.failed': `To use OAuth as your authentication you must allow our app access to your {provider} account.`,
     'oauth.accessToken.error': `There was an issue attempting to get the access token from {provider}. ${Error['error.tryAgain']}`,
     'oauth.authenticated': `Authenticated`,
     'oauth.unauthenticated': `Not Authenticated`,

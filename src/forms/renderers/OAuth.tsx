@@ -53,11 +53,22 @@ const OAuthproviderRenderer = ({
         [data, dataKeys, descriminatorProperty, requiredFields]
     );
 
-    const provider = options ? options[Options.oauthProvider] : NO_PROVIDER;
-    const capitalizedProvider = useMemo(() => startCase(provider), [provider]);
+    const providerVal = options ? options[Options.oauthProvider] : NO_PROVIDER;
+    const provider = useMemo(() => startCase(providerVal), [providerVal]);
 
-    const onError = (error_: any) => {
-        setErrorMessage(error_);
+    const onError = (error: any) => {
+        if (error === 'access_denied') {
+            setErrorMessage(
+                intl.formatMessage(
+                    {
+                        id: 'oauth.authentication.failed',
+                    },
+                    { provider }
+                )
+            );
+        } else {
+            setErrorMessage(error);
+        }
     };
 
     const onSuccess = async (payload: any) => {
@@ -67,9 +78,7 @@ const OAuthproviderRenderer = ({
             setErrorMessage(
                 intl.formatMessage(
                     { id: 'oauth.accessToken.error' },
-                    {
-                        provider: capitalizedProvider,
-                    }
+                    { provider }
                 )
             );
         } else if (!isEmpty(tokenResponse.data)) {
@@ -125,7 +134,7 @@ const OAuthproviderRenderer = ({
                 <Typography>
                     <FormattedMessage
                         id="oauth.instructions"
-                        values={{ provider: capitalizedProvider }}
+                        values={{ provider }}
                     />
                 </Typography>
 
@@ -147,13 +156,13 @@ const OAuthproviderRenderer = ({
                         alignItems: 'center',
                     }}
                 >
-                    {provider === 'google' ? (
+                    {providerVal === 'google' ? (
                         <GoogleButton disabled={loading} onClick={openPopUp} />
                     ) : (
                         <Button disabled={loading} onClick={openPopUp}>
                             <FormattedMessage
                                 id="oauth.authenticate"
-                                values={{ provider: capitalizedProvider }}
+                                values={{ provider }}
                             />
                         </Button>
                     )}
