@@ -28,8 +28,8 @@ import { ENTITY, SortDirection } from 'types';
 import useConstant from 'use-constant';
 
 interface Props {
-    cardWidth: number;
     belowMd: boolean;
+    gridSpacing: number;
     setColumnToSort: Dispatch<
         SetStateAction<keyof ConnectorWithTagDetailQuery>
     >;
@@ -63,8 +63,8 @@ const toolbarSectionSx: SxProps<Theme> = {
 };
 
 function ConnectorToolbar({
-    // cardWidth,
     belowMd,
+    gridSpacing,
     setColumnToSort,
     setProtocol,
     setSortDirection,
@@ -72,15 +72,6 @@ function ConnectorToolbar({
 }: Props) {
     const intl = useIntl();
     const isFiltering = useRef(false);
-
-    // const protocolLayout: Partial<ClassNameMap> = useConstant(() =>
-    //     belowMd
-    //         ? {
-    //               width: '0',
-    //               flexBasis: '100%',
-    //           }
-    //         : {}
-    // );
 
     const protocolOptions: {
         protocol: ENTITY | null;
@@ -191,7 +182,10 @@ function ConnectorToolbar({
             sx={{ flexDirection: belowMd ? 'column' : 'row' }}
         >
             {belowMd ? (
-                <Grid container sx={{ mb: 2, justifyContent: 'flex-end' }}>
+                <Grid
+                    container
+                    sx={{ mb: gridSpacing, justifyContent: 'flex-end' }}
+                >
                     <Autocomplete
                         options={protocolOptions.map(({ message }) => message)}
                         renderInput={({
@@ -220,7 +214,11 @@ function ConnectorToolbar({
                 </Grid>
             ) : null}
 
-            <Grid container spacing={2} sx={{ justifyContent: 'flex-end' }}>
+            <Grid
+                container
+                spacing={gridSpacing}
+                sx={{ justifyContent: 'flex-end' }}
+            >
                 {belowMd ? null : (
                     <Grid item>
                         <Autocomplete

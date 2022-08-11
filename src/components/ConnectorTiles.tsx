@@ -115,8 +115,8 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
         >
             <Grid item xs={12}>
                 <ConnectorToolbar
-                    cardWidth={cardWidth}
                     belowMd={belowMd}
+                    gridSpacing={gridSpacing}
                     setColumnToSort={setColumnToSort}
                     setProtocol={setProtocol}
                     setSortDirection={setSortDirection}
