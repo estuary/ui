@@ -13,12 +13,12 @@ import {
     Dispatch,
     SetStateAction,
     SyntheticEvent,
-    useMemo,
     useRef,
 } from 'react';
 import { useIntl } from 'react-intl';
 import { CONNECTOR_NAME } from 'services/supabase';
 import { ENTITY, SortDirection } from 'types';
+import useConstant from 'use-constant';
 
 interface Props {
     cardWidth: number;
@@ -54,71 +54,62 @@ function ConnectorToolbar({
     const paramOptions: {
         field: keyof ConnectorWithTagDetailQuery;
         message: string;
-    }[] = useMemo(
-        () => [
-            {
-                field: CONNECTOR_NAME,
-                message: intl.formatMessage({
-                    id: 'connectorTable.data.title',
-                }),
-            },
-            {
-                field: 'image_name',
-                message: intl.formatMessage({
-                    id: 'connectorTable.data.image_name',
-                }),
-            },
-        ],
-        [intl]
-    );
+    }[] = useConstant(() => [
+        {
+            field: CONNECTOR_NAME,
+            message: intl.formatMessage({
+                id: 'connectorTable.data.title',
+            }),
+        },
+        {
+            field: 'image_name',
+            message: intl.formatMessage({
+                id: 'connectorTable.data.image_name',
+            }),
+        },
+    ]);
 
     const protocolOptions: {
         protocol: ENTITY | null;
         message: string;
-    }[] = useMemo(
-        () => [
-            {
-                protocol: null,
-                message: intl.formatMessage({
-                    id: 'common.optionsAll',
-                }),
-            },
-            {
-                protocol: ENTITY.CAPTURE,
-                message: intl.formatMessage({
-                    id: 'terms.capture',
-                }),
-            },
-            {
-                protocol: ENTITY.MATERIALIZATION,
-                message: intl.formatMessage({
-                    id: 'terms.materialization',
-                }),
-            },
-        ],
-        [intl]
-    );
+    }[] = useConstant(() => [
+        {
+            protocol: null,
+            message: intl.formatMessage({
+                id: 'common.optionsAll',
+            }),
+        },
+        {
+            protocol: ENTITY.CAPTURE,
+            message: intl.formatMessage({
+                id: 'terms.capture',
+            }),
+        },
+        {
+            protocol: ENTITY.MATERIALIZATION,
+            message: intl.formatMessage({
+                id: 'terms.materialization',
+            }),
+        },
+    ]);
 
     const sortDirectionOptions: {
         direction: SortDirection;
         message: string;
-    }[] = useMemo(
-        () => [
-            {
-                direction: 'asc',
-                message: intl.formatMessage({
-                    id: 'sortDirection.ascending',
-                }),
-            },
-            {
-                direction: 'desc',
-                message: intl.formatMessage({
-                    id: 'sortDirection.descending',
-                }),
-            },
-        ],
-        [intl]
-    );
+    }[] = useConstant(() => [
+        {
+            direction: 'asc',
+            message: intl.formatMessage({
+                id: 'sortDirection.ascending',
+            }),
+        },
+        {
+            direction: 'desc',
+            message: intl.formatMessage({
+                id: 'sortDirection.descending',
+            }),
+        },
+    ]);
 
     const handlers = {
         filterTiles: debounce(
