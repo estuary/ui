@@ -2,10 +2,16 @@ import {
     Autocomplete,
     AutocompleteRenderInputParams,
     FilledInputProps,
+    SxProps,
     TextField,
+    Theme,
     Toolbar,
 } from '@mui/material';
-import { slate } from 'context/Theme';
+import {
+    darkGlassBkgColor,
+    darkGlassBkgColorPseudoClass,
+    slate,
+} from 'context/Theme';
 import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
 import { debounce } from 'lodash';
 import {
@@ -35,9 +41,22 @@ const inputProps: Partial<FilledInputProps> = {
     sx: {
         borderRadius: 5,
         backgroundColor: (theme) =>
+            theme.palette.mode === 'dark' ? darkGlassBkgColor : slate[50],
+    },
+};
+
+const toolbarSectionSx: SxProps<Theme> = {
+    '& .MuiInputLabel-root.Mui-focused': {
+        color: (theme) =>
             theme.palette.mode === 'dark'
-                ? 'linear-gradient(160deg, rgba(172, 199, 220, 0.18) 2%, rgba(172, 199, 220, 0.12) 40%)'
-                : slate[50],
+                ? 'primary'
+                : theme.palette.text.secondary,
+    },
+    '& .MuiFilledInput-root:hover, .MuiFilledInput-root.Mui-focused': {
+        backgroundColor: (theme) =>
+            theme.palette.mode === 'dark'
+                ? darkGlassBkgColorPseudoClass
+                : 'rgba(80, 114, 235, 0.09)',
     },
 };
 
@@ -184,7 +203,7 @@ function ConnectorToolbar({
                 })}
                 disableClearable
                 onChange={handlers.setFilterParam}
-                sx={{ width: 150, mr: 2 }}
+                sx={{ width: 150, mr: 2, ...toolbarSectionSx }}
             />
 
             <Autocomplete
@@ -210,7 +229,7 @@ function ConnectorToolbar({
                 })}
                 disableClearable
                 onChange={handlers.setProtocol}
-                sx={{ width: 200, mr: 2 }}
+                sx={{ width: 200, mr: 2, ...toolbarSectionSx }}
             />
 
             <Autocomplete
@@ -236,7 +255,7 @@ function ConnectorToolbar({
                 })}
                 disableClearable
                 onChange={handlers.switchSortDirection}
-                sx={{ width: 125, mr: 2 }}
+                sx={{ width: 125, mr: 2, ...toolbarSectionSx }}
             />
 
             <TextField
@@ -246,7 +265,7 @@ function ConnectorToolbar({
                 variant="filled"
                 InputProps={inputProps}
                 onChange={handlers.filterTiles}
-                sx={{ width: cardWidth, borderRadius: 5 }}
+                sx={{ width: cardWidth, borderRadius: 5, ...toolbarSectionSx }}
             />
         </Toolbar>
     );

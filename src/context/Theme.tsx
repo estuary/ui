@@ -155,6 +155,9 @@ export const outlineSx: SxProps<Theme> = {
     border: `1px solid ${slate[200]}`,
 };
 
+export const darkGlassBkgColor = 'rgba(172, 199, 220, 0.12)';
+export const darkGlassBkgColorPseudoClass = 'rgba(172, 199, 220, 0.18)';
+
 export const darkGlassBkgWithBlur = {
     background:
         'linear-gradient(160deg, rgba(99, 138, 169, 0.24) 0%, rgba(13, 43, 67, 0.22) 75%, rgba(13, 43, 67, 0.18) 100%)',
