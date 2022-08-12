@@ -76,7 +76,8 @@ export const defaultTableFilter = <Data>(
     searchQuery: string | null,
     columnToSort: keyof Data,
     sortDirection: string,
-    pagination?: { from: number; to: number }
+    pagination?: { from: number; to: number },
+    protocol?: { column: keyof Data; value: string | null }
 ) => {
     let queryBuilder = query;
 
@@ -96,6 +97,14 @@ export const defaultTableFilter = <Data>(
 
     if (pagination) {
         queryBuilder = queryBuilder.range(pagination.from, pagination.to);
+    }
+
+    if (protocol?.value) {
+        queryBuilder = queryBuilder.filter(
+            protocol.column,
+            'eq',
+            protocol.value
+        );
     }
 
     return queryBuilder;

@@ -19,7 +19,6 @@ import {
     Toolbar,
     Typography,
 } from '@mui/material';
-import { PostgrestError } from '@supabase/supabase-js';
 import MessageWithLink from 'components/content/MessageWithLink';
 import RowSelector, {
     RowSelectorProps,
@@ -40,23 +39,13 @@ import {
     useState,
 } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-
-enum TableStatuses {
-    LOADING = 'LOADING',
-    DATA_FETCHED = 'DATA_FETCHED',
-    NO_EXISTING_DATA = 'NO_EXISTING_DATA',
-    TECHNICAL_DIFFICULTIES = 'TECHNICAL_DIFFICULTIES',
-    UNMATCHED_FILTER = 'UNMATCHED_FILTER',
-}
-
-type TableStatus =
-    | TableStatuses.LOADING
-    | TableStatuses.DATA_FETCHED
-    | TableStatuses.NO_EXISTING_DATA
-    | TableStatuses.TECHNICAL_DIFFICULTIES
-    | TableStatuses.UNMATCHED_FILTER;
-
-export type SortDirection = 'asc' | 'desc';
+import {
+    SortDirection,
+    TableIntlConfig,
+    TableState,
+    TableStatuses,
+} from 'types';
+import { getEmptyTableHeader, getEmptyTableMessage } from 'utils/table-utils';
 
 interface Props {
     columns: {
@@ -77,18 +66,9 @@ interface Props {
     enableSelection?: boolean;
     rowSelectorProps?: RowSelectorProps;
     tableDescriptionId?: string;
-    noExistingDataContentIds: {
-        header: string;
-        message: string;
-        disableDoclink?: boolean;
-    };
+    noExistingDataContentIds: TableIntlConfig;
     showEntityStatus?: boolean;
     selectableTableStoreName: SelectTableStoreNames;
-}
-
-interface TableState {
-    status: TableStatus;
-    error?: PostgrestError;
 }
 
 export const getPagination = (currPage: number, size: number) => {
@@ -177,39 +157,6 @@ function EntityTable({
     useEffect(() => {
         mutateSelectData().catch(() => {});
     }, [mutateSelectData, successfulTransformations]);
-
-    const getEmptyTableHeader = (tableStatus: TableStatuses): string => {
-        switch (tableStatus) {
-            case TableStatuses.TECHNICAL_DIFFICULTIES:
-                return 'entityTable.technicalDifficulties.header';
-            case TableStatuses.UNMATCHED_FILTER:
-                return 'entityTable.unmatchedFilter.header';
-            default:
-                return noExistingDataContentIds.header;
-        }
-    };
-
-    const getEmptyTableMessage = (tableStatus: TableStatuses): JSX.Element => {
-        switch (tableStatus) {
-            case TableStatuses.TECHNICAL_DIFFICULTIES:
-                return (
-                    <FormattedMessage id="entityTable.technicalDifficulties.message" />
-                );
-            case TableStatuses.UNMATCHED_FILTER:
-                return (
-                    <FormattedMessage id="entityTable.unmatchedFilter.message" />
-                );
-            default: {
-                const { disableDoclink, message } = noExistingDataContentIds;
-
-                if (disableDoclink) {
-                    return <FormattedMessage id={message} />;
-                }
-
-                return <MessageWithLink messageID={message} />;
-            }
-        }
-    };
 
     const resetSelection = () => {
         if (enableSelection) {
@@ -418,13 +365,15 @@ function EntityTable({
                                                         >
                                                             <FormattedMessage
                                                                 id={getEmptyTableHeader(
-                                                                    tableState.status
+                                                                    tableState.status,
+                                                                    noExistingDataContentIds
                                                                 )}
                                                             />
                                                         </Typography>
                                                         <Typography component="div">
                                                             {getEmptyTableMessage(
-                                                                tableState.status
+                                                                tableState.status,
+                                                                noExistingDataContentIds
                                                             )}
                                                         </Typography>
                                                     </>

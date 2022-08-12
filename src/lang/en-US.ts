@@ -22,6 +22,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.fail': `Failed`,
     'common.success': `Success`,
     'common.errors.heading': `Error`,
+    'common.optionsAll': `All`,
     'common.optionsMissing': `No options`,
     'common.noData': `No data to display`,
     'common.loggedOut': `You have been logged out. Please log back in.`,
@@ -39,6 +40,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'terms.permissions': `Access Grants`,
     'terms.materialization': `Materialization`,
     'terms.capture': `Capture`,
+    'terms.documentation': `Docs`,
 
     // Common fields
     'entityPrefix.label': `Prefix`,
@@ -49,6 +51,10 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'connector.description': `Choose the external system you're connecting to.`,
     'description.label': `Details`,
     'description.description': `Describe your changes or why you're changing things.`,
+
+    // Filter options
+    'sortDirection.ascending': `A to Z`,
+    'sortDirection.descending': `Z to A`,
 
     // Common sections
     'connectionConfig.header': `Connection Config`,
@@ -219,6 +225,7 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.data.entity': `Name`,
     'entityTable.data.connectorType': `Type`,
     'entityTable.data.lastUpdated': `Last Updated`,
+    'entityTable.data.lastUpdatedWithColon': `Last Updated:`,
     'entityTable.data.lastPublished': `Published`,
     'entityTable.data.actions': `Actions`,
     'entityTable.data.writesTo': `Writes To`,
@@ -298,6 +305,8 @@ const ConnectorsPage: ResolvedIntlConfig['messages'] = {
     'connectorTable.title': `Installed ${CommonMessages['terms.connectors']}`,
     'connectorTable.title.aria': `Table of all installed ${CommonMessages['terms.connectors']}`,
     'connectorTable.filterLabel': `Search connectors`,
+    'connectorTable.label.sortBy': `Sort By`,
+    'connectorTable.label.sortDirection': `Sort Direction`,
     'connectorTable.data.title': `Name`,
     'connectorTable.data.image_name': `Image`,
     'connectorTable.data.detail': `Details`,
@@ -307,12 +316,12 @@ const ConnectorsPage: ResolvedIntlConfig['messages'] = {
     'connectorTable.data.external_url': `Homepage`,
     'connectorTable.data.actions': `Actions`,
     'connectorTable.actionsCta.capture': `Capture`,
-    'connectorTable.actionsCta.materialization': `Materialization`,
+    'connectorTable.actionsCta.materialization': `Materialize`,
     'connectors.header': `Connectors`,
     'connectors.main.message1': `There are no connectors available matching your search.`,
     'connectors.main.message2': `If you'd like to request a connector for a system that isn't yet supported, {docLink}.`,
     'connectors.main.message2.docLink': `contact Estuary`,
-    'connectors.main.message2.docPath': `https://www.estuary.dev/#get-in-touch`,
+    'connectors.main.message2.docPath': `https://github.com/estuary/connectors/issues/new?assignees=&labels=new+connector&template=request-new-connector-form.yaml&title=Request+a+connector+to+%5Bcapture+from+%7C+materialize+to%5D+%5Byour+favorite+system%5D`,
 };
 
 const NoGrants: ResolvedIntlConfig['messages'] = {

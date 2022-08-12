@@ -30,5 +30,9 @@ module.exports = {
 
         // Just do not agree with this one
         'no-negated-condition': 'off',
+
+        'react/iframe-missing-sandbox': 'error',
+        'react/jsx-no-leaked-render': 'error',
+        'no-constant-binary-expression': 'error',
     },
 };

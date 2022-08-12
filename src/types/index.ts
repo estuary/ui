@@ -1,4 +1,5 @@
 import { JsonFormsCore } from '@jsonforms/core';
+import { PostgrestError } from '@supabase/supabase-js';
 import { ReactNode } from 'react';
 
 export enum MessagePrefixes {
@@ -98,4 +99,25 @@ export enum ENTITY {
     CAPTURE = 'capture',
     MATERIALIZATION = 'materialization',
     COLLECTION = 'collection',
+}
+
+export type SortDirection = 'asc' | 'desc';
+
+export enum TableStatuses {
+    LOADING = 'LOADING',
+    DATA_FETCHED = 'DATA_FETCHED',
+    NO_EXISTING_DATA = 'NO_EXISTING_DATA',
+    TECHNICAL_DIFFICULTIES = 'TECHNICAL_DIFFICULTIES',
+    UNMATCHED_FILTER = 'UNMATCHED_FILTER',
+}
+
+export interface TableState {
+    status: TableStatuses;
+    error?: PostgrestError;
+}
+
+export interface TableIntlConfig {
+    header: string;
+    message: string;
+    disableDoclink?: boolean;
 }

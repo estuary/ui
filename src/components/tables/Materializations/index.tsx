@@ -1,14 +1,11 @@
 import { Box } from '@mui/material';
-import EntityTable, {
-    getPagination,
-    SortDirection,
-} from 'components/tables/EntityTable';
+import EntityTable, { getPagination } from 'components/tables/EntityTable';
 import Rows, { tableColumns } from 'components/tables/Materializations/Rows';
-import { useQuery } from 'hooks/supabase-swr';
 import { SelectTableStoreNames } from 'context/Zustand';
+import { useQuery } from 'hooks/supabase-swr';
 import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
-import { LiveSpecsExtBaseQuery } from 'types';
+import { LiveSpecsExtBaseQuery, SortDirection } from 'types';
 
 export interface LiveSpecsExtQuery extends LiveSpecsExtBaseQuery {
     reads_from: string[];

@@ -1,17 +1,15 @@
 import { Box } from '@mui/material';
 import Rows, { tableColumns } from 'components/tables/Connectors/Rows';
-import EntityTable, {
-    getPagination,
-    SortDirection,
-} from 'components/tables/EntityTable';
+import EntityTable, { getPagination } from 'components/tables/EntityTable';
+import { SelectTableStoreNames } from 'context/Zustand';
 import { useQuery } from 'hooks/supabase-swr';
 import {
     ConnectorWithTagDetailQuery,
     CONNECTOR_WITH_TAG_QUERY,
 } from 'hooks/useConnectorWithTagDetail';
-import { SelectTableStoreNames } from 'context/Zustand';
 import { useState } from 'react';
 import { CONNECTOR_NAME, defaultTableFilter, TABLES } from 'services/supabase';
+import { SortDirection } from 'types';
 
 function ConnectorsTable() {
     const rowsPerPage = 10;
