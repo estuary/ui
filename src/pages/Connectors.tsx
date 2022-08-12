@@ -33,7 +33,7 @@ const Connectors = () => {
                 </Stack>
             </Toolbar>
 
-            <ConnectorTiles cardWidth={260} cardsPerRow={4} gridSpacing={2} />
+            <ConnectorTiles cardWidth={250} cardsPerRow={4} gridSpacing={2} />
         </PageContainer>
     );
 };

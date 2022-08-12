@@ -316,7 +316,7 @@ const ConnectorsPage: ResolvedIntlConfig['messages'] = {
     'connectorTable.data.external_url': `Homepage`,
     'connectorTable.data.actions': `Actions`,
     'connectorTable.actionsCta.capture': `Capture`,
-    'connectorTable.actionsCta.materialization': `Materialization`,
+    'connectorTable.actionsCta.materialization': `Materialize`,
     'connectors.header': `Connectors`,
     'connectors.main.message1': `There are no connectors available matching your search.`,
     'connectors.main.message2': `If you'd like to request a connector for a system that isn't yet supported, {docLink}.`,
