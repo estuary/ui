@@ -239,7 +239,7 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
                                             },
                                         }}
                                     >
-                                        Docs
+                                        <FormattedMessage id="terms.documentation" />
                                     </Button>
 
                                     <Button

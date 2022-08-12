@@ -40,6 +40,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'terms.permissions': `Access Grants`,
     'terms.materialization': `Materialization`,
     'terms.capture': `Capture`,
+    'terms.documentation': `Docs`,
 
     // Common fields
     'entityPrefix.label': `Prefix`,
