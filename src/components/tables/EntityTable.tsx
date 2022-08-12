@@ -39,6 +39,7 @@ import {
     useState,
 } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { useEffectOnce } from 'react-use';
 import {
     SortDirection,
     TableIntlConfig,
@@ -165,6 +166,12 @@ function EntityTable({
             resetRows();
         }
     };
+
+    useEffectOnce(() => {
+        return () => {
+            return resetSelection();
+        };
+    });
 
     const handlers = {
         filterTable: debounce(
