@@ -43,13 +43,6 @@ interface ProtocolOption {
     message: string;
 }
 
-interface ProtocolFieldProps {
-    fieldLabel: string;
-    defaultOption: string;
-    options: ProtocolOption[];
-    setProtocolHandler: (_event: SyntheticEvent, value: string | null) => void;
-}
-
 const inputProps: Partial<FilledInputProps> = {
     disableUnderline: true,
     sx: {
@@ -73,37 +66,6 @@ const toolbarSectionSx: SxProps<Theme> = {
                 : 'rgba(80, 114, 235, 0.09)',
     },
 };
-
-function ProtocolField({
-    fieldLabel,
-    defaultOption,
-    options,
-    setProtocolHandler,
-}: ProtocolFieldProps) {
-    return (
-        <Autocomplete
-            options={options.map(({ message }) => message)}
-            renderInput={({
-                InputProps,
-                ...params
-            }: AutocompleteRenderInputParams) => (
-                <TextField
-                    {...params}
-                    InputProps={{
-                        ...InputProps,
-                        ...inputProps,
-                    }}
-                    label={fieldLabel}
-                    variant="filled"
-                />
-            )}
-            defaultValue={defaultOption}
-            disableClearable
-            onChange={setProtocolHandler}
-            sx={{ width: 200, ...toolbarSectionSx }}
-        />
-    );
-}
 
 function ConnectorToolbar({
     belowMd,
@@ -221,43 +183,29 @@ function ConnectorToolbar({
             disableGutters
             sx={{ flexDirection: belowMd ? 'column' : 'row' }}
         >
-            {belowMd ? (
-                <Grid
-                    container
-                    sx={{ mb: gridSpacing, justifyContent: 'flex-end' }}
-                >
-                    <ProtocolField
-                        fieldLabel={intl.formatMessage({
-                            id: 'connectorTable.data.protocol',
-                        })}
-                        defaultOption={intl.formatMessage({
-                            id: 'common.optionsAll',
-                        })}
-                        options={protocolOptions}
-                        setProtocolHandler={handlers.setProtocol}
-                    />
-                </Grid>
-            ) : null}
-
             <Grid
                 container
                 spacing={gridSpacing}
-                sx={{ justifyContent: 'flex-end' }}
+                wrap="wrap-reverse"
+                sx={{
+                    justifyContent: 'flex-end',
+                }}
             >
-                {belowMd ? null : (
-                    <Grid item>
-                        <ProtocolField
-                            fieldLabel={intl.formatMessage({
-                                id: 'connectorTable.data.protocol',
-                            })}
-                            defaultOption={intl.formatMessage({
-                                id: 'common.optionsAll',
-                            })}
-                            options={protocolOptions}
-                            setProtocolHandler={handlers.setProtocol}
-                        />
-                    </Grid>
-                )}
+                <Grid item xs={5} md={3}>
+                    <TextField
+                        label={intl.formatMessage({
+                            id: 'connectorTable.filterLabel',
+                        })}
+                        variant="filled"
+                        InputProps={inputProps}
+                        onChange={handlers.filterTiles}
+                        sx={{
+                            width: '100%',
+                            borderRadius: 5,
+                            ...toolbarSectionSx,
+                        }}
+                    />
+                </Grid>
 
                 <Grid item xs={3} md={2}>
                     <Autocomplete
@@ -317,19 +265,31 @@ function ConnectorToolbar({
                     />
                 </Grid>
 
-                <Grid item xs={5} md={3}>
-                    <TextField
-                        label={intl.formatMessage({
-                            id: 'connectorTable.filterLabel',
+                <Grid item xs={5} md={2}>
+                    <Autocomplete
+                        options={protocolOptions.map(({ message }) => message)}
+                        renderInput={({
+                            InputProps,
+                            ...params
+                        }: AutocompleteRenderInputParams) => (
+                            <TextField
+                                {...params}
+                                InputProps={{
+                                    ...InputProps,
+                                    ...inputProps,
+                                }}
+                                label={intl.formatMessage({
+                                    id: 'connectorTable.data.protocol',
+                                })}
+                                variant="filled"
+                            />
+                        )}
+                        defaultValue={intl.formatMessage({
+                            id: 'common.optionsAll',
                         })}
-                        variant="filled"
-                        InputProps={inputProps}
-                        onChange={handlers.filterTiles}
-                        sx={{
-                            width: '100%',
-                            borderRadius: 5,
-                            ...toolbarSectionSx,
-                        }}
+                        disableClearable
+                        onChange={handlers.setProtocol}
+                        sx={toolbarSectionSx}
                     />
                 </Grid>
             </Grid>
