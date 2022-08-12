@@ -1,9 +1,8 @@
-import { Cable, Help } from '@mui/icons-material';
+import { Cable, OpenInNew } from '@mui/icons-material';
 import {
     Box,
     Button,
     Grid,
-    IconButton,
     LinearProgress,
     Paper,
     Stack,
@@ -182,38 +181,9 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
                                     )}
                                 </Box>
 
-                                <Box
-                                    sx={{
-                                        width: '100%',
-                                        mb: 1,
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'space-around',
-                                    }}
-                                >
-                                    <Box
-                                        sx={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                        }}
-                                    >
-                                        <Typography marginRight={1}>
-                                            {row.title}
-                                        </Typography>
-
-                                        <IconButton
-                                            href={
-                                                row.connector_tags[0]
-                                                    .documentation_url
-                                            }
-                                            target="_blank"
-                                            rel="noopener"
-                                            color="inherit"
-                                        >
-                                            <Help />
-                                        </IconButton>
-                                    </Box>
-                                </Box>
+                                <Typography align="center" marginBottom={1}>
+                                    {row.title}
+                                </Typography>
 
                                 <Typography
                                     variant="caption"
@@ -246,48 +216,78 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
                                     />
                                 </Typography>
 
-                                <Button
-                                    size="small"
-                                    onClick={() => {
-                                        if (
-                                            row.connector_tags[0].protocol ===
-                                            'capture'
-                                        ) {
-                                            navigate(
-                                                getPathWithParam(
-                                                    authenticatedRoutes.captures
-                                                        .create.fullPath,
-                                                    authenticatedRoutes.captures
-                                                        .create.params
-                                                        .connectorID,
-                                                    row.connector_tags[0].id
-                                                )
-                                            );
-                                        } else if (
-                                            row.connector_tags[0].protocol ===
-                                            'materialization'
-                                        ) {
-                                            navigate(
-                                                getPathWithParam(
-                                                    authenticatedRoutes
-                                                        .materializations.create
-                                                        .fullPath,
-                                                    authenticatedRoutes
-                                                        .materializations.create
-                                                        .params.connectorId,
-                                                    row.connector_tags[0].id
-                                                )
-                                            );
-                                        }
+                                <Stack
+                                    direction="row"
+                                    spacing={1}
+                                    sx={{
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
                                     }}
                                 >
-                                    {row.connector_tags[0].protocol ===
-                                    'capture' ? (
-                                        <FormattedMessage id="connectorTable.actionsCta.capture" />
-                                    ) : (
-                                        <FormattedMessage id="connectorTable.actionsCta.materialization" />
-                                    )}
-                                </Button>
+                                    <Button
+                                        href={
+                                            row.connector_tags[0]
+                                                .documentation_url
+                                        }
+                                        target="_blank"
+                                        rel="noopener"
+                                        endIcon={<OpenInNew />}
+                                        sx={{
+                                            'backgroundColor': slate[25],
+                                            '&:hover': {
+                                                backgroundColor: slate[25],
+                                            },
+                                        }}
+                                    >
+                                        Docs
+                                    </Button>
+
+                                    <Button
+                                        onClick={() => {
+                                            if (
+                                                row.connector_tags[0]
+                                                    .protocol === 'capture'
+                                            ) {
+                                                navigate(
+                                                    getPathWithParam(
+                                                        authenticatedRoutes
+                                                            .captures.create
+                                                            .fullPath,
+                                                        authenticatedRoutes
+                                                            .captures.create
+                                                            .params.connectorID,
+                                                        row.connector_tags[0].id
+                                                    )
+                                                );
+                                            } else if (
+                                                row.connector_tags[0]
+                                                    .protocol ===
+                                                'materialization'
+                                            ) {
+                                                navigate(
+                                                    getPathWithParam(
+                                                        authenticatedRoutes
+                                                            .materializations
+                                                            .create.fullPath,
+                                                        authenticatedRoutes
+                                                            .materializations
+                                                            .create.params
+                                                            .connectorId,
+                                                        row.connector_tags[0].id
+                                                    )
+                                                );
+                                            }
+                                        }}
+                                        sx={{ flexGrow: 1 }}
+                                    >
+                                        {row.connector_tags[0].protocol ===
+                                        'capture' ? (
+                                            <FormattedMessage id="connectorTable.actionsCta.capture" />
+                                        ) : (
+                                            <FormattedMessage id="connectorTable.actionsCta.materialization" />
+                                        )}
+                                    </Button>
+                                </Stack>
                             </Stack>
                         </Paper>
                     </Grid>
