@@ -9,10 +9,12 @@ import { LiveSpecsExtBaseQuery, SortDirection } from 'types';
 
 export interface LiveSpecsExtQuery extends LiveSpecsExtBaseQuery {
     writes_to: string[];
+    connector_id: string;
 }
 
 const queryColumns = [
     'catalog_name',
+    'connector_id',
     'connector_image_name',
     'connector_image_tag',
     'connector_open_graph->en-US->>image',

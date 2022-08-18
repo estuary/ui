@@ -38,7 +38,9 @@ interface Props {
     readOnly?: boolean;
 }
 
-const getConnectorImageDetails = (connector: ConnectorWithTagDetailQuery) => {
+export const getConnectorImageDetails = (
+    connector: ConnectorWithTagDetailQuery
+) => {
     return {
         connectorId: connector.id,
         id: connector.connector_tags[0].id,

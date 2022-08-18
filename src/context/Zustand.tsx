@@ -79,6 +79,64 @@ interface ZustandProviderProps {
     };
 }
 
+const invariableStores = {
+    // Draft Editor Store
+    [DraftEditorStoreNames.CAPTURE]: createEditorStore(
+        DraftEditorStoreNames.CAPTURE
+    ),
+    [DraftEditorStoreNames.MATERIALIZATION]: createEditorStore(
+        DraftEditorStoreNames.MATERIALIZATION
+    ),
+
+    // Form State Store
+    [FormStateStoreNames.CAPTURE_CREATE]: createFormStateStore(
+        FormStateStoreNames.CAPTURE_CREATE,
+        MessagePrefixes.CAPTURE_CREATE
+    ),
+    [FormStateStoreNames.CAPTURE_EDIT]: createFormStateStore(
+        FormStateStoreNames.CAPTURE_EDIT,
+        MessagePrefixes.CAPTURE_EDIT
+    ),
+    [FormStateStoreNames.MATERIALIZATION_CREATE]: createFormStateStore(
+        FormStateStoreNames.MATERIALIZATION_CREATE,
+        MessagePrefixes.MATERIALIZATION_CREATE
+    ),
+    [FormStateStoreNames.MATERIALIZATION_EDIT]: createFormStateStore(
+        FormStateStoreNames.MATERIALIZATION_EDIT,
+        MessagePrefixes.MATERIALIZATION_EDIT
+    ),
+
+    // Resource Config Store
+    [ResourceConfigStoreNames.MATERIALIZATION]: createResourceConfigStore(
+        ResourceConfigStoreNames.MATERIALIZATION
+    ),
+
+    // Select Table Store
+    [SelectTableStoreNames.ACCESS_GRANTS]: createSelectableTableStore(
+        SelectTableStoreNames.ACCESS_GRANTS
+    ),
+    [SelectTableStoreNames.CAPTURE]: createSelectableTableStore(
+        SelectTableStoreNames.CAPTURE
+    ),
+    [SelectTableStoreNames.COLLECTION]: createSelectableTableStore(
+        SelectTableStoreNames.COLLECTION
+    ),
+    [SelectTableStoreNames.CONNECTOR]: createSelectableTableStore(
+        SelectTableStoreNames.CONNECTOR
+    ),
+    [SelectTableStoreNames.MATERIALIZATION]: createSelectableTableStore(
+        SelectTableStoreNames.MATERIALIZATION
+    ),
+
+    // Shard Detail Store
+    [ShardDetailStoreNames.CAPTURE]: createShardDetailStore(
+        ShardDetailStoreNames.CAPTURE
+    ),
+    [ShardDetailStoreNames.MATERIALIZATION]: createShardDetailStore(
+        ShardDetailStoreNames.MATERIALIZATION
+    ),
+};
+
 export const ZustandContext = createReactContext<any | null>(null);
 
 export const ZustandProvider = ({
@@ -91,68 +149,7 @@ export const ZustandProvider = ({
 
             return { [storeName]: createStore };
         } else {
-            return {
-                // Draft Editor Store
-                [DraftEditorStoreNames.CAPTURE]: createEditorStore(
-                    DraftEditorStoreNames.CAPTURE
-                ),
-                [DraftEditorStoreNames.MATERIALIZATION]: createEditorStore(
-                    DraftEditorStoreNames.MATERIALIZATION
-                ),
-
-                // Form State Store
-                [FormStateStoreNames.CAPTURE_CREATE]: createFormStateStore(
-                    FormStateStoreNames.CAPTURE_CREATE,
-                    MessagePrefixes.CAPTURE_CREATE
-                ),
-                [FormStateStoreNames.CAPTURE_EDIT]: createFormStateStore(
-                    FormStateStoreNames.CAPTURE_EDIT,
-                    MessagePrefixes.CAPTURE_EDIT
-                ),
-                [FormStateStoreNames.MATERIALIZATION_CREATE]:
-                    createFormStateStore(
-                        FormStateStoreNames.MATERIALIZATION_CREATE,
-                        MessagePrefixes.MATERIALIZATION_CREATE
-                    ),
-                [FormStateStoreNames.MATERIALIZATION_EDIT]:
-                    createFormStateStore(
-                        FormStateStoreNames.MATERIALIZATION_EDIT,
-                        MessagePrefixes.MATERIALIZATION_EDIT
-                    ),
-
-                // Resource Config Store
-                [ResourceConfigStoreNames.MATERIALIZATION]:
-                    createResourceConfigStore(
-                        ResourceConfigStoreNames.MATERIALIZATION
-                    ),
-
-                // Select Table Store
-                [SelectTableStoreNames.ACCESS_GRANTS]:
-                    createSelectableTableStore(
-                        SelectTableStoreNames.ACCESS_GRANTS
-                    ),
-                [SelectTableStoreNames.CAPTURE]: createSelectableTableStore(
-                    SelectTableStoreNames.CAPTURE
-                ),
-                [SelectTableStoreNames.COLLECTION]: createSelectableTableStore(
-                    SelectTableStoreNames.COLLECTION
-                ),
-                [SelectTableStoreNames.CONNECTOR]: createSelectableTableStore(
-                    SelectTableStoreNames.CONNECTOR
-                ),
-                [SelectTableStoreNames.MATERIALIZATION]:
-                    createSelectableTableStore(
-                        SelectTableStoreNames.MATERIALIZATION
-                    ),
-
-                // Shard Detail Store
-                [ShardDetailStoreNames.CAPTURE]: createShardDetailStore(
-                    ShardDetailStoreNames.CAPTURE
-                ),
-                [ShardDetailStoreNames.MATERIALIZATION]: createShardDetailStore(
-                    ShardDetailStoreNames.MATERIALIZATION
-                ),
-            };
+            return invariableStores;
         }
     });
 

@@ -108,9 +108,11 @@ function Row({
             navigate(
                 `${getPathWithParam(
                     authenticatedRoutes.captures.edit.fullPath,
-                    authenticatedRoutes.captures.edit.params.liveSpecId,
+                    authenticatedRoutes.captures.edit.params.connectorId,
+                    row.connector_id
+                )}&${authenticatedRoutes.captures.edit.params.liveSpecId}=${
                     row.id
-                )}&${authenticatedRoutes.captures.edit.params.lastPubId}=${
+                }&${authenticatedRoutes.captures.edit.params.lastPubId}=${
                     row.last_pub_id
                 }`
             );

@@ -25,6 +25,7 @@ const supabaseSettings = {
 export const CONNECTOR_NAME = `open_graph->en-US->>title`;
 export const CONNECTOR_RECOMMENDED = `open_graph->en-US->>recommended`;
 export const CONNECTOR_TITLE = `connector_open_graph->en-US->>title`;
+export const CONNECTOR_IMAGE = `connector_open_graph->en-US->>image`;
 
 export const ERROR_MESSAGES = {
     jwtExpired: 'JWT expired',

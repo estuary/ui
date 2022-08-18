@@ -19,11 +19,17 @@ interface Response<T> {
 
 export interface LiveSpecsExtQueryWithSpec extends LiveSpecsExtQuery {
     spec: any;
+    catalog_name: string;
+    detail: string;
 }
 
 const defaultResponse: LiveSpecsExtQuery[] = [];
 const queryColumns = ['id', 'writes_to', 'spec_type'];
-const queryColumnsWithSpec = queryColumns.concat(['spec']);
+const queryColumnsWithSpec = queryColumns.concat([
+    'spec',
+    'catalog_name',
+    'detail',
+]);
 
 type EntityID = string[] | string | null;
 

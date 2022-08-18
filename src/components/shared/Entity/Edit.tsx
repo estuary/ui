@@ -3,7 +3,9 @@ import { authenticatedRoutes } from 'app/Authenticated';
 import CollectionConfig from 'components/collection/Config';
 import { EditorStoreState } from 'components/editor/Store';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
-import DetailsForm from 'components/shared/Entity/DetailsForm';
+import DetailsForm, {
+    getConnectorImageDetails,
+} from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
 import EntityError from 'components/shared/Entity/Error';
 import Error from 'components/shared/Error';
@@ -22,11 +24,17 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import {
     useLiveSpecsExtByLastPubId,
     useLiveSpecsExtWithOutSpec,
+    useLiveSpecsExtWithSpec,
 } from 'hooks/useLiveSpecsExt';
+import { isEmpty } from 'lodash';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
-import { useDetailsForm_connectorImage } from 'stores/DetailsForm';
+import {
+    Details,
+    useDetailsForm_connectorImage,
+    useDetailsForm_setDetails,
+} from 'stores/DetailsForm';
 import { useEndpointConfigStore_setEndpointSchema } from 'stores/EndpointConfig';
 import { EntityFormState } from 'stores/FormState';
 import { ResourceConfigState } from 'stores/ResourceConfig';
@@ -67,6 +75,14 @@ function EntityEdit({
 
     // Check for properties being passed in
     const [searchParams] = useSearchParams();
+    const connectorId =
+        searchParams.get(
+            authenticatedRoutes.captures.edit.params.connectorId
+        ) ??
+        searchParams.get(
+            authenticatedRoutes.materializations.edit.params.connectorId
+        );
+
     const specId =
         searchParams.get(authenticatedRoutes.captures.edit.params.liveSpecId) ??
         searchParams.get(
@@ -85,7 +101,18 @@ function EntityEdit({
         isValidating,
     } = useConnectorWithTagDetail(entityType);
 
+    const {
+        connectorTags: [initialConnectorTag],
+        // error: connectorTagsError,
+        // isValidating,
+    } = useConnectorWithTagDetail(entityType, connectorId);
+
+    const {
+        liveSpecs: [liveSpecInfo],
+    } = useLiveSpecsExtWithSpec(specId, entityType);
+
     // Details Form Store
+    const setDetails = useDetailsForm_setDetails();
     const imageTag = useDetailsForm_connectorImage();
 
     // Draft Editor Store
@@ -136,10 +163,22 @@ function EntityEdit({
         (state) => state.preFillCollections
     );
 
-    // Reset the catalog if the connector changes
     useEffect(() => {
-        setDraftId(null);
-    }, [imageTag, setDraftId]);
+        if (!isEmpty(liveSpecInfo) && !isEmpty(initialConnectorTag)) {
+            const details: Details = {
+                data: {
+                    entityName: liveSpecInfo.catalog_name,
+                    connectorImage:
+                        getConnectorImageDetails(initialConnectorTag),
+                    description: liveSpecInfo.detail || '',
+                },
+            };
+
+            setDetails(details);
+        }
+
+        setDraftId(specId);
+    }, [setDetails, setDraftId, specId, liveSpecInfo, initialConnectorTag]);
 
     const { connectorTag } = useConnectorTag(imageTag.id);
     const { liveSpecs } = useLiveSpecsExtWithOutSpec(specId, entityType);
