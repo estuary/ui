@@ -13,8 +13,8 @@ import useConstant from 'use-constant';
 import { StoreApi, useStore } from 'zustand';
 
 export enum DetailsFormStoreNames {
-    CAPTURE_CREATE = 'capture-create-details-form',
-    MATERIALIZATION_CREATE = 'materialization-create-details-form',
+    CAPTURE = 'capture-details-form',
+    MATERIALIZATION = 'materialization-details-form',
 }
 
 export enum DraftEditorStoreNames {
@@ -23,13 +23,13 @@ export enum DraftEditorStoreNames {
 }
 
 export enum EndpointConfigStoreNames {
-    CAPTURE_CREATE = 'capture-create-endpoint-config',
-    MATERIALIZATION_CREATE = 'materialization-create-endpoint-config',
+    CAPTURE = 'capture-endpoint-config',
+    MATERIALIZATION = 'materialization-endpoint-config',
 }
 
 export enum FormStateStoreNames {
-    CAPTURE_CREATE = 'Capture-Create-Form-State',
-    MATERIALIZATION_CREATE = 'Materialization-Create-Form-State',
+    CAPTURE = 'Capture-Form-State',
+    MATERIALIZATION = 'Materialization-Form-State',
 }
 
 export enum LiveSpecEditorStoreNames {
@@ -37,7 +37,7 @@ export enum LiveSpecEditorStoreNames {
 }
 
 export enum ResourceConfigStoreNames {
-    MATERIALIZATION_CREATE = 'Materialization-Create-Resource-Config',
+    MATERIALIZATION = 'Materialization-Resource-Config',
 }
 
 export enum SelectTableStoreNames {
@@ -99,20 +99,19 @@ export const ZustandProvider = ({
                 ),
 
                 // Form State Store
-                [FormStateStoreNames.CAPTURE_CREATE]: createFormStateStore(
-                    FormStateStoreNames.CAPTURE_CREATE,
+                [FormStateStoreNames.CAPTURE]: createFormStateStore(
+                    FormStateStoreNames.CAPTURE,
                     MessagePrefixes.CAPTURE_CREATE
                 ),
-                [FormStateStoreNames.MATERIALIZATION_CREATE]:
-                    createFormStateStore(
-                        FormStateStoreNames.MATERIALIZATION_CREATE,
-                        MessagePrefixes.MATERIALIZATION_CREATE
-                    ),
+                [FormStateStoreNames.MATERIALIZATION]: createFormStateStore(
+                    FormStateStoreNames.MATERIALIZATION,
+                    MessagePrefixes.MATERIALIZATION_CREATE
+                ),
 
                 // Resource Config Store
-                [ResourceConfigStoreNames.MATERIALIZATION_CREATE]:
+                [ResourceConfigStoreNames.MATERIALIZATION]:
                     createResourceConfigStore(
-                        ResourceConfigStoreNames.MATERIALIZATION_CREATE
+                        ResourceConfigStoreNames.MATERIALIZATION
                     ),
 
                 // Select Table Store

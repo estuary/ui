@@ -24,9 +24,10 @@ export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
 
 interface Props {
     formStateStoreName: FormStateStoreNames;
+    readOnly: boolean;
 }
 
-function EndpointConfigForm({ formStateStoreName }: Props) {
+function EndpointConfigForm({ formStateStoreName, readOnly }: Props) {
     // Endpoint Config Store
     const setSpec = useEndpointConfigStore_setEndpointConfig();
     const formData = useEndpointConfigStore_endpointConfig_data();
@@ -82,7 +83,7 @@ function EndpointConfigForm({ formStateStoreName }: Props) {
                     renderers={defaultRenderers}
                     cells={materialCells}
                     config={defaultOptions}
-                    readonly={isActive}
+                    readonly={readOnly || isActive}
                     validationMode={showValidationVal}
                     onChange={setSpec}
                     ajv={setDefaultsValidator}

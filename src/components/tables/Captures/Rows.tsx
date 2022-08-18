@@ -1,4 +1,4 @@
-import { TableRow, useTheme } from '@mui/material';
+import { Button, TableCell, TableRow, useTheme } from '@mui/material';
 import { authenticatedRoutes } from 'app/Authenticated';
 import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import Actions from 'components/tables/cells/Actions';
@@ -22,6 +22,7 @@ import {
 } from 'context/Zustand';
 import useShardsList from 'hooks/useShardsList';
 import { useEffect, useState } from 'react';
+import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { CONNECTOR_TITLE } from 'services/supabase';
 import { shardDetailSelectors, ShardDetailStore } from 'stores/ShardDetail';
@@ -70,6 +71,10 @@ export const tableColumns = [
         field: null,
         headerIntlKey: null,
     },
+    {
+        field: null,
+        headerIntlKey: null,
+    },
 ];
 
 function Row({
@@ -97,6 +102,18 @@ function Row({
         },
         clickRow: (rowId: string) => {
             setRow(rowId, !isSelected);
+        },
+        editTask: () => {
+            // TODO: Extend getPathWithParam utility to allow for the setting of multiple parameters.
+            navigate(
+                `${getPathWithParam(
+                    authenticatedRoutes.captures.edit.fullPath,
+                    authenticatedRoutes.captures.edit.params.liveSpecId,
+                    row.id
+                )}&${authenticatedRoutes.captures.edit.params.lastPubId}=${
+                    row.last_pub_id
+                }`
+            );
         },
     };
 
@@ -140,6 +157,18 @@ function Row({
                         expanded={detailsExpanded}
                     />
                 </Actions>
+
+                <TableCell>
+                    <Button
+                        variant="text"
+                        size="small"
+                        disableElevation
+                        onClick={handlers.editTask}
+                        sx={{ mr: 1 }}
+                    >
+                        <FormattedMessage id="cta.edit" />
+                    </Button>
+                </TableCell>
             </TableRow>
 
             <DetailsPanel

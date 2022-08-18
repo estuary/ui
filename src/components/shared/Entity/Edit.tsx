@@ -35,22 +35,28 @@ import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     title: string;
-    connectorType: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
+    entityType: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
     Header: any;
     draftEditorStoreName: DraftEditorStoreNames;
     formStateStoreName: FormStateStoreNames;
     resourceConfigStoreName?: ResourceConfigStoreNames;
     showCollections?: boolean;
+    readOnly: {
+        detailsForm?: true;
+        endpointConfigForm?: true;
+        resourceConfigForm?: true;
+    };
 }
 
-function EntityCreate({
+function EntityEdit({
     title,
-    connectorType,
+    entityType,
     Header,
     draftEditorStoreName,
     formStateStoreName,
     resourceConfigStoreName,
     showCollections,
+    readOnly,
 }: Props) {
     useBrowserTitle(title); //'browserTitle.captureCreate'
 
@@ -61,18 +67,23 @@ function EntityCreate({
 
     // Check for properties being passed in
     const [searchParams] = useSearchParams();
-    const specId = searchParams.get(
-        authenticatedRoutes.materializations.create.params.liveSpecId
-    );
-    const lastPubId = searchParams.get(
-        authenticatedRoutes.materializations.create.params.lastPubId
-    );
+    const specId =
+        searchParams.get(authenticatedRoutes.captures.edit.params.liveSpecId) ??
+        searchParams.get(
+            authenticatedRoutes.materializations.edit.params.liveSpecId
+        );
+
+    const lastPubId =
+        searchParams.get(authenticatedRoutes.captures.edit.params.lastPubId) ??
+        searchParams.get(
+            authenticatedRoutes.materializations.edit.params.lastPubId
+        );
 
     const {
         connectorTags,
         error: connectorTagsError,
         isValidating,
-    } = useConnectorWithTagDetail(connectorType);
+    } = useConnectorWithTagDetail(entityType);
 
     // Details Form Store
     const imageTag = useDetailsForm_connectorImage();
@@ -131,10 +142,10 @@ function EntityCreate({
     }, [imageTag, setDraftId]);
 
     const { connectorTag } = useConnectorTag(imageTag.id);
-    const { liveSpecs } = useLiveSpecsExtWithOutSpec(specId, ENTITY.CAPTURE);
+    const { liveSpecs } = useLiveSpecsExtWithOutSpec(specId, entityType);
     const { liveSpecs: liveSpecsByLastPub } = useLiveSpecsExtByLastPubId(
         lastPubId,
-        ENTITY.CAPTURE
+        entityType
     );
 
     useEffect(() => {
@@ -196,6 +207,7 @@ function EntityCreate({
                                 accessGrants={combinedGrants}
                                 draftEditorStoreName={draftEditorStoreName}
                                 formStateStoreName={formStateStoreName}
+                                readOnly={readOnly.detailsForm}
                             />
                         </ErrorBoundryWrapper>
                     ) : null}
@@ -206,6 +218,7 @@ function EntityCreate({
                                 connectorImage={imageTag.id}
                                 draftEditorStoreName={draftEditorStoreName}
                                 formStateStoreName={formStateStoreName}
+                                readOnly={readOnly.endpointConfigForm}
                             />
                         </ErrorBoundryWrapper>
                     ) : null}
@@ -236,4 +249,4 @@ function EntityCreate({
     );
 }
 
-export default EntityCreate;
+export default EntityEdit;

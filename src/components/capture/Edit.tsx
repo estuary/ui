@@ -4,7 +4,7 @@ import CaptureGenerateButton from 'components/capture/GenerateButton';
 import { EditorStoreState } from 'components/editor/Store';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
-import EntityCreate from 'components/shared/Entity/Create';
+import EntityEdit from 'components/shared/Entity/Edit';
 import { useEntityType } from 'components/shared/Entity/EntityContext';
 import FooHeader from 'components/shared/Entity/Header';
 import PageContainer from 'components/shared/PageContainer';
@@ -49,7 +49,7 @@ const trackEvent = (payload: any) => {
     });
 };
 
-function CaptureCreate() {
+function CaptureEdit() {
     const navigate = useNavigate();
 
     const entityType = useEntityType();
@@ -206,9 +206,9 @@ function CaptureCreate() {
 
     return (
         <PageContainer>
-            <EntityCreate
+            <EntityEdit
                 title="browserTitle.captureCreate"
-                connectorType={entityType}
+                entityType={entityType}
                 Header={
                     <FooHeader
                         heading={
@@ -252,9 +252,10 @@ function CaptureCreate() {
                 }
                 draftEditorStoreName={draftEditorStoreName}
                 formStateStoreName={formStateStoreName}
+                readOnly={{ detailsForm: true, endpointConfigForm: true }}
             />
         </PageContainer>
     );
 }
 
-export default CaptureCreate;
+export default CaptureEdit;

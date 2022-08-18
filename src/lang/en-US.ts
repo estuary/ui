@@ -63,12 +63,12 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
 };
 
 const CTAs: ResolvedIntlConfig['messages'] = {
-    'cta.addToChangeSet': `Add to change set`,
     'cta.cancel': `Cancel`,
     'cta.close': `Close`,
     'cta.continue': `Continue`,
     'cta.delete': `Delete`,
     'cta.download': `Download`,
+    'cta.edit': `Edit`,
     'cta.login': `Login`,
     'cta.logout': `Logout`,
     'cta.materialize': `Materialize`,
@@ -248,6 +248,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.dashboard': `Dashboard`,
     'routeTitle.admin': `Admin`,
     'routeTitle.captureCreate': `Create Capture`,
+    'routeTitle.captureEdit': `Edit Capture`,
     'routeTitle.captures': `Captures`,
     'routeTitle.collections': `Collections`,
     'routeTitle.connectors': `Connectors`,
@@ -256,6 +257,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.loginLoading': `Checking Credentials`,
     'routeTitle.noGrants': `Signed Up`,
     'routeTitle.materializationCreate': `Create Materialization`,
+    'routeTitle.materializationEdit': `Edit Materialization`,
     'routeTitle.materializations': `Materializations`,
     'routeTitle.registration': `Registration`,
     'routeTitle.passwordReset': `Password Reset`,

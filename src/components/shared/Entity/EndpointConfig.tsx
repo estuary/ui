@@ -15,12 +15,14 @@ interface Props {
     connectorImage: string;
     draftEditorStoreName: DraftEditorStoreNames;
     formStateStoreName: FormStateStoreNames;
+    readOnly?: boolean;
 }
 
 function EndpointConfig({
     connectorImage,
     draftEditorStoreName,
     formStateStoreName,
+    readOnly = false,
 }: Props) {
     const { connectorTag, error } = useConnectorTag(connectorImage);
 
@@ -41,7 +43,10 @@ function EndpointConfig({
                     />
                 }
             >
-                <EndpointConfigForm formStateStoreName={formStateStoreName} />
+                <EndpointConfigForm
+                    formStateStoreName={formStateStoreName}
+                    readOnly={readOnly}
+                />
             </WrapperWithHeader>
         );
     } else {

@@ -35,6 +35,7 @@ interface Props {
     accessGrants: Grants[];
     draftEditorStoreName: DraftEditorStoreNames;
     formStateStoreName: FormStateStoreNames;
+    readOnly?: boolean;
 }
 
 const getConnectorImageDetails = (connector: ConnectorWithTagDetailQuery) => {
@@ -51,6 +52,7 @@ function DetailsForm({
     accessGrants,
     draftEditorStoreName,
     formStateStoreName,
+    readOnly = false,
 }: Props) {
     const intl = useIntl();
     const [searchParams] = useSearchParams();
@@ -243,7 +245,7 @@ function DetailsForm({
                             renderers={defaultRenderers}
                             cells={materialCells}
                             config={defaultOptions}
-                            readonly={isSaving || isActive}
+                            readonly={readOnly || isSaving || isActive}
                             validationMode={showValidation(displayValidation)}
                             onChange={updateDetails}
                         />
