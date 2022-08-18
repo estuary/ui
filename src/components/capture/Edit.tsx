@@ -37,7 +37,7 @@ import { EntityFormState, FormStatus } from 'stores/FormState';
 import { getPathWithParam } from 'utils/misc-utils';
 
 const draftEditorStoreName = DraftEditorStoreNames.CAPTURE;
-const formStateStoreName = FormStateStoreNames.CAPTURE;
+const formStateStoreName = FormStateStoreNames.CAPTURE_EDIT;
 
 const trackEvent = (payload: any) => {
     LogRocket.track(CustomEvents.CAPTURE_DISCOVER, {
@@ -207,7 +207,7 @@ function CaptureEdit() {
     return (
         <PageContainer>
             <EntityEdit
-                title="browserTitle.captureCreate"
+                title="browserTitle.captureEdit"
                 entityType={entityType}
                 Header={
                     <FooHeader

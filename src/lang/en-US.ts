@@ -268,6 +268,7 @@ const BrowserTitles: ResolvedIntlConfig['messages'] = {
     'browserTitle.dashboard': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.dashboard']}`,
     'browserTitle.admin': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin']}`,
     'browserTitle.captureCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureCreate']}`,
+    'browserTitle.captureEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureEdit']}`,
     'browserTitle.captures': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captures']}`,
     'browserTitle.collections': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.collections']}`,
     'browserTitle.connectors': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.connectors']}`,
@@ -428,6 +429,37 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreate.testNotification.desc': `Your capture succeeded in a dry run and can be saved.`,
 };
 
+const CaptureEdit: ResolvedIntlConfig['messages'] = {
+    'captureEdit.heading': `${RouteTitles['routeTitle.captureEdit']}`,
+    'captureEdit.details.heading': `Capture Details`,
+    'captureEdit.ctas.materialize': `Materialize Collections`,
+    'captureEdit.instructions': `Click "${CTAs['cta.generateCatalog.capture']}" to test the connection.`,
+    'captureEdit.missingConnectors': `No connectors are installed. You must install a source connector to edit a capture.`,
+    'captureEdit.noAccessGrants': `You do not have the necessary ${CommonMessages['terms.permissions']} to edit this capture. Please contact an administrator.`,
+    'captureEdit.tenant.label': `Prefix`,
+    'captureEdit.config.source.doclink': `Connector Help`,
+    'captureEdit.config.source.homepage': `Home`,
+    'captureEdit.save.failed': `Capture edit failed. See below for details:`,
+    'captureEdit.editor.default': `Before you can edit the capture specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.capture']}." `,
+    'captureEdit.finalReview.instructions': `The following catalog was generated from the details you provided. To make changes, you can enter new values in the form above and click "${CTAs['cta.generateCatalog.capture']}" again. You can also edit the YAML file directly. Click "${CTAs['cta.saveEntity']}" to proceed.`,
+
+    'captureEdit.test.failedErrorTitle': `Configuration Test Failed`,
+    'captureEdit.test.serverUnreachable': `Unable to reach server while testing configuration.`,
+
+    'captureEdit.save.failedErrorTitle': `Capture Save Failed`,
+    'captureEdit.save.serverUnreachable': `Unable to reach server while saving capture`,
+    'captureEdit.save.waitMessage': `Please wait while we test, save, and publish your capture.`,
+
+    'captureEdit.generate.failedErrorTitle': `Generating Catalog Failed`,
+
+    'captureEdit.createNotification.title': `Edited Capture Saved`,
+    'captureEdit.createNotification.desc': `Your edit capture is published and ready to be used.`,
+
+    'captureEdit.test.waitMessage': `Please wait while we test your capture.`,
+    'captureEdit.testNotification.title': `Test Successful`,
+    'captureEdit.testNotification.desc': `Your capture succeeded in a dry run and can be saved.`,
+};
+
 const DetailsPanel: ResolvedIntlConfig['messages'] = {
     'detailsPanel.logs.title': `Logs`,
     'detailsPanel.logs.notFound': `Logs for this build cannot be found. This is likely a permissions issue. You don't have permissions to view other users' logs by default.`,
@@ -525,6 +557,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...EntityCreate,
     ...Captures,
     ...CaptureCreate,
+    ...CaptureEdit,
     ...DetailsPanel,
     ...MaterializationCreate,
     ...ShardStatus,

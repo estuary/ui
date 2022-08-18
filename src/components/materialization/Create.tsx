@@ -37,7 +37,7 @@ import { EntityFormState, FormStatus } from 'stores/FormState';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 
 const draftEditorStoreName = DraftEditorStoreNames.MATERIALIZATION;
-const formStateStoreName = FormStateStoreNames.MATERIALIZATION;
+const formStateStoreName = FormStateStoreNames.MATERIALIZATION_CREATE;
 const resourceConfigStoreName = ResourceConfigStoreNames.MATERIALIZATION;
 
 function MaterializationCreate() {

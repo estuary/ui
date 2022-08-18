@@ -28,8 +28,10 @@ export enum EndpointConfigStoreNames {
 }
 
 export enum FormStateStoreNames {
-    CAPTURE = 'Capture-Form-State',
-    MATERIALIZATION = 'Materialization-Form-State',
+    CAPTURE_CREATE = 'Capture-Create-Form-State',
+    CAPTURE_EDIT = 'Capture-Edit-Form-State',
+    MATERIALIZATION_CREATE = 'Materialization-Create-Form-State',
+    MATERIALIZATION_EDIT = 'Materialization-Edit-Form-State',
 }
 
 export enum LiveSpecEditorStoreNames {
@@ -99,14 +101,24 @@ export const ZustandProvider = ({
                 ),
 
                 // Form State Store
-                [FormStateStoreNames.CAPTURE]: createFormStateStore(
-                    FormStateStoreNames.CAPTURE,
+                [FormStateStoreNames.CAPTURE_CREATE]: createFormStateStore(
+                    FormStateStoreNames.CAPTURE_CREATE,
                     MessagePrefixes.CAPTURE_CREATE
                 ),
-                [FormStateStoreNames.MATERIALIZATION]: createFormStateStore(
-                    FormStateStoreNames.MATERIALIZATION,
-                    MessagePrefixes.MATERIALIZATION_CREATE
+                [FormStateStoreNames.CAPTURE_EDIT]: createFormStateStore(
+                    FormStateStoreNames.CAPTURE_EDIT,
+                    MessagePrefixes.CAPTURE_EDIT
                 ),
+                [FormStateStoreNames.MATERIALIZATION_CREATE]:
+                    createFormStateStore(
+                        FormStateStoreNames.MATERIALIZATION_CREATE,
+                        MessagePrefixes.MATERIALIZATION_CREATE
+                    ),
+                [FormStateStoreNames.MATERIALIZATION_EDIT]:
+                    createFormStateStore(
+                        FormStateStoreNames.MATERIALIZATION_EDIT,
+                        MessagePrefixes.MATERIALIZATION_EDIT
+                    ),
 
                 // Resource Config Store
                 [ResourceConfigStoreNames.MATERIALIZATION]:
