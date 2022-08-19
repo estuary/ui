@@ -10,12 +10,14 @@ import {
 } from 'context/Zustand';
 import useConnectorTag from 'hooks/useConnectorTag';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { JsonFormsData } from 'types';
 
 interface Props {
     connectorImage: string;
     draftEditorStoreName: DraftEditorStoreNames;
     formStateStoreName: FormStateStoreNames;
     readOnly?: boolean;
+    initialEndpointConfig?: JsonFormsData | null;
 }
 
 function EndpointConfig({
@@ -23,6 +25,7 @@ function EndpointConfig({
     draftEditorStoreName,
     formStateStoreName,
     readOnly = false,
+    initialEndpointConfig,
 }: Props) {
     const { connectorTag, error } = useConnectorTag(connectorImage);
 
@@ -46,6 +49,7 @@ function EndpointConfig({
                 <EndpointConfigForm
                     formStateStoreName={formStateStoreName}
                     readOnly={readOnly}
+                    initialEndpointConfig={initialEndpointConfig}
                 />
             </WrapperWithHeader>
         );

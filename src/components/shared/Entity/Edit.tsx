@@ -30,7 +30,7 @@ import {
     useLiveSpecsExtWithSpec,
 } from 'hooks/useLiveSpecsExt';
 import { isEmpty } from 'lodash';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
 import {
@@ -41,7 +41,7 @@ import {
 import { useEndpointConfigStore_setEndpointSchema } from 'stores/EndpointConfig';
 import { EntityFormState, FormState, FormStatus } from 'stores/FormState';
 import { ResourceConfigState } from 'stores/ResourceConfig';
-import { ENTITY, Schema } from 'types';
+import { ENTITY, JsonFormsData, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
@@ -68,6 +68,7 @@ const createDraftToEdit = async (
     const draftsResponse = await createEntityDraft(liveSpecInfo.catalog_name);
 
     if (draftsResponse.error) {
+        // TODO: Handle supabase service error.
         console.log('There is a drafts table error.');
     }
 
@@ -81,6 +82,7 @@ const createDraftToEdit = async (
     );
 
     if (draftSpecResponse.error) {
+        // TODO: Handle supabase service error.
         console.log('There is a drafts-spec table error.');
     }
 
@@ -99,6 +101,10 @@ function EntityEdit({
     readOnly,
 }: Props) {
     useBrowserTitle(title);
+
+    const [endpointConfig, setEndpointConfig] = useState<JsonFormsData | null>(
+        null
+    );
 
     // Supabase stuff
     const { combinedGrants } = useCombinedGrantsExt({
@@ -213,8 +219,6 @@ function EntityEdit({
 
     useEffect(() => {
         if (!isEmpty(liveSpecInfo) && !isEmpty(initialConnectorTag)) {
-            console.log(liveSpecInfo.catalog_name);
-
             const details: Details = {
                 data: {
                     entityName: liveSpecInfo.catalog_name,
@@ -236,7 +240,17 @@ function EntityEdit({
     );
 
     useEffect(() => {
-        if (connectorTag) {
+        if (
+            connectorTag &&
+            !isEmpty(liveSpecInfo) &&
+            !isEmpty(initialConnectorTag)
+        ) {
+            setEndpointConfig(
+                connectorTag.connector_id === initialConnectorTag.id
+                    ? { data: liveSpecInfo.spec.endpoint.connector.config }
+                    : null
+            );
+
             // TODO: Repair temporary typing.
             setEndpointSchema(
                 connectorTag.endpoint_spec_schema as unknown as Schema
@@ -257,10 +271,14 @@ function EntityEdit({
         connectorTag,
         liveSpecs,
         liveSpecsByLastPub,
+        liveSpecInfo,
+        initialConnectorTag,
         prefillCollections,
         setEndpointSchema,
         setResourceSchema,
     ]);
+
+    useEffect(() => {});
 
     return (
         <>
@@ -268,7 +286,7 @@ function EntityEdit({
 
             {connectorTagsError ? (
                 <Error error={connectorTagsError} />
-            ) : (
+            ) : isEmpty(liveSpecInfo) ? null : (
                 <>
                     <Collapse in={formSubmitError !== null}>
                         {formSubmitError ? (
@@ -287,7 +305,7 @@ function EntityEdit({
                                 id={`${messagePrefix}.missingConnectors`}
                             />
                         </Alert>
-                    ) : connectorTags.length > 0 && !isEmpty(liveSpecInfo) ? (
+                    ) : connectorTags.length > 0 ? (
                         <ErrorBoundryWrapper>
                             <DetailsForm
                                 connectorTags={connectorTags}
@@ -306,6 +324,7 @@ function EntityEdit({
                                 draftEditorStoreName={draftEditorStoreName}
                                 formStateStoreName={formStateStoreName}
                                 readOnly={readOnly.endpointConfigForm}
+                                initialEndpointConfig={endpointConfig}
                             />
                         </ErrorBoundryWrapper>
                     ) : null}
