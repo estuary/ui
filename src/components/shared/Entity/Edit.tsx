@@ -1,6 +1,6 @@
 import { Alert, Collapse } from '@mui/material';
-import { createEntityDraft } from 'api/drafts';
-import { createDraftSpec } from 'api/draftSpecs';
+import { createEntityDraft, deleteEntityDraft } from 'api/drafts';
+import { createDraftSpec, deleteDraftSpec } from 'api/draftSpecs';
 import { authenticatedRoutes } from 'app/Authenticated';
 import CollectionConfig from 'components/collection/Config';
 import { EditorStoreState } from 'components/editor/Store';
@@ -88,6 +88,24 @@ const createDraftToEdit = async (
 
     setDraftId(newDraftId);
     setFormState({ status: FormStatus.INIT });
+};
+
+const deleteEditDraft = async (draftId: string | null) => {
+    if (draftId) {
+        const draftsResponse = await deleteEntityDraft(draftId);
+
+        if (draftsResponse.error) {
+            // TODO: Handle supabase service error.
+            console.log('There is a drafts table error.');
+        }
+
+        const draftSpecResponse = await deleteDraftSpec(draftId);
+
+        if (draftSpecResponse.error) {
+            // TODO: Handle supabase service error.
+            console.log('There is a drafts-spec table error.');
+        }
+    }
 };
 
 function EntityEdit({
@@ -278,7 +296,11 @@ function EntityEdit({
         setResourceSchema,
     ]);
 
-    useEffect(() => {});
+    useEffect(() => {
+        return () => {
+            void deleteEditDraft(draftId);
+        };
+    }, [draftId]);
 
     return (
         <>

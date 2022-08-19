@@ -189,6 +189,22 @@ export const updateSupabase = (
     return makeCall();
 };
 
+export const deleteSupabase = (
+    table: TABLES,
+    matchData: any
+): PromiseLike<CallSupabaseResponse<any>> => {
+    const query = supabaseClient.from(table);
+
+    const makeCall = () => {
+        return query
+            .delete()
+            .match(matchData)
+            .then(handleSuccess, handleFailure);
+    };
+
+    return makeCall();
+};
+
 export const endSubscription = (subscription: RealtimeSubscription) => {
     return supabaseClient
         .removeSubscription(subscription)

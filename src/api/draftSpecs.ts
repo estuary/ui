@@ -1,4 +1,9 @@
-import { insertSupabase, TABLES, updateSupabase } from 'services/supabase';
+import {
+    deleteSupabase,
+    insertSupabase,
+    TABLES,
+    updateSupabase,
+} from 'services/supabase';
 import { ENTITY } from 'types';
 
 export const createDraftSpec = (
@@ -64,4 +69,8 @@ export const generateDraftSpec = (
     }
 
     return draftSpec;
+};
+
+export const deleteDraftSpec = (draftId: string) => {
+    return deleteSupabase(TABLES.DRAFT_SPECS, { draft_id: draftId });
 };

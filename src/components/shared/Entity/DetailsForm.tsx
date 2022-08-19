@@ -106,7 +106,6 @@ function DetailsForm({
         if (connectorId && hasLength(connectorTags)) {
             connectorTags.forEach((connector) => {
                 if (connector.connector_tags[0].id === connectorId) {
-                    console.log('Here');
                     setDetails({
                         data: {
                             entityName: '',
@@ -221,8 +220,6 @@ function DetailsForm({
     };
 
     const updateDetails = (details: Details) => {
-        console.log(details);
-
         if (details.data.connectorImage.id === '') {
             resetEndpointConfig();
         }
