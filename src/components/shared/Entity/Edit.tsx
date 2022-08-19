@@ -1,4 +1,6 @@
 import { Alert, Collapse } from '@mui/material';
+import { createEntityDraft } from 'api/drafts';
+import { createDraftSpec } from 'api/draftSpecs';
 import { authenticatedRoutes } from 'app/Authenticated';
 import CollectionConfig from 'components/collection/Config';
 import { EditorStoreState } from 'components/editor/Store';
@@ -22,6 +24,7 @@ import useConnectorTag from 'hooks/useConnectorTag';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import {
+    LiveSpecsExtQueryWithSpec,
     useLiveSpecsExtByLastPubId,
     useLiveSpecsExtWithOutSpec,
     useLiveSpecsExtWithSpec,
@@ -36,7 +39,7 @@ import {
     useDetailsForm_setDetails,
 } from 'stores/DetailsForm';
 import { useEndpointConfigStore_setEndpointSchema } from 'stores/EndpointConfig';
-import { EntityFormState } from 'stores/FormState';
+import { EntityFormState, FormState, FormStatus } from 'stores/FormState';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 import { ENTITY, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
@@ -56,6 +59,35 @@ interface Props {
     };
 }
 
+const createDraftToEdit = async (
+    liveSpecInfo: LiveSpecsExtQueryWithSpec,
+    entityType: ENTITY,
+    setDraftId: (id: EditorStoreState<DraftSpecQuery>['id']) => void,
+    setFormState: (data: Partial<FormState>) => void
+) => {
+    const draftsResponse = await createEntityDraft(liveSpecInfo.catalog_name);
+
+    if (draftsResponse.error) {
+        console.log('There is a drafts table error.');
+    }
+
+    const newDraftId = draftsResponse.data[0].id;
+
+    const draftSpecResponse = await createDraftSpec(
+        newDraftId,
+        liveSpecInfo.catalog_name,
+        liveSpecInfo.spec,
+        entityType
+    );
+
+    if (draftSpecResponse.error) {
+        console.log('There is a drafts-spec table error.');
+    }
+
+    setDraftId(newDraftId);
+    setFormState({ status: FormStatus.INIT });
+};
+
 function EntityEdit({
     title,
     entityType,
@@ -66,7 +98,7 @@ function EntityEdit({
     showCollections,
     readOnly,
 }: Props) {
-    useBrowserTitle(title); //'browserTitle.captureCreate'
+    useBrowserTitle(title);
 
     // Supabase stuff
     const { combinedGrants } = useCombinedGrantsExt({
@@ -145,6 +177,11 @@ function EntityEdit({
         EntityFormState['formState']['error']
     >(formStateStoreName, (state) => state.formState.error);
 
+    const setFormState = useZustandStore<
+        EntityFormState,
+        EntityFormState['setFormState']
+    >(formStateStoreName, (state) => state.setFormState);
+
     // Resource Config Store
     // TODO: Determine proper placement for this logic.
     const setResourceSchema = useZustandStore<
@@ -164,7 +201,20 @@ function EntityEdit({
     );
 
     useEffect(() => {
+        if (!isEmpty(liveSpecInfo)) {
+            void createDraftToEdit(
+                liveSpecInfo,
+                entityType,
+                setDraftId,
+                setFormState
+            );
+        }
+    }, [setDraftId, setFormState, liveSpecInfo, entityType]);
+
+    useEffect(() => {
         if (!isEmpty(liveSpecInfo) && !isEmpty(initialConnectorTag)) {
+            console.log(liveSpecInfo.catalog_name);
+
             const details: Details = {
                 data: {
                     entityName: liveSpecInfo.catalog_name,
@@ -176,9 +226,7 @@ function EntityEdit({
 
             setDetails(details);
         }
-
-        setDraftId(specId);
-    }, [setDetails, setDraftId, specId, liveSpecInfo, initialConnectorTag]);
+    }, [setDetails, liveSpecInfo, initialConnectorTag]);
 
     const { connectorTag } = useConnectorTag(imageTag.id);
     const { liveSpecs } = useLiveSpecsExtWithOutSpec(specId, entityType);
@@ -239,7 +287,7 @@ function EntityEdit({
                                 id={`${messagePrefix}.missingConnectors`}
                             />
                         </Alert>
-                    ) : connectorTags.length > 0 ? (
+                    ) : connectorTags.length > 0 && !isEmpty(liveSpecInfo) ? (
                         <ErrorBoundryWrapper>
                             <DetailsForm
                                 connectorTags={connectorTags}

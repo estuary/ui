@@ -58,9 +58,9 @@ function DetailsForm({
 }: Props) {
     const intl = useIntl();
     const [searchParams] = useSearchParams();
-    const connectorID =
+    const connectorId =
         searchParams.get(
-            authenticatedRoutes.captures.create.params.connectorID
+            authenticatedRoutes.captures.edit.params.connectorId
         ) ??
         searchParams.get(
             authenticatedRoutes.materializations.create.params.connectorId
@@ -103,9 +103,10 @@ function DetailsForm({
     >(formStateStoreName, (state) => state.resetState);
 
     useEffect(() => {
-        if (connectorID && hasLength(connectorTags)) {
+        if (connectorId && hasLength(connectorTags)) {
             connectorTags.forEach((connector) => {
-                if (connector.connector_tags[0].id === connectorID) {
+                if (connector.connector_tags[0].id === connectorId) {
+                    console.log('Here');
                     setDetails({
                         data: {
                             entityName: '',
@@ -115,13 +116,13 @@ function DetailsForm({
                 }
             });
         }
-    }, [setDetails, connectorID, connectorTags]);
+    }, [setDetails, connectorId, connectorTags]);
 
     useEffect(() => {
-        if (connectorID && originalConnectorImage.id !== connectorID) {
+        if (connectorId && originalConnectorImage.id !== connectorId) {
             resetFormState();
         }
-    }, [resetFormState, connectorID, originalConnectorImage]);
+    }, [resetFormState, connectorId, originalConnectorImage]);
 
     const accessGrantsOneOf = useMemo(() => {
         const response = [] as string[];
@@ -220,9 +221,12 @@ function DetailsForm({
     };
 
     const updateDetails = (details: Details) => {
+        console.log(details);
+
         if (details.data.connectorImage.id === '') {
             resetEndpointConfig();
         }
+
         setDetails(details);
     };
 

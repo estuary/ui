@@ -27,6 +27,7 @@ import {
     useDetailsForm_changed,
     useDetailsForm_connectorImage,
     useDetailsForm_errorsExist,
+    useDetailsForm_resetFormState,
 } from 'stores/DetailsForm';
 import {
     useEndpointConfigStore_changed,
@@ -63,6 +64,7 @@ function CaptureEdit() {
     const imageTag = useDetailsForm_connectorImage();
     const detailsFormErrorsExist = useDetailsForm_errorsExist();
     const detailsFormChanged = useDetailsForm_changed();
+    const resetDetailsForm = useDetailsForm_resetFormState();
 
     // Draft Editor Store
     const setDraftId = useZustandStore<
@@ -112,6 +114,7 @@ function CaptureEdit() {
     }, [imageTag, setDraftId]);
 
     const resetState = () => {
+        resetDetailsForm();
         resetEndpointConfigState();
         resetFormState();
     };
