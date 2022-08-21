@@ -308,7 +308,7 @@ function EntityEdit({
 
             {connectorTagsError ? (
                 <Error error={connectorTagsError} />
-            ) : isEmpty(liveSpecInfo) ? null : (
+            ) : isEmpty(liveSpecInfo) || isEmpty(initialConnectorTag) ? null : (
                 <>
                     <Collapse in={formSubmitError !== null}>
                         {formSubmitError ? (
