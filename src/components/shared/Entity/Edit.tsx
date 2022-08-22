@@ -287,7 +287,7 @@ function EntityEdit({
 
             // We wanna make sure we do these after the schemas are set as
             //  as they are dependent on them.
-            if (liveSpecs.length > 0) {
+            if (entityType === ENTITY.MATERIALIZATION && liveSpecs.length > 0) {
                 liveSpecs.forEach((data) =>
                     data.spec.bindings.forEach((binding: any) =>
                         setResourceConfig(binding.source, {
@@ -306,6 +306,7 @@ function EntityEdit({
         liveSpecsByLastPub,
         liveSpecInfo,
         initialConnectorTag,
+        entityType,
         preFillCollections,
         setResourceConfig,
         setEndpointSchema,
