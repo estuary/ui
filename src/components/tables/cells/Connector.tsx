@@ -3,8 +3,8 @@ import ConnectorName from 'components/ConnectorName';
 import { tableBorderSx } from 'context/Theme';
 
 interface Props {
-    connectorName: string;
-    connectorImage: string;
+    connectorName: string | null;
+    connectorImage: string | null;
     imageTag: string;
 }
 
