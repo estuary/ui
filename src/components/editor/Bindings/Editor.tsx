@@ -9,11 +9,13 @@ import { ResourceConfigState } from 'stores/ResourceConfig';
 interface Props {
     resourceConfigStoreName: ResourceConfigStoreNames;
     formStateStoreName: FormStateStoreNames;
+    readOnly?: boolean;
 }
 
 function BindingsEditor({
     resourceConfigStoreName,
     formStateStoreName,
+    readOnly = false,
 }: Props) {
     const currentCollection = useZustandStore<
         ResourceConfigState,
@@ -26,6 +28,7 @@ function BindingsEditor({
                 collectionName={currentCollection}
                 resourceConfigStoreName={resourceConfigStoreName}
                 formStateStoreName={formStateStoreName}
+                readOnly={readOnly}
             />
         );
     } else {

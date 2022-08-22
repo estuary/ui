@@ -3,8 +3,11 @@ import { TABLES } from 'services/supabase';
 import { ENTITY } from 'types';
 import { useQuery, useSelect } from './supabase-swr/';
 
+// TODO: Consider consolidating query interface instances.
 export interface LiveSpecsExtQuery {
     id: string;
+    spec: any;
+    reads_from: string[];
     writes_to: string[];
     spec_type: string;
 }
@@ -24,7 +27,7 @@ export interface LiveSpecsExtQueryWithSpec extends LiveSpecsExtQuery {
 }
 
 const defaultResponse: LiveSpecsExtQuery[] = [];
-const queryColumns = ['id', 'writes_to', 'spec_type'];
+const queryColumns = ['id', 'spec', 'writes_to', 'reads_from', 'spec_type'];
 const queryColumnsWithSpec = queryColumns.concat([
     'spec',
     'catalog_name',

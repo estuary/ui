@@ -235,7 +235,11 @@ function MaterializationEdit() {
                 draftEditorStoreName={draftEditorStoreName}
                 resourceConfigStoreName={resourceConfigStoreName}
                 formStateStoreName={formStateStoreName}
-                readOnly={{ detailsForm: true, endpointConfigForm: true }}
+                readOnly={{
+                    detailsForm: true,
+                    endpointConfigForm: true,
+                    resourceConfigForm: true,
+                }}
             />
         </PageContainer>
     );

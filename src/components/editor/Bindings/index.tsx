@@ -7,16 +7,19 @@ import { FormStateStoreNames, ResourceConfigStoreNames } from 'context/Zustand';
 interface Props {
     resourceConfigStoreName: ResourceConfigStoreNames;
     formStateStoreName: FormStateStoreNames;
+    readOnly?: boolean;
 }
 
 function BindingsMultiEditor({
     resourceConfigStoreName,
     formStateStoreName,
+    readOnly = false,
 }: Props) {
     return (
         <>
             <CollectionSelector
                 resourceConfigStoreName={resourceConfigStoreName}
+                readOnly={readOnly}
             />
 
             <ListAndDetails
@@ -29,6 +32,7 @@ function BindingsMultiEditor({
                     <BindingsEditor
                         resourceConfigStoreName={resourceConfigStoreName}
                         formStateStoreName={formStateStoreName}
+                        readOnly={readOnly}
                     />
                 }
             />

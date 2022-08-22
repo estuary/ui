@@ -8,9 +8,13 @@ import useConstant from 'use-constant';
 
 interface Props {
     resourceConfigStoreName: ResourceConfigStoreNames;
+    readOnly?: boolean;
 }
 
-function CollectionPicker({ resourceConfigStoreName }: Props) {
+function CollectionPicker({
+    resourceConfigStoreName,
+    readOnly = false,
+}: Props) {
     const intl = useIntl();
     const collectionsLabel = useConstant(() =>
         intl.formatMessage({
@@ -52,6 +56,7 @@ function CollectionPicker({ resourceConfigStoreName }: Props) {
 
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Autocomplete
+                    disabled={readOnly}
                     multiple
                     options={collectionData.map(
                         ({ catalog_name }) => catalog_name

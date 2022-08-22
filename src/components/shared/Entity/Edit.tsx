@@ -216,12 +216,20 @@ function EntityEdit({
         (state) => state.setResourceSchema
     );
 
-    const prefillEmptyCollections = useZustandStore<
+    const setResourceConfig = useZustandStore<
         ResourceConfigState,
-        ResourceConfigState['preFillEmptyCollections']
+        ResourceConfigState['setResourceConfig']
     >(
         resourceConfigStoreName ?? ResourceConfigStoreNames.MATERIALIZATION,
-        (state) => state.preFillEmptyCollections
+        (state) => state.setResourceConfig
+    );
+
+    const preFillCollections = useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['preFillCollections']
+    >(
+        resourceConfigStoreName ?? ResourceConfigStoreNames.MATERIALIZATION,
+        (state) => state.preFillCollections
     );
 
     useEffect(() => {
@@ -280,9 +288,16 @@ function EntityEdit({
             // We wanna make sure we do these after the schemas are set as
             //  as they are dependent on them.
             if (liveSpecs.length > 0) {
-                prefillEmptyCollections(liveSpecs);
-            } else if (liveSpecsByLastPub.length > 0) {
-                prefillEmptyCollections(liveSpecsByLastPub);
+                liveSpecs.forEach((data) =>
+                    data.spec.bindings.forEach((binding: any) =>
+                        setResourceConfig(binding.source, {
+                            data: binding.resource,
+                            errors: [],
+                        })
+                    )
+                );
+
+                preFillCollections(liveSpecs);
             }
         }
     }, [
@@ -291,7 +306,8 @@ function EntityEdit({
         liveSpecsByLastPub,
         liveSpecInfo,
         initialConnectorTag,
-        prefillEmptyCollections,
+        preFillCollections,
+        setResourceConfig,
         setEndpointSchema,
         setResourceSchema,
     ]);
@@ -360,6 +376,7 @@ function EntityEdit({
                                     resourceConfigStoreName
                                 }
                                 formStateStoreName={formStateStoreName}
+                                readOnly={readOnly.resourceConfigForm}
                             />
                         </ErrorBoundryWrapper>
                     ) : null}

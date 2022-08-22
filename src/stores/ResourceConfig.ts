@@ -22,6 +22,7 @@ export interface ResourceConfigState {
     // Collection Selector
     collections: string[] | null;
     preFillEmptyCollections: (collections: LiveSpecsExtQuery[]) => void;
+    preFillCollections: (liveSpecsData: LiveSpecsExtQuery[]) => void;
 
     collectionErrorsExist: boolean;
 
@@ -141,6 +142,27 @@ const getInitialState = (
         );
     },
 
+    preFillCollections: (value) => {
+        set(
+            produce((state: ResourceConfigState) => {
+                const collections: string[] = [];
+
+                value.forEach((queryData) => {
+                    queryData.reads_from.forEach((collection) => {
+                        collections.push(collection);
+                    });
+                });
+
+                state.collections = collections;
+                state.currentCollection = collections[0];
+
+                state.collectionErrorsExist = isEmpty(collections);
+            }),
+            false,
+            'Collections Pre-filled'
+        );
+    },
+
     setCurrentCollection: (value) => {
         set(
             produce((state: ResourceConfigState) => {
@@ -213,7 +235,7 @@ const getInitialState = (
                 state.resourceSchema = val;
             }),
             false,
-            'Reset Schema Set'
+            'Resource Schema Set'
         );
     },
 
