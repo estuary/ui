@@ -117,12 +117,12 @@ function EntityCreate({
         (state) => state.setResourceSchema
     );
 
-    const prefillCollections = useZustandStore<
+    const prefillEmptyCollections = useZustandStore<
         ResourceConfigState,
-        ResourceConfigState['preFillCollections']
+        ResourceConfigState['preFillEmptyCollections']
     >(
         resourceConfigStoreName ?? ResourceConfigStoreNames.MATERIALIZATION,
-        (state) => state.preFillCollections
+        (state) => state.preFillEmptyCollections
     );
 
     // Reset the catalog if the connector changes
@@ -150,16 +150,16 @@ function EntityCreate({
             // We wanna make sure we do these after the schemas are set as
             //  as they are dependent on them.
             if (liveSpecs.length > 0) {
-                prefillCollections(liveSpecs);
+                prefillEmptyCollections(liveSpecs);
             } else if (liveSpecsByLastPub.length > 0) {
-                prefillCollections(liveSpecsByLastPub);
+                prefillEmptyCollections(liveSpecsByLastPub);
             }
         }
     }, [
         connectorTag,
         liveSpecs,
         liveSpecsByLastPub,
-        prefillCollections,
+        prefillEmptyCollections,
         setEndpointSchema,
         setResourceSchema,
     ]);

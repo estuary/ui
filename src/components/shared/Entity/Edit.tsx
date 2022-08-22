@@ -216,12 +216,12 @@ function EntityEdit({
         (state) => state.setResourceSchema
     );
 
-    const prefillCollections = useZustandStore<
+    const prefillEmptyCollections = useZustandStore<
         ResourceConfigState,
-        ResourceConfigState['preFillCollections']
+        ResourceConfigState['preFillEmptyCollections']
     >(
         resourceConfigStoreName ?? ResourceConfigStoreNames.MATERIALIZATION,
-        (state) => state.preFillCollections
+        (state) => state.preFillEmptyCollections
     );
 
     useEffect(() => {
@@ -280,9 +280,9 @@ function EntityEdit({
             // We wanna make sure we do these after the schemas are set as
             //  as they are dependent on them.
             if (liveSpecs.length > 0) {
-                prefillCollections(liveSpecs);
+                prefillEmptyCollections(liveSpecs);
             } else if (liveSpecsByLastPub.length > 0) {
-                prefillCollections(liveSpecsByLastPub);
+                prefillEmptyCollections(liveSpecsByLastPub);
             }
         }
     }, [
@@ -291,7 +291,7 @@ function EntityEdit({
         liveSpecsByLastPub,
         liveSpecInfo,
         initialConnectorTag,
-        prefillCollections,
+        prefillEmptyCollections,
         setEndpointSchema,
         setResourceSchema,
     ]);

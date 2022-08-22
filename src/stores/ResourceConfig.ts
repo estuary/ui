@@ -21,7 +21,7 @@ interface ResourceConfigDictionary {
 export interface ResourceConfigState {
     // Collection Selector
     collections: string[] | null;
-    preFillCollections: (collections: LiveSpecsExtQuery[]) => void;
+    preFillEmptyCollections: (collections: LiveSpecsExtQuery[]) => void;
 
     collectionErrorsExist: boolean;
 
@@ -112,7 +112,7 @@ const getInitialState = (
 ): ResourceConfigState => ({
     ...getInitialStateData(),
 
-    preFillCollections: (value) => {
+    preFillEmptyCollections: (value) => {
         set(
             produce((state: ResourceConfigState) => {
                 const collections: string[] = [];
