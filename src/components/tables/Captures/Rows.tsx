@@ -27,7 +27,7 @@ import { useNavigate } from 'react-router-dom';
 import { CONNECTOR_TITLE } from 'services/supabase';
 import { shardDetailSelectors, ShardDetailStore } from 'stores/ShardDetail';
 import { ENTITY } from 'types';
-import { getPathWithParam } from 'utils/misc-utils';
+import { getPathWithParam, getPathWithParams } from 'utils/misc-utils';
 
 interface RowsProps {
     data: LiveSpecsExtQuery[];
@@ -104,17 +104,15 @@ function Row({
             setRow(rowId, !isSelected);
         },
         editTask: () => {
-            // TODO: Extend getPathWithParam utility to allow for the setting of multiple parameters.
             navigate(
-                `${getPathWithParam(
-                    authenticatedRoutes.captures.edit.fullPath,
-                    authenticatedRoutes.captures.edit.params.connectorId,
-                    row.connector_id
-                )}&${authenticatedRoutes.captures.edit.params.liveSpecId}=${
-                    row.id
-                }&${authenticatedRoutes.captures.edit.params.lastPubId}=${
-                    row.last_pub_id
-                }`
+                getPathWithParams(authenticatedRoutes.captures.edit.fullPath, {
+                    [authenticatedRoutes.captures.edit.params.connectorId]:
+                        row.connector_id,
+                    [authenticatedRoutes.captures.edit.params.liveSpecId]:
+                        row.id,
+                    [authenticatedRoutes.captures.edit.params.lastPubId]:
+                        row.last_pub_id,
+                })
             );
         },
     };

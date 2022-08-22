@@ -26,7 +26,7 @@ import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router';
 import { shardDetailSelectors, ShardDetailStore } from 'stores/ShardDetail';
 import { ENTITY } from 'types';
-import { getPathWithParam } from 'utils/misc-utils';
+import { getPathWithParams } from 'utils/misc-utils';
 
 interface RowsProps {
     data: LiveSpecsExtQuery[];
@@ -93,18 +93,18 @@ function Row({
             setRow(rowId, !isSelected);
         },
         editTask: () => {
-            // TODO: Extend getPathWithParam utility to allow for the setting of multiple parameters.
             navigate(
-                `${getPathWithParam(
+                getPathWithParams(
                     authenticatedRoutes.materializations.edit.fullPath,
-                    authenticatedRoutes.materializations.edit.params
-                        .connectorId,
-                    row.connector_id
-                )}&${
-                    authenticatedRoutes.materializations.edit.params.liveSpecId
-                }=${row.id}&${
-                    authenticatedRoutes.materializations.edit.params.lastPubId
-                }=${row.last_pub_id}`
+                    {
+                        [authenticatedRoutes.materializations.edit.params
+                            .connectorId]: row.connector_id,
+                        [authenticatedRoutes.materializations.edit.params
+                            .liveSpecId]: row.id,
+                        [authenticatedRoutes.materializations.edit.params
+                            .lastPubId]: row.last_pub_id,
+                    }
+                )
             );
         },
     };
