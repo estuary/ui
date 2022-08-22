@@ -15,7 +15,7 @@ const queryColumns = [
     'catalog_name',
     'connector_image_name',
     'connector_image_tag',
-    'connector_open_graph->en-US->>image',
+    'spec->endpoint->connector->image',
     'connector_open_graph->en-US->>title',
     'id',
     'last_pub_id',
