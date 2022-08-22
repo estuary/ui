@@ -5,6 +5,7 @@
     "main": "index.js",
     "private": true,
     "scripts": {
+        "print-versions": "tsc --version && eslint --version && prettier --version",
         "start": "set WDS_SOCKET_PORT=0 && react-app-rewired start",
         "build": "react-app-rewired build",
         "test": "react-app-rewired test",
@@ -67,7 +68,7 @@
     "devDependencies": {
         "@testing-library/jest-dom": "^5.16.4",
         "@testing-library/react": "^12.1.5",
-        "@testing-library/user-event": "^14.4.1",
+        "@testing-library/user-event": "^14.4.3",
         "@types/auth0-js": "^9.14.6",
         "@types/lodash": "^4.14.182",
         "@types/logrocket-react": "^3.0.0",
