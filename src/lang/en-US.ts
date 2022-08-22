@@ -277,6 +277,7 @@ const BrowserTitles: ResolvedIntlConfig['messages'] = {
     'browserTitle.noGrants': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.noGrants']}`,
     'browserTitle.loginLoading': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.loginLoading']}`,
     'browserTitle.materializationCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationCreate']}`,
+    'browserTitle.materializationEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationEdit']}`,
     'browserTitle.materializations': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializations']}`,
     'browserTitle.registration': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.registration']}`,
     'browserTitle.passwordReset': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.passwordReset']}`,
@@ -453,7 +454,7 @@ const CaptureEdit: ResolvedIntlConfig['messages'] = {
     'captureEdit.generate.failedErrorTitle': `Generating Catalog Failed`,
 
     'captureEdit.createNotification.title': `Edited Capture Saved`,
-    'captureEdit.createNotification.desc': `Your edit capture is published and ready to be used.`,
+    'captureEdit.createNotification.desc': `Your edited capture is published and ready to be used.`,
 
     'captureEdit.test.waitMessage': `Please wait while we test your capture.`,
     'captureEdit.testNotification.title': `Test Successful`,
@@ -504,6 +505,41 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreate.test.waitMessage': `Please wait while we test your materialization.`,
     'materializationCreate.testNotification.title': `Test Successful`,
     'materializationCreate.testNotification.desc': `Your materialization succeeded in a dry run and can be saved.`,
+};
+
+const MaterializationEdit: ResolvedIntlConfig['messages'] = {
+    'materializationEdit.details.heading': `Materialization Details`,
+    'materializationEdit.collections.heading': `Output Collections`,
+    'materializationEdit.config.source.doclink': `Connector Help`,
+    'materializationEdit.editor.default': `Before you can edit the materialization specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.materialization']}".`,
+    'materializationEdit.finalReview.instructions': `The following catalog was generated from the details you provided. To make changes, you can enter new values in the form above and click "${CTAs['cta.generateCatalog.materialization']}" again. You can also edit the YAML file directly. Click "${CTAs['cta.saveEntity']}," to proceed.`,
+    'materializationEdit.heading': `Edit Materialization`,
+    'materializationEdit.instructions': `Provide a unique name and specify a destination system for your materialization. Fill in the required details and click "${CTAs['cta.generateCatalog.materialization']}".`,
+    'materializationEdit.missingConnectors': `No connectors installed. A materialization connector must be installed before a materialization can be edited.`,
+    'materializationEdit.noAccessGrants': `You do not have the necessary ${CommonMessages['terms.permissions']} to edit a materialization. Please contact an administrator.`,
+    'materializationEdit.save.failure': `Materialization edit failed. See below for details:`,
+    'materializationEdit.save.failure.errorTitle': `Materialization Save Failed`,
+    'materializationEdit.save.serverUnreachable': `Unable to reach server while saving materialization`,
+    'materializationEdit.tenant.label': `Prefix`,
+
+    'materializationEdit.generate.failure.errorTitle': `Materialization Preparation Failed`,
+
+    'materializationEdit.test.serverUnreachable': `Unable to reach server while testing configuration`,
+    'materializationEdit.test.inProgress': `Please wait while we try to connect to the destination.`,
+
+    'materializationEdit.collectionSelector.heading': `Collection Selector`,
+    'materializationEdit.collectionSelector.instructions': `Choose one or more collections to materialize.`,
+
+    'materializationEdit.resourceConfig.heading': `Resource Configuration`,
+    'materializationEdit.save.failedErrorTitle': `Materialization Save Failed`,
+    'materializationEdit.save.waitMessage': `Please wait while we test, save, and publish your materialization.`,
+
+    'materializationEdit.createNotification.title': `Edited Materialization Saved`,
+    'materializationEdit.createNotification.desc': `Your edited materialization is published and ready to be used.`,
+
+    'materializationEdit.test.waitMessage': `Please wait while we test your materialization.`,
+    'materializationEdit.testNotification.title': `Test Successful`,
+    'materializationEdit.testNotification.desc': `Your materialization succeeded in a dry run and can be saved.`,
 };
 
 const ShardStatus: ResolvedIntlConfig['messages'] = {
@@ -560,6 +596,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CaptureEdit,
     ...DetailsPanel,
     ...MaterializationCreate,
+    ...MaterializationEdit,
     ...ShardStatus,
     ...OAuth,
 };

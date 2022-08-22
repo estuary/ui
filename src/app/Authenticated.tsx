@@ -5,6 +5,7 @@ import CaptureCreate from 'components/capture/Create';
 import CaptureEdit from 'components/capture/Edit';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import MaterializationCreate from 'components/materialization/Create';
+import MaterializationEdit from 'components/materialization/Edit';
 import { EntityContextProvider } from 'components/shared/Entity/EntityContext';
 import AuthenticatedOnlyContext from 'context/Authenticated';
 import { OAuthPopup } from 'hooks/forks/react-use-oauth2/components';
@@ -191,6 +192,7 @@ const Authenticated = () => {
 
                         <Route path={authenticatedRoutes.materializations.path}>
                             <Route path="" element={<Materializations />} />
+
                             <Route
                                 path={
                                     authenticatedRoutes.materializations.create
@@ -201,6 +203,20 @@ const Authenticated = () => {
                                         value={ENTITY.MATERIALIZATION}
                                     >
                                         <MaterializationCreate />
+                                    </EntityContextProvider>
+                                }
+                            />
+
+                            <Route
+                                path={
+                                    authenticatedRoutes.materializations.edit
+                                        .path
+                                }
+                                element={
+                                    <EntityContextProvider
+                                        value={ENTITY.MATERIALIZATION}
+                                    >
+                                        <MaterializationEdit />
                                     </EntityContextProvider>
                                 }
                             />

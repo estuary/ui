@@ -1,7 +1,7 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { authenticatedRoutes } from 'app/Authenticated';
-import CaptureGenerateButton from 'components/capture/GenerateButton';
 import { EditorStoreState } from 'components/editor/Store';
+import MaterializeGenerateButton from 'components/materialization/GenerateButton';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityEdit from 'components/shared/Entity/Edit';
@@ -11,18 +11,17 @@ import PageContainer from 'components/shared/PageContainer';
 import {
     DraftEditorStoreNames,
     FormStateStoreNames,
+    ResourceConfigStoreNames,
     useZustandStore,
 } from 'context/Zustand';
 import { useClient } from 'hooks/supabase-swr';
 import { usePrompt } from 'hooks/useBlocker';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import LogRocket from 'logrocket';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
-import { startSubscription, TABLES } from 'services/supabase';
 import {
     useDetailsForm_changed,
     useDetailsForm_connectorImage,
@@ -35,27 +34,18 @@ import {
     useEndpointConfigStore_reset,
 } from 'stores/EndpointConfig';
 import { EntityFormState, FormStatus } from 'stores/FormState';
-import { getPathWithParam } from 'utils/misc-utils';
+import { ResourceConfigState } from 'stores/ResourceConfig';
 
-const draftEditorStoreName = DraftEditorStoreNames.CAPTURE;
-const formStateStoreName = FormStateStoreNames.CAPTURE_EDIT;
+const draftEditorStoreName = DraftEditorStoreNames.MATERIALIZATION;
+const formStateStoreName = FormStateStoreNames.MATERIALIZATION_EDIT;
+const resourceConfigStoreName = ResourceConfigStoreNames.MATERIALIZATION;
 
-const trackEvent = (payload: any) => {
-    LogRocket.track(CustomEvents.CAPTURE_DISCOVER, {
-        name: payload.capture_name,
-        id: payload.id,
-        draft_id: payload.draft_id,
-        logs_token: payload.logs_token,
-        status: payload.job_status.type,
-    });
-};
-
-function CaptureEdit() {
+function MaterializationEdit() {
     const navigate = useNavigate();
 
     const entityType = useEntityType();
 
-    // Supabase stuff
+    // Supabase
     const supabaseClient = useClient();
     const { connectorTags } = useConnectorWithTagDetail(entityType);
     const hasConnectors = connectorTags.length > 0;
@@ -67,20 +57,15 @@ function CaptureEdit() {
     const resetDetailsFormState = useDetailsForm_resetFormState();
 
     // Draft Editor Store
-    const setDraftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['setId']
-    >(draftEditorStoreName, (state) => state.setId);
-
-    const pubId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['pubId']
-    >(draftEditorStoreName, (state) => state.pubId);
-
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
     >(draftEditorStoreName, (state) => state.id);
+
+    const setDraftId = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['setId']
+    >(draftEditorStoreName, (state) => state.setId);
 
     // Endpoint Config Store
     const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
@@ -108,14 +93,31 @@ function CaptureEdit() {
         EntityFormState['formState']['exitWhenLogsClose']
     >(formStateStoreName, (state) => state.formState.exitWhenLogsClose);
 
+    // Resource Config Store
+    const resourceConfigErrorsExist = useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['resourceConfigErrorsExist']
+    >(resourceConfigStoreName, (state) => state.resourceConfigErrorsExist);
+
+    const resetResourceConfigState = useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['resetState']
+    >(resourceConfigStoreName, (state) => state.resetState);
+
+    const resourceConfigChanged = useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['stateChanged']
+    >(resourceConfigStoreName, (state) => state.stateChanged);
+
     // Reset the catalog if the connector changes
     useEffect(() => {
         setDraftId(null);
     }, [imageTag, setDraftId]);
 
     const resetState = () => {
-        resetDetailsFormState();
         resetEndpointConfigState();
+        resetResourceConfigState();
+        resetDetailsFormState();
         resetFormState();
     };
 
@@ -128,6 +130,7 @@ function CaptureEdit() {
                     ...formState,
                 });
             };
+
             if (subscription) {
                 supabaseClient
                     .removeSubscription(subscription)
@@ -142,7 +145,7 @@ function CaptureEdit() {
         exit: () => {
             resetState();
 
-            navigate(authenticatedRoutes.captures.path);
+            navigate(authenticatedRoutes.materializations.path);
         },
         jobFailed: (errorTitle: string) => {
             setFormState({
@@ -165,43 +168,14 @@ function CaptureEdit() {
                 helpers.exit();
             }
         },
-
-        materializeCollections: () => {
-            helpers.exit();
-            navigate(
-                getPathWithParam(
-                    authenticatedRoutes.materializations.create.fullPath,
-                    authenticatedRoutes.materializations.create.params
-                        .lastPubId,
-                    pubId
-                )
-            );
-        },
-    };
-
-    const discoversSubscription = (discoverDraftId: string) => {
-        setDraftId(null);
-        return startSubscription(
-            supabaseClient.from(
-                `${TABLES.DISCOVERS}:draft_id=eq.${discoverDraftId}`
-            ),
-            (payload: any) => {
-                setDraftId(payload.draft_id);
-                setFormState({
-                    status: FormStatus.GENERATED,
-                });
-                trackEvent(payload);
-            },
-            (payload: any) => {
-                helpers.jobFailed(`${messagePrefix}.test.failedErrorTitle`);
-                trackEvent(payload);
-            }
-        );
     };
 
     usePrompt(
         'confirm.loseData',
-        !exitWhenLogsClose && (detailsFormChanged() || endpointConfigChanged()),
+        !exitWhenLogsClose &&
+            (endpointConfigChanged() ||
+                resourceConfigChanged() ||
+                detailsFormChanged()),
         () => {
             resetState();
         }
@@ -210,50 +184,56 @@ function CaptureEdit() {
     return (
         <PageContainer>
             <EntityEdit
-                title="browserTitle.captureEdit"
+                title="browserTitle.materializationEdit"
                 entityType={entityType}
+                showCollections
                 Header={
                     <FooHeader
-                        heading={
-                            <FormattedMessage id={`${messagePrefix}.heading`} />
-                        }
-                        formErrorsExist={
-                            detailsFormErrorsExist || endpointConfigErrorsExist
-                        }
                         GenerateButton={
-                            <CaptureGenerateButton
+                            <MaterializeGenerateButton
                                 disabled={!hasConnectors}
                                 callFailed={helpers.callFailed}
-                                subscription={discoversSubscription}
                                 draftEditorStoreName={draftEditorStoreName}
+                                resourceConfigStoreName={
+                                    resourceConfigStoreName
+                                }
                                 formStateStoreName={formStateStoreName}
                             />
                         }
                         TestButton={
                             <EntityTestButton
-                                closeLogs={handlers.closeLogs}
-                                callFailed={helpers.callFailed}
                                 disabled={!hasConnectors}
-                                logEvent={CustomEvents.CAPTURE_TEST}
+                                callFailed={helpers.callFailed}
+                                closeLogs={handlers.closeLogs}
+                                logEvent={CustomEvents.MATERIALIZATION_TEST}
                                 draftEditorStoreName={draftEditorStoreName}
                                 formStateStoreName={formStateStoreName}
                             />
                         }
                         SaveButton={
                             <EntitySaveButton
-                                closeLogs={handlers.closeLogs}
-                                callFailed={helpers.callFailed}
                                 disabled={!draftId}
+                                callFailed={helpers.callFailed}
+                                closeLogs={handlers.closeLogs}
+                                logEvent={CustomEvents.MATERIALIZATION_EDIT}
                                 draftEditorStoreName={draftEditorStoreName}
-                                materialize={handlers.materializeCollections}
-                                logEvent={CustomEvents.CAPTURE_EDIT}
                                 formStateStoreName={formStateStoreName}
                             />
                         }
+                        heading={
+                            <FormattedMessage id={`${messagePrefix}.heading`} />
+                        }
+                        formErrorsExist={
+                            detailsFormErrorsExist ||
+                            endpointConfigErrorsExist ||
+                            resourceConfigErrorsExist
+                        }
+                        resourceConfigStoreName={resourceConfigStoreName}
                         formStateStoreName={formStateStoreName}
                     />
                 }
                 draftEditorStoreName={draftEditorStoreName}
+                resourceConfigStoreName={resourceConfigStoreName}
                 formStateStoreName={formStateStoreName}
                 readOnly={{ detailsForm: true, endpointConfigForm: true }}
             />
@@ -261,4 +241,4 @@ function CaptureEdit() {
     );
 }
 
-export default CaptureEdit;
+export default MaterializationEdit;

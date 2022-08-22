@@ -1,4 +1,5 @@
-import { TableRow, useTheme } from '@mui/material';
+import { Button, TableCell, TableRow, useTheme } from '@mui/material';
+import { authenticatedRoutes } from 'app/Authenticated';
 import Actions from 'components/tables/cells/Actions';
 import ChipList from 'components/tables/cells/ChipList';
 import Connector from 'components/tables/cells/Connector';
@@ -21,8 +22,11 @@ import {
 } from 'context/Zustand';
 import useShardsList from 'hooks/useShardsList';
 import { useEffect, useState } from 'react';
+import { FormattedMessage } from 'react-intl';
+import { useNavigate } from 'react-router';
 import { shardDetailSelectors, ShardDetailStore } from 'stores/ShardDetail';
 import { ENTITY } from 'types';
+import { getPathWithParam } from 'utils/misc-utils';
 
 interface RowsProps {
     data: LiveSpecsExtQuery[];
@@ -66,6 +70,10 @@ export const tableColumns = [
         field: null,
         headerIntlKey: null,
     },
+    {
+        field: null,
+        headerIntlKey: null,
+    },
 ];
 
 function Row({
@@ -75,6 +83,7 @@ function Row({
     showEntityStatus,
     shardDetailStoreName,
 }: RowProps) {
+    const navigate = useNavigate();
     const theme = useTheme();
 
     const [detailsExpanded, setDetailsExpanded] = useState(false);
@@ -82,6 +91,21 @@ function Row({
     const handlers = {
         clickRow: (rowId: string) => {
             setRow(rowId, !isSelected);
+        },
+        editTask: () => {
+            // TODO: Extend getPathWithParam utility to allow for the setting of multiple parameters.
+            navigate(
+                `${getPathWithParam(
+                    authenticatedRoutes.materializations.edit.fullPath,
+                    authenticatedRoutes.materializations.edit.params
+                        .connectorId,
+                    row.connector_id
+                )}&${
+                    authenticatedRoutes.materializations.edit.params.liveSpecId
+                }=${row.id}&${
+                    authenticatedRoutes.materializations.edit.params.lastPubId
+                }=${row.last_pub_id}`
+            );
         },
     };
 
@@ -125,6 +149,18 @@ function Row({
                         expanded={detailsExpanded}
                     />
                 </Actions>
+
+                <TableCell>
+                    <Button
+                        variant="text"
+                        size="small"
+                        disableElevation
+                        onClick={handlers.editTask}
+                        sx={{ mr: 1 }}
+                    >
+                        <FormattedMessage id="cta.edit" />
+                    </Button>
+                </TableCell>
             </TableRow>
 
             <DetailsPanel
