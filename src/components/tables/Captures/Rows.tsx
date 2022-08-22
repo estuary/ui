@@ -1,9 +1,10 @@
-import { Button, TableCell, TableRow, useTheme } from '@mui/material';
+import { TableRow, useTheme } from '@mui/material';
 import { authenticatedRoutes } from 'app/Authenticated';
 import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import Actions from 'components/tables/cells/Actions';
 import ChipList from 'components/tables/cells/ChipList';
 import Connector from 'components/tables/cells/Connector';
+import EditTask from 'components/tables/cells/EditTask';
 import EntityName from 'components/tables/cells/EntityName';
 import ExpandDetails from 'components/tables/cells/ExpandDetails';
 import RowSelect from 'components/tables/cells/RowSelect';
@@ -22,7 +23,6 @@ import {
 } from 'context/Zustand';
 import useShardsList from 'hooks/useShardsList';
 import { useEffect, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { CONNECTOR_TITLE } from 'services/supabase';
 import { shardDetailSelectors, ShardDetailStore } from 'stores/ShardDetail';
@@ -158,17 +158,7 @@ function Row({
                     />
                 </Actions>
 
-                <TableCell>
-                    <Button
-                        variant="text"
-                        size="small"
-                        disableElevation
-                        onClick={handlers.editTask}
-                        sx={{ mr: 1 }}
-                    >
-                        <FormattedMessage id="cta.edit" />
-                    </Button>
-                </TableCell>
+                <EditTask clickHandler={handlers.editTask} />
             </TableRow>
 
             <DetailsPanel
