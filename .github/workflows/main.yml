@@ -26,6 +26,9 @@ jobs:
             - name: Get Deps
               run: npm install
 
+            - name: Print Versions
+              run: npm run print-versions
+
             - name: Prettier...ing
               run: npm run format
 
@@ -47,6 +50,9 @@ jobs:
 
             - name: Get Deps
               run: npm install
+
+            - name: Print Versions
+              run: npm run print-versions
 
             - name: Linting
               run: npm run lint
@@ -70,6 +76,9 @@ jobs:
             - name: Get Deps
               run: npm install
 
+            - name: Print Versions
+              run: npm run print-versions
+
             - name: Type Checking
               run: npm run typecheck
 
@@ -90,6 +99,9 @@ jobs:
 
             - name: Get Deps
               run: npm install
+
+            - name: Print Versions
+              run: npm run print-versions
 
             - name: Run jest
               run: npm run test
