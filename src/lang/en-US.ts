@@ -434,7 +434,7 @@ const CaptureEdit: ResolvedIntlConfig['messages'] = {
     'captureEdit.heading': `${RouteTitles['routeTitle.captureEdit']}`,
     'captureEdit.details.heading': `Capture Details`,
     'captureEdit.ctas.materialize': `Materialize Collections`,
-    'captureEdit.instructions': `Click "${CTAs['cta.generateCatalog.capture']}" to test the connection.`,
+    'captureEdit.instructions': `The name and destination of your existing capture.`,
     'captureEdit.missingConnectors': `No connectors are installed. You must install a source connector to edit a capture.`,
     'captureEdit.noAccessGrants': `You do not have the necessary ${CommonMessages['terms.permissions']} to edit this capture. Please contact an administrator.`,
     'captureEdit.tenant.label': `Prefix`,
@@ -442,7 +442,7 @@ const CaptureEdit: ResolvedIntlConfig['messages'] = {
     'captureEdit.config.source.homepage': `Home`,
     'captureEdit.save.failed': `Capture edit failed. See below for details:`,
     'captureEdit.editor.default': `Before you can edit the capture specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.capture']}." `,
-    'captureEdit.finalReview.instructions': `The following catalog was generated from the details you provided. To make changes, you can enter new values in the form above and click "${CTAs['cta.generateCatalog.capture']}" again. You can also edit the YAML file directly. Click "${CTAs['cta.saveEntity']}" to proceed.`,
+    'captureEdit.finalReview.instructions': `The following catalog was generated from the details you provided. To make changes, edit the YAML file directly. Click "${CTAs['cta.saveEntity']}" to proceed.`,
 
     'captureEdit.test.failedErrorTitle': `Configuration Test Failed`,
     'captureEdit.test.serverUnreachable': `Unable to reach server while testing configuration.`,
@@ -512,9 +512,9 @@ const MaterializationEdit: ResolvedIntlConfig['messages'] = {
     'materializationEdit.collections.heading': `Output Collections`,
     'materializationEdit.config.source.doclink': `Connector Help`,
     'materializationEdit.editor.default': `Before you can edit the materialization specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.materialization']}".`,
-    'materializationEdit.finalReview.instructions': `The following catalog was generated from the details you provided. To make changes, you can enter new values in the form above and click "${CTAs['cta.generateCatalog.materialization']}" again. You can also edit the YAML file directly. Click "${CTAs['cta.saveEntity']}," to proceed.`,
+    'materializationEdit.finalReview.instructions': `The following catalog was generated from the details you provided. To make changes, edit the YAML file directly. Click "${CTAs['cta.saveEntity']}," to proceed.`,
     'materializationEdit.heading': `Edit Materialization`,
-    'materializationEdit.instructions': `Provide a unique name and specify a destination system for your materialization. Fill in the required details and click "${CTAs['cta.generateCatalog.materialization']}".`,
+    'materializationEdit.instructions': `The name and destination of your existing materialization.`,
     'materializationEdit.missingConnectors': `No connectors installed. A materialization connector must be installed before a materialization can be edited.`,
     'materializationEdit.noAccessGrants': `You do not have the necessary ${CommonMessages['terms.permissions']} to edit a materialization. Please contact an administrator.`,
     'materializationEdit.save.failure': `Materialization edit failed. See below for details:`,
@@ -528,7 +528,7 @@ const MaterializationEdit: ResolvedIntlConfig['messages'] = {
     'materializationEdit.test.inProgress': `Please wait while we try to connect to the destination.`,
 
     'materializationEdit.collectionSelector.heading': `Collection Selector`,
-    'materializationEdit.collectionSelector.instructions': `Choose one or more collections to materialize.`,
+    'materializationEdit.collectionSelector.instructions': `The collections bound to your existing materialization. To make changes, edit the YAML file shown in the ${EntityCreate['entityCreate.catalogEditor.heading']} section below.`,
 
     'materializationEdit.resourceConfig.heading': `Resource Configuration`,
     'materializationEdit.save.failedErrorTitle': `Materialization Save Failed`,

@@ -1,7 +1,7 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { authenticatedRoutes } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
-import MaterializeGenerateButton from 'components/materialization/GenerateButton';
+// import MaterializeGenerateButton from 'components/materialization/GenerateButton';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityEdit from 'components/shared/Entity/Edit';
@@ -189,17 +189,6 @@ function MaterializationEdit() {
                 showCollections
                 Header={
                     <FooHeader
-                        GenerateButton={
-                            <MaterializeGenerateButton
-                                disabled={!hasConnectors}
-                                callFailed={helpers.callFailed}
-                                draftEditorStoreName={draftEditorStoreName}
-                                resourceConfigStoreName={
-                                    resourceConfigStoreName
-                                }
-                                formStateStoreName={formStateStoreName}
-                            />
-                        }
                         TestButton={
                             <EntityTestButton
                                 disabled={!hasConnectors}

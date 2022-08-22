@@ -1,18 +1,25 @@
 import { Autocomplete, Box, TextField, Typography } from '@mui/material';
-import { ResourceConfigStoreNames, useZustandStore } from 'context/Zustand';
+import {
+    FormStateStoreNames,
+    ResourceConfigStoreNames,
+    useZustandStore,
+} from 'context/Zustand';
 import useLiveSpecs from 'hooks/useLiveSpecs';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { EntityFormState } from 'stores/FormState';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 import useConstant from 'use-constant';
 
 interface Props {
     resourceConfigStoreName: ResourceConfigStoreNames;
+    formStateStoreName: FormStateStoreNames;
     readOnly?: boolean;
 }
 
 function CollectionPicker({
     resourceConfigStoreName,
+    formStateStoreName,
     readOnly = false,
 }: Props) {
     const intl = useIntl();
@@ -25,6 +32,13 @@ function CollectionPicker({
 
     const { liveSpecs: collectionData, error } = useLiveSpecs('collection');
 
+    // Form State Store
+    const messagePrefix = useZustandStore<
+        EntityFormState,
+        EntityFormState['messagePrefix']
+    >(formStateStoreName, (state) => state.messagePrefix);
+
+    // Resource Config Store
     const collections = useZustandStore<
         ResourceConfigState,
         ResourceConfigState['collections']
@@ -47,11 +61,15 @@ function CollectionPicker({
     return collections && collectionData.length > 0 && !error ? (
         <Box>
             <Typography variant="h5" sx={{ mb: 1 }}>
-                <FormattedMessage id="materializationCreate.collectionSelector.heading" />
+                <FormattedMessage
+                    id={`${messagePrefix}.collectionSelector.heading`}
+                />
             </Typography>
 
             <Typography sx={{ mb: 2 }}>
-                <FormattedMessage id="materializationCreate.collectionSelector.instructions" />
+                <FormattedMessage
+                    id={`${messagePrefix}.collectionSelector.instructions`}
+                />
             </Typography>
 
             <Box sx={{ display: 'flex', alignItems: 'center' }}>

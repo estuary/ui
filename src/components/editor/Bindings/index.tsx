@@ -19,6 +19,7 @@ function BindingsMultiEditor({
         <>
             <CollectionSelector
                 resourceConfigStoreName={resourceConfigStoreName}
+                formStateStoreName={formStateStoreName}
                 readOnly={readOnly}
             />
 

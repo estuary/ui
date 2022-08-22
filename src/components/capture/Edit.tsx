@@ -1,6 +1,6 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { authenticatedRoutes } from 'app/Authenticated';
-import CaptureGenerateButton from 'components/capture/GenerateButton';
+// import CaptureGenerateButton from 'components/capture/GenerateButton';
 import { EditorStoreState } from 'components/editor/Store';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
@@ -17,12 +17,12 @@ import { useClient } from 'hooks/supabase-swr';
 import { usePrompt } from 'hooks/useBlocker';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import LogRocket from 'logrocket';
+// import LogRocket from 'logrocket';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
-import { startSubscription, TABLES } from 'services/supabase';
+// import { startSubscription, TABLES } from 'services/supabase';
 import {
     useDetailsForm_changed,
     useDetailsForm_connectorImage,
@@ -40,15 +40,15 @@ import { getPathWithParam } from 'utils/misc-utils';
 const draftEditorStoreName = DraftEditorStoreNames.CAPTURE;
 const formStateStoreName = FormStateStoreNames.CAPTURE_EDIT;
 
-const trackEvent = (payload: any) => {
-    LogRocket.track(CustomEvents.CAPTURE_DISCOVER, {
-        name: payload.capture_name,
-        id: payload.id,
-        draft_id: payload.draft_id,
-        logs_token: payload.logs_token,
-        status: payload.job_status.type,
-    });
-};
+// const trackEvent = (payload: any) => {
+//     LogRocket.track(CustomEvents.CAPTURE_DISCOVER, {
+//         name: payload.capture_name,
+//         id: payload.id,
+//         draft_id: payload.draft_id,
+//         logs_token: payload.logs_token,
+//         status: payload.job_status.type,
+//     });
+// };
 
 function CaptureEdit() {
     const navigate = useNavigate();
@@ -179,25 +179,25 @@ function CaptureEdit() {
         },
     };
 
-    const discoversSubscription = (discoverDraftId: string) => {
-        setDraftId(null);
-        return startSubscription(
-            supabaseClient.from(
-                `${TABLES.DISCOVERS}:draft_id=eq.${discoverDraftId}`
-            ),
-            (payload: any) => {
-                setDraftId(payload.draft_id);
-                setFormState({
-                    status: FormStatus.GENERATED,
-                });
-                trackEvent(payload);
-            },
-            (payload: any) => {
-                helpers.jobFailed(`${messagePrefix}.test.failedErrorTitle`);
-                trackEvent(payload);
-            }
-        );
-    };
+    // const discoversSubscription = (discoverDraftId: string) => {
+    //     setDraftId(null);
+    //     return startSubscription(
+    //         supabaseClient.from(
+    //             `${TABLES.DISCOVERS}:draft_id=eq.${discoverDraftId}`
+    //         ),
+    //         (payload: any) => {
+    //             setDraftId(payload.draft_id);
+    //             setFormState({
+    //                 status: FormStatus.GENERATED,
+    //             });
+    //             trackEvent(payload);
+    //         },
+    //         (payload: any) => {
+    //             helpers.jobFailed(`${messagePrefix}.test.failedErrorTitle`);
+    //             trackEvent(payload);
+    //         }
+    //     );
+    // };
 
     usePrompt(
         'confirm.loseData',
@@ -219,15 +219,6 @@ function CaptureEdit() {
                         }
                         formErrorsExist={
                             detailsFormErrorsExist || endpointConfigErrorsExist
-                        }
-                        GenerateButton={
-                            <CaptureGenerateButton
-                                disabled={!hasConnectors}
-                                callFailed={helpers.callFailed}
-                                subscription={discoversSubscription}
-                                draftEditorStoreName={draftEditorStoreName}
-                                formStateStoreName={formStateStoreName}
-                            />
                         }
                         TestButton={
                             <EntityTestButton
