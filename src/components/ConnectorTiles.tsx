@@ -1,4 +1,4 @@
-import { Cable, OpenInNew } from '@mui/icons-material';
+import { AddBox, Cable, OpenInNew } from '@mui/icons-material';
 import {
     Box,
     Button,
@@ -6,6 +6,8 @@ import {
     LinearProgress,
     Paper,
     Stack,
+    SxProps,
+    Theme,
     Typography,
     useMediaQuery,
     useTheme,
@@ -22,8 +24,8 @@ import {
     ConnectorWithTagDetailQuery,
     CONNECTOR_WITH_TAG_QUERY,
 } from 'hooks/useConnectorWithTagDetail';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { FormattedDate, FormattedMessage } from 'react-intl';
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { CONNECTOR_NAME, defaultTableFilter, TABLES } from 'services/supabase';
 import {
@@ -35,10 +37,15 @@ import {
 import { getPathWithParam, hasLength } from 'utils/misc-utils';
 import { getEmptyTableHeader, getEmptyTableMessage } from 'utils/table-utils';
 
-interface Props {
+interface ConnectorTilesProps {
     cardWidth: number;
     cardsPerRow: number;
     gridSpacing: number;
+}
+
+interface TileProps {
+    children: ReactNode;
+    darkGlassBkg: string;
 }
 
 const intlConfig: TableIntlConfig = {
@@ -46,9 +53,58 @@ const intlConfig: TableIntlConfig = {
     message: 'connectors.main.message2',
 };
 
-function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
+const imageBackgroundSx: SxProps<Theme> = {
+    width: '100%',
+    height: 125,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 2,
+    borderRadius: 5,
+    background: (theme) =>
+        theme.palette.mode === 'dark'
+            ? 'rgba(172, 199, 220, 0.30)' // Brighter than desired to improve MySQL visibility.
+            : slate[25],
+};
+
+function Tile({ children, darkGlassBkg }: TileProps) {
+    return (
+        <Paper
+            elevation={0}
+            sx={{
+                'height': '100%',
+                'borderRadius': 5,
+                'background': (theme) =>
+                    theme.palette.mode === 'dark' ? darkGlassBkg : slate[50],
+                'padding': 1,
+                '&:hover': {
+                    background: (theme) =>
+                        theme.palette.mode === 'dark'
+                            ? darkGlassBkgColorIntensified
+                            : 'rgba(172, 199, 220, 0.45)',
+                },
+            }}
+        >
+            <Stack
+                style={{
+                    height: '100%',
+                    justifyContent: 'space-between',
+                }}
+            >
+                {children}
+            </Stack>
+        </Paper>
+    );
+}
+
+function ConnectorTiles({
+    cardWidth,
+    cardsPerRow,
+    gridSpacing,
+}: ConnectorTilesProps) {
     const navigate = useNavigate();
     const isFiltering = useRef(false);
+    const intl = useIntl();
 
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
@@ -124,47 +180,11 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
             </Grid>
 
             {hasLength(selectData) ? (
-                selectData.map((row, index) => (
-                    <Grid key={index} item xs={6} md={12 / cardsPerRow}>
-                        <Paper
-                            elevation={0}
-                            sx={{
-                                'height': '100%',
-                                'borderRadius': 5,
-                                'background':
-                                    theme.palette.mode === 'dark'
-                                        ? darkGlassBkg
-                                        : slate[50],
-                                'padding': 1,
-                                '&:hover': {
-                                    background:
-                                        theme.palette.mode === 'dark'
-                                            ? darkGlassBkgColorIntensified
-                                            : 'rgba(172, 199, 220, 0.45)',
-                                },
-                            }}
-                        >
-                            <Stack
-                                style={{
-                                    height: '100%',
-                                    justifyContent: 'space-between',
-                                }}
-                            >
-                                <Box
-                                    sx={{
-                                        width: '100%',
-                                        height: 125,
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        marginBottom: 2,
-                                        borderRadius: 5,
-                                        background:
-                                            theme.palette.mode === 'dark'
-                                                ? 'rgba(172, 199, 220, 0.30)' // Brighter than desired to improve MySQL visibility.
-                                                : slate[25],
-                                    }}
-                                >
+                selectData
+                    .map((row, index) => (
+                        <Grid key={index} item xs={6} md={12 / cardsPerRow}>
+                            <Tile darkGlassBkg={darkGlassBkg}>
+                                <Box sx={imageBackgroundSx}>
                                     {row.image ? (
                                         <img
                                             src={row.image}
@@ -288,10 +308,49 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
                                         )}
                                     </Button>
                                 </Stack>
-                            </Stack>
-                        </Paper>
-                    </Grid>
-                ))
+                            </Tile>
+                        </Grid>
+                    ))
+                    .concat(
+                        <Grid
+                            key="connector-request-tile"
+                            item
+                            xs={6}
+                            md={12 / cardsPerRow}
+                        >
+                            <Tile darkGlassBkg={darkGlassBkg}>
+                                <Box>
+                                    <Box sx={imageBackgroundSx}>
+                                        <AddBox sx={{ fontSize: '4rem' }} />
+                                    </Box>
+
+                                    <Typography align="center" marginBottom={1}>
+                                        <FormattedMessage id="connectorTable.data.connectorRequest" />
+                                    </Typography>
+
+                                    <Typography
+                                        component="p"
+                                        variant="caption"
+                                        marginBottom={2}
+                                        sx={{ px: 1 }}
+                                    >
+                                        <FormattedMessage id="connectors.main.message2.alt" />
+                                    </Typography>
+                                </Box>
+
+                                <Button
+                                    href={intl.formatMessage({
+                                        id: 'connectors.main.message2.docPath',
+                                    })}
+                                    target="_blank"
+                                    rel="noopener"
+                                    endIcon={<OpenInNew />}
+                                >
+                                    <FormattedMessage id="connectorTable.actionsCta.connectorRequest" />
+                                </Button>
+                            </Tile>
+                        </Grid>
+                    )
             ) : (
                 <Grid item sx={{ width: '100%' }}>
                     {isValidating ||
@@ -339,4 +398,4 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
     );
 }
 
-export default ConnectorTile;
+export default ConnectorTiles;
