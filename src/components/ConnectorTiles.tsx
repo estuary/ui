@@ -400,8 +400,11 @@ function ConnectorTiles({
                     <Paper
                         elevation={0}
                         sx={{
-                            height: '100%',
+                            height: 300,
                             borderRadius: 5,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
                             background:
                                 theme.palette.mode === 'dark'
                                     ? darkGlassBkg
