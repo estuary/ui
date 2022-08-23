@@ -1,15 +1,23 @@
 import {
     Box,
-    CircularProgress,
     Grid,
+    LinearProgress,
+    Paper,
+    SxProps,
     Table,
+    TableBody,
     TableCell,
     TableContainer,
     TableHead,
     TableRow,
+    Theme,
+    ToggleButton,
+    ToggleButtonGroup,
 } from '@mui/material';
 import { DataGrid, GridSelectionModel } from '@mui/x-data-grid';
 import ListAndDetails from 'components/editor/ListAndDetails';
+import Error from 'components/shared/Error';
+import { tableAlternateRowsSx } from 'context/Theme';
 import { ProtocolJournalSpec } from 'data-plane-gateway/types/gen/broker/protocol/broker';
 import {
     JournalRecord,
@@ -24,8 +32,15 @@ interface PreviewTableModeProps {
     journal: ProtocolJournalSpec;
 }
 
+const heightSx: SxProps<Theme> = {
+    minHeight: 350,
+    maxHeight: 350,
+};
+
 const PreviewTableMode = ({ spec, journal }: PreviewTableModeProps) => {
     const jdata = useJournalData(journal.name, 20);
+
+    console.log('jdata = ', jdata);
 
     const specEntries = useMemo(
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -46,27 +61,51 @@ const PreviewTableMode = ({ spec, journal }: PreviewTableModeProps) => {
         [specEntries]
     );
 
-    return (
-        <div style={{ width: '100%', marginTop: 10 }}>
-            {jdata.loading ? (
-                <CircularProgress />
-            ) : (
-                <TableContainer component={Box}>
-                    <Table sx={{ minWidth: 350 }}>
-                        {tableHead}
-                        {jdata.data.map((row) => (
-                            <TableRow key={row._meta.uuid}>
-                                {specEntries.map(([k]) => (
-                                    <TableCell key={`${row._meta.uuid}_${k}`}>
-                                        {row[k]}
-                                    </TableCell>
-                                ))}
-                            </TableRow>
+    const tableBody = useMemo(
+        () => (
+            <TableBody
+                sx={{
+                    ...tableAlternateRowsSx,
+                }}
+            >
+                {jdata.data.map((row) => (
+                    <TableRow key={row._meta.uuid}>
+                        {specEntries.map(([k]) => (
+                            <TableCell key={`${row._meta.uuid}_${k}`}>
+                                {row[k]}
+                            </TableCell>
                         ))}
+                    </TableRow>
+                ))}
+            </TableBody>
+        ),
+        [jdata.data, specEntries]
+    );
+
+    if (jdata.error) {
+        return <Error error={jdata.error} />;
+    }
+
+    return (
+        <Paper
+            sx={{
+                ...heightSx,
+                m: 2,
+                width: '100%',
+                overflow: 'hidden',
+            }}
+        >
+            {jdata.loading ? (
+                <LinearProgress />
+            ) : (
+                <TableContainer sx={{ ...heightSx }}>
+                    <Table stickyHeader sx={{ ...heightSx }}>
+                        {tableHead}
+                        {tableBody}
                     </Table>
                 </TableContainer>
             )}
-        </div>
+        </Paper>
     );
 };
 
@@ -136,6 +175,11 @@ interface Props {
     collectionName: string;
 }
 
+enum Views {
+    table = 'table',
+    json = 'json',
+}
+
 export function CollectionPreview({ collectionName }: Props) {
     const { liveSpecs: publicationSpecs } = useLiveSpecs_spec(
         `datapreview-${collectionName}`,
@@ -149,13 +193,46 @@ export function CollectionPreview({ collectionName }: Props) {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const journal = useMemo(() => journals.data?.journals?.[0], [journals]);
 
-    const [useJsonMode] = useState(true);
+    const [previewMode, setPreviewMode] = useState<Views>(Views.table);
 
-    return journal ? (
-        useJsonMode ? (
-            <PreviewJsonMode journal={journal} spec={spec} />
-        ) : (
-            <PreviewTableMode journal={journal} spec={spec} />
-        )
-    ) : null;
+    const toggleMode = (_event: any, newValue: Views) => {
+        setPreviewMode(newValue);
+    };
+
+    if (journal) {
+        return (
+            <>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'flex-end',
+                        justifyContent: 'flex-end',
+                        m: 0,
+                        mr: 2,
+                        mt: 2,
+                        width: '100%',
+                    }}
+                >
+                    <ToggleButtonGroup
+                        color="primary"
+                        exclusive
+                        onChange={toggleMode}
+                        value={previewMode}
+                        sx={{}}
+                    >
+                        <ToggleButton value={Views.table}>Table</ToggleButton>
+                        <ToggleButton value={Views.json}>List</ToggleButton>
+                    </ToggleButtonGroup>
+                </Box>
+
+                {previewMode === Views.json ? (
+                    <PreviewJsonMode journal={journal} spec={spec} />
+                ) : (
+                    <PreviewTableMode journal={journal} spec={spec} />
+                )}
+            </>
+        );
+    }
+
+    return null;
 }
