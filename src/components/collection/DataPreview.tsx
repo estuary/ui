@@ -78,17 +78,11 @@ interface PreviewJsonModeProps {
 const PreviewJsonMode = ({ spec, journal }: PreviewJsonModeProps) => {
     const jdata = useJournalData(journal.name, 20);
 
-    const specEntries = useMemo(
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        () => Object.entries(spec?.spec?.schema?.properties ?? {}),
-        [spec]
-    );
-
     const buildRecordKey = useCallback(
         (record: Record<string, any>) => {
-            return specEntries.map(([k]) => record[k]).join('_');
+            return spec.spec.key.map((k: string) => record[k]).join('_');
         },
-        [specEntries]
+        [spec.spec.key]
     );
 
     const rowsByKey = useMemo(() => {

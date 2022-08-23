@@ -36,7 +36,9 @@ export interface LiveSpecsQuery_spec {
     spec: {
         schema: {
             properties: Record<string, any>;
+            required?: string[];
         };
+        key: string[];
     };
     spec_type: string;
 }
