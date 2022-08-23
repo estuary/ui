@@ -151,6 +151,12 @@ export const tableBorderSx: SxProps<Theme> = {
     borderBottom: `1px solid ${slate[200]}`,
 };
 
+export const tableAlternateRowsSx: SxProps<Theme> = {
+    '& tr:nth-of-type(even)': {
+        backgroundColor: (theme) => theme.palette.action.hover,
+    },
+};
+
 export const outlineSx: SxProps<Theme> = {
     border: `1px solid ${slate[200]}`,
 };
