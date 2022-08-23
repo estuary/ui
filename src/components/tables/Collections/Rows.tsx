@@ -69,12 +69,18 @@ function Row({ row, showEntityStatus }: RowProps) {
                     <ExpandDetails
                         onClick={() => {
                             setDetailsExpanded(!detailsExpanded);
+                            if (!detailsExpanded) {
+                                setPreviewExpanded(false);
+                            }
                         }}
                         expanded={detailsExpanded}
                     />
                     <ExpandDetails
                         onClick={() => {
                             setPreviewExpanded(!previewExpanded);
+                            if (!previewExpanded) {
+                                setDetailsExpanded(false);
+                            }
                         }}
                         expanded={previewExpanded}
                         messageId="cta.preview"
