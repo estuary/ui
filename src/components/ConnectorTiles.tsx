@@ -3,8 +3,8 @@ import {
     Box,
     Button,
     Grid,
-    LinearProgress,
     Paper,
+    Skeleton,
     Stack,
     SxProps,
     Theme,
@@ -154,11 +154,16 @@ function ConnectorTiles({
         } else {
             setTableState({ status: TableStatuses.NO_EXISTING_DATA });
         }
-    }, [selectData]);
+    }, [selectData, isValidating]);
 
     const gridContainerWidth = belowMd
         ? '100%'
         : cardWidth * cardsPerRow + 8 * gridSpacing * (cardsPerRow + 1);
+
+    const skeletonTileCount = useMemo(
+        () => 12 / (belowMd ? 6 : 12 / cardsPerRow),
+        [belowMd, cardsPerRow]
+    );
 
     return (
         <Grid
@@ -182,7 +187,12 @@ function ConnectorTiles({
             {hasLength(selectData) ? (
                 selectData
                     .map((row, index) => (
-                        <Grid key={index} item xs={6} md={12 / cardsPerRow}>
+                        <Grid
+                            key={`connector-tile-${index}`}
+                            item
+                            xs={6}
+                            md={12 / cardsPerRow}
+                        >
                             <Tile darkGlassBkg={darkGlassBkg}>
                                 <Box sx={imageBackgroundSx}>
                                     {row.image ? (
@@ -351,47 +361,71 @@ function ConnectorTiles({
                             </Tile>
                         </Grid>
                     )
+            ) : isValidating || tableState.status === TableStatuses.LOADING ? (
+                Array(skeletonTileCount)
+                    .fill(
+                        <Tile darkGlassBkg={darkGlassBkg}>
+                            <Box>
+                                <Skeleton
+                                    variant="rounded"
+                                    height={125}
+                                    sx={{ mb: 2, borderRadius: 3 }}
+                                />
+
+                                <Skeleton />
+
+                                <Skeleton />
+
+                                <Skeleton sx={{ mb: 5 }} />
+                            </Box>
+
+                            <Skeleton
+                                variant="rounded"
+                                height={36}
+                                sx={{ borderRadius: 3 }}
+                            />
+                        </Tile>
+                    )
+                    .map((skeleton, index) => (
+                        <Grid
+                            key={`connector-skeleton-${index}`}
+                            item
+                            xs={6}
+                            md={12 / cardsPerRow}
+                        >
+                            {skeleton}
+                        </Grid>
+                    ))
             ) : (
                 <Grid item sx={{ width: '100%' }}>
-                    {isValidating ||
-                    tableState.status === TableStatuses.LOADING ? (
-                        <Box>
-                            <LinearProgress />
-                        </Box>
-                    ) : (
-                        <Paper
-                            elevation={0}
-                            sx={{
-                                height: '100%',
-                                borderRadius: 5,
-                                background:
-                                    theme.palette.mode === 'dark'
-                                        ? darkGlassBkg
-                                        : slate[50],
-                                padding: 1,
-                            }}
-                        >
-                            <Typography
-                                variant="h6"
-                                align="center"
-                                sx={{ mb: 2 }}
-                            >
-                                <FormattedMessage
-                                    id={getEmptyTableHeader(
-                                        tableState.status,
-                                        intlConfig
-                                    )}
-                                />
-                            </Typography>
-
-                            <Typography component="div" align="center">
-                                {getEmptyTableMessage(
+                    <Paper
+                        elevation={0}
+                        sx={{
+                            height: '100%',
+                            borderRadius: 5,
+                            background:
+                                theme.palette.mode === 'dark'
+                                    ? darkGlassBkg
+                                    : slate[50],
+                            padding: 1,
+                        }}
+                    >
+                        <Typography variant="h6" align="center" sx={{ mb: 2 }}>
+                            <FormattedMessage
+                                id={getEmptyTableHeader(
                                     tableState.status,
                                     intlConfig
                                 )}
-                            </Typography>
-                        </Paper>
-                    )}
+                            />
+                        </Typography>
+
+                        <Typography component="div" align="center">
+                            {getEmptyTableMessage(
+                                tableState.status,
+                                intlConfig
+                            )}
+                        </Typography>
+                    </Paper>
                 </Grid>
             )}
         </Grid>
