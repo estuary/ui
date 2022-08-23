@@ -78,6 +78,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.verifyOTP': `Sign in with OTP`,
     'cta.clickHere': `Click here`,
     'cta.details': `Details`,
+    'cta.preview': `Preview`,
     'cta.saveEntity': `Save and publish`,
     'cta.restart': `Restart`,
     'cta.enable': `Enable`,

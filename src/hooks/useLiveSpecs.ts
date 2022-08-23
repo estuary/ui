@@ -1,3 +1,4 @@
+import { useDebugValue } from 'react';
 import { TABLES } from 'services/supabase';
 import { hasLength } from 'utils/misc-utils';
 import { useQuery, useSelect } from './supabase-swr/';
@@ -32,11 +33,25 @@ function useLiveSpecs(specType: string) {
 export interface LiveSpecsQuery_spec {
     id: string;
     catalog_name: string;
-    spec: string;
+    spec: {
+        schema: {
+            properties: Record<string, any>;
+        };
+    };
     spec_type: string;
 }
 const specQuery = ['id', 'catalog_name', 'spec', 'spec_type'];
-export function useLiveSpecs_spec(collectionNames?: string[]) {
+
+const withKey =
+    (key: string) =>
+    (useSWRNext: any) =>
+    (params: any, fetcher: any, config: any) => {
+        // Pass the serialized key, and unserialize it in fetcher.
+        return useSWRNext(key, () => fetcher(...params), config);
+    };
+
+export function useLiveSpecs_spec(id: string, collectionNames?: string[]) {
+    useDebugValue(`useLiveSpecs_spec ${collectionNames?.join(', ')}`);
     const liveSpecQuery = useQuery<LiveSpecsQuery_spec>(
         TABLES.LIVE_SPECS_EXT,
         {
@@ -48,11 +63,14 @@ export function useLiveSpecs_spec(collectionNames?: string[]) {
     );
 
     const { data, error } = useSelect(
-        hasLength(collectionNames) ? liveSpecQuery : null
+        hasLength(collectionNames) ? liveSpecQuery : null,
+        { use: [withKey(id)] }
     );
 
     return {
-        liveSpecs: data ? data.data : defaultResponse,
+        liveSpecs: data
+            ? data.data
+            : (defaultResponse as LiveSpecsQuery_spec[]),
         error,
     };
 }

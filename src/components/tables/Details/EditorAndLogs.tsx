@@ -27,7 +27,10 @@ function EditorAndLogs({
     collectionNames,
 }: Props) {
     const { liveSpecs: publicationSpecs, error: pubSpecsError } =
-        useLiveSpecs_spec(collectionNames);
+        useLiveSpecs_spec(
+            `editorandlogs-${collectionNames?.join('-')}`,
+            collectionNames
+        );
     const { publication: publications, error: pubsError } = usePublications(
         !disableLogs ? lastPubId : null
     );
