@@ -45,13 +45,14 @@ interface ConnectorTilesProps {
 
 interface TileProps {
     children: ReactNode;
-    darkGlassBkg: string;
 }
 
 const intlConfig: TableIntlConfig = {
     header: 'connectors.main.message1',
     message: 'connectors.main.message2',
 };
+
+const { background: darkGlassBkg } = darkGlassBkgWithoutBlur;
 
 const imageBackgroundSx: SxProps<Theme> = {
     width: '100%',
@@ -67,7 +68,7 @@ const imageBackgroundSx: SxProps<Theme> = {
             : slate[25],
 };
 
-function Tile({ children, darkGlassBkg }: TileProps) {
+function Tile({ children }: TileProps) {
     return (
         <Paper
             elevation={0}
@@ -108,8 +109,6 @@ function ConnectorTiles({
 
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
-
-    const { background: darkGlassBkg } = darkGlassBkgWithoutBlur;
 
     const [protocol, setProtocol] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState<string | null>(null);
@@ -193,7 +192,7 @@ function ConnectorTiles({
                             xs={6}
                             md={12 / cardsPerRow}
                         >
-                            <Tile darkGlassBkg={darkGlassBkg}>
+                            <Tile>
                                 <Box sx={imageBackgroundSx}>
                                     {row.image ? (
                                         <img
@@ -328,7 +327,7 @@ function ConnectorTiles({
                             xs={6}
                             md={12 / cardsPerRow}
                         >
-                            <Tile darkGlassBkg={darkGlassBkg}>
+                            <Tile>
                                 <Box>
                                     <Box sx={imageBackgroundSx}>
                                         <AddBox sx={{ fontSize: '4rem' }} />
@@ -364,7 +363,7 @@ function ConnectorTiles({
             ) : isValidating || tableState.status === TableStatuses.LOADING ? (
                 Array(skeletonTileCount)
                     .fill(
-                        <Tile darkGlassBkg={darkGlassBkg}>
+                        <Tile>
                             <Box>
                                 <Skeleton
                                     variant="rounded"
