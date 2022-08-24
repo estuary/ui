@@ -1,7 +1,7 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { authenticatedRoutes } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
-// import MaterializeGenerateButton from 'components/materialization/GenerateButton';
+import MaterializeGenerateButton from 'components/materialization/GenerateButton';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityEdit from 'components/shared/Entity/Edit';
@@ -109,10 +109,15 @@ function MaterializationEdit() {
         ResourceConfigState['stateChanged']
     >(resourceConfigStoreName, (state) => state.stateChanged);
 
-    // Reset the catalog if the connector changes
+    const resourceConfig = useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['resourceConfig']
+    >(resourceConfigStoreName, (state) => state.resourceConfig);
+
+    // Reset the catalog if the connector or resource config changes
     useEffect(() => {
         setDraftId(null);
-    }, [imageTag, setDraftId]);
+    }, [imageTag, setDraftId, resourceConfig]);
 
     const resetState = () => {
         resetEndpointConfigState();
@@ -189,6 +194,17 @@ function MaterializationEdit() {
                 showCollections
                 Header={
                     <FooHeader
+                        GenerateButton={
+                            <MaterializeGenerateButton
+                                disabled={!hasConnectors}
+                                callFailed={helpers.callFailed}
+                                draftEditorStoreName={draftEditorStoreName}
+                                resourceConfigStoreName={
+                                    resourceConfigStoreName
+                                }
+                                formStateStoreName={formStateStoreName}
+                            />
+                        }
                         TestButton={
                             <EntityTestButton
                                 disabled={!hasConnectors}
@@ -227,7 +243,6 @@ function MaterializationEdit() {
                 readOnly={{
                     detailsForm: true,
                     endpointConfigForm: true,
-                    resourceConfigForm: true,
                 }}
             />
         </PageContainer>
