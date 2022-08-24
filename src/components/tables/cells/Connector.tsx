@@ -3,8 +3,8 @@ import ConnectorName from 'components/ConnectorName';
 import { tableBorderSx } from 'context/Theme';
 
 interface Props {
-    connectorName: string;
-    connectorImage: string;
+    connectorName: string | null;
+    connectorImage: string | null;
     imageTag: string;
 }
 
@@ -20,7 +20,7 @@ function Connector({ connectorImage, connectorName, imageTag }: Props) {
                 <Box>
                     <ConnectorName
                         iconSize={20}
-                        connector={connectorName}
+                        connector={connectorName ?? imageTag}
                         iconPath={connectorImage}
                     />
                 </Box>
