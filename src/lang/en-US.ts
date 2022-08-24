@@ -366,7 +366,7 @@ const Collections: ResolvedIntlConfig['messages'] = {
 
 const entityCreateHeader = `Endpoint Config`;
 const EntityCreate: ResolvedIntlConfig['messages'] = {
-    'entityCreate.catalogEditor.heading': `Catalog Editor`,
+    'entityCreate.catalogEditor.heading': `Specification Editor`,
     'entityCreate.ctas.docs': `Connector Help`,
     'entityCreate.errors.collapseTitle': `Expand to see logs`,
     'entityCreate.sops.failedTitle': `Configuration Encryption Failed`,
@@ -407,7 +407,7 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreate.config.source.homepage': `Home`,
     'captureCreate.save.failed': `Capture creation failed. See below for details:`,
     'captureCreate.editor.default': `Before you can edit the capture specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.capture']}." `,
-    'captureCreate.finalReview.instructions': `The following catalog was generated from the details you provided. To make changes, you can enter new values in the form above and click "${CTAs['cta.generateCatalog.capture']}" again. You can also edit the YAML file directly. Click "${CTAs['cta.saveEntity']}" to proceed.`,
+    'captureCreate.finalReview.instructions': `The following Flow specification was generated from the details you provided. To make changes, you can enter new values in the form above and click "${CTAs['cta.generateCatalog.capture']}" again. You can also edit the specification file directly. Click "${CTAs['cta.saveEntity']}" to proceed.`,
 
     'captureCreate.test.failedErrorTitle': `Configuration Test Failed`,
     'captureCreate.test.serverUnreachable': `Unable to reach server while testing configuration.`,
@@ -416,7 +416,7 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreate.save.serverUnreachable': `Unable to reach server while saving capture`,
     'captureCreate.save.waitMessage': `Please wait while we test, save, and publish your capture.`,
 
-    'captureCreate.generate.failedErrorTitle': `Generating Catalog Failed`,
+    'captureCreate.generate.failedErrorTitle': `Generating Specification Failed`,
 
     'captureCreate.createNotification.title': `New Capture Created`,
     'captureCreate.createNotification.desc': `Your new capture is published and ready to be used.`,
@@ -442,7 +442,7 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreate.collections.heading': `Output Collections`,
     'materializationCreate.config.source.doclink': `Connector Help`,
     'materializationCreate.editor.default': `Before you can edit the materialization specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.materialization']}".`,
-    'materializationCreate.finalReview.instructions': `The following catalog was generated from the details you provided. To make changes, you can enter new values in the form above and click "${CTAs['cta.generateCatalog.materialization']}" again. You can also edit the YAML file directly. Click "${CTAs['cta.saveEntity']}," to proceed.`,
+    'materializationCreate.finalReview.instructions': `The following Flow specification was generated from the details you provided. To make changes, you can enter new values in the form above and click "${CTAs['cta.generateCatalog.materialization']}" again. You can also edit the specification file directly. Click "${CTAs['cta.saveEntity']}," to proceed.`,
     'materializationCreate.heading': `New Materialization`,
     'materializationCreate.instructions': `Provide a unique name and specify a destination system for your materialization. Fill in the required details and click "${CTAs['cta.generateCatalog.materialization']}".`,
     'materializationCreate.missingConnectors': `No connectors installed. A materialization connector must be installed before a materialization can be created.`,
