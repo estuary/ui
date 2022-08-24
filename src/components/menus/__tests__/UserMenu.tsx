@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { UserEvent } from '@testing-library/user-event/dist/types/setup';
+import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import UserMenu from 'components/menus/UserMenu';
 import { act, customRender, screen, waitFor } from 'utils/test-utils';
 
