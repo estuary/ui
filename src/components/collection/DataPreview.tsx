@@ -13,6 +13,7 @@ import {
     Theme,
     ToggleButton,
     ToggleButtonGroup,
+    useTheme,
 } from '@mui/material';
 import { DataGrid, GridSelectionModel } from '@mui/x-data-grid';
 import ListAndDetails from 'components/editor/ListAndDetails';
@@ -26,6 +27,7 @@ import {
 } from 'hooks/useJournalData';
 import { LiveSpecsQuery_spec, useLiveSpecs_spec } from 'hooks/useLiveSpecs';
 import { useCallback, useMemo, useState } from 'react';
+import ReactJson from 'react-json-view';
 
 interface PreviewTableModeProps {
     spec: LiveSpecsQuery_spec;
@@ -116,6 +118,9 @@ interface PreviewJsonModeProps {
 
 const PreviewJsonMode = ({ spec, journal }: PreviewJsonModeProps) => {
     const jdata = useJournalData(journal.name, 20);
+    const theme = useTheme();
+    const jsonTheme =
+        theme.palette.mode === 'dark' ? 'bright' : 'bright:inverted';
 
     const buildRecordKey = useCallback(
         (record: Record<string, any>) => {
@@ -164,7 +169,13 @@ const PreviewJsonMode = ({ spec, journal }: PreviewJsonModeProps) => {
                     />
                 }
                 details={
-                    <pre>{JSON.stringify(rowsByKey[selectedKey], null, 4)}</pre>
+                    <Paper variant="outlined" sx={{ m: 2 }}>
+                        <ReactJson
+                            quotesOnKeys={false}
+                            src={rowsByKey[selectedKey]}
+                            theme={jsonTheme}
+                        />
+                    </Paper>
                 }
             />
         </Grid>
