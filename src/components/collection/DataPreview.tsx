@@ -26,6 +26,7 @@ import {
     useJournalsForCollection,
 } from 'hooks/useJournalData';
 import { LiveSpecsQuery_spec, useLiveSpecs_spec } from 'hooks/useLiveSpecs';
+import { JsonPointer } from 'json-ptr';
 import { useCallback, useMemo, useState } from 'react';
 import ReactJson from 'react-json-view';
 
@@ -45,6 +46,7 @@ const PreviewTableMode = ({ spec, journal }: PreviewTableModeProps) => {
     console.log('jdata = ', jdata);
 
     const specEntries = useMemo(
+        // TODO (typing) we need to fix typing
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         () => Object.entries(spec?.spec?.schema?.properties ?? {}),
         [spec]
@@ -124,7 +126,9 @@ const PreviewJsonMode = ({ spec, journal }: PreviewJsonModeProps) => {
 
     const buildRecordKey = useCallback(
         (record: Record<string, any>) => {
-            return spec.spec.key.map((k: string) => record[k]).join('_');
+            return spec.spec.key
+                .map((k: string) => JsonPointer.get(record, k))
+                .join('_');
         },
         [spec.spec.key]
     );
@@ -169,13 +173,22 @@ const PreviewJsonMode = ({ spec, journal }: PreviewJsonModeProps) => {
                     />
                 }
                 details={
-                    <Paper variant="outlined" sx={{ m: 2 }}>
+                    <Box
+                        sx={{
+                            'm': 2,
+                            '& .react-json-view': {
+                                backgroundColor: 'transparent !important',
+                            },
+                        }}
+                    >
                         <ReactJson
                             quotesOnKeys={false}
                             src={rowsByKey[selectedKey]}
                             theme={jsonTheme}
+                            displayObjectSize={false}
+                            displayDataTypes={false}
                         />
-                    </Paper>
+                    </Box>
                 }
             />
         </Grid>
@@ -199,8 +212,11 @@ export function CollectionPreview({ collectionName }: Props) {
 
     const spec = useMemo(() => publicationSpecs[0], [publicationSpecs]);
 
+    // TODO (typing) we need to fix typing
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const journals = useJournalsForCollection(spec?.catalog_name);
+
+    // TODO (typing) we need to fix typing
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const journal = useMemo(() => journals.data?.journals?.[0], [journals]);
 
