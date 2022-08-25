@@ -1,4 +1,12 @@
-import { Collapse, Grid, TableCell, TableRow } from '@mui/material';
+import {
+    Collapse,
+    Divider,
+    Grid,
+    TableCell,
+    TableRow,
+    Typography,
+} from '@mui/material';
+import { DataPreview } from 'components/collection/DataPreview';
 import { createEditorStore } from 'components/editor/Store';
 import EditorAndLogs from 'components/tables/Details/EditorAndLogs';
 import ShardInformation from 'components/tables/Details/ShardInformation';
@@ -39,6 +47,9 @@ function DetailsPanel({
         () => concat([entityName], collectionNames),
         [collectionNames, entityName]
     ) as string[];
+
+    const isCollection = entityType === ENTITY.COLLECTION;
+
     return (
         <TableRow>
             <TableCell
@@ -56,24 +67,43 @@ function DetailsPanel({
                         )}
                     >
                         <Grid container spacing={2}>
-                            {shardDetailStoreName &&
-                            entityType !== ENTITY.COLLECTION ? (
-                                <ShardInformation
-                                    useLocalZustandStore={useLocalZustandStore}
-                                    entityType={entityType}
-                                    shardDetailStoreName={shardDetailStoreName}
-                                />
+                            {shardDetailStoreName && !isCollection ? (
+                                <Grid item xs={12}>
+                                    <Typography variant="h4">Status</Typography>
+                                    <ShardInformation
+                                        useLocalZustandStore={
+                                            useLocalZustandStore
+                                        }
+                                        entityType={entityType}
+                                        shardDetailStoreName={
+                                            shardDetailStoreName
+                                        }
+                                    />
+                                </Grid>
                             ) : null}
 
-                            <EditorAndLogs
-                                collectionNames={fullList}
-                                lastPubId={lastPubId}
-                                disableLogs={true}
-                                liveSpecEditorStoreName={
-                                    LiveSpecEditorStoreNames.GENERAL
-                                }
-                                useZustandStore={useLocalZustandStore}
-                            />
+                            <Grid item xs={12}>
+                                <Typography variant="h4">
+                                    Specification
+                                </Typography>
+                                <EditorAndLogs
+                                    collectionNames={fullList}
+                                    lastPubId={lastPubId}
+                                    disableLogs={true}
+                                    liveSpecEditorStoreName={
+                                        LiveSpecEditorStoreNames.GENERAL
+                                    }
+                                    useZustandStore={useLocalZustandStore}
+                                />
+                            </Grid>
+
+                            <Divider />
+
+                            {entityName && isCollection ? (
+                                <Grid item xs={12}>
+                                    <DataPreview collectionName={entityName} />
+                                </Grid>
+                            ) : null}
                         </Grid>
                     </LocalZustandProvider>
                 </Collapse>
