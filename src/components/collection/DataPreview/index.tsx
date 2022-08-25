@@ -62,7 +62,9 @@ export function DataPreview({ collectionName }: Props) {
                     spacing={2}
                     sx={{ alignItems: 'center' }}
                 >
-                    <Typography variant="subtitle1">Data Preview</Typography>
+                    <Typography variant="subtitle1">
+                        <FormattedMessage id="detailsPanel.dataPreview.header" />
+                    </Typography>
 
                     <Button
                         variant="text"
@@ -96,7 +98,7 @@ export function DataPreview({ collectionName }: Props) {
             {isLoading ? <LinearProgress /> : null}
 
             {!hasLength(journalsData?.journals) ? (
-                <Alert severity="warning">
+                <Alert severity="warning" sx={{ mb: 3 }}>
                     <AlertTitle>
                         <FormattedMessage id="collections.preview.notFound.title" />
                     </AlertTitle>

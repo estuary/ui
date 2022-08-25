@@ -21,6 +21,7 @@ import {
 } from 'context/Zustand';
 import { concat } from 'lodash';
 import { useMemo } from 'react';
+import { FormattedMessage } from 'react-intl';
 import { ENTITY } from 'types';
 
 interface Props {
@@ -80,7 +81,7 @@ function DetailsPanel({
                             {shardDetailStoreName && !isCollection ? (
                                 <Grid item xs={12}>
                                     <Typography variant="subtitle1">
-                                        Status
+                                        <FormattedMessage id="detailsPanel.status.header" />
                                     </Typography>
                                     <ShardInformation
                                         useLocalZustandStore={
@@ -96,7 +97,7 @@ function DetailsPanel({
 
                             <Grid item xs={12}>
                                 <Typography variant="subtitle1">
-                                    Specification
+                                    <FormattedMessage id="detailsPanel.specification.header" />
                                 </Typography>
                                 <EditorAndLogs
                                     collectionNames={fullList}

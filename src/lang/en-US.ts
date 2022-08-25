@@ -366,8 +366,8 @@ const Collections: ResolvedIntlConfig['messages'] = {
     'collections.message2': `Captures connect to outside systems, pull in data, and generate {docLink} within Flow.`,
     'collections.message2.docLink': `collections`,
     'collections.message2.docPath': `https://docs.estuary.dev/concepts/collections/`,
-    'collections.preview.notFound.title': `Not Found`,
-    'collections.preview.notFound.message': `We were unable to find the journals to display the preview. This could mean the Capture is currently not running.`,
+    'collectionsPreview.notFound.title': `Not Found`,
+    'collectionsPreview.notFound.message': `We were unable to find the journals to display the preview. This could mean the Capture is currently not running.`,
 };
 
 const entityCreateHeader = `Endpoint Config`;
@@ -441,6 +441,9 @@ const DetailsPanel: ResolvedIntlConfig['messages'] = {
     'detailsPanel.shardDetails.errorTitle': `Shard Replica Processing Errors`,
     'detailsPanel.shardDetails.docLink': `Shard Help`,
     'detailsPanel.shardDetails.docPath': `https://docs.estuary.dev/concepts/advanced/shards/`,
+    'detailsPanel.dataPreview.header': `Data Preview`,
+    'detailsPanel.specification.header': `Specification`,
+    'detailsPanel.status.header': `Status`,
 };
 
 const MaterializationCreate: ResolvedIntlConfig['messages'] = {
