@@ -1,6 +1,5 @@
 import {
     Grid,
-    LinearProgress,
     Paper,
     SxProps,
     Table,
@@ -27,7 +26,10 @@ const heightSx: SxProps<Theme> = {
     maxHeight: 350,
 };
 
-function TableView({ journalData, spec }: PreviewTableModeProps) {
+function TableView({
+    journalData: { data, error },
+    spec,
+}: PreviewTableModeProps) {
     const specEntries = useMemo(
         // TODO (typing) we need to fix typing
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -55,7 +57,7 @@ function TableView({ journalData, spec }: PreviewTableModeProps) {
                     ...tableAlternateRowsSx,
                 }}
             >
-                {journalData.data.map((row) => (
+                {data.map((row) => (
                     <TableRow key={row._meta.uuid}>
                         {specEntries.map(([k]) => (
                             <TableCell key={`${row._meta.uuid}_${k}`}>
@@ -66,11 +68,11 @@ function TableView({ journalData, spec }: PreviewTableModeProps) {
                 ))}
             </TableBody>
         ),
-        [journalData.data, specEntries]
+        [data, specEntries]
     );
 
-    if (journalData.error) {
-        return <Error error={journalData.error} />;
+    if (error) {
+        return <Error error={error} />;
     }
 
     return (
@@ -82,8 +84,6 @@ function TableView({ journalData, spec }: PreviewTableModeProps) {
                     overflow: 'hidden',
                 }}
             >
-                {journalData.loading ? <LinearProgress /> : null}
-
                 <TableContainer sx={{ ...heightSx }}>
                     <Table stickyHeader sx={{ ...heightSx }}>
                         {tableHead}

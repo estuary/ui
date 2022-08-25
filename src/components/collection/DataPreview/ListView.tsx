@@ -1,4 +1,4 @@
-import { Box, Grid, LinearProgress, useTheme } from '@mui/material';
+import { Box, Grid, useTheme } from '@mui/material';
 import { DataGrid, GridSelectionModel } from '@mui/x-data-grid';
 import ListAndDetails from 'components/editor/ListAndDetails';
 import Error from 'components/shared/Error';
@@ -14,8 +14,10 @@ interface PreviewJsonModeProps {
     journalData: ReturnType<typeof useJournalData>;
 }
 
-function ListView({ spec, journalData }: PreviewJsonModeProps) {
-    const { data, loading, error } = journalData;
+function ListView({
+    spec,
+    journalData: { data, error },
+}: PreviewJsonModeProps) {
     const [selectedKey, setSelectedKey] = useState<string>('');
     const [selectionModel, setSelectionModel] = useState<GridSelectionModel>(
         []
@@ -35,7 +37,7 @@ function ListView({ spec, journalData }: PreviewJsonModeProps) {
     );
 
     const rowsByKey = useMemo(() => {
-        if (!loading && error === null) {
+        if (error === null) {
             return Object.assign(
                 {},
                 ...data.map((record) => ({
@@ -45,10 +47,9 @@ function ListView({ spec, journalData }: PreviewJsonModeProps) {
         } else {
             return {};
         }
-    }, [buildRecordKey, data, error, loading]);
+    }, [buildRecordKey, data, error]);
 
     useEffect(() => {
-        console.log('running effect');
         if (!isEmpty(rowsByKey)) {
             const firstKey = Object.keys(rowsByKey)[0];
             setSelectedKey(firstKey);
@@ -58,7 +59,6 @@ function ListView({ spec, journalData }: PreviewJsonModeProps) {
 
     return (
         <Grid item xs={12}>
-            {loading ? <LinearProgress /> : null}
             {error ? (
                 <Error error={error} />
             ) : (

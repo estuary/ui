@@ -3,6 +3,7 @@ import {
     Alert,
     AlertTitle,
     Button,
+    LinearProgress,
     Stack,
     ToggleButton,
     ToggleButtonGroup,
@@ -86,6 +87,8 @@ export function DataPreview({ collectionName }: Props) {
                     <FormattedMessage id="cta.refresh" />
                 </Button>
             </Stack>
+
+            {isLoading ? <LinearProgress /> : null}
 
             {!hasLength(journalsData?.journals) ? (
                 <Alert severity="warning">
