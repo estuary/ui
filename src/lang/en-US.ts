@@ -129,8 +129,9 @@ const FullPage: ResolvedIntlConfig['messages'] = {
 };
 
 const Navigation: ResolvedIntlConfig['messages'] = {
-    'navigation.ariaLabel': `Main application navigation`,
-    'header.openNavigation.ariaLabel': `Expand Navigation`,
+    'navigation.toggle.ariaLabel': `Toggle Navigation`,
+    'navigation.expand': `Expand Navigation`,
+    'navigation.collapse': `Collapse Navigation`,
 };
 
 const Header: ResolvedIntlConfig['messages'] = {

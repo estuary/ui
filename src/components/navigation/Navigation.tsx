@@ -3,11 +3,15 @@ import CableIcon from '@mui/icons-material/Cable';
 import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 //TODO (UI / UX) - These icons are not final
 import InputIcon from '@mui/icons-material/Input';
+import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
+
 import StorageIcon from '@mui/icons-material/Storage';
 import {
     Box,
-    IconButton,
     List,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
     SxProps,
     Theme,
     Tooltip,
@@ -18,38 +22,16 @@ import MuiDrawer from '@mui/material/Drawer';
 import { authenticatedRoutes } from 'app/Authenticated';
 import HelpMenu from 'components/menus/HelpMenu';
 import UserMenu from 'components/menus/UserMenu';
-import Logo from 'components/navigation/Logo';
 import ModeSwitch from 'components/navigation/ModeSwitch';
 import { darkGlassBkgWithBlur, lightGlassBkgWithBlur } from 'context/Theme';
 import { FormattedMessage, useIntl } from 'react-intl';
 import ListItemLink from './ListItemLink';
-
-interface MenuButtonProps {
-    ariaLabel: string;
-    openNavigation: () => void;
-}
 
 interface NavigationProps {
     open: boolean;
     width: number;
     onNavigationToggle: Function;
 }
-
-const MenuButton = ({ ariaLabel, openNavigation }: MenuButtonProps) => {
-    return (
-        <IconButton
-            aria-label={ariaLabel}
-            onClick={openNavigation}
-            sx={{
-                display: 'inline-flex',
-                justifyContent: 'left',
-                flexShrink: 0,
-            }}
-        >
-            <Logo width={20} />
-        </IconButton>
-    );
-};
 
 const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
     const intl = useIntl();
@@ -113,31 +95,6 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                             alignItems: 'center',
                         }}
                     >
-                        {open ? (
-                            <MenuButton
-                                ariaLabel={intl.formatMessage({
-                                    id: 'header.openNavigation.ariaLabel',
-                                })}
-                                openNavigation={openNavigation}
-                            />
-                        ) : (
-                            <Tooltip
-                                title={intl.formatMessage({
-                                    id: 'mainMenu.tooltip',
-                                })}
-                                placement="right-end"
-                            >
-                                <span>
-                                    <MenuButton
-                                        ariaLabel={intl.formatMessage({
-                                            id: 'header.openNavigation.ariaLabel',
-                                        })}
-                                        openNavigation={openNavigation}
-                                    />
-                                </span>
-                            </Tooltip>
-                        )}
-
                         <Typography
                             sx={{ width: 136, ml: '22px', flexShrink: 0 }}
                         >
@@ -146,7 +103,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                     </Box>
                     <List
                         aria-label={intl.formatMessage({
-                            id: 'navigation.ariaLabel',
+                            id: 'navigation.toggle.ariaLabel',
                         })}
                     >
                         <ListItemLink
@@ -177,7 +134,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                     </List>
                 </Box>
 
-                <Box sx={{ pl: 1 }}>
+                <Box>
                     <UserMenu iconSx={iconSx} />
 
                     <HelpMenu iconSx={iconSx} />
@@ -197,6 +154,48 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                             <FormattedMessage id="modeSwitch.label" />
                         </Typography>
                     </Box>
+
+                    <List
+                        aria-label={intl.formatMessage({
+                            id: 'navigation.toggle.ariaLabel',
+                        })}
+                    >
+                        <Tooltip
+                            title={intl.formatMessage({
+                                id: 'navigation.toggle.ariaLabel',
+                            })}
+                            placement="right-end"
+                            enterDelay={open ? 1000 : undefined}
+                        >
+                            <ListItemButton
+                                component="a"
+                                onClick={openNavigation}
+                                sx={{
+                                    whiteSpace: 'nowrap',
+                                }}
+                            >
+                                <ListItemIcon sx={{}}>
+                                    <KeyboardDoubleArrowLeftIcon
+                                        sx={{
+                                            ...iconSx,
+                                            transform: `rotate(${
+                                                open ? '0' : '180'
+                                            }deg)`,
+                                            transition: 'all 250ms ease-in-out',
+                                        }}
+                                    />
+                                </ListItemIcon>
+                                <ListItemText
+                                    primary={intl.formatMessage({
+                                        id: 'navigation.collapse',
+                                    })}
+                                    sx={{
+                                        display: !open ? 'none' : undefined,
+                                    }}
+                                />
+                            </ListItemButton>
+                        </Tooltip>
+                    </List>
                 </Box>
             </Box>
         </MuiDrawer>
