@@ -1,0 +1,104 @@
+import RefreshIcon from '@mui/icons-material/Refresh';
+import {
+    Alert,
+    AlertTitle,
+    Button,
+    Stack,
+    ToggleButton,
+    ToggleButtonGroup,
+    Typography,
+} from '@mui/material';
+import ListView from 'components/collection/DataPreview/ListView';
+import TableView from 'components/collection/DataPreview/TableView';
+import { useJournalData, useJournalsForCollection } from 'hooks/useJournalData';
+import { useLiveSpecs_spec } from 'hooks/useLiveSpecs';
+import { useMemo, useState } from 'react';
+import { FormattedMessage } from 'react-intl';
+import { hasLength } from 'utils/misc-utils';
+
+interface Props {
+    collectionName: string;
+}
+
+enum Views {
+    table = 'table',
+    list = 'list',
+}
+
+export function DataPreview({ collectionName }: Props) {
+    const [previewMode, setPreviewMode] = useState<Views>(Views.list);
+    const toggleMode = (_event: any, newValue: Views) => {
+        setPreviewMode(newValue);
+    };
+
+    const { liveSpecs: publicationSpecs } = useLiveSpecs_spec(
+        `datapreview-${collectionName}`,
+        [collectionName]
+    );
+    const spec = useMemo(() => publicationSpecs[0], [publicationSpecs]);
+
+    // TODO (typing) we need to fix typing
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const journals = useJournalsForCollection(spec?.catalog_name);
+    const { data: journalsData, isValidating: journalsLoading } = journals;
+
+    // TODO (typing) we need to fix typing
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const journal = useMemo(() => journalsData?.journals?.[0], [journalsData]);
+    const journalData = useJournalData(journal?.name, 20);
+    const isLoading = journalsLoading || journalData.loading;
+
+    return (
+        <>
+            <Stack
+                justifyContent="space-between"
+                direction="row"
+                spacing={2}
+                sx={{ mb: 1 }}
+            >
+                <Stack direction="row" spacing={2}>
+                    <Typography variant="h4">Data Preview</Typography>
+                    <ToggleButtonGroup
+                        color="primary"
+                        exclusive
+                        onChange={toggleMode}
+                        value={previewMode}
+                        disabled={!hasLength(journalData.data) || isLoading}
+                    >
+                        <ToggleButton value={Views.list}>
+                            <FormattedMessage id="cta.list" />
+                        </ToggleButton>
+                        <ToggleButton value={Views.table}>
+                            <FormattedMessage id="cta.table" />
+                        </ToggleButton>
+                    </ToggleButtonGroup>
+                </Stack>
+
+                <Button
+                    startIcon={<RefreshIcon />}
+                    onClick={journalData.refresh}
+                    disabled={!hasLength(journalData.data) || isLoading}
+                    sx={{
+                        height: 'auto',
+                        alignSelf: 'center',
+                    }}
+                >
+                    <FormattedMessage id="cta.refresh" />
+                </Button>
+            </Stack>
+
+            {!hasLength(journalsData?.journals) ? (
+                <Alert severity="warning">
+                    <AlertTitle>
+                        <FormattedMessage id="collections.preview.notFound.title" />
+                    </AlertTitle>
+                    <FormattedMessage id="collections.preview.notFound.message" />
+                </Alert>
+            ) : previewMode === Views.list ? (
+                <ListView journalData={journalData} spec={spec} />
+            ) : (
+                <TableView journalData={journalData} spec={spec} />
+            )}
+        </>
+    );
+}
