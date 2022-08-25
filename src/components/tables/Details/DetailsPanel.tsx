@@ -14,7 +14,7 @@ import {
     LocalZustandProvider,
     useLocalZustandStore,
 } from 'context/LocalZustand';
-import { tableBorderSx } from 'context/Theme';
+import { darkGlassBkgColorIntensified, tableBorderSx } from 'context/Theme';
 import {
     LiveSpecEditorStoreNames,
     ShardDetailStoreNames,
@@ -53,14 +53,24 @@ function DetailsPanel({
     return (
         <TableRow>
             <TableCell
-                sx={
-                    detailsExpanded
-                        ? tableBorderSx
-                        : { pb: 0, pt: 0, ...tableBorderSx }
-                }
+                sx={{
+                    pb: 0,
+                    pt: 0,
+                    ...tableBorderSx,
+                }}
                 colSpan={colSpan}
             >
-                <Collapse in={detailsExpanded} unmountOnExit>
+                <Collapse
+                    in={detailsExpanded}
+                    sx={{
+                        p: 2,
+                        pb: 0,
+                        mb: 2,
+                        mt: 0,
+                        bgcolor: darkGlassBkgColorIntensified,
+                    }}
+                    unmountOnExit
+                >
                     <LocalZustandProvider
                         createStore={createEditorStore(
                             LiveSpecEditorStoreNames.GENERAL
@@ -69,7 +79,9 @@ function DetailsPanel({
                         <Grid container spacing={2}>
                             {shardDetailStoreName && !isCollection ? (
                                 <Grid item xs={12}>
-                                    <Typography variant="h4">Status</Typography>
+                                    <Typography variant="subtitle1">
+                                        Status
+                                    </Typography>
                                     <ShardInformation
                                         useLocalZustandStore={
                                             useLocalZustandStore
@@ -83,7 +95,7 @@ function DetailsPanel({
                             ) : null}
 
                             <Grid item xs={12}>
-                                <Typography variant="h4">
+                                <Typography variant="subtitle1">
                                     Specification
                                 </Typography>
                                 <EditorAndLogs

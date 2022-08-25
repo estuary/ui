@@ -57,35 +57,40 @@ export function DataPreview({ collectionName }: Props) {
                 spacing={2}
                 sx={{ mb: 1 }}
             >
-                <Stack direction="row" spacing={2}>
-                    <Typography variant="h4">Data Preview</Typography>
-                    <ToggleButtonGroup
-                        color="primary"
-                        exclusive
-                        onChange={toggleMode}
-                        value={previewMode}
-                        disabled={!hasLength(journalData.data) || isLoading}
-                    >
-                        <ToggleButton value={Views.list}>
-                            <FormattedMessage id="cta.list" />
-                        </ToggleButton>
-                        <ToggleButton value={Views.table}>
-                            <FormattedMessage id="cta.table" />
-                        </ToggleButton>
-                    </ToggleButtonGroup>
-                </Stack>
-
-                <Button
-                    startIcon={<RefreshIcon />}
-                    onClick={journalData.refresh}
-                    disabled={!hasLength(journalData.data) || isLoading}
-                    sx={{
-                        height: 'auto',
-                        alignSelf: 'center',
-                    }}
+                <Stack
+                    direction="row"
+                    spacing={2}
+                    sx={{ alignItems: 'center' }}
                 >
-                    <FormattedMessage id="cta.refresh" />
-                </Button>
+                    <Typography variant="subtitle1">Data Preview</Typography>
+
+                    <Button
+                        variant="text"
+                        startIcon={<RefreshIcon />}
+                        onClick={journalData.refresh}
+                        disabled={!hasLength(journalData.data) || isLoading}
+                        sx={{
+                            height: 'auto',
+                        }}
+                    >
+                        <FormattedMessage id="cta.refresh" />
+                    </Button>
+                </Stack>
+                <ToggleButtonGroup
+                    color="primary"
+                    size="small"
+                    exclusive
+                    onChange={toggleMode}
+                    value={previewMode}
+                    disabled={!hasLength(journalData.data) || isLoading}
+                >
+                    <ToggleButton value={Views.list}>
+                        <FormattedMessage id="cta.list" />
+                    </ToggleButton>
+                    <ToggleButton value={Views.table}>
+                        <FormattedMessage id="cta.table" />
+                    </ToggleButton>
+                </ToggleButtonGroup>
             </Stack>
 
             {isLoading ? <LinearProgress /> : null}
