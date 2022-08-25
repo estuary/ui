@@ -6,7 +6,6 @@ import ExpandDetails from 'components/tables/cells/ExpandDetails';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import UserName from 'components/tables/cells/UserName';
 import DetailsPanel from 'components/tables/Details/DetailsPanel';
-import PreviewPanel from 'components/tables/Details/PreviewPanel';
 import { getEntityTableRowSx } from 'context/Theme';
 import { useState } from 'react';
 import { ENTITY } from 'types';
@@ -44,7 +43,6 @@ function Row({ row, showEntityStatus }: RowProps) {
     const theme = useTheme();
 
     const [detailsExpanded, setDetailsExpanded] = useState(false);
-    const [previewExpanded, setPreviewExpanded] = useState(false);
 
     return (
         <>
@@ -69,21 +67,8 @@ function Row({ row, showEntityStatus }: RowProps) {
                     <ExpandDetails
                         onClick={() => {
                             setDetailsExpanded(!detailsExpanded);
-                            if (!detailsExpanded) {
-                                setPreviewExpanded(false);
-                            }
                         }}
                         expanded={detailsExpanded}
-                    />
-                    <ExpandDetails
-                        onClick={() => {
-                            setPreviewExpanded(!previewExpanded);
-                            if (!previewExpanded) {
-                                setDetailsExpanded(false);
-                            }
-                        }}
-                        expanded={previewExpanded}
-                        messageId="cta.preview"
                     />
                 </Actions>
             </TableRow>
@@ -95,11 +80,6 @@ function Row({ row, showEntityStatus }: RowProps) {
                 entityType={ENTITY.COLLECTION}
                 entityName={row.catalog_name}
                 disableLogs
-            />
-            <PreviewPanel
-                expanded={previewExpanded}
-                colSpan={tableColumns.length}
-                collectionName={row.catalog_name}
             />
         </>
     );
