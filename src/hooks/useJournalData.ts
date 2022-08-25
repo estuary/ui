@@ -21,8 +21,6 @@ enum ErrorFlags {
     OPERATION_INVALID = 'Unauthorized',
 }
 
-const INTERVAL = 30000;
-
 const useJournalsForCollection = (collectionName: string) => {
     const { session } = Auth.useUser();
     const { grantDetails } = usePreFetchData();
@@ -71,9 +69,10 @@ const useJournalsForCollection = (collectionName: string) => {
             : null,
         fetcher,
         {
-            errorRetryInterval: INTERVAL / 2,
-            refreshInterval: INTERVAL,
-            revalidateOnFocus: false, // We're already refreshing and these status do not change often
+            // TODO (data preview refresh) no polling right now we should add a manual refresh button
+            errorRetryInterval: undefined,
+            refreshInterval: undefined,
+            revalidateOnFocus: false,
             onError: (error) => {
                 if (
                     session &&
@@ -233,8 +232,7 @@ const useJournalData = (journalName?: string, desiredCount: number = 50) => {
                         documentCount: desiredCount,
                     });
                     setData(docs);
-                    // eslint-disable-next-line @typescript-eslint/no-implicit-any-catch
-                } catch (e: any) {
+                } catch (e: unknown) {
                     setError(e);
                 } finally {
                     setLoading(false);
