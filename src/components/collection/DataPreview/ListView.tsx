@@ -85,6 +85,9 @@ function ListView({
                             }}
                         />
                     }
+                    backgroundColor={
+                        theme.palette.mode === 'light' ? 'white' : undefined
+                    }
                     details={
                         <Box
                             sx={{

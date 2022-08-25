@@ -84,7 +84,7 @@ export function DataPreview({ collectionName }: Props) {
                     exclusive
                     onChange={toggleMode}
                     value={previewMode}
-                    disabled={!hasLength(journalData.data) || isLoading}
+                    disabled={!hasLength(journalData.data)}
                 >
                     <ToggleButton value={Views.list}>
                         <FormattedMessage id="cta.list" />
