@@ -87,6 +87,9 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.generateCatalog.capture': `Discover Endpoint`,
     'cta.generateCatalog.materialization': `Discover Endpoint`,
     'cta.expandToEdit': `Expand to edit`,
+    'cta.refresh': `Refresh`,
+    'cta.table': `Table`,
+    'cta.list': `List`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
@@ -363,6 +366,8 @@ const Collections: ResolvedIntlConfig['messages'] = {
     'collections.message2': `Captures connect to outside systems, pull in data, and generate {docLink} within Flow.`,
     'collections.message2.docLink': `collections`,
     'collections.message2.docPath': `https://docs.estuary.dev/concepts/collections/`,
+    'collections.preview.notFound.title': `Not Found`,
+    'collections.preview.notFound.message': `We were unable to find the journals to display the preview. This could mean the Capture is currently not running.`,
 };
 
 const entityCreateHeader = `Endpoint Config`;
