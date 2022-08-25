@@ -1,9 +1,8 @@
 import RefreshIcon from '@mui/icons-material/Refresh';
+import { LoadingButton } from '@mui/lab';
 import {
     Alert,
     AlertTitle,
-    Button,
-    LinearProgress,
     Stack,
     ToggleButton,
     ToggleButtonGroup,
@@ -66,18 +65,19 @@ export function DataPreview({ collectionName }: Props) {
                         <FormattedMessage id="detailsPanel.dataPreview.header" />
                     </Typography>
 
-                    <Button
+                    <LoadingButton
                         variant="text"
                         startIcon={<RefreshIcon />}
                         onClick={journalData.refresh}
-                        disabled={!hasLength(journalData.data) || isLoading}
+                        loading={!hasLength(journalData.data) || isLoading}
                         sx={{
                             height: 'auto',
                         }}
                     >
                         <FormattedMessage id="cta.refresh" />
-                    </Button>
+                    </LoadingButton>
                 </Stack>
+
                 <ToggleButtonGroup
                     color="primary"
                     size="small"
@@ -94,8 +94,6 @@ export function DataPreview({ collectionName }: Props) {
                     </ToggleButton>
                 </ToggleButtonGroup>
             </Stack>
-
-            {isLoading ? <LinearProgress /> : null}
 
             {!hasLength(journalsData?.journals) ? (
                 <Alert severity="warning" sx={{ mb: 3 }}>

@@ -68,7 +68,10 @@ function DetailsPanel({
                         pb: 0,
                         mb: 2,
                         mt: 0,
-                        bgcolor: darkGlassBkgColorIntensified,
+                        bgcolor: (theme) =>
+                            theme.palette.mode === 'dark'
+                                ? darkGlassBkgColorIntensified
+                                : 'rgba(172, 199, 220, 0.45)',
                     }}
                     unmountOnExit
                 >
