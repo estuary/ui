@@ -15,6 +15,7 @@ import MessageWithLink from 'components/content/MessageWithLink';
 import KeyValueList, { KeyValue } from 'components/shared/KeyValueList';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { hasLength } from 'utils/misc-utils';
 
 export interface ErrorProps {
     error?: PostgrestError | any | null;
@@ -81,28 +82,38 @@ function Error({ error, hideTitle }: ErrorProps) {
                         <Typography>{error.message}</Typography>
                     </Stack>
 
-                    <Divider />
-                    <IconButton
-                        onClick={handleExpandClick}
-                        aria-expanded={expanded}
-                        aria-label={intl.formatMessage({
-                            id: expanded
-                                ? 'aria.closeExpand'
-                                : 'aria.openExpand',
-                        })}
-                        sx={{
-                            marginRight: 0,
-                            transform: `rotate(${expanded ? '180' : '0'}deg)`,
-                            transition: 'all 250ms ease-in-out',
-                        }}
-                    >
-                        <ExpandMore />
-                    </IconButton>
-                    <Collapse in={expanded} timeout="auto" unmountOnExit>
-                        <Paper variant="outlined" square>
-                            <KeyValueList data={details} />
-                        </Paper>
-                    </Collapse>
+                    {hasLength(details) ? (
+                        <>
+                            <Divider />
+                            <IconButton
+                                onClick={handleExpandClick}
+                                aria-expanded={expanded}
+                                aria-label={intl.formatMessage({
+                                    id: expanded
+                                        ? 'aria.closeExpand'
+                                        : 'aria.openExpand',
+                                })}
+                                sx={{
+                                    marginRight: 0,
+                                    transform: `rotate(${
+                                        expanded ? '180' : '0'
+                                    }deg)`,
+                                    transition: 'all 250ms ease-in-out',
+                                }}
+                            >
+                                <ExpandMore />
+                            </IconButton>
+                            <Collapse
+                                in={expanded}
+                                timeout="auto"
+                                unmountOnExit
+                            >
+                                <Paper variant="outlined" square>
+                                    <KeyValueList data={details} />
+                                </Paper>
+                            </Collapse>
+                        </>
+                    ) : null}
                 </Alert>
             </Box>
         );
