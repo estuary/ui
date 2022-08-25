@@ -117,6 +117,8 @@ async function* streamAsyncIterator<T>(stream: ReadableStream<T>) {
     }
 }
 
+// We increment the read window by this many bytes every time we get back
+// fewer than the desired number of rows.
 const INCREMENT = 1024 * 10;
 
 async function readAllDocuments<T>(stream: ReadableStream<T>) {
