@@ -1,4 +1,4 @@
-import { Stack, Toolbar } from '@mui/material';
+import { Divider, Stack, Toolbar } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
 import { SxProps, Theme, useTheme } from '@mui/material/styles';
 import CompanyLogo from 'components/graphics/CompanyLogo';
@@ -42,8 +42,9 @@ const Topbar = ({ pageTitleProps }: Props) => {
             >
                 <Stack
                     direction="row"
-                    spacing={6}
+                    spacing={3}
                     sx={{ alignItems: 'center' }}
+                    divider={<Divider orientation="vertical" flexItem />}
                 >
                     <CompanyLogo />
                     {pageTitleProps ? (

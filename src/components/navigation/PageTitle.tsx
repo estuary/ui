@@ -13,7 +13,7 @@ function PageTitle({ header, headerLink }: PageTitleProps) {
             direction="row"
             spacing={1}
             sx={{
-                alignItems: 'center',
+                alignItems: 'baseline',
             }}
         >
             <Typography variant="h6">

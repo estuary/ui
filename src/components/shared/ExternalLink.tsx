@@ -10,7 +10,7 @@ interface Props {
     padding?: number;
 }
 
-const ExternalLink = ({ children, link, hideIcon, padding }: Props) => {
+const ExternalLink = ({ children, link, hideIcon }: Props) => {
     const onClick = (event: any) => {
         event.stopPropagation();
     };
@@ -25,14 +25,14 @@ const ExternalLink = ({ children, link, hideIcon, padding }: Props) => {
             color="secondary"
             onClick={onClick}
             sx={{
-                'padding': padding ? padding : 0,
+                'px': 1,
+                'py': 0,
                 'fontWeight': 500,
                 'zIndex': headerLinkIndex,
-                'borderBottom': 1,
-                'borderRadius': 0,
-                'mx': 1,
+                'textDecoration': 'underline',
                 '&:hover, &:focus': {
                     fontWeight: 700,
+                    textDecoration: 'underline',
                 },
             }}
         >
