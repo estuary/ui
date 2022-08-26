@@ -55,7 +55,6 @@ function AccessGrantsTable() {
                 columnToSort={columnToSort}
                 setColumnToSort={setColumnToSort}
                 header="accessGrantsTable.title"
-                headerLink="https://docs.estuary.dev/reference/authentication/"
                 filterLabel="accessGrantsTable.filterLabel"
                 tableDescriptionId="admin.roles.message"
                 selectableTableStoreName={SelectTableStoreNames.ACCESS_GRANTS}

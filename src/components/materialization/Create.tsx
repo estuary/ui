@@ -182,7 +182,11 @@ function MaterializationCreate() {
     );
 
     return (
-        <PageContainer>
+        <PageContainer
+            pageTitleProps={{
+                header: authenticatedRoutes.materializations.create.title,
+            }}
+        >
             <EntityCreate
                 title="browserTitle.materializationCreate"
                 connectorType={entityType}

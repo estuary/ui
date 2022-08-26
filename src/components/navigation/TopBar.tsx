@@ -4,6 +4,7 @@ import { SxProps, Theme, useTheme } from '@mui/material/styles';
 import CompanyLogo from 'components/graphics/CompanyLogo';
 import HelpMenu from 'components/menus/HelpMenu';
 import UserMenu from 'components/menus/UserMenu';
+import PageTitle, { PageTitleProps } from 'components/navigation/PageTitle';
 import {
     darkGlassBkgWithBlur,
     lightGlassBkgWithBlur,
@@ -11,10 +12,10 @@ import {
 } from 'context/Theme';
 
 interface Props {
-    title: string;
+    pageTitleProps?: PageTitleProps;
 }
 
-const Topbar = ({ title }: Props) => {
+const Topbar = ({ pageTitleProps }: Props) => {
     const theme = useTheme();
     const iconSx: SxProps<Theme> = {
         color: theme.palette.text.primary,
@@ -39,9 +40,19 @@ const Topbar = ({ title }: Props) => {
                     justifyContent: 'space-between',
                 }}
             >
-                <CompanyLogo />
-
-                {title}
+                <Stack
+                    direction="row"
+                    spacing={6}
+                    sx={{ alignItems: 'center' }}
+                >
+                    <CompanyLogo />
+                    {pageTitleProps ? (
+                        <PageTitle
+                            header={pageTitleProps.header}
+                            headerLink={pageTitleProps.headerLink}
+                        />
+                    ) : null}
+                </Stack>
 
                 <Stack direction="row" sx={{ alignItems: 'center' }}>
                     <HelpMenu iconSx={iconSx} />

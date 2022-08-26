@@ -1,12 +1,12 @@
 import {
     Box,
     TextareaAutosize,
-    Toolbar,
     Typography,
     type SxProps,
     type Theme,
 } from '@mui/material';
 import { Auth } from '@supabase/ui';
+import { authenticatedRoutes } from 'app/Authenticated';
 import PageContainer from 'components/shared/PageContainer';
 import AccessGrantsTable from 'components/tables/AccessGrants';
 import useBrowserTitle from 'hooks/useBrowserTitle';
@@ -23,13 +23,9 @@ const Admin = () => {
     const { session } = Auth.useUser();
 
     return (
-        <PageContainer>
-            <Toolbar>
-                <Typography>
-                    <FormattedMessage id="admin.header" />
-                </Typography>
-            </Toolbar>
-
+        <PageContainer
+            pageTitleProps={{ header: authenticatedRoutes.admin.title }}
+        >
             <AccessGrantsTable />
 
             <Box sx={boxStyling}>

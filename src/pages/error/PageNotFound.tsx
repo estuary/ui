@@ -15,8 +15,10 @@ import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 
+const TITLE = 'browserTitle.error.pageNotFound';
+
 const PageNotFound = () => {
-    useBrowserTitle('browserTitle.error.pageNotFound');
+    useBrowserTitle(TITLE);
 
     const intl = useIntl();
     const navigate = useNavigate();
@@ -84,7 +86,11 @@ const PageNotFound = () => {
     };
 
     return (
-        <PageContainer>
+        <PageContainer
+            pageTitleProps={{
+                header: TITLE,
+            }}
+        >
             <Typography variant="h5" align="center" sx={{ mb: 2 }}>
                 <FormattedMessage id="pageNotFound.heading" />
             </Typography>

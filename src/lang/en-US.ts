@@ -257,7 +257,7 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
 };
 
 const RouteTitles: ResolvedIntlConfig['messages'] = {
-    'routeTitle.home': `Home`,
+    'routeTitle.home': `Welcome`,
     'routeTitle.dashboard': `Dashboard`,
     'routeTitle.admin': `Admin`,
     'routeTitle.captureCreate': `Create Capture`,
@@ -275,7 +275,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
 };
 
 const BrowserTitles: ResolvedIntlConfig['messages'] = {
-    'browserTitle.home': `${CommonMessages['common.browserTitle']} · Welcome`,
+    'browserTitle.home': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.home']}`,
     'browserTitle.dashboard': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.dashboard']}`,
     'browserTitle.admin': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin']}`,
     'browserTitle.captureCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureCreate']}`,

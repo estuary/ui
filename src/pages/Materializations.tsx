@@ -16,7 +16,13 @@ const Materializations = () => {
     useBrowserTitle('browserTitle.materializations');
 
     return (
-        <PageContainer>
+        <PageContainer
+            pageTitleProps={{
+                header: authenticatedRoutes.materializations.title,
+                headerLink:
+                    'https://docs.estuary.dev/concepts/#materializations',
+            }}
+        >
             <Toolbar
                 sx={{
                     alignItems: 'center',

@@ -205,7 +205,11 @@ function CaptureCreate() {
     );
 
     return (
-        <PageContainer>
+        <PageContainer
+            pageTitleProps={{
+                header: authenticatedRoutes.captures.create.title,
+            }}
+        >
             <EntityCreate
                 title="browserTitle.captureCreate"
                 connectorType={entityType}

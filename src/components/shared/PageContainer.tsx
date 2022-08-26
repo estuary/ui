@@ -6,6 +6,7 @@ import {
     Toolbar,
     useTheme,
 } from '@mui/material';
+import { PageTitleProps } from 'components/navigation/PageTitle';
 import Topbar from 'components/navigation/TopBar';
 import { darkGlassBkgWithBlur, lightGlassBkgWithBlur } from 'context/Theme';
 import { ReactNode, useEffect, useState } from 'react';
@@ -15,6 +16,7 @@ import useNotificationStore, {
 
 interface Props {
     children: ReactNode | ReactNode[];
+    pageTitleProps?: PageTitleProps;
 }
 
 const selectors = {
@@ -24,7 +26,7 @@ const selectors = {
         state.updateNotificationHistory,
 };
 
-function PageContainer({ children }: Props) {
+function PageContainer({ children, pageTitleProps }: Props) {
     const theme = useTheme();
     const backgroundSx =
         theme.palette.mode === 'dark'
@@ -70,7 +72,7 @@ function PageContainer({ children }: Props) {
                 </Snackbar>
             ) : null}
 
-            <Topbar title="" />
+            <Topbar pageTitleProps={pageTitleProps} />
             <Toolbar />
 
             <Paper

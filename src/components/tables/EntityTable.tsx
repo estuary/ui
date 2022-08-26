@@ -1,10 +1,7 @@
-import HelpIcon from '@mui/icons-material/Help';
 import SearchIcon from '@mui/icons-material/Search';
 import {
     Box,
-    IconButton,
     LinearProgress,
-    Link,
     Stack,
     Table,
     TableBody,
@@ -62,7 +59,6 @@ interface Props {
     columnToSort: string;
     setColumnToSort: (data: any) => void;
     header: string;
-    headerLink?: string;
     filterLabel: string;
     enableSelection?: boolean;
     rowSelectorProps?: RowSelectorProps;
@@ -96,7 +92,6 @@ function EntityTable({
     columnToSort,
     setColumnToSort,
     header,
-    headerLink,
     filterLabel,
     enableSelection,
     rowSelectorProps,
@@ -228,19 +223,6 @@ function EntityTable({
                     >
                         <FormattedMessage id={header} />
                     </Typography>
-
-                    {headerLink ? (
-                        <Link target="_blank" rel="noopener" href={headerLink}>
-                            <IconButton size="small">
-                                <HelpIcon
-                                    sx={{
-                                        color: (theme) =>
-                                            theme.palette.text.primary,
-                                    }}
-                                />
-                            </IconButton>
-                        </Link>
-                    ) : null}
                 </Stack>
 
                 {tableDescriptionId ? (
