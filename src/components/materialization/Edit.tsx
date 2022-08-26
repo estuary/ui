@@ -109,19 +109,10 @@ function MaterializationEdit() {
         ResourceConfigState['stateChanged']
     >(resourceConfigStoreName, (state) => state.stateChanged);
 
-    // const resourceConfig = useZustandStore<
-    //     ResourceConfigState,
-    //     ResourceConfigState['resourceConfig']
-    // >(resourceConfigStoreName, (state) => state.resourceConfig);
-
     // Reset the catalog if the connector or resource config changes
     useEffect(() => {
         setDraftId(null);
     }, [imageTag, setDraftId]);
-
-    // useEffect(() => {
-    //     setDraftId(null);
-    // }, [resourceConfig, setDraftId]);
 
     const resetState = () => {
         resetEndpointConfigState();

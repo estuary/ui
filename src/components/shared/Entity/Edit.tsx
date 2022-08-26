@@ -313,7 +313,6 @@ function EntityEdit({
             // We wanna make sure we do these after the schemas are set as
             //  as they are dependent on them.
             if (entityType === ENTITY.MATERIALIZATION && liveSpecs.length > 0) {
-                console.log(liveSpecs);
                 if (isEmpty(resourceConfig)) {
                     liveSpecs.forEach((data) =>
                         data.spec.bindings.forEach((binding: any) =>
