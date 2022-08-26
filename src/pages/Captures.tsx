@@ -16,7 +16,12 @@ const Capture = () => {
     useBrowserTitle('browserTitle.captures');
 
     return (
-        <PageContainer>
+        <PageContainer
+            pageTitleProps={{
+                header: authenticatedRoutes.captures.title,
+                headerLink: 'https://docs.estuary.dev/concepts/#captures',
+            }}
+        >
             <Toolbar
                 sx={{
                     alignItems: 'center',

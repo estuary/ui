@@ -35,7 +35,7 @@ interface CombinatorPropertiesProps {
 }
 
 export const isLayout = (uischema: UISchemaElement): uischema is Layout =>
-    uischema.hasOwnProperty('elements');
+    Object.hasOwn(uischema, 'elements');
 
 export class CombinatorProperties extends React.Component<
     CombinatorPropertiesProps,

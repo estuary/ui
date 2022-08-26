@@ -2,54 +2,34 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import CableIcon from '@mui/icons-material/Cable';
 import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 //TODO (UI / UX) - These icons are not final
+import HomeIcon from '@mui/icons-material/Home';
 import InputIcon from '@mui/icons-material/Input';
+import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
 import StorageIcon from '@mui/icons-material/Storage';
 import {
     Box,
-    IconButton,
     List,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
     SxProps,
     Theme,
+    Toolbar,
     Tooltip,
-    Typography,
     useTheme,
 } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
 import { authenticatedRoutes } from 'app/Authenticated';
-import HelpMenu from 'components/menus/HelpMenu';
-import UserMenu from 'components/menus/UserMenu';
-import Logo from 'components/navigation/Logo';
 import ModeSwitch from 'components/navigation/ModeSwitch';
 import { darkGlassBkgWithBlur, lightGlassBkgWithBlur } from 'context/Theme';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import ListItemLink from './ListItemLink';
-
-interface MenuButtonProps {
-    ariaLabel: string;
-    openNavigation: () => void;
-}
 
 interface NavigationProps {
     open: boolean;
     width: number;
     onNavigationToggle: Function;
 }
-
-const MenuButton = ({ ariaLabel, openNavigation }: MenuButtonProps) => {
-    return (
-        <IconButton
-            aria-label={ariaLabel}
-            onClick={openNavigation}
-            sx={{
-                display: 'inline-flex',
-                justifyContent: 'left',
-                flexShrink: 0,
-            }}
-        >
-            <Logo width={20} />
-        </IconButton>
-    );
-};
 
 const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
     const intl = useIntl();
@@ -85,7 +65,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                     transition: (paperTheme) =>
                         `${paperTheme.transitions.duration.shortest}ms`,
                     width,
-                    borderRadius: '0px 10px 10px 0px',
+                    border: 0,
                     ...paperBackground,
                 },
                 'transition': (drawerTheme) =>
@@ -93,6 +73,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                 width,
             }}
         >
+            <Toolbar />
             <Box
                 sx={{
                     height: '100%',
@@ -103,52 +84,16 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                 }}
             >
                 <Box>
-                    <Box
-                        sx={{
-                            pt: 1,
-                            pb: 0.25,
-                            pl: '7px',
-                            display: 'flex',
-                            flexGrow: 1,
-                            alignItems: 'center',
-                        }}
-                    >
-                        {open ? (
-                            <MenuButton
-                                ariaLabel={intl.formatMessage({
-                                    id: 'header.openNavigation.ariaLabel',
-                                })}
-                                openNavigation={openNavigation}
-                            />
-                        ) : (
-                            <Tooltip
-                                title={intl.formatMessage({
-                                    id: 'mainMenu.tooltip',
-                                })}
-                                placement="right-end"
-                            >
-                                <span>
-                                    <MenuButton
-                                        ariaLabel={intl.formatMessage({
-                                            id: 'header.openNavigation.ariaLabel',
-                                        })}
-                                        openNavigation={openNavigation}
-                                    />
-                                </span>
-                            </Tooltip>
-                        )}
-
-                        <Typography
-                            sx={{ width: 136, ml: '22px', flexShrink: 0 }}
-                        >
-                            <FormattedMessage id="company" />
-                        </Typography>
-                    </Box>
                     <List
                         aria-label={intl.formatMessage({
-                            id: 'navigation.ariaLabel',
+                            id: 'navigation.toggle.ariaLabel',
                         })}
                     >
+                        <ListItemLink
+                            icon={<HomeIcon sx={iconSx} />}
+                            title={authenticatedRoutes.home.title}
+                            link={authenticatedRoutes.home.path}
+                        />
                         <ListItemLink
                             icon={<InputIcon sx={iconSx} />}
                             title={authenticatedRoutes.captures.title}
@@ -177,26 +122,62 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                     </List>
                 </Box>
 
-                <Box sx={{ pl: 1 }}>
-                    <UserMenu iconSx={iconSx} />
-
-                    <HelpMenu iconSx={iconSx} />
-
+                <Box>
                     <Box
                         sx={{
-                            pt: 0.25,
                             pb: 1,
-                            display: 'flex',
-                            flexGrow: 1,
-                            alignItems: 'center',
+                            pl: open ? 2 : 1,
                         }}
                     >
-                        <ModeSwitch />
-
-                        <Typography sx={{ width: 136, ml: 2, flexShrink: 0 }}>
-                            <FormattedMessage id="modeSwitch.label" />
-                        </Typography>
+                        <ModeSwitch hideText={!open} />
                     </Box>
+
+                    <List
+                        aria-label={intl.formatMessage({
+                            id: 'navigation.toggle.ariaLabel',
+                        })}
+                        sx={{
+                            py: 0,
+                        }}
+                    >
+                        <Tooltip
+                            title={intl.formatMessage({
+                                id: 'navigation.toggle.ariaLabel',
+                            })}
+                            placement="right-end"
+                            enterDelay={open ? 1000 : undefined}
+                        >
+                            <ListItemButton
+                                component="a"
+                                onClick={openNavigation}
+                                sx={{
+                                    whiteSpace: 'nowrap',
+                                    minHeight: 60,
+                                    maxHeight: 60,
+                                }}
+                            >
+                                <ListItemIcon sx={{}}>
+                                    <KeyboardDoubleArrowLeftIcon
+                                        sx={{
+                                            ...iconSx,
+                                            transform: open
+                                                ? 'scaleX(1)'
+                                                : 'scaleX(-1)',
+                                            transition: 'all 50ms ease-in-out',
+                                        }}
+                                    />
+                                </ListItemIcon>
+                                <ListItemText
+                                    primary={intl.formatMessage({
+                                        id: 'navigation.collapse',
+                                    })}
+                                    sx={{
+                                        display: !open ? 'none' : undefined,
+                                    }}
+                                />
+                            </ListItemButton>
+                        </Tooltip>
+                    </List>
                 </Box>
             </Box>
         </MuiDrawer>

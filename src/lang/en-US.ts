@@ -129,8 +129,53 @@ const FullPage: ResolvedIntlConfig['messages'] = {
 };
 
 const Navigation: ResolvedIntlConfig['messages'] = {
-    'navigation.ariaLabel': `Main application navigation`,
-    'header.openNavigation.ariaLabel': `Expand Navigation`,
+    'navigation.toggle.ariaLabel': `Toggle Navigation`,
+    'navigation.expand': `Expand Navigation`,
+    'navigation.collapse': `Collapse Navigation`,
+};
+
+const RouteTitles: ResolvedIntlConfig['messages'] = {
+    'routeTitle.home': `Welcome`,
+    'routeTitle.dashboard': `Dashboard`,
+    'routeTitle.admin': `Admin`,
+    'routeTitle.admin.accessGrants': `Access Grants`,
+    'routeTitle.admin.api': `CLI - API`,
+    'routeTitle.captureCreate': `Create Capture`,
+    'routeTitle.captureEdit': `Edit Capture`,
+    'routeTitle.captures': `Captures`,
+    'routeTitle.collections': `Collections`,
+    'routeTitle.connectors': `Connectors`,
+    'routeTitle.error.pageNotFound': `Page Not Found`,
+    'routeTitle.login': `Login`,
+    'routeTitle.loginLoading': `Checking Credentials`,
+    'routeTitle.noGrants': `Signed Up`,
+    'routeTitle.materializationCreate': `Create Materialization`,
+    'routeTitle.materializationEdit': `Edit Materialization`,
+    'routeTitle.materializations': `Materializations`,
+    'routeTitle.registration': `Registration`,
+    'routeTitle.passwordReset': `Password Reset`,
+};
+
+const BrowserTitles: ResolvedIntlConfig['messages'] = {
+    'browserTitle.home': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.home']}`,
+    'browserTitle.dashboard': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.dashboard']}`,
+    'browserTitle.admin': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin']}`,
+    'browserTitle.admin.accessGrants': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.accessGrants']}`,
+    'browserTitle.admin.api': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.api']}`,
+    'browserTitle.captureCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureCreate']}`,
+    'browserTitle.captureEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureEdit']}`,
+    'browserTitle.captures': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captures']}`,
+    'browserTitle.collections': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.collections']}`,
+    'browserTitle.connectors': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.connectors']}`,
+    'browserTitle.error.pageNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.pageNotFound']}`,
+    'browserTitle.login': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.login']}`,
+    'browserTitle.noGrants': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.noGrants']}`,
+    'browserTitle.loginLoading': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.loginLoading']}`,
+    'browserTitle.materializationCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationCreate']}`,
+    'browserTitle.materializationEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationEdit']}`,
+    'browserTitle.materializations': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializations']}`,
+    'browserTitle.registration': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.registration']}`,
+    'browserTitle.passwordReset': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.passwordReset']}`,
 };
 
 const Header: ResolvedIntlConfig['messages'] = {
@@ -158,6 +203,18 @@ const Header: ResolvedIntlConfig['messages'] = {
 const Home: ResolvedIntlConfig['messages'] = {
     'home.main.header': `Welcome to Flow!`,
     'home.main.description': `Click the Captures icon on the menu bar to get started.`,
+
+    'home.hero.one.title': `Step 1`,
+    'home.hero.one.message': `Start at the {emphasis} page to setup real-time data ingestion from your sources.`,
+    'home.hero.one.emphasis': RouteTitles['routeTitle.captures'],
+
+    'home.hero.two.title': `Step 2`,
+    'home.hero.two.message': `Flow automatically lands your data in {emphasis} within your cloud storage. `,
+    'home.hero.two.emphasis': RouteTitles['routeTitle.collections'],
+
+    'home.hero.three.title': `Step 3`,
+    'home.hero.three.message': `Connect to your target systems and keep them up to date with low-latency views of collection data, known as {emphasis}.`,
+    'home.hero.three.emphasis': RouteTitles['routeTitle.materializations'],
 };
 
 const PageNotFound: ResolvedIntlConfig['messages'] = {
@@ -249,46 +306,6 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'optionMenu.option.edit': `Edit entity specification`,
 };
 
-const RouteTitles: ResolvedIntlConfig['messages'] = {
-    'routeTitle.home': `Home`,
-    'routeTitle.dashboard': `Dashboard`,
-    'routeTitle.admin': `Admin`,
-    'routeTitle.captureCreate': `Create Capture`,
-    'routeTitle.captureEdit': `Edit Capture`,
-    'routeTitle.captures': `Captures`,
-    'routeTitle.collections': `Collections`,
-    'routeTitle.connectors': `Connectors`,
-    'routeTitle.error.pageNotFound': `Page Not Found`,
-    'routeTitle.login': `Login`,
-    'routeTitle.loginLoading': `Checking Credentials`,
-    'routeTitle.noGrants': `Signed Up`,
-    'routeTitle.materializationCreate': `Create Materialization`,
-    'routeTitle.materializationEdit': `Edit Materialization`,
-    'routeTitle.materializations': `Materializations`,
-    'routeTitle.registration': `Registration`,
-    'routeTitle.passwordReset': `Password Reset`,
-};
-
-const BrowserTitles: ResolvedIntlConfig['messages'] = {
-    'browserTitle.home': `${CommonMessages['common.browserTitle']} · Welcome`,
-    'browserTitle.dashboard': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.dashboard']}`,
-    'browserTitle.admin': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin']}`,
-    'browserTitle.captureCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureCreate']}`,
-    'browserTitle.captureEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureEdit']}`,
-    'browserTitle.captures': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captures']}`,
-    'browserTitle.collections': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.collections']}`,
-    'browserTitle.connectors': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.connectors']}`,
-    'browserTitle.error.pageNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.pageNotFound']}`,
-    'browserTitle.login': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.login']}`,
-    'browserTitle.noGrants': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.noGrants']}`,
-    'browserTitle.loginLoading': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.loginLoading']}`,
-    'browserTitle.materializationCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationCreate']}`,
-    'browserTitle.materializationEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationEdit']}`,
-    'browserTitle.materializations': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializations']}`,
-    'browserTitle.registration': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.registration']}`,
-    'browserTitle.passwordReset': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.passwordReset']}`,
-};
-
 const LogsDialog: ResolvedIntlConfig['messages'] = {
     'logs.default': `Waiting for logs...`,
     'logs.toManyEmpty': `Logs for this build may have ended. Click ${CTAs['cta.restart']} to check for new logs.`,
@@ -301,11 +318,17 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.roles.message.docPath': `https://go.estuary.dev/provision`,
     'admin.accessToken': `Access Token`,
     'admin.accessToken.message': `Copy the access token below to authenticate the CLI client.`,
+    'admin.tabs.users': `Users`,
+    'admin.tabs.api': `CLI-API`,
+};
+
+const Welcome: ResolvedIntlConfig['messages'] = {
+    'welcome.image.alt': `content needed`,
 };
 
 const AccessGrants: ResolvedIntlConfig['messages'] = {
     'accessGrantsTable.header': `Captures`,
-    'accessGrantsTable.title': `${CommonMessages['terms.permissions']}`,
+    'accessGrantsTable.title': `Users`,
     'accessGrantsTable.filterLabel': `Filter User or Object`,
     'accessGrants.message1': `No results found.`,
     'accessGrants.message2': `We couldn't find any results matching your search. Please try a different filter.`,
@@ -376,7 +399,7 @@ const Collections: ResolvedIntlConfig['messages'] = {
 
 const entityCreateHeader = `Endpoint Config`;
 const EntityCreate: ResolvedIntlConfig['messages'] = {
-    'entityCreate.catalogEditor.heading': `Catalog Editor`,
+    'entityCreate.catalogEditor.heading': `Specification Editor`,
     'entityCreate.ctas.docs': `Connector Help`,
     'entityCreate.errors.collapseTitle': `Expand to see logs`,
     'entityCreate.sops.failedTitle': `Configuration Encryption Failed`,
@@ -417,7 +440,7 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreate.config.source.homepage': `Home`,
     'captureCreate.save.failed': `Capture creation failed. See below for details:`,
     'captureCreate.editor.default': `Before you can edit the capture specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.capture']}." `,
-    'captureCreate.finalReview.instructions': `The following catalog was generated from the details you provided. To make changes, you can enter new values in the form above and click "${CTAs['cta.generateCatalog.capture']}" again. You can also edit the YAML file directly. Click "${CTAs['cta.saveEntity']}" to proceed.`,
+    'captureCreate.finalReview.instructions': `The following Flow specification was generated from the details you provided. To make changes, you can enter new values in the form above and click "${CTAs['cta.generateCatalog.capture']}" again. You can also edit the specification file directly. Click "${CTAs['cta.saveEntity']}" to proceed.`,
 
     'captureCreate.test.failedErrorTitle': `Configuration Test Failed`,
     'captureCreate.test.serverUnreachable': `Unable to reach server while testing configuration.`,
@@ -426,7 +449,7 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreate.save.serverUnreachable': `Unable to reach server while saving capture`,
     'captureCreate.save.waitMessage': `Please wait while we test, save, and publish your capture.`,
 
-    'captureCreate.generate.failedErrorTitle': `Generating Catalog Failed`,
+    'captureCreate.generate.failedErrorTitle': `Generating Specification Failed`,
 
     'captureCreate.createNotification.title': `New Capture Created`,
     'captureCreate.createNotification.desc': `Your new capture is published and ready to be used.`,
@@ -483,7 +506,7 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreate.collections.heading': `Output Collections`,
     'materializationCreate.config.source.doclink': `Connector Help`,
     'materializationCreate.editor.default': `Before you can edit the materialization specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.materialization']}".`,
-    'materializationCreate.finalReview.instructions': `The following catalog was generated from the details you provided. To make changes, you can enter new values in the form above and click "${CTAs['cta.generateCatalog.materialization']}" again. You can also edit the YAML file directly. Click "${CTAs['cta.saveEntity']}," to proceed.`,
+    'materializationCreate.finalReview.instructions': `The following Flow specification was generated from the details you provided. To make changes, you can enter new values in the form above and click "${CTAs['cta.generateCatalog.materialization']}" again. You can also edit the specification file directly. Click "${CTAs['cta.saveEntity']}," to proceed.`,
     'materializationCreate.heading': `New Materialization`,
     'materializationCreate.instructions': `Provide a unique name and specify a destination system for your materialization. Fill in the required details and click "${CTAs['cta.generateCatalog.materialization']}".`,
     'materializationCreate.missingConnectors': `No connectors installed. A materialization connector must be installed before a materialization can be created.`,
@@ -605,6 +628,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...MaterializationEdit,
     ...ShardStatus,
     ...OAuth,
+    ...Welcome,
 };
 
 export default enUSMessages;

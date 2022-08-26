@@ -65,8 +65,8 @@ const IconMenu = ({
                   display: 'block',
                   height: 10,
                   position: 'absolute',
-                  left: -5,
-                  bottom: 22,
+                  top: 0,
+                  right: 14,
                   transform: 'translateY(-50%) rotate(45deg)',
                   width: 10,
                   zIndex: 0,
@@ -78,7 +78,7 @@ const IconMenu = ({
 
     return (
         <Box sx={{ my: 0.5 }}>
-            <Tooltip title={tooltip} placement="right-end">
+            <Tooltip title={tooltip} placement="bottom-end">
                 <Box
                     sx={{
                         display: 'flex',

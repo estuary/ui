@@ -182,7 +182,13 @@ function MaterializationCreate() {
     );
 
     return (
-        <PageContainer>
+        <PageContainer
+            pageTitleProps={{
+                header: authenticatedRoutes.materializations.create.title,
+                headerLink:
+                    'https://docs.estuary.dev/guides/create-dataflow/#create-a-materialization',
+            }}
+        >
             <EntityCreate
                 title="browserTitle.materializationCreate"
                 connectorType={entityType}
