@@ -1,5 +1,5 @@
-import HelpIcon from '@mui/icons-material/Help';
-import { IconButton, Link, Stack, Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
+import ExternalLink from 'components/shared/ExternalLink';
 import { FormattedMessage } from 'react-intl';
 
 export interface PageTitleProps {
@@ -9,26 +9,21 @@ export interface PageTitleProps {
 
 function PageTitle({ header, headerLink }: PageTitleProps) {
     return (
-        <Stack direction="row" spacing={1}>
-            <Typography
-                variant="h6"
-                sx={{
-                    alignItems: 'center',
-                }}
-            >
+        <Stack
+            direction="row"
+            spacing={1}
+            sx={{
+                alignItems: 'center',
+            }}
+        >
+            <Typography variant="h6">
                 <FormattedMessage id={header} />
             </Typography>
 
             {headerLink ? (
-                <Link target="_blank" rel="noopener" href={headerLink}>
-                    <IconButton size="small">
-                        <HelpIcon
-                            sx={{
-                                color: (theme) => theme.palette.text.primary,
-                            }}
-                        />
-                    </IconButton>
-                </Link>
+                <ExternalLink link={headerLink}>
+                    <FormattedMessage id="terms.documentation" />
+                </ExternalLink>
             ) : null}
         </Stack>
     );

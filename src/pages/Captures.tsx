@@ -18,8 +18,8 @@ const Capture = () => {
     return (
         <PageContainer
             pageTitleProps={{
-                header: authenticatedRoutes.connectors.title,
-                headerLink: 'https://docs.estuary.dev/concepts/#connectors',
+                header: authenticatedRoutes.captures.title,
+                headerLink: 'https://docs.estuary.dev/concepts/#captures',
             }}
         >
             <Toolbar

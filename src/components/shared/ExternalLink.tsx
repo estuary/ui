@@ -7,9 +7,10 @@ interface Props {
     children: ReactNode;
     link: string;
     hideIcon?: boolean;
+    padding?: number;
 }
 
-const ExternalLink = ({ children, link, hideIcon }: Props) => {
+const ExternalLink = ({ children, link, hideIcon, padding }: Props) => {
     const onClick = (event: any) => {
         event.stopPropagation();
     };
@@ -24,9 +25,15 @@ const ExternalLink = ({ children, link, hideIcon }: Props) => {
             color="secondary"
             onClick={onClick}
             sx={{
-                padding: 0,
-                fontWeight: 700,
-                zIndex: headerLinkIndex,
+                'padding': padding ? padding : 0,
+                'fontWeight': 500,
+                'zIndex': headerLinkIndex,
+                'borderBottom': 1,
+                'borderRadius': 0,
+                'mx': 1,
+                '&:hover, &:focus': {
+                    fontWeight: 700,
+                },
             }}
         >
             {children}
