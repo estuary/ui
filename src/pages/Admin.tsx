@@ -10,7 +10,7 @@ const Admin = () => {
         <PageContainer
             pageTitleProps={{ header: authenticatedRoutes.admin.title }}
         >
-            <AdminTabs selectedTab={0} />
+            <AdminTabs />
         </PageContainer>
     );
 };

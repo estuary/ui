@@ -18,7 +18,7 @@ function AccessGrants() {
                     'https://docs.estuary.dev/reference/authentication/',
             }}
         >
-            <AdminTabs selectedTab={0} />
+            <AdminTabs />
 
             <Stack direction="column" spacing={2} sx={{ m: 2 }}>
                 <Typography
