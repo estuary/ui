@@ -157,10 +157,10 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                                     <KeyboardDoubleArrowLeftIcon
                                         sx={{
                                             ...iconSx,
-                                            transform: `rotate(${
-                                                open ? '0' : '180'
-                                            }deg)`,
-                                            transition: 'all 250ms ease-in-out',
+                                            transform: open
+                                                ? 'scaleX(1)'
+                                                : 'scaleX(-1)',
+                                            transition: 'all 50ms ease-in-out',
                                         }}
                                     />
                                 </ListItemIcon>
