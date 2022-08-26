@@ -138,6 +138,9 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                         aria-label={intl.formatMessage({
                             id: 'navigation.toggle.ariaLabel',
                         })}
+                        sx={{
+                            py: 0,
+                        }}
                     >
                         <Tooltip
                             title={intl.formatMessage({
@@ -151,6 +154,8 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                                 onClick={openNavigation}
                                 sx={{
                                     whiteSpace: 'nowrap',
+                                    minHeight: 60,
+                                    maxHeight: 60,
                                 }}
                             >
                                 <ListItemIcon sx={{}}>
