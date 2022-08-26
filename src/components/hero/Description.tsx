@@ -1,4 +1,12 @@
-import { Grid, Stack, SxProps, Theme, Typography } from '@mui/material';
+import {
+    Grid,
+    Stack,
+    SxProps,
+    Theme,
+    Typography,
+    useMediaQuery,
+    useTheme,
+} from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
@@ -7,13 +15,16 @@ interface Props {
 }
 
 function Description({ sx, step }: Props) {
+    const theme = useTheme();
+    const belowMd = useMediaQuery(theme.breakpoints.down('md'));
+
     return (
         <Grid item xs={4}>
             <Stack direction="column" sx={{ wordBreak: 'break-word', ...sx }}>
-                <Typography variant="h3" component="span">
+                <Typography variant={belowMd ? 'h4' : 'h3'} component="span">
                     <FormattedMessage id={`home.hero.${step}.title`} />
                 </Typography>
-                <Typography variant="h6" component="span">
+                <Typography variant={belowMd ? 'h6' : 'h5'} component="span">
                     <FormattedMessage
                         id={`home.hero.${step}.message`}
                         values={{
