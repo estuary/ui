@@ -218,7 +218,6 @@ function EntityTable({
                 <Toolbar
                     disableGutters
                     sx={{
-                        mb: 2,
                         display: 'flex',
                         justifyContent: 'space-between',
                         alignItems: 'baseline',
