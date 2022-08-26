@@ -22,6 +22,8 @@ import {
     generateCategoryUiSchema,
 } from 'services/jsonforms';
 
+const TITLE = 'Test JSON Forms';
+
 const TestJsonForms = () => {
     const [error, setError] = useState<string | null>(null);
     const [schemaInput, setSchemaInput] = useState<string | undefined>('');
@@ -61,7 +63,7 @@ const TestJsonForms = () => {
     };
 
     return (
-        <PageContainer>
+        <PageContainer pageTitleProps={{ header: TITLE }}>
             <Stack
                 spacing={2}
                 sx={{

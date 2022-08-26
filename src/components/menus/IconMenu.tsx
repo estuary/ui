@@ -5,7 +5,6 @@ import {
     Menu,
     PopoverProps,
     Tooltip,
-    Typography,
     useTheme,
 } from '@mui/material';
 import { indigo } from 'context/Theme';
@@ -50,7 +49,7 @@ const IconMenu = ({
 
     return (
         <Box sx={{ my: 0.5 }}>
-            <Tooltip title={tooltip} placement="right-end">
+            <Tooltip title={tooltip} placement="bottom-end">
                 <Box
                     sx={{
                         display: 'flex',
@@ -68,10 +67,6 @@ const IconMenu = ({
                     >
                         {icon}
                     </IconButton>
-
-                    <Typography sx={{ width: 136, ml: 2, flexShrink: 0 }}>
-                        {tooltip}
-                    </Typography>
                 </Box>
             </Tooltip>
 
@@ -82,10 +77,7 @@ const IconMenu = ({
                 open={open}
                 onClose={handlers.close}
                 onClick={handlers.close}
-                transformOrigin={{
-                    horizontal: 'left',
-                    vertical: 'bottom',
-                }}
+                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 PaperProps={{
                     elevation: 0,
@@ -102,8 +94,8 @@ const IconMenu = ({
                             display: 'block',
                             height: 10,
                             position: 'absolute',
-                            left: -5,
-                            bottom: 22,
+                            top: 0,
+                            right: 14,
                             transform: 'translateY(-50%) rotate(45deg)',
                             width: 10,
                             zIndex: 0,
@@ -112,7 +104,7 @@ const IconMenu = ({
                         'mt': 1.5,
                         'overflow': 'visible',
                         'bgcolor': menuBgColor,
-                        'borderRadius': '0px 10px 10px 0px',
+                        'borderRadius': 5,
                     },
                 }}
             >

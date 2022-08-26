@@ -13,10 +13,11 @@ import { Widths } from '../../AppLayout';
 interface Props {
     icon: ReactNode;
     title: string;
-    link: string;
+    link: string | any;
     isOpen?: boolean;
     menuWidth?: number;
     badgeContent?: number;
+    tooltipDelay?: number;
 }
 
 const ListItemLink = ({
@@ -26,6 +27,7 @@ const ListItemLink = ({
     isOpen,
     menuWidth,
     badgeContent,
+    tooltipDelay,
 }: Props) => {
     const intl = useIntl();
 
@@ -38,11 +40,13 @@ const ListItemLink = ({
             <Tooltip
                 title={!isOpen ? translatedTitle : ''}
                 placement="right-end"
+                enterDelay={tooltipDelay ? tooltipDelay : undefined}
             >
                 {menuWidth === Widths.FULL ? (
                     <ListItemButton
-                        component={RouterLink}
-                        to={link}
+                        component={typeof link === 'string' ? RouterLink : 'a'}
+                        to={typeof link === 'string' ? link : undefined}
+                        onClick={typeof link === 'function' ? link : undefined}
                         sx={{
                             whiteSpace: 'nowrap',
                         }}
@@ -53,8 +57,9 @@ const ListItemLink = ({
                     </ListItemButton>
                 ) : (
                     <ListItemButton
-                        component={RouterLink}
-                        to={link}
+                        component={typeof link === 'string' ? RouterLink : 'a'}
+                        to={typeof link === 'string' ? link : undefined}
+                        onClick={typeof link === 'function' ? link : undefined}
                         sx={{
                             whiteSpace: 'nowrap',
                         }}
