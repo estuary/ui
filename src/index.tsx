@@ -1,4 +1,4 @@
-import 'utils/transformStream-polyfill';
+import 'polyfills/transformStream';
 
 import { enableMapSet } from 'immer';
 import React from 'react';
