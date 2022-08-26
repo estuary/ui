@@ -29,6 +29,7 @@ function HeroImageAndDescription() {
                     sx={{
                         mx: 'auto',
                         maxWidth: 225,
+                        textAlign: 'center',
                     }}
                 />
                 <Description
@@ -36,6 +37,7 @@ function HeroImageAndDescription() {
                     sx={{
                         ml: 'auto',
                         maxWidth: 300,
+                        textAlign: 'right',
                     }}
                 />
             </Grid>
