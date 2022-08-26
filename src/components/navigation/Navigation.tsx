@@ -117,9 +117,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                         <ListItemLink
                             icon={<AdminPanelSettingsIcon sx={iconSx} />}
                             title={authenticatedRoutes.admin.title}
-                            link={
-                                authenticatedRoutes.admin.accressGrants.fullPath
-                            }
+                            link={authenticatedRoutes.admin.path}
                         />
                     </List>
                 </Box>
