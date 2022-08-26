@@ -26,9 +26,11 @@ function AdminApi() {
         <PageContainer
             pageTitleProps={{
                 header: authenticatedRoutes.admin.api.title,
+                headerLink:
+                    'https://docs.estuary.dev/reference/authentication/#authenticating-flow-using-the-cli',
             }}
         >
-            <AdminTabs selectedTab={0} />
+            <AdminTabs selectedTab={1} />
             <Box sx={boxStyling}>
                 <Typography variant="h6" sx={{ mb: 0.5 }}>
                     <FormattedMessage id="admin.accessToken" />

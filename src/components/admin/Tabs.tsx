@@ -1,6 +1,9 @@
+import GroupIcon from '@mui/icons-material/Group';
+import TerminalIcon from '@mui/icons-material/Terminal';
 import { Box, Tab, Tabs } from '@mui/material';
-import { useState } from 'react';
+import { authenticatedRoutes } from 'app/Authenticated';
 import { useIntl } from 'react-intl';
+import { Link } from 'react-router-dom';
 
 interface Props {
     selectedTab: number;
@@ -8,18 +11,25 @@ interface Props {
 
 function AdminTabs({ selectedTab }: Props) {
     const intl = useIntl();
-    const [value] = useState(selectedTab);
 
     return (
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Tabs value={value} aria-label="basic tabs example">
+            <Tabs value={selectedTab} aria-label="basic tabs example">
                 <Tab
                     label={intl.formatMessage({
-                        id: 'routeTitle.admin.accessGrants',
+                        id: 'admin.tabs.users',
                     })}
+                    icon={<GroupIcon />}
+                    iconPosition="start"
+                    component={Link}
+                    to={authenticatedRoutes.admin.accressGrants.fullPath}
                 />
                 <Tab
-                    label={intl.formatMessage({ id: 'routeTitle.admin.api' })}
+                    label={intl.formatMessage({ id: 'admin.tabs.api' })}
+                    icon={<TerminalIcon />}
+                    iconPosition="start"
+                    component={Link}
+                    to={authenticatedRoutes.admin.api.fullPath}
                 />
             </Tabs>
         </Box>

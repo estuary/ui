@@ -33,12 +33,12 @@ export const authenticatedRoutes = {
         title: 'routeTitle.admin',
         path: '/admin',
         accressGrants: {
-            title: 'routeTitle.admin',
+            title: 'routeTitle.admin.accessGrants',
             path: 'accessGrants',
             fullPath: '/admin/accessGrants',
         },
         api: {
-            title: 'routeTitle.api',
+            title: 'routeTitle.admin.api',
             path: 'api',
             fullPath: '/admin/api',
         },

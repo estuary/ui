@@ -56,7 +56,6 @@ function AccessGrantsTable() {
                 setColumnToSort={setColumnToSort}
                 header="accessGrantsTable.title"
                 filterLabel="accessGrantsTable.filterLabel"
-                tableDescriptionId="admin.roles.message"
                 selectableTableStoreName={SelectTableStoreNames.ACCESS_GRANTS}
             />
         </Box>

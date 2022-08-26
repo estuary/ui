@@ -308,6 +308,8 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.roles.message.docPath': `https://go.estuary.dev/provision`,
     'admin.accessToken': `Access Token`,
     'admin.accessToken.message': `Copy the access token below to authenticate the CLI client.`,
+    'admin.tabs.users': `Users`,
+    'admin.tabs.api': `CLI-API`,
 };
 
 const Welcome: ResolvedIntlConfig['messages'] = {
@@ -316,7 +318,7 @@ const Welcome: ResolvedIntlConfig['messages'] = {
 
 const AccessGrants: ResolvedIntlConfig['messages'] = {
     'accessGrantsTable.header': `Captures`,
-    'accessGrantsTable.title': `${CommonMessages['terms.permissions']}`,
+    'accessGrantsTable.title': `Users`,
     'accessGrantsTable.filterLabel': `Filter User or Object`,
     'accessGrants.message1': `No results found.`,
     'accessGrants.message2': `We couldn't find any results matching your search. Please try a different filter.`,
