@@ -155,7 +155,7 @@ export const outlineSx: SxProps<Theme> = {
     border: `1px solid ${slate[200]}`,
 };
 
-export const darkGlassBkgColor = 'rgb(172, 199, 220, 0.12)';
+export const darkGlassBkgColor = 'rgb(172, 199, 220)';
 export const darkGlassBkgColorIntensified = 'rgba(172, 199, 220, 0.18)';
 
 export const darkGlassBkgWithBlur = {
