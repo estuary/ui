@@ -42,7 +42,7 @@ function AdminApi() {
 
                 <TextareaAutosize
                     minRows={4}
-                    style={{ width: '100%' }}
+                    cols={50}
                     value={session?.access_token}
                     id="accessTokenValue"
                 />
