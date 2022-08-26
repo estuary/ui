@@ -29,10 +29,11 @@ import {
     useLiveSpecsExtWithOutSpec,
     useLiveSpecsExtWithSpec,
 } from 'hooks/useLiveSpecsExt';
-import { isEmpty } from 'lodash';
+import { isEmpty, isEqual } from 'lodash';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
+import { useEffectOnce } from 'react-use';
 import {
     Details,
     useDetailsForm_connectorImage,
@@ -40,7 +41,10 @@ import {
 } from 'stores/DetailsForm';
 import { useEndpointConfigStore_setEndpointSchema } from 'stores/EndpointConfig';
 import { EntityFormState, FormState, FormStatus } from 'stores/FormState';
-import { ResourceConfigState } from 'stores/ResourceConfig';
+import {
+    ResourceConfigDictionary,
+    ResourceConfigState,
+} from 'stores/ResourceConfig';
 import { ENTITY, JsonFormsData, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
@@ -63,6 +67,9 @@ const createDraftToEdit = async (
     liveSpecInfo: LiveSpecsExtQueryWithSpec,
     entityType: ENTITY,
     setDraftId: (id: EditorStoreState<DraftSpecQuery>['id']) => void,
+    setEditDraftId: (
+        id: EditorStoreState<DraftSpecQuery>['editDraftId']
+    ) => void,
     setFormState: (data: Partial<FormState>) => void
 ) => {
     const draftsResponse = await createEntityDraft(liveSpecInfo.catalog_name);
@@ -87,24 +94,23 @@ const createDraftToEdit = async (
     }
 
     setDraftId(newDraftId);
+    setEditDraftId(newDraftId);
     setFormState({ status: FormStatus.INIT });
 };
 
-const deleteEditDraft = async (draftId: string | null) => {
-    if (draftId) {
-        const draftsResponse = await deleteEntityDraft(draftId);
+const deleteEditDraft = async (draftId: string) => {
+    const draftsResponse = await deleteEntityDraft(draftId);
 
-        if (draftsResponse.error) {
-            // TODO: Handle supabase service error.
-            console.log('There is a drafts table error.');
-        }
+    if (draftsResponse.error) {
+        // TODO: Handle supabase service error.
+        console.log('There is a drafts table error.');
+    }
 
-        const draftSpecResponse = await deleteDraftSpec(draftId);
+    const draftSpecResponse = await deleteDraftSpec(draftId);
 
-        if (draftSpecResponse.error) {
-            // TODO: Handle supabase service error.
-            console.log('There is a drafts-spec table error.');
-        }
+    if (draftSpecResponse.error) {
+        // TODO: Handle supabase service error.
+        console.log('There is a drafts-spec table error.');
     }
 };
 
@@ -182,6 +188,16 @@ function EntityEdit({
         EditorStoreState<DraftSpecQuery>['id']
     >(draftEditorStoreName, (state) => state.id);
 
+    const setEditDraftId = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['setEditDraftId']
+    >(draftEditorStoreName, (state) => state.setEditDraftId);
+
+    const editDraftId = useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['editDraftId']
+    >(draftEditorStoreName, (state) => state.editDraftId);
+
     // Endpoint Config Store
     const setEndpointSchema = useEndpointConfigStore_setEndpointSchema();
 
@@ -232,16 +248,25 @@ function EntityEdit({
         (state) => state.preFillCollections
     );
 
+    const resourceConfig = useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['resourceConfig']
+    >(
+        resourceConfigStoreName ?? ResourceConfigStoreNames.MATERIALIZATION,
+        (state) => state.resourceConfig
+    );
+
     useEffect(() => {
         if (!isEmpty(liveSpecInfo)) {
             void createDraftToEdit(
                 liveSpecInfo,
                 entityType,
                 setDraftId,
+                setEditDraftId,
                 setFormState
             );
         }
-    }, [setDraftId, setFormState, liveSpecInfo, entityType]);
+    }, [setDraftId, setEditDraftId, setFormState, liveSpecInfo, entityType]);
 
     useEffect(() => {
         if (!isEmpty(liveSpecInfo) && !isEmpty(initialConnectorTag)) {
@@ -288,16 +313,39 @@ function EntityEdit({
             // We wanna make sure we do these after the schemas are set as
             //  as they are dependent on them.
             if (entityType === ENTITY.MATERIALIZATION && liveSpecs.length > 0) {
-                liveSpecs.forEach((data) =>
-                    data.spec.bindings.forEach((binding: any) =>
-                        setResourceConfig(binding.source, {
-                            data: binding.resource,
-                            errors: [],
-                        })
-                    )
-                );
+                console.log(liveSpecs);
+                if (isEmpty(resourceConfig)) {
+                    liveSpecs.forEach((data) =>
+                        data.spec.bindings.forEach((binding: any) =>
+                            setResourceConfig(binding.source, {
+                                data: binding.resource,
+                                errors: [],
+                            })
+                        )
+                    );
 
-                preFillCollections(liveSpecs);
+                    preFillCollections(liveSpecs);
+                } else {
+                    let existingResourceConfig: ResourceConfigDictionary = {};
+
+                    liveSpecs.forEach((data) =>
+                        data.spec.bindings.forEach((binding: any) => {
+                            existingResourceConfig = {
+                                ...existingResourceConfig,
+                                [binding.source]: {
+                                    data: binding.resource,
+                                    errors: [],
+                                },
+                            };
+                        })
+                    );
+
+                    setDraftId(
+                        isEqual(resourceConfig, existingResourceConfig)
+                            ? editDraftId
+                            : null
+                    );
+                }
             }
         }
     }, [
@@ -307,17 +355,23 @@ function EntityEdit({
         liveSpecInfo,
         initialConnectorTag,
         entityType,
+        resourceConfig,
+        editDraftId,
         preFillCollections,
         setResourceConfig,
         setEndpointSchema,
         setResourceSchema,
+        setDraftId,
     ]);
 
-    useEffect(() => {
+    // TODO: Enable delete on exit.
+    useEffectOnce(() => {
         return () => {
-            void deleteEditDraft(draftId);
+            if (editDraftId) {
+                void deleteEditDraft(editDraftId);
+            }
         };
-    }, [draftId]);
+    });
 
     return (
         <>

@@ -13,7 +13,7 @@ export interface ResourceConfig {
     errors: any[];
 }
 
-interface ResourceConfigDictionary {
+export interface ResourceConfigDictionary {
     [key: string]: ResourceConfig;
 }
 

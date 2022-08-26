@@ -1,7 +1,7 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { authenticatedRoutes } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
-import MaterializeGenerateButton from 'components/materialization/GenerateButton';
+import MaterializeGenerateButton from 'components/materialization/EditGenerateButton';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityEdit from 'components/shared/Entity/Edit';
@@ -109,15 +109,19 @@ function MaterializationEdit() {
         ResourceConfigState['stateChanged']
     >(resourceConfigStoreName, (state) => state.stateChanged);
 
-    const resourceConfig = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['resourceConfig']
-    >(resourceConfigStoreName, (state) => state.resourceConfig);
+    // const resourceConfig = useZustandStore<
+    //     ResourceConfigState,
+    //     ResourceConfigState['resourceConfig']
+    // >(resourceConfigStoreName, (state) => state.resourceConfig);
 
     // Reset the catalog if the connector or resource config changes
     useEffect(() => {
         setDraftId(null);
-    }, [imageTag, setDraftId, resourceConfig]);
+    }, [imageTag, setDraftId]);
+
+    // useEffect(() => {
+    //     setDraftId(null);
+    // }, [resourceConfig, setDraftId]);
 
     const resetState = () => {
         resetEndpointConfigState();
