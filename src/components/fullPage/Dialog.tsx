@@ -1,5 +1,5 @@
 import { Box, Paper, useTheme } from '@mui/material';
-import CompanyLogo from 'components/CompanyLogo';
+import CompanyLogo from 'components/graphics/CompanyLogo';
 import {
     darkGlassBkgWithoutBlur,
     lightGlassBkgWithoutBlur,

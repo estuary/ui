@@ -1,4 +1,6 @@
-import { Box, Toolbar, Typography } from '@mui/material';
+//TODO (UI / UX) - These icons are not final
+import { Toolbar, Typography } from '@mui/material';
+import HeroImageAndDescription from 'components/hero';
 import PageContainer from 'components/shared/PageContainer';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { FormattedMessage } from 'react-intl';
@@ -11,24 +13,15 @@ const Home = () => {
             <Toolbar
                 sx={{
                     justifyContent: 'center',
+                    mb: 4,
                 }}
             >
-                <Typography variant="h3">
+                <Typography variant="h2">
                     <FormattedMessage id="home.main.header" />
                 </Typography>
             </Toolbar>
-            <Box
-                sx={{
-                    display: 'flex',
-                    height: 150,
-                    justifyContent: 'center',
-                    mt: 2,
-                }}
-            >
-                <Typography variant="body2" color="text.secondary">
-                    <FormattedMessage id="home.main.description" />
-                </Typography>
-            </Box>
+
+            <HeroImageAndDescription />
         </PageContainer>
     );
 };

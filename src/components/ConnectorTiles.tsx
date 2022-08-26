@@ -13,6 +13,7 @@ import {
 import { authenticatedRoutes } from 'app/Authenticated';
 import ConnectorToolbar from 'components/ConnectorToolbar';
 import {
+    darkGlassBkgColor,
     darkGlassBkgColorIntensified,
     darkGlassBkgWithoutBlur,
     slate,
@@ -133,7 +134,7 @@ function ConnectorTile({ cardWidth, cardsPerRow, gridSpacing }: Props) {
                                 'borderRadius': 5,
                                 'background':
                                     theme.palette.mode === 'dark'
-                                        ? darkGlassBkg
+                                        ? darkGlassBkgColor
                                         : slate[50],
                                 'padding': 1,
                                 '&:hover': {

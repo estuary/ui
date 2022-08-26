@@ -159,6 +159,18 @@ const Header: ResolvedIntlConfig['messages'] = {
 const Home: ResolvedIntlConfig['messages'] = {
     'home.main.header': `Welcome to Flow!`,
     'home.main.description': `Click the Captures icon on the menu bar to get started.`,
+
+    'home.hero.one.title': `Step 1`,
+    'home.hero.one.message': `Start at the {emphasis} page to setup real-time data ingestion from your sources.`,
+    'home.hero.one.emphasis': `Captures`,
+
+    'home.hero.two.title': `Step 2`,
+    'home.hero.two.message': `Flow automatically lands your data in {emphasis} within your cloud storage. `,
+    'home.hero.two.emphasis': `collections`,
+
+    'home.hero.three.title': `Step 3`,
+    'home.hero.three.message': `Connect to your target systems and keep them up to date with low-latency views of collection data, known as {emphasis}.`,
+    'home.hero.three.emphasis': `materialiations`,
 };
 
 const PageNotFound: ResolvedIntlConfig['messages'] = {
@@ -292,6 +304,10 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.roles.message.docPath': `https://go.estuary.dev/provision`,
     'admin.accessToken': `Access Token`,
     'admin.accessToken.message': `Copy the access token below to authenticate the CLI client.`,
+};
+
+const Welcome: ResolvedIntlConfig['messages'] = {
+    'welcome.image.alt': `content needed`,
 };
 
 const AccessGrants: ResolvedIntlConfig['messages'] = {
@@ -528,6 +544,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...MaterializationCreate,
     ...ShardStatus,
     ...OAuth,
+    ...Welcome,
 };
 
 export default enUSMessages;

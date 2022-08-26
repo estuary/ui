@@ -1,0 +1,55 @@
+import { Stack, Toolbar } from '@mui/material';
+import MuiAppBar from '@mui/material/AppBar';
+import { SxProps, Theme, useTheme } from '@mui/material/styles';
+import CompanyLogo from 'components/graphics/CompanyLogo';
+import HelpMenu from 'components/menus/HelpMenu';
+import UserMenu from 'components/menus/UserMenu';
+import {
+    darkGlassBkgWithBlur,
+    lightGlassBkgWithBlur,
+    zIndexIncrement,
+} from 'context/Theme';
+
+interface Props {
+    title: string;
+}
+
+const Topbar = ({ title }: Props) => {
+    const theme = useTheme();
+    const iconSx: SxProps<Theme> = {
+        color: theme.palette.text.primary,
+    };
+
+    const paperBackground =
+        theme.palette.mode === 'dark'
+            ? darkGlassBkgWithBlur
+            : lightGlassBkgWithBlur;
+
+    return (
+        <MuiAppBar
+            sx={{
+                position: 'fixed',
+                zIndex: theme.zIndex.drawer + zIndexIncrement,
+                ...paperBackground,
+            }}
+        >
+            <Toolbar
+                sx={{
+                    px: 1,
+                    justifyContent: 'space-between',
+                }}
+            >
+                <CompanyLogo />
+
+                {title}
+
+                <Stack direction="row" sx={{ alignItems: 'center' }}>
+                    <HelpMenu iconSx={iconSx} />
+                    <UserMenu iconSx={iconSx} />
+                </Stack>
+            </Toolbar>
+        </MuiAppBar>
+    );
+};
+
+export default Topbar;

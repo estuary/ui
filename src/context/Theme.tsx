@@ -155,32 +155,24 @@ export const outlineSx: SxProps<Theme> = {
     border: `1px solid ${slate[200]}`,
 };
 
-export const darkGlassBkgColor = 'rgba(172, 199, 220, 0.12)';
+export const darkGlassBkgColor = 'rgb(172, 199, 220, 0.12)';
 export const darkGlassBkgColorIntensified = 'rgba(172, 199, 220, 0.18)';
 
 export const darkGlassBkgWithBlur = {
-    background:
-        'linear-gradient(160deg, rgba(99, 138, 169, 0.24) 0%, rgba(13, 43, 67, 0.22) 75%, rgba(13, 43, 67, 0.18) 100%)',
-    boxShadow: '0px 4px 24px -1px rgba(4, 25, 42, 0.2)',
-    backdropFilter: 'blur(20px)',
+    background: 'rgb(13, 43, 67)',
 };
 
 export const darkGlassBkgWithoutBlur = {
-    background:
-        'linear-gradient(160deg, rgba(172, 199, 220, 0.18) 2%, rgba(172, 199, 220, 0.12) 40%)',
-    boxShadow: '0px 4px 24px -1px rgba(4, 25, 42, 0.2)',
+    background: 'rgb(13, 43, 67)',
     borderRadius: 5,
 };
 
 export const lightGlassBkgWithBlur = {
-    background: 'rgba(255, 255, 255, 0.4)',
-    boxShadow: '0px 4px 24px -1px rgba(4, 25, 42, 0.2)',
-    backdropFilter: 'blur(20px)',
+    background: 'white',
 };
 
 export const lightGlassBkgWithoutBlur = {
-    background: 'rgba(255, 255, 255, 0.4)',
-    boxShadow: '0px 4px 24px -1px rgba(4, 25, 42, 0.2)',
+    background: 'white',
     borderRadius: 5,
 };
 
@@ -376,8 +368,8 @@ const ThemeProvider = ({ children }: BaseComponentProps) => {
                         root: {
                             backgroundColor:
                                 palette.mode === 'dark'
-                                    ? 'transparent'
-                                    : 'rgba(216, 233, 245, 0.4)',
+                                    ? slate[800]
+                                    : slate[50],
                             boxShadow: 'none',
                             color: palette.text?.primary,
                         },

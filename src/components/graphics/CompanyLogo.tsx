@@ -10,8 +10,7 @@ function CompanyLogo() {
     return (
         <img
             src={theme.palette.mode === 'dark' ? lightLogo : darkLogo}
-            style={{ marginBottom: 16 }}
-            width={200}
+            width={150}
             alt={intl.formatMessage({ id: 'company' })}
         />
     );
