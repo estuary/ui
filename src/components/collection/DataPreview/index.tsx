@@ -98,9 +98,9 @@ export function DataPreview({ collectionName }: Props) {
             {!hasLength(journalsData?.journals) ? (
                 <Alert severity="warning" sx={{ mb: 3 }}>
                     <AlertTitle>
-                        <FormattedMessage id="collections.preview.notFound.title" />
+                        <FormattedMessage id="collectionsPreview.notFound.title" />
                     </AlertTitle>
-                    <FormattedMessage id="collections.preview.notFound.message" />
+                    <FormattedMessage id="collectionsPreview.notFound.message" />
                 </Alert>
             ) : previewMode === Views.list ? (
                 <ListView journalData={journalData} spec={spec} />
