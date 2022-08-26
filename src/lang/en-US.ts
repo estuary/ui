@@ -134,6 +134,46 @@ const Navigation: ResolvedIntlConfig['messages'] = {
     'navigation.collapse': `Collapse Navigation`,
 };
 
+const RouteTitles: ResolvedIntlConfig['messages'] = {
+    'routeTitle.home': `Welcome`,
+    'routeTitle.dashboard': `Dashboard`,
+    'routeTitle.admin': `Admin`,
+    'routeTitle.admin.accessGrants': `Access Grants`,
+    'routeTitle.admin.api': `CLI - API`,
+    'routeTitle.captureCreate': `Create Capture`,
+    'routeTitle.captures': `Captures`,
+    'routeTitle.collections': `Collections`,
+    'routeTitle.connectors': `Connectors`,
+    'routeTitle.error.pageNotFound': `Page Not Found`,
+    'routeTitle.login': `Login`,
+    'routeTitle.loginLoading': `Checking Credentials`,
+    'routeTitle.noGrants': `Signed Up`,
+    'routeTitle.materializationCreate': `Create Materialization`,
+    'routeTitle.materializations': `Materializations`,
+    'routeTitle.registration': `Registration`,
+    'routeTitle.passwordReset': `Password Reset`,
+};
+
+const BrowserTitles: ResolvedIntlConfig['messages'] = {
+    'browserTitle.home': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.home']}`,
+    'browserTitle.dashboard': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.dashboard']}`,
+    'browserTitle.admin': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin']}`,
+    'browserTitle.admin.accessGrants': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.accessGrants']}`,
+    'browserTitle.admin.api': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.api']}`,
+    'browserTitle.captureCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureCreate']}`,
+    'browserTitle.captures': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captures']}`,
+    'browserTitle.collections': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.collections']}`,
+    'browserTitle.connectors': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.connectors']}`,
+    'browserTitle.error.pageNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.pageNotFound']}`,
+    'browserTitle.login': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.login']}`,
+    'browserTitle.noGrants': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.noGrants']}`,
+    'browserTitle.loginLoading': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.loginLoading']}`,
+    'browserTitle.materializationCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationCreate']}`,
+    'browserTitle.materializations': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializations']}`,
+    'browserTitle.registration': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.registration']}`,
+    'browserTitle.passwordReset': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.passwordReset']}`,
+};
+
 const Header: ResolvedIntlConfig['messages'] = {
     'mainMenu.tooltip': `Open Main Menu`,
 
@@ -162,15 +202,15 @@ const Home: ResolvedIntlConfig['messages'] = {
 
     'home.hero.one.title': `Step 1`,
     'home.hero.one.message': `Start at the {emphasis} page to setup real-time data ingestion from your sources.`,
-    'home.hero.one.emphasis': `Captures`,
+    'home.hero.one.emphasis': RouteTitles['routeTitle.captures'],
 
     'home.hero.two.title': `Step 2`,
     'home.hero.two.message': `Flow automatically lands your data in {emphasis} within your cloud storage. `,
-    'home.hero.two.emphasis': `collections`,
+    'home.hero.two.emphasis': RouteTitles['routeTitle.collections'],
 
     'home.hero.three.title': `Step 3`,
     'home.hero.three.message': `Connect to your target systems and keep them up to date with low-latency views of collection data, known as {emphasis}.`,
-    'home.hero.three.emphasis': `materialiations`,
+    'home.hero.three.emphasis': RouteTitles['routeTitle.materializations'],
 };
 
 const PageNotFound: ResolvedIntlConfig['messages'] = {
@@ -254,46 +294,6 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
 
     'entityTable.technicalDifficulties.header': `There was an issue getting your data.`,
     'entityTable.technicalDifficulties.message': `We apologize for the inconvenience. You'll find a message describing the issue at the top of the page.`,
-};
-
-const RouteTitles: ResolvedIntlConfig['messages'] = {
-    'routeTitle.home': `Welcome`,
-    'routeTitle.dashboard': `Dashboard`,
-    'routeTitle.admin': `Admin`,
-    'routeTitle.admin.accessGrants': `Access Grants`,
-    'routeTitle.admin.api': `CLI - API`,
-    'routeTitle.captureCreate': `Create Capture`,
-    'routeTitle.captures': `Captures`,
-    'routeTitle.collections': `Collections`,
-    'routeTitle.connectors': `Connectors`,
-    'routeTitle.error.pageNotFound': `Page Not Found`,
-    'routeTitle.login': `Login`,
-    'routeTitle.loginLoading': `Checking Credentials`,
-    'routeTitle.noGrants': `Signed Up`,
-    'routeTitle.materializationCreate': `Create Materialization`,
-    'routeTitle.materializations': `Materializations`,
-    'routeTitle.registration': `Registration`,
-    'routeTitle.passwordReset': `Password Reset`,
-};
-
-const BrowserTitles: ResolvedIntlConfig['messages'] = {
-    'browserTitle.home': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.home']}`,
-    'browserTitle.dashboard': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.dashboard']}`,
-    'browserTitle.admin': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin']}`,
-    'browserTitle.admin.accessGrants': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.accessGrants']}`,
-    'browserTitle.admin.api': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.api']}`,
-    'browserTitle.captureCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureCreate']}`,
-    'browserTitle.captures': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captures']}`,
-    'browserTitle.collections': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.collections']}`,
-    'browserTitle.connectors': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.connectors']}`,
-    'browserTitle.error.pageNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.pageNotFound']}`,
-    'browserTitle.login': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.login']}`,
-    'browserTitle.noGrants': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.noGrants']}`,
-    'browserTitle.loginLoading': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.loginLoading']}`,
-    'browserTitle.materializationCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationCreate']}`,
-    'browserTitle.materializations': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializations']}`,
-    'browserTitle.registration': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.registration']}`,
-    'browserTitle.passwordReset': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.passwordReset']}`,
 };
 
 const LogsDialog: ResolvedIntlConfig['messages'] = {
