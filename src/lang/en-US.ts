@@ -241,6 +241,12 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
 
     'entityTable.technicalDifficulties.header': `There was an issue getting your data.`,
     'entityTable.technicalDifficulties.message': `We apologize for the inconvenience. You'll find a message describing the issue at the top of the page.`,
+
+    'optionMenu.ariaLabel': `Open Option Menu`,
+    'optionMenu.tooltip': `Options`,
+    'optionMenu.option.detailsPanel.display': `View entity details`,
+    'optionMenu.option.detailsPanel.hide': `Hide entity details`,
+    'optionMenu.option.edit': `Edit entity specification`,
 };
 
 const RouteTitles: ResolvedIntlConfig['messages'] = {

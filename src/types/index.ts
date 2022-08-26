@@ -74,6 +74,7 @@ export interface Grants {
 
 export interface LiveSpecsExtBaseQuery {
     catalog_name: string;
+    connector_id: string;
     connector_image_name: string | null;
     connector_image_tag: string | null;
     image: string;

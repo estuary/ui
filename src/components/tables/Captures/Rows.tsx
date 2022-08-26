@@ -1,12 +1,10 @@
 import { TableRow, useTheme } from '@mui/material';
 import { authenticatedRoutes } from 'app/Authenticated';
 import { LiveSpecsExtQuery } from 'components/tables/Captures';
-import Actions from 'components/tables/cells/Actions';
 import ChipList from 'components/tables/cells/ChipList';
 import Connector from 'components/tables/cells/Connector';
-import EditTask from 'components/tables/cells/EditTask';
 import EntityName from 'components/tables/cells/EntityName';
-import ExpandDetails from 'components/tables/cells/ExpandDetails';
+import OptionsMenu from 'components/tables/cells/OptionsMenu';
 import RowSelect from 'components/tables/cells/RowSelect';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import UserName from 'components/tables/cells/UserName';
@@ -71,10 +69,6 @@ export const tableColumns = [
         field: null,
         headerIntlKey: null,
     },
-    {
-        field: null,
-        headerIntlKey: null,
-    },
 ];
 
 function Row({
@@ -115,6 +109,7 @@ function Row({
                 })
             );
         },
+        toggleDetailsPanel: () => setDetailsExpanded(!detailsExpanded),
     };
 
     return (
@@ -149,16 +144,11 @@ function Row({
                     name={row.last_pub_user_full_name}
                 />
 
-                <Actions>
-                    <ExpandDetails
-                        onClick={() => {
-                            setDetailsExpanded(!detailsExpanded);
-                        }}
-                        expanded={detailsExpanded}
-                    />
-                </Actions>
-
-                <EditTask clickHandler={handlers.editTask} />
+                <OptionsMenu
+                    detailsExpanded={detailsExpanded}
+                    toggleDetailsPanel={handlers.toggleDetailsPanel}
+                    editTask={handlers.editTask}
+                />
             </TableRow>
 
             <DetailsPanel
