@@ -1,6 +1,8 @@
 import NoGrantsFound from 'app/NoGrantsFound';
 import { unauthenticatedRoutes } from 'app/Unauthenticated';
 import AppLayout from 'AppLayout';
+import AccessGrants from 'components/admin/AccessGrants';
+import AdminApi from 'components/admin/Api';
 import CaptureCreate from 'components/capture/Create';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import MaterializationCreate from 'components/materialization/Create';
@@ -30,6 +32,16 @@ export const authenticatedRoutes = {
     admin: {
         title: 'routeTitle.admin',
         path: '/admin',
+        accressGrants: {
+            title: 'routeTitle.admin.accessGrants',
+            path: 'accessGrants',
+            fullPath: '/admin/accessGrants',
+        },
+        api: {
+            title: 'routeTitle.admin.api',
+            path: 'api',
+            fullPath: '/admin/api',
+        },
     },
     connectors: {
         title: 'routeTitle.connectors',
@@ -173,16 +185,27 @@ const Authenticated = () => {
                             />
                         </Route>
 
-                        <Route
-                            path={authenticatedRoutes.admin.path}
-                            element={<Admin />}
-                        />
+                        <Route path={authenticatedRoutes.admin.path}>
+                            <Route path="" element={<Admin />} />
+                            <Route
+                                path={
+                                    authenticatedRoutes.admin.accressGrants.path
+                                }
+                                element={<AccessGrants />}
+                            />
+                            <Route
+                                path={authenticatedRoutes.admin.api.path}
+                                element={<AdminApi />}
+                            />
+                        </Route>
+
                         {!isProduction ? (
                             <Route
                                 path="test/jsonforms"
                                 element={<TestJsonForms />}
                             />
                         ) : null}
+
                         <Route
                             path={authenticatedRoutes.pageNotFound.path}
                             element={<PageNotFound />}

@@ -1,4 +1,5 @@
 import { Box, SxProps, Theme } from '@mui/material';
+import { authenticatedRoutes } from 'app/Authenticated';
 import PageContainer from 'components/shared/PageContainer';
 import CollectionsTable from 'components/tables/Collections';
 import useBrowserTitle from 'hooks/useBrowserTitle';
@@ -12,7 +13,12 @@ const Collections = () => {
     useBrowserTitle('browserTitle.collections');
 
     return (
-        <PageContainer>
+        <PageContainer
+            pageTitleProps={{
+                header: authenticatedRoutes.collections.title,
+                headerLink: 'https://docs.estuary.dev/concepts/#collections',
+            }}
+        >
             <Box sx={boxStyling}>
                 <CollectionsTable />
             </Box>

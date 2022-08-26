@@ -1,53 +1,26 @@
-import {
-    Box,
-    TextareaAutosize,
-    Toolbar,
-    Typography,
-    type SxProps,
-    type Theme,
-} from '@mui/material';
-import { Auth } from '@supabase/ui';
+import { authenticatedRoutes } from 'app/Authenticated';
+import AdminTabs from 'components/admin/Tabs';
 import PageContainer from 'components/shared/PageContainer';
-import AccessGrantsTable from 'components/tables/AccessGrants';
 import useBrowserTitle from 'hooks/useBrowserTitle';
-import { FormattedMessage } from 'react-intl';
+import { useNavigate } from 'react-router-dom';
+import { useEffectOnce } from 'react-use';
 
-const boxStyling: SxProps<Theme> = {
-    marginBottom: 2,
-    padding: 2,
-};
-
+// TODO (Admin dash) this page is not used right now and we just load access grants since it is
+//  the first tab. Eventually we might make this a dashboard page to land on... so leaving it in
 const Admin = () => {
+    const navigate = useNavigate();
+    useEffectOnce(() =>
+        navigate(authenticatedRoutes.admin.accressGrants.fullPath, {
+            replace: true,
+        })
+    );
+
     useBrowserTitle('browserTitle.admin');
-
-    const { session } = Auth.useUser();
-
     return (
-        <PageContainer>
-            <Toolbar>
-                <Typography>
-                    <FormattedMessage id="admin.header" />
-                </Typography>
-            </Toolbar>
-
-            <AccessGrantsTable />
-
-            <Box sx={boxStyling}>
-                <Typography variant="h6" sx={{ mb: 0.5 }}>
-                    <FormattedMessage id="admin.accessToken" />
-                </Typography>
-
-                <Typography sx={{ mb: 2 }}>
-                    <FormattedMessage id="admin.accessToken.message" />
-                </Typography>
-
-                <TextareaAutosize
-                    minRows={4}
-                    style={{ width: '100%' }}
-                    value={session?.access_token}
-                    id="accessTokenValue"
-                />
-            </Box>
+        <PageContainer
+            pageTitleProps={{ header: authenticatedRoutes.admin.title }}
+        >
+            <AdminTabs />
         </PageContainer>
     );
 };
