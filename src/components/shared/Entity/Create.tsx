@@ -3,6 +3,7 @@ import { authenticatedRoutes } from 'app/Authenticated';
 import CollectionConfig from 'components/collection/Config';
 import { EditorStoreState } from 'components/editor/Store';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
+import ConnectorSelector from 'components/shared/Entity/ConnectorSelector';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
 import EntityError from 'components/shared/Entity/Error';
@@ -169,6 +170,8 @@ function EntityCreate({
     return (
         <>
             {Header}
+
+            <ConnectorSelector entityType={connectorType} />
 
             {connectorTagsError ? (
                 <Error error={connectorTagsError} />

@@ -80,8 +80,7 @@ const xs = 0;
 // TODO: Balance the light mode color palette.
 const lightMode: PaletteOptions = {
     background: {
-        default: slate[50],
-        paper: slate[50],
+        default: '#F5F6FA',
     },
     contrastThreshold,
     error: {
