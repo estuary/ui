@@ -3,6 +3,7 @@ import { unauthenticatedRoutes } from 'app/Unauthenticated';
 import AppLayout from 'AppLayout';
 import AccessGrants from 'components/admin/AccessGrants';
 import AdminApi from 'components/admin/Api';
+import AdminConnectors from 'components/admin/Connectors';
 import CaptureCreate from 'components/capture/Create';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import MaterializationCreate from 'components/materialization/Create';
@@ -15,7 +16,6 @@ import Admin from 'pages/Admin';
 import Auth from 'pages/Auth';
 import Captures from 'pages/Captures';
 import Collections from 'pages/Collections';
-import Connectors from 'pages/Connectors';
 import TestJsonForms from 'pages/dev/TestJsonForms';
 import PageNotFound from 'pages/error/PageNotFound';
 import Home from 'pages/Home';
@@ -32,7 +32,7 @@ export const authenticatedRoutes = {
     admin: {
         title: 'routeTitle.admin',
         path: '/admin',
-        accressGrants: {
+        accessGrants: {
             title: 'routeTitle.admin.accessGrants',
             path: 'accessGrants',
             fullPath: '/admin/accessGrants',
@@ -42,10 +42,11 @@ export const authenticatedRoutes = {
             path: 'api',
             fullPath: '/admin/api',
         },
-    },
-    connectors: {
-        title: 'routeTitle.connectors',
-        path: '/connectors',
+        connectors: {
+            title: 'routeTitle.admin.connectors',
+            path: 'connectors',
+            fullPath: '/admin/connectors',
+        },
     },
     captures: {
         title: 'routeTitle.captures',
@@ -145,11 +146,6 @@ const Authenticated = () => {
                         />
 
                         <Route
-                            path={authenticatedRoutes.connectors.path}
-                            element={<Connectors />}
-                        />
-
-                        <Route
                             path={authenticatedRoutes.collections.path}
                             element={<Collections />}
                         />
@@ -189,13 +185,17 @@ const Authenticated = () => {
                             <Route path="" element={<Admin />} />
                             <Route
                                 path={
-                                    authenticatedRoutes.admin.accressGrants.path
+                                    authenticatedRoutes.admin.accessGrants.path
                                 }
                                 element={<AccessGrants />}
                             />
                             <Route
                                 path={authenticatedRoutes.admin.api.path}
                                 element={<AdminApi />}
+                            />
+                            <Route
+                                path={authenticatedRoutes.admin.connectors.path}
+                                element={<AdminConnectors />}
                             />
                         </Route>
 

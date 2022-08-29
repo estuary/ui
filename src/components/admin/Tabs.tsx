@@ -1,4 +1,5 @@
 import GroupIcon from '@mui/icons-material/Group';
+import MediationIcon from '@mui/icons-material/Mediation';
 import TerminalIcon from '@mui/icons-material/Terminal';
 import { Box, Tab, Tabs } from '@mui/material';
 import { authenticatedRoutes } from 'app/Authenticated';
@@ -16,7 +17,12 @@ function AdminTabs() {
         {
             label: 'admin.tabs.users',
             icon: GroupIcon,
-            path: authenticatedRoutes.admin.accressGrants.fullPath,
+            path: authenticatedRoutes.admin.accessGrants.fullPath,
+        },
+        {
+            label: 'admin.tabs.connectors',
+            icon: MediationIcon,
+            path: authenticatedRoutes.admin.connectors.fullPath,
         },
         {
             label: 'admin.tabs.api',
