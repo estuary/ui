@@ -73,7 +73,8 @@ const initDraftToEdit = async (
     setEditDraftId: (
         id: EditorStoreState<DraftSpecQuery>['editDraftId']
     ) => void,
-    setFormState: (data: Partial<FormState>) => void
+    setFormState: (data: Partial<FormState>) => void,
+    callFailed: (formState: any, subscription?: RealtimeSubscription) => void
 ) => {
     setFormState({ status: FormStatus.GENERATING });
 
@@ -81,8 +82,12 @@ const initDraftToEdit = async (
         const draftsResponse = await createEntityDraft(catalog_name);
 
         if (draftsResponse.error) {
-            // TODO: Handle supabase service error.
-            console.log('There is a drafts table error.');
+            return callFailed({
+                error: {
+                    title: 'materializationEdit.generate.failure.errorTitle',
+                    error: draftsResponse.error,
+                },
+            });
         }
 
         const newDraftId = draftsResponse.data[0].id;
@@ -95,8 +100,12 @@ const initDraftToEdit = async (
         );
 
         if (draftSpecResponse.error) {
-            // TODO: Handle supabase service error.
-            console.log('There is a drafts-spec table insert error.');
+            return callFailed({
+                error: {
+                    title: 'materializationEdit.generate.failure.errorTitle',
+                    error: draftSpecResponse.error,
+                },
+            });
         }
 
         setDraftId(newDraftId);
@@ -111,8 +120,12 @@ const initDraftToEdit = async (
         );
 
         if (draftSpecResponse.error) {
-            // TODO: Handle supabase service error.
-            console.log('There is a drafts-spec table update error.');
+            return callFailed({
+                error: {
+                    title: 'materializationEdit.generate.failure.errorTitle',
+                    error: draftSpecResponse.error,
+                },
+            });
         }
 
         setDraftId(existingDraftId);
@@ -127,6 +140,7 @@ function EntityEdit({
     draftEditorStoreName,
     formStateStoreName,
     resourceConfigStoreName,
+    callFailed,
     showCollections,
     readOnly,
 }: Props) {
@@ -281,13 +295,15 @@ function EntityEdit({
                 drafts,
                 setDraftId,
                 setEditDraftId,
-                setFormState
+                setFormState,
+                callFailed
             );
         }
     }, [
         setDraftId,
         setEditDraftId,
         setFormState,
+        callFailed,
         initialSpec,
         entityType,
         drafts,
