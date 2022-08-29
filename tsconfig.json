@@ -3,7 +3,7 @@
         "incremental": true,
         "outDir": "build/lib",
         "target": "es5",
-        "lib": ["es6", "dom", "dom.iterable", "esnext"],
+        "lib": ["es6", "dom", "dom.iterable", "esnext", "ES2022.Object"],
         "sourceMap": true,
         "importHelpers": true,
         "declaration": true,

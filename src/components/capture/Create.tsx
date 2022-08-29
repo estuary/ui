@@ -205,7 +205,13 @@ function CaptureCreate() {
     );
 
     return (
-        <PageContainer>
+        <PageContainer
+            pageTitleProps={{
+                header: authenticatedRoutes.captures.create.title,
+                headerLink:
+                    'https://docs.estuary.dev/guides/create-dataflow/#create-a-capture',
+            }}
+        >
             <EntityCreate
                 title="browserTitle.captureCreate"
                 connectorType={entityType}

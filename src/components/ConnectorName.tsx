@@ -5,20 +5,26 @@ import useConstant from 'use-constant';
 import { getConnectorIcon } from 'utils/misc-utils';
 
 interface Props {
-    iconPath?: OpenGraph | string;
+    iconPath?: OpenGraph | string | null;
     iconSize?: number;
-    connector: OpenGraph | string;
+    connector: OpenGraph | string | null;
 }
 
 function ConnectorName({ connector, iconPath, iconSize }: Props) {
     const connectorName = useConstant(() =>
-        typeof connector === 'string' ? connector : connector.title
+        typeof connector === 'string'
+            ? connector
+            : connector === null
+            ? ''
+            : connector.title
     );
 
     const connectorIcon = useConstant(() => {
         if (typeof iconPath === 'string') {
             return iconPath;
-        } else if (typeof connector !== 'string') {
+        }
+
+        if (typeof connector !== 'string' && connector !== null) {
             return getConnectorIcon(connector);
         } else {
             return undefined;

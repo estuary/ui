@@ -1,10 +1,7 @@
-import HelpIcon from '@mui/icons-material/Help';
 import SearchIcon from '@mui/icons-material/Search';
 import {
     Box,
-    IconButton,
     LinearProgress,
-    Link,
     Stack,
     Table,
     TableBody,
@@ -19,7 +16,6 @@ import {
     Toolbar,
     Typography,
 } from '@mui/material';
-import MessageWithLink from 'components/content/MessageWithLink';
 import RowSelector, {
     RowSelectorProps,
 } from 'components/tables/RowActions/RowSelector';
@@ -27,6 +23,7 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
+import Title from 'components/tables/Title';
 import { SelectTableStoreNames, useZustandStore } from 'context/Zustand';
 import { Query, useSelect } from 'hooks/supabase-swr';
 import { debounce } from 'lodash';
@@ -62,11 +59,9 @@ interface Props {
     columnToSort: string;
     setColumnToSort: (data: any) => void;
     header: string;
-    headerLink?: string;
     filterLabel: string;
     enableSelection?: boolean;
     rowSelectorProps?: RowSelectorProps;
-    tableDescriptionId?: string;
     noExistingDataContentIds: TableIntlConfig;
     showEntityStatus?: boolean;
     selectableTableStoreName: SelectTableStoreNames;
@@ -96,12 +91,10 @@ function EntityTable({
     columnToSort,
     setColumnToSort,
     header,
-    headerLink,
     filterLabel,
     enableSelection,
     rowSelectorProps,
     showEntityStatus = false,
-    tableDescriptionId,
     selectableTableStoreName,
 }: Props) {
     const [page, setPage] = useState(0);
@@ -220,51 +213,29 @@ function EntityTable({
         <Box>
             <Box sx={{ mx: 2 }}>
                 <Stack direction="row" spacing={1}>
-                    <Typography
-                        variant="h6"
-                        sx={{
-                            alignItems: 'center',
-                        }}
-                    >
-                        <FormattedMessage id={header} />
-                    </Typography>
-
-                    {headerLink ? (
-                        <Link target="_blank" rel="noopener" href={headerLink}>
-                            <IconButton size="small">
-                                <HelpIcon
-                                    sx={{
-                                        color: (theme) =>
-                                            theme.palette.text.primary,
-                                    }}
-                                />
-                            </IconButton>
-                        </Link>
-                    ) : null}
+                    {enableSelection ? <Title header={header} /> : null}
                 </Stack>
-
-                {tableDescriptionId ? (
-                    <Box>
-                        <MessageWithLink messageID={tableDescriptionId} />
-                    </Box>
-                ) : null}
-
                 <Toolbar
                     disableGutters
                     sx={{
-                        mb: 2,
                         display: 'flex',
-                        justifyContent: enableSelection
-                            ? 'space-between'
-                            : 'flex-end',
-                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        alignItems: 'baseline',
                     }}
                 >
                     {enableSelection ? (
                         <RowSelector {...rowSelectorProps} />
-                    ) : null}
+                    ) : (
+                        <Title header={header} />
+                    )}
 
-                    <Box sx={{ display: 'flex', alignItems: 'flex-end', m: 0 }}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'flex-end',
+                            m: 0,
+                        }}
+                    >
                         <SearchIcon sx={{ mb: 0.9, mr: 0.5, fontSize: 18 }} />
                         <TextField
                             id="capture-search-box"

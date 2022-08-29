@@ -225,7 +225,7 @@ export const materialOneOfControlTester_Discriminator: RankedTester = rankWith(
     10,
     and(
         isOneOfControl,
-        schemaMatches((schema) => schema.hasOwnProperty(discriminator))
+        schemaMatches((schema) => Object.hasOwn(schema, discriminator))
     )
 );
 
