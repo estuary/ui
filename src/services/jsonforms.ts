@@ -252,7 +252,7 @@ const wrapInLayoutIfNecessary = (
         return verticalLayout;
     }
 
-    return uischema;
+    return uischema as Layout;
 };
 
 /**
@@ -410,7 +410,7 @@ const generateUISchema = (
             const nextRef: string = `${currentRef}/properties`;
 
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            layout.elements = Object.keys(jsonSchema.properties).map(
+            layout.elements = Object.keys(jsonSchema.properties!).map(
                 (propName) => {
                     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                     let value: JsonSchema = jsonSchema.properties![propName];
