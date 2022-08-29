@@ -1,6 +1,6 @@
 import { Alert, Collapse } from '@mui/material';
-import { createEntityDraft, deleteEntityDraft } from 'api/drafts';
-import { createDraftSpec, deleteDraftSpec } from 'api/draftSpecs';
+import { createEntityDraft } from 'api/drafts';
+import { createDraftSpec, updateDraftSpec } from 'api/draftSpecs';
 import { authenticatedRoutes } from 'app/Authenticated';
 import CollectionConfig from 'components/collection/Config';
 import { EditorStoreState } from 'components/editor/Store';
@@ -22,6 +22,7 @@ import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useConnectorTag from 'hooks/useConnectorTag';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
+import useDraft, { DraftQuery } from 'hooks/useDraft';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import {
     LiveSpecsExtQueryWithSpec,
@@ -33,7 +34,6 @@ import { isEmpty, isEqual } from 'lodash';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
-import { useEffectOnce } from 'react-use';
 import {
     Details,
     useDetailsForm_connectorImage,
@@ -63,55 +63,59 @@ interface Props {
     };
 }
 
-const createDraftToEdit = async (
-    liveSpecInfo: LiveSpecsExtQueryWithSpec,
+const initDraftToEdit = async (
+    { catalog_name, spec }: LiveSpecsExtQueryWithSpec,
     entityType: ENTITY,
+    drafts: DraftQuery[],
     setDraftId: (id: EditorStoreState<DraftSpecQuery>['id']) => void,
     setEditDraftId: (
         id: EditorStoreState<DraftSpecQuery>['editDraftId']
     ) => void,
     setFormState: (data: Partial<FormState>) => void
 ) => {
-    const draftsResponse = await createEntityDraft(liveSpecInfo.catalog_name);
+    if (drafts.length === 0) {
+        const draftsResponse = await createEntityDraft(catalog_name);
 
-    if (draftsResponse.error) {
-        // TODO: Handle supabase service error.
-        console.log('There is a drafts table error.');
+        if (draftsResponse.error) {
+            // TODO: Handle supabase service error.
+            console.log('There is a drafts table error.');
+        }
+
+        const newDraftId = draftsResponse.data[0].id;
+
+        const draftSpecResponse = await createDraftSpec(
+            newDraftId,
+            catalog_name,
+            spec,
+            entityType
+        );
+
+        if (draftSpecResponse.error) {
+            // TODO: Handle supabase service error.
+            console.log('There is a drafts-spec table insert error.');
+        }
+
+        setDraftId(newDraftId);
+        setEditDraftId(newDraftId);
+    } else {
+        const existingDraftId = drafts[0].id;
+
+        const draftSpecResponse = await updateDraftSpec(
+            existingDraftId,
+            catalog_name,
+            spec
+        );
+
+        if (draftSpecResponse.error) {
+            // TODO: Handle supabase service error.
+            console.log('There is a drafts-spec table update error.');
+        }
+
+        setDraftId(existingDraftId);
+        setEditDraftId(existingDraftId);
     }
 
-    const newDraftId = draftsResponse.data[0].id;
-
-    const draftSpecResponse = await createDraftSpec(
-        newDraftId,
-        liveSpecInfo.catalog_name,
-        liveSpecInfo.spec,
-        entityType
-    );
-
-    if (draftSpecResponse.error) {
-        // TODO: Handle supabase service error.
-        console.log('There is a drafts-spec table error.');
-    }
-
-    setDraftId(newDraftId);
-    setEditDraftId(newDraftId);
     setFormState({ status: FormStatus.INIT });
-};
-
-const deleteEditDraft = async (draftId: string) => {
-    const draftsResponse = await deleteEntityDraft(draftId);
-
-    if (draftsResponse.error) {
-        // TODO: Handle supabase service error.
-        console.log('There is a drafts table error.');
-    }
-
-    const draftSpecResponse = await deleteDraftSpec(draftId);
-
-    if (draftSpecResponse.error) {
-        // TODO: Handle supabase service error.
-        console.log('There is a drafts-spec table error.');
-    }
 };
 
 function EntityEdit({
@@ -145,7 +149,7 @@ function EntityEdit({
             authenticatedRoutes.materializations.edit.params.connectorId
         );
 
-    const specId =
+    const liveSpecId =
         searchParams.get(authenticatedRoutes.captures.edit.params.liveSpecId) ??
         searchParams.get(
             authenticatedRoutes.materializations.edit.params.liveSpecId
@@ -170,8 +174,15 @@ function EntityEdit({
     } = useConnectorWithTagDetail(entityType, connectorId);
 
     const {
-        liveSpecs: [liveSpecInfo],
-    } = useLiveSpecsExtWithSpec(specId, entityType);
+        liveSpecs: [initialSpec],
+    } = useLiveSpecsExtWithSpec(liveSpecId, entityType);
+
+    const { drafts, isValidating: isValidatingDrafts } = useDraft(
+        isEmpty(initialSpec) ? null : initialSpec.catalog_name
+    );
+
+    console.log(drafts);
+    console.log(isValidatingDrafts);
 
     // Details Form Store
     const setDetails = useDetailsForm_setDetails();
@@ -256,35 +267,45 @@ function EntityEdit({
         (state) => state.resourceConfig
     );
 
+    // TODO: Constrain this effect, potentially with the aid of form status.
     useEffect(() => {
-        if (!isEmpty(liveSpecInfo)) {
-            void createDraftToEdit(
-                liveSpecInfo,
+        if (!isEmpty(initialSpec) && !isValidatingDrafts) {
+            void initDraftToEdit(
+                initialSpec,
                 entityType,
+                drafts,
                 setDraftId,
                 setEditDraftId,
                 setFormState
             );
         }
-    }, [setDraftId, setEditDraftId, setFormState, liveSpecInfo, entityType]);
+    }, [
+        setDraftId,
+        setEditDraftId,
+        setFormState,
+        initialSpec,
+        entityType,
+        drafts,
+        isValidatingDrafts,
+    ]);
 
     useEffect(() => {
-        if (!isEmpty(liveSpecInfo) && !isEmpty(initialConnectorTag)) {
+        if (!isEmpty(initialSpec) && !isEmpty(initialConnectorTag)) {
             const details: Details = {
                 data: {
-                    entityName: liveSpecInfo.catalog_name,
+                    entityName: initialSpec.catalog_name,
                     connectorImage:
                         getConnectorImageDetails(initialConnectorTag),
-                    description: liveSpecInfo.detail || '',
+                    description: initialSpec.detail || '',
                 },
             };
 
             setDetails(details);
         }
-    }, [setDetails, liveSpecInfo, initialConnectorTag]);
+    }, [setDetails, initialSpec, initialConnectorTag]);
 
     const { connectorTag } = useConnectorTag(imageTag.id);
-    const { liveSpecs } = useLiveSpecsExtWithOutSpec(specId, entityType);
+    const { liveSpecs } = useLiveSpecsExtWithOutSpec(liveSpecId, entityType);
     const { liveSpecs: liveSpecsByLastPub } = useLiveSpecsExtByLastPubId(
         lastPubId,
         entityType
@@ -293,12 +314,12 @@ function EntityEdit({
     useEffect(() => {
         if (
             connectorTag &&
-            !isEmpty(liveSpecInfo) &&
+            !isEmpty(initialSpec) &&
             !isEmpty(initialConnectorTag)
         ) {
             setEndpointConfig(
                 connectorTag.connector_id === initialConnectorTag.id
-                    ? { data: liveSpecInfo.spec.endpoint.connector.config }
+                    ? { data: initialSpec.spec.endpoint.connector.config }
                     : null
             );
 
@@ -351,7 +372,7 @@ function EntityEdit({
         connectorTag,
         liveSpecs,
         liveSpecsByLastPub,
-        liveSpecInfo,
+        initialSpec,
         initialConnectorTag,
         entityType,
         resourceConfig,
@@ -363,22 +384,13 @@ function EntityEdit({
         setDraftId,
     ]);
 
-    // TODO: Enable delete on exit.
-    useEffectOnce(() => {
-        return () => {
-            if (editDraftId) {
-                void deleteEditDraft(editDraftId);
-            }
-        };
-    });
-
     return (
         <>
             {Header}
 
             {connectorTagsError ? (
                 <Error error={connectorTagsError} />
-            ) : isEmpty(liveSpecInfo) || isEmpty(initialConnectorTag) ? null : (
+            ) : isEmpty(initialSpec) || isEmpty(initialConnectorTag) ? null : (
                 <>
                     <Collapse in={formSubmitError !== null}>
                         {formSubmitError ? (
