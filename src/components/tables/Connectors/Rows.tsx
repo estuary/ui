@@ -53,7 +53,7 @@ function Rows({ data }: Props) {
                         <TableCell align="left" style={columnStyling}>
                             <ConnectorName
                                 iconSize={40}
-                                connector={row.title}
+                                title={row.title}
                                 iconPath={row.image}
                             />
                         </TableCell>
