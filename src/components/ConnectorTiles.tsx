@@ -15,8 +15,8 @@ import {
 import { authenticatedRoutes } from 'app/Authenticated';
 import ConnectorToolbar from 'components/ConnectorToolbar';
 import {
+    darkGlassBkgColor,
     darkGlassBkgColorIntensified,
-    darkGlassBkgWithoutBlur,
     slate,
 } from 'context/Theme';
 import { useQuery, useSelect } from 'hooks/supabase-swr';
@@ -52,8 +52,6 @@ const intlConfig: TableIntlConfig = {
     message: 'connectors.main.message2',
 };
 
-const { background: darkGlassBkg } = darkGlassBkgWithoutBlur;
-
 const imageBackgroundSx: SxProps<Theme> = {
     width: '100%',
     height: 125,
@@ -76,7 +74,9 @@ function Tile({ children }: TileProps) {
                 'height': '100%',
                 'borderRadius': 5,
                 'background': (theme) =>
-                    theme.palette.mode === 'dark' ? darkGlassBkg : slate[50],
+                    theme.palette.mode === 'dark'
+                        ? darkGlassBkgColor
+                        : slate[50],
                 'padding': 1,
                 '&:hover': {
                     background: (theme) =>
@@ -366,7 +366,7 @@ function ConnectorTiles({
                         <Tile>
                             <Box>
                                 <Skeleton
-                                    variant="rounded"
+                                    variant="rectangular"
                                     height={125}
                                     sx={{ mb: 2, borderRadius: 3 }}
                                 />
@@ -379,7 +379,7 @@ function ConnectorTiles({
                             </Box>
 
                             <Skeleton
-                                variant="rounded"
+                                variant="rectangular"
                                 height={36}
                                 sx={{ borderRadius: 3 }}
                             />
@@ -407,7 +407,7 @@ function ConnectorTiles({
                             justifyContent: 'center',
                             background:
                                 theme.palette.mode === 'dark'
-                                    ? darkGlassBkg
+                                    ? darkGlassBkgColor
                                     : slate[50],
                             padding: 1,
                         }}
