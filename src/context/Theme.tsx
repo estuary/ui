@@ -154,9 +154,13 @@ export const outlineSx: SxProps<Theme> = {
     border: `1px solid ${slate[200]}`,
 };
 
+// TODO: Either drop "color" in all variables, as the distinction is no longer required, or introduce the word
+// "color" in all variables setting the backgroundColor property.
 export const darkGlassBkgColor = 'rgba(172, 199, 220, 0.12)';
 export const darkGlassBkgColorIntensified = 'rgba(172, 199, 220, 0.18)';
 
+// TODO: Set the backgroundColor property, not the background property. The background property was previously set
+// because of the use of linear-gradient.
 export const darkGlassBkgWithBlur = {
     background: 'rgb(13, 43, 67)',
 };
