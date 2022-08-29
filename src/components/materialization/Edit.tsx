@@ -235,6 +235,7 @@ function MaterializationEdit() {
                 draftEditorStoreName={draftEditorStoreName}
                 resourceConfigStoreName={resourceConfigStoreName}
                 formStateStoreName={formStateStoreName}
+                callFailed={helpers.callFailed}
                 readOnly={{
                     detailsForm: true,
                     endpointConfigForm: true,

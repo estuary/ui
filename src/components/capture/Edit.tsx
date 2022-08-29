@@ -246,6 +246,7 @@ function CaptureEdit() {
                 }
                 draftEditorStoreName={draftEditorStoreName}
                 formStateStoreName={formStateStoreName}
+                callFailed={helpers.callFailed}
                 readOnly={{ detailsForm: true, endpointConfigForm: true }}
             />
         </PageContainer>

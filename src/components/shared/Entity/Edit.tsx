@@ -1,4 +1,5 @@
 import { Alert, Collapse } from '@mui/material';
+import { RealtimeSubscription } from '@supabase/supabase-js';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec, updateDraftSpec } from 'api/draftSpecs';
 import { authenticatedRoutes } from 'app/Authenticated';
@@ -54,6 +55,7 @@ interface Props {
     Header: any;
     draftEditorStoreName: DraftEditorStoreNames;
     formStateStoreName: FormStateStoreNames;
+    callFailed: (formState: any, subscription?: RealtimeSubscription) => void;
     resourceConfigStoreName?: ResourceConfigStoreNames;
     showCollections?: boolean;
     readOnly: {
@@ -73,6 +75,8 @@ const initDraftToEdit = async (
     ) => void,
     setFormState: (data: Partial<FormState>) => void
 ) => {
+    setFormState({ status: FormStatus.GENERATING });
+
     if (drafts.length === 0) {
         const draftsResponse = await createEntityDraft(catalog_name);
 
@@ -114,8 +118,6 @@ const initDraftToEdit = async (
         setDraftId(existingDraftId);
         setEditDraftId(existingDraftId);
     }
-
-    setFormState({ status: FormStatus.INIT });
 };
 
 function EntityEdit({
@@ -169,8 +171,6 @@ function EntityEdit({
 
     const {
         connectorTags: [initialConnectorTag],
-        // error: connectorTagsError,
-        // isValidating,
     } = useConnectorWithTagDetail(entityType, connectorId);
 
     const {
@@ -180,9 +180,6 @@ function EntityEdit({
     const { drafts, isValidating: isValidatingDrafts } = useDraft(
         isEmpty(initialSpec) ? null : initialSpec.catalog_name
     );
-
-    console.log(drafts);
-    console.log(isValidatingDrafts);
 
     // Details Form Store
     const setDetails = useDetailsForm_setDetails();
@@ -233,6 +230,11 @@ function EntityEdit({
         EntityFormState['setFormState']
     >(formStateStoreName, (state) => state.setFormState);
 
+    const formStatus = useZustandStore<
+        EntityFormState,
+        EntityFormState['formState']['status']
+    >(formStateStoreName, (state) => state.formState.status);
+
     // Resource Config Store
     // TODO: Determine proper placement for this logic.
     const setResourceSchema = useZustandStore<
@@ -267,9 +269,12 @@ function EntityEdit({
         (state) => state.resourceConfig
     );
 
-    // TODO: Constrain this effect, potentially with the aid of form status.
     useEffect(() => {
-        if (!isEmpty(initialSpec) && !isValidatingDrafts) {
+        if (
+            !isEmpty(initialSpec) &&
+            !isValidatingDrafts &&
+            formStatus === FormStatus.INIT
+        ) {
             void initDraftToEdit(
                 initialSpec,
                 entityType,
@@ -287,6 +292,7 @@ function EntityEdit({
         entityType,
         drafts,
         isValidatingDrafts,
+        formStatus,
     ]);
 
     useEffect(() => {
@@ -367,6 +373,8 @@ function EntityEdit({
                     );
                 }
             }
+
+            setFormState({ status: FormStatus.GENERATED });
         }
     }, [
         connectorTag,
@@ -382,6 +390,7 @@ function EntityEdit({
         setEndpointSchema,
         setResourceSchema,
         setDraftId,
+        setFormState,
     ]);
 
     return (
