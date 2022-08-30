@@ -109,7 +109,6 @@ const getInitialState = (
     },
 
     resetState: () => {
-        console.log('reset state');
         set(getInitialStateData(), false, 'Endpoint Config State Reset');
     },
 });
