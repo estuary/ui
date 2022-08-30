@@ -205,77 +205,81 @@ function EntityCreate({
                 <ConnectorSelector entityType={connectorType} />
             </Collapse>
 
-            {/* <Collapse in={!showConnectorTiles} unmountOnExit> */}
-            {/* <> */}
-            {Header}
-
-            {connectorTagsError ? (
-                <Error error={connectorTagsError} />
-            ) : (
+            <Collapse in={!showConnectorTiles} unmountOnExit>
                 <>
-                    <Collapse in={formSubmitError !== null}>
-                        {formSubmitError ? (
-                            <EntityError
-                                title={formSubmitError.title}
-                                error={formSubmitError.error}
-                                logToken={logToken}
-                                draftId={draftId}
-                            />
-                        ) : null}
-                    </Collapse>
+                    {Header}
 
-                    {!isValidating && connectorTags.length === 0 ? (
-                        <Alert severity="warning">
-                            <FormattedMessage
-                                id={`${messagePrefix}.missingConnectors`}
-                            />
-                        </Alert>
-                    ) : connectorTags.length > 0 ? (
-                        <ErrorBoundryWrapper>
-                            <DetailsForm
-                                connectorTags={connectorTags}
-                                accessGrants={combinedGrants}
-                                draftEditorStoreName={draftEditorStoreName}
-                                formStateStoreName={formStateStoreName}
-                                entityType={connectorType}
-                            />
-                        </ErrorBoundryWrapper>
-                    ) : null}
+                    {connectorTagsError ? (
+                        <Error error={connectorTagsError} />
+                    ) : (
+                        <>
+                            <Collapse in={formSubmitError !== null}>
+                                {formSubmitError ? (
+                                    <EntityError
+                                        title={formSubmitError.title}
+                                        error={formSubmitError.error}
+                                        logToken={logToken}
+                                        draftId={draftId}
+                                    />
+                                ) : null}
+                            </Collapse>
 
-                    {imageTag.id ? (
-                        <ErrorBoundryWrapper>
-                            <EndpointConfig
-                                connectorImage={imageTag.id}
-                                draftEditorStoreName={draftEditorStoreName}
-                                formStateStoreName={formStateStoreName}
-                            />
-                        </ErrorBoundryWrapper>
-                    ) : null}
+                            {!isValidating && connectorTags.length === 0 ? (
+                                <Alert severity="warning">
+                                    <FormattedMessage
+                                        id={`${messagePrefix}.missingConnectors`}
+                                    />
+                                </Alert>
+                            ) : connectorTags.length > 0 ? (
+                                <ErrorBoundryWrapper>
+                                    <DetailsForm
+                                        connectorTags={connectorTags}
+                                        accessGrants={combinedGrants}
+                                        draftEditorStoreName={
+                                            draftEditorStoreName
+                                        }
+                                        formStateStoreName={formStateStoreName}
+                                        entityType={connectorType}
+                                    />
+                                </ErrorBoundryWrapper>
+                            ) : null}
 
-                    {showCollections &&
-                    resourceConfigStoreName &&
-                    hasLength(imageTag.id) ? (
-                        <ErrorBoundryWrapper>
-                            <CollectionConfig
-                                resourceConfigStoreName={
-                                    resourceConfigStoreName
-                                }
-                                formStateStoreName={formStateStoreName}
-                            />
-                        </ErrorBoundryWrapper>
-                    ) : null}
+                            {imageTag.id ? (
+                                <ErrorBoundryWrapper>
+                                    <EndpointConfig
+                                        connectorImage={imageTag.id}
+                                        draftEditorStoreName={
+                                            draftEditorStoreName
+                                        }
+                                        formStateStoreName={formStateStoreName}
+                                    />
+                                </ErrorBoundryWrapper>
+                            ) : null}
 
-                    <ErrorBoundryWrapper>
-                        <CatalogEditor
-                            messageId={`${messagePrefix}.finalReview.instructions`}
-                            draftEditorStoreName={draftEditorStoreName}
-                            formStateStoreName={formStateStoreName}
-                        />
-                    </ErrorBoundryWrapper>
+                            {showCollections &&
+                            resourceConfigStoreName &&
+                            hasLength(imageTag.id) ? (
+                                <ErrorBoundryWrapper>
+                                    <CollectionConfig
+                                        resourceConfigStoreName={
+                                            resourceConfigStoreName
+                                        }
+                                        formStateStoreName={formStateStoreName}
+                                    />
+                                </ErrorBoundryWrapper>
+                            ) : null}
+
+                            <ErrorBoundryWrapper>
+                                <CatalogEditor
+                                    messageId={`${messagePrefix}.finalReview.instructions`}
+                                    draftEditorStoreName={draftEditorStoreName}
+                                    formStateStoreName={formStateStoreName}
+                                />
+                            </ErrorBoundryWrapper>
+                        </>
+                    )}
                 </>
-            )}
-            {/* </> */}
-            {/* </Collapse> */}
+            </Collapse>
         </>
     );
 }
