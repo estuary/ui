@@ -88,6 +88,11 @@ const initDraftToEdit = async (
 ) => {
     setFormState({ status: FormStatus.GENERATING });
 
+    const errorTitle =
+        entityType === ENTITY.MATERIALIZATION
+            ? 'materializationEdit.generate.failure.errorTitle'
+            : 'captureEdit.generate.failedErrorTitle';
+
     if (
         drafts.length === 0 ||
         draftSpecs.length === 0 ||
@@ -98,7 +103,7 @@ const initDraftToEdit = async (
         if (draftsResponse.error) {
             return callFailed({
                 error: {
-                    title: 'materializationEdit.generate.failure.errorTitle',
+                    title: errorTitle,
                     error: draftsResponse.error,
                 },
             });
@@ -117,7 +122,7 @@ const initDraftToEdit = async (
         if (draftSpecResponse.error) {
             return callFailed({
                 error: {
-                    title: 'materializationEdit.generate.failure.errorTitle',
+                    title: errorTitle,
                     error: draftSpecResponse.error,
                 },
             });
@@ -138,7 +143,7 @@ const initDraftToEdit = async (
         if (draftSpecResponse.error) {
             return callFailed({
                 error: {
-                    title: 'materializationEdit.generate.failure.errorTitle',
+                    title: errorTitle,
                     error: draftSpecResponse.error,
                 },
             });
