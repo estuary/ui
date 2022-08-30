@@ -216,7 +216,7 @@ export const useDetailsForm_changed = () => {
     >(storeName(entityType), (state) => state.stateChanged);
 };
 
-export const useDetailsForm_resetFormState = () => {
+export const useDetailsForm_resetState = () => {
     const entityType = useEntityType();
     return useZustandStoreMap<DetailsFormState, DetailsFormState['resetState']>(
         storeName(entityType),

@@ -17,8 +17,8 @@ export const getPathWithParam = (path: string, param: any, val: any) => {
     return `${path}?${param}=${val}`;
 };
 
-export const hasLength = (val: string | any[] | null | undefined) => {
-    return val && val.length > 0;
+export const hasLength = (val: string | any[] | null | undefined): boolean => {
+    return Boolean(val && val.length > 0);
 };
 
 export const base64RemovePadding = (state: string | null) => {

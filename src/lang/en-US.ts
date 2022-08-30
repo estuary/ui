@@ -404,6 +404,9 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.endpointConfig.resourceConfigHaveErrors': `The Collections Resource Configuration section has errors:`,
     'entityCreate.endpointConfig.endpointConfigHaveErrors': `The ${entityCreateHeader} section has errors:`,
 
+    'entityCreate.endpointConfig.noConnectorSelectedTitle': `Please select a Connector to begin`,
+    'entityCreate.endpointConfig.noConnectorSelected': `To start the creation process you must select a Connector. You can change this later.`,
+
     'entityCreate.endpointConfig.entityNameMissing': `Name missing`,
     'entityCreate.endpointConfig.connectorMissing': `Connector missing`,
     'entityCreate.endpointConfig.endpointConfigMissing': `${entityCreateHeader} empty`,

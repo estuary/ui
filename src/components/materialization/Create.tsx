@@ -25,7 +25,7 @@ import {
     useDetailsForm_changed,
     useDetailsForm_connectorImage,
     useDetailsForm_errorsExist,
-    useDetailsForm_resetFormState,
+    useDetailsForm_resetState,
 } from 'stores/DetailsForm';
 import {
     useEndpointConfigStore_changed,
@@ -53,7 +53,7 @@ function MaterializationCreate() {
     const imageTag = useDetailsForm_connectorImage();
     const detailsFormErrorsExist = useDetailsForm_errorsExist();
     const detailsFormChanged = useDetailsForm_changed();
-    const resetDetailsFormState = useDetailsForm_resetFormState();
+    const resetDetailsForm = useDetailsForm_resetState();
 
     // Draft Editor Store
     const draftId = useZustandStore<
@@ -116,7 +116,7 @@ function MaterializationCreate() {
     const resetState = () => {
         resetEndpointConfigState();
         resetResourceConfigState();
-        resetDetailsFormState();
+        resetDetailsForm();
         resetFormState();
     };
 

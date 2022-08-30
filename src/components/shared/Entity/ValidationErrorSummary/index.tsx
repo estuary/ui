@@ -1,6 +1,8 @@
 import { Alert, AlertTitle, Collapse } from '@mui/material';
+import useConnectorID from 'components/shared/Entity/useConnectorID';
 import DetailsErrors from 'components/shared/Entity/ValidationErrorSummary/DetailsErrors';
 import EndpointConfigErrors from 'components/shared/Entity/ValidationErrorSummary/EndpointConfigErrors';
+import NoConnectorError from 'components/shared/Entity/ValidationErrorSummary/NoConnectorError';
 import ResourceConfigErrors from 'components/shared/Entity/ValidationErrorSummary/ResourceConfigErrors';
 import {
     FormStateStoreNames,
@@ -9,6 +11,7 @@ import {
 } from 'context/Zustand';
 import { FormattedMessage } from 'react-intl';
 import { EntityFormState } from 'stores/FormState';
+import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     formStateStoreName: FormStateStoreNames;
@@ -27,10 +30,14 @@ function ValidationErrorSummary({
     ErrorComponent,
     errorsExist,
 }: Props) {
+    const connectorID = useConnectorID();
+
     const displayValidation = useZustandStore<
         EntityFormState,
         EntityFormState['formState']['displayValidation']
     >(formStateStoreName, (state) => state.formState.displayValidation);
+
+    console.log('displayValidation', displayValidation);
 
     return displayValidation ? (
         <Collapse in={errorsExist} timeout="auto" unmountOnExit>
@@ -46,12 +53,10 @@ function ValidationErrorSummary({
 
                 {ErrorComponent === false ? null : ErrorComponent ? (
                     <ErrorComponent />
-                ) : (
+                ) : hasLength(connectorID) ? (
                     <>
                         <DetailsErrors />
-
                         <EndpointConfigErrors />
-
                         {resourceConfigStoreName ? (
                             <ResourceConfigErrors
                                 resourceConfigStoreName={
@@ -60,6 +65,8 @@ function ValidationErrorSummary({
                             />
                         ) : null}
                     </>
+                ) : (
+                    <NoConnectorError />
                 )}
             </Alert>
         </Collapse>

@@ -26,7 +26,7 @@ import {
     useDetailsForm_changed,
     useDetailsForm_connectorImage,
     useDetailsForm_errorsExist,
-    useDetailsForm_resetFormState,
+    useDetailsForm_resetState,
 } from 'stores/DetailsForm';
 import {
     useEndpointConfigStore_changed,
@@ -84,7 +84,7 @@ function CaptureCreate() {
     const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
     const resetEndpointConfigState = useEndpointConfigStore_reset();
     const endpointConfigChanged = useEndpointConfigStore_changed();
-    const resetDetailsFormState = useDetailsForm_resetFormState();
+    const resetDetailsForm = useDetailsForm_resetState();
 
     // Form State Store
     const messagePrefix = useZustandStore<
@@ -113,7 +113,7 @@ function CaptureCreate() {
     }, [imageTag, setDraftId]);
 
     const resetState = () => {
-        resetDetailsFormState();
+        resetDetailsForm();
         resetEndpointConfigState();
         resetFormState();
     };

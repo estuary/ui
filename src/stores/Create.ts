@@ -1,5 +1,4 @@
 import { JsonFormsCore } from '@jsonforms/core';
-import { PostgrestError } from '@supabase/postgrest-js';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
 import { difference, has, isEmpty, isEqual, map, omit } from 'lodash';
@@ -31,50 +30,6 @@ export interface ResourceConfig {
     errors: any[];
     [key: string]: JsonFormsData | any[];
 }
-
-export interface FormState {
-    displayValidation: boolean;
-    status: FormStatus;
-    showLogs: boolean;
-    exitWhenLogsClose: boolean;
-    logToken: string | null;
-    error: {
-        title: string;
-        error?: PostgrestError;
-    } | null;
-}
-
-export enum FormStatus {
-    INIT = 'idle',
-
-    SAVING = 'saving',
-    SAVED = 'saved',
-
-    TESTING = 'testing',
-    TESTED = 'tested',
-
-    GENERATING = 'Generating Preview',
-    GENERATED = 'Generated Preview',
-
-    FAILED = 'failed',
-}
-
-const formActive = (formStateStatus: FormStatus) => {
-    return (
-        formStateStatus === FormStatus.TESTING ||
-        formStateStatus === FormStatus.GENERATING ||
-        formStateStatus === FormStatus.SAVING
-    );
-};
-
-const formIdle = (formStateStatus: FormStatus) => {
-    return (
-        formStateStatus === FormStatus.TESTED ||
-        formStateStatus === FormStatus.INIT ||
-        formStateStatus === FormStatus.SAVED ||
-        formStateStatus === FormStatus.GENERATED
-    );
-};
 
 const getDefaultJsonFormsData = () => ({
     data: {},
@@ -206,11 +161,6 @@ export interface CreateEntityStore {
     currentCollection: string | null;
     setCurrentCollection: (collections: string) => void;
 
-    //Form State
-    formState: FormState;
-    setFormState: (data: Partial<FormState>) => void;
-    resetFormState: (status: FormStatus) => void;
-
     //Misc
     connectors: { [key: string]: any }[];
     setConnectors: (val: CreateEntityStore['connectors']) => void;
@@ -218,8 +168,6 @@ export interface CreateEntityStore {
     setEndpointSchema: (val: CreateEntityStore['endpointSchema']) => void;
     resourceSchema: { [key: string]: any };
     setResourceSchema: (val: CreateEntityStore['resourceSchema']) => void;
-    isIdle: boolean;
-    isActive: boolean;
     hasErrors: boolean;
 
     //Content
@@ -257,16 +205,6 @@ export const initialCreateStates = {
         const defaults = getDefaultJsonFormsData();
         return { ...defaults };
     },
-    formState: (): FormState => {
-        return {
-            displayValidation: false,
-            status: FormStatus.INIT,
-            showLogs: false,
-            exitWhenLogsClose: false,
-            logToken: null,
-            error: null,
-        };
-    },
     resourceConfig: () => {
         return {};
     },
@@ -281,7 +219,6 @@ export const getInitialStateData = (
     | 'endpointConfig'
     | 'endpointConfigErrors'
     | 'connectors'
-    | 'formState'
     | 'endpointSchema'
     | 'resourceSchema'
     | 'collections'
@@ -293,13 +230,9 @@ export const getInitialStateData = (
     | 'endpointConfigHasErrors'
     | 'detailsFormHasErrors'
     | 'collectionsHasErrors'
-    | 'isIdle'
-    | 'isActive'
     | 'hasErrors'
 > => {
     return {
-        isIdle: true,
-        isActive: false,
         hasErrors: true,
 
         messagePrefix,
@@ -311,8 +244,6 @@ export const getInitialStateData = (
         endpointConfigErrors: [],
 
         connectors: initialCreateStates.connectors(),
-
-        formState: initialCreateStates.formState(),
 
         endpointSchema: initialCreateStates.endpointSchema(),
         resourceSchema: initialCreateStates.resourceSchema(),
@@ -348,21 +279,16 @@ export const getInitialCreateState = (
                         state.details.data.connectorImage?.id !==
                         details.data.connectorImage.id
                     ) {
-                        const { endpointConfig, formState } =
-                            getInitialStateData(
-                                includeCollections,
-                                messagePrefix
-                            );
+                        const { endpointConfig } = getInitialStateData(
+                            includeCollections,
+                            messagePrefix
+                        );
                         state.endpointConfig = endpointConfig;
                         populateEndpointConfigErrors(
                             endpointConfig,
                             state,
                             get
                         );
-
-                        state.formState = formState;
-                        state.isIdle = formIdle(formState.status);
-                        state.isActive = formActive(formState.status);
                     }
 
                     state.details = details;
@@ -382,39 +308,6 @@ export const getInitialCreateState = (
                 }),
                 false,
                 'Endpoint config changed'
-            );
-        },
-
-        setFormState: (newState) => {
-            set(
-                produce((state) => {
-                    const { formState } = get();
-                    state.formState = {
-                        ...formState,
-                        ...newState,
-                    };
-                    state.isIdle = formIdle(state.formState.status);
-                    state.isActive = formActive(state.formState.status);
-                }),
-                false,
-                'Form State changed'
-            );
-        },
-
-        resetFormState: (status) => {
-            set(
-                produce((state) => {
-                    const { formState } = getInitialStateData(
-                        includeCollections,
-                        messagePrefix
-                    );
-                    state.formState = formState;
-                    state.formState.status = status;
-                    state.isIdle = formIdle(status);
-                    state.isActive = formActive(status);
-                }),
-                false,
-                'Form State Reset'
             );
         },
 
@@ -600,18 +493,6 @@ export const getInitialCreateState = (
 };
 
 export const entityCreateStoreSelectors = {
-    formState: {
-        showLogs: (state: CreateEntityStore) => state.formState.showLogs,
-        logToken: (state: CreateEntityStore) => state.formState.logToken,
-        error: (state: CreateEntityStore) => state.formState.error,
-        exitWhenLogsClose: (state: CreateEntityStore) =>
-            state.formState.exitWhenLogsClose,
-        displayValidation: (state: CreateEntityStore) =>
-            state.formState.displayValidation,
-        status: (state: CreateEntityStore) => state.formState.status,
-        set: (state: CreateEntityStore) => state.setFormState,
-        reset: (state: CreateEntityStore) => state.resetFormState,
-    },
     details: {
         data: (state: CreateEntityStore) => state.details.data,
         entityName: (state: CreateEntityStore) => state.details.data.entityName,
@@ -652,8 +533,6 @@ export const entityCreateStoreSelectors = {
     setResourceSchema: (state: CreateEntityStore) => state.setResourceSchema,
 
     messagePrefix: (state: CreateEntityStore) => state.messagePrefix,
-    isActive: (state: CreateEntityStore) => state.isActive,
-    isIdle: (state: CreateEntityStore) => state.isIdle,
 
     resetState: (state: CreateEntityStore) => state.resetState,
     hasChanges: (state: CreateEntityStore) => state.hasChanges,

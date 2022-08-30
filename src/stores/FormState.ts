@@ -123,6 +123,7 @@ const getInitialState = (
     },
 
     resetState: () => {
+        console.log('reset form start');
         set(
             getInitialStateData(messagePrefix),
             false,
