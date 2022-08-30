@@ -115,10 +115,10 @@ function MaterializationEdit() {
     }, [imageTag, setDraftId]);
 
     const resetState = () => {
-        resetEndpointConfigState();
-        resetResourceConfigState();
-        resetDetailsFormState();
         resetFormState();
+        resetEndpointConfigState();
+        resetDetailsFormState();
+        resetResourceConfigState();
     };
 
     const helpers = {

@@ -335,7 +335,8 @@ function EntityEdit({
         if (
             connectorTag &&
             !isEmpty(initialSpec) &&
-            !isEmpty(initialConnectorTag)
+            !isEmpty(initialConnectorTag) &&
+            formStatus !== FormStatus.INIT
         ) {
             setEndpointConfig(
                 connectorTag.connector_id === initialConnectorTag.id
@@ -355,6 +356,7 @@ function EntityEdit({
             //  as they are dependent on them.
             if (entityType === ENTITY.MATERIALIZATION) {
                 if (isEmpty(resourceConfig)) {
+                    console.log('A');
                     initialSpec.spec.bindings.forEach((binding: any) =>
                         setResourceConfig(binding.source, {
                             data: binding.resource,
@@ -394,6 +396,7 @@ function EntityEdit({
         entityType,
         resourceConfig,
         editDraftId,
+        formStatus,
         preFillCollections,
         setResourceConfig,
         setEndpointSchema,

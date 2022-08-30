@@ -64,6 +64,12 @@ function DetailsForm({
         ) ??
         searchParams.get(
             authenticatedRoutes.materializations.create.params.connectorId
+        ) ??
+        searchParams.get(
+            authenticatedRoutes.captures.edit.params.connectorId
+        ) ??
+        searchParams.get(
+            authenticatedRoutes.materializations.edit.params.connectorId
         );
 
     // Details Form Store
