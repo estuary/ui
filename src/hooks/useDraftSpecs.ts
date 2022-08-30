@@ -6,17 +6,32 @@ export interface DraftSpecQuery {
     spec_type: string;
     spec: object;
     draft_id: string;
+    expect_pub_id: string;
 }
 
-const DRAFT_SPEC_COLS = ['catalog_name', 'spec_type', 'spec', 'draft_id'];
+const DRAFT_SPEC_COLS = [
+    'catalog_name',
+    'spec_type',
+    'spec',
+    'draft_id',
+    'expect_pub_id',
+];
 const defaultResponse: DraftSpecQuery[] = [];
 
-function useDraftSpecs(draftId: string | null) {
+function useDraftSpecs(draftId: string | null, lastPubId?: string | null) {
     const draftSpecQuery = useQuery<DraftSpecQuery>(
         TABLES.DRAFT_SPECS,
         {
             columns: DRAFT_SPEC_COLS,
-            filter: (query) => query.eq('draft_id', draftId as string),
+            filter: (query) => {
+                let queryBuilder = query;
+
+                if (lastPubId) {
+                    queryBuilder = queryBuilder.eq('expect_pub_id', lastPubId);
+                }
+
+                return queryBuilder.eq('draft_id', draftId as string);
+            },
         },
         [draftId]
     );

@@ -24,7 +24,7 @@ import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useConnectorTag from 'hooks/useConnectorTag';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import useDraft, { DraftQuery } from 'hooks/useDraft';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import {
     LiveSpecsExtQueryWithSpec,
     useLiveSpecsExtByLastPubId,
@@ -64,20 +64,35 @@ interface Props {
     };
 }
 
+interface InitializationHelpers {
+    setDraftId: (id: EditorStoreState<DraftSpecQuery>['id']) => void;
+    setEditDraftId: (
+        id: EditorStoreState<DraftSpecQuery>['editDraftId']
+    ) => void;
+    setFormState: (data: Partial<FormState>) => void;
+    callFailed: (formState: any, subscription?: RealtimeSubscription) => void;
+}
+
 const initDraftToEdit = async (
     { catalog_name, spec }: LiveSpecsExtQueryWithSpec,
     entityType: ENTITY,
     drafts: DraftQuery[],
-    setDraftId: (id: EditorStoreState<DraftSpecQuery>['id']) => void,
-    setEditDraftId: (
-        id: EditorStoreState<DraftSpecQuery>['editDraftId']
-    ) => void,
-    setFormState: (data: Partial<FormState>) => void,
-    callFailed: (formState: any, subscription?: RealtimeSubscription) => void
+    draftSpecs: DraftSpecQuery[],
+    lastPubId: string | null,
+    {
+        setDraftId,
+        setEditDraftId,
+        setFormState,
+        callFailed,
+    }: InitializationHelpers
 ) => {
     setFormState({ status: FormStatus.GENERATING });
 
-    if (drafts.length === 0) {
+    if (
+        drafts.length === 0 ||
+        draftSpecs.length === 0 ||
+        lastPubId !== draftSpecs[0].expect_pub_id
+    ) {
         const draftsResponse = await createEntityDraft(catalog_name);
 
         if (draftsResponse.error) {
@@ -95,7 +110,8 @@ const initDraftToEdit = async (
             newDraftId,
             catalog_name,
             spec,
-            entityType
+            entityType,
+            lastPubId
         );
 
         if (draftSpecResponse.error) {
@@ -115,7 +131,8 @@ const initDraftToEdit = async (
         const draftSpecResponse = await updateDraftSpec(
             existingDraftId,
             catalog_name,
-            spec
+            spec,
+            lastPubId
         );
 
         if (draftSpecResponse.error) {
@@ -282,20 +299,30 @@ function EntityEdit({
         (state) => state.resourceConfig
     );
 
+    const { draftSpecs, isValidating: isValidatingDraftSpecs } = useDraftSpecs(
+        editDraftId,
+        lastPubId
+    );
+
     useEffect(() => {
         if (
             !isEmpty(initialSpec) &&
             !isValidatingDrafts &&
+            !isValidatingDraftSpecs &&
             formStatus === FormStatus.INIT
         ) {
             void initDraftToEdit(
                 initialSpec,
                 entityType,
                 drafts,
-                setDraftId,
-                setEditDraftId,
-                setFormState,
-                callFailed
+                draftSpecs,
+                lastPubId,
+                {
+                    setDraftId,
+                    setEditDraftId,
+                    setFormState,
+                    callFailed,
+                }
             );
         }
     }, [
@@ -306,8 +333,11 @@ function EntityEdit({
         initialSpec,
         entityType,
         drafts,
+        draftSpecs,
         isValidatingDrafts,
+        isValidatingDraftSpecs,
         formStatus,
+        lastPubId,
     ]);
 
     useEffect(() => {
@@ -336,7 +366,9 @@ function EntityEdit({
             connectorTag &&
             !isEmpty(initialSpec) &&
             !isEmpty(initialConnectorTag) &&
-            formStatus !== FormStatus.INIT
+            (formStatus === FormStatus.GENERATING ||
+                formStatus == FormStatus.GENERATED ||
+                formStatus === FormStatus.FAILED)
         ) {
             setEndpointConfig(
                 connectorTag.connector_id === initialConnectorTag.id

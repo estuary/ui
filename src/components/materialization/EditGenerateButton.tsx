@@ -134,9 +134,8 @@ function MaterializeGenerateButton({
                     },
                 });
             }
-
             const draftSpec = generateDraftSpec(
-                encryptedEndpointConfig.data,
+                endpointConfigData,
                 imagePath,
                 resourceConfig
             );
@@ -157,7 +156,7 @@ function MaterializeGenerateButton({
 
             setDraftId(editDraftId);
             setFormState({
-                status: FormStatus.INIT,
+                status: FormStatus.GENERATED,
             });
         }
     };
