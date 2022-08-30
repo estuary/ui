@@ -34,8 +34,6 @@ export function useBlocker(blocker: Blocker, when = true, path?: string) {
 
         if (!refUnBlock.current) {
             const blockHandler = (tx: Transition) => {
-                console.log('blocking ', tx);
-
                 const autoUnblockingTx = {
                     ...tx,
                     retry() {
@@ -44,13 +42,16 @@ export function useBlocker(blocker: Blocker, when = true, path?: string) {
                     },
                 };
 
-                if (path) {
-                    if (path !== tx.location.pathname) {
-                        blocker(autoUnblockingTx);
-                    } else {
-                        autoUnblockingTx.retry();
-                        refUnBlock.current = navigator.block(blockHandler);
-                    }
+                // If the path is set then we only want to prompt the user is the actual
+                //      path is changing. Otherwise, we just let them navigate. These must
+                //      be an EXACT match.
+                if (path && path === tx.location.pathname) {
+                    // If the path is not changing then the search params are being used
+                    //      so we want to allow that. So we use the try as if the user allower
+                    //      the nav. Then we set the current again to make sure it blocks future
+                    //      navigation that might change the path
+                    autoUnblockingTx.retry();
+                    refUnBlock.current = navigator.block(blockHandler);
                 } else {
                     blocker(autoUnblockingTx);
                 }
