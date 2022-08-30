@@ -135,7 +135,7 @@ function MaterializeGenerateButton({
                 });
             }
             const draftSpec = generateDraftSpec(
-                endpointConfigData,
+                encryptedEndpointConfig.data,
                 imagePath,
                 resourceConfig
             );
