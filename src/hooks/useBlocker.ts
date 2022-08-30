@@ -19,7 +19,7 @@ type NavigationContextWithBlock = ContextType<typeof NavigationContext> & {
 /**
  * @source https://github.com/remix-run/react-router/commit/256cad70d3fd4500b1abcfea66f3ee622fb90874
  */
-export function useBlocker(blocker: Blocker, when = true) {
+export function useBlocker(blocker: Blocker, when = true, path?: string) {
     const { navigator } = useContext(
         NavigationContext
     ) as NavigationContextWithBlock;
@@ -33,7 +33,9 @@ export function useBlocker(blocker: Blocker, when = true) {
         }
 
         if (!refUnBlock.current) {
-            refUnBlock.current = navigator.block((tx: Transition) => {
+            const blockHandler = (tx: Transition) => {
+                console.log('blocking ', tx);
+
                 const autoUnblockingTx = {
                     ...tx,
                     retry() {
@@ -42,16 +44,31 @@ export function useBlocker(blocker: Blocker, when = true) {
                     },
                 };
 
-                blocker(autoUnblockingTx);
-            });
+                if (path) {
+                    if (path !== tx.location.pathname) {
+                        blocker(autoUnblockingTx);
+                    } else {
+                        autoUnblockingTx.retry();
+                        refUnBlock.current = navigator.block(blockHandler);
+                    }
+                } else {
+                    blocker(autoUnblockingTx);
+                }
+            };
+            refUnBlock.current = navigator.block(blockHandler);
         }
-    }, [navigator, blocker, when]);
+    }, [navigator, blocker, when, path]);
 }
 
 /**
  * @source https://github.com/remix-run/react-router/issues/8139#issuecomment-1021457943
  */
-export function usePrompt(message: string, when = true, callback?: Function) {
+export function usePrompt(
+    message: string,
+    path: string,
+    when = true,
+    callback?: Function
+) {
     const confirmationModalContext = useConfirmationModalContext();
     const blocker = useCallback(
         async (tx: Transition) => {
@@ -69,5 +86,5 @@ export function usePrompt(message: string, when = true, callback?: Function) {
         },
         [message, callback, confirmationModalContext]
     );
-    return useBlocker(blocker, when);
+    return useBlocker(blocker, when, path);
 }

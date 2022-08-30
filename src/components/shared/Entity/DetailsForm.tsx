@@ -25,7 +25,6 @@ import {
     useDetailsForm_details,
     useDetailsForm_setDetails,
 } from 'stores/DetailsForm';
-import { useEndpointConfigStore_reset } from 'stores/EndpointConfig';
 import { EntityFormState } from 'stores/FormState';
 import { ENTITY_WITH_CREATE, Grants } from 'types';
 import { hasLength } from 'utils/misc-utils';
@@ -71,7 +70,7 @@ function DetailsForm({
     >(draftEditorStoreName, (state) => state.isSaving);
 
     // Endpoint Config Store
-    const resetEndpointConfig = useEndpointConfigStore_reset();
+    // const resetEndpointConfig = useEndpointConfigStore_reset();
 
     // Form State Store
     const messagePrefix = useZustandStore<
@@ -89,10 +88,10 @@ function DetailsForm({
         EntityFormState['isActive']
     >(formStateStoreName, (state) => state.isActive);
 
-    const resetFormState = useZustandStore<
-        EntityFormState,
-        EntityFormState['resetState']
-    >(formStateStoreName, (state) => state.resetState);
+    // const resetFormState = useZustandStore<
+    //     EntityFormState,
+    //     EntityFormState['resetState']
+    // >(formStateStoreName, (state) => state.resetState);
 
     useEffect(() => {
         if (connectorID && hasLength(connectorTags)) {
@@ -109,11 +108,11 @@ function DetailsForm({
         }
     }, [setDetails, connectorID, connectorTags]);
 
-    useEffect(() => {
-        if (connectorID && originalConnectorImage.id !== connectorID) {
-            resetFormState();
-        }
-    }, [resetFormState, connectorID, originalConnectorImage]);
+    // useEffect(() => {
+    //     if (connectorID && originalConnectorImage.id !== connectorID) {
+    //         resetFormState();
+    //     }
+    // }, [resetFormState, connectorID, originalConnectorImage]);
 
     const accessGrantsOneOf = useMemo(() => {
         const response = [] as string[];
@@ -219,9 +218,9 @@ function DetailsForm({
         ) {
             navigateToCreate(entityType, details.data.connectorImage.id, true);
         } else {
-            if (details.data.connectorImage.id === '') {
-                resetEndpointConfig();
-            }
+            // if (details.data.connectorImage.id === '') {
+            //     resetEndpointConfig();
+            // }
             setDetails(details);
         }
     };

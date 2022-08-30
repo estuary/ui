@@ -15,7 +15,6 @@ import {
     useZustandStore,
 } from 'context/Zustand';
 import { useClient } from 'hooks/supabase-swr';
-import { usePrompt } from 'hooks/useBlocker';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useEffect } from 'react';
@@ -170,17 +169,6 @@ function MaterializationCreate() {
         },
     };
 
-    usePrompt(
-        'confirm.loseData',
-        !exitWhenLogsClose &&
-            (endpointConfigChanged() ||
-                resourceConfigChanged() ||
-                detailsFormChanged()),
-        () => {
-            resetState();
-        }
-    );
-
     return (
         <PageContainer
             pageTitleProps={{
@@ -193,6 +181,12 @@ function MaterializationCreate() {
                 title="browserTitle.materializationCreate"
                 connectorType={entityType}
                 showCollections
+                promptDataLoss={
+                    endpointConfigChanged() ||
+                    resourceConfigChanged() ||
+                    detailsFormChanged()
+                }
+                resetState={resetState}
                 Header={
                     <FooHeader
                         GenerateButton={

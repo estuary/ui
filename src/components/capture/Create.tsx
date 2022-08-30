@@ -14,7 +14,6 @@ import {
     useZustandStore,
 } from 'context/Zustand';
 import { useClient } from 'hooks/supabase-swr';
-import { usePrompt } from 'hooks/useBlocker';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import LogRocket from 'logrocket';
@@ -27,6 +26,7 @@ import {
     useDetailsForm_changed,
     useDetailsForm_connectorImage,
     useDetailsForm_errorsExist,
+    useDetailsForm_resetFormState,
 } from 'stores/DetailsForm';
 import {
     useEndpointConfigStore_changed,
@@ -84,6 +84,7 @@ function CaptureCreate() {
     const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
     const resetEndpointConfigState = useEndpointConfigStore_reset();
     const endpointConfigChanged = useEndpointConfigStore_changed();
+    const resetDetailsFormState = useDetailsForm_resetFormState();
 
     // Form State Store
     const messagePrefix = useZustandStore<
@@ -112,6 +113,7 @@ function CaptureCreate() {
     }, [imageTag, setDraftId]);
 
     const resetState = () => {
+        resetDetailsFormState();
         resetEndpointConfigState();
         resetFormState();
     };
@@ -138,7 +140,6 @@ function CaptureCreate() {
         },
         exit: () => {
             resetState();
-
             navigate(authenticatedRoutes.captures.path);
         },
         jobFailed: (errorTitle: string) => {
@@ -196,14 +197,6 @@ function CaptureCreate() {
         );
     };
 
-    usePrompt(
-        'confirm.loseData',
-        !exitWhenLogsClose && (detailsFormChanged() || endpointConfigChanged()),
-        () => {
-            resetState();
-        }
-    );
-
     return (
         <PageContainer
             pageTitleProps={{
@@ -215,6 +208,8 @@ function CaptureCreate() {
             <EntityCreate
                 title="browserTitle.captureCreate"
                 connectorType={entityType}
+                promptDataLoss={detailsFormChanged() || endpointConfigChanged()}
+                resetState={resetState}
                 Header={
                     <FooHeader
                         heading={

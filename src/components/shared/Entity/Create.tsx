@@ -16,6 +16,7 @@ import {
     ResourceConfigStoreNames,
     useZustandStore,
 } from 'context/Zustand';
+import { usePrompt } from 'hooks/useBlocker';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useConnectorTag from 'hooks/useConnectorTag';
@@ -27,7 +28,7 @@ import {
 } from 'hooks/useLiveSpecsExt';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { useDetailsForm_connectorImage } from 'stores/DetailsForm';
 import { useEndpointConfigStore_setEndpointSchema } from 'stores/EndpointConfig';
 import { EntityFormState } from 'stores/FormState';
@@ -43,6 +44,8 @@ interface Props {
     formStateStoreName: FormStateStoreNames;
     resourceConfigStoreName?: ResourceConfigStoreNames;
     showCollections?: boolean;
+    promptDataLoss: any;
+    resetState: () => void;
 }
 
 function EntityCreate({
@@ -53,6 +56,8 @@ function EntityCreate({
     formStateStoreName,
     resourceConfigStoreName,
     showCollections,
+    promptDataLoss,
+    resetState,
 }: Props) {
     useBrowserTitle(title); //'browserTitle.captureCreate'
 
@@ -101,6 +106,11 @@ function EntityCreate({
         EntityFormState,
         EntityFormState['messagePrefix']
     >(formStateStoreName, (state) => state.messagePrefix);
+
+    const exitWhenLogsClose = useZustandStore<
+        EntityFormState,
+        EntityFormState['formState']['exitWhenLogsClose']
+    >(formStateStoreName, (state) => state.formState.exitWhenLogsClose);
 
     const logToken = useZustandStore<
         EntityFormState,
@@ -178,6 +188,16 @@ function EntityCreate({
             setShowConnectorTiles(true);
         }
     }, [connectorID]);
+
+    const { pathname } = useLocation();
+    usePrompt(
+        'confirm.loseData',
+        pathname,
+        !exitWhenLogsClose && promptDataLoss,
+        () => {
+            resetState();
+        }
+    );
 
     return (
         <>
