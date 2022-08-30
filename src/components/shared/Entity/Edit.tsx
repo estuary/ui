@@ -28,7 +28,6 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import {
     LiveSpecsExtQueryWithSpec,
     useLiveSpecsExtByLastPubId,
-    useLiveSpecsExtWithOutSpec,
     useLiveSpecsExtWithSpec,
 } from 'hooks/useLiveSpecsExt';
 import { isEmpty, isEqual } from 'lodash';
@@ -327,7 +326,6 @@ function EntityEdit({
     }, [setDetails, initialSpec, initialConnectorTag]);
 
     const { connectorTag } = useConnectorTag(imageTag.id);
-    const { liveSpecs } = useLiveSpecsExtWithOutSpec(liveSpecId, entityType);
     const { liveSpecs: liveSpecsByLastPub } = useLiveSpecsExtByLastPubId(
         lastPubId,
         entityType
@@ -355,32 +353,28 @@ function EntityEdit({
 
             // We wanna make sure we do these after the schemas are set as
             //  as they are dependent on them.
-            if (entityType === ENTITY.MATERIALIZATION && liveSpecs.length > 0) {
+            if (entityType === ENTITY.MATERIALIZATION) {
                 if (isEmpty(resourceConfig)) {
-                    liveSpecs.forEach((data) =>
-                        data.spec.bindings.forEach((binding: any) =>
-                            setResourceConfig(binding.source, {
-                                data: binding.resource,
-                                errors: [],
-                            })
-                        )
+                    initialSpec.spec.bindings.forEach((binding: any) =>
+                        setResourceConfig(binding.source, {
+                            data: binding.resource,
+                            errors: [],
+                        })
                     );
 
-                    preFillCollections(liveSpecs);
+                    preFillCollections([initialSpec]);
                 } else {
                     let existingResourceConfig: ResourceConfigDictionary = {};
 
-                    liveSpecs.forEach((data) =>
-                        data.spec.bindings.forEach((binding: any) => {
-                            existingResourceConfig = {
-                                ...existingResourceConfig,
-                                [binding.source]: {
-                                    data: binding.resource,
-                                    errors: [],
-                                },
-                            };
-                        })
-                    );
+                    initialSpec.spec.bindings.forEach((binding: any) => {
+                        existingResourceConfig = {
+                            ...existingResourceConfig,
+                            [binding.source]: {
+                                data: binding.resource,
+                                errors: [],
+                            },
+                        };
+                    });
 
                     setDraftId(
                         isEqual(resourceConfig, existingResourceConfig)
@@ -394,7 +388,6 @@ function EntityEdit({
         }
     }, [
         connectorTag,
-        liveSpecs,
         liveSpecsByLastPub,
         initialSpec,
         initialConnectorTag,
