@@ -356,7 +356,6 @@ function EntityEdit({
             //  as they are dependent on them.
             if (entityType === ENTITY.MATERIALIZATION) {
                 if (isEmpty(resourceConfig)) {
-                    console.log('A');
                     initialSpec.spec.bindings.forEach((binding: any) =>
                         setResourceConfig(binding.source, {
                             data: binding.resource,
