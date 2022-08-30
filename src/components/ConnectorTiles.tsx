@@ -29,6 +29,7 @@ import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { CONNECTOR_NAME, defaultTableFilter, TABLES } from 'services/supabase';
 import {
+    ENTITY,
     SortDirection,
     TableIntlConfig,
     TableState,
@@ -41,6 +42,7 @@ interface ConnectorTilesProps {
     cardWidth: number;
     cardsPerRow: number;
     gridSpacing: number;
+    protocolPreset?: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
 }
 
 interface TileProps {
@@ -102,6 +104,7 @@ function ConnectorTiles({
     cardWidth,
     cardsPerRow,
     gridSpacing,
+    protocolPreset,
 }: ConnectorTilesProps) {
     const navigate = useNavigate();
     const isFiltering = useRef(false);
@@ -110,7 +113,9 @@ function ConnectorTiles({
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
-    const [protocol, setProtocol] = useState<string | null>(null);
+    const [protocol, setProtocol] = useState<string | null>(
+        protocolPreset ?? null
+    );
     const [searchQuery, setSearchQuery] = useState<string | null>(null);
     const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
     const [columnToSort, setColumnToSort] =
@@ -177,6 +182,7 @@ function ConnectorTiles({
                     belowMd={belowMd}
                     gridSpacing={gridSpacing}
                     setColumnToSort={setColumnToSort}
+                    hideProtocol={!!protocolPreset}
                     setProtocol={setProtocol}
                     setSortDirection={setSortDirection}
                     setSearchQuery={setSearchQuery}
@@ -214,13 +220,22 @@ function ConnectorTiles({
                                     {row.title}
                                 </Typography>
 
-                                <Typography
-                                    variant="caption"
-                                    align="center"
-                                    marginBottom={2}
+                                <Button
+                                    href={
+                                        row.connector_tags[0].documentation_url
+                                    }
+                                    target="_blank"
+                                    rel="noopener"
+                                    endIcon={<OpenInNew />}
+                                    sx={{
+                                        'backgroundColor': slate[25],
+                                        '&:hover': {
+                                            backgroundColor: slate[25],
+                                        },
+                                    }}
                                 >
-                                    {row.image_name}
-                                </Typography>
+                                    <FormattedMessage id="terms.documentation" />
+                                </Button>
 
                                 <Typography
                                     component="div"
@@ -250,27 +265,9 @@ function ConnectorTiles({
                                     spacing={1}
                                     sx={{
                                         alignItems: 'center',
-                                        justifyContent: 'center',
+                                        justifyContent: 'flex-start',
                                     }}
                                 >
-                                    <Button
-                                        href={
-                                            row.connector_tags[0]
-                                                .documentation_url
-                                        }
-                                        target="_blank"
-                                        rel="noopener"
-                                        endIcon={<OpenInNew />}
-                                        sx={{
-                                            'backgroundColor': slate[25],
-                                            '&:hover': {
-                                                backgroundColor: slate[25],
-                                            },
-                                        }}
-                                    >
-                                        <FormattedMessage id="terms.documentation" />
-                                    </Button>
-
                                     <Button
                                         onClick={() => {
                                             if (
@@ -307,7 +304,6 @@ function ConnectorTiles({
                                                 );
                                             }
                                         }}
-                                        sx={{ flexGrow: 1 }}
                                     >
                                         {row.connector_tags[0].protocol ===
                                         'capture' ? (

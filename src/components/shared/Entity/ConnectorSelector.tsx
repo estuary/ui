@@ -6,8 +6,14 @@ interface Props {
 }
 
 function ConnectorSelector({ entityType }: Props) {
-    console.log('foo', entityType);
-    return <ConnectorTiles cardWidth={250} cardsPerRow={4} gridSpacing={2} />;
+    return (
+        <ConnectorTiles
+            cardWidth={250}
+            cardsPerRow={4}
+            gridSpacing={2}
+            protocolPreset={entityType}
+        />
+    );
 }
 
 export default ConnectorSelector;
