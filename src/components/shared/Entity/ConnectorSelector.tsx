@@ -1,8 +1,8 @@
 import ConnectorTiles from 'components/ConnectorTiles';
-import { ENTITY } from 'types';
+import { ENTITY_WITH_CREATE } from 'types';
 
 interface Props {
-    entityType: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
+    entityType: ENTITY_WITH_CREATE;
 }
 
 function ConnectorSelector({ entityType }: Props) {

@@ -12,8 +12,8 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
-import { authenticatedRoutes } from 'app/Authenticated';
 import ConnectorToolbar from 'components/ConnectorToolbar';
+import useEntityCreateNavigate from 'components/shared/Entity/useEntityCreateNavigate';
 import {
     darkGlassBkgColor,
     darkGlassBkgColorIntensified,
@@ -26,23 +26,22 @@ import {
 } from 'hooks/useConnectorWithTagDetail';
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
-import { useNavigate } from 'react-router-dom';
 import { CONNECTOR_NAME, defaultTableFilter, TABLES } from 'services/supabase';
 import {
-    ENTITY,
+    ENTITY_WITH_CREATE,
     SortDirection,
     TableIntlConfig,
     TableState,
     TableStatuses,
 } from 'types';
-import { getPathWithParam, hasLength } from 'utils/misc-utils';
+import { hasLength } from 'utils/misc-utils';
 import { getEmptyTableHeader, getEmptyTableMessage } from 'utils/table-utils';
 
 interface ConnectorTilesProps {
     cardWidth: number;
     cardsPerRow: number;
     gridSpacing: number;
-    protocolPreset?: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
+    protocolPreset?: ENTITY_WITH_CREATE;
 }
 
 interface TileProps {
@@ -106,7 +105,7 @@ function ConnectorTiles({
     gridSpacing,
     protocolPreset,
 }: ConnectorTilesProps) {
-    const navigate = useNavigate();
+    const navigateToCreate = useEntityCreateNavigate();
     const isFiltering = useRef(false);
     const intl = useIntl();
 
@@ -124,6 +123,13 @@ function ConnectorTiles({
     const [tableState, setTableState] = useState<TableState>({
         status: TableStatuses.LOADING,
     });
+
+    const primaryCtaClick = (row: ConnectorWithTagDetailQuery) => {
+        navigateToCreate(
+            row.connector_tags[0].protocol,
+            row.connector_tags[0].id
+        );
+    };
 
     const liveSpecQuery = useQuery<ConnectorWithTagDetailQuery>(
         TABLES.CONNECTORS,
@@ -269,41 +275,7 @@ function ConnectorTiles({
                                     }}
                                 >
                                     <Button
-                                        onClick={() => {
-                                            if (
-                                                row.connector_tags[0]
-                                                    .protocol === 'capture'
-                                            ) {
-                                                navigate(
-                                                    getPathWithParam(
-                                                        authenticatedRoutes
-                                                            .captures.create
-                                                            .fullPath,
-                                                        authenticatedRoutes
-                                                            .captures.create
-                                                            .params.connectorID,
-                                                        row.connector_tags[0].id
-                                                    )
-                                                );
-                                            } else if (
-                                                row.connector_tags[0]
-                                                    .protocol ===
-                                                'materialization'
-                                            ) {
-                                                navigate(
-                                                    getPathWithParam(
-                                                        authenticatedRoutes
-                                                            .materializations
-                                                            .create.fullPath,
-                                                        authenticatedRoutes
-                                                            .materializations
-                                                            .create.params
-                                                            .connectorId,
-                                                        row.connector_tags[0].id
-                                                    )
-                                                );
-                                            }
-                                        }}
+                                        onClick={() => primaryCtaClick(row)}
                                     >
                                         {row.connector_tags[0].protocol ===
                                         'capture' ? (

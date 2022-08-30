@@ -23,9 +23,11 @@ export const addKeywords = (ajv: any) => {
     // https://github.com/estuary/flow/blob/master/crates/doc/src/annotation.rs
     ajv.addKeyword('multiline'); // text input should expect multiple lines
     ajv.addKeyword('secret'); // should render as a password
+    ajv.addKeyword('airbyte_secret'); // should render as a password
     ajv.addKeyword('advanced'); // Should be collapsed by default
     ajv.addKeyword('order'); // Unused at this time, but still present in airbyte schemas.
     ajv.addKeyword('x-oauth2-provider'); // Used to display OAuth
+    ajv.addKeyword('discriminator'); // User to know what field to key off of with complex oneOfs (ex: parser)
     return ajv;
 };
 

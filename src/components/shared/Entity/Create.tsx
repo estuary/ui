@@ -7,6 +7,7 @@ import ConnectorSelector from 'components/shared/Entity/ConnectorSelector';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
 import EntityError from 'components/shared/Entity/Error';
+import useConnectorID from 'components/shared/Entity/useConnectorID';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import {
@@ -24,19 +25,19 @@ import {
     useLiveSpecsExtByLastPubId,
     useLiveSpecsExtWithOutSpec,
 } from 'hooks/useLiveSpecsExt';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
 import { useDetailsForm_connectorImage } from 'stores/DetailsForm';
 import { useEndpointConfigStore_setEndpointSchema } from 'stores/EndpointConfig';
 import { EntityFormState } from 'stores/FormState';
 import { ResourceConfigState } from 'stores/ResourceConfig';
-import { ENTITY, Schema } from 'types';
+import { ENTITY, ENTITY_WITH_CREATE, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     title: string;
-    connectorType: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
+    connectorType: ENTITY_WITH_CREATE;
     Header: any;
     draftEditorStoreName: DraftEditorStoreNames;
     formStateStoreName: FormStateStoreNames;
@@ -68,6 +69,9 @@ function EntityCreate({
     const lastPubId = searchParams.get(
         authenticatedRoutes.materializations.create.params.lastPubId
     );
+    const connectorID = useConnectorID();
+
+    const [showConnectorTiles, setShowConnectorTiles] = useState(true);
 
     const {
         connectorTags,
@@ -167,11 +171,23 @@ function EntityCreate({
         setResourceSchema,
     ]);
 
+    useEffect(() => {
+        if (typeof connectorID === 'string') {
+            setShowConnectorTiles(false);
+        } else {
+            setShowConnectorTiles(true);
+        }
+    }, [connectorID]);
+
     return (
         <>
-            {Header}
+            <Collapse in={showConnectorTiles} unmountOnExit>
+                <ConnectorSelector entityType={connectorType} />
+            </Collapse>
 
-            <ConnectorSelector entityType={connectorType} />
+            {/* <Collapse in={!showConnectorTiles} unmountOnExit> */}
+            {/* <> */}
+            {Header}
 
             {connectorTagsError ? (
                 <Error error={connectorTagsError} />
@@ -201,6 +217,7 @@ function EntityCreate({
                                 accessGrants={combinedGrants}
                                 draftEditorStoreName={draftEditorStoreName}
                                 formStateStoreName={formStateStoreName}
+                                entityType={connectorType}
                             />
                         </ErrorBoundryWrapper>
                     ) : null}
@@ -237,6 +254,8 @@ function EntityCreate({
                     </ErrorBoundryWrapper>
                 </>
             )}
+            {/* </> */}
+            {/* </Collapse> */}
         </>
     );
 }

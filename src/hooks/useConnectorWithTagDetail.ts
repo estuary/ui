@@ -3,13 +3,13 @@ import {
     CONNECTOR_RECOMMENDED,
     TABLES,
 } from 'services/supabase';
-import { OpenGraph } from 'types';
+import { ENTITY_WITH_CREATE, OpenGraph } from 'types';
 import { useQuery, useSelect } from './supabase-swr';
 
 export interface ConnectorWithTagDetailQuery {
     connector_tags: {
         documentation_url: string;
-        protocol: string;
+        protocol: ENTITY_WITH_CREATE;
         image_tag: string;
         image_name: string;
         id: string;

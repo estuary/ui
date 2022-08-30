@@ -123,6 +123,7 @@ const getInitialState = (
     },
 
     resetState: () => {
+        console.log('reset form state');
         set(
             getInitialStateData(messagePrefix),
             false,
@@ -135,6 +136,7 @@ export const createFormStateStore = (
     key: FormStateStoreNames,
     messagePrefix: MessagePrefixes
 ) => {
+    console.log('createFormStateStore', key);
     return create<EntityFormState>()(
         devtools(
             (set, get) => getInitialState(set, get, messagePrefix),

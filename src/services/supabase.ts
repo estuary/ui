@@ -4,6 +4,7 @@ import {
     RealtimeSubscription,
     User,
 } from '@supabase/supabase-js';
+import { SupabaseQueryBuilder } from '@supabase/supabase-js/dist/module/lib/SupabaseQueryBuilder';
 import { isEmpty } from 'lodash';
 import { JobStatus } from 'types';
 
@@ -203,7 +204,7 @@ export const endAllSubscriptions = () => {
 };
 
 export const startSubscription = (
-    query: any,
+    query: SupabaseQueryBuilder<any>,
     success: Function,
     failure: Function,
     keepSubscription?: boolean

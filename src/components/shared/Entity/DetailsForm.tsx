@@ -1,8 +1,9 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Alert, Stack, Typography } from '@mui/material';
-import { authenticatedRoutes } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
+import useConnectorID from 'components/shared/Entity/useConnectorID';
+import useEntityCreateNavigate from 'components/shared/Entity/useEntityCreateNavigate';
 import {
     DraftEditorStoreNames,
     FormStateStoreNames,
@@ -14,7 +15,6 @@ import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useSearchParams } from 'react-router-dom';
 import {
     defaultOptions,
     defaultRenderers,
@@ -27,7 +27,7 @@ import {
 } from 'stores/DetailsForm';
 import { useEndpointConfigStore_reset } from 'stores/EndpointConfig';
 import { EntityFormState } from 'stores/FormState';
-import { Grants } from 'types';
+import { ENTITY_WITH_CREATE, Grants } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
@@ -35,6 +35,7 @@ interface Props {
     accessGrants: Grants[];
     draftEditorStoreName: DraftEditorStoreNames;
     formStateStoreName: FormStateStoreNames;
+    entityType: ENTITY_WITH_CREATE;
 }
 
 const getConnectorImageDetails = (connector: ConnectorWithTagDetailQuery) => {
@@ -51,16 +52,11 @@ function DetailsForm({
     accessGrants,
     draftEditorStoreName,
     formStateStoreName,
+    entityType,
 }: Props) {
     const intl = useIntl();
-    const [searchParams] = useSearchParams();
-    const connectorID =
-        searchParams.get(
-            authenticatedRoutes.captures.create.params.connectorID
-        ) ??
-        searchParams.get(
-            authenticatedRoutes.materializations.create.params.connectorId
-        );
+    const navigateToCreate = useEntityCreateNavigate();
+    const connectorID = useConnectorID();
 
     // Details Form Store
     const formData = useDetailsForm_details();
@@ -216,10 +212,18 @@ function DetailsForm({
     };
 
     const updateDetails = (details: Details) => {
-        if (details.data.connectorImage.id === '') {
-            resetEndpointConfig();
+        if (
+            details.data.connectorImage.id &&
+            details.data.connectorImage.id.length === 23 &&
+            details.data.connectorImage.id !== originalConnectorImage.id
+        ) {
+            navigateToCreate(entityType, details.data.connectorImage.id, true);
+        } else {
+            if (details.data.connectorImage.id === '') {
+                resetEndpointConfig();
+            }
+            setDetails(details);
         }
-        setDetails(details);
     };
 
     return (
