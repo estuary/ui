@@ -86,6 +86,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.generateCatalog.capture': `Discover Endpoint`,
     'cta.generateCatalog.materialization': `Discover Endpoint`,
     'cta.expandToEdit': `Expand to edit`,
+    'cta.expandToView': `Expand to view`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
@@ -423,6 +424,11 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.connector.label': `${CommonMessages['connector.label']} Search`,
 };
 
+const EntityEdit: ResolvedIntlConfig['messages'] = {
+    'entityEdit.alert.detailsFormDisabled': `The details form cannot be edited at this time.`,
+    'entityEdit.alert.endpointConfigDisabled': `We are working to enable editing of the endpoint configuration form. In the meantime, edits can be made in the Specification Editor below.`,
+};
+
 const MonacoEditor: ResolvedIntlConfig['messages'] = {
     'monacoEditor.serverDiff': `Your version is out of sync with the server.`,
     'monacoEditor.serverDiffCTA': `See changes`,
@@ -629,6 +635,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...ShardStatus,
     ...OAuth,
     ...Welcome,
+    ...EntityEdit,
 };
 
 export default enUSMessages;

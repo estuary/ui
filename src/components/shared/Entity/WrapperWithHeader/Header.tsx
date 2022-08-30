@@ -6,9 +6,10 @@ import { BaseComponentProps } from 'types';
 
 interface Props extends BaseComponentProps {
     expanded: boolean;
+    readOnly?: boolean;
 }
 
-function Header({ children, expanded }: Props) {
+function Header({ children, expanded, readOnly }: Props) {
     return (
         <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
@@ -18,13 +19,16 @@ function Header({ children, expanded }: Props) {
             }}
         >
             {children}
+
             <Fade in={!expanded}>
                 <Typography
                     sx={{
                         ml: 'auto',
                     }}
                 >
-                    <FormattedMessage id="cta.expandToEdit" />
+                    <FormattedMessage
+                        id={readOnly ? 'cta.expandToView' : 'cta.expandToEdit'}
+                    />
                 </Typography>
             </Fade>
         </AccordionSummary>

@@ -239,6 +239,14 @@ function DetailsForm({
                 <FormattedMessage id={`${messagePrefix}.details.heading`} />
             </Typography>
 
+            {readOnly ? (
+                <Alert color="info" style={{ marginBottom: 8 }}>
+                    {intl.formatMessage({
+                        id: 'entityEdit.alert.detailsFormDisabled',
+                    })}
+                </Alert>
+            ) : null}
+
             <Typography sx={{ mb: 2 }}>
                 <FormattedMessage id={`${messagePrefix}.instructions`} />
             </Typography>
