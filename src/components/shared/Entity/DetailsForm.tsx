@@ -60,7 +60,7 @@ function DetailsForm({
     const [searchParams] = useSearchParams();
     const connectorId =
         searchParams.get(
-            authenticatedRoutes.captures.edit.params.connectorId
+            authenticatedRoutes.captures.create.params.connectorID
         ) ??
         searchParams.get(
             authenticatedRoutes.materializations.create.params.connectorId
