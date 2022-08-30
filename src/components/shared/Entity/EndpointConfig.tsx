@@ -51,11 +51,13 @@ function EndpointConfig({
                     />
                 }
             >
-                <Alert color="info" style={{ marginBottom: 8 }}>
-                    {intl.formatMessage({
-                        id: 'entityEdit.alert.endpointConfigDisabled',
-                    })}
-                </Alert>
+                {readOnly ? (
+                    <Alert color="info" style={{ marginBottom: 8 }}>
+                        {intl.formatMessage({
+                            id: 'entityEdit.alert.endpointConfigDisabled',
+                        })}
+                    </Alert>
+                ) : null}
 
                 <EndpointConfigForm
                     formStateStoreName={formStateStoreName}
