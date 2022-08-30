@@ -301,9 +301,9 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
 
     'optionMenu.ariaLabel': `Open Option Menu`,
     'optionMenu.tooltip': `Options`,
-    'optionMenu.option.detailsPanel.display': `View entity details`,
-    'optionMenu.option.detailsPanel.hide': `Hide entity details`,
-    'optionMenu.option.edit': `Edit entity specification`,
+    'optionMenu.option.detailsPanel.display': `View details`,
+    'optionMenu.option.detailsPanel.hide': `Hide details`,
+    'optionMenu.option.edit': `Edit catalog`,
 };
 
 const LogsDialog: ResolvedIntlConfig['messages'] = {
