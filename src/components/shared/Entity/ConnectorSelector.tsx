@@ -12,6 +12,7 @@ function ConnectorSelector({ entityType }: Props) {
             cardsPerRow={4}
             gridSpacing={2}
             protocolPreset={entityType}
+            replaceOnNavigate
         />
     );
 }

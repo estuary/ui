@@ -8,6 +8,7 @@ import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
 import EntityError from 'components/shared/Entity/Error';
 import useConnectorID from 'components/shared/Entity/useConnectorID';
+import useUnsavedChangesPrompt from 'components/shared/Entity/useUnsavedChangesPrompt';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import {
@@ -16,7 +17,6 @@ import {
     ResourceConfigStoreNames,
     useZustandStore,
 } from 'context/Zustand';
-import { usePrompt } from 'hooks/useBlocker';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useConnectorTag from 'hooks/useConnectorTag';
@@ -28,7 +28,8 @@ import {
 } from 'hooks/useLiveSpecsExt';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
+import { useUnmount } from 'react-use';
 import { useDetailsForm_connectorImage } from 'stores/DetailsForm';
 import { useEndpointConfigStore_setEndpointSchema } from 'stores/EndpointConfig';
 import { EntityFormState } from 'stores/FormState';
@@ -189,16 +190,8 @@ function EntityCreate({
         }
     }, [connectorID]);
 
-    const { pathname } = useLocation();
-    usePrompt(
-        'confirm.loseData',
-        pathname,
-        !exitWhenLogsClose && promptDataLoss,
-        () => {
-            console.log('calling reset state');
-            resetState();
-        }
-    );
+    useUnsavedChangesPrompt(!exitWhenLogsClose && promptDataLoss);
+    useUnmount(() => resetState());
 
     return (
         <>

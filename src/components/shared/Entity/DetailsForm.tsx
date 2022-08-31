@@ -61,8 +61,6 @@ function DetailsForm({
     const formData = useDetailsForm_details();
     const { connectorImage: originalConnectorImage } = formData;
 
-    console.log('>>> ', originalConnectorImage.id);
-
     const setDetails = useDetailsForm_setDetails();
 
     // Draft Editor Store
@@ -97,7 +95,6 @@ function DetailsForm({
 
     useEffect(() => {
         if (connectorID && hasLength(connectorTags)) {
-            console.log('Setting the details');
             connectorTags.forEach((connector) => {
                 if (connector.connector_tags[0].id === connectorID) {
                     setDetails({
@@ -214,16 +211,11 @@ function DetailsForm({
     };
 
     const updateDetails = (details: Details) => {
-        console.log('updateDetails', [
-            details.data.connectorImage.id,
-            originalConnectorImage.id,
-        ]);
         if (
             details.data.connectorImage.id &&
             details.data.connectorImage.id.length === 23 &&
             details.data.connectorImage.id !== originalConnectorImage.id
         ) {
-            console.log('  navigate');
             navigateToCreate(entityType, details.data.connectorImage.id, true);
         } else {
             if (details.data.connectorImage.id === '') {
@@ -233,7 +225,6 @@ function DetailsForm({
                     true
                 );
             }
-            console.log('  set details');
             setDetails(details);
         }
     };

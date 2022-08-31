@@ -24,10 +24,11 @@ import {
     ConnectorWithTagDetailQuery,
     CONNECTOR_WITH_TAG_QUERY,
 } from 'hooks/useConnectorWithTagDetail';
-import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
 import { CONNECTOR_NAME, defaultTableFilter, TABLES } from 'services/supabase';
 import {
+    BaseComponentProps,
     ENTITY_WITH_CREATE,
     SortDirection,
     TableIntlConfig,
@@ -42,11 +43,10 @@ interface ConnectorTilesProps {
     cardsPerRow: number;
     gridSpacing: number;
     protocolPreset?: ENTITY_WITH_CREATE;
+    replaceOnNavigate?: boolean;
 }
 
-interface TileProps {
-    children: ReactNode;
-}
+type TileProps = BaseComponentProps;
 
 const intlConfig: TableIntlConfig = {
     header: 'connectors.main.message1',
@@ -104,6 +104,7 @@ function ConnectorTiles({
     cardsPerRow,
     gridSpacing,
     protocolPreset,
+    replaceOnNavigate,
 }: ConnectorTilesProps) {
     const navigateToCreate = useEntityCreateNavigate();
     const isFiltering = useRef(false);
@@ -127,7 +128,8 @@ function ConnectorTiles({
     const primaryCtaClick = (row: ConnectorWithTagDetailQuery) => {
         navigateToCreate(
             row.connector_tags[0].protocol,
-            row.connector_tags[0].id
+            row.connector_tags[0].id,
+            replaceOnNavigate
         );
     };
 

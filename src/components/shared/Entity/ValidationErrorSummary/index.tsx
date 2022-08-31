@@ -37,8 +37,6 @@ function ValidationErrorSummary({
         EntityFormState['formState']['displayValidation']
     >(formStateStoreName, (state) => state.formState.displayValidation);
 
-    console.log('displayValidation', displayValidation);
-
     return displayValidation ? (
         <Collapse in={errorsExist} timeout="auto" unmountOnExit>
             <Alert severity="error" icon={hideIcon ?? undefined}>
