@@ -399,6 +399,7 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.sops.failedTitle': `Configuration Encryption Failed`,
     'entityCreate.endpointConfig.heading': `${entityCreateHeader}`,
     'entityCreate.endpointConfig.errorSummary': `There are issues with the form.`,
+    'entityCreate.instructions': `To start select a Connector below. Once you make a selection the rest of the form will display and you can configure your endpoint. You can search by name and if you do not find what you are looking for please let us know by requesting the connector.`,
 
     'entityCreate.endpointConfig.detailsHaveErrors': `The Details section has errors:`,
     'entityCreate.endpointConfig.resourceConfigHaveErrors': `The Collections Resource Configuration section has errors:`,

@@ -61,7 +61,7 @@ function FooHeader({
     });
 
     return (
-        <>
+        <Stack spacing={2} sx={{ mb: 1 }}>
             <Toolbar
                 ref={ref}
                 disableGutters
@@ -101,7 +101,7 @@ function FooHeader({
             </Toolbar>
 
             <Collapse in={formActive} unmountOnExit>
-                <LinearProgress sx={{ mb: 2 }} />
+                <LinearProgress />
             </Collapse>
 
             <Box sx={{ maxHeight: 200, overflowY: 'auto' }}>
@@ -111,7 +111,7 @@ function FooHeader({
                     resourceConfigStoreName={resourceConfigStoreName}
                 />
             </Box>
-        </>
+        </Stack>
     );
 }
 

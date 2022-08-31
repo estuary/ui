@@ -1,4 +1,4 @@
-import { Alert, Collapse } from '@mui/material';
+import { Alert, Collapse, Typography } from '@mui/material';
 import { authenticatedRoutes } from 'app/Authenticated';
 import CollectionConfig from 'components/collection/Config';
 import ConnectorTiles from 'components/ConnectorTiles';
@@ -197,6 +197,10 @@ function EntityCreate({
             {Header}
 
             <Collapse in={showConnectorTiles} unmountOnExit>
+                <Typography sx={{ mb: 2 }}>
+                    <FormattedMessage id="entityCreate.instructions" />
+                </Typography>
+
                 <ConnectorTiles
                     protocolPreset={connectorType}
                     replaceOnNavigate
