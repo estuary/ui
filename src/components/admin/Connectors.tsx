@@ -25,7 +25,7 @@ const AdminConnectors = () => {
                 </Stack>
             </Toolbar>
 
-            <ConnectorTiles cardWidth={250} cardsPerRow={4} gridSpacing={2} />
+            <ConnectorTiles />
         </PageContainer>
     );
 };

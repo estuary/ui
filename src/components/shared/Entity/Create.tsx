@@ -1,9 +1,9 @@
 import { Alert, Collapse } from '@mui/material';
 import { authenticatedRoutes } from 'app/Authenticated';
 import CollectionConfig from 'components/collection/Config';
+import ConnectorTiles from 'components/ConnectorTiles';
 import { EditorStoreState } from 'components/editor/Store';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
-import ConnectorSelector from 'components/shared/Entity/ConnectorSelector';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
 import EntityError from 'components/shared/Entity/Error';
@@ -197,7 +197,10 @@ function EntityCreate({
             {Header}
 
             <Collapse in={showConnectorTiles} unmountOnExit>
-                <ConnectorSelector entityType={connectorType} />
+                <ConnectorTiles
+                    protocolPreset={connectorType}
+                    replaceOnNavigate
+                />
             </Collapse>
 
             <Collapse in={!showConnectorTiles} unmountOnExit>

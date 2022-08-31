@@ -39,9 +39,6 @@ import { hasLength } from 'utils/misc-utils';
 import { getEmptyTableHeader, getEmptyTableMessage } from 'utils/table-utils';
 
 interface ConnectorTilesProps {
-    cardWidth: number;
-    cardsPerRow: number;
-    gridSpacing: number;
     protocolPreset?: ENTITY_WITH_CREATE;
     replaceOnNavigate?: boolean;
 }
@@ -100,9 +97,6 @@ function Tile({ children }: TileProps) {
 }
 
 function ConnectorTiles({
-    cardWidth,
-    cardsPerRow,
-    gridSpacing,
     protocolPreset,
     replaceOnNavigate,
 }: ConnectorTilesProps) {
@@ -124,14 +118,6 @@ function ConnectorTiles({
     const [tableState, setTableState] = useState<TableState>({
         status: TableStatuses.LOADING,
     });
-
-    const primaryCtaClick = (row: ConnectorWithTagDetailQuery) => {
-        navigateToCreate(
-            row.connector_tags[0].protocol,
-            row.connector_tags[0].id,
-            replaceOnNavigate
-        );
-    };
 
     const liveSpecQuery = useQuery<ConnectorWithTagDetailQuery>(
         TABLES.CONNECTORS,
@@ -158,6 +144,14 @@ function ConnectorTiles({
         [useSelectResponse]
     );
 
+    const primaryCtaClick = (row: ConnectorWithTagDetailQuery) => {
+        navigateToCreate(
+            row.connector_tags[0].protocol,
+            row.connector_tags[0].id,
+            replaceOnNavigate
+        );
+    };
+
     useEffect(() => {
         if (selectData.length > 0) {
             setTableState({ status: TableStatuses.DATA_FETCHED });
@@ -168,19 +162,15 @@ function ConnectorTiles({
         }
     }, [selectData, isValidating]);
 
-    const gridContainerWidth = belowMd
-        ? '100%'
-        : cardWidth * cardsPerRow + 8 * gridSpacing * (cardsPerRow + 1);
+    const gridContainerWidth = '100%';
 
-    const skeletonTileCount = useMemo(
-        () => 12 / (belowMd ? 6 : 12 / cardsPerRow),
-        [belowMd, cardsPerRow]
-    );
+    const skeletonTileCount = 6;
 
     return (
         <Grid
             container
-            spacing={gridSpacing}
+            spacing={{ xs: 2, md: 3 }}
+            columns={{ xs: 2, sm: 4, md: 12, lg: 12, xl: 12 }}
             paddingRight={2}
             width={gridContainerWidth}
             margin="auto"
@@ -188,7 +178,7 @@ function ConnectorTiles({
             <Grid item xs={12}>
                 <ConnectorToolbar
                     belowMd={belowMd}
-                    gridSpacing={gridSpacing}
+                    gridSpacing={2}
                     setColumnToSort={setColumnToSort}
                     hideProtocol={!!protocolPreset}
                     setProtocol={setProtocol}
@@ -203,8 +193,9 @@ function ConnectorTiles({
                         <Grid
                             key={`connector-tile-${index}`}
                             item
-                            xs={6}
-                            md={12 / cardsPerRow}
+                            xs={2}
+                            md={4}
+                            lg={3}
                         >
                             <Tile>
                                 <Box sx={imageBackgroundSx}>
@@ -294,8 +285,9 @@ function ConnectorTiles({
                         <Grid
                             key="connector-request-tile"
                             item
-                            xs={6}
-                            md={12 / cardsPerRow}
+                            xs={2}
+                            md={4}
+                            lg={3}
                         >
                             <Tile>
                                 <Box>
@@ -359,8 +351,9 @@ function ConnectorTiles({
                         <Grid
                             key={`connector-skeleton-${index}`}
                             item
-                            xs={6}
-                            md={12 / cardsPerRow}
+                            xs={2}
+                            md={4}
+                            lg={3}
                         >
                             {skeleton}
                         </Grid>
