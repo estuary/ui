@@ -10,7 +10,7 @@ import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
 import useConnectorID from 'hooks/searchParams/useConnectorID';
 import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
     defaultOptions,
@@ -21,6 +21,7 @@ import {
     Details,
     useDetailsForm_details,
     useDetailsForm_setDetails,
+    useDetailsForm_setDetails_connector,
 } from 'stores/DetailsForm';
 import { EntityFormState } from 'stores/FormState';
 import { hasLength } from 'utils/misc-utils';
@@ -49,12 +50,10 @@ function DetailsFormForm({
 
     // Details Form Store
     const formData = useDetailsForm_details();
-    const {
-        connectorImage: originalConnectorImage,
-        entityName: originalEntityName,
-    } = formData;
+    const { connectorImage: originalConnectorImage } = formData;
 
     const setDetails = useDetailsForm_setDetails();
+    const setDetails_connector = useDetailsForm_setDetails_connector();
 
     // Draft Editor Store
     const isSaving = useZustandStore<
@@ -78,20 +77,22 @@ function DetailsFormForm({
         EntityFormState['isActive']
     >(formStateStoreName, (state) => state.isActive);
 
-    useEffect(() => {
-        if (connectorID && hasLength(connectorTags)) {
+    const setSelectedConnector = useCallback(
+        (id: string) => {
             connectorTags.forEach((connector) => {
-                if (connector.connector_tags[0].id === connectorID) {
-                    setDetails({
-                        data: {
-                            entityName: originalEntityName,
-                            connectorImage: getConnectorImageDetails(connector),
-                        },
-                    });
+                if (connector.connector_tags[0].id === id) {
+                    setDetails_connector(getConnectorImageDetails(connector));
                 }
             });
+        },
+        [connectorTags, setDetails_connector]
+    );
+
+    useEffect(() => {
+        if (connectorID && hasLength(connectorTags)) {
+            setSelectedConnector(connectorID);
         }
-    }, [setDetails, connectorID, connectorTags]);
+    }, [connectorID, connectorTags, setSelectedConnector]);
 
     const accessGrantsOneOf = useMemo(() => {
         const response = [] as string[];
@@ -191,11 +192,20 @@ function DetailsFormForm({
 
     const updateDetails = (details: Details) => {
         if (
+            // TODO (Validators) we need to build out validators for specific types of data
             details.data.connectorImage.id &&
             details.data.connectorImage.id.length === 23 &&
             details.data.connectorImage.id !== originalConnectorImage.id
         ) {
-            navigateToCreate(entityType, details.data.connectorImage.id, true);
+            if (details.data.connectorImage.id === connectorID) {
+                setDetails_connector(details.data.connectorImage);
+            } else {
+                navigateToCreate(
+                    entityType,
+                    details.data.connectorImage.id,
+                    true
+                );
+            }
         } else {
             setDetails(details);
         }
