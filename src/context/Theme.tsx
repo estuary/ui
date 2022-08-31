@@ -353,16 +353,12 @@ const ThemeProvider = ({ children }: BaseComponentProps) => {
                     },
                     styleOverrides: {
                         root: {
-                            'backgroundColor':
+                            backgroundColor:
                                 palette.mode === 'dark'
                                     ? 'transparent'
                                     : 'rgba(255, 255, 255, 0.6)',
-                            'boxShadow': 'none',
-                            'borderRadius': 10,
-                            'overflow': 'hidden',
-                            '&:last-of-type': {
-                                borderRadius: 10,
-                            },
+                            boxShadow: 'none',
+                            overflow: 'hidden',
                         },
                     },
                 },

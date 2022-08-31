@@ -6,12 +6,13 @@ import { BaseComponentProps } from 'types';
 
 interface Props extends BaseComponentProps {
     expanded: boolean;
+    disableClose?: boolean;
 }
 
-function Header({ children, expanded }: Props) {
+function Header({ children, disableClose, expanded }: Props) {
     return (
         <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
+            expandIcon={!disableClose ? <ExpandMoreIcon /> : undefined}
             sx={{
                 backgroundColor: (theme) =>
                     theme.palette.mode === 'dark' ? 'transparent' : slate[50],
