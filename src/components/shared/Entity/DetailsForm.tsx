@@ -2,8 +2,8 @@ import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Alert, Stack, Typography } from '@mui/material';
 import { EditorStoreState } from 'components/editor/Store';
+import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
 import useConnectorID from 'components/shared/Entity/useConnectorID';
-import useEntityCreateNavigate from 'components/shared/Entity/useEntityCreateNavigate';
 import {
     DraftEditorStoreNames,
     FormStateStoreNames,

@@ -7,8 +7,8 @@ import ConnectorSelector from 'components/shared/Entity/ConnectorSelector';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
 import EntityError from 'components/shared/Entity/Error';
+import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedChangesPrompt';
 import useConnectorID from 'components/shared/Entity/useConnectorID';
-import useUnsavedChangesPrompt from 'components/shared/Entity/useUnsavedChangesPrompt';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import {
@@ -29,7 +29,6 @@ import {
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
-import { useUnmount } from 'react-use';
 import { useDetailsForm_connectorImage } from 'stores/DetailsForm';
 import { useEndpointConfigStore_setEndpointSchema } from 'stores/EndpointConfig';
 import { EntityFormState } from 'stores/FormState';
@@ -190,8 +189,7 @@ function EntityCreate({
         }
     }, [connectorID]);
 
-    useUnsavedChangesPrompt(!exitWhenLogsClose && promptDataLoss);
-    useUnmount(() => resetState());
+    useUnsavedChangesPrompt(!exitWhenLogsClose && promptDataLoss, resetState);
 
     return (
         <>

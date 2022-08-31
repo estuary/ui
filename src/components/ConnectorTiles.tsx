@@ -13,7 +13,7 @@ import {
     useTheme,
 } from '@mui/material';
 import ConnectorToolbar from 'components/ConnectorToolbar';
-import useEntityCreateNavigate from 'components/shared/Entity/useEntityCreateNavigate';
+import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
 import {
     darkGlassBkgColor,
     darkGlassBkgColorIntensified,
