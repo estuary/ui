@@ -10,7 +10,7 @@ import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
 import useConnectorID from 'hooks/searchParams/useConnectorID';
 import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
     defaultOptions,
@@ -77,22 +77,17 @@ function DetailsFormForm({
         EntityFormState['isActive']
     >(formStateStoreName, (state) => state.isActive);
 
-    const setSelectedConnector = useCallback(
-        (id: string) => {
-            connectorTags.forEach((connector) => {
-                if (connector.connector_tags[0].id === id) {
-                    setDetails_connector(getConnectorImageDetails(connector));
-                }
-            });
-        },
-        [connectorTags, setDetails_connector]
-    );
-
     useEffect(() => {
         if (connectorID && hasLength(connectorTags)) {
-            setSelectedConnector(connectorID);
+            connectorTags.find((connector) => {
+                const response = connector.connector_tags[0].id === connectorID;
+                if (response) {
+                    setDetails_connector(getConnectorImageDetails(connector));
+                }
+                return response;
+            });
         }
-    }, [connectorID, connectorTags, setSelectedConnector]);
+    }, [connectorID, connectorTags, setDetails_connector]);
 
     const accessGrantsOneOf = useMemo(() => {
         const response = [] as string[];
