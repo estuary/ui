@@ -3,7 +3,6 @@ import { JsonForms } from '@jsonforms/react';
 import { Alert, Stack, Typography } from '@mui/material';
 import { EditorStoreState } from 'components/editor/Store';
 import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
-import useConnectorID from 'components/shared/Entity/useConnectorID';
 import {
     DraftEditorStoreNames,
     FormStateStoreNames,
@@ -11,6 +10,7 @@ import {
 } from 'context/Zustand';
 import { CATALOG_NAME_SCOPE } from 'forms/renderers/CatalogName';
 import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
+import useConnectorID from 'hooks/searchParams/useConnectorID';
 import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useEffect, useMemo } from 'react';

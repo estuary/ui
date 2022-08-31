@@ -8,7 +8,6 @@ import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
 import EntityError from 'components/shared/Entity/Error';
 import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedChangesPrompt';
-import useConnectorID from 'components/shared/Entity/useConnectorID';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import {
@@ -17,6 +16,7 @@ import {
     ResourceConfigStoreNames,
     useZustandStore,
 } from 'context/Zustand';
+import useConnectorID from 'hooks/searchParams/useConnectorID';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useConnectorTag from 'hooks/useConnectorTag';
@@ -160,6 +160,7 @@ function EntityCreate({
             setEndpointSchema(
                 connectorTag.endpoint_spec_schema as unknown as Schema
             );
+
             setResourceSchema(
                 connectorTag.resource_spec_schema as unknown as Schema
             );

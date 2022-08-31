@@ -1,5 +1,4 @@
 import { Alert, AlertTitle, Collapse } from '@mui/material';
-import useConnectorID from 'components/shared/Entity/useConnectorID';
 import DetailsErrors from 'components/shared/Entity/ValidationErrorSummary/DetailsErrors';
 import EndpointConfigErrors from 'components/shared/Entity/ValidationErrorSummary/EndpointConfigErrors';
 import NoConnectorError from 'components/shared/Entity/ValidationErrorSummary/NoConnectorError';
@@ -9,6 +8,7 @@ import {
     ResourceConfigStoreNames,
     useZustandStore,
 } from 'context/Zustand';
+import useConnectorID from 'hooks/searchParams/useConnectorID';
 import { FormattedMessage } from 'react-intl';
 import { EntityFormState } from 'stores/FormState';
 import { hasLength } from 'utils/misc-utils';
