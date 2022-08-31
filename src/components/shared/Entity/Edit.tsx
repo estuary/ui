@@ -154,6 +154,29 @@ const initDraftToEdit = async (
     }
 };
 
+const evaluateResourceConfigEquality = (
+    resourceConfig: ResourceConfigDictionary,
+    queries: any[]
+) => {
+    const configEquality: boolean[] = queries.map((query) => {
+        let queriedResourceConfig: ResourceConfigDictionary = {};
+
+        query.spec.bindings.forEach((binding: any) => {
+            queriedResourceConfig = {
+                ...queriedResourceConfig,
+                [binding.source]: {
+                    data: binding.resource,
+                    errors: [],
+                },
+            };
+        });
+
+        return isEqual(resourceConfig, queriedResourceConfig);
+    });
+
+    return configEquality.includes(true);
+};
+
 function EntityEdit({
     title,
     entityType,
@@ -391,7 +414,10 @@ function EntityEdit({
 
             // We wanna make sure we do these after the schemas are set as
             //  as they are dependent on them.
-            if (entityType === ENTITY.MATERIALIZATION) {
+            if (
+                entityType === ENTITY.MATERIALIZATION &&
+                hasLength(draftSpecs)
+            ) {
                 if (isEmpty(resourceConfig)) {
                     initialSpec.spec.bindings.forEach((binding: any) =>
                         setResourceConfig(binding.source, {
@@ -402,20 +428,11 @@ function EntityEdit({
 
                     preFillCollections([initialSpec]);
                 } else {
-                    let existingResourceConfig: ResourceConfigDictionary = {};
-
-                    initialSpec.spec.bindings.forEach((binding: any) => {
-                        existingResourceConfig = {
-                            ...existingResourceConfig,
-                            [binding.source]: {
-                                data: binding.resource,
-                                errors: [],
-                            },
-                        };
-                    });
-
                     setDraftId(
-                        isEqual(resourceConfig, existingResourceConfig)
+                        evaluateResourceConfigEquality(resourceConfig, [
+                            initialSpec,
+                            draftSpecs[0],
+                        ])
                             ? editDraftId
                             : null
                     );
@@ -433,6 +450,7 @@ function EntityEdit({
         resourceConfig,
         editDraftId,
         formStatus,
+        draftSpecs,
         preFillCollections,
         setResourceConfig,
         setEndpointSchema,
