@@ -37,10 +37,10 @@ function ListView({
     );
 
     const rowsByKey = useMemo(() => {
-        if (error === null) {
+        if (error === null && !!data) {
             return Object.assign(
                 {},
-                ...data.map((record) => ({
+                ...data.documents.map((record) => ({
                     [buildRecordKey(record)]: record,
                 }))
             ) as Record<string, JournalRecord<Record<string, any>>>;
@@ -75,7 +75,7 @@ function ListView({
                             hideFooter
                             disableColumnSelector
                             headerHeight={40}
-                            rowCount={data.length}
+                            rowCount={data?.documents.length}
                             onRowClick={(params) =>
                                 setSelectedKey(params.row.key)
                             }

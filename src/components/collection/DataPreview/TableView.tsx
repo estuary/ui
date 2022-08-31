@@ -57,7 +57,7 @@ function TableView({
                     ...tableAlternateRowsSx,
                 }}
             >
-                {data.map((row) => (
+                {data?.documents.map((row) => (
                     <TableRow key={row._meta.uuid}>
                         {specEntries.map(([k]) => (
                             <TableCell key={`${row._meta.uuid}_${k}`}>

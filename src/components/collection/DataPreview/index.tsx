@@ -69,7 +69,9 @@ export function DataPreview({ collectionName }: Props) {
                         variant="text"
                         startIcon={<RefreshIcon />}
                         onClick={journalData.refresh}
-                        loading={!hasLength(journalData.data) || isLoading}
+                        loading={
+                            !hasLength(journalData.data?.documents) || isLoading
+                        }
                         sx={{
                             height: 'auto',
                         }}
@@ -84,7 +86,7 @@ export function DataPreview({ collectionName }: Props) {
                     exclusive
                     onChange={toggleMode}
                     value={previewMode}
-                    disabled={!hasLength(journalData.data)}
+                    disabled={!hasLength(journalData.data?.documents)}
                 >
                     <ToggleButton value={Views.list}>
                         <FormattedMessage id="cta.list" />
@@ -101,6 +103,28 @@ export function DataPreview({ collectionName }: Props) {
                         <FormattedMessage id="collectionsPreview.notFound.title" />
                     </AlertTitle>
                     <FormattedMessage id="collectionsPreview.notFound.message" />
+                </Alert>
+            ) : journalData.data?.tooManyBytes &&
+              journalData.data.documents.length === 0 ? (
+                <Alert severity="warning" sx={{ mb: 3 }}>
+                    <AlertTitle>
+                        <FormattedMessage id="collectionsPreview.tooManyBytesAndNoDocuments.title" />
+                    </AlertTitle>
+                    <FormattedMessage id="collectionsPreview.tooManyBytesAndNoDocuments.message" />
+                </Alert>
+            ) : journalData.data?.tooFewDocuments ? (
+                <Alert severity="warning" sx={{ mb: 3 }}>
+                    <AlertTitle>
+                        <FormattedMessage id="collectionsPreview.tooFewDocuments.title" />
+                    </AlertTitle>
+                    <FormattedMessage id="collectionsPreview.tooFewDocuments.message" />
+                </Alert>
+            ) : journalData.data?.tooManyBytes ? (
+                <Alert severity="warning" sx={{ mb: 3 }}>
+                    <AlertTitle>
+                        <FormattedMessage id="collectionsPreview.tooManyBytes.title" />
+                    </AlertTitle>
+                    <FormattedMessage id="collectionsPreview.tooManyBytes.message" />
                 </Alert>
             ) : previewMode === Views.list ? (
                 <ListView journalData={journalData} spec={spec} />

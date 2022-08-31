@@ -391,6 +391,12 @@ const Collections: ResolvedIntlConfig['messages'] = {
     'collections.message2.docPath': `https://docs.estuary.dev/concepts/collections/`,
     'collectionsPreview.notFound.title': `Not Found`,
     'collectionsPreview.notFound.message': `We were unable to find the journals to display the preview. This could mean the Capture is currently not running.`,
+    'collectionsPreview.tooFewDocuments.title': `Low document count`,
+    'collectionsPreview.tooFewDocuments.message': `Fewer documents than desired were found. This could mean that your collection isn't seeing very much data.`,
+    'collectionsPreview.tooManyBytes.title': `Large documents`,
+    'collectionsPreview.tooManyBytes.message': `Exceeded the maximum bytes before reaching the desired number of documents. This probably means that your documents are large.`,
+    'collectionsPreview.tooManyBytesAndNoDocuments.title': `Read limit reached`,
+    'collectionsPreview.tooManyBytesAndNoDocuments.message': `We reached the limit of how much data a web browser can comfortably read, and didn't find even reach the end of one document! This probably means that your documents are huge.`,
 };
 
 const entityCreateHeader = `Endpoint Config`;

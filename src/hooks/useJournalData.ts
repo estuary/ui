@@ -135,14 +135,20 @@ async function loadDocuments({
     journalName,
     client,
     documentCount,
+    maxBytes,
 }: {
     journalName?: string;
     client?: JournalClient;
     documentCount: number;
+    maxBytes: number;
 }) {
     if (!client || !journalName) {
         console.warn('Cannot load documents without client and journal');
-        return [];
+        return {
+            documents: [],
+            tooFewDocuments: false,
+            tooManyBytes: false,
+        };
     }
     const metaInfo = (
         await client.read({
@@ -156,38 +162,45 @@ async function loadDocuments({
     const metadataResponse = (await generator.next()).value;
 
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (metadataResponse?.writeHead) {
-        const head = parseInt(metadataResponse.writeHead, 10);
-        let start = head;
-
-        let documents: JournalRecord[] = [];
-
-        while (documents.length < documentCount && start > 0) {
-            start = Math.max(0, start - INCREMENT);
-            const stream = (
-                await client.read({
-                    journal: journalName,
-                    offset: `${start}`,
-                    endOffset: `${head}`,
-                })
-            ).unwrap();
-            const journalDocumentStream = parseJournalDocuments(stream);
-            const allDocs = await readAllDocuments(journalDocumentStream);
-
-            // TODO: Instead of inefficiently re-reading until we get the desired row count,
-            // we should accumulate documents and shift `head` backwards using `ProtocolReadResponse.offset`
-            documents = allDocs
-                .filter(isJournalRecord)
-                .filter(
-                    (record) =>
-                        !(record._meta as unknown as { ack: boolean }).ack
-                )
-                .slice(documentCount * -1);
-        }
-        return documents;
-    } else {
+    if (!metadataResponse?.writeHead) {
         throw new Error('Unable to load metadata');
     }
+
+    const head = parseInt(metadataResponse.writeHead, 10);
+    let start = head;
+
+    let documents: JournalRecord[] = [];
+
+    while (
+        documents.length < documentCount &&
+        start > 0 &&
+        head - start < maxBytes
+    ) {
+        start = Math.max(0, start - INCREMENT);
+        const stream = (
+            await client.read({
+                journal: journalName,
+                offset: `${start}`,
+                endOffset: `${head}`,
+            })
+        ).unwrap();
+        const journalDocumentStream = parseJournalDocuments(stream);
+        const allDocs = await readAllDocuments(journalDocumentStream);
+
+        // TODO: Instead of inefficiently re-reading until we get the desired row count,
+        // we should accumulate documents and shift `head` backwards using `ProtocolReadResponse.offset`
+        documents = allDocs
+            .filter(isJournalRecord)
+            .filter(
+                (record) => !(record._meta as unknown as { ack: boolean }).ack
+            )
+            .slice(documentCount * -1);
+    }
+    return {
+        documents,
+        tooFewDocuments: start <= 0,
+        tooManyBytes: head - start >= maxBytes,
+    };
 }
 
 export type JournalRecord<B extends {} = Record<string, any>> = B & {
@@ -200,7 +213,11 @@ function isJournalRecord(val: any): val is JournalRecord {
     return val?._meta?.uuid;
 }
 
-const useJournalData = (journalName?: string, desiredCount: number = 50) => {
+const useJournalData = (
+    journalName?: string,
+    desiredCount: number = 50,
+    maxBytes: number = 5 * 10 ** 6
+) => {
     const [gatewayConfig] = useLocalStorage(
         LocalStorageKeys.GATEWAY,
         getStoredGatewayAuthConfig()
@@ -219,7 +236,8 @@ const useJournalData = (journalName?: string, desiredCount: number = 50) => {
 
     const [refreshCount, setRefresh] = useState(0);
 
-    const [data, setData] = useState<JournalRecord[]>([]);
+    const [data, setData] =
+        useState<Awaited<ReturnType<typeof loadDocuments>>>();
     const [error, setError] = useState<any>(null);
     const [loading, setLoading] = useState(false);
 
@@ -232,6 +250,7 @@ const useJournalData = (journalName?: string, desiredCount: number = 50) => {
                         journalName,
                         client: journalClient,
                         documentCount: desiredCount,
+                        maxBytes,
                     });
                     setData(docs);
                 } catch (e: unknown) {
@@ -241,7 +260,7 @@ const useJournalData = (journalName?: string, desiredCount: number = 50) => {
                 }
             }
         })();
-    }, [desiredCount, journalClient, journalName, refreshCount]);
+    }, [desiredCount, journalClient, journalName, maxBytes, refreshCount]);
 
     return {
         data,
