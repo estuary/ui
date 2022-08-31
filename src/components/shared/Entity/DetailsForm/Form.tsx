@@ -49,7 +49,10 @@ function DetailsFormForm({
 
     // Details Form Store
     const formData = useDetailsForm_details();
-    const { connectorImage: originalConnectorImage } = formData;
+    const {
+        connectorImage: originalConnectorImage,
+        entityName: originalEntityName,
+    } = formData;
 
     const setDetails = useDetailsForm_setDetails();
 
@@ -81,7 +84,7 @@ function DetailsFormForm({
                 if (connector.connector_tags[0].id === connectorID) {
                     setDetails({
                         data: {
-                            entityName: '',
+                            entityName: originalEntityName,
                             connectorImage: getConnectorImageDetails(connector),
                         },
                     });
@@ -194,13 +197,6 @@ function DetailsFormForm({
         ) {
             navigateToCreate(entityType, details.data.connectorImage.id, true);
         } else {
-            if (details.data.connectorImage.id === '') {
-                navigateToCreate(
-                    entityType,
-                    details.data.connectorImage.id,
-                    true
-                );
-            }
             setDetails(details);
         }
     };
