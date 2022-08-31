@@ -11,6 +11,7 @@ import {
     ListItemButton,
     ListItemIcon,
     ListItemText,
+    Stack,
     SxProps,
     Theme,
     Toolbar,
@@ -73,11 +74,9 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
             }}
         >
             <Toolbar />
-            <Box
+            <Stack
                 sx={{
                     height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
                     justifyContent: 'space-between',
                     overflowX: 'hidden',
                 }}
@@ -173,7 +172,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                         </Tooltip>
                     </List>
                 </Box>
-            </Box>
+            </Stack>
         </MuiDrawer>
     );
 };

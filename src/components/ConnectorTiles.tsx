@@ -169,7 +169,7 @@ function ConnectorTiles({
         <Grid
             container
             spacing={{ xs: 2, md: 3 }}
-            columns={{ xs: 2, sm: 4, md: 12, lg: 12, xl: 12 }}
+            columns={{ xs: 4, sm: 4, md: 12, lg: 12, xl: 12 }}
             paddingRight={2}
             margin="auto"
         >
@@ -206,6 +206,8 @@ function ConnectorTiles({
                             xs={2}
                             md={4}
                             lg={3}
+                            xl={2}
+                            sx={{ maxWidth: 275 }}
                         >
                             <Tile>
                                 <Box>

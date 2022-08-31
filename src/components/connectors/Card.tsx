@@ -57,7 +57,7 @@ function ConnectorCard({
     description,
 }: Props) {
     return (
-        <Grid item xs={2} md={4} lg={3}>
+        <Grid item xs={2} md={4} lg={3} xl={2} sx={{ maxWidth: 275 }}>
             <Tile>
                 <Stack
                     sx={{
