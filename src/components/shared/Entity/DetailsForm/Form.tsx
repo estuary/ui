@@ -195,6 +195,8 @@ function DetailsFormForm({
             if (details.data.connectorImage.id === connectorID) {
                 setDetails_connector(details.data.connectorImage);
             } else {
+                // Set the details before navigating to reduce "flicker"
+                setDetails(details);
                 navigateToCreate(
                     entityType,
                     details.data.connectorImage.id,
