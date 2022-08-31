@@ -19,7 +19,6 @@ function OptionsMenu({ detailsExpanded, toggleDetailsPanel, editTask }: Props) {
                 icon={<MoreVert />}
                 identifier="table-options-menu"
                 tooltip={intl.formatMessage({ id: 'optionMenu.tooltip' })}
-                hideLabel
                 hideArrow
                 customMenuPosition={{
                     transformOrigin: {

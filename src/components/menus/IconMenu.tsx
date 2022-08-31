@@ -8,7 +8,6 @@ import {
     SxProps,
     Theme,
     Tooltip,
-    Typography,
 } from '@mui/material';
 import { indigo } from 'context/Theme';
 import React, { ReactNode } from 'react';
@@ -24,7 +23,6 @@ interface Props {
     identifier: string;
     tooltip: string;
     children: ReactNode;
-    hideLabel?: boolean;
     hideArrow?: boolean;
     customMenuPosition?: CustomPopoverPosition;
 }
@@ -35,7 +33,6 @@ const IconMenu = ({
     ariaLabel,
     icon,
     children,
-    hideLabel,
     hideArrow,
     customMenuPosition,
 }: Props) => {
@@ -96,12 +93,6 @@ const IconMenu = ({
                     >
                         {icon}
                     </IconButton>
-
-                    {hideLabel ? null : (
-                        <Typography sx={{ width: 136, ml: 2, flexShrink: 0 }}>
-                            {tooltip}
-                        </Typography>
-                    )}
                 </Box>
             </Tooltip>
 
@@ -114,8 +105,8 @@ const IconMenu = ({
                 onClick={handlers.close}
                 transformOrigin={
                     customMenuPosition?.transformOrigin ?? {
-                        horizontal: 'left',
-                        vertical: 'bottom',
+                        horizontal: 'right',
+                        vertical: 'top',
                     }
                 }
                 anchorOrigin={
