@@ -304,7 +304,7 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'optionMenu.tooltip': `Options`,
     'optionMenu.option.detailsPanel.display': `View details`,
     'optionMenu.option.detailsPanel.hide': `Hide details`,
-    'optionMenu.option.edit': `Edit catalog`,
+    'optionMenu.option.edit': `Edit specification`,
 };
 
 const LogsDialog: ResolvedIntlConfig['messages'] = {
@@ -480,7 +480,7 @@ const CaptureEdit: ResolvedIntlConfig['messages'] = {
     'captureEdit.config.source.homepage': `Home`,
     'captureEdit.save.failed': `Capture edit failed. See below for details:`,
     'captureEdit.editor.default': `Before you can edit the capture specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.capture']}." `,
-    'captureEdit.finalReview.instructions': `The following catalog was generated from the details you provided. To make changes, edit the YAML file directly. Click "${CTAs['cta.saveEntity']}" to proceed.`,
+    'captureEdit.finalReview.instructions': `The following specification was generated from the details you provided. To make changes, edit the YAML file directly. Click "${CTAs['cta.saveEntity']}" to proceed.`,
 
     'captureEdit.test.failedErrorTitle': `Configuration Test Failed`,
     'captureEdit.test.serverUnreachable': `Unable to reach server while testing configuration.`,
@@ -489,7 +489,7 @@ const CaptureEdit: ResolvedIntlConfig['messages'] = {
     'captureEdit.save.serverUnreachable': `Unable to reach server while saving capture`,
     'captureEdit.save.waitMessage': `Please wait while we test, save, and publish your capture.`,
 
-    'captureEdit.generate.failedErrorTitle': `Generating Catalog Failed`,
+    'captureEdit.generate.failedErrorTitle': `Generating Specification Failed`,
 
     'captureEdit.createNotification.title': `Edited Capture Saved`,
     'captureEdit.createNotification.desc': `Your edited capture is published and ready to be used.`,
@@ -550,7 +550,7 @@ const MaterializationEdit: ResolvedIntlConfig['messages'] = {
     'materializationEdit.collections.heading': `Output Collections`,
     'materializationEdit.config.source.doclink': `Connector Help`,
     'materializationEdit.editor.default': `Before you can edit the materialization specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.materialization']}".`,
-    'materializationEdit.finalReview.instructions': `The following catalog was generated from the details you provided. To make changes, edit the YAML file directly. Click "${CTAs['cta.saveEntity']}," to proceed.`,
+    'materializationEdit.finalReview.instructions': `The following specification was generated from the details you provided. To make changes, edit the YAML file directly. Click "${CTAs['cta.saveEntity']}," to proceed.`,
     'materializationEdit.heading': `Edit Materialization`,
     'materializationEdit.instructions': `The name and destination of your existing materialization.`,
     'materializationEdit.missingConnectors': `No connectors installed. A materialization connector must be installed before a materialization can be edited.`,
