@@ -1,4 +1,4 @@
-import DetailsFormInputs from 'components/shared/Entity/DetailsForm/Form';
+import DetailsFormForm from 'components/shared/Entity/DetailsForm/Form';
 import DetailsFormHeader from 'components/shared/Entity/DetailsForm/Header';
 import { Props } from 'components/shared/Entity/DetailsForm/types';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
@@ -22,7 +22,7 @@ function DetailsForm({
         <WrapperWithHeader
             header={<DetailsFormHeader messagePrefix={messagePrefix} />}
         >
-            <DetailsFormInputs
+            <DetailsFormForm
                 connectorTags={connectorTags}
                 accessGrants={accessGrants}
                 draftEditorStoreName={draftEditorStoreName}

@@ -36,7 +36,7 @@ const getConnectorImageDetails = (connector: ConnectorWithTagDetailQuery) => {
     };
 };
 
-function DetailsFormInputs({
+function DetailsFormForm({
     connectorTags,
     accessGrants,
     draftEditorStoreName,
@@ -244,4 +244,4 @@ function DetailsFormInputs({
     );
 }
 
-export default DetailsFormInputs;
+export default DetailsFormForm;
