@@ -1,4 +1,4 @@
-import { AddBox, Cable, OpenInNew } from '@mui/icons-material';
+import { AddBox, OpenInNew } from '@mui/icons-material';
 import {
     Box,
     Button,
@@ -12,6 +12,7 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
+import ConnectorCard from 'components/connectors/Card';
 import ConnectorToolbar from 'components/ConnectorToolbar';
 import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
 import {
@@ -25,7 +26,7 @@ import {
     CONNECTOR_WITH_TAG_QUERY,
 } from 'hooks/useConnectorWithTagDetail';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { CONNECTOR_NAME, defaultTableFilter, TABLES } from 'services/supabase';
 import {
     BaseComponentProps,
@@ -45,12 +46,14 @@ interface ConnectorTilesProps {
 
 type TileProps = BaseComponentProps;
 
+const skeletonTileCount = 6;
+
 const intlConfig: TableIntlConfig = {
     header: 'connectors.main.message1',
     message: 'connectors.main.message2',
 };
 
-const imageBackgroundSx: SxProps<Theme> = {
+export const imageBackgroundSx: SxProps<Theme> = {
     width: '100%',
     height: 125,
     display: 'flex',
@@ -162,17 +165,12 @@ function ConnectorTiles({
         }
     }, [selectData, isValidating]);
 
-    const gridContainerWidth = '100%';
-
-    const skeletonTileCount = 6;
-
     return (
         <Grid
             container
             spacing={{ xs: 2, md: 3 }}
             columns={{ xs: 2, sm: 4, md: 12, lg: 12, xl: 12 }}
             paddingRight={2}
-            width={gridContainerWidth}
             margin="auto"
         >
             <Grid item xs={12}>
@@ -190,96 +188,16 @@ function ConnectorTiles({
             {hasLength(selectData) ? (
                 selectData
                     .map((row, index) => (
-                        <Grid
+                        <ConnectorCard
                             key={`connector-tile-${index}`}
-                            item
-                            xs={2}
-                            md={4}
-                            lg={3}
-                        >
-                            <Tile>
-                                <Box sx={imageBackgroundSx}>
-                                    {row.image ? (
-                                        <img
-                                            src={row.image}
-                                            loading="lazy"
-                                            alt=""
-                                            style={{
-                                                width: 'auto',
-                                                maxHeight: 75,
-                                                padding: '0 1rem',
-                                            }}
-                                        />
-                                    ) : (
-                                        <Cable sx={{ fontSize: '4rem' }} />
-                                    )}
-                                </Box>
-
-                                <Typography align="center" marginBottom={1}>
-                                    {row.title}
-                                </Typography>
-
-                                <Button
-                                    href={
-                                        row.connector_tags[0].documentation_url
-                                    }
-                                    target="_blank"
-                                    rel="noopener"
-                                    endIcon={<OpenInNew />}
-                                    sx={{
-                                        'backgroundColor': slate[25],
-                                        '&:hover': {
-                                            backgroundColor: slate[25],
-                                        },
-                                    }}
-                                >
-                                    <FormattedMessage id="terms.documentation" />
-                                </Button>
-
-                                <Typography
-                                    component="div"
-                                    variant="caption"
-                                    align="center"
-                                    marginBottom={5}
-                                >
-                                    <span
-                                        style={{
-                                            marginRight: '.5rem',
-                                            fontWeight: 'bold',
-                                        }}
-                                    >
-                                        <FormattedMessage id="entityTable.data.lastUpdatedWithColon" />
-                                    </span>
-
-                                    <FormattedDate
-                                        day="numeric"
-                                        month="long"
-                                        year="numeric"
-                                        value={row.updated_at}
-                                    />
-                                </Typography>
-
-                                <Stack
-                                    direction="row"
-                                    spacing={1}
-                                    sx={{
-                                        alignItems: 'center',
-                                        justifyContent: 'flex-start',
-                                    }}
-                                >
-                                    <Button
-                                        onClick={() => primaryCtaClick(row)}
-                                    >
-                                        {row.connector_tags[0].protocol ===
-                                        'capture' ? (
-                                            <FormattedMessage id="connectorTable.actionsCta.capture" />
-                                        ) : (
-                                            <FormattedMessage id="connectorTable.actionsCta.materialization" />
-                                        )}
-                                    </Button>
-                                </Stack>
-                            </Tile>
-                        </Grid>
+                            imageSrc={row.image}
+                            lastUpdate={row.updated_at}
+                            title={row.title}
+                            docsUrl={row.connector_tags[0].documentation_url}
+                            entity={row.connector_tags[0].protocol}
+                            ctaCallback={() => primaryCtaClick(row)}
+                            description={row.detail}
+                        />
                     ))
                     .concat(
                         <Grid
