@@ -76,7 +76,9 @@ function EntityCreate({
     );
     const connectorID = useConnectorID();
 
-    const [showConnectorTiles, setShowConnectorTiles] = useState(true);
+    const [showConnectorTiles, setShowConnectorTiles] = useState<
+        boolean | null
+    >(null);
 
     const {
         connectorTags,
@@ -192,6 +194,7 @@ function EntityCreate({
 
     useUnsavedChangesPrompt(!exitWhenLogsClose && promptDataLoss, resetState);
 
+    if (showConnectorTiles === null) return null;
     return (
         <>
             {Header}
