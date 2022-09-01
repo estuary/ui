@@ -222,6 +222,7 @@ function EntityTable({
                         justifyContent: 'space-between',
                         alignItems: 'baseline',
                     }}
+                    data-public
                 >
                     {enableSelection ? (
                         <RowSelector {...rowSelectorProps} />
