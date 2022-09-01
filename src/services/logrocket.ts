@@ -3,7 +3,7 @@ import filterObject from 'filter-obj';
 import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 import setupLogRocketReact from 'logrocket-react';
-import { getUserDetails } from 'services/supabase';
+import { DEFAULT_FILTER, getUserDetails } from 'services/supabase';
 import {
     getAppVersion,
     getLogRocketSettings,
@@ -193,6 +193,8 @@ export const identifyUser = (user: User) => {
     ) {
         const traits = {} as IUserTraits;
         const userDetails = getUserDetails(user);
+
+        traits.id = userDetails.id ?? DEFAULT_FILTER;
 
         if (logRocketSettings.idUser.includeName) {
             traits.name = userDetails.userName;
