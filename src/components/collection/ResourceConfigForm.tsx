@@ -21,12 +21,14 @@ type Props = {
     collectionName: string;
     resourceConfigStoreName: ResourceConfigStoreNames;
     formStateStoreName: FormStateStoreNames;
+    readOnly?: boolean;
 };
 
 function ResourceConfigForm({
     collectionName,
     resourceConfigStoreName,
     formStateStoreName,
+    readOnly = false,
 }: Props) {
     const name = useRef(collectionName);
 
@@ -81,7 +83,7 @@ function ResourceConfigForm({
                 renderers={defaultRenderers}
                 cells={materialCells}
                 config={defaultOptions}
-                readonly={isActive}
+                readonly={readOnly || isActive}
                 validationMode={showValidationVal}
                 onChange={(state) => {
                     handlers.onChange(name.current, state);

@@ -6,6 +6,7 @@ import {
 } from '@supabase/supabase-js';
 import { SupabaseQueryBuilder } from '@supabase/supabase-js/dist/module/lib/SupabaseQueryBuilder';
 import { isEmpty } from 'lodash';
+import LogRocket from 'logrocket';
 import { JobStatus } from 'types';
 
 if (
@@ -26,6 +27,7 @@ const supabaseSettings = {
 export const CONNECTOR_NAME = `open_graph->en-US->>title`;
 export const CONNECTOR_RECOMMENDED = `open_graph->en-US->>recommended`;
 export const CONNECTOR_TITLE = `connector_open_graph->en-US->>title`;
+export const CONNECTOR_IMAGE = `connector_open_graph->en-US->>image`;
 
 export const ERROR_MESSAGES = {
     jwtExpired: 'JWT expired',
@@ -66,7 +68,16 @@ export enum FUNCTIONS {
 
 export const supabaseClient = createClient(
     supabaseSettings.url,
-    supabaseSettings.anonKey
+    supabaseSettings.anonKey,
+    {
+        // TODO (realtime) This is temporary until we figure out why some
+        //      subscriptions just hang forever.
+        realtime: {
+            logger: (kind: string, msg: string, data?: any) => {
+                LogRocket.log(kind, msg, data);
+            },
+        },
+    }
 );
 
 export const DEFAULT_POLLING_INTERVAL = 500;
@@ -112,7 +123,7 @@ export const defaultTableFilter = <Data>(
 };
 
 export const getUserDetails = (user: User | null) => {
-    let userName, email, emailVerified, avatar;
+    let userName, email, emailVerified, avatar, id;
 
     if (user) {
         if (!isEmpty(user.user_metadata)) {
@@ -125,9 +136,12 @@ export const getUserDetails = (user: User | null) => {
             email = user.email;
             emailVerified = false;
         }
+
+        id = user.id;
     }
 
     return {
+        id,
         userName,
         email,
         emailVerified,
@@ -189,16 +203,25 @@ export const updateSupabase = (
     return makeCall();
 };
 
+export const deleteSupabase = (
+    table: TABLES,
+    matchData: any
+): PromiseLike<CallSupabaseResponse<any>> => {
+    const query = supabaseClient.from(table);
+
+    const makeCall = () => {
+        return query
+            .delete()
+            .match(matchData)
+            .then(handleSuccess, handleFailure);
+    };
+
+    return makeCall();
+};
+
 export const endSubscription = (subscription: RealtimeSubscription) => {
     return supabaseClient
         .removeSubscription(subscription)
-        .then(() => {})
-        .catch(() => {});
-};
-
-export const endAllSubscriptions = () => {
-    return supabaseClient
-        .removeAllSubscriptions()
         .then(() => {})
         .catch(() => {});
 };
@@ -213,8 +236,12 @@ export const startSubscription = (
         .on('*', async (payload: any) => {
             const response = payload.new
                 ? payload.new
-                : payload.record
-                ? payload.record
+                : // TODO (typing) during manual testing I have seen record be in the response
+                //      even though the type says it is not there. Needs more research
+                // eslint-disable-next-line @typescript-eslint/dot-notation
+                payload['record']
+                ? // eslint-disable-next-line @typescript-eslint/dot-notation
+                  payload['record']
                 : null;
 
             if (response) {

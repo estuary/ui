@@ -21,6 +21,20 @@ export const hasLength = (val: string | any[] | null | undefined): boolean => {
     return Boolean(val && val.length > 0);
 };
 
+// TODO: Replace instances of getPathWithParam with the expanded utility function below.
+export const getPathWithParams = (
+    baseURL: string,
+    params: { [key: string]: string }
+): string => {
+    let url = `${baseURL}?`;
+
+    Object.entries(params).forEach(([key, value], index) => {
+        url = url.concat(index === 0 ? `${key}=${value}` : `&${key}=${value}`);
+    });
+
+    return url;
+};
+
 export const base64RemovePadding = (state: string | null) => {
     return state ? state.replace(/[=]{1,2}$/, '') : state;
 };

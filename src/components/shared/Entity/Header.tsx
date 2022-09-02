@@ -19,8 +19,9 @@ import { ReactNode } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { EntityFormState } from 'stores/FormState';
 
+// TODO: Make the generate button Props property required once the edit workflow matures.
 interface Props {
-    GenerateButton: ReactNode;
+    GenerateButton?: ReactNode;
     TestButton: ReactNode;
     SaveButton: ReactNode;
     heading: ReactNode;
@@ -92,7 +93,7 @@ function FooHeader({
                         },
                     }}
                 >
-                    {GenerateButton}
+                    {GenerateButton ? GenerateButton : null}
 
                     {TestButton}
 

@@ -7,12 +7,14 @@ interface Props {
     collectionName: string;
     resourceConfigStoreName: ResourceConfigStoreNames;
     formStateStoreName: FormStateStoreNames;
+    readOnly?: boolean;
 }
 
 function ResourceConfig({
     collectionName,
     resourceConfigStoreName,
     formStateStoreName,
+    readOnly = false,
 }: Props) {
     return (
         <Box sx={{ p: 1 }}>
@@ -25,6 +27,7 @@ function ResourceConfig({
                     collectionName={collectionName}
                     resourceConfigStoreName={resourceConfigStoreName}
                     formStateStoreName={formStateStoreName}
+                    readOnly={readOnly}
                 />
             </Box>
         </Box>

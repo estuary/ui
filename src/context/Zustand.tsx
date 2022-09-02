@@ -13,8 +13,8 @@ import useConstant from 'use-constant';
 import { StoreApi, useStore } from 'zustand';
 
 export enum DetailsFormStoreNames {
-    CAPTURE_CREATE = 'capture-create-details-form',
-    MATERIALIZATION_CREATE = 'materialization-create-details-form',
+    CAPTURE = 'capture-details-form',
+    MATERIALIZATION = 'materialization-details-form',
 }
 
 export enum DraftEditorStoreNames {
@@ -23,13 +23,15 @@ export enum DraftEditorStoreNames {
 }
 
 export enum EndpointConfigStoreNames {
-    CAPTURE_CREATE = 'capture-create-endpoint-config',
-    MATERIALIZATION_CREATE = 'materialization-create-endpoint-config',
+    CAPTURE = 'capture-endpoint-config',
+    MATERIALIZATION = 'materialization-endpoint-config',
 }
 
 export enum FormStateStoreNames {
     CAPTURE_CREATE = 'Capture-Create-Form-State',
+    CAPTURE_EDIT = 'Capture-Edit-Form-State',
     MATERIALIZATION_CREATE = 'Materialization-Create-Form-State',
+    MATERIALIZATION_EDIT = 'Materialization-Edit-Form-State',
 }
 
 export enum LiveSpecEditorStoreNames {
@@ -37,7 +39,7 @@ export enum LiveSpecEditorStoreNames {
 }
 
 export enum ResourceConfigStoreNames {
-    MATERIALIZATION_CREATE = 'Materialization-Create-Resource-Config',
+    MATERIALIZATION = 'Materialization-Resource-Config',
 }
 
 export enum SelectTableStoreNames {
@@ -77,6 +79,64 @@ interface ZustandProviderProps {
     };
 }
 
+const invariableStores = {
+    // Draft Editor Store
+    [DraftEditorStoreNames.CAPTURE]: createEditorStore(
+        DraftEditorStoreNames.CAPTURE
+    ),
+    [DraftEditorStoreNames.MATERIALIZATION]: createEditorStore(
+        DraftEditorStoreNames.MATERIALIZATION
+    ),
+
+    // Form State Store
+    [FormStateStoreNames.CAPTURE_CREATE]: createFormStateStore(
+        FormStateStoreNames.CAPTURE_CREATE,
+        MessagePrefixes.CAPTURE_CREATE
+    ),
+    [FormStateStoreNames.CAPTURE_EDIT]: createFormStateStore(
+        FormStateStoreNames.CAPTURE_EDIT,
+        MessagePrefixes.CAPTURE_EDIT
+    ),
+    [FormStateStoreNames.MATERIALIZATION_CREATE]: createFormStateStore(
+        FormStateStoreNames.MATERIALIZATION_CREATE,
+        MessagePrefixes.MATERIALIZATION_CREATE
+    ),
+    [FormStateStoreNames.MATERIALIZATION_EDIT]: createFormStateStore(
+        FormStateStoreNames.MATERIALIZATION_EDIT,
+        MessagePrefixes.MATERIALIZATION_EDIT
+    ),
+
+    // Resource Config Store
+    [ResourceConfigStoreNames.MATERIALIZATION]: createResourceConfigStore(
+        ResourceConfigStoreNames.MATERIALIZATION
+    ),
+
+    // Select Table Store
+    [SelectTableStoreNames.ACCESS_GRANTS]: createSelectableTableStore(
+        SelectTableStoreNames.ACCESS_GRANTS
+    ),
+    [SelectTableStoreNames.CAPTURE]: createSelectableTableStore(
+        SelectTableStoreNames.CAPTURE
+    ),
+    [SelectTableStoreNames.COLLECTION]: createSelectableTableStore(
+        SelectTableStoreNames.COLLECTION
+    ),
+    [SelectTableStoreNames.CONNECTOR]: createSelectableTableStore(
+        SelectTableStoreNames.CONNECTOR
+    ),
+    [SelectTableStoreNames.MATERIALIZATION]: createSelectableTableStore(
+        SelectTableStoreNames.MATERIALIZATION
+    ),
+
+    // Shard Detail Store
+    [ShardDetailStoreNames.CAPTURE]: createShardDetailStore(
+        ShardDetailStoreNames.CAPTURE
+    ),
+    [ShardDetailStoreNames.MATERIALIZATION]: createShardDetailStore(
+        ShardDetailStoreNames.MATERIALIZATION
+    ),
+};
+
 export const ZustandContext = createReactContext<any | null>(null);
 
 export const ZustandProvider = ({
@@ -89,59 +149,7 @@ export const ZustandProvider = ({
 
             return { [storeName]: createStore };
         } else {
-            return {
-                // Draft Editor Store
-                [DraftEditorStoreNames.CAPTURE]: createEditorStore(
-                    DraftEditorStoreNames.CAPTURE
-                ),
-                [DraftEditorStoreNames.MATERIALIZATION]: createEditorStore(
-                    DraftEditorStoreNames.MATERIALIZATION
-                ),
-
-                // Form State Store
-                [FormStateStoreNames.CAPTURE_CREATE]: createFormStateStore(
-                    FormStateStoreNames.CAPTURE_CREATE,
-                    MessagePrefixes.CAPTURE_CREATE
-                ),
-                [FormStateStoreNames.MATERIALIZATION_CREATE]:
-                    createFormStateStore(
-                        FormStateStoreNames.MATERIALIZATION_CREATE,
-                        MessagePrefixes.MATERIALIZATION_CREATE
-                    ),
-
-                // Resource Config Store
-                [ResourceConfigStoreNames.MATERIALIZATION_CREATE]:
-                    createResourceConfigStore(
-                        ResourceConfigStoreNames.MATERIALIZATION_CREATE
-                    ),
-
-                // Select Table Store
-                [SelectTableStoreNames.ACCESS_GRANTS]:
-                    createSelectableTableStore(
-                        SelectTableStoreNames.ACCESS_GRANTS
-                    ),
-                [SelectTableStoreNames.CAPTURE]: createSelectableTableStore(
-                    SelectTableStoreNames.CAPTURE
-                ),
-                [SelectTableStoreNames.COLLECTION]: createSelectableTableStore(
-                    SelectTableStoreNames.COLLECTION
-                ),
-                [SelectTableStoreNames.CONNECTOR]: createSelectableTableStore(
-                    SelectTableStoreNames.CONNECTOR
-                ),
-                [SelectTableStoreNames.MATERIALIZATION]:
-                    createSelectableTableStore(
-                        SelectTableStoreNames.MATERIALIZATION
-                    ),
-
-                // Shard Detail Store
-                [ShardDetailStoreNames.CAPTURE]: createShardDetailStore(
-                    ShardDetailStoreNames.CAPTURE
-                ),
-                [ShardDetailStoreNames.MATERIALIZATION]: createShardDetailStore(
-                    ShardDetailStoreNames.MATERIALIZATION
-                ),
-            };
+            return invariableStores;
         }
     });
 

@@ -6,7 +6,7 @@ import { devtoolsOptions } from 'utils/store-utils';
 import create, { StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 
-interface FormState {
+export interface FormState {
     displayValidation: boolean;
     status: FormStatus;
     showLogs: boolean;

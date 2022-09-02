@@ -15,9 +15,9 @@ import { devtools, NamedSet } from 'zustand/middleware';
 const storeName = (entityType: ENTITY): DetailsFormStoreNames => {
     switch (entityType) {
         case ENTITY.CAPTURE:
-            return DetailsFormStoreNames.CAPTURE_CREATE;
+            return DetailsFormStoreNames.CAPTURE;
         case ENTITY.MATERIALIZATION:
-            return DetailsFormStoreNames.MATERIALIZATION_CREATE;
+            return DetailsFormStoreNames.MATERIALIZATION;
         default: {
             throw new Error('Invalid DetailsForm store name');
         }

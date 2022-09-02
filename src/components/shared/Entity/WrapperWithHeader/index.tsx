@@ -7,6 +7,7 @@ interface Props {
     children: ReactNode;
     forceClose?: boolean;
     disableClose?: boolean;
+    readOnly?: boolean;
 }
 
 function WrapperWithHeader({
@@ -14,6 +15,7 @@ function WrapperWithHeader({
     children,
     forceClose,
     disableClose,
+    readOnly,
 }: Props) {
     const [expanded, setExpanded] = useState(true);
     const handlers = {
@@ -37,7 +39,11 @@ function WrapperWithHeader({
                 mt: 2,
             }}
         >
-            <Header expanded={expanded} disableClose={disableClose}>
+            <Header
+                expanded={expanded}
+                readOnly={readOnly}
+                disableClose={disableClose}
+            >
                 {header}
             </Header>
             <AccordionDetails>{children}</AccordionDetails>

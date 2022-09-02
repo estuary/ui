@@ -28,7 +28,9 @@ import { hasLength } from 'utils/misc-utils';
 
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
 
-const getConnectorImageDetails = (connector: ConnectorWithTagDetailQuery) => {
+export const getConnectorImageDetails = (
+    connector: ConnectorWithTagDetailQuery
+) => {
     return {
         connectorId: connector.id,
         id: connector.connector_tags[0].id,
@@ -43,10 +45,11 @@ function DetailsFormForm({
     draftEditorStoreName,
     formStateStoreName,
     entityType,
+    readOnly,
 }: Props) {
     const intl = useIntl();
     const navigateToCreate = useEntityCreateNavigate();
-    const connectorID = useConnectorID();
+    const connectorId = useConnectorID();
 
     // Details Form Store
     const formData = useDetailsForm_details();
@@ -78,16 +81,16 @@ function DetailsFormForm({
     >(formStateStoreName, (state) => state.isActive);
 
     useEffect(() => {
-        if (connectorID && hasLength(connectorTags)) {
+        if (connectorId && hasLength(connectorTags)) {
             connectorTags.find((connector) => {
-                const response = connector.connector_tags[0].id === connectorID;
+                const response = connector.connector_tags[0].id === connectorId;
                 if (response) {
                     setDetails_connector(getConnectorImageDetails(connector));
                 }
                 return response;
             });
         }
-    }, [connectorID, connectorTags, setDetails_connector]);
+    }, [connectorId, connectorTags, setDetails_connector]);
 
     const accessGrantsOneOf = useMemo(() => {
         const response = [] as string[];
@@ -192,7 +195,7 @@ function DetailsFormForm({
             details.data.connectorImage.id.length === 23 &&
             details.data.connectorImage.id !== originalConnectorImage.id
         ) {
-            if (details.data.connectorImage.id === connectorID) {
+            if (details.data.connectorImage.id === connectorId) {
                 setDetails_connector(details.data.connectorImage);
             } else {
                 // Set the details before navigating to reduce "flicker"
@@ -213,6 +216,15 @@ function DetailsFormForm({
             <Typography sx={{ mb: 2 }}>
                 <FormattedMessage id={`${messagePrefix}.instructions`} />
             </Typography>
+
+            {readOnly ? (
+                <Alert color="info" style={{ marginBottom: 8 }}>
+                    {intl.formatMessage({
+                        id: 'entityEdit.alert.detailsFormDisabled',
+                    })}
+                </Alert>
+            ) : null}
+
             <Stack direction="row" spacing={2}>
                 {schema.properties[CONNECTOR_IMAGE_SCOPE].oneOf.length > 0 ? (
                     schema.properties[CATALOG_NAME_SCOPE].examples.length >
@@ -224,7 +236,7 @@ function DetailsFormForm({
                             renderers={defaultRenderers}
                             cells={materialCells}
                             config={defaultOptions}
-                            readonly={isSaving || isActive}
+                            readonly={readOnly ?? (isSaving || isActive)}
                             validationMode={showValidation(displayValidation)}
                             onChange={updateDetails}
                         />

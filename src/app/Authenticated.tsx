@@ -5,8 +5,10 @@ import AccessGrants from 'components/admin/AccessGrants';
 import AdminApi from 'components/admin/Api';
 import AdminConnectors from 'components/admin/Connectors';
 import CaptureCreate from 'components/capture/Create';
+import CaptureEdit from 'components/capture/Edit';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import MaterializationCreate from 'components/materialization/Create';
+import MaterializationEdit from 'components/materialization/Edit';
 import { EntityContextProvider } from 'components/shared/Entity/EntityContext';
 import AuthenticatedOnlyContext from 'context/Authenticated';
 import { OAuthPopup } from 'hooks/forks/react-use-oauth2/components';
@@ -59,6 +61,16 @@ export const authenticatedRoutes = {
                 connectorID: 'connectorID',
             },
         },
+        edit: {
+            title: 'routeTitle.captureEdit',
+            path: `edit`,
+            fullPath: '/captures/edit',
+            params: {
+                connectorId: 'connectorId',
+                liveSpecId: 'liveSpecId', // live spec ID
+                lastPubId: 'lastPubId', // last published ID
+            },
+        },
     },
     collections: {
         title: 'routeTitle.collections',
@@ -75,6 +87,16 @@ export const authenticatedRoutes = {
             title: 'routeTitle.materializationCreate',
             path: 'create',
             fullPath: '/materializations/create',
+            params: {
+                connectorId: 'connectorId',
+                liveSpecId: 'liveSpecId', // live spec ID
+                lastPubId: 'lastPubId', // last published ID
+            },
+        },
+        edit: {
+            title: 'routeTitle.materializationEdit',
+            path: 'edit',
+            fullPath: '/materializations/edit',
             params: {
                 connectorId: 'connectorId',
                 liveSpecId: 'liveSpecId', // live spec ID
@@ -152,6 +174,7 @@ const Authenticated = () => {
 
                         <Route path={authenticatedRoutes.captures.path}>
                             <Route path="" element={<Captures />} />
+
                             <Route
                                 path={authenticatedRoutes.captures.create.path}
                                 element={
@@ -162,10 +185,22 @@ const Authenticated = () => {
                                     </EntityContextProvider>
                                 }
                             />
+
+                            <Route
+                                path={authenticatedRoutes.captures.edit.path}
+                                element={
+                                    <EntityContextProvider
+                                        value={ENTITY.CAPTURE}
+                                    >
+                                        <CaptureEdit />
+                                    </EntityContextProvider>
+                                }
+                            />
                         </Route>
 
                         <Route path={authenticatedRoutes.materializations.path}>
                             <Route path="" element={<Materializations />} />
+
                             <Route
                                 path={
                                     authenticatedRoutes.materializations.create
@@ -176,6 +211,20 @@ const Authenticated = () => {
                                         value={ENTITY.MATERIALIZATION}
                                     >
                                         <MaterializationCreate />
+                                    </EntityContextProvider>
+                                }
+                            />
+
+                            <Route
+                                path={
+                                    authenticatedRoutes.materializations.edit
+                                        .path
+                                }
+                                element={
+                                    <EntityContextProvider
+                                        value={ENTITY.MATERIALIZATION}
+                                    >
+                                        <MaterializationEdit />
                                     </EntityContextProvider>
                                 }
                             />
