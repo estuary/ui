@@ -4,6 +4,7 @@ import {
     RealtimeSubscription,
     User,
 } from '@supabase/supabase-js';
+import { SupabaseQueryBuilder } from '@supabase/supabase-js/dist/module/lib/SupabaseQueryBuilder';
 import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 import { JobStatus } from 'types';
@@ -225,15 +226,8 @@ export const endSubscription = (subscription: RealtimeSubscription) => {
         .catch(() => {});
 };
 
-export const endAllSubscriptions = () => {
-    return supabaseClient
-        .removeAllSubscriptions()
-        .then(() => {})
-        .catch(() => {});
-};
-
 export const startSubscription = (
-    query: any,
+    query: SupabaseQueryBuilder<any>,
     success: Function,
     failure: Function,
     keepSubscription?: boolean
@@ -242,8 +236,12 @@ export const startSubscription = (
         .on('*', async (payload: any) => {
             const response = payload.new
                 ? payload.new
-                : payload.record
-                ? payload.record
+                : // TODO (typing) during manual testing I have seen record be in the response
+                //      even though the type says it is not there. Needs more research
+                // eslint-disable-next-line @typescript-eslint/dot-notation
+                payload['record']
+                ? // eslint-disable-next-line @typescript-eslint/dot-notation
+                  payload['record']
                 : null;
 
             if (response) {
