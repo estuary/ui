@@ -1,8 +1,8 @@
 import { updateDraftSpec } from 'api/draftSpecs';
 import EditorWithFileSelector from 'components/editor/EditorWithFileSelector';
 import { EditorStoreState } from 'components/editor/Store';
-import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
+import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useEffect, useState } from 'react';
 
 export interface Props {
@@ -62,8 +62,8 @@ function DraftSpecEditor({ draftEditorStoreName, disabled }: Props) {
     }, [currentCatalog]);
 
     // TODO (sync editing) : turning off as right now this will show lots of "Out of sync" errors
-    //    because we are comparing two JSON obejcts that are being stringified and that means the order
-    //    change change whenever. We should probably compare the two obejcts and THEN if those do not match
+    //    because we are comparing two JSON objects that are being stringified and that means the order
+    //    change change whenever. We should probably compare the two objects and THEN if those do not match
     //    show an error/diff editor.
     //
     // useEffectOnce(() => {

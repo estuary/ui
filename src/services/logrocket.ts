@@ -28,8 +28,10 @@ export enum CustomEvents {
     CAPTURE_TEST = 'Capture_Test',
     CAPTURE_CREATE = 'Capture_Create',
     CAPTURE_DISCOVER = 'Capture_Discover',
+    CAPTURE_EDIT = 'Capture_Edit',
     MATERIALIZATION_CREATE = 'Materialization_Create',
     MATERIALIZATION_TEST = 'Materialization_Test',
+    MATERIALIZATION_EDIT = 'Materialization_Edit',
 }
 
 const logRocketSettings = getLogRocketSettings();
