@@ -14,7 +14,6 @@ import {
     useZustandStore,
 } from 'context/Zustand';
 import { useClient } from 'hooks/supabase-swr';
-import { usePrompt } from 'hooks/useBlocker';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 // import LogRocket from 'logrocket';
@@ -27,7 +26,7 @@ import {
     useDetailsForm_changed,
     useDetailsForm_connectorImage,
     useDetailsForm_errorsExist,
-    useDetailsForm_resetFormState,
+    useDetailsForm_resetState,
 } from 'stores/DetailsForm';
 import {
     useEndpointConfigStore_changed,
@@ -64,7 +63,7 @@ function CaptureEdit() {
     const imageTag = useDetailsForm_connectorImage();
     const detailsFormErrorsExist = useDetailsForm_errorsExist();
     const detailsFormChanged = useDetailsForm_changed();
-    const resetDetailsFormState = useDetailsForm_resetFormState();
+    const resetDetailsForm = useDetailsForm_resetState();
 
     // Draft Editor Store
     const setDraftId = useZustandStore<
@@ -114,7 +113,7 @@ function CaptureEdit() {
     }, [imageTag, setDraftId]);
 
     const resetState = () => {
-        resetDetailsFormState();
+        resetDetailsForm();
         resetEndpointConfigState();
         resetFormState();
     };
@@ -199,19 +198,13 @@ function CaptureEdit() {
     //     );
     // };
 
-    usePrompt(
-        'confirm.loseData',
-        !exitWhenLogsClose && (detailsFormChanged() || endpointConfigChanged()),
-        () => {
-            resetState();
-        }
-    );
-
     return (
         <PageContainer>
             <EntityEdit
                 title="browserTitle.captureEdit"
                 entityType={entityType}
+                promptDataLoss={detailsFormChanged() || endpointConfigChanged()}
+                resetState={resetState}
                 Header={
                     <FooHeader
                         heading={

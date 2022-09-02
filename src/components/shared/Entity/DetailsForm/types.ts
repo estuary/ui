@@ -8,4 +8,5 @@ export interface Props {
     draftEditorStoreName: DraftEditorStoreNames;
     formStateStoreName: FormStateStoreNames;
     entityType: ENTITY_WITH_CREATE;
+    readOnly?: boolean;
 }

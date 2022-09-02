@@ -11,6 +11,7 @@ function DetailsForm({
     draftEditorStoreName,
     formStateStoreName,
     entityType,
+    readOnly,
 }: Props) {
     // Form State Store
     const messagePrefix = useZustandStore<
@@ -28,6 +29,7 @@ function DetailsForm({
                 draftEditorStoreName={draftEditorStoreName}
                 formStateStoreName={formStateStoreName}
                 entityType={entityType}
+                readOnly={readOnly}
             />
         </WrapperWithHeader>
     );
