@@ -39,6 +39,7 @@ function DetailsPanel({
         () => concat([entityName], collectionNames),
         [collectionNames, entityName]
     ) as string[];
+
     return (
         <TableRow>
             <TableCell

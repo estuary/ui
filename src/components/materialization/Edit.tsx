@@ -1,10 +1,10 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { authenticatedRoutes } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
-import MaterializeGenerateButton from 'components/materialization/GenerateButton';
+import MaterializeGenerateButton from 'components/materialization/EditGenerateButton';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
-import EntityCreate from 'components/shared/Entity/Create';
+import EntityEdit from 'components/shared/Entity/Edit';
 import { useEntityType } from 'components/shared/Entity/EntityContext';
 import FooHeader from 'components/shared/Entity/Header';
 import PageContainer from 'components/shared/PageContainer';
@@ -37,10 +37,10 @@ import { EntityFormState, FormStatus } from 'stores/FormState';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 
 const draftEditorStoreName = DraftEditorStoreNames.MATERIALIZATION;
-const formStateStoreName = FormStateStoreNames.MATERIALIZATION_CREATE;
+const formStateStoreName = FormStateStoreNames.MATERIALIZATION_EDIT;
 const resourceConfigStoreName = ResourceConfigStoreNames.MATERIALIZATION;
 
-function MaterializationCreate() {
+function MaterializationEdit() {
     const navigate = useNavigate();
 
     const entityType = useEntityType();
@@ -115,10 +115,10 @@ function MaterializationCreate() {
     }, [imageTag, setDraftId]);
 
     const resetState = () => {
-        resetEndpointConfigState();
-        resetResourceConfigState();
-        resetDetailsFormState();
         resetFormState();
+        resetEndpointConfigState();
+        resetDetailsFormState();
+        resetResourceConfigState();
     };
 
     const helpers = {
@@ -182,16 +182,10 @@ function MaterializationCreate() {
     );
 
     return (
-        <PageContainer
-            pageTitleProps={{
-                header: authenticatedRoutes.materializations.create.title,
-                headerLink:
-                    'https://docs.estuary.dev/guides/create-dataflow/#create-a-materialization',
-            }}
-        >
-            <EntityCreate
-                title="browserTitle.materializationCreate"
-                connectorType={entityType}
+        <PageContainer>
+            <EntityEdit
+                title="browserTitle.materializationEdit"
+                entityType={entityType}
                 showCollections
                 Header={
                     <FooHeader
@@ -221,7 +215,7 @@ function MaterializationCreate() {
                                 disabled={!draftId}
                                 callFailed={helpers.callFailed}
                                 closeLogs={handlers.closeLogs}
-                                logEvent={CustomEvents.MATERIALIZATION_CREATE}
+                                logEvent={CustomEvents.MATERIALIZATION_EDIT}
                                 draftEditorStoreName={draftEditorStoreName}
                                 formStateStoreName={formStateStoreName}
                             />
@@ -241,9 +235,14 @@ function MaterializationCreate() {
                 draftEditorStoreName={draftEditorStoreName}
                 resourceConfigStoreName={resourceConfigStoreName}
                 formStateStoreName={formStateStoreName}
+                callFailed={helpers.callFailed}
+                readOnly={{
+                    detailsForm: true,
+                    endpointConfigForm: true,
+                }}
             />
         </PageContainer>
     );
 }
 
-export default MaterializationCreate;
+export default MaterializationEdit;

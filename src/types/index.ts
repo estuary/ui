@@ -4,7 +4,9 @@ import { ReactNode } from 'react';
 
 export enum MessagePrefixes {
     CAPTURE_CREATE = 'captureCreate',
+    CAPTURE_EDIT = 'captureEdit',
     MATERIALIZATION_CREATE = 'materializationCreate',
+    MATERIALIZATION_EDIT = 'materializationEdit',
 }
 
 export interface JsonFormsData extends Pick<JsonFormsCore, 'data' | 'errors'> {
@@ -70,6 +72,7 @@ export interface Grants {
 
 export interface LiveSpecsExtBaseQuery {
     catalog_name: string;
+    connector_id: string;
     connector_image_name: string | null;
     connector_image_tag: string | null;
     image: string;

@@ -46,16 +46,21 @@ export const CONNECTOR_WITH_TAG_QUERY = `
 `;
 const defaultResponse: ConnectorWithTagDetailQuery[] = [];
 
-function useConnectorWithTagDetail(protocol: string | null) {
+function useConnectorWithTagDetail(
+    protocol: string | null,
+    connectorId?: string | null
+) {
     const connectorTagsQuery = useQuery<ConnectorWithTagDetailQuery>(
         TABLES.CONNECTORS,
         {
             columns: CONNECTOR_WITH_TAG_QUERY,
             filter: (query) =>
-                query
-                    .eq('connector_tags.protocol', protocol as string)
-                    .order(CONNECTOR_RECOMMENDED)
-                    .order(CONNECTOR_NAME),
+                connectorId
+                    ? query.eq('id', connectorId)
+                    : query
+                          .eq('connector_tags.protocol', protocol as string)
+                          .order(CONNECTOR_RECOMMENDED)
+                          .order(CONNECTOR_NAME),
         },
         [protocol]
     );

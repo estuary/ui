@@ -19,14 +19,21 @@ import {
     useEndpointConfigStore_setEndpointConfig,
 } from 'stores/EndpointConfig';
 import { EntityFormState } from 'stores/FormState';
+import { JsonFormsData } from 'types';
 
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
 
 interface Props {
     formStateStoreName: FormStateStoreNames;
+    readOnly: boolean;
+    initialEndpointConfig?: JsonFormsData | null;
 }
 
-function EndpointConfigForm({ formStateStoreName }: Props) {
+function EndpointConfigForm({
+    formStateStoreName,
+    readOnly,
+    initialEndpointConfig,
+}: Props) {
     // Endpoint Config Store
     const setSpec = useEndpointConfigStore_setEndpointConfig();
     const formData = useEndpointConfigStore_endpointConfig_data();
@@ -45,9 +52,11 @@ function EndpointConfigForm({ formStateStoreName }: Props) {
 
     useEffect(() => {
         if (!isEmpty(endpointSchema)) {
-            setSpec(createJSONFormDefaults(endpointSchema));
+            setSpec(
+                initialEndpointConfig ?? createJSONFormDefaults(endpointSchema)
+            );
         }
-    }, [endpointSchema, setSpec]);
+    }, [setSpec, endpointSchema, initialEndpointConfig]);
 
     const categoryLikeSchema = useMemo(() => {
         if (!isEmpty(endpointSchema)) {
@@ -82,7 +91,7 @@ function EndpointConfigForm({ formStateStoreName }: Props) {
                     renderers={defaultRenderers}
                     cells={materialCells}
                     config={defaultOptions}
-                    readonly={isActive}
+                    readonly={readOnly || isActive}
                     validationMode={showValidationVal}
                     onChange={setSpec}
                     ajv={setDefaultsValidator}
