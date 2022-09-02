@@ -16,7 +16,11 @@ interface Props {
     closeLogs: Function;
     callFailed: Function;
     disabled: boolean;
-    logEvent: CustomEvents.CAPTURE_CREATE | CustomEvents.MATERIALIZATION_CREATE;
+    logEvent:
+        | CustomEvents.CAPTURE_CREATE
+        | CustomEvents.MATERIALIZATION_CREATE
+        | CustomEvents.CAPTURE_EDIT
+        | CustomEvents.MATERIALIZATION_EDIT;
     draftEditorStoreName: DraftEditorStoreNames;
     formStateStoreName: FormStateStoreNames;
     materialize?: Function;

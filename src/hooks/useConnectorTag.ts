@@ -9,6 +9,7 @@ interface ConnectorTag {
         image_name: string;
     };
     id: string;
+    connector_id: string;
     image_tag: string;
     endpoint_spec_schema: string;
     resource_spec_schema: string;
@@ -20,6 +21,7 @@ export const CONNECTOR_TAG_QUERY = `
         image_name
     ),
     id,
+    connector_id,
     image_tag,
     endpoint_spec_schema, 
     resource_spec_schema, 

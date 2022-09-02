@@ -14,9 +14,9 @@ import { devtools, NamedSet } from 'zustand/middleware';
 const storeName = (entityType: ENTITY): EndpointConfigStoreNames => {
     switch (entityType) {
         case ENTITY.CAPTURE:
-            return EndpointConfigStoreNames.CAPTURE_CREATE;
+            return EndpointConfigStoreNames.CAPTURE;
         case ENTITY.MATERIALIZATION:
-            return EndpointConfigStoreNames.MATERIALIZATION_CREATE;
+            return EndpointConfigStoreNames.MATERIALIZATION;
         default: {
             throw new Error('Invalid EndpointConfig store name');
         }

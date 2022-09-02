@@ -35,9 +35,12 @@ interface Props {
     accessGrants: Grants[];
     draftEditorStoreName: DraftEditorStoreNames;
     formStateStoreName: FormStateStoreNames;
+    readOnly?: boolean;
 }
 
-const getConnectorImageDetails = (connector: ConnectorWithTagDetailQuery) => {
+export const getConnectorImageDetails = (
+    connector: ConnectorWithTagDetailQuery
+) => {
     return {
         connectorId: connector.id,
         id: connector.connector_tags[0].id,
@@ -51,15 +54,22 @@ function DetailsForm({
     accessGrants,
     draftEditorStoreName,
     formStateStoreName,
+    readOnly = false,
 }: Props) {
     const intl = useIntl();
     const [searchParams] = useSearchParams();
-    const connectorID =
+    const connectorId =
         searchParams.get(
             authenticatedRoutes.captures.create.params.connectorID
         ) ??
         searchParams.get(
             authenticatedRoutes.materializations.create.params.connectorId
+        ) ??
+        searchParams.get(
+            authenticatedRoutes.captures.edit.params.connectorId
+        ) ??
+        searchParams.get(
+            authenticatedRoutes.materializations.edit.params.connectorId
         );
 
     // Details Form Store
@@ -99,9 +109,9 @@ function DetailsForm({
     >(formStateStoreName, (state) => state.resetState);
 
     useEffect(() => {
-        if (connectorID && hasLength(connectorTags)) {
+        if (connectorId && hasLength(connectorTags)) {
             connectorTags.forEach((connector) => {
-                if (connector.connector_tags[0].id === connectorID) {
+                if (connector.connector_tags[0].id === connectorId) {
                     setDetails({
                         data: {
                             entityName: '',
@@ -111,13 +121,13 @@ function DetailsForm({
                 }
             });
         }
-    }, [setDetails, connectorID, connectorTags]);
+    }, [setDetails, connectorId, connectorTags]);
 
     useEffect(() => {
-        if (connectorID && originalConnectorImage.id !== connectorID) {
+        if (connectorId && originalConnectorImage.id !== connectorId) {
             resetFormState();
         }
-    }, [resetFormState, connectorID, originalConnectorImage]);
+    }, [resetFormState, connectorId, originalConnectorImage]);
 
     const accessGrantsOneOf = useMemo(() => {
         const response = [] as string[];
@@ -219,6 +229,7 @@ function DetailsForm({
         if (details.data.connectorImage.id === '') {
             resetEndpointConfig();
         }
+
         setDetails(details);
     };
 
@@ -227,6 +238,14 @@ function DetailsForm({
             <Typography variant="h5" sx={{ mb: 1 }}>
                 <FormattedMessage id={`${messagePrefix}.details.heading`} />
             </Typography>
+
+            {readOnly ? (
+                <Alert color="info" style={{ marginBottom: 8 }}>
+                    {intl.formatMessage({
+                        id: 'entityEdit.alert.detailsFormDisabled',
+                    })}
+                </Alert>
+            ) : null}
 
             <Typography sx={{ mb: 2 }}>
                 <FormattedMessage id={`${messagePrefix}.instructions`} />
@@ -243,7 +262,7 @@ function DetailsForm({
                             renderers={defaultRenderers}
                             cells={materialCells}
                             config={defaultOptions}
-                            readonly={isSaving || isActive}
+                            readonly={readOnly || isSaving || isActive}
                             validationMode={showValidation(displayValidation)}
                             onChange={updateDetails}
                         />

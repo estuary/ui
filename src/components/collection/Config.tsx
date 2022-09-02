@@ -12,11 +12,13 @@ import { ResourceConfigState } from 'stores/ResourceConfig';
 interface Props {
     resourceConfigStoreName: ResourceConfigStoreNames;
     formStateStoreName: FormStateStoreNames;
+    readOnly?: boolean;
 }
 
 function CollectionConfig({
     resourceConfigStoreName,
     formStateStoreName,
+    readOnly = false,
 }: Props) {
     // Resource Config Store
     const resourceConfigHasErrors = useZustandStore<
@@ -45,6 +47,7 @@ function CollectionConfig({
             <BindingsMultiEditor
                 resourceConfigStoreName={resourceConfigStoreName}
                 formStateStoreName={formStateStoreName}
+                readOnly={readOnly}
             />
         </WrapperWithHeader>
     );

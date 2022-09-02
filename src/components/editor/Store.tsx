@@ -24,6 +24,9 @@ export interface EditorStoreState<T> {
     id: string | null;
     setId: (newVal: EditorStoreState<T>['id']) => void;
 
+    editDraftId: string | null;
+    setEditDraftId: (newVal: EditorStoreState<T>['editDraftId']) => void;
+
     pubId: string | null;
     setPubId: (newVal: EditorStoreState<T>['pubId']) => void;
 
@@ -49,6 +52,7 @@ const getInitialStateData = () => {
     return {
         currentCatalog: null,
         id: null,
+        editDraftId: null,
         pubId: null,
         specs: null,
         isSaving: false,
@@ -70,6 +74,16 @@ const getInitialState = <T,>(
                 }),
                 false,
                 'Set draft id'
+            );
+        },
+
+        setEditDraftId: (newVal) => {
+            set(
+                produce((state) => {
+                    state.editDraftId = newVal;
+                }),
+                false,
+                'Set edit draft id'
             );
         },
 
