@@ -324,7 +324,6 @@ function EntityTable({
                                             sx={{
                                                 display: 'flex',
                                                 justifyContent: 'center',
-                                                py: 4,
                                             }}
                                         >
                                             <Box width={450}>

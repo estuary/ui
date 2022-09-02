@@ -70,8 +70,8 @@ const tonalOffset = 0.1;
 // const borderColor = "rgba(0, 0, 0, 0.13)";
 
 // Breakpoints
-const xl = 1800;
-const lg = 1200;
+const xl = 1600;
+const lg = 1440;
 const md = 900;
 const sm = 650;
 const xs = 0;
@@ -282,6 +282,12 @@ const themeSettings = createTheme({
         MuiTableCell: {
             defaultProps: {
                 sx: tableBorderSx,
+            },
+            styleOverrides: {
+                root: {
+                    paddingLeft: 8,
+                    paddingRight: 8,
+                },
             },
         },
         MuiTabs: {

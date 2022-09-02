@@ -1,4 +1,5 @@
 import { Checkbox, TableCell } from '@mui/material';
+import { tableBorderSx } from 'context/Theme';
 
 interface Props {
     isSelected: boolean;
@@ -7,7 +8,14 @@ interface Props {
 
 function RowSelect({ isSelected, name }: Props) {
     return (
-        <TableCell padding="checkbox">
+        <TableCell
+            padding="checkbox"
+            sx={{
+                ...tableBorderSx,
+                maxWidth: 42,
+                minWidth: 42,
+            }}
+        >
             <Checkbox
                 color="primary"
                 checked={isSelected}
