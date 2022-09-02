@@ -251,7 +251,7 @@ function DetailsForm({
                 <FormattedMessage id={`${messagePrefix}.instructions`} />
             </Typography>
 
-            <Stack direction="row" spacing={2}>
+            <Stack direction="row" spacing={2} data-public>
                 {schema.properties[CONNECTOR_IMAGE_SCOPE].oneOf.length > 0 ? (
                     schema.properties[CATALOG_NAME_SCOPE].examples.length >
                     0 ? (

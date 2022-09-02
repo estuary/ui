@@ -4,7 +4,9 @@ import {
     RealtimeSubscription,
     User,
 } from '@supabase/supabase-js';
+import { SupabaseQueryBuilder } from '@supabase/supabase-js/dist/module/lib/SupabaseQueryBuilder';
 import { isEmpty } from 'lodash';
+import LogRocket from 'logrocket';
 import { JobStatus } from 'types';
 
 if (
@@ -66,7 +68,16 @@ export enum FUNCTIONS {
 
 export const supabaseClient = createClient(
     supabaseSettings.url,
-    supabaseSettings.anonKey
+    supabaseSettings.anonKey,
+    {
+        // TODO (realtime) This is temporary until we figure out why some
+        //      subscriptions just hang forever.
+        realtime: {
+            logger: (kind: string, msg: string, data?: any) => {
+                LogRocket.log(kind, msg, data);
+            },
+        },
+    }
 );
 
 export const DEFAULT_POLLING_INTERVAL = 500;
@@ -112,7 +123,7 @@ export const defaultTableFilter = <Data>(
 };
 
 export const getUserDetails = (user: User | null) => {
-    let userName, email, emailVerified, avatar;
+    let userName, email, emailVerified, avatar, id;
 
     if (user) {
         if (!isEmpty(user.user_metadata)) {
@@ -125,9 +136,12 @@ export const getUserDetails = (user: User | null) => {
             email = user.email;
             emailVerified = false;
         }
+
+        id = user.id;
     }
 
     return {
+        id,
         userName,
         email,
         emailVerified,
@@ -212,15 +226,8 @@ export const endSubscription = (subscription: RealtimeSubscription) => {
         .catch(() => {});
 };
 
-export const endAllSubscriptions = () => {
-    return supabaseClient
-        .removeAllSubscriptions()
-        .then(() => {})
-        .catch(() => {});
-};
-
 export const startSubscription = (
-    query: any,
+    query: SupabaseQueryBuilder<any>,
     success: Function,
     failure: Function,
     keepSubscription?: boolean
@@ -229,8 +236,12 @@ export const startSubscription = (
         .on('*', async (payload: any) => {
             const response = payload.new
                 ? payload.new
-                : payload.record
-                ? payload.record
+                : // TODO (typing) during manual testing I have seen record be in the response
+                //      even though the type says it is not there. Needs more research
+                // eslint-disable-next-line @typescript-eslint/dot-notation
+                payload['record']
+                ? // eslint-disable-next-line @typescript-eslint/dot-notation
+                  payload['record']
                 : null;
 
             if (response) {
