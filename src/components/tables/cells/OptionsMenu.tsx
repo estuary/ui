@@ -12,6 +12,14 @@ interface Props {
 function OptionsMenu({ detailsExpanded, toggleDetailsPanel, editTask }: Props) {
     const intl = useIntl();
 
+    const stopEventPropogation = (
+        event: React.MouseEvent<any, any>,
+        callback: Function
+    ) => {
+        event.stopPropagation();
+        callback(event);
+    };
+
     return (
         <TableCell>
             <IconMenu
@@ -28,7 +36,11 @@ function OptionsMenu({ detailsExpanded, toggleDetailsPanel, editTask }: Props) {
                     anchorOrigin: { horizontal: 'left', vertical: 'top' },
                 }}
             >
-                <MenuItem onClick={toggleDetailsPanel}>
+                <MenuItem
+                    onClick={(event) =>
+                        stopEventPropogation(event, toggleDetailsPanel)
+                    }
+                >
                     <Typography>
                         <FormattedMessage
                             id={
@@ -40,7 +52,9 @@ function OptionsMenu({ detailsExpanded, toggleDetailsPanel, editTask }: Props) {
                     </Typography>
                 </MenuItem>
 
-                <MenuItem onClick={editTask}>
+                <MenuItem
+                    onClick={(event) => stopEventPropogation(event, editTask)}
+                >
                     <Typography>
                         <FormattedMessage id="optionMenu.option.edit" />
                     </Typography>

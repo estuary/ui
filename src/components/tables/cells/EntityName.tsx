@@ -17,7 +17,7 @@ interface Props {
 
 function EntityName({ name, showEntityStatus, shardDetailStoreName }: Props) {
     const theme = useTheme();
-    const belowLg = useMediaQuery(theme.breakpoints.down('lg'));
+    const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
     return (
         <TableCell
@@ -42,7 +42,7 @@ function EntityName({ name, showEntityStatus, shardDetailStoreName }: Props) {
 
                 <Typography
                     sx={
-                        belowLg
+                        belowMd
                             ? {
                                   overflowWrap: 'break-word',
                                   wordBreak: 'break-all',
