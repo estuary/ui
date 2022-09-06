@@ -7,6 +7,7 @@ import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
 import { useEntityType } from 'components/shared/Entity/EntityContext';
 import FooHeader from 'components/shared/Entity/Header';
+import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
 import PageContainer from 'components/shared/PageContainer';
 import {
     DraftEditorStoreNames,
@@ -34,7 +35,6 @@ import {
     useEndpointConfigStore_reset,
 } from 'stores/EndpointConfig';
 import { EntityFormState, FormStatus } from 'stores/FormState';
-import { getPathWithParam } from 'utils/misc-utils';
 
 const draftEditorStoreName = DraftEditorStoreNames.CAPTURE;
 const formStateStoreName = FormStateStoreNames.CAPTURE_CREATE;
@@ -107,6 +107,8 @@ function CaptureCreate() {
         EntityFormState['formState']['exitWhenLogsClose']
     >(formStateStoreName, (state) => state.formState.exitWhenLogsClose);
 
+    const navigateToCreate = useEntityCreateNavigate();
+
     // Reset the catalog if the connector changes
     useEffect(() => {
         setDraftId(null);
@@ -166,14 +168,7 @@ function CaptureCreate() {
 
         materializeCollections: () => {
             helpers.exit();
-            navigate(
-                getPathWithParam(
-                    authenticatedRoutes.materializations.create.fullPath,
-                    authenticatedRoutes.materializations.create.params
-                        .lastPubId,
-                    pubId
-                )
-            );
+            navigateToCreate(entityType, pubId);
         },
     };
 

@@ -2,7 +2,7 @@ import { Alert, Collapse } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec, updateDraftSpec } from 'api/draftSpecs';
-import { authenticatedRoutes } from 'app/Authenticated';
+import { globalSearchParams } from 'app/Authenticated';
 import CollectionConfig from 'components/collection/Config';
 import { EditorStoreState } from 'components/editor/Store';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
@@ -19,6 +19,7 @@ import {
     ResourceConfigStoreNames,
     useZustandStore,
 } from 'context/Zustand';
+import useGlobalSearchParams from 'hooks/searchParams/useGlobalSearchParams';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useConnectorTag from 'hooks/useConnectorTag';
@@ -33,7 +34,6 @@ import {
 import { isEmpty, isEqual } from 'lodash';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useSearchParams } from 'react-router-dom';
 import {
     Details,
     useDetailsForm_connectorImage,
@@ -205,26 +205,11 @@ function EntityEdit({
     });
 
     // Check for properties being passed in
-    const [searchParams] = useSearchParams();
-    const connectorId =
-        searchParams.get(
-            authenticatedRoutes.captures.edit.params.connectorId
-        ) ??
-        searchParams.get(
-            authenticatedRoutes.materializations.edit.params.connectorId
-        );
-
-    const liveSpecId =
-        searchParams.get(authenticatedRoutes.captures.edit.params.liveSpecId) ??
-        searchParams.get(
-            authenticatedRoutes.materializations.edit.params.liveSpecId
-        );
-
-    const lastPubId =
-        searchParams.get(authenticatedRoutes.captures.edit.params.lastPubId) ??
-        searchParams.get(
-            authenticatedRoutes.materializations.edit.params.lastPubId
-        );
+    const [connectorId, liveSpecId, lastPubId] = useGlobalSearchParams([
+        globalSearchParams.connectorId,
+        globalSearchParams.liveSpecId,
+        globalSearchParams.lastPubId,
+    ]);
 
     const {
         connectorTags,

@@ -1,5 +1,5 @@
 import { TableRow, useTheme } from '@mui/material';
-import { authenticatedRoutes } from 'app/Authenticated';
+import { authenticatedRoutes, globalSearchParams } from 'app/Authenticated';
 import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import ChipList from 'components/tables/cells/ChipList';
 import Connector from 'components/tables/cells/Connector';
@@ -25,7 +25,7 @@ import { useNavigate } from 'react-router-dom';
 import { CONNECTOR_TITLE } from 'services/supabase';
 import { shardDetailSelectors, ShardDetailStore } from 'stores/ShardDetail';
 import { ENTITY } from 'types';
-import { getPathWithParam, getPathWithParams } from 'utils/misc-utils';
+import { getPathWithParams } from 'utils/misc-utils';
 
 interface RowsProps {
     data: LiveSpecsExtQuery[];
@@ -86,11 +86,11 @@ function Row({
     const handlers = {
         clickMaterialize: () => {
             navigate(
-                getPathWithParam(
+                getPathWithParams(
                     authenticatedRoutes.materializations.create.fullPath,
-                    authenticatedRoutes.materializations.create.params
-                        .liveSpecId,
-                    row.id
+                    {
+                        [globalSearchParams.liveSpecId]: row.id,
+                    }
                 )
             );
         },
@@ -100,12 +100,9 @@ function Row({
         editTask: () => {
             navigate(
                 getPathWithParams(authenticatedRoutes.captures.edit.fullPath, {
-                    [authenticatedRoutes.captures.edit.params.connectorId]:
-                        row.connector_id,
-                    [authenticatedRoutes.captures.edit.params.liveSpecId]:
-                        row.id,
-                    [authenticatedRoutes.captures.edit.params.lastPubId]:
-                        row.last_pub_id,
+                    [globalSearchParams.connectorId]: row.connector_id,
+                    [globalSearchParams.liveSpecId]: row.id,
+                    [globalSearchParams.lastPubId]: row.last_pub_id,
                 })
             );
         },

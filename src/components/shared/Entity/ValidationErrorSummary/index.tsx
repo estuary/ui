@@ -1,4 +1,5 @@
 import { Alert, AlertTitle, Collapse } from '@mui/material';
+import { globalSearchParams } from 'app/Authenticated';
 import DetailsErrors from 'components/shared/Entity/ValidationErrorSummary/DetailsErrors';
 import EndpointConfigErrors from 'components/shared/Entity/ValidationErrorSummary/EndpointConfigErrors';
 import NoConnectorError from 'components/shared/Entity/ValidationErrorSummary/NoConnectorError';
@@ -8,7 +9,7 @@ import {
     ResourceConfigStoreNames,
     useZustandStore,
 } from 'context/Zustand';
-import useConnectorID from 'hooks/searchParams/useConnectorID';
+import useGlobalSearchParams from 'hooks/searchParams/useGlobalSearchParams';
 import { FormattedMessage } from 'react-intl';
 import { EntityFormState } from 'stores/FormState';
 import { hasLength } from 'utils/misc-utils';
@@ -30,7 +31,9 @@ function ValidationErrorSummary({
     ErrorComponent,
     errorsExist,
 }: Props) {
-    const connectorID = useConnectorID();
+    const [connectorID] = useGlobalSearchParams([
+        globalSearchParams.connectorId,
+    ]);
 
     const displayValidation = useZustandStore<
         EntityFormState,

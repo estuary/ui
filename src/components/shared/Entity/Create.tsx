@@ -1,5 +1,5 @@
 import { Alert, Collapse, Typography } from '@mui/material';
-import { authenticatedRoutes } from 'app/Authenticated';
+import { globalSearchParams } from 'app/Authenticated';
 import CollectionConfig from 'components/collection/Config';
 import ConnectorTiles from 'components/ConnectorTiles';
 import { EditorStoreState } from 'components/editor/Store';
@@ -16,7 +16,7 @@ import {
     ResourceConfigStoreNames,
     useZustandStore,
 } from 'context/Zustand';
-import useConnectorID from 'hooks/searchParams/useConnectorID';
+import useGlobalSearchParams from 'hooks/searchParams/useGlobalSearchParams';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useConnectorTag from 'hooks/useConnectorTag';
@@ -28,7 +28,6 @@ import {
 } from 'hooks/useLiveSpecsExt';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useSearchParams } from 'react-router-dom';
 import { useDetailsForm_connectorImage } from 'stores/DetailsForm';
 import { useEndpointConfigStore_setEndpointSchema } from 'stores/EndpointConfig';
 import { EntityFormState } from 'stores/FormState';
@@ -67,14 +66,11 @@ function EntityCreate({
     });
 
     // Check for properties being passed in
-    const [searchParams] = useSearchParams();
-    const specId = searchParams.get(
-        authenticatedRoutes.materializations.create.params.liveSpecId
-    );
-    const lastPubId = searchParams.get(
-        authenticatedRoutes.materializations.create.params.lastPubId
-    );
-    const connectorID = useConnectorID();
+    const [connectorID, specId, lastPubId] = useGlobalSearchParams([
+        globalSearchParams.connectorId,
+        globalSearchParams.liveSpecId,
+        globalSearchParams.lastPubId,
+    ]);
 
     const [showConnectorTiles, setShowConnectorTiles] = useState<
         boolean | null

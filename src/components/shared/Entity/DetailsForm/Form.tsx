@@ -1,13 +1,14 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Alert, Stack, Typography } from '@mui/material';
+import { globalSearchParams } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
 import { Props } from 'components/shared/Entity/DetailsForm/types';
 import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
 import { useZustandStore } from 'context/Zustand';
 import { CATALOG_NAME_SCOPE } from 'forms/renderers/CatalogName';
 import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
-import useConnectorID from 'hooks/searchParams/useConnectorID';
+import useGlobalSearchParams from 'hooks/searchParams/useGlobalSearchParams';
 import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useEffect, useMemo } from 'react';
@@ -49,7 +50,7 @@ function DetailsFormForm({
 }: Props) {
     const intl = useIntl();
     const navigateToCreate = useEntityCreateNavigate();
-    const connectorId = useConnectorID();
+    const [connectorId] = useGlobalSearchParams(globalSearchParams.connectorId);
 
     // Details Form Store
     const formData = useDetailsForm_details();

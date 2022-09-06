@@ -1,5 +1,5 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
-import { authenticatedRoutes } from 'app/Authenticated';
+import { authenticatedRoutes, globalSearchParams } from 'app/Authenticated';
 // import CaptureGenerateButton from 'components/capture/GenerateButton';
 import { EditorStoreState } from 'components/editor/Store';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
@@ -34,7 +34,7 @@ import {
     useEndpointConfigStore_reset,
 } from 'stores/EndpointConfig';
 import { EntityFormState, FormStatus } from 'stores/FormState';
-import { getPathWithParam } from 'utils/misc-utils';
+import { getPathWithParams } from 'utils/misc-utils';
 
 const draftEditorStoreName = DraftEditorStoreNames.CAPTURE;
 const formStateStoreName = FormStateStoreNames.CAPTURE_EDIT;
@@ -168,12 +168,14 @@ function CaptureEdit() {
         materializeCollections: () => {
             helpers.exit();
             navigate(
-                getPathWithParam(
-                    authenticatedRoutes.materializations.create.fullPath,
-                    authenticatedRoutes.materializations.create.params
-                        .lastPubId,
-                    pubId
-                )
+                pubId
+                    ? getPathWithParams(
+                          authenticatedRoutes.materializations.create.fullPath,
+                          {
+                              [globalSearchParams.lastPubId]: pubId,
+                          }
+                      )
+                    : authenticatedRoutes.materializations.create.fullPath
             );
         },
     };

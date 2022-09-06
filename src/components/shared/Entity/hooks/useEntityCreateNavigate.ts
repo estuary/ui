@@ -1,51 +1,39 @@
-import { authenticatedRoutes } from 'app/Authenticated';
+import { authenticatedRoutes, globalSearchParams } from 'app/Authenticated';
+import useSearchParamAppend from 'hooks/searchParams/useSearchParamAppend';
 import { useNavigate } from 'react-router';
-import { useSearchParams } from 'react-router-dom';
 import { ENTITY } from 'types';
-import { getPathWithParam, hasLength } from 'utils/misc-utils';
+import { getPathWithParams, hasLength } from 'utils/misc-utils';
 
 export default function useEntityCreateNavigate() {
     const navigate = useNavigate();
-    const [searchParams] = useSearchParams();
-    const searchAsObject = Object.fromEntries(
-        new URLSearchParams(searchParams)
-    );
-
-    console.log('sp', searchAsObject);
+    const appendSearchParams = useSearchParamAppend();
 
     return (
         entity: ENTITY.CAPTURE | ENTITY.MATERIALIZATION,
-        id?: string,
+        id?: string | null | undefined,
         replace?: boolean
     ) => {
-        if (entity === ENTITY.CAPTURE) {
-            navigate(
-                hasLength(id)
-                    ? getPathWithParam(
-                          authenticatedRoutes.captures.create.fullPath,
-                          authenticatedRoutes.captures.create.params
-                              .connectorID,
-                          id
-                      )
-                    : authenticatedRoutes.captures.create.fullPath,
-                {
-                    replace,
-                }
-            );
-        } else {
-            navigate(
-                hasLength(id)
-                    ? getPathWithParam(
-                          authenticatedRoutes.materializations.create.fullPath,
-                          authenticatedRoutes.materializations.create.params
-                              .connectorId,
-                          id
-                      )
-                    : authenticatedRoutes.materializations.create.fullPath,
-                {
-                    replace,
-                }
-            );
+        let newSearchParams: URLSearchParams | null = null;
+        if (hasLength(id)) {
+            newSearchParams = appendSearchParams({
+                [globalSearchParams.connectorId]: id,
+            });
         }
+
+        let newPath: string | null = null;
+        if (entity === ENTITY.CAPTURE) {
+            newPath = authenticatedRoutes.captures.create.fullPath;
+        } else {
+            newPath = authenticatedRoutes.materializations.create.fullPath;
+        }
+
+        navigate(
+            newSearchParams
+                ? getPathWithParams(newPath, newSearchParams)
+                : newPath,
+            {
+                replace,
+            }
+        );
     };
 }

@@ -1,5 +1,5 @@
 import { TableRow, useTheme } from '@mui/material';
-import { authenticatedRoutes } from 'app/Authenticated';
+import { authenticatedRoutes, globalSearchParams } from 'app/Authenticated';
 import ChipList from 'components/tables/cells/ChipList';
 import Connector from 'components/tables/cells/Connector';
 import EntityName from 'components/tables/cells/EntityName';
@@ -91,12 +91,9 @@ function Row({
                 getPathWithParams(
                     authenticatedRoutes.materializations.edit.fullPath,
                     {
-                        [authenticatedRoutes.materializations.edit.params
-                            .connectorId]: row.connector_id,
-                        [authenticatedRoutes.materializations.edit.params
-                            .liveSpecId]: row.id,
-                        [authenticatedRoutes.materializations.edit.params
-                            .lastPubId]: row.last_pub_id,
+                        [globalSearchParams.connectorId]: row.connector_id,
+                        [globalSearchParams.liveSpecId]: row.id,
+                        [globalSearchParams.lastPubId]: row.last_pub_id,
                     }
                 )
             );

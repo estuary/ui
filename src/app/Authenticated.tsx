@@ -27,6 +27,12 @@ import { Route, Routes } from 'react-router';
 import { ENTITY } from 'types';
 import { isProduction } from 'utils/env-utils';
 
+export enum globalSearchParams {
+    connectorId = 'connectorId',
+    liveSpecId = 'liveSpecId',
+    lastPubId = 'lastPubId',
+}
+
 export const authenticatedRoutes = {
     oauth: {
         path: '/oauth',
@@ -57,19 +63,11 @@ export const authenticatedRoutes = {
             title: 'routeTitle.captureCreate',
             path: `create`,
             fullPath: '/captures/create',
-            params: {
-                connectorID: 'connectorID',
-            },
         },
         edit: {
             title: 'routeTitle.captureEdit',
             path: `edit`,
             fullPath: '/captures/edit',
-            params: {
-                connectorId: 'connectorId',
-                liveSpecId: 'liveSpecId', // live spec ID
-                lastPubId: 'lastPubId', // last published ID
-            },
         },
     },
     collections: {
@@ -87,21 +85,11 @@ export const authenticatedRoutes = {
             title: 'routeTitle.materializationCreate',
             path: 'create',
             fullPath: '/materializations/create',
-            params: {
-                connectorId: 'connectorId',
-                liveSpecId: 'liveSpecId', // live spec ID
-                lastPubId: 'lastPubId', // last published ID
-            },
         },
         edit: {
             title: 'routeTitle.materializationEdit',
             path: 'edit',
             fullPath: '/materializations/edit',
-            params: {
-                connectorId: 'connectorId',
-                liveSpecId: 'liveSpecId', // live spec ID
-                lastPubId: 'lastPubId', // last published ID
-            },
         },
     },
     user: {
