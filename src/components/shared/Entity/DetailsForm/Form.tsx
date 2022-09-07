@@ -50,7 +50,7 @@ function DetailsFormForm({
 }: Props) {
     const intl = useIntl();
     const navigateToCreate = useEntityCreateNavigate();
-    const [connectorId] = useGlobalSearchParams(globalSearchParams.connectorId);
+    const connectorId = useGlobalSearchParams(globalSearchParams.connectorId);
 
     // Details Form Store
     const formData = useDetailsForm_details();

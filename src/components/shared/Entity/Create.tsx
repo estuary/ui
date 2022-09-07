@@ -66,11 +66,12 @@ function EntityCreate({
     });
 
     // Check for properties being passed in
-    const [connectorID, specId, lastPubId] = useGlobalSearchParams([
+    const [connectorID, lastPubId] = useGlobalSearchParams([
         globalSearchParams.connectorId,
-        globalSearchParams.liveSpecId,
         globalSearchParams.lastPubId,
     ]);
+
+    const specId = useGlobalSearchParams(globalSearchParams.liveSpecId, true);
 
     const [showConnectorTiles, setShowConnectorTiles] = useState<
         boolean | null
