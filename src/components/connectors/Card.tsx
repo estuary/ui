@@ -8,7 +8,7 @@ import {
     slate,
 } from 'context/Theme';
 import { FormattedDate, FormattedMessage } from 'react-intl';
-import { BaseComponentProps, ENTITY_WITH_CREATE } from 'types';
+import { BaseComponentProps, EntityWithCreateWorkflow } from 'types';
 
 type TileProps = BaseComponentProps;
 function Tile({ children }: TileProps) {
@@ -44,7 +44,7 @@ interface Props {
     imageSrc: string | null | undefined;
     lastUpdate: any;
     title: string;
-    entity: ENTITY_WITH_CREATE;
+    entity: EntityWithCreateWorkflow;
     ctaCallback: Function;
 }
 function ConnectorCard({

@@ -16,7 +16,7 @@ import {
     useZustandStore,
 } from 'context/Zustand';
 import useGlobalSearchParams, {
-    globalSearchParams,
+    GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
@@ -33,12 +33,12 @@ import { useDetailsForm_connectorImage } from 'stores/DetailsForm';
 import { useEndpointConfigStore_setEndpointSchema } from 'stores/EndpointConfig';
 import { EntityFormState } from 'stores/FormState';
 import { ResourceConfigState } from 'stores/ResourceConfig';
-import { ENTITY, ENTITY_WITH_CREATE, Schema } from 'types';
+import { ENTITY, EntityWithCreateWorkflow, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     title: string;
-    connectorType: ENTITY_WITH_CREATE;
+    connectorType: EntityWithCreateWorkflow;
     Header: any;
     draftEditorStoreName: DraftEditorStoreNames;
     formStateStoreName: FormStateStoreNames;
@@ -68,11 +68,11 @@ function EntityCreate({
 
     // Check for properties being passed in
     const [connectorID, lastPubId] = useGlobalSearchParams([
-        globalSearchParams.connectorId,
-        globalSearchParams.lastPubId,
+        GlobalSearchParams.CONNECTOR_ID,
+        GlobalSearchParams.LAST_PUB_ID,
     ]);
 
-    const specId = useGlobalSearchParams(globalSearchParams.liveSpecId, true);
+    const specId = useGlobalSearchParams(GlobalSearchParams.LIVE_SPEC_ID, true);
 
     const [showConnectorTiles, setShowConnectorTiles] = useState<
         boolean | null

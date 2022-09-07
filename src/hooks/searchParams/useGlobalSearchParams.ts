@@ -1,26 +1,26 @@
 import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-export enum globalSearchParams {
-    connectorId = 'connectorId',
-    liveSpecId = 'liveSpecId',
-    lastPubId = 'lastPubId',
+export enum GlobalSearchParams {
+    CONNECTOR_ID = 'connectorId',
+    LIVE_SPEC_ID = 'liveSpecId',
+    LAST_PUB_ID = 'lastPubId',
 }
 
-function useGlobalSearchParams(key: globalSearchParams): string;
+function useGlobalSearchParams(key: GlobalSearchParams): string;
 function useGlobalSearchParams(
-    key: globalSearchParams,
+    key: GlobalSearchParams,
     fetchAll: true
 ): string[];
 function useGlobalSearchParams(
-    key: globalSearchParams | Array<globalSearchParams>
+    key: GlobalSearchParams | Array<GlobalSearchParams>
 ): string[];
 function useGlobalSearchParams(
-    key: globalSearchParams | Array<globalSearchParams>,
+    key: GlobalSearchParams | Array<GlobalSearchParams>,
     fetchAll: true
 ): string[][];
 function useGlobalSearchParams(
-    key: globalSearchParams | Array<globalSearchParams>,
+    key: GlobalSearchParams | Array<GlobalSearchParams>,
     fetchAll?: boolean
 ) {
     const [searchParams] = useSearchParams();

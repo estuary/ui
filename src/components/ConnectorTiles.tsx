@@ -30,7 +30,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { CONNECTOR_NAME, defaultTableFilter, TABLES } from 'services/supabase';
 import {
     BaseComponentProps,
-    ENTITY_WITH_CREATE,
+    EntityWithCreateWorkflow,
     SortDirection,
     TableIntlConfig,
     TableState,
@@ -40,7 +40,7 @@ import { hasLength } from 'utils/misc-utils';
 import { getEmptyTableHeader, getEmptyTableMessage } from 'utils/table-utils';
 
 interface ConnectorTilesProps {
-    protocolPreset?: ENTITY_WITH_CREATE;
+    protocolPreset?: EntityWithCreateWorkflow;
     replaceOnNavigate?: boolean;
 }
 
