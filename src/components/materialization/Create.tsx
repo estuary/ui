@@ -1,6 +1,9 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { authenticatedRoutes } from 'app/Authenticated';
-import { EditorStoreState } from 'components/editor/Store';
+import {
+    EditorStoreState,
+    useEditorStore_setId,
+} from 'components/editor/Store';
 import MaterializeGenerateButton from 'components/materialization/GenerateButton';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
@@ -62,10 +65,7 @@ function MaterializationCreate() {
         EditorStoreState<DraftSpecQuery>['id']
     >(draftEditorStoreName, (state) => state.id);
 
-    const setDraftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['setId']
-    >(draftEditorStoreName, (state) => state.setId);
+    const setDraftId = useEditorStore_setId();
 
     // Endpoint Config Store
     const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();

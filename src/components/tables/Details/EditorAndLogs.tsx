@@ -1,7 +1,10 @@
 import { Alert, Grid } from '@mui/material';
 import LiveSpecEditor from 'components/editor/LiveSpec';
 import { DEFAULT_TOTAL_HEIGHT } from 'components/editor/MonacoEditor';
-import { EditorStoreState } from 'components/editor/Store';
+import {
+    EditorStoreState,
+    useEditorStore_setId,
+} from 'components/editor/Store';
 import Logs from 'components/Logs';
 import Error from 'components/shared/Error';
 import { LiveSpecEditorStoreNames, UseZustandStore } from 'context/Zustand';
@@ -37,10 +40,7 @@ function EditorAndLogs({
         EditorStoreState<LiveSpecsQuery_spec>['setSpecs']
     >(liveSpecEditorStoreName, (state) => state.setSpecs);
 
-    const setId = useZustandStore<
-        EditorStoreState<LiveSpecsQuery_spec>,
-        EditorStoreState<LiveSpecsQuery_spec>['setId']
-    >(liveSpecEditorStoreName, (state) => state.setId);
+    const setId = useEditorStore_setId();
 
     useEffect(() => {
         setId(lastPubId);

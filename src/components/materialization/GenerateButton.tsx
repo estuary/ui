@@ -2,7 +2,10 @@ import { Button } from '@mui/material';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec, generateDraftSpec } from 'api/draftSpecs';
 import { encryptConfig } from 'api/oauth';
-import { EditorStoreState } from 'components/editor/Store';
+import {
+    EditorStoreState,
+    useEditorStore_setId,
+} from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
 import {
     DraftEditorStoreNames,
@@ -61,10 +64,7 @@ function MaterializeGenerateButton({
         EditorStoreState<DraftSpecQuery>['resetState']
     >(draftEditorStoreName, (state) => state.resetState);
 
-    const setDraftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['setId']
-    >(draftEditorStoreName, (state) => state.setId);
+    const setDraftId = useEditorStore_setId();
 
     // Endpoint Config Store
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();

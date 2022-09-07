@@ -1,7 +1,10 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { authenticatedRoutes } from 'app/Authenticated';
 import CaptureGenerateButton from 'components/capture/GenerateButton';
-import { EditorStoreState } from 'components/editor/Store';
+import {
+    EditorStoreState,
+    useEditorStore_setId,
+} from 'components/editor/Store';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
@@ -65,10 +68,7 @@ function CaptureCreate() {
     const detailsFormChanged = useDetailsForm_changed();
 
     // Draft Editor Store
-    const setDraftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['setId']
-    >(draftEditorStoreName, (state) => state.setId);
+    const setDraftId = useEditorStore_setId();
 
     const pubId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,

@@ -1,5 +1,12 @@
+import { useEntityType } from 'components/shared/Entity/EntityContext';
+import { useLocalZustandStore } from 'context/LocalZustand';
+import {
+    EditorStoreNames,
+    useZustandStore as useGlobalZustandStore,
+} from 'context/Zustand';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import produce from 'immer';
+import { ENTITY } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
 import create from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -156,4 +163,36 @@ export const createEditorStore = <T,>(key: string) => {
     return create<EditorStoreState<T>>()(
         devtools((set) => getInitialState<T>(set), devtoolsOptions(key))
     );
+};
+
+// Selector Hooks
+interface SelectorParams {
+    localScope?: true;
+}
+
+const storeName = (entityType: ENTITY, localScope?: true): EditorStoreNames => {
+    if (localScope) {
+        return EditorStoreNames.LOCAL;
+    } else if (entityType === ENTITY.CAPTURE) {
+        return EditorStoreNames.CAPTURE;
+    } else if (entityType === ENTITY.MATERIALIZATION) {
+        return EditorStoreNames.MATERIALIZATION;
+    } else {
+        throw new Error('Invalid Editor store name');
+    }
+};
+
+export const useEditorStore_setId = (params?: SelectorParams | undefined) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['setId']
+    >(storeName(entityType, localScope), (state) => state.setId);
 };

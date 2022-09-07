@@ -4,7 +4,10 @@ import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec, updateDraftSpec } from 'api/draftSpecs';
 import { authenticatedRoutes } from 'app/Authenticated';
 import CollectionConfig from 'components/collection/Config';
-import { EditorStoreState } from 'components/editor/Store';
+import {
+    EditorStoreState,
+    useEditorStore_setId,
+} from 'components/editor/Store';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm, {
     getConnectorImageDetails,
@@ -244,10 +247,7 @@ function EntityEdit({
     const imageTag = useDetailsForm_connectorImage();
 
     // Draft Editor Store
-    const setDraftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['setId']
-    >(draftEditorStoreName, (state) => state.setId);
+    const setDraftId = useEditorStore_setId();
 
     const draftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,

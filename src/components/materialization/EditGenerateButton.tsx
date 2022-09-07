@@ -1,7 +1,10 @@
 import { Button } from '@mui/material';
 import { generateDraftSpec, updateDraftSpec } from 'api/draftSpecs';
 // import { encryptConfig } from 'api/oauth';
-import { EditorStoreState } from 'components/editor/Store';
+import {
+    EditorStoreState,
+    useEditorStore_setId,
+} from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
 import {
     DraftEditorStoreNames,
@@ -54,10 +57,7 @@ function MaterializeGenerateButton({
         EditorStoreState<DraftSpecQuery>['isSaving']
     >(draftEditorStoreName, (state) => state.isSaving);
 
-    const setDraftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['setId']
-    >(draftEditorStoreName, (state) => state.setId);
+    const setDraftId = useEditorStore_setId();
 
     const editDraftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
