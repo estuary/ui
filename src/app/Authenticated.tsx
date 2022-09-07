@@ -27,12 +27,6 @@ import { Route, Routes } from 'react-router';
 import { ENTITY } from 'types';
 import { isProduction } from 'utils/env-utils';
 
-export enum globalSearchParams {
-    connectorId = 'connectorId',
-    liveSpecId = 'liveSpecId',
-    lastPubId = 'lastPubId',
-}
-
 export const authenticatedRoutes = {
     oauth: {
         path: '/oauth',

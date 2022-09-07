@@ -1,6 +1,11 @@
-import { globalSearchParams } from 'app/Authenticated';
 import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
+
+export enum globalSearchParams {
+    connectorId = 'connectorId',
+    liveSpecId = 'liveSpecId',
+    lastPubId = 'lastPubId',
+}
 
 function useGlobalSearchParams(key: globalSearchParams): string;
 function useGlobalSearchParams(

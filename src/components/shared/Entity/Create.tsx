@@ -1,5 +1,4 @@
 import { Alert, Collapse, Typography } from '@mui/material';
-import { globalSearchParams } from 'app/Authenticated';
 import CollectionConfig from 'components/collection/Config';
 import ConnectorTiles from 'components/ConnectorTiles';
 import { EditorStoreState } from 'components/editor/Store';
@@ -16,7 +15,9 @@ import {
     ResourceConfigStoreNames,
     useZustandStore,
 } from 'context/Zustand';
-import useGlobalSearchParams from 'hooks/searchParams/useGlobalSearchParams';
+import useGlobalSearchParams, {
+    globalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useConnectorTag from 'hooks/useConnectorTag';

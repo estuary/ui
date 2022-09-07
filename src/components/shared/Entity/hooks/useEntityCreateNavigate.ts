@@ -1,4 +1,5 @@
-import { authenticatedRoutes, globalSearchParams } from 'app/Authenticated';
+import { authenticatedRoutes } from 'app/Authenticated';
+import { globalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useSearchParamAppend from 'hooks/searchParams/useSearchParamAppend';
 import { useNavigate } from 'react-router';
 import { ENTITY } from 'types';

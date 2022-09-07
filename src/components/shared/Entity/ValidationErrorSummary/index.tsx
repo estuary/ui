@@ -1,5 +1,4 @@
 import { Alert, AlertTitle, Collapse } from '@mui/material';
-import { globalSearchParams } from 'app/Authenticated';
 import DetailsErrors from 'components/shared/Entity/ValidationErrorSummary/DetailsErrors';
 import EndpointConfigErrors from 'components/shared/Entity/ValidationErrorSummary/EndpointConfigErrors';
 import NoConnectorError from 'components/shared/Entity/ValidationErrorSummary/NoConnectorError';
@@ -9,7 +8,9 @@ import {
     ResourceConfigStoreNames,
     useZustandStore,
 } from 'context/Zustand';
-import useGlobalSearchParams from 'hooks/searchParams/useGlobalSearchParams';
+import useGlobalSearchParams, {
+    globalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
 import { FormattedMessage } from 'react-intl';
 import { EntityFormState } from 'stores/FormState';
 import { hasLength } from 'utils/misc-utils';

@@ -1,10 +1,11 @@
 import { Button } from '@mui/material';
-import { authenticatedRoutes, globalSearchParams } from 'app/Authenticated';
+import { authenticatedRoutes } from 'app/Authenticated';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
 import { SelectTableStoreNames, useZustandStore } from 'context/Zustand';
+import { globalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router';
 import { getPathWithParams } from 'utils/misc-utils';

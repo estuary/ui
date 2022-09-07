@@ -1,5 +1,5 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
-import { authenticatedRoutes, globalSearchParams } from 'app/Authenticated';
+import { authenticatedRoutes } from 'app/Authenticated';
 // import CaptureGenerateButton from 'components/capture/GenerateButton';
 import { EditorStoreState } from 'components/editor/Store';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
@@ -13,6 +13,7 @@ import {
     FormStateStoreNames,
     useZustandStore,
 } from 'context/Zustand';
+import { globalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';

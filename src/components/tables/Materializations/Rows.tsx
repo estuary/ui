@@ -1,5 +1,5 @@
 import { TableRow, useTheme } from '@mui/material';
-import { authenticatedRoutes, globalSearchParams } from 'app/Authenticated';
+import { authenticatedRoutes } from 'app/Authenticated';
 import ChipList from 'components/tables/cells/ChipList';
 import Connector from 'components/tables/cells/Connector';
 import EntityName from 'components/tables/cells/EntityName';
@@ -19,6 +19,7 @@ import {
     ShardDetailStoreNames,
     useZustandStore,
 } from 'context/Zustand';
+import { globalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useShardsList from 'hooks/useShardsList';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
