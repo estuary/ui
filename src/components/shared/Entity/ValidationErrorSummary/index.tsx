@@ -9,7 +9,7 @@ import {
     useZustandStore,
 } from 'context/Zustand';
 import useGlobalSearchParams, {
-    globalSearchParams,
+    GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { FormattedMessage } from 'react-intl';
 import { EntityFormState } from 'stores/FormState';
@@ -32,7 +32,7 @@ function ValidationErrorSummary({
     ErrorComponent,
     errorsExist,
 }: Props) {
-    const connectorID = useGlobalSearchParams(globalSearchParams.connectorId);
+    const connectorID = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
     const displayValidation = useZustandStore<
         EntityFormState,

@@ -13,7 +13,7 @@ import {
     FormStateStoreNames,
     useZustandStore,
 } from 'context/Zustand';
-import { globalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
+import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
@@ -173,7 +173,7 @@ function CaptureEdit() {
                     ? getPathWithParams(
                           authenticatedRoutes.materializations.create.fullPath,
                           {
-                              [globalSearchParams.lastPubId]: pubId,
+                              [GlobalSearchParams.LAST_PUB_ID]: pubId,
                           }
                       )
                     : authenticatedRoutes.materializations.create.fullPath

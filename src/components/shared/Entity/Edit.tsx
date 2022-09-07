@@ -19,7 +19,7 @@ import {
     useZustandStore,
 } from 'context/Zustand';
 import useGlobalSearchParams, {
-    globalSearchParams,
+    GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
@@ -207,9 +207,9 @@ function EntityEdit({
 
     // Check for properties being passed in
     const [connectorId, liveSpecId, lastPubId] = useGlobalSearchParams([
-        globalSearchParams.connectorId,
-        globalSearchParams.liveSpecId,
-        globalSearchParams.lastPubId,
+        GlobalSearchParams.CONNECTOR_ID,
+        GlobalSearchParams.LIVE_SPEC_ID,
+        GlobalSearchParams.LAST_PUB_ID,
     ]);
 
     const {

@@ -5,7 +5,7 @@ import {
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
 import { SelectTableStoreNames, useZustandStore } from 'context/Zustand';
-import { globalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
+import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router';
 import { getPathWithParams } from 'utils/misc-utils';
@@ -39,7 +39,8 @@ function Materialize({ selectableTableStoreName }: Props) {
                     getPathWithParams(
                         authenticatedRoutes.materializations.create.fullPath,
                         {
-                            [globalSearchParams.liveSpecId]: selectedRowsArray,
+                            [GlobalSearchParams.LIVE_SPEC_ID]:
+                                selectedRowsArray,
                         }
                     )
                 );

@@ -8,7 +8,7 @@ import { useZustandStore } from 'context/Zustand';
 import { CATALOG_NAME_SCOPE } from 'forms/renderers/CatalogName';
 import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
 import useGlobalSearchParams, {
-    globalSearchParams,
+    GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
@@ -51,7 +51,7 @@ function DetailsFormForm({
 }: Props) {
     const intl = useIntl();
     const navigateToCreate = useEntityCreateNavigate();
-    const connectorId = useGlobalSearchParams(globalSearchParams.connectorId);
+    const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
     // Details Form Store
     const formData = useDetailsForm_details();
