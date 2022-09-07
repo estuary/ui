@@ -3,6 +3,7 @@ import { authenticatedRoutes } from 'app/Authenticated';
 // import CaptureGenerateButton from 'components/capture/GenerateButton';
 import {
     EditorStoreState,
+    useEditorStore_id,
     useEditorStore_setId,
 } from 'components/editor/Store';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
@@ -77,10 +78,7 @@ function CaptureEdit() {
         EditorStoreState<DraftSpecQuery>['pubId']
     >(draftEditorStoreName, (state) => state.pubId);
 
-    const draftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['id']
-    >(draftEditorStoreName, (state) => state.id);
+    const draftId = useEditorStore_id();
 
     // Endpoint Config Store
     const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();

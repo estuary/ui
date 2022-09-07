@@ -1,6 +1,6 @@
 import { updateDraftSpec } from 'api/draftSpecs';
 import EditorWithFileSelector from 'components/editor/EditorWithFileSelector';
-import { EditorStoreState } from 'components/editor/Store';
+import { EditorStoreState, useEditorStore_id } from 'components/editor/Store';
 import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
 import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useEffect, useState } from 'react';
@@ -21,19 +21,16 @@ function DraftSpecEditor({ draftEditorStoreName, disabled }: Props) {
         EditorStoreState<DraftSpecQuery>['setSpecs']
     >(draftEditorStoreName, (state) => state.setSpecs);
 
-    const id = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['id']
-    >(draftEditorStoreName, (state) => state.id);
+    const draftId = useEditorStore_id();
 
-    const { draftSpecs, mutate } = useDraftSpecs(id);
+    const { draftSpecs, mutate } = useDraftSpecs(draftId);
     const [draftSpec, setDraftSpec] = useState<DraftSpecQuery | null>(null);
 
     const handlers = {
         change: async (newVal: any, catalogName: string) => {
             if (draftSpec) {
                 const updateResponse = await updateDraftSpec(
-                    id,
+                    draftId,
                     catalogName,
                     newVal
                 );

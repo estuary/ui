@@ -1,6 +1,6 @@
 import { Button } from '@mui/material';
 import { createPublication } from 'api/publications';
-import { EditorStoreState } from 'components/editor/Store';
+import { EditorStoreState, useEditorStore_id } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
 import {
     DraftEditorStoreNames,
@@ -52,10 +52,7 @@ function EntityCreateSave({
     const status = dryRun ? FormStatus.TESTING : FormStatus.SAVING;
 
     // Draft Editor Store
-    const draftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['id']
-    >(draftEditorStoreName, (state) => state.id);
+    const draftId = useEditorStore_id();
 
     const setPubId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,

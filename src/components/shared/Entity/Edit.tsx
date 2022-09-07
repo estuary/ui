@@ -6,6 +6,7 @@ import { authenticatedRoutes } from 'app/Authenticated';
 import CollectionConfig from 'components/collection/Config';
 import {
     EditorStoreState,
+    useEditorStore_id,
     useEditorStore_setId,
 } from 'components/editor/Store';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
@@ -247,12 +248,8 @@ function EntityEdit({
     const imageTag = useDetailsForm_connectorImage();
 
     // Draft Editor Store
+    const draftId = useEditorStore_id();
     const setDraftId = useEditorStore_setId();
-
-    const draftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['id']
-    >(draftEditorStoreName, (state) => state.id);
 
     const setEditDraftId = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
@@ -500,7 +497,6 @@ function EntityEdit({
                         <ErrorBoundryWrapper>
                             <EndpointConfig
                                 connectorImage={imageTag.id}
-                                draftEditorStoreName={draftEditorStoreName}
                                 formStateStoreName={formStateStoreName}
                                 readOnly={readOnly.endpointConfigForm}
                                 initialEndpointConfig={endpointConfig}

@@ -1,4 +1,4 @@
-import { EditorStoreState } from 'components/editor/Store';
+import { useEditorStore_id } from 'components/editor/Store';
 import EntityCreateSave from 'components/shared/Entity/Actions/Save';
 import LogDialog from 'components/shared/Entity/LogDialog';
 import LogDialogActions from 'components/shared/Entity/LogDialogActions';
@@ -7,7 +7,6 @@ import {
     FormStateStoreNames,
     useZustandStore,
 } from 'context/Zustand';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { FormattedMessage } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
 import { EntityFormState, FormStatus } from 'stores/FormState';
@@ -36,10 +35,7 @@ function EntitySaveButton({
     formStateStoreName,
 }: Props) {
     // Draft Editor Store
-    const draftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['id']
-    >(draftEditorStoreName, (state) => state.id);
+    const draftId = useEditorStore_id();
 
     // Form State Store
     const messagePrefix = useZustandStore<

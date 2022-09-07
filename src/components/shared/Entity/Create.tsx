@@ -2,7 +2,7 @@ import { Alert, Collapse } from '@mui/material';
 import { authenticatedRoutes } from 'app/Authenticated';
 import CollectionConfig from 'components/collection/Config';
 import {
-    EditorStoreState,
+    useEditorStore_id,
     useEditorStore_setId,
 } from 'components/editor/Store';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
@@ -21,7 +21,6 @@ import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useConnectorTag from 'hooks/useConnectorTag';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import {
     useLiveSpecsExtByLastPubId,
     useLiveSpecsExtWithOutSpec,
@@ -81,12 +80,8 @@ function EntityCreate({
     const imageTag = useDetailsForm_connectorImage();
 
     // Draft Editor Store
+    const draftId = useEditorStore_id();
     const setDraftId = useEditorStore_setId();
-
-    const draftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['id']
-    >(draftEditorStoreName, (state) => state.id);
 
     // Endpoint Config Store
     const setEndpointSchema = useEndpointConfigStore_setEndpointSchema();
@@ -204,7 +199,6 @@ function EntityCreate({
                         <ErrorBoundryWrapper>
                             <EndpointConfig
                                 connectorImage={imageTag.id}
-                                draftEditorStoreName={draftEditorStoreName}
                                 formStateStoreName={formStateStoreName}
                             />
                         </ErrorBoundryWrapper>

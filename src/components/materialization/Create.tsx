@@ -1,7 +1,7 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { authenticatedRoutes } from 'app/Authenticated';
 import {
-    EditorStoreState,
+    useEditorStore_id,
     useEditorStore_setId,
 } from 'components/editor/Store';
 import MaterializeGenerateButton from 'components/materialization/GenerateButton';
@@ -20,7 +20,6 @@ import {
 import { useClient } from 'hooks/supabase-swr';
 import { usePrompt } from 'hooks/useBlocker';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
@@ -60,10 +59,7 @@ function MaterializationCreate() {
     const resetDetailsFormState = useDetailsForm_resetFormState();
 
     // Draft Editor Store
-    const draftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['id']
-    >(draftEditorStoreName, (state) => state.id);
+    const draftId = useEditorStore_id();
 
     const setDraftId = useEditorStore_setId();
 

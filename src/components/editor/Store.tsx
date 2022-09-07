@@ -182,6 +182,21 @@ const storeName = (entityType: ENTITY, localScope?: true): EditorStoreNames => {
     }
 };
 
+export const useEditorStore_id = (params?: SelectorParams | undefined) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['id']
+    >(storeName(entityType, localScope), (state) => state.id);
+};
+
 export const useEditorStore_setId = (params?: SelectorParams | undefined) => {
     const localScope = params?.localScope;
 
