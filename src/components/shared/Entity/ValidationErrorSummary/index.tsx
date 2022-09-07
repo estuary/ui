@@ -32,9 +32,7 @@ function ValidationErrorSummary({
     ErrorComponent,
     errorsExist,
 }: Props) {
-    const [connectorID] = useGlobalSearchParams([
-        globalSearchParams.connectorId,
-    ]);
+    const connectorID = useGlobalSearchParams(globalSearchParams.connectorId);
 
     const displayValidation = useZustandStore<
         EntityFormState,
