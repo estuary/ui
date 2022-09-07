@@ -42,12 +42,12 @@ export function useBlocker(blocker: Blocker, when = true, path?: string) {
                     },
                 };
 
-                // If the path is set then we only want to prompt the user is the actual
+                // If the path is set then we only want to prompt the user if the actual
                 //      path is changing. Otherwise, we just let them navigate. These must
                 //      be an EXACT match.
                 if (path && path === tx.location.pathname) {
                     // If the path is not changing then the search params are being used
-                    //      so we want to allow that. So we use the try as if the user allower
+                    //      so we want to allow that. So we use the try as if the user allowed
                     //      the nav. Then we set the current again to make sure it blocks future
                     //      navigation that might change the path
                     autoUnblockingTx.retry();
