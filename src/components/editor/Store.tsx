@@ -397,3 +397,20 @@ export const useEditorStore_isSaving = (
         EditorStoreState<DraftSpecQuery>['isSaving']
     >(storeName(entityType, localScope), (state) => state.isSaving);
 };
+
+export const useEditorStore_isEditing = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['isEditing']
+    >(storeName(entityType, localScope), (state) => state.isEditing);
+};

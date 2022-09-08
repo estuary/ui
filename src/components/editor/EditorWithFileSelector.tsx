@@ -13,13 +13,7 @@ function EditorWithFileSelector(props: Props) {
 
     return (
         <ListAndDetails
-            list={
-                <EditorFileSelector
-                    editorStoreName={editorStoreName}
-                    useZustandStore={useZustandStore}
-                    localZustandScope={localZustandScope}
-                />
-            }
+            list={<EditorFileSelector localZustandScope={localZustandScope} />}
             details={
                 <MonacoEditor
                     {...props}

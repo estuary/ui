@@ -6,24 +6,16 @@ import {
     GridSelectionModel,
 } from '@mui/x-data-grid';
 import {
-    EditorStoreState,
+    useEditorStore_isEditing,
     useEditorStore_isSaving,
     useEditorStore_setCurrentCatalog,
     useEditorStore_specs,
 } from 'components/editor/Store';
 import { slate } from 'context/Theme';
-import {
-    DraftEditorStoreNames,
-    LiveSpecEditorStoreNames,
-    UseZustandStore,
-} from 'context/Zustand';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
-    editorStoreName: DraftEditorStoreNames | LiveSpecEditorStoreNames;
-    useZustandStore: UseZustandStore;
     localZustandScope: boolean;
 }
 
@@ -65,19 +57,14 @@ const columns: GridColDef[] = [
     },
 ];
 
-function EditorFileSelector({
-    editorStoreName,
-    useZustandStore,
-    localZustandScope,
-}: Props) {
+function EditorFileSelector({ localZustandScope }: Props) {
     const initDone = useRef(false);
 
     const isSaving = useEditorStore_isSaving({ localScope: localZustandScope });
 
-    const isEditing = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['isEditing']
-    >(editorStoreName, (state) => state.isEditing);
+    const isEditing = useEditorStore_isEditing({
+        localScope: localZustandScope,
+    });
 
     // TODO: Update type LiveSpecsQuery_spec | DraftSpecQuery
     const setCurrentCatalog = useEditorStore_setCurrentCatalog({
