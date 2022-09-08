@@ -3,16 +3,11 @@ import { discover } from 'api/discovers';
 import { createEntityDraft } from 'api/drafts';
 import { encryptConfig } from 'api/oauth';
 import {
-    EditorStoreState,
     useEditorStore_isSaving,
+    useEditorStore_resetState,
 } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
-import {
-    DraftEditorStoreNames,
-    FormStateStoreNames,
-    useZustandStore,
-} from 'context/Zustand';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { FormStateStoreNames, useZustandStore } from 'context/Zustand';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -31,7 +26,6 @@ interface Props {
     disabled: boolean;
     callFailed: Function;
     subscription: Function;
-    draftEditorStoreName: DraftEditorStoreNames;
     formStateStoreName: FormStateStoreNames;
 }
 
@@ -39,16 +33,12 @@ function CaptureGenerateButton({
     disabled,
     callFailed,
     subscription,
-    draftEditorStoreName,
     formStateStoreName,
 }: Props) {
     // Editor Store
     const isSaving = useEditorStore_isSaving();
 
-    const resetEditorState = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['resetState']
-    >(draftEditorStoreName, (state) => state.resetState);
+    const resetEditorState = useEditorStore_resetState();
 
     // Form State Store
     const formActive = useZustandStore<

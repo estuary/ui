@@ -12,7 +12,6 @@ import { useEntityType } from 'components/shared/Entity/EntityContext';
 import FooHeader from 'components/shared/Entity/Header';
 import PageContainer from 'components/shared/PageContainer';
 import {
-    DraftEditorStoreNames,
     FormStateStoreNames,
     ResourceConfigStoreNames,
     useZustandStore,
@@ -37,7 +36,6 @@ import {
 import { EntityFormState, FormStatus } from 'stores/FormState';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 
-const draftEditorStoreName = DraftEditorStoreNames.MATERIALIZATION;
 const formStateStoreName = FormStateStoreNames.MATERIALIZATION_CREATE;
 const resourceConfigStoreName = ResourceConfigStoreNames.MATERIALIZATION;
 
@@ -189,7 +187,6 @@ function MaterializationCreate() {
                             <MaterializeGenerateButton
                                 disabled={!hasConnectors}
                                 callFailed={helpers.callFailed}
-                                draftEditorStoreName={draftEditorStoreName}
                                 resourceConfigStoreName={
                                     resourceConfigStoreName
                                 }
