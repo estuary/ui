@@ -1,9 +1,9 @@
 import { updateDraftSpec } from 'api/draftSpecs';
 import EditorWithFileSelector from 'components/editor/EditorWithFileSelector';
 import {
-    EditorStoreState,
     useEditorStore_currentCatalog,
     useEditorStore_id,
+    useEditorStore_setSpecs,
 } from 'components/editor/Store';
 import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
 import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
@@ -17,10 +17,7 @@ export interface Props {
 function DraftSpecEditor({ draftEditorStoreName, disabled }: Props) {
     const currentCatalog = useEditorStore_currentCatalog();
 
-    const setSpecs = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['setSpecs']
-    >(draftEditorStoreName, (state) => state.setSpecs);
+    const setSpecs = useEditorStore_setSpecs();
 
     const draftId = useEditorStore_id();
 

@@ -329,3 +329,20 @@ export const useEditorStore_specs = (params?: SelectorParams | undefined) => {
         EditorStoreState<DraftSpecQuery>['specs']
     >(storeName(entityType, localScope), (state) => state.specs);
 };
+
+export const useEditorStore_setSpecs = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['setSpecs']
+    >(storeName(entityType, localScope), (state) => state.setSpecs);
+};
