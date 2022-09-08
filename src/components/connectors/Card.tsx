@@ -91,9 +91,11 @@ function ConnectorCard({
                                     )}
                                 </Box>
 
-                                <ExternalLink link={docsUrl}>
-                                    <FormattedMessage id="terms.documentation" />
-                                </ExternalLink>
+                                {docsUrl ? (
+                                    <ExternalLink link={docsUrl}>
+                                        <FormattedMessage id="terms.documentation" />
+                                    </ExternalLink>
+                                ) : null}
                             </Stack>
                         </Box>
 
