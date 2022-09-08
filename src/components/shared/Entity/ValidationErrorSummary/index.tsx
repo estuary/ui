@@ -1,14 +1,19 @@
 import { Alert, AlertTitle, Collapse } from '@mui/material';
 import DetailsErrors from 'components/shared/Entity/ValidationErrorSummary/DetailsErrors';
 import EndpointConfigErrors from 'components/shared/Entity/ValidationErrorSummary/EndpointConfigErrors';
+import NoConnectorError from 'components/shared/Entity/ValidationErrorSummary/NoConnectorError';
 import ResourceConfigErrors from 'components/shared/Entity/ValidationErrorSummary/ResourceConfigErrors';
 import {
     FormStateStoreNames,
     ResourceConfigStoreNames,
     useZustandStore,
 } from 'context/Zustand';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
 import { FormattedMessage } from 'react-intl';
 import { EntityFormState } from 'stores/FormState';
+import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     formStateStoreName: FormStateStoreNames;
@@ -27,6 +32,8 @@ function ValidationErrorSummary({
     ErrorComponent,
     errorsExist,
 }: Props) {
+    const connectorID = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
+
     const displayValidation = useZustandStore<
         EntityFormState,
         EntityFormState['formState']['displayValidation']
@@ -46,12 +53,10 @@ function ValidationErrorSummary({
 
                 {ErrorComponent === false ? null : ErrorComponent ? (
                     <ErrorComponent />
-                ) : (
+                ) : hasLength(connectorID) ? (
                     <>
                         <DetailsErrors />
-
                         <EndpointConfigErrors />
-
                         {resourceConfigStoreName ? (
                             <ResourceConfigErrors
                                 resourceConfigStoreName={
@@ -60,6 +65,8 @@ function ValidationErrorSummary({
                             />
                         ) : null}
                     </>
+                ) : (
+                    <NoConnectorError />
                 )}
             </Alert>
         </Collapse>

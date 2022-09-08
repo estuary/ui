@@ -41,6 +41,9 @@ export interface DetailsFormState {
     // Form Data
     details: Details;
     setDetails: (details: Details) => void;
+    setDetails_connector: (
+        connector: Details['data']['connectorImage']
+    ) => void;
 
     detailsFormErrorsExist: boolean;
 
@@ -96,6 +99,21 @@ export const getInitialState = (
             }),
             false,
             'Details Changed'
+        );
+    },
+
+    setDetails_connector: (connectorImage) => {
+        set(
+            produce((state: DetailsFormState) => {
+                if (connectorImage.id === '') {
+                    state.details.data.connectorImage =
+                        getInitialStateData().details.data.connectorImage;
+                } else {
+                    state.details.data.connectorImage = connectorImage;
+                }
+            }),
+            false,
+            'Details Connector Changed'
         );
     },
 
@@ -198,6 +216,14 @@ export const useDetailsForm_setDetails = () => {
     );
 };
 
+export const useDetailsForm_setDetails_connector = () => {
+    const entityType = useEntityType();
+    return useZustandStoreMap<
+        DetailsFormState,
+        DetailsFormState['setDetails_connector']
+    >(storeName(entityType), (state) => state.setDetails_connector);
+};
+
 const errorsExistSelector = (state: DetailsFormState) =>
     state.detailsFormErrorsExist;
 export const useDetailsForm_errorsExist = () => {
@@ -216,7 +242,7 @@ export const useDetailsForm_changed = () => {
     >(storeName(entityType), (state) => state.stateChanged);
 };
 
-export const useDetailsForm_resetFormState = () => {
+export const useDetailsForm_resetState = () => {
     const entityType = useEntityType();
     return useZustandStoreMap<DetailsFormState, DetailsFormState['resetState']>(
         storeName(entityType),

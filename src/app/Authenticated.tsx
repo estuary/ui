@@ -3,6 +3,7 @@ import { unauthenticatedRoutes } from 'app/Unauthenticated';
 import AppLayout from 'AppLayout';
 import AccessGrants from 'components/admin/AccessGrants';
 import AdminApi from 'components/admin/Api';
+import AdminConnectors from 'components/admin/Connectors';
 import CaptureCreate from 'components/capture/Create';
 import CaptureEdit from 'components/capture/Edit';
 import FullPageSpinner from 'components/fullPage/Spinner';
@@ -17,7 +18,6 @@ import Admin from 'pages/Admin';
 import Auth from 'pages/Auth';
 import Captures from 'pages/Captures';
 import Collections from 'pages/Collections';
-import Connectors from 'pages/Connectors';
 import TestJsonForms from 'pages/dev/TestJsonForms';
 import PageNotFound from 'pages/error/PageNotFound';
 import Home from 'pages/Home';
@@ -34,7 +34,7 @@ export const authenticatedRoutes = {
     admin: {
         title: 'routeTitle.admin',
         path: '/admin',
-        accressGrants: {
+        accessGrants: {
             title: 'routeTitle.admin.accessGrants',
             path: 'accessGrants',
             fullPath: '/admin/accessGrants',
@@ -44,10 +44,11 @@ export const authenticatedRoutes = {
             path: 'api',
             fullPath: '/admin/api',
         },
-    },
-    connectors: {
-        title: 'routeTitle.connectors',
-        path: '/connectors',
+        connectors: {
+            title: 'routeTitle.admin.connectors',
+            path: 'connectors',
+            fullPath: '/admin/connectors',
+        },
     },
     captures: {
         title: 'routeTitle.captures',
@@ -56,19 +57,11 @@ export const authenticatedRoutes = {
             title: 'routeTitle.captureCreate',
             path: `create`,
             fullPath: '/captures/create',
-            params: {
-                connectorID: 'connectorID',
-            },
         },
         edit: {
             title: 'routeTitle.captureEdit',
             path: `edit`,
             fullPath: '/captures/edit',
-            params: {
-                connectorId: 'connectorId',
-                liveSpecId: 'liveSpecId', // live spec ID
-                lastPubId: 'lastPubId', // last published ID
-            },
         },
     },
     collections: {
@@ -86,21 +79,11 @@ export const authenticatedRoutes = {
             title: 'routeTitle.materializationCreate',
             path: 'create',
             fullPath: '/materializations/create',
-            params: {
-                connectorId: 'connectorId',
-                liveSpecId: 'liveSpecId', // live spec ID
-                lastPubId: 'lastPubId', // last published ID
-            },
         },
         edit: {
             title: 'routeTitle.materializationEdit',
             path: 'edit',
             fullPath: '/materializations/edit',
-            params: {
-                connectorId: 'connectorId',
-                liveSpecId: 'liveSpecId', // live spec ID
-                lastPubId: 'lastPubId', // last published ID
-            },
         },
     },
     user: {
@@ -164,11 +147,6 @@ const Authenticated = () => {
                         <Route
                             path={authenticatedRoutes.home.path}
                             element={<Home />}
-                        />
-
-                        <Route
-                            path={authenticatedRoutes.connectors.path}
-                            element={<Connectors />}
                         />
 
                         <Route
@@ -238,13 +216,17 @@ const Authenticated = () => {
                             <Route path="" element={<Admin />} />
                             <Route
                                 path={
-                                    authenticatedRoutes.admin.accressGrants.path
+                                    authenticatedRoutes.admin.accessGrants.path
                                 }
                                 element={<AccessGrants />}
                             />
                             <Route
                                 path={authenticatedRoutes.admin.api.path}
                                 element={<AdminApi />}
+                            />
+                            <Route
+                                path={authenticatedRoutes.admin.connectors.path}
+                                element={<AdminConnectors />}
                             />
                         </Route>
 

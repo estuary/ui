@@ -43,6 +43,7 @@ const IconMenu = ({
 
     const handlers = {
         click: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+            event.stopPropagation();
             setAnchorEl(event.currentTarget);
         },
         close: () => {

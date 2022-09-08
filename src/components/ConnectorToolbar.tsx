@@ -33,6 +33,7 @@ interface Props {
     setColumnToSort: Dispatch<
         SetStateAction<keyof ConnectorWithTagDetailQuery>
     >;
+    hideProtocol?: boolean;
     setProtocol: Dispatch<SetStateAction<string | null>>;
     setSortDirection: Dispatch<SetStateAction<SortDirection>>;
     setSearchQuery: Dispatch<SetStateAction<string | null>>;
@@ -71,6 +72,7 @@ function ConnectorToolbar({
     belowMd,
     gridSpacing,
     setColumnToSort,
+    hideProtocol,
     setProtocol,
     setSortDirection,
     setSearchQuery,
@@ -266,33 +268,37 @@ function ConnectorToolbar({
                     />
                 </Grid>
 
-                <Grid item xs={5} md={2}>
-                    <Autocomplete
-                        options={protocolOptions.map(({ message }) => message)}
-                        renderInput={({
-                            InputProps,
-                            ...params
-                        }: AutocompleteRenderInputParams) => (
-                            <TextField
-                                {...params}
-                                InputProps={{
-                                    ...InputProps,
-                                    ...inputProps,
-                                }}
-                                label={intl.formatMessage({
-                                    id: 'connectorTable.data.protocol',
-                                })}
-                                variant="filled"
-                            />
-                        )}
-                        defaultValue={intl.formatMessage({
-                            id: 'common.optionsAll',
-                        })}
-                        disableClearable
-                        onChange={handlers.setProtocol}
-                        sx={toolbarSectionSx}
-                    />
-                </Grid>
+                {hideProtocol ? null : (
+                    <Grid item xs={5} md={2}>
+                        <Autocomplete
+                            options={protocolOptions.map(
+                                ({ message }) => message
+                            )}
+                            renderInput={({
+                                InputProps,
+                                ...params
+                            }: AutocompleteRenderInputParams) => (
+                                <TextField
+                                    {...params}
+                                    InputProps={{
+                                        ...InputProps,
+                                        ...inputProps,
+                                    }}
+                                    label={intl.formatMessage({
+                                        id: 'connectorTable.data.protocol',
+                                    })}
+                                    variant="filled"
+                                />
+                            )}
+                            defaultValue={intl.formatMessage({
+                                id: 'common.optionsAll',
+                            })}
+                            disableClearable
+                            onChange={handlers.setProtocol}
+                            sx={toolbarSectionSx}
+                        />
+                    </Grid>
+                )}
             </Grid>
         </Toolbar>
     );

@@ -19,13 +19,14 @@ import {
     ShardDetailStoreNames,
     useZustandStore,
 } from 'context/Zustand';
+import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useShardsList from 'hooks/useShardsList';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CONNECTOR_TITLE } from 'services/supabase';
 import { shardDetailSelectors, ShardDetailStore } from 'stores/ShardDetail';
 import { ENTITY } from 'types';
-import { getPathWithParam, getPathWithParams } from 'utils/misc-utils';
+import { getPathWithParams } from 'utils/misc-utils';
 
 interface RowsProps {
     data: LiveSpecsExtQuery[];
@@ -86,11 +87,11 @@ function Row({
     const handlers = {
         clickMaterialize: () => {
             navigate(
-                getPathWithParam(
+                getPathWithParams(
                     authenticatedRoutes.materializations.create.fullPath,
-                    authenticatedRoutes.materializations.create.params
-                        .liveSpecId,
-                    row.id
+                    {
+                        [GlobalSearchParams.LIVE_SPEC_ID]: row.id,
+                    }
                 )
             );
         },
@@ -100,12 +101,9 @@ function Row({
         editTask: () => {
             navigate(
                 getPathWithParams(authenticatedRoutes.captures.edit.fullPath, {
-                    [authenticatedRoutes.captures.edit.params.connectorId]:
-                        row.connector_id,
-                    [authenticatedRoutes.captures.edit.params.liveSpecId]:
-                        row.id,
-                    [authenticatedRoutes.captures.edit.params.lastPubId]:
-                        row.last_pub_id,
+                    [GlobalSearchParams.CONNECTOR_ID]: row.connector_id,
+                    [GlobalSearchParams.LIVE_SPEC_ID]: row.id,
+                    [GlobalSearchParams.LAST_PUB_ID]: row.last_pub_id,
                 })
             );
         },
