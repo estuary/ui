@@ -1,11 +1,12 @@
-import { Alert, Collapse } from '@mui/material';
-import { authenticatedRoutes } from 'app/Authenticated';
+import { Alert, Collapse, Typography } from '@mui/material';
 import CollectionConfig from 'components/collection/Config';
+import ConnectorTiles from 'components/ConnectorTiles';
 import { EditorStoreState } from 'components/editor/Store';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
 import EntityError from 'components/shared/Entity/Error';
+import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedChangesPrompt';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import {
@@ -14,6 +15,9 @@ import {
     ResourceConfigStoreNames,
     useZustandStore,
 } from 'context/Zustand';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useConnectorTag from 'hooks/useConnectorTag';
@@ -23,24 +27,25 @@ import {
     useLiveSpecsExtByLastPubId,
     useLiveSpecsExtWithOutSpec,
 } from 'hooks/useLiveSpecsExt';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useSearchParams } from 'react-router-dom';
 import { useDetailsForm_connectorImage } from 'stores/DetailsForm';
 import { useEndpointConfigStore_setEndpointSchema } from 'stores/EndpointConfig';
 import { EntityFormState } from 'stores/FormState';
 import { ResourceConfigState } from 'stores/ResourceConfig';
-import { ENTITY, Schema } from 'types';
+import { ENTITY, EntityWithCreateWorkflow, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     title: string;
-    connectorType: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
+    connectorType: EntityWithCreateWorkflow;
     Header: any;
     draftEditorStoreName: DraftEditorStoreNames;
     formStateStoreName: FormStateStoreNames;
     resourceConfigStoreName?: ResourceConfigStoreNames;
     showCollections?: boolean;
+    promptDataLoss: any;
+    resetState: () => void;
 }
 
 function EntityCreate({
@@ -51,8 +56,10 @@ function EntityCreate({
     formStateStoreName,
     resourceConfigStoreName,
     showCollections,
+    promptDataLoss,
+    resetState,
 }: Props) {
-    useBrowserTitle(title); //'browserTitle.captureCreate'
+    useBrowserTitle(title);
 
     // Supabase stuff
     const { combinedGrants } = useCombinedGrantsExt({
@@ -60,13 +67,16 @@ function EntityCreate({
     });
 
     // Check for properties being passed in
-    const [searchParams] = useSearchParams();
-    const specId = searchParams.get(
-        authenticatedRoutes.materializations.create.params.liveSpecId
-    );
-    const lastPubId = searchParams.get(
-        authenticatedRoutes.materializations.create.params.lastPubId
-    );
+    const [connectorID, lastPubId] = useGlobalSearchParams([
+        GlobalSearchParams.CONNECTOR_ID,
+        GlobalSearchParams.LAST_PUB_ID,
+    ]);
+
+    const specId = useGlobalSearchParams(GlobalSearchParams.LIVE_SPEC_ID, true);
+
+    const [showConnectorTiles, setShowConnectorTiles] = useState<
+        boolean | null
+    >(null);
 
     const {
         connectorTags,
@@ -97,6 +107,11 @@ function EntityCreate({
         EntityFormState['messagePrefix']
     >(formStateStoreName, (state) => state.messagePrefix);
 
+    const exitWhenLogsClose = useZustandStore<
+        EntityFormState,
+        EntityFormState['formState']['exitWhenLogsClose']
+    >(formStateStoreName, (state) => state.formState.exitWhenLogsClose);
+
     const logToken = useZustandStore<
         EntityFormState,
         EntityFormState['formState']['logToken']
@@ -113,18 +128,16 @@ function EntityCreate({
         ResourceConfigState,
         ResourceConfigState['setResourceSchema']
     >(
-        resourceConfigStoreName ??
-            ResourceConfigStoreNames.MATERIALIZATION_CREATE,
+        resourceConfigStoreName ?? ResourceConfigStoreNames.MATERIALIZATION,
         (state) => state.setResourceSchema
     );
 
-    const prefillCollections = useZustandStore<
+    const prefillEmptyCollections = useZustandStore<
         ResourceConfigState,
-        ResourceConfigState['preFillCollections']
+        ResourceConfigState['preFillEmptyCollections']
     >(
-        resourceConfigStoreName ??
-            ResourceConfigStoreNames.MATERIALIZATION_CREATE,
-        (state) => state.preFillCollections
+        resourceConfigStoreName ?? ResourceConfigStoreNames.MATERIALIZATION,
+        (state) => state.preFillEmptyCollections
     );
 
     // Reset the catalog if the connector changes
@@ -145,6 +158,7 @@ function EntityCreate({
             setEndpointSchema(
                 connectorTag.endpoint_spec_schema as unknown as Schema
             );
+
             setResourceSchema(
                 connectorTag.resource_spec_schema as unknown as Schema
             );
@@ -152,88 +166,113 @@ function EntityCreate({
             // We wanna make sure we do these after the schemas are set as
             //  as they are dependent on them.
             if (liveSpecs.length > 0) {
-                prefillCollections(liveSpecs);
+                prefillEmptyCollections(liveSpecs);
             } else if (liveSpecsByLastPub.length > 0) {
-                prefillCollections(liveSpecsByLastPub);
+                prefillEmptyCollections(liveSpecsByLastPub);
             }
         }
     }, [
         connectorTag,
         liveSpecs,
         liveSpecsByLastPub,
-        prefillCollections,
+        prefillEmptyCollections,
         setEndpointSchema,
         setResourceSchema,
     ]);
 
+    useEffect(() => {
+        if (typeof connectorID === 'string') {
+            setShowConnectorTiles(false);
+        } else {
+            setShowConnectorTiles(true);
+        }
+    }, [connectorID]);
+
+    useUnsavedChangesPrompt(!exitWhenLogsClose && promptDataLoss, resetState);
+
+    if (showConnectorTiles === null) return null;
     return (
         <>
             {Header}
 
-            {connectorTagsError ? (
-                <Error error={connectorTagsError} />
-            ) : (
-                <>
-                    <Collapse in={formSubmitError !== null}>
-                        {formSubmitError ? (
-                            <EntityError
-                                title={formSubmitError.title}
-                                error={formSubmitError.error}
-                                logToken={logToken}
-                                draftId={draftId}
-                            />
+            <Collapse in={showConnectorTiles} unmountOnExit>
+                <Typography sx={{ mb: 2 }}>
+                    <FormattedMessage id="entityCreate.instructions" />
+                </Typography>
+
+                <ConnectorTiles
+                    protocolPreset={connectorType}
+                    replaceOnNavigate
+                />
+            </Collapse>
+
+            <Collapse in={!showConnectorTiles} unmountOnExit>
+                {connectorTagsError ? (
+                    <Error error={connectorTagsError} />
+                ) : (
+                    <>
+                        <Collapse in={formSubmitError !== null}>
+                            {formSubmitError ? (
+                                <EntityError
+                                    title={formSubmitError.title}
+                                    error={formSubmitError.error}
+                                    logToken={logToken}
+                                    draftId={draftId}
+                                />
+                            ) : null}
+                        </Collapse>
+
+                        {!isValidating && connectorTags.length === 0 ? (
+                            <Alert severity="warning">
+                                <FormattedMessage
+                                    id={`${messagePrefix}.missingConnectors`}
+                                />
+                            </Alert>
+                        ) : connectorTags.length > 0 ? (
+                            <ErrorBoundryWrapper>
+                                <DetailsForm
+                                    connectorTags={connectorTags}
+                                    accessGrants={combinedGrants}
+                                    draftEditorStoreName={draftEditorStoreName}
+                                    formStateStoreName={formStateStoreName}
+                                    entityType={connectorType}
+                                />
+                            </ErrorBoundryWrapper>
                         ) : null}
-                    </Collapse>
 
-                    {!isValidating && connectorTags.length === 0 ? (
-                        <Alert severity="warning">
-                            <FormattedMessage
-                                id={`${messagePrefix}.missingConnectors`}
-                            />
-                        </Alert>
-                    ) : connectorTags.length > 0 ? (
+                        {imageTag.id ? (
+                            <ErrorBoundryWrapper>
+                                <EndpointConfig
+                                    connectorImage={imageTag.id}
+                                    draftEditorStoreName={draftEditorStoreName}
+                                    formStateStoreName={formStateStoreName}
+                                />
+                            </ErrorBoundryWrapper>
+                        ) : null}
+
+                        {showCollections &&
+                        resourceConfigStoreName &&
+                        hasLength(imageTag.id) ? (
+                            <ErrorBoundryWrapper>
+                                <CollectionConfig
+                                    resourceConfigStoreName={
+                                        resourceConfigStoreName
+                                    }
+                                    formStateStoreName={formStateStoreName}
+                                />
+                            </ErrorBoundryWrapper>
+                        ) : null}
+
                         <ErrorBoundryWrapper>
-                            <DetailsForm
-                                connectorTags={connectorTags}
-                                accessGrants={combinedGrants}
+                            <CatalogEditor
+                                messageId={`${messagePrefix}.finalReview.instructions`}
                                 draftEditorStoreName={draftEditorStoreName}
                                 formStateStoreName={formStateStoreName}
                             />
                         </ErrorBoundryWrapper>
-                    ) : null}
-
-                    {imageTag.id ? (
-                        <ErrorBoundryWrapper>
-                            <EndpointConfig
-                                connectorImage={imageTag.id}
-                                draftEditorStoreName={draftEditorStoreName}
-                                formStateStoreName={formStateStoreName}
-                            />
-                        </ErrorBoundryWrapper>
-                    ) : null}
-
-                    {showCollections &&
-                    resourceConfigStoreName &&
-                    hasLength(imageTag.id) ? (
-                        <ErrorBoundryWrapper>
-                            <CollectionConfig
-                                resourceConfigStoreName={
-                                    resourceConfigStoreName
-                                }
-                                formStateStoreName={formStateStoreName}
-                            />
-                        </ErrorBoundryWrapper>
-                    ) : null}
-
-                    <ErrorBoundryWrapper>
-                        <CatalogEditor
-                            messageId={`${messagePrefix}.finalReview.instructions`}
-                            draftEditorStoreName={draftEditorStoreName}
-                            formStateStoreName={formStateStoreName}
-                        />
-                    </ErrorBoundryWrapper>
-                </>
-            )}
+                    </>
+                )}
+            </Collapse>
         </>
     );
 }

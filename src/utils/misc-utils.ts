@@ -1,3 +1,4 @@
+import { createSearchParams } from 'react-router-dom';
 import { OpenGraph } from 'types';
 
 export const stripPathing = (stringVal: string) => {
@@ -13,12 +14,24 @@ export const getConnectorIcon = (connectorObject: OpenGraph) => {
     return connectorObject['en-US'].image;
 };
 
-export const getPathWithParam = (path: string, param: any, val: any) => {
-    return `${path}?${param}=${val}`;
+export const hasLength = (val: string | any[] | null | undefined): boolean => {
+    return Boolean(val && val.length > 0);
 };
 
-export const hasLength = (val: string | any[] | null | undefined) => {
-    return val && val.length > 0;
+// TODO: Replace instances of getPathWithParam with the expanded utility function below.
+export const getPathWithParams = (
+    baseURL: string,
+    params: { [key: string]: string | string[] } | URLSearchParams
+): string => {
+    let newSearchParams;
+
+    if (params instanceof URLSearchParams) {
+        newSearchParams = params;
+    } else {
+        newSearchParams = createSearchParams(params);
+    }
+
+    return `${baseURL}?${newSearchParams.toString()}`;
 };
 
 export const base64RemovePadding = (state: string | null) => {

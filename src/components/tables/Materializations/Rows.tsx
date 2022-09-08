@@ -1,9 +1,9 @@
 import { TableRow, useTheme } from '@mui/material';
-import Actions from 'components/tables/cells/Actions';
+import { authenticatedRoutes } from 'app/Authenticated';
 import ChipList from 'components/tables/cells/ChipList';
 import Connector from 'components/tables/cells/Connector';
 import EntityName from 'components/tables/cells/EntityName';
-import ExpandDetails from 'components/tables/cells/ExpandDetails';
+import OptionsMenu from 'components/tables/cells/OptionsMenu';
 import RowSelect from 'components/tables/cells/RowSelect';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import UserName from 'components/tables/cells/UserName';
@@ -19,10 +19,13 @@ import {
     ShardDetailStoreNames,
     useZustandStore,
 } from 'context/Zustand';
+import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useShardsList from 'hooks/useShardsList';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
 import { shardDetailSelectors, ShardDetailStore } from 'stores/ShardDetail';
 import { ENTITY } from 'types';
+import { getPathWithParams } from 'utils/misc-utils';
 
 interface RowsProps {
     data: LiveSpecsExtQuery[];
@@ -75,6 +78,7 @@ function Row({
     showEntityStatus,
     shardDetailStoreName,
 }: RowProps) {
+    const navigate = useNavigate();
     const theme = useTheme();
 
     const [detailsExpanded, setDetailsExpanded] = useState(false);
@@ -83,6 +87,19 @@ function Row({
         clickRow: (rowId: string) => {
             setRow(rowId, !isSelected);
         },
+        editTask: () => {
+            navigate(
+                getPathWithParams(
+                    authenticatedRoutes.materializations.edit.fullPath,
+                    {
+                        [GlobalSearchParams.CONNECTOR_ID]: row.connector_id,
+                        [GlobalSearchParams.LIVE_SPEC_ID]: row.id,
+                        [GlobalSearchParams.LAST_PUB_ID]: row.last_pub_id,
+                    }
+                )
+            );
+        },
+        toggleDetailsPanel: () => setDetailsExpanded(!detailsExpanded),
     };
 
     return (
@@ -117,14 +134,11 @@ function Row({
                     name={row.last_pub_user_full_name}
                 />
 
-                <Actions>
-                    <ExpandDetails
-                        onClick={() => {
-                            setDetailsExpanded(!detailsExpanded);
-                        }}
-                        expanded={detailsExpanded}
-                    />
-                </Actions>
+                <OptionsMenu
+                    detailsExpanded={detailsExpanded}
+                    toggleDetailsPanel={handlers.toggleDetailsPanel}
+                    editTask={handlers.editTask}
+                />
             </TableRow>
 
             <DetailsPanel

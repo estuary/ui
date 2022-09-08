@@ -1,20 +1,19 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Alert, Stack, Typography } from '@mui/material';
-import { authenticatedRoutes } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
-import {
-    DraftEditorStoreNames,
-    FormStateStoreNames,
-    useZustandStore,
-} from 'context/Zustand';
+import { Props } from 'components/shared/Entity/DetailsForm/types';
+import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
+import { useZustandStore } from 'context/Zustand';
 import { CATALOG_NAME_SCOPE } from 'forms/renderers/CatalogName';
 import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
 import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useSearchParams } from 'react-router-dom';
 import {
     defaultOptions,
     defaultRenderers,
@@ -24,20 +23,16 @@ import {
     Details,
     useDetailsForm_details,
     useDetailsForm_setDetails,
+    useDetailsForm_setDetails_connector,
 } from 'stores/DetailsForm';
-import { useEndpointConfigStore_reset } from 'stores/EndpointConfig';
 import { EntityFormState } from 'stores/FormState';
-import { Grants } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
-interface Props {
-    connectorTags: ConnectorWithTagDetailQuery[];
-    accessGrants: Grants[];
-    draftEditorStoreName: DraftEditorStoreNames;
-    formStateStoreName: FormStateStoreNames;
-}
+export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
 
-const getConnectorImageDetails = (connector: ConnectorWithTagDetailQuery) => {
+export const getConnectorImageDetails = (
+    connector: ConnectorWithTagDetailQuery
+) => {
     return {
         connectorId: connector.id,
         id: connector.connector_tags[0].id,
@@ -46,36 +41,30 @@ const getConnectorImageDetails = (connector: ConnectorWithTagDetailQuery) => {
     };
 };
 
-function DetailsForm({
+function DetailsFormForm({
     connectorTags,
     accessGrants,
     draftEditorStoreName,
     formStateStoreName,
+    entityType,
+    readOnly,
 }: Props) {
     const intl = useIntl();
-    const [searchParams] = useSearchParams();
-    const connectorID =
-        searchParams.get(
-            authenticatedRoutes.captures.create.params.connectorID
-        ) ??
-        searchParams.get(
-            authenticatedRoutes.materializations.create.params.connectorId
-        );
+    const navigateToCreate = useEntityCreateNavigate();
+    const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
     // Details Form Store
     const formData = useDetailsForm_details();
     const { connectorImage: originalConnectorImage } = formData;
 
     const setDetails = useDetailsForm_setDetails();
+    const setDetails_connector = useDetailsForm_setDetails_connector();
 
     // Draft Editor Store
     const isSaving = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['isSaving']
     >(draftEditorStoreName, (state) => state.isSaving);
-
-    // Endpoint Config Store
-    const resetEndpointConfig = useEndpointConfigStore_reset();
 
     // Form State Store
     const messagePrefix = useZustandStore<
@@ -93,31 +82,17 @@ function DetailsForm({
         EntityFormState['isActive']
     >(formStateStoreName, (state) => state.isActive);
 
-    const resetFormState = useZustandStore<
-        EntityFormState,
-        EntityFormState['resetState']
-    >(formStateStoreName, (state) => state.resetState);
-
     useEffect(() => {
-        if (connectorID && hasLength(connectorTags)) {
-            connectorTags.forEach((connector) => {
-                if (connector.connector_tags[0].id === connectorID) {
-                    setDetails({
-                        data: {
-                            entityName: '',
-                            connectorImage: getConnectorImageDetails(connector),
-                        },
-                    });
+        if (connectorId && hasLength(connectorTags)) {
+            connectorTags.find((connector) => {
+                const response = connector.connector_tags[0].id === connectorId;
+                if (response) {
+                    setDetails_connector(getConnectorImageDetails(connector));
                 }
+                return response;
             });
         }
-    }, [setDetails, connectorID, connectorTags]);
-
-    useEffect(() => {
-        if (connectorID && originalConnectorImage.id !== connectorID) {
-            resetFormState();
-        }
-    }, [resetFormState, connectorID, originalConnectorImage]);
+    }, [connectorId, connectorTags, setDetails_connector]);
 
     const accessGrantsOneOf = useMemo(() => {
         const response = [] as string[];
@@ -216,21 +191,41 @@ function DetailsForm({
     };
 
     const updateDetails = (details: Details) => {
-        if (details.data.connectorImage.id === '') {
-            resetEndpointConfig();
+        if (
+            // TODO (Validators) we need to build out validators for specific types of data
+            details.data.connectorImage.id &&
+            details.data.connectorImage.id.length === 23 &&
+            details.data.connectorImage.id !== originalConnectorImage.id
+        ) {
+            if (details.data.connectorImage.id === connectorId) {
+                setDetails_connector(details.data.connectorImage);
+            } else {
+                // Set the details before navigating to reduce "flicker"
+                setDetails(details);
+                navigateToCreate(
+                    entityType,
+                    details.data.connectorImage.id,
+                    true
+                );
+            }
+        } else {
+            setDetails(details);
         }
-        setDetails(details);
     };
 
     return (
         <>
-            <Typography variant="h5" sx={{ mb: 1 }}>
-                <FormattedMessage id={`${messagePrefix}.details.heading`} />
-            </Typography>
-
             <Typography sx={{ mb: 2 }}>
                 <FormattedMessage id={`${messagePrefix}.instructions`} />
             </Typography>
+
+            {readOnly ? (
+                <Alert color="info" style={{ marginBottom: 8 }}>
+                    {intl.formatMessage({
+                        id: 'entityEdit.alert.detailsFormDisabled',
+                    })}
+                </Alert>
+            ) : null}
 
             <Stack direction="row" spacing={2}>
                 {schema.properties[CONNECTOR_IMAGE_SCOPE].oneOf.length > 0 ? (
@@ -243,7 +238,7 @@ function DetailsForm({
                             renderers={defaultRenderers}
                             cells={materialCells}
                             config={defaultOptions}
-                            readonly={isSaving || isActive}
+                            readonly={readOnly ?? (isSaving || isActive)}
                             validationMode={showValidation(displayValidation)}
                             onChange={updateDetails}
                         />
@@ -266,4 +261,4 @@ function DetailsForm({
     );
 }
 
-export default DetailsForm;
+export default DetailsFormForm;

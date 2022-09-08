@@ -7,12 +7,14 @@ import { useState } from 'react';
 import { defaultTableFilter, TABLES } from 'services/supabase';
 import { LiveSpecsExtBaseQuery, SortDirection } from 'types';
 
+// TODO: Consider consolidating query interface instances.
 export interface LiveSpecsExtQuery extends LiveSpecsExtBaseQuery {
     writes_to: string[];
 }
 
 const queryColumns = [
     'catalog_name',
+    'connector_id',
     'connector_image_name',
     'connector_image_tag',
     'connector_open_graph->en-US->>image',

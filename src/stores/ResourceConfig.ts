@@ -13,7 +13,7 @@ export interface ResourceConfig {
     errors: any[];
 }
 
-interface ResourceConfigDictionary {
+export interface ResourceConfigDictionary {
     [key: string]: ResourceConfig;
 }
 
@@ -21,7 +21,8 @@ interface ResourceConfigDictionary {
 export interface ResourceConfigState {
     // Collection Selector
     collections: string[] | null;
-    preFillCollections: (collections: LiveSpecsExtQuery[]) => void;
+    preFillEmptyCollections: (collections: LiveSpecsExtQuery[]) => void;
+    preFillCollections: (liveSpecsData: LiveSpecsExtQuery[]) => void;
 
     collectionErrorsExist: boolean;
 
@@ -112,7 +113,7 @@ const getInitialState = (
 ): ResourceConfigState => ({
     ...getInitialStateData(),
 
-    preFillCollections: (value) => {
+    preFillEmptyCollections: (value) => {
         set(
             produce((state: ResourceConfigState) => {
                 const collections: string[] = [];
@@ -133,6 +134,27 @@ const getInitialState = (
                 state.resourceConfig = configs;
 
                 populateResourceConfigErrors(configs, state);
+
+                state.collectionErrorsExist = isEmpty(collections);
+            }),
+            false,
+            'Collections Pre-filled'
+        );
+    },
+
+    preFillCollections: (value) => {
+        set(
+            produce((state: ResourceConfigState) => {
+                const collections: string[] = [];
+
+                value.forEach((queryData) => {
+                    queryData.reads_from.forEach((collection) => {
+                        collections.push(collection);
+                    });
+                });
+
+                state.collections = collections;
+                state.currentCollection = collections[0];
 
                 state.collectionErrorsExist = isEmpty(collections);
             }),
@@ -213,7 +235,7 @@ const getInitialState = (
                 state.resourceSchema = val;
             }),
             false,
-            'Reset Schema Set'
+            'Resource Schema Set'
         );
     },
 

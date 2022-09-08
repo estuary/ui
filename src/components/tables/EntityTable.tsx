@@ -149,7 +149,9 @@ function EntityTable({
     }, [selectData, setRows, enableSelection]);
 
     useEffect(() => {
-        mutateSelectData().catch(() => {});
+        if (successfulTransformations > 0) {
+            mutateSelectData().catch(() => {});
+        }
     }, [mutateSelectData, successfulTransformations]);
 
     const resetSelection = () => {
@@ -210,7 +212,7 @@ function EntityTable({
     };
 
     return (
-        <Box>
+        <Box data-public>
             <Box sx={{ mx: 2 }}>
                 <Stack direction="row" spacing={1}>
                     {enableSelection ? <Title header={header} /> : null}
@@ -324,7 +326,6 @@ function EntityTable({
                                             sx={{
                                                 display: 'flex',
                                                 justifyContent: 'center',
-                                                py: 4,
                                             }}
                                         >
                                             <Box width={450}>

@@ -63,12 +63,12 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
 };
 
 const CTAs: ResolvedIntlConfig['messages'] = {
-    'cta.addToChangeSet': `Add to change set`,
     'cta.cancel': `Cancel`,
     'cta.close': `Close`,
     'cta.continue': `Continue`,
     'cta.delete': `Delete`,
     'cta.download': `Download`,
+    'cta.edit': `Edit`,
     'cta.login': `Login`,
     'cta.logout': `Logout`,
     'cta.materialize': `Materialize`,
@@ -90,6 +90,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.refresh': `Refresh`,
     'cta.table': `Table`,
     'cta.list': `List`,
+    'cta.expandToView': `Expand to view`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
@@ -144,15 +145,17 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.admin': `Admin`,
     'routeTitle.admin.accessGrants': `Access Grants`,
     'routeTitle.admin.api': `CLI - API`,
+    'routeTitle.admin.connectors': `Connectors`,
     'routeTitle.captureCreate': `Create Capture`,
+    'routeTitle.captureEdit': `Edit Capture`,
     'routeTitle.captures': `Captures`,
     'routeTitle.collections': `Collections`,
-    'routeTitle.connectors': `Connectors`,
     'routeTitle.error.pageNotFound': `Page Not Found`,
     'routeTitle.login': `Login`,
     'routeTitle.loginLoading': `Checking Credentials`,
     'routeTitle.noGrants': `Signed Up`,
     'routeTitle.materializationCreate': `Create Materialization`,
+    'routeTitle.materializationEdit': `Edit Materialization`,
     'routeTitle.materializations': `Materializations`,
     'routeTitle.registration': `Registration`,
     'routeTitle.passwordReset': `Password Reset`,
@@ -164,15 +167,17 @@ const BrowserTitles: ResolvedIntlConfig['messages'] = {
     'browserTitle.admin': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin']}`,
     'browserTitle.admin.accessGrants': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.accessGrants']}`,
     'browserTitle.admin.api': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.api']}`,
+    'browserTitle.admin.connectors': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.connectors']}`,
     'browserTitle.captureCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureCreate']}`,
+    'browserTitle.captureEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureEdit']}`,
     'browserTitle.captures': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captures']}`,
     'browserTitle.collections': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.collections']}`,
-    'browserTitle.connectors': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.connectors']}`,
     'browserTitle.error.pageNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.pageNotFound']}`,
     'browserTitle.login': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.login']}`,
     'browserTitle.noGrants': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.noGrants']}`,
     'browserTitle.loginLoading': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.loginLoading']}`,
     'browserTitle.materializationCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationCreate']}`,
+    'browserTitle.materializationEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationEdit']}`,
     'browserTitle.materializations': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializations']}`,
     'browserTitle.registration': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.registration']}`,
     'browserTitle.passwordReset': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.passwordReset']}`,
@@ -298,6 +303,12 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
 
     'entityTable.technicalDifficulties.header': `There was an issue getting your data.`,
     'entityTable.technicalDifficulties.message': `We apologize for the inconvenience. You'll find a message describing the issue at the top of the page.`,
+
+    'optionMenu.ariaLabel': `Open Option Menu`,
+    'optionMenu.tooltip': `Options`,
+    'optionMenu.option.detailsPanel.display': `View details`,
+    'optionMenu.option.detailsPanel.hide': `Hide details`,
+    'optionMenu.option.edit': `Edit specification`,
 };
 
 const LogsDialog: ResolvedIntlConfig['messages'] = {
@@ -313,6 +324,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.accessToken': `Access Token`,
     'admin.accessToken.message': `Copy the access token below to authenticate the CLI client.`,
     'admin.tabs.users': `Users`,
+    'admin.tabs.connectors': `Connectors`,
     'admin.tabs.api': `CLI-API`,
 };
 
@@ -410,10 +422,14 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.sops.failedTitle': `Configuration Encryption Failed`,
     'entityCreate.endpointConfig.heading': `${entityCreateHeader}`,
     'entityCreate.endpointConfig.errorSummary': `There are issues with the form.`,
+    'entityCreate.instructions': `To start select a Connector below. Once you make a selection the rest of the form will display and you can configure your endpoint. You can search by name and if you do not find what you are looking for please let us know by requesting the connector.`,
 
     'entityCreate.endpointConfig.detailsHaveErrors': `The Details section has errors:`,
     'entityCreate.endpointConfig.resourceConfigHaveErrors': `The Collections Resource Configuration section has errors:`,
     'entityCreate.endpointConfig.endpointConfigHaveErrors': `The ${entityCreateHeader} section has errors:`,
+
+    'entityCreate.endpointConfig.noConnectorSelectedTitle': `Please select a Connector to begin`,
+    'entityCreate.endpointConfig.noConnectorSelected': `To start the creation process you must select a Connector. You can change this later.`,
 
     'entityCreate.endpointConfig.entityNameMissing': `Name missing`,
     'entityCreate.endpointConfig.connectorMissing': `Connector missing`,
@@ -426,6 +442,11 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.bindingsConfig.noRowsTitle': `No selection made`,
 
     'entityCreate.connector.label': `${CommonMessages['connector.label']} Search`,
+};
+
+const EntityEdit: ResolvedIntlConfig['messages'] = {
+    'entityEdit.alert.detailsFormDisabled': `The details form cannot be edited at this time.`,
+    'entityEdit.alert.endpointConfigDisabled': `We are working to enable editing of the endpoint configuration form. In the meantime, edits can be made in the Specification Editor below.`,
 };
 
 const MonacoEditor: ResolvedIntlConfig['messages'] = {
@@ -462,6 +483,37 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreate.test.waitMessage': `Please wait while we test your capture.`,
     'captureCreate.testNotification.title': `Test Successful`,
     'captureCreate.testNotification.desc': `Your capture succeeded in a dry run and can be saved.`,
+};
+
+const CaptureEdit: ResolvedIntlConfig['messages'] = {
+    'captureEdit.heading': `${RouteTitles['routeTitle.captureEdit']}`,
+    'captureEdit.details.heading': `Capture Details`,
+    'captureEdit.ctas.materialize': `Materialize Collections`,
+    'captureEdit.instructions': `The name and destination of your existing capture.`,
+    'captureEdit.missingConnectors': `No connectors are installed. You must install a source connector to edit a capture.`,
+    'captureEdit.noAccessGrants': `You do not have the necessary ${CommonMessages['terms.permissions']} to edit this capture. Please contact an administrator.`,
+    'captureEdit.tenant.label': `Prefix`,
+    'captureEdit.config.source.doclink': `Connector Help`,
+    'captureEdit.config.source.homepage': `Home`,
+    'captureEdit.save.failed': `Capture edit failed. See below for details:`,
+    'captureEdit.editor.default': `Before you can edit the capture specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.capture']}." `,
+    'captureEdit.finalReview.instructions': `The following specification was generated from the details you provided. To make changes, edit the YAML file directly. Click "${CTAs['cta.saveEntity']}" to proceed.`,
+
+    'captureEdit.test.failedErrorTitle': `Configuration Test Failed`,
+    'captureEdit.test.serverUnreachable': `Unable to reach server while testing configuration.`,
+
+    'captureEdit.save.failedErrorTitle': `Capture Save Failed`,
+    'captureEdit.save.serverUnreachable': `Unable to reach server while saving capture`,
+    'captureEdit.save.waitMessage': `Please wait while we test, save, and publish your capture.`,
+
+    'captureEdit.generate.failedErrorTitle': `Generating Specification Failed`,
+
+    'captureEdit.createNotification.title': `Edited Capture Saved`,
+    'captureEdit.createNotification.desc': `Your edited capture is published and ready to be used.`,
+
+    'captureEdit.test.waitMessage': `Please wait while we test your capture.`,
+    'captureEdit.testNotification.title': `Test Successful`,
+    'captureEdit.testNotification.desc': `Your capture succeeded in a dry run and can be saved.`,
 };
 
 const DetailsPanel: ResolvedIntlConfig['messages'] = {
@@ -511,6 +563,41 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreate.test.waitMessage': `Please wait while we test your materialization.`,
     'materializationCreate.testNotification.title': `Test Successful`,
     'materializationCreate.testNotification.desc': `Your materialization succeeded in a dry run and can be saved.`,
+};
+
+const MaterializationEdit: ResolvedIntlConfig['messages'] = {
+    'materializationEdit.details.heading': `Materialization Details`,
+    'materializationEdit.collections.heading': `Output Collections`,
+    'materializationEdit.config.source.doclink': `Connector Help`,
+    'materializationEdit.editor.default': `Before you can edit the materialization specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.materialization']}".`,
+    'materializationEdit.finalReview.instructions': `The following specification was generated from the details you provided. To make changes, edit the YAML file directly. Click "${CTAs['cta.saveEntity']}," to proceed.`,
+    'materializationEdit.heading': `Edit Materialization`,
+    'materializationEdit.instructions': `The name and destination of your existing materialization.`,
+    'materializationEdit.missingConnectors': `No connectors installed. A materialization connector must be installed before a materialization can be edited.`,
+    'materializationEdit.noAccessGrants': `You do not have the necessary ${CommonMessages['terms.permissions']} to edit a materialization. Please contact an administrator.`,
+    'materializationEdit.save.failure': `Materialization edit failed. See below for details:`,
+    'materializationEdit.save.failure.errorTitle': `Materialization Save Failed`,
+    'materializationEdit.save.serverUnreachable': `Unable to reach server while saving materialization`,
+    'materializationEdit.tenant.label': `Prefix`,
+
+    'materializationEdit.generate.failure.errorTitle': `Materialization Preparation Failed`,
+
+    'materializationEdit.test.serverUnreachable': `Unable to reach server while testing configuration`,
+    'materializationEdit.test.inProgress': `Please wait while we try to connect to the destination.`,
+
+    'materializationEdit.collectionSelector.heading': `Collection Selector`,
+    'materializationEdit.collectionSelector.instructions': `The collections bound to your existing materialization. To make changes, edit the YAML file shown in the ${EntityCreate['entityCreate.catalogEditor.heading']} section below.`,
+
+    'materializationEdit.resourceConfig.heading': `Resource Configuration`,
+    'materializationEdit.save.failedErrorTitle': `Materialization Save Failed`,
+    'materializationEdit.save.waitMessage': `Please wait while we test, save, and publish your materialization.`,
+
+    'materializationEdit.createNotification.title': `Edited Materialization Saved`,
+    'materializationEdit.createNotification.desc': `Your edited materialization is published and ready to be used.`,
+
+    'materializationEdit.test.waitMessage': `Please wait while we test your materialization.`,
+    'materializationEdit.testNotification.title': `Test Successful`,
+    'materializationEdit.testNotification.desc': `Your materialization succeeded in a dry run and can be saved.`,
 };
 
 const ShardStatus: ResolvedIntlConfig['messages'] = {
@@ -564,11 +651,14 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...EntityCreate,
     ...Captures,
     ...CaptureCreate,
+    ...CaptureEdit,
     ...DetailsPanel,
     ...MaterializationCreate,
+    ...MaterializationEdit,
     ...ShardStatus,
     ...OAuth,
     ...Welcome,
+    ...EntityEdit,
 };
 
 export default enUSMessages;

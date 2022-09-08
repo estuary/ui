@@ -21,11 +21,16 @@ export const addKeywords = (ajv: any) => {
     // Flow allows some extra annotations, some of which are used to control how forms are rendered
     // in the UI. The full list of allowed annotations is defined in:
     // https://github.com/estuary/flow/blob/master/crates/doc/src/annotation.rs
+
+    // How to write a config schema
+    // https://github.com/estuary/connectors/blob/main/config_schema_guidelines.md
     ajv.addKeyword('multiline'); // text input should expect multiple lines
     ajv.addKeyword('secret'); // should render as a password
+    ajv.addKeyword('airbyte_secret'); // should render as a password
     ajv.addKeyword('advanced'); // Should be collapsed by default
     ajv.addKeyword('order'); // Unused at this time, but still present in airbyte schemas.
     ajv.addKeyword('x-oauth2-provider'); // Used to display OAuth
+    ajv.addKeyword('discriminator'); // Used to know what field in a complex oneOf should be unique (ex: parser)
     return ajv;
 };
 

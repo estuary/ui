@@ -13,8 +13,8 @@ import {
     FormStateStoreNames,
     useZustandStore,
 } from 'context/Zustand';
+import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
-import { usePrompt } from 'hooks/useBlocker';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import LogRocket from 'logrocket';
@@ -27,6 +27,7 @@ import {
     useDetailsForm_changed,
     useDetailsForm_connectorImage,
     useDetailsForm_errorsExist,
+    useDetailsForm_resetState,
 } from 'stores/DetailsForm';
 import {
     useEndpointConfigStore_changed,
@@ -34,7 +35,7 @@ import {
     useEndpointConfigStore_reset,
 } from 'stores/EndpointConfig';
 import { EntityFormState, FormStatus } from 'stores/FormState';
-import { getPathWithParam } from 'utils/misc-utils';
+import { getPathWithParams } from 'utils/misc-utils';
 
 const draftEditorStoreName = DraftEditorStoreNames.CAPTURE;
 const formStateStoreName = FormStateStoreNames.CAPTURE_CREATE;
@@ -84,6 +85,7 @@ function CaptureCreate() {
     const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
     const resetEndpointConfigState = useEndpointConfigStore_reset();
     const endpointConfigChanged = useEndpointConfigStore_changed();
+    const resetDetailsForm = useDetailsForm_resetState();
 
     // Form State Store
     const messagePrefix = useZustandStore<
@@ -112,6 +114,7 @@ function CaptureCreate() {
     }, [imageTag, setDraftId]);
 
     const resetState = () => {
+        resetDetailsForm();
         resetEndpointConfigState();
         resetFormState();
     };
@@ -138,7 +141,6 @@ function CaptureCreate() {
         },
         exit: () => {
             resetState();
-
             navigate(authenticatedRoutes.captures.path);
         },
         jobFailed: (errorTitle: string) => {
@@ -166,12 +168,14 @@ function CaptureCreate() {
         materializeCollections: () => {
             helpers.exit();
             navigate(
-                getPathWithParam(
-                    authenticatedRoutes.materializations.create.fullPath,
-                    authenticatedRoutes.materializations.create.params
-                        .lastPubId,
-                    pubId
-                )
+                pubId
+                    ? getPathWithParams(
+                          authenticatedRoutes.materializations.create.fullPath,
+                          {
+                              [GlobalSearchParams.LAST_PUB_ID]: pubId,
+                          }
+                      )
+                    : authenticatedRoutes.materializations.create.fullPath
             );
         },
     };
@@ -196,14 +200,6 @@ function CaptureCreate() {
         );
     };
 
-    usePrompt(
-        'confirm.loseData',
-        !exitWhenLogsClose && (detailsFormChanged() || endpointConfigChanged()),
-        () => {
-            resetState();
-        }
-    );
-
     return (
         <PageContainer
             pageTitleProps={{
@@ -215,6 +211,8 @@ function CaptureCreate() {
             <EntityCreate
                 title="browserTitle.captureCreate"
                 connectorType={entityType}
+                promptDataLoss={detailsFormChanged() || endpointConfigChanged()}
+                resetState={resetState}
                 Header={
                     <FooHeader
                         heading={
