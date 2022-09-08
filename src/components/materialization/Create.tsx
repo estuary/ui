@@ -226,7 +226,6 @@ function MaterializationCreate() {
                         formStateStoreName={formStateStoreName}
                     />
                 }
-                draftEditorStoreName={draftEditorStoreName}
                 resourceConfigStoreName={resourceConfigStoreName}
                 formStateStoreName={formStateStoreName}
             />

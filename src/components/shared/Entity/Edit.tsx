@@ -19,7 +19,6 @@ import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedCh
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import {
-    DraftEditorStoreNames,
     FormStateStoreNames,
     ResourceConfigStoreNames,
     useZustandStore,
@@ -59,7 +58,6 @@ interface Props {
     title: string;
     entityType: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
     Header: any;
-    draftEditorStoreName: DraftEditorStoreNames;
     formStateStoreName: FormStateStoreNames;
     callFailed: (formState: any, subscription?: RealtimeSubscription) => void;
     resourceConfigStoreName?: ResourceConfigStoreNames;
@@ -191,7 +189,6 @@ function EntityEdit({
     title,
     entityType,
     Header,
-    draftEditorStoreName,
     formStateStoreName,
     resourceConfigStoreName,
     callFailed,
@@ -514,7 +511,6 @@ function EntityEdit({
                     <ErrorBoundryWrapper>
                         <CatalogEditor
                             messageId={`${messagePrefix}.finalReview.instructions`}
-                            draftEditorStoreName={draftEditorStoreName}
                             formStateStoreName={formStateStoreName}
                         />
                     </ErrorBoundryWrapper>

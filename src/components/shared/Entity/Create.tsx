@@ -13,7 +13,6 @@ import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedCh
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import {
-    DraftEditorStoreNames,
     FormStateStoreNames,
     ResourceConfigStoreNames,
     useZustandStore,
@@ -42,7 +41,6 @@ interface Props {
     title: string;
     connectorType: EntityWithCreateWorkflow;
     Header: any;
-    draftEditorStoreName: DraftEditorStoreNames;
     formStateStoreName: FormStateStoreNames;
     resourceConfigStoreName?: ResourceConfigStoreNames;
     showCollections?: boolean;
@@ -54,7 +52,6 @@ function EntityCreate({
     title,
     connectorType,
     Header,
-    draftEditorStoreName,
     formStateStoreName,
     resourceConfigStoreName,
     showCollections,
@@ -259,7 +256,6 @@ function EntityCreate({
                         <ErrorBoundryWrapper>
                             <CatalogEditor
                                 messageId={`${messagePrefix}.finalReview.instructions`}
-                                draftEditorStoreName={draftEditorStoreName}
                                 formStateStoreName={formStateStoreName}
                             />
                         </ErrorBoundryWrapper>

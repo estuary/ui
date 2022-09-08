@@ -12,11 +12,7 @@ import EntityEdit from 'components/shared/Entity/Edit';
 import { useEntityType } from 'components/shared/Entity/EntityContext';
 import FooHeader from 'components/shared/Entity/Header';
 import PageContainer from 'components/shared/PageContainer';
-import {
-    DraftEditorStoreNames,
-    FormStateStoreNames,
-    useZustandStore,
-} from 'context/Zustand';
+import { FormStateStoreNames, useZustandStore } from 'context/Zustand';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
@@ -40,7 +36,6 @@ import {
 import { EntityFormState, FormStatus } from 'stores/FormState';
 import { getPathWithParams } from 'utils/misc-utils';
 
-const draftEditorStoreName = DraftEditorStoreNames.CAPTURE;
 const formStateStoreName = FormStateStoreNames.CAPTURE_EDIT;
 
 // const trackEvent = (payload: any) => {
@@ -232,7 +227,6 @@ function CaptureEdit() {
                         formStateStoreName={formStateStoreName}
                     />
                 }
-                draftEditorStoreName={draftEditorStoreName}
                 formStateStoreName={formStateStoreName}
                 callFailed={helpers.callFailed}
                 readOnly={{ detailsForm: true, endpointConfigForm: true }}

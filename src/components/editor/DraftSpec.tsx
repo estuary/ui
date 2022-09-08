@@ -5,16 +5,14 @@ import {
     useEditorStore_id,
     useEditorStore_setSpecs,
 } from 'components/editor/Store';
-import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
 import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useEffect, useState } from 'react';
 
 export interface Props {
-    draftEditorStoreName: DraftEditorStoreNames;
     disabled?: boolean;
 }
 
-function DraftSpecEditor({ draftEditorStoreName, disabled }: Props) {
+function DraftSpecEditor({ disabled }: Props) {
     const currentCatalog = useEditorStore_currentCatalog();
 
     const setSpecs = useEditorStore_setSpecs();
@@ -84,8 +82,6 @@ function DraftSpecEditor({ draftEditorStoreName, disabled }: Props) {
         return (
             <EditorWithFileSelector
                 disabled={disabled}
-                editorStoreName={draftEditorStoreName}
-                useZustandStore={useZustandStore}
                 localZustandScope={false}
                 onChange={handlers.change}
             />

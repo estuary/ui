@@ -71,10 +71,6 @@ function DetailsPanel({
                                 lastPubId={lastPubId}
                                 disableLogs={true}
                                 localZustandScope={true}
-                                liveSpecEditorStoreName={
-                                    LiveSpecEditorStoreNames.GENERAL
-                                }
-                                useZustandStore={useLocalZustandStore}
                             />
                         </Grid>
                     </LocalZustandProvider>

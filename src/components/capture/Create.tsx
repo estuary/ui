@@ -246,7 +246,6 @@ function CaptureCreate() {
                         formStateStoreName={formStateStoreName}
                     />
                 }
-                draftEditorStoreName={draftEditorStoreName}
                 formStateStoreName={formStateStoreName}
             />
         </PageContainer>
