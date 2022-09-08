@@ -6,6 +6,7 @@ import { authenticatedRoutes } from 'app/Authenticated';
 import CollectionConfig from 'components/collection/Config';
 import {
     EditorStoreState,
+    useEditorStore_editDraftId,
     useEditorStore_id,
     useEditorStore_setId,
 } from 'components/editor/Store';
@@ -256,10 +257,7 @@ function EntityEdit({
         EditorStoreState<DraftSpecQuery>['setEditDraftId']
     >(draftEditorStoreName, (state) => state.setEditDraftId);
 
-    const editDraftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['editDraftId']
-    >(draftEditorStoreName, (state) => state.editDraftId);
+    const editDraftId = useEditorStore_editDraftId();
 
     // Endpoint Config Store
     const setEndpointSchema = useEndpointConfigStore_setEndpointSchema();

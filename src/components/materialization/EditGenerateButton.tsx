@@ -3,6 +3,7 @@ import { generateDraftSpec, updateDraftSpec } from 'api/draftSpecs';
 // import { encryptConfig } from 'api/oauth';
 import {
     EditorStoreState,
+    useEditorStore_editDraftId,
     useEditorStore_setId,
 } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
@@ -59,10 +60,7 @@ function MaterializeGenerateButton({
 
     const setDraftId = useEditorStore_setId();
 
-    const editDraftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['editDraftId']
-    >(draftEditorStoreName, (state) => state.editDraftId);
+    const editDraftId = useEditorStore_editDraftId();
 
     // Endpoint Config Store
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
