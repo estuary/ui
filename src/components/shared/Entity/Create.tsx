@@ -239,7 +239,6 @@ function EntityCreate({
                             <ErrorBoundryWrapper>
                                 <EndpointConfig
                                     connectorImage={imageTag.id}
-                                    draftEditorStoreName={draftEditorStoreName}
                                     formStateStoreName={formStateStoreName}
                                 />
                             </ErrorBoundryWrapper>
