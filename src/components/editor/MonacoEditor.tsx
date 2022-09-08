@@ -9,6 +9,7 @@ import {
     EditorStoreState,
     useEditorStore_currentCatalog,
     useEditorStore_serverUpdate,
+    useEditorStore_status,
 } from 'components/editor/Store';
 import {
     DraftEditorStoreNames,
@@ -63,10 +64,7 @@ function MonacoEditor({
     const catalogSpec = currentCatalog?.spec ?? null;
     const catalogType = currentCatalog?.spec_type ?? null;
 
-    const status = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['status']
-    >(editorStoreName, (state) => state.status);
+    const status = useEditorStore_status({ localScope: localZustandScope });
 
     const setStatus = useZustandStore<
         EditorStoreState<DraftSpecQuery>,
