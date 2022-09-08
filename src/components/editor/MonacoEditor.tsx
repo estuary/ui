@@ -8,6 +8,7 @@ import {
     EditorStatus,
     EditorStoreState,
     useEditorStore_currentCatalog,
+    useEditorStore_serverUpdate,
 } from 'components/editor/Store';
 import {
     DraftEditorStoreNames,
@@ -49,10 +50,9 @@ function MonacoEditor({
         null
     );
 
-    const serverUpdate = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['serverUpdate']
-    >(editorStoreName, (state) => state.serverUpdate);
+    const serverUpdate = useEditorStore_serverUpdate({
+        localScope: localZustandScope,
+    });
 
     const currentCatalog = useEditorStore_currentCatalog({
         localScope: localZustandScope,
