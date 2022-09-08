@@ -260,3 +260,20 @@ export const useEditorStore_pubId = (params?: SelectorParams | undefined) => {
         EditorStoreState<DraftSpecQuery>['pubId']
     >(storeName(entityType, localScope), (state) => state.pubId);
 };
+
+export const useEditorStore_setPubId = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['setPubId']
+    >(storeName(entityType, localScope), (state) => state.setPubId);
+};
