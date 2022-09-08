@@ -2,11 +2,7 @@ import { useEditorStore_id } from 'components/editor/Store';
 import EntityCreateSave from 'components/shared/Entity/Actions/Save';
 import LogDialog from 'components/shared/Entity/LogDialog';
 import LogDialogActions from 'components/shared/Entity/LogDialogActions';
-import {
-    DraftEditorStoreNames,
-    FormStateStoreNames,
-    useZustandStore,
-} from 'context/Zustand';
+import { FormStateStoreNames, useZustandStore } from 'context/Zustand';
 import { FormattedMessage } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
 import { EntityFormState, FormStatus } from 'stores/FormState';
@@ -16,7 +12,6 @@ interface Props {
     callFailed: Function;
     disabled: boolean;
     logEvent: CustomEvents.CAPTURE_TEST | CustomEvents.MATERIALIZATION_TEST;
-    draftEditorStoreName: DraftEditorStoreNames;
     formStateStoreName: FormStateStoreNames;
 }
 
@@ -25,7 +20,6 @@ function EntityTestButton({
     closeLogs,
     disabled,
     logEvent,
-    draftEditorStoreName,
     formStateStoreName,
 }: Props) {
     // Draft Editor Store
@@ -79,7 +73,6 @@ function EntityTestButton({
                 disabled={disabled || !draftId}
                 onFailure={callFailed}
                 logEvent={logEvent}
-                draftEditorStoreName={draftEditorStoreName}
                 formStateStoreName={formStateStoreName}
             />
         </>

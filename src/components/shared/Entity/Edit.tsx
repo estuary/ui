@@ -479,7 +479,6 @@ function EntityEdit({
                             <DetailsForm
                                 connectorTags={connectorTags}
                                 accessGrants={combinedGrants}
-                                draftEditorStoreName={draftEditorStoreName}
                                 formStateStoreName={formStateStoreName}
                                 readOnly={readOnly.detailsForm}
                                 entityType={entityType}

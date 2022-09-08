@@ -216,7 +216,6 @@ function CaptureEdit() {
                                 callFailed={helpers.callFailed}
                                 disabled={!hasConnectors}
                                 logEvent={CustomEvents.CAPTURE_TEST}
-                                draftEditorStoreName={draftEditorStoreName}
                                 formStateStoreName={formStateStoreName}
                             />
                         }
@@ -225,7 +224,6 @@ function CaptureEdit() {
                                 closeLogs={handlers.closeLogs}
                                 callFailed={helpers.callFailed}
                                 disabled={!draftId}
-                                draftEditorStoreName={draftEditorStoreName}
                                 materialize={handlers.materializeCollections}
                                 logEvent={CustomEvents.CAPTURE_EDIT}
                                 formStateStoreName={formStateStoreName}

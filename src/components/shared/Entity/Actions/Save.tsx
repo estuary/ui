@@ -1,18 +1,13 @@
 import { Button } from '@mui/material';
 import { createPublication } from 'api/publications';
 import {
-    EditorStoreState,
     useEditorStore_id,
+    useEditorStore_isSaving,
     useEditorStore_setPubId,
 } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
-import {
-    DraftEditorStoreNames,
-    FormStateStoreNames,
-    useZustandStore,
-} from 'context/Zustand';
+import { FormStateStoreNames, useZustandStore } from 'context/Zustand';
 import { useClient } from 'hooks/supabase-swr';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import LogRocket from 'logrocket';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
@@ -28,7 +23,6 @@ interface Props {
     onFailure: Function;
     logEvent: CustomEvents;
     dryRun?: boolean;
-    draftEditorStoreName: DraftEditorStoreNames;
     formStateStoreName: FormStateStoreNames;
 }
 
@@ -46,7 +40,6 @@ function EntityCreateSave({
     disabled,
     dryRun,
     onFailure,
-    draftEditorStoreName,
     logEvent,
     formStateStoreName,
 }: Props) {
@@ -60,10 +53,7 @@ function EntityCreateSave({
 
     const setPubId = useEditorStore_setPubId();
 
-    const isSaving = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['isSaving']
-    >(draftEditorStoreName, (state) => state.isSaving);
+    const isSaving = useEditorStore_isSaving();
 
     // Details Form Store
     const entityDescription = useDetailsForm_details_description();

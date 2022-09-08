@@ -202,7 +202,6 @@ function MaterializationCreate() {
                                 callFailed={helpers.callFailed}
                                 closeLogs={handlers.closeLogs}
                                 logEvent={CustomEvents.MATERIALIZATION_TEST}
-                                draftEditorStoreName={draftEditorStoreName}
                                 formStateStoreName={formStateStoreName}
                             />
                         }
@@ -212,7 +211,6 @@ function MaterializationCreate() {
                                 callFailed={helpers.callFailed}
                                 closeLogs={handlers.closeLogs}
                                 logEvent={CustomEvents.MATERIALIZATION_CREATE}
-                                draftEditorStoreName={draftEditorStoreName}
                                 formStateStoreName={formStateStoreName}
                             />
                         }

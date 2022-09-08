@@ -2,7 +2,10 @@ import { Button } from '@mui/material';
 import { discover } from 'api/discovers';
 import { createEntityDraft } from 'api/drafts';
 import { encryptConfig } from 'api/oauth';
-import { EditorStoreState } from 'components/editor/Store';
+import {
+    EditorStoreState,
+    useEditorStore_isSaving,
+} from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
 import {
     DraftEditorStoreNames,
@@ -40,10 +43,7 @@ function CaptureGenerateButton({
     formStateStoreName,
 }: Props) {
     // Editor Store
-    const isSaving = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['isSaving']
-    >(draftEditorStoreName, (state) => state.isSaving);
+    const isSaving = useEditorStore_isSaving();
 
     const resetEditorState = useZustandStore<
         EditorStoreState<DraftSpecQuery>,

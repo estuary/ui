@@ -2,18 +2,16 @@ import { Button } from '@mui/material';
 import { generateDraftSpec, updateDraftSpec } from 'api/draftSpecs';
 import { encryptConfig } from 'api/oauth';
 import {
-    EditorStoreState,
     useEditorStore_editDraftId,
+    useEditorStore_isSaving,
     useEditorStore_setId,
 } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
 import {
-    DraftEditorStoreNames,
     FormStateStoreNames,
     ResourceConfigStoreNames,
     useZustandStore,
 } from 'context/Zustand';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -33,7 +31,6 @@ import { ResourceConfigState } from 'stores/ResourceConfig';
 interface Props {
     disabled: boolean;
     callFailed: Function;
-    draftEditorStoreName: DraftEditorStoreNames;
     resourceConfigStoreName: ResourceConfigStoreNames;
     formStateStoreName: FormStateStoreNames;
 }
@@ -41,7 +38,6 @@ interface Props {
 function MaterializeGenerateButton({
     disabled,
     callFailed,
-    draftEditorStoreName,
     resourceConfigStoreName,
     formStateStoreName,
 }: Props) {
@@ -53,10 +49,7 @@ function MaterializeGenerateButton({
     const imagePath = useDetailsForm_connectorImage_imagePath();
 
     // Draft Editor Store
-    const isSaving = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['isSaving']
-    >(draftEditorStoreName, (state) => state.isSaving);
+    const isSaving = useEditorStore_isSaving();
 
     const setDraftId = useEditorStore_setId();
 

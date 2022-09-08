@@ -4,6 +4,7 @@ import { createDraftSpec, generateDraftSpec } from 'api/draftSpecs';
 import { encryptConfig } from 'api/oauth';
 import {
     EditorStoreState,
+    useEditorStore_isSaving,
     useEditorStore_setId,
 } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
@@ -54,10 +55,7 @@ function MaterializeGenerateButton({
     const imagePath = useDetailsForm_connectorImage_imagePath();
 
     // Draft Editor Store
-    const isSaving = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['isSaving']
-    >(draftEditorStoreName, (state) => state.isSaving);
+    const isSaving = useEditorStore_isSaving();
 
     const resetEditorState = useZustandStore<
         EditorStoreState<DraftSpecQuery>,

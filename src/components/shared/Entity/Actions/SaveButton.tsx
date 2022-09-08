@@ -2,11 +2,7 @@ import { useEditorStore_id } from 'components/editor/Store';
 import EntityCreateSave from 'components/shared/Entity/Actions/Save';
 import LogDialog from 'components/shared/Entity/LogDialog';
 import LogDialogActions from 'components/shared/Entity/LogDialogActions';
-import {
-    DraftEditorStoreNames,
-    FormStateStoreNames,
-    useZustandStore,
-} from 'context/Zustand';
+import { FormStateStoreNames, useZustandStore } from 'context/Zustand';
 import { FormattedMessage } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
 import { EntityFormState, FormStatus } from 'stores/FormState';
@@ -20,7 +16,6 @@ interface Props {
         | CustomEvents.MATERIALIZATION_CREATE
         | CustomEvents.CAPTURE_EDIT
         | CustomEvents.MATERIALIZATION_EDIT;
-    draftEditorStoreName: DraftEditorStoreNames;
     formStateStoreName: FormStateStoreNames;
     materialize?: Function;
 }
@@ -29,7 +24,6 @@ function EntitySaveButton({
     callFailed,
     closeLogs,
     disabled,
-    draftEditorStoreName,
     materialize,
     logEvent,
     formStateStoreName,
@@ -92,7 +86,6 @@ function EntitySaveButton({
                 disabled={disabled || !draftId}
                 onFailure={callFailed}
                 logEvent={logEvent}
-                draftEditorStoreName={draftEditorStoreName}
                 formStateStoreName={formStateStoreName}
             />
         </>

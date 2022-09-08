@@ -1,7 +1,7 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Alert, Stack, Typography } from '@mui/material';
-import { EditorStoreState } from 'components/editor/Store';
+import { useEditorStore_isSaving } from 'components/editor/Store';
 import { Props } from 'components/shared/Entity/DetailsForm/types';
 import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
 import { useZustandStore } from 'context/Zustand';
@@ -11,7 +11,6 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
@@ -44,7 +43,6 @@ export const getConnectorImageDetails = (
 function DetailsFormForm({
     connectorTags,
     accessGrants,
-    draftEditorStoreName,
     formStateStoreName,
     entityType,
     readOnly,
@@ -61,10 +59,7 @@ function DetailsFormForm({
     const setDetails_connector = useDetailsForm_setDetails_connector();
 
     // Draft Editor Store
-    const isSaving = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['isSaving']
-    >(draftEditorStoreName, (state) => state.isSaving);
+    const isSaving = useEditorStore_isSaving();
 
     // Form State Store
     const messagePrefix = useZustandStore<

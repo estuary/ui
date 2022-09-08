@@ -182,7 +182,6 @@ function MaterializationEdit() {
                             <MaterializeGenerateButton
                                 disabled={!hasConnectors}
                                 callFailed={helpers.callFailed}
-                                draftEditorStoreName={draftEditorStoreName}
                                 resourceConfigStoreName={
                                     resourceConfigStoreName
                                 }
@@ -195,7 +194,6 @@ function MaterializationEdit() {
                                 callFailed={helpers.callFailed}
                                 closeLogs={handlers.closeLogs}
                                 logEvent={CustomEvents.MATERIALIZATION_TEST}
-                                draftEditorStoreName={draftEditorStoreName}
                                 formStateStoreName={formStateStoreName}
                             />
                         }
@@ -205,7 +203,6 @@ function MaterializationEdit() {
                                 callFailed={helpers.callFailed}
                                 closeLogs={handlers.closeLogs}
                                 logEvent={CustomEvents.MATERIALIZATION_EDIT}
-                                draftEditorStoreName={draftEditorStoreName}
                                 formStateStoreName={formStateStoreName}
                             />
                         }

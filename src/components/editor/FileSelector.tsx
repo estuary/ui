@@ -7,6 +7,7 @@ import {
 } from '@mui/x-data-grid';
 import {
     EditorStoreState,
+    useEditorStore_isSaving,
     useEditorStore_setCurrentCatalog,
     useEditorStore_specs,
 } from 'components/editor/Store';
@@ -71,10 +72,7 @@ function EditorFileSelector({
 }: Props) {
     const initDone = useRef(false);
 
-    const isSaving = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['isSaving']
-    >(editorStoreName, (state) => state.isSaving);
+    const isSaving = useEditorStore_isSaving({ localScope: localZustandScope });
 
     const isEditing = useZustandStore<
         EditorStoreState<DraftSpecQuery>,

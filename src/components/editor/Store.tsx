@@ -380,3 +380,20 @@ export const useEditorStore_setServerUpdate = (
         EditorStoreState<DraftSpecQuery>['setServerUpdate']
     >(storeName(entityType, localScope), (state) => state.setServerUpdate);
 };
+
+export const useEditorStore_isSaving = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['isSaving']
+    >(storeName(entityType, localScope), (state) => state.isSaving);
+};

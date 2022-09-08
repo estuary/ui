@@ -228,7 +228,6 @@ function EntityCreate({
                                 <DetailsForm
                                     connectorTags={connectorTags}
                                     accessGrants={combinedGrants}
-                                    draftEditorStoreName={draftEditorStoreName}
                                     formStateStoreName={formStateStoreName}
                                     entityType={connectorType}
                                 />
