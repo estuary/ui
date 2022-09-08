@@ -5,7 +5,10 @@ import {
     GridRenderCellParams,
     GridSelectionModel,
 } from '@mui/x-data-grid';
-import { EditorStoreState } from 'components/editor/Store';
+import {
+    EditorStoreState,
+    useEditorStore_setCurrentCatalog,
+} from 'components/editor/Store';
 import { slate } from 'context/Theme';
 import {
     DraftEditorStoreNames,
@@ -73,12 +76,8 @@ function EditorFileSelector({ editorStoreName, useZustandStore }: Props) {
         EditorStoreState<DraftSpecQuery>['isEditing']
     >(editorStoreName, (state) => state.isEditing);
 
-    const setCurrentCatalog = useZustandStore<
-        EditorStoreState<LiveSpecsQuery_spec | DraftSpecQuery>,
-        EditorStoreState<
-            LiveSpecsQuery_spec | DraftSpecQuery
-        >['setCurrentCatalog']
-    >(editorStoreName, (state) => state.setCurrentCatalog);
+    // TODO: Update type LiveSpecsQuery_spec | DraftSpecQuery
+    const setCurrentCatalog = useEditorStore_setCurrentCatalog();
 
     const specs = useZustandStore<
         EditorStoreState<LiveSpecsQuery_spec | DraftSpecQuery>,

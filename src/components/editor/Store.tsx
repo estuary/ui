@@ -294,3 +294,20 @@ export const useEditorStore_currentCatalog = (
         EditorStoreState<DraftSpecQuery>['currentCatalog']
     >(storeName(entityType, localScope), (state) => state.currentCatalog);
 };
+
+export const useEditorStore_setCurrentCatalog = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['setCurrentCatalog']
+    >(storeName(entityType, localScope), (state) => state.setCurrentCatalog);
+};
