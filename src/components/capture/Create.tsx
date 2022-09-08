@@ -11,13 +11,13 @@ import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
 import { useEntityType } from 'components/shared/Entity/EntityContext';
 import FooHeader from 'components/shared/Entity/Header';
-import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
 import PageContainer from 'components/shared/PageContainer';
 import {
     DraftEditorStoreNames,
     FormStateStoreNames,
     useZustandStore,
 } from 'context/Zustand';
+import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import LogRocket from 'logrocket';
@@ -38,7 +38,7 @@ import {
     useEndpointConfigStore_reset,
 } from 'stores/EndpointConfig';
 import { EntityFormState, FormStatus } from 'stores/FormState';
-import { ENTITY } from 'types';
+import { getPathWithParams } from 'utils/misc-utils';
 
 const draftEditorStoreName = DraftEditorStoreNames.CAPTURE;
 const formStateStoreName = FormStateStoreNames.CAPTURE_CREATE;
@@ -102,8 +102,6 @@ function CaptureCreate() {
         EntityFormState['formState']['exitWhenLogsClose']
     >(formStateStoreName, (state) => state.formState.exitWhenLogsClose);
 
-    const navigateToCreate = useEntityCreateNavigate();
-
     // Reset the catalog if the connector changes
     useEffect(() => {
         setDraftId(null);
@@ -163,7 +161,16 @@ function CaptureCreate() {
 
         materializeCollections: () => {
             helpers.exit();
-            navigateToCreate(ENTITY.MATERIALIZATION, pubId);
+            navigate(
+                pubId
+                    ? getPathWithParams(
+                          authenticatedRoutes.materializations.create.fullPath,
+                          {
+                              [GlobalSearchParams.LAST_PUB_ID]: pubId,
+                          }
+                      )
+                    : authenticatedRoutes.materializations.create.fullPath
+            );
         },
     };
 
