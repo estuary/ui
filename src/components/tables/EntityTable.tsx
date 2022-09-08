@@ -149,7 +149,9 @@ function EntityTable({
     }, [selectData, setRows, enableSelection]);
 
     useEffect(() => {
-        mutateSelectData().catch(() => {});
+        if (successfulTransformations > 0) {
+            mutateSelectData().catch(() => {});
+        }
     }, [mutateSelectData, successfulTransformations]);
 
     const resetSelection = () => {
