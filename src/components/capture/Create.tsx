@@ -35,6 +35,7 @@ import {
     useEndpointConfigStore_reset,
 } from 'stores/EndpointConfig';
 import { EntityFormState, FormStatus } from 'stores/FormState';
+import { ENTITY } from 'types';
 
 const draftEditorStoreName = DraftEditorStoreNames.CAPTURE;
 const formStateStoreName = FormStateStoreNames.CAPTURE_CREATE;
@@ -168,7 +169,7 @@ function CaptureCreate() {
 
         materializeCollections: () => {
             helpers.exit();
-            navigateToCreate(entityType, pubId);
+            navigateToCreate(ENTITY.MATERIALIZATION, pubId);
         },
     };
 
