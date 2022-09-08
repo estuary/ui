@@ -18,6 +18,7 @@ interface Props {
     lastPubId: string;
     liveSpecEditorStoreName: LiveSpecEditorStoreNames;
     useZustandStore: UseZustandStore;
+    localZustandScope: boolean;
     disableLogs?: boolean;
     collectionNames?: string[];
 }
@@ -26,6 +27,7 @@ function EditorAndLogs({
     lastPubId,
     liveSpecEditorStoreName,
     useZustandStore,
+    localZustandScope,
     disableLogs,
     collectionNames,
 }: Props) {
@@ -40,7 +42,7 @@ function EditorAndLogs({
         EditorStoreState<LiveSpecsQuery_spec>['setSpecs']
     >(liveSpecEditorStoreName, (state) => state.setSpecs);
 
-    const setId = useEditorStore_setId();
+    const setId = useEditorStore_setId({ localScope: localZustandScope });
 
     useEffect(() => {
         setId(lastPubId);
@@ -61,6 +63,7 @@ function EditorAndLogs({
                     <LiveSpecEditor
                         liveSpecEditorStoreName={liveSpecEditorStoreName}
                         useZustandStore={useZustandStore}
+                        localZustandScope={localZustandScope}
                     />
                 </Grid>
 

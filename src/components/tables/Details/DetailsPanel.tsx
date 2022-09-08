@@ -70,6 +70,7 @@ function DetailsPanel({
                                 collectionNames={fullList}
                                 lastPubId={lastPubId}
                                 disableLogs={true}
+                                localZustandScope={true}
                                 liveSpecEditorStoreName={
                                     LiveSpecEditorStoreNames.GENERAL
                                 }

@@ -167,10 +167,13 @@ export const createEditorStore = <T,>(key: string) => {
 
 // Selector Hooks
 interface SelectorParams {
-    localScope?: true;
+    localScope?: boolean;
 }
 
-const storeName = (entityType: ENTITY, localScope?: true): EditorStoreNames => {
+const storeName = (
+    entityType: ENTITY,
+    localScope?: boolean
+): EditorStoreNames => {
     if (localScope) {
         return EditorStoreNames.LOCAL;
     } else if (entityType === ENTITY.CAPTURE) {
@@ -310,4 +313,19 @@ export const useEditorStore_setCurrentCatalog = (
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setCurrentCatalog']
     >(storeName(entityType, localScope), (state) => state.setCurrentCatalog);
+};
+
+export const useEditorStore_specs = (params?: SelectorParams | undefined) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['specs']
+    >(storeName(entityType, localScope), (state) => state.specs);
 };

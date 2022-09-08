@@ -8,6 +8,7 @@ import {
 import {
     EditorStoreState,
     useEditorStore_setCurrentCatalog,
+    useEditorStore_specs,
 } from 'components/editor/Store';
 import { slate } from 'context/Theme';
 import {
@@ -16,13 +17,13 @@ import {
     UseZustandStore,
 } from 'context/Zustand';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
 import { useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
     editorStoreName: DraftEditorStoreNames | LiveSpecEditorStoreNames;
     useZustandStore: UseZustandStore;
+    localZustandScope: boolean;
 }
 
 const initialState = {
@@ -63,7 +64,11 @@ const columns: GridColDef[] = [
     },
 ];
 
-function EditorFileSelector({ editorStoreName, useZustandStore }: Props) {
+function EditorFileSelector({
+    editorStoreName,
+    useZustandStore,
+    localZustandScope,
+}: Props) {
     const initDone = useRef(false);
 
     const isSaving = useZustandStore<
@@ -77,12 +82,12 @@ function EditorFileSelector({ editorStoreName, useZustandStore }: Props) {
     >(editorStoreName, (state) => state.isEditing);
 
     // TODO: Update type LiveSpecsQuery_spec | DraftSpecQuery
-    const setCurrentCatalog = useEditorStore_setCurrentCatalog();
+    const setCurrentCatalog = useEditorStore_setCurrentCatalog({
+        localScope: localZustandScope,
+    });
 
-    const specs = useZustandStore<
-        EditorStoreState<LiveSpecsQuery_spec | DraftSpecQuery>,
-        EditorStoreState<LiveSpecsQuery_spec | DraftSpecQuery>['specs']
-    >(editorStoreName, (state) => state.specs);
+    // TODO: Update type LiveSpecsQuery_spec | DraftSpecQuery
+    const specs = useEditorStore_specs({ localScope: localZustandScope });
 
     const [selectionModel, setSelectionModel] = useState<GridSelectionModel>(
         []

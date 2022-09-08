@@ -14,19 +14,17 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import { EditorStoreState } from 'components/editor/Store';
+import { useEditorStore_specs } from 'components/editor/Store';
 import ExternalLink from 'components/shared/ExternalLink';
 import ShardErrors from 'components/tables/Details/ShardErrors';
 import StatusIndicatorAndLabel from 'components/tables/Details/StatusIndicatorAndLabel';
 import { slate } from 'context/Theme';
 import {
-    LiveSpecEditorStoreNames,
     ShardDetailStoreNames,
     useZustandStore,
     UseZustandStore,
 } from 'context/Zustand';
 import { Shard } from 'data-plane-gateway/types/shard_client';
-import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
 import { MouseEvent, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { shardDetailSelectors, ShardDetailStore } from 'stores/ShardDetail';
@@ -40,11 +38,7 @@ interface Props {
 
 const rowsPerPage = 3;
 
-function ShardInformation({
-    shardDetailStoreName,
-    useLocalZustandStore,
-    entityType,
-}: Props) {
+function ShardInformation({ shardDetailStoreName, entityType }: Props) {
     const theme = useTheme();
     const intl = useIntl();
 
@@ -62,10 +56,8 @@ function ShardInformation({
         ShardDetailStore['getTaskShards']
     >(shardDetailStoreName, shardDetailSelectors.getTaskShards);
 
-    const specs = useLocalZustandStore<
-        EditorStoreState<LiveSpecsQuery_spec>,
-        EditorStoreState<LiveSpecsQuery_spec>['specs']
-    >(LiveSpecEditorStoreNames.GENERAL, (state) => state.specs);
+    // TODO: Update type LiveSpecsQuery_spec
+    const specs = useEditorStore_specs({ localScope: true });
 
     const columns: {
         field: string | null;

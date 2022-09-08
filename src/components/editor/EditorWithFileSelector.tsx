@@ -9,7 +9,7 @@ export interface Props extends MonacoEditorProps {
 }
 
 function EditorWithFileSelector(props: Props) {
-    const { editorStoreName, useZustandStore } = props;
+    const { editorStoreName, useZustandStore, localZustandScope } = props;
 
     return (
         <ListAndDetails
@@ -17,6 +17,7 @@ function EditorWithFileSelector(props: Props) {
                 <EditorFileSelector
                     editorStoreName={editorStoreName}
                     useZustandStore={useZustandStore}
+                    localZustandScope={localZustandScope}
                 />
             }
             details={

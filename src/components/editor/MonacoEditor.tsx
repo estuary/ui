@@ -23,6 +23,7 @@ import { stringifyJSON } from 'services/stringify';
 export interface Props {
     editorStoreName: DraftEditorStoreNames | LiveSpecEditorStoreNames;
     useZustandStore: UseZustandStore;
+    localZustandScope: boolean;
     disabled?: boolean;
     onChange?: (newVal: any, path: string, specType: string) => any;
     height?: number;
@@ -37,6 +38,7 @@ const ICON_SIZE = 15;
 function MonacoEditor({
     editorStoreName,
     useZustandStore,
+    localZustandScope,
     disabled,
     height = DEFAULT_HEIGHT,
     onChange,
@@ -52,7 +54,9 @@ function MonacoEditor({
         EditorStoreState<DraftSpecQuery>['serverUpdate']
     >(editorStoreName, (state) => state.serverUpdate);
 
-    const currentCatalog = useEditorStore_currentCatalog();
+    const currentCatalog = useEditorStore_currentCatalog({
+        localScope: localZustandScope,
+    });
 
     // TODO (editor store) Should just fetch these directly from the store?
     const catalogName = currentCatalog?.catalog_name ?? null;
@@ -202,7 +206,9 @@ function MonacoEditor({
                         )}
                     </Stack>
                 </Box>
+
                 <Divider />
+
                 {showServerDiff && serverUpdate && editorRef.current ? (
                     <DiffEditor
                         height={`${height}px`}

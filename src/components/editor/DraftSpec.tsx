@@ -89,6 +89,7 @@ function DraftSpecEditor({ draftEditorStoreName, disabled }: Props) {
                 disabled={disabled}
                 editorStoreName={draftEditorStoreName}
                 useZustandStore={useZustandStore}
+                localZustandScope={false}
                 onChange={handlers.change}
             />
         );
