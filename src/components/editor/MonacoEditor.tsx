@@ -4,7 +4,11 @@ import Invalid from 'components/editor/Status/Invalid';
 import Saved from 'components/editor/Status/Saved';
 import Saving from 'components/editor/Status/Saving';
 import ServerDiff from 'components/editor/Status/ServerDiff';
-import { EditorStatus, EditorStoreState } from 'components/editor/Store';
+import {
+    EditorStatus,
+    EditorStoreState,
+    useEditorStore_currentCatalog,
+} from 'components/editor/Store';
 import {
     DraftEditorStoreNames,
     LiveSpecEditorStoreNames,
@@ -48,10 +52,7 @@ function MonacoEditor({
         EditorStoreState<DraftSpecQuery>['serverUpdate']
     >(editorStoreName, (state) => state.serverUpdate);
 
-    const currentCatalog = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['currentCatalog']
-    >(editorStoreName, (state) => state.currentCatalog);
+    const currentCatalog = useEditorStore_currentCatalog();
 
     // TODO (editor store) Should just fetch these directly from the store?
     const catalogName = currentCatalog?.catalog_name ?? null;
