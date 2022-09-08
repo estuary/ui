@@ -1,6 +1,6 @@
 import { Button } from '@mui/material';
 import { generateDraftSpec, updateDraftSpec } from 'api/draftSpecs';
-// import { encryptConfig } from 'api/oauth';
+import { encryptConfig } from 'api/oauth';
 import {
     EditorStoreState,
     useEditorStore_editDraftId,
@@ -17,8 +17,8 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
-    // useDetailsForm_connectorImage_connectorId,
-    // useDetailsForm_connectorImage_id,
+    useDetailsForm_connectorImage_connectorId,
+    useDetailsForm_connectorImage_id,
     useDetailsForm_connectorImage_imagePath,
     useDetailsForm_details_entityName,
     useDetailsForm_errorsExist,
@@ -48,8 +48,8 @@ function MaterializeGenerateButton({
     // Details Form Store
     const entityName = useDetailsForm_details_entityName();
     const detailsFormsHasErrors = useDetailsForm_errorsExist();
-    // const imageConnectorTagId = useDetailsForm_connectorImage_id();
-    // const imageConnectorId = useDetailsForm_connectorImage_connectorId();
+    const imageConnectorTagId = useDetailsForm_connectorImage_id();
+    const imageConnectorId = useDetailsForm_connectorImage_connectorId();
     const imagePath = useDetailsForm_connectorImage_imagePath();
 
     // Draft Editor Store
@@ -114,26 +114,26 @@ function MaterializeGenerateButton({
         } else {
             setDraftId(null);
 
-            // const encryptedEndpointConfig = await encryptConfig(
-            //     imageConnectorId,
-            //     imageConnectorTagId,
-            //     endpointConfigData
-            // );
-            // if (
-            //     encryptedEndpointConfig.error ||
-            //     encryptedEndpointConfig.data.error
-            // ) {
-            //     return callFailed({
-            //         error: {
-            //             title: 'entityCreate.sops.failedTitle',
-            //             error:
-            //                 encryptedEndpointConfig.error ??
-            //                 encryptedEndpointConfig.data.error,
-            //         },
-            //     });
-            // }
+            const encryptedEndpointConfig = await encryptConfig(
+                imageConnectorId,
+                imageConnectorTagId,
+                endpointConfigData
+            );
+            if (
+                encryptedEndpointConfig.error ||
+                encryptedEndpointConfig.data.error
+            ) {
+                return callFailed({
+                    error: {
+                        title: 'entityCreate.sops.failedTitle',
+                        error:
+                            encryptedEndpointConfig.error ??
+                            encryptedEndpointConfig.data.error,
+                    },
+                });
+            }
             const draftSpec = generateDraftSpec(
-                endpointConfigData,
+                encryptedEndpointConfig.data,
                 imagePath,
                 resourceConfig
             );

@@ -6,14 +6,21 @@ interface Props {
     header: ReactNode;
     children: ReactNode;
     forceClose?: boolean;
+    disableClose?: boolean;
     readOnly?: boolean;
 }
 
-function WrapperWithHeader({ header, children, forceClose, readOnly }: Props) {
+function WrapperWithHeader({
+    header,
+    children,
+    forceClose,
+    disableClose,
+    readOnly,
+}: Props) {
     const [expanded, setExpanded] = useState(true);
     const handlers = {
         change: () => {
-            setExpanded(!expanded);
+            setExpanded(disableClose ?? !expanded);
         },
     };
 
@@ -25,13 +32,18 @@ function WrapperWithHeader({ header, children, forceClose, readOnly }: Props) {
 
     return (
         <Accordion
+            square
             expanded={expanded}
             onChange={handlers.change}
             sx={{
                 mt: 2,
             }}
         >
-            <Header expanded={expanded} readOnly={readOnly}>
+            <Header
+                expanded={expanded}
+                readOnly={readOnly}
+                disableClose={disableClose}
+            >
                 {header}
             </Header>
             <AccordionDetails>{children}</AccordionDetails>

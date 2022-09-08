@@ -141,11 +141,11 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.admin': `Admin`,
     'routeTitle.admin.accessGrants': `Access Grants`,
     'routeTitle.admin.api': `CLI - API`,
+    'routeTitle.admin.connectors': `Connectors`,
     'routeTitle.captureCreate': `Create Capture`,
     'routeTitle.captureEdit': `Edit Capture`,
     'routeTitle.captures': `Captures`,
     'routeTitle.collections': `Collections`,
-    'routeTitle.connectors': `Connectors`,
     'routeTitle.error.pageNotFound': `Page Not Found`,
     'routeTitle.login': `Login`,
     'routeTitle.loginLoading': `Checking Credentials`,
@@ -163,11 +163,11 @@ const BrowserTitles: ResolvedIntlConfig['messages'] = {
     'browserTitle.admin': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin']}`,
     'browserTitle.admin.accessGrants': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.accessGrants']}`,
     'browserTitle.admin.api': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.api']}`,
+    'browserTitle.admin.connectors': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.connectors']}`,
     'browserTitle.captureCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureCreate']}`,
     'browserTitle.captureEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureEdit']}`,
     'browserTitle.captures': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captures']}`,
     'browserTitle.collections': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.collections']}`,
-    'browserTitle.connectors': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.connectors']}`,
     'browserTitle.error.pageNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.pageNotFound']}`,
     'browserTitle.login': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.login']}`,
     'browserTitle.noGrants': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.noGrants']}`,
@@ -320,6 +320,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.accessToken': `Access Token`,
     'admin.accessToken.message': `Copy the access token below to authenticate the CLI client.`,
     'admin.tabs.users': `Users`,
+    'admin.tabs.connectors': `Connectors`,
     'admin.tabs.api': `CLI-API`,
 };
 
@@ -409,10 +410,14 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.sops.failedTitle': `Configuration Encryption Failed`,
     'entityCreate.endpointConfig.heading': `${entityCreateHeader}`,
     'entityCreate.endpointConfig.errorSummary': `There are issues with the form.`,
+    'entityCreate.instructions': `To start select a Connector below. Once you make a selection the rest of the form will display and you can configure your endpoint. You can search by name and if you do not find what you are looking for please let us know by requesting the connector.`,
 
     'entityCreate.endpointConfig.detailsHaveErrors': `The Details section has errors:`,
     'entityCreate.endpointConfig.resourceConfigHaveErrors': `The Collections Resource Configuration section has errors:`,
     'entityCreate.endpointConfig.endpointConfigHaveErrors': `The ${entityCreateHeader} section has errors:`,
+
+    'entityCreate.endpointConfig.noConnectorSelectedTitle': `Please select a Connector to begin`,
+    'entityCreate.endpointConfig.noConnectorSelected': `To start the creation process you must select a Connector. You can change this later.`,
 
     'entityCreate.endpointConfig.entityNameMissing': `Name missing`,
     'entityCreate.endpointConfig.connectorMissing': `Connector missing`,

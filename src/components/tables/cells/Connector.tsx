@@ -8,18 +8,21 @@ interface Props {
     imageTag: string;
 }
 
+const iconSize = 20;
+
 function Connector({ connectorImage, connectorName, imageTag }: Props) {
     return (
         <TableCell
             sx={{
                 ...tableBorderSx,
-                minWidth: 100,
+                minWidth: iconSize,
+                maxWidth: 'min-content',
             }}
         >
             <Tooltip title={imageTag} placement="bottom-start">
                 <Box>
                     <ConnectorName
-                        iconSize={20}
+                        iconSize={iconSize}
                         connector={connectorName ?? imageTag}
                         iconPath={connectorImage}
                     />

@@ -1,12 +1,10 @@
 import { Box, Button, TableCell, TableRow } from '@mui/material';
-import { authenticatedRoutes } from 'app/Authenticated';
 import ConnectorName from 'components/ConnectorName';
+import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
 import Link from 'components/tables/Link';
 import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
 import { FormattedDate, FormattedMessage } from 'react-intl';
-import { useNavigate } from 'react-router-dom';
 import { CONNECTOR_NAME } from 'services/supabase';
-import { getPathWithParam } from 'utils/misc-utils';
 
 interface Props {
     data: ConnectorWithTagDetailQuery[];
@@ -43,7 +41,7 @@ export const tableColumns: {
 ];
 
 function Rows({ data }: Props) {
-    const navigate = useNavigate();
+    const navigateToCreate = useEntityCreateNavigate();
 
     return (
         <>
@@ -75,36 +73,10 @@ function Rows({ data }: Props) {
                                             : 'secondary'
                                     }
                                     onClick={() => {
-                                        if (
-                                            row.connector_tags[0].protocol ===
-                                            'capture'
-                                        ) {
-                                            navigate(
-                                                getPathWithParam(
-                                                    authenticatedRoutes.captures
-                                                        .create.fullPath,
-                                                    authenticatedRoutes.captures
-                                                        .create.params
-                                                        .connectorID,
-                                                    row.connector_tags[0].id
-                                                )
-                                            );
-                                        } else if (
-                                            row.connector_tags[0].protocol ===
-                                            'materialization'
-                                        ) {
-                                            navigate(
-                                                getPathWithParam(
-                                                    authenticatedRoutes
-                                                        .materializations.create
-                                                        .fullPath,
-                                                    authenticatedRoutes
-                                                        .materializations.create
-                                                        .params.connectorId,
-                                                    row.connector_tags[0].id
-                                                )
-                                            );
-                                        }
+                                        navigateToCreate(
+                                            row.connector_tags[0].protocol,
+                                            row.connector_tags[0].id
+                                        );
                                     }}
                                 >
                                     {row.connector_tags[0].protocol ===

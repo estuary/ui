@@ -5,9 +5,10 @@ import {
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
 import { SelectTableStoreNames, useZustandStore } from 'context/Zustand';
+import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router';
-import { getPathWithParam } from 'utils/misc-utils';
+import { getPathWithParams } from 'utils/misc-utils';
 
 interface Props {
     selectableTableStoreName:
@@ -29,17 +30,18 @@ function Materialize({ selectableTableStoreName }: Props) {
         materialize: () => {
             const selectedRowsArray: string[] = [];
 
-            selectedRows.forEach((value, key) => {
+            selectedRows.forEach((_value, key) => {
                 selectedRowsArray.push(key);
             });
 
             if (selectedRowsArray.length > 0) {
                 navigate(
-                    getPathWithParam(
+                    getPathWithParams(
                         authenticatedRoutes.materializations.create.fullPath,
-                        authenticatedRoutes.materializations.create.params
-                            .liveSpecId,
-                        selectedRowsArray
+                        {
+                            [GlobalSearchParams.LIVE_SPEC_ID]:
+                                selectedRowsArray,
+                        }
                     )
                 );
             }

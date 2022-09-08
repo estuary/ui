@@ -13,7 +13,7 @@ function AccessGrants() {
     return (
         <PageContainer
             pageTitleProps={{
-                header: authenticatedRoutes.admin.accressGrants.title,
+                header: authenticatedRoutes.admin.accessGrants.title,
                 headerLink:
                     'https://docs.estuary.dev/reference/authentication/',
             }}

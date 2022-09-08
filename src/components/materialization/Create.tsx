@@ -18,7 +18,6 @@ import {
     useZustandStore,
 } from 'context/Zustand';
 import { useClient } from 'hooks/supabase-swr';
-import { usePrompt } from 'hooks/useBlocker';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -28,7 +27,7 @@ import {
     useDetailsForm_changed,
     useDetailsForm_connectorImage,
     useDetailsForm_errorsExist,
-    useDetailsForm_resetFormState,
+    useDetailsForm_resetState,
 } from 'stores/DetailsForm';
 import {
     useEndpointConfigStore_changed,
@@ -56,7 +55,7 @@ function MaterializationCreate() {
     const imageTag = useDetailsForm_connectorImage();
     const detailsFormErrorsExist = useDetailsForm_errorsExist();
     const detailsFormChanged = useDetailsForm_changed();
-    const resetDetailsFormState = useDetailsForm_resetFormState();
+    const resetDetailsForm = useDetailsForm_resetState();
 
     // Draft Editor Store
     const draftId = useEditorStore_id();
@@ -113,7 +112,7 @@ function MaterializationCreate() {
     const resetState = () => {
         resetEndpointConfigState();
         resetResourceConfigState();
-        resetDetailsFormState();
+        resetDetailsForm();
         resetFormState();
     };
 
@@ -166,17 +165,6 @@ function MaterializationCreate() {
         },
     };
 
-    usePrompt(
-        'confirm.loseData',
-        !exitWhenLogsClose &&
-            (endpointConfigChanged() ||
-                resourceConfigChanged() ||
-                detailsFormChanged()),
-        () => {
-            resetState();
-        }
-    );
-
     return (
         <PageContainer
             pageTitleProps={{
@@ -189,6 +177,12 @@ function MaterializationCreate() {
                 title="browserTitle.materializationCreate"
                 connectorType={entityType}
                 showCollections
+                promptDataLoss={
+                    endpointConfigChanged() ||
+                    resourceConfigChanged() ||
+                    detailsFormChanged()
+                }
+                resetState={resetState}
                 Header={
                     <FooHeader
                         GenerateButton={

@@ -1,13 +1,11 @@
 import { createContext, useContext } from 'react';
-import { BaseComponentProps, ENTITY } from 'types';
+import { BaseComponentProps, EntityWithCreateWorkflow } from 'types';
 
 interface Props extends BaseComponentProps {
-    value: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
+    value: EntityWithCreateWorkflow;
 }
 
-const EntityContext = createContext<
-    ENTITY.CAPTURE | ENTITY.MATERIALIZATION | null
->(null);
+const EntityContext = createContext<EntityWithCreateWorkflow | null>(null);
 
 const EntityContextProvider = ({ children, value }: Props) => {
     return (

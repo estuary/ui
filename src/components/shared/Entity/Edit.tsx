@@ -2,7 +2,6 @@ import { Alert, Collapse } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec, updateDraftSpec } from 'api/draftSpecs';
-import { authenticatedRoutes } from 'app/Authenticated';
 import CollectionConfig from 'components/collection/Config';
 import {
     EditorStoreState,
@@ -12,11 +11,11 @@ import {
     useEditorStore_setId,
 } from 'components/editor/Store';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
-import DetailsForm, {
-    getConnectorImageDetails,
-} from 'components/shared/Entity/DetailsForm';
+import DetailsForm from 'components/shared/Entity/DetailsForm';
+import { getConnectorImageDetails } from 'components/shared/Entity/DetailsForm/Form';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
 import EntityError from 'components/shared/Entity/Error';
+import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedChangesPrompt';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import {
@@ -25,6 +24,9 @@ import {
     ResourceConfigStoreNames,
     useZustandStore,
 } from 'context/Zustand';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useConnectorTag from 'hooks/useConnectorTag';
@@ -39,7 +41,6 @@ import {
 import { isEmpty, isEqual } from 'lodash';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useSearchParams } from 'react-router-dom';
 import {
     Details,
     useDetailsForm_connectorImage,
@@ -63,6 +64,8 @@ interface Props {
     callFailed: (formState: any, subscription?: RealtimeSubscription) => void;
     resourceConfigStoreName?: ResourceConfigStoreNames;
     showCollections?: boolean;
+    promptDataLoss: any;
+    resetState: () => void;
     readOnly: {
         detailsForm?: true;
         endpointConfigForm?: true;
@@ -183,6 +186,7 @@ const evaluateResourceConfigEquality = (
     return configEquality.includes(true);
 };
 
+// eslint-disable-next-line complexity
 function EntityEdit({
     title,
     entityType,
@@ -193,6 +197,8 @@ function EntityEdit({
     callFailed,
     showCollections,
     readOnly,
+    promptDataLoss,
+    resetState,
 }: Props) {
     useBrowserTitle(title);
 
@@ -206,26 +212,11 @@ function EntityEdit({
     });
 
     // Check for properties being passed in
-    const [searchParams] = useSearchParams();
-    const connectorId =
-        searchParams.get(
-            authenticatedRoutes.captures.edit.params.connectorId
-        ) ??
-        searchParams.get(
-            authenticatedRoutes.materializations.edit.params.connectorId
-        );
-
-    const liveSpecId =
-        searchParams.get(authenticatedRoutes.captures.edit.params.liveSpecId) ??
-        searchParams.get(
-            authenticatedRoutes.materializations.edit.params.liveSpecId
-        );
-
-    const lastPubId =
-        searchParams.get(authenticatedRoutes.captures.edit.params.lastPubId) ??
-        searchParams.get(
-            authenticatedRoutes.materializations.edit.params.lastPubId
-        );
+    const [connectorId, liveSpecId, lastPubId] = useGlobalSearchParams([
+        GlobalSearchParams.CONNECTOR_ID,
+        GlobalSearchParams.LIVE_SPEC_ID,
+        GlobalSearchParams.LAST_PUB_ID,
+    ]);
 
     const {
         connectorTags,
@@ -284,6 +275,11 @@ function EntityEdit({
         EntityFormState,
         EntityFormState['formState']['status']
     >(formStateStoreName, (state) => state.formState.status);
+
+    const exitWhenLogsClose = useZustandStore<
+        EntityFormState,
+        EntityFormState['formState']['exitWhenLogsClose']
+    >(formStateStoreName, (state) => state.formState.exitWhenLogsClose);
 
     // Resource Config Store
     // TODO: Determine proper placement for this logic.
@@ -451,6 +447,8 @@ function EntityEdit({
         setFormState,
     ]);
 
+    useUnsavedChangesPrompt(!exitWhenLogsClose && promptDataLoss, resetState);
+
     return (
         <>
             {Header}
@@ -484,6 +482,7 @@ function EntityEdit({
                                 draftEditorStoreName={draftEditorStoreName}
                                 formStateStoreName={formStateStoreName}
                                 readOnly={readOnly.detailsForm}
+                                entityType={entityType}
                             />
                         </ErrorBoundryWrapper>
                     ) : null}

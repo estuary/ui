@@ -15,7 +15,7 @@ const chipListHoverStyling = {
     cursor: 'pointer',
 };
 
-export const chipListWrapperStyling = {
+const chipListWrapperStyling = {
     ...tableBorderSx,
     minWidth: 100,
     maxHeight: 100,
@@ -62,8 +62,8 @@ function ChipList({ disabled, strings }: Props) {
                                         'maxWidth': 200,
                                         '&:hover': {
                                             ...chipListHoverStyling,
-                                            background: (theme) =>
-                                                theme.palette.background
+                                            background: (hoverTheme) =>
+                                                hoverTheme.palette.background
                                                     .default,
                                         },
                                     }}

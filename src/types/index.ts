@@ -104,6 +104,8 @@ export enum ENTITY {
     COLLECTION = 'collection',
 }
 
+export type EntityWithCreateWorkflow = ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
+
 export type SortDirection = 'asc' | 'desc';
 
 export enum TableStatuses {

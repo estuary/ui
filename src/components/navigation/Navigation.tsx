@@ -1,5 +1,4 @@
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-import CableIcon from '@mui/icons-material/Cable';
 import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 //TODO (UI / UX) - These icons are not final
 import HomeIcon from '@mui/icons-material/Home';
@@ -12,6 +11,7 @@ import {
     ListItemButton,
     ListItemIcon,
     ListItemText,
+    Stack,
     SxProps,
     Theme,
     Toolbar,
@@ -74,11 +74,9 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
             }}
         >
             <Toolbar />
-            <Box
+            <Stack
                 sx={{
                     height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
                     justifyContent: 'space-between',
                     overflowX: 'hidden',
                 }}
@@ -108,11 +106,6 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                             icon={<StorageIcon sx={iconSx} />}
                             title={authenticatedRoutes.materializations.title}
                             link={authenticatedRoutes.materializations.path}
-                        />
-                        <ListItemLink
-                            icon={<CableIcon sx={iconSx} />}
-                            title={authenticatedRoutes.connectors.title}
-                            link={authenticatedRoutes.connectors.path}
                         />
                         <ListItemLink
                             icon={<AdminPanelSettingsIcon sx={iconSx} />}
@@ -179,7 +172,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                         </Tooltip>
                     </List>
                 </Box>
-            </Box>
+            </Stack>
         </MuiDrawer>
     );
 };
