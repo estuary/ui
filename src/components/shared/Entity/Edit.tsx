@@ -253,9 +253,8 @@ function EntityEdit({
     const draftId = useEditorStore_id();
     const setDraftId = useEditorStore_setId();
 
-    const setEditDraftId = useEditorStore_setEditDraftId();
-
     const editDraftId = useEditorStore_editDraftId();
+    const setEditDraftId = useEditorStore_setEditDraftId();
 
     // Endpoint Config Store
     const setEndpointSchema = useEndpointConfigStore_setEndpointSchema();

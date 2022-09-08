@@ -2,8 +2,8 @@ import { RealtimeSubscription } from '@supabase/supabase-js';
 import { authenticatedRoutes } from 'app/Authenticated';
 // import CaptureGenerateButton from 'components/capture/GenerateButton';
 import {
-    EditorStoreState,
     useEditorStore_id,
+    useEditorStore_pubId,
     useEditorStore_setId,
 } from 'components/editor/Store';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
@@ -20,7 +20,6 @@ import {
 import { useClient } from 'hooks/supabase-swr';
 import { usePrompt } from 'hooks/useBlocker';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 // import LogRocket from 'logrocket';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -61,6 +60,7 @@ function CaptureEdit() {
 
     // Supabase stuff
     const supabaseClient = useClient();
+
     const { connectorTags } = useConnectorWithTagDetail(entityType);
     const hasConnectors = connectorTags.length > 0;
 
@@ -71,14 +71,10 @@ function CaptureEdit() {
     const resetDetailsFormState = useDetailsForm_resetFormState();
 
     // Draft Editor Store
+    const draftId = useEditorStore_id();
     const setDraftId = useEditorStore_setId();
 
-    const pubId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['pubId']
-    >(draftEditorStoreName, (state) => state.pubId);
-
-    const draftId = useEditorStore_id();
+    const pubId = useEditorStore_pubId();
 
     // Endpoint Config Store
     const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();

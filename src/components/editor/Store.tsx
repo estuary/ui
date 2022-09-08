@@ -245,3 +245,18 @@ export const useEditorStore_setEditDraftId = (
         EditorStoreState<DraftSpecQuery>['setEditDraftId']
     >(storeName(entityType, localScope), (state) => state.setEditDraftId);
 };
+
+export const useEditorStore_pubId = (params?: SelectorParams | undefined) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['pubId']
+    >(storeName(entityType, localScope), (state) => state.pubId);
+};
