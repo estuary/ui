@@ -10,7 +10,7 @@ import { useEffectOnce } from 'react-use';
 const Admin = () => {
     const navigate = useNavigate();
     useEffectOnce(() =>
-        navigate(authenticatedRoutes.admin.accressGrants.fullPath, {
+        navigate(authenticatedRoutes.admin.accessGrants.fullPath, {
             replace: true,
         })
     );

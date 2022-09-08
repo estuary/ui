@@ -7,6 +7,7 @@ import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
 import { useEntityType } from 'components/shared/Entity/EntityContext';
 import FooHeader from 'components/shared/Entity/Header';
+import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
 import PageContainer from 'components/shared/PageContainer';
 import {
     DraftEditorStoreNames,
@@ -14,7 +15,6 @@ import {
     useZustandStore,
 } from 'context/Zustand';
 import { useClient } from 'hooks/supabase-swr';
-import { usePrompt } from 'hooks/useBlocker';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import LogRocket from 'logrocket';
@@ -27,6 +27,7 @@ import {
     useDetailsForm_changed,
     useDetailsForm_connectorImage,
     useDetailsForm_errorsExist,
+    useDetailsForm_resetState,
 } from 'stores/DetailsForm';
 import {
     useEndpointConfigStore_changed,
@@ -34,7 +35,6 @@ import {
     useEndpointConfigStore_reset,
 } from 'stores/EndpointConfig';
 import { EntityFormState, FormStatus } from 'stores/FormState';
-import { getPathWithParam } from 'utils/misc-utils';
 
 const draftEditorStoreName = DraftEditorStoreNames.CAPTURE;
 const formStateStoreName = FormStateStoreNames.CAPTURE_CREATE;
@@ -84,6 +84,7 @@ function CaptureCreate() {
     const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
     const resetEndpointConfigState = useEndpointConfigStore_reset();
     const endpointConfigChanged = useEndpointConfigStore_changed();
+    const resetDetailsForm = useDetailsForm_resetState();
 
     // Form State Store
     const messagePrefix = useZustandStore<
@@ -106,12 +107,15 @@ function CaptureCreate() {
         EntityFormState['formState']['exitWhenLogsClose']
     >(formStateStoreName, (state) => state.formState.exitWhenLogsClose);
 
+    const navigateToCreate = useEntityCreateNavigate();
+
     // Reset the catalog if the connector changes
     useEffect(() => {
         setDraftId(null);
     }, [imageTag, setDraftId]);
 
     const resetState = () => {
+        resetDetailsForm();
         resetEndpointConfigState();
         resetFormState();
     };
@@ -138,7 +142,6 @@ function CaptureCreate() {
         },
         exit: () => {
             resetState();
-
             navigate(authenticatedRoutes.captures.path);
         },
         jobFailed: (errorTitle: string) => {
@@ -165,14 +168,7 @@ function CaptureCreate() {
 
         materializeCollections: () => {
             helpers.exit();
-            navigate(
-                getPathWithParam(
-                    authenticatedRoutes.materializations.create.fullPath,
-                    authenticatedRoutes.materializations.create.params
-                        .lastPubId,
-                    pubId
-                )
-            );
+            navigateToCreate(entityType, pubId);
         },
     };
 
@@ -196,14 +192,6 @@ function CaptureCreate() {
         );
     };
 
-    usePrompt(
-        'confirm.loseData',
-        !exitWhenLogsClose && (detailsFormChanged() || endpointConfigChanged()),
-        () => {
-            resetState();
-        }
-    );
-
     return (
         <PageContainer
             pageTitleProps={{
@@ -215,6 +203,8 @@ function CaptureCreate() {
             <EntityCreate
                 title="browserTitle.captureCreate"
                 connectorType={entityType}
+                promptDataLoss={detailsFormChanged() || endpointConfigChanged()}
+                resetState={resetState}
                 Header={
                     <FooHeader
                         heading={

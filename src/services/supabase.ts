@@ -74,7 +74,7 @@ export const supabaseClient = createClient(
         //      subscriptions just hang forever.
         realtime: {
             logger: (kind: string, msg: string, data?: any) => {
-                LogRocket.log(kind, msg, data);
+                LogRocket.log('Realtime : ', kind, msg, data);
             },
         },
     }

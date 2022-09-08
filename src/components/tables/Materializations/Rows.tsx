@@ -19,6 +19,7 @@ import {
     ShardDetailStoreNames,
     useZustandStore,
 } from 'context/Zustand';
+import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useShardsList from 'hooks/useShardsList';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
@@ -91,12 +92,9 @@ function Row({
                 getPathWithParams(
                     authenticatedRoutes.materializations.edit.fullPath,
                     {
-                        [authenticatedRoutes.materializations.edit.params
-                            .connectorId]: row.connector_id,
-                        [authenticatedRoutes.materializations.edit.params
-                            .liveSpecId]: row.id,
-                        [authenticatedRoutes.materializations.edit.params
-                            .lastPubId]: row.last_pub_id,
+                        [GlobalSearchParams.CONNECTOR_ID]: row.connector_id,
+                        [GlobalSearchParams.LIVE_SPEC_ID]: row.id,
+                        [GlobalSearchParams.LAST_PUB_ID]: row.last_pub_id,
                     }
                 )
             );

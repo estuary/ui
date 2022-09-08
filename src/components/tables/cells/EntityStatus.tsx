@@ -15,6 +15,8 @@ interface Props {
     shardDetailStoreName: ShardDetailStoreNames;
 }
 
+const indicatorSize = 16;
+
 function EntityStatus({ name, shardDetailStoreName }: Props) {
     const theme = useTheme();
 
@@ -112,8 +114,13 @@ function EntityStatus({ name, shardDetailStoreName }: Props) {
         >
             <span
                 style={{
-                    height: 16,
-                    width: 16,
+                    height: indicatorSize,
+                    width: indicatorSize,
+                    minWidth: indicatorSize,
+                    maxWidth: indicatorSize,
+                    minHeight: indicatorSize,
+                    maxHeight: indicatorSize,
+
                     marginRight: 12,
                     border: taskDisabled
                         ? `solid 2px ${compositeStatusColor}`

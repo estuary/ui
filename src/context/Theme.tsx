@@ -70,8 +70,8 @@ const tonalOffset = 0.1;
 // const borderColor = "rgba(0, 0, 0, 0.13)";
 
 // Breakpoints
-const xl = 1800;
-const lg = 1200;
+const xl = 1600;
+const lg = 1440;
 const md = 900;
 const sm = 650;
 const xs = 0;
@@ -80,8 +80,7 @@ const xs = 0;
 // TODO: Balance the light mode color palette.
 const lightMode: PaletteOptions = {
     background: {
-        default: slate[50],
-        paper: slate[50],
+        default: '#F5F6FA',
     },
     contrastThreshold,
     error: {
@@ -284,6 +283,12 @@ const themeSettings = createTheme({
             defaultProps: {
                 sx: tableBorderSx,
             },
+            styleOverrides: {
+                root: {
+                    paddingLeft: 8,
+                    paddingRight: 8,
+                },
+            },
         },
         MuiTabs: {
             ...baseBackground,
@@ -354,16 +359,12 @@ const ThemeProvider = ({ children }: BaseComponentProps) => {
                     },
                     styleOverrides: {
                         root: {
-                            'backgroundColor':
+                            backgroundColor:
                                 palette.mode === 'dark'
                                     ? 'transparent'
                                     : 'rgba(255, 255, 255, 0.6)',
-                            'boxShadow': 'none',
-                            'borderRadius': 10,
-                            'overflow': 'hidden',
-                            '&:last-of-type': {
-                                borderRadius: 10,
-                            },
+                            boxShadow: 'none',
+                            overflow: 'hidden',
                         },
                     },
                 },

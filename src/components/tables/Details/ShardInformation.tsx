@@ -30,12 +30,12 @@ import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
 import { MouseEvent, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { shardDetailSelectors, ShardDetailStore } from 'stores/ShardDetail';
-import { ENTITY } from 'types';
+import { EntityWithCreateWorkflow } from 'types';
 
 interface Props {
     shardDetailStoreName: ShardDetailStoreNames;
     useLocalZustandStore: UseZustandStore;
-    entityType?: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
+    entityType?: EntityWithCreateWorkflow;
 }
 
 const rowsPerPage = 3;

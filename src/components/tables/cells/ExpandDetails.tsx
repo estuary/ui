@@ -16,7 +16,10 @@ function ExpandDetails({ onClick, disabled, expanded }: Props) {
             disableElevation
             sx={{ mr: 1 }}
             disabled={disabled}
-            onClick={onClick}
+            onClick={(event: any) => {
+                event.stopPropagation();
+                onClick();
+            }}
             endIcon={
                 // TODO (duplication) this is copied a few times
                 <KeyboardArrowDownIcon

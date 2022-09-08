@@ -1,7 +1,7 @@
 import { Alert } from '@mui/material';
 import { EditorStoreState } from 'components/editor/Store';
-import EndpointConfigForm from 'components/shared/Entity/EndpointConfigForm';
-import EndpointConfigHeader from 'components/shared/Entity/EndpointConfigHeader';
+import EndpointConfigForm from 'components/shared/Entity/EndpointConfig/Form';
+import EndpointConfigHeader from 'components/shared/Entity/EndpointConfig/Header';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import Error from 'components/shared/Error';
 import {

@@ -1,4 +1,4 @@
-import { AddBox, Cable, OpenInNew } from '@mui/icons-material';
+import { AddBox, OpenInNew } from '@mui/icons-material';
 import {
     Box,
     Button,
@@ -12,8 +12,9 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
-import { authenticatedRoutes } from 'app/Authenticated';
+import ConnectorCard from 'components/connectors/Card';
 import ConnectorToolbar from 'components/ConnectorToolbar';
+import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
 import {
     darkGlassBkgColor,
     darkGlassBkgColorIntensified,
@@ -24,35 +25,35 @@ import {
     ConnectorWithTagDetailQuery,
     CONNECTOR_WITH_TAG_QUERY,
 } from 'hooks/useConnectorWithTagDetail';
-import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
-import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { CONNECTOR_NAME, defaultTableFilter, TABLES } from 'services/supabase';
 import {
+    BaseComponentProps,
+    EntityWithCreateWorkflow,
     SortDirection,
     TableIntlConfig,
     TableState,
     TableStatuses,
 } from 'types';
-import { getPathWithParam, hasLength } from 'utils/misc-utils';
+import { hasLength } from 'utils/misc-utils';
 import { getEmptyTableHeader, getEmptyTableMessage } from 'utils/table-utils';
 
 interface ConnectorTilesProps {
-    cardWidth: number;
-    cardsPerRow: number;
-    gridSpacing: number;
+    protocolPreset?: EntityWithCreateWorkflow;
+    replaceOnNavigate?: boolean;
 }
 
-interface TileProps {
-    children: ReactNode;
-}
+type TileProps = BaseComponentProps;
+
+const skeletonTileCount = 6;
 
 const intlConfig: TableIntlConfig = {
     header: 'connectors.main.message1',
     message: 'connectors.main.message2',
 };
 
-const imageBackgroundSx: SxProps<Theme> = {
+export const imageBackgroundSx: SxProps<Theme> = {
     width: '100%',
     height: 125,
     display: 'flex',
@@ -99,18 +100,19 @@ function Tile({ children }: TileProps) {
 }
 
 function ConnectorTiles({
-    cardWidth,
-    cardsPerRow,
-    gridSpacing,
+    protocolPreset,
+    replaceOnNavigate,
 }: ConnectorTilesProps) {
-    const navigate = useNavigate();
+    const navigateToCreate = useEntityCreateNavigate();
     const isFiltering = useRef(false);
     const intl = useIntl();
 
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
-    const [protocol, setProtocol] = useState<string | null>(null);
+    const [protocol, setProtocol] = useState<string | null>(
+        protocolPreset ?? null
+    );
     const [searchQuery, setSearchQuery] = useState<string | null>(null);
     const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
     const [columnToSort, setColumnToSort] =
@@ -145,6 +147,14 @@ function ConnectorTiles({
         [useSelectResponse]
     );
 
+    const primaryCtaClick = (row: ConnectorWithTagDetailQuery) => {
+        navigateToCreate(
+            row.connector_tags[0].protocol,
+            row.connector_tags[0].id,
+            replaceOnNavigate
+        );
+    };
+
     useEffect(() => {
         if (selectData.length > 0) {
             setTableState({ status: TableStatuses.DATA_FETCHED });
@@ -155,28 +165,20 @@ function ConnectorTiles({
         }
     }, [selectData, isValidating]);
 
-    const gridContainerWidth = belowMd
-        ? '100%'
-        : cardWidth * cardsPerRow + 8 * gridSpacing * (cardsPerRow + 1);
-
-    const skeletonTileCount = useMemo(
-        () => 12 / (belowMd ? 6 : 12 / cardsPerRow),
-        [belowMd, cardsPerRow]
-    );
-
     return (
         <Grid
             container
-            spacing={gridSpacing}
+            spacing={{ xs: 2, md: 3 }}
+            columns={{ xs: 4, sm: 4, md: 12, lg: 12, xl: 12 }}
             paddingRight={2}
-            width={gridContainerWidth}
             margin="auto"
         >
             <Grid item xs={12}>
                 <ConnectorToolbar
                     belowMd={belowMd}
-                    gridSpacing={gridSpacing}
+                    gridSpacing={2}
                     setColumnToSort={setColumnToSort}
+                    hideProtocol={!!protocolPreset}
                     setProtocol={setProtocol}
                     setSortDirection={setSortDirection}
                     setSearchQuery={setSearchQuery}
@@ -186,146 +188,26 @@ function ConnectorTiles({
             {hasLength(selectData) ? (
                 selectData
                     .map((row, index) => (
-                        <Grid
+                        <ConnectorCard
                             key={`connector-tile-${index}`}
-                            item
-                            xs={6}
-                            md={12 / cardsPerRow}
-                        >
-                            <Tile>
-                                <Box sx={imageBackgroundSx}>
-                                    {row.image ? (
-                                        <img
-                                            src={row.image}
-                                            loading="lazy"
-                                            alt=""
-                                            style={{
-                                                width: 'auto',
-                                                maxHeight: 75,
-                                                padding: '0 1rem',
-                                            }}
-                                        />
-                                    ) : (
-                                        <Cable sx={{ fontSize: '4rem' }} />
-                                    )}
-                                </Box>
-
-                                <Typography align="center" marginBottom={1}>
-                                    {row.title}
-                                </Typography>
-
-                                <Typography
-                                    variant="caption"
-                                    align="center"
-                                    marginBottom={2}
-                                >
-                                    {row.image_name}
-                                </Typography>
-
-                                <Typography
-                                    component="div"
-                                    variant="caption"
-                                    align="center"
-                                    marginBottom={5}
-                                >
-                                    <span
-                                        style={{
-                                            marginRight: '.5rem',
-                                            fontWeight: 'bold',
-                                        }}
-                                    >
-                                        <FormattedMessage id="entityTable.data.lastUpdatedWithColon" />
-                                    </span>
-
-                                    <FormattedDate
-                                        day="numeric"
-                                        month="long"
-                                        year="numeric"
-                                        value={row.updated_at}
-                                    />
-                                </Typography>
-
-                                <Stack
-                                    direction="row"
-                                    spacing={1}
-                                    sx={{
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                    }}
-                                >
-                                    <Button
-                                        href={
-                                            row.connector_tags[0]
-                                                .documentation_url
-                                        }
-                                        target="_blank"
-                                        rel="noopener"
-                                        endIcon={<OpenInNew />}
-                                        sx={{
-                                            'backgroundColor': slate[25],
-                                            '&:hover': {
-                                                backgroundColor: slate[25],
-                                            },
-                                        }}
-                                    >
-                                        <FormattedMessage id="terms.documentation" />
-                                    </Button>
-
-                                    <Button
-                                        onClick={() => {
-                                            if (
-                                                row.connector_tags[0]
-                                                    .protocol === 'capture'
-                                            ) {
-                                                navigate(
-                                                    getPathWithParam(
-                                                        authenticatedRoutes
-                                                            .captures.create
-                                                            .fullPath,
-                                                        authenticatedRoutes
-                                                            .captures.create
-                                                            .params.connectorID,
-                                                        row.connector_tags[0].id
-                                                    )
-                                                );
-                                            } else if (
-                                                row.connector_tags[0]
-                                                    .protocol ===
-                                                'materialization'
-                                            ) {
-                                                navigate(
-                                                    getPathWithParam(
-                                                        authenticatedRoutes
-                                                            .materializations
-                                                            .create.fullPath,
-                                                        authenticatedRoutes
-                                                            .materializations
-                                                            .create.params
-                                                            .connectorId,
-                                                        row.connector_tags[0].id
-                                                    )
-                                                );
-                                            }
-                                        }}
-                                        sx={{ flexGrow: 1 }}
-                                    >
-                                        {row.connector_tags[0].protocol ===
-                                        'capture' ? (
-                                            <FormattedMessage id="connectorTable.actionsCta.capture" />
-                                        ) : (
-                                            <FormattedMessage id="connectorTable.actionsCta.materialization" />
-                                        )}
-                                    </Button>
-                                </Stack>
-                            </Tile>
-                        </Grid>
+                            imageSrc={row.image}
+                            lastUpdate={row.updated_at}
+                            title={row.title}
+                            docsUrl={row.connector_tags[0].documentation_url}
+                            entity={row.connector_tags[0].protocol}
+                            ctaCallback={() => primaryCtaClick(row)}
+                            description={row.detail}
+                        />
                     ))
                     .concat(
                         <Grid
                             key="connector-request-tile"
                             item
-                            xs={6}
-                            md={12 / cardsPerRow}
+                            xs={2}
+                            md={4}
+                            lg={3}
+                            xl={2}
+                            sx={{ maxWidth: 275 }}
                         >
                             <Tile>
                                 <Box>
@@ -389,8 +271,9 @@ function ConnectorTiles({
                         <Grid
                             key={`connector-skeleton-${index}`}
                             item
-                            xs={6}
-                            md={12 / cardsPerRow}
+                            xs={2}
+                            md={4}
+                            lg={3}
                         >
                             {skeleton}
                         </Grid>
