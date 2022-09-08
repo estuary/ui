@@ -8,6 +8,7 @@ import {
     EditorStoreState,
     useEditorStore_editDraftId,
     useEditorStore_id,
+    useEditorStore_setEditDraftId,
     useEditorStore_setId,
 } from 'components/editor/Store';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
@@ -252,10 +253,7 @@ function EntityEdit({
     const draftId = useEditorStore_id();
     const setDraftId = useEditorStore_setId();
 
-    const setEditDraftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['setEditDraftId']
-    >(draftEditorStoreName, (state) => state.setEditDraftId);
+    const setEditDraftId = useEditorStore_setEditDraftId();
 
     const editDraftId = useEditorStore_editDraftId();
 
