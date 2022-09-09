@@ -89,11 +89,11 @@ interface ZustandProviderProps {
 }
 
 const invariableStores = {
-    // Draft Editor Store
-    [DraftEditorStoreNames.CAPTURE]: createEditorStore(
+    // Editor Store
+    [EditorStoreNames.CAPTURE]: createEditorStore(
         DraftEditorStoreNames.CAPTURE
     ),
-    [DraftEditorStoreNames.MATERIALIZATION]: createEditorStore(
+    [EditorStoreNames.MATERIALIZATION]: createEditorStore(
         DraftEditorStoreNames.MATERIALIZATION
     ),
 

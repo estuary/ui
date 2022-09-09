@@ -165,11 +165,6 @@ export const createEditorStore = <T,>(key: string) => {
     );
 };
 
-// Selector Hooks
-interface SelectorParams {
-    localScope?: boolean;
-}
-
 const storeName = (
     entityType: ENTITY,
     localScope?: boolean
@@ -184,6 +179,11 @@ const storeName = (
         throw new Error('Invalid Editor store name');
     }
 };
+
+// Selector Hooks
+interface SelectorParams {
+    localScope?: boolean;
+}
 
 export const useEditorStore_id = (params?: SelectorParams | undefined) => {
     const localScope = params?.localScope;
