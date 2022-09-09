@@ -1,5 +1,4 @@
 import { createSearchParams } from 'react-router-dom';
-import { OpenGraph } from 'types';
 
 export const stripPathing = (stringVal: string) => {
     if (!stringVal) return stringVal;
@@ -8,10 +7,6 @@ export const stripPathing = (stringVal: string) => {
         stringVal.lastIndexOf('/') + 1,
         stringVal.length
     );
-};
-
-export const getConnectorIcon = (connectorObject: OpenGraph) => {
-    return connectorObject['en-US'].image;
 };
 
 export const hasLength = (val: string | any[] | null | undefined): boolean => {

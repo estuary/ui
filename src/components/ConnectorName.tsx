@@ -1,34 +1,21 @@
 import { Stack } from '@mui/material';
 import ConnectorIcon from 'components/ConnectorIcon';
-import { OpenGraph } from 'types';
 import useConstant from 'use-constant';
-import { getConnectorIcon } from 'utils/misc-utils';
 
 interface Props {
-    iconPath?: OpenGraph | string | null;
+    iconPath?: string | null;
     iconSize?: number;
-    connector: OpenGraph | string | null;
+    title: string | null;
 }
 
-function ConnectorName({ connector, iconPath, iconSize }: Props) {
-    const connectorName = useConstant(() =>
-        typeof connector === 'string'
-            ? connector
-            : connector === null
-            ? ''
-            : connector.title
-    );
+function ConnectorName({ title, iconPath, iconSize }: Props) {
+    const connectorName = useConstant(() => title ?? '');
 
     const connectorIcon = useConstant(() => {
         if (typeof iconPath === 'string') {
             return iconPath;
         }
-
-        if (typeof connector !== 'string' && connector !== null) {
-            return getConnectorIcon(connector);
-        } else {
-            return undefined;
-        }
+        return undefined;
     });
 
     return (

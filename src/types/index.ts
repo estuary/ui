@@ -54,11 +54,9 @@ export interface BaseComponentProps {
     children?: ReactNode;
 }
 
-export interface OpenGraph {
-    image: string;
-    recommended: boolean | null;
-    title: string;
-}
+export type InternationalizedString =
+    | { 'en-US': string }
+    | { [key: string]: string };
 
 export interface JobStatus {
     type: string;
