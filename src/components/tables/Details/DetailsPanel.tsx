@@ -7,10 +7,7 @@ import {
     useLocalZustandStore,
 } from 'context/LocalZustand';
 import { tableBorderSx } from 'context/Theme';
-import {
-    LiveSpecEditorStoreNames,
-    ShardDetailStoreNames,
-} from 'context/Zustand';
+import { EditorStoreNames, ShardDetailStoreNames } from 'context/Zustand';
 import { concat } from 'lodash';
 import { useMemo } from 'react';
 import { ENTITY } from 'types';
@@ -53,7 +50,7 @@ function DetailsPanel({
                 <Collapse in={detailsExpanded} unmountOnExit>
                     <LocalZustandProvider
                         createStore={createEditorStore(
-                            LiveSpecEditorStoreNames.GENERAL
+                            EditorStoreNames.GENERAL
                         )}
                     >
                         <Grid container spacing={2}>

@@ -12,21 +12,14 @@ import { MessagePrefixes } from 'types';
 import useConstant from 'use-constant';
 import { StoreApi, useStore } from 'zustand';
 
-// TODO: Consolidate editor store instances.
-
 export enum DetailsFormStoreNames {
     CAPTURE = 'capture-details-form',
     MATERIALIZATION = 'materialization-details-form',
 }
 
-export enum DraftEditorStoreNames {
-    CAPTURE = 'draftSpecEditor-Captures',
-    MATERIALIZATION = 'draftSpecEditor-Materializations',
-}
-
 export enum EditorStoreNames {
     CAPTURE = 'capture_editor_store',
-    LOCAL = 'local_editor_store',
+    GENERAL = 'general_editor_store',
     MATERIALIZATION = 'materialization_editor_store',
 }
 
@@ -40,10 +33,6 @@ export enum FormStateStoreNames {
     CAPTURE_EDIT = 'Capture-Edit-Form-State',
     MATERIALIZATION_CREATE = 'Materialization-Create-Form-State',
     MATERIALIZATION_EDIT = 'Materialization-Edit-Form-State',
-}
-
-export enum LiveSpecEditorStoreNames {
-    GENERAL = 'liveSpecEditor',
 }
 
 export enum ResourceConfigStoreNames {
@@ -65,11 +54,9 @@ export enum ShardDetailStoreNames {
 
 export type StoreName =
     | DetailsFormStoreNames
-    | DraftEditorStoreNames
     | EditorStoreNames
     | EndpointConfigStoreNames
     | FormStateStoreNames
-    | LiveSpecEditorStoreNames
     | ResourceConfigStoreNames
     | SelectTableStoreNames
     | ShardDetailStoreNames;

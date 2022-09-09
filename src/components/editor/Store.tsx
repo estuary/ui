@@ -171,7 +171,7 @@ const storeName = (
     localScope?: boolean
 ): EditorStoreNames => {
     if (localScope) {
-        return EditorStoreNames.LOCAL;
+        return EditorStoreNames.GENERAL;
     } else if (entityType === ENTITY.CAPTURE) {
         return EditorStoreNames.CAPTURE;
     } else if (entityType === ENTITY.MATERIALIZATION) {
