@@ -42,7 +42,10 @@ export interface ShardDetails {
 export interface ShardDetailStore {
     shards: Shard[];
     setShards: SetShards;
-    getTaskShards: (catalogNamespace: string, shards: Shard[]) => Shard[];
+    getTaskShards: (
+        catalogNamespace: string | undefined,
+        shards: Shard[]
+    ) => Shard[];
     getTaskShardDetails: (
         taskShards: Shard[],
         defaultStatusColor: ShardStatusColor
@@ -246,7 +249,7 @@ export const getInitialState = (
             );
         },
         getTaskShards: (catalogNamespace, shards) => {
-            return shards.length > 0
+            return catalogNamespace && shards.length > 0
                 ? shards.filter(({ spec }) => {
                       const labels = spec.labels ? spec.labels.labels : [];
 

@@ -5,13 +5,12 @@ import {
     useZustandStore as useGlobalZustandStore,
 } from 'context/Zustand';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
 import produce from 'immer';
 import { ENTITY } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
 import create from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
-
-export const DraftSpecEditorKey = 'draftSpecEditor';
 
 export enum EditorStatus {
     IDLE = 'nothing happened since load',
@@ -37,13 +36,15 @@ export interface EditorStoreState<T> {
     pubId: string | null;
     setPubId: (newVal: EditorStoreState<T>['pubId']) => void;
 
+    // TODO: Resolve conflicting type. Determine whether current catalog can be a DraftSpecQuery, LiveSpecsQuery_spec, or null.
+    // See the FileSelector component for reference.
     currentCatalog: DraftSpecQuery | null;
     setCurrentCatalog: (newVal: EditorStoreState<T>['currentCatalog']) => void;
 
-    // TODO (typing) : This needs typed. Using the T here made the checks in setSpecs break
-    specs: any[] | null;
+    specs: T[] | null;
     setSpecs: (newVal: EditorStoreState<T>['specs']) => void;
 
+    // TODO: Confirm that a server update will always be a DraftSpecQuery.
     serverUpdate: any | null;
     setServerUpdate: (newVal: EditorStoreState<T>['serverUpdate']) => void;
 
@@ -315,24 +316,26 @@ export const useEditorStore_setCurrentCatalog = (
     >(storeName(entityType, localScope), (state) => state.setCurrentCatalog);
 };
 
-export const useEditorStore_specs = (params?: SelectorParams | undefined) => {
-    const localScope = params?.localScope;
-
-    const useZustandStore = localScope
-        ? useLocalZustandStore
-        : useGlobalZustandStore;
-
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['specs']
-    >(storeName(entityType, localScope), (state) => state.specs);
-};
-
-export const useEditorStore_setSpecs = (
+export function useEditorStore_specs<T = DraftSpecQuery | LiveSpecsQuery_spec>(
     params?: SelectorParams | undefined
-) => {
+) {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<EditorStoreState<T>, EditorStoreState<T>['specs']>(
+        storeName(entityType, localScope),
+        (state) => state.specs
+    );
+}
+
+export function useEditorStore_setSpecs<
+    T = DraftSpecQuery | LiveSpecsQuery_spec
+>(params?: SelectorParams | undefined) {
     const localScope = params?.localScope;
 
     const useZustandStore = localScope
@@ -342,10 +345,10 @@ export const useEditorStore_setSpecs = (
     const entityType = useEntityType();
 
     return useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['setSpecs']
+        EditorStoreState<T>,
+        EditorStoreState<T>['setSpecs']
     >(storeName(entityType, localScope), (state) => state.setSpecs);
-};
+}
 
 export const useEditorStore_serverUpdate = (
     params?: SelectorParams | undefined

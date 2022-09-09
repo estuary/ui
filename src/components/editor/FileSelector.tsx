@@ -71,7 +71,6 @@ function EditorFileSelector({ localZustandScope }: Props) {
         localScope: localZustandScope,
     });
 
-    // TODO: Update type LiveSpecsQuery_spec | DraftSpecQuery
     const specs = useEditorStore_specs({ localScope: localZustandScope });
 
     const [selectionModel, setSelectionModel] = useState<GridSelectionModel>(

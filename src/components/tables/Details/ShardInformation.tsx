@@ -25,6 +25,7 @@ import {
     UseZustandStore,
 } from 'context/Zustand';
 import { Shard } from 'data-plane-gateway/types/shard_client';
+import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
 import { MouseEvent, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { shardDetailSelectors, ShardDetailStore } from 'stores/ShardDetail';
@@ -56,8 +57,9 @@ function ShardInformation({ shardDetailStoreName, entityType }: Props) {
         ShardDetailStore['getTaskShards']
     >(shardDetailStoreName, shardDetailSelectors.getTaskShards);
 
-    // TODO: Update type LiveSpecsQuery_spec
-    const specs = useEditorStore_specs({ localScope: true });
+    const specs = useEditorStore_specs<LiveSpecsQuery_spec>({
+        localScope: true,
+    });
 
     const columns: {
         field: string | null;
