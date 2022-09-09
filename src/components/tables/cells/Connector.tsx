@@ -23,7 +23,7 @@ function Connector({ connectorImage, connectorName, imageTag }: Props) {
                 <Box>
                     <ConnectorName
                         iconSize={iconSize}
-                        connector={connectorName ?? imageTag}
+                        title={connectorName ?? imageTag}
                         iconPath={connectorImage}
                     />
                 </Box>

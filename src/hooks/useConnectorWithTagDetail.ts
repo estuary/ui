@@ -3,7 +3,7 @@ import {
     CONNECTOR_RECOMMENDED,
     TABLES,
 } from 'services/supabase';
-import { EntityWithCreateWorkflow, OpenGraph } from 'types';
+import { EntityWithCreateWorkflow } from 'types';
 import { useQuery, useSelect } from './supabase-swr';
 
 export interface ConnectorWithTagDetailQuery {
@@ -19,9 +19,9 @@ export interface ConnectorWithTagDetailQuery {
     detail: string;
     updated_at: string;
     image_name: string;
-    image: OpenGraph['image'];
-    recommended: OpenGraph['image'];
-    title: OpenGraph['title'];
+    image: string;
+    recommended: boolean;
+    title: string;
     // FILTERING TYPES HACK
     ['connector_tags.protocol']: undefined;
     ['connector_tags.image_tag']: undefined;
@@ -34,9 +34,9 @@ export const CONNECTOR_WITH_TAG_QUERY = `
     detail,
     updated_at,
     image_name,
-    open_graph->en-US->>image,
+    image:logo_url->>en-US::text,
     ${CONNECTOR_RECOMMENDED},
-    ${CONNECTOR_NAME},
+    title:${CONNECTOR_NAME}::text,
     connector_tags !inner(
         documentation_url,
         protocol,
