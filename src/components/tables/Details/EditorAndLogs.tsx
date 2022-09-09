@@ -42,10 +42,6 @@ function EditorAndLogs({
 
     useEffect(() => {
         if (hasLength(publicationSpecs)) {
-            // TODO: Remove logging statements.
-            console.log('PUBLICATION SPECS');
-            console.log(publicationSpecs);
-
             setSpecs(publicationSpecs);
         }
     }, [publicationSpecs, setSpecs]);

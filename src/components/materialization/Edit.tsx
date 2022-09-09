@@ -8,7 +8,6 @@ import MaterializeGenerateButton from 'components/materialization/EditGenerateBu
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityEdit from 'components/shared/Entity/Edit';
-import { useEntityType } from 'components/shared/Entity/EntityContext';
 import FooHeader from 'components/shared/Entity/Header';
 import PageContainer from 'components/shared/PageContainer';
 import {
@@ -35,6 +34,7 @@ import {
 } from 'stores/EndpointConfig';
 import { EntityFormState, FormStatus } from 'stores/FormState';
 import { ResourceConfigState } from 'stores/ResourceConfig';
+import { ENTITY } from 'types';
 
 const formStateStoreName = FormStateStoreNames.MATERIALIZATION_EDIT;
 const resourceConfigStoreName = ResourceConfigStoreNames.MATERIALIZATION;
@@ -42,7 +42,7 @@ const resourceConfigStoreName = ResourceConfigStoreNames.MATERIALIZATION;
 function MaterializationEdit() {
     const navigate = useNavigate();
 
-    const entityType = useEntityType();
+    const entityType = ENTITY.MATERIALIZATION;
 
     // Supabase
     const supabaseClient = useClient();

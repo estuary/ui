@@ -151,7 +151,13 @@ const Authenticated = () => {
 
                         <Route
                             path={authenticatedRoutes.collections.path}
-                            element={<Collections />}
+                            element={
+                                <EntityContextProvider
+                                    value={ENTITY.COLLECTION}
+                                >
+                                    <Collections />
+                                </EntityContextProvider>
+                            }
                         />
 
                         <Route path={authenticatedRoutes.captures.path}>

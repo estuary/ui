@@ -9,7 +9,6 @@ import {
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityEdit from 'components/shared/Entity/Edit';
-import { useEntityType } from 'components/shared/Entity/EntityContext';
 import FooHeader from 'components/shared/Entity/Header';
 import PageContainer from 'components/shared/PageContainer';
 import { FormStateStoreNames, useZustandStore } from 'context/Zustand';
@@ -34,6 +33,7 @@ import {
     useEndpointConfigStore_reset,
 } from 'stores/EndpointConfig';
 import { EntityFormState, FormStatus } from 'stores/FormState';
+import { ENTITY } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
 
 const formStateStoreName = FormStateStoreNames.CAPTURE_EDIT;
@@ -51,7 +51,7 @@ const formStateStoreName = FormStateStoreNames.CAPTURE_EDIT;
 function CaptureEdit() {
     const navigate = useNavigate();
 
-    const entityType = useEntityType();
+    const entityType = ENTITY.CAPTURE;
 
     // Supabase stuff
     const supabaseClient = useClient();
