@@ -35,7 +35,10 @@ import {
     useFormStateStore_resetState,
     useFormStateStore_setFormState,
 } from 'stores/FormState';
-import { ResourceConfigState } from 'stores/ResourceConfig';
+import {
+    ResourceConfigState,
+    useResourceConfig_resourceConfigErrorsExist,
+} from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
 
 const resourceConfigStoreName = ResourceConfigStoreNames.MATERIALIZATION;
@@ -76,10 +79,8 @@ function MaterializationCreate() {
     const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
 
     // Resource Config Store
-    const resourceConfigErrorsExist = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['resourceConfigErrorsExist']
-    >(resourceConfigStoreName, (state) => state.resourceConfigErrorsExist);
+    const resourceConfigErrorsExist =
+        useResourceConfig_resourceConfigErrorsExist();
 
     const resetResourceConfigState = useZustandStore<
         ResourceConfigState,
@@ -176,9 +177,6 @@ function MaterializationCreate() {
                             <MaterializeGenerateButton
                                 disabled={!hasConnectors}
                                 callFailed={helpers.callFailed}
-                                resourceConfigStoreName={
-                                    resourceConfigStoreName
-                                }
                             />
                         }
                         TestButton={

@@ -7,7 +7,6 @@ import {
     useEditorStore_setId,
 } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
-import { ResourceConfigStoreNames, useZustandStore } from 'context/Zustand';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -28,21 +27,16 @@ import {
     useFormStateStore_updateStatus,
 } from 'stores/FormState';
 import {
-    ResourceConfigState,
     useResourceConfig_resourceConfig,
+    useResourceConfig_resourceConfigErrorsExist,
 } from 'stores/ResourceConfig';
 
 interface Props {
     disabled: boolean;
     callFailed: Function;
-    resourceConfigStoreName: ResourceConfigStoreNames;
 }
 
-function MaterializeGenerateButton({
-    disabled,
-    callFailed,
-    resourceConfigStoreName,
-}: Props) {
+function MaterializeGenerateButton({ disabled, callFailed }: Props) {
     // Details Form Store
     const entityName = useDetailsForm_details_entityName();
     const detailsFormsHasErrors = useDetailsForm_errorsExist();
@@ -70,11 +64,8 @@ function MaterializeGenerateButton({
 
     // Resource Config Store
     const resourceConfig = useResourceConfig_resourceConfig();
-
-    const resourceConfigHasErrors = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['resourceConfigErrorsExist']
-    >(resourceConfigStoreName, (state) => state.resourceConfigErrorsExist);
+    const resourceConfigHasErrors =
+        useResourceConfig_resourceConfigErrorsExist();
 
     const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();

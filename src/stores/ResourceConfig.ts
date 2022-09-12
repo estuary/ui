@@ -338,3 +338,12 @@ export const useResourceConfig_setResourceConfig = () => {
         ResourceConfigState['setResourceConfig']
     >(storeName(entityType), (state) => state.setResourceConfig);
 };
+
+export const useResourceConfig_resourceConfigErrorsExist = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['resourceConfigErrorsExist']
+    >(storeName(entityType), (state) => state.resourceConfigErrorsExist);
+};

@@ -1,21 +1,14 @@
 import SectionError from 'components/shared/Entity/ValidationErrorSummary/SectionError';
-import { ResourceConfigStoreNames, useZustandStore } from 'context/Zustand';
 import {
-    ResourceConfigState,
     useResourceConfig_collections,
+    useResourceConfig_resourceConfigErrorsExist,
 } from 'stores/ResourceConfig';
 
-interface Props {
-    resourceConfigStoreName: ResourceConfigStoreNames;
-}
-
-function ResourceConfigErrors({ resourceConfigStoreName }: Props) {
+function ResourceConfigErrors() {
     const collections = useResourceConfig_collections();
 
-    const filteredResourceConfigErrors = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['resourceConfigErrorsExist']
-    >(resourceConfigStoreName, (state) => state.resourceConfigErrorsExist);
+    const filteredResourceConfigErrors =
+        useResourceConfig_resourceConfigErrorsExist();
 
     return (
         <SectionError

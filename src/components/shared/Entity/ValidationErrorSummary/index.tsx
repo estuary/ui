@@ -49,11 +49,7 @@ function ValidationErrorSummary({
                         <DetailsErrors />
                         <EndpointConfigErrors />
                         {resourceConfigStoreName ? (
-                            <ResourceConfigErrors
-                                resourceConfigStoreName={
-                                    resourceConfigStoreName
-                                }
-                            />
+                            <ResourceConfigErrors />
                         ) : null}
                     </>
                 ) : (
