@@ -7,6 +7,7 @@ import {
     ShardDetailStore,
     ShardStatusColor,
     useShardDetail_getShardStatusColor,
+    useShardDetail_getShardStatusMessageId,
 } from 'stores/ShardDetail';
 
 interface Props {
@@ -21,11 +22,7 @@ function StatusIndicatorAndLabel({ shard, shardDetailStoreName }: Props) {
     const theme = useTheme();
 
     const getShardStatusColor = useShardDetail_getShardStatusColor();
-
-    const getShardStatusMessageId = useZustandStore<
-        ShardDetailStore,
-        ShardDetailStore['getShardStatusMessageId']
-    >(shardDetailStoreName, shardDetailSelectors.getShardStatusMessageId);
+    const getShardStatusMessageId = useShardDetail_getShardStatusMessageId();
 
     const evaluateShardProcessingState = useZustandStore<
         ShardDetailStore,

@@ -471,3 +471,12 @@ export const useShardDetail_getShardStatusColor = () => {
         ShardDetailStore['getShardStatusColor']
     >(storeName(entityType), (state) => state.getShardStatusColor);
 };
+
+export const useShardDetail_getShardStatusMessageId = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ShardDetailStore,
+        ShardDetailStore['getShardStatusMessageId']
+    >(storeName(entityType), (state) => state.getShardStatusMessageId);
+};
