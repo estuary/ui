@@ -5,7 +5,13 @@ import LogDialogActions from 'components/shared/Entity/LogDialogActions';
 import { FormStateStoreNames, useZustandStore } from 'context/Zustand';
 import { FormattedMessage } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
-import { EntityFormState, FormStatus } from 'stores/FormState';
+import {
+    EntityFormState,
+    FormStatus,
+    useFormStateStore_logToken,
+    useFormStateStore_showLogs,
+    useFormStateStore_status,
+} from 'stores/FormState';
 
 interface Props {
     closeLogs: Function;
@@ -37,20 +43,10 @@ function EntitySaveButton({
         EntityFormState['messagePrefix']
     >(formStateStoreName, (state) => state.messagePrefix);
 
-    const showLogs = useZustandStore<
-        EntityFormState,
-        EntityFormState['formState']['showLogs']
-    >(formStateStoreName, (state) => state.formState.showLogs);
+    const showLogs = useFormStateStore_showLogs();
+    const logToken = useFormStateStore_logToken();
 
-    const logToken = useZustandStore<
-        EntityFormState,
-        EntityFormState['formState']['logToken']
-    >(formStateStoreName, (state) => state.formState.logToken);
-
-    const formStatus = useZustandStore<
-        EntityFormState,
-        EntityFormState['formState']['status']
-    >(formStateStoreName, (state) => state.formState.status);
+    const formStatus = useFormStateStore_status();
 
     return (
         <>

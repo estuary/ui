@@ -1,7 +1,8 @@
 import { PostgrestError } from '@supabase/postgrest-js';
-import { FormStateStoreNames } from 'context/Zustand';
+import { useEntityWorkflow } from 'context/Workflow';
+import { FormStateStoreNames, useZustandStore } from 'context/Zustand';
 import produce from 'immer';
-import { MessagePrefixes } from 'types';
+import { EntityWorkflow, MessagePrefixes } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
 import create, { StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -34,6 +35,16 @@ export enum FormStatus {
 }
 
 export interface EntityFormState {
+    displayValidation: boolean;
+    status: FormStatus;
+    showLogs: boolean;
+    exitWhenLogsClose: boolean;
+    logToken: string | null;
+    error: {
+        title: string;
+        error?: PostgrestError;
+    } | null;
+
     // Form State
     formState: FormState;
     setFormState: (data: Partial<FormState>) => void;
@@ -78,8 +89,24 @@ const getInitialStateData = (
     messagePrefix: MessagePrefixes
 ): Pick<
     EntityFormState,
-    'formState' | 'isIdle' | 'isActive' | 'messagePrefix'
+    | 'formState'
+    | 'displayValidation'
+    | 'status'
+    | 'showLogs'
+    | 'exitWhenLogsClose'
+    | 'logToken'
+    | 'error'
+    | 'isIdle'
+    | 'isActive'
+    | 'messagePrefix'
 > => ({
+    displayValidation: false,
+    status: FormStatus.INIT,
+    showLogs: false,
+    exitWhenLogsClose: false,
+    logToken: null,
+    error: null,
+
     formState: initialFormState,
 
     isIdle: true,
@@ -140,5 +167,76 @@ export const createFormStateStore = (
             (set, get) => getInitialState(set, get, messagePrefix),
             devtoolsOptions(key)
         )
+    );
+};
+
+// Selector Hooks
+const storeName = (workflow: EntityWorkflow): FormStateStoreNames => {
+    switch (workflow) {
+        case 'capture_create':
+            return FormStateStoreNames.CAPTURE_CREATE;
+        case 'capture_edit':
+            return FormStateStoreNames.CAPTURE_EDIT;
+        case 'materialization_create':
+            return FormStateStoreNames.MATERIALIZATION_CREATE;
+        case 'materialization_edit':
+            return FormStateStoreNames.MATERIALIZATION_EDIT;
+        default: {
+            throw new Error('Invalid FormState store name');
+        }
+    }
+};
+
+export const useFormStateStore_displayValidation = () => {
+    const workflow = useEntityWorkflow();
+
+    return useZustandStore<
+        EntityFormState,
+        EntityFormState['displayValidation']
+    >(storeName(workflow), (state) => state.displayValidation);
+};
+
+export const useFormStateStore_status = () => {
+    const workflow = useEntityWorkflow();
+
+    return useZustandStore<EntityFormState, EntityFormState['status']>(
+        storeName(workflow),
+        (state) => state.status
+    );
+};
+
+export const useFormStateStore_showLogs = () => {
+    const workflow = useEntityWorkflow();
+
+    return useZustandStore<EntityFormState, EntityFormState['showLogs']>(
+        storeName(workflow),
+        (state) => state.showLogs
+    );
+};
+
+export const useFormStateStore_exitWhenLogsClose = () => {
+    const workflow = useEntityWorkflow();
+
+    return useZustandStore<
+        EntityFormState,
+        EntityFormState['exitWhenLogsClose']
+    >(storeName(workflow), (state) => state.exitWhenLogsClose);
+};
+
+export const useFormStateStore_logToken = () => {
+    const workflow = useEntityWorkflow();
+
+    return useZustandStore<EntityFormState, EntityFormState['logToken']>(
+        storeName(workflow),
+        (state) => state.logToken
+    );
+};
+
+export const useFormStateStore_error = () => {
+    const workflow = useEntityWorkflow();
+
+    return useZustandStore<EntityFormState, EntityFormState['error']>(
+        storeName(workflow),
+        (state) => state.error
     );
 };

@@ -18,7 +18,10 @@ import {
     useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_setEndpointConfig,
 } from 'stores/EndpointConfig';
-import { EntityFormState } from 'stores/FormState';
+import {
+    EntityFormState,
+    useFormStateStore_displayValidation,
+} from 'stores/FormState';
 import { JsonFormsData } from 'types';
 
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
@@ -40,10 +43,7 @@ function EndpointConfigForm({
     const endpointSchema = useEndpointConfigStore_endpointSchema();
 
     // Form State Store
-    const displayValidation = useZustandStore<
-        EntityFormState,
-        EntityFormState['formState']['displayValidation']
-    >(formStateStoreName, (state) => state.formState.displayValidation);
+    const displayValidation = useFormStateStore_displayValidation();
 
     const isActive = useZustandStore<
         EntityFormState,

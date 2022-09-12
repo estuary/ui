@@ -3,20 +3,15 @@ import DetailsErrors from 'components/shared/Entity/ValidationErrorSummary/Detai
 import EndpointConfigErrors from 'components/shared/Entity/ValidationErrorSummary/EndpointConfigErrors';
 import NoConnectorError from 'components/shared/Entity/ValidationErrorSummary/NoConnectorError';
 import ResourceConfigErrors from 'components/shared/Entity/ValidationErrorSummary/ResourceConfigErrors';
-import {
-    FormStateStoreNames,
-    ResourceConfigStoreNames,
-    useZustandStore,
-} from 'context/Zustand';
+import { ResourceConfigStoreNames } from 'context/Zustand';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { FormattedMessage } from 'react-intl';
-import { EntityFormState } from 'stores/FormState';
+import { useFormStateStore_displayValidation } from 'stores/FormState';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
-    formStateStoreName: FormStateStoreNames;
     resourceConfigStoreName?: ResourceConfigStoreNames;
     ErrorComponent?: any | boolean;
     hideIcon?: boolean;
@@ -25,7 +20,6 @@ interface Props {
 }
 
 function ValidationErrorSummary({
-    formStateStoreName,
     resourceConfigStoreName,
     headerMessageId,
     hideIcon,
@@ -34,10 +28,7 @@ function ValidationErrorSummary({
 }: Props) {
     const connectorID = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
-    const displayValidation = useZustandStore<
-        EntityFormState,
-        EntityFormState['formState']['displayValidation']
-    >(formStateStoreName, (state) => state.formState.displayValidation);
+    const displayValidation = useFormStateStore_displayValidation();
 
     return displayValidation ? (
         <Collapse in={errorsExist} timeout="auto" unmountOnExit>

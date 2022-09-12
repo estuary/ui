@@ -46,7 +46,15 @@ import {
     useDetailsForm_setDetails,
 } from 'stores/DetailsForm';
 import { useEndpointConfigStore_setEndpointSchema } from 'stores/EndpointConfig';
-import { EntityFormState, FormState, FormStatus } from 'stores/FormState';
+import {
+    EntityFormState,
+    FormState,
+    FormStatus,
+    useFormStateStore_error,
+    useFormStateStore_exitWhenLogsClose,
+    useFormStateStore_logToken,
+    useFormStateStore_status,
+} from 'stores/FormState';
 import {
     ResourceConfigDictionary,
     ResourceConfigState,
@@ -253,30 +261,18 @@ function EntityEdit({
         EntityFormState['messagePrefix']
     >(formStateStoreName, (state) => state.messagePrefix);
 
-    const logToken = useZustandStore<
-        EntityFormState,
-        EntityFormState['formState']['logToken']
-    >(formStateStoreName, (state) => state.formState.logToken);
+    const formStatus = useFormStateStore_status();
 
-    const formSubmitError = useZustandStore<
-        EntityFormState,
-        EntityFormState['formState']['error']
-    >(formStateStoreName, (state) => state.formState.error);
+    const logToken = useFormStateStore_logToken();
+
+    const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
+
+    const formSubmitError = useFormStateStore_error();
 
     const setFormState = useZustandStore<
         EntityFormState,
         EntityFormState['setFormState']
     >(formStateStoreName, (state) => state.setFormState);
-
-    const formStatus = useZustandStore<
-        EntityFormState,
-        EntityFormState['formState']['status']
-    >(formStateStoreName, (state) => state.formState.status);
-
-    const exitWhenLogsClose = useZustandStore<
-        EntityFormState,
-        EntityFormState['formState']['exitWhenLogsClose']
-    >(formStateStoreName, (state) => state.formState.exitWhenLogsClose);
 
     // Resource Config Store
     // TODO: Determine proper placement for this logic.

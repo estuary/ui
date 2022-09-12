@@ -108,7 +108,6 @@ function FooHeader({
             <Box sx={{ maxHeight: 200, overflowY: 'auto' }}>
                 <ValidationErrorSummary
                     errorsExist={formErrorsExist}
-                    formStateStoreName={formStateStoreName}
                     resourceConfigStoreName={resourceConfigStoreName}
                 />
             </Box>

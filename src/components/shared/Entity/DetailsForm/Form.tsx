@@ -24,7 +24,10 @@ import {
     useDetailsForm_setDetails,
     useDetailsForm_setDetails_connector,
 } from 'stores/DetailsForm';
-import { EntityFormState } from 'stores/FormState';
+import {
+    EntityFormState,
+    useFormStateStore_displayValidation,
+} from 'stores/FormState';
 import { hasLength } from 'utils/misc-utils';
 
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
@@ -67,10 +70,7 @@ function DetailsFormForm({
         EntityFormState['messagePrefix']
     >(formStateStoreName, (state) => state.messagePrefix);
 
-    const displayValidation = useZustandStore<
-        EntityFormState,
-        EntityFormState['formState']['displayValidation']
-    >(formStateStoreName, (state) => state.formState.displayValidation);
+    const displayValidation = useFormStateStore_displayValidation();
 
     const isActive = useZustandStore<
         EntityFormState,

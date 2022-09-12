@@ -1,17 +1,18 @@
 import { Typography } from '@mui/material';
 import { FormStateStoreNames, useZustandStore } from 'context/Zustand';
 import { FormattedMessage } from 'react-intl';
-import { EntityFormState, FormStatus } from 'stores/FormState';
+import {
+    EntityFormState,
+    FormStatus,
+    useFormStateStore_status,
+} from 'stores/FormState';
 
 interface Props {
     formStateStoreName: FormStateStoreNames;
 }
 
 function Status({ formStateStoreName }: Props) {
-    const formStatus = useZustandStore<
-        EntityFormState,
-        EntityFormState['formState']['status']
-    >(formStateStoreName, (state) => state.formState.status);
+    const formStatus = useFormStateStore_status();
 
     const isActive = useZustandStore<
         EntityFormState,

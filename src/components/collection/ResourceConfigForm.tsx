@@ -14,7 +14,10 @@ import {
     defaultRenderers,
     showValidation,
 } from 'services/jsonforms';
-import { EntityFormState } from 'stores/FormState';
+import {
+    EntityFormState,
+    useFormStateStore_displayValidation,
+} from 'stores/FormState';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 
 type Props = {
@@ -51,10 +54,7 @@ function ResourceConfigForm({
     >(resourceConfigStoreName, (state) => state.resourceSchema);
 
     // Form State Store
-    const displayValidation = useZustandStore<
-        EntityFormState,
-        EntityFormState['formState']['displayValidation']
-    >(formStateStoreName, (state) => state.formState.displayValidation);
+    const displayValidation = useFormStateStore_displayValidation();
 
     const isActive = useZustandStore<
         EntityFormState,

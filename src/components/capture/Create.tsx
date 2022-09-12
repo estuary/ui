@@ -32,7 +32,11 @@ import {
     useEndpointConfigStore_errorsExist,
     useEndpointConfigStore_reset,
 } from 'stores/EndpointConfig';
-import { EntityFormState, FormStatus } from 'stores/FormState';
+import {
+    EntityFormState,
+    FormStatus,
+    useFormStateStore_exitWhenLogsClose,
+} from 'stores/FormState';
 import { ENTITY } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
 
@@ -92,10 +96,7 @@ function CaptureCreate() {
         EntityFormState['resetState']
     >(formStateStoreName, (state) => state.resetState);
 
-    const exitWhenLogsClose = useZustandStore<
-        EntityFormState,
-        EntityFormState['formState']['exitWhenLogsClose']
-    >(formStateStoreName, (state) => state.formState.exitWhenLogsClose);
+    const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
 
     // Reset the catalog if the connector changes
     useEffect(() => {

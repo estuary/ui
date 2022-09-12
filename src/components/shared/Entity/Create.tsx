@@ -32,7 +32,12 @@ import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useDetailsForm_connectorImage } from 'stores/DetailsForm';
 import { useEndpointConfigStore_setEndpointSchema } from 'stores/EndpointConfig';
-import { EntityFormState } from 'stores/FormState';
+import {
+    EntityFormState,
+    useFormStateStore_error,
+    useFormStateStore_exitWhenLogsClose,
+    useFormStateStore_logToken,
+} from 'stores/FormState';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 import { ENTITY, EntityWithCreateWorkflow, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
@@ -99,20 +104,11 @@ function EntityCreate({
         EntityFormState['messagePrefix']
     >(formStateStoreName, (state) => state.messagePrefix);
 
-    const exitWhenLogsClose = useZustandStore<
-        EntityFormState,
-        EntityFormState['formState']['exitWhenLogsClose']
-    >(formStateStoreName, (state) => state.formState.exitWhenLogsClose);
+    const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
 
-    const logToken = useZustandStore<
-        EntityFormState,
-        EntityFormState['formState']['logToken']
-    >(formStateStoreName, (state) => state.formState.logToken);
+    const logToken = useFormStateStore_logToken();
 
-    const formSubmitError = useZustandStore<
-        EntityFormState,
-        EntityFormState['formState']['error']
-    >(formStateStoreName, (state) => state.formState.error);
+    const formSubmitError = useFormStateStore_error();
 
     // Resource Config Store
     // TODO: Determine proper placement for this logic.

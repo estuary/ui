@@ -32,7 +32,11 @@ import {
     useEndpointConfigStore_errorsExist,
     useEndpointConfigStore_reset,
 } from 'stores/EndpointConfig';
-import { EntityFormState, FormStatus } from 'stores/FormState';
+import {
+    EntityFormState,
+    FormStatus,
+    useFormStateStore_exitWhenLogsClose,
+} from 'stores/FormState';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
 
@@ -81,10 +85,7 @@ function MaterializationCreate() {
         EntityFormState['resetState']
     >(formStateStoreName, (state) => state.resetState);
 
-    const exitWhenLogsClose = useZustandStore<
-        EntityFormState,
-        EntityFormState['formState']['exitWhenLogsClose']
-    >(formStateStoreName, (state) => state.formState.exitWhenLogsClose);
+    const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
 
     // Resource Config Store
     const resourceConfigErrorsExist = useZustandStore<
