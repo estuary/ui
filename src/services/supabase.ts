@@ -226,6 +226,35 @@ export const endSubscription = (subscription: RealtimeSubscription) => {
         .catch(() => {});
 };
 
+export const useJobStatusPoller = (initWait?: number) => {
+    const makeCall = (query: any, success: Function, failure: Function) => {
+        const makeApiCall = () => {
+            return query.then(
+                (payload: any) => {
+                    const response = payload.data[0] ?? null;
+
+                    if (response && response.job_status.type !== 'queued') {
+                        if (response.job_status.type === 'success') {
+                            success(response);
+                        } else {
+                            failure(response);
+                        }
+                    } else {
+                        setTimeout(makeApiCall, DEFAULT_POLLING_INTERVAL * 4);
+                    }
+                },
+                (error: unknown) => {
+                    handleFailure(error);
+                }
+            );
+        };
+
+        setTimeout(makeApiCall, initWait ?? DEFAULT_POLLING_INTERVAL * 2);
+    };
+
+    return makeCall;
+};
+
 export const startSubscription = (
     query: SupabaseQueryBuilder<any>,
     success: Function,

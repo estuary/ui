@@ -22,7 +22,7 @@ import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
-import { startSubscription, TABLES } from 'services/supabase';
+import { TABLES, useJobStatusPoller } from 'services/supabase';
 import {
     useDetailsForm_changed,
     useDetailsForm_connectorImage,
@@ -180,12 +180,21 @@ function CaptureCreate() {
         },
     };
 
+    const jobStatusPoller = useJobStatusPoller();
     const discoversSubscription = (discoverDraftId: string) => {
         setDraftId(null);
-        return startSubscription(
-            supabaseClient.from(
-                `${TABLES.DISCOVERS}:draft_id=eq.${discoverDraftId}`
-            ),
+        jobStatusPoller(
+            supabaseClient
+                .from(TABLES.DISCOVERS)
+                .select(
+                    `
+                    draft_id,
+                    job_status
+                `
+                )
+                .match({
+                    draft_id: discoverDraftId,
+                }),
             (payload: any) => {
                 setDraftId(payload.draft_id);
                 setFormState({
