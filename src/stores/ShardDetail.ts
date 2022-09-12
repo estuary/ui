@@ -462,3 +462,12 @@ export const useShardDetail_getShardDetails = () => {
         ShardDetailStore['getShardDetails']
     >(storeName(entityType), (state) => state.getShardDetails);
 };
+
+export const useShardDetail_getShardStatusColor = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ShardDetailStore,
+        ShardDetailStore['getShardStatusColor']
+    >(storeName(entityType), (state) => state.getShardStatusColor);
+};
