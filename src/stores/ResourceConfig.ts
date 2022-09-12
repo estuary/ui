@@ -293,3 +293,12 @@ export const useResourceConfig_preFillCollections = () => {
         ResourceConfigState['preFillCollections']
     >(storeName(entityType), (state) => state.preFillCollections);
 };
+
+export const useResourceConfig_collectionErrorsExist = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['collectionErrorsExist']
+    >(storeName(entityType), (state) => state.collectionErrorsExist);
+};

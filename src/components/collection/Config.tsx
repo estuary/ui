@@ -3,7 +3,10 @@ import BindingsMultiEditor from 'components/editor/Bindings';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import { ResourceConfigStoreNames, useZustandStore } from 'context/Zustand';
 import { FormattedMessage } from 'react-intl';
-import { ResourceConfigState } from 'stores/ResourceConfig';
+import {
+    ResourceConfigState,
+    useResourceConfig_collectionErrorsExist,
+} from 'stores/ResourceConfig';
 
 interface Props {
     resourceConfigStoreName: ResourceConfigStoreNames;
@@ -20,10 +23,7 @@ function CollectionConfig({
         ResourceConfigState['resourceConfigErrorsExist']
     >(resourceConfigStoreName, (state) => state.resourceConfigErrorsExist);
 
-    const collectionsHasErrors = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['collectionErrorsExist']
-    >(resourceConfigStoreName, (state) => state.collectionErrorsExist);
+    const collectionsHasErrors = useResourceConfig_collectionErrorsExist();
 
     const hasErrors = resourceConfigHasErrors || collectionsHasErrors;
 
