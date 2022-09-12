@@ -34,7 +34,10 @@ import {
     useFormStateStore_logToken,
     useFormStateStore_messagePrefix,
 } from 'stores/FormState';
-import { ResourceConfigState } from 'stores/ResourceConfig';
+import {
+    ResourceConfigState,
+    useResourceConfig_preFillEmptyCollections,
+} from 'stores/ResourceConfig';
 import { ENTITY, EntityWithCreateWorkflow, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
@@ -111,13 +114,7 @@ function EntityCreate({
         (state) => state.setResourceSchema
     );
 
-    const prefillEmptyCollections = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['preFillEmptyCollections']
-    >(
-        resourceConfigStoreName ?? ResourceConfigStoreNames.MATERIALIZATION,
-        (state) => state.preFillEmptyCollections
-    );
+    const prefillEmptyCollections = useResourceConfig_preFillEmptyCollections();
 
     // Reset the catalog if the connector changes
     useEffect(() => {

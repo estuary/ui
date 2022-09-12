@@ -275,3 +275,12 @@ export const useResourceConfig_collections = () => {
         ResourceConfigState['collections']
     >(storeName(entityType), (state) => state.collections);
 };
+
+export const useResourceConfig_preFillEmptyCollections = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['preFillEmptyCollections']
+    >(storeName(entityType), (state) => state.preFillEmptyCollections);
+};
