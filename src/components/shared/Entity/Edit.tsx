@@ -55,6 +55,7 @@ import {
 import {
     ResourceConfigDictionary,
     ResourceConfigState,
+    useResourceConfig_preFillCollections,
 } from 'stores/ResourceConfig';
 import { ENTITY, JsonFormsData, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
@@ -281,13 +282,7 @@ function EntityEdit({
         (state) => state.setResourceConfig
     );
 
-    const preFillCollections = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['preFillCollections']
-    >(
-        resourceConfigStoreName ?? ResourceConfigStoreNames.MATERIALIZATION,
-        (state) => state.preFillCollections
-    );
+    const preFillCollections = useResourceConfig_preFillCollections();
 
     const resourceConfig = useZustandStore<
         ResourceConfigState,
