@@ -199,7 +199,6 @@ function MaterializationEdit() {
                         resourceConfigStoreName={resourceConfigStoreName}
                     />
                 }
-                resourceConfigStoreName={resourceConfigStoreName}
                 callFailed={helpers.callFailed}
                 readOnly={{
                     detailsForm: true,

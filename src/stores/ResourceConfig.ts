@@ -365,3 +365,12 @@ export const useResourceConfig_resourceSchema = () => {
         ResourceConfigState['resourceSchema']
     >(storeName(entityType), (state) => state.resourceSchema);
 };
+
+export const useResourceConfig_setResourceSchema = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['setResourceSchema']
+    >(storeName(entityType), (state) => state.setResourceSchema);
+};

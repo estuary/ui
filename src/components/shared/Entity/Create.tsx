@@ -12,7 +12,6 @@ import EntityError from 'components/shared/Entity/Error';
 import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedChangesPrompt';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import { ResourceConfigStoreNames, useZustandStore } from 'context/Zustand';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -35,8 +34,8 @@ import {
     useFormStateStore_messagePrefix,
 } from 'stores/FormState';
 import {
-    ResourceConfigState,
     useResourceConfig_preFillEmptyCollections,
+    useResourceConfig_setResourceSchema,
 } from 'stores/ResourceConfig';
 import { ENTITY, EntityWithCreateWorkflow, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
@@ -45,7 +44,6 @@ interface Props {
     title: string;
     connectorType: EntityWithCreateWorkflow;
     Header: any;
-    resourceConfigStoreName?: ResourceConfigStoreNames;
     showCollections?: boolean;
     promptDataLoss: any;
     resetState: () => void;
@@ -55,7 +53,6 @@ function EntityCreate({
     title,
     connectorType,
     Header,
-    resourceConfigStoreName,
     showCollections,
     promptDataLoss,
     resetState,
@@ -106,13 +103,7 @@ function EntityCreate({
 
     // Resource Config Store
     // TODO: Determine proper placement for this logic.
-    const setResourceSchema = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['setResourceSchema']
-    >(
-        resourceConfigStoreName ?? ResourceConfigStoreNames.MATERIALIZATION,
-        (state) => state.setResourceSchema
-    );
+    const setResourceSchema = useResourceConfig_setResourceSchema();
 
     const prefillEmptyCollections = useResourceConfig_preFillEmptyCollections();
 
@@ -220,9 +211,7 @@ function EntityCreate({
                             </ErrorBoundryWrapper>
                         ) : null}
 
-                        {showCollections &&
-                        resourceConfigStoreName &&
-                        hasLength(imageTag.id) ? (
+                        {showCollections && hasLength(imageTag.id) ? (
                             <ErrorBoundryWrapper>
                                 <CollectionConfig />
                             </ErrorBoundryWrapper>

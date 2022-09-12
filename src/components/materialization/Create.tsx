@@ -206,7 +206,6 @@ function MaterializationCreate() {
                         resourceConfigStoreName={resourceConfigStoreName}
                     />
                 }
-                resourceConfigStoreName={resourceConfigStoreName}
             />
         </PageContainer>
     );

@@ -18,7 +18,6 @@ import EntityError from 'components/shared/Entity/Error';
 import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedChangesPrompt';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import { ResourceConfigStoreNames, useZustandStore } from 'context/Zustand';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -54,10 +53,10 @@ import {
 } from 'stores/FormState';
 import {
     ResourceConfigDictionary,
-    ResourceConfigState,
     useResourceConfig_preFillCollections,
     useResourceConfig_resourceConfig,
     useResourceConfig_setResourceConfig,
+    useResourceConfig_setResourceSchema,
 } from 'stores/ResourceConfig';
 import { ENTITY, JsonFormsData, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
@@ -67,7 +66,6 @@ interface Props {
     entityType: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
     Header: any;
     callFailed: (formState: any, subscription?: RealtimeSubscription) => void;
-    resourceConfigStoreName?: ResourceConfigStoreNames;
     showCollections?: boolean;
     promptDataLoss: any;
     resetState: () => void;
@@ -196,7 +194,6 @@ function EntityEdit({
     title,
     entityType,
     Header,
-    resourceConfigStoreName,
     callFailed,
     showCollections,
     readOnly,
@@ -268,13 +265,7 @@ function EntityEdit({
 
     // Resource Config Store
     // TODO: Determine proper placement for this logic.
-    const setResourceSchema = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['setResourceSchema']
-    >(
-        resourceConfigStoreName ?? ResourceConfigStoreNames.MATERIALIZATION,
-        (state) => state.setResourceSchema
-    );
+    const setResourceSchema = useResourceConfig_setResourceSchema();
 
     const resourceConfig = useResourceConfig_resourceConfig();
     const setResourceConfig = useResourceConfig_setResourceConfig();
@@ -461,9 +452,7 @@ function EntityEdit({
                         </ErrorBoundryWrapper>
                     ) : null}
 
-                    {showCollections &&
-                    resourceConfigStoreName &&
-                    hasLength(imageTag.id) ? (
+                    {showCollections && hasLength(imageTag.id) ? (
                         <ErrorBoundryWrapper>
                             <CollectionConfig
                                 readOnly={readOnly.resourceConfigForm}
