@@ -466,9 +466,6 @@ function EntityEdit({
                     hasLength(imageTag.id) ? (
                         <ErrorBoundryWrapper>
                             <CollectionConfig
-                                resourceConfigStoreName={
-                                    resourceConfigStoreName
-                                }
                                 readOnly={readOnly.resourceConfigForm}
                             />
                         </ErrorBoundryWrapper>

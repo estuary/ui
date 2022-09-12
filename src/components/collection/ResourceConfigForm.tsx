@@ -1,7 +1,6 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { StyledEngineProvider } from '@mui/material';
-import { ResourceConfigStoreNames, useZustandStore } from 'context/Zustand';
 import { useEffect, useRef } from 'react';
 import { setDefaultsValidator } from 'services/ajv';
 import {
@@ -15,22 +14,17 @@ import {
     useFormStateStore_isActive,
 } from 'stores/FormState';
 import {
-    ResourceConfigState,
     useResourceConfig_resourceConfig,
+    useResourceConfig_resourceSchema,
     useResourceConfig_setResourceConfig,
 } from 'stores/ResourceConfig';
 
 type Props = {
     collectionName: string;
-    resourceConfigStoreName: ResourceConfigStoreNames;
     readOnly?: boolean;
 };
 
-function ResourceConfigForm({
-    collectionName,
-    resourceConfigStoreName,
-    readOnly = false,
-}: Props) {
+function ResourceConfigForm({ collectionName, readOnly = false }: Props) {
     const name = useRef(collectionName);
 
     // Resource Config Store
@@ -39,10 +33,7 @@ function ResourceConfigForm({
 
     const formData = resourceConfig[collectionName].data;
 
-    const resourceSchema = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['resourceSchema']
-    >(resourceConfigStoreName, (state) => state.resourceSchema);
+    const resourceSchema = useResourceConfig_resourceSchema();
 
     // Form State Store
     const displayValidation = useFormStateStore_displayValidation();

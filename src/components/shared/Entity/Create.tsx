@@ -224,11 +224,7 @@ function EntityCreate({
                         resourceConfigStoreName &&
                         hasLength(imageTag.id) ? (
                             <ErrorBoundryWrapper>
-                                <CollectionConfig
-                                    resourceConfigStoreName={
-                                        resourceConfigStoreName
-                                    }
-                                />
+                                <CollectionConfig />
                             </ErrorBoundryWrapper>
                         ) : null}
 

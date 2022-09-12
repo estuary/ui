@@ -1,7 +1,6 @@
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import BindingsMultiEditor from 'components/editor/Bindings';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
-import { ResourceConfigStoreNames } from 'context/Zustand';
 import { FormattedMessage } from 'react-intl';
 import {
     useResourceConfig_collectionErrorsExist,
@@ -9,14 +8,10 @@ import {
 } from 'stores/ResourceConfig';
 
 interface Props {
-    resourceConfigStoreName: ResourceConfigStoreNames;
     readOnly?: boolean;
 }
 
-function CollectionConfig({
-    resourceConfigStoreName,
-    readOnly = false,
-}: Props) {
+function CollectionConfig({ readOnly = false }: Props) {
     // Resource Config Store
     const resourceConfigHasErrors =
         useResourceConfig_resourceConfigErrorsExist();
@@ -35,10 +30,7 @@ function CollectionConfig({
                 </>
             }
         >
-            <BindingsMultiEditor
-                resourceConfigStoreName={resourceConfigStoreName}
-                readOnly={readOnly}
-            />
+            <BindingsMultiEditor readOnly={readOnly} />
         </WrapperWithHeader>
     );
 }
