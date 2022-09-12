@@ -35,6 +35,7 @@ export enum FormStatus {
 }
 
 export interface EntityFormState {
+    // Form State
     displayValidation: boolean;
 
     status: FormStatus;
@@ -49,8 +50,6 @@ export interface EntityFormState {
         error?: PostgrestError;
     } | null;
 
-    // Form State
-    formState: FormState;
     setFormState: (data: Partial<FormState>) => void;
 
     // Form Status
@@ -92,7 +91,6 @@ const getInitialStateData = (
     messagePrefix: MessagePrefixes
 ): Pick<
     EntityFormState,
-    | 'formState'
     | 'displayValidation'
     | 'status'
     | 'showLogs'
@@ -103,14 +101,7 @@ const getInitialStateData = (
     | 'isActive'
     | 'messagePrefix'
 > => ({
-    displayValidation: false,
-    status: FormStatus.INIT,
-    showLogs: false,
-    exitWhenLogsClose: false,
-    logToken: null,
-    error: null,
-
-    formState: initialFormState,
+    ...initialFormState,
 
     isIdle: true,
     isActive: false,
@@ -128,9 +119,9 @@ const getInitialState = (
     setFormState: (newState) => {
         set(
             produce((state: EntityFormState) => {
-                state = { ...newState, ...state };
-                state.isIdle = formIdle(state.formState.status);
-                state.isActive = formActive(state.formState.status);
+                state = { ...state, ...newState };
+                state.isIdle = formIdle(state.status);
+                state.isActive = formActive(state.status);
             }),
             false,
             'Form State Changed'
@@ -140,8 +131,9 @@ const getInitialState = (
     updateStatus: (status) => {
         set(
             produce((state: EntityFormState) => {
-                state.formState = { ...initialFormState };
-                state.formState.status = status;
+                state = { ...state, ...initialFormState };
+
+                state.status = status;
                 state.isIdle = formIdle(status);
                 state.isActive = formActive(status);
             }),
