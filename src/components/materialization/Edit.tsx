@@ -38,6 +38,7 @@ import {
 import {
     ResourceConfigState,
     useResourceConfig_resourceConfigErrorsExist,
+    useResourceConfig_stateChanged,
 } from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
 
@@ -78,6 +79,8 @@ function MaterializationEdit() {
     const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
 
     // Resource Config Store
+    const resourceConfigChanged = useResourceConfig_stateChanged();
+
     const resourceConfigErrorsExist =
         useResourceConfig_resourceConfigErrorsExist();
 
@@ -85,11 +88,6 @@ function MaterializationEdit() {
         ResourceConfigState,
         ResourceConfigState['resetState']
     >(resourceConfigStoreName, (state) => state.resetState);
-
-    const resourceConfigChanged = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['stateChanged']
-    >(resourceConfigStoreName, (state) => state.stateChanged);
 
     // Reset the catalog if the connector changes
     useEffect(() => {
