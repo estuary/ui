@@ -53,6 +53,7 @@ import {
     useFormStateStore_error,
     useFormStateStore_exitWhenLogsClose,
     useFormStateStore_logToken,
+    useFormStateStore_setFormState,
     useFormStateStore_status,
 } from 'stores/FormState';
 import {
@@ -269,10 +270,7 @@ function EntityEdit({
 
     const formSubmitError = useFormStateStore_error();
 
-    const setFormState = useZustandStore<
-        EntityFormState,
-        EntityFormState['setFormState']
-    >(formStateStoreName, (state) => state.setFormState);
+    const setFormState = useFormStateStore_setFormState();
 
     // Resource Config Store
     // TODO: Determine proper placement for this logic.

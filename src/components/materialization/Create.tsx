@@ -36,6 +36,7 @@ import {
     EntityFormState,
     FormStatus,
     useFormStateStore_exitWhenLogsClose,
+    useFormStateStore_setFormState,
 } from 'stores/FormState';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
@@ -75,10 +76,7 @@ function MaterializationCreate() {
         EntityFormState['messagePrefix']
     >(formStateStoreName, (state) => state.messagePrefix);
 
-    const setFormState = useZustandStore<
-        EntityFormState,
-        EntityFormState['setFormState']
-    >(formStateStoreName, (state) => state.setFormState);
+    const setFormState = useFormStateStore_setFormState();
 
     const resetFormState = useZustandStore<
         EntityFormState,

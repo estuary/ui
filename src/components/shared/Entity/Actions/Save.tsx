@@ -13,7 +13,11 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
 import { endSubscription, startSubscription, TABLES } from 'services/supabase';
 import { useDetailsForm_details_description } from 'stores/DetailsForm';
-import { EntityFormState, FormStatus } from 'stores/FormState';
+import {
+    EntityFormState,
+    FormStatus,
+    useFormStateStore_setFormState,
+} from 'stores/FormState';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
@@ -64,10 +68,7 @@ function EntityCreateSave({
         EntityFormState['messagePrefix']
     >(formStateStoreName, (state) => state.messagePrefix);
 
-    const setFormState = useZustandStore<
-        EntityFormState,
-        EntityFormState['setFormState']
-    >(formStateStoreName, (state) => state.setFormState);
+    const setFormState = useFormStateStore_setFormState();
 
     const resetFormState = useZustandStore<
         EntityFormState,

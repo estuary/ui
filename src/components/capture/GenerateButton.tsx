@@ -20,7 +20,11 @@ import {
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_errorsExist,
 } from 'stores/EndpointConfig';
-import { EntityFormState, FormStatus } from 'stores/FormState';
+import {
+    EntityFormState,
+    FormStatus,
+    useFormStateStore_setFormState,
+} from 'stores/FormState';
 
 interface Props {
     disabled: boolean;
@@ -46,10 +50,7 @@ function CaptureGenerateButton({
         EntityFormState['isActive']
     >(formStateStoreName, (state) => state.isActive);
 
-    const setFormState = useZustandStore<
-        EntityFormState,
-        EntityFormState['setFormState']
-    >(formStateStoreName, (state) => state.setFormState);
+    const setFormState = useFormStateStore_setFormState();
 
     const resetFormState = useZustandStore<
         EntityFormState,

@@ -36,10 +36,13 @@ export enum FormStatus {
 
 export interface EntityFormState {
     displayValidation: boolean;
+
     status: FormStatus;
+
+    logToken: string | null;
     showLogs: boolean;
     exitWhenLogsClose: boolean;
-    logToken: string | null;
+
     error: {
         title: string;
         error?: PostgrestError;
@@ -48,6 +51,7 @@ export interface EntityFormState {
     // Form State
     formState: FormState;
     setFormState: (data: Partial<FormState>) => void;
+    // TODO: Rename to evaluateFormState or updateFormState.
     resetFormState: (status: FormStatus) => void;
 
     // Form Status
@@ -125,9 +129,7 @@ const getInitialState = (
     setFormState: (newState) => {
         set(
             produce((state: EntityFormState) => {
-                const { formState } = get();
-
-                state.formState = { ...formState, ...newState };
+                state = { ...newState, ...state };
                 state.isIdle = formIdle(state.formState.status);
                 state.isActive = formActive(state.formState.status);
             }),
@@ -238,5 +240,14 @@ export const useFormStateStore_error = () => {
     return useZustandStore<EntityFormState, EntityFormState['error']>(
         storeName(workflow),
         (state) => state.error
+    );
+};
+
+export const useFormStateStore_setFormState = () => {
+    const workflow = useEntityWorkflow();
+
+    return useZustandStore<EntityFormState, EntityFormState['setFormState']>(
+        storeName(workflow),
+        (state) => state.setFormState
     );
 };

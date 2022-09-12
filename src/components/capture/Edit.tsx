@@ -36,6 +36,7 @@ import {
     EntityFormState,
     FormStatus,
     useFormStateStore_exitWhenLogsClose,
+    useFormStateStore_setFormState,
 } from 'stores/FormState';
 import { ENTITY } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
@@ -86,10 +87,7 @@ function CaptureEdit() {
         EntityFormState['messagePrefix']
     >(formStateStoreName, (state) => state.messagePrefix);
 
-    const setFormState = useZustandStore<
-        EntityFormState,
-        EntityFormState['setFormState']
-    >(formStateStoreName, (state) => state.setFormState);
+    const setFormState = useFormStateStore_setFormState();
 
     const resetFormState = useZustandStore<
         EntityFormState,
