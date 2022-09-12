@@ -36,6 +36,7 @@ import {
     EntityFormState,
     FormStatus,
     useFormStateStore_exitWhenLogsClose,
+    useFormStateStore_resetState,
     useFormStateStore_setFormState,
 } from 'stores/FormState';
 import { ResourceConfigState } from 'stores/ResourceConfig';
@@ -77,10 +78,7 @@ function MaterializationEdit() {
 
     const setFormState = useFormStateStore_setFormState();
 
-    const resetFormState = useZustandStore<
-        EntityFormState,
-        EntityFormState['resetState']
-    >(formStateStoreName, (state) => state.resetState);
+    const resetFormState = useFormStateStore_resetState();
 
     const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
 

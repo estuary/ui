@@ -269,3 +269,12 @@ export const useFormStateStore_isActive = () => {
         (state) => state.isActive
     );
 };
+
+export const useFormStateStore_resetState = () => {
+    const workflow = useEntityWorkflow();
+
+    return useZustandStore<EntityFormState, EntityFormState['resetState']>(
+        storeName(workflow),
+        (state) => state.resetState
+    );
+};
