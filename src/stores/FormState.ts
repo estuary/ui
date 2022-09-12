@@ -36,21 +36,10 @@ export enum FormStatus {
 
 export interface EntityFormState {
     // Form State
-    displayValidation: boolean;
-
-    logToken: string | null;
-    showLogs: boolean;
-    exitWhenLogsClose: boolean;
-
-    error: {
-        title: string;
-        error?: PostgrestError;
-    } | null;
-
+    formState: FormState;
     setFormState: (data: Partial<FormState>) => void;
 
     // Form Status
-    status: FormStatus;
     isIdle: boolean;
     isActive: boolean;
 
@@ -91,17 +80,9 @@ const getInitialStateData = (
     messagePrefix: MessagePrefixes
 ): Pick<
     EntityFormState,
-    | 'displayValidation'
-    | 'status'
-    | 'showLogs'
-    | 'exitWhenLogsClose'
-    | 'logToken'
-    | 'error'
-    | 'isIdle'
-    | 'isActive'
-    | 'messagePrefix'
+    'formState' | 'isIdle' | 'isActive' | 'messagePrefix'
 > => ({
-    ...initialFormState,
+    formState: initialFormState,
 
     isIdle: true,
     isActive: false,
@@ -119,9 +100,11 @@ const getInitialState = (
     setFormState: (newState) => {
         set(
             produce((state: EntityFormState) => {
-                state = { ...state, ...newState };
-                state.isIdle = formIdle(state.status);
-                state.isActive = formActive(state.status);
+                const { formState } = get();
+
+                state.formState = { ...formState, ...newState };
+                state.isIdle = formIdle(state.formState.status);
+                state.isActive = formActive(state.formState.status);
             }),
             false,
             'Form State Changed'
@@ -131,9 +114,8 @@ const getInitialState = (
     updateStatus: (status) => {
         set(
             produce((state: EntityFormState) => {
-                state = { ...state, ...initialFormState };
-
-                state.status = status;
+                state.formState = { ...initialFormState };
+                state.formState.status = status;
                 state.isIdle = formIdle(status);
                 state.isActive = formActive(status);
             }),
@@ -185,26 +167,26 @@ export const useFormStateStore_displayValidation = () => {
 
     return useZustandStore<
         EntityFormState,
-        EntityFormState['displayValidation']
-    >(storeName(workflow), (state) => state.displayValidation);
+        EntityFormState['formState']['displayValidation']
+    >(storeName(workflow), (state) => state.formState.displayValidation);
 };
 
 export const useFormStateStore_status = () => {
     const workflow = useEntityWorkflow();
 
-    return useZustandStore<EntityFormState, EntityFormState['status']>(
-        storeName(workflow),
-        (state) => state.status
-    );
+    return useZustandStore<
+        EntityFormState,
+        EntityFormState['formState']['status']
+    >(storeName(workflow), (state) => state.formState.status);
 };
 
 export const useFormStateStore_showLogs = () => {
     const workflow = useEntityWorkflow();
 
-    return useZustandStore<EntityFormState, EntityFormState['showLogs']>(
-        storeName(workflow),
-        (state) => state.showLogs
-    );
+    return useZustandStore<
+        EntityFormState,
+        EntityFormState['formState']['showLogs']
+    >(storeName(workflow), (state) => state.formState.showLogs);
 };
 
 export const useFormStateStore_exitWhenLogsClose = () => {
@@ -212,26 +194,26 @@ export const useFormStateStore_exitWhenLogsClose = () => {
 
     return useZustandStore<
         EntityFormState,
-        EntityFormState['exitWhenLogsClose']
-    >(storeName(workflow), (state) => state.exitWhenLogsClose);
+        EntityFormState['formState']['exitWhenLogsClose']
+    >(storeName(workflow), (state) => state.formState.exitWhenLogsClose);
 };
 
 export const useFormStateStore_logToken = () => {
     const workflow = useEntityWorkflow();
 
-    return useZustandStore<EntityFormState, EntityFormState['logToken']>(
-        storeName(workflow),
-        (state) => state.logToken
-    );
+    return useZustandStore<
+        EntityFormState,
+        EntityFormState['formState']['logToken']
+    >(storeName(workflow), (state) => state.formState.logToken);
 };
 
 export const useFormStateStore_error = () => {
     const workflow = useEntityWorkflow();
 
-    return useZustandStore<EntityFormState, EntityFormState['error']>(
-        storeName(workflow),
-        (state) => state.error
-    );
+    return useZustandStore<
+        EntityFormState,
+        EntityFormState['formState']['error']
+    >(storeName(workflow), (state) => state.formState.error);
 };
 
 export const useFormStateStore_setFormState = () => {
