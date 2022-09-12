@@ -4,7 +4,10 @@ import useLiveSpecs from 'hooks/useLiveSpecs';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useFormStateStore_messagePrefix } from 'stores/FormState';
-import { ResourceConfigState } from 'stores/ResourceConfig';
+import {
+    ResourceConfigState,
+    useResourceConfig_collections,
+} from 'stores/ResourceConfig';
 import useConstant from 'use-constant';
 
 interface Props {
@@ -30,10 +33,7 @@ function CollectionPicker({
     const messagePrefix = useFormStateStore_messagePrefix();
 
     // Resource Config Store
-    const collections = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['collections']
-    >(resourceConfigStoreName, (state) => state.collections);
+    const collections = useResourceConfig_collections();
 
     const setResourceConfig = useZustandStore<
         ResourceConfigState,

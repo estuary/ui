@@ -1,9 +1,10 @@
-import { ResourceConfigStoreNames } from 'context/Zustand';
+import { useEntityType } from 'context/EntityContext';
+import { ResourceConfigStoreNames, useZustandStore } from 'context/Zustand';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
 import { difference, has, isEmpty, isEqual, map, omit } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
-import { JsonFormsData, Schema } from 'types';
+import { ENTITY, JsonFormsData, Schema } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
 import create, { StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -255,4 +256,22 @@ export const createResourceConfigStore = (key: ResourceConfigStoreNames) => {
     return create<ResourceConfigState>()(
         devtools((set, get) => getInitialState(set, get), devtoolsOptions(key))
     );
+};
+
+// Selector Hooks
+const storeName = (entityType: ENTITY): ResourceConfigStoreNames => {
+    if (entityType === ENTITY.MATERIALIZATION) {
+        return ResourceConfigStoreNames.MATERIALIZATION;
+    } else {
+        throw new Error('Invalid ResourceConfig store name');
+    }
+};
+
+export const useResourceConfig_collections = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['collections']
+    >(storeName(entityType), (state) => state.collections);
 };
