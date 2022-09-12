@@ -1,23 +1,17 @@
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import BindingsMultiEditor from 'components/editor/Bindings';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
-import {
-    FormStateStoreNames,
-    ResourceConfigStoreNames,
-    useZustandStore,
-} from 'context/Zustand';
+import { ResourceConfigStoreNames, useZustandStore } from 'context/Zustand';
 import { FormattedMessage } from 'react-intl';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 
 interface Props {
     resourceConfigStoreName: ResourceConfigStoreNames;
-    formStateStoreName: FormStateStoreNames;
     readOnly?: boolean;
 }
 
 function CollectionConfig({
     resourceConfigStoreName,
-    formStateStoreName,
     readOnly = false,
 }: Props) {
     // Resource Config Store
@@ -46,7 +40,6 @@ function CollectionConfig({
         >
             <BindingsMultiEditor
                 resourceConfigStoreName={resourceConfigStoreName}
-                formStateStoreName={formStateStoreName}
                 readOnly={readOnly}
             />
         </WrapperWithHeader>

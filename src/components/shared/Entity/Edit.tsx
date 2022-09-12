@@ -18,11 +18,7 @@ import EntityError from 'components/shared/Entity/Error';
 import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedChangesPrompt';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import {
-    FormStateStoreNames,
-    ResourceConfigStoreNames,
-    useZustandStore,
-} from 'context/Zustand';
+import { ResourceConfigStoreNames, useZustandStore } from 'context/Zustand';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -47,12 +43,12 @@ import {
 } from 'stores/DetailsForm';
 import { useEndpointConfigStore_setEndpointSchema } from 'stores/EndpointConfig';
 import {
-    EntityFormState,
     FormState,
     FormStatus,
     useFormStateStore_error,
     useFormStateStore_exitWhenLogsClose,
     useFormStateStore_logToken,
+    useFormStateStore_messagePrefix,
     useFormStateStore_setFormState,
     useFormStateStore_status,
 } from 'stores/FormState';
@@ -67,7 +63,6 @@ interface Props {
     title: string;
     entityType: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
     Header: any;
-    formStateStoreName: FormStateStoreNames;
     callFailed: (formState: any, subscription?: RealtimeSubscription) => void;
     resourceConfigStoreName?: ResourceConfigStoreNames;
     showCollections?: boolean;
@@ -198,7 +193,6 @@ function EntityEdit({
     title,
     entityType,
     Header,
-    formStateStoreName,
     resourceConfigStoreName,
     callFailed,
     showCollections,
@@ -257,10 +251,7 @@ function EntityEdit({
     const setEndpointSchema = useEndpointConfigStore_setEndpointSchema();
 
     // Form State Store
-    const messagePrefix = useZustandStore<
-        EntityFormState,
-        EntityFormState['messagePrefix']
-    >(formStateStoreName, (state) => state.messagePrefix);
+    const messagePrefix = useFormStateStore_messagePrefix();
 
     const formStatus = useFormStateStore_status();
 
@@ -470,7 +461,6 @@ function EntityEdit({
                             <DetailsForm
                                 connectorTags={connectorTags}
                                 accessGrants={combinedGrants}
-                                formStateStoreName={formStateStoreName}
                                 readOnly={readOnly.detailsForm}
                                 entityType={entityType}
                             />
@@ -495,7 +485,6 @@ function EntityEdit({
                                 resourceConfigStoreName={
                                     resourceConfigStoreName
                                 }
-                                formStateStoreName={formStateStoreName}
                                 readOnly={readOnly.resourceConfigForm}
                             />
                         </ErrorBoundryWrapper>

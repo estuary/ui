@@ -4,7 +4,6 @@ import { Alert, Stack, Typography } from '@mui/material';
 import { useEditorStore_isSaving } from 'components/editor/Store';
 import { Props } from 'components/shared/Entity/DetailsForm/types';
 import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
-import { useZustandStore } from 'context/Zustand';
 import { CATALOG_NAME_SCOPE } from 'forms/renderers/CatalogName';
 import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
 import useGlobalSearchParams, {
@@ -25,9 +24,9 @@ import {
     useDetailsForm_setDetails_connector,
 } from 'stores/DetailsForm';
 import {
-    EntityFormState,
     useFormStateStore_displayValidation,
     useFormStateStore_isActive,
+    useFormStateStore_messagePrefix,
 } from 'stores/FormState';
 import { hasLength } from 'utils/misc-utils';
 
@@ -47,7 +46,6 @@ export const getConnectorImageDetails = (
 function DetailsFormForm({
     connectorTags,
     accessGrants,
-    formStateStoreName,
     entityType,
     readOnly,
 }: Props) {
@@ -66,11 +64,7 @@ function DetailsFormForm({
     const isSaving = useEditorStore_isSaving();
 
     // Form State Store
-    const messagePrefix = useZustandStore<
-        EntityFormState,
-        EntityFormState['messagePrefix']
-    >(formStateStoreName, (state) => state.messagePrefix);
-
+    const messagePrefix = useFormStateStore_messagePrefix();
     const displayValidation = useFormStateStore_displayValidation();
 
     const isActive = useFormStateStore_isActive();

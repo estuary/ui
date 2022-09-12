@@ -6,7 +6,6 @@ import {
     useEditorStore_setPubId,
 } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
-import { FormStateStoreNames, useZustandStore } from 'context/Zustand';
 import { useClient } from 'hooks/supabase-swr';
 import LogRocket from 'logrocket';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -14,9 +13,9 @@ import { CustomEvents } from 'services/logrocket';
 import { endSubscription, startSubscription, TABLES } from 'services/supabase';
 import { useDetailsForm_details_description } from 'stores/DetailsForm';
 import {
-    EntityFormState,
     FormStatus,
     useFormStateStore_isActive,
+    useFormStateStore_messagePrefix,
     useFormStateStore_setFormState,
     useFormStateStore_updateStatus,
 } from 'stores/FormState';
@@ -29,7 +28,6 @@ interface Props {
     onFailure: Function;
     logEvent: CustomEvents;
     dryRun?: boolean;
-    formStateStoreName: FormStateStoreNames;
 }
 
 const trackEvent = (logEvent: Props['logEvent'], payload: any) => {
@@ -42,13 +40,7 @@ const trackEvent = (logEvent: Props['logEvent'], payload: any) => {
     });
 };
 
-function EntityCreateSave({
-    disabled,
-    dryRun,
-    onFailure,
-    logEvent,
-    formStateStoreName,
-}: Props) {
+function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
     const intl = useIntl();
     const supabaseClient = useClient();
 
@@ -65,10 +57,7 @@ function EntityCreateSave({
     const entityDescription = useDetailsForm_details_description();
 
     // Form State Store
-    const messagePrefix = useZustandStore<
-        EntityFormState,
-        EntityFormState['messagePrefix']
-    >(formStateStoreName, (state) => state.messagePrefix);
+    const messagePrefix = useFormStateStore_messagePrefix();
 
     const setFormState = useFormStateStore_setFormState();
 

@@ -12,11 +12,7 @@ import EntityError from 'components/shared/Entity/Error';
 import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedChangesPrompt';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import {
-    FormStateStoreNames,
-    ResourceConfigStoreNames,
-    useZustandStore,
-} from 'context/Zustand';
+import { ResourceConfigStoreNames, useZustandStore } from 'context/Zustand';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -33,10 +29,10 @@ import { FormattedMessage } from 'react-intl';
 import { useDetailsForm_connectorImage } from 'stores/DetailsForm';
 import { useEndpointConfigStore_setEndpointSchema } from 'stores/EndpointConfig';
 import {
-    EntityFormState,
     useFormStateStore_error,
     useFormStateStore_exitWhenLogsClose,
     useFormStateStore_logToken,
+    useFormStateStore_messagePrefix,
 } from 'stores/FormState';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 import { ENTITY, EntityWithCreateWorkflow, Schema } from 'types';
@@ -46,7 +42,6 @@ interface Props {
     title: string;
     connectorType: EntityWithCreateWorkflow;
     Header: any;
-    formStateStoreName: FormStateStoreNames;
     resourceConfigStoreName?: ResourceConfigStoreNames;
     showCollections?: boolean;
     promptDataLoss: any;
@@ -57,7 +52,6 @@ function EntityCreate({
     title,
     connectorType,
     Header,
-    formStateStoreName,
     resourceConfigStoreName,
     showCollections,
     promptDataLoss,
@@ -99,10 +93,7 @@ function EntityCreate({
     const setEndpointSchema = useEndpointConfigStore_setEndpointSchema();
 
     // Form State Store
-    const messagePrefix = useZustandStore<
-        EntityFormState,
-        EntityFormState['messagePrefix']
-    >(formStateStoreName, (state) => state.messagePrefix);
+    const messagePrefix = useFormStateStore_messagePrefix();
 
     const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
 
@@ -221,7 +212,6 @@ function EntityCreate({
                                 <DetailsForm
                                     connectorTags={connectorTags}
                                     accessGrants={combinedGrants}
-                                    formStateStoreName={formStateStoreName}
                                     entityType={connectorType}
                                 />
                             </ErrorBoundryWrapper>
@@ -241,7 +231,6 @@ function EntityCreate({
                                     resourceConfigStoreName={
                                         resourceConfigStoreName
                                     }
-                                    formStateStoreName={formStateStoreName}
                                 />
                             </ErrorBoundryWrapper>
                         ) : null}

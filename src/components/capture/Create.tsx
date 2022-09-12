@@ -11,7 +11,6 @@ import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
 import FooHeader from 'components/shared/Entity/Header';
 import PageContainer from 'components/shared/PageContainer';
-import { FormStateStoreNames, useZustandStore } from 'context/Zustand';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
@@ -33,16 +32,14 @@ import {
     useEndpointConfigStore_reset,
 } from 'stores/EndpointConfig';
 import {
-    EntityFormState,
     FormStatus,
     useFormStateStore_exitWhenLogsClose,
+    useFormStateStore_messagePrefix,
     useFormStateStore_resetState,
     useFormStateStore_setFormState,
 } from 'stores/FormState';
 import { ENTITY } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
-
-const formStateStoreName = FormStateStoreNames.CAPTURE_CREATE;
 
 const trackEvent = (payload: any) => {
     LogRocket.track(CustomEvents.CAPTURE_DISCOVER, {
@@ -83,10 +80,7 @@ function CaptureCreate() {
     const resetDetailsForm = useDetailsForm_resetState();
 
     // Form State Store
-    const messagePrefix = useZustandStore<
-        EntityFormState,
-        EntityFormState['messagePrefix']
-    >(formStateStoreName, (state) => state.messagePrefix);
+    const messagePrefix = useFormStateStore_messagePrefix();
 
     const setFormState = useFormStateStore_setFormState();
 
@@ -221,7 +215,6 @@ function CaptureCreate() {
                                 callFailed={helpers.callFailed}
                                 disabled={!hasConnectors}
                                 logEvent={CustomEvents.CAPTURE_TEST}
-                                formStateStoreName={formStateStoreName}
                             />
                         }
                         SaveButton={
@@ -231,12 +224,10 @@ function CaptureCreate() {
                                 disabled={!draftId}
                                 materialize={handlers.materializeCollections}
                                 logEvent={CustomEvents.CAPTURE_CREATE}
-                                formStateStoreName={formStateStoreName}
                             />
                         }
                     />
                 }
-                formStateStoreName={formStateStoreName}
             />
         </PageContainer>
     );

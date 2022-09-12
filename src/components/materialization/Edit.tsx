@@ -10,11 +10,7 @@ import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityEdit from 'components/shared/Entity/Edit';
 import FooHeader from 'components/shared/Entity/Header';
 import PageContainer from 'components/shared/PageContainer';
-import {
-    FormStateStoreNames,
-    ResourceConfigStoreNames,
-    useZustandStore,
-} from 'context/Zustand';
+import { ResourceConfigStoreNames, useZustandStore } from 'context/Zustand';
 import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { useEffect } from 'react';
@@ -33,16 +29,15 @@ import {
     useEndpointConfigStore_reset,
 } from 'stores/EndpointConfig';
 import {
-    EntityFormState,
     FormStatus,
     useFormStateStore_exitWhenLogsClose,
+    useFormStateStore_messagePrefix,
     useFormStateStore_resetState,
     useFormStateStore_setFormState,
 } from 'stores/FormState';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
 
-const formStateStoreName = FormStateStoreNames.MATERIALIZATION_EDIT;
 const resourceConfigStoreName = ResourceConfigStoreNames.MATERIALIZATION;
 
 function MaterializationEdit() {
@@ -71,10 +66,7 @@ function MaterializationEdit() {
     const endpointConfigChanged = useEndpointConfigStore_changed();
 
     // Form State Store
-    const messagePrefix = useZustandStore<
-        EntityFormState,
-        EntityFormState['messagePrefix']
-    >(formStateStoreName, (state) => state.messagePrefix);
+    const messagePrefix = useFormStateStore_messagePrefix();
 
     const setFormState = useFormStateStore_setFormState();
 
@@ -188,7 +180,6 @@ function MaterializationEdit() {
                                 callFailed={helpers.callFailed}
                                 closeLogs={handlers.closeLogs}
                                 logEvent={CustomEvents.MATERIALIZATION_TEST}
-                                formStateStoreName={formStateStoreName}
                             />
                         }
                         SaveButton={
@@ -197,7 +188,6 @@ function MaterializationEdit() {
                                 callFailed={helpers.callFailed}
                                 closeLogs={handlers.closeLogs}
                                 logEvent={CustomEvents.MATERIALIZATION_EDIT}
-                                formStateStoreName={formStateStoreName}
                             />
                         }
                         heading={
@@ -212,7 +202,6 @@ function MaterializationEdit() {
                     />
                 }
                 resourceConfigStoreName={resourceConfigStoreName}
-                formStateStoreName={formStateStoreName}
                 callFailed={helpers.callFailed}
                 readOnly={{
                     detailsForm: true,

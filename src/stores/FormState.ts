@@ -278,3 +278,12 @@ export const useFormStateStore_resetState = () => {
         (state) => state.resetState
     );
 };
+
+export const useFormStateStore_messagePrefix = () => {
+    const workflow = useEntityWorkflow();
+
+    return useZustandStore<EntityFormState, EntityFormState['messagePrefix']>(
+        storeName(workflow),
+        (state) => state.messagePrefix
+    );
+};
