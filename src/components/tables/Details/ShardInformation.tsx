@@ -19,7 +19,6 @@ import ExternalLink from 'components/shared/ExternalLink';
 import ShardErrors from 'components/tables/Details/ShardErrors';
 import StatusIndicatorAndLabel from 'components/tables/Details/StatusIndicatorAndLabel';
 import { slate } from 'context/Theme';
-import { ShardDetailStoreNames, UseZustandStore } from 'context/Zustand';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
 import { MouseEvent, useEffect, useState } from 'react';
@@ -31,14 +30,12 @@ import {
 import { EntityWithCreateWorkflow } from 'types';
 
 interface Props {
-    shardDetailStoreName: ShardDetailStoreNames;
-    useLocalZustandStore: UseZustandStore;
     entityType?: EntityWithCreateWorkflow;
 }
 
 const rowsPerPage = 3;
 
-function ShardInformation({ shardDetailStoreName, entityType }: Props) {
+function ShardInformation({ entityType }: Props) {
     const theme = useTheme();
     const intl = useIntl();
 
@@ -165,9 +162,6 @@ function ShardInformation({ shardDetailStoreName, entityType }: Props) {
                                     >
                                         <StatusIndicatorAndLabel
                                             shard={shard}
-                                            shardDetailStoreName={
-                                                shardDetailStoreName
-                                            }
                                         />
 
                                         <TableCell>

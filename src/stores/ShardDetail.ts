@@ -382,20 +382,6 @@ export const createShardDetailStore = (key: ShardDetailStoreNames) => {
     );
 };
 
-export const shardDetailSelectors = {
-    shards: (state: ShardDetailStore) => state.shards,
-    setShards: (state: ShardDetailStore) => state.setShards,
-    getTaskShards: (state: ShardDetailStore) => state.getTaskShards,
-    getTaskShardDetails: (state: ShardDetailStore) => state.getTaskShardDetails,
-    getTaskStatusColor: (state: ShardDetailStore) => state.getTaskStatusColor,
-    getShardDetails: (state: ShardDetailStore) => state.getShardDetails,
-    getShardStatusColor: (state: ShardDetailStore) => state.getShardStatusColor,
-    getShardStatusMessageId: (state: ShardDetailStore) =>
-        state.getShardStatusMessageId,
-    evaluateShardProcessingState: (state: ShardDetailStore) =>
-        state.evaluateShardProcessingState,
-};
-
 // Selector Hooks
 const storeName = (entityType: ENTITY): ShardDetailStoreNames => {
     switch (entityType) {
@@ -479,4 +465,13 @@ export const useShardDetail_getShardStatusMessageId = () => {
         ShardDetailStore,
         ShardDetailStore['getShardStatusMessageId']
     >(storeName(entityType), (state) => state.getShardStatusMessageId);
+};
+
+export const useShardDetail_evaluateShardProcessingState = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ShardDetailStore,
+        ShardDetailStore['evaluateShardProcessingState']
+    >(storeName(entityType), (state) => state.evaluateShardProcessingState);
 };

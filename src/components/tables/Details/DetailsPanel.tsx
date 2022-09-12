@@ -2,12 +2,9 @@ import { Collapse, Grid, TableCell, TableRow } from '@mui/material';
 import { createEditorStore } from 'components/editor/Store';
 import EditorAndLogs from 'components/tables/Details/EditorAndLogs';
 import ShardInformation from 'components/tables/Details/ShardInformation';
-import {
-    LocalZustandProvider,
-    useLocalZustandStore,
-} from 'context/LocalZustand';
+import { LocalZustandProvider } from 'context/LocalZustand';
 import { tableBorderSx } from 'context/Theme';
-import { EditorStoreNames, ShardDetailStoreNames } from 'context/Zustand';
+import { EditorStoreNames } from 'context/Zustand';
 import { concat } from 'lodash';
 import { useMemo } from 'react';
 import { ENTITY } from 'types';
@@ -20,7 +17,6 @@ interface Props {
     entityName: string;
     collectionNames?: string[];
     disableLogs?: boolean; // TODO (detail logs) We'll start using this again when we have better logs
-    shardDetailStoreName?: ShardDetailStoreNames;
 }
 
 function DetailsPanel({
@@ -28,7 +24,6 @@ function DetailsPanel({
     lastPubId,
     colSpan,
     entityType,
-    shardDetailStoreName,
     collectionNames,
     entityName,
 }: Props) {
@@ -54,13 +49,8 @@ function DetailsPanel({
                         )}
                     >
                         <Grid container spacing={2}>
-                            {shardDetailStoreName &&
-                            entityType !== ENTITY.COLLECTION ? (
-                                <ShardInformation
-                                    useLocalZustandStore={useLocalZustandStore}
-                                    entityType={entityType}
-                                    shardDetailStoreName={shardDetailStoreName}
-                                />
+                            {entityType !== ENTITY.COLLECTION ? (
+                                <ShardInformation entityType={entityType} />
                             ) : null}
 
                             <EditorAndLogs

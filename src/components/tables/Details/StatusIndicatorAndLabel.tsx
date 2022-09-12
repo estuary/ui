@@ -1,21 +1,18 @@
 import { TableCell, Typography, useTheme } from '@mui/material';
-import { ShardDetailStoreNames, useZustandStore } from 'context/Zustand';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { FormattedMessage } from 'react-intl';
 import {
-    shardDetailSelectors,
-    ShardDetailStore,
     ShardStatusColor,
+    useShardDetail_evaluateShardProcessingState,
     useShardDetail_getShardStatusColor,
     useShardDetail_getShardStatusMessageId,
 } from 'stores/ShardDetail';
 
 interface Props {
     shard: Shard;
-    shardDetailStoreName: ShardDetailStoreNames;
 }
 
-function StatusIndicatorAndLabel({ shard, shardDetailStoreName }: Props) {
+function StatusIndicatorAndLabel({ shard }: Props) {
     const { id } = shard.spec;
     const shardId = id ?? '';
 
@@ -24,10 +21,8 @@ function StatusIndicatorAndLabel({ shard, shardDetailStoreName }: Props) {
     const getShardStatusColor = useShardDetail_getShardStatusColor();
     const getShardStatusMessageId = useShardDetail_getShardStatusMessageId();
 
-    const evaluateShardProcessingState = useZustandStore<
-        ShardDetailStore,
-        ShardDetailStore['evaluateShardProcessingState']
-    >(shardDetailStoreName, shardDetailSelectors.evaluateShardProcessingState);
+    const evaluateShardProcessingState =
+        useShardDetail_evaluateShardProcessingState();
 
     const defaultStatusColor: ShardStatusColor =
         theme.palette.mode === 'dark' ? '#EEF8FF' : '#04192A';

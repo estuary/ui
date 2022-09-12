@@ -14,11 +14,7 @@ import {
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
 import { getEntityTableRowSx } from 'context/Theme';
-import {
-    SelectTableStoreNames,
-    ShardDetailStoreNames,
-    useZustandStore,
-} from 'context/Zustand';
+import { SelectTableStoreNames, useZustandStore } from 'context/Zustand';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useShardsList from 'hooks/useShardsList';
 import { useEffect, useState } from 'react';
@@ -37,7 +33,6 @@ interface RowProps {
     setRow: any;
     isSelected: boolean;
     showEntityStatus: boolean;
-    shardDetailStoreName: ShardDetailStoreNames;
 }
 
 export const tableColumns = [
@@ -71,13 +66,7 @@ export const tableColumns = [
     },
 ];
 
-function Row({
-    isSelected,
-    setRow,
-    row,
-    showEntityStatus,
-    shardDetailStoreName,
-}: RowProps) {
+function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
     const navigate = useNavigate();
     const theme = useTheme();
 
@@ -146,7 +135,6 @@ function Row({
                 lastPubId={row.last_pub_id}
                 colSpan={tableColumns.length}
                 entityType={ENTITY.MATERIALIZATION}
-                shardDetailStoreName={shardDetailStoreName}
                 entityName={row.catalog_name}
             />
         </>
@@ -176,8 +164,6 @@ function Rows({ data, showEntityStatus }: RowsProps) {
     );
 
     // Shard Detail Store
-    const shardDetailStoreName = ShardDetailStoreNames.MATERIALIZATION;
-
     const setShards = useShardDetail_setShards();
 
     const { data: shardsData, mutate: mutateShardsList } = useShardsList(data);
@@ -201,7 +187,6 @@ function Rows({ data, showEntityStatus }: RowsProps) {
                     isSelected={selected.has(row.id)}
                     setRow={setRow}
                     showEntityStatus={showEntityStatus}
-                    shardDetailStoreName={shardDetailStoreName}
                 />
             ))}
         </>
