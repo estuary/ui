@@ -123,7 +123,6 @@ function Row({
                 <EntityName
                     name={row.catalog_name}
                     showEntityStatus={showEntityStatus}
-                    shardDetailStoreName={shardDetailStoreName}
                 />
 
                 <Connector
