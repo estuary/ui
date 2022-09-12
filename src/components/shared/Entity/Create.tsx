@@ -229,10 +229,7 @@ function EntityCreate({
 
                         {imageTag.id ? (
                             <ErrorBoundryWrapper>
-                                <EndpointConfig
-                                    connectorImage={imageTag.id}
-                                    formStateStoreName={formStateStoreName}
-                                />
+                                <EndpointConfig connectorImage={imageTag.id} />
                             </ErrorBoundryWrapper>
                         ) : null}
 
@@ -252,7 +249,6 @@ function EntityCreate({
                         <ErrorBoundryWrapper>
                             <CatalogEditor
                                 messageId={`${messagePrefix}.finalReview.instructions`}
-                                formStateStoreName={formStateStoreName}
                             />
                         </ErrorBoundryWrapper>
                     </>

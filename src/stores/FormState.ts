@@ -260,3 +260,12 @@ export const useFormStateStore_isIdle = () => {
         (state) => state.isIdle
     );
 };
+
+export const useFormStateStore_isActive = () => {
+    const workflow = useEntityWorkflow();
+
+    return useZustandStore<EntityFormState, EntityFormState['isActive']>(
+        storeName(workflow),
+        (state) => state.isActive
+    );
+};

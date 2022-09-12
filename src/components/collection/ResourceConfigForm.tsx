@@ -1,11 +1,7 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { StyledEngineProvider } from '@mui/material';
-import {
-    FormStateStoreNames,
-    ResourceConfigStoreNames,
-    useZustandStore,
-} from 'context/Zustand';
+import { ResourceConfigStoreNames, useZustandStore } from 'context/Zustand';
 import { useEffect, useRef } from 'react';
 import { setDefaultsValidator } from 'services/ajv';
 import {
@@ -15,22 +11,20 @@ import {
     showValidation,
 } from 'services/jsonforms';
 import {
-    EntityFormState,
     useFormStateStore_displayValidation,
+    useFormStateStore_isActive,
 } from 'stores/FormState';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 
 type Props = {
     collectionName: string;
     resourceConfigStoreName: ResourceConfigStoreNames;
-    formStateStoreName: FormStateStoreNames;
     readOnly?: boolean;
 };
 
 function ResourceConfigForm({
     collectionName,
     resourceConfigStoreName,
-    formStateStoreName,
     readOnly = false,
 }: Props) {
     const name = useRef(collectionName);
@@ -56,10 +50,7 @@ function ResourceConfigForm({
     // Form State Store
     const displayValidation = useFormStateStore_displayValidation();
 
-    const isActive = useZustandStore<
-        EntityFormState,
-        EntityFormState['isActive']
-    >(formStateStoreName, (state) => state.isActive);
+    const isActive = useFormStateStore_isActive();
 
     useEffect(() => {
         name.current = collectionName;

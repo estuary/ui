@@ -7,7 +7,6 @@ import {
     useEditorStore_resetState,
 } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
-import { FormStateStoreNames, useZustandStore } from 'context/Zustand';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -21,8 +20,8 @@ import {
     useEndpointConfigStore_errorsExist,
 } from 'stores/EndpointConfig';
 import {
-    EntityFormState,
     FormStatus,
+    useFormStateStore_isActive,
     useFormStateStore_setFormState,
     useFormStateStore_updateStatus,
 } from 'stores/FormState';
@@ -31,25 +30,16 @@ interface Props {
     disabled: boolean;
     callFailed: Function;
     subscription: Function;
-    formStateStoreName: FormStateStoreNames;
 }
 
-function CaptureGenerateButton({
-    disabled,
-    callFailed,
-    subscription,
-    formStateStoreName,
-}: Props) {
+function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
     // Editor Store
     const isSaving = useEditorStore_isSaving();
 
     const resetEditorState = useEditorStore_resetState();
 
     // Form State Store
-    const formActive = useZustandStore<
-        EntityFormState,
-        EntityFormState['isActive']
-    >(formStateStoreName, (state) => state.isActive);
+    const formActive = useFormStateStore_isActive();
 
     const setFormState = useFormStateStore_setFormState();
 

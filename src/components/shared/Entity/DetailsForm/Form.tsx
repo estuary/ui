@@ -27,6 +27,7 @@ import {
 import {
     EntityFormState,
     useFormStateStore_displayValidation,
+    useFormStateStore_isActive,
 } from 'stores/FormState';
 import { hasLength } from 'utils/misc-utils';
 
@@ -72,10 +73,7 @@ function DetailsFormForm({
 
     const displayValidation = useFormStateStore_displayValidation();
 
-    const isActive = useZustandStore<
-        EntityFormState,
-        EntityFormState['isActive']
-    >(formStateStoreName, (state) => state.isActive);
+    const isActive = useFormStateStore_isActive();
 
     useEffect(() => {
         if (connectorId && hasLength(connectorTags)) {

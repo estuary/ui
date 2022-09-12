@@ -1,19 +1,17 @@
 import { Box, Typography } from '@mui/material';
 import ResourceConfigForm from 'components/collection/ResourceConfigForm';
-import { FormStateStoreNames, ResourceConfigStoreNames } from 'context/Zustand';
+import { ResourceConfigStoreNames } from 'context/Zustand';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
     collectionName: string;
     resourceConfigStoreName: ResourceConfigStoreNames;
-    formStateStoreName: FormStateStoreNames;
     readOnly?: boolean;
 }
 
 function ResourceConfig({
     collectionName,
     resourceConfigStoreName,
-    formStateStoreName,
     readOnly = false,
 }: Props) {
     return (
@@ -26,7 +24,6 @@ function ResourceConfig({
                 <ResourceConfigForm
                     collectionName={collectionName}
                     resourceConfigStoreName={resourceConfigStoreName}
-                    formStateStoreName={formStateStoreName}
                     readOnly={readOnly}
                 />
             </Box>

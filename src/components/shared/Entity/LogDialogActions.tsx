@@ -1,29 +1,23 @@
 import { Box, Button, Stack } from '@mui/material';
 import Status from 'components/shared/Entity/Status';
-import { FormStateStoreNames } from 'context/Zustand';
 import { FormattedMessage } from 'react-intl';
 import { FormStatus, useFormStateStore_status } from 'stores/FormState';
 
 interface Props {
     close: any;
-    formStateStoreName: FormStateStoreNames;
     materialize?: {
         action: any;
         title: string;
     };
 }
 
-function LogDialogActions({ close, materialize, formStateStoreName }: Props) {
+function LogDialogActions({ close, materialize }: Props) {
     const formStatus = useFormStateStore_status();
 
     return (
         <>
-            <Box
-                sx={{
-                    pl: 2,
-                }}
-            >
-                <Status formStateStoreName={formStateStoreName} />
+            <Box sx={{ pl: 2 }}>
+                <Status />
             </Box>
 
             <Stack direction="row" spacing={2}>

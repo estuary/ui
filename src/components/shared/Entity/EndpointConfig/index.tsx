@@ -4,21 +4,18 @@ import EndpointConfigForm from 'components/shared/Entity/EndpointConfig/Form';
 import EndpointConfigHeader from 'components/shared/Entity/EndpointConfig/Header';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import Error from 'components/shared/Error';
-import { FormStateStoreNames } from 'context/Zustand';
 import useConnectorTag from 'hooks/useConnectorTag';
 import { useIntl } from 'react-intl';
 import { JsonFormsData } from 'types';
 
 interface Props {
     connectorImage: string;
-    formStateStoreName: FormStateStoreNames;
     readOnly?: boolean;
     initialEndpointConfig?: JsonFormsData | null;
 }
 
 function EndpointConfig({
     connectorImage,
-    formStateStoreName,
     readOnly = false,
     initialEndpointConfig,
 }: Props) {
@@ -50,7 +47,6 @@ function EndpointConfig({
                 ) : null}
 
                 <EndpointConfigForm
-                    formStateStoreName={formStateStoreName}
                     readOnly={readOnly}
                     initialEndpointConfig={initialEndpointConfig}
                 />

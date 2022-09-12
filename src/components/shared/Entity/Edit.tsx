@@ -481,7 +481,6 @@ function EntityEdit({
                         <ErrorBoundryWrapper>
                             <EndpointConfig
                                 connectorImage={imageTag.id}
-                                formStateStoreName={formStateStoreName}
                                 readOnly={readOnly.endpointConfigForm}
                                 initialEndpointConfig={endpointConfig}
                             />
@@ -505,7 +504,6 @@ function EntityEdit({
                     <ErrorBoundryWrapper>
                         <CatalogEditor
                             messageId={`${messagePrefix}.finalReview.instructions`}
-                            formStateStoreName={formStateStoreName}
                         />
                     </ErrorBoundryWrapper>
                 </>

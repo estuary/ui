@@ -32,7 +32,6 @@ function BindingsMultiEditor({
                 details={
                     <BindingsEditor
                         resourceConfigStoreName={resourceConfigStoreName}
-                        formStateStoreName={formStateStoreName}
                         readOnly={readOnly}
                     />
                 }

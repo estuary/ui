@@ -215,7 +215,6 @@ function CaptureCreate() {
                                 disabled={!hasConnectors}
                                 callFailed={helpers.callFailed}
                                 subscription={discoversSubscription}
-                                formStateStoreName={formStateStoreName}
                             />
                         }
                         TestButton={
@@ -237,7 +236,6 @@ function CaptureCreate() {
                                 formStateStoreName={formStateStoreName}
                             />
                         }
-                        formStateStoreName={formStateStoreName}
                     />
                 }
                 formStateStoreName={formStateStoreName}

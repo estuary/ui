@@ -189,7 +189,6 @@ function MaterializationCreate() {
                                 resourceConfigStoreName={
                                     resourceConfigStoreName
                                 }
-                                formStateStoreName={formStateStoreName}
                             />
                         }
                         TestButton={
@@ -219,7 +218,6 @@ function MaterializationCreate() {
                             resourceConfigErrorsExist
                         }
                         resourceConfigStoreName={resourceConfigStoreName}
-                        formStateStoreName={formStateStoreName}
                     />
                 }
                 resourceConfigStoreName={resourceConfigStoreName}

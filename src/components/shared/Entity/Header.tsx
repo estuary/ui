@@ -10,14 +10,10 @@ import {
 } from '@mui/material';
 import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
 import { slate, stickyHeaderIndex, tableBorderSx } from 'context/Theme';
-import {
-    FormStateStoreNames,
-    ResourceConfigStoreNames,
-    useZustandStore,
-} from 'context/Zustand';
+import { ResourceConfigStoreNames } from 'context/Zustand';
 import { ReactNode } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { EntityFormState } from 'stores/FormState';
+import { useFormStateStore_isActive } from 'stores/FormState';
 
 // TODO: Make the generate button Props property required once the edit workflow matures.
 interface Props {
@@ -26,7 +22,6 @@ interface Props {
     SaveButton: ReactNode;
     heading: ReactNode;
     formErrorsExist: boolean;
-    formStateStoreName: FormStateStoreNames;
     resourceConfigStoreName?: ResourceConfigStoreNames;
 }
 
@@ -49,13 +44,9 @@ function FooHeader({
     SaveButton,
     heading,
     formErrorsExist,
-    formStateStoreName,
     resourceConfigStoreName,
 }: Props) {
-    const formActive = useZustandStore<
-        EntityFormState,
-        EntityFormState['isActive']
-    >(formStateStoreName, (state) => state.isActive);
+    const formActive = useFormStateStore_isActive();
 
     const { inView, ref } = useInView({
         threshold: [stickyThreshold],

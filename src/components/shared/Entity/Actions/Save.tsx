@@ -16,6 +16,7 @@ import { useDetailsForm_details_description } from 'stores/DetailsForm';
 import {
     EntityFormState,
     FormStatus,
+    useFormStateStore_isActive,
     useFormStateStore_setFormState,
     useFormStateStore_updateStatus,
 } from 'stores/FormState';
@@ -73,10 +74,7 @@ function EntityCreateSave({
 
     const updateFormStatus = useFormStateStore_updateStatus();
 
-    const formActive = useZustandStore<
-        EntityFormState,
-        EntityFormState['isActive']
-    >(formStateStoreName, (state) => state.isActive);
+    const formActive = useFormStateStore_isActive();
 
     // Notification Store
     const showNotification = useNotificationStore(

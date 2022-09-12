@@ -223,7 +223,6 @@ function CaptureEdit() {
                                 formStateStoreName={formStateStoreName}
                             />
                         }
-                        formStateStoreName={formStateStoreName}
                     />
                 }
                 formStateStoreName={formStateStoreName}

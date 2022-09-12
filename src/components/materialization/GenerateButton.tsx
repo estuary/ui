@@ -8,11 +8,7 @@ import {
     useEditorStore_setId,
 } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
-import {
-    FormStateStoreNames,
-    ResourceConfigStoreNames,
-    useZustandStore,
-} from 'context/Zustand';
+import { ResourceConfigStoreNames, useZustandStore } from 'context/Zustand';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -27,8 +23,8 @@ import {
     useEndpointConfigStore_errorsExist,
 } from 'stores/EndpointConfig';
 import {
-    EntityFormState,
     FormStatus,
+    useFormStateStore_isActive,
     useFormStateStore_setFormState,
     useFormStateStore_updateStatus,
 } from 'stores/FormState';
@@ -39,14 +35,12 @@ interface Props {
     disabled: boolean;
     callFailed: Function;
     resourceConfigStoreName: ResourceConfigStoreNames;
-    formStateStoreName: FormStateStoreNames;
 }
 
 function MaterializeGenerateButton({
     disabled,
     callFailed,
     resourceConfigStoreName,
-    formStateStoreName,
 }: Props) {
     // Details Form Store
     const entityName = useDetailsForm_details_entityName();
@@ -67,10 +61,7 @@ function MaterializeGenerateButton({
     const endpointConfigHasErrors = useEndpointConfigStore_errorsExist();
 
     // Form State Store
-    const formActive = useZustandStore<
-        EntityFormState,
-        EntityFormState['isActive']
-    >(formStateStoreName, (state) => state.isActive);
+    const formActive = useFormStateStore_isActive();
 
     const setFormState = useFormStateStore_setFormState();
 

@@ -182,7 +182,6 @@ function MaterializationEdit() {
                                 resourceConfigStoreName={
                                     resourceConfigStoreName
                                 }
-                                formStateStoreName={formStateStoreName}
                             />
                         }
                         TestButton={
@@ -212,7 +211,6 @@ function MaterializationEdit() {
                             resourceConfigErrorsExist
                         }
                         resourceConfigStoreName={resourceConfigStoreName}
-                        formStateStoreName={formStateStoreName}
                     />
                 }
                 resourceConfigStoreName={resourceConfigStoreName}

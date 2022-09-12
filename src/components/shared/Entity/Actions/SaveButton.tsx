@@ -66,7 +66,6 @@ function EntitySaveButton({
                 actionComponent={
                     <LogDialogActions
                         close={closeLogs}
-                        formStateStoreName={formStateStoreName}
                         materialize={
                             materialize
                                 ? {
