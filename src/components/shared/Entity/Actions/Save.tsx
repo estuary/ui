@@ -17,6 +17,7 @@ import {
     EntityFormState,
     FormStatus,
     useFormStateStore_setFormState,
+    useFormStateStore_updateStatus,
 } from 'stores/FormState';
 import useNotificationStore, {
     notificationStoreSelectors,
@@ -70,10 +71,7 @@ function EntityCreateSave({
 
     const setFormState = useFormStateStore_setFormState();
 
-    const resetFormState = useZustandStore<
-        EntityFormState,
-        EntityFormState['resetFormState']
-    >(formStateStoreName, (state) => state.resetFormState);
+    const updateFormStatus = useFormStateStore_updateStatus();
 
     const formActive = useZustandStore<
         EntityFormState,
@@ -86,7 +84,8 @@ function EntityCreateSave({
     );
 
     const waitForPublishToFinish = (logTokenVal: string) => {
-        resetFormState(status);
+        updateFormStatus(status);
+
         const subscription = startSubscription(
             supabaseClient.from(
                 `${TABLES.PUBLICATIONS}:draft_id=eq.${draftId}`
@@ -150,7 +149,7 @@ function EntityCreateSave({
     const save = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
 
-        resetFormState(status);
+        updateFormStatus(status);
 
         const response = await createPublication(
             draftId,

@@ -24,6 +24,7 @@ import {
     EntityFormState,
     FormStatus,
     useFormStateStore_setFormState,
+    useFormStateStore_updateStatus,
 } from 'stores/FormState';
 
 interface Props {
@@ -52,10 +53,7 @@ function CaptureGenerateButton({
 
     const setFormState = useFormStateStore_setFormState();
 
-    const resetFormState = useZustandStore<
-        EntityFormState,
-        EntityFormState['resetFormState']
-    >(formStateStoreName, (state) => state.resetFormState);
+    const updateFormStatus = useFormStateStore_updateStatus();
 
     // Details Form Store
     const entityName = useDetailsForm_details_entityName();
@@ -69,7 +67,7 @@ function CaptureGenerateButton({
 
     const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
-        resetFormState(FormStatus.GENERATING);
+        updateFormStatus(FormStatus.GENERATING);
 
         if (
             isEmpty(endpointConfigData) ||

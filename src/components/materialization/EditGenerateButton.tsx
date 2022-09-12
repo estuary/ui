@@ -29,6 +29,7 @@ import {
     EntityFormState,
     FormStatus,
     useFormStateStore_setFormState,
+    useFormStateStore_updateStatus,
 } from 'stores/FormState';
 import { ResourceConfigState } from 'stores/ResourceConfig';
 
@@ -71,10 +72,7 @@ function MaterializeGenerateButton({
 
     const setFormState = useFormStateStore_setFormState();
 
-    const resetFormState = useZustandStore<
-        EntityFormState,
-        EntityFormState['resetFormState']
-    >(formStateStoreName, (state) => state.resetFormState);
+    const updateFormStatus = useFormStateStore_updateStatus();
 
     // Resource Config Store
     const resourceConfig = useZustandStore<
@@ -89,7 +87,7 @@ function MaterializeGenerateButton({
 
     const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
-        resetFormState(FormStatus.GENERATING);
+        updateFormStatus(FormStatus.GENERATING);
 
         if (
             resourceConfigHasErrors ||

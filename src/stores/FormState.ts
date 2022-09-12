@@ -38,6 +38,7 @@ export interface EntityFormState {
     displayValidation: boolean;
 
     status: FormStatus;
+    updateStatus: (status: FormStatus) => void;
 
     logToken: string | null;
     showLogs: boolean;
@@ -51,8 +52,6 @@ export interface EntityFormState {
     // Form State
     formState: FormState;
     setFormState: (data: Partial<FormState>) => void;
-    // TODO: Rename to evaluateFormState or updateFormState.
-    resetFormState: (status: FormStatus) => void;
 
     // Form Status
     isIdle: boolean;
@@ -138,7 +137,7 @@ const getInitialState = (
         );
     },
 
-    resetFormState: (status) => {
+    updateStatus: (status) => {
         set(
             produce((state: EntityFormState) => {
                 state.formState = { ...initialFormState };
@@ -147,7 +146,7 @@ const getInitialState = (
                 state.isActive = formActive(status);
             }),
             false,
-            'Form State Reset'
+            'Form Status Updated'
         );
     },
 
@@ -249,5 +248,14 @@ export const useFormStateStore_setFormState = () => {
     return useZustandStore<EntityFormState, EntityFormState['setFormState']>(
         storeName(workflow),
         (state) => state.setFormState
+    );
+};
+
+export const useFormStateStore_updateStatus = () => {
+    const workflow = useEntityWorkflow();
+
+    return useZustandStore<EntityFormState, EntityFormState['updateStatus']>(
+        storeName(workflow),
+        (state) => state.updateStatus
     );
 };
