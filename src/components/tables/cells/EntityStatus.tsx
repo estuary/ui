@@ -8,6 +8,7 @@ import {
     ShardDetailStore,
     ShardStatusColor,
     TaskShardDetails,
+    useShardDetail_shards,
 } from 'stores/ShardDetail';
 
 interface Props {
@@ -30,10 +31,7 @@ function EntityStatus({ name, shardDetailStoreName }: Props) {
         useState<ShardStatusColor>(defaultStatusColor);
     const [taskDisabled, setTaskDisabled] = useState<boolean>(false);
 
-    const shards = useZustandStore<
-        ShardDetailStore,
-        ShardDetailStore['shards']
-    >(shardDetailStoreName, shardDetailSelectors.shards);
+    const shards = useShardDetail_shards();
 
     const getTaskShards = useZustandStore<
         ShardDetailStore,

@@ -28,7 +28,11 @@ import { Shard } from 'data-plane-gateway/types/shard_client';
 import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
 import { MouseEvent, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { shardDetailSelectors, ShardDetailStore } from 'stores/ShardDetail';
+import {
+    shardDetailSelectors,
+    ShardDetailStore,
+    useShardDetail_shards,
+} from 'stores/ShardDetail';
 import { EntityWithCreateWorkflow } from 'types';
 
 interface Props {
@@ -47,10 +51,7 @@ function ShardInformation({ shardDetailStoreName, entityType }: Props) {
 
     const [taskShards, setTaskShards] = useState<Shard[]>([]);
 
-    const shards = useZustandStore<
-        ShardDetailStore,
-        ShardDetailStore['shards']
-    >(shardDetailStoreName, shardDetailSelectors.shards);
+    const shards = useShardDetail_shards();
 
     const getTaskShards = useZustandStore<
         ShardDetailStore,

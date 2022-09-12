@@ -1,13 +1,15 @@
+import { useEntityType } from 'context/EntityContext';
 import {
     errorMain,
     SemanticColor,
     successMain,
     warningMain,
 } from 'context/Theme';
-import { ShardDetailStoreNames } from 'context/Zustand';
+import { ShardDetailStoreNames, useZustandStore } from 'context/Zustand';
 import { ReplicaStatusCode } from 'data-plane-gateway/types/gen/consumer/protocol/consumer';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import produce from 'immer';
+import { ENTITY } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
 import create, { StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -392,4 +394,26 @@ export const shardDetailSelectors = {
         state.getShardStatusMessageId,
     evaluateShardProcessingState: (state: ShardDetailStore) =>
         state.evaluateShardProcessingState,
+};
+
+// Selector Hooks
+const storeName = (entityType: ENTITY): ShardDetailStoreNames => {
+    switch (entityType) {
+        case ENTITY.CAPTURE:
+            return ShardDetailStoreNames.CAPTURE;
+        case ENTITY.MATERIALIZATION:
+            return ShardDetailStoreNames.MATERIALIZATION;
+        default: {
+            throw new Error('Invalid ShardDetail store name');
+        }
+    }
+};
+
+export const useShardDetail_shards = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<ShardDetailStore, ShardDetailStore['shards']>(
+        storeName(entityType),
+        (state) => state.shards
+    );
 };
