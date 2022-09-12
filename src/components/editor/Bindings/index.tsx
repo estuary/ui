@@ -15,17 +15,10 @@ function BindingsMultiEditor({
 }: Props) {
     return (
         <>
-            <CollectionSelector
-                resourceConfigStoreName={resourceConfigStoreName}
-                readOnly={readOnly}
-            />
+            <CollectionSelector readOnly={readOnly} />
 
             <ListAndDetails
-                list={
-                    <BindingSelector
-                        resourceConfigStoreName={resourceConfigStoreName}
-                    />
-                }
+                list={<BindingSelector />}
                 details={
                     <BindingsEditor
                         resourceConfigStoreName={resourceConfigStoreName}

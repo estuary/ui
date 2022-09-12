@@ -57,6 +57,7 @@ import {
     ResourceConfigState,
     useResourceConfig_preFillCollections,
     useResourceConfig_resourceConfig,
+    useResourceConfig_setResourceConfig,
 } from 'stores/ResourceConfig';
 import { ENTITY, JsonFormsData, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
@@ -275,17 +276,10 @@ function EntityEdit({
         (state) => state.setResourceSchema
     );
 
-    const setResourceConfig = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['setResourceConfig']
-    >(
-        resourceConfigStoreName ?? ResourceConfigStoreNames.MATERIALIZATION,
-        (state) => state.setResourceConfig
-    );
+    const resourceConfig = useResourceConfig_resourceConfig();
+    const setResourceConfig = useResourceConfig_setResourceConfig();
 
     const preFillCollections = useResourceConfig_preFillCollections();
-
-    const resourceConfig = useResourceConfig_resourceConfig();
 
     const { draftSpecs, isValidating: isValidatingDraftSpecs } = useDraftSpecs(
         editDraftId,

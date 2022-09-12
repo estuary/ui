@@ -1,24 +1,19 @@
 import { Autocomplete, Box, TextField, Typography } from '@mui/material';
-import { ResourceConfigStoreNames, useZustandStore } from 'context/Zustand';
 import useLiveSpecs from 'hooks/useLiveSpecs';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useFormStateStore_messagePrefix } from 'stores/FormState';
 import {
-    ResourceConfigState,
     useResourceConfig_collections,
+    useResourceConfig_setResourceConfig,
 } from 'stores/ResourceConfig';
 import useConstant from 'use-constant';
 
 interface Props {
-    resourceConfigStoreName: ResourceConfigStoreNames;
     readOnly?: boolean;
 }
 
-function CollectionPicker({
-    resourceConfigStoreName,
-    readOnly = false,
-}: Props) {
+function CollectionPicker({ readOnly = false }: Props) {
     const intl = useIntl();
     const collectionsLabel = useConstant(() =>
         intl.formatMessage({
@@ -35,10 +30,7 @@ function CollectionPicker({
     // Resource Config Store
     const collections = useResourceConfig_collections();
 
-    const setResourceConfig = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['setResourceConfig']
-    >(resourceConfigStoreName, (state) => state.setResourceConfig);
+    const setResourceConfig = useResourceConfig_setResourceConfig();
 
     const handlers = {
         updateCollections: (event: React.SyntheticEvent, value: any) => {

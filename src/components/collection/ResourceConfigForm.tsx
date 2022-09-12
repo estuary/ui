@@ -17,6 +17,7 @@ import {
 import {
     ResourceConfigState,
     useResourceConfig_resourceConfig,
+    useResourceConfig_setResourceConfig,
 } from 'stores/ResourceConfig';
 
 type Props = {
@@ -33,12 +34,8 @@ function ResourceConfigForm({
     const name = useRef(collectionName);
 
     // Resource Config Store
-    const setConfig = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['setResourceConfig']
-    >(resourceConfigStoreName, (state) => state.setResourceConfig);
-
     const resourceConfig = useResourceConfig_resourceConfig();
+    const setConfig = useResourceConfig_setResourceConfig();
 
     const formData = resourceConfig[collectionName].data;
 
