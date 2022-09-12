@@ -28,7 +28,10 @@ import {
     useFormStateStore_setFormState,
     useFormStateStore_updateStatus,
 } from 'stores/FormState';
-import { ResourceConfigState } from 'stores/ResourceConfig';
+import {
+    ResourceConfigState,
+    useResourceConfig_resourceConfig,
+} from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
 
 interface Props {
@@ -68,10 +71,7 @@ function MaterializeGenerateButton({
     const updateFormStatus = useFormStateStore_updateStatus();
 
     // Resource Config Store
-    const resourceConfig = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['resourceConfig']
-    >(resourceConfigStoreName, (state) => state.resourceConfig);
+    const resourceConfig = useResourceConfig_resourceConfig();
 
     const resourceConfigHasErrors = useZustandStore<
         ResourceConfigState,

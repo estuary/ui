@@ -14,7 +14,10 @@ import {
     useFormStateStore_displayValidation,
     useFormStateStore_isActive,
 } from 'stores/FormState';
-import { ResourceConfigState } from 'stores/ResourceConfig';
+import {
+    ResourceConfigState,
+    useResourceConfig_resourceConfig,
+} from 'stores/ResourceConfig';
 
 type Props = {
     collectionName: string;
@@ -35,10 +38,7 @@ function ResourceConfigForm({
         ResourceConfigState['setResourceConfig']
     >(resourceConfigStoreName, (state) => state.setResourceConfig);
 
-    const resourceConfig = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['resourceConfig']
-    >(resourceConfigStoreName, (state) => state.resourceConfig);
+    const resourceConfig = useResourceConfig_resourceConfig();
 
     const formData = resourceConfig[collectionName].data;
 
