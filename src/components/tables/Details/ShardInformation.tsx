@@ -19,18 +19,13 @@ import ExternalLink from 'components/shared/ExternalLink';
 import ShardErrors from 'components/tables/Details/ShardErrors';
 import StatusIndicatorAndLabel from 'components/tables/Details/StatusIndicatorAndLabel';
 import { slate } from 'context/Theme';
-import {
-    ShardDetailStoreNames,
-    useZustandStore,
-    UseZustandStore,
-} from 'context/Zustand';
+import { ShardDetailStoreNames, UseZustandStore } from 'context/Zustand';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
 import { MouseEvent, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
-    shardDetailSelectors,
-    ShardDetailStore,
+    useShardDetail_getTaskShards,
     useShardDetail_shards,
 } from 'stores/ShardDetail';
 import { EntityWithCreateWorkflow } from 'types';
@@ -53,10 +48,7 @@ function ShardInformation({ shardDetailStoreName, entityType }: Props) {
 
     const shards = useShardDetail_shards();
 
-    const getTaskShards = useZustandStore<
-        ShardDetailStore,
-        ShardDetailStore['getTaskShards']
-    >(shardDetailStoreName, shardDetailSelectors.getTaskShards);
+    const getTaskShards = useShardDetail_getTaskShards();
 
     const specs = useEditorStore_specs<LiveSpecsQuery_spec>({
         localScope: true,

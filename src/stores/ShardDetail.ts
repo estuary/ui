@@ -426,3 +426,12 @@ export const useShardDetail_setShards = () => {
         (state) => state.setShards
     );
 };
+
+export const useShardDetail_getTaskShards = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<ShardDetailStore, ShardDetailStore['getTaskShards']>(
+        storeName(entityType),
+        (state) => state.getTaskShards
+    );
+};
