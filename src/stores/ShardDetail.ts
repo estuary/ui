@@ -453,3 +453,12 @@ export const useShardDetail_getTaskStatusColor = () => {
         ShardDetailStore['getTaskStatusColor']
     >(storeName(entityType), (state) => state.getTaskStatusColor);
 };
+
+export const useShardDetail_getShardDetails = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ShardDetailStore,
+        ShardDetailStore['getShardDetails']
+    >(storeName(entityType), (state) => state.getShardDetails);
+};

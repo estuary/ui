@@ -91,10 +91,7 @@ function ShardInformation({ shardDetailStoreName, entityType }: Props) {
 
     return taskShards.length > 0 ? (
         <>
-            <ShardErrors
-                shards={taskShards}
-                shardDetailStoreName={shardDetailStoreName}
-            />
+            <ShardErrors shards={taskShards} />
 
             <Grid item xs={12}>
                 <TableContainer>
