@@ -1,4 +1,4 @@
-import { useEntityType } from 'components/shared/Entity/EntityContext';
+import { useEntityType } from 'context/EntityContext';
 import { useLocalZustandStore } from 'context/LocalZustand';
 import {
     EditorStoreNames,
