@@ -3,16 +3,16 @@ import DetailsErrors from 'components/shared/Entity/ValidationErrorSummary/Detai
 import EndpointConfigErrors from 'components/shared/Entity/ValidationErrorSummary/EndpointConfigErrors';
 import NoConnectorError from 'components/shared/Entity/ValidationErrorSummary/NoConnectorError';
 import ResourceConfigErrors from 'components/shared/Entity/ValidationErrorSummary/ResourceConfigErrors';
-import { ResourceConfigStoreNames } from 'context/Zustand';
+import { useEntityType } from 'context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { FormattedMessage } from 'react-intl';
 import { useFormStateStore_displayValidation } from 'stores/FormState';
+import { ENTITY } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
-    resourceConfigStoreName?: ResourceConfigStoreNames;
     ErrorComponent?: any | boolean;
     hideIcon?: boolean;
     headerMessageId?: string;
@@ -20,12 +20,13 @@ interface Props {
 }
 
 function ValidationErrorSummary({
-    resourceConfigStoreName,
     headerMessageId,
     hideIcon,
     ErrorComponent,
     errorsExist,
 }: Props) {
+    const entityType = useEntityType();
+
     const connectorID = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
     const displayValidation = useFormStateStore_displayValidation();
@@ -47,8 +48,10 @@ function ValidationErrorSummary({
                 ) : hasLength(connectorID) ? (
                     <>
                         <DetailsErrors />
+
                         <EndpointConfigErrors />
-                        {resourceConfigStoreName ? (
+
+                        {entityType === ENTITY.MATERIALIZATION ? (
                             <ResourceConfigErrors />
                         ) : null}
                     </>

@@ -383,3 +383,12 @@ export const useResourceConfig_stateChanged = () => {
         ResourceConfigState['stateChanged']
     >(storeName(entityType), (state) => state.stateChanged);
 };
+
+export const useResourceConfig_resetState = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['resetState']
+    >(storeName(entityType), (state) => state.resetState);
+};

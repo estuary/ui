@@ -10,7 +10,6 @@ import {
 } from '@mui/material';
 import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
 import { slate, stickyHeaderIndex, tableBorderSx } from 'context/Theme';
-import { ResourceConfigStoreNames } from 'context/Zustand';
 import { ReactNode } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useFormStateStore_isActive } from 'stores/FormState';
@@ -22,7 +21,6 @@ interface Props {
     SaveButton: ReactNode;
     heading: ReactNode;
     formErrorsExist: boolean;
-    resourceConfigStoreName?: ResourceConfigStoreNames;
 }
 
 export const buttonSx: SxProps<Theme> = { ml: 1 };
@@ -44,7 +42,6 @@ function FooHeader({
     SaveButton,
     heading,
     formErrorsExist,
-    resourceConfigStoreName,
 }: Props) {
     const formActive = useFormStateStore_isActive();
 
@@ -97,10 +94,7 @@ function FooHeader({
             </Collapse>
 
             <Box sx={{ maxHeight: 200, overflowY: 'auto' }}>
-                <ValidationErrorSummary
-                    errorsExist={formErrorsExist}
-                    resourceConfigStoreName={resourceConfigStoreName}
-                />
+                <ValidationErrorSummary errorsExist={formErrorsExist} />
             </Box>
         </Stack>
     );

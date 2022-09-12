@@ -10,7 +10,6 @@ import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityEdit from 'components/shared/Entity/Edit';
 import FooHeader from 'components/shared/Entity/Header';
 import PageContainer from 'components/shared/PageContainer';
-import { ResourceConfigStoreNames, useZustandStore } from 'context/Zustand';
 import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { useEffect } from 'react';
@@ -36,13 +35,11 @@ import {
     useFormStateStore_setFormState,
 } from 'stores/FormState';
 import {
-    ResourceConfigState,
+    useResourceConfig_resetState,
     useResourceConfig_resourceConfigErrorsExist,
     useResourceConfig_stateChanged,
 } from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
-
-const resourceConfigStoreName = ResourceConfigStoreNames.MATERIALIZATION;
 
 function MaterializationEdit() {
     const navigate = useNavigate();
@@ -84,10 +81,7 @@ function MaterializationEdit() {
     const resourceConfigErrorsExist =
         useResourceConfig_resourceConfigErrorsExist();
 
-    const resetResourceConfigState = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['resetState']
-    >(resourceConfigStoreName, (state) => state.resetState);
+    const resetResourceConfigState = useResourceConfig_resetState();
 
     // Reset the catalog if the connector changes
     useEffect(() => {
@@ -194,7 +188,6 @@ function MaterializationEdit() {
                             endpointConfigErrorsExist ||
                             resourceConfigErrorsExist
                         }
-                        resourceConfigStoreName={resourceConfigStoreName}
                     />
                 }
                 callFailed={helpers.callFailed}
