@@ -1,6 +1,6 @@
 import ResourceConfig from 'components/collection/ResourceConfig';
-import { ResourceConfigStoreNames, useZustandStore } from 'context/Zustand';
-import { ResourceConfigState } from 'stores/ResourceConfig';
+import { ResourceConfigStoreNames } from 'context/Zustand';
+import { useResourceConfig_currentCollection } from 'stores/ResourceConfig';
 
 interface Props {
     resourceConfigStoreName: ResourceConfigStoreNames;
@@ -8,10 +8,7 @@ interface Props {
 }
 
 function BindingsEditor({ resourceConfigStoreName, readOnly = false }: Props) {
-    const currentCollection = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['currentCollection']
-    >(resourceConfigStoreName, (state) => state.currentCollection);
+    const currentCollection = useResourceConfig_currentCollection();
 
     if (currentCollection) {
         return (

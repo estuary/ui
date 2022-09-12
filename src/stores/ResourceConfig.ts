@@ -302,3 +302,12 @@ export const useResourceConfig_collectionErrorsExist = () => {
         ResourceConfigState['collectionErrorsExist']
     >(storeName(entityType), (state) => state.collectionErrorsExist);
 };
+
+export const useResourceConfig_currentCollection = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['currentCollection']
+    >(storeName(entityType), (state) => state.currentCollection);
+};

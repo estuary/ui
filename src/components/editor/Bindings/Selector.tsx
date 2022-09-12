@@ -11,7 +11,10 @@ import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
 import { ResourceConfigStoreNames, useZustandStore } from 'context/Zustand';
 import { useEffect, useRef, useState } from 'react';
 import { useUnmount } from 'react-use';
-import { ResourceConfigState } from 'stores/ResourceConfig';
+import {
+    ResourceConfigState,
+    useResourceConfig_currentCollection,
+} from 'stores/ResourceConfig';
 
 interface Props {
     resourceConfigStoreName: ResourceConfigStoreNames;
@@ -28,10 +31,7 @@ const initialState = {
 function BindingSelector({ resourceConfigStoreName }: Props) {
     const onSelectTimeOut = useRef<number | null>(null);
 
-    const currentCollection = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['currentCollection']
-    >(resourceConfigStoreName, (state) => state.currentCollection);
+    const currentCollection = useResourceConfig_currentCollection();
 
     const setCurrentCollection = useZustandStore<
         ResourceConfigState,
