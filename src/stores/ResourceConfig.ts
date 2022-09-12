@@ -311,3 +311,12 @@ export const useResourceConfig_currentCollection = () => {
         ResourceConfigState['currentCollection']
     >(storeName(entityType), (state) => state.currentCollection);
 };
+
+export const useResourceConfig_setCurrentCollection = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['setCurrentCollection']
+    >(storeName(entityType), (state) => state.setCurrentCollection);
+};

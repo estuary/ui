@@ -14,6 +14,7 @@ import { useUnmount } from 'react-use';
 import {
     ResourceConfigState,
     useResourceConfig_currentCollection,
+    useResourceConfig_setCurrentCollection,
 } from 'stores/ResourceConfig';
 
 interface Props {
@@ -32,11 +33,7 @@ function BindingSelector({ resourceConfigStoreName }: Props) {
     const onSelectTimeOut = useRef<number | null>(null);
 
     const currentCollection = useResourceConfig_currentCollection();
-
-    const setCurrentCollection = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['setCurrentCollection']
-    >(resourceConfigStoreName, (state) => state.setCurrentCollection);
+    const setCurrentCollection = useResourceConfig_setCurrentCollection();
 
     const resourceConfig = useZustandStore<
         ResourceConfigState,
