@@ -23,7 +23,7 @@ import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useShardsList from 'hooks/useShardsList';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { shardDetailSelectors, ShardDetailStore } from 'stores/ShardDetail';
+import { useShardDetail_setShards } from 'stores/ShardDetail';
 import { ENTITY } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
 
@@ -179,10 +179,7 @@ function Rows({ data, showEntityStatus }: RowsProps) {
     // Shard Detail Store
     const shardDetailStoreName = ShardDetailStoreNames.MATERIALIZATION;
 
-    const setShards = useZustandStore<
-        ShardDetailStore,
-        ShardDetailStore['setShards']
-    >(shardDetailStoreName, shardDetailSelectors.setShards);
+    const setShards = useShardDetail_setShards();
 
     const { data: shardsData, mutate: mutateShardsList } = useShardsList(data);
 

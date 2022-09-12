@@ -417,3 +417,12 @@ export const useShardDetail_shards = () => {
         (state) => state.shards
     );
 };
+
+export const useShardDetail_setShards = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<ShardDetailStore, ShardDetailStore['setShards']>(
+        storeName(entityType),
+        (state) => state.setShards
+    );
+};
