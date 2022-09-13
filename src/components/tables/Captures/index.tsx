@@ -49,7 +49,7 @@ function CapturesTable() {
                     [
                         'catalog_name',
                         'last_pub_user_full_name',
-                        'title:connector_title->>en-US',
+                        'connector_title->>en-US',
                     ],
                     searchQuery,
                     columnToSort,
