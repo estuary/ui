@@ -1,6 +1,8 @@
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import BindingsMultiEditor from 'components/editor/Bindings';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
+import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { LiveSpecsExtQueryWithSpec } from 'hooks/useLiveSpecsExt';
 import { FormattedMessage } from 'react-intl';
 import {
     useResourceConfig_collectionErrorsExist,
@@ -9,9 +11,13 @@ import {
 
 interface Props {
     readOnly?: boolean;
+    editWorkflow?: {
+        initialSpec: LiveSpecsExtQueryWithSpec;
+        draftSpecs: DraftSpecQuery[];
+    };
 }
 
-function CollectionConfig({ readOnly = false }: Props) {
+function CollectionConfig({ readOnly = false, editWorkflow }: Props) {
     // Resource Config Store
     const resourceConfigHasErrors =
         useResourceConfig_resourceConfigErrorsExist();
@@ -30,7 +36,10 @@ function CollectionConfig({ readOnly = false }: Props) {
                 </>
             }
         >
-            <BindingsMultiEditor readOnly={readOnly} />
+            <BindingsMultiEditor
+                readOnly={readOnly}
+                editWorkflow={editWorkflow}
+            />
         </WrapperWithHeader>
     );
 }

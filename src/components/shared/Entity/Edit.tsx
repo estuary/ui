@@ -29,10 +29,9 @@ import useDraft, { DraftQuery } from 'hooks/useDraft';
 import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import {
     LiveSpecsExtQueryWithSpec,
-    useLiveSpecsExtByLastPubId,
     useLiveSpecsExtWithSpec,
 } from 'hooks/useLiveSpecsExt';
-import { isEmpty, isEqual } from 'lodash';
+import { isEmpty } from 'lodash';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -51,13 +50,6 @@ import {
     useFormStateStore_setFormState,
     useFormStateStore_status,
 } from 'stores/FormState';
-import {
-    ResourceConfigDictionary,
-    useResourceConfig_preFillCollections,
-    useResourceConfig_resourceConfig,
-    useResourceConfig_setResourceConfig,
-    useResourceConfig_setResourceSchema,
-} from 'stores/ResourceConfig';
 import { ENTITY, JsonFormsData, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
@@ -166,28 +158,28 @@ const initDraftToEdit = async (
     }
 };
 
-const evaluateResourceConfigEquality = (
-    resourceConfig: ResourceConfigDictionary,
-    queries: any[]
-) => {
-    const configEquality: boolean[] = queries.map((query) => {
-        let queriedResourceConfig: ResourceConfigDictionary = {};
+// const evaluateResourceConfigEquality = (
+//     resourceConfig: ResourceConfigDictionary,
+//     queries: any[]
+// ) => {
+//     const configEquality: boolean[] = queries.map((query) => {
+//         let queriedResourceConfig: ResourceConfigDictionary = {};
 
-        query.spec.bindings.forEach((binding: any) => {
-            queriedResourceConfig = {
-                ...queriedResourceConfig,
-                [binding.source]: {
-                    data: binding.resource,
-                    errors: [],
-                },
-            };
-        });
+//         query.spec.bindings.forEach((binding: any) => {
+//             queriedResourceConfig = {
+//                 ...queriedResourceConfig,
+//                 [binding.source]: {
+//                     data: binding.resource,
+//                     errors: [],
+//                 },
+//             };
+//         });
 
-        return isEqual(resourceConfig, queriedResourceConfig);
-    });
+//         return isEqual(resourceConfig, queriedResourceConfig);
+//     });
 
-    return configEquality.includes(true);
-};
+//     return configEquality.includes(true);
+// };
 
 // eslint-disable-next-line complexity
 function EntityEdit({
@@ -265,12 +257,12 @@ function EntityEdit({
 
     // Resource Config Store
     // TODO: Determine proper placement for this logic.
-    const setResourceSchema = useResourceConfig_setResourceSchema();
+    // const setResourceSchema = useResourceConfig_setResourceSchema();
 
-    const resourceConfig = useResourceConfig_resourceConfig();
-    const setResourceConfig = useResourceConfig_setResourceConfig();
+    // const resourceConfig = useResourceConfig_resourceConfig();
+    // const setResourceConfig = useResourceConfig_setResourceConfig();
 
-    const preFillCollections = useResourceConfig_preFillCollections();
+    // const preFillCollections = useResourceConfig_preFillCollections();
 
     const { draftSpecs, isValidating: isValidatingDraftSpecs } = useDraftSpecs(
         editDraftId,
@@ -329,10 +321,6 @@ function EntityEdit({
     }, [setDetails, initialSpec, initialConnectorTag]);
 
     const { connectorTag } = useConnectorTag(imageTag.id);
-    const { liveSpecs: liveSpecsByLastPub } = useLiveSpecsExtByLastPubId(
-        lastPubId,
-        entityType
-    );
 
     useEffect(() => {
         if (
@@ -353,54 +341,53 @@ function EntityEdit({
             setEndpointSchema(
                 connectorTag.endpoint_spec_schema as unknown as Schema
             );
-            setResourceSchema(
-                connectorTag.resource_spec_schema as unknown as Schema
-            );
+            // setResourceSchema(
+            //     connectorTag.resource_spec_schema as unknown as Schema
+            // );
 
             // We wanna make sure we do these after the schemas are set as
             //  as they are dependent on them.
-            if (
-                entityType === ENTITY.MATERIALIZATION &&
-                hasLength(draftSpecs)
-            ) {
-                if (isEmpty(resourceConfig)) {
-                    initialSpec.spec.bindings.forEach((binding: any) =>
-                        setResourceConfig(binding.source, {
-                            data: binding.resource,
-                            errors: [],
-                        })
-                    );
+            // if (
+            //     entityType === ENTITY.MATERIALIZATION &&
+            //     hasLength(draftSpecs)
+            // ) {
+            //     if (isEmpty(resourceConfig)) {
+            //         initialSpec.spec.bindings.forEach((binding: any) =>
+            //             setResourceConfig(binding.source, {
+            //                 data: binding.resource,
+            //                 errors: [],
+            //             })
+            //         );
 
-                    preFillCollections([initialSpec]);
-                } else {
-                    setDraftId(
-                        evaluateResourceConfigEquality(resourceConfig, [
-                            initialSpec,
-                            draftSpecs[0],
-                        ])
-                            ? editDraftId
-                            : null
-                    );
-                }
-            }
+            //         preFillCollections([initialSpec]);
+            //     } else {
+            //         setDraftId(
+            //             evaluateResourceConfigEquality(resourceConfig, [
+            //                 initialSpec,
+            //                 draftSpecs[0],
+            //             ])
+            //                 ? editDraftId
+            //                 : null
+            //         );
+            //     }
+            // }
 
             setFormState({ status: FormStatus.GENERATED });
         }
     }, [
         connectorTag,
-        liveSpecsByLastPub,
         initialSpec,
         initialConnectorTag,
-        entityType,
-        resourceConfig,
-        editDraftId,
+        // entityType,
+        // resourceConfig,
+        // editDraftId,
         formStatus,
-        draftSpecs,
-        preFillCollections,
-        setResourceConfig,
+        // draftSpecs,
+        // preFillCollections,
+        // setResourceConfig,
         setEndpointSchema,
-        setResourceSchema,
-        setDraftId,
+        // setResourceSchema,
+        // setDraftId,
         setFormState,
     ]);
 
@@ -412,7 +399,9 @@ function EntityEdit({
 
             {connectorTagsError ? (
                 <Error error={connectorTagsError} />
-            ) : isEmpty(initialSpec) || isEmpty(initialConnectorTag) ? null : (
+            ) : isEmpty(initialSpec) ||
+              draftSpecs.length === 0 ||
+              isEmpty(initialConnectorTag) ? null : (
                 <>
                     <Collapse in={formSubmitError !== null}>
                         {formSubmitError ? (
@@ -456,6 +445,7 @@ function EntityEdit({
                         <ErrorBoundryWrapper>
                             <CollectionConfig
                                 readOnly={readOnly.resourceConfigForm}
+                                editWorkflow={{ initialSpec, draftSpecs }}
                             />
                         </ErrorBoundryWrapper>
                     ) : null}
