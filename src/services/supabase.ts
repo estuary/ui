@@ -21,7 +21,7 @@ const supabaseSettings = {
 
 // Little helper string that fetches the name from open graph
 export const CONNECTOR_NAME = `title->>en-US`;
-export const CONNECTOR_RECOMMENDED = `open_graph->en-US->>recommended`;
+export const CONNECTOR_RECOMMENDED = `recommended`;
 export const CONNECTOR_TITLE = `title:connector_title->>en-US::text`;
 export const CONNECTOR_IMAGE = `title:connector_logo_url->>en-US::text`;
 

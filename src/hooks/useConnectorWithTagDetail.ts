@@ -26,7 +26,6 @@ export interface ConnectorWithTagDetailQuery {
     ['connector_tags.protocol']: undefined;
     ['connector_tags.image_tag']: undefined;
     [CONNECTOR_NAME]: undefined;
-    [CONNECTOR_RECOMMENDED]: undefined;
 }
 
 export const CONNECTOR_WITH_TAG_QUERY = `
