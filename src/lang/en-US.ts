@@ -310,7 +310,7 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
 const LogsDialog: ResolvedIntlConfig['messages'] = {
     'logs.default': `Waiting for logs...`,
     'logs.tooManyEmpty': `Logs for this build may have ended. Click ${CTAs['cta.restart']} to check for new logs.`,
-    'logs.networkFailure': `We are having issues fetching logs. There may be network issues. Click ${CTAs['cta.restart']} to try again.`,
+    'logs.networkFailure': `We encountered a problem retrieving logs. Please check your network connection and click ${CTAs['cta.restart']} to try again.`,
 };
 
 const AdminPage: ResolvedIntlConfig['messages'] = {
@@ -431,7 +431,7 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.bindingsConfig.noRowsTitle': `No selection made`,
 
     'entityCreate.connector.label': `${CommonMessages['connector.label']} Search`,
-    'entityCreate.errors.missingDraftId': `Missing draft id`,
+    'entityCreate.errors.missingDraftId': `Missing Draft ID.`,
 };
 
 const EntityEdit: ResolvedIntlConfig['messages'] = {
@@ -609,7 +609,7 @@ const OAuth: ResolvedIntlConfig['messages'] = {
 };
 
 const Supabase: ResolvedIntlConfig['messages'] = {
-    'supabase.poller.failed': `Failed to get the status from the backend. There might be an issue with the network connection.`,
+    'supabase.poller.failed': `We encountered a problem retrieving the status of this action. Please check your network connection and try again.`,
 };
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {
