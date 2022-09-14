@@ -187,7 +187,7 @@ function EntityCreateSave({
                 });
             }
         } else {
-            LogRocket.log('Entity : Create : Missing draftId');
+            LogRocket.track('Entity:Create:Missing draftId');
             onFailure({
                 error: {
                     title: `${messagePrefix}.save.failure.errorTitle`,
