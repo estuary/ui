@@ -1,10 +1,5 @@
 import { PostgrestError, PostgrestFilterBuilder } from '@supabase/postgrest-js';
-import {
-    createClient,
-    RealtimeSubscription,
-    User,
-} from '@supabase/supabase-js';
-import { SupabaseQueryBuilder } from '@supabase/supabase-js/dist/module/lib/SupabaseQueryBuilder';
+import { createClient, User } from '@supabase/supabase-js';
 import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 import { JobStatus } from 'types';
@@ -220,11 +215,16 @@ export const deleteSupabase = (
     return makeCall();
 };
 
-export const endSubscription = (subscription: RealtimeSubscription) => {
-    return supabaseClient
-        .removeSubscription(subscription)
-        .then(() => {})
-        .catch(() => {});
+export const jobSucceeded = (jobStatus?: JobStatus) => {
+    if (jobStatus) {
+        if (jobStatus.type !== 'queued') {
+            return jobStatus.type === 'success';
+        } else {
+            return null;
+        }
+    } else {
+        return null;
+    }
 };
 
 // START: Poller
@@ -233,10 +233,7 @@ const INTERVAL_MAX = 5000;
 const INTERVAL_INCREMENT = 500;
 export const JOB_STATUS_POLLER_ERROR = 'supabase.poller.failed';
 const cleanUp = (pollerTimeout: PollerTimeout) => {
-    console.log('clean  up ', pollerTimeout);
     if (pollerTimeout) {
-        console.log('clean  up firing');
-
         window.clearInterval(pollerTimeout);
     }
 };
@@ -305,57 +302,58 @@ export const jobStatusPoller = (
 };
 // END: Poller
 
-export const startSubscription = (
-    query: SupabaseQueryBuilder<any>,
-    success: Function,
-    failure: Function,
-    keepSubscription?: boolean
-) => {
-    const subscription = query
-        .on('*', async (payload: any) => {
-            const response = payload.new
-                ? payload.new
-                : // TODO (typing) during manual testing I have seen record be in the response
-                //      even though the type says it is not there. Needs more research
-                // eslint-disable-next-line @typescript-eslint/dot-notation
-                payload['record']
-                ? // eslint-disable-next-line @typescript-eslint/dot-notation
-                  payload['record']
-                : null;
+// DO NOT USE WITHOUT TALKING TO SOMEONE
+// TODO (Realtime) - fix the "hanging" isue where realtime does not always come back with a response
+//  We have found some weird issues with the RealTime stuff
+//  Eventually we want to go back to this but need to research the issues first.
 
-            if (response) {
-                if (response.job_status.type !== 'queued') {
-                    if (response.job_status.type === 'success') {
-                        success(response);
-                    } else {
-                        failure(response);
-                    }
+// export const endSubscription = (subscription: RealtimeSubscription) => {
+//     return supabaseClient
+//         .removeSubscription(subscription)
+//         .then(() => {})
+//         .catch(() => {});
+// };
 
-                    if (!keepSubscription) {
-                        await endSubscription(subscription);
-                    }
-                }
-            } else {
-                // TODO (error handling) Do not know how this path could happen but wanted to be safe
-                failure(payload);
-            }
-        })
-        .subscribe();
+// export const startSubscription = (
+//     query: SupabaseQueryBuilder<any>,
+//     success: Function,
+//     failure: Function,
+//     keepSubscription?: boolean
+// ) => {
+//     const subscription = query
+//         .on('*', async (payload: any) => {
+//             const response = payload.new
+//                 ? payload.new
+//                 : // TODO (typing) during manual testing I have seen record be in the response
+//                 //      even though the type says it is not there. Needs more research
+//                 // eslint-disable-next-line @typescript-eslint/dot-notation
+//                 payload['record']
+//                 ? // eslint-disable-next-line @typescript-eslint/dot-notation
+//                   payload['record']
+//                 : null;
 
-    return subscription;
-};
+//             if (response) {
+//                 if (response.job_status.type !== 'queued') {
+//                     if (response.job_status.type === 'success') {
+//                         success(response);
+//                     } else {
+//                         failure(response);
+//                     }
 
-export const jobSucceeded = (jobStatus?: JobStatus) => {
-    if (jobStatus) {
-        if (jobStatus.type !== 'queued') {
-            return jobStatus.type === 'success';
-        } else {
-            return null;
-        }
-    } else {
-        return null;
-    }
-};
+//                     if (!keepSubscription) {
+//                         await endSubscription(subscription);
+//                     }
+//                 }
+//             } else {
+//                 // TODO (error handling) Do not know how this path could happen but wanted to be safe
+//                 failure(payload);
+//             }
+//         })
+//         .subscribe();
+
+//     return subscription;
+// };
+// DO NOT USE WITHOUT TALKING TO SOMEONE
 
 // Invoke supabase edge functions.
 export function invokeSupabase<T>(fn: FUNCTIONS, body: any) {
