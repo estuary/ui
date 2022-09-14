@@ -18,7 +18,7 @@ import {
     useLiveSpecsExtWithOutSpec,
 } from 'hooks/useLiveSpecsExt';
 import { isEmpty, isEqual } from 'lodash';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { useDetailsForm_connectorImage } from 'stores/DetailsForm';
 import {
     ResourceConfigDictionary,
@@ -29,7 +29,6 @@ import {
     useResourceConfig_setResourceSchema,
 } from 'stores/ResourceConfig';
 import { ENTITY, Schema } from 'types';
-import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     readOnly?: boolean;
@@ -85,6 +84,7 @@ function BindingsMultiEditor({ readOnly = false, editWorkflow }: Props) {
     const setResourceConfig = useResourceConfig_setResourceConfig();
 
     const prefillEmptyCollections = useResourceConfig_preFillEmptyCollections();
+
     const preFillCollections = useResourceConfig_preFillCollections();
 
     const { liveSpecs } = useLiveSpecsExtWithOutSpec(
@@ -98,70 +98,157 @@ function BindingsMultiEditor({ readOnly = false, editWorkflow }: Props) {
 
     const { connectorTag } = useConnectorTag(imageTag.id);
 
-    const rcKeys = Object.keys(resourceConfig).length;
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const computedResourceConfig = useMemo(() => resourceConfig, [rcKeys]);
-
     useEffect(() => {
+        console.log('1: outer');
         if (connectorTag?.resource_spec_schema) {
+            console.log('1: inner');
+
             setResourceSchema(
                 connectorTag.resource_spec_schema as unknown as Schema
             );
+        }
+    }, [setResourceSchema, connectorTag?.resource_spec_schema]);
 
-            // We wanna make sure we do these after the schemas are set as
-            //  as they are dependent on them.
-            if (
-                workflow === 'capture_create' ||
-                workflow === 'materialization_create'
-            ) {
-                if (liveSpecs.length > 0) {
-                    prefillEmptyCollections(liveSpecs);
-                } else if (liveSpecsByLastPub.length > 0) {
-                    prefillEmptyCollections(liveSpecsByLastPub);
-                }
-            } else if (workflow === 'materialization_edit' && editWorkflow) {
-                const { initialSpec, draftSpecs } = editWorkflow;
+    useEffect(() => {
+        console.log('2: outer');
+        if (
+            workflow === 'capture_create' ||
+            workflow === 'materialization_create'
+        ) {
+            console.log('2: inner');
 
-                if (hasLength(draftSpecs)) {
-                    if (isEmpty(resourceConfig)) {
-                        initialSpec.spec.bindings.forEach((binding: any) =>
-                            setResourceConfig(binding.source, {
-                                data: binding.resource,
-                                errors: [],
-                            })
-                        );
-
-                        preFillCollections([initialSpec]);
-                    } else {
-                        setDraftId(
-                            evaluateResourceConfigEquality(resourceConfig, [
-                                initialSpec,
-                                draftSpecs[0],
-                            ])
-                                ? editDraftId
-                                : null
-                        );
-                    }
-                }
+            if (liveSpecs.length > 0) {
+                prefillEmptyCollections(liveSpecs);
+            } else if (liveSpecsByLastPub.length > 0) {
+                prefillEmptyCollections(liveSpecsByLastPub);
             }
         }
+    }, [prefillEmptyCollections, liveSpecs, liveSpecsByLastPub, workflow]);
+
+    useEffect(() => {
+        console.log('3: outer');
+        if (editWorkflow && isEmpty(resourceConfig)) {
+            console.log('3: inner');
+
+            const { initialSpec } = editWorkflow;
+
+            initialSpec.spec.bindings.forEach((binding: any) =>
+                setResourceConfig(binding.source, {
+                    data: binding.resource,
+                    errors: [],
+                })
+            );
+
+            preFillCollections([initialSpec]);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [
-        preFillCollections,
-        prefillEmptyCollections,
-        setDraftId,
-        setResourceConfig,
-        setResourceSchema,
-        computedResourceConfig,
-        connectorTag?.resource_spec_schema,
-        editDraftId,
-        // liveSpecs,
-        // liveSpecsByLastPub,
-        // resourceConfig,
-        // workflow,
-        // editWorkflow,
-    ]);
+    }, []);
+
+    useEffect(() => {
+        console.log('4: outer');
+        if (editWorkflow && !isEmpty(resourceConfig)) {
+            console.log('4: inner');
+
+            const { initialSpec, draftSpecs } = editWorkflow;
+
+            setDraftId(
+                evaluateResourceConfigEquality(resourceConfig, [
+                    initialSpec,
+                    draftSpecs[0],
+                ])
+                    ? editDraftId
+                    : null
+            );
+        }
+    }, [setDraftId, editDraftId, editWorkflow, resourceConfig]);
+
+    // useEffect(() => {
+    //     if (workflow === 'materialization_edit' && editWorkflow) {
+    //         const { initialSpec, draftSpecs } = editWorkflow;
+
+    //         if (hasLength(draftSpecs)) {
+    //             if (isEmpty(resourceConfig)) {
+    //                 initialSpec.spec.bindings.forEach((binding: any) =>
+    //                     setResourceConfig(binding.source, {
+    //                         data: binding.resource,
+    //                         errors: [],
+    //                     })
+    //                 );
+
+    //                 preFillCollections([initialSpec]);
+    //             } else {
+    //                 setDraftId(
+    //                     evaluateResourceConfigEquality(resourceConfig, [
+    //                         initialSpec,
+    //                         draftSpecs[0],
+    //                     ])
+    //                         ? editDraftId
+    //                         : null
+    //                 );
+    //             }
+    //         }
+    //     }
+    // });
+
+    // useEffect(() => {
+    //     if (connectorTag?.resource_spec_schema) {
+    //         setResourceSchema(
+    //             connectorTag.resource_spec_schema as unknown as Schema
+    //         );
+
+    //         // We wanna make sure we do these after the schemas are set as
+    //         //  as they are dependent on them.
+    //         if (
+    //             workflow === 'capture_create' ||
+    //             workflow === 'materialization_create'
+    //         ) {
+    //             if (liveSpecs.length > 0) {
+    //                 prefillEmptyCollections(liveSpecs);
+    //             } else if (liveSpecsByLastPub.length > 0) {
+    //                 prefillEmptyCollections(liveSpecsByLastPub);
+    //             }
+    //         } else if (workflow === 'materialization_edit' && editWorkflow) {
+    //             const { initialSpec, draftSpecs } = editWorkflow;
+
+    //             if (hasLength(draftSpecs)) {
+    //                 if (isEmpty(resourceConfig)) {
+    //                     initialSpec.spec.bindings.forEach((binding: any) =>
+    //                         setResourceConfig(binding.source, {
+    //                             data: binding.resource,
+    //                             errors: [],
+    //                         })
+    //                     );
+
+    //                     preFillResourceConfigAndCollections([initialSpec]);
+    //                 } else {
+    //                     setDraftId(
+    //                         evaluateResourceConfigEquality(resourceConfig, [
+    //                             initialSpec,
+    //                             draftSpecs[0],
+    //                         ])
+    //                             ? editDraftId
+    //                             : null
+    //                     );
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [
+    //     preFillResourceConfigAndCollections,
+    //     prefillEmptyCollections,
+    //     setDraftId,
+    //     setResourceConfig,
+    //     setResourceSchema,
+    //     computedResourceConfig,
+    //     connectorTag?.resource_spec_schema,
+    //     editDraftId,
+    //     // liveSpecs,
+    //     // liveSpecsByLastPub,
+    //     // resourceConfig,
+    //     // workflow,
+    //     // editWorkflow,
+    // ]);
 
     return (
         <>

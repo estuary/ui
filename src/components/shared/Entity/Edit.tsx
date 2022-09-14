@@ -399,9 +399,7 @@ function EntityEdit({
 
             {connectorTagsError ? (
                 <Error error={connectorTagsError} />
-            ) : isEmpty(initialSpec) ||
-              draftSpecs.length === 0 ||
-              isEmpty(initialConnectorTag) ? null : (
+            ) : !editDraftId || draftSpecs.length === 0 ? null : (
                 <>
                     <Collapse in={formSubmitError !== null}>
                         {formSubmitError ? (
