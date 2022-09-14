@@ -8,6 +8,7 @@ import { SupabaseQueryBuilder } from '@supabase/supabase-js/dist/module/lib/Supa
 import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 import { JobStatus } from 'types';
+import { hasLength } from 'utils/misc-utils';
 
 if (
     !process.env.REACT_APP_SUPABASE_URL ||
@@ -80,7 +81,7 @@ export const supabaseClient = createClient(
     }
 );
 
-export const DEFAULT_POLLING_INTERVAL = 500;
+export const DEFAULT_POLLING_INTERVAL = 750;
 
 export const defaultTableFilter = <Data>(
     query: PostgrestFilterBuilder<Data>,
@@ -226,34 +227,83 @@ export const endSubscription = (subscription: RealtimeSubscription) => {
         .catch(() => {});
 };
 
-export const useJobStatusPoller = (initWait?: number) => {
-    const makeCall = (query: any, success: Function, failure: Function) => {
-        const makeApiCall = () => {
-            return query.then(
-                (payload: any) => {
-                    const response = payload.data[0] ?? null;
+// START: Poller
+type PollerTimeout = number | undefined;
+const INTERVAL_MAX = 5000;
+const INTERVAL_INCREMENT = 500;
+export const JOB_STATUS_POLLER_ERROR = 'supabase.poller.failed';
+const cleanUp = (pollerTimeout: PollerTimeout) => {
+    console.log('clean  up ', pollerTimeout);
+    if (pollerTimeout) {
+        console.log('clean  up firing');
 
-                    if (response && response.job_status.type !== 'queued') {
+        window.clearInterval(pollerTimeout);
+    }
+};
+
+export const jobStatusPoller = (
+    query: any,
+    success: Function,
+    failure: Function,
+    initWait?: number
+) => {
+    console.log('jobStatusPoller');
+    let pollerTimeout: PollerTimeout;
+    let interval = DEFAULT_POLLING_INTERVAL;
+    const makeApiCall = () => {
+        LogRocket.log('Poller : start ');
+
+        return query.throwOnError().then(
+            (payload: any) => {
+                LogRocket.log('Poller : response : ', payload);
+                cleanUp(pollerTimeout);
+
+                if (payload.error) {
+                    failure(handleFailure(payload.error));
+                } else {
+                    const response =
+                        (payload &&
+                            hasLength(payload.data) &&
+                            payload.data[0]) ??
+                        null;
+                    if (
+                        response?.job_status?.type &&
+                        response.job_status.type !== 'queued'
+                    ) {
+                        LogRocket.log(
+                            `Poller : response : ${response.job_status.type}`
+                        );
                         if (response.job_status.type === 'success') {
                             success(response);
                         } else {
                             failure(response);
                         }
                     } else {
-                        setTimeout(makeApiCall, DEFAULT_POLLING_INTERVAL * 4);
+                        interval =
+                            interval < INTERVAL_MAX
+                                ? interval + INTERVAL_INCREMENT
+                                : INTERVAL_MAX;
+                        pollerTimeout = window.setTimeout(
+                            makeApiCall,
+                            interval
+                        );
                     }
-                },
-                (error: unknown) => {
-                    handleFailure(error);
                 }
-            );
-        };
-
-        setTimeout(makeApiCall, initWait ?? DEFAULT_POLLING_INTERVAL * 2);
+            },
+            (error: unknown) => {
+                LogRocket.log('Poller : error : ', error);
+                cleanUp(pollerTimeout);
+                failure(handleFailure(JOB_STATUS_POLLER_ERROR));
+            }
+        );
     };
 
-    return makeCall;
+    pollerTimeout = window.setTimeout(
+        makeApiCall,
+        initWait ?? DEFAULT_POLLING_INTERVAL * 2
+    );
 };
+// END: Poller
 
 export const startSubscription = (
     query: SupabaseQueryBuilder<any>,
