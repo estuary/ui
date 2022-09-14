@@ -12,7 +12,7 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import LogRocket from 'logrocket';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
-import { jobStatusPoller, TABLES } from 'services/supabase';
+import { DEFAULT_FILTER, jobStatusPoller, TABLES } from 'services/supabase';
 import { useDetailsForm_details_description } from 'stores/DetailsForm';
 import { EntityFormState, FormStatus } from 'stores/FormState';
 import useNotificationStore, {
@@ -30,11 +30,11 @@ interface Props {
 
 const trackEvent = (logEvent: Props['logEvent'], payload: any) => {
     LogRocket.track(logEvent, {
-        id: payload.id,
-        draft_id: payload.draft_id,
-        dry_run: payload.dry_run,
-        logs_token: payload.logs_token,
-        status: payload.job_status?.type,
+        id: payload.id ?? DEFAULT_FILTER,
+        draft_id: payload.draft_id ?? DEFAULT_FILTER,
+        dry_run: payload.dry_run ?? DEFAULT_FILTER,
+        logs_token: payload.logs_token ?? DEFAULT_FILTER,
+        status: payload.job_status?.type ?? DEFAULT_FILTER,
     });
 };
 

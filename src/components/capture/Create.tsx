@@ -22,6 +22,7 @@ import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import {
+    DEFAULT_FILTER,
     jobStatusPoller,
     JOB_STATUS_POLLER_ERROR,
     TABLES,
@@ -45,11 +46,11 @@ const formStateStoreName = FormStateStoreNames.CAPTURE_CREATE;
 
 const trackEvent = (payload: any) => {
     LogRocket.track(CustomEvents.CAPTURE_DISCOVER, {
-        name: payload.capture_name,
-        id: payload.id,
-        draft_id: payload.draft_id,
-        logs_token: payload.logs_token,
-        status: payload.job_status?.type,
+        name: payload.capture_name ?? DEFAULT_FILTER,
+        id: payload.id ?? DEFAULT_FILTER,
+        draft_id: payload.draft_id ?? DEFAULT_FILTER,
+        logs_token: payload.logs_token ?? DEFAULT_FILTER,
+        status: payload.job_status?.type ?? DEFAULT_FILTER,
     });
 };
 
