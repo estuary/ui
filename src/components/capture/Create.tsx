@@ -194,7 +194,6 @@ function CaptureCreate() {
                 trackEvent(payload);
             },
             (payload: any) => {
-                console.log('error', payload);
                 if (payload.error === JOB_STATUS_POLLER_ERROR) {
                     helpers.jobFailed(payload.error);
                 } else {
