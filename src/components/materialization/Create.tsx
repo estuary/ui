@@ -1,4 +1,3 @@
-import { RealtimeSubscription } from '@supabase/supabase-js';
 import { authenticatedRoutes } from 'app/Authenticated';
 import { EditorStoreState } from 'components/editor/Store';
 import MaterializeGenerateButton from 'components/materialization/GenerateButton';
@@ -14,7 +13,6 @@ import {
     ResourceConfigStoreNames,
     useZustandStore,
 } from 'context/Zustand';
-import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useEffect } from 'react';
@@ -45,7 +43,6 @@ function MaterializationCreate() {
     const entityType = useEntityType();
 
     // Supabase
-    const supabaseClient = useClient();
     const { connectorTags } = useConnectorWithTagDetail(entityType);
     const hasConnectors = connectorTags.length > 0;
 
@@ -121,25 +118,12 @@ function MaterializationCreate() {
     };
 
     const helpers = {
-        callFailed: (formState: any, subscription?: RealtimeSubscription) => {
-            const setFailureState = () => {
-                setFormState({
-                    status: FormStatus.FAILED,
-                    exitWhenLogsClose: false,
-                    ...formState,
-                });
-            };
-
-            if (subscription) {
-                supabaseClient
-                    .removeSubscription(subscription)
-                    .then(() => {
-                        setFailureState();
-                    })
-                    .catch(() => {});
-            } else {
-                setFailureState();
-            }
+        callFailed: (formState: any) => {
+            setFormState({
+                status: FormStatus.FAILED,
+                exitWhenLogsClose: false,
+                ...formState,
+            });
         },
         exit: () => {
             resetState();
