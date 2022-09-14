@@ -120,7 +120,6 @@ function CaptureGenerateButton({
                 });
             }
 
-            subscription(draftsResponse.data[0].id);
             const discoverResponse = await discover(
                 entityName,
                 encryptedEndpointConfig.data,
@@ -135,6 +134,7 @@ function CaptureGenerateButton({
                     },
                 });
             }
+            subscription(draftsResponse.data[0].id);
 
             setFormState({
                 logToken: discoverResponse.data[0].logs_token,
