@@ -12,7 +12,7 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import LogRocket from 'logrocket';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
-import { TABLES, useJobStatusPoller } from 'services/supabase';
+import { jobStatusPoller, TABLES } from 'services/supabase';
 import { useDetailsForm_details_description } from 'stores/DetailsForm';
 import { EntityFormState, FormStatus } from 'stores/FormState';
 import useNotificationStore, {
@@ -34,7 +34,7 @@ const trackEvent = (logEvent: Props['logEvent'], payload: any) => {
         draft_id: payload.draft_id,
         dry_run: payload.dry_run,
         logs_token: payload.logs_token,
-        status: payload.job_status.type,
+        status: payload.job_status?.type,
     });
 };
 
@@ -96,7 +96,6 @@ function EntityCreateSave({
         notificationStoreSelectors.showNotification
     );
 
-    const jobStatusPoller = useJobStatusPoller();
     const waitForPublishToFinish = (
         logTokenVal: string,
         draftIdVal: string
@@ -173,31 +172,28 @@ function EntityCreateSave({
                 dryRun ?? false,
                 entityDescription
             );
-            const publicationsSubscription = waitForPublishToFinish(
-                response.data[0].logs_token,
-                draftId
-            );
             if (response.error) {
-                onFailure(
-                    {
-                        error: {
-                            title: `${messagePrefix}.save.failure.errorTitle`,
-                            error: response.error,
-                        },
+                onFailure({
+                    error: {
+                        title: `${messagePrefix}.save.failure.errorTitle`,
+                        error: response.error,
                     },
-                    publicationsSubscription
-                );
+                });
             } else {
+                waitForPublishToFinish(response.data[0].logs_token, draftId);
                 setFormState({
                     logToken: response.data[0].logs_token,
                     showLogs: true,
                 });
             }
         } else {
+            LogRocket.log('Entity : Create : Missing draftId');
             onFailure({
                 error: {
                     title: `${messagePrefix}.save.failure.errorTitle`,
-                    error: 'Missing draft id',
+                    error: intl.formatMessage({
+                        id: 'entityCreate.errors.missingDraftId',
+                    }),
                 },
             });
         }
