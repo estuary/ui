@@ -12,7 +12,7 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import LogRocket from 'logrocket';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
-import { endSubscription, startSubscription, TABLES } from 'services/supabase';
+import { DEFAULT_FILTER, jobStatusPoller, TABLES } from 'services/supabase';
 import { useDetailsForm_details_description } from 'stores/DetailsForm';
 import { EntityFormState, FormStatus } from 'stores/FormState';
 import useNotificationStore, {
@@ -30,11 +30,11 @@ interface Props {
 
 const trackEvent = (logEvent: Props['logEvent'], payload: any) => {
     LogRocket.track(logEvent, {
-        id: payload.id,
-        draft_id: payload.draft_id,
-        dry_run: payload.dry_run,
-        logs_token: payload.logs_token,
-        status: payload.job_status.type,
+        id: payload.id ?? DEFAULT_FILTER,
+        draft_id: payload.draft_id ?? DEFAULT_FILTER,
+        dry_run: payload.dry_run ?? DEFAULT_FILTER,
+        logs_token: payload.logs_token ?? DEFAULT_FILTER,
+        status: payload.job_status?.type ?? DEFAULT_FILTER,
     });
 };
 
@@ -96,66 +96,69 @@ function EntityCreateSave({
         notificationStoreSelectors.showNotification
     );
 
-    const waitForPublishToFinish = (logTokenVal: string) => {
+    const waitForPublishToFinish = (
+        logTokenVal: string,
+        draftIdVal: string
+    ) => {
         resetFormState(status);
-        const subscription = startSubscription(
-            supabaseClient.from(
-                `${TABLES.PUBLICATIONS}:draft_id=eq.${draftId}`
-            ),
+
+        jobStatusPoller(
+            supabaseClient
+                .from(TABLES.PUBLICATIONS)
+                .select(
+                    `
+                    job_status,
+                    logs_token,
+                    id
+                `
+                )
+                .match({
+                    draft_id: draftIdVal,
+                    logs_token: logTokenVal,
+                }),
             async (payload: any) => {
-                if (payload.logs_token === logTokenVal) {
-                    const formStatus = dryRun
-                        ? FormStatus.TESTED
-                        : FormStatus.SAVED;
+                const formStatus = dryRun
+                    ? FormStatus.TESTED
+                    : FormStatus.SAVED;
 
-                    setPubId(payload.id);
-                    setFormState({
-                        status: formStatus,
-                        exitWhenLogsClose: !dryRun,
-                    });
+                setPubId(payload.id);
+                setFormState({
+                    status: formStatus,
+                    exitWhenLogsClose: !dryRun,
+                });
 
-                    let description, title;
+                let description, title;
 
-                    if (!dryRun) {
-                        description = `${messagePrefix}.createNotification.desc`;
-                        title = `${messagePrefix}.createNotification.title`;
-                    } else {
-                        description = `${messagePrefix}.testNotification.desc`;
-                        title = `${messagePrefix}.testNotification.title`;
-                    }
-
-                    showNotification({
-                        description: intl.formatMessage({
-                            id: description,
-                        }),
-                        severity: 'success',
-                        title: intl.formatMessage({
-                            id: title,
-                        }),
-                    });
-
-                    trackEvent(logEvent, payload);
-
-                    await endSubscription(subscription);
+                if (!dryRun) {
+                    description = `${messagePrefix}.createNotification.desc`;
+                    title = `${messagePrefix}.createNotification.title`;
+                } else {
+                    description = `${messagePrefix}.testNotification.desc`;
+                    title = `${messagePrefix}.testNotification.title`;
                 }
+
+                showNotification({
+                    description: intl.formatMessage({
+                        id: description,
+                    }),
+                    severity: 'success',
+                    title: intl.formatMessage({
+                        id: title,
+                    }),
+                });
+
+                trackEvent(logEvent, payload);
             },
             async (payload: any) => {
-                if (payload.logs_token === logTokenVal) {
-                    trackEvent(logEvent, payload);
+                trackEvent(logEvent, payload);
 
-                    onFailure({
-                        error: {
-                            title: `${messagePrefix}.save.failedErrorTitle`,
-                        },
-                    });
-
-                    await endSubscription(subscription);
-                }
-            },
-            true
+                onFailure({
+                    error: {
+                        title: `${messagePrefix}.save.failedErrorTitle`,
+                    },
+                });
+            }
         );
-
-        return subscription;
     };
 
     const save = async (event: React.MouseEvent<HTMLElement>) => {
@@ -163,28 +166,35 @@ function EntityCreateSave({
 
         resetFormState(status);
 
-        const response = await createPublication(
-            draftId,
-            dryRun ?? false,
-            entityDescription
-        );
-        const publicationsSubscription = waitForPublishToFinish(
-            response.data[0].logs_token
-        );
-        if (response.error) {
-            onFailure(
-                {
+        if (draftId) {
+            const response = await createPublication(
+                draftId,
+                dryRun ?? false,
+                entityDescription
+            );
+            if (response.error) {
+                onFailure({
                     error: {
                         title: `${messagePrefix}.save.failure.errorTitle`,
                         error: response.error,
                     },
-                },
-                publicationsSubscription
-            );
+                });
+            } else {
+                waitForPublishToFinish(response.data[0].logs_token, draftId);
+                setFormState({
+                    logToken: response.data[0].logs_token,
+                    showLogs: true,
+                });
+            }
         } else {
-            setFormState({
-                logToken: response.data[0].logs_token,
-                showLogs: true,
+            LogRocket.track('Entity:Create:Missing draftId');
+            onFailure({
+                error: {
+                    title: `${messagePrefix}.save.failure.errorTitle`,
+                    error: intl.formatMessage({
+                        id: 'entityCreate.errors.missingDraftId',
+                    }),
+                },
             });
         }
     };
