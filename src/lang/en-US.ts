@@ -309,7 +309,8 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
 
 const LogsDialog: ResolvedIntlConfig['messages'] = {
     'logs.default': `Waiting for logs...`,
-    'logs.toManyEmpty': `Logs for this build may have ended. Click ${CTAs['cta.restart']} to check for new logs.`,
+    'logs.tooManyEmpty': `Logs for this build may have ended. Click ${CTAs['cta.restart']} to check for new logs.`,
+    'logs.networkFailure': `We are having issues fetching logs. There may be network issues. Click ${CTAs['cta.restart']} to try again.`,
 };
 
 const AdminPage: ResolvedIntlConfig['messages'] = {
@@ -430,6 +431,7 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.bindingsConfig.noRowsTitle': `No selection made`,
 
     'entityCreate.connector.label': `${CommonMessages['connector.label']} Search`,
+    'entityCreate.errors.missingDraftId': `Missing draft id`,
 };
 
 const EntityEdit: ResolvedIntlConfig['messages'] = {
@@ -606,6 +608,10 @@ const OAuth: ResolvedIntlConfig['messages'] = {
     'oauth.remove': `Remove`,
 };
 
+const Supabase: ResolvedIntlConfig['messages'] = {
+    'supabase.poller.failed': `Failed to get the status from the backend. There might be an issue with the network connection.`,
+};
+
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
     ...CTAs,
@@ -644,6 +650,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...OAuth,
     ...Welcome,
     ...EntityEdit,
+    ...Supabase,
 };
 
 export default enUSMessages;
