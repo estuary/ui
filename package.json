@@ -16,7 +16,9 @@
         "typecheck": "tsc",
         "generate-flow-types": "cd flow_deps && ./fetch-flow.sh && ./flow-bin/flowctl json-schema | ./flow-bin/flowctl schemalate typescript --name Catalog --hoist-definitions > flow.d.ts",
         "save-local-supabase-data": "cd supabase_data && ./fetch-connector_tags.sh",
-        "__build_deploy__": "npm run build; serve -s build"
+        "__build_deploy__": "npm run build; serve -s build",
+        "maintenance:on": "touch public/maintenance",
+        "maintenance:off": "rm public/maintenance"
     },
     "dependencies": {
         "@emotion/react": "^11.10.0",
