@@ -130,10 +130,6 @@ const getInitialStateData = (hydrated: boolean): ResourceConfigStateBase => ({
     resourceSchema: {},
 });
 
-const initializeState = (workflow: EntityWorkflow): void => {
-    console.log(workflow);
-};
-
 type ConnectorTagData = Pick<
     ConnectorTag,
     'connector_id' | 'resource_spec_schema'
@@ -189,20 +185,22 @@ const hydrateState = (
     const liveSpecId = searchParams.get(GlobalSearchParams.LIVE_SPEC_ID);
     const lastPubId = searchParams.get(GlobalSearchParams.LAST_PUB_ID);
 
-    getResourceSchema(connectorId).then(
-        ({ data }) => {
-            if (data && data.length > 0) {
-                const { setResourceSchema } = get();
+    if (connectorId) {
+        getResourceSchema(connectorId).then(
+            ({ data }) => {
+                if (data && data.length > 0) {
+                    const { setResourceSchema } = get();
 
-                setResourceSchema(
-                    data[0].resource_spec_schema as unknown as Schema
-                );
+                    setResourceSchema(
+                        data[0].resource_spec_schema as unknown as Schema
+                    );
+                }
+            },
+            () => {
+                console.log('rejected');
             }
-        },
-        () => {
-            console.log('rejected');
-        }
-    );
+        );
+    }
 
     if (workflow === 'materialization_create') {
         const specType = ENTITY.CAPTURE;
@@ -255,8 +253,6 @@ const hydrateState = (
             }
         );
     }
-
-    initializeState(workflow);
 };
 
 const getInitialState = (

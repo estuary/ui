@@ -6,6 +6,9 @@ import {
     useEditorStore_editDraftId,
     useEditorStore_setId,
 } from 'components/editor/Store';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
 import useConnectorTag from 'hooks/useConnectorTag';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { LiveSpecsExtQueryWithSpec } from 'hooks/useLiveSpecsExt';
@@ -51,6 +54,10 @@ const evaluateResourceConfigEquality = (
 };
 
 function BindingsMultiEditor({ readOnly = false, editWorkflow }: Props) {
+    const [connectorId] = useGlobalSearchParams([
+        GlobalSearchParams.CONNECTOR_ID,
+    ]);
+
     // Details Form Store
     const imageTag = useDetailsForm_connectorImage();
 
@@ -67,15 +74,20 @@ function BindingsMultiEditor({ readOnly = false, editWorkflow }: Props) {
     const { connectorTag } = useConnectorTag(imageTag.id);
 
     useEffect(() => {
-        console.log('1: outer');
-        if (connectorTag?.resource_spec_schema) {
-            console.log('1: inner');
-
+        if (
+            connectorId !== connectorTag?.connector_id &&
+            connectorTag?.resource_spec_schema
+        ) {
             setResourceSchema(
                 connectorTag.resource_spec_schema as unknown as Schema
             );
         }
-    }, [setResourceSchema, connectorTag?.resource_spec_schema]);
+    }, [
+        setResourceSchema,
+        connectorId,
+        connectorTag?.connector_id,
+        connectorTag?.resource_spec_schema,
+    ]);
 
     useEffect(() => {
         console.log('4: outer');
