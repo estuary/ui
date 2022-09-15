@@ -12,8 +12,6 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useEvaluateResourceConfigUpdates from 'hooks/updates/useEvaluateResourceConfigUpdates';
 import useConnectorTag from 'hooks/useConnectorTag';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { LiveSpecsExtQueryWithSpec } from 'hooks/useLiveSpecsExt';
 import { useEffect } from 'react';
 import { useDetailsForm_connectorImage } from 'stores/DetailsForm';
 import {
@@ -25,10 +23,6 @@ import { Schema } from 'types';
 
 interface Props {
     readOnly?: boolean;
-    editWorkflow?: {
-        initialSpec: LiveSpecsExtQueryWithSpec;
-        draftSpecs: DraftSpecQuery[];
-    };
 }
 
 function BindingsMultiEditor({ readOnly = false }: Props) {

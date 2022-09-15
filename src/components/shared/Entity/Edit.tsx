@@ -443,7 +443,6 @@ function EntityEdit({
                         <ErrorBoundryWrapper>
                             <CollectionConfig
                                 readOnly={readOnly.resourceConfigForm}
-                                editWorkflow={{ initialSpec, draftSpecs }}
                             />
                         </ErrorBoundryWrapper>
                     ) : null}
