@@ -158,29 +158,6 @@ const initDraftToEdit = async (
     }
 };
 
-// const evaluateResourceConfigEquality = (
-//     resourceConfig: ResourceConfigDictionary,
-//     queries: any[]
-// ) => {
-//     const configEquality: boolean[] = queries.map((query) => {
-//         let queriedResourceConfig: ResourceConfigDictionary = {};
-
-//         query.spec.bindings.forEach((binding: any) => {
-//             queriedResourceConfig = {
-//                 ...queriedResourceConfig,
-//                 [binding.source]: {
-//                     data: binding.resource,
-//                     errors: [],
-//                 },
-//             };
-//         });
-
-//         return isEqual(resourceConfig, queriedResourceConfig);
-//     });
-
-//     return configEquality.includes(true);
-// };
-
 // eslint-disable-next-line complexity
 function EntityEdit({
     title,
@@ -254,15 +231,6 @@ function EntityEdit({
     const formSubmitError = useFormStateStore_error();
 
     const setFormState = useFormStateStore_setFormState();
-
-    // Resource Config Store
-    // TODO: Determine proper placement for this logic.
-    // const setResourceSchema = useResourceConfig_setResourceSchema();
-
-    // const resourceConfig = useResourceConfig_resourceConfig();
-    // const setResourceConfig = useResourceConfig_setResourceConfig();
-
-    // const preFillCollections = useResourceConfig_preFillCollections();
 
     const { draftSpecs, isValidating: isValidatingDraftSpecs } = useDraftSpecs(
         editDraftId,
@@ -341,36 +309,6 @@ function EntityEdit({
             setEndpointSchema(
                 connectorTag.endpoint_spec_schema as unknown as Schema
             );
-            // setResourceSchema(
-            //     connectorTag.resource_spec_schema as unknown as Schema
-            // );
-
-            // We wanna make sure we do these after the schemas are set as
-            //  as they are dependent on them.
-            // if (
-            //     entityType === ENTITY.MATERIALIZATION &&
-            //     hasLength(draftSpecs)
-            // ) {
-            //     if (isEmpty(resourceConfig)) {
-            //         initialSpec.spec.bindings.forEach((binding: any) =>
-            //             setResourceConfig(binding.source, {
-            //                 data: binding.resource,
-            //                 errors: [],
-            //             })
-            //         );
-
-            //         preFillCollections([initialSpec]);
-            //     } else {
-            //         setDraftId(
-            //             evaluateResourceConfigEquality(resourceConfig, [
-            //                 initialSpec,
-            //                 draftSpecs[0],
-            //             ])
-            //                 ? editDraftId
-            //                 : null
-            //         );
-            //     }
-            // }
 
             setFormState({ status: FormStatus.GENERATED });
         }
@@ -378,16 +316,8 @@ function EntityEdit({
         connectorTag,
         initialSpec,
         initialConnectorTag,
-        // entityType,
-        // resourceConfig,
-        // editDraftId,
         formStatus,
-        // draftSpecs,
-        // preFillCollections,
-        // setResourceConfig,
         setEndpointSchema,
-        // setResourceSchema,
-        // setDraftId,
         setFormState,
     ]);
 
