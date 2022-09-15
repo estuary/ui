@@ -25,13 +25,8 @@ const evaluateResourceConfigEquality = (
             };
         });
 
-        console.log(resourceConfig);
-        console.log(queriedResourceConfig);
-
         return isEqual(resourceConfig, queriedResourceConfig);
     });
-
-    console.log(configEquality);
 
     return configEquality.includes(true);
 };
