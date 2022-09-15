@@ -213,6 +213,18 @@ export const jsonFormsPadding: SxProps<Theme> = {
     },
 };
 
+export const LINK_BUTTON_STYLING: SxProps<Theme> = {
+    'px': 1,
+    'py': 0,
+    'fontWeight': 500,
+    'zIndex': headerLinkIndex,
+    'textDecoration': 'underline',
+    '&:hover, &:focus': {
+        fontWeight: 700,
+        textDecoration: 'underline',
+    },
+};
+
 const themeSettings = createTheme({
     breakpoints: {
         values: {

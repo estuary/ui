@@ -1,7 +1,14 @@
 import Editor from '@monaco-editor/react';
-import { Alert, Box, Button, Collapse, Paper, useTheme } from '@mui/material';
+import {
+    Alert,
+    Box,
+    Button,
+    Collapse,
+    Stack,
+    useMediaQuery,
+    useTheme,
+} from '@mui/material';
 import { parse } from 'ansicolor';
-import { zIndexIncrement } from 'context/Theme';
 import { useClient } from 'hooks/supabase-swr';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useRef, useState } from 'react';
@@ -9,6 +16,9 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { useInterval } from 'react-use';
 import { DEFAULT_POLLING_INTERVAL, RPCS } from 'services/supabase';
 import { hasLength } from 'utils/misc-utils';
+import SyncDisabledIcon from '@mui/icons-material/SyncDisabled';
+import SyncIcon from '@mui/icons-material/Sync';
+import { LINK_BUTTON_STYLING } from 'context/Theme';
 
 export interface LogProps {
     token: string | null;
@@ -32,6 +42,8 @@ const generateLogLine = (logData: any) => {
     return mergedText;
 };
 
+const RESTART_MESSAGE_HEIGHT = 20;
+
 function Logs({
     token,
     defaultMessage,
@@ -40,6 +52,8 @@ function Logs({
     fetchAll,
 }: LogProps) {
     const theme = useTheme();
+    const belowMd = useMediaQuery(theme.breakpoints.down('md'));
+
     const supabaseClient = useClient();
     const intl = useIntl();
 
@@ -63,7 +77,8 @@ function Logs({
     const displayRestart =
         networkFailure ||
         (!disableIntervalFetching && MAX_EMPTY_CALLS < emptyResponses);
-    const heightVal = height ?? 200;
+
+    const heightVal = (height ?? 200) + RESTART_MESSAGE_HEIGHT;
 
     const fetchLogs = async () => {
         const queryParams = {
@@ -128,36 +143,72 @@ function Logs({
 
     return (
         <Box>
-            <Collapse in={displayRestart} sx={{ position: 'relative' }}>
-                <Paper
-                    elevation={0}
+            <Box
+                sx={{
+                    minHeight: RESTART_MESSAGE_HEIGHT,
+                }}
+            >
+                <Stack
+                    direction="row"
                     sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        position: 'absolute',
-                        zIndex: zIndexIncrement,
-                        width: '100%',
                         justifyContent: 'space-between',
-                        px: 1,
+                        alignItems: 'center',
                     }}
                 >
-                    {networkFailure ? (
-                        <Alert severity="warning">
-                            <FormattedMessage id="logs.networkFailure" />
-                        </Alert>
-                    ) : (
-                        <FormattedMessage id="logs.tooManyEmpty" />
-                    )}
+                    <Collapse in={displayRestart} sx={{ position: 'relative' }}>
+                        <Stack direction="row">
+                            <Alert severity="warning">
+                                <FormattedMessage
+                                    id={
+                                        networkFailure
+                                            ? 'logs.networkFailure'
+                                            : 'logs.tooManyEmpty'
+                                    }
+                                    values={{
+                                        restartCTA: (
+                                            <Button
+                                                variant="text"
+                                                sx={LINK_BUTTON_STYLING}
+                                                onClick={handlers.reset}
+                                            >
+                                                <FormattedMessage id="logs.restartLink" />
+                                            </Button>
+                                        ),
+                                    }}
+                                />
+                            </Alert>
+                        </Stack>
+                    </Collapse>
 
-                    <Button
-                        color="secondary"
-                        variant="text"
-                        onClick={handlers.reset}
+                    <Stack
+                        direction="row"
+                        sx={{
+                            justifyContent: 'end',
+                            alignItems: 'flex-start',
+                        }}
                     >
-                        <FormattedMessage id="cta.restart" />
-                    </Button>
-                </Paper>
-            </Collapse>
+                        {belowMd ? null : (
+                            <Box>
+                                <FormattedMessage
+                                    id={
+                                        displayRestart
+                                            ? 'logs.paused'
+                                            : 'logs.streaming'
+                                    }
+                                />
+                            </Box>
+                        )}
+
+                        <Box>
+                            {displayRestart ? (
+                                <SyncDisabledIcon />
+                            ) : (
+                                <SyncIcon />
+                            )}
+                        </Box>
+                    </Stack>
+                </Stack>
+            </Box>
 
             <Editor
                 height={`${heightVal}px`}

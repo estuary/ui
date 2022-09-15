@@ -1,6 +1,6 @@
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { Button } from '@mui/material';
-import { headerLinkIndex } from 'context/Theme';
+import { LINK_BUTTON_STYLING } from 'context/Theme';
 import { ReactNode } from 'react';
 
 interface Props {
@@ -24,17 +24,7 @@ const ExternalLink = ({ children, link, hideIcon }: Props) => {
             rel="noopener"
             color="secondary"
             onClick={onClick}
-            sx={{
-                'px': 1,
-                'py': 0,
-                'fontWeight': 500,
-                'zIndex': headerLinkIndex,
-                'textDecoration': 'underline',
-                '&:hover, &:focus': {
-                    fontWeight: 700,
-                    textDecoration: 'underline',
-                },
-            }}
+            sx={LINK_BUTTON_STYLING}
         >
             {children}
         </Button>

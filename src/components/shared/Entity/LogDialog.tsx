@@ -3,6 +3,7 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
+    useTheme,
 } from '@mui/material';
 import ErrorLogs from 'components/shared/Entity/Error/Logs';
 import { slate } from 'context/Theme';
@@ -15,10 +16,12 @@ interface Props {
     actionComponent: ReactNode;
 }
 
-const logHeight = 200;
+const logHeight = 250;
 const TITLE_ID = 'logs-dialog-title';
 
 function LogDialog({ open, token, actionComponent, title }: Props) {
+    const theme = useTheme();
+
     return (
         <Dialog
             open={open}
@@ -26,17 +29,18 @@ function LogDialog({ open, token, actionComponent, title }: Props) {
             fullWidth
             aria-labelledby={TITLE_ID}
             sx={{
+                'minWidth': (themes) => themes.breakpoints.values.sm,
                 '& .MuiDialog-paper': {
-                    backgroundColor: (themes) =>
-                        themes.palette.mode === 'dark' ? slate[800] : slate[25],
+                    backgroundColor:
+                        theme.palette.mode === 'dark' ? slate[800] : slate[25],
                     borderRadius: 5,
-                    backgroundImage: (themes) =>
-                        themes.palette.mode === 'dark'
+                    backgroundImage:
+                        theme.palette.mode === 'dark'
                             ? 'linear-gradient(160deg, rgba(99, 138, 169, 0.24) 0%, rgba(13, 43, 67, 0.22) 75%, rgba(13, 43, 67, 0.18) 100%)'
                             : 'linear-gradient(160deg, rgba(246, 250, 255, 0.4) 0%, rgba(216, 233, 245, 0.4) 75%, rgba(172, 199, 220, 0.4) 100%)',
                 },
                 '& .MuiAccordionSummary-root': {
-                    backgroundColor: (theme) =>
+                    backgroundColor:
                         theme.palette.mode === 'dark'
                             ? 'transparent'
                             : slate[50],
