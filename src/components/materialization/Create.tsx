@@ -10,6 +10,8 @@ import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
 import FooHeader from 'components/shared/Entity/Header';
 import PageContainer from 'components/shared/PageContainer';
+import { ResourceConfigStoreNames } from 'context/Zustand';
+import { ResourceConfigProvider } from 'context/zustand/ResourceConfig';
 import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { useEffect } from 'react';
@@ -34,11 +36,7 @@ import {
     useFormStateStore_resetState,
     useFormStateStore_setFormState,
 } from 'stores/FormState';
-import {
-    useResourceConfig_resetState,
-    useResourceConfig_resourceConfigErrorsExist,
-    useResourceConfig_stateChanged,
-} from 'stores/ResourceConfig';
+import { createResourceConfigStore } from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
 
 function MaterializationCreate() {
@@ -77,12 +75,12 @@ function MaterializationCreate() {
     const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
 
     // Resource Config Store
-    const resourceConfigChanged = useResourceConfig_stateChanged();
+    // const resourceConfigChanged = useResourceConfig_stateChanged();
 
-    const resourceConfigErrorsExist =
-        useResourceConfig_resourceConfigErrorsExist();
+    // const resourceConfigErrorsExist =
+    //     useResourceConfig_resourceConfigErrorsExist();
 
-    const resetResourceConfigState = useResourceConfig_resetState();
+    // const resetResourceConfigState = useResourceConfig_resetState();
 
     // Reset the catalog if the connector changes
     useEffect(() => {
@@ -91,7 +89,7 @@ function MaterializationCreate() {
 
     const resetState = () => {
         resetEndpointConfigState();
-        resetResourceConfigState();
+        // resetResourceConfigState();
         resetDetailsForm();
         resetFormState();
     };
@@ -153,51 +151,60 @@ function MaterializationCreate() {
                     'https://docs.estuary.dev/guides/create-dataflow/#create-a-materialization',
             }}
         >
-            <EntityCreate
-                title="browserTitle.materializationCreate"
-                connectorType={entityType}
-                showCollections
-                promptDataLoss={
-                    endpointConfigChanged() ||
-                    resourceConfigChanged() ||
-                    detailsFormChanged()
-                }
-                resetState={resetState}
-                Header={
-                    <FooHeader
-                        GenerateButton={
-                            <MaterializeGenerateButton
-                                disabled={!hasConnectors}
-                                callFailed={helpers.callFailed}
-                            />
-                        }
-                        TestButton={
-                            <EntityTestButton
-                                disabled={!hasConnectors}
-                                callFailed={helpers.callFailed}
-                                closeLogs={handlers.closeLogs}
-                                logEvent={CustomEvents.MATERIALIZATION_TEST}
-                            />
-                        }
-                        SaveButton={
-                            <EntitySaveButton
-                                disabled={!draftId}
-                                callFailed={helpers.callFailed}
-                                closeLogs={handlers.closeLogs}
-                                logEvent={CustomEvents.MATERIALIZATION_CREATE}
-                            />
-                        }
-                        heading={
-                            <FormattedMessage id={`${messagePrefix}.heading`} />
-                        }
-                        formErrorsExist={
-                            detailsFormErrorsExist ||
-                            endpointConfigErrorsExist ||
-                            resourceConfigErrorsExist
-                        }
-                    />
-                }
-            />
+            <ResourceConfigProvider
+                storeName={ResourceConfigStoreNames.MATERIALIZATION_CREATE}
+                createStore={createResourceConfigStore}
+            >
+                <EntityCreate
+                    title="browserTitle.materializationCreate"
+                    connectorType={entityType}
+                    showCollections
+                    promptDataLoss={
+                        endpointConfigChanged() ||
+                        // resourceConfigChanged() ||
+                        detailsFormChanged()
+                    }
+                    resetState={resetState}
+                    Header={
+                        <FooHeader
+                            GenerateButton={
+                                <MaterializeGenerateButton
+                                    disabled={!hasConnectors}
+                                    callFailed={helpers.callFailed}
+                                />
+                            }
+                            TestButton={
+                                <EntityTestButton
+                                    disabled={!hasConnectors}
+                                    callFailed={helpers.callFailed}
+                                    closeLogs={handlers.closeLogs}
+                                    logEvent={CustomEvents.MATERIALIZATION_TEST}
+                                />
+                            }
+                            SaveButton={
+                                <EntitySaveButton
+                                    disabled={!draftId}
+                                    callFailed={helpers.callFailed}
+                                    closeLogs={handlers.closeLogs}
+                                    logEvent={
+                                        CustomEvents.MATERIALIZATION_CREATE
+                                    }
+                                />
+                            }
+                            heading={
+                                <FormattedMessage
+                                    id={`${messagePrefix}.heading`}
+                                />
+                            }
+                            formErrorsExist={
+                                detailsFormErrorsExist ||
+                                endpointConfigErrorsExist
+                                // resourceConfigErrorsExist
+                            }
+                        />
+                    }
+                />
+            </ResourceConfigProvider>
         </PageContainer>
     );
 }

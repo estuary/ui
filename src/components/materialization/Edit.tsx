@@ -10,6 +10,8 @@ import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityEdit from 'components/shared/Entity/Edit';
 import FooHeader from 'components/shared/Entity/Header';
 import PageContainer from 'components/shared/PageContainer';
+import { ResourceConfigStoreNames } from 'context/Zustand';
+import { ResourceConfigProvider } from 'context/zustand/ResourceConfig';
 import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { useEffect } from 'react';
@@ -34,11 +36,7 @@ import {
     useFormStateStore_resetState,
     useFormStateStore_setFormState,
 } from 'stores/FormState';
-import {
-    useResourceConfig_resetState,
-    useResourceConfig_resourceConfigErrorsExist,
-    useResourceConfig_stateChanged,
-} from 'stores/ResourceConfig';
+import { createResourceConfigStore } from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
 
 function MaterializationEdit() {
@@ -76,12 +74,12 @@ function MaterializationEdit() {
     const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
 
     // Resource Config Store
-    const resourceConfigChanged = useResourceConfig_stateChanged();
+    // const resourceConfigChanged = useResourceConfig_stateChanged();
 
-    const resourceConfigErrorsExist =
-        useResourceConfig_resourceConfigErrorsExist();
+    // const resourceConfigErrorsExist =
+    //     useResourceConfig_resourceConfigErrorsExist();
 
-    const resetResourceConfigState = useResourceConfig_resetState();
+    // const resetResourceConfigState = useResourceConfig_resetState();
 
     // Reset the catalog if the connector changes
     useEffect(() => {
@@ -92,7 +90,7 @@ function MaterializationEdit() {
         resetFormState();
         resetEndpointConfigState();
         resetDetailsFormState();
-        resetResourceConfigState();
+        // resetResourceConfigState();
     };
 
     const helpers = {
@@ -146,56 +144,63 @@ function MaterializationEdit() {
 
     return (
         <PageContainer>
-            <EntityEdit
-                title="browserTitle.materializationEdit"
-                entityType={entityType}
-                showCollections
-                promptDataLoss={
-                    endpointConfigChanged() ||
-                    resourceConfigChanged() ||
-                    detailsFormChanged()
-                }
-                resetState={resetState}
-                Header={
-                    <FooHeader
-                        GenerateButton={
-                            <MaterializeGenerateButton
-                                disabled={!hasConnectors}
-                                callFailed={helpers.callFailed}
-                            />
-                        }
-                        TestButton={
-                            <EntityTestButton
-                                disabled={!hasConnectors}
-                                callFailed={helpers.callFailed}
-                                closeLogs={handlers.closeLogs}
-                                logEvent={CustomEvents.MATERIALIZATION_TEST}
-                            />
-                        }
-                        SaveButton={
-                            <EntitySaveButton
-                                disabled={!draftId}
-                                callFailed={helpers.callFailed}
-                                closeLogs={handlers.closeLogs}
-                                logEvent={CustomEvents.MATERIALIZATION_EDIT}
-                            />
-                        }
-                        heading={
-                            <FormattedMessage id={`${messagePrefix}.heading`} />
-                        }
-                        formErrorsExist={
-                            detailsFormErrorsExist ||
-                            endpointConfigErrorsExist ||
-                            resourceConfigErrorsExist
-                        }
-                    />
-                }
-                callFailed={helpers.callFailed}
-                readOnly={{
-                    detailsForm: true,
-                    endpointConfigForm: true,
-                }}
-            />
+            <ResourceConfigProvider
+                storeName={ResourceConfigStoreNames.MATERIALIZATION_EDIT}
+                createStore={createResourceConfigStore}
+            >
+                <EntityEdit
+                    title="browserTitle.materializationEdit"
+                    entityType={entityType}
+                    showCollections
+                    promptDataLoss={
+                        endpointConfigChanged() ||
+                        // resourceConfigChanged() ||
+                        detailsFormChanged()
+                    }
+                    resetState={resetState}
+                    Header={
+                        <FooHeader
+                            GenerateButton={
+                                <MaterializeGenerateButton
+                                    disabled={!hasConnectors}
+                                    callFailed={helpers.callFailed}
+                                />
+                            }
+                            TestButton={
+                                <EntityTestButton
+                                    disabled={!hasConnectors}
+                                    callFailed={helpers.callFailed}
+                                    closeLogs={handlers.closeLogs}
+                                    logEvent={CustomEvents.MATERIALIZATION_TEST}
+                                />
+                            }
+                            SaveButton={
+                                <EntitySaveButton
+                                    disabled={!draftId}
+                                    callFailed={helpers.callFailed}
+                                    closeLogs={handlers.closeLogs}
+                                    logEvent={CustomEvents.MATERIALIZATION_EDIT}
+                                />
+                            }
+                            heading={
+                                <FormattedMessage
+                                    id={`${messagePrefix}.heading`}
+                                />
+                            }
+                            formErrorsExist={
+                                detailsFormErrorsExist ||
+                                endpointConfigErrorsExist
+                                // resourceConfigErrorsExist
+                            }
+                        />
+                    }
+                    callFailed={helpers.callFailed}
+                    readOnly={{
+                        detailsForm: true,
+                        endpointConfigForm: true,
+                    }}
+                />
+            </ResourceConfigProvider>
         </PageContainer>
     );
 }

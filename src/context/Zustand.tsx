@@ -6,7 +6,6 @@ import {
     useContext,
 } from 'react';
 import { createFormStateStore } from 'stores/FormState';
-import { createResourceConfigStore } from 'stores/ResourceConfig';
 import { createShardDetailStore } from 'stores/ShardDetail';
 import { MessagePrefixes } from 'types';
 import useConstant from 'use-constant';
@@ -36,7 +35,8 @@ export enum FormStateStoreNames {
 }
 
 export enum ResourceConfigStoreNames {
-    MATERIALIZATION = 'Materialization-Resource-Config',
+    MATERIALIZATION_CREATE = 'Materialization-Create-Resource-Config',
+    MATERIALIZATION_EDIT = 'Materialization-Edit-Resource-Config',
 }
 
 export enum SelectTableStoreNames {
@@ -98,11 +98,6 @@ const invariableStores = {
     [FormStateStoreNames.MATERIALIZATION_EDIT]: createFormStateStore(
         FormStateStoreNames.MATERIALIZATION_EDIT,
         MessagePrefixes.MATERIALIZATION_EDIT
-    ),
-
-    // Resource Config Store
-    [ResourceConfigStoreNames.MATERIALIZATION]: createResourceConfigStore(
-        ResourceConfigStoreNames.MATERIALIZATION
     ),
 
     // Select Table Store
