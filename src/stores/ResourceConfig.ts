@@ -17,6 +17,7 @@ import { ENTITY, EntityWorkflow, JsonFormsData, Schema } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
 import create, { StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
+import shallow from 'zustand/shallow';
 
 export interface ResourceConfig {
     [key: string]: JsonFormsData | any[];
@@ -504,7 +505,7 @@ export const useResourceConfig_resourceConfig = () => {
     return useResourceConfigStore<
         ResourceConfigState,
         ResourceConfigState['resourceConfig']
-    >(storeName(workflow), (state) => state.resourceConfig);
+    >(storeName(workflow), (state) => state.resourceConfig, shallow);
 };
 
 export const useResourceConfig_setResourceConfig = () => {

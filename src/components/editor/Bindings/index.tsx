@@ -6,17 +6,18 @@ import {
     useEditorStore_editDraftId,
     useEditorStore_setId,
 } from 'components/editor/Store';
+import { useEntityWorkflow } from 'context/Workflow';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
+import useEvaluateResourceConfigUpdates from 'hooks/updates/useEvaluateResourceConfigUpdates';
 import useConnectorTag from 'hooks/useConnectorTag';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { LiveSpecsExtQueryWithSpec } from 'hooks/useLiveSpecsExt';
-import { isEmpty, isEqual } from 'lodash';
 import { useEffect } from 'react';
 import { useDetailsForm_connectorImage } from 'stores/DetailsForm';
 import {
-    ResourceConfigDictionary,
+    // ResourceConfigDictionary,
     useResourceConfig_resourceConfig,
     useResourceConfig_setResourceSchema,
 } from 'stores/ResourceConfig';
@@ -30,33 +31,12 @@ interface Props {
     };
 }
 
-const evaluateResourceConfigEquality = (
-    resourceConfig: ResourceConfigDictionary,
-    queries: any[]
-) => {
-    const configEquality: boolean[] = queries.map((query) => {
-        let queriedResourceConfig: ResourceConfigDictionary = {};
-
-        query.spec.bindings.forEach((binding: any) => {
-            queriedResourceConfig = {
-                ...queriedResourceConfig,
-                [binding.source]: {
-                    data: binding.resource,
-                    errors: [],
-                },
-            };
-        });
-
-        return isEqual(resourceConfig, queriedResourceConfig);
-    });
-
-    return configEquality.includes(true);
-};
-
-function BindingsMultiEditor({ readOnly = false, editWorkflow }: Props) {
+function BindingsMultiEditor({ readOnly = false }: Props) {
     const [connectorId] = useGlobalSearchParams([
         GlobalSearchParams.CONNECTOR_ID,
     ]);
+
+    const workflow = useEntityWorkflow();
 
     // Details Form Store
     const imageTag = useDetailsForm_connectorImage();
@@ -89,23 +69,16 @@ function BindingsMultiEditor({ readOnly = false, editWorkflow }: Props) {
         connectorTag?.resource_spec_schema,
     ]);
 
+    const resourceConfigUpdated = useEvaluateResourceConfigUpdates(
+        editDraftId,
+        resourceConfig
+    );
+
     useEffect(() => {
-        console.log('4: outer');
-        if (editWorkflow && !isEmpty(resourceConfig)) {
-            console.log('4: inner');
-
-            const { initialSpec, draftSpecs } = editWorkflow;
-
-            setDraftId(
-                evaluateResourceConfigEquality(resourceConfig, [
-                    initialSpec,
-                    draftSpecs[0],
-                ])
-                    ? editDraftId
-                    : null
-            );
+        if (workflow === 'materialization_edit') {
+            setDraftId(resourceConfigUpdated ? editDraftId : null);
         }
-    }, [setDraftId, editDraftId, editWorkflow, resourceConfig]);
+    }, [setDraftId, editDraftId, resourceConfigUpdated, workflow]);
 
     return (
         <>
