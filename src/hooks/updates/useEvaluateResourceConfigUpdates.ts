@@ -5,7 +5,7 @@ import useGlobalSearchParams, {
 import useDraftSpecs from 'hooks/useDraftSpecs';
 import { useLiveSpecsExtWithSpec } from 'hooks/useLiveSpecsExt';
 import { isEqual } from 'lodash';
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { ResourceConfigDictionary } from 'stores/ResourceConfig';
 
 const evaluateResourceConfigEquality = (
@@ -42,24 +42,18 @@ function useEvaluateResourceConfigUpdates(
 
     const entityType = useEntityType();
 
-    const [unchanged, setUnchanged] = useState(false);
-
     const {
         liveSpecs: [initialSpec],
     } = useLiveSpecsExtWithSpec(liveSpecId, entityType);
 
     const { draftSpecs } = useDraftSpecs(draftId, lastPubId);
 
-    useEffect(() => {
-        setUnchanged(
-            evaluateResourceConfigEquality(resourceConfig, [
-                initialSpec,
-                draftSpecs[0],
-            ])
-        );
-    }, [setUnchanged, draftSpecs, initialSpec, resourceConfig]);
-
-    return unchanged;
+    return useMemo(() => {
+        return evaluateResourceConfigEquality(resourceConfig, [
+            initialSpec,
+            draftSpecs[0],
+        ]);
+    }, [draftSpecs, initialSpec, resourceConfig]);
 }
 
 export default useEvaluateResourceConfigUpdates;
