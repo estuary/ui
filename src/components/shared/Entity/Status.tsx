@@ -27,19 +27,26 @@ function Status({ formStateStoreName }: Props) {
         severity = 'error';
     } else if (isActive) {
         messageKey = 'common.running';
-        severity = 'info';
     }
 
     console.log('rendering the status');
 
     if (messageKey) {
-        return (
-            <Alert severity={severity}>
+        if (severity) {
+            return (
+                <Alert severity={severity} variant="filled">
+                    <Typography sx={{ mr: 1 }}>
+                        <FormattedMessage id={messageKey} />
+                    </Typography>
+                </Alert>
+            );
+        } else {
+            return (
                 <Typography sx={{ mr: 1 }}>
                     <FormattedMessage id={messageKey} />
                 </Typography>
-            </Alert>
-        );
+            );
+        }
     } else {
         return null;
     }

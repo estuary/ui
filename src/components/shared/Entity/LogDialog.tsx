@@ -5,9 +5,10 @@ import {
     DialogTitle,
     useTheme,
 } from '@mui/material';
-import ErrorLogs from 'components/shared/Entity/Error/Logs';
+import Logs from 'components/logs';
 import { slate } from 'context/Theme';
 import { ReactNode } from 'react';
+import ErrorBoundryWrapper from '../ErrorBoundryWrapper';
 
 interface Props {
     open: boolean;
@@ -16,7 +17,6 @@ interface Props {
     actionComponent: ReactNode;
 }
 
-const logHeight = 250;
 const TITLE_ID = 'logs-dialog-title';
 
 function LogDialog({ open, token, actionComponent, title }: Props) {
@@ -49,12 +49,10 @@ function LogDialog({ open, token, actionComponent, title }: Props) {
         >
             <DialogTitle id={TITLE_ID}>{title}</DialogTitle>
 
-            <DialogContent
-                sx={{
-                    minHeight: logHeight + 25,
-                }}
-            >
-                <ErrorLogs logToken={token} defaultOpen />
+            <DialogContent>
+                <ErrorBoundryWrapper>
+                    <Logs token={token} height={250} />
+                </ErrorBoundryWrapper>
             </DialogContent>
 
             <DialogActions

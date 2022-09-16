@@ -308,12 +308,11 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
 };
 
 const LogsDialog: ResolvedIntlConfig['messages'] = {
-    'logs.default': `Waiting for logs...`,
-    'logs.streaming': `Streaming Logs`,
-    'logs.paused': `Streaming Paused`,
+    'logs.default': `waiting for logs...`,
+    'logs.paused': `paused`,
     'logs.restartLink': `click here`,
-    'logs.tooManyEmpty': `Logs for this build may have ended. {restartCTA} to start streaming logs again.`,
-    'logs.networkFailure': `We encountered a problem streaming logs. Please check your network connection and {restartCTA} to start streaming logs again.`,
+    'logs.tooManyEmpty': `Logs for this build may have ended. {restartCTA} to start waiting for new logs again.`,
+    'logs.networkFailure': `We encountered a problem streaming logs. Please check your network connection and {restartCTA} to start waiting for new logs again.`,
 };
 
 const AdminPage: ResolvedIntlConfig['messages'] = {

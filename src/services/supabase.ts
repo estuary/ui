@@ -3,7 +3,7 @@ import { createClient, User } from '@supabase/supabase-js';
 import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 import { JobStatus } from 'types';
-import { hasLength } from 'utils/misc-utils';
+import { hasLength, incrementInterval, timeoutCleanUp } from 'utils/misc-utils';
 
 if (
     !process.env.REACT_APP_SUPABASE_URL ||
@@ -77,7 +77,6 @@ export const supabaseClient = createClient(
 );
 
 export const DEFAULT_POLLING_INTERVAL = 750;
-
 export const defaultTableFilter = <Data>(
     query: PostgrestFilterBuilder<Data>,
     searchParam: Array<keyof Data | any>, // TODO (typing) added any because of how Supabase handles keys. Hoping Supabase 2.0 fixes https://github.com/supabase/supabase-js/issues/170
@@ -229,15 +228,8 @@ export const jobSucceeded = (jobStatus?: JobStatus) => {
 
 // START: Poller
 type PollerTimeout = number | undefined;
-const INTERVAL_MAX = 5000;
-const INTERVAL_INCREMENT = 500;
-export const JOB_STATUS_POLLER_ERROR = 'supabase.poller.failed';
-const cleanUp = (pollerTimeout: PollerTimeout) => {
-    if (pollerTimeout) {
-        window.clearInterval(pollerTimeout);
-    }
-};
 
+export const JOB_STATUS_POLLER_ERROR = 'supabase.poller.failed';
 export const jobStatusPoller = (
     query: any,
     success: Function,
@@ -253,7 +245,7 @@ export const jobStatusPoller = (
         return query.throwOnError().then(
             (payload: any) => {
                 LogRocket.log('Poller : response : ', payload);
-                cleanUp(pollerTimeout);
+                timeoutCleanUp(pollerTimeout);
 
                 if (payload.error) {
                     failure(handleFailure(payload.error));
@@ -276,10 +268,7 @@ export const jobStatusPoller = (
                             failure(response);
                         }
                     } else {
-                        interval =
-                            interval < INTERVAL_MAX
-                                ? interval + INTERVAL_INCREMENT
-                                : INTERVAL_MAX;
+                        interval = incrementInterval(interval);
                         pollerTimeout = window.setTimeout(
                             makeApiCall,
                             interval
@@ -289,7 +278,7 @@ export const jobStatusPoller = (
             },
             (error: unknown) => {
                 LogRocket.log('Poller : error : ', error);
-                cleanUp(pollerTimeout);
+                timeoutCleanUp(pollerTimeout);
                 failure(handleFailure(JOB_STATUS_POLLER_ERROR));
             }
         );

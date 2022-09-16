@@ -2,7 +2,7 @@ import { Alert, Grid } from '@mui/material';
 import LiveSpecEditor from 'components/editor/LiveSpec';
 import { DEFAULT_TOTAL_HEIGHT } from 'components/editor/MonacoEditor';
 import { EditorStoreState } from 'components/editor/Store';
-import Logs from 'components/Logs';
+import Logs from 'components/logs';
 import Error from 'components/shared/Error';
 import { LiveSpecEditorStoreNames, UseZustandStore } from 'context/Zustand';
 import { LiveSpecsQuery_spec, useLiveSpecs_spec } from 'hooks/useLiveSpecs';
