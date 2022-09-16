@@ -99,9 +99,6 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
                 });
             }
 
-            const discoversSubscription = subscription(
-                draftsResponse.data[0].id
-            );
             const discoverResponse = await discover(
                 entityName,
                 encryptedEndpointConfig.data,
@@ -109,16 +106,14 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
                 draftsResponse.data[0].id
             );
             if (discoverResponse.error) {
-                return callFailed(
-                    {
-                        error: {
-                            title: 'captureCreate.generate.failedErrorTitle',
-                            error: discoverResponse.error,
-                        },
+                return callFailed({
+                    error: {
+                        title: 'captureCreate.generate.failedErrorTitle',
+                        error: discoverResponse.error,
                     },
-                    discoversSubscription
-                );
+                });
             }
+            subscription(draftsResponse.data[0].id);
 
             setFormState({
                 logToken: discoverResponse.data[0].logs_token,

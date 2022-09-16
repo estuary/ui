@@ -1,6 +1,5 @@
 import { Button } from '@mui/material';
 import { generateDraftSpec, updateDraftSpec } from 'api/draftSpecs';
-import { encryptConfig } from 'api/oauth';
 import {
     useEditorStore_editDraftId,
     useEditorStore_isSaving,
@@ -10,8 +9,6 @@ import { buttonSx } from 'components/shared/Entity/Header';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
-    useDetailsForm_connectorImage_connectorId,
-    useDetailsForm_connectorImage_id,
     useDetailsForm_connectorImage_imagePath,
     useDetailsForm_details_entityName,
     useDetailsForm_errorsExist,
@@ -40,8 +37,6 @@ function MaterializeGenerateButton({ disabled, callFailed }: Props) {
     // Details Form Store
     const entityName = useDetailsForm_details_entityName();
     const detailsFormsHasErrors = useDetailsForm_errorsExist();
-    const imageConnectorTagId = useDetailsForm_connectorImage_id();
-    const imageConnectorId = useDetailsForm_connectorImage_connectorId();
     const imagePath = useDetailsForm_connectorImage_imagePath();
 
     // Draft Editor Store
@@ -88,26 +83,30 @@ function MaterializeGenerateButton({ disabled, callFailed }: Props) {
         } else {
             setDraftId(null);
 
-            const encryptedEndpointConfig = await encryptConfig(
-                imageConnectorId,
-                imageConnectorTagId,
-                endpointConfigData
-            );
-            if (
-                encryptedEndpointConfig.error ||
-                encryptedEndpointConfig.data.error
-            ) {
-                return callFailed({
-                    error: {
-                        title: 'entityCreate.sops.failedTitle',
-                        error:
-                            encryptedEndpointConfig.error ??
-                            encryptedEndpointConfig.data.error,
-                    },
-                });
-            }
+            // TODO (Edit) We can add this back when you can change the endpoint config
+            //  Might be better to just get the create GenerateButton sharable for edit
+
+            // const encryptedEndpointConfig = await encryptConfig(
+            //     imageConnectorId,
+            //     imageConnectorTagId,
+            //     endpointConfigData
+            // );
+            // if (
+            //     encryptedEndpointConfig.error ||
+            //     encryptedEndpointConfig.data.error
+            // ) {
+            //     return callFailed({
+            //         error: {
+            //             title: 'entityCreate.sops.failedTitle',
+            //             error:
+            //                 encryptedEndpointConfig.error ??
+            //                 encryptedEndpointConfig.data.error,
+            //         },
+            //     });
+            // }
+
             const draftSpec = generateDraftSpec(
-                encryptedEndpointConfig.data,
+                endpointConfigData,
                 imagePath,
                 resourceConfig
             );

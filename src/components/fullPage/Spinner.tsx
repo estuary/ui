@@ -1,12 +1,16 @@
 import { Backdrop, CircularProgress } from '@mui/material';
 import { useIntl } from 'react-intl';
+import { zIndexIncrement } from 'context/Theme';
 
 function FullPageSpinner() {
     const intl = useIntl();
 
     return (
         <Backdrop
-            sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            sx={{
+                color: '#fff',
+                zIndex: (theme) => theme.zIndex.tooltip + zIndexIncrement,
+            }}
             open={true}
         >
             <CircularProgress

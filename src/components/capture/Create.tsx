@@ -1,4 +1,3 @@
-import { RealtimeSubscription } from '@supabase/supabase-js';
 import { authenticatedRoutes } from 'app/Authenticated';
 import CaptureGenerateButton from 'components/capture/GenerateButton';
 import {
@@ -20,7 +19,12 @@ import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
-import { startSubscription, TABLES } from 'services/supabase';
+import {
+    DEFAULT_FILTER,
+    jobStatusPoller,
+    JOB_STATUS_POLLER_ERROR,
+    TABLES,
+} from 'services/supabase';
 import {
     useDetailsForm_changed,
     useDetailsForm_connectorImage,
@@ -44,11 +48,11 @@ import { getPathWithParams } from 'utils/misc-utils';
 
 const trackEvent = (payload: any) => {
     LogRocket.track(CustomEvents.CAPTURE_DISCOVER, {
-        name: payload.capture_name,
-        id: payload.id,
-        draft_id: payload.draft_id,
-        logs_token: payload.logs_token,
-        status: payload.job_status.type,
+        name: payload.capture_name ?? DEFAULT_FILTER,
+        id: payload.id ?? DEFAULT_FILTER,
+        draft_id: payload.draft_id ?? DEFAULT_FILTER,
+        logs_token: payload.logs_token ?? DEFAULT_FILTER,
+        status: payload.job_status?.type ?? DEFAULT_FILTER,
     });
 };
 
@@ -101,25 +105,12 @@ function CaptureCreate() {
     };
 
     const helpers = {
-        callFailed: (formState: any, subscription?: RealtimeSubscription) => {
-            const setFailureState = () => {
-                setFormState({
-                    status: FormStatus.FAILED,
-                    exitWhenLogsClose: false,
-                    ...formState,
-                });
-            };
-
-            if (subscription) {
-                supabaseClient
-                    .removeSubscription(subscription)
-                    .then(() => {
-                        setFailureState();
-                    })
-                    .catch(() => {});
-            } else {
-                setFailureState();
-            }
+        callFailed: (formState: any) => {
+            setFormState({
+                status: FormStatus.FAILED,
+                exitWhenLogsClose: false,
+                ...formState,
+            });
         },
         exit: () => {
             resetState();
@@ -164,10 +155,18 @@ function CaptureCreate() {
 
     const discoversSubscription = (discoverDraftId: string) => {
         setDraftId(null);
-        return startSubscription(
-            supabaseClient.from(
-                `${TABLES.DISCOVERS}:draft_id=eq.${discoverDraftId}`
-            ),
+        jobStatusPoller(
+            supabaseClient
+                .from(TABLES.DISCOVERS)
+                .select(
+                    `
+                    draft_id,
+                    job_status
+                `
+                )
+                .match({
+                    draft_id: discoverDraftId,
+                }),
             (payload: any) => {
                 setDraftId(payload.draft_id);
                 setFormState({
@@ -176,8 +175,11 @@ function CaptureCreate() {
                 trackEvent(payload);
             },
             (payload: any) => {
-                helpers.jobFailed(`${messagePrefix}.test.failedErrorTitle`);
-                trackEvent(payload);
+                if (payload.error === JOB_STATUS_POLLER_ERROR) {
+                    helpers.jobFailed(payload.error);
+                } else {
+                    helpers.jobFailed(`${messagePrefix}.test.failedErrorTitle`);
+                }
             }
         );
     };

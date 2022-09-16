@@ -1,5 +1,5 @@
 import Editor from '@monaco-editor/react';
-import { Box, Button, Collapse, Paper, useTheme } from '@mui/material';
+import { Alert, Box, Button, Collapse, Paper, useTheme } from '@mui/material';
 import { parse } from 'ansicolor';
 import { zIndexIncrement } from 'context/Theme';
 import { useClient } from 'hooks/supabase-swr';
@@ -8,6 +8,7 @@ import { useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useInterval } from 'react-use';
 import { DEFAULT_POLLING_INTERVAL, RPCS } from 'services/supabase';
+import { hasLength } from 'utils/misc-utils';
 
 export interface LogProps {
     token: string | null;
@@ -50,6 +51,7 @@ function Logs({
         disableIntervalFetching ? MAX_EMPTY_CALLS : 0
     );
 
+    const [networkFailure, setNetworkFailure] = useState<boolean>(false);
     const [offset, setOffset] = useState(0);
     const [logs, setLogs] = useState<string[]>([
         defaultMessage ??
@@ -59,7 +61,8 @@ function Logs({
     ]);
 
     const displayRestart =
-        !disableIntervalFetching && MAX_EMPTY_CALLS < emptyResponses;
+        networkFailure ||
+        (!disableIntervalFetching && MAX_EMPTY_CALLS < emptyResponses);
     const heightVal = height ?? 200;
 
     const fetchLogs = async () => {
@@ -87,25 +90,33 @@ function Logs({
             editorRef.current = editor;
         },
         reset: () => {
+            setNetworkFailure(false);
             setEmptyResponses(0);
         },
     };
 
     useInterval(
         async () => {
-            const { data: viewLogsResponse } = await fetchLogs();
+            const fetchLogsResponse = await fetchLogs();
 
-            if (viewLogsResponse && viewLogsResponse.length > 0) {
-                const logsReduced = viewLogsResponse.map((logData) => {
-                    return generateLogLine(logData);
-                });
-                setOffset(offset + viewLogsResponse.length);
-                setLogs(logs.concat(logsReduced));
-                if (disableIntervalFetching) {
+            if (fetchLogsResponse.error) {
+                setNetworkFailure(true);
+                setEmptyResponses(MAX_EMPTY_CALLS + 1);
+            } else {
+                setNetworkFailure(false);
+                const { data: viewLogsResponse } = fetchLogsResponse;
+                if (hasLength(viewLogsResponse)) {
+                    const logsReduced = viewLogsResponse.map((logData) => {
+                        return generateLogLine(logData);
+                    });
+                    setOffset(offset + viewLogsResponse.length);
+                    setLogs(logs.concat(logsReduced));
+                    if (disableIntervalFetching) {
+                        setEmptyResponses(emptyResponses + 1);
+                    }
+                } else {
                     setEmptyResponses(emptyResponses + 1);
                 }
-            } else {
-                setEmptyResponses(emptyResponses + 1);
             }
         },
         token && MAX_EMPTY_CALLS >= emptyResponses
@@ -130,7 +141,13 @@ function Logs({
                         px: 1,
                     }}
                 >
-                    <FormattedMessage id="logs.toManyEmpty" />
+                    {networkFailure ? (
+                        <Alert severity="warning">
+                            <FormattedMessage id="logs.networkFailure" />
+                        </Alert>
+                    ) : (
+                        <FormattedMessage id="logs.tooManyEmpty" />
+                    )}
 
                     <Button
                         color="secondary"
