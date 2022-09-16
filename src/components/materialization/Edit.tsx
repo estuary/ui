@@ -79,8 +79,6 @@ function MaterializationEdit() {
     // const resourceConfigErrorsExist =
     //     useResourceConfig_resourceConfigErrorsExist();
 
-    // const resetResourceConfigState = useResourceConfig_resetState();
-
     // Reset the catalog if the connector changes
     useEffect(() => {
         setDraftId(null);
@@ -90,7 +88,6 @@ function MaterializationEdit() {
         resetFormState();
         resetEndpointConfigState();
         resetDetailsFormState();
-        // resetResourceConfigState();
     };
 
     const helpers = {

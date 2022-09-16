@@ -13,9 +13,10 @@ import useGlobalSearchParams, {
 import useEvaluateResourceConfigUpdates from 'hooks/updates/useEvaluateResourceConfigUpdates';
 import useConnectorTag from 'hooks/useConnectorTag';
 import { useEffect } from 'react';
+import { useEffectOnce } from 'react-use';
 import { useDetailsForm_connectorImage } from 'stores/DetailsForm';
 import {
-    // ResourceConfigDictionary,
+    useResourceConfig_resetState,
     useResourceConfig_resourceConfig,
     useResourceConfig_setResourceSchema,
 } from 'stores/ResourceConfig';
@@ -45,6 +46,8 @@ function BindingsMultiEditor({ readOnly = false }: Props) {
 
     const resourceConfig = useResourceConfig_resourceConfig();
 
+    const resetResourceConfigState = useResourceConfig_resetState();
+
     const { connectorTag } = useConnectorTag(imageTag.id);
 
     useEffect(() => {
@@ -73,6 +76,12 @@ function BindingsMultiEditor({ readOnly = false }: Props) {
             setDraftId(resourceConfigUpdated ? editDraftId : null);
         }
     }, [setDraftId, editDraftId, resourceConfigUpdated, workflow]);
+
+    useEffectOnce(() => {
+        return () => {
+            resetResourceConfigState();
+        };
+    });
 
     return (
         <>
