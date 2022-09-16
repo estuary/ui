@@ -10,6 +10,7 @@ import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
 import FooHeader from 'components/shared/Entity/Header';
+import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary/capture';
 import PageContainer from 'components/shared/PageContainer';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
@@ -199,9 +200,6 @@ function CaptureCreate() {
                         heading={
                             <FormattedMessage id={`${messagePrefix}.heading`} />
                         }
-                        formErrorsExist={
-                            detailsFormErrorsExist || endpointConfigErrorsExist
-                        }
                         GenerateButton={
                             <CaptureGenerateButton
                                 disabled={!hasConnectors}
@@ -224,6 +222,14 @@ function CaptureCreate() {
                                 disabled={!draftId}
                                 materialize={handlers.materializeCollections}
                                 logEvent={CustomEvents.CAPTURE_CREATE}
+                            />
+                        }
+                        ErrorSummary={
+                            <ValidationErrorSummary
+                                errorsExist={
+                                    detailsFormErrorsExist ||
+                                    endpointConfigErrorsExist
+                                }
                             />
                         }
                     />

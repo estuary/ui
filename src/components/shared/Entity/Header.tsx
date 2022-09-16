@@ -8,7 +8,6 @@ import {
     Toolbar,
     Typography,
 } from '@mui/material';
-import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
 import { slate, stickyHeaderIndex, tableBorderSx } from 'context/Theme';
 import { ReactNode } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -20,7 +19,7 @@ interface Props {
     TestButton: ReactNode;
     SaveButton: ReactNode;
     heading: ReactNode;
-    formErrorsExist: boolean;
+    ErrorSummary: ReactNode;
 }
 
 export const buttonSx: SxProps<Theme> = { ml: 1 };
@@ -41,7 +40,7 @@ function FooHeader({
     TestButton,
     SaveButton,
     heading,
-    formErrorsExist,
+    ErrorSummary,
 }: Props) {
     const formActive = useFormStateStore_isActive();
 
@@ -93,9 +92,7 @@ function FooHeader({
                 <LinearProgress />
             </Collapse>
 
-            <Box sx={{ maxHeight: 200, overflowY: 'auto' }}>
-                <ValidationErrorSummary errorsExist={formErrorsExist} />
-            </Box>
+            <Box sx={{ maxHeight: 200, overflowY: 'auto' }}>{ErrorSummary}</Box>
         </Stack>
     );
 }

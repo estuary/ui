@@ -3,20 +3,19 @@ import DetailsErrors from 'components/shared/Entity/ValidationErrorSummary/Detai
 import EndpointConfigErrors from 'components/shared/Entity/ValidationErrorSummary/EndpointConfigErrors';
 import NoConnectorError from 'components/shared/Entity/ValidationErrorSummary/NoConnectorError';
 import ResourceConfigErrors from 'components/shared/Entity/ValidationErrorSummary/ResourceConfigErrors';
-import { useEntityType } from 'context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { FormattedMessage } from 'react-intl';
 import { useFormStateStore_displayValidation } from 'stores/FormState';
-import { ENTITY } from 'types';
+import { useResourceConfig_resourceConfigErrorsExist } from 'stores/ResourceConfig';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
+    errorsExist: boolean;
     ErrorComponent?: any | boolean;
     hideIcon?: boolean;
     headerMessageId?: string;
-    errorsExist: boolean;
 }
 
 function ValidationErrorSummary({
@@ -25,14 +24,19 @@ function ValidationErrorSummary({
     ErrorComponent,
     errorsExist,
 }: Props) {
-    const entityType = useEntityType();
-
     const connectorID = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
     const displayValidation = useFormStateStore_displayValidation();
 
+    const resourceConfigErrorsExist =
+        useResourceConfig_resourceConfigErrorsExist();
+
     return displayValidation ? (
-        <Collapse in={errorsExist} timeout="auto" unmountOnExit>
+        <Collapse
+            in={errorsExist || resourceConfigErrorsExist}
+            timeout="auto"
+            unmountOnExit
+        >
             <Alert severity="error" icon={hideIcon ?? undefined}>
                 <AlertTitle>
                     <FormattedMessage
@@ -51,9 +55,7 @@ function ValidationErrorSummary({
 
                         <EndpointConfigErrors />
 
-                        {entityType === ENTITY.MATERIALIZATION ? (
-                            <ResourceConfigErrors />
-                        ) : null}
+                        <ResourceConfigErrors />
                     </>
                 ) : (
                     <NoConnectorError />

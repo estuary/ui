@@ -9,6 +9,7 @@ import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityEdit from 'components/shared/Entity/Edit';
 import FooHeader from 'components/shared/Entity/Header';
+import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary/materialization';
 import PageContainer from 'components/shared/PageContainer';
 import { ResourceConfigStoreNames } from 'context/Zustand';
 import { ResourceConfigProvider } from 'context/zustand/ResourceConfig';
@@ -184,10 +185,13 @@ function MaterializationEdit() {
                                     id={`${messagePrefix}.heading`}
                                 />
                             }
-                            formErrorsExist={
-                                detailsFormErrorsExist ||
-                                endpointConfigErrorsExist
-                                // resourceConfigErrorsExist
+                            ErrorSummary={
+                                <ValidationErrorSummary
+                                    errorsExist={
+                                        detailsFormErrorsExist ||
+                                        endpointConfigErrorsExist
+                                    }
+                                />
                             }
                         />
                     }

@@ -9,6 +9,7 @@ import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
 import FooHeader from 'components/shared/Entity/Header';
+import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary/materialization';
 import PageContainer from 'components/shared/PageContainer';
 import { ResourceConfigStoreNames } from 'context/Zustand';
 import { ResourceConfigProvider } from 'context/zustand/ResourceConfig';
@@ -77,11 +78,6 @@ function MaterializationCreate() {
     // Resource Config Store
     // const resourceConfigChanged = useResourceConfig_stateChanged();
 
-    // const resourceConfigErrorsExist =
-    //     useResourceConfig_resourceConfigErrorsExist();
-
-    // const resetResourceConfigState = useResourceConfig_resetState();
-
     // Reset the catalog if the connector changes
     useEffect(() => {
         setDraftId(null);
@@ -89,7 +85,6 @@ function MaterializationCreate() {
 
     const resetState = () => {
         resetEndpointConfigState();
-        // resetResourceConfigState();
         resetDetailsForm();
         resetFormState();
     };
@@ -196,10 +191,13 @@ function MaterializationCreate() {
                                     id={`${messagePrefix}.heading`}
                                 />
                             }
-                            formErrorsExist={
-                                detailsFormErrorsExist ||
-                                endpointConfigErrorsExist
-                                // resourceConfigErrorsExist
+                            ErrorSummary={
+                                <ValidationErrorSummary
+                                    errorsExist={
+                                        detailsFormErrorsExist ||
+                                        endpointConfigErrorsExist
+                                    }
+                                />
                             }
                         />
                     }
