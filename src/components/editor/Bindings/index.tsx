@@ -77,6 +77,8 @@ function BindingsMultiEditor({ readOnly = false }: Props) {
         }
     }, [setDraftId, editDraftId, resourceConfigUpdated, workflow]);
 
+    // TODO (placement): Consider moving this logic into the context provider
+    //   once the create function for the store can be used there.
     useEffectOnce(() => {
         return () => {
             resetResourceConfigState();

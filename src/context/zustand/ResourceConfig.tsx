@@ -18,6 +18,11 @@ interface ResourceConfigProviderProps {
     ) => any;
 }
 
+// TODO (placement): Determine whether this context provider should be
+//   defined within the resource config store. The core deciding factor is
+//   the ability to call the create function directly within the provider.
+//   Currently, that import is not defined when used outside the bounds of
+//   an instance of the provider (i.e., context and hooks).
 const invariableStores = {
     [ResourceConfigStoreNames.MATERIALIZATION_CREATE]: {},
     [ResourceConfigStoreNames.MATERIALIZATION_EDIT]: {},

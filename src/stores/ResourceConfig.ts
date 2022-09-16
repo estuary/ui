@@ -1,18 +1,16 @@
+import {
+    getLiveSpecsByLastPubId,
+    getLiveSpecsByLiveSpecId,
+    getResourceSchema,
+} from 'api/hydration';
 import { useEntityWorkflow } from 'context/Workflow';
 import { ResourceConfigStoreNames } from 'context/Zustand';
 import { useResourceConfigStore } from 'context/zustand/ResourceConfig';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
-import { ConnectorTag } from 'hooks/useConnectorTag';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
 import { difference, has, isEmpty, isEqual, map, omit } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
-import {
-    handleFailure,
-    handleSuccess,
-    supabaseClient,
-    TABLES,
-} from 'services/supabase';
 import { ENTITY, EntityWorkflow, JsonFormsData, Schema } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
 import create, { StoreApi } from 'zustand';
@@ -28,7 +26,8 @@ export interface ResourceConfigDictionary {
     [key: string]: ResourceConfig;
 }
 
-// TODO: Determine whether the resourceConfig state property should be made plural. It is a dictionary of individual resource configs, so I am leaning "yes."
+// TODO (naming): Determine whether the resourceConfig state property should be made plural.
+//   It is a dictionary of individual resource configs, so I am leaning "yes."
 export interface ResourceConfigState {
     // Collection Selector
     collections: string[] | null;
@@ -65,19 +64,6 @@ export interface ResourceConfigState {
     stateChanged: () => boolean;
     resetState: () => void;
 }
-
-type ResourceConfigStateBase = Pick<
-    ResourceConfigState,
-    | 'collections'
-    | 'collectionErrorsExist'
-    | 'currentCollection'
-    | 'hydrated'
-    | 'hydrationErrors'
-    | 'resourceConfig'
-    | 'resourceConfigErrorsExist'
-    | 'resourceConfigErrors'
-    | 'resourceSchema'
->;
 
 const populateResourceConfigErrors = (
     resourceConfig: ResourceConfigDictionary,
@@ -119,63 +105,28 @@ const whatChanged = (
     return [removedCollections, newCollections];
 };
 
-const getInitialStateData = (hydrated: boolean): ResourceConfigStateBase => ({
+const getInitialStateData = (): Pick<
+    ResourceConfigState,
+    | 'collections'
+    | 'collectionErrorsExist'
+    | 'currentCollection'
+    | 'hydrated'
+    | 'hydrationErrors'
+    | 'resourceConfig'
+    | 'resourceConfigErrorsExist'
+    | 'resourceConfigErrors'
+    | 'resourceSchema'
+> => ({
     collections: [],
     collectionErrorsExist: true,
     currentCollection: null,
-    hydrated,
+    hydrated: true,
     hydrationErrors: [],
     resourceConfig: {},
     resourceConfigErrorsExist: true,
     resourceConfigErrors: [],
     resourceSchema: {},
 });
-
-type ConnectorTagData = Pick<
-    ConnectorTag,
-    'connector_id' | 'resource_spec_schema'
->;
-
-const getResourceSchema = async (connectorId: string | null) => {
-    const resourceSchema = await supabaseClient
-        .from(TABLES.CONNECTOR_TAGS)
-        .select(`connector_id,resource_spec_schema`)
-        .eq('connector_id', connectorId)
-        .then(handleSuccess<ConnectorTagData[]>, handleFailure);
-
-    return resourceSchema;
-};
-
-const getLiveSpecsByLiveSpecId = async (
-    liveSpecId: string,
-    specType: ENTITY
-) => {
-    const draftArray: string[] =
-        typeof liveSpecId === 'string' ? [liveSpecId] : liveSpecId;
-
-    const emptyCollections = await supabaseClient
-        .from(TABLES.LIVE_SPECS_EXT)
-        .select(`id,spec_type,spec,writes_to,reads_from`)
-        .eq('spec_type', specType)
-        .or(`id.in.(${draftArray})`)
-        .then(handleSuccess<LiveSpecsExtQuery[]>, handleFailure);
-
-    return emptyCollections;
-};
-
-const getLiveSpecsByLastPubId = async (lastPubId: string, specType: ENTITY) => {
-    const draftArray: string[] =
-        typeof lastPubId === 'string' ? [lastPubId] : lastPubId;
-
-    const emptyCollections = await supabaseClient
-        .from(TABLES.LIVE_SPECS_EXT)
-        .select(`id,spec_type,spec,writes_to,reads_from`)
-        .eq('spec_type', specType)
-        .or(`last_pub_id.in.(${draftArray})`)
-        .then(handleSuccess<LiveSpecsExtQuery[]>, handleFailure);
-
-    return emptyCollections;
-};
 
 const hydrateState = (
     get: StoreApi<ResourceConfigState>['getState'],
@@ -260,15 +211,7 @@ const getInitialState = (
     set: NamedSet<ResourceConfigState>,
     get: StoreApi<ResourceConfigState>['getState']
 ): ResourceConfigState => ({
-    collections: [],
-    collectionErrorsExist: true,
-    currentCollection: null,
-    hydrated: true,
-    hydrationErrors: [],
-    resourceConfig: {},
-    resourceConfigErrorsExist: true,
-    resourceConfigErrors: [],
-    resourceSchema: {},
+    ...getInitialStateData(),
 
     preFillEmptyCollections: (value) => {
         set(
@@ -408,14 +351,13 @@ const getInitialState = (
 
     stateChanged: () => {
         const { resourceConfig } = get();
-        const { resourceConfig: initialResourceConfig } =
-            getInitialStateData(true);
+        const { resourceConfig: initialResourceConfig } = getInitialStateData();
 
         return !isEqual(resourceConfig.data, initialResourceConfig.data);
     },
 
     resetState: () => {
-        set(getInitialStateData(true), false, 'Resource Config State Reset');
+        set(getInitialStateData(), false, 'Resource Config State Reset');
     },
 });
 

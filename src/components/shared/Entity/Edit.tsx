@@ -97,6 +97,8 @@ const initDraftToEdit = async (
             ? 'materializationEdit.generate.failure.errorTitle'
             : 'captureEdit.generate.failedErrorTitle';
 
+    // TODO (defect): Correct this initialization logic so that a new draft
+    //   is not created when the browser is refreshed.
     if (
         drafts.length === 0 ||
         draftSpecs.length === 0 ||
@@ -263,13 +265,13 @@ function EntityEdit({
         setEditDraftId,
         setFormState,
         callFailed,
-        initialSpec,
-        entityType,
         drafts,
         draftSpecs,
+        entityType,
+        formStatus,
+        initialSpec,
         isValidatingDrafts,
         isValidatingDraftSpecs,
-        formStatus,
         lastPubId,
     ]);
 
@@ -305,7 +307,6 @@ function EntityEdit({
                     : null
             );
 
-            // TODO: Repair temporary typing.
             setEndpointSchema(
                 connectorTag.endpoint_spec_schema as unknown as Schema
             );

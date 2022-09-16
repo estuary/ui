@@ -25,6 +25,7 @@ const evaluateResourceConfigEquality = (
             };
         });
 
+        // TODO (optimization): Evaluate the performance of a hash comparator function.
         return isEqual(resourceConfig, queriedResourceConfig);
     });
 
