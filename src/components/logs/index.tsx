@@ -28,12 +28,14 @@ function Logs({ token, height, disableIntervalFetching, fetchAll }: LogProps) {
                     <Paper
                         variant="outlined"
                         sx={{
-                            fontSize: 12,
+                            display: 'flex',
+                            alignItems: 'flex-start',
                             fontFamily: ['Monaco', 'monospace'],
                             minHeight: heightVal,
                             maxHeight: heightVal,
                             overflow: 'auto',
-                            py: 2,
+                            pt: 1,
+                            pb: 2,
                         }}
                     >
                         <List
@@ -41,6 +43,7 @@ function Logs({ token, height, disableIntervalFetching, fetchAll }: LogProps) {
                             sx={{
                                 pt: 0,
                                 whiteSpace: 'pre',
+                                width: '100%',
                             }}
                         >
                             <LogLines />

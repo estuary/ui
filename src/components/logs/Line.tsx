@@ -25,7 +25,6 @@ function LogLine({ line, lineNumber }: Props) {
                 spacing={2}
                 sx={{
                     alignItems: 'center',
-                    flexGrow: 1,
                 }}
             >
                 <Box
@@ -38,10 +37,12 @@ function LogLine({ line, lineNumber }: Props) {
                 >
                     {lineNumber}
                 </Box>
-                {parsedLine.spans.map((span, index) => (
+
+                {parsedLine.spans.map((span, index, array) => (
                     <LinePart
                         key={`${span.text}-linePart-${index}`}
                         parsedLine={span}
+                        lastPart={index + 1 === array.length}
                     />
                 ))}
             </Stack>
