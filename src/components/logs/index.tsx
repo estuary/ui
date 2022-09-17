@@ -33,6 +33,7 @@ function Logs({ token, height, disableIntervalFetching, fetchAll }: LogProps) {
                             minHeight: heightVal,
                             maxHeight: heightVal,
                             overflow: 'auto',
+                            py: 2,
                         }}
                     >
                         <List

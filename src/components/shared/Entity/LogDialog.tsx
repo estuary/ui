@@ -51,7 +51,7 @@ function LogDialog({ open, token, actionComponent, title }: Props) {
 
             <DialogContent>
                 <ErrorBoundryWrapper>
-                    <Logs token={token} height={250} />
+                    <Logs token={token} height={350} />
                 </ErrorBoundryWrapper>
             </DialogContent>
 

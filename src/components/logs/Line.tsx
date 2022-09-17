@@ -15,7 +15,8 @@ function LogLine({ line, lineNumber }: Props) {
             sx={{
                 'py': 0,
                 '&:hover': {
-                    background: 'red',
+                    background: (theme) =>
+                        theme.palette.mode === 'dark' ? '#222' : '#eee',
                 },
             }}
         >
@@ -29,6 +30,7 @@ function LogLine({ line, lineNumber }: Props) {
             >
                 <Box
                     sx={{
+                        color: '#666',
                         userSelect: 'none',
                         minWidth: 50,
                         textAlign: 'right',
