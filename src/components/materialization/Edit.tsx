@@ -75,9 +75,6 @@ function MaterializationEdit() {
     // Resource Config Store
     // const resourceConfigChanged = useResourceConfig_stateChanged();
 
-    // const resourceConfigErrorsExist =
-    //     useResourceConfig_resourceConfigErrorsExist();
-
     // Reset the catalog if the connector changes
     useEffect(() => {
         setDraftId(null);
