@@ -16,7 +16,6 @@ function LogLines({ height }: Props) {
     const { stayScrolled } = useStayScrolled(scrollElementRef);
 
     useLayoutEffect(() => {
-        console.log('spinner scrolling');
         stayScrolled();
     }, [logs, stayScrolled]);
 

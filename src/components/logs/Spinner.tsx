@@ -41,11 +41,9 @@ function Spinner() {
     return (
         <LogLine
             disableSelect
-            line={{
-                log_line: intl.formatMessage({
-                    id: stopped ? 'logs.paused' : 'logs.default',
-                }),
-            }}
+            line={intl.formatMessage({
+                id: stopped ? 'logs.paused' : 'logs.default',
+            })}
             lineNumber={
                 <CircularProgress
                     variant={stopped ? 'determinate' : undefined}

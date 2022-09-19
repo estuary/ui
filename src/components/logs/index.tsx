@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { Stack } from '@mui/material';
 import { useMemo } from 'react';
 import { LogsContextProvider } from './Context';
 import LogLines from './Lines';
@@ -16,17 +16,16 @@ function Logs({ token, height, disableIntervalFetching, fetchAll }: LogProps) {
 
     return useMemo(() => {
         return (
-            <Box>
-                <LogsContextProvider
-                    token={token}
-                    disableIntervalFetching={disableIntervalFetching}
-                    fetchAll={fetchAll}
-                >
+            <LogsContextProvider
+                token={token}
+                disableIntervalFetching={disableIntervalFetching}
+                fetchAll={fetchAll}
+            >
+                <Stack spacing={2}>
                     <StoppedAlert />
-
                     <LogLines height={heightVal} />
-                </LogsContextProvider>
-            </Box>
+                </Stack>
+            </LogsContextProvider>
         );
     }, [disableIntervalFetching, fetchAll, heightVal, token]);
 }

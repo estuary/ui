@@ -1,17 +1,28 @@
 import { Box, ListItem, Stack } from '@mui/material';
 import { parse } from 'ansicolor';
+import { ViewLogs_Line } from 'types';
 import LinePart from './LinePart';
 
 interface Props {
-    line: any;
+    line: ViewLogs_Line | string;
     lineNumber: number | string | any;
     disableSelect?: boolean;
 }
 
 export const lineNumberColor = '#666';
 
+// const parseStream = (line: ViewLogs_Line): ParsedStream => {
+//     return line.stream.slice(0, line.stream.lastIndexOf(':')) as ParsedStream;
+// };
+
 function LogLine({ line, lineNumber, disableSelect }: Props) {
-    const parsedLine = parse(line.log_line);
+    let parsedLine;
+
+    if (line instanceof Object) {
+        parsedLine = parse(line.log_line);
+    } else {
+        parsedLine = parse(line);
+    }
 
     return (
         <ListItem

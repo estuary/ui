@@ -124,3 +124,19 @@ export interface TableIntlConfig {
     message: string;
     disableDoclink?: boolean;
 }
+
+export interface ViewLogs_Line {
+    log_line: string;
+    logged_at: string;
+    stream: string;
+    token: string;
+}
+
+export type ParsedStream =
+    | 'build'
+    | 'persist'
+    | 'temp-data-plane'
+    | 'setup'
+    | 'test'
+    | 'cleanup'
+    | 'activate';

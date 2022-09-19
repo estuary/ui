@@ -29,12 +29,14 @@ function Status({ formStateStoreName }: Props) {
         messageKey = 'common.running';
     }
 
-    console.log('rendering the status');
-
     if (messageKey) {
         if (severity) {
             return (
-                <Alert severity={severity} variant="filled">
+                <Alert
+                    severity={severity}
+                    variant="outlined"
+                    sx={{ border: 0 }}
+                >
                     <Typography sx={{ mr: 1 }}>
                         <FormattedMessage id={messageKey} />
                     </Typography>

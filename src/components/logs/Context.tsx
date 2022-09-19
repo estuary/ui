@@ -6,7 +6,7 @@ import {
     useState,
     useRef,
 } from 'react';
-import { BaseComponentProps } from 'types';
+import { BaseComponentProps, ViewLogs_Line } from 'types';
 import { DEFAULT_POLLING_INTERVAL, RPCS } from 'services/supabase';
 import { hasLength, incrementInterval, timeoutCleanUp } from 'utils/misc-utils';
 import { useClient } from 'hooks/supabase-swr';
@@ -19,12 +19,12 @@ interface Props extends BaseComponentProps {
 
 type LogsContextValue = {
     reset: () => void;
-    logs: any[];
+    logs: ViewLogs_Line[];
     networkFailure: boolean;
     stopped: boolean;
 };
 
-const MAX_EMPTY_CALLS = 25; // about 1.5 minutes
+const MAX_EMPTY_CALLS = 90; // about 1.5 minute
 const MAX_INTERVAL = 1000; //  we don't want to wait too longer between pings
 const LogsContext = createContext<LogsContextValue | null>(null);
 
@@ -37,7 +37,7 @@ const LogsContextProvider = ({
     const supabaseClient = useClient();
 
     // Privates
-    const allLogs = useRef<string[]>([]);
+    const allLogs = useRef<ViewLogs_Line[]>([]);
     const offset = useRef(0);
     const timeoutRef = useRef<number | undefined>();
     const interval = useRef(DEFAULT_POLLING_INTERVAL / 2);
@@ -46,7 +46,7 @@ const LogsContextProvider = ({
     );
 
     // Publics
-    const [logs, setLogs] = useState<string[]>([]);
+    const [logs, setLogs] = useState<ViewLogs_Line[]>([]);
     const [stopped, setStopped] = useState(false);
     const [networkFailure, setNetworkFailure] = useState(false);
 
@@ -56,11 +56,11 @@ const LogsContextProvider = ({
         };
         if (fetchAll) {
             return supabaseClient
-                .rpc(RPCS.VIEW_LOGS, queryParams)
+                .rpc<ViewLogs_Line>(RPCS.VIEW_LOGS, queryParams)
                 .throwOnError();
         } else {
             return supabaseClient
-                .rpc(RPCS.VIEW_LOGS, queryParams)
+                .rpc<ViewLogs_Line>(RPCS.VIEW_LOGS, queryParams)
                 .throwOnError()
                 .range(offsetVal, offsetVal + 10);
         }
