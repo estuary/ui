@@ -4,17 +4,22 @@ import {
     getLiveSpecsByLiveSpecId,
     getResourceSchema,
 } from 'api/hydration';
-import { useEntityWorkflow } from 'context/Workflow';
+import { useEntityType } from 'context/EntityContext';
 import { ResourceConfigStoreNames } from 'context/Zustand';
-import { useResourceConfigStore } from 'context/zustand/ResourceConfig';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
 import { difference, has, isEmpty, isEqual, map, omit } from 'lodash';
+import {
+    createContext as createReactContext,
+    ReactNode,
+    useContext,
+} from 'react';
 import { createJSONFormDefaults } from 'services/ajv';
 import { ENTITY, EntityWorkflow, JsonFormsData, Schema } from 'types';
+import useConstant from 'use-constant';
 import { devtoolsOptions } from 'utils/store-utils';
-import create, { StoreApi } from 'zustand';
+import create, { StoreApi, useStore } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import shallow from 'zustand/shallow';
 
@@ -444,157 +449,207 @@ export const createHydratedResourceConfigStore = (
     );
 };
 
+// Context Provider
+interface ResourceConfigProviderProps {
+    children: ReactNode;
+    workflow: EntityWorkflow;
+}
+
+const invariableStore = {
+    [ResourceConfigStoreNames.MATERIALIZATION]: {},
+};
+
+export const ResourceConfigContext = createReactContext<any | null>(null);
+
+export const ResourceConfigProvider = ({
+    children,
+    workflow,
+}: ResourceConfigProviderProps) => {
+    const storeOptions = useConstant(() => {
+        invariableStore[ResourceConfigStoreNames.MATERIALIZATION] =
+            createHydratedResourceConfigStore(
+                ResourceConfigStoreNames.MATERIALIZATION,
+                workflow
+            );
+
+        return invariableStore;
+    });
+
+    return (
+        <ResourceConfigContext.Provider value={storeOptions}>
+            {children}
+        </ResourceConfigContext.Provider>
+    );
+};
+
+// TODO (useZustand) it would be great to check that the parent exists
+//   and if so then enable the functionality relying on this. An example
+//   where this would be good is the tables as any tables currently needs
+//   the store even if they don't allow for selection
+export const useResourceConfigStore = <S extends Object, U>(
+    storeName: ResourceConfigStoreNames,
+    selector: (state: S) => U,
+    equalityFn?: any
+) => {
+    const storeOptions = useContext(ResourceConfigContext);
+    const store = storeOptions[storeName];
+
+    return useStore<StoreApi<S>, ReturnType<typeof selector>>(
+        store,
+        selector,
+        equalityFn
+    );
+};
+
 // Selector Hooks
-const storeName = (workflow: EntityWorkflow): ResourceConfigStoreNames => {
-    if (workflow === 'materialization_create') {
-        return ResourceConfigStoreNames.MATERIALIZATION_CREATE;
-    } else if (workflow === 'materialization_edit') {
-        return ResourceConfigStoreNames.MATERIALIZATION_EDIT;
+const storeName = (entityType: ENTITY): ResourceConfigStoreNames => {
+    if (entityType === ENTITY.MATERIALIZATION) {
+        return ResourceConfigStoreNames.MATERIALIZATION;
     } else {
         throw new Error('Invalid ResourceConfig store name');
     }
 };
 
 export const useResourceConfig_collections = () => {
-    const workflow = useEntityWorkflow();
+    const entityType = useEntityType();
 
     return useResourceConfigStore<
         ResourceConfigState,
         ResourceConfigState['collections']
-    >(storeName(workflow), (state) => state.collections);
+    >(storeName(entityType), (state) => state.collections);
 };
 
 export const useResourceConfig_preFillEmptyCollections = () => {
-    const workflow = useEntityWorkflow();
+    const entityType = useEntityType();
 
     return useResourceConfigStore<
         ResourceConfigState,
         ResourceConfigState['preFillEmptyCollections']
-    >(storeName(workflow), (state) => state.preFillEmptyCollections);
+    >(storeName(entityType), (state) => state.preFillEmptyCollections);
 };
 
 export const useResourceConfig_preFillCollections = () => {
-    const workflow = useEntityWorkflow();
+    const entityType = useEntityType();
 
     return useResourceConfigStore<
         ResourceConfigState,
         ResourceConfigState['preFillCollections']
-    >(storeName(workflow), (state) => state.preFillCollections);
+    >(storeName(entityType), (state) => state.preFillCollections);
 };
 
 export const useResourceConfig_collectionErrorsExist = () => {
-    const workflow = useEntityWorkflow();
+    const entityType = useEntityType();
 
     return useResourceConfigStore<
         ResourceConfigState,
         ResourceConfigState['collectionErrorsExist']
-    >(storeName(workflow), (state) => state.collectionErrorsExist);
+    >(storeName(entityType), (state) => state.collectionErrorsExist);
 };
 
 export const useResourceConfig_currentCollection = () => {
-    const workflow = useEntityWorkflow();
+    const entityType = useEntityType();
 
     return useResourceConfigStore<
         ResourceConfigState,
         ResourceConfigState['currentCollection']
-    >(storeName(workflow), (state) => state.currentCollection);
+    >(storeName(entityType), (state) => state.currentCollection);
 };
 
 export const useResourceConfig_setCurrentCollection = () => {
-    const workflow = useEntityWorkflow();
+    const entityType = useEntityType();
 
     return useResourceConfigStore<
         ResourceConfigState,
         ResourceConfigState['setCurrentCollection']
-    >(storeName(workflow), (state) => state.setCurrentCollection);
+    >(storeName(entityType), (state) => state.setCurrentCollection);
 };
 
 export const useResourceConfig_resourceConfig = () => {
-    const workflow = useEntityWorkflow();
+    const entityType = useEntityType();
 
     return useResourceConfigStore<
         ResourceConfigState,
         ResourceConfigState['resourceConfig']
-    >(storeName(workflow), (state) => state.resourceConfig, shallow);
+    >(storeName(entityType), (state) => state.resourceConfig, shallow);
 };
 
 export const useResourceConfig_setResourceConfig = () => {
-    const workflow = useEntityWorkflow();
+    const entityType = useEntityType();
 
     return useResourceConfigStore<
         ResourceConfigState,
         ResourceConfigState['setResourceConfig']
-    >(storeName(workflow), (state) => state.setResourceConfig);
+    >(storeName(entityType), (state) => state.setResourceConfig);
 };
 
 export const useResourceConfig_resourceConfigErrorsExist = () => {
-    const workflow = useEntityWorkflow();
+    const entityType = useEntityType();
 
     return useResourceConfigStore<
         ResourceConfigState,
         ResourceConfigState['resourceConfigErrorsExist']
-    >(storeName(workflow), (state) => state.resourceConfigErrorsExist);
+    >(storeName(entityType), (state) => state.resourceConfigErrorsExist);
 };
 
 export const useResourceConfig_resourceConfigErrors = () => {
-    const workflow = useEntityWorkflow();
+    const entityType = useEntityType();
 
     return useResourceConfigStore<
         ResourceConfigState,
         ResourceConfigState['resourceConfigErrors']
-    >(storeName(workflow), (state) => state.resourceConfigErrors);
+    >(storeName(entityType), (state) => state.resourceConfigErrors);
 };
 
 export const useResourceConfig_resourceSchema = () => {
-    const workflow = useEntityWorkflow();
+    const entityType = useEntityType();
 
     return useResourceConfigStore<
         ResourceConfigState,
         ResourceConfigState['resourceSchema']
-    >(storeName(workflow), (state) => state.resourceSchema);
+    >(storeName(entityType), (state) => state.resourceSchema);
 };
 
 export const useResourceConfig_setResourceSchema = () => {
-    const workflow = useEntityWorkflow();
+    const entityType = useEntityType();
 
     return useResourceConfigStore<
         ResourceConfigState,
         ResourceConfigState['setResourceSchema']
-    >(storeName(workflow), (state) => state.setResourceSchema);
+    >(storeName(entityType), (state) => state.setResourceSchema);
 };
 
 export const useResourceConfig_stateChanged = () => {
-    const workflow = useEntityWorkflow();
+    const entityType = useEntityType();
 
     return useResourceConfigStore<
         ResourceConfigState,
         ResourceConfigState['stateChanged']
-    >(storeName(workflow), (state) => state.stateChanged);
+    >(storeName(entityType), (state) => state.stateChanged);
 };
 
 export const useResourceConfig_resetState = () => {
-    const workflow = useEntityWorkflow();
+    const entityType = useEntityType();
 
     return useResourceConfigStore<
         ResourceConfigState,
         ResourceConfigState['resetState']
-    >(storeName(workflow), (state) => state.resetState);
+    >(storeName(entityType), (state) => state.resetState);
 };
 
 export const useResourceConfig_hydrated = () => {
-    const workflow = useEntityWorkflow();
+    const entityType = useEntityType();
 
     return useResourceConfigStore<
         ResourceConfigState,
         ResourceConfigState['hydrated']
-    >(storeName(workflow), (state) => state.hydrated);
+    >(storeName(entityType), (state) => state.hydrated);
 };
 
 export const useResourceConfig_hydrationErrorsExist = () => {
-    const workflow = useEntityWorkflow();
+    const entityType = useEntityType();
 
     return useResourceConfigStore<
         ResourceConfigState,
         ResourceConfigState['hydrationErrorsExist']
-    >(storeName(workflow), (state) => state.hydrationErrorsExist);
+    >(storeName(entityType), (state) => state.hydrationErrorsExist);
 };

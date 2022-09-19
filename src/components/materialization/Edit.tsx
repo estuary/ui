@@ -11,8 +11,6 @@ import EntityEdit from 'components/shared/Entity/Edit';
 import FooHeader from 'components/shared/Entity/Header';
 import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary/materialization';
 import PageContainer from 'components/shared/PageContainer';
-import { ResourceConfigStoreNames } from 'context/Zustand';
-import { ResourceConfigProvider } from 'context/zustand/ResourceConfig';
 import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { useEffect } from 'react';
@@ -37,7 +35,7 @@ import {
     useFormStateStore_resetState,
     useFormStateStore_setFormState,
 } from 'stores/FormState';
-import { createHydratedResourceConfigStore } from 'stores/ResourceConfig';
+import { ResourceConfigProvider } from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
 
 function MaterializationEdit() {
@@ -142,10 +140,7 @@ function MaterializationEdit() {
 
     return (
         <PageContainer>
-            <ResourceConfigProvider
-                storeName={ResourceConfigStoreNames.MATERIALIZATION_EDIT}
-                createStore={createHydratedResourceConfigStore}
-            >
+            <ResourceConfigProvider workflow="materialization_edit">
                 <EntityEdit
                     title="browserTitle.materializationEdit"
                     entityType={entityType}

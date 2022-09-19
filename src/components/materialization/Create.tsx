@@ -10,8 +10,6 @@ import EntityCreate from 'components/shared/Entity/Create';
 import FooHeader from 'components/shared/Entity/Header';
 import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary/materialization';
 import PageContainer from 'components/shared/PageContainer';
-import { ResourceConfigStoreNames } from 'context/Zustand';
-import { ResourceConfigProvider } from 'context/zustand/ResourceConfig';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -35,7 +33,7 @@ import {
     useFormStateStore_resetState,
     useFormStateStore_setFormState,
 } from 'stores/FormState';
-import { createHydratedResourceConfigStore } from 'stores/ResourceConfig';
+import { ResourceConfigProvider } from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
 
 function MaterializationCreate() {
@@ -130,10 +128,7 @@ function MaterializationCreate() {
                     'https://docs.estuary.dev/guides/create-dataflow/#create-a-materialization',
             }}
         >
-            <ResourceConfigProvider
-                storeName={ResourceConfigStoreNames.MATERIALIZATION_CREATE}
-                createStore={createHydratedResourceConfigStore}
-            >
+            <ResourceConfigProvider workflow="materialization_create">
                 <EntityCreate
                     title="browserTitle.materializationCreate"
                     connectorType={entityType}
