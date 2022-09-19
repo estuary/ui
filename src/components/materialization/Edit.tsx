@@ -155,7 +155,12 @@ function MaterializationEdit() {
                         // resourceConfigChanged() ||
                         detailsFormChanged()
                     }
+                    readOnly={{
+                        detailsForm: true,
+                        endpointConfigForm: true,
+                    }}
                     resetState={resetState}
+                    callFailed={helpers.callFailed}
                     Header={
                         <FooHeader
                             GenerateButton={
@@ -195,11 +200,6 @@ function MaterializationEdit() {
                             }
                         />
                     }
-                    callFailed={helpers.callFailed}
-                    readOnly={{
-                        detailsForm: true,
-                        endpointConfigForm: true,
-                    }}
                 />
             </ResourceConfigProvider>
         </PageContainer>

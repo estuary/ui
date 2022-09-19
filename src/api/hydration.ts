@@ -17,7 +17,7 @@ export const getResourceSchema = async (connectorId: string | null) => {
     const resourceSchema = await supabaseClient
         .from(TABLES.CONNECTOR_TAGS)
         .select(`connector_id,resource_spec_schema`)
-        .eq('connector_id', connectorId)
+        .eq('connector_i', connectorId)
         .then(handleSuccess<ConnectorTagData[]>, handleFailure);
 
     return resourceSchema;

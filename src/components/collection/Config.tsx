@@ -15,6 +15,7 @@ function CollectionConfig({ readOnly = false }: Props) {
     // Resource Config Store
     const resourceConfigHasErrors =
         useResourceConfig_resourceConfigErrorsExist();
+
     const collectionsHasErrors = useResourceConfig_collectionErrorsExist();
 
     const hasErrors = resourceConfigHasErrors || collectionsHasErrors;

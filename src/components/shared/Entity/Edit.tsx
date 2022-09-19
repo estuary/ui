@@ -56,16 +56,16 @@ import { hasLength } from 'utils/misc-utils';
 interface Props {
     title: string;
     entityType: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
-    Header: any;
-    callFailed: (formState: any, subscription?: RealtimeSubscription) => void;
-    showCollections?: boolean;
-    promptDataLoss: any;
-    resetState: () => void;
+    promptDataLoss: boolean;
     readOnly: {
         detailsForm?: true;
         endpointConfigForm?: true;
         resourceConfigForm?: true;
     };
+    callFailed: (formState: any, subscription?: RealtimeSubscription) => void;
+    resetState: () => void;
+    Header: any;
+    showCollections?: boolean;
 }
 
 interface InitializationHelpers {

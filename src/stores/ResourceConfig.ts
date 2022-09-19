@@ -1,3 +1,4 @@
+import { PostgrestError } from '@supabase/postgrest-js';
 import {
     getLiveSpecsByLastPubId,
     getLiveSpecsByLiveSpecId,
@@ -25,6 +26,10 @@ export interface ResourceConfig {
 export interface ResourceConfigDictionary {
     [key: string]: ResourceConfig;
 }
+
+type HydrationError =
+    | PostgrestError
+    | Pick<PostgrestError, 'message' | 'details'>;
 
 // TODO (naming): Determine whether the resourceConfig state property should be made plural.
 //   It is a dictionary of individual resource configs, so I am leaning "yes."
@@ -56,7 +61,8 @@ export interface ResourceConfigState {
     // Hydration
     // TODO: Narrow the type of hydration errors.
     hydrated: boolean;
-    hydrationErrors: any[];
+    hydrationErrorsExist: boolean;
+    hydrationErrors: HydrationError[];
 
     // Misc.
     stateChanged: () => boolean;
@@ -109,6 +115,7 @@ const getInitialStateData = (): Pick<
     | 'collectionErrorsExist'
     | 'currentCollection'
     | 'hydrated'
+    | 'hydrationErrorsExist'
     | 'hydrationErrors'
     | 'resourceConfig'
     | 'resourceConfigErrorsExist'
@@ -119,6 +126,7 @@ const getInitialStateData = (): Pick<
     collectionErrorsExist: true,
     currentCollection: null,
     hydrated: false,
+    hydrationErrorsExist: false,
     hydrationErrors: [],
     resourceConfig: {},
     resourceConfigErrorsExist: true,
@@ -127,6 +135,7 @@ const getInitialStateData = (): Pick<
 });
 
 const hydrateState = async (
+    set: NamedSet<ResourceConfigState>,
     get: StoreApi<ResourceConfigState>['getState'],
     workflow: EntityWorkflow
 ): Promise<void> => {
@@ -139,7 +148,14 @@ const hydrateState = async (
         const { data, error } = await getResourceSchema(connectorId);
 
         if (error) {
-            console.log('rejected');
+            set(
+                produce((state: ResourceConfigState) => {
+                    state.hydrationErrorsExist = true;
+                    state.hydrationErrors = [...state.hydrationErrors, error];
+                }),
+                false,
+                'Resource Config Hydration Errors Detected'
+            );
         }
 
         if (data && data.length > 0) {
@@ -161,7 +177,17 @@ const hydrateState = async (
             );
 
             if (error) {
-                console.log('lastPub: empty collections rejected');
+                set(
+                    produce((state: ResourceConfigState) => {
+                        state.hydrationErrorsExist = true;
+                        state.hydrationErrors = [
+                            ...state.hydrationErrors,
+                            error,
+                        ];
+                    }),
+                    false,
+                    'Resource Config Hydration Errors Detected'
+                );
             }
 
             if (data && data.length > 0) {
@@ -176,7 +202,17 @@ const hydrateState = async (
             );
 
             if (error) {
-                console.log('liveSpec: empty collections rejected');
+                set(
+                    produce((state: ResourceConfigState) => {
+                        state.hydrationErrorsExist = true;
+                        state.hydrationErrors = [
+                            ...state.hydrationErrors,
+                            error,
+                        ];
+                    }),
+                    false,
+                    'Resource Config Hydration Errors Detected'
+                );
             }
 
             if (data && data.length > 0) {
@@ -192,7 +228,14 @@ const hydrateState = async (
         );
 
         if (error) {
-            console.log('liveSpec: empty collections rejected');
+            set(
+                produce((state: ResourceConfigState) => {
+                    state.hydrationErrorsExist = true;
+                    state.hydrationErrors = [...state.hydrationErrors, error];
+                }),
+                false,
+                'Resource Config Hydration Errors Detected'
+            );
         }
 
         if (data && data.length > 0) {
@@ -362,7 +405,7 @@ export const createHydratedResourceConfigStore = (
         devtools((set, get) => {
             const coreState = getInitialState(set, get);
 
-            hydrateState(get, workflow).then(
+            hydrateState(set, get, workflow).then(
                 () => {
                     set(
                         produce((state: ResourceConfigState) => {
@@ -373,7 +416,26 @@ export const createHydratedResourceConfigStore = (
                     );
                 },
                 () => {
-                    console.log('hydration error');
+                    set(
+                        produce((state: ResourceConfigState) => {
+                            const error: HydrationError = {
+                                message:
+                                    'A problem was encountered when hydrating the resource configuration store.',
+                                details:
+                                    'This error occurred in the top-level create function.',
+                            };
+
+                            state.hydrated = true;
+
+                            state.hydrationErrorsExist = true;
+                            state.hydrationErrors = [
+                                ...state.hydrationErrors,
+                                error,
+                            ];
+                        }),
+                        false,
+                        'Resource Config Hydration Errors Detected'
+                    );
                 }
             );
 
@@ -526,4 +588,13 @@ export const useResourceConfig_hydrated = () => {
         ResourceConfigState,
         ResourceConfigState['hydrated']
     >(storeName(workflow), (state) => state.hydrated);
+};
+
+export const useResourceConfig_hydrationErrorsExist = () => {
+    const workflow = useEntityWorkflow();
+
+    return useResourceConfigStore<
+        ResourceConfigState,
+        ResourceConfigState['hydrationErrorsExist']
+    >(storeName(workflow), (state) => state.hydrationErrorsExist);
 };
