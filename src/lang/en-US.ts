@@ -590,6 +590,7 @@ const MaterializationEdit: ResolvedIntlConfig['messages'] = {
 // TODO (optimization): Consolidate duplicate create and edit messages.
 const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.error.initForm': `An issue was encountered initializing the form.`,
+    'workflows.error.initFormSection': `An issue was encountered initializing this section of the form.`,
 };
 
 const ShardStatus: ResolvedIntlConfig['messages'] = {
