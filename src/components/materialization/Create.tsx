@@ -35,7 +35,7 @@ import {
     useFormStateStore_resetState,
     useFormStateStore_setFormState,
 } from 'stores/FormState';
-import { createResourceConfigStore } from 'stores/ResourceConfig';
+import { createHydratedResourceConfigStore } from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
 
 function MaterializationCreate() {
@@ -132,7 +132,7 @@ function MaterializationCreate() {
         >
             <ResourceConfigProvider
                 storeName={ResourceConfigStoreNames.MATERIALIZATION_CREATE}
-                createStore={createResourceConfigStore}
+                createStore={createHydratedResourceConfigStore}
             >
                 <EntityCreate
                     title="browserTitle.materializationCreate"

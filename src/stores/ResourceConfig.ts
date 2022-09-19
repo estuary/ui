@@ -354,7 +354,7 @@ const getInitialState = (
     },
 });
 
-export const createResourceConfigStore = (
+export const createHydratedResourceConfigStore = (
     key: ResourceConfigStoreNames,
     workflow: EntityWorkflow
 ) => {

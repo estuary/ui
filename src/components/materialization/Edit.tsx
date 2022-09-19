@@ -37,7 +37,7 @@ import {
     useFormStateStore_resetState,
     useFormStateStore_setFormState,
 } from 'stores/FormState';
-import { createResourceConfigStore } from 'stores/ResourceConfig';
+import { createHydratedResourceConfigStore } from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
 
 function MaterializationEdit() {
@@ -144,7 +144,7 @@ function MaterializationEdit() {
         <PageContainer>
             <ResourceConfigProvider
                 storeName={ResourceConfigStoreNames.MATERIALIZATION_EDIT}
-                createStore={createResourceConfigStore}
+                createStore={createHydratedResourceConfigStore}
             >
                 <EntityEdit
                     title="browserTitle.materializationEdit"
