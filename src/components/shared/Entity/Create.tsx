@@ -61,8 +61,6 @@ function EntityCreate({
         GlobalSearchParams.CONNECTOR_ID,
     ]);
 
-    // const specId = useGlobalSearchParams(GlobalSearchParams.LIVE_SPEC_ID, true);
-
     const [showConnectorTiles, setShowConnectorTiles] = useState<
         boolean | null
     >(null);
@@ -92,44 +90,20 @@ function EntityCreate({
 
     const formSubmitError = useFormStateStore_error();
 
-    // Resource Config Store
-    // TODO: Determine proper placement for this logic.
-    // const prefillEmptyCollections = useResourceConfig_preFillEmptyCollections();
-
     // Reset the catalog if the connector changes
     useEffect(() => {
         setDraftId(null);
     }, [imageTag, setDraftId]);
 
     const { connectorTag } = useConnectorTag(imageTag.id);
-    // const { liveSpecs } = useLiveSpecsExtWithOutSpec(specId, ENTITY.CAPTURE);
-    // const { liveSpecs: liveSpecsByLastPub } = useLiveSpecsExtByLastPubId(
-    //     lastPubId,
-    //     ENTITY.CAPTURE
-    // );
 
     useEffect(() => {
         if (connectorTag?.endpoint_spec_schema) {
-            // TODO: Repair temporary typing.
             setEndpointSchema(
                 connectorTag.endpoint_spec_schema as unknown as Schema
             );
-
-            // We wanna make sure we do these after the schemas are set as
-            //  as they are dependent on them.
-            // if (liveSpecs.length > 0) {
-            //     prefillEmptyCollections(liveSpecs);
-            // } else if (liveSpecsByLastPub.length > 0) {
-            //     prefillEmptyCollections(liveSpecsByLastPub);
-            // }
         }
-    }, [
-        setEndpointSchema,
-        connectorTag?.endpoint_spec_schema,
-        // liveSpecs,
-        // liveSpecsByLastPub,
-        // prefillEmptyCollections,
-    ]);
+    }, [setEndpointSchema, connectorTag?.endpoint_spec_schema]);
 
     useEffect(() => {
         if (typeof connectorID === 'string') {
