@@ -5,14 +5,18 @@ import LinePart from './LinePart';
 interface Props {
     line: any;
     lineNumber: number | string | any;
+    disableSelect?: boolean;
 }
 
-function LogLine({ line, lineNumber }: Props) {
+export const lineNumberColor = '#666';
+
+function LogLine({ line, lineNumber, disableSelect }: Props) {
     const parsedLine = parse(line.log_line);
 
     return (
         <ListItem
             sx={{
+                'userSelect': disableSelect ? 'none' : undefined,
                 'py': 0,
                 '&:hover': {
                     background: (theme) =>
@@ -29,7 +33,7 @@ function LogLine({ line, lineNumber }: Props) {
             >
                 <Box
                     sx={{
-                        color: '#666',
+                        color: lineNumberColor,
                         userSelect: 'none',
                         minWidth: 50,
                         textAlign: 'right',

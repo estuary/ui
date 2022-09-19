@@ -308,7 +308,7 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
 };
 
 const LogsDialog: ResolvedIntlConfig['messages'] = {
-    'logs.default': `waiting for logs...`,
+    'logs.default': `Waiting for logs...`,
     'logs.paused': `paused`,
     'logs.restartLink': `click here`,
     'logs.tooManyEmpty': `Logs for this build may have ended. {restartCTA} to start waiting for new logs again.`,

@@ -1,11 +1,9 @@
 import { CircularProgress } from '@mui/material';
-import { useRef } from 'react';
 // import { MutableRefObject, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useUpdateEffect } from 'react-use';
 import { useLogsContext } from './Context';
 // import { useInterval } from 'react-use';
-import LogLine from './Line';
+import LogLine, { lineNumberColor } from './Line';
 
 // Spinner from https://github.com/sindresorhus/cli-spinners/blob/main/spinners.json
 // const ANIMATION_PROPERTIES = {
@@ -20,19 +18,7 @@ import LogLine from './Line';
 
 function Spinner() {
     const intl = useIntl();
-    const { stopped: stop } = useLogsContext();
-
-    const spinnerRef = useRef<HTMLDivElement>(null);
-
-    useUpdateEffect(() => {
-        if (spinnerRef.current) {
-            spinnerRef.current.scrollIntoView({
-                behavior: 'smooth',
-                block: 'end',
-                inline: 'start',
-            });
-        }
-    });
+    const { stopped } = useLogsContext();
 
     // const buildLogLine = (newFrame: MutableRefObject<number>) => {
     //  return `${getFrame(newFrame.current)}`;
@@ -53,35 +39,25 @@ function Spinner() {
     // );
 
     return (
-        <>
-            <LogLine
-                line={{
-                    log_line: intl.formatMessage({
-                        id: stop ? 'logs.paused' : 'logs.default',
-                    }),
-                }}
-                lineNumber={
-                    <CircularProgress
-                        variant={stop ? 'determinate' : undefined}
-                        value={stop ? 100 : undefined}
-                        size={10}
-                        sx={{
-                            color: (theme) =>
-                                theme.palette.mode === 'dark'
-                                    ? 'white'
-                                    : 'black',
-                        }}
-                    />
-                }
-            />
-            {/*Blank on purpose. This is here so scrolling looks better.*/}
-            <LogLine
-                line={{
-                    log_line: '',
-                }}
-                lineNumber={<span ref={spinnerRef} />}
-            />
-        </>
+        <LogLine
+            disableSelect
+            line={{
+                log_line: intl.formatMessage({
+                    id: stopped ? 'logs.paused' : 'logs.default',
+                }),
+            }}
+            lineNumber={
+                <CircularProgress
+                    variant={stopped ? 'determinate' : undefined}
+                    value={stopped ? 100 : undefined}
+                    size={18}
+                    sx={{
+                        alignSelf: 'end',
+                        color: lineNumberColor,
+                    }}
+                />
+            }
+        />
     );
 }
 

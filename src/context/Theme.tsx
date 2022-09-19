@@ -135,7 +135,6 @@ const darkMode: PaletteOptions = {
 export const zIndexIncrement = 5;
 
 // Need to make the sticky header be on top
-export const stickyHeaderIndex = zIndexIncrement * 100;
 export const headerLinkIndex = zIndexIncrement * 30;
 
 // Makes sure the hovering styling can be seen
