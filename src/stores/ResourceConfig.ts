@@ -56,8 +56,6 @@ export interface ResourceConfigState {
     // Hydration
     // TODO: Narrow the type of hydration errors.
     hydrated: boolean;
-    setHydrated: (value: boolean) => void;
-
     hydrationErrors: any[];
 
     // Misc.
@@ -120,7 +118,7 @@ const getInitialStateData = (): Pick<
     collections: [],
     collectionErrorsExist: true,
     currentCollection: null,
-    hydrated: true,
+    hydrated: false,
     hydrationErrors: [],
     resourceConfig: {},
     resourceConfigErrorsExist: true,
@@ -128,82 +126,87 @@ const getInitialStateData = (): Pick<
     resourceSchema: {},
 });
 
-const hydrateState = (
+const hydrateState = async (
     get: StoreApi<ResourceConfigState>['getState'],
     workflow: EntityWorkflow
-): void => {
+): Promise<void> => {
     const searchParams = new URLSearchParams(window.location.search);
     const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
     const liveSpecId = searchParams.get(GlobalSearchParams.LIVE_SPEC_ID);
     const lastPubId = searchParams.get(GlobalSearchParams.LAST_PUB_ID);
 
     if (connectorId) {
-        getResourceSchema(connectorId).then(
-            ({ data }) => {
-                if (data && data.length > 0) {
-                    const { setResourceSchema } = get();
+        const { data, error } = await getResourceSchema(connectorId);
 
-                    setResourceSchema(
-                        data[0].resource_spec_schema as unknown as Schema
-                    );
-                }
-            },
-            () => {
-                console.log('rejected');
-            }
-        );
+        if (error) {
+            console.log('rejected');
+        }
+
+        if (data && data.length > 0) {
+            const { setResourceSchema } = get();
+
+            setResourceSchema(
+                data[0].resource_spec_schema as unknown as Schema
+            );
+        }
     }
 
     if (workflow === 'materialization_create') {
         const specType = ENTITY.CAPTURE;
 
         if (lastPubId) {
-            getLiveSpecsByLastPubId(lastPubId, specType).then(
-                ({ data }) => {
-                    if (data && data.length > 0) {
-                        const { preFillEmptyCollections } = get();
-
-                        preFillEmptyCollections(data);
-                    }
-                },
-                () => {
-                    console.log('lastPub: empty collections rejected');
-                }
+            const { data, error } = await getLiveSpecsByLastPubId(
+                lastPubId,
+                specType
             );
+
+            if (error) {
+                console.log('lastPub: empty collections rejected');
+            }
+
+            if (data && data.length > 0) {
+                const { preFillEmptyCollections } = get();
+
+                preFillEmptyCollections(data);
+            }
         } else if (liveSpecId) {
-            getLiveSpecsByLiveSpecId(liveSpecId, specType).then(
-                ({ data }) => {
-                    if (data && data.length > 0) {
-                        const { preFillEmptyCollections } = get();
-
-                        preFillEmptyCollections(data);
-                    }
-                },
-                () => {
-                    console.log('liveSpec: empty collections rejected');
-                }
+            const { data, error } = await getLiveSpecsByLiveSpecId(
+                liveSpecId,
+                specType
             );
-        }
-    } else if (workflow === 'materialization_edit' && liveSpecId) {
-        getLiveSpecsByLiveSpecId(liveSpecId, ENTITY.MATERIALIZATION).then(
-            ({ data }) => {
-                if (data && data.length > 0) {
-                    const { setResourceConfig, preFillCollections } = get();
 
-                    data[0].spec.bindings.forEach((binding: any) =>
-                        setResourceConfig(binding.source, {
-                            data: binding.resource,
-                            errors: [],
-                        })
-                    );
-
-                    preFillCollections(data);
-                }
-            },
-            () => {
+            if (error) {
                 console.log('liveSpec: empty collections rejected');
             }
+
+            if (data && data.length > 0) {
+                const { preFillEmptyCollections } = get();
+
+                preFillEmptyCollections(data);
+            }
+        }
+    } else if (workflow === 'materialization_edit' && liveSpecId) {
+        const { data, error } = await getLiveSpecsByLiveSpecId(
+            liveSpecId,
+            ENTITY.MATERIALIZATION
         );
+
+        if (error) {
+            console.log('liveSpec: empty collections rejected');
+        }
+
+        if (data && data.length > 0) {
+            const { setResourceConfig, preFillCollections } = get();
+
+            data[0].spec.bindings.forEach((binding: any) =>
+                setResourceConfig(binding.source, {
+                    data: binding.resource,
+                    errors: [],
+                })
+            );
+
+            preFillCollections(data);
+        }
     }
 };
 
@@ -339,16 +342,6 @@ const getInitialState = (
         );
     },
 
-    setHydrated: (value) => {
-        set(
-            produce((state: ResourceConfigState) => {
-                state.hydrated = value;
-            }),
-            false,
-            'Resource Config State Hydrated'
-        );
-    },
-
     stateChanged: () => {
         const { resourceConfig } = get();
         const { resourceConfig: initialResourceConfig } = getInitialStateData();
@@ -367,11 +360,24 @@ export const createResourceConfigStore = (
 ) => {
     return create<ResourceConfigState>()(
         devtools((set, get) => {
-            const state = getInitialState(set, get);
+            const coreState = getInitialState(set, get);
 
-            hydrateState(get, workflow);
+            hydrateState(get, workflow).then(
+                () => {
+                    set(
+                        produce((state: ResourceConfigState) => {
+                            state.hydrated = true;
+                        }),
+                        false,
+                        'Resource Config State Hydrated'
+                    );
+                },
+                () => {
+                    console.log('hydration error');
+                }
+            );
 
-            return state;
+            return coreState;
         }, devtoolsOptions(key))
     );
 };
@@ -513,11 +519,11 @@ export const useResourceConfig_resetState = () => {
     >(storeName(workflow), (state) => state.resetState);
 };
 
-export const useResourceConfig_setHydrated = () => {
+export const useResourceConfig_hydrated = () => {
     const workflow = useEntityWorkflow();
 
     return useResourceConfigStore<
         ResourceConfigState,
-        ResourceConfigState['setHydrated']
-    >(storeName(workflow), (state) => state.setHydrated);
+        ResourceConfigState['hydrated']
+    >(storeName(workflow), (state) => state.hydrated);
 };
