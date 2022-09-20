@@ -76,6 +76,7 @@ export const getPagination = (currPage: number, size: number) => {
     return { from, to };
 };
 
+const emptyRowHeight = 80;
 const rowsPerPageOptions = [10, 25, 50];
 
 // TODO (tables) I think we should switch this to React Table soon
@@ -213,6 +214,7 @@ function EntityTable({
     };
 
     const loadingRows = useMemo(() => {
+        const styling = { height: emptyRowHeight };
         const loadingRow = columns.map((column, index) => {
             return (
                 <TableCell key={`loading-${column.field}-${index}`}>
@@ -223,11 +225,16 @@ function EntityTable({
 
         return (
             <>
-                <TableRow>{loadingRow}</TableRow>
-                <TableRow sx={{ opacity: '75%' }}>{loadingRow}</TableRow>
-                <TableRow>{loadingRow}</TableRow>
+                <TableRow sx={styling}>{loadingRow}</TableRow>
+                <TableRow sx={{ ...styling, opacity: '75%' }}>
+                    {loadingRow}
+                </TableRow>
+                <TableRow sx={{ ...styling, opacity: '50%' }}>
+                    {loadingRow}
+                </TableRow>
                 <TableRow
                     sx={{
+                        ...styling,
                         'opacity': '25%',
                         '& .MuiTableCell-root': {
                             borderBottom: 'transparent',
