@@ -14,7 +14,13 @@ export interface LiveSpecsQuery {
     id: string;
 }
 
-// const queryColumns = ['id', 'spec_type', 'catalog_name', 'updated_at'];
+const queryColumns = [
+    'id',
+    'spec_type',
+    'catalog_name',
+    'updated_at',
+    'last_pub_id',
+];
 
 function CollectionsTable() {
     const rowsPerPage = 10;
@@ -28,7 +34,7 @@ function CollectionsTable() {
     const liveSpecQuery = useQuery<LiveSpecsQuery>(
         TABLES.LIVE_SPECS_EXT,
         {
-            columns: '*',
+            columns: queryColumns,
             count: 'exact',
             filter: (query) => {
                 return defaultTableFilter<LiveSpecsQuery>(
