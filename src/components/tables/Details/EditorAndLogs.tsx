@@ -5,7 +5,7 @@ import {
     useEditorStore_setId,
     useEditorStore_setSpecs,
 } from 'components/editor/Store';
-import Logs from 'components/Logs';
+import Logs from 'components/logs';
 import Error from 'components/shared/Error';
 import { useLiveSpecs_spec } from 'hooks/useLiveSpecs';
 import usePublications from 'hooks/usePublications';
