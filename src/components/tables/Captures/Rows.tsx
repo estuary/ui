@@ -18,7 +18,7 @@ import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useShardsList from 'hooks/useShardsList';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CONNECTOR_TITLE } from 'services/supabase';
+import { QUERY_PARAM_CONNECTOR_TITLE } from 'services/supabase';
 import { useShardDetail_setShards } from 'stores/ShardDetail';
 import { ENTITY } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
@@ -45,7 +45,7 @@ export const tableColumns = [
         headerIntlKey: 'entityTable.data.entity',
     },
     {
-        field: CONNECTOR_TITLE,
+        field: QUERY_PARAM_CONNECTOR_TITLE,
         headerIntlKey: 'entityTable.data.connectorType',
     },
     {

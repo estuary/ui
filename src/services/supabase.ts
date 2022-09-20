@@ -22,8 +22,10 @@ const supabaseSettings = {
 // Little helper string that fetches the name from open graph
 export const CONNECTOR_NAME = `title->>en-US`;
 export const CONNECTOR_RECOMMENDED = `recommended`;
-export const CONNECTOR_TITLE = `title:connector_title->>en-US::text`;
-export const CONNECTOR_IMAGE = `title:connector_logo_url->>en-US::text`;
+export const CONNECTOR_TITLE = `title:connector_title->>en-US`;
+export const CONNECTOR_IMAGE = `image:connector_logo_url->>en-US`;
+
+export const QUERY_PARAM_CONNECTOR_TITLE = `connector_title->>en-US`;
 
 export const ERROR_MESSAGES = {
     jwtExpired: 'JWT expired',
