@@ -52,7 +52,9 @@ export function useLiveSpecs_spec(collectionNames?: string[]) {
     );
 
     return {
-        liveSpecs: data ? data.data : defaultResponse,
+        liveSpecs: data
+            ? data.data
+            : (defaultResponse as LiveSpecsQuery_spec[]),
         error,
     };
 }

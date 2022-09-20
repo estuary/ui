@@ -4,21 +4,20 @@ import Invalid from 'components/editor/Status/Invalid';
 import Saved from 'components/editor/Status/Saved';
 import Saving from 'components/editor/Status/Saving';
 import ServerDiff from 'components/editor/Status/ServerDiff';
-import { EditorStatus, EditorStoreState } from 'components/editor/Store';
 import {
-    DraftEditorStoreNames,
-    LiveSpecEditorStoreNames,
-    UseZustandStore,
-} from 'context/Zustand';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+    EditorStatus,
+    useEditorStore_currentCatalog,
+    useEditorStore_serverUpdate,
+    useEditorStore_setStatus,
+    useEditorStore_status,
+} from 'components/editor/Store';
 import { debounce } from 'lodash';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { stringifyJSON } from 'services/stringify';
 
 export interface Props {
-    editorStoreName: DraftEditorStoreNames | LiveSpecEditorStoreNames;
-    useZustandStore: UseZustandStore;
+    localZustandScope: boolean;
     disabled?: boolean;
     onChange?: (newVal: any, path: string, specType: string) => any;
     height?: number;
@@ -31,8 +30,7 @@ export const DEFAULT_TOTAL_HEIGHT = DEFAULT_TOOLBAR_HEIGHT + DEFAULT_HEIGHT;
 const ICON_SIZE = 15;
 
 function MonacoEditor({
-    editorStoreName,
-    useZustandStore,
+    localZustandScope,
     disabled,
     height = DEFAULT_HEIGHT,
     onChange,
@@ -43,30 +41,23 @@ function MonacoEditor({
         null
     );
 
-    const serverUpdate = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['serverUpdate']
-    >(editorStoreName, (state) => state.serverUpdate);
+    const serverUpdate = useEditorStore_serverUpdate({
+        localScope: localZustandScope,
+    });
 
-    const currentCatalog = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['currentCatalog']
-    >(editorStoreName, (state) => state.currentCatalog);
+    const currentCatalog = useEditorStore_currentCatalog({
+        localScope: localZustandScope,
+    });
 
     // TODO (editor store) Should just fetch these directly from the store?
     const catalogName = currentCatalog?.catalog_name ?? null;
     const catalogSpec = currentCatalog?.spec ?? null;
     const catalogType = currentCatalog?.spec_type ?? null;
 
-    const status = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['status']
-    >(editorStoreName, (state) => state.status);
-
-    const setStatus = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['setStatus']
-    >(editorStoreName, (state) => state.setStatus);
+    const status = useEditorStore_status({ localScope: localZustandScope });
+    const setStatus = useEditorStore_setStatus({
+        localScope: localZustandScope,
+    });
 
     const [showServerDiff, setShowServerDiff] = useState(false);
 
@@ -201,7 +192,9 @@ function MonacoEditor({
                         )}
                     </Stack>
                 </Box>
+
                 <Divider />
+
                 {showServerDiff && serverUpdate && editorRef.current ? (
                     <DiffEditor
                         height={`${height}px`}

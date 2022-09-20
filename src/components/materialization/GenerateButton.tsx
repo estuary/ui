@@ -2,15 +2,12 @@ import { Button } from '@mui/material';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec, generateDraftSpec } from 'api/draftSpecs';
 import { encryptConfig } from 'api/oauth';
-import { EditorStoreState } from 'components/editor/Store';
-import { buttonSx } from 'components/shared/Entity/Header';
 import {
-    DraftEditorStoreNames,
-    FormStateStoreNames,
-    ResourceConfigStoreNames,
-    useZustandStore,
-} from 'context/Zustand';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+    useEditorStore_isSaving,
+    useEditorStore_resetState,
+    useEditorStore_setId,
+} from 'components/editor/Store';
+import { buttonSx } from 'components/shared/Entity/Header';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -24,25 +21,24 @@ import {
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_errorsExist,
 } from 'stores/EndpointConfig';
-import { EntityFormState, FormStatus } from 'stores/FormState';
-import { ResourceConfigState } from 'stores/ResourceConfig';
+import {
+    FormStatus,
+    useFormStateStore_isActive,
+    useFormStateStore_setFormState,
+    useFormStateStore_updateStatus,
+} from 'stores/FormState';
+import {
+    useResourceConfig_resourceConfig,
+    useResourceConfig_resourceConfigErrorsExist,
+} from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
 
 interface Props {
     disabled: boolean;
     callFailed: Function;
-    draftEditorStoreName: DraftEditorStoreNames;
-    resourceConfigStoreName: ResourceConfigStoreNames;
-    formStateStoreName: FormStateStoreNames;
 }
 
-function MaterializeGenerateButton({
-    disabled,
-    callFailed,
-    draftEditorStoreName,
-    resourceConfigStoreName,
-    formStateStoreName,
-}: Props) {
+function MaterializeGenerateButton({ disabled, callFailed }: Props) {
     // Details Form Store
     const entityName = useDetailsForm_details_entityName();
     const detailsFormsHasErrors = useDetailsForm_errorsExist();
@@ -51,55 +47,31 @@ function MaterializeGenerateButton({
     const imagePath = useDetailsForm_connectorImage_imagePath();
 
     // Draft Editor Store
-    const isSaving = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['isSaving']
-    >(draftEditorStoreName, (state) => state.isSaving);
+    const isSaving = useEditorStore_isSaving();
 
-    const resetEditorState = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['resetState']
-    >(draftEditorStoreName, (state) => state.resetState);
+    const resetEditorState = useEditorStore_resetState();
 
-    const setDraftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['setId']
-    >(draftEditorStoreName, (state) => state.setId);
+    const setDraftId = useEditorStore_setId();
 
     // Endpoint Config Store
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
     const endpointConfigHasErrors = useEndpointConfigStore_errorsExist();
 
     // Form State Store
-    const formActive = useZustandStore<
-        EntityFormState,
-        EntityFormState['isActive']
-    >(formStateStoreName, (state) => state.isActive);
+    const formActive = useFormStateStore_isActive();
 
-    const setFormState = useZustandStore<
-        EntityFormState,
-        EntityFormState['setFormState']
-    >(formStateStoreName, (state) => state.setFormState);
+    const setFormState = useFormStateStore_setFormState();
 
-    const resetFormState = useZustandStore<
-        EntityFormState,
-        EntityFormState['resetFormState']
-    >(formStateStoreName, (state) => state.resetFormState);
+    const updateFormStatus = useFormStateStore_updateStatus();
 
     // Resource Config Store
-    const resourceConfig = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['resourceConfig']
-    >(resourceConfigStoreName, (state) => state.resourceConfig);
-
-    const resourceConfigHasErrors = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['resourceConfigErrorsExist']
-    >(resourceConfigStoreName, (state) => state.resourceConfigErrorsExist);
+    const resourceConfig = useResourceConfig_resourceConfig();
+    const resourceConfigHasErrors =
+        useResourceConfig_resourceConfigErrorsExist();
 
     const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
-        resetFormState(FormStatus.GENERATING);
+        updateFormStatus(FormStatus.GENERATING);
 
         if (
             resourceConfigHasErrors ||

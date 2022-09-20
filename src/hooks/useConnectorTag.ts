@@ -4,7 +4,7 @@ import { TABLES } from 'services/supabase';
 import { hasLength } from 'utils/misc-utils';
 import { useQuery, useSelectSingle } from './supabase-swr/';
 
-interface ConnectorTag {
+export interface ConnectorTag {
     connectors: {
         image_name: string;
     };

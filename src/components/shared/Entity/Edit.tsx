@@ -3,7 +3,13 @@ import { RealtimeSubscription } from '@supabase/supabase-js';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec, updateDraftSpec } from 'api/draftSpecs';
 import CollectionConfig from 'components/collection/Config';
-import { EditorStoreState } from 'components/editor/Store';
+import {
+    EditorStoreState,
+    useEditorStore_editDraftId,
+    useEditorStore_id,
+    useEditorStore_setEditDraftId,
+    useEditorStore_setId,
+} from 'components/editor/Store';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import { getConnectorImageDetails } from 'components/shared/Entity/DetailsForm/Form';
@@ -12,12 +18,6 @@ import EntityError from 'components/shared/Entity/Error';
 import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedChangesPrompt';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import {
-    DraftEditorStoreNames,
-    FormStateStoreNames,
-    ResourceConfigStoreNames,
-    useZustandStore,
-} from 'context/Zustand';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -29,10 +29,9 @@ import useDraft, { DraftQuery } from 'hooks/useDraft';
 import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import {
     LiveSpecsExtQueryWithSpec,
-    useLiveSpecsExtByLastPubId,
     useLiveSpecsExtWithSpec,
 } from 'hooks/useLiveSpecsExt';
-import { isEmpty, isEqual } from 'lodash';
+import { isEmpty } from 'lodash';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -41,30 +40,32 @@ import {
     useDetailsForm_setDetails,
 } from 'stores/DetailsForm';
 import { useEndpointConfigStore_setEndpointSchema } from 'stores/EndpointConfig';
-import { EntityFormState, FormState, FormStatus } from 'stores/FormState';
 import {
-    ResourceConfigDictionary,
-    ResourceConfigState,
-} from 'stores/ResourceConfig';
+    FormState,
+    FormStatus,
+    useFormStateStore_error,
+    useFormStateStore_exitWhenLogsClose,
+    useFormStateStore_logToken,
+    useFormStateStore_messagePrefix,
+    useFormStateStore_setFormState,
+    useFormStateStore_status,
+} from 'stores/FormState';
 import { ENTITY, JsonFormsData, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     title: string;
     entityType: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
-    Header: any;
-    draftEditorStoreName: DraftEditorStoreNames;
-    formStateStoreName: FormStateStoreNames;
-    callFailed: (formState: any, subscription?: RealtimeSubscription) => void;
-    resourceConfigStoreName?: ResourceConfigStoreNames;
-    showCollections?: boolean;
-    promptDataLoss: any;
-    resetState: () => void;
+    promptDataLoss: boolean;
     readOnly: {
         detailsForm?: true;
         endpointConfigForm?: true;
         resourceConfigForm?: true;
     };
+    callFailed: (formState: any, subscription?: RealtimeSubscription) => void;
+    resetState: () => void;
+    Header: any;
+    showCollections?: boolean;
 }
 
 interface InitializationHelpers {
@@ -96,6 +97,8 @@ const initDraftToEdit = async (
             ? 'materializationEdit.generate.failure.errorTitle'
             : 'captureEdit.generate.failedErrorTitle';
 
+    // TODO (defect): Correct this initialization logic so that a new draft
+    //   is not created when the browser is refreshed.
     if (
         drafts.length === 0 ||
         draftSpecs.length === 0 ||
@@ -157,37 +160,11 @@ const initDraftToEdit = async (
     }
 };
 
-const evaluateResourceConfigEquality = (
-    resourceConfig: ResourceConfigDictionary,
-    queries: any[]
-) => {
-    const configEquality: boolean[] = queries.map((query) => {
-        let queriedResourceConfig: ResourceConfigDictionary = {};
-
-        query.spec.bindings.forEach((binding: any) => {
-            queriedResourceConfig = {
-                ...queriedResourceConfig,
-                [binding.source]: {
-                    data: binding.resource,
-                    errors: [],
-                },
-            };
-        });
-
-        return isEqual(resourceConfig, queriedResourceConfig);
-    });
-
-    return configEquality.includes(true);
-};
-
 // eslint-disable-next-line complexity
 function EntityEdit({
     title,
     entityType,
     Header,
-    draftEditorStoreName,
-    formStateStoreName,
-    resourceConfigStoreName,
     callFailed,
     showCollections,
     readOnly,
@@ -235,93 +212,27 @@ function EntityEdit({
     const imageTag = useDetailsForm_connectorImage();
 
     // Draft Editor Store
-    const setDraftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['setId']
-    >(draftEditorStoreName, (state) => state.setId);
+    const draftId = useEditorStore_id();
+    const setDraftId = useEditorStore_setId();
 
-    const draftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['id']
-    >(draftEditorStoreName, (state) => state.id);
-
-    const setEditDraftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['setEditDraftId']
-    >(draftEditorStoreName, (state) => state.setEditDraftId);
-
-    const editDraftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['editDraftId']
-    >(draftEditorStoreName, (state) => state.editDraftId);
+    const editDraftId = useEditorStore_editDraftId();
+    const setEditDraftId = useEditorStore_setEditDraftId();
 
     // Endpoint Config Store
     const setEndpointSchema = useEndpointConfigStore_setEndpointSchema();
 
     // Form State Store
-    const messagePrefix = useZustandStore<
-        EntityFormState,
-        EntityFormState['messagePrefix']
-    >(formStateStoreName, (state) => state.messagePrefix);
+    const messagePrefix = useFormStateStore_messagePrefix();
 
-    const logToken = useZustandStore<
-        EntityFormState,
-        EntityFormState['formState']['logToken']
-    >(formStateStoreName, (state) => state.formState.logToken);
+    const formStatus = useFormStateStore_status();
 
-    const formSubmitError = useZustandStore<
-        EntityFormState,
-        EntityFormState['formState']['error']
-    >(formStateStoreName, (state) => state.formState.error);
+    const logToken = useFormStateStore_logToken();
 
-    const setFormState = useZustandStore<
-        EntityFormState,
-        EntityFormState['setFormState']
-    >(formStateStoreName, (state) => state.setFormState);
+    const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
 
-    const formStatus = useZustandStore<
-        EntityFormState,
-        EntityFormState['formState']['status']
-    >(formStateStoreName, (state) => state.formState.status);
+    const formSubmitError = useFormStateStore_error();
 
-    const exitWhenLogsClose = useZustandStore<
-        EntityFormState,
-        EntityFormState['formState']['exitWhenLogsClose']
-    >(formStateStoreName, (state) => state.formState.exitWhenLogsClose);
-
-    // Resource Config Store
-    // TODO: Determine proper placement for this logic.
-    const setResourceSchema = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['setResourceSchema']
-    >(
-        resourceConfigStoreName ?? ResourceConfigStoreNames.MATERIALIZATION,
-        (state) => state.setResourceSchema
-    );
-
-    const setResourceConfig = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['setResourceConfig']
-    >(
-        resourceConfigStoreName ?? ResourceConfigStoreNames.MATERIALIZATION,
-        (state) => state.setResourceConfig
-    );
-
-    const preFillCollections = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['preFillCollections']
-    >(
-        resourceConfigStoreName ?? ResourceConfigStoreNames.MATERIALIZATION,
-        (state) => state.preFillCollections
-    );
-
-    const resourceConfig = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['resourceConfig']
-    >(
-        resourceConfigStoreName ?? ResourceConfigStoreNames.MATERIALIZATION,
-        (state) => state.resourceConfig
-    );
+    const setFormState = useFormStateStore_setFormState();
 
     const { draftSpecs, isValidating: isValidatingDraftSpecs } = useDraftSpecs(
         editDraftId,
@@ -354,13 +265,13 @@ function EntityEdit({
         setEditDraftId,
         setFormState,
         callFailed,
-        initialSpec,
-        entityType,
         drafts,
         draftSpecs,
+        entityType,
+        formStatus,
+        initialSpec,
         isValidatingDrafts,
         isValidatingDraftSpecs,
-        formStatus,
         lastPubId,
     ]);
 
@@ -380,10 +291,6 @@ function EntityEdit({
     }, [setDetails, initialSpec, initialConnectorTag]);
 
     const { connectorTag } = useConnectorTag(imageTag.id);
-    const { liveSpecs: liveSpecsByLastPub } = useLiveSpecsExtByLastPubId(
-        lastPubId,
-        entityType
-    );
 
     useEffect(() => {
         if (
@@ -400,58 +307,18 @@ function EntityEdit({
                     : null
             );
 
-            // TODO: Repair temporary typing.
             setEndpointSchema(
                 connectorTag.endpoint_spec_schema as unknown as Schema
             );
-            setResourceSchema(
-                connectorTag.resource_spec_schema as unknown as Schema
-            );
-
-            // We wanna make sure we do these after the schemas are set as
-            //  as they are dependent on them.
-            if (
-                entityType === ENTITY.MATERIALIZATION &&
-                hasLength(draftSpecs)
-            ) {
-                if (isEmpty(resourceConfig)) {
-                    initialSpec.spec.bindings.forEach((binding: any) =>
-                        setResourceConfig(binding.source, {
-                            data: binding.resource,
-                            errors: [],
-                        })
-                    );
-
-                    preFillCollections([initialSpec]);
-                } else {
-                    setDraftId(
-                        evaluateResourceConfigEquality(resourceConfig, [
-                            initialSpec,
-                            draftSpecs[0],
-                        ])
-                            ? editDraftId
-                            : null
-                    );
-                }
-            }
 
             setFormState({ status: FormStatus.GENERATED });
         }
     }, [
         connectorTag,
-        liveSpecsByLastPub,
         initialSpec,
         initialConnectorTag,
-        entityType,
-        resourceConfig,
-        editDraftId,
         formStatus,
-        draftSpecs,
-        preFillCollections,
-        setResourceConfig,
         setEndpointSchema,
-        setResourceSchema,
-        setDraftId,
         setFormState,
     ]);
 
@@ -463,7 +330,7 @@ function EntityEdit({
 
             {connectorTagsError ? (
                 <Error error={connectorTagsError} />
-            ) : isEmpty(initialSpec) || isEmpty(initialConnectorTag) ? null : (
+            ) : !editDraftId || draftSpecs.length === 0 ? null : (
                 <>
                     <Collapse in={formSubmitError !== null}>
                         {formSubmitError ? (
@@ -487,8 +354,6 @@ function EntityEdit({
                             <DetailsForm
                                 connectorTags={connectorTags}
                                 accessGrants={combinedGrants}
-                                draftEditorStoreName={draftEditorStoreName}
-                                formStateStoreName={formStateStoreName}
                                 readOnly={readOnly.detailsForm}
                                 entityType={entityType}
                             />
@@ -499,23 +364,15 @@ function EntityEdit({
                         <ErrorBoundryWrapper>
                             <EndpointConfig
                                 connectorImage={imageTag.id}
-                                draftEditorStoreName={draftEditorStoreName}
-                                formStateStoreName={formStateStoreName}
                                 readOnly={readOnly.endpointConfigForm}
                                 initialEndpointConfig={endpointConfig}
                             />
                         </ErrorBoundryWrapper>
                     ) : null}
 
-                    {showCollections &&
-                    resourceConfigStoreName &&
-                    hasLength(imageTag.id) ? (
+                    {showCollections && hasLength(imageTag.id) ? (
                         <ErrorBoundryWrapper>
                             <CollectionConfig
-                                resourceConfigStoreName={
-                                    resourceConfigStoreName
-                                }
-                                formStateStoreName={formStateStoreName}
                                 readOnly={readOnly.resourceConfigForm}
                             />
                         </ErrorBoundryWrapper>
@@ -524,8 +381,6 @@ function EntityEdit({
                     <ErrorBoundryWrapper>
                         <CatalogEditor
                             messageId={`${messagePrefix}.finalReview.instructions`}
-                            draftEditorStoreName={draftEditorStoreName}
-                            formStateStoreName={formStateStoreName}
                         />
                     </ErrorBoundryWrapper>
                 </>

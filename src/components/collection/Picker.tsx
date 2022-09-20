@@ -1,27 +1,19 @@
 import { Autocomplete, Box, TextField, Typography } from '@mui/material';
-import {
-    FormStateStoreNames,
-    ResourceConfigStoreNames,
-    useZustandStore,
-} from 'context/Zustand';
 import useLiveSpecs from 'hooks/useLiveSpecs';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { EntityFormState } from 'stores/FormState';
-import { ResourceConfigState } from 'stores/ResourceConfig';
+import { useFormStateStore_messagePrefix } from 'stores/FormState';
+import {
+    useResourceConfig_collections,
+    useResourceConfig_setResourceConfig,
+} from 'stores/ResourceConfig';
 import useConstant from 'use-constant';
 
 interface Props {
-    resourceConfigStoreName: ResourceConfigStoreNames;
-    formStateStoreName: FormStateStoreNames;
     readOnly?: boolean;
 }
 
-function CollectionPicker({
-    resourceConfigStoreName,
-    formStateStoreName,
-    readOnly = false,
-}: Props) {
+function CollectionPicker({ readOnly = false }: Props) {
     const intl = useIntl();
     const collectionsLabel = useConstant(() =>
         intl.formatMessage({
@@ -33,21 +25,12 @@ function CollectionPicker({
     const { liveSpecs: collectionData, error } = useLiveSpecs('collection');
 
     // Form State Store
-    const messagePrefix = useZustandStore<
-        EntityFormState,
-        EntityFormState['messagePrefix']
-    >(formStateStoreName, (state) => state.messagePrefix);
+    const messagePrefix = useFormStateStore_messagePrefix();
 
     // Resource Config Store
-    const collections = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['collections']
-    >(resourceConfigStoreName, (state) => state.collections);
+    const collections = useResourceConfig_collections();
 
-    const setResourceConfig = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['setResourceConfig']
-    >(resourceConfigStoreName, (state) => state.setResourceConfig);
+    const setResourceConfig = useResourceConfig_setResourceConfig();
 
     const handlers = {
         updateCollections: (event: React.SyntheticEvent, value: any) => {

@@ -1,10 +1,16 @@
+import { useEntityType } from 'context/EntityContext';
+import { useLocalZustandStore } from 'context/LocalZustand';
+import {
+    EditorStoreNames,
+    useZustandStore as useGlobalZustandStore,
+} from 'context/Zustand';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
 import produce from 'immer';
+import { ENTITY } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
 import create from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
-
-export const DraftSpecEditorKey = 'draftSpecEditor';
 
 export enum EditorStatus {
     IDLE = 'nothing happened since load',
@@ -30,13 +36,15 @@ export interface EditorStoreState<T> {
     pubId: string | null;
     setPubId: (newVal: EditorStoreState<T>['pubId']) => void;
 
+    // TODO: Resolve conflicting type. Determine whether current catalog can be a DraftSpecQuery, LiveSpecsQuery_spec, or null.
+    // See the FileSelector component for reference.
     currentCatalog: DraftSpecQuery | null;
     setCurrentCatalog: (newVal: EditorStoreState<T>['currentCatalog']) => void;
 
-    // TODO (typing) : This needs typed. Using the T here made the checks in setSpecs break
-    specs: any[] | null;
+    specs: T[] | null;
     setSpecs: (newVal: EditorStoreState<T>['specs']) => void;
 
+    // TODO: Confirm that a server update will always be a DraftSpecQuery.
     serverUpdate: any | null;
     setServerUpdate: (newVal: EditorStoreState<T>['serverUpdate']) => void;
 
@@ -156,4 +164,305 @@ export const createEditorStore = <T,>(key: string) => {
     return create<EditorStoreState<T>>()(
         devtools((set) => getInitialState<T>(set), devtoolsOptions(key))
     );
+};
+
+const storeName = (
+    entityType: ENTITY,
+    localScope?: boolean
+): EditorStoreNames => {
+    if (localScope) {
+        return EditorStoreNames.GENERAL;
+    } else if (entityType === ENTITY.CAPTURE) {
+        return EditorStoreNames.CAPTURE;
+    } else if (entityType === ENTITY.MATERIALIZATION) {
+        return EditorStoreNames.MATERIALIZATION;
+    } else {
+        throw new Error('Invalid Editor store name');
+    }
+};
+
+// Selector Hooks
+interface SelectorParams {
+    localScope?: boolean;
+}
+
+export const useEditorStore_id = (params?: SelectorParams | undefined) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['id']
+    >(storeName(entityType, localScope), (state) => state.id);
+};
+
+export const useEditorStore_setId = (params?: SelectorParams | undefined) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['setId']
+    >(storeName(entityType, localScope), (state) => state.setId);
+};
+
+export const useEditorStore_editDraftId = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['editDraftId']
+    >(storeName(entityType, localScope), (state) => state.editDraftId);
+};
+
+export const useEditorStore_setEditDraftId = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['setEditDraftId']
+    >(storeName(entityType, localScope), (state) => state.setEditDraftId);
+};
+
+export const useEditorStore_pubId = (params?: SelectorParams | undefined) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['pubId']
+    >(storeName(entityType, localScope), (state) => state.pubId);
+};
+
+export const useEditorStore_setPubId = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['setPubId']
+    >(storeName(entityType, localScope), (state) => state.setPubId);
+};
+
+export const useEditorStore_currentCatalog = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['currentCatalog']
+    >(storeName(entityType, localScope), (state) => state.currentCatalog);
+};
+
+export const useEditorStore_setCurrentCatalog = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['setCurrentCatalog']
+    >(storeName(entityType, localScope), (state) => state.setCurrentCatalog);
+};
+
+export function useEditorStore_specs<T = DraftSpecQuery | LiveSpecsQuery_spec>(
+    params?: SelectorParams | undefined
+) {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<EditorStoreState<T>, EditorStoreState<T>['specs']>(
+        storeName(entityType, localScope),
+        (state) => state.specs
+    );
+}
+
+export function useEditorStore_setSpecs<
+    T = DraftSpecQuery | LiveSpecsQuery_spec
+>(params?: SelectorParams | undefined) {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<T>,
+        EditorStoreState<T>['setSpecs']
+    >(storeName(entityType, localScope), (state) => state.setSpecs);
+}
+
+export const useEditorStore_serverUpdate = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['serverUpdate']
+    >(storeName(entityType, localScope), (state) => state.serverUpdate);
+};
+
+export const useEditorStore_setServerUpdate = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['setServerUpdate']
+    >(storeName(entityType, localScope), (state) => state.setServerUpdate);
+};
+
+export const useEditorStore_isSaving = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['isSaving']
+    >(storeName(entityType, localScope), (state) => state.isSaving);
+};
+
+export const useEditorStore_isEditing = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['isEditing']
+    >(storeName(entityType, localScope), (state) => state.isEditing);
+};
+
+export const useEditorStore_status = (params?: SelectorParams | undefined) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['status']
+    >(storeName(entityType, localScope), (state) => state.status);
+};
+
+export const useEditorStore_setStatus = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['setStatus']
+    >(storeName(entityType, localScope), (state) => state.setStatus);
+};
+
+export const useEditorStore_resetState = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['resetState']
+    >(storeName(entityType, localScope), (state) => state.resetState);
 };

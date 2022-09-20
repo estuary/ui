@@ -1,39 +1,32 @@
 import { updateDraftSpec } from 'api/draftSpecs';
 import EditorWithFileSelector from 'components/editor/EditorWithFileSelector';
-import { EditorStoreState } from 'components/editor/Store';
-import { DraftEditorStoreNames, useZustandStore } from 'context/Zustand';
+import {
+    useEditorStore_currentCatalog,
+    useEditorStore_id,
+    useEditorStore_setSpecs,
+} from 'components/editor/Store';
 import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useEffect, useState } from 'react';
 
 export interface Props {
-    draftEditorStoreName: DraftEditorStoreNames;
     disabled?: boolean;
 }
 
-function DraftSpecEditor({ draftEditorStoreName, disabled }: Props) {
-    const currentCatalog = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['currentCatalog']
-    >(draftEditorStoreName, (state) => state.currentCatalog);
+function DraftSpecEditor({ disabled }: Props) {
+    const currentCatalog = useEditorStore_currentCatalog();
 
-    const setSpecs = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['setSpecs']
-    >(draftEditorStoreName, (state) => state.setSpecs);
+    const setSpecs = useEditorStore_setSpecs();
 
-    const id = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['id']
-    >(draftEditorStoreName, (state) => state.id);
+    const draftId = useEditorStore_id();
 
-    const { draftSpecs, mutate } = useDraftSpecs(id);
+    const { draftSpecs, mutate } = useDraftSpecs(draftId);
     const [draftSpec, setDraftSpec] = useState<DraftSpecQuery | null>(null);
 
     const handlers = {
         change: async (newVal: any, catalogName: string) => {
             if (draftSpec) {
                 const updateResponse = await updateDraftSpec(
-                    id,
+                    draftId,
                     catalogName,
                     newVal
                 );
@@ -89,8 +82,7 @@ function DraftSpecEditor({ draftEditorStoreName, disabled }: Props) {
         return (
             <EditorWithFileSelector
                 disabled={disabled}
-                editorStoreName={draftEditorStoreName}
-                useZustandStore={useZustandStore}
+                localZustandScope={false}
                 onChange={handlers.change}
             />
         );

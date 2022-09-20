@@ -1,33 +1,17 @@
 import ResourceConfig from 'components/collection/ResourceConfig';
-import {
-    FormStateStoreNames,
-    ResourceConfigStoreNames,
-    useZustandStore,
-} from 'context/Zustand';
-import { ResourceConfigState } from 'stores/ResourceConfig';
+import { useResourceConfig_currentCollection } from 'stores/ResourceConfig';
 
 interface Props {
-    resourceConfigStoreName: ResourceConfigStoreNames;
-    formStateStoreName: FormStateStoreNames;
     readOnly?: boolean;
 }
 
-function BindingsEditor({
-    resourceConfigStoreName,
-    formStateStoreName,
-    readOnly = false,
-}: Props) {
-    const currentCollection = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['currentCollection']
-    >(resourceConfigStoreName, (state) => state.currentCollection);
+function BindingsEditor({ readOnly = false }: Props) {
+    const currentCollection = useResourceConfig_currentCollection();
 
     if (currentCollection) {
         return (
             <ResourceConfig
                 collectionName={currentCollection}
-                resourceConfigStoreName={resourceConfigStoreName}
-                formStateStoreName={formStateStoreName}
                 readOnly={readOnly}
             />
         );

@@ -9,8 +9,9 @@ import CaptureEdit from 'components/capture/Edit';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import MaterializationCreate from 'components/materialization/Create';
 import MaterializationEdit from 'components/materialization/Edit';
-import { EntityContextProvider } from 'components/shared/Entity/EntityContext';
 import AuthenticatedOnlyContext from 'context/Authenticated';
+import { EntityContextProvider } from 'context/EntityContext';
+import { WorkflowContextProvider } from 'context/Workflow';
 import { OAuthPopup } from 'hooks/forks/react-use-oauth2/components';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
@@ -151,11 +152,26 @@ const Authenticated = () => {
 
                         <Route
                             path={authenticatedRoutes.collections.path}
-                            element={<Collections />}
+                            element={
+                                <EntityContextProvider
+                                    value={ENTITY.COLLECTION}
+                                >
+                                    <Collections />
+                                </EntityContextProvider>
+                            }
                         />
 
                         <Route path={authenticatedRoutes.captures.path}>
-                            <Route path="" element={<Captures />} />
+                            <Route
+                                path=""
+                                element={
+                                    <EntityContextProvider
+                                        value={ENTITY.CAPTURE}
+                                    >
+                                        <Captures />
+                                    </EntityContextProvider>
+                                }
+                            />
 
                             <Route
                                 path={authenticatedRoutes.captures.create.path}
@@ -163,7 +179,9 @@ const Authenticated = () => {
                                     <EntityContextProvider
                                         value={ENTITY.CAPTURE}
                                     >
-                                        <CaptureCreate />
+                                        <WorkflowContextProvider value="capture_create">
+                                            <CaptureCreate />
+                                        </WorkflowContextProvider>
                                     </EntityContextProvider>
                                 }
                             />
@@ -174,14 +192,25 @@ const Authenticated = () => {
                                     <EntityContextProvider
                                         value={ENTITY.CAPTURE}
                                     >
-                                        <CaptureEdit />
+                                        <WorkflowContextProvider value="capture_edit">
+                                            <CaptureEdit />
+                                        </WorkflowContextProvider>
                                     </EntityContextProvider>
                                 }
                             />
                         </Route>
 
                         <Route path={authenticatedRoutes.materializations.path}>
-                            <Route path="" element={<Materializations />} />
+                            <Route
+                                path=""
+                                element={
+                                    <EntityContextProvider
+                                        value={ENTITY.MATERIALIZATION}
+                                    >
+                                        <Materializations />
+                                    </EntityContextProvider>
+                                }
+                            />
 
                             <Route
                                 path={
@@ -192,7 +221,9 @@ const Authenticated = () => {
                                     <EntityContextProvider
                                         value={ENTITY.MATERIALIZATION}
                                     >
-                                        <MaterializationCreate />
+                                        <WorkflowContextProvider value="materialization_create">
+                                            <MaterializationCreate />
+                                        </WorkflowContextProvider>
                                     </EntityContextProvider>
                                 }
                             />
@@ -206,7 +237,9 @@ const Authenticated = () => {
                                     <EntityContextProvider
                                         value={ENTITY.MATERIALIZATION}
                                     >
-                                        <MaterializationEdit />
+                                        <WorkflowContextProvider value="materialization_edit">
+                                            <MaterializationEdit />
+                                        </WorkflowContextProvider>
                                     </EntityContextProvider>
                                 }
                             />

@@ -104,6 +104,12 @@ export enum ENTITY {
 
 export type EntityWithCreateWorkflow = ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
 
+export type EntityWorkflow =
+    | 'capture_create'
+    | 'capture_edit'
+    | 'materialization_create'
+    | 'materialization_edit';
+
 export type SortDirection = 'asc' | 'desc';
 
 export enum TableStatuses {

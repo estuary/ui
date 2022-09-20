@@ -7,15 +7,13 @@ import {
 } from '@mui/material';
 import EntityStatus from 'components/tables/cells/EntityStatus';
 import { tableBorderSx } from 'context/Theme';
-import { ShardDetailStoreNames } from 'context/Zustand';
 
 interface Props {
     name: string;
     showEntityStatus: boolean;
-    shardDetailStoreName?: ShardDetailStoreNames;
 }
 
-function EntityName({ name, showEntityStatus, shardDetailStoreName }: Props) {
+function EntityName({ name, showEntityStatus }: Props) {
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -33,12 +31,7 @@ function EntityName({ name, showEntityStatus, shardDetailStoreName }: Props) {
                     alignItems: 'center',
                 }}
             >
-                {showEntityStatus && shardDetailStoreName ? (
-                    <EntityStatus
-                        name={name}
-                        shardDetailStoreName={shardDetailStoreName}
-                    />
-                ) : null}
+                {showEntityStatus ? <EntityStatus name={name} /> : null}
 
                 <Typography
                     sx={

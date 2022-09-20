@@ -8,14 +8,13 @@ import {
     GridValueGetterParams,
 } from '@mui/x-data-grid';
 import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
-import { ResourceConfigStoreNames, useZustandStore } from 'context/Zustand';
 import { useEffect, useRef, useState } from 'react';
 import { useUnmount } from 'react-use';
-import { ResourceConfigState } from 'stores/ResourceConfig';
-
-interface Props {
-    resourceConfigStoreName: ResourceConfigStoreNames;
-}
+import {
+    useResourceConfig_currentCollection,
+    useResourceConfig_resourceConfig,
+    useResourceConfig_setCurrentCollection,
+} from 'stores/ResourceConfig';
 
 const initialState = {
     columns: {
@@ -25,23 +24,13 @@ const initialState = {
     },
 };
 
-function BindingSelector({ resourceConfigStoreName }: Props) {
+function BindingSelector() {
     const onSelectTimeOut = useRef<number | null>(null);
 
-    const currentCollection = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['currentCollection']
-    >(resourceConfigStoreName, (state) => state.currentCollection);
+    const currentCollection = useResourceConfig_currentCollection();
+    const setCurrentCollection = useResourceConfig_setCurrentCollection();
 
-    const setCurrentCollection = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['setCurrentCollection']
-    >(resourceConfigStoreName, (state) => state.setCurrentCollection);
-
-    const resourceConfig = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['resourceConfig']
-    >(resourceConfigStoreName, (state) => state.resourceConfig);
+    const resourceConfig = useResourceConfig_resourceConfig();
 
     const resourceConfigKeys = Object.keys(resourceConfig);
 

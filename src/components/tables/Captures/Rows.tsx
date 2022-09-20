@@ -14,17 +14,13 @@ import {
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
 import { getEntityTableRowSx } from 'context/Theme';
-import {
-    SelectTableStoreNames,
-    ShardDetailStoreNames,
-    useZustandStore,
-} from 'context/Zustand';
+import { SelectTableStoreNames, useZustandStore } from 'context/Zustand';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useShardsList from 'hooks/useShardsList';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CONNECTOR_TITLE } from 'services/supabase';
-import { shardDetailSelectors, ShardDetailStore } from 'stores/ShardDetail';
+import { useShardDetail_setShards } from 'stores/ShardDetail';
 import { ENTITY } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
 
@@ -38,7 +34,6 @@ export interface RowProps {
     setRow: any;
     isSelected: boolean;
     showEntityStatus: boolean;
-    shardDetailStoreName: ShardDetailStoreNames;
 }
 
 export const tableColumns = [
@@ -72,13 +67,7 @@ export const tableColumns = [
     },
 ];
 
-function Row({
-    isSelected,
-    setRow,
-    row,
-    showEntityStatus,
-    shardDetailStoreName,
-}: RowProps) {
+function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
     const navigate = useNavigate();
     const theme = useTheme();
 
@@ -123,7 +112,6 @@ function Row({
                 <EntityName
                     name={row.catalog_name}
                     showEntityStatus={showEntityStatus}
-                    shardDetailStoreName={shardDetailStoreName}
                 />
 
                 <Connector
@@ -154,7 +142,6 @@ function Row({
                 lastPubId={row.last_pub_id}
                 colSpan={tableColumns.length}
                 entityType={ENTITY.CAPTURE}
-                shardDetailStoreName={shardDetailStoreName}
                 entityName={row.catalog_name}
                 collectionNames={row.writes_to}
             />
@@ -185,12 +172,7 @@ function Rows({ data, showEntityStatus }: RowsProps) {
     );
 
     // Shard Detail Store
-    const shardDetailStoreName = ShardDetailStoreNames.CAPTURE;
-
-    const setShards = useZustandStore<
-        ShardDetailStore,
-        ShardDetailStore['setShards']
-    >(shardDetailStoreName, shardDetailSelectors.setShards);
+    const setShards = useShardDetail_setShards();
 
     const { data: shardsData, mutate: mutateShardsList } = useShardsList(data);
 
@@ -213,7 +195,6 @@ function Rows({ data, showEntityStatus }: RowsProps) {
                     isSelected={selected.has(row.id)}
                     setRow={setRow}
                     showEntityStatus={showEntityStatus}
-                    shardDetailStoreName={shardDetailStoreName}
                 />
             ))}
         </>

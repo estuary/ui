@@ -2,7 +2,6 @@ import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Box, StyledEngineProvider } from '@mui/material';
 import { jsonFormsPadding } from 'context/Theme';
-import { FormStateStoreNames, useZustandStore } from 'context/Zustand';
 import { isEmpty } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import { createJSONFormDefaults, setDefaultsValidator } from 'services/ajv';
@@ -18,37 +17,29 @@ import {
     useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_setEndpointConfig,
 } from 'stores/EndpointConfig';
-import { EntityFormState } from 'stores/FormState';
+import {
+    useFormStateStore_displayValidation,
+    useFormStateStore_isActive,
+} from 'stores/FormState';
 import { JsonFormsData } from 'types';
 
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
 
 interface Props {
-    formStateStoreName: FormStateStoreNames;
     readOnly: boolean;
     initialEndpointConfig?: JsonFormsData | null;
 }
 
-function EndpointConfigForm({
-    formStateStoreName,
-    readOnly,
-    initialEndpointConfig,
-}: Props) {
+function EndpointConfigForm({ readOnly, initialEndpointConfig }: Props) {
     // Endpoint Config Store
     const setSpec = useEndpointConfigStore_setEndpointConfig();
     const formData = useEndpointConfigStore_endpointConfig_data();
     const endpointSchema = useEndpointConfigStore_endpointSchema();
 
     // Form State Store
-    const displayValidation = useZustandStore<
-        EntityFormState,
-        EntityFormState['formState']['displayValidation']
-    >(formStateStoreName, (state) => state.formState.displayValidation);
+    const displayValidation = useFormStateStore_displayValidation();
 
-    const isActive = useZustandStore<
-        EntityFormState,
-        EntityFormState['isActive']
-    >(formStateStoreName, (state) => state.isActive);
+    const isActive = useFormStateStore_isActive();
 
     useEffect(() => {
         if (!isEmpty(endpointSchema)) {

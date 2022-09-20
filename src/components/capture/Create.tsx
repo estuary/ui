@@ -1,21 +1,19 @@
 import { authenticatedRoutes } from 'app/Authenticated';
 import CaptureGenerateButton from 'components/capture/GenerateButton';
-import { EditorStoreState } from 'components/editor/Store';
+import {
+    useEditorStore_id,
+    useEditorStore_pubId,
+    useEditorStore_setId,
+} from 'components/editor/Store';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
-import { useEntityType } from 'components/shared/Entity/EntityContext';
 import FooHeader from 'components/shared/Entity/Header';
+import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary/capture';
 import PageContainer from 'components/shared/PageContainer';
-import {
-    DraftEditorStoreNames,
-    FormStateStoreNames,
-    useZustandStore,
-} from 'context/Zustand';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import LogRocket from 'logrocket';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -38,11 +36,15 @@ import {
     useEndpointConfigStore_errorsExist,
     useEndpointConfigStore_reset,
 } from 'stores/EndpointConfig';
-import { EntityFormState, FormStatus } from 'stores/FormState';
+import {
+    FormStatus,
+    useFormStateStore_exitWhenLogsClose,
+    useFormStateStore_messagePrefix,
+    useFormStateStore_resetState,
+    useFormStateStore_setFormState,
+} from 'stores/FormState';
+import { ENTITY } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
-
-const draftEditorStoreName = DraftEditorStoreNames.CAPTURE;
-const formStateStoreName = FormStateStoreNames.CAPTURE_CREATE;
 
 const trackEvent = (payload: any) => {
     LogRocket.track(CustomEvents.CAPTURE_DISCOVER, {
@@ -57,10 +59,11 @@ const trackEvent = (payload: any) => {
 function CaptureCreate() {
     const navigate = useNavigate();
 
-    const entityType = useEntityType();
+    const entityType = ENTITY.CAPTURE;
 
     // Supabase stuff
     const supabaseClient = useClient();
+
     const { connectorTags } = useConnectorWithTagDetail(entityType);
     const hasConnectors = connectorTags.length > 0;
 
@@ -70,20 +73,10 @@ function CaptureCreate() {
     const detailsFormChanged = useDetailsForm_changed();
 
     // Draft Editor Store
-    const setDraftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['setId']
-    >(draftEditorStoreName, (state) => state.setId);
+    const draftId = useEditorStore_id();
+    const setDraftId = useEditorStore_setId();
 
-    const pubId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['pubId']
-    >(draftEditorStoreName, (state) => state.pubId);
-
-    const draftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['id']
-    >(draftEditorStoreName, (state) => state.id);
+    const pubId = useEditorStore_pubId();
 
     // Endpoint Config Store
     const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
@@ -92,25 +85,13 @@ function CaptureCreate() {
     const resetDetailsForm = useDetailsForm_resetState();
 
     // Form State Store
-    const messagePrefix = useZustandStore<
-        EntityFormState,
-        EntityFormState['messagePrefix']
-    >(formStateStoreName, (state) => state.messagePrefix);
+    const messagePrefix = useFormStateStore_messagePrefix();
 
-    const setFormState = useZustandStore<
-        EntityFormState,
-        EntityFormState['setFormState']
-    >(formStateStoreName, (state) => state.setFormState);
+    const setFormState = useFormStateStore_setFormState();
 
-    const resetFormState = useZustandStore<
-        EntityFormState,
-        EntityFormState['resetState']
-    >(formStateStoreName, (state) => state.resetState);
+    const resetFormState = useFormStateStore_resetState();
 
-    const exitWhenLogsClose = useZustandStore<
-        EntityFormState,
-        EntityFormState['formState']['exitWhenLogsClose']
-    >(formStateStoreName, (state) => state.formState.exitWhenLogsClose);
+    const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
 
     // Reset the catalog if the connector changes
     useEffect(() => {
@@ -221,16 +202,11 @@ function CaptureCreate() {
                         heading={
                             <FormattedMessage id={`${messagePrefix}.heading`} />
                         }
-                        formErrorsExist={
-                            detailsFormErrorsExist || endpointConfigErrorsExist
-                        }
                         GenerateButton={
                             <CaptureGenerateButton
                                 disabled={!hasConnectors}
                                 callFailed={helpers.callFailed}
                                 subscription={discoversSubscription}
-                                draftEditorStoreName={draftEditorStoreName}
-                                formStateStoreName={formStateStoreName}
                             />
                         }
                         TestButton={
@@ -239,8 +215,6 @@ function CaptureCreate() {
                                 callFailed={helpers.callFailed}
                                 disabled={!hasConnectors}
                                 logEvent={CustomEvents.CAPTURE_TEST}
-                                draftEditorStoreName={draftEditorStoreName}
-                                formStateStoreName={formStateStoreName}
                             />
                         }
                         SaveButton={
@@ -248,17 +222,20 @@ function CaptureCreate() {
                                 closeLogs={handlers.closeLogs}
                                 callFailed={helpers.callFailed}
                                 disabled={!draftId}
-                                draftEditorStoreName={draftEditorStoreName}
                                 materialize={handlers.materializeCollections}
                                 logEvent={CustomEvents.CAPTURE_CREATE}
-                                formStateStoreName={formStateStoreName}
                             />
                         }
-                        formStateStoreName={formStateStoreName}
+                        ErrorSummary={
+                            <ValidationErrorSummary
+                                errorsExist={
+                                    detailsFormErrorsExist ||
+                                    endpointConfigErrorsExist
+                                }
+                            />
+                        }
                     />
                 }
-                draftEditorStoreName={draftEditorStoreName}
-                formStateStoreName={formStateStoreName}
             />
         </PageContainer>
     );

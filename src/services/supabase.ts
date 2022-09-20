@@ -150,7 +150,7 @@ export interface CallSupabaseResponse<T> {
     data: T | null;
 }
 
-const handleSuccess = <T>(response: any) => {
+export const handleSuccess = <T>(response: any) => {
     return response.error
         ? {
               data: null,
@@ -161,7 +161,7 @@ const handleSuccess = <T>(response: any) => {
           };
 };
 
-const handleFailure = (error: any) => {
+export const handleFailure = (error: any) => {
     return {
         data: null,
         error,
