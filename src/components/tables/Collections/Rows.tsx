@@ -4,7 +4,6 @@ import Actions from 'components/tables/cells/Actions';
 import EntityName from 'components/tables/cells/EntityName';
 import ExpandDetails from 'components/tables/cells/ExpandDetails';
 import TimeStamp from 'components/tables/cells/TimeStamp';
-import UserName from 'components/tables/cells/UserName';
 import DetailsPanel from 'components/tables/Details/DetailsPanel';
 import { getEntityTableRowSx } from 'context/Theme';
 import { useState } from 'react';
@@ -30,10 +29,6 @@ export const tableColumns = [
         headerIntlKey: 'entityTable.data.lastPublished',
     },
     {
-        field: 'last_pub_user_full_name',
-        headerIntlKey: 'entityTable.data.lastPubUserFullName',
-    },
-    {
         field: null,
         headerIntlKey: null,
     },
@@ -56,12 +51,6 @@ function Row({ row, showEntityStatus }: RowProps) {
                 />
 
                 <TimeStamp time={row.updated_at} />
-
-                <UserName
-                    avatar={row.last_pub_user_avatar_url}
-                    email={row.last_pub_user_email}
-                    name={row.last_pub_user_full_name}
-                />
 
                 <Actions>
                     <ExpandDetails

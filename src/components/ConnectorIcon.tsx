@@ -3,7 +3,7 @@ import { Avatar, Box } from '@mui/material';
 
 interface Props {
     size?: number;
-    iconPath: string | undefined;
+    iconPath?: string | null;
 }
 
 const defaultSize = 20;
@@ -15,7 +15,7 @@ function ConnectorIcon({ size = defaultSize, iconPath }: Props) {
                 <Avatar
                     variant="rounded"
                     sx={{
-                        background: 'primary',
+                        background: 'transparent',
                         width: size,
                         height: size,
                     }}

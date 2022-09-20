@@ -6,7 +6,6 @@ import EntityName from 'components/tables/cells/EntityName';
 import OptionsMenu from 'components/tables/cells/OptionsMenu';
 import RowSelect from 'components/tables/cells/RowSelect';
 import TimeStamp from 'components/tables/cells/TimeStamp';
-import UserName from 'components/tables/cells/UserName';
 import DetailsPanel from 'components/tables/Details/DetailsPanel';
 import { LiveSpecsExtQuery } from 'components/tables/Materializations';
 import {
@@ -56,10 +55,6 @@ export const tableColumns = [
     {
         field: 'updated_at',
         headerIntlKey: 'entityTable.data.lastPublished',
-    },
-    {
-        field: 'last_pub_user_full_name',
-        headerIntlKey: 'entityTable.data.lastPubUserFullName',
     },
     {
         field: null,
@@ -116,12 +111,6 @@ function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
                 <ChipList strings={row.reads_from} />
 
                 <TimeStamp time={row.updated_at} />
-
-                <UserName
-                    avatar={row.last_pub_user_avatar_url}
-                    email={row.last_pub_user_email}
-                    name={row.last_pub_user_full_name}
-                />
 
                 <OptionsMenu
                     detailsExpanded={detailsExpanded}

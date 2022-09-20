@@ -96,7 +96,7 @@ function RowActionButton({
 
             <Dialog
                 open={showProgress}
-                maxWidth="lg"
+                maxWidth="md"
                 sx={{
                     '& .MuiPaper-root.MuiDialog-paper': {
                         backgroundColor: (themes) =>
