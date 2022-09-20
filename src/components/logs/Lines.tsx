@@ -1,15 +1,17 @@
 import { List, Paper } from '@mui/material';
 import { useLayoutEffect, useRef } from 'react';
 import useStayScrolled from 'react-stay-scrolled';
+import { hasLength } from 'utils/misc-utils';
 import { useLogsContext } from './Context';
 import LogLine from './Line';
 import Spinner from './Spinner';
 
 interface Props {
     height: number;
+    disableSpinner?: boolean;
 }
 
-function LogLines({ height }: Props) {
+function LogLines({ height, disableSpinner }: Props) {
     const { logs } = useLogsContext();
 
     const scrollElementRef = useRef<HTMLDivElement>(null);
@@ -47,7 +49,7 @@ function LogLines({ height }: Props) {
                         lineNumber={index}
                     />
                 ))}
-                <Spinner />
+                {!disableSpinner || !hasLength(logs) ? <Spinner /> : null}
             </List>
         </Paper>
     );

@@ -15,15 +15,11 @@ export interface LiveSpecsExtQuery extends LiveSpecsExtBaseQuery {
 const queryColumns = [
     'catalog_name',
     'connector_id',
-    'connector_image_name',
     'connector_image_tag',
     'image:connector_logo_url->>en-US',
     'title:connector_title->>en-US',
     'id',
     'last_pub_id',
-    'last_pub_user_avatar_url',
-    'last_pub_user_email',
-    'last_pub_user_full_name',
     'reads_from',
     'spec_type',
     'updated_at',
@@ -46,11 +42,7 @@ function MaterializationsTable() {
             filter: (query) => {
                 return defaultTableFilter<LiveSpecsExtQuery>(
                     query,
-                    [
-                        'catalog_name',
-                        'last_pub_user_full_name',
-                        'connector_title->>en-US',
-                    ],
+                    ['catalog_name', 'connector_title->>en-US'],
                     searchQuery,
                     columnToSort,
                     sortDirection,

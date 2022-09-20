@@ -22,8 +22,8 @@ function Logs({ token, height, disableIntervalFetching, fetchAll }: LogProps) {
                 fetchAll={fetchAll}
             >
                 <Stack spacing={2}>
-                    <StoppedAlert />
-                    <LogLines height={heightVal} />
+                    {!disableIntervalFetching ? <StoppedAlert /> : null}
+                    <LogLines height={heightVal} disableSpinner={fetchAll} />
                 </Stack>
             </LogsContextProvider>
         );

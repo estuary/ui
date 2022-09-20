@@ -33,7 +33,7 @@ function CollectionsTable() {
             filter: (query) => {
                 return defaultTableFilter<LiveSpecsQuery>(
                     query,
-                    ['catalog_name', 'last_pub_user_full_name'],
+                    ['catalog_name'],
                     searchQuery,
                     columnToSort,
                     sortDirection,
