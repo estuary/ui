@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material';
+import { Alert, AlertColor, Typography } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 import {
     FormStatus,
@@ -8,24 +8,39 @@ import {
 
 function Status() {
     const formStatus = useFormStateStore_status();
-
     const isActive = useFormStateStore_isActive();
 
-    let messageKey;
+    let severity: AlertColor | undefined, messageKey;
     if (formStatus === FormStatus.TESTED || formStatus === FormStatus.SAVED) {
         messageKey = 'common.success';
+        severity = 'success';
     } else if (formStatus === FormStatus.FAILED) {
         messageKey = 'common.fail';
+        severity = 'error';
     } else if (isActive) {
         messageKey = 'common.running';
     }
 
     if (messageKey) {
-        return (
-            <Typography sx={{ mr: 1 }}>
-                <FormattedMessage id={messageKey} />
-            </Typography>
-        );
+        if (severity) {
+            return (
+                <Alert
+                    severity={severity}
+                    variant="outlined"
+                    sx={{ border: 0 }}
+                >
+                    <Typography sx={{ mr: 1 }}>
+                        <FormattedMessage id={messageKey} />
+                    </Typography>
+                </Alert>
+            );
+        } else {
+            return (
+                <Typography sx={{ mr: 1 }}>
+                    <FormattedMessage id={messageKey} />
+                </Typography>
+            );
+        }
     } else {
         return null;
     }
