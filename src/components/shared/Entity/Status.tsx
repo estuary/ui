@@ -1,22 +1,14 @@
 import { Alert, AlertColor, Typography } from '@mui/material';
-import { FormStateStoreNames, useZustandStore } from 'context/Zustand';
 import { FormattedMessage } from 'react-intl';
-import { EntityFormState, FormStatus } from 'stores/FormState';
+import {
+    FormStatus,
+    useFormStateStore_isActive,
+    useFormStateStore_status,
+} from 'stores/FormState';
 
-interface Props {
-    formStateStoreName: FormStateStoreNames;
-}
-
-function Status({ formStateStoreName }: Props) {
-    const formStatus = useZustandStore<
-        EntityFormState,
-        EntityFormState['formState']['status']
-    >(formStateStoreName, (state) => state.formState.status);
-
-    const isActive = useZustandStore<
-        EntityFormState,
-        EntityFormState['isActive']
-    >(formStateStoreName, (state) => state.isActive);
+function Status() {
+    const formStatus = useFormStateStore_status();
+    const isActive = useFormStateStore_isActive();
 
     let severity: AlertColor | undefined, messageKey;
     if (formStatus === FormStatus.TESTED || formStatus === FormStatus.SAVED) {

@@ -17,7 +17,7 @@ function WrapperWithHeader({
     disableClose,
     readOnly,
 }: Props) {
-    const [expanded, setExpanded] = useState(true);
+    const [expanded, setExpanded] = useState(readOnly ? !readOnly : true);
     const handlers = {
         change: () => {
             setExpanded(disableClose ?? !expanded);

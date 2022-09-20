@@ -1,20 +1,24 @@
 import { Button } from '@mui/material';
 import { createPublication } from 'api/publications';
-import { EditorStoreState } from 'components/editor/Store';
-import { buttonSx } from 'components/shared/Entity/Header';
 import {
-    DraftEditorStoreNames,
-    FormStateStoreNames,
-    useZustandStore,
-} from 'context/Zustand';
+    useEditorStore_id,
+    useEditorStore_isSaving,
+    useEditorStore_setPubId,
+} from 'components/editor/Store';
+import { buttonSx } from 'components/shared/Entity/Header';
 import { useClient } from 'hooks/supabase-swr';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import LogRocket from 'logrocket';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
 import { DEFAULT_FILTER, jobStatusPoller, TABLES } from 'services/supabase';
 import { useDetailsForm_details_description } from 'stores/DetailsForm';
-import { EntityFormState, FormStatus } from 'stores/FormState';
+import {
+    FormStatus,
+    useFormStateStore_isActive,
+    useFormStateStore_messagePrefix,
+    useFormStateStore_setFormState,
+    useFormStateStore_updateStatus,
+} from 'stores/FormState';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
@@ -24,8 +28,6 @@ interface Props {
     onFailure: Function;
     logEvent: CustomEvents;
     dryRun?: boolean;
-    draftEditorStoreName: DraftEditorStoreNames;
-    formStateStoreName: FormStateStoreNames;
 }
 
 const trackEvent = (logEvent: Props['logEvent'], payload: any) => {
@@ -38,58 +40,30 @@ const trackEvent = (logEvent: Props['logEvent'], payload: any) => {
     });
 };
 
-function EntityCreateSave({
-    disabled,
-    dryRun,
-    onFailure,
-    draftEditorStoreName,
-    logEvent,
-    formStateStoreName,
-}: Props) {
+function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
     const intl = useIntl();
     const supabaseClient = useClient();
 
     const status = dryRun ? FormStatus.TESTING : FormStatus.SAVING;
 
     // Draft Editor Store
-    const draftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['id']
-    >(draftEditorStoreName, (state) => state.id);
+    const draftId = useEditorStore_id();
 
-    const setPubId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['setPubId']
-    >(draftEditorStoreName, (state) => state.setPubId);
+    const setPubId = useEditorStore_setPubId();
 
-    const isSaving = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['isSaving']
-    >(draftEditorStoreName, (state) => state.isSaving);
+    const isSaving = useEditorStore_isSaving();
 
     // Details Form Store
     const entityDescription = useDetailsForm_details_description();
 
     // Form State Store
-    const messagePrefix = useZustandStore<
-        EntityFormState,
-        EntityFormState['messagePrefix']
-    >(formStateStoreName, (state) => state.messagePrefix);
+    const messagePrefix = useFormStateStore_messagePrefix();
 
-    const setFormState = useZustandStore<
-        EntityFormState,
-        EntityFormState['setFormState']
-    >(formStateStoreName, (state) => state.setFormState);
+    const setFormState = useFormStateStore_setFormState();
 
-    const resetFormState = useZustandStore<
-        EntityFormState,
-        EntityFormState['resetFormState']
-    >(formStateStoreName, (state) => state.resetFormState);
+    const updateFormStatus = useFormStateStore_updateStatus();
 
-    const formActive = useZustandStore<
-        EntityFormState,
-        EntityFormState['isActive']
-    >(formStateStoreName, (state) => state.isActive);
+    const formActive = useFormStateStore_isActive();
 
     // Notification Store
     const showNotification = useNotificationStore(
@@ -100,7 +74,7 @@ function EntityCreateSave({
         logTokenVal: string,
         draftIdVal: string
     ) => {
-        resetFormState(status);
+        updateFormStatus(status);
 
         jobStatusPoller(
             supabaseClient
@@ -164,7 +138,7 @@ function EntityCreateSave({
     const save = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
 
-        resetFormState(status);
+        updateFormStatus(status);
 
         if (draftId) {
             const response = await createPublication(

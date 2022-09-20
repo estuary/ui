@@ -1,11 +1,13 @@
 import { Alert, Grid } from '@mui/material';
 import LiveSpecEditor from 'components/editor/LiveSpec';
 import { DEFAULT_TOTAL_HEIGHT } from 'components/editor/MonacoEditor';
-import { EditorStoreState } from 'components/editor/Store';
+import {
+    useEditorStore_setId,
+    useEditorStore_setSpecs,
+} from 'components/editor/Store';
 import Logs from 'components/logs';
 import Error from 'components/shared/Error';
-import { LiveSpecEditorStoreNames, UseZustandStore } from 'context/Zustand';
-import { LiveSpecsQuery_spec, useLiveSpecs_spec } from 'hooks/useLiveSpecs';
+import { useLiveSpecs_spec } from 'hooks/useLiveSpecs';
 import usePublications from 'hooks/usePublications';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -13,16 +15,14 @@ import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     lastPubId: string;
-    liveSpecEditorStoreName: LiveSpecEditorStoreNames;
-    useZustandStore: UseZustandStore;
+    localZustandScope: boolean;
     disableLogs?: boolean;
     collectionNames?: string[];
 }
 
 function EditorAndLogs({
     lastPubId,
-    liveSpecEditorStoreName,
-    useZustandStore,
+    localZustandScope,
     disableLogs,
     collectionNames,
 }: Props) {
@@ -32,15 +32,9 @@ function EditorAndLogs({
         !disableLogs ? lastPubId : null
     );
 
-    const setSpecs = useZustandStore<
-        EditorStoreState<LiveSpecsQuery_spec>,
-        EditorStoreState<LiveSpecsQuery_spec>['setSpecs']
-    >(liveSpecEditorStoreName, (state) => state.setSpecs);
+    const setSpecs = useEditorStore_setSpecs({ localScope: localZustandScope });
 
-    const setId = useZustandStore<
-        EditorStoreState<LiveSpecsQuery_spec>,
-        EditorStoreState<LiveSpecsQuery_spec>['setId']
-    >(liveSpecEditorStoreName, (state) => state.setId);
+    const setId = useEditorStore_setId({ localScope: localZustandScope });
 
     useEffect(() => {
         setId(lastPubId);
@@ -58,10 +52,7 @@ function EditorAndLogs({
         return (
             <>
                 <Grid item xs={disableLogs ? 12 : 6}>
-                    <LiveSpecEditor
-                        liveSpecEditorStoreName={liveSpecEditorStoreName}
-                        useZustandStore={useZustandStore}
-                    />
+                    <LiveSpecEditor localZustandScope={localZustandScope} />
                 </Grid>
 
                 <Grid item xs={6}>

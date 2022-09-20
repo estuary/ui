@@ -589,6 +589,12 @@ const MaterializationEdit: ResolvedIntlConfig['messages'] = {
     'materializationEdit.testNotification.desc': `Your materialization succeeded in a dry run and can be saved.`,
 };
 
+// TODO (optimization): Consolidate duplicate create and edit messages.
+const Workflows: ResolvedIntlConfig['messages'] = {
+    'workflows.error.initForm': `An issue was encountered initializing the form.`,
+    'workflows.error.initFormSection': `An issue was encountered initializing this section of the form.`,
+};
+
 const ShardStatus: ResolvedIntlConfig['messages'] = {
     'shardStatus.primary': `PRIMARY`,
     'shardStatus.failed': `FAILED`,
@@ -653,6 +659,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...Welcome,
     ...EntityEdit,
     ...Supabase,
+    ...Workflows,
 };
 
 export default enUSMessages;

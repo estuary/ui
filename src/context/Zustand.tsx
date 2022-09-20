@@ -6,7 +6,6 @@ import {
     useContext,
 } from 'react';
 import { createFormStateStore } from 'stores/FormState';
-import { createResourceConfigStore } from 'stores/ResourceConfig';
 import { createShardDetailStore } from 'stores/ShardDetail';
 import { MessagePrefixes } from 'types';
 import useConstant from 'use-constant';
@@ -17,9 +16,10 @@ export enum DetailsFormStoreNames {
     MATERIALIZATION = 'materialization-details-form',
 }
 
-export enum DraftEditorStoreNames {
-    CAPTURE = 'draftSpecEditor-Captures',
-    MATERIALIZATION = 'draftSpecEditor-Materializations',
+export enum EditorStoreNames {
+    CAPTURE = 'capture_editor_store',
+    GENERAL = 'general_editor_store',
+    MATERIALIZATION = 'materialization_editor_store',
 }
 
 export enum EndpointConfigStoreNames {
@@ -32,10 +32,6 @@ export enum FormStateStoreNames {
     CAPTURE_EDIT = 'Capture-Edit-Form-State',
     MATERIALIZATION_CREATE = 'Materialization-Create-Form-State',
     MATERIALIZATION_EDIT = 'Materialization-Edit-Form-State',
-}
-
-export enum LiveSpecEditorStoreNames {
-    GENERAL = 'liveSpecEditor',
 }
 
 export enum ResourceConfigStoreNames {
@@ -57,10 +53,9 @@ export enum ShardDetailStoreNames {
 
 export type StoreName =
     | DetailsFormStoreNames
-    | DraftEditorStoreNames
+    | EditorStoreNames
     | EndpointConfigStoreNames
     | FormStateStoreNames
-    | LiveSpecEditorStoreNames
     | ResourceConfigStoreNames
     | SelectTableStoreNames
     | ShardDetailStoreNames;
@@ -80,12 +75,10 @@ interface ZustandProviderProps {
 }
 
 const invariableStores = {
-    // Draft Editor Store
-    [DraftEditorStoreNames.CAPTURE]: createEditorStore(
-        DraftEditorStoreNames.CAPTURE
-    ),
-    [DraftEditorStoreNames.MATERIALIZATION]: createEditorStore(
-        DraftEditorStoreNames.MATERIALIZATION
+    // Editor Store
+    [EditorStoreNames.CAPTURE]: createEditorStore(EditorStoreNames.CAPTURE),
+    [EditorStoreNames.MATERIALIZATION]: createEditorStore(
+        EditorStoreNames.MATERIALIZATION
     ),
 
     // Form State Store
@@ -104,11 +97,6 @@ const invariableStores = {
     [FormStateStoreNames.MATERIALIZATION_EDIT]: createFormStateStore(
         FormStateStoreNames.MATERIALIZATION_EDIT,
         MessagePrefixes.MATERIALIZATION_EDIT
-    ),
-
-    // Resource Config Store
-    [ResourceConfigStoreNames.MATERIALIZATION]: createResourceConfigStore(
-        ResourceConfigStoreNames.MATERIALIZATION
     ),
 
     // Select Table Store

@@ -1,17 +1,15 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Alert, Stack, Typography } from '@mui/material';
-import { EditorStoreState } from 'components/editor/Store';
+import { useEditorStore_isSaving } from 'components/editor/Store';
 import { Props } from 'components/shared/Entity/DetailsForm/types';
 import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
-import { useZustandStore } from 'context/Zustand';
 import { CATALOG_NAME_SCOPE } from 'forms/renderers/CatalogName';
 import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
@@ -25,7 +23,11 @@ import {
     useDetailsForm_setDetails,
     useDetailsForm_setDetails_connector,
 } from 'stores/DetailsForm';
-import { EntityFormState } from 'stores/FormState';
+import {
+    useFormStateStore_displayValidation,
+    useFormStateStore_isActive,
+    useFormStateStore_messagePrefix,
+} from 'stores/FormState';
 import { hasLength } from 'utils/misc-utils';
 
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
@@ -44,8 +46,6 @@ export const getConnectorImageDetails = (
 function DetailsFormForm({
     connectorTags,
     accessGrants,
-    draftEditorStoreName,
-    formStateStoreName,
     entityType,
     readOnly,
 }: Props) {
@@ -61,26 +61,13 @@ function DetailsFormForm({
     const setDetails_connector = useDetailsForm_setDetails_connector();
 
     // Draft Editor Store
-    const isSaving = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['isSaving']
-    >(draftEditorStoreName, (state) => state.isSaving);
+    const isSaving = useEditorStore_isSaving();
 
     // Form State Store
-    const messagePrefix = useZustandStore<
-        EntityFormState,
-        EntityFormState['messagePrefix']
-    >(formStateStoreName, (state) => state.messagePrefix);
+    const messagePrefix = useFormStateStore_messagePrefix();
+    const displayValidation = useFormStateStore_displayValidation();
 
-    const displayValidation = useZustandStore<
-        EntityFormState,
-        EntityFormState['formState']['displayValidation']
-    >(formStateStoreName, (state) => state.formState.displayValidation);
-
-    const isActive = useZustandStore<
-        EntityFormState,
-        EntityFormState['isActive']
-    >(formStateStoreName, (state) => state.isActive);
+    const isActive = useFormStateStore_isActive();
 
     useEffect(() => {
         if (connectorId && hasLength(connectorTags)) {

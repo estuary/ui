@@ -14,37 +14,28 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import { EditorStoreState } from 'components/editor/Store';
+import { useEditorStore_specs } from 'components/editor/Store';
 import ExternalLink from 'components/shared/ExternalLink';
 import ShardErrors from 'components/tables/Details/ShardErrors';
 import StatusIndicatorAndLabel from 'components/tables/Details/StatusIndicatorAndLabel';
 import { slate } from 'context/Theme';
-import {
-    LiveSpecEditorStoreNames,
-    ShardDetailStoreNames,
-    useZustandStore,
-    UseZustandStore,
-} from 'context/Zustand';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
 import { MouseEvent, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { shardDetailSelectors, ShardDetailStore } from 'stores/ShardDetail';
+import {
+    useShardDetail_getTaskShards,
+    useShardDetail_shards,
+} from 'stores/ShardDetail';
 import { EntityWithCreateWorkflow } from 'types';
 
 interface Props {
-    shardDetailStoreName: ShardDetailStoreNames;
-    useLocalZustandStore: UseZustandStore;
     entityType?: EntityWithCreateWorkflow;
 }
 
 const rowsPerPage = 3;
 
-function ShardInformation({
-    shardDetailStoreName,
-    useLocalZustandStore,
-    entityType,
-}: Props) {
+function ShardInformation({ entityType }: Props) {
     const theme = useTheme();
     const intl = useIntl();
 
@@ -52,20 +43,13 @@ function ShardInformation({
 
     const [taskShards, setTaskShards] = useState<Shard[]>([]);
 
-    const shards = useZustandStore<
-        ShardDetailStore,
-        ShardDetailStore['shards']
-    >(shardDetailStoreName, shardDetailSelectors.shards);
+    const shards = useShardDetail_shards();
 
-    const getTaskShards = useZustandStore<
-        ShardDetailStore,
-        ShardDetailStore['getTaskShards']
-    >(shardDetailStoreName, shardDetailSelectors.getTaskShards);
+    const getTaskShards = useShardDetail_getTaskShards();
 
-    const specs = useLocalZustandStore<
-        EditorStoreState<LiveSpecsQuery_spec>,
-        EditorStoreState<LiveSpecsQuery_spec>['specs']
-    >(LiveSpecEditorStoreNames.GENERAL, (state) => state.specs);
+    const specs = useEditorStore_specs<LiveSpecsQuery_spec>({
+        localScope: true,
+    });
 
     const columns: {
         field: string | null;
@@ -104,10 +88,7 @@ function ShardInformation({
 
     return taskShards.length > 0 ? (
         <>
-            <ShardErrors
-                shards={taskShards}
-                shardDetailStoreName={shardDetailStoreName}
-            />
+            <ShardErrors shards={taskShards} />
 
             <Grid item xs={12}>
                 <TableContainer>
@@ -181,9 +162,6 @@ function ShardInformation({
                                     >
                                         <StatusIndicatorAndLabel
                                             shard={shard}
-                                            shardDetailStoreName={
-                                                shardDetailStoreName
-                                            }
                                         />
 
                                         <TableCell>

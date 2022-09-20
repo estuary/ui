@@ -8,14 +8,8 @@ import {
     Toolbar,
     Typography,
 } from '@mui/material';
-import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
-import {
-    FormStateStoreNames,
-    ResourceConfigStoreNames,
-    useZustandStore,
-} from 'context/Zustand';
 import { ReactNode } from 'react';
-import { EntityFormState } from 'stores/FormState';
+import { useFormStateStore_isActive } from 'stores/FormState';
 
 // TODO: Make the generate button Props property required once the edit workflow matures.
 interface Props {
@@ -23,9 +17,7 @@ interface Props {
     TestButton: ReactNode;
     SaveButton: ReactNode;
     heading: ReactNode;
-    formErrorsExist: boolean;
-    formStateStoreName: FormStateStoreNames;
-    resourceConfigStoreName?: ResourceConfigStoreNames;
+    ErrorSummary: ReactNode;
 }
 
 export const buttonSx: SxProps<Theme> = { ml: 1 };
@@ -35,14 +27,9 @@ function FooHeader({
     TestButton,
     SaveButton,
     heading,
-    formErrorsExist,
-    formStateStoreName,
-    resourceConfigStoreName,
+    ErrorSummary,
 }: Props) {
-    const formActive = useZustandStore<
-        EntityFormState,
-        EntityFormState['isActive']
-    >(formStateStoreName, (state) => state.isActive);
+    const formActive = useFormStateStore_isActive();
 
     return (
         <Stack spacing={2} sx={{ mb: 1 }}>
@@ -75,13 +62,7 @@ function FooHeader({
                 <LinearProgress />
             </Collapse>
 
-            <Box sx={{ maxHeight: 200, overflowY: 'auto' }}>
-                <ValidationErrorSummary
-                    errorsExist={formErrorsExist}
-                    formStateStoreName={formStateStoreName}
-                    resourceConfigStoreName={resourceConfigStoreName}
-                />
-            </Box>
+            <Box sx={{ maxHeight: 200, overflowY: 'auto' }}>{ErrorSummary}</Box>
         </Stack>
     );
 }
