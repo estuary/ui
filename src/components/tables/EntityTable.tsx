@@ -1,7 +1,7 @@
 import SearchIcon from '@mui/icons-material/Search';
 import {
     Box,
-    LinearProgress,
+    Skeleton,
     Stack,
     Table,
     TableBody,
@@ -32,6 +32,7 @@ import {
     MouseEvent,
     ReactNode,
     useEffect,
+    useMemo,
     useRef,
     useState,
 } from 'react';
@@ -211,6 +212,42 @@ function EntityTable({
         },
     };
 
+    const loadingRows = useMemo(() => {
+        const loadingRow = columns.map((column, index) => {
+            return (
+                <TableCell key={`loading-${column.field}-${index}`}>
+                    <Skeleton variant="rectangular" />
+                </TableCell>
+            );
+        });
+
+        return (
+            <>
+                <TableRow>{loadingRow}</TableRow>
+                <TableRow sx={{ opacity: '75%' }}>{loadingRow}</TableRow>
+                <TableRow>{loadingRow}</TableRow>
+                <TableRow
+                    sx={{
+                        'opacity': '25%',
+                        '& .MuiTableCell-root': {
+                            borderBottom: 'transparent',
+                        },
+                    }}
+                >
+                    {loadingRow}
+                </TableRow>
+            </>
+        );
+    }, [columns]);
+
+    const dataRows = useMemo(
+        () =>
+            selectData && selectData.length > 0
+                ? renderTableRows(selectData, showEntityStatus)
+                : null,
+        [renderTableRows, selectData, showEntityStatus]
+    );
+
     return (
         <Box data-public>
             <Box sx={{ mx: 2 }}>
@@ -266,107 +303,91 @@ function EntityTable({
                                         theme.palette.background.default,
                                 }}
                             >
-                                <>
-                                    {columns.map((column, index) => {
-                                        return (
-                                            <TableCell
-                                                key={`${column.field}-${index}`}
-                                                sortDirection={
-                                                    columnToSort ===
-                                                    column.field
-                                                        ? sortDirection
-                                                        : false
-                                                }
-                                            >
-                                                {selectData && column.field ? (
-                                                    <TableSortLabel
-                                                        active={
-                                                            columnToSort ===
-                                                            column.field
-                                                        }
-                                                        direction={
-                                                            columnToSort ===
-                                                            column.field
-                                                                ? sortDirection
-                                                                : 'asc'
-                                                        }
-                                                        onClick={handlers.sort(
-                                                            column.field
-                                                        )}
-                                                    >
-                                                        {column.headerIntlKey ? (
-                                                            <FormattedMessage
-                                                                id={
-                                                                    column.headerIntlKey
-                                                                }
-                                                            />
-                                                        ) : null}
-                                                    </TableSortLabel>
-                                                ) : column.headerIntlKey ? (
-                                                    <FormattedMessage
-                                                        id={
-                                                            column.headerIntlKey
-                                                        }
-                                                    />
-                                                ) : null}
-                                            </TableCell>
-                                        );
-                                    })}
-                                </>
+                                {columns.map((column, index) => {
+                                    return (
+                                        <TableCell
+                                            key={`${column.field}-${index}`}
+                                            sortDirection={
+                                                columnToSort === column.field
+                                                    ? sortDirection
+                                                    : false
+                                            }
+                                        >
+                                            {selectData && column.field ? (
+                                                <TableSortLabel
+                                                    active={
+                                                        columnToSort ===
+                                                        column.field
+                                                    }
+                                                    direction={
+                                                        columnToSort ===
+                                                        column.field
+                                                            ? sortDirection
+                                                            : 'asc'
+                                                    }
+                                                    onClick={handlers.sort(
+                                                        column.field
+                                                    )}
+                                                >
+                                                    {column.headerIntlKey ? (
+                                                        <FormattedMessage
+                                                            id={
+                                                                column.headerIntlKey
+                                                            }
+                                                        />
+                                                    ) : null}
+                                                </TableSortLabel>
+                                            ) : column.headerIntlKey ? (
+                                                <FormattedMessage
+                                                    id={column.headerIntlKey}
+                                                />
+                                            ) : null}
+                                        </TableCell>
+                                    );
+                                })}
                             </TableRow>
                         </TableHead>
 
                         <TableBody>
-                            {selectData && selectData.length > 0 ? (
-                                renderTableRows(selectData, showEntityStatus)
+                            {dataRows ? (
+                                dataRows
+                            ) : isValidating ||
+                              tableState.status === TableStatuses.LOADING ? (
+                                loadingRows
                             ) : (
-                                <TableRow>
-                                    <TableCell colSpan={columns.length}>
-                                        <Box
-                                            sx={{
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                            }}
-                                        >
-                                            <Box width={450}>
-                                                {isValidating ||
-                                                tableState.status ===
-                                                    TableStatuses.LOADING ? (
-                                                    <Box>
-                                                        <LinearProgress />
-                                                    </Box>
-                                                ) : (
-                                                    <>
-                                                        <Typography
-                                                            variant="h6"
-                                                            align="center"
-                                                            sx={{ mb: 2 }}
-                                                        >
-                                                            <FormattedMessage
-                                                                id={getEmptyTableHeader(
-                                                                    tableState.status,
-                                                                    noExistingDataContentIds
-                                                                )}
-                                                            />
-                                                        </Typography>
-                                                        <Typography component="div">
-                                                            {getEmptyTableMessage(
-                                                                tableState.status,
-                                                                noExistingDataContentIds
-                                                            )}
-                                                        </Typography>
-                                                    </>
+                                <TableCell colSpan={columns.length}>
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                        }}
+                                    >
+                                        <Box width={450}>
+                                            <Typography
+                                                variant="h6"
+                                                align="center"
+                                                sx={{ mb: 2 }}
+                                            >
+                                                <FormattedMessage
+                                                    id={getEmptyTableHeader(
+                                                        tableState.status,
+                                                        noExistingDataContentIds
+                                                    )}
+                                                />
+                                            </Typography>
+                                            <Typography component="div">
+                                                {getEmptyTableMessage(
+                                                    tableState.status,
+                                                    noExistingDataContentIds
                                                 )}
-                                            </Box>
+                                            </Typography>
                                         </Box>
-                                    </TableCell>
-                                </TableRow>
+                                    </Box>
+                                </TableCell>
                             )}
                         </TableBody>
 
-                        {selectData &&
-                        selectData.length > 0 &&
-                        useSelectResponse?.count ? (
+                        {dataRows && useSelectResponse?.count ? (
                             <TableFooter>
                                 <TableRow>
                                     <TablePagination
