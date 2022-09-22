@@ -1,6 +1,6 @@
 import { Backdrop, CircularProgress } from '@mui/material';
-import { useIntl } from 'react-intl';
 import { zIndexIncrement } from 'context/Theme';
+import { useIntl } from 'react-intl';
 
 function FullPageSpinner() {
     const intl = useIntl();

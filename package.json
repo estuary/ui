@@ -10,6 +10,7 @@
         "test": "react-app-rewired test",
         "prepare": "husky install",
         "format": "prettier --check '**/*.{js,jsx,ts,tsx}'",
+        "format:fix": "prettier --write '**/*.{js,jsx,ts,tsx}'",
         "lint": "eslint --ext js,jsx,ts,tsx .",
         "lint:fix": "eslint --fix --ext js,jsx,ts,tsx .",
         "lint-staged": "lint-staged --config .lint-staged.js",
