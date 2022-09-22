@@ -15,6 +15,8 @@ import { tableAlternateRowsSx } from 'context/Theme';
 import { useJournalData } from 'hooks/useJournalData';
 import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
 import { useMemo } from 'react';
+import { FormattedMessage } from 'react-intl';
+import { hasLength } from 'utils/misc-utils';
 
 interface PreviewTableModeProps {
     spec: LiveSpecsQuery_spec;
@@ -22,14 +24,16 @@ interface PreviewTableModeProps {
 }
 
 const heightSx: SxProps<Theme> = {
-    minHeight: 350,
-    maxHeight: 350,
+    minHeight: 320,
+    maxHeight: 320,
 };
 
 function TableView({
     journalData: { data, error },
     spec,
 }: PreviewTableModeProps) {
+    console.log('spec', spec);
+
     const specEntries = useMemo(
         // TODO (typing) we need to fix typing
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -38,38 +42,63 @@ function TableView({
     );
 
     const tableHead = useMemo(
-        () => (
-            <TableHead>
-                <TableRow>
-                    {specEntries.map(([key, _fieldSpec]) => (
-                        <TableCell key={key}>{key}</TableCell>
-                    ))}
-                </TableRow>
-            </TableHead>
-        ),
+        () =>
+            hasLength(specEntries) ? (
+                <TableHead>
+                    <TableRow>
+                        {specEntries.map(([key, _fieldSpec]) => (
+                            <TableCell key={key}>{key}</TableCell>
+                        ))}
+                    </TableRow>
+                </TableHead>
+            ) : (
+                <TableHead>
+                    <TableRow>
+                        <TableCell> </TableCell>
+                    </TableRow>
+                </TableHead>
+            ),
         [specEntries]
     );
 
-    const tableBody = useMemo(
-        () => (
+    const tableBody = useMemo(() => {
+        console.log('making table body', {
+            docs: data?.documents,
+            specEntries,
+        });
+
+        return (
             <TableBody
                 sx={{
                     ...tableAlternateRowsSx,
                 }}
             >
-                {data?.documents.map((row) => (
-                    <TableRow key={row._meta.uuid}>
-                        {specEntries.map(([k]) => (
-                            <TableCell key={`${row._meta.uuid}_${k}`}>
-                                {row[k]}
-                            </TableCell>
-                        ))}
+                {hasLength(specEntries) ? (
+                    data?.documents.map((row) => (
+                        <TableRow key={row._meta.uuid}>
+                            {specEntries.map(([k]) => {
+                                return (
+                                    <TableCell key={`${row._meta.uuid}_${k}`}>
+                                        {row[k]}
+                                    </TableCell>
+                                );
+                            })}
+                        </TableRow>
+                    ))
+                ) : (
+                    <TableRow>
+                        <TableCell
+                            sx={{
+                                textAlign: 'center',
+                            }}
+                        >
+                            <FormattedMessage id="detailsPanel.dataPreview.failedParsingMessage" />
+                        </TableCell>
                     </TableRow>
-                ))}
+                )}
             </TableBody>
-        ),
-        [data, specEntries]
-    );
+        );
+    }, [data, specEntries]);
 
     if (error) {
         return <Error error={error} />;
@@ -78,10 +107,12 @@ function TableView({
     return (
         <Grid item xs={12}>
             <Paper
+                variant="outlined"
                 sx={{
                     ...heightSx,
                     width: '100%',
                     overflow: 'hidden',
+                    mb: 2,
                 }}
             >
                 <TableContainer sx={{ ...heightSx }}>

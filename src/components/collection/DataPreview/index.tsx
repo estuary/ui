@@ -1,18 +1,10 @@
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { LoadingButton } from '@mui/lab';
-import {
-    Alert,
-    AlertTitle,
-    Stack,
-    ToggleButton,
-    ToggleButtonGroup,
-    Typography,
-} from '@mui/material';
+import { Alert, AlertTitle, Stack, Typography } from '@mui/material';
 import ListView from 'components/collection/DataPreview/ListView';
-import TableView from 'components/collection/DataPreview/TableView';
 import { useJournalData, useJournalsForCollection } from 'hooks/useJournalData';
 import { useLiveSpecs_spec } from 'hooks/useLiveSpecs';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
 
@@ -20,16 +12,19 @@ interface Props {
     collectionName: string;
 }
 
-enum Views {
-    table = 'table',
-    list = 'list',
-}
+// TODO (preview table) the table view has some issues so turning off before enabling it
+//      in production. Mainly that we should use projecttions to fetch data.
+
+// enum Views {
+//     table = 'table',
+//     list = 'list',
+// }
 
 export function DataPreview({ collectionName }: Props) {
-    const [previewMode, setPreviewMode] = useState<Views>(Views.list);
-    const toggleMode = (_event: any, newValue: Views) => {
-        setPreviewMode(newValue);
-    };
+    // const [previewMode, setPreviewMode] = useState<Views>(Views.list);
+    // const toggleMode = (_event: any, newValue: Views) => {
+    //     setPreviewMode(newValue);
+    // };
 
     const { liveSpecs: publicationSpecs } = useLiveSpecs_spec(
         `datapreview-${collectionName}`,
@@ -79,7 +74,7 @@ export function DataPreview({ collectionName }: Props) {
                     </LoadingButton>
                 </Stack>
 
-                <ToggleButtonGroup
+                {/*                <ToggleButtonGroup
                     color="primary"
                     size="small"
                     exclusive
@@ -93,7 +88,7 @@ export function DataPreview({ collectionName }: Props) {
                     <ToggleButton value={Views.table}>
                         <FormattedMessage id="cta.table" />
                     </ToggleButton>
-                </ToggleButtonGroup>
+                </ToggleButtonGroup>*/}
             </Stack>
 
             {!hasLength(journalsData?.journals) ? (
@@ -125,11 +120,12 @@ export function DataPreview({ collectionName }: Props) {
                     </AlertTitle>
                     <FormattedMessage id="collectionsPreview.tooManyBytes.message" />
                 </Alert>
-            ) : previewMode === Views.list ? (
-                <ListView journalData={journalData} spec={spec} />
             ) : (
-                <TableView journalData={journalData} spec={spec} />
+                <ListView journalData={journalData} spec={spec} />
             )}
+            {/*             : (
+                <TableView journalData={journalData} spec={spec} />
+            )}*/}
         </>
     );
 }

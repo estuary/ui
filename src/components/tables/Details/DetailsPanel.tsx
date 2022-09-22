@@ -1,4 +1,5 @@
 import {
+    Box,
     Collapse,
     Divider,
     Grid,
@@ -56,7 +57,6 @@ function DetailsPanel({
                 <Collapse
                     in={detailsExpanded}
                     sx={{
-                        p: 2,
                         pb: 0,
                         mb: 2,
                         mt: 0,
@@ -67,42 +67,48 @@ function DetailsPanel({
                     }}
                     unmountOnExit
                 >
-                    <LocalZustandProvider
-                        createStore={createEditorStore(
-                            EditorStoreNames.GENERAL
-                        )}
-                    >
-                        <Grid container spacing={2}>
-                            {!isCollection ? (
+                    <Box sx={{ margin: 2 }}>
+                        <LocalZustandProvider
+                            createStore={createEditorStore(
+                                EditorStoreNames.GENERAL
+                            )}
+                        >
+                            <Grid container spacing={2}>
+                                {!isCollection ? (
+                                    <Grid item xs={12}>
+                                        <Typography variant="subtitle1">
+                                            <FormattedMessage id="detailsPanel.status.header" />
+                                        </Typography>
+                                        <ShardInformation
+                                            entityType={entityType}
+                                        />
+                                    </Grid>
+                                ) : null}
+
                                 <Grid item xs={12}>
                                     <Typography variant="subtitle1">
-                                        <FormattedMessage id="detailsPanel.status.header" />
+                                        <FormattedMessage id="detailsPanel.specification.header" />
                                     </Typography>
-                                    <ShardInformation entityType={entityType} />
+                                    <EditorAndLogs
+                                        collectionNames={fullList}
+                                        lastPubId={lastPubId}
+                                        disableLogs={true}
+                                        localZustandScope={true}
+                                    />
                                 </Grid>
-                            ) : null}
 
-                            <Grid item xs={12}>
-                                <Typography variant="subtitle1">
-                                    <FormattedMessage id="detailsPanel.specification.header" />
-                                </Typography>
-                                <EditorAndLogs
-                                    collectionNames={fullList}
-                                    lastPubId={lastPubId}
-                                    disableLogs={true}
-                                    localZustandScope={true}
-                                />
+                                <Divider />
+
+                                {entityName && isCollection ? (
+                                    <Grid item xs={12}>
+                                        <DataPreview
+                                            collectionName={entityName}
+                                        />
+                                    </Grid>
+                                ) : null}
                             </Grid>
-
-                            <Divider />
-
-                            {entityName && isCollection ? (
-                                <Grid item xs={12}>
-                                    <DataPreview collectionName={entityName} />
-                                </Grid>
-                            ) : null}
-                        </Grid>
-                    </LocalZustandProvider>
+                        </LocalZustandProvider>
+                    </Box>
                 </Collapse>
             </TableCell>
         </TableRow>

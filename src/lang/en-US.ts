@@ -408,7 +408,7 @@ const Collections: ResolvedIntlConfig['messages'] = {
     'collections.message2.docLink': `collections`,
     'collections.message2.docPath': `https://docs.estuary.dev/concepts/collections/`,
     'collectionsPreview.notFound.title': `Not Found`,
-    'collectionsPreview.notFound.message': `We were unable to find the journals to display the preview. This could mean the Capture is currently not running.`,
+    'collectionsPreview.notFound.message': `We were unable to find the journals to display the preview. This could mean the Capture has not injested data yet or is not running. Check the status on the Captures page to make sure it is running.`,
     'collectionsPreview.tooFewDocuments.title': `Low document count`,
     'collectionsPreview.tooFewDocuments.message': `Fewer documents than desired were found. This could mean that your collection isn't seeing very much data.`,
     'collectionsPreview.tooManyBytes.title': `Large documents`,
@@ -530,6 +530,7 @@ const DetailsPanel: ResolvedIntlConfig['messages'] = {
     'detailsPanel.shardDetails.docLink': `Shard Help`,
     'detailsPanel.shardDetails.docPath': `https://docs.estuary.dev/concepts/advanced/shards/`,
     'detailsPanel.dataPreview.header': `Data Preview`,
+    'detailsPanel.dataPreview.failedParsingMessage': `Ran into an problem parsing data. This is a UI bug and does not mean there is an issue with your data.`,
     'detailsPanel.specification.header': `Specification`,
     'detailsPanel.status.header': `Status`,
 };
