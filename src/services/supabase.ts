@@ -1,13 +1,9 @@
 import { PostgrestError, PostgrestFilterBuilder } from '@supabase/postgrest-js';
-import {
-    createClient,
-    RealtimeSubscription,
-    User,
-} from '@supabase/supabase-js';
-import { SupabaseQueryBuilder } from '@supabase/supabase-js/dist/module/lib/SupabaseQueryBuilder';
+import { createClient, User } from '@supabase/supabase-js';
 import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 import { JobStatus } from 'types';
+import { hasLength, incrementInterval, timeoutCleanUp } from 'utils/misc-utils';
 
 if (
     !process.env.REACT_APP_SUPABASE_URL ||
@@ -24,10 +20,12 @@ const supabaseSettings = {
 };
 
 // Little helper string that fetches the name from open graph
-export const CONNECTOR_NAME = `open_graph->en-US->>title`;
-export const CONNECTOR_RECOMMENDED = `open_graph->en-US->>recommended`;
-export const CONNECTOR_TITLE = `connector_open_graph->en-US->>title`;
-export const CONNECTOR_IMAGE = `connector_open_graph->en-US->>image`;
+export const CONNECTOR_NAME = `title->>en-US`;
+export const CONNECTOR_RECOMMENDED = `recommended`;
+export const CONNECTOR_TITLE = `title:connector_title->>en-US`;
+export const CONNECTOR_IMAGE = `image:connector_logo_url->>en-US`;
+
+export const QUERY_PARAM_CONNECTOR_TITLE = `connector_title->>en-US`;
 
 export const ERROR_MESSAGES = {
     jwtExpired: 'JWT expired',
@@ -80,8 +78,7 @@ export const supabaseClient = createClient(
     }
 );
 
-export const DEFAULT_POLLING_INTERVAL = 500;
-
+export const DEFAULT_POLLING_INTERVAL = 750;
 export const defaultTableFilter = <Data>(
     query: PostgrestFilterBuilder<Data>,
     searchParam: Array<keyof Data | any>, // TODO (typing) added any because of how Supabase handles keys. Hoping Supabase 2.0 fixes https://github.com/supabase/supabase-js/issues/170
@@ -154,7 +151,7 @@ export interface CallSupabaseResponse<T> {
     data: T | null;
 }
 
-const handleSuccess = <T>(response: any) => {
+export const handleSuccess = <T>(response: any) => {
     return response.error
         ? {
               data: null,
@@ -165,7 +162,7 @@ const handleSuccess = <T>(response: any) => {
           };
 };
 
-const handleFailure = (error: any) => {
+export const handleFailure = (error: any) => {
     return {
         data: null,
         error,
@@ -219,53 +216,6 @@ export const deleteSupabase = (
     return makeCall();
 };
 
-export const endSubscription = (subscription: RealtimeSubscription) => {
-    return supabaseClient
-        .removeSubscription(subscription)
-        .then(() => {})
-        .catch(() => {});
-};
-
-export const startSubscription = (
-    query: SupabaseQueryBuilder<any>,
-    success: Function,
-    failure: Function,
-    keepSubscription?: boolean
-) => {
-    const subscription = query
-        .on('*', async (payload: any) => {
-            const response = payload.new
-                ? payload.new
-                : // TODO (typing) during manual testing I have seen record be in the response
-                //      even though the type says it is not there. Needs more research
-                // eslint-disable-next-line @typescript-eslint/dot-notation
-                payload['record']
-                ? // eslint-disable-next-line @typescript-eslint/dot-notation
-                  payload['record']
-                : null;
-
-            if (response) {
-                if (response.job_status.type !== 'queued') {
-                    if (response.job_status.type === 'success') {
-                        success(response);
-                    } else {
-                        failure(response);
-                    }
-
-                    if (!keepSubscription) {
-                        await endSubscription(subscription);
-                    }
-                }
-            } else {
-                // TODO (error handling) Do not know how this path could happen but wanted to be safe
-                failure(payload);
-            }
-        })
-        .subscribe();
-
-    return subscription;
-};
-
 export const jobSucceeded = (jobStatus?: JobStatus) => {
     if (jobStatus) {
         if (jobStatus.type !== 'queued') {
@@ -277,6 +227,124 @@ export const jobSucceeded = (jobStatus?: JobStatus) => {
         return null;
     }
 };
+
+// START: Poller
+type PollerTimeout = number | undefined;
+
+export const JOB_STATUS_POLLER_ERROR = 'supabase.poller.failed';
+export const jobStatusPoller = (
+    query: any,
+    success: Function,
+    failure: Function,
+    initWait?: number
+) => {
+    console.log('jobStatusPoller');
+    let pollerTimeout: PollerTimeout;
+    let interval = DEFAULT_POLLING_INTERVAL;
+    const makeApiCall = () => {
+        LogRocket.log('Poller : start ');
+
+        return query.throwOnError().then(
+            (payload: any) => {
+                LogRocket.log('Poller : response : ', payload);
+                timeoutCleanUp(pollerTimeout);
+
+                if (payload.error) {
+                    failure(handleFailure(payload.error));
+                } else {
+                    const response =
+                        (payload &&
+                            hasLength(payload.data) &&
+                            payload.data[0]) ??
+                        null;
+                    if (
+                        response?.job_status?.type &&
+                        response.job_status.type !== 'queued'
+                    ) {
+                        LogRocket.log(
+                            `Poller : response : ${response.job_status.type}`
+                        );
+                        if (response.job_status.type === 'success') {
+                            success(response);
+                        } else {
+                            failure(response);
+                        }
+                    } else {
+                        interval = incrementInterval(interval);
+                        pollerTimeout = window.setTimeout(
+                            makeApiCall,
+                            interval
+                        );
+                    }
+                }
+            },
+            (error: unknown) => {
+                LogRocket.log('Poller : error : ', error);
+                timeoutCleanUp(pollerTimeout);
+                failure(handleFailure(JOB_STATUS_POLLER_ERROR));
+            }
+        );
+    };
+
+    pollerTimeout = window.setTimeout(
+        makeApiCall,
+        initWait ?? DEFAULT_POLLING_INTERVAL * 2
+    );
+};
+// END: Poller
+
+// DO NOT USE WITHOUT TALKING TO SOMEONE
+// TODO (Realtime) - fix the "hanging" isue where realtime does not always come back with a response
+//  We have found some weird issues with the RealTime stuff
+//  Eventually we want to go back to this but need to research the issues first.
+
+// export const endSubscription = (subscription: RealtimeSubscription) => {
+//     return supabaseClient
+//         .removeSubscription(subscription)
+//         .then(() => {})
+//         .catch(() => {});
+// };
+
+// export const startSubscription = (
+//     query: SupabaseQueryBuilder<any>,
+//     success: Function,
+//     failure: Function,
+//     keepSubscription?: boolean
+// ) => {
+//     const subscription = query
+//         .on('*', async (payload: any) => {
+//             const response = payload.new
+//                 ? payload.new
+//                 : // TODO (typing) during manual testing I have seen record be in the response
+//                 //      even though the type says it is not there. Needs more research
+//                 // eslint-disable-next-line @typescript-eslint/dot-notation
+//                 payload['record']
+//                 ? // eslint-disable-next-line @typescript-eslint/dot-notation
+//                   payload['record']
+//                 : null;
+
+//             if (response) {
+//                 if (response.job_status.type !== 'queued') {
+//                     if (response.job_status.type === 'success') {
+//                         success(response);
+//                     } else {
+//                         failure(response);
+//                     }
+
+//                     if (!keepSubscription) {
+//                         await endSubscription(subscription);
+//                     }
+//                 }
+//             } else {
+//                 // TODO (error handling) Do not know how this path could happen but wanted to be safe
+//                 failure(payload);
+//             }
+//         })
+//         .subscribe();
+
+//     return subscription;
+// };
+// DO NOT USE WITHOUT TALKING TO SOMEONE
 
 // Invoke supabase edge functions.
 export function invokeSupabase<T>(fn: FUNCTIONS, body: any) {

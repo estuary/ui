@@ -10,15 +10,9 @@ import { DataPreview } from 'components/collection/DataPreview';
 import { createEditorStore } from 'components/editor/Store';
 import EditorAndLogs from 'components/tables/Details/EditorAndLogs';
 import ShardInformation from 'components/tables/Details/ShardInformation';
-import {
-    LocalZustandProvider,
-    useLocalZustandStore,
-} from 'context/LocalZustand';
+import { LocalZustandProvider } from 'context/LocalZustand';
 import { darkGlassBkgColorIntensified, tableBorderSx } from 'context/Theme';
-import {
-    LiveSpecEditorStoreNames,
-    ShardDetailStoreNames,
-} from 'context/Zustand';
+import { EditorStoreNames } from 'context/Zustand';
 import { concat } from 'lodash';
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -32,7 +26,6 @@ interface Props {
     entityName: string;
     collectionNames?: string[];
     disableLogs?: boolean; // TODO (detail logs) We'll start using this again when we have better logs
-    shardDetailStoreName?: ShardDetailStoreNames;
 }
 
 function DetailsPanel({
@@ -40,7 +33,6 @@ function DetailsPanel({
     lastPubId,
     colSpan,
     entityType,
-    shardDetailStoreName,
     collectionNames,
     entityName,
 }: Props) {
@@ -77,24 +69,16 @@ function DetailsPanel({
                 >
                     <LocalZustandProvider
                         createStore={createEditorStore(
-                            LiveSpecEditorStoreNames.GENERAL
+                            EditorStoreNames.GENERAL
                         )}
                     >
                         <Grid container spacing={2}>
-                            {shardDetailStoreName && !isCollection ? (
+                            {!isCollection ? (
                                 <Grid item xs={12}>
                                     <Typography variant="subtitle1">
                                         <FormattedMessage id="detailsPanel.status.header" />
                                     </Typography>
-                                    <ShardInformation
-                                        useLocalZustandStore={
-                                            useLocalZustandStore
-                                        }
-                                        entityType={entityType}
-                                        shardDetailStoreName={
-                                            shardDetailStoreName
-                                        }
-                                    />
+                                    <ShardInformation entityType={entityType} />
                                 </Grid>
                             ) : null}
 
@@ -106,10 +90,7 @@ function DetailsPanel({
                                     collectionNames={fullList}
                                     lastPubId={lastPubId}
                                     disableLogs={true}
-                                    liveSpecEditorStoreName={
-                                        LiveSpecEditorStoreNames.GENERAL
-                                    }
-                                    useZustandStore={useLocalZustandStore}
+                                    localZustandScope={true}
                                 />
                             </Grid>
 

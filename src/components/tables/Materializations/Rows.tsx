@@ -6,7 +6,6 @@ import EntityName from 'components/tables/cells/EntityName';
 import OptionsMenu from 'components/tables/cells/OptionsMenu';
 import RowSelect from 'components/tables/cells/RowSelect';
 import TimeStamp from 'components/tables/cells/TimeStamp';
-import UserName from 'components/tables/cells/UserName';
 import DetailsPanel from 'components/tables/Details/DetailsPanel';
 import { LiveSpecsExtQuery } from 'components/tables/Materializations';
 import {
@@ -14,16 +13,13 @@ import {
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
 import { getEntityTableRowSx } from 'context/Theme';
-import {
-    SelectTableStoreNames,
-    ShardDetailStoreNames,
-    useZustandStore,
-} from 'context/Zustand';
+import { SelectTableStoreNames, useZustandStore } from 'context/Zustand';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useShardsList from 'hooks/useShardsList';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { shardDetailSelectors, ShardDetailStore } from 'stores/ShardDetail';
+import { QUERY_PARAM_CONNECTOR_TITLE } from 'services/supabase';
+import { useShardDetail_setShards } from 'stores/ShardDetail';
 import { ENTITY } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
 
@@ -37,7 +33,6 @@ interface RowProps {
     setRow: any;
     isSelected: boolean;
     showEntityStatus: boolean;
-    shardDetailStoreName: ShardDetailStoreNames;
 }
 
 export const tableColumns = [
@@ -50,7 +45,7 @@ export const tableColumns = [
         headerIntlKey: 'entityTable.data.entity',
     },
     {
-        field: 'connector_open_graph->en-US->>title',
+        field: QUERY_PARAM_CONNECTOR_TITLE,
         headerIntlKey: 'data.type',
     },
     {
@@ -62,22 +57,12 @@ export const tableColumns = [
         headerIntlKey: 'entityTable.data.lastPublished',
     },
     {
-        field: 'last_pub_user_full_name',
-        headerIntlKey: 'entityTable.data.lastPubUserFullName',
-    },
-    {
         field: null,
         headerIntlKey: null,
     },
 ];
 
-function Row({
-    isSelected,
-    setRow,
-    row,
-    showEntityStatus,
-    shardDetailStoreName,
-}: RowProps) {
+function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
     const navigate = useNavigate();
     const theme = useTheme();
 
@@ -115,7 +100,6 @@ function Row({
                 <EntityName
                     name={row.catalog_name}
                     showEntityStatus={showEntityStatus}
-                    shardDetailStoreName={shardDetailStoreName}
                 />
 
                 <Connector
@@ -127,12 +111,6 @@ function Row({
                 <ChipList strings={row.reads_from} />
 
                 <TimeStamp time={row.updated_at} />
-
-                <UserName
-                    avatar={row.last_pub_user_avatar_url}
-                    email={row.last_pub_user_email}
-                    name={row.last_pub_user_full_name}
-                />
 
                 <OptionsMenu
                     detailsExpanded={detailsExpanded}
@@ -147,7 +125,6 @@ function Row({
                 lastPubId={row.last_pub_id}
                 colSpan={tableColumns.length}
                 entityType={ENTITY.MATERIALIZATION}
-                shardDetailStoreName={shardDetailStoreName}
                 entityName={row.catalog_name}
             />
         </>
@@ -177,12 +154,7 @@ function Rows({ data, showEntityStatus }: RowsProps) {
     );
 
     // Shard Detail Store
-    const shardDetailStoreName = ShardDetailStoreNames.MATERIALIZATION;
-
-    const setShards = useZustandStore<
-        ShardDetailStore,
-        ShardDetailStore['setShards']
-    >(shardDetailStoreName, shardDetailSelectors.setShards);
+    const setShards = useShardDetail_setShards();
 
     const { data: shardsData, mutate: mutateShardsList } = useShardsList(data);
 
@@ -205,7 +177,6 @@ function Rows({ data, showEntityStatus }: RowsProps) {
                     isSelected={selected.has(row.id)}
                     setRow={setRow}
                     showEntityStatus={showEntityStatus}
-                    shardDetailStoreName={shardDetailStoreName}
                 />
             ))}
         </>

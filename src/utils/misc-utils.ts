@@ -1,5 +1,4 @@
 import { createSearchParams } from 'react-router-dom';
-import { OpenGraph } from 'types';
 
 export const stripPathing = (stringVal: string) => {
     if (!stringVal) return stringVal;
@@ -8,10 +7,6 @@ export const stripPathing = (stringVal: string) => {
         stringVal.lastIndexOf('/') + 1,
         stringVal.length
     );
-};
-
-export const getConnectorIcon = (connectorObject: OpenGraph) => {
-    return connectorObject['en-US'].image;
 };
 
 export const hasLength = (val: string | any[] | null | undefined): boolean => {
@@ -37,3 +32,16 @@ export const getPathWithParams = (
 export const base64RemovePadding = (state: string | null) => {
     return state ? state.replace(/[=]{1,2}$/, '') : state;
 };
+
+export const timeoutCleanUp = (pollerTimeout: number | undefined) => {
+    if (pollerTimeout) {
+        window.clearInterval(pollerTimeout);
+    }
+};
+
+export const INTERVAL_MAX = 5000;
+export const INTERVAL_INCREMENT = 500;
+export const incrementInterval = (
+    interval: number,
+    max: number | undefined = INTERVAL_MAX
+) => (interval < max ? interval + INTERVAL_INCREMENT : max);

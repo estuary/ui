@@ -6,7 +6,7 @@ import {
     Box,
     Typography,
 } from '@mui/material';
-import Logs, { type LogProps } from 'components/Logs';
+import Logs, { type LogProps } from 'components/logs';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { FormattedMessage } from 'react-intl';
 
@@ -41,7 +41,6 @@ function ErrorLogs({
                     <Box
                         sx={{
                             width: '100%',
-                            height: heightVal,
                         }}
                     >
                         <ErrorBoundryWrapper>

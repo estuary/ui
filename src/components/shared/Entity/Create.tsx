@@ -1,7 +1,10 @@
 import { Alert, Collapse, Typography } from '@mui/material';
 import CollectionConfig from 'components/collection/Config';
 import ConnectorTiles from 'components/ConnectorTiles';
-import { EditorStoreState } from 'components/editor/Store';
+import {
+    useEditorStore_id,
+    useEditorStore_setId,
+} from 'components/editor/Store';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
@@ -9,12 +12,6 @@ import EntityError from 'components/shared/Entity/Error';
 import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedChangesPrompt';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import {
-    DraftEditorStoreNames,
-    FormStateStoreNames,
-    ResourceConfigStoreNames,
-    useZustandStore,
-} from 'context/Zustand';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -22,27 +19,23 @@ import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useConnectorTag from 'hooks/useConnectorTag';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import {
-    useLiveSpecsExtByLastPubId,
-    useLiveSpecsExtWithOutSpec,
-} from 'hooks/useLiveSpecsExt';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useDetailsForm_connectorImage } from 'stores/DetailsForm';
 import { useEndpointConfigStore_setEndpointSchema } from 'stores/EndpointConfig';
-import { EntityFormState } from 'stores/FormState';
-import { ResourceConfigState } from 'stores/ResourceConfig';
-import { ENTITY, EntityWithCreateWorkflow, Schema } from 'types';
+import {
+    useFormStateStore_error,
+    useFormStateStore_exitWhenLogsClose,
+    useFormStateStore_logToken,
+    useFormStateStore_messagePrefix,
+} from 'stores/FormState';
+import { EntityWithCreateWorkflow, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     title: string;
     connectorType: EntityWithCreateWorkflow;
     Header: any;
-    draftEditorStoreName: DraftEditorStoreNames;
-    formStateStoreName: FormStateStoreNames;
-    resourceConfigStoreName?: ResourceConfigStoreNames;
     showCollections?: boolean;
     promptDataLoss: any;
     resetState: () => void;
@@ -52,9 +45,6 @@ function EntityCreate({
     title,
     connectorType,
     Header,
-    draftEditorStoreName,
-    formStateStoreName,
-    resourceConfigStoreName,
     showCollections,
     promptDataLoss,
     resetState,
@@ -67,12 +57,9 @@ function EntityCreate({
     });
 
     // Check for properties being passed in
-    const [connectorID, lastPubId] = useGlobalSearchParams([
+    const [connectorID] = useGlobalSearchParams([
         GlobalSearchParams.CONNECTOR_ID,
-        GlobalSearchParams.LAST_PUB_ID,
     ]);
-
-    const specId = useGlobalSearchParams(GlobalSearchParams.LIVE_SPEC_ID, true);
 
     const [showConnectorTiles, setShowConnectorTiles] = useState<
         boolean | null
@@ -88,57 +75,20 @@ function EntityCreate({
     const imageTag = useDetailsForm_connectorImage();
 
     // Draft Editor Store
-    const setDraftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['setId']
-    >(draftEditorStoreName, (state) => state.setId);
-
-    const draftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['id']
-    >(draftEditorStoreName, (state) => state.id);
+    const draftId = useEditorStore_id();
+    const setDraftId = useEditorStore_setId();
 
     // Endpoint Config Store
     const setEndpointSchema = useEndpointConfigStore_setEndpointSchema();
 
     // Form State Store
-    const messagePrefix = useZustandStore<
-        EntityFormState,
-        EntityFormState['messagePrefix']
-    >(formStateStoreName, (state) => state.messagePrefix);
+    const messagePrefix = useFormStateStore_messagePrefix();
 
-    const exitWhenLogsClose = useZustandStore<
-        EntityFormState,
-        EntityFormState['formState']['exitWhenLogsClose']
-    >(formStateStoreName, (state) => state.formState.exitWhenLogsClose);
+    const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
 
-    const logToken = useZustandStore<
-        EntityFormState,
-        EntityFormState['formState']['logToken']
-    >(formStateStoreName, (state) => state.formState.logToken);
+    const logToken = useFormStateStore_logToken();
 
-    const formSubmitError = useZustandStore<
-        EntityFormState,
-        EntityFormState['formState']['error']
-    >(formStateStoreName, (state) => state.formState.error);
-
-    // Resource Config Store
-    // TODO: Determine proper placement for this logic.
-    const setResourceSchema = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['setResourceSchema']
-    >(
-        resourceConfigStoreName ?? ResourceConfigStoreNames.MATERIALIZATION,
-        (state) => state.setResourceSchema
-    );
-
-    const prefillEmptyCollections = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['preFillEmptyCollections']
-    >(
-        resourceConfigStoreName ?? ResourceConfigStoreNames.MATERIALIZATION,
-        (state) => state.preFillEmptyCollections
-    );
+    const formSubmitError = useFormStateStore_error();
 
     // Reset the catalog if the connector changes
     useEffect(() => {
@@ -146,39 +96,14 @@ function EntityCreate({
     }, [imageTag, setDraftId]);
 
     const { connectorTag } = useConnectorTag(imageTag.id);
-    const { liveSpecs } = useLiveSpecsExtWithOutSpec(specId, ENTITY.CAPTURE);
-    const { liveSpecs: liveSpecsByLastPub } = useLiveSpecsExtByLastPubId(
-        lastPubId,
-        ENTITY.CAPTURE
-    );
 
     useEffect(() => {
-        if (connectorTag) {
-            // TODO: Repair temporary typing.
+        if (connectorTag?.endpoint_spec_schema) {
             setEndpointSchema(
                 connectorTag.endpoint_spec_schema as unknown as Schema
             );
-
-            setResourceSchema(
-                connectorTag.resource_spec_schema as unknown as Schema
-            );
-
-            // We wanna make sure we do these after the schemas are set as
-            //  as they are dependent on them.
-            if (liveSpecs.length > 0) {
-                prefillEmptyCollections(liveSpecs);
-            } else if (liveSpecsByLastPub.length > 0) {
-                prefillEmptyCollections(liveSpecsByLastPub);
-            }
         }
-    }, [
-        connectorTag,
-        liveSpecs,
-        liveSpecsByLastPub,
-        prefillEmptyCollections,
-        setEndpointSchema,
-        setResourceSchema,
-    ]);
+    }, [setEndpointSchema, connectorTag?.endpoint_spec_schema]);
 
     useEffect(() => {
         if (typeof connectorID === 'string') {
@@ -233,8 +158,6 @@ function EntityCreate({
                                 <DetailsForm
                                     connectorTags={connectorTags}
                                     accessGrants={combinedGrants}
-                                    draftEditorStoreName={draftEditorStoreName}
-                                    formStateStoreName={formStateStoreName}
                                     entityType={connectorType}
                                 />
                             </ErrorBoundryWrapper>
@@ -242,32 +165,19 @@ function EntityCreate({
 
                         {imageTag.id ? (
                             <ErrorBoundryWrapper>
-                                <EndpointConfig
-                                    connectorImage={imageTag.id}
-                                    draftEditorStoreName={draftEditorStoreName}
-                                    formStateStoreName={formStateStoreName}
-                                />
+                                <EndpointConfig connectorImage={imageTag.id} />
                             </ErrorBoundryWrapper>
                         ) : null}
 
-                        {showCollections &&
-                        resourceConfigStoreName &&
-                        hasLength(imageTag.id) ? (
+                        {showCollections && hasLength(imageTag.id) ? (
                             <ErrorBoundryWrapper>
-                                <CollectionConfig
-                                    resourceConfigStoreName={
-                                        resourceConfigStoreName
-                                    }
-                                    formStateStoreName={formStateStoreName}
-                                />
+                                <CollectionConfig />
                             </ErrorBoundryWrapper>
                         ) : null}
 
                         <ErrorBoundryWrapper>
                             <CatalogEditor
                                 messageId={`${messagePrefix}.finalReview.instructions`}
-                                draftEditorStoreName={draftEditorStoreName}
-                                formStateStoreName={formStateStoreName}
                             />
                         </ErrorBoundryWrapper>
                     </>

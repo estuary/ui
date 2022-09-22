@@ -1,37 +1,33 @@
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import { Alert, AlertTitle } from '@mui/material';
+import MessageWithLink from 'components/content/MessageWithLink';
 import BindingsMultiEditor from 'components/editor/Bindings';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
-import {
-    FormStateStoreNames,
-    ResourceConfigStoreNames,
-    useZustandStore,
-} from 'context/Zustand';
 import { FormattedMessage } from 'react-intl';
-import { ResourceConfigState } from 'stores/ResourceConfig';
+import {
+    useResourceConfig_collectionErrorsExist,
+    useResourceConfig_hydrationErrorsExist,
+    useResourceConfig_resourceConfigErrorsExist,
+} from 'stores/ResourceConfig';
 
 interface Props {
-    resourceConfigStoreName: ResourceConfigStoreNames;
-    formStateStoreName: FormStateStoreNames;
     readOnly?: boolean;
 }
 
-function CollectionConfig({
-    resourceConfigStoreName,
-    formStateStoreName,
-    readOnly = false,
-}: Props) {
+function CollectionConfig({ readOnly = false }: Props) {
     // Resource Config Store
-    const resourceConfigHasErrors = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['resourceConfigErrorsExist']
-    >(resourceConfigStoreName, (state) => state.resourceConfigErrorsExist);
+    const resourceConfigHydrationErrorsExist =
+        useResourceConfig_hydrationErrorsExist();
 
-    const collectionsHasErrors = useZustandStore<
-        ResourceConfigState,
-        ResourceConfigState['collectionErrorsExist']
-    >(resourceConfigStoreName, (state) => state.collectionErrorsExist);
+    const resourceConfigHasErrors =
+        useResourceConfig_resourceConfigErrorsExist();
 
-    const hasErrors = resourceConfigHasErrors || collectionsHasErrors;
+    const collectionsHasErrors = useResourceConfig_collectionErrorsExist();
+
+    const hasErrors =
+        resourceConfigHydrationErrorsExist ||
+        resourceConfigHasErrors ||
+        collectionsHasErrors;
 
     return (
         <WrapperWithHeader
@@ -40,15 +36,22 @@ function CollectionConfig({
                     {hasErrors ? (
                         <ErrorOutlineIcon color="error" sx={{ pr: 1 }} />
                     ) : null}
+
                     <FormattedMessage id="materializationCreate.collections.heading" />
                 </>
             }
         >
-            <BindingsMultiEditor
-                resourceConfigStoreName={resourceConfigStoreName}
-                formStateStoreName={formStateStoreName}
-                readOnly={readOnly}
-            />
+            {resourceConfigHydrationErrorsExist ? (
+                <Alert severity="error">
+                    <AlertTitle>
+                        <FormattedMessage id="workflows.error.initFormSection" />
+
+                        <MessageWithLink messageID="error.message" />
+                    </AlertTitle>
+                </Alert>
+            ) : (
+                <BindingsMultiEditor readOnly={readOnly} />
+            )}
         </WrapperWithHeader>
     );
 }

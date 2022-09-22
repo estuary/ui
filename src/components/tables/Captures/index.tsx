@@ -4,7 +4,13 @@ import EntityTable, { getPagination } from 'components/tables/EntityTable';
 import { SelectTableStoreNames } from 'context/Zustand';
 import { useQuery } from 'hooks/supabase-swr';
 import { useState } from 'react';
-import { defaultTableFilter, TABLES } from 'services/supabase';
+import {
+    CONNECTOR_IMAGE,
+    CONNECTOR_TITLE,
+    defaultTableFilter,
+    QUERY_PARAM_CONNECTOR_TITLE,
+    TABLES,
+} from 'services/supabase';
 import { LiveSpecsExtBaseQuery, SortDirection } from 'types';
 
 // TODO: Consider consolidating query interface instances.
@@ -17,13 +23,10 @@ const queryColumns = [
     'connector_id',
     'connector_image_name',
     'connector_image_tag',
-    'connector_open_graph->en-US->>image',
-    'connector_open_graph->en-US->>title',
+    CONNECTOR_IMAGE,
+    CONNECTOR_TITLE,
     'id',
     'last_pub_id',
-    'last_pub_user_avatar_url',
-    'last_pub_user_email',
-    'last_pub_user_full_name',
     'spec_type',
     'updated_at',
     'writes_to',
@@ -46,11 +49,7 @@ function CapturesTable() {
             filter: (query) => {
                 return defaultTableFilter<LiveSpecsExtQuery>(
                     query,
-                    [
-                        'catalog_name',
-                        'last_pub_user_full_name',
-                        'connector_open_graph->en-US->>title',
-                    ],
+                    ['catalog_name', QUERY_PARAM_CONNECTOR_TITLE],
                     searchQuery,
                     columnToSort,
                     sortDirection,

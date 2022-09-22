@@ -1,5 +1,5 @@
 import { Box, TableCell, Tooltip } from '@mui/material';
-import ConnectorName from 'components/ConnectorName';
+import ConnectorIcon from 'components/ConnectorIcon';
 import { tableBorderSx } from 'context/Theme';
 
 interface Props {
@@ -8,7 +8,7 @@ interface Props {
     imageTag: string;
 }
 
-const iconSize = 20;
+const iconSize = 40;
 
 function Connector({ connectorImage, connectorName, imageTag }: Props) {
     return (
@@ -19,13 +19,9 @@ function Connector({ connectorImage, connectorName, imageTag }: Props) {
                 maxWidth: 'min-content',
             }}
         >
-            <Tooltip title={imageTag} placement="bottom-start">
+            <Tooltip title={connectorName ?? imageTag} placement="bottom-start">
                 <Box>
-                    <ConnectorName
-                        iconSize={iconSize}
-                        connector={connectorName ?? imageTag}
-                        iconPath={connectorImage}
-                    />
+                    <ConnectorIcon iconPath={connectorImage} size={iconSize} />
                 </Box>
             </Tooltip>
         </TableCell>

@@ -1,28 +1,30 @@
-import { RealtimeSubscription } from '@supabase/supabase-js';
 import { authenticatedRoutes } from 'app/Authenticated';
 import CaptureGenerateButton from 'components/capture/GenerateButton';
-import { EditorStoreState } from 'components/editor/Store';
+import {
+    useEditorStore_id,
+    useEditorStore_pubId,
+    useEditorStore_setId,
+} from 'components/editor/Store';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
-import { useEntityType } from 'components/shared/Entity/EntityContext';
 import FooHeader from 'components/shared/Entity/Header';
+import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary/capture';
 import PageContainer from 'components/shared/PageContainer';
-import {
-    DraftEditorStoreNames,
-    FormStateStoreNames,
-    useZustandStore,
-} from 'context/Zustand';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import LogRocket from 'logrocket';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
-import { startSubscription, TABLES } from 'services/supabase';
+import {
+    DEFAULT_FILTER,
+    jobStatusPoller,
+    JOB_STATUS_POLLER_ERROR,
+    TABLES,
+} from 'services/supabase';
 import {
     useDetailsForm_changed,
     useDetailsForm_connectorImage,
@@ -34,29 +36,34 @@ import {
     useEndpointConfigStore_errorsExist,
     useEndpointConfigStore_reset,
 } from 'stores/EndpointConfig';
-import { EntityFormState, FormStatus } from 'stores/FormState';
+import {
+    FormStatus,
+    useFormStateStore_exitWhenLogsClose,
+    useFormStateStore_messagePrefix,
+    useFormStateStore_resetState,
+    useFormStateStore_setFormState,
+} from 'stores/FormState';
+import { ENTITY } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
-
-const draftEditorStoreName = DraftEditorStoreNames.CAPTURE;
-const formStateStoreName = FormStateStoreNames.CAPTURE_CREATE;
 
 const trackEvent = (payload: any) => {
     LogRocket.track(CustomEvents.CAPTURE_DISCOVER, {
-        name: payload.capture_name,
-        id: payload.id,
-        draft_id: payload.draft_id,
-        logs_token: payload.logs_token,
-        status: payload.job_status.type,
+        name: payload.capture_name ?? DEFAULT_FILTER,
+        id: payload.id ?? DEFAULT_FILTER,
+        draft_id: payload.draft_id ?? DEFAULT_FILTER,
+        logs_token: payload.logs_token ?? DEFAULT_FILTER,
+        status: payload.job_status?.type ?? DEFAULT_FILTER,
     });
 };
 
 function CaptureCreate() {
     const navigate = useNavigate();
 
-    const entityType = useEntityType();
+    const entityType = ENTITY.CAPTURE;
 
     // Supabase stuff
     const supabaseClient = useClient();
+
     const { connectorTags } = useConnectorWithTagDetail(entityType);
     const hasConnectors = connectorTags.length > 0;
 
@@ -66,20 +73,10 @@ function CaptureCreate() {
     const detailsFormChanged = useDetailsForm_changed();
 
     // Draft Editor Store
-    const setDraftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['setId']
-    >(draftEditorStoreName, (state) => state.setId);
+    const draftId = useEditorStore_id();
+    const setDraftId = useEditorStore_setId();
 
-    const pubId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['pubId']
-    >(draftEditorStoreName, (state) => state.pubId);
-
-    const draftId = useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['id']
-    >(draftEditorStoreName, (state) => state.id);
+    const pubId = useEditorStore_pubId();
 
     // Endpoint Config Store
     const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
@@ -88,25 +85,13 @@ function CaptureCreate() {
     const resetDetailsForm = useDetailsForm_resetState();
 
     // Form State Store
-    const messagePrefix = useZustandStore<
-        EntityFormState,
-        EntityFormState['messagePrefix']
-    >(formStateStoreName, (state) => state.messagePrefix);
+    const messagePrefix = useFormStateStore_messagePrefix();
 
-    const setFormState = useZustandStore<
-        EntityFormState,
-        EntityFormState['setFormState']
-    >(formStateStoreName, (state) => state.setFormState);
+    const setFormState = useFormStateStore_setFormState();
 
-    const resetFormState = useZustandStore<
-        EntityFormState,
-        EntityFormState['resetState']
-    >(formStateStoreName, (state) => state.resetState);
+    const resetFormState = useFormStateStore_resetState();
 
-    const exitWhenLogsClose = useZustandStore<
-        EntityFormState,
-        EntityFormState['formState']['exitWhenLogsClose']
-    >(formStateStoreName, (state) => state.formState.exitWhenLogsClose);
+    const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
 
     // Reset the catalog if the connector changes
     useEffect(() => {
@@ -120,24 +105,12 @@ function CaptureCreate() {
     };
 
     const helpers = {
-        callFailed: (formState: any, subscription?: RealtimeSubscription) => {
-            const setFailureState = () => {
-                setFormState({
-                    status: FormStatus.FAILED,
-                    exitWhenLogsClose: false,
-                    ...formState,
-                });
-            };
-            if (subscription) {
-                supabaseClient
-                    .removeSubscription(subscription)
-                    .then(() => {
-                        setFailureState();
-                    })
-                    .catch(() => {});
-            } else {
-                setFailureState();
-            }
+        callFailed: (formState: any) => {
+            setFormState({
+                status: FormStatus.FAILED,
+                exitWhenLogsClose: false,
+                ...formState,
+            });
         },
         exit: () => {
             resetState();
@@ -182,10 +155,18 @@ function CaptureCreate() {
 
     const discoversSubscription = (discoverDraftId: string) => {
         setDraftId(null);
-        return startSubscription(
-            supabaseClient.from(
-                `${TABLES.DISCOVERS}:draft_id=eq.${discoverDraftId}`
-            ),
+        jobStatusPoller(
+            supabaseClient
+                .from(TABLES.DISCOVERS)
+                .select(
+                    `
+                    draft_id,
+                    job_status
+                `
+                )
+                .match({
+                    draft_id: discoverDraftId,
+                }),
             (payload: any) => {
                 setDraftId(payload.draft_id);
                 setFormState({
@@ -194,8 +175,11 @@ function CaptureCreate() {
                 trackEvent(payload);
             },
             (payload: any) => {
-                helpers.jobFailed(`${messagePrefix}.test.failedErrorTitle`);
-                trackEvent(payload);
+                if (payload.error === JOB_STATUS_POLLER_ERROR) {
+                    helpers.jobFailed(payload.error);
+                } else {
+                    helpers.jobFailed(`${messagePrefix}.test.failedErrorTitle`);
+                }
             }
         );
     };
@@ -218,16 +202,11 @@ function CaptureCreate() {
                         heading={
                             <FormattedMessage id={`${messagePrefix}.heading`} />
                         }
-                        formErrorsExist={
-                            detailsFormErrorsExist || endpointConfigErrorsExist
-                        }
                         GenerateButton={
                             <CaptureGenerateButton
                                 disabled={!hasConnectors}
                                 callFailed={helpers.callFailed}
                                 subscription={discoversSubscription}
-                                draftEditorStoreName={draftEditorStoreName}
-                                formStateStoreName={formStateStoreName}
                             />
                         }
                         TestButton={
@@ -236,8 +215,6 @@ function CaptureCreate() {
                                 callFailed={helpers.callFailed}
                                 disabled={!hasConnectors}
                                 logEvent={CustomEvents.CAPTURE_TEST}
-                                draftEditorStoreName={draftEditorStoreName}
-                                formStateStoreName={formStateStoreName}
                             />
                         }
                         SaveButton={
@@ -245,17 +222,20 @@ function CaptureCreate() {
                                 closeLogs={handlers.closeLogs}
                                 callFailed={helpers.callFailed}
                                 disabled={!draftId}
-                                draftEditorStoreName={draftEditorStoreName}
                                 materialize={handlers.materializeCollections}
                                 logEvent={CustomEvents.CAPTURE_CREATE}
-                                formStateStoreName={formStateStoreName}
                             />
                         }
-                        formStateStoreName={formStateStoreName}
+                        ErrorSummary={
+                            <ValidationErrorSummary
+                                errorsExist={
+                                    detailsFormErrorsExist ||
+                                    endpointConfigErrorsExist
+                                }
+                            />
+                        }
                     />
                 }
-                draftEditorStoreName={draftEditorStoreName}
-                formStateStoreName={formStateStoreName}
             />
         </PageContainer>
     );

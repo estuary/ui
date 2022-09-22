@@ -1,5 +1,5 @@
 import { JsonFormsCore } from '@jsonforms/core';
-import { useEntityType } from 'components/shared/Entity/EntityContext';
+import { useEntityType } from 'context/EntityContext';
 import {
     DetailsFormStoreNames,
     registerStores,

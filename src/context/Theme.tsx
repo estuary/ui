@@ -135,7 +135,6 @@ const darkMode: PaletteOptions = {
 export const zIndexIncrement = 5;
 
 // Need to make the sticky header be on top
-export const stickyHeaderIndex = zIndexIncrement * 100;
 export const headerLinkIndex = zIndexIncrement * 30;
 
 // Makes sure the hovering styling can be seen
@@ -216,6 +215,18 @@ const baseBackground = {
 export const jsonFormsPadding: SxProps<Theme> = {
     '& > div > .MuiGrid-container.MuiGrid-root': {
         padding: 1,
+    },
+};
+
+export const LINK_BUTTON_STYLING: SxProps<Theme> = {
+    'px': 1,
+    'py': 0,
+    'fontWeight': 500,
+    'zIndex': headerLinkIndex,
+    'textDecoration': 'underline',
+    '&:hover, &:focus': {
+        fontWeight: 700,
+        textDecoration: 'underline',
     },
 };
 

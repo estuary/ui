@@ -57,6 +57,9 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
             <SWRConfig
                 value={{
                     onError: errorHandler,
+
+                    // TODO (SWR) this is nice but we need some UX built out before turning it back on
+                    revalidateOnFocus: false,
                 }}
             >
                 {children}

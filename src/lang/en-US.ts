@@ -313,7 +313,10 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
 
 const LogsDialog: ResolvedIntlConfig['messages'] = {
     'logs.default': `Waiting for logs...`,
-    'logs.toManyEmpty': `Logs for this build may have ended. Click ${CTAs['cta.restart']} to check for new logs.`,
+    'logs.paused': `paused`,
+    'logs.restartLink': `click here`,
+    'logs.tooManyEmpty': `Logs for this build may have ended. {restartCTA} to start waiting for new logs again.`,
+    'logs.networkFailure': `We encountered a problem streaming logs. Please check your network connection and {restartCTA} to start waiting for new logs again.`,
 };
 
 const AdminPage: ResolvedIntlConfig['messages'] = {
@@ -442,6 +445,7 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.bindingsConfig.noRowsTitle': `No selection made`,
 
     'entityCreate.connector.label': `${CommonMessages['connector.label']} Search`,
+    'entityCreate.errors.missingDraftId': `Missing Draft ID.`,
 };
 
 const EntityEdit: ResolvedIntlConfig['messages'] = {
@@ -600,6 +604,12 @@ const MaterializationEdit: ResolvedIntlConfig['messages'] = {
     'materializationEdit.testNotification.desc': `Your materialization succeeded in a dry run and can be saved.`,
 };
 
+// TODO (optimization): Consolidate duplicate create and edit messages.
+const Workflows: ResolvedIntlConfig['messages'] = {
+    'workflows.error.initForm': `An issue was encountered initializing the form.`,
+    'workflows.error.initFormSection': `An issue was encountered initializing this section of the form.`,
+};
+
 const ShardStatus: ResolvedIntlConfig['messages'] = {
     'shardStatus.primary': `PRIMARY`,
     'shardStatus.failed': `FAILED`,
@@ -619,6 +629,10 @@ const OAuth: ResolvedIntlConfig['messages'] = {
     'oauth.unauthenticated': `Not Authenticated`,
     'oauth.authenticate': `Authenticate your {provider} account`,
     'oauth.remove': `Remove`,
+};
+
+const Supabase: ResolvedIntlConfig['messages'] = {
+    'supabase.poller.failed': `We encountered a problem retrieving the status of this action. Please check your network connection and try again.`,
 };
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {
@@ -659,6 +673,8 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...OAuth,
     ...Welcome,
     ...EntityEdit,
+    ...Supabase,
+    ...Workflows,
 };
 
 export default enUSMessages;
