@@ -63,7 +63,7 @@ const useJournalsForCollection = (collectionName: string) => {
 
     return useSWR(
         collectionName
-            ? `journals-${
+            ? `journals-${collectionName}-${
                   gatewayConfig?.gateway_url ?? '__missing_gateway_url__'
               }`
             : null,
