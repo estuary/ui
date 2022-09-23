@@ -1,0 +1,129 @@
+import {
+    Grid,
+    Paper,
+    SxProps,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Theme,
+} from '@mui/material';
+import Error from 'components/shared/Error';
+import { tableAlternateRowsSx } from 'context/Theme';
+import { useJournalData } from 'hooks/useJournalData';
+import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
+import { useMemo } from 'react';
+import { FormattedMessage } from 'react-intl';
+import { hasLength } from 'utils/misc-utils';
+
+interface PreviewTableModeProps {
+    spec: LiveSpecsQuery_spec;
+    journalData: ReturnType<typeof useJournalData>;
+}
+
+const heightSx: SxProps<Theme> = {
+    minHeight: 320,
+    maxHeight: 320,
+};
+
+function TableView({
+    journalData: { data, error },
+    spec,
+}: PreviewTableModeProps) {
+    console.log('spec', spec);
+
+    const specEntries = useMemo(
+        // TODO (typing) we need to fix typing
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        () => Object.entries(spec?.spec?.schema?.properties ?? {}),
+        [spec]
+    );
+
+    const tableHead = useMemo(
+        () =>
+            hasLength(specEntries) ? (
+                <TableHead>
+                    <TableRow>
+                        {specEntries.map(([key, _fieldSpec]) => (
+                            <TableCell key={key}>{key}</TableCell>
+                        ))}
+                    </TableRow>
+                </TableHead>
+            ) : (
+                <TableHead>
+                    <TableRow>
+                        <TableCell> </TableCell>
+                    </TableRow>
+                </TableHead>
+            ),
+        [specEntries]
+    );
+
+    const tableBody = useMemo(() => {
+        console.log('making table body', {
+            docs: data?.documents,
+            specEntries,
+        });
+
+        return (
+            <TableBody
+                sx={{
+                    ...tableAlternateRowsSx,
+                }}
+            >
+                {hasLength(specEntries) ? (
+                    data?.documents.map((row) => (
+                        <TableRow key={row._meta.uuid}>
+                            {specEntries.map(([k]) => {
+                                return (
+                                    <TableCell key={`${row._meta.uuid}_${k}`}>
+                                        {row[k]}
+                                    </TableCell>
+                                );
+                            })}
+                        </TableRow>
+                    ))
+                ) : (
+                    <TableRow>
+                        <TableCell
+                            sx={{
+                                textAlign: 'center',
+                            }}
+                        >
+                            <FormattedMessage id="detailsPanel.dataPreview.failedParsingMessage" />
+                        </TableCell>
+                    </TableRow>
+                )}
+            </TableBody>
+        );
+    }, [data, specEntries]);
+
+    if (error) {
+        return <Error error={error} />;
+    }
+
+    return (
+        <Grid item xs={12}>
+            <Paper
+                variant="outlined"
+                sx={{
+                    ...heightSx,
+                    width: '100%',
+                    overflow: 'hidden',
+                    mb: 2,
+                }}
+            >
+                <TableContainer sx={{ ...heightSx }}>
+                    <Table stickyHeader sx={{ ...heightSx }}>
+                        {tableHead}
+                        {tableBody}
+                    </Table>
+                </TableContainer>
+            </Paper>
+        </Grid>
+    );
+}
+
+export default TableView;

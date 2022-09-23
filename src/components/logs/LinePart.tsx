@@ -1,5 +1,5 @@
-import { ParsedSpan } from 'ansicolor';
 import { ListItemText, styled } from '@mui/material';
+import { ParsedSpan } from 'ansicolor';
 
 interface Props {
     parsedLine: ParsedSpan;

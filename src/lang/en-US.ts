@@ -78,6 +78,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.verifyOTP': `Sign in with OTP`,
     'cta.clickHere': `Click here`,
     'cta.details': `Details`,
+    'cta.preview': `Preview`,
     'cta.saveEntity': `Save and publish`,
     'cta.restart': `Restart`,
     'cta.enable': `Enable`,
@@ -86,6 +87,9 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.generateCatalog.capture': `Discover Endpoint`,
     'cta.generateCatalog.materialization': `Discover Endpoint`,
     'cta.expandToEdit': `Expand to edit`,
+    'cta.refresh': `Refresh`,
+    'cta.table': `Table`,
+    'cta.list': `List`,
     'cta.expandToView': `Expand to view`,
 };
 
@@ -403,6 +407,14 @@ const Collections: ResolvedIntlConfig['messages'] = {
     'collections.message2': `Captures connect to outside systems, pull in data, and generate {docLink} within Flow.`,
     'collections.message2.docLink': `collections`,
     'collections.message2.docPath': `https://docs.estuary.dev/concepts/collections/`,
+    'collectionsPreview.notFound.title': `Not Found`,
+    'collectionsPreview.notFound.message': `We were unable to find the journals to display the preview. This could mean the Capture has not injested data yet or is not running. Check the status on the Captures page to make sure it is running.`,
+    'collectionsPreview.tooFewDocuments.title': `Low document count`,
+    'collectionsPreview.tooFewDocuments.message': `Fewer documents than desired were found. This could mean that your collection isn't seeing very much data.`,
+    'collectionsPreview.tooManyBytes.title': `Large documents`,
+    'collectionsPreview.tooManyBytes.message': `Exceeded the maximum bytes before reaching the desired number of documents. This probably means that your documents are large.`,
+    'collectionsPreview.tooManyBytesAndNoDocuments.title': `Read limit reached`,
+    'collectionsPreview.tooManyBytesAndNoDocuments.message': `We reached the limit of how much data a web browser can comfortably read, and didn't find even reach the end of one document! This probably means that your documents are huge.`,
 };
 
 const entityCreateHeader = `Endpoint Config`;
@@ -517,6 +529,10 @@ const DetailsPanel: ResolvedIntlConfig['messages'] = {
     'detailsPanel.shardDetails.errorTitle': `Shard Replica Processing Errors`,
     'detailsPanel.shardDetails.docLink': `Shard Help`,
     'detailsPanel.shardDetails.docPath': `https://docs.estuary.dev/concepts/advanced/shards/`,
+    'detailsPanel.dataPreview.header': `Data Preview`,
+    'detailsPanel.dataPreview.failedParsingMessage': `Ran into an problem parsing data. This is a UI bug and does not mean there is an issue with your data.`,
+    'detailsPanel.specification.header': `Specification`,
+    'detailsPanel.status.header': `Status`,
 };
 
 const MaterializationCreate: ResolvedIntlConfig['messages'] = {

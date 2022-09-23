@@ -10,18 +10,19 @@ export interface Props {
     list: ReactNode;
     details: ReactNode;
     height?: number;
+    backgroundColor?: string;
 }
 
 const MIN_RESIZE_WIDTH = 25;
 const INITIAL_SELECTOR_WIDTH = 250;
 
-function ListAndDetails({ list, details, height }: Props) {
+function ListAndDetails({ backgroundColor, list, details, height }: Props) {
     const heightVal = (height ?? DEFAULT_HEIGHT) + DEFAULT_TOOLBAR_HEIGHT;
 
     return (
         <Box
             sx={{
-                bgcolor: 'background.paper',
+                bgcolor: backgroundColor ?? 'background.paper',
                 height: `${heightVal}px`,
                 overflow: 'hidden',
                 mb: 2,

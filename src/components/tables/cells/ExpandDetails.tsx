@@ -6,9 +6,15 @@ interface Props {
     onClick?: any;
     disabled?: boolean;
     expanded?: boolean;
+    messageId?: string;
 }
 
-function ExpandDetails({ onClick, disabled, expanded }: Props) {
+function ExpandDetails({
+    onClick,
+    disabled,
+    expanded,
+    messageId = 'cta.details',
+}: Props) {
     return (
         <Button
             variant="text"
@@ -31,7 +37,7 @@ function ExpandDetails({ onClick, disabled, expanded }: Props) {
                 />
             }
         >
-            <FormattedMessage id="cta.details" />
+            <FormattedMessage id={messageId} />
         </Button>
     );
 }

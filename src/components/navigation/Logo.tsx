@@ -1,8 +1,8 @@
+import { useTheme } from '@mui/material';
 import Box from '@mui/material/Box';
-import { useIntl } from 'react-intl';
 import darkLogo from 'images/pictorial-marks/pictorial-mark__slate.png';
 import lightLogo from 'images/pictorial-marks/pictorial-mark__white.png';
-import { useTheme } from '@mui/material';
+import { useIntl } from 'react-intl';
 
 type Props = {
     width: number;
