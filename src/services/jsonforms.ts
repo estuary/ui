@@ -167,35 +167,54 @@ const copyAdvancedOption = (elem: Layout, schema: JsonSchema) => {
     }
 };
 
+// const generateHorizontalLayout = (elements: any[]) => {
+//     return arrayToMatrix(elements, 2).map((controls: any) => ({
+//         type: 'HorizontalLayout',
+//         elements: controls,
+//     }));
+// };
+
+interface CategoryUiSchema {
+    type: string;
+    elements: [
+        {
+            type: string;
+            label: string;
+            options?: any;
+            elements: any[];
+        }
+    ];
+}
 export const generateCategoryUiSchema = (uiSchema: any) => {
     const basicElements: any[] = [];
-    const categoryUiSchema = {
-        type: 'Categorization',
+    const categoryUiSchema: CategoryUiSchema = {
+        type: 'VerticalLayout',
         elements: [
             {
-                type: 'Category',
+                type: 'Group',
                 label: 'Basic Config',
-                elements: [
-                    {
-                        type: 'VerticalLayout',
-                        elements: [],
-                    } as { type: string; elements: any[] },
-                ],
+                elements: [],
             },
         ],
     };
 
     uiSchema.elements.forEach((element: any) => {
         if (element.label) {
+            const groupElements = element.elements
+                ? element.elements
+                : [element];
+
             categoryUiSchema.elements.push({
-                type: 'Category',
+                type: 'Group',
                 label: element.label,
+                options: {
+                    ...(element.options ?? {}),
+                    advanced: true,
+                },
                 elements: [
                     {
                         type: 'VerticalLayout',
-                        elements: element.elements
-                            ? element.elements
-                            : [element],
+                        elements: groupElements,
                     },
                 ],
             });

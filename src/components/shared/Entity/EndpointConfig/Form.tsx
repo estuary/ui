@@ -55,6 +55,8 @@ function EndpointConfigForm({ readOnly, initialEndpointConfig }: Props) {
                 custom_generateDefaultUISchema(endpointSchema)
             );
 
+            console.log('generatedSchema', generatedSchema);
+
             return generatedSchema;
         } else {
             return null;
@@ -73,6 +75,11 @@ function EndpointConfigForm({ readOnly, initialEndpointConfig }: Props) {
                 id={CONFIG_EDITOR_ID}
                 sx={{
                     ...jsonFormsPadding,
+                    // '& .MuiAccordionDetails-root .MuiGrid-root.MuiGrid-item > .MuiFormControl-root':
+                    //     {
+                    //         background: 'red',
+                    //         minWidth: 300,
+                    //     },
                 }}
             >
                 <JsonForms

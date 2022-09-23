@@ -46,7 +46,11 @@ const CollapsibleGroupRenderer = ({
 
     return (
         <Hidden xsUp={!visible}>
-            <Accordion defaultExpanded={expand}>
+            <Accordion
+                defaultExpanded={expand}
+                disableGutters
+                variant="elevation"
+            >
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     sx={{
