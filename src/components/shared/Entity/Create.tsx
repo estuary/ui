@@ -17,19 +17,17 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
-import useConnectorTag from 'hooks/useConnectorTag';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useDetailsForm_connectorImage } from 'stores/DetailsForm';
-import { useEndpointConfigStore_setEndpointSchema } from 'stores/EndpointConfig';
 import {
     useFormStateStore_error,
     useFormStateStore_exitWhenLogsClose,
     useFormStateStore_logToken,
     useFormStateStore_messagePrefix,
 } from 'stores/FormState';
-import { EntityWithCreateWorkflow, Schema } from 'types';
+import { EntityWithCreateWorkflow } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
@@ -78,9 +76,6 @@ function EntityCreate({
     const draftId = useEditorStore_id();
     const setDraftId = useEditorStore_setId();
 
-    // Endpoint Config Store
-    const setEndpointSchema = useEndpointConfigStore_setEndpointSchema();
-
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
 
@@ -94,16 +89,6 @@ function EntityCreate({
     useEffect(() => {
         setDraftId(null);
     }, [imageTag, setDraftId]);
-
-    const { connectorTag } = useConnectorTag(imageTag.id);
-
-    useEffect(() => {
-        if (connectorTag?.endpoint_spec_schema) {
-            setEndpointSchema(
-                connectorTag.endpoint_spec_schema as unknown as Schema
-            );
-        }
-    }, [setEndpointSchema, connectorTag?.endpoint_spec_schema]);
 
     useEffect(() => {
         if (typeof connectorID === 'string') {

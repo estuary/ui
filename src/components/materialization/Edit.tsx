@@ -23,11 +23,7 @@ import {
     useDetailsForm_errorsExist,
     useDetailsForm_resetState,
 } from 'stores/DetailsForm';
-import {
-    useEndpointConfigStore_changed,
-    useEndpointConfigStore_errorsExist,
-    useEndpointConfigStore_reset,
-} from 'stores/EndpointConfig';
+import { EndpointConfigProvider } from 'stores/EndpointConfig';
 import {
     FormStatus,
     useFormStateStore_exitWhenLogsClose,
@@ -58,10 +54,11 @@ function MaterializationEdit() {
     const draftId = useEditorStore_id();
     const setDraftId = useEditorStore_setId();
 
+    // TODO (placement): Relocate endpoint config-related store selectors.
     // Endpoint Config Store
-    const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
-    const resetEndpointConfigState = useEndpointConfigStore_reset();
-    const endpointConfigChanged = useEndpointConfigStore_changed();
+    // const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
+    // const resetEndpointConfigState = useEndpointConfigStore_reset();
+    // const endpointConfigChanged = useEndpointConfigStore_changed();
 
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
@@ -72,6 +69,7 @@ function MaterializationEdit() {
 
     const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
 
+    // TODO (placement): Relocate resource config-related store selectors.
     // Resource Config Store
     // const resourceConfigChanged = useResourceConfig_stateChanged();
 
@@ -82,7 +80,7 @@ function MaterializationEdit() {
 
     const resetState = () => {
         resetFormState();
-        resetEndpointConfigState();
+        // resetEndpointConfigState();
         resetDetailsFormState();
     };
 
@@ -137,63 +135,66 @@ function MaterializationEdit() {
 
     return (
         <PageContainer>
-            <ResourceConfigProvider workflow="materialization_edit">
-                <EntityEdit
-                    title="browserTitle.materializationEdit"
-                    entityType={entityType}
-                    showCollections
-                    promptDataLoss={
-                        endpointConfigChanged() ||
-                        // resourceConfigChanged() ||
-                        detailsFormChanged()
-                    }
-                    readOnly={{
-                        detailsForm: true,
-                        endpointConfigForm: true,
-                    }}
-                    resetState={resetState}
-                    callFailed={helpers.callFailed}
-                    Header={
-                        <FooHeader
-                            GenerateButton={
-                                <MaterializeGenerateButton
-                                    disabled={!hasConnectors}
-                                    callFailed={helpers.callFailed}
-                                />
-                            }
-                            TestButton={
-                                <EntityTestButton
-                                    disabled={!hasConnectors}
-                                    callFailed={helpers.callFailed}
-                                    closeLogs={handlers.closeLogs}
-                                    logEvent={CustomEvents.MATERIALIZATION_TEST}
-                                />
-                            }
-                            SaveButton={
-                                <EntitySaveButton
-                                    disabled={!draftId}
-                                    callFailed={helpers.callFailed}
-                                    closeLogs={handlers.closeLogs}
-                                    logEvent={CustomEvents.MATERIALIZATION_EDIT}
-                                />
-                            }
-                            heading={
-                                <FormattedMessage
-                                    id={`${messagePrefix}.heading`}
-                                />
-                            }
-                            ErrorSummary={
-                                <ValidationErrorSummary
-                                    errorsExist={
-                                        detailsFormErrorsExist ||
-                                        endpointConfigErrorsExist
-                                    }
-                                />
-                            }
-                        />
-                    }
-                />
-            </ResourceConfigProvider>
+            <EndpointConfigProvider entityType={entityType}>
+                <ResourceConfigProvider workflow="materialization_edit">
+                    <EntityEdit
+                        title="browserTitle.materializationEdit"
+                        entityType={entityType}
+                        showCollections
+                        promptDataLoss={
+                            // endpointConfigChanged() ||
+                            // resourceConfigChanged() ||
+                            detailsFormChanged()
+                        }
+                        readOnly={{ detailsForm: true }}
+                        resetState={resetState}
+                        callFailed={helpers.callFailed}
+                        Header={
+                            <FooHeader
+                                GenerateButton={
+                                    <MaterializeGenerateButton
+                                        disabled={!hasConnectors}
+                                        callFailed={helpers.callFailed}
+                                    />
+                                }
+                                TestButton={
+                                    <EntityTestButton
+                                        disabled={!hasConnectors}
+                                        callFailed={helpers.callFailed}
+                                        closeLogs={handlers.closeLogs}
+                                        logEvent={
+                                            CustomEvents.MATERIALIZATION_TEST
+                                        }
+                                    />
+                                }
+                                SaveButton={
+                                    <EntitySaveButton
+                                        disabled={!draftId}
+                                        callFailed={helpers.callFailed}
+                                        closeLogs={handlers.closeLogs}
+                                        logEvent={
+                                            CustomEvents.MATERIALIZATION_EDIT
+                                        }
+                                    />
+                                }
+                                heading={
+                                    <FormattedMessage
+                                        id={`${messagePrefix}.heading`}
+                                    />
+                                }
+                                ErrorSummary={
+                                    <ValidationErrorSummary
+                                        errorsExist={
+                                            detailsFormErrorsExist
+                                            // || endpointConfigErrorsExist
+                                        }
+                                    />
+                                }
+                            />
+                        }
+                    />
+                </ResourceConfigProvider>
+            </EndpointConfigProvider>
         </PageContainer>
     );
 }

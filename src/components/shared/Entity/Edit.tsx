@@ -23,7 +23,6 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
-import useConnectorTag from 'hooks/useConnectorTag';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import useDraft, { DraftQuery } from 'hooks/useDraft';
 import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
@@ -32,14 +31,13 @@ import {
     useLiveSpecsExtWithSpec,
 } from 'hooks/useLiveSpecsExt';
 import { isEmpty } from 'lodash';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     Details,
     useDetailsForm_connectorImage,
     useDetailsForm_setDetails,
 } from 'stores/DetailsForm';
-import { useEndpointConfigStore_setEndpointSchema } from 'stores/EndpointConfig';
 import {
     FormState,
     FormStatus,
@@ -50,7 +48,7 @@ import {
     useFormStateStore_setFormState,
     useFormStateStore_status,
 } from 'stores/FormState';
-import { ENTITY, JsonFormsData, Schema } from 'types';
+import { ENTITY } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
@@ -136,6 +134,8 @@ const initDraftToEdit = async (
 
         setDraftId(newDraftId);
         setEditDraftId(newDraftId);
+
+        setFormState({ status: FormStatus.GENERATED });
     } else {
         const existingDraftId = drafts[0].id;
 
@@ -172,10 +172,6 @@ function EntityEdit({
     resetState,
 }: Props) {
     useBrowserTitle(title);
-
-    const [endpointConfig, setEndpointConfig] = useState<JsonFormsData | null>(
-        null
-    );
 
     // Supabase stuff
     const { combinedGrants } = useCombinedGrantsExt({
@@ -217,9 +213,6 @@ function EntityEdit({
 
     const editDraftId = useEditorStore_editDraftId();
     const setEditDraftId = useEditorStore_setEditDraftId();
-
-    // Endpoint Config Store
-    const setEndpointSchema = useEndpointConfigStore_setEndpointSchema();
 
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
@@ -290,38 +283,6 @@ function EntityEdit({
         }
     }, [setDetails, initialSpec, initialConnectorTag]);
 
-    const { connectorTag } = useConnectorTag(imageTag.id);
-
-    useEffect(() => {
-        if (
-            connectorTag &&
-            !isEmpty(initialSpec) &&
-            !isEmpty(initialConnectorTag) &&
-            (formStatus === FormStatus.GENERATING ||
-                formStatus == FormStatus.GENERATED ||
-                formStatus === FormStatus.FAILED)
-        ) {
-            setEndpointConfig(
-                connectorTag.connector_id === initialConnectorTag.id
-                    ? { data: initialSpec.spec.endpoint.connector.config }
-                    : null
-            );
-
-            setEndpointSchema(
-                connectorTag.endpoint_spec_schema as unknown as Schema
-            );
-
-            setFormState({ status: FormStatus.GENERATED });
-        }
-    }, [
-        connectorTag,
-        initialSpec,
-        initialConnectorTag,
-        formStatus,
-        setEndpointSchema,
-        setFormState,
-    ]);
-
     useUnsavedChangesPrompt(!exitWhenLogsClose && promptDataLoss, resetState);
 
     return (
@@ -365,7 +326,6 @@ function EntityEdit({
                             <EndpointConfig
                                 connectorImage={imageTag.id}
                                 readOnly={readOnly.endpointConfigForm}
-                                initialEndpointConfig={endpointConfig}
                             />
                         </ErrorBoundryWrapper>
                     ) : null}

@@ -8,17 +8,34 @@ import {
 } from 'services/supabase';
 import { ENTITY } from 'types';
 
-type ConnectorTagData = Pick<
+type ConnectorTagResourceData = Pick<
     ConnectorTag,
     'connector_id' | 'resource_spec_schema'
 >;
+
+type ConnectorTagEndpointData = Pick<
+    ConnectorTag,
+    'connector_id' | 'endpoint_spec_schema'
+>;
+
+// TODO (optimization): Consider consolidating the two schema-related APIs into a single getSchema()
+// that takes the schema-related column name as an input param.
+export const getEndpointSchema = async (connectorId: string | null) => {
+    const endpointSchema = await supabaseClient
+        .from(TABLES.CONNECTOR_TAGS)
+        .select(`connector_id,endpoint_spec_schema`)
+        .eq('connector_id', connectorId)
+        .then(handleSuccess<ConnectorTagEndpointData[]>, handleFailure);
+
+    return endpointSchema;
+};
 
 export const getResourceSchema = async (connectorId: string | null) => {
     const resourceSchema = await supabaseClient
         .from(TABLES.CONNECTOR_TAGS)
         .select(`connector_id,resource_spec_schema`)
         .eq('connector_id', connectorId)
-        .then(handleSuccess<ConnectorTagData[]>, handleFailure);
+        .then(handleSuccess<ConnectorTagResourceData[]>, handleFailure);
 
     return resourceSchema;
 };

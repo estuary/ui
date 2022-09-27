@@ -23,8 +23,7 @@ export enum EditorStoreNames {
 }
 
 export enum EndpointConfigStoreNames {
-    CAPTURE = 'capture-endpoint-config',
-    MATERIALIZATION = 'materialization-endpoint-config',
+    GENERAL = 'general-endpoint-config',
 }
 
 export enum FormStateStoreNames {
@@ -167,8 +166,8 @@ export const useZustandStore = <S extends Object, U>(
     );
 };
 
-// TODO (zustand) decide on how we'll store stores that are used
-//  right now only details create uses this approach
+// TODO (zustand): Determine a method to store UI stores. The following stores
+// use this method: details form.
 const storeMap = new Map<StoreName, any>();
 export const registerStores = (storeKeys: StoreName[], create: Function) => {
     storeKeys.forEach((key) => {

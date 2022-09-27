@@ -31,11 +31,7 @@ import {
     useDetailsForm_errorsExist,
     useDetailsForm_resetState,
 } from 'stores/DetailsForm';
-import {
-    useEndpointConfigStore_changed,
-    useEndpointConfigStore_errorsExist,
-    useEndpointConfigStore_reset,
-} from 'stores/EndpointConfig';
+import { EndpointConfigProvider } from 'stores/EndpointConfig';
 import {
     FormStatus,
     useFormStateStore_exitWhenLogsClose,
@@ -71,6 +67,7 @@ function CaptureCreate() {
     const imageTag = useDetailsForm_connectorImage();
     const detailsFormErrorsExist = useDetailsForm_errorsExist();
     const detailsFormChanged = useDetailsForm_changed();
+    const resetDetailsForm = useDetailsForm_resetState();
 
     // Draft Editor Store
     const draftId = useEditorStore_id();
@@ -78,11 +75,11 @@ function CaptureCreate() {
 
     const pubId = useEditorStore_pubId();
 
+    // TODO (placement): Relocate endpoint config-related store selectors.
     // Endpoint Config Store
-    const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
-    const resetEndpointConfigState = useEndpointConfigStore_reset();
-    const endpointConfigChanged = useEndpointConfigStore_changed();
-    const resetDetailsForm = useDetailsForm_resetState();
+    // const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
+    // const resetEndpointConfigState = useEndpointConfigStore_reset();
+    // const endpointConfigChanged = useEndpointConfigStore_changed();
 
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
@@ -100,7 +97,7 @@ function CaptureCreate() {
 
     const resetState = () => {
         resetDetailsForm();
-        resetEndpointConfigState();
+        // resetEndpointConfigState();
         resetFormState();
     };
 
@@ -192,51 +189,60 @@ function CaptureCreate() {
                     'https://docs.estuary.dev/guides/create-dataflow/#create-a-capture',
             }}
         >
-            <EntityCreate
-                title="browserTitle.captureCreate"
-                connectorType={entityType}
-                promptDataLoss={detailsFormChanged() || endpointConfigChanged()}
-                resetState={resetState}
-                Header={
-                    <FooHeader
-                        heading={
-                            <FormattedMessage id={`${messagePrefix}.heading`} />
-                        }
-                        GenerateButton={
-                            <CaptureGenerateButton
-                                disabled={!hasConnectors}
-                                callFailed={helpers.callFailed}
-                                subscription={discoversSubscription}
-                            />
-                        }
-                        TestButton={
-                            <EntityTestButton
-                                closeLogs={handlers.closeLogs}
-                                callFailed={helpers.callFailed}
-                                disabled={!hasConnectors}
-                                logEvent={CustomEvents.CAPTURE_TEST}
-                            />
-                        }
-                        SaveButton={
-                            <EntitySaveButton
-                                closeLogs={handlers.closeLogs}
-                                callFailed={helpers.callFailed}
-                                disabled={!draftId}
-                                materialize={handlers.materializeCollections}
-                                logEvent={CustomEvents.CAPTURE_CREATE}
-                            />
-                        }
-                        ErrorSummary={
-                            <ValidationErrorSummary
-                                errorsExist={
-                                    detailsFormErrorsExist ||
-                                    endpointConfigErrorsExist
-                                }
-                            />
-                        }
-                    />
-                }
-            />
+            <EndpointConfigProvider entityType={entityType}>
+                <EntityCreate
+                    title="browserTitle.captureCreate"
+                    connectorType={entityType}
+                    promptDataLoss={
+                        detailsFormChanged()
+                        // || endpointConfigChanged()
+                    }
+                    resetState={resetState}
+                    Header={
+                        <FooHeader
+                            heading={
+                                <FormattedMessage
+                                    id={`${messagePrefix}.heading`}
+                                />
+                            }
+                            GenerateButton={
+                                <CaptureGenerateButton
+                                    disabled={!hasConnectors}
+                                    callFailed={helpers.callFailed}
+                                    subscription={discoversSubscription}
+                                />
+                            }
+                            TestButton={
+                                <EntityTestButton
+                                    closeLogs={handlers.closeLogs}
+                                    callFailed={helpers.callFailed}
+                                    disabled={!hasConnectors}
+                                    logEvent={CustomEvents.CAPTURE_TEST}
+                                />
+                            }
+                            SaveButton={
+                                <EntitySaveButton
+                                    closeLogs={handlers.closeLogs}
+                                    callFailed={helpers.callFailed}
+                                    disabled={!draftId}
+                                    materialize={
+                                        handlers.materializeCollections
+                                    }
+                                    logEvent={CustomEvents.CAPTURE_CREATE}
+                                />
+                            }
+                            ErrorSummary={
+                                <ValidationErrorSummary
+                                    errorsExist={
+                                        detailsFormErrorsExist
+                                        // || endpointConfigErrorsExist
+                                    }
+                                />
+                            }
+                        />
+                    }
+                />
+            </EndpointConfigProvider>
         </PageContainer>
     );
 }
