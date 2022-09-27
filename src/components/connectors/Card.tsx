@@ -3,9 +3,8 @@ import { Box, Button, Grid, Paper, Stack, Typography } from '@mui/material';
 import { imageBackgroundSx } from 'components/ConnectorTiles';
 import ExternalLink from 'components/shared/ExternalLink';
 import {
-    darkGlassBkgColor,
-    darkGlassBkgColorIntensified,
-    slate,
+    semiTransparentBackground,
+    semiTransparentBackgroundIntensified,
 } from 'context/Theme';
 import { FormattedDate, FormattedMessage } from 'react-intl';
 import { BaseComponentProps, EntityWithCreateWorkflow } from 'types';
@@ -20,16 +19,12 @@ function Tile({ children }: TileProps) {
                 'maxWidth': 500,
                 'flexGrow': 1,
                 'background': (theme) =>
-                    theme.palette.mode === 'dark'
-                        ? darkGlassBkgColor
-                        : slate[50],
+                    semiTransparentBackgroundIntensified[theme.palette.mode],
                 'padding': 1,
                 'height': '100%',
                 '&:hover': {
                     background: (theme) =>
-                        theme.palette.mode === 'dark'
-                            ? darkGlassBkgColorIntensified
-                            : 'rgba(172, 199, 220, 0.45)',
+                        semiTransparentBackground[theme.palette.mode],
                 },
             }}
         >

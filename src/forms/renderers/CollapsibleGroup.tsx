@@ -12,7 +12,7 @@ import {
     Hidden,
     Typography,
 } from '@mui/material';
-import { slate } from 'context/Theme';
+import { jsonFormsGroupHeaders } from 'context/Theme';
 
 export const CollapsibleGroupType = 'CollapsibleGroup';
 
@@ -46,18 +46,12 @@ const CollapsibleGroupRenderer = ({
 
     return (
         <Hidden xsUp={!visible}>
-            <Accordion
-                defaultExpanded={expand}
-                disableGutters
-                variant="elevation"
-            >
+            <Accordion defaultExpanded={expand}>
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     sx={{
                         backgroundColor: (theme) =>
-                            theme.palette.mode === 'dark'
-                                ? 'transparent'
-                                : slate[50],
+                            jsonFormsGroupHeaders[theme.palette.mode],
                     }}
                 >
                     <Typography>{uischema.label}</Typography>

@@ -6,7 +6,7 @@ import {
     DialogContent,
     DialogTitle,
 } from '@mui/material';
-import { slate } from 'context/Theme';
+import { glassBkgWithoutBlur, slate } from 'context/Theme';
 import { createContext, ReactNode, useContext, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { BaseComponentProps } from 'types';
@@ -84,15 +84,9 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
                 aria-describedby={DESCRIPTION_ID}
                 sx={{
                     '& .MuiPaper-root.MuiDialog-paper': {
-                        backgroundColor: (themes) =>
-                            themes.palette.mode === 'dark'
-                                ? slate[800]
-                                : slate[25],
+                        backgroundColor: (theme) =>
+                            glassBkgWithoutBlur[theme.palette.mode],
                         borderRadius: 5,
-                        backgroundImage: (themes) =>
-                            themes.palette.mode === 'dark'
-                                ? 'linear-gradient(160deg, rgba(99, 138, 169, 0.24) 0%, rgba(13, 43, 67, 0.22) 75%, rgba(13, 43, 67, 0.18) 100%)'
-                                : 'linear-gradient(160deg, rgba(246, 250, 255, 0.4) 0%, rgba(216, 233, 245, 0.4) 75%, rgba(172, 199, 220, 0.4) 100%)',
                     },
                 }}
             >

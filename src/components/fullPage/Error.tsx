@@ -1,11 +1,5 @@
-import {
-    Alert,
-    AlertTitle,
-    Backdrop,
-    Box,
-    List,
-    ListItem,
-} from '@mui/material';
+import { Backdrop, Box, List, ListItem } from '@mui/material';
+import AlertBox from 'components/shared/AlertBox';
 import { FormattedMessage } from 'react-intl';
 import { BaseError } from 'types';
 
@@ -19,10 +13,10 @@ function FullPageError({ errors }: Props) {
             open={true}
         >
             <Box sx={{ width: '100%' }}>
-                <Alert severity="error">
-                    <AlertTitle>
-                        <FormattedMessage id="fullpage.error" />
-                    </AlertTitle>
+                <AlertBox
+                    severity="error"
+                    title={<FormattedMessage id="fullpage.error" />}
+                >
                     {errors.length > 0 ? (
                         <List dense>
                             {errors.map((error, index: number) => {
@@ -35,7 +29,7 @@ function FullPageError({ errors }: Props) {
                             })}
                         </List>
                     ) : null}
-                </Alert>
+                </AlertBox>
             </Box>
         </Backdrop>
     );

@@ -5,11 +5,7 @@ import CompanyLogo from 'components/graphics/CompanyLogo';
 import HelpMenu from 'components/menus/HelpMenu';
 import UserMenu from 'components/menus/UserMenu';
 import PageTitle, { PageTitleProps } from 'components/navigation/PageTitle';
-import {
-    darkGlassBkgWithBlur,
-    lightGlassBkgWithBlur,
-    zIndexIncrement,
-} from 'context/Theme';
+import { glassBkgWithBlur, zIndexIncrement } from 'context/Theme';
 
 interface Props {
     pageTitleProps?: PageTitleProps;
@@ -21,10 +17,7 @@ const Topbar = ({ pageTitleProps }: Props) => {
         color: theme.palette.text.primary,
     };
 
-    const paperBackground =
-        theme.palette.mode === 'dark'
-            ? darkGlassBkgWithBlur
-            : lightGlassBkgWithBlur;
+    const paperBackground = glassBkgWithBlur[theme.palette.mode];
 
     return (
         <MuiAppBar

@@ -1,13 +1,9 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import {
-    Accordion,
-    AccordionDetails,
-    AccordionSummary,
-    Box,
-    Typography,
-} from '@mui/material';
+import { Button, Collapse, Stack } from '@mui/material';
 import Logs, { type LogProps } from 'components/logs';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
+import { LINK_BUTTON_STYLING } from 'context/Theme';
+import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 export interface ErrorLogsProps {
@@ -24,35 +20,49 @@ function ErrorLogs({
     logProps,
 }: ErrorLogsProps) {
     const heightVal = height ?? 250;
+    const [showLogs, setShowLogs] = useState(defaultOpen ?? false);
+
+    const toggleLogs = () => {
+        setShowLogs(!showLogs);
+    };
 
     if (logToken) {
         return (
-            <Accordion
-                defaultExpanded={defaultOpen ?? false}
-                TransitionProps={{ unmountOnExit: true }}
-            >
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography>
-                        <FormattedMessage id="entityCreate.errors.collapseTitle" />
-                    </Typography>
-                </AccordionSummary>
-
-                <AccordionDetails>
-                    <Box
-                        sx={{
-                            width: '100%',
-                        }}
-                    >
-                        <ErrorBoundryWrapper>
-                            <Logs
-                                {...logProps}
-                                token={logToken}
-                                height={heightVal}
-                            />
-                        </ErrorBoundryWrapper>
-                    </Box>
-                </AccordionDetails>
-            </Accordion>
+            <Stack>
+                <Button
+                    variant="text"
+                    sx={{ ...LINK_BUTTON_STYLING, width: 'max-content' }}
+                    onClick={toggleLogs}
+                    endIcon={
+                        <ExpandMoreIcon
+                            sx={{
+                                transform: `rotate(${
+                                    showLogs ? '180' : '0'
+                                }deg)`,
+                                transition: (theme) =>
+                                    `${theme.transitions.duration.shortest}ms`,
+                            }}
+                        />
+                    }
+                >
+                    <FormattedMessage
+                        id={
+                            showLogs
+                                ? 'entityCreate.errors.collapseTitleOpen'
+                                : 'entityCreate.errors.collapseTitle'
+                        }
+                    />
+                </Button>
+                <Collapse in={showLogs} unmountOnExit>
+                    <ErrorBoundryWrapper>
+                        <Logs
+                            {...logProps}
+                            token={logToken}
+                            height={heightVal}
+                        />
+                    </ErrorBoundryWrapper>
+                </Collapse>
+            </Stack>
         );
     } else {
         return null;
