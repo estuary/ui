@@ -200,6 +200,10 @@ export const alertTextPrimary = {
     light: 'rgba(0, 0, 0, 0.8)',
     dark: 'rgb(255, 255, 255)',
 };
+export const alertBackground = {
+    light: 'white',
+    dark: semiTransparentBackgroundIntensified.dark,
+};
 
 const expandedRowBgColor = {
     light: slate[50],

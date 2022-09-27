@@ -1,4 +1,4 @@
-import { Alert, Collapse } from '@mui/material';
+import { Collapse } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec, updateDraftSpec } from 'api/draftSpecs';
@@ -52,6 +52,7 @@ import {
 } from 'stores/FormState';
 import { ENTITY, JsonFormsData, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
+import AlertBox from '../AlertBox';
 
 interface Props {
     title: string;
@@ -346,11 +347,11 @@ function EntityEdit({
                     </Collapse>
 
                     {!isValidating && connectorTags.length === 0 ? (
-                        <Alert severity="warning">
+                        <AlertBox severity="warning" short>
                             <FormattedMessage
                                 id={`${messagePrefix}.missingConnectors`}
                             />
-                        </Alert>
+                        </AlertBox>
                     ) : connectorTags.length > 0 ? (
                         <ErrorBoundryWrapper>
                             <DetailsForm

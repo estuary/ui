@@ -3,13 +3,13 @@ import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import Editor from '@monaco-editor/react';
 import {
-    Alert,
     Box,
     Button,
     Divider,
     Stack,
     StyledEngineProvider,
 } from '@mui/material';
+import AlertBox from 'components/shared/AlertBox';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import PageContainer from 'components/shared/PageContainer';
 import { jsonFormsPadding } from 'context/Theme';
@@ -71,7 +71,7 @@ const TestJsonForms = () => {
                 }}
             >
                 {error !== null ? (
-                    <Alert severity="error">{error}</Alert>
+                    <AlertBox severity="error">{error}</AlertBox>
                 ) : null}
 
                 <Editor

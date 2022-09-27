@@ -2,8 +2,14 @@ import DangerousOutlinedIcon from '@mui/icons-material/DangerousOutlined';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined';
 import TaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined';
-import { Alert, AlertColor, AlertTitle, Typography } from '@mui/material';
-import { alertTextPrimary } from 'context/Theme';
+import {
+    Alert,
+    AlertColor,
+    AlertTitle,
+    Theme,
+    Typography,
+} from '@mui/material';
+import { alertBackground, alertTextPrimary } from 'context/Theme';
 import { ReactNode, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { BaseComponentProps } from 'types';
@@ -14,17 +20,6 @@ interface Props extends BaseComponentProps {
     hideIcon?: boolean;
     title?: string | ReactNode;
 }
-
-const SHORT_ICON_STYLING = {
-    color: 'white',
-};
-
-const ICON_STYLING = {
-    ...SHORT_ICON_STYLING,
-    fontSize: '2.5em',
-    marginLeft: 'auto',
-    marginRight: 'auto',
-};
 
 const SHARED_STYLING = {
     borderRadius: 4,
@@ -41,7 +36,16 @@ const HEADER_MESSAGE = {
 
 function AlertBox({ short, severity, hideIcon, title, children }: Props) {
     const iconComponentStyling = useMemo(
-        () => (!short ? ICON_STYLING : undefined),
+        () =>
+            !short
+                ? {
+                      color: (theme: Theme) =>
+                          alertTextPrimary[theme.palette.mode],
+                      fontSize: '2em',
+                      marginLeft: 'auto',
+                      marginRight: 'auto',
+                  }
+                : undefined,
         [short]
     );
 
@@ -75,7 +79,11 @@ function AlertBox({ short, severity, hideIcon, title, children }: Props) {
                 success: <TaskAltOutlinedIcon sx={iconComponentStyling} />,
             }}
             sx={{
+                'backgroundColor': (theme) =>
+                    alertBackground[theme.palette.mode],
                 'color': (theme) => alertTextPrimary[theme.palette.mode],
+                'borderColor': (theme) =>
+                    theme.palette[severity][theme.palette.mode],
                 'padding': 0,
                 '& > .MuiAlert-message': {
                     p: 1,

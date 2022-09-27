@@ -1,7 +1,8 @@
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { LoadingButton } from '@mui/lab';
-import { Alert, AlertTitle, Stack, Typography } from '@mui/material';
+import { AlertTitle, Box, Stack, Typography } from '@mui/material';
 import ListView from 'components/collection/DataPreview/ListView';
+import AlertBox from 'components/shared/AlertBox';
 import { useJournalData, useJournalsForCollection } from 'hooks/useJournalData';
 import { useLiveSpecs_spec } from 'hooks/useLiveSpecs';
 import { useMemo } from 'react';
@@ -92,34 +93,42 @@ export function DataPreview({ collectionName }: Props) {
             </Stack>
 
             {!hasLength(journalsData?.journals) ? (
-                <Alert severity="warning" sx={{ mb: 3 }}>
-                    <AlertTitle>
-                        <FormattedMessage id="collectionsPreview.notFound.title" />
-                    </AlertTitle>
-                    <FormattedMessage id="collectionsPreview.notFound.message" />
-                </Alert>
+                <Box sx={{ mb: 3 }}>
+                    <AlertBox severity="warning">
+                        <AlertTitle>
+                            <FormattedMessage id="collectionsPreview.notFound.title" />
+                        </AlertTitle>
+                        <FormattedMessage id="collectionsPreview.notFound.message" />
+                    </AlertBox>
+                </Box>
             ) : journalData.data?.tooManyBytes &&
               journalData.data.documents.length === 0 ? (
-                <Alert severity="warning" sx={{ mb: 3 }}>
-                    <AlertTitle>
-                        <FormattedMessage id="collectionsPreview.tooManyBytesAndNoDocuments.title" />
-                    </AlertTitle>
-                    <FormattedMessage id="collectionsPreview.tooManyBytesAndNoDocuments.message" />
-                </Alert>
+                <Box sx={{ mb: 3 }}>
+                    <AlertBox severity="warning">
+                        <AlertTitle>
+                            <FormattedMessage id="collectionsPreview.tooManyBytesAndNoDocuments.title" />
+                        </AlertTitle>
+                        <FormattedMessage id="collectionsPreview.tooManyBytesAndNoDocuments.message" />
+                    </AlertBox>
+                </Box>
             ) : journalData.data?.tooFewDocuments ? (
-                <Alert severity="warning" sx={{ mb: 3 }}>
-                    <AlertTitle>
-                        <FormattedMessage id="collectionsPreview.tooFewDocuments.title" />
-                    </AlertTitle>
-                    <FormattedMessage id="collectionsPreview.tooFewDocuments.message" />
-                </Alert>
+                <Box sx={{ mb: 3 }}>
+                    <AlertBox severity="warning">
+                        <AlertTitle>
+                            <FormattedMessage id="collectionsPreview.tooFewDocuments.title" />
+                        </AlertTitle>
+                        <FormattedMessage id="collectionsPreview.tooFewDocuments.message" />
+                    </AlertBox>
+                </Box>
             ) : journalData.data?.tooManyBytes ? (
-                <Alert severity="warning" sx={{ mb: 3 }}>
-                    <AlertTitle>
-                        <FormattedMessage id="collectionsPreview.tooManyBytes.title" />
-                    </AlertTitle>
-                    <FormattedMessage id="collectionsPreview.tooManyBytes.message" />
-                </Alert>
+                <Box sx={{ mb: 3 }}>
+                    <AlertBox severity="warning">
+                        <AlertTitle>
+                            <FormattedMessage id="collectionsPreview.tooManyBytes.title" />
+                        </AlertTitle>
+                        <FormattedMessage id="collectionsPreview.tooManyBytes.message" />
+                    </AlertBox>
+                </Box>
             ) : (
                 <ListView journalData={journalData} spec={spec} />
             )}
