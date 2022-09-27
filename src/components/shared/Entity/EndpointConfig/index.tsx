@@ -1,5 +1,6 @@
-import { Alert } from '@mui/material';
+import { Box } from '@mui/material';
 import { useEditorStore_id } from 'components/editor/Store';
+import AlertBox from 'components/shared/AlertBox';
 import EndpointConfigForm from 'components/shared/Entity/EndpointConfig/Form';
 import EndpointConfigHeader from 'components/shared/Entity/EndpointConfig/Header';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
@@ -39,11 +40,13 @@ function EndpointConfig({
                 }
             >
                 {readOnly ? (
-                    <Alert color="info" style={{ marginBottom: 8 }}>
-                        {intl.formatMessage({
-                            id: 'entityEdit.alert.endpointConfigDisabled',
-                        })}
-                    </Alert>
+                    <Box sx={{ mb: 3 }}>
+                        <AlertBox severity="info" short>
+                            {intl.formatMessage({
+                                id: 'entityEdit.alert.endpointConfigDisabled',
+                            })}
+                        </AlertBox>
+                    </Box>
                 ) : null}
 
                 <EndpointConfigForm

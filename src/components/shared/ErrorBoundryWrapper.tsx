@@ -1,15 +1,9 @@
 import { ExpandMore } from '@mui/icons-material';
-import {
-    Alert,
-    AlertTitle,
-    Collapse,
-    Divider,
-    IconButton,
-    Paper,
-} from '@mui/material';
+import { Collapse, Divider, IconButton, Paper } from '@mui/material';
 import React, { ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FormattedMessage, useIntl } from 'react-intl';
+import AlertBox from './AlertBox';
 
 interface Props {
     children: ReactNode;
@@ -25,10 +19,10 @@ function ErrorFallback({ error }: { error: Error }): JSX.Element {
     };
 
     return (
-        <Alert severity="error">
-            <AlertTitle>
-                <FormattedMessage id="errorBoundry.title" />
-            </AlertTitle>
+        <AlertBox
+            severity="error"
+            title={<FormattedMessage id="errorBoundry.title" />}
+        >
             <FormattedMessage id="errorBoundry.message1" />
             <FormattedMessage id="errorBoundry.message2" />
 
@@ -54,7 +48,7 @@ function ErrorFallback({ error }: { error: Error }): JSX.Element {
                     {error.stack}
                 </Paper>
             </Collapse>
-        </Alert>
+        </AlertBox>
     );
 }
 

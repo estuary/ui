@@ -329,6 +329,8 @@ function EntityEdit({
 
     return (
         <>
+            {toolbar}
+
             {errorSummary}
 
             {connectorTagsError ? (
@@ -388,8 +390,6 @@ function EntityEdit({
                     </ErrorBoundryWrapper>
                 </>
             )}
-
-            {toolbar}
         </>
     );
 }
