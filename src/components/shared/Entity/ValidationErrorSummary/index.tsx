@@ -1,5 +1,4 @@
 import { Alert, AlertTitle, Collapse } from '@mui/material';
-import MessageWithLink from 'components/content/MessageWithLink';
 import DetailsErrors from 'components/shared/Entity/ValidationErrorSummary/DetailsErrors';
 import EndpointConfigErrors from 'components/shared/Entity/ValidationErrorSummary/EndpointConfigErrors';
 import NoConnectorError from 'components/shared/Entity/ValidationErrorSummary/NoConnectorError';
@@ -8,11 +7,11 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { FormattedMessage } from 'react-intl';
-import { useFormStateStore_displayValidation } from 'stores/FormState';
 import {
-    useResourceConfig_hydrationErrorsExist,
-    useResourceConfig_resourceConfigErrorsExist,
-} from 'stores/ResourceConfig';
+    useEndpointConfigStore_errorsExist,
+    useEndpointConfig_hydrationErrorsExist,
+} from 'stores/EndpointConfig';
+import { useFormStateStore_displayValidation } from 'stores/FormState';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
@@ -20,6 +19,10 @@ interface Props {
     ErrorComponent?: any | boolean;
     hideIcon?: boolean;
     headerMessageId?: string;
+    resourceConfigErrorsExist?: {
+        hydration: boolean;
+        form: boolean;
+    };
 }
 
 function ValidationErrorSummary({
@@ -27,42 +30,40 @@ function ValidationErrorSummary({
     hideIcon,
     ErrorComponent,
     errorsExist,
+    resourceConfigErrorsExist,
 }: Props) {
     const connectorID = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
+    // Endpoint Config Store
+    const endpointConfigHydrationErrorsExist =
+        useEndpointConfig_hydrationErrorsExist();
+
+    const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
+
+    // Form State Store
     const displayValidation = useFormStateStore_displayValidation();
 
-    // Resource Config Store
-    const resourceConfigHydrationErrorsExist =
-        useResourceConfig_hydrationErrorsExist();
+    const hydrationErrorsExist =
+        endpointConfigHydrationErrorsExist ||
+        resourceConfigErrorsExist?.hydration;
 
-    const resourceConfigErrorsExist =
-        useResourceConfig_resourceConfigErrorsExist();
+    const formErrorsExist =
+        errorsExist ||
+        endpointConfigErrorsExist ||
+        resourceConfigErrorsExist?.form;
 
-    const defaultHeaderMessageId = resourceConfigHydrationErrorsExist
+    const defaultHeaderMessageId = hydrationErrorsExist
         ? 'workflows.error.initForm'
         : 'entityCreate.endpointConfig.errorSummary';
 
-    return displayValidation || resourceConfigHydrationErrorsExist ? (
-        <Collapse
-            in={
-                resourceConfigHydrationErrorsExist ||
-                errorsExist ||
-                resourceConfigErrorsExist
-            }
-            timeout="auto"
-            unmountOnExit
-        >
+    return displayValidation || hydrationErrorsExist ? (
+        <Collapse in={formErrorsExist} timeout="auto" unmountOnExit>
             <Alert severity="error" icon={hideIcon ?? undefined}>
                 <AlertTitle>
                     <FormattedMessage
                         id={headerMessageId ?? defaultHeaderMessageId}
                     />
                 </AlertTitle>
-
-                {resourceConfigHydrationErrorsExist ? (
-                    <MessageWithLink messageID="error.message" />
-                ) : null}
 
                 {ErrorComponent === false ? null : ErrorComponent ? (
                     <ErrorComponent />
@@ -72,7 +73,9 @@ function ValidationErrorSummary({
 
                         <EndpointConfigErrors />
 
-                        <ResourceConfigErrors />
+                        {resourceConfigErrorsExist ? (
+                            <ResourceConfigErrors />
+                        ) : null}
                     </>
                 ) : (
                     <NoConnectorError />

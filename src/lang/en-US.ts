@@ -417,26 +417,26 @@ const Collections: ResolvedIntlConfig['messages'] = {
     'collectionsPreview.tooManyBytesAndNoDocuments.message': `We reached the limit of how much data a web browser can comfortably read, and didn't find even reach the end of one document! This probably means that your documents are huge.`,
 };
 
-const entityCreateHeader = `Endpoint Config`;
+const endpointConfigHeader = `Endpoint Config`;
 const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.catalogEditor.heading': `Specification Editor`,
     'entityCreate.ctas.docs': `Connector Help`,
     'entityCreate.errors.collapseTitle': `Expand to see logs`,
     'entityCreate.sops.failedTitle': `Configuration Encryption Failed`,
-    'entityCreate.endpointConfig.heading': `${entityCreateHeader}`,
+    'entityCreate.endpointConfig.heading': `${endpointConfigHeader}`,
     'entityCreate.endpointConfig.errorSummary': `There are issues with the form.`,
     'entityCreate.instructions': `To start select a Connector below. Once you make a selection the rest of the form will display and you can configure your endpoint. You can search by name and if you do not find what you are looking for please let us know by requesting the connector.`,
 
     'entityCreate.endpointConfig.detailsHaveErrors': `The Details section has errors:`,
-    'entityCreate.endpointConfig.resourceConfigHaveErrors': `The Collections Resource Configuration section has errors:`,
-    'entityCreate.endpointConfig.endpointConfigHaveErrors': `The ${entityCreateHeader} section has errors:`,
+    'entityCreate.endpointConfig.resourceConfigHaveErrors': `The Output Collections section has errors:`,
+    'entityCreate.endpointConfig.endpointConfigHaveErrors': `The ${endpointConfigHeader} section has errors:`,
 
     'entityCreate.endpointConfig.noConnectorSelectedTitle': `Please select a Connector to begin`,
     'entityCreate.endpointConfig.noConnectorSelected': `To start the creation process you must select a Connector. You can change this later.`,
 
     'entityCreate.endpointConfig.entityNameMissing': `Name missing`,
     'entityCreate.endpointConfig.connectorMissing': `Connector missing`,
-    'entityCreate.endpointConfig.endpointConfigMissing': `${entityCreateHeader} empty`,
+    'entityCreate.endpointConfig.endpointConfigMissing': `${endpointConfigHeader} empty`,
     'entityCreate.endpointConfig.collectionsMissing': `${CommonMessages['terms.collections']} missing`,
     'entityCreate.endpointConfig.resourceConfigInvalid': `Resource Config invalid`,
 
@@ -607,6 +607,7 @@ const MaterializationEdit: ResolvedIntlConfig['messages'] = {
 
 // TODO (optimization): Consolidate duplicate create and edit messages.
 const Workflows: ResolvedIntlConfig['messages'] = {
+    'workflows.error.endpointConfig.empty': `${endpointConfigHeader} empty`,
     'workflows.error.initForm': `An issue was encountered initializing the form.`,
     'workflows.error.initFormSection': `An issue was encountered initializing this section of the form.`,
 };

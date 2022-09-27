@@ -10,7 +10,7 @@ import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityEdit from 'components/shared/Entity/Edit';
 import FooHeader from 'components/shared/Entity/Header';
-import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary/capture';
+import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
 import PageContainer from 'components/shared/PageContainer';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
@@ -73,7 +73,6 @@ function CaptureEdit() {
 
     // TODO (placement): Relocate endpoint config-related store selectors.
     // Endpoint Config Store
-    // const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
     // const resetEndpointConfigState = useEndpointConfigStore_reset();
     // const endpointConfigChanged = useEndpointConfigStore_changed();
 
@@ -218,10 +217,7 @@ function CaptureEdit() {
                             }
                             ErrorSummary={
                                 <ValidationErrorSummary
-                                    errorsExist={
-                                        detailsFormErrorsExist
-                                        // || endpointConfigErrorsExist
-                                    }
+                                    errorsExist={detailsFormErrorsExist}
                                 />
                             }
                         />

@@ -8,7 +8,7 @@ import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
 import FooHeader from 'components/shared/Entity/Header';
-import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary/materialization';
+import ExtendedValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary/extensions/WithResourceConfigErrors';
 import PageContainer from 'components/shared/PageContainer';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { useEffect } from 'react';
@@ -54,7 +54,6 @@ function MaterializationCreate() {
 
     // TODO (placement): Relocate endpoint config-related store selectors.
     // Endpoint Config Store
-    // const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
     // const resetEndpointConfigState = useEndpointConfigStore_reset();
     // const endpointConfigChanged = useEndpointConfigStore_changed();
 
@@ -172,11 +171,8 @@ function MaterializationCreate() {
                                     />
                                 }
                                 ErrorSummary={
-                                    <ValidationErrorSummary
-                                        errorsExist={
-                                            detailsFormErrorsExist
-                                            // || endpointConfigErrorsExist
-                                        }
+                                    <ExtendedValidationErrorSummary
+                                        errorsExist={detailsFormErrorsExist}
                                     />
                                 }
                             />

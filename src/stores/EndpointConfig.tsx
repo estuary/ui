@@ -24,7 +24,7 @@ export interface EndpointConfigState {
     setEndpointConfig: (endpointConfig: JsonFormsData) => void;
 
     endpointConfigErrorsExist: boolean;
-    endpointConfigErrors: (string | undefined)[];
+    endpointConfigErrors: { message: string | undefined }[];
 
     endpointSchema: Schema;
     setEndpointSchema: (val: EndpointConfigState['endpointSchema']) => void;
@@ -57,7 +57,10 @@ const populateEndpointConfigErrors = (
 ): void => {
     const endpointConfigErrors = filterErrors(fetchErrors(endpointConfig));
 
-    state.endpointConfigErrors = endpointConfigErrors;
+    state.endpointConfigErrors = endpointConfigErrors.map((message) => ({
+        message,
+    }));
+
     state.endpointConfigErrorsExist = !isEmpty(endpointConfigErrors);
 };
 
@@ -287,6 +290,15 @@ export const useEndpointConfigStore_errorsExist = () => {
     >(getStoreName(entityType), (state) => state.endpointConfigErrorsExist);
 };
 
+export const useEndpointConfigStore_endpointConfigErrors = () => {
+    const entityType = useEntityType();
+
+    return useEndpointConfigStore<
+        EndpointConfigState,
+        EndpointConfigState['endpointConfigErrors']
+    >(getStoreName(entityType), (state) => state.endpointConfigErrors);
+};
+
 export const useEndpointConfigStore_reset = () => {
     const entityType = useEntityType();
 
@@ -339,4 +351,22 @@ export const useEndpointConfigStore_setEndpointConfig = () => {
         EndpointConfigState,
         EndpointConfigState['setEndpointConfig']
     >(getStoreName(entityType), (state) => state.setEndpointConfig);
+};
+
+export const useEndpointConfig_hydrated = () => {
+    const entityType = useEntityType();
+
+    return useEndpointConfigStore<
+        EndpointConfigState,
+        EndpointConfigState['hydrated']
+    >(getStoreName(entityType), (state) => state.hydrated);
+};
+
+export const useEndpointConfig_hydrationErrorsExist = () => {
+    const entityType = useEntityType();
+
+    return useEndpointConfigStore<
+        EndpointConfigState,
+        EndpointConfigState['hydrationErrorsExist']
+    >(getStoreName(entityType), (state) => state.hydrationErrorsExist);
 };
