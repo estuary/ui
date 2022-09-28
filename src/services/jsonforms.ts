@@ -57,6 +57,7 @@ import { oAuthProviderTester, OAuthType } from 'forms/renderers/OAuth';
 import MaterialOneOfRenderer_Discriminator, {
     materialOneOfControlTester_Discriminator,
 } from 'forms/renderers/Overrides/material/complex/MaterialOneOfRenderer_Discriminator';
+import { orderBy } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 import keys from 'lodash/keys';
 import startCase from 'lodash/startCase';
@@ -168,7 +169,7 @@ const copyAdvancedOption = (elem: Layout, schema: JsonSchema) => {
 };
 
 // const generateHorizontalLayout = (elements: any[]) => {
-//     return arrayToMatrix(elements, 2).map((controls: any) => ({
+//     return arrayToMatrix(elements, 4).map((controls: any) => ({
 //         type: 'HorizontalLayout',
 //         elements: controls,
 //     }));
@@ -318,6 +319,7 @@ const generateUISchema = (
     currentRef: string,
     schemaName: string,
     layoutType: string,
+    rootGenerating: boolean,
     rootSchema?: JsonSchema
 ): UISchemaElement => {
     if (!isEmpty(jsonSchema) && jsonSchema.$ref !== undefined) {
@@ -331,6 +333,7 @@ const generateUISchema = (
             currentRef,
             schemaName,
             layoutType,
+            rootGenerating,
             rootSchema
         );
     }
@@ -403,10 +406,14 @@ const generateUISchema = (
     ) {
         let layout: Layout | GroupLayout;
 
-        if (currentRef === '#') {
-            layout = createLayout(layoutType);
+        if (rootGenerating) {
+            if (currentRef === '#') {
+                layout = createLayout(layoutType);
+            } else {
+                layout = createLayout('Group');
+            }
         } else {
-            layout = createLayout('Group');
+            layout = createLayout(layoutType);
         }
 
         // Add the advanced option to the layout, if required
@@ -428,29 +435,41 @@ const generateUISchema = (
             // traverse properties
             const nextRef: string = `${currentRef}/properties`;
 
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            layout.elements = Object.keys(jsonSchema.properties).map(
-                (propName) => {
+            // Order the properties based on the schema
+            const orderedProps = orderBy(
+                Object.keys(jsonSchema.properties),
+                (propName: string) => {
                     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                    let value: JsonSchema = jsonSchema.properties![propName];
-                    const ref = `${nextRef}/${encode(propName)}`;
-                    if (value.$ref !== undefined) {
-                        value = resolveSchema(
-                            rootSchema as JsonSchema,
-                            value.$ref,
-                            rootSchema as JsonSchema
-                        );
-                    }
-                    return generateUISchema(
-                        value,
-                        layout.elements,
-                        ref,
-                        propName,
-                        layoutType,
-                        rootSchema
+                    const prop = jsonSchema.properties![propName] as any;
+
+                    return prop.order;
+                },
+                ['asc']
+            );
+
+            // Step through the ordered properties
+            layout.elements = orderedProps.map((propName) => {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                let value: JsonSchema = jsonSchema.properties![propName];
+                const ref = `${nextRef}/${encode(propName)}`;
+                if (value.$ref !== undefined) {
+                    value = resolveSchema(
+                        rootSchema as JsonSchema,
+                        value.$ref,
+                        rootSchema as JsonSchema
                     );
                 }
-            );
+
+                return generateUISchema(
+                    value,
+                    layout.elements,
+                    ref,
+                    propName,
+                    layoutType,
+                    rootGenerating,
+                    rootSchema
+                );
+            });
         }
 
         return layout;
@@ -509,13 +528,32 @@ const generateUISchema = (
  */
 export const custom_generateDefaultUISchema = (
     jsonSchema: JsonSchema,
-    layoutType = 'VerticalLayout',
-    prefix = '#',
-    rootSchema = jsonSchema
-): UISchemaElement =>
-    wrapInLayoutIfNecessary(
-        generateUISchema(jsonSchema, [], prefix, '', layoutType, rootSchema),
-        layoutType
+    layoutType?: string,
+    prefix?: string,
+    rootSchema?: JsonSchema
+): UISchemaElement => {
+    const rootGenerating = !layoutType && !prefix && !rootSchema;
+    const defaultLayout = layoutType ?? 'VerticalLayout';
+
+    let response;
+    response = wrapInLayoutIfNecessary(
+        generateUISchema(
+            jsonSchema,
+            [],
+            prefix ?? '#',
+            '',
+            defaultLayout,
+            rootGenerating,
+            rootSchema ?? jsonSchema
+        ),
+        defaultLayout
     );
+
+    if (rootGenerating) {
+        response = generateCategoryUiSchema(response);
+    }
+
+    return response;
+};
 
 Generate.uiSchema = custom_generateDefaultUISchema;

@@ -19,7 +19,6 @@ import {
     custom_generateDefaultUISchema,
     defaultOptions,
     defaultRenderers,
-    generateCategoryUiSchema,
 } from 'services/jsonforms';
 
 const TITLE = 'Test JSON Forms';
@@ -48,9 +47,9 @@ const TestJsonForms = () => {
             const parsedSchema = JSON.parse(schemaInput);
             setSchema(parsedSchema);
 
-            const generatedSchema = generateCategoryUiSchema(
-                custom_generateDefaultUISchema(parsedSchema)
-            );
+            const generatedSchema =
+                custom_generateDefaultUISchema(parsedSchema);
+
             setUiSchema(generatedSchema);
 
             console.log('Generated this UI Schema:', {

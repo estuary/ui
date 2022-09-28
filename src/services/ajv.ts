@@ -28,7 +28,7 @@ export const addKeywords = (ajv: any) => {
     ajv.addKeyword('secret'); // should render as a password
     ajv.addKeyword('airbyte_secret'); // should render as a password
     ajv.addKeyword('advanced'); // Should be collapsed by default
-    ajv.addKeyword('order'); // Unused at this time, but still present in airbyte schemas.
+    ajv.addKeyword('order'); // Used to order the fields in the UI
     ajv.addKeyword('x-oauth2-provider'); // Used to display OAuth
     ajv.addKeyword('discriminator'); // Used to know what field in a complex oneOf should be unique (ex: parser)
     return ajv;
