@@ -58,7 +58,7 @@ function ListView({
     }, [rowsByKey]);
 
     return (
-        <Grid item xs={12}>
+        <Grid item xs={12} data-private>
             {error ? (
                 <Error error={error} />
             ) : (
