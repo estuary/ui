@@ -575,7 +575,7 @@ const MaterializationEdit: ResolvedIntlConfig['messages'] = {
     'materializationEdit.collections.heading': `Output Collections`,
     'materializationEdit.config.source.doclink': `Connector Help`,
     'materializationEdit.editor.default': `Before you can edit the materialization specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.materialization']}".`,
-    'materializationEdit.finalReview.instructions': `The following specification was generated from the details you provided. To make changes, edit the YAML file directly. Click "${CTAs['cta.saveEntity']}," to proceed.`,
+    'materializationEdit.finalReview.instructions': `The following Flow specification was generated from the details you provided. To make changes, you can enter new values in the form above and click "${CTAs['cta.generateCatalog.materialization']}" again. You can also edit the specification file directly. Click "${CTAs['cta.saveEntity']}," to proceed.`,
     'materializationEdit.heading': `Edit Materialization`,
     'materializationEdit.instructions': `The name and destination of your existing materialization.`,
     'materializationEdit.missingConnectors': `No connectors installed. A materialization connector must be installed before a materialization can be edited.`,

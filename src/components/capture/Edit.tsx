@@ -1,7 +1,6 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { authenticatedRoutes } from 'app/Authenticated';
 import CaptureGenerateButton from 'components/capture/GenerateButton';
-// import CaptureGenerateButton from 'components/capture/GenerateButton';
 import {
     useEditorStore_id,
     useEditorStore_pubId,
