@@ -18,9 +18,7 @@ type ConnectorTagEndpointData = Pick<
     'connector_id' | 'endpoint_spec_schema'
 >;
 
-// TODO (optimization): Consider consolidating the two schema-related APIs into a single getSchema()
-// that takes the schema-related column name as an input param.
-export const getEndpointSchema = async (connectorId: string | null) => {
+export const getSchema_Endpoint = async (connectorId: string | null) => {
     const endpointSchema = await supabaseClient
         .from(TABLES.CONNECTOR_TAGS)
         .select(`connector_id,endpoint_spec_schema`)
@@ -30,7 +28,7 @@ export const getEndpointSchema = async (connectorId: string | null) => {
     return endpointSchema;
 };
 
-export const getResourceSchema = async (connectorId: string | null) => {
+export const getSchema_Resource = async (connectorId: string | null) => {
     const resourceSchema = await supabaseClient
         .from(TABLES.CONNECTOR_TAGS)
         .select(`connector_id,resource_spec_schema`)

@@ -1,3 +1,4 @@
+import { getLiveSpecsByLiveSpecId, getSchema_Endpoint } from 'api/hydration';
 import { useEntityType } from 'context/EntityContext';
 import { EndpointConfigStoreNames } from 'context/Zustand';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
@@ -9,10 +10,6 @@ import {
     useContext,
 } from 'react';
 import { createJSONFormDefaults } from 'services/ajv';
-import {
-    getEndpointSchema,
-    getLiveSpecsByLiveSpecId,
-} from 'stores/api/hydration';
 import { ENTITY, EntityWithCreateWorkflow, JsonFormsData, Schema } from 'types';
 import useConstant from 'use-constant';
 import { devtoolsOptions } from 'utils/store-utils';
@@ -91,7 +88,7 @@ const hydrateState = async (
     const liveSpecId = searchParams.get(GlobalSearchParams.LIVE_SPEC_ID);
 
     if (connectorId) {
-        const { data, error } = await getEndpointSchema(connectorId);
+        const { data, error } = await getSchema_Endpoint(connectorId);
 
         if (error) {
             set(

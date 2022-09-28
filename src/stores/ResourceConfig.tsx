@@ -1,4 +1,9 @@
 import { PostgrestError } from '@supabase/postgrest-js';
+import {
+    getLiveSpecsByLastPubId,
+    getLiveSpecsByLiveSpecId,
+    getSchema_Resource,
+} from 'api/hydration';
 import { useEntityType } from 'context/EntityContext';
 import { ResourceConfigStoreNames } from 'context/Zustand';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
@@ -11,11 +16,6 @@ import {
     useContext,
 } from 'react';
 import { createJSONFormDefaults } from 'services/ajv';
-import {
-    getLiveSpecsByLastPubId,
-    getLiveSpecsByLiveSpecId,
-    getResourceSchema,
-} from 'stores/api/hydration';
 import { ENTITY, EntityWorkflow, JsonFormsData, Schema } from 'types';
 import useConstant from 'use-constant';
 import { devtoolsOptions } from 'utils/store-utils';
@@ -150,7 +150,7 @@ const hydrateState = async (
     const lastPubId = searchParams.get(GlobalSearchParams.LAST_PUB_ID);
 
     if (connectorId) {
-        const { data, error } = await getResourceSchema(connectorId);
+        const { data, error } = await getSchema_Resource(connectorId);
 
         if (error) {
             set(
