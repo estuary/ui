@@ -1,6 +1,5 @@
 import { ExpandMore } from '@mui/icons-material';
 import {
-    Alert,
     AlertTitle,
     Box,
     Collapse,
@@ -16,6 +15,7 @@ import KeyValueList, { KeyValue } from 'components/shared/KeyValueList';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
+import AlertBox from './AlertBox';
 
 export interface ErrorProps {
     error?: PostgrestError | any | null;
@@ -64,13 +64,16 @@ function Error({ error, hideTitle }: ErrorProps) {
 
         return (
             <Box sx={{ width: '100%' }}>
-                <Alert severity="error" icon={!hideTitle}>
-                    {!hideTitle ? (
-                        <AlertTitle>
-                            <FormattedMessage id="error.title" />
-                        </AlertTitle>
-                    ) : null}
-
+                <AlertBox
+                    severity="error"
+                    title={
+                        !hideTitle ? (
+                            <AlertTitle>
+                                <FormattedMessage id="error.title" />
+                            </AlertTitle>
+                        ) : null
+                    }
+                >
                     <Box>
                         <MessageWithLink messageID="error.message" />
                     </Box>
@@ -114,7 +117,7 @@ function Error({ error, hideTitle }: ErrorProps) {
                             </Collapse>
                         </>
                     ) : null}
-                </Alert>
+                </AlertBox>
             </Box>
         );
     } else {

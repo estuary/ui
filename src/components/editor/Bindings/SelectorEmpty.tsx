@@ -1,14 +1,17 @@
-import { Alert, AlertTitle } from '@mui/material';
+import AlertBox from 'components/shared/AlertBox';
 import { FormattedMessage } from 'react-intl';
 
 function SelectorEmpty() {
     return (
-        <Alert severity="info">
-            <AlertTitle>
+        <AlertBox
+            severity="info"
+            short
+            title={
                 <FormattedMessage id="entityCreate.bindingsConfig.noRowsTitle" />
-            </AlertTitle>
+            }
+        >
             <FormattedMessage id="entityCreate.bindingsConfig.noRows" />
-        </Alert>
+        </AlertBox>
     );
 }
 

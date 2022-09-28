@@ -8,7 +8,7 @@ import {
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
-import FooHeader from 'components/shared/Entity/Header';
+import EntityToolbar from 'components/shared/Entity/Header';
 import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary/capture';
 import PageContainer from 'components/shared/PageContainer';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
@@ -16,7 +16,6 @@ import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import LogRocket from 'logrocket';
 import { useEffect } from 'react';
-import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import {
@@ -86,11 +85,8 @@ function CaptureCreate() {
 
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
-
     const setFormState = useFormStateStore_setFormState();
-
     const resetFormState = useFormStateStore_resetState();
-
     const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
 
     // Reset the catalog if the connector changes
@@ -197,11 +193,15 @@ function CaptureCreate() {
                 connectorType={entityType}
                 promptDataLoss={detailsFormChanged() || endpointConfigChanged()}
                 resetState={resetState}
-                Header={
-                    <FooHeader
-                        heading={
-                            <FormattedMessage id={`${messagePrefix}.heading`} />
+                errorSummary={
+                    <ValidationErrorSummary
+                        errorsExist={
+                            detailsFormErrorsExist || endpointConfigErrorsExist
                         }
+                    />
+                }
+                toolbar={
+                    <EntityToolbar
                         GenerateButton={
                             <CaptureGenerateButton
                                 disabled={!hasConnectors}
@@ -224,14 +224,6 @@ function CaptureCreate() {
                                 disabled={!draftId}
                                 materialize={handlers.materializeCollections}
                                 logEvent={CustomEvents.CAPTURE_CREATE}
-                            />
-                        }
-                        ErrorSummary={
-                            <ValidationErrorSummary
-                                errorsExist={
-                                    detailsFormErrorsExist ||
-                                    endpointConfigErrorsExist
-                                }
                             />
                         }
                     />

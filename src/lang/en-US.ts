@@ -60,6 +60,12 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'connectionConfig.header': `Connection Config`,
 
     'commin.pathShort.prefix': '.../{path}',
+
+    // Alert messages
+    'alert.error': 'Error!',
+    'alert.warning': 'Warning!',
+    'alert.success': 'Success!',
+    'alert.info': 'Important!',
 };
 
 const CTAs: ResolvedIntlConfig['messages'] = {
@@ -408,7 +414,7 @@ const Collections: ResolvedIntlConfig['messages'] = {
     'collections.message2.docLink': `collections`,
     'collections.message2.docPath': `https://docs.estuary.dev/concepts/collections/`,
     'collectionsPreview.notFound.title': `Not Found`,
-    'collectionsPreview.notFound.message': `We were unable to find the journals to display the preview. This could mean the Capture has not injested data yet or is not running. Check the status on the Captures page to make sure it is running.`,
+    'collectionsPreview.notFound.message': `We were unable to find the journals to display the preview. This could mean there is no injested data yet.`,
     'collectionsPreview.tooFewDocuments.title': `Low document count`,
     'collectionsPreview.tooFewDocuments.message': `Fewer documents than desired were found. This could mean that your collection isn't seeing very much data.`,
     'collectionsPreview.tooManyBytes.title': `Large documents`,
@@ -421,7 +427,8 @@ const entityCreateHeader = `Endpoint Config`;
 const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.catalogEditor.heading': `Specification Editor`,
     'entityCreate.ctas.docs': `Connector Help`,
-    'entityCreate.errors.collapseTitle': `Expand to see logs`,
+    'entityCreate.errors.collapseTitle': `View logs`,
+    'entityCreate.errors.collapseTitleOpen': `Hide logs`,
     'entityCreate.sops.failedTitle': `Configuration Encryption Failed`,
     'entityCreate.endpointConfig.heading': `${entityCreateHeader}`,
     'entityCreate.endpointConfig.errorSummary': `There are issues with the form.`,

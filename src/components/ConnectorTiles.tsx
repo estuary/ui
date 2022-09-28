@@ -16,8 +16,8 @@ import ConnectorCard from 'components/connectors/Card';
 import ConnectorToolbar from 'components/ConnectorToolbar';
 import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
 import {
-    darkGlassBkgColor,
-    darkGlassBkgColorIntensified,
+    semiTransparentBackground,
+    semiTransparentBackgroundIntensified,
     slate,
 } from 'context/Theme';
 import { useQuery, useSelect } from 'hooks/supabase-swr';
@@ -75,15 +75,13 @@ function Tile({ children }: TileProps) {
                 'height': '100%',
                 'borderRadius': 5,
                 'background': (theme) =>
-                    theme.palette.mode === 'dark'
-                        ? darkGlassBkgColor
-                        : slate[50],
+                    semiTransparentBackground[theme.palette.mode],
                 'padding': 1,
                 '&:hover': {
                     background: (theme) =>
-                        theme.palette.mode === 'dark'
-                            ? darkGlassBkgColorIntensified
-                            : 'rgba(172, 199, 220, 0.45)',
+                        semiTransparentBackgroundIntensified[
+                            theme.palette.mode
+                        ],
                 },
             }}
         >
@@ -289,9 +287,7 @@ function ConnectorTiles({
                             flexDirection: 'column',
                             justifyContent: 'center',
                             background:
-                                theme.palette.mode === 'dark'
-                                    ? darkGlassBkgColor
-                                    : slate[50],
+                                semiTransparentBackground[theme.palette.mode],
                             padding: 1,
                         }}
                     >

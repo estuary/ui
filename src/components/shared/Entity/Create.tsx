@@ -1,4 +1,4 @@
-import { Alert, Collapse, Typography } from '@mui/material';
+import { Box, Collapse, Typography } from '@mui/material';
 import CollectionConfig from 'components/collection/Config';
 import ConnectorTiles from 'components/ConnectorTiles';
 import {
@@ -19,7 +19,7 @@ import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useConnectorTag from 'hooks/useConnectorTag';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useDetailsForm_connectorImage } from 'stores/DetailsForm';
 import { useEndpointConfigStore_setEndpointSchema } from 'stores/EndpointConfig';
@@ -31,23 +31,26 @@ import {
 } from 'stores/FormState';
 import { EntityWithCreateWorkflow, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
+import AlertBox from '../AlertBox';
 
 interface Props {
     title: string;
     connectorType: EntityWithCreateWorkflow;
-    Header: any;
+    toolbar: ReactNode;
     showCollections?: boolean;
     promptDataLoss: any;
+    errorSummary: ReactNode;
     resetState: () => void;
 }
 
 function EntityCreate({
     title,
     connectorType,
-    Header,
+    toolbar,
     showCollections,
     promptDataLoss,
     resetState,
+    errorSummary,
 }: Props) {
     useBrowserTitle(title);
 
@@ -118,7 +121,11 @@ function EntityCreate({
     if (showConnectorTiles === null) return null;
     return (
         <>
-            {Header}
+            {toolbar}
+
+            <Box sx={{ maxHeight: 200, overflowY: 'auto', mb: 2 }}>
+                {errorSummary}
+            </Box>
 
             <Collapse in={showConnectorTiles} unmountOnExit>
                 <Typography sx={{ mb: 2 }}>
@@ -136,7 +143,7 @@ function EntityCreate({
                     <Error error={connectorTagsError} />
                 ) : (
                     <>
-                        <Collapse in={formSubmitError !== null}>
+                        <Collapse in={formSubmitError !== null} unmountOnExit>
                             {formSubmitError ? (
                                 <EntityError
                                     title={formSubmitError.title}
@@ -148,11 +155,11 @@ function EntityCreate({
                         </Collapse>
 
                         {!isValidating && connectorTags.length === 0 ? (
-                            <Alert severity="warning">
+                            <AlertBox severity="warning">
                                 <FormattedMessage
                                     id={`${messagePrefix}.missingConnectors`}
                                 />
-                            </Alert>
+                            </AlertBox>
                         ) : connectorTags.length > 0 ? (
                             <ErrorBoundryWrapper>
                                 <DetailsForm

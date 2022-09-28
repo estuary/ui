@@ -1,7 +1,7 @@
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import { Alert, AlertTitle } from '@mui/material';
 import MessageWithLink from 'components/content/MessageWithLink';
 import BindingsMultiEditor from 'components/editor/Bindings';
+import AlertBox from 'components/shared/AlertBox';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -42,13 +42,15 @@ function CollectionConfig({ readOnly = false }: Props) {
             }
         >
             {resourceConfigHydrationErrorsExist ? (
-                <Alert severity="error">
-                    <AlertTitle>
+                <AlertBox
+                    severity="error"
+                    title={
                         <FormattedMessage id="workflows.error.initFormSection" />
-
-                        <MessageWithLink messageID="error.message" />
-                    </AlertTitle>
-                </Alert>
+                    }
+                    short
+                >
+                    <MessageWithLink messageID="error.message" />
+                </AlertBox>
             ) : (
                 <BindingsMultiEditor readOnly={readOnly} />
             )}

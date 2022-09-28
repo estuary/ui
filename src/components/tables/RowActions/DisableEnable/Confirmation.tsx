@@ -1,10 +1,11 @@
-import { Alert, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
+import AlertBox from 'components/shared/AlertBox';
 import { DisableEnableButtonProps } from 'components/tables/RowActions/DisableEnable/Button';
 import { FormattedMessage } from 'react-intl';
 
 function DisableEnableConfirmation({ enabling }: DisableEnableButtonProps) {
     return (
-        <Alert variant="filled" severity="info">
+        <AlertBox severity="info" short>
             <Typography component="div">
                 <FormattedMessage
                     id="capturesTable.disableEnable.confirm"
@@ -21,7 +22,7 @@ function DisableEnableConfirmation({ enabling }: DisableEnableButtonProps) {
                     }}
                 />
             </Typography>
-        </Alert>
+        </AlertBox>
     );
 }
 

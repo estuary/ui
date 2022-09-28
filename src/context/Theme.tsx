@@ -159,45 +159,68 @@ export const outlineSx: SxProps<Theme> = {
     border: `1px solid ${slate[200]}`,
 };
 
-// TODO: Either drop "color" in all variables, as the distinction is no longer required, or introduce the word
-// "color" in all variables setting the backgroundColor property.
-export const darkGlassBkgColor = 'rgba(172, 199, 220, 0.12)';
-export const darkGlassBkgColorIntensified = 'rgba(172, 199, 220, 0.18)';
-
-// TODO: Set the backgroundColor property, not the background property. The background property was previously set
-// because of the use of linear-gradient.
-export const darkGlassBkgWithBlur = {
-    background: 'rgb(13, 43, 67)',
+// TODO (Colors) need to follow a pattern where all colors are in the theme file.
+//      this is one way to handle the light/dark mode:
+export const glassBkgWithBlur = {
+    light: {
+        background: 'white',
+    },
+    dark: {
+        background: 'rgb(13, 43, 67)',
+    },
 };
 
-export const darkGlassBkgWithoutBlur = {
-    background: 'rgb(13, 43, 67)',
-    borderRadius: 5,
+export const glassBkgWithoutBlur = {
+    light: {
+        background: 'white',
+        borderRadius: 5,
+    },
+    dark: {
+        background: 'rgb(13, 43, 67)',
+        borderRadius: 5,
+    },
 };
 
-export const lightGlassBkgWithBlur = {
-    background: 'white',
+export const semiTransparentBackground = {
+    light: slate[25],
+    dark: 'rgba(172, 199, 220, 0.12)',
 };
 
-export const lightGlassBkgWithoutBlur = {
-    background: 'white',
-    borderRadius: 5,
+export const semiTransparentBackgroundIntensified = {
+    light: slate[50],
+    dark: 'rgba(172, 199, 220, 0.18)',
 };
 
+export const jsonFormsGroupHeaders = {
+    light: slate[25],
+    dark: 'transparent',
+};
+
+export const alertTextPrimary = {
+    light: 'rgba(0, 0, 0, 0.8)',
+    dark: 'rgb(255, 255, 255)',
+};
+export const alertBackground = {
+    light: 'white',
+    dark: semiTransparentBackgroundIntensified.dark,
+};
+
+const expandedRowBgColor = {
+    light: slate[50],
+    dark: slate[800],
+};
 export const getEntityTableRowSx = (
     theme: Theme,
     detailsExpanded: boolean
 ): SxProps<Theme> => {
-    const expandedRowBgColor =
-        theme.palette.mode === 'dark' ? slate[800] : slate[50];
-
     return {
-        background: detailsExpanded ? expandedRowBgColor : null,
+        background: detailsExpanded
+            ? expandedRowBgColor[theme.palette.mode]
+            : null,
         cursor: 'pointer',
     };
 };
 
-// TODO (theme) Figure out how to make these composable
 export const truncateTextSx: SxProps<Theme> = {
     whiteSpace: 'nowrap',
     overflow: 'hidden',
@@ -218,6 +241,7 @@ export const jsonFormsPadding: SxProps<Theme> = {
     },
 };
 
+// Used to make buttons look like a normal(ish) link
 export const LINK_BUTTON_STYLING: SxProps<Theme> = {
     'px': 1,
     'py': 0,

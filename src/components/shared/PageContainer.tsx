@@ -1,18 +1,12 @@
-import {
-    Alert,
-    Container,
-    Paper,
-    Snackbar,
-    Toolbar,
-    useTheme,
-} from '@mui/material';
+import { Box, Container, Snackbar, Toolbar, useTheme } from '@mui/material';
 import { PageTitleProps } from 'components/navigation/PageTitle';
 import Topbar from 'components/navigation/TopBar';
-import { darkGlassBkgWithBlur, lightGlassBkgWithBlur } from 'context/Theme';
+import { glassBkgWithBlur } from 'context/Theme';
 import { ReactNode, useEffect, useState } from 'react';
 import useNotificationStore, {
     NotificationState,
 } from 'stores/NotificationStore';
+import AlertBox from './AlertBox';
 
 interface Props {
     children: ReactNode | ReactNode[];
@@ -28,10 +22,7 @@ const selectors = {
 
 function PageContainer({ children, pageTitleProps }: Props) {
     const theme = useTheme();
-    const backgroundSx =
-        theme.palette.mode === 'dark'
-            ? darkGlassBkgWithBlur
-            : lightGlassBkgWithBlur;
+    const backgroundSx = glassBkgWithBlur[theme.palette.mode];
 
     const notification = useNotificationStore(selectors.notification);
 
@@ -57,7 +48,7 @@ function PageContainer({ children, pageTitleProps }: Props) {
         <Container
             maxWidth={false}
             sx={{
-                paddingTop: 2,
+                paddingTop: 3,
             }}
         >
             {notification ? (
@@ -66,26 +57,24 @@ function PageContainer({ children, pageTitleProps }: Props) {
                     autoHideDuration={5000}
                     onClose={handlers.notificationClose}
                 >
-                    <Alert severity={notification.severity} variant="filled">
+                    <AlertBox severity={notification.severity}>
                         {`${notification.title}. ${notification.description}`}
-                    </Alert>
+                    </AlertBox>
                 </Snackbar>
             ) : null}
 
             <Topbar pageTitleProps={pageTitleProps} />
             <Toolbar />
 
-            <Paper
+            <Box
                 sx={{
-                    padding: 2,
+                    p: 2,
                     width: '100%',
-                    borderRadius: 5,
                     ...backgroundSx,
                 }}
-                variant="outlined"
             >
                 {children}
-            </Paper>
+            </Box>
         </Container>
     );
 }

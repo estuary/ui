@@ -11,8 +11,8 @@ function DraftErrors({ draftId, enablePolling }: DraftErrorProps) {
 
     if (draftSpecErrors.length > 0) {
         const errors: KeyValue[] = draftSpecErrors.map((draftError) => ({
-            title: draftError.scope,
-            val: draftError.detail,
+            title: draftError.detail,
+            val: draftError.scope,
         }));
         return <KeyValueList data={errors} />;
     } else {

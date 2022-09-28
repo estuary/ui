@@ -1,10 +1,11 @@
-import { Alert, AlertColor, Typography } from '@mui/material';
+import { AlertColor, Typography } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 import {
     FormStatus,
     useFormStateStore_isActive,
     useFormStateStore_status,
 } from 'stores/FormState';
+import AlertBox from '../AlertBox';
 
 function Status() {
     const formStatus = useFormStateStore_status();
@@ -24,15 +25,11 @@ function Status() {
     if (messageKey) {
         if (severity) {
             return (
-                <Alert
-                    severity={severity}
-                    variant="outlined"
-                    sx={{ border: 0 }}
-                >
+                <AlertBox severity={severity}>
                     <Typography sx={{ mr: 1 }}>
                         <FormattedMessage id={messageKey} />
                     </Typography>
-                </Alert>
+                </AlertBox>
             );
         } else {
             return (

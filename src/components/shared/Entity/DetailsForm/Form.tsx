@@ -1,7 +1,8 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
-import { Alert, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 import { useEditorStore_isSaving } from 'components/editor/Store';
+import AlertBox from 'components/shared/AlertBox';
 import { Props } from 'components/shared/Entity/DetailsForm/types';
 import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
 import { CATALOG_NAME_SCOPE } from 'forms/renderers/CatalogName';
@@ -207,11 +208,13 @@ function DetailsFormForm({
             </Typography>
 
             {readOnly ? (
-                <Alert color="info" style={{ marginBottom: 8 }}>
-                    {intl.formatMessage({
-                        id: 'entityEdit.alert.detailsFormDisabled',
-                    })}
-                </Alert>
+                <Box sx={{ mb: 2 }}>
+                    <AlertBox short severity="info">
+                        {intl.formatMessage({
+                            id: 'entityEdit.alert.detailsFormDisabled',
+                        })}
+                    </AlertBox>
+                </Box>
             ) : null}
 
             <Stack direction="row" spacing={2}>
@@ -230,18 +233,18 @@ function DetailsFormForm({
                             onChange={updateDetails}
                         />
                     ) : (
-                        <Alert severity="warning">
+                        <AlertBox severity="warning" short>
                             <FormattedMessage
                                 id={`${messagePrefix}.noAccessGrants`}
                             />
-                        </Alert>
+                        </AlertBox>
                     )
                 ) : (
-                    <Alert severity="warning">
+                    <AlertBox severity="warning" short>
                         <FormattedMessage
                             id={`${messagePrefix}.missingConnectors`}
                         />
-                    </Alert>
+                    </AlertBox>
                 )}
             </Stack>
         </>

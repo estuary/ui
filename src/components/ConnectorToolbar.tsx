@@ -9,9 +9,8 @@ import {
     Toolbar,
 } from '@mui/material';
 import {
-    darkGlassBkgColor,
-    darkGlassBkgColorIntensified,
-    slate,
+    semiTransparentBackground,
+    semiTransparentBackgroundIntensified,
 } from 'context/Theme';
 import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
 import { debounce } from 'lodash';
@@ -49,7 +48,7 @@ const inputProps: Partial<FilledInputProps> = {
     sx: {
         borderRadius: 5,
         backgroundColor: (theme) =>
-            theme.palette.mode === 'dark' ? darkGlassBkgColor : slate[50],
+            semiTransparentBackgroundIntensified[theme.palette.mode],
     },
 };
 
@@ -62,9 +61,7 @@ const toolbarSectionSx: SxProps<Theme> = {
     },
     '& .MuiFilledInput-root:hover, .MuiFilledInput-root.Mui-focused': {
         backgroundColor: (theme) =>
-            theme.palette.mode === 'dark'
-                ? darkGlassBkgColorIntensified
-                : 'rgba(80, 114, 235, 0.09)',
+            semiTransparentBackground[theme.palette.mode],
     },
 };
 

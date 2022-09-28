@@ -45,3 +45,12 @@ export const incrementInterval = (
     interval: number,
     max: number | undefined = INTERVAL_MAX
 ) => (interval < max ? interval + INTERVAL_INCREMENT : max);
+
+export const arrayToMatrix = (arr: any[], width: number) =>
+    arr.reduce(
+        (rows, key, index) =>
+            (index % width == 0
+                ? rows.push([key])
+                : rows[rows.length - 1].push(key)) && rows,
+        []
+    );

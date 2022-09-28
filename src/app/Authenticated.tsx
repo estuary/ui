@@ -266,7 +266,13 @@ const Authenticated = () => {
                         {!isProduction ? (
                             <Route
                                 path="test/jsonforms"
-                                element={<TestJsonForms />}
+                                element={
+                                    <EntityContextProvider
+                                        value={ENTITY.CAPTURE}
+                                    >
+                                        <TestJsonForms />
+                                    </EntityContextProvider>
+                                }
                             />
                         ) : null}
 
