@@ -28,7 +28,10 @@ export interface EndpointConfigState {
 
     // Hydration
     hydrated: boolean;
+    setHydrated: (value: boolean) => void;
+
     hydrationErrorsExist: boolean;
+    setHydrationErrorsExist: (value: boolean) => void;
 
     // Misc.
     stateChanged: () => boolean;
@@ -79,7 +82,6 @@ const getInitialStateData = (): Pick<
 });
 
 const hydrateState = async (
-    set: NamedSet<EndpointConfigState>,
     get: StoreApi<EndpointConfigState>['getState'],
     entityType: EntityWithCreateWorkflow
 ): Promise<void> => {
@@ -91,13 +93,9 @@ const hydrateState = async (
         const { data, error } = await getSchema_Endpoint(connectorId);
 
         if (error) {
-            set(
-                produce((state: EndpointConfigState) => {
-                    state.hydrationErrorsExist = true;
-                }),
-                false,
-                'Endpoint Config Hydration Errors Detected'
-            );
+            const { setHydrationErrorsExist } = get();
+
+            setHydrationErrorsExist(true);
         }
 
         if (data && data.length > 0) {
@@ -116,13 +114,9 @@ const hydrateState = async (
         );
 
         if (error) {
-            set(
-                produce((state: EndpointConfigState) => {
-                    state.hydrationErrorsExist = true;
-                }),
-                false,
-                'Endpoint Config Hydration Errors Detected'
-            );
+            const { setHydrationErrorsExist } = get();
+
+            setHydrationErrorsExist(true);
         }
 
         if (data && data.length > 0) {
@@ -165,6 +159,26 @@ const getInitialState = (
         );
     },
 
+    setHydrated: (value) => {
+        set(
+            produce((state: EndpointConfigState) => {
+                state.hydrated = value;
+            }),
+            false,
+            'Endpoint Config State Hydrated'
+        );
+    },
+
+    setHydrationErrorsExist: (value) => {
+        set(
+            produce((state: EndpointConfigState) => {
+                state.hydrationErrorsExist = value;
+            }),
+            false,
+            'Endpoint Config Hydration Errors Detected'
+        );
+    },
+
     stateChanged: () => {
         const { endpointConfig } = get();
         const { endpointConfig: initialEndpointConfig } = getInitialStateData();
@@ -186,26 +200,18 @@ export const createHydratedEndpointConfigStore = (
         devtools((set, get) => {
             const coreState = getInitialState(set, get);
 
-            hydrateState(set, get, entityType).then(
+            hydrateState(get, entityType).then(
                 () => {
-                    set(
-                        produce((state: EndpointConfigState) => {
-                            state.hydrated = true;
-                        }),
-                        false,
-                        'Endpoint Config State Hydrated'
-                    );
+                    const { setHydrated } = get();
+
+                    setHydrated(true);
                 },
                 () => {
-                    set(
-                        produce((state: EndpointConfigState) => {
-                            state.hydrated = true;
+                    const { setHydrated, setHydrationErrorsExist } = get();
 
-                            state.hydrationErrorsExist = true;
-                        }),
-                        false,
-                        'Endpoint Config Hydration Errors Detected'
-                    );
+                    setHydrated(true);
+
+                    setHydrationErrorsExist(true);
                 }
             );
 
