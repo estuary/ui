@@ -35,9 +35,11 @@ import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     Details,
+    useDetailsForm_changed,
     useDetailsForm_connectorImage,
     useDetailsForm_setDetails,
 } from 'stores/DetailsForm';
+import { useEndpointConfigStore_changed } from 'stores/EndpointConfig';
 import {
     FormState,
     FormStatus,
@@ -54,7 +56,6 @@ import { hasLength } from 'utils/misc-utils';
 interface Props {
     title: string;
     entityType: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
-    promptDataLoss: boolean;
     readOnly: {
         detailsForm?: true;
         endpointConfigForm?: true;
@@ -168,7 +169,6 @@ function EntityEdit({
     callFailed,
     showCollections,
     readOnly,
-    promptDataLoss,
     resetState,
 }: Props) {
     useBrowserTitle(title);
@@ -206,6 +206,7 @@ function EntityEdit({
     // Details Form Store
     const setDetails = useDetailsForm_setDetails();
     const imageTag = useDetailsForm_connectorImage();
+    const detailsFormChanged = useDetailsForm_changed();
 
     // Draft Editor Store
     const draftId = useEditorStore_id();
@@ -213,6 +214,9 @@ function EntityEdit({
 
     const editDraftId = useEditorStore_editDraftId();
     const setEditDraftId = useEditorStore_setEditDraftId();
+
+    // Endpoint Config Store
+    const endpointConfigChanged = useEndpointConfigStore_changed();
 
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
@@ -282,6 +286,8 @@ function EntityEdit({
             setDetails(details);
         }
     }, [setDetails, initialSpec, initialConnectorTag]);
+
+    const promptDataLoss = detailsFormChanged() || endpointConfigChanged();
 
     useUnsavedChangesPrompt(!exitWhenLogsClose && promptDataLoss, resetState);
 

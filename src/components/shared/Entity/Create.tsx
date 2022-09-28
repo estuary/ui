@@ -20,7 +20,11 @@ import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useDetailsForm_connectorImage } from 'stores/DetailsForm';
+import {
+    useDetailsForm_changed,
+    useDetailsForm_connectorImage,
+} from 'stores/DetailsForm';
+import { useEndpointConfigStore_changed } from 'stores/EndpointConfig';
 import {
     useFormStateStore_error,
     useFormStateStore_exitWhenLogsClose,
@@ -35,7 +39,6 @@ interface Props {
     connectorType: EntityWithCreateWorkflow;
     Header: any;
     showCollections?: boolean;
-    promptDataLoss: any;
     resetState: () => void;
 }
 
@@ -44,7 +47,6 @@ function EntityCreate({
     connectorType,
     Header,
     showCollections,
-    promptDataLoss,
     resetState,
 }: Props) {
     useBrowserTitle(title);
@@ -71,10 +73,14 @@ function EntityCreate({
 
     // Details Form Store
     const imageTag = useDetailsForm_connectorImage();
+    const detailsFormChanged = useDetailsForm_changed();
 
     // Draft Editor Store
     const draftId = useEditorStore_id();
     const setDraftId = useEditorStore_setId();
+
+    // Endpoint Config Store
+    const endpointConfigChanged = useEndpointConfigStore_changed();
 
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
@@ -97,6 +103,8 @@ function EntityCreate({
             setShowConnectorTiles(true);
         }
     }, [connectorID]);
+
+    const promptDataLoss = detailsFormChanged() || endpointConfigChanged();
 
     useUnsavedChangesPrompt(!exitWhenLogsClose && promptDataLoss, resetState);
 

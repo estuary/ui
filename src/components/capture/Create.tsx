@@ -26,7 +26,6 @@ import {
     TABLES,
 } from 'services/supabase';
 import {
-    useDetailsForm_changed,
     useDetailsForm_connectorImage,
     useDetailsForm_errorsExist,
     useDetailsForm_resetState,
@@ -66,7 +65,6 @@ function CaptureCreate() {
     // Details Form Store
     const imageTag = useDetailsForm_connectorImage();
     const detailsFormErrorsExist = useDetailsForm_errorsExist();
-    const detailsFormChanged = useDetailsForm_changed();
     const resetDetailsForm = useDetailsForm_resetState();
 
     // Draft Editor Store
@@ -78,7 +76,6 @@ function CaptureCreate() {
     // TODO (placement): Relocate endpoint config-related store selectors.
     // Endpoint Config Store
     // const resetEndpointConfigState = useEndpointConfigStore_reset();
-    // const endpointConfigChanged = useEndpointConfigStore_changed();
 
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
@@ -192,10 +189,6 @@ function CaptureCreate() {
                 <EntityCreate
                     title="browserTitle.captureCreate"
                     connectorType={entityType}
-                    promptDataLoss={
-                        detailsFormChanged()
-                        // || endpointConfigChanged()
-                    }
                     resetState={resetState}
                     Header={
                         <FooHeader

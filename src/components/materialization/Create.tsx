@@ -16,7 +16,6 @@ import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import {
-    useDetailsForm_changed,
     useDetailsForm_connectorImage,
     useDetailsForm_errorsExist,
     useDetailsForm_resetState,
@@ -44,7 +43,6 @@ function MaterializationCreate() {
     // Details Form Store
     const imageTag = useDetailsForm_connectorImage();
     const detailsFormErrorsExist = useDetailsForm_errorsExist();
-    const detailsFormChanged = useDetailsForm_changed();
     const resetDetailsForm = useDetailsForm_resetState();
 
     // Draft Editor Store
@@ -55,7 +53,6 @@ function MaterializationCreate() {
     // TODO (placement): Relocate endpoint config-related store selectors.
     // Endpoint Config Store
     // const resetEndpointConfigState = useEndpointConfigStore_reset();
-    // const endpointConfigChanged = useEndpointConfigStore_changed();
 
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
@@ -131,11 +128,6 @@ function MaterializationCreate() {
                         title="browserTitle.materializationCreate"
                         connectorType={entityType}
                         showCollections
-                        promptDataLoss={
-                            // endpointConfigChanged() ||
-                            // resourceConfigChanged() ||
-                            detailsFormChanged()
-                        }
                         resetState={resetState}
                         Header={
                             <FooHeader

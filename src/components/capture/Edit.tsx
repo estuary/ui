@@ -22,7 +22,6 @@ import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 // import { startSubscription, TABLES } from 'services/supabase';
 import {
-    useDetailsForm_changed,
     useDetailsForm_connectorImage,
     useDetailsForm_errorsExist,
     useDetailsForm_resetState,
@@ -62,7 +61,6 @@ function CaptureEdit() {
     // Details Form Store
     const imageTag = useDetailsForm_connectorImage();
     const detailsFormErrorsExist = useDetailsForm_errorsExist();
-    const detailsFormChanged = useDetailsForm_changed();
     const resetDetailsForm = useDetailsForm_resetState();
 
     // Draft Editor Store
@@ -184,10 +182,6 @@ function CaptureEdit() {
                 <EntityEdit
                     title="browserTitle.captureEdit"
                     entityType={entityType}
-                    promptDataLoss={
-                        detailsFormChanged()
-                        //  || endpointConfigChanged()
-                    }
                     resetState={resetState}
                     Header={
                         <FooHeader
