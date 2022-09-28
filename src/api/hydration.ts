@@ -8,6 +8,8 @@ import {
 } from 'services/supabase';
 import { ENTITY } from 'types';
 
+// TODO (naming): Consider removing he tight coupling between this file and the stores.
+//  These APIs are truly general purpose. Perhaps break them out by supabase table.
 type ConnectorTagResourceData = Pick<
     ConnectorTag,
     'connector_id' | 'resource_spec_schema'

@@ -1,5 +1,6 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { authenticatedRoutes } from 'app/Authenticated';
+import CaptureGenerateButton from 'components/capture/GenerateButton';
 // import CaptureGenerateButton from 'components/capture/GenerateButton';
 import {
     useEditorStore_id,
@@ -15,12 +16,17 @@ import PageContainer from 'components/shared/PageContainer';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
-// import LogRocket from 'logrocket';
+import LogRocket from 'logrocket';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
-// import { startSubscription, TABLES } from 'services/supabase';
+import {
+    DEFAULT_FILTER,
+    jobStatusPoller,
+    JOB_STATUS_POLLER_ERROR,
+    TABLES,
+} from 'services/supabase';
 import {
     useDetailsForm_connectorImage,
     useDetailsForm_errorsExist,
@@ -37,16 +43,15 @@ import {
 import { ENTITY } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
 
-// const trackEvent = (payload: any) => {
-//     LogRocket.track(CustomEvents.CAPTURE_DISCOVER, {
-//         name: payload.capture_name,
-//         id: payload.id,
-//         draft_id: payload.draft_id,
-//         logs_token: payload.logs_token,
-//         status: payload.job_status.type,
-//     });
-// };
-
+const trackEvent = (payload: any) => {
+    LogRocket.track(CustomEvents.CAPTURE_DISCOVER, {
+        name: payload.capture_name ?? DEFAULT_FILTER,
+        id: payload.id ?? DEFAULT_FILTER,
+        draft_id: payload.draft_id ?? DEFAULT_FILTER,
+        logs_token: payload.logs_token ?? DEFAULT_FILTER,
+        status: payload.job_status?.type ?? DEFAULT_FILTER,
+    });
+};
 function CaptureEdit() {
     const navigate = useNavigate();
 
@@ -154,36 +159,56 @@ function CaptureEdit() {
         },
     };
 
-    // const discoversSubscription = (discoverDraftId: string) => {
-    //     setDraftId(null);
-    //     return startSubscription(
-    //         supabaseClient.from(
-    //             `${TABLES.DISCOVERS}:draft_id=eq.${discoverDraftId}`
-    //         ),
-    //         (payload: any) => {
-    //             setDraftId(payload.draft_id);
-    //             setFormState({
-    //                 status: FormStatus.GENERATED,
-    //             });
-    //             trackEvent(payload);
-    //         },
-    //         (payload: any) => {
-    //             helpers.jobFailed(`${messagePrefix}.test.failedErrorTitle`);
-    //             trackEvent(payload);
-    //         }
-    //     );
-    // };
+    const discoversSubscription = (discoverDraftId: string) => {
+        setDraftId(null);
+
+        jobStatusPoller(
+            supabaseClient
+                .from(TABLES.DISCOVERS)
+                .select(
+                    `
+                    draft_id,
+                    job_status
+                `
+                )
+                .match({
+                    draft_id: discoverDraftId,
+                }),
+            (payload: any) => {
+                setDraftId(payload.draft_id);
+                setFormState({
+                    status: FormStatus.GENERATED,
+                });
+                trackEvent(payload);
+            },
+            (payload: any) => {
+                if (payload.error === JOB_STATUS_POLLER_ERROR) {
+                    helpers.jobFailed(payload.error);
+                } else {
+                    helpers.jobFailed(`${messagePrefix}.test.failedErrorTitle`);
+                }
+            }
+        );
+    };
 
     return (
         <PageContainer>
             <EntityEdit
                 title="browserTitle.captureEdit"
                 entityType={entityType}
+                readOnly={{ detailsForm: true }}
                 resetState={resetState}
                 Header={
                     <FooHeader
                         heading={
                             <FormattedMessage id={`${messagePrefix}.heading`} />
+                        }
+                        GenerateButton={
+                            <CaptureGenerateButton
+                                disabled={!hasConnectors}
+                                callFailed={helpers.callFailed}
+                                subscription={discoversSubscription}
+                            />
                         }
                         TestButton={
                             <EntityTestButton
@@ -210,7 +235,6 @@ function CaptureEdit() {
                     />
                 }
                 callFailed={helpers.callFailed}
-                readOnly={{ detailsForm: true }}
             />
         </PageContainer>
     );

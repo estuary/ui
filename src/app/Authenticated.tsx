@@ -247,7 +247,9 @@ const Authenticated = () => {
                                         value={ENTITY.MATERIALIZATION}
                                     >
                                         <WorkflowContextProvider value="materialization_edit">
-                                            <MaterializationEdit />
+                                            <EndpointConfigProvider>
+                                                <MaterializationEdit />
+                                            </EndpointConfigProvider>
                                         </WorkflowContextProvider>
                                     </EntityContextProvider>
                                 }

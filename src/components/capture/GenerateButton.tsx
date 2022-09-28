@@ -1,17 +1,25 @@
 import { Button } from '@mui/material';
 import { discover } from 'api/discovers';
 import { createEntityDraft } from 'api/drafts';
+import { generateCaptureDraftSpec, updateDraftSpec } from 'api/draftSpecs';
+import { getLiveSpecsByLiveSpecId } from 'api/hydration';
 import { encryptConfig } from 'api/oauth';
 import {
+    useEditorStore_editDraftId,
     useEditorStore_isSaving,
     useEditorStore_resetState,
+    useEditorStore_setSpecs,
 } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
     useDetailsForm_connectorImage_connectorId,
     useDetailsForm_connectorImage_id,
+    useDetailsForm_connectorImage_imagePath,
     useDetailsForm_details_entityName,
     useDetailsForm_errorsExist,
 } from 'stores/DetailsForm';
@@ -25,6 +33,7 @@ import {
     useFormStateStore_setFormState,
     useFormStateStore_updateStatus,
 } from 'stores/FormState';
+import { ENTITY } from 'types';
 
 interface Props {
     disabled: boolean;
@@ -33,9 +42,13 @@ interface Props {
 }
 
 function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
+    const liveSpecId = useGlobalSearchParams(GlobalSearchParams.LIVE_SPEC_ID);
+
     // Editor Store
+    const draftId = useEditorStore_editDraftId();
     const isSaving = useEditorStore_isSaving();
 
+    const setDraftSpecs = useEditorStore_setSpecs();
     const resetEditorState = useEditorStore_resetState();
 
     // Form State Store
@@ -49,6 +62,7 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
     const entityName = useDetailsForm_details_entityName();
     const detailsFormsHasErrors = useDetailsForm_errorsExist();
     const imageConnectorTagId = useDetailsForm_connectorImage_id();
+    const imagePath = useDetailsForm_connectorImage_imagePath();
     const imageConnectorId = useDetailsForm_connectorImage_connectorId();
 
     // Endpoint Config Store
@@ -68,8 +82,50 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
                 status: FormStatus.FAILED,
                 displayValidation: true,
             });
+        } else if (liveSpecId && draftId) {
+            const liveSpecResponse = await getLiveSpecsByLiveSpecId(
+                liveSpecId,
+                ENTITY.CAPTURE
+            );
+            if (liveSpecResponse.error) {
+                return callFailed({
+                    error: {
+                        title: 'captureCreate.generate.failedErrorTitle',
+                        error: liveSpecResponse.error,
+                    },
+                });
+            }
+
+            if (liveSpecResponse.data) {
+                const draftSpec = generateCaptureDraftSpec(
+                    liveSpecResponse.data[0].spec.bindings,
+                    endpointConfigData,
+                    imagePath
+                );
+
+                const draftSpecsResponse = await updateDraftSpec(
+                    draftId,
+                    entityName,
+                    draftSpec
+                );
+                if (draftSpecsResponse.error) {
+                    return callFailed({
+                        error: {
+                            title: 'captureCreate.generate.failedErrorTitle',
+                            error: draftSpecsResponse.error,
+                        },
+                    });
+                }
+
+                if (draftSpecsResponse.data.length > 0) {
+                    setDraftSpecs(draftSpecsResponse.data);
+                }
+            }
+
+            updateFormStatus(FormStatus.GENERATED);
         } else {
             resetEditorState();
+
             const draftsResponse = await createEntityDraft(entityName);
             if (draftsResponse.error) {
                 return callFailed({
