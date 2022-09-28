@@ -30,7 +30,7 @@ import {
     useDetailsForm_errorsExist,
     useDetailsForm_resetState,
 } from 'stores/DetailsForm';
-import { EndpointConfigProvider } from 'stores/EndpointConfig';
+import { useEndpointConfigStore_reset } from 'stores/EndpointConfig';
 import {
     FormStatus,
     useFormStateStore_exitWhenLogsClose,
@@ -73,9 +73,8 @@ function CaptureCreate() {
 
     const pubId = useEditorStore_pubId();
 
-    // TODO (placement): Relocate endpoint config-related store selectors.
     // Endpoint Config Store
-    // const resetEndpointConfigState = useEndpointConfigStore_reset();
+    const resetEndpointConfigState = useEndpointConfigStore_reset();
 
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
@@ -93,7 +92,7 @@ function CaptureCreate() {
 
     const resetState = () => {
         resetDetailsForm();
-        // resetEndpointConfigState();
+        resetEndpointConfigState();
         resetFormState();
     };
 
@@ -185,53 +184,47 @@ function CaptureCreate() {
                     'https://docs.estuary.dev/guides/create-dataflow/#create-a-capture',
             }}
         >
-            <EndpointConfigProvider entityType={entityType}>
-                <EntityCreate
-                    title="browserTitle.captureCreate"
-                    connectorType={entityType}
-                    resetState={resetState}
-                    Header={
-                        <FooHeader
-                            heading={
-                                <FormattedMessage
-                                    id={`${messagePrefix}.heading`}
-                                />
-                            }
-                            GenerateButton={
-                                <CaptureGenerateButton
-                                    disabled={!hasConnectors}
-                                    callFailed={helpers.callFailed}
-                                    subscription={discoversSubscription}
-                                />
-                            }
-                            TestButton={
-                                <EntityTestButton
-                                    closeLogs={handlers.closeLogs}
-                                    callFailed={helpers.callFailed}
-                                    disabled={!hasConnectors}
-                                    logEvent={CustomEvents.CAPTURE_TEST}
-                                />
-                            }
-                            SaveButton={
-                                <EntitySaveButton
-                                    closeLogs={handlers.closeLogs}
-                                    callFailed={helpers.callFailed}
-                                    disabled={!draftId}
-                                    materialize={
-                                        handlers.materializeCollections
-                                    }
-                                    logEvent={CustomEvents.CAPTURE_CREATE}
-                                />
-                            }
-                            ErrorSummary={
-                                <ValidationErrorSummary
-                                    errorsExist={detailsFormErrorsExist}
-                                />
-                            }
-                        />
-                    }
-                />
-            </EndpointConfigProvider>
+            <EntityCreate
+                title="browserTitle.captureCreate"
+                connectorType={entityType}
+                resetState={resetState}
+                Header={
+                    <FooHeader
+                        heading={
+                            <FormattedMessage id={`${messagePrefix}.heading`} />
+                        }
+                        GenerateButton={
+                            <CaptureGenerateButton
+                                disabled={!hasConnectors}
+                                callFailed={helpers.callFailed}
+                                subscription={discoversSubscription}
+                            />
+                        }
+                        TestButton={
+                            <EntityTestButton
+                                closeLogs={handlers.closeLogs}
+                                callFailed={helpers.callFailed}
+                                disabled={!hasConnectors}
+                                logEvent={CustomEvents.CAPTURE_TEST}
+                            />
+                        }
+                        SaveButton={
+                            <EntitySaveButton
+                                closeLogs={handlers.closeLogs}
+                                callFailed={helpers.callFailed}
+                                disabled={!draftId}
+                                materialize={handlers.materializeCollections}
+                                logEvent={CustomEvents.CAPTURE_CREATE}
+                            />
+                        }
+                        ErrorSummary={
+                            <ValidationErrorSummary
+                                errorsExist={detailsFormErrorsExist}
+                            />
+                        }
+                    />
+                }
+            />
         </PageContainer>
     );
 }

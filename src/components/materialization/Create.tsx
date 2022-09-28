@@ -20,7 +20,7 @@ import {
     useDetailsForm_errorsExist,
     useDetailsForm_resetState,
 } from 'stores/DetailsForm';
-import { EndpointConfigProvider } from 'stores/EndpointConfig';
+import { useEndpointConfigStore_reset } from 'stores/EndpointConfig';
 import {
     FormStatus,
     useFormStateStore_exitWhenLogsClose,
@@ -50,9 +50,8 @@ function MaterializationCreate() {
 
     const setDraftId = useEditorStore_setId();
 
-    // TODO (placement): Relocate endpoint config-related store selectors.
     // Endpoint Config Store
-    // const resetEndpointConfigState = useEndpointConfigStore_reset();
+    const resetEndpointConfigState = useEndpointConfigStore_reset();
 
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
@@ -73,7 +72,7 @@ function MaterializationCreate() {
     }, [imageTag, setDraftId]);
 
     const resetState = () => {
-        // resetEndpointConfigState();
+        resetEndpointConfigState();
         resetDetailsForm();
         resetFormState();
     };
@@ -122,56 +121,52 @@ function MaterializationCreate() {
                     'https://docs.estuary.dev/guides/create-dataflow/#create-a-materialization',
             }}
         >
-            <EndpointConfigProvider entityType={entityType}>
-                <ResourceConfigProvider workflow="materialization_create">
-                    <EntityCreate
-                        title="browserTitle.materializationCreate"
-                        connectorType={entityType}
-                        showCollections
-                        resetState={resetState}
-                        Header={
-                            <FooHeader
-                                GenerateButton={
-                                    <MaterializeGenerateButton
-                                        disabled={!hasConnectors}
-                                        callFailed={helpers.callFailed}
-                                    />
-                                }
-                                TestButton={
-                                    <EntityTestButton
-                                        disabled={!hasConnectors}
-                                        callFailed={helpers.callFailed}
-                                        closeLogs={handlers.closeLogs}
-                                        logEvent={
-                                            CustomEvents.MATERIALIZATION_TEST
-                                        }
-                                    />
-                                }
-                                SaveButton={
-                                    <EntitySaveButton
-                                        disabled={!draftId}
-                                        callFailed={helpers.callFailed}
-                                        closeLogs={handlers.closeLogs}
-                                        logEvent={
-                                            CustomEvents.MATERIALIZATION_CREATE
-                                        }
-                                    />
-                                }
-                                heading={
-                                    <FormattedMessage
-                                        id={`${messagePrefix}.heading`}
-                                    />
-                                }
-                                ErrorSummary={
-                                    <ExtendedValidationErrorSummary
-                                        errorsExist={detailsFormErrorsExist}
-                                    />
-                                }
-                            />
-                        }
-                    />
-                </ResourceConfigProvider>
-            </EndpointConfigProvider>
+            <ResourceConfigProvider workflow="materialization_create">
+                <EntityCreate
+                    title="browserTitle.materializationCreate"
+                    connectorType={entityType}
+                    showCollections
+                    resetState={resetState}
+                    Header={
+                        <FooHeader
+                            GenerateButton={
+                                <MaterializeGenerateButton
+                                    disabled={!hasConnectors}
+                                    callFailed={helpers.callFailed}
+                                />
+                            }
+                            TestButton={
+                                <EntityTestButton
+                                    disabled={!hasConnectors}
+                                    callFailed={helpers.callFailed}
+                                    closeLogs={handlers.closeLogs}
+                                    logEvent={CustomEvents.MATERIALIZATION_TEST}
+                                />
+                            }
+                            SaveButton={
+                                <EntitySaveButton
+                                    disabled={!draftId}
+                                    callFailed={helpers.callFailed}
+                                    closeLogs={handlers.closeLogs}
+                                    logEvent={
+                                        CustomEvents.MATERIALIZATION_CREATE
+                                    }
+                                />
+                            }
+                            heading={
+                                <FormattedMessage
+                                    id={`${messagePrefix}.heading`}
+                                />
+                            }
+                            ErrorSummary={
+                                <ExtendedValidationErrorSummary
+                                    errorsExist={detailsFormErrorsExist}
+                                />
+                            }
+                        />
+                    }
+                />
+            </ResourceConfigProvider>
         </PageContainer>
     );
 }

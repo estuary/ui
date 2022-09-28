@@ -26,7 +26,7 @@ import {
     useDetailsForm_errorsExist,
     useDetailsForm_resetState,
 } from 'stores/DetailsForm';
-import { EndpointConfigProvider } from 'stores/EndpointConfig';
+import { useEndpointConfigStore_reset } from 'stores/EndpointConfig';
 import {
     FormStatus,
     useFormStateStore_exitWhenLogsClose,
@@ -69,10 +69,8 @@ function CaptureEdit() {
 
     const pubId = useEditorStore_pubId();
 
-    // TODO (placement): Relocate endpoint config-related store selectors.
     // Endpoint Config Store
-    // const resetEndpointConfigState = useEndpointConfigStore_reset();
-    // const endpointConfigChanged = useEndpointConfigStore_changed();
+    const resetEndpointConfigState = useEndpointConfigStore_reset();
 
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
@@ -90,7 +88,7 @@ function CaptureEdit() {
 
     const resetState = () => {
         resetDetailsForm();
-        // resetEndpointConfigState();
+        resetEndpointConfigState();
         resetFormState();
     };
 
@@ -178,48 +176,42 @@ function CaptureEdit() {
 
     return (
         <PageContainer>
-            <EndpointConfigProvider entityType={entityType}>
-                <EntityEdit
-                    title="browserTitle.captureEdit"
-                    entityType={entityType}
-                    resetState={resetState}
-                    Header={
-                        <FooHeader
-                            heading={
-                                <FormattedMessage
-                                    id={`${messagePrefix}.heading`}
-                                />
-                            }
-                            TestButton={
-                                <EntityTestButton
-                                    closeLogs={handlers.closeLogs}
-                                    callFailed={helpers.callFailed}
-                                    disabled={!hasConnectors}
-                                    logEvent={CustomEvents.CAPTURE_TEST}
-                                />
-                            }
-                            SaveButton={
-                                <EntitySaveButton
-                                    closeLogs={handlers.closeLogs}
-                                    callFailed={helpers.callFailed}
-                                    disabled={!draftId}
-                                    materialize={
-                                        handlers.materializeCollections
-                                    }
-                                    logEvent={CustomEvents.CAPTURE_EDIT}
-                                />
-                            }
-                            ErrorSummary={
-                                <ValidationErrorSummary
-                                    errorsExist={detailsFormErrorsExist}
-                                />
-                            }
-                        />
-                    }
-                    callFailed={helpers.callFailed}
-                    readOnly={{ detailsForm: true }}
-                />
-            </EndpointConfigProvider>
+            <EntityEdit
+                title="browserTitle.captureEdit"
+                entityType={entityType}
+                resetState={resetState}
+                Header={
+                    <FooHeader
+                        heading={
+                            <FormattedMessage id={`${messagePrefix}.heading`} />
+                        }
+                        TestButton={
+                            <EntityTestButton
+                                closeLogs={handlers.closeLogs}
+                                callFailed={helpers.callFailed}
+                                disabled={!hasConnectors}
+                                logEvent={CustomEvents.CAPTURE_TEST}
+                            />
+                        }
+                        SaveButton={
+                            <EntitySaveButton
+                                closeLogs={handlers.closeLogs}
+                                callFailed={helpers.callFailed}
+                                disabled={!draftId}
+                                materialize={handlers.materializeCollections}
+                                logEvent={CustomEvents.CAPTURE_EDIT}
+                            />
+                        }
+                        ErrorSummary={
+                            <ValidationErrorSummary
+                                errorsExist={detailsFormErrorsExist}
+                            />
+                        }
+                    />
+                }
+                callFailed={helpers.callFailed}
+                readOnly={{ detailsForm: true }}
+            />
         </PageContainer>
     );
 }

@@ -16,15 +16,7 @@ const WorkflowContextProvider = ({ children, value }: Props) => {
 };
 
 const useEntityWorkflow = () => {
-    const context = useContext(WorkflowContext);
-
-    if (context === null) {
-        throw new Error(
-            'useEntityWorkflow must be used within a WorkflowContextProvider'
-        );
-    }
-
-    return context;
+    return useContext(WorkflowContext);
 };
 
 export { WorkflowContextProvider, useEntityWorkflow };

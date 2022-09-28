@@ -1,5 +1,6 @@
 import { getLiveSpecsByLiveSpecId, getSchema_Endpoint } from 'api/hydration';
 import { useEntityType } from 'context/EntityContext';
+import { useEntityWorkflow } from 'context/Workflow';
 import { EndpointConfigStoreNames } from 'context/Zustand';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
@@ -194,26 +195,31 @@ const getInitialState = (
 // TODO (research): Investigate the differences between createStore() and create().
 export const createHydratedEndpointConfigStore = (
     key: EndpointConfigStoreNames,
-    entityType: EntityWithCreateWorkflow
+    entityType: ENTITY
 ) => {
     return createStore<EndpointConfigState>()(
         devtools((set, get) => {
             const coreState = getInitialState(set, get);
 
-            hydrateState(get, entityType).then(
-                () => {
-                    const { setHydrated } = get();
+            if (
+                entityType === ENTITY.CAPTURE ||
+                entityType === ENTITY.MATERIALIZATION
+            ) {
+                hydrateState(get, entityType).then(
+                    () => {
+                        const { setHydrated } = get();
 
-                    setHydrated(true);
-                },
-                () => {
-                    const { setHydrated, setHydrationErrorsExist } = get();
+                        setHydrated(true);
+                    },
+                    () => {
+                        const { setHydrated, setHydrationErrorsExist } = get();
 
-                    setHydrated(true);
+                        setHydrated(true);
 
-                    setHydrationErrorsExist(true);
-                }
-            );
+                        setHydrationErrorsExist(true);
+                    }
+                );
+            }
 
             return coreState;
         }, devtoolsOptions(key))
@@ -223,7 +229,6 @@ export const createHydratedEndpointConfigStore = (
 // Context Provider
 interface EndpointConfigProviderProps {
     children: ReactNode;
-    entityType: EntityWithCreateWorkflow;
 }
 
 const invariableStore = {
@@ -234,14 +239,17 @@ export const EndpointConfigContext = createReactContext<any | null>(null);
 
 export const EndpointConfigProvider = ({
     children,
-    entityType,
 }: EndpointConfigProviderProps) => {
+    const entityType = useEntityType();
+    const workflow = useEntityWorkflow();
+
     const storeOptions = useConstant(() => {
-        invariableStore[EndpointConfigStoreNames.GENERAL] =
-            createHydratedEndpointConfigStore(
-                EndpointConfigStoreNames.GENERAL,
-                entityType
-            );
+        invariableStore[EndpointConfigStoreNames.GENERAL] = workflow
+            ? createHydratedEndpointConfigStore(
+                  EndpointConfigStoreNames.GENERAL,
+                  entityType
+              )
+            : {};
 
         return invariableStore;
     });
