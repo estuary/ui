@@ -212,9 +212,7 @@ const Authenticated = () => {
                                     <EntityContextProvider
                                         value={ENTITY.MATERIALIZATION}
                                     >
-                                        <EndpointConfigProvider>
-                                            <Materializations />
-                                        </EndpointConfigProvider>
+                                        <Materializations />
                                     </EntityContextProvider>
                                 }
                             />
