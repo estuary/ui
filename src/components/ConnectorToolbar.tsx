@@ -191,8 +191,9 @@ function ConnectorToolbar({
                     justifyContent: 'flex-end',
                 }}
             >
-                <Grid item xs={5} md={3}>
+                <Grid item xs={hideProtocol ? 8 : 6}>
                     <TextField
+                        autoFocus
                         label={intl.formatMessage({
                             id: 'connectorTable.filterLabel',
                         })}

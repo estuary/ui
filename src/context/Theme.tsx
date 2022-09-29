@@ -43,6 +43,7 @@ export const slate = {
     15: '#F6FAFF',
     25: '#EEF8FF',
     50: '#D8E9F5',
+    '50_a': 'rgba(216, 233, 245, 1)',
     100: '#ACC7DC',
     200: '#85A7C2',
     300: '#638AA9',
@@ -182,12 +183,12 @@ export const glassBkgWithoutBlur = {
 };
 
 export const semiTransparentBackground = {
-    light: slate[25],
+    light: 'rgba(216, 233, 245, 0.75)',
     dark: 'rgba(172, 199, 220, 0.12)',
 };
 
 export const semiTransparentBackgroundIntensified = {
-    light: slate[50],
+    light: 'rgba(216, 233, 245, 1)',
     dark: 'rgba(172, 199, 220, 0.18)',
 };
 
@@ -204,6 +205,8 @@ export const alertBackground = {
     light: 'white',
     dark: semiTransparentBackgroundIntensified.dark,
 };
+
+export const connectorCardLogoBackground = 'rgba(172, 199, 220, 0.30)';
 
 const expandedRowBgColor = {
     light: slate[50],
