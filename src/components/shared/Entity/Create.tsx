@@ -39,10 +39,9 @@ interface Props {
     title: string;
     connectorType: EntityWithCreateWorkflow;
     toolbar: ReactNode;
-    showCollections?: boolean;
-    promptDataLoss: any;
     errorSummary: ReactNode;
     resetState: () => void;
+    showCollections?: boolean;
 }
 
 function EntityCreate({

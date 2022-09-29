@@ -34,6 +34,7 @@ import { useEndpointConfigStore_reset } from 'stores/EndpointConfig';
 import {
     FormStatus,
     useFormStateStore_exitWhenLogsClose,
+    useFormStateStore_messagePrefix,
     useFormStateStore_resetState,
     useFormStateStore_setFormState,
 } from 'stores/FormState';
@@ -75,6 +76,7 @@ function CaptureEdit() {
     const resetEndpointConfigState = useEndpointConfigStore_reset();
 
     // Form State Store
+    const messagePrefix = useFormStateStore_messagePrefix();
     const setFormState = useFormStateStore_setFormState();
     const resetFormState = useFormStateStore_resetState();
     const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
