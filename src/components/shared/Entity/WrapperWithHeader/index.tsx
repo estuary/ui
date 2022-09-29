@@ -7,17 +7,34 @@ interface Props {
     children: ReactNode;
     forceClose?: boolean;
     disableClose?: boolean;
+    mountClosed?: boolean;
     readOnly?: boolean;
 }
+
+const expandOnMount = (
+    mountClosed: boolean | undefined,
+    readOnly: boolean | undefined
+): boolean => {
+    if (mountClosed) {
+        return !mountClosed;
+    } else if (readOnly) {
+        return !readOnly;
+    } else {
+        return true;
+    }
+};
 
 function WrapperWithHeader({
     header,
     children,
     forceClose,
     disableClose,
+    mountClosed,
     readOnly,
 }: Props) {
-    const [expanded, setExpanded] = useState(readOnly ? !readOnly : true);
+    const [expanded, setExpanded] = useState(
+        expandOnMount(mountClosed, readOnly)
+    );
     const handlers = {
         change: () => {
             setExpanded(disableClose ?? !expanded);

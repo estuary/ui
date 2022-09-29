@@ -32,7 +32,7 @@ const evaluateResourceConfigEquality = (
     return configEquality.includes(true);
 };
 
-function useEvaluateResourceConfigUpdates(
+function useEvaluateResourceConfigChanges(
     draftId: string | null,
     resourceConfig: ResourceConfigDictionary
 ) {
@@ -57,4 +57,4 @@ function useEvaluateResourceConfigUpdates(
     }, [draftSpecs, initialSpec, resourceConfig]);
 }
 
-export default useEvaluateResourceConfigUpdates;
+export default useEvaluateResourceConfigChanges;

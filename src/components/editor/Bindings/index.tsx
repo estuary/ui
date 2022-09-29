@@ -7,10 +7,10 @@ import {
     useEditorStore_setId,
 } from 'components/editor/Store';
 import { useEntityWorkflow } from 'context/Workflow';
+import useEvaluateResourceConfigChanges from 'hooks/comparisons/useEvaluateResourceConfigChanges';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import useEvaluateResourceConfigUpdates from 'hooks/updates/useEvaluateResourceConfigUpdates';
 import useConnectorTag from 'hooks/useConnectorTag';
 import { useEffect } from 'react';
 import { useEffectOnce } from 'react-use';
@@ -66,16 +66,16 @@ function BindingsMultiEditor({ readOnly = false }: Props) {
         connectorTag?.resource_spec_schema,
     ]);
 
-    const resourceConfigUpdated = useEvaluateResourceConfigUpdates(
+    const resourceConfigUnchanged = useEvaluateResourceConfigChanges(
         editDraftId,
         resourceConfig
     );
 
     useEffect(() => {
         if (workflow === 'materialization_edit') {
-            setDraftId(resourceConfigUpdated ? editDraftId : null);
+            setDraftId(resourceConfigUnchanged ? editDraftId : null);
         }
-    }, [setDraftId, editDraftId, resourceConfigUpdated, workflow]);
+    }, [setDraftId, editDraftId, resourceConfigUnchanged, workflow]);
 
     // TODO (placement): Consider moving this logic into the context provider
     //   once the create function for the store can be used there.

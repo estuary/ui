@@ -8,6 +8,7 @@ import {
     useEditorStore_editDraftId,
     useEditorStore_isSaving,
     useEditorStore_resetState,
+    useEditorStore_setId,
     useEditorStore_setSpecs,
 } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
@@ -42,10 +43,15 @@ interface Props {
 }
 
 function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
-    const liveSpecId = useGlobalSearchParams(GlobalSearchParams.LIVE_SPEC_ID);
+    const [liveSpecId, initialConnectorId] = useGlobalSearchParams([
+        GlobalSearchParams.LIVE_SPEC_ID,
+        GlobalSearchParams.CONNECTOR_ID,
+    ]);
 
     // Editor Store
-    const draftId = useEditorStore_editDraftId();
+    const editDraftId = useEditorStore_editDraftId();
+    const setDraftId = useEditorStore_setId();
+
     const isSaving = useEditorStore_isSaving();
 
     const setDraftSpecs = useEditorStore_setSpecs();
@@ -82,7 +88,11 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
                 status: FormStatus.FAILED,
                 displayValidation: true,
             });
-        } else if (liveSpecId && draftId) {
+        } else if (
+            liveSpecId &&
+            editDraftId &&
+            imageConnectorId === initialConnectorId
+        ) {
             const liveSpecResponse = await getLiveSpecsByLiveSpecId(
                 liveSpecId,
                 ENTITY.CAPTURE
@@ -104,7 +114,7 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
                 );
 
                 const draftSpecsResponse = await updateDraftSpec(
-                    draftId,
+                    editDraftId,
                     entityName,
                     draftSpec
                 );
@@ -122,6 +132,7 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
                 }
             }
 
+            setDraftId(editDraftId);
             updateFormStatus(FormStatus.GENERATED);
         } else {
             resetEditorState();
