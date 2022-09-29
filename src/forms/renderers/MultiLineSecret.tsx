@@ -16,7 +16,7 @@ export const multiLineSecretTester: RankedTester = rankWith(
 
 // This is blank on purpose. For right now we can just show null settings are nothing
 const MultiLineSecretRenderer = (props: any) => {
-    const { handleChange, path } = props;
+    const { handleChange, path, enabled } = props;
 
     const [isUploadOpen, setIsUploadOpen] = useState(false);
 
@@ -69,8 +69,9 @@ const MultiLineSecretRenderer = (props: any) => {
 
                 <Box>
                     <Button
-                        sx={{ whiteSpace: 'nowrap' }}
+                        disabled={!enabled}
                         onClick={() => setIsUploadOpen(!isUploadOpen)}
+                        sx={{ whiteSpace: 'nowrap' }}
                     >
                         Use secret from file
                     </Button>

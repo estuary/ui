@@ -30,6 +30,7 @@ const OAuthproviderRenderer = ({
     handleChange,
     schema,
     uischema,
+    enabled,
 }: ControlProps) => {
     const intl = useIntl();
     const { options } = uischema;
@@ -157,9 +158,15 @@ const OAuthproviderRenderer = ({
                     }}
                 >
                     {providerVal === 'google' ? (
-                        <GoogleButton disabled={loading} onClick={openPopUp} />
+                        <GoogleButton
+                            disabled={loading || !enabled}
+                            onClick={openPopUp}
+                        />
                     ) : (
-                        <Button disabled={loading} onClick={openPopUp}>
+                        <Button
+                            disabled={loading || !enabled}
+                            onClick={openPopUp}
+                        >
                             <FormattedMessage
                                 id="oauth.authenticate"
                                 values={{ provider }}
