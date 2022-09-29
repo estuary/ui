@@ -1,4 +1,4 @@
-import { Alert, Collapse } from '@mui/material';
+import { Collapse } from '@mui/material';
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec, updateDraftSpec } from 'api/draftSpecs';
@@ -31,7 +31,7 @@ import {
     useLiveSpecsExtWithSpec,
 } from 'hooks/useLiveSpecsExt';
 import { isEmpty } from 'lodash';
-import { useEffect } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     Details,
@@ -52,6 +52,7 @@ import {
 } from 'stores/FormState';
 import { ENTITY } from 'types';
 import { hasLength } from 'utils/misc-utils';
+import AlertBox from '../AlertBox';
 
 interface Props {
     title: string;
@@ -63,7 +64,8 @@ interface Props {
     };
     callFailed: (formState: any, subscription?: RealtimeSubscription) => void;
     resetState: () => void;
-    Header: any;
+    toolbar: ReactNode;
+    errorSummary: ReactNode;
     showCollections?: boolean;
 }
 
@@ -165,11 +167,12 @@ const initDraftToEdit = async (
 function EntityEdit({
     title,
     entityType,
-    Header,
+    toolbar,
     callFailed,
     showCollections,
     readOnly,
     resetState,
+    errorSummary,
 }: Props) {
     useBrowserTitle(title);
 
@@ -293,7 +296,9 @@ function EntityEdit({
 
     return (
         <>
-            {Header}
+            {toolbar}
+
+            {errorSummary}
 
             {connectorTagsError ? (
                 <Error error={connectorTagsError} />
@@ -311,11 +316,11 @@ function EntityEdit({
                     </Collapse>
 
                     {!isValidating && connectorTags.length === 0 ? (
-                        <Alert severity="warning">
+                        <AlertBox severity="warning" short>
                             <FormattedMessage
                                 id={`${messagePrefix}.missingConnectors`}
                             />
-                        </Alert>
+                        </AlertBox>
                     ) : connectorTags.length > 0 ? (
                         <ErrorBoundryWrapper>
                             <DetailsForm

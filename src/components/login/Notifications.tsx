@@ -1,4 +1,5 @@
-import { Alert, Snackbar } from '@mui/material';
+import { Snackbar } from '@mui/material';
+import AlertBox from 'components/shared/AlertBox';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
@@ -16,9 +17,9 @@ function LoginNotifications({ notificationMessage }: Props) {
                 }}
                 autoHideDuration={10000}
             >
-                <Alert severity="error">
+                <AlertBox severity="error" short>
                     <FormattedMessage id={notificationMessage} />
-                </Alert>
+                </AlertBox>
             </Snackbar>
         );
     } else {

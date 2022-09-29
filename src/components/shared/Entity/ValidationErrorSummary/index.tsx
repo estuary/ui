@@ -1,4 +1,5 @@
-import { Alert, AlertTitle, Collapse } from '@mui/material';
+import { AlertTitle, Collapse } from '@mui/material';
+import AlertBox from 'components/shared/AlertBox';
 import DetailsErrors from 'components/shared/Entity/ValidationErrorSummary/DetailsErrors';
 import EndpointConfigErrors from 'components/shared/Entity/ValidationErrorSummary/EndpointConfigErrors';
 import NoConnectorError from 'components/shared/Entity/ValidationErrorSummary/NoConnectorError';
@@ -58,11 +59,12 @@ function ValidationErrorSummary({
 
     return displayValidation || hydrationErrorsExist ? (
         <Collapse in={formErrorsExist} timeout="auto" unmountOnExit>
-            <Alert severity="error" icon={hideIcon ?? undefined}>
+            <AlertBox severity="error" hideIcon={hideIcon}>
                 <AlertTitle>
                     <FormattedMessage
                         id={headerMessageId ?? defaultHeaderMessageId}
                     />
+                    s
                 </AlertTitle>
 
                 {ErrorComponent === false ? null : ErrorComponent ? (
@@ -80,7 +82,7 @@ function ValidationErrorSummary({
                 ) : (
                     <NoConnectorError />
                 )}
-            </Alert>
+            </AlertBox>
         </Collapse>
     ) : null;
 }

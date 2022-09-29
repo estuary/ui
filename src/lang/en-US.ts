@@ -60,6 +60,12 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'connectionConfig.header': `Connection Config`,
 
     'commin.pathShort.prefix': '.../{path}',
+
+    // Alert messages
+    'alert.error': 'Error!',
+    'alert.warning': 'Warning!',
+    'alert.success': 'Success!',
+    'alert.info': 'Important!',
 };
 
 const CTAs: ResolvedIntlConfig['messages'] = {
@@ -421,7 +427,8 @@ const endpointConfigHeader = `Endpoint Config`;
 const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.catalogEditor.heading': `Specification Editor`,
     'entityCreate.ctas.docs': `Connector Help`,
-    'entityCreate.errors.collapseTitle': `Expand to see logs`,
+    'entityCreate.errors.collapseTitle': `View logs`,
+    'entityCreate.errors.collapseTitleOpen': `Hide logs`,
     'entityCreate.sops.failedTitle': `Configuration Encryption Failed`,
     'entityCreate.endpointConfig.heading': `${endpointConfigHeader}`,
     'entityCreate.endpointConfig.errorSummary': `There are issues with the form.`,

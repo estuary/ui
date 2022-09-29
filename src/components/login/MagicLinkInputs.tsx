@@ -1,8 +1,9 @@
 import { JsonSchema } from '@jsonforms/core';
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
-import { Alert, Button, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import { ApiError } from '@supabase/supabase-js';
+import AlertBox from 'components/shared/AlertBox';
 import { isEmpty } from 'lodash';
 import { useSnackbar, VariantType } from 'notistack';
 import React, { useState } from 'react';
@@ -94,14 +95,15 @@ const MagicLinkInputs = ({ onSubmit, schema, uiSchema }: Props) => {
     return (
         <>
             {submitError ? (
-                <Alert
-                    severity="error"
+                <Box
                     sx={{
                         mb: 5,
                     }}
                 >
-                    <Typography>{submitError.message}</Typography>
-                </Alert>
+                    <AlertBox severity="error" short>
+                        <Typography>{submitError.message}</Typography>
+                    </AlertBox>
+                </Box>
             ) : null}
 
             <form

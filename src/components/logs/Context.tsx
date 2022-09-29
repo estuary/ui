@@ -42,7 +42,7 @@ const LogsContextProvider = ({
     const timeoutRef = useRef<number | undefined>();
     const interval = useRef(DEFAULT_POLLING_INTERVAL / 2);
     const emptyResponses = useRef(
-        disableIntervalFetching ? MAX_EMPTY_CALLS : 0
+        fetchAll || disableIntervalFetching ? MAX_EMPTY_CALLS : 0
     );
 
     // Publics
@@ -100,6 +100,7 @@ const LogsContextProvider = ({
                         }
 
                         if (
+                            !fetchAll &&
                             !disableIntervalFetching &&
                             MAX_EMPTY_CALLS >= emptyResponses.current
                         ) {

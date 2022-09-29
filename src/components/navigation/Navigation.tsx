@@ -21,7 +21,7 @@ import {
 import MuiDrawer from '@mui/material/Drawer';
 import { authenticatedRoutes } from 'app/Authenticated';
 import ModeSwitch from 'components/navigation/ModeSwitch';
-import { darkGlassBkgWithBlur, lightGlassBkgWithBlur } from 'context/Theme';
+import { glassBkgWithBlur } from 'context/Theme';
 import { useIntl } from 'react-intl';
 import ListItemLink from './ListItemLink';
 
@@ -47,10 +47,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
         onNavigationToggle(false);
     };
 
-    const paperBackground =
-        theme.palette.mode === 'dark'
-            ? darkGlassBkgWithBlur
-            : lightGlassBkgWithBlur;
+    const paperBackground = glassBkgWithBlur[theme.palette.mode];
 
     return (
         <MuiDrawer

@@ -12,7 +12,10 @@ import { createEditorStore } from 'components/editor/Store';
 import EditorAndLogs from 'components/tables/Details/EditorAndLogs';
 import ShardInformation from 'components/tables/Details/ShardInformation';
 import { LocalZustandProvider } from 'context/LocalZustand';
-import { darkGlassBkgColorIntensified, tableBorderSx } from 'context/Theme';
+import {
+    semiTransparentBackgroundIntensified,
+    tableBorderSx,
+} from 'context/Theme';
 import { EditorStoreNames } from 'context/Zustand';
 import { concat } from 'lodash';
 import { useMemo } from 'react';
@@ -61,9 +64,9 @@ function DetailsPanel({
                         mb: 2,
                         mt: 0,
                         bgcolor: (theme) =>
-                            theme.palette.mode === 'dark'
-                                ? darkGlassBkgColorIntensified
-                                : 'rgba(172, 199, 220, 0.45)',
+                            semiTransparentBackgroundIntensified[
+                                theme.palette.mode
+                            ],
                     }}
                     unmountOnExit
                 >

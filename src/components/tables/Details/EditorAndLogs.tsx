@@ -1,4 +1,4 @@
-import { Alert, Grid } from '@mui/material';
+import { Grid } from '@mui/material';
 import LiveSpecEditor from 'components/editor/LiveSpec';
 import { DEFAULT_TOTAL_HEIGHT } from 'components/editor/MonacoEditor';
 import {
@@ -6,6 +6,7 @@ import {
     useEditorStore_setSpecs,
 } from 'components/editor/Store';
 import Logs from 'components/logs';
+import AlertBox from 'components/shared/AlertBox';
 import Error from 'components/shared/Error';
 import { useLiveSpecs_spec } from 'hooks/useLiveSpecs';
 import usePublications from 'hooks/usePublications';
@@ -60,9 +61,9 @@ function EditorAndLogs({
 
                 <Grid item xs={6}>
                     {pubsError && !disableLogs ? (
-                        <Alert variant="filled" severity="warning">
+                        <AlertBox severity="warning" short>
                             <FormattedMessage id="detailsPanel.logs.notFound" />
-                        </Alert>
+                        </AlertBox>
                     ) : !disableLogs && publications !== null ? (
                         <Logs
                             token={publications.logs_token}

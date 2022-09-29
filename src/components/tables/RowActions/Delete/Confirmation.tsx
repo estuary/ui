@@ -1,18 +1,21 @@
-import { Alert, AlertTitle, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
+import AlertBox from 'components/shared/AlertBox';
 import { FormattedMessage } from 'react-intl';
 
 function DeleteConfirmation() {
     return (
-        <Alert variant="filled" severity="warning">
-            <AlertTitle>
+        <AlertBox
+            severity="warning"
+            title={
                 <Typography component="div">
                     <FormattedMessage id="common.noUnDo" />
                 </Typography>
-            </AlertTitle>
+            }
+        >
             <Typography component="div">
                 <FormattedMessage id="capturesTable.delete.confirm" />
             </Typography>
-        </Alert>
+        </AlertBox>
     );
 }
 

@@ -7,12 +7,11 @@ import MaterializeGenerateButton from 'components/materialization/GenerateButton
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
-import FooHeader from 'components/shared/Entity/Header';
+import EntityToolbar from 'components/shared/Entity/Header';
 import ExtendedValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary/extensions/WithResourceConfigErrors';
 import PageContainer from 'components/shared/PageContainer';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { useEffect } from 'react';
-import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import {
@@ -24,7 +23,6 @@ import { useEndpointConfigStore_reset } from 'stores/EndpointConfig';
 import {
     FormStatus,
     useFormStateStore_exitWhenLogsClose,
-    useFormStateStore_messagePrefix,
     useFormStateStore_resetState,
     useFormStateStore_setFormState,
 } from 'stores/FormState';
@@ -54,12 +52,8 @@ function MaterializationCreate() {
     const resetEndpointConfigState = useEndpointConfigStore_reset();
 
     // Form State Store
-    const messagePrefix = useFormStateStore_messagePrefix();
-
     const setFormState = useFormStateStore_setFormState();
-
     const resetFormState = useFormStateStore_resetState();
-
     const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
 
     // TODO (placement): Relocate resource config-related store selectors.
@@ -127,8 +121,13 @@ function MaterializationCreate() {
                     connectorType={entityType}
                     showCollections
                     resetState={resetState}
-                    Header={
-                        <FooHeader
+                    errorSummary={
+                        <ExtendedValidationErrorSummary
+                            errorsExist={detailsFormErrorsExist}
+                        />
+                    }
+                    toolbar={
+                        <EntityToolbar
                             GenerateButton={
                                 <MaterializeGenerateButton
                                     disabled={!hasConnectors}
@@ -151,16 +150,6 @@ function MaterializationCreate() {
                                     logEvent={
                                         CustomEvents.MATERIALIZATION_CREATE
                                     }
-                                />
-                            }
-                            heading={
-                                <FormattedMessage
-                                    id={`${messagePrefix}.heading`}
-                                />
-                            }
-                            ErrorSummary={
-                                <ExtendedValidationErrorSummary
-                                    errorsExist={detailsFormErrorsExist}
                                 />
                             }
                         />

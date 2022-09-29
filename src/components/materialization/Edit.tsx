@@ -8,13 +8,12 @@ import MaterializeGenerateButton from 'components/materialization/EditGenerateBu
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityEdit from 'components/shared/Entity/Edit';
-import FooHeader from 'components/shared/Entity/Header';
+import EntityToolbar from 'components/shared/Entity/Header';
 import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary/extensions/WithResourceConfigErrors';
 import PageContainer from 'components/shared/PageContainer';
 import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { useEffect } from 'react';
-import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import {
@@ -26,7 +25,6 @@ import { useEndpointConfigStore_reset } from 'stores/EndpointConfig';
 import {
     FormStatus,
     useFormStateStore_exitWhenLogsClose,
-    useFormStateStore_messagePrefix,
     useFormStateStore_resetState,
     useFormStateStore_setFormState,
 } from 'stores/FormState';
@@ -56,12 +54,8 @@ function MaterializationEdit() {
     const resetEndpointConfigState = useEndpointConfigStore_reset();
 
     // Form State Store
-    const messagePrefix = useFormStateStore_messagePrefix();
-
     const setFormState = useFormStateStore_setFormState();
-
     const resetFormState = useFormStateStore_resetState();
-
     const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
 
     // TODO (placement): Relocate resource config-related store selectors.
@@ -138,8 +132,13 @@ function MaterializationEdit() {
                     readOnly={{ detailsForm: true }}
                     resetState={resetState}
                     callFailed={helpers.callFailed}
-                    Header={
-                        <FooHeader
+                    errorSummary={
+                        <ValidationErrorSummary
+                            errorsExist={detailsFormErrorsExist}
+                        />
+                    }
+                    toolbar={
+                        <EntityToolbar
                             GenerateButton={
                                 <MaterializeGenerateButton
                                     disabled={!hasConnectors}
@@ -160,16 +159,6 @@ function MaterializationEdit() {
                                     callFailed={helpers.callFailed}
                                     closeLogs={handlers.closeLogs}
                                     logEvent={CustomEvents.MATERIALIZATION_EDIT}
-                                />
-                            }
-                            heading={
-                                <FormattedMessage
-                                    id={`${messagePrefix}.heading`}
-                                />
-                            }
-                            ErrorSummary={
-                                <ValidationErrorSummary
-                                    errorsExist={detailsFormErrorsExist}
                                 />
                             }
                         />

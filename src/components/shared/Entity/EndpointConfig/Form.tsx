@@ -9,7 +9,6 @@ import {
     custom_generateDefaultUISchema,
     defaultOptions,
     defaultRenderers,
-    generateCategoryUiSchema,
     showValidation,
 } from 'services/jsonforms';
 import {
@@ -42,11 +41,7 @@ function EndpointConfigForm({ readOnly }: Props) {
 
     const categoryLikeSchema = useMemo(() => {
         if (!isEmpty(endpointSchema)) {
-            const generatedSchema = generateCategoryUiSchema(
-                custom_generateDefaultUISchema(endpointSchema)
-            );
-
-            return generatedSchema;
+            return custom_generateDefaultUISchema(endpointSchema);
         } else {
             return null;
         }
@@ -64,6 +59,12 @@ function EndpointConfigForm({ readOnly }: Props) {
                 id={CONFIG_EDITOR_ID}
                 sx={{
                     ...jsonFormsPadding,
+                    // TODO (horizontal forms) : potential styling for making form horizontal
+                    // '& .MuiAccordionDetails-root .MuiGrid-root.MuiGrid-item > .MuiFormControl-root':
+                    //     {
+                    //         background: 'red',
+                    //         minWidth: 300,
+                    //     },
                 }}
             >
                 <JsonForms
