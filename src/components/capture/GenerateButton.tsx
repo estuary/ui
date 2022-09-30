@@ -15,6 +15,7 @@ import { buttonSx } from 'components/shared/Entity/Header';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
+import { DraftSpecSwrMetadata_Mutate } from 'hooks/useDraftSpecs';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -40,9 +41,15 @@ interface Props {
     disabled: boolean;
     callFailed: Function;
     subscription: Function;
+    mutateDraftSpecs?: DraftSpecSwrMetadata_Mutate;
 }
 
-function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
+function CaptureGenerateButton({
+    disabled,
+    callFailed,
+    subscription,
+    mutateDraftSpecs,
+}: Props) {
     const [liveSpecId, initialConnectorId] = useGlobalSearchParams([
         GlobalSearchParams.LIVE_SPEC_ID,
         GlobalSearchParams.CONNECTOR_ID,
@@ -75,6 +82,8 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
     const endpointConfigHasErrors = useEndpointConfigStore_errorsExist();
 
+    const editAssetsExist = liveSpecId && editDraftId && mutateDraftSpecs;
+
     const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
         updateFormStatus(FormStatus.GENERATING);
@@ -88,11 +97,7 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
                 status: FormStatus.FAILED,
                 displayValidation: true,
             });
-        } else if (
-            liveSpecId &&
-            editDraftId &&
-            imageConnectorId === initialConnectorId
-        ) {
+        } else if (editAssetsExist && imageConnectorId === initialConnectorId) {
             const liveSpecResponse = await getLiveSpecsByLiveSpecId(
                 liveSpecId,
                 ENTITY.CAPTURE
@@ -129,6 +134,13 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
 
                 if (draftSpecsResponse.data.length > 0) {
                     setDraftSpecs(draftSpecsResponse.data);
+
+                    // TODO (optimization): The two setters directly below are likely superfluous with the latest iteration
+                    //   of draft specs mutation logic. Test to ensure they can be removed.
+                    setDraftId(editDraftId);
+                    updateFormStatus(FormStatus.GENERATED);
+
+                    void mutateDraftSpecs();
                 }
             }
 

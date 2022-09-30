@@ -24,7 +24,7 @@ import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import useDraft, { DraftQuery } from 'hooks/useDraft';
-import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { DraftSpecQuery, DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
 import {
     LiveSpecsExtQueryWithSpec,
     useLiveSpecsExtWithSpec,
@@ -38,7 +38,10 @@ import {
     useDetailsForm_connectorImage,
     useDetailsForm_setDetails,
 } from 'stores/DetailsForm';
-import { useEndpointConfigStore_changed } from 'stores/EndpointConfig';
+import {
+    useEndpointConfigStore_changed,
+    useEndpointConfig_serverUpdateRequired,
+} from 'stores/EndpointConfig';
 import {
     FormState,
     FormStatus,
@@ -49,6 +52,7 @@ import {
     useFormStateStore_setFormState,
     useFormStateStore_status,
 } from 'stores/FormState';
+import { useResourceConfig_serverUpdateRequired } from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import AlertBox from '../AlertBox';
@@ -61,10 +65,14 @@ interface Props {
         endpointConfigForm?: true;
         resourceConfigForm?: true;
     };
+    draftSpecMetadata: Pick<
+        DraftSpecSwrMetadata,
+        'draftSpecs' | 'isValidating' | 'error'
+    >;
     callFailed: (formState: any, subscription?: RealtimeSubscription) => void;
     resetState: () => void;
-    toolbar: ReactNode;
     errorSummary: ReactNode;
+    toolbar: ReactNode;
     showCollections?: boolean;
 }
 
@@ -166,12 +174,13 @@ const initDraftToEdit = async (
 function EntityEdit({
     title,
     entityType,
-    toolbar,
-    callFailed,
-    showCollections,
     readOnly,
+    draftSpecMetadata,
+    callFailed,
     resetState,
     errorSummary,
+    toolbar,
+    showCollections,
 }: Props) {
     useBrowserTitle(title);
 
@@ -218,6 +227,8 @@ function EntityEdit({
 
     // Endpoint Config Store
     const endpointConfigChanged = useEndpointConfigStore_changed();
+    const endpointConfigServerUpdateRequired =
+        useEndpointConfig_serverUpdateRequired();
 
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
@@ -232,10 +243,12 @@ function EntityEdit({
 
     const setFormState = useFormStateStore_setFormState();
 
-    const { draftSpecs, isValidating: isValidatingDraftSpecs } = useDraftSpecs(
-        editDraftId,
-        lastPubId
-    );
+    // Resource Config Store
+    const resourceConfigServerUpdateRequired =
+        useResourceConfig_serverUpdateRequired();
+
+    const { draftSpecs, isValidating: isValidatingDraftSpecs } =
+        draftSpecMetadata;
 
     useEffect(() => {
         if (
@@ -288,6 +301,20 @@ function EntityEdit({
         }
     }, [setDetails, initialSpec, initialConnectorTag]);
 
+    useEffect(() => {
+        setDraftId(
+            endpointConfigServerUpdateRequired ||
+                resourceConfigServerUpdateRequired
+                ? null
+                : editDraftId
+        );
+    }, [
+        setDraftId,
+        editDraftId,
+        endpointConfigServerUpdateRequired,
+        resourceConfigServerUpdateRequired,
+    ]);
+
     const promptDataLoss = detailsFormChanged() || endpointConfigChanged();
 
     useUnsavedChangesPrompt(!exitWhenLogsClose && promptDataLoss, resetState);
@@ -334,6 +361,7 @@ function EntityEdit({
                         <ErrorBoundryWrapper>
                             <EndpointConfig
                                 connectorImage={imageTag.id}
+                                draftSpecs={draftSpecs}
                                 readOnly={readOnly.endpointConfigForm}
                             />
                         </ErrorBoundryWrapper>
@@ -342,6 +370,7 @@ function EntityEdit({
                     {showCollections && hasLength(imageTag.id) ? (
                         <ErrorBoundryWrapper>
                             <CollectionConfig
+                                draftSpecs={draftSpecs}
                                 readOnly={readOnly.resourceConfigForm}
                             />
                         </ErrorBoundryWrapper>

@@ -34,6 +34,10 @@ export interface EndpointConfigState {
     hydrationErrorsExist: boolean;
     setHydrationErrorsExist: (value: boolean) => void;
 
+    // Server-Form Alignment
+    serverUpdateRequired: boolean;
+    setServerUpdateRequired: (value: boolean) => void;
+
     // Misc.
     stateChanged: () => boolean;
     resetState: () => void;
@@ -73,6 +77,7 @@ const getInitialStateData = (): Pick<
     | 'endpointSchema'
     | 'hydrated'
     | 'hydrationErrorsExist'
+    | 'serverUpdateRequired'
 > => ({
     endpointConfig: { data: {}, errors: [] },
     endpointConfigErrorsExist: true,
@@ -80,6 +85,7 @@ const getInitialStateData = (): Pick<
     endpointSchema: {},
     hydrated: false,
     hydrationErrorsExist: false,
+    serverUpdateRequired: false,
 });
 
 const hydrateState = async (
@@ -177,6 +183,16 @@ const getInitialState = (
             }),
             false,
             'Endpoint Config Hydration Errors Detected'
+        );
+    },
+
+    setServerUpdateRequired: (value) => {
+        set(
+            produce((state: EndpointConfigState) => {
+                state.serverUpdateRequired = value;
+            }),
+            false,
+            'Server Update Required Flag Changed'
         );
     },
 
@@ -380,4 +396,22 @@ export const useEndpointConfig_hydrationErrorsExist = () => {
         EndpointConfigState,
         EndpointConfigState['hydrationErrorsExist']
     >(getStoreName(entityType), (state) => state.hydrationErrorsExist);
+};
+
+export const useEndpointConfig_serverUpdateRequired = () => {
+    const entityType = useEntityType();
+
+    return useEndpointConfigStore<
+        EndpointConfigState,
+        EndpointConfigState['serverUpdateRequired']
+    >(getStoreName(entityType), (state) => state.serverUpdateRequired);
+};
+
+export const useEndpointConfig_setServerUpdateRequired = () => {
+    const entityType = useEntityType();
+
+    return useEndpointConfigStore<
+        EndpointConfigState,
+        EndpointConfigState['setServerUpdateRequired']
+    >(getStoreName(entityType), (state) => state.setServerUpdateRequired);
 };

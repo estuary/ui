@@ -31,9 +31,14 @@ import {
 interface Props {
     disabled: boolean;
     callFailed: Function;
+    mutateDraftSpecs: Function;
 }
 
-function MaterializeGenerateButton({ disabled, callFailed }: Props) {
+function MaterializeGenerateButton({
+    disabled,
+    callFailed,
+    mutateDraftSpecs,
+}: Props) {
     // Details Form Store
     const entityName = useDetailsForm_details_entityName();
     const detailsFormsHasErrors = useDetailsForm_errorsExist();
@@ -129,6 +134,8 @@ function MaterializeGenerateButton({ disabled, callFailed }: Props) {
             setFormState({
                 status: FormStatus.GENERATED,
             });
+
+            return mutateDraftSpecs();
         }
     };
 

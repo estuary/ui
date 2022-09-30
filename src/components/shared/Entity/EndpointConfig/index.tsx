@@ -1,40 +1,41 @@
 import { Box } from '@mui/material';
-import {
-    useEditorStore_editDraftId,
-    useEditorStore_setId,
-} from 'components/editor/Store';
 import AlertBox from 'components/shared/AlertBox';
 import EndpointConfigForm from 'components/shared/Entity/EndpointConfig/Form';
 import EndpointConfigHeader from 'components/shared/Entity/EndpointConfig/Header';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import Error from 'components/shared/Error';
 import { useEntityWorkflow } from 'context/Workflow';
-import useEvaluateEndpointConfigChanges from 'hooks/comparisons/useEvaluateEndpointConfigChanges';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useConnectorTag from 'hooks/useConnectorTag';
-import { useEffect } from 'react';
+import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { isEqual } from 'lodash';
+import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { createJSONFormDefaults } from 'services/ajv';
 import {
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_setEndpointConfig,
     useEndpointConfigStore_setEndpointSchema,
+    useEndpointConfig_setServerUpdateRequired,
 } from 'stores/EndpointConfig';
 import { Schema } from 'types';
 
 interface Props {
     connectorImage: string;
+    draftSpecs?: DraftSpecQuery[];
     readOnly?: boolean;
 }
 
-function EndpointConfig({ connectorImage, readOnly = false }: Props) {
+function EndpointConfig({
+    connectorImage,
+    draftSpecs = [],
+    readOnly = false,
+}: Props) {
     const intl = useIntl();
 
-    const [connectorId] = useGlobalSearchParams([
-        GlobalSearchParams.CONNECTOR_ID,
-    ]);
+    const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
     const workflow = useEntityWorkflow();
     const editWorkflow =
@@ -42,16 +43,13 @@ function EndpointConfig({ connectorImage, readOnly = false }: Props) {
 
     const { connectorTag, error } = useConnectorTag(connectorImage);
 
-    // Editor Store
-    const setDraftId = useEditorStore_setId();
-
-    const editDraftId = useEditorStore_editDraftId();
-
     // Endpoint Config Store
     const endpointConfig = useEndpointConfigStore_endpointConfig_data();
     const setEndpointConfig = useEndpointConfigStore_setEndpointConfig();
 
     const setEndpointSchema = useEndpointConfigStore_setEndpointSchema();
+
+    const setServerUpdateRequired = useEndpointConfig_setServerUpdateRequired();
 
     useEffect(() => {
         if (
@@ -72,16 +70,21 @@ function EndpointConfig({ connectorImage, readOnly = false }: Props) {
         connectorTag?.endpoint_spec_schema,
     ]);
 
-    const endpointConfigUnchanged = useEvaluateEndpointConfigChanges(
-        editDraftId,
-        endpointConfig
-    );
+    const endpointConfigUpdated = useMemo(() => {
+        // TODO (optimization): Evaluate the performance of a hash comparator function.
+        return draftSpecs.length > 0
+            ? !isEqual(
+                  endpointConfig,
+                  draftSpecs[0]?.spec.endpoint.connector.config
+              )
+            : false;
+    }, [draftSpecs, endpointConfig]);
 
     useEffect(() => {
         if (editWorkflow) {
-            setDraftId(endpointConfigUnchanged ? editDraftId : null);
+            setServerUpdateRequired(endpointConfigUpdated);
         }
-    }, [setDraftId, editDraftId, endpointConfigUnchanged, editWorkflow]);
+    }, [setServerUpdateRequired, editWorkflow, endpointConfigUpdated]);
 
     if (error) {
         return <Error error={error} />;

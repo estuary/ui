@@ -5,6 +5,7 @@ import {
     getSchema_Resource,
 } from 'api/hydration';
 import { useEntityType } from 'context/EntityContext';
+import { useEntityWorkflow } from 'context/Workflow';
 import { ResourceConfigStoreNames } from 'context/Zustand';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
@@ -69,6 +70,10 @@ export interface ResourceConfigState {
     hydrationErrorsExist: boolean;
     hydrationErrors: HydrationError[];
 
+    // Server-Form Alignment
+    serverUpdateRequired: boolean;
+    setServerUpdateRequired: (value: boolean) => void;
+
     // Misc.
     stateChanged: () => boolean;
     resetState: () => void;
@@ -126,6 +131,7 @@ const getInitialStateData = (): Pick<
     | 'resourceConfigErrorsExist'
     | 'resourceConfigErrors'
     | 'resourceSchema'
+    | 'serverUpdateRequired'
 > => ({
     collections: [],
     collectionErrorsExist: true,
@@ -137,6 +143,7 @@ const getInitialStateData = (): Pick<
     resourceConfigErrorsExist: true,
     resourceConfigErrors: [],
     resourceSchema: {},
+    serverUpdateRequired: false,
 });
 
 const hydrateState = async (
@@ -390,6 +397,16 @@ const getInitialState = (
         );
     },
 
+    setServerUpdateRequired: (value) => {
+        set(
+            produce((state: ResourceConfigState) => {
+                state.serverUpdateRequired = value;
+            }),
+            false,
+            'Server Update Required Flag Changed'
+        );
+    },
+
     stateChanged: () => {
         const { resourceConfig } = get();
         const { resourceConfig: initialResourceConfig } = getInitialStateData();
@@ -452,25 +469,26 @@ export const createHydratedResourceConfigStore = (
 // Context Provider
 interface ResourceConfigProviderProps {
     children: ReactNode;
-    workflow: EntityWorkflow;
 }
 
 const invariableStore = {
-    [ResourceConfigStoreNames.MATERIALIZATION]: {},
+    [ResourceConfigStoreNames.GENERAL]: {},
 };
 
 export const ResourceConfigContext = createReactContext<any | null>(null);
 
 export const ResourceConfigProvider = ({
     children,
-    workflow,
 }: ResourceConfigProviderProps) => {
+    const workflow = useEntityWorkflow();
+
     const storeOptions = useConstant(() => {
-        invariableStore[ResourceConfigStoreNames.MATERIALIZATION] =
-            createHydratedResourceConfigStore(
-                ResourceConfigStoreNames.MATERIALIZATION,
-                workflow
-            );
+        invariableStore[ResourceConfigStoreNames.GENERAL] = workflow
+            ? createHydratedResourceConfigStore(
+                  ResourceConfigStoreNames.GENERAL,
+                  workflow
+              )
+            : {};
 
         return invariableStore;
     });
@@ -503,8 +521,11 @@ export const useResourceConfigStore = <S extends Object, U>(
 
 // Selector Hooks
 const storeName = (entityType: ENTITY): ResourceConfigStoreNames => {
-    if (entityType === ENTITY.MATERIALIZATION) {
-        return ResourceConfigStoreNames.MATERIALIZATION;
+    if (
+        entityType === ENTITY.CAPTURE ||
+        entityType === ENTITY.MATERIALIZATION
+    ) {
+        return ResourceConfigStoreNames.GENERAL;
     } else {
         throw new Error('Invalid ResourceConfig store name');
     }
@@ -652,4 +673,22 @@ export const useResourceConfig_hydrationErrorsExist = () => {
         ResourceConfigState,
         ResourceConfigState['hydrationErrorsExist']
     >(storeName(entityType), (state) => state.hydrationErrorsExist);
+};
+
+export const useResourceConfig_serverUpdateRequired = () => {
+    const entityType = useEntityType();
+
+    return useResourceConfigStore<
+        ResourceConfigState,
+        ResourceConfigState['serverUpdateRequired']
+    >(storeName(entityType), (state) => state.serverUpdateRequired);
+};
+
+export const useResourceConfig_setServerUpdateRequired = () => {
+    const entityType = useEntityType();
+
+    return useResourceConfigStore<
+        ResourceConfigState,
+        ResourceConfigState['setServerUpdateRequired']
+    >(storeName(entityType), (state) => state.setServerUpdateRequired);
 };

@@ -2,6 +2,7 @@ import { RealtimeSubscription } from '@supabase/supabase-js';
 import { authenticatedRoutes } from 'app/Authenticated';
 import CaptureGenerateButton from 'components/capture/GenerateButton';
 import {
+    useEditorStore_editDraftId,
     useEditorStore_id,
     useEditorStore_pubId,
     useEditorStore_setId,
@@ -12,9 +13,12 @@ import EntityEdit from 'components/shared/Entity/Edit';
 import EntityToolbar from 'components/shared/Entity/Header';
 import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
 import PageContainer from 'components/shared/PageContainer';
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
+import useDraftSpecs from 'hooks/useDraftSpecs';
 import LogRocket from 'logrocket';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -51,6 +55,7 @@ const trackEvent = (payload: any) => {
     });
 };
 function CaptureEdit() {
+    const lastPubId = useGlobalSearchParams(GlobalSearchParams.LAST_PUB_ID);
     const navigate = useNavigate();
 
     const entityType = ENTITY.CAPTURE;
@@ -70,6 +75,8 @@ function CaptureEdit() {
     const draftId = useEditorStore_id();
     const setDraftId = useEditorStore_setId();
 
+    const editDraftId = useEditorStore_editDraftId();
+
     const pubId = useEditorStore_pubId();
 
     // Endpoint Config Store
@@ -80,6 +87,11 @@ function CaptureEdit() {
     const setFormState = useFormStateStore_setFormState();
     const resetFormState = useFormStateStore_resetState();
     const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
+
+    const { mutate: mutateDraftSpecs, ...draftSpecsMetadata } = useDraftSpecs(
+        editDraftId,
+        lastPubId
+    );
 
     // Reset the catalog if the connector changes
     useEffect(() => {
@@ -152,6 +164,10 @@ function CaptureEdit() {
                     : authenticatedRoutes.materializations.create.fullPath
             );
         },
+
+        mutateDraftSpecs: () => {
+            mutateDraftSpecs;
+        },
     };
 
     const discoversSubscription = (discoverDraftId: string) => {
@@ -192,6 +208,8 @@ function CaptureEdit() {
                 title="browserTitle.captureEdit"
                 entityType={entityType}
                 readOnly={{ detailsForm: true }}
+                draftSpecMetadata={draftSpecsMetadata}
+                callFailed={helpers.callFailed}
                 resetState={resetState}
                 errorSummary={
                     <ValidationErrorSummary
@@ -205,6 +223,7 @@ function CaptureEdit() {
                                 disabled={!hasConnectors}
                                 callFailed={helpers.callFailed}
                                 subscription={discoversSubscription}
+                                mutateDraftSpecs={mutateDraftSpecs}
                             />
                         }
                         TestButton={
@@ -226,7 +245,6 @@ function CaptureEdit() {
                         }
                     />
                 }
-                callFailed={helpers.callFailed}
             />
         </PageContainer>
     );

@@ -34,7 +34,7 @@ export enum FormStateStoreNames {
 }
 
 export enum ResourceConfigStoreNames {
-    MATERIALIZATION = 'Materialization-Resource-Config',
+    GENERAL = 'general-resource-config',
 }
 
 export enum SelectTableStoreNames {

@@ -26,6 +26,7 @@ import Materializations from 'pages/Materializations';
 import Registration from 'pages/Registration';
 import { Route, Routes } from 'react-router';
 import { EndpointConfigProvider } from 'stores/EndpointConfig';
+import { ResourceConfigProvider } from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
 import { isProduction } from 'utils/env-utils';
 
@@ -182,7 +183,9 @@ const Authenticated = () => {
                                     >
                                         <WorkflowContextProvider value="capture_create">
                                             <EndpointConfigProvider>
-                                                <CaptureCreate />
+                                                <ResourceConfigProvider>
+                                                    <CaptureCreate />
+                                                </ResourceConfigProvider>
                                             </EndpointConfigProvider>
                                         </WorkflowContextProvider>
                                     </EntityContextProvider>
@@ -197,7 +200,9 @@ const Authenticated = () => {
                                     >
                                         <WorkflowContextProvider value="capture_edit">
                                             <EndpointConfigProvider>
-                                                <CaptureEdit />
+                                                <ResourceConfigProvider>
+                                                    <CaptureEdit />
+                                                </ResourceConfigProvider>
                                             </EndpointConfigProvider>
                                         </WorkflowContextProvider>
                                     </EntityContextProvider>
@@ -228,7 +233,9 @@ const Authenticated = () => {
                                     >
                                         <WorkflowContextProvider value="materialization_create">
                                             <EndpointConfigProvider>
-                                                <MaterializationCreate />
+                                                <ResourceConfigProvider>
+                                                    <MaterializationCreate />
+                                                </ResourceConfigProvider>
                                             </EndpointConfigProvider>
                                         </WorkflowContextProvider>
                                     </EntityContextProvider>
@@ -246,7 +253,9 @@ const Authenticated = () => {
                                     >
                                         <WorkflowContextProvider value="materialization_edit">
                                             <EndpointConfigProvider>
-                                                <MaterializationEdit />
+                                                <ResourceConfigProvider>
+                                                    <MaterializationEdit />
+                                                </ResourceConfigProvider>
                                             </EndpointConfigProvider>
                                         </WorkflowContextProvider>
                                     </EntityContextProvider>
