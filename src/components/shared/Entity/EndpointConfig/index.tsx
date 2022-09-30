@@ -1,4 +1,5 @@
 import { Box } from '@mui/material';
+import { useEditorStore_id } from 'components/editor/Store';
 import AlertBox from 'components/shared/AlertBox';
 import EndpointConfigForm from 'components/shared/Entity/EndpointConfig/Form';
 import EndpointConfigHeader from 'components/shared/Entity/EndpointConfig/Header';
@@ -43,6 +44,9 @@ function EndpointConfig({
 
     const { connectorTag, error } = useConnectorTag(connectorImage);
 
+    // Draft Editor Store
+    const draftId = useEditorStore_id();
+
     // Endpoint Config Store
     const endpointConfig = useEndpointConfigStore_endpointConfig_data();
     const setEndpointConfig = useEndpointConfigStore_setEndpointConfig();
@@ -86,12 +90,15 @@ function EndpointConfig({
         }
     }, [setServerUpdateRequired, editWorkflow, endpointConfigUpdated]);
 
+    const forceClose = !editWorkflow && draftId !== null;
+
     if (error) {
         return <Error error={error} />;
     } else if (connectorTag) {
         return (
             <WrapperWithHeader
                 mountClosed={editWorkflow}
+                forceClose={forceClose}
                 readOnly={readOnly}
                 header={
                     <EndpointConfigHeader
