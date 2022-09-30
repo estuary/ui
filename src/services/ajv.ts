@@ -27,7 +27,7 @@ export const addKeywords = (ajv: any) => {
     ajv.addKeyword('multiline'); // text input should expect multiple lines
     ajv.addKeyword('secret'); // should render as a password
     ajv.addKeyword('airbyte_secret'); // should render as a password
-    ajv.addKeyword('advanced'); // Should be collapsed by default
+    ajv.addKeyword('advanced'); // Should be collapsed by default (over ridden if section contains required fields)
     ajv.addKeyword('order'); // Used to order the fields in the UI
     ajv.addKeyword('x-oauth2-provider'); // Used to display OAuth
     ajv.addKeyword('discriminator'); // Used to know what field in a complex oneOf should be unique (ex: parser)
