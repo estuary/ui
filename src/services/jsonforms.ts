@@ -57,7 +57,7 @@ import { oAuthProviderTester, OAuthType } from 'forms/renderers/OAuth';
 import MaterialOneOfRenderer_Discriminator, {
     materialOneOfControlTester_Discriminator,
 } from 'forms/renderers/Overrides/material/complex/MaterialOneOfRenderer_Discriminator';
-import { orderBy } from 'lodash';
+import { concat, orderBy } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 import keys from 'lodash/keys';
 import startCase from 'lodash/startCase';
@@ -175,29 +175,20 @@ const copyAdvancedOption = (elem: Layout, schema: JsonSchema) => {
 //     }));
 // };
 
+interface CategoryUiSchema_Elements {
+    type: string;
+    label: string;
+    options?: any;
+    elements: any[];
+}
+
 interface CategoryUiSchema {
     type: string;
-    elements: [
-        {
-            type: string;
-            label: string;
-            options?: any;
-            elements: any[];
-        }
-    ];
+    elements: CategoryUiSchema_Elements[];
 }
 export const generateCategoryUiSchema = (uiSchema: any) => {
-    const basicElements: any[] = [];
-    const categoryUiSchema: CategoryUiSchema = {
-        type: 'VerticalLayout',
-        elements: [
-            {
-                type: 'Group',
-                label: 'Basic Config',
-                elements: [],
-            },
-        ],
-    };
+    const basicElements: CategoryUiSchema_Elements[] = [];
+    const advancedElements: CategoryUiSchema_Elements[] = [];
 
     if (uiSchema?.elements) {
         uiSchema.elements.forEach((element: any) => {
@@ -206,7 +197,7 @@ export const generateCategoryUiSchema = (uiSchema: any) => {
                     ? element.elements
                     : [element];
 
-                categoryUiSchema.elements.push({
+                advancedElements.push({
                     type: 'Group',
                     label: element.label,
                     options: {
@@ -226,11 +217,10 @@ export const generateCategoryUiSchema = (uiSchema: any) => {
         });
     }
 
-    if (basicElements.length > 0) {
-        categoryUiSchema.elements[0].elements = basicElements;
-    } else {
-        categoryUiSchema.elements.shift();
-    }
+    const categoryUiSchema: CategoryUiSchema = {
+        type: 'VerticalLayout',
+        elements: concat(basicElements, advancedElements),
+    };
 
     return categoryUiSchema;
 };
