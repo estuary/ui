@@ -26,7 +26,10 @@ import {
     useFormStateStore_resetState,
     useFormStateStore_setFormState,
 } from 'stores/FormState';
-import { useResourceConfig_resetState } from 'stores/ResourceConfig';
+import {
+    ResourceConfigHydrationProvider,
+    useResourceConfig_resetState,
+} from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
 
 function MaterializationCreate() {
@@ -117,43 +120,47 @@ function MaterializationCreate() {
                     'https://docs.estuary.dev/guides/create-dataflow/#create-a-materialization',
             }}
         >
-            <EntityCreate
-                title="browserTitle.materializationCreate"
-                connectorType={entityType}
-                showCollections
-                resetState={resetState}
-                errorSummary={
-                    <ExtendedValidationErrorSummary
-                        errorsExist={detailsFormErrorsExist}
-                    />
-                }
-                toolbar={
-                    <EntityToolbar
-                        GenerateButton={
-                            <MaterializeGenerateButton
-                                disabled={!hasConnectors}
-                                callFailed={helpers.callFailed}
-                            />
-                        }
-                        TestButton={
-                            <EntityTestButton
-                                disabled={!hasConnectors}
-                                callFailed={helpers.callFailed}
-                                closeLogs={handlers.closeLogs}
-                                logEvent={CustomEvents.MATERIALIZATION_TEST}
-                            />
-                        }
-                        SaveButton={
-                            <EntitySaveButton
-                                disabled={!draftId}
-                                callFailed={helpers.callFailed}
-                                closeLogs={handlers.closeLogs}
-                                logEvent={CustomEvents.MATERIALIZATION_CREATE}
-                            />
-                        }
-                    />
-                }
-            />
+            <ResourceConfigHydrationProvider>
+                <EntityCreate
+                    title="browserTitle.materializationCreate"
+                    connectorType={entityType}
+                    showCollections
+                    resetState={resetState}
+                    errorSummary={
+                        <ExtendedValidationErrorSummary
+                            errorsExist={detailsFormErrorsExist}
+                        />
+                    }
+                    toolbar={
+                        <EntityToolbar
+                            GenerateButton={
+                                <MaterializeGenerateButton
+                                    disabled={!hasConnectors}
+                                    callFailed={helpers.callFailed}
+                                />
+                            }
+                            TestButton={
+                                <EntityTestButton
+                                    disabled={!hasConnectors}
+                                    callFailed={helpers.callFailed}
+                                    closeLogs={handlers.closeLogs}
+                                    logEvent={CustomEvents.MATERIALIZATION_TEST}
+                                />
+                            }
+                            SaveButton={
+                                <EntitySaveButton
+                                    disabled={!draftId}
+                                    callFailed={helpers.callFailed}
+                                    closeLogs={handlers.closeLogs}
+                                    logEvent={
+                                        CustomEvents.MATERIALIZATION_CREATE
+                                    }
+                                />
+                            }
+                        />
+                    }
+                />
+            </ResourceConfigHydrationProvider>
         </PageContainer>
     );
 }

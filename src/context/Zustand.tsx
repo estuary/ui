@@ -6,6 +6,7 @@ import {
     useContext,
 } from 'react';
 import { createFormStateStore } from 'stores/FormState';
+import { createResourceConfigStore } from 'stores/ResourceConfig';
 import { createShardDetailStore } from 'stores/ShardDetail';
 import { MessagePrefixes } from 'types';
 import useConstant from 'use-constant';
@@ -113,6 +114,11 @@ const invariableStores = {
     ),
     [SelectTableStoreNames.MATERIALIZATION]: createSelectableTableStore(
         SelectTableStoreNames.MATERIALIZATION
+    ),
+
+    // ResourceConfigStore
+    [ResourceConfigStoreNames.GENERAL]: createResourceConfigStore(
+        ResourceConfigStoreNames.GENERAL
     ),
 
     // Shard Detail Store

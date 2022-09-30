@@ -33,7 +33,10 @@ import {
     useFormStateStore_resetState,
     useFormStateStore_setFormState,
 } from 'stores/FormState';
-import { useResourceConfig_resetState } from 'stores/ResourceConfig';
+import {
+    ResourceConfigHydrationProvider,
+    useResourceConfig_resetState,
+} from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
 
 function MaterializationEdit() {
@@ -139,47 +142,49 @@ function MaterializationEdit() {
 
     return (
         <PageContainer>
-            <EntityEdit
-                title="browserTitle.materializationEdit"
-                entityType={entityType}
-                readOnly={{ detailsForm: true }}
-                draftSpecMetadata={draftSpecsMetadata}
-                showCollections
-                callFailed={helpers.callFailed}
-                resetState={resetState}
-                errorSummary={
-                    <ValidationErrorSummary
-                        errorsExist={detailsFormErrorsExist}
-                    />
-                }
-                toolbar={
-                    <EntityToolbar
-                        GenerateButton={
-                            <MaterializeGenerateButton
-                                disabled={!hasConnectors}
-                                callFailed={helpers.callFailed}
-                                mutateDraftSpecs={mutateDraftSpecs}
-                            />
-                        }
-                        TestButton={
-                            <EntityTestButton
-                                disabled={!hasConnectors}
-                                callFailed={helpers.callFailed}
-                                closeLogs={handlers.closeLogs}
-                                logEvent={CustomEvents.MATERIALIZATION_TEST}
-                            />
-                        }
-                        SaveButton={
-                            <EntitySaveButton
-                                disabled={!draftId}
-                                callFailed={helpers.callFailed}
-                                closeLogs={handlers.closeLogs}
-                                logEvent={CustomEvents.MATERIALIZATION_EDIT}
-                            />
-                        }
-                    />
-                }
-            />
+            <ResourceConfigHydrationProvider>
+                <EntityEdit
+                    title="browserTitle.materializationEdit"
+                    entityType={entityType}
+                    readOnly={{ detailsForm: true }}
+                    draftSpecMetadata={draftSpecsMetadata}
+                    showCollections
+                    callFailed={helpers.callFailed}
+                    resetState={resetState}
+                    errorSummary={
+                        <ValidationErrorSummary
+                            errorsExist={detailsFormErrorsExist}
+                        />
+                    }
+                    toolbar={
+                        <EntityToolbar
+                            GenerateButton={
+                                <MaterializeGenerateButton
+                                    disabled={!hasConnectors}
+                                    callFailed={helpers.callFailed}
+                                    mutateDraftSpecs={mutateDraftSpecs}
+                                />
+                            }
+                            TestButton={
+                                <EntityTestButton
+                                    disabled={!hasConnectors}
+                                    callFailed={helpers.callFailed}
+                                    closeLogs={handlers.closeLogs}
+                                    logEvent={CustomEvents.MATERIALIZATION_TEST}
+                                />
+                            }
+                            SaveButton={
+                                <EntitySaveButton
+                                    disabled={!draftId}
+                                    callFailed={helpers.callFailed}
+                                    closeLogs={handlers.closeLogs}
+                                    logEvent={CustomEvents.MATERIALIZATION_EDIT}
+                                />
+                            }
+                        />
+                    }
+                />
+            </ResourceConfigHydrationProvider>
         </PageContainer>
     );
 }
