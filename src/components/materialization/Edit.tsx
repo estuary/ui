@@ -34,7 +34,7 @@ import {
     useFormStateStore_setFormState,
 } from 'stores/FormState';
 import {
-    ResourceConfigHydrationProvider,
+    ResourceConfigHydrator,
     useResourceConfig_resetState,
 } from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
@@ -142,7 +142,7 @@ function MaterializationEdit() {
 
     return (
         <PageContainer>
-            <ResourceConfigHydrationProvider>
+            <ResourceConfigHydrator>
                 <EntityEdit
                     title="browserTitle.materializationEdit"
                     entityType={entityType}
@@ -184,7 +184,7 @@ function MaterializationEdit() {
                         />
                     }
                 />
-            </ResourceConfigHydrationProvider>
+            </ResourceConfigHydrator>
         </PageContainer>
     );
 }

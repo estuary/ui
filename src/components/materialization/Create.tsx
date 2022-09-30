@@ -27,7 +27,7 @@ import {
     useFormStateStore_setFormState,
 } from 'stores/FormState';
 import {
-    ResourceConfigHydrationProvider,
+    ResourceConfigHydrator,
     useResourceConfig_resetState,
 } from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
@@ -120,7 +120,7 @@ function MaterializationCreate() {
                     'https://docs.estuary.dev/guides/create-dataflow/#create-a-materialization',
             }}
         >
-            <ResourceConfigHydrationProvider>
+            <ResourceConfigHydrator>
                 <EntityCreate
                     title="browserTitle.materializationCreate"
                     connectorType={entityType}
@@ -160,7 +160,7 @@ function MaterializationCreate() {
                         />
                     }
                 />
-            </ResourceConfigHydrationProvider>
+            </ResourceConfigHydrator>
         </PageContainer>
     );
 }

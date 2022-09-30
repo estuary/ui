@@ -10,7 +10,7 @@ import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
 import { difference, has, isEmpty, isEqual, map, omit } from 'lodash';
-import { createContext as createReactContext, ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { useEffectOnce } from 'react-use';
 import { createJSONFormDefaults } from 'services/ajv';
 import { ENTITY, EntityWorkflow, JsonFormsData, Schema } from 'types';
@@ -602,16 +602,14 @@ export const useResourceConfig_setServerUpdateRequired = () => {
     >(getStoreName(entityType), (state) => state.setServerUpdateRequired);
 };
 
-// Context Provider
-interface ResourceConfigProviderProps {
+// Hydrator
+interface ResourceConfigHydratorProps {
     children: ReactNode;
 }
 
-export const ResourceConfigContext = createReactContext<null>(null);
-
-export const ResourceConfigHydrationProvider = ({
+export const ResourceConfigHydrator = ({
     children,
-}: ResourceConfigProviderProps) => {
+}: ResourceConfigHydratorProps) => {
     const workflow = useEntityWorkflow();
 
     const hydrated = useResourceConfig_hydrated();
@@ -635,9 +633,5 @@ export const ResourceConfigHydrationProvider = ({
         }
     });
 
-    return (
-        <ResourceConfigContext.Provider value={null}>
-            {children}
-        </ResourceConfigContext.Provider>
-    );
+    return <div>{children}</div>;
 };
