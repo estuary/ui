@@ -484,9 +484,8 @@ const generateUISchema = (
             layout.elements = orderedProps.map((propName) => {
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 let value: JsonSchema = jsonSchema.properties![propName];
+                const ref = `${nextRef}/${encode(propName)}`;
 
-                const encodedName = encode(propName);
-                const ref = `${nextRef}/${encodedName}`;
                 if (value.$ref !== undefined) {
                     console.log('resolving schema');
                     value = resolveSchema(
