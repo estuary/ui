@@ -17,6 +17,7 @@ import {
     ShardDetails,
     useShardDetail_getShardDetails,
 } from 'stores/ShardDetail';
+import { unescapeString } from 'utils/misc-utils';
 
 interface Props {
     shards: Shard[];
@@ -75,11 +76,12 @@ function ShardErrors({ shards }: Props) {
                                                     enabled: false,
                                                 },
                                             }}
-                                            value={shardDetails.errors
-                                                .join(NEW_LINE)
-                                                .split(/\\n/)
-                                                .join(NEW_LINE)
-                                                .replaceAll(/\\"/g, '"')}
+                                            value={unescapeString(
+                                                shardDetails.errors
+                                                    .join(NEW_LINE)
+                                                    .split(/\\n/)
+                                                    .join(NEW_LINE)
+                                            )}
                                         />
                                     </Box>
                                 </AccordionDetails>

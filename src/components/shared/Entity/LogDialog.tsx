@@ -3,10 +3,9 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
-    useTheme,
 } from '@mui/material';
 import Logs from 'components/logs';
-import { slate } from 'context/Theme';
+import { logDialogBackground } from 'context/Theme';
 import { ReactNode } from 'react';
 import ErrorBoundryWrapper from '../ErrorBoundryWrapper';
 
@@ -20,8 +19,6 @@ interface Props {
 const TITLE_ID = 'logs-dialog-title';
 
 function LogDialog({ open, token, actionComponent, title }: Props) {
-    const theme = useTheme();
-
     return (
         <Dialog
             open={open}
@@ -29,17 +26,11 @@ function LogDialog({ open, token, actionComponent, title }: Props) {
             fullWidth
             aria-labelledby={TITLE_ID}
             sx={{
-                'minWidth': (themes) => themes.breakpoints.values.sm,
+                'minWidth': (theme) => theme.breakpoints.values.sm,
                 '& .MuiDialog-paper': {
-                    backgroundColor:
-                        theme.palette.mode === 'dark' ? slate[800] : slate[25],
+                    backgroundColor: (theme) =>
+                        logDialogBackground[theme.palette.mode],
                     borderRadius: 5,
-                },
-                '& .MuiAccordionSummary-root': {
-                    backgroundColor:
-                        theme.palette.mode === 'dark'
-                            ? 'transparent'
-                            : slate[50],
                 },
             }}
         >
