@@ -6,7 +6,6 @@ import CollectionConfig from 'components/collection/Config';
 import {
     EditorStoreState,
     useEditorStore_editDraftId,
-    useEditorStore_id,
     useEditorStore_setEditDraftId,
     useEditorStore_setId,
 } from 'components/editor/Store';
@@ -212,7 +211,6 @@ function EntityEdit({
     const detailsFormChanged = useDetailsForm_changed();
 
     // Draft Editor Store
-    const draftId = useEditorStore_id();
     const setDraftId = useEditorStore_setId();
 
     const editDraftId = useEditorStore_editDraftId();
@@ -310,7 +308,7 @@ function EntityEdit({
                                 title={formSubmitError.title}
                                 error={formSubmitError.error}
                                 logToken={logToken}
-                                draftId={draftId}
+                                draftId={editDraftId}
                             />
                         ) : null}
                     </Collapse>
