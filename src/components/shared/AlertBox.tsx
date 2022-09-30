@@ -10,7 +10,7 @@ import {
     Typography,
 } from '@mui/material';
 import { alertBackground, alertTextPrimary } from 'context/Theme';
-import { ReactNode, useMemo } from 'react';
+import { forwardRef, ReactNode, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { BaseComponentProps } from 'types';
 
@@ -34,7 +34,10 @@ const HEADER_MESSAGE = {
     error: 'alert.error',
 };
 
-function AlertBox({ short, severity, hideIcon, title, children }: Props) {
+const AlertBox = forwardRef<any, Props>(function NavLinkRef(
+    { short, severity, hideIcon, title, children },
+    ref
+) {
     const iconComponentStyling = useMemo(
         () =>
             !short
@@ -67,6 +70,7 @@ function AlertBox({ short, severity, hideIcon, title, children }: Props) {
 
     return (
         <Alert
+            ref={ref}
             severity={severity}
             variant="outlined"
             icon={hideIcon ?? undefined}
@@ -114,6 +118,6 @@ function AlertBox({ short, severity, hideIcon, title, children }: Props) {
             {children}
         </Alert>
     );
-}
+});
 
 export default AlertBox;

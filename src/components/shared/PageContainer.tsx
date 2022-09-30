@@ -57,7 +57,7 @@ function PageContainer({ children, pageTitleProps }: Props) {
                     autoHideDuration={5000}
                     onClose={handlers.notificationClose}
                 >
-                    <AlertBox severity={notification.severity}>
+                    <AlertBox severity={notification.severity} short>
                         {`${notification.title}. ${notification.description}`}
                     </AlertBox>
                 </Snackbar>

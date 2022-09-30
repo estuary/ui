@@ -199,30 +199,32 @@ export const generateCategoryUiSchema = (uiSchema: any) => {
         ],
     };
 
-    uiSchema.elements.forEach((element: any) => {
-        if (element.label) {
-            const groupElements = element.elements
-                ? element.elements
-                : [element];
+    if (uiSchema?.elements) {
+        uiSchema.elements.forEach((element: any) => {
+            if (element.label) {
+                const groupElements = element.elements
+                    ? element.elements
+                    : [element];
 
-            categoryUiSchema.elements.push({
-                type: 'Group',
-                label: element.label,
-                options: {
-                    ...(element.options ?? {}),
-                    advanced: true,
-                },
-                elements: [
-                    {
-                        type: 'VerticalLayout',
-                        elements: groupElements,
+                categoryUiSchema.elements.push({
+                    type: 'Group',
+                    label: element.label,
+                    options: {
+                        ...(element.options ?? {}),
+                        advanced: true,
                     },
-                ],
-            });
-        } else {
-            basicElements.push(element);
-        }
-    });
+                    elements: [
+                        {
+                            type: 'VerticalLayout',
+                            elements: groupElements,
+                        },
+                    ],
+                });
+            } else {
+                basicElements.push(element);
+            }
+        });
+    }
 
     if (basicElements.length > 0) {
         categoryUiSchema.elements[0].elements = basicElements;
@@ -549,7 +551,8 @@ export const custom_generateDefaultUISchema = (
         defaultLayout
     );
 
-    if (rootGenerating) {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (rootGenerating && response) {
         response = generateCategoryUiSchema(response);
     }
 
