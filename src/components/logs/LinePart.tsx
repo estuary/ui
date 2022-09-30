@@ -21,8 +21,6 @@ function LinePart({ parsedLine, lastPart }: Props) {
                         lastPart ? lineText.trimEnd() : lineText
                     );
 
-                    console.log('formattedLine', formattedLine);
-
                     return (
                         <ListItemText
                             key={`${lineText} - linePart - ${index}`}
