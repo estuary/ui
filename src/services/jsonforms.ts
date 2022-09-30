@@ -487,7 +487,6 @@ const generateUISchema = (
                 const ref = `${nextRef}/${encode(propName)}`;
 
                 if (value.$ref !== undefined) {
-                    console.log('resolving schema');
                     value = resolveSchema(
                         rootSchema as JsonSchema,
                         value.$ref,
