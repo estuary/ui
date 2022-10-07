@@ -211,6 +211,7 @@ const OAuthproviderRenderer = ({
 
                     {isAuthorized ? (
                         <Chip
+                            disabled={!enabled || loading}
                             label={
                                 <FormattedMessage id="oauth.authenticated" />
                             }
