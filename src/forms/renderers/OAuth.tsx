@@ -3,10 +3,9 @@ import { withJsonFormsControlProps } from '@jsonforms/react';
 import { Alert, Box, Button, Chip, Stack, Typography } from '@mui/material';
 import { accessToken, authURL } from 'api/oauth';
 import FullPageSpinner from 'components/fullPage/Spinner';
-import { getDiscriminator } from 'forms/renderers/Overrides/material/complex/MaterialOneOfRenderer_Discriminator';
 import { optionExists } from 'forms/renderers/Overrides/testers/testers';
 import { useOAuth2 } from 'hooks/forks/react-use-oauth2/components';
-import { every, includes, isEmpty, startCase } from 'lodash';
+import { isEmpty, startCase } from 'lodash';
 import { useMemo, useState } from 'react';
 import GoogleButton from 'react-google-button';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -28,7 +27,6 @@ const OAuthproviderRenderer = ({
     data,
     path,
     handleChange,
-    schema,
     uischema,
     enabled,
 }: ControlProps) => {
@@ -36,41 +34,61 @@ const OAuthproviderRenderer = ({
     const { options } = uischema;
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    const dataKeys = Object.keys(data ?? {});
-    const descriminatorProperty = getDiscriminator(schema);
-    const requiredFields = useMemo(
-        () => (options ? options[Options.oauthFields] : []),
-        [options]
-    );
-    const onChangePath = useMemo(() => {
-        if (hasLength(path)) {
-            return path;
+    const { 0: onChangePath } = useMemo<[string]>(() => {
+        const hasOwnPathProp = hasLength(path); //this means the control is nested inside a tab
+
+        if (hasOwnPathProp) {
+            return [path];
+        } else {
+            return [options?.[Options.oauthPathToFields] ?? ''];
         }
-        return options?.[Options.oauthPathToFields] ?? '';
     }, [options, path]);
 
-    const isAuthorized = useMemo(
-        () =>
-            every(requiredFields, (field: string) => {
-                if (descriminatorProperty) {
-                    return field === CLIENT_ID ||
-                        field === CLIENT_SECRET ||
-                        field === descriminatorProperty
-                        ? true
-                        : includes(dataKeys, field) && hasLength(data[field]);
-                } else {
-                    return field === CLIENT_ID || field === CLIENT_SECRET
-                        ? true
-                        : includes(dataKeys, field) && hasLength(data[field]);
-                }
-            }),
-        [data, dataKeys, descriminatorProperty, requiredFields]
-    );
+    const [isAuthorized, setIsAuthorized] = useState(false);
+
+    // TODO (OAuth) we should not leverage state but rather truly validate like we used to
+
+    // const descriminatorProperty = getDiscriminator(schema);
+    // const requiredFields = useMemo(
+    //     () => (options ? options[Options.oauthFields] : []),
+    //     [options]
+    // );
+
+    // const isAuthorized = useMemo(
+    //     () =>
+    //         every(requiredFields, (field: string) => {
+    //             if (field === CLIENT_ID || field === CLIENT_SECRET) {
+    //                 return true
+    //             }
+
+    //             if (descriminatorProperty) {
+    //                 return field === descriminatorProperty
+    //             }
+
+    //             if (descriminatorProperty) {
+    //                 return field === CLIENT_ID ||
+    //                     field === CLIENT_SECRET ||
+    //                     field === descriminatorProperty
+    //                     ? true
+    //                     : includes(dataKeys, field) && hasLength(data[field]);
+    //             } else {
+    //                 if (field === CLIENT_ID || field === CLIENT_SECRET) {
+    //                     return true
+    //                 }
+    //                 return field === CLIENT_ID || field === CLIENT_SECRET
+    //                     ? true
+    //                     : includes(dataKeys, field) && hasLength(data[field]);
+    //             }
+    //         }),
+    //     [data, dataKeys, descriminatorProperty, requiredFields]
+    // );
 
     const providerVal = options ? options[Options.oauthProvider] : NO_PROVIDER;
     const provider = useMemo(() => startCase(providerVal), [providerVal]);
 
     const onError = (error: any) => {
+        setIsAuthorized(true);
+
         if (error === 'access_denied') {
             setErrorMessage(
                 intl.formatMessage(
@@ -89,6 +107,8 @@ const OAuthproviderRenderer = ({
         const tokenResponse = await accessToken(payload.state, payload.code);
 
         if (tokenResponse.error) {
+            setIsAuthorized(false);
+
             setErrorMessage(
                 intl.formatMessage(
                     { id: 'oauth.accessToken.error' },
@@ -107,6 +127,7 @@ const OAuthproviderRenderer = ({
                 ...data,
                 ...tokenResponse.data,
             });
+            setIsAuthorized(true);
         }
     };
 
@@ -133,7 +154,8 @@ const OAuthproviderRenderer = ({
     };
 
     const removeCofig = () => {
-        handleChange(path, undefined);
+        setIsAuthorized(false);
+        handleChange(onChangePath, undefined);
     };
 
     return (
