@@ -16,7 +16,8 @@ export const multiLineSecretTester: RankedTester = rankWith(
 
 // This is blank on purpose. For right now we can just show null settings are nothing
 const MultiLineSecretRenderer = (props: any) => {
-    const { handleChange, path } = props;
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    const { handleChange, path, enabled } = props;
 
     const [isUploadOpen, setIsUploadOpen] = useState(false);
 
@@ -71,6 +72,7 @@ const MultiLineSecretRenderer = (props: any) => {
                     <Button
                         sx={{ whiteSpace: 'nowrap' }}
                         onClick={() => setIsUploadOpen(!isUploadOpen)}
+                        disabled={!enabled}
                     >
                         Use secret from file
                     </Button>
