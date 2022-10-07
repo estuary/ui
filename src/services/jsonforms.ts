@@ -35,6 +35,7 @@ import {
     LabelElement,
     Layout,
     resolveSchema,
+    toDataPath,
     UISchemaElement,
     ValidationMode,
 } from '@jsonforms/core';
@@ -407,26 +408,32 @@ const generateUISchema = (
         // Handle OAuth specifically as we need to show an "OAuth CTA" to allow
         //  users to sign in with the provider. This includes injecting our own
         //  control in place of the actual properties that would normally be
-        //  displayed.
+        //  displayed. Since we are displaying a custom object control
+        //  we fetch the "path to fields" so we can properly fire the change event
 
         const oAuthCTAControl = createControlElement(currentRef);
+
         addOption(
             oAuthCTAControl,
             Options.oauthProvider,
             jsonSchema[Annotations.oAuthProvider]
         );
         addOption(oAuthCTAControl, Options.oauthFields, jsonSchema.required);
+        addOption(
+            oAuthCTAControl,
+            Options.oauthPathToFields,
+            toDataPath(currentRef)
+        );
 
         if (jsonSchema.title) {
             oAuthCTAControl.label = jsonSchema.title;
         }
 
-        schemaElements.push(oAuthCTAControl);
-
         if (isRequired) {
             addRequiredGroupOptions(oAuthCTAControl);
         }
 
+        schemaElements.push(oAuthCTAControl);
         return oAuthCTAControl;
     }
 
