@@ -52,11 +52,17 @@ const OAuthproviderRenderer = ({
     const isAuthorized = useMemo(
         () =>
             every(requiredFields, (field: string) => {
-                return field === CLIENT_ID ||
-                    field === CLIENT_SECRET ||
-                    field === descriminatorProperty
-                    ? true
-                    : includes(dataKeys, field) && hasLength(data[field]);
+                if (descriminatorProperty) {
+                    return field === CLIENT_ID ||
+                        field === CLIENT_SECRET ||
+                        field === descriminatorProperty
+                        ? true
+                        : includes(dataKeys, field) && hasLength(data[field]);
+                } else {
+                    return field === CLIENT_ID || field === CLIENT_SECRET
+                        ? true
+                        : includes(dataKeys, field) && hasLength(data[field]);
+                }
             }),
         [data, dataKeys, descriminatorProperty, requiredFields]
     );
