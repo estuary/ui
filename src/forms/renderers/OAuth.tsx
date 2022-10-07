@@ -35,8 +35,17 @@ const OAuthproviderRenderer = ({
     const intl = useIntl();
     const { options } = uischema;
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const hasOwnPathProp = hasLength(path); //this means the control is nested inside a tab
 
+    // Feels jank - but may it is fine. Feels weird to have a JSONForms
+    //      renderer dependent on a Zustand store
+    const imageTag = useDetailsForm_connectorImage_connectorId();
+
+    // This usually means the control is nested inside a tab
+    const hasOwnPathProp = hasLength(path);
+
+    // Fetch the patch we should use to fire onChange. This is kinda janky
+    //      but mainly in place because of hacking around JSONForms wanting
+    //      to NOT handle an object (like credentials) as a control
     const { 0: onChangePath } = useMemo<[string]>(() => {
         if (hasOwnPathProp) {
             return [path];
@@ -45,29 +54,42 @@ const OAuthproviderRenderer = ({
         }
     }, [hasOwnPathProp, options, path]);
 
+    // This is the field in an anyOf/oneOf/etc. that is used
+    //      to tell which option is selected
     const descriminatorProperty = getDiscriminator(schema);
+
+    // Need to know the list of required fields so we can manually
+    //      check them down below
     const requiredFields = useMemo(
         () => (options ? options[Options.oauthFields] : []),
         [options]
     );
+
+    const removeCofig = () => {
+        handleChange(onChangePath, undefined);
+    };
 
     const hasAllRequiredProps = useMemo(() => {
         const dataKeys = Object.keys(data ?? {});
         const nestedKeys = Object.keys(data?.[onChangePath] ?? {});
 
         return every(requiredFields, (field: string) => {
+            // We know we should always have at least these two
             if (field === CLIENT_ID || field === CLIENT_SECRET) {
                 return true;
             }
 
+            // When inside a oneOf/anOf/etc. we need to check we have the descriminator
             if (descriminatorProperty && field === descriminatorProperty) {
                 return true;
             }
 
+            // Check if the field is in the main data
             if (includes(dataKeys, field) && hasLength(data?.[field])) {
                 return true;
             }
 
+            // As a last effort check if the field is inside of nested data
             if (
                 includes(nestedKeys, field) &&
                 hasLength(data?.[onChangePath]?.[field])
@@ -75,16 +97,16 @@ const OAuthproviderRenderer = ({
                 return true;
             }
 
+            // Didn't find anything - return false
             return false;
         });
     }, [data, descriminatorProperty, onChangePath, requiredFields]);
 
-    console.log('data', data);
-    console.log('hasAllRequiredProps = ', hasAllRequiredProps);
-
+    // Pull out the provider so we can render the button
     const providerVal = options ? options[Options.oauthProvider] : NO_PROVIDER;
     const provider = useMemo(() => startCase(providerVal), [providerVal]);
 
+    // handler for the useOauth stuff
     const onError = (error: any) => {
         if (error === 'access_denied') {
             setErrorMessage(
@@ -100,6 +122,7 @@ const OAuthproviderRenderer = ({
         }
     };
 
+    // handler for the useOauth stuff
     const onSuccess = async (payload: any) => {
         const tokenResponse = await accessToken(payload.state, payload.code);
 
@@ -112,28 +135,32 @@ const OAuthproviderRenderer = ({
             );
         } else if (!isEmpty(tokenResponse.data)) {
             // These are injected by the server/encryption call so just setting
-            //  some value here to pass the validation
+            //      some value here to pass the validation
             const fakeDefaults = {
                 [CLIENT_ID]: INJECTED,
                 [CLIENT_SECRET]: INJECTED,
             };
             handleChange(onChangePath, {
                 ...fakeDefaults,
+                ...(!hasOwnPathProp ? data?.[onChangePath] : data),
                 ...tokenResponse.data,
             });
         }
     };
 
+    // This does not make the call - just wiring stuff up and getting
+    //      a function/state to use
     const { loading, getAuth } = useOAuth2({
         onSuccess,
         onError,
     });
 
-    const imageTag = useDetailsForm_connectorImage_connectorId();
-
     const openPopUp = async () => {
+        // As we start clear out errors and current credentials
+        removeCofig();
         setErrorMessage(null);
 
+        // Make the call to know what pop url to open
         const fetchAuthURL = await authURL(imageTag);
 
         if (fetchAuthURL.error) {
@@ -144,10 +171,6 @@ const OAuthproviderRenderer = ({
             // This kicks off the call and the success is handled with the onSuccess/onError
             getAuth(fetchAuthURL.data.url, fetchAuthURL.data.state);
         }
-    };
-
-    const removeCofig = () => {
-        handleChange(onChangePath, undefined);
     };
 
     return (
