@@ -30,6 +30,7 @@ const OAuthproviderRenderer = ({
     handleChange,
     schema,
     uischema,
+    enabled,
 }: ControlProps) => {
     const intl = useIntl();
     const { options } = uischema;
@@ -41,6 +42,13 @@ const OAuthproviderRenderer = ({
         () => (options ? options[Options.oauthFields] : []),
         [options]
     );
+    const onChangePath = useMemo(() => {
+        if (hasLength(path)) {
+            return path;
+        }
+        return options?.[Options.oauthPathToFields] ?? '';
+    }, [options, path]);
+
     const isAuthorized = useMemo(
         () =>
             every(requiredFields, (field: string) => {
@@ -88,7 +96,7 @@ const OAuthproviderRenderer = ({
                 [CLIENT_ID]: INJECTED,
                 [CLIENT_SECRET]: INJECTED,
             };
-            handleChange(path, {
+            handleChange(onChangePath, {
                 ...fakeDefaults,
                 ...data,
                 ...tokenResponse.data,
@@ -157,9 +165,15 @@ const OAuthproviderRenderer = ({
                     }}
                 >
                     {providerVal === 'google' ? (
-                        <GoogleButton disabled={loading} onClick={openPopUp} />
+                        <GoogleButton
+                            disabled={!enabled || loading}
+                            onClick={openPopUp}
+                        />
                     ) : (
-                        <Button disabled={loading} onClick={openPopUp}>
+                        <Button
+                            disabled={!enabled || loading}
+                            onClick={openPopUp}
+                        >
                             <FormattedMessage
                                 id="oauth.authenticate"
                                 values={{ provider }}
