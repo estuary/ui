@@ -135,17 +135,14 @@ function ConnectorToolbar({
     ]);
 
     const handlers = {
-        setProtocol: debounce(
-            (_event: SyntheticEvent, value: string | null) => {
-                const selectedProtocol = protocolOptions.find(
-                    (option) => option.message === value
-                )?.protocol;
+        setProtocol: (_event: SyntheticEvent, value: string | null) => {
+            const selectedProtocol = protocolOptions.find(
+                (option) => option.message === value
+            )?.protocol;
 
-                setProtocol(selectedProtocol ? selectedProtocol : null);
-            },
-            750
-        ),
-        setSortBy: debounce((_event: SyntheticEvent, value: string | null) => {
+            setProtocol(selectedProtocol ? selectedProtocol : null);
+        },
+        setSortBy: (_event: SyntheticEvent, value: string | null) => {
             setSortDirection('asc');
 
             const selectedColumn = sortByOptions.find(
@@ -153,17 +150,14 @@ function ConnectorToolbar({
             )?.field;
 
             setColumnToSort(selectedColumn ? selectedColumn : CONNECTOR_NAME);
-        }, 750),
-        switchSortDirection: debounce(
-            (_event: SyntheticEvent, value: string | null) => {
-                const selectedDirection = sortDirectionOptions.find(
-                    (option) => option.message === value
-                )?.direction;
+        },
+        switchSortDirection: (_event: SyntheticEvent, value: string | null) => {
+            const selectedDirection = sortDirectionOptions.find(
+                (option) => option.message === value
+            )?.direction;
 
-                setSortDirection(selectedDirection ? selectedDirection : 'asc');
-            },
-            750
-        ),
+            setSortDirection(selectedDirection ? selectedDirection : 'asc');
+        },
         filterTiles: debounce(
             (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
                 const filterQuery = event.target.value;
@@ -186,13 +180,14 @@ function ConnectorToolbar({
             <Grid
                 container
                 spacing={gridSpacing}
-                wrap="wrap-reverse"
+                wrap="wrap"
                 sx={{
                     justifyContent: 'flex-end',
                 }}
             >
-                <Grid item xs={5} md={3}>
+                <Grid item xs={12} md={hideProtocol ? 6 : 4}>
                     <TextField
+                        autoFocus
                         label={intl.formatMessage({
                             id: 'connectorTable.filterLabel',
                         })}
@@ -207,7 +202,7 @@ function ConnectorToolbar({
                     />
                 </Grid>
 
-                <Grid item xs={3} md={2}>
+                <Grid item xs={hideProtocol ? 6 : 4} md={2}>
                     <Autocomplete
                         options={sortByOptions.map(({ message }) => message)}
                         renderInput={({
@@ -235,7 +230,7 @@ function ConnectorToolbar({
                     />
                 </Grid>
 
-                <Grid item xs={3} md={2}>
+                <Grid item xs={hideProtocol ? 6 : 4} md={2}>
                     <Autocomplete
                         options={sortDirectionOptions.map(
                             ({ message }) => message
@@ -266,7 +261,7 @@ function ConnectorToolbar({
                 </Grid>
 
                 {hideProtocol ? null : (
-                    <Grid item xs={5} md={2}>
+                    <Grid item xs={4} md={2}>
                         <Autocomplete
                             options={protocolOptions.map(
                                 ({ message }) => message

@@ -54,3 +54,7 @@ export const arrayToMatrix = (arr: any[], width: number) =>
                 : rows[rows.length - 1].push(key)) && rows,
         []
     );
+
+export const unescapeString = (stringVal: string) => {
+    return stringVal.replaceAll(/\\"/g, '"');
+};

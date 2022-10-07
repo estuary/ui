@@ -28,7 +28,7 @@ function ErrorLogs({
 
     if (logToken) {
         return (
-            <Stack>
+            <Stack spacing={2}>
                 <Button
                     variant="text"
                     sx={{ ...LINK_BUTTON_STYLING, width: 'max-content' }}

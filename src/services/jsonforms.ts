@@ -57,7 +57,7 @@ import { oAuthProviderTester, OAuthType } from 'forms/renderers/OAuth';
 import MaterialOneOfRenderer_Discriminator, {
     materialOneOfControlTester_Discriminator,
 } from 'forms/renderers/Overrides/material/complex/MaterialOneOfRenderer_Discriminator';
-import { orderBy } from 'lodash';
+import { concat, includes, orderBy } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 import keys from 'lodash/keys';
 import startCase from 'lodash/startCase';
@@ -66,6 +66,9 @@ import { Annotations, Formats, Options, Patterns } from 'types/jsonforms';
 /////////////////////////////////////////////////////////
 //  CUSTOM FUNCTIONS AND SETTINGS
 /////////////////////////////////////////////////////////
+export const CONTAINS_REQUIRED_FIELDS = 'containsRequiredFields';
+export const ADVANCED = 'advanced';
+
 export const defaultOptions = {
     restrict: true,
     showUnfocusedDescription: true,
@@ -155,7 +158,7 @@ const isSecretText = (schema: JsonSchema): boolean => {
 
 const isAdvancedConfig = (schema: JsonSchema): boolean => {
     // eslint-disable-next-line @typescript-eslint/dot-notation
-    return schema['advanced'] === true;
+    return schema[ADVANCED] === true;
 };
 
 const isOAuthConfig = (schema: JsonSchema): boolean => {
@@ -164,7 +167,38 @@ const isOAuthConfig = (schema: JsonSchema): boolean => {
 
 const copyAdvancedOption = (elem: Layout, schema: JsonSchema) => {
     if (isAdvancedConfig(schema)) {
-        addOption(elem, 'advanced', true);
+        addOption(elem, ADVANCED, true);
+    }
+};
+
+const isRequiredField = (propName: string, rootSchema?: JsonSchema) => {
+    const requiredFields = rootSchema?.required;
+
+    return includes(requiredFields, propName);
+};
+
+const addRequiredGroupOptions = (
+    elem: Layout | ControlElement | GroupLayout
+) => {
+    if (!Object.hasOwn(elem.options ?? {}, CONTAINS_REQUIRED_FIELDS)) {
+        addOption(elem, CONTAINS_REQUIRED_FIELDS, true);
+    }
+};
+
+const getOrderedProps = (jsonSchema?: JsonSchema): string[] => {
+    if (jsonSchema?.properties) {
+        return orderBy(
+            Object.keys(jsonSchema.properties),
+            (propName: string) => {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                const prop = jsonSchema.properties![propName] as any;
+
+                return prop.order;
+            },
+            ['asc']
+        );
+    } else {
+        return [];
     }
 };
 
@@ -175,29 +209,20 @@ const copyAdvancedOption = (elem: Layout, schema: JsonSchema) => {
 //     }));
 // };
 
+interface CategoryUiSchema_Elements {
+    type: string;
+    label: string;
+    options?: any;
+    elements: any[];
+}
+
 interface CategoryUiSchema {
     type: string;
-    elements: [
-        {
-            type: string;
-            label: string;
-            options?: any;
-            elements: any[];
-        }
-    ];
+    elements: CategoryUiSchema_Elements[];
 }
 export const generateCategoryUiSchema = (uiSchema: any) => {
-    const basicElements: any[] = [];
-    const categoryUiSchema: CategoryUiSchema = {
-        type: 'VerticalLayout',
-        elements: [
-            {
-                type: 'Group',
-                label: 'Basic Config',
-                elements: [],
-            },
-        ],
-    };
+    const basicElements: CategoryUiSchema_Elements[] = [];
+    const advancedElements: CategoryUiSchema_Elements[] = [];
 
     if (uiSchema?.elements) {
         uiSchema.elements.forEach((element: any) => {
@@ -206,7 +231,7 @@ export const generateCategoryUiSchema = (uiSchema: any) => {
                     ? element.elements
                     : [element];
 
-                categoryUiSchema.elements.push({
+                advancedElements.push({
                     type: 'Group',
                     label: element.label,
                     options: {
@@ -226,11 +251,10 @@ export const generateCategoryUiSchema = (uiSchema: any) => {
         });
     }
 
-    if (basicElements.length > 0) {
-        categoryUiSchema.elements[0].elements = basicElements;
-    } else {
-        categoryUiSchema.elements.shift();
-    }
+    const categoryUiSchema: CategoryUiSchema = {
+        type: 'VerticalLayout',
+        elements: concat(basicElements, advancedElements),
+    };
 
     return categoryUiSchema;
 };
@@ -340,6 +364,12 @@ const generateUISchema = (
         );
     }
 
+    // Fetch all nested props and order them (if they exist)
+    const orderedProps = getOrderedProps(jsonSchema);
+
+    // Check if the current schema is one of the required props
+    const isRequired = isRequiredField(schemaName, rootSchema);
+
     if (isCombinator(jsonSchema) && isAdvancedConfig(jsonSchema)) {
         // Always create a Group for "advanced" configuration objects, so that we can collapse it and
         // see the label.
@@ -349,6 +379,11 @@ const generateUISchema = (
             elements: [createControlElement(currentRef)],
         };
         copyAdvancedOption(group, jsonSchema);
+
+        if (isRequired) {
+            addRequiredGroupOptions(group);
+        }
+
         return addTitle(group, jsonSchema, schemaName);
     } else if (isCombinator(jsonSchema)) {
         // For oneOf/allOf, we just create a control element. This is where things get weird in json
@@ -362,6 +397,10 @@ const generateUISchema = (
         }
 
         schemaElements.push(controlObject);
+
+        if (isRequired) {
+            addRequiredGroupOptions(controlObject);
+        }
 
         return controlObject;
     } else if (isOAuthConfig(jsonSchema)) {
@@ -383,6 +422,10 @@ const generateUISchema = (
         }
 
         schemaElements.push(oAuthCTAControl);
+
+        if (isRequired) {
+            addRequiredGroupOptions(oAuthCTAControl);
+        }
 
         return oAuthCTAControl;
     }
@@ -437,23 +480,12 @@ const generateUISchema = (
             // traverse properties
             const nextRef: string = `${currentRef}/properties`;
 
-            // Order the properties based on the schema
-            const orderedProps = orderBy(
-                Object.keys(jsonSchema.properties),
-                (propName: string) => {
-                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                    const prop = jsonSchema.properties![propName] as any;
-
-                    return prop.order;
-                },
-                ['asc']
-            );
-
             // Step through the ordered properties
             layout.elements = orderedProps.map((propName) => {
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 let value: JsonSchema = jsonSchema.properties![propName];
                 const ref = `${nextRef}/${encode(propName)}`;
+
                 if (value.$ref !== undefined) {
                     value = resolveSchema(
                         rootSchema as JsonSchema,
@@ -536,6 +568,7 @@ export const custom_generateDefaultUISchema = (
 ): UISchemaElement => {
     const rootGenerating = !layoutType && !prefix && !rootSchema;
     const defaultLayout = layoutType ?? 'VerticalLayout';
+    const defaultRootSchema = rootSchema ?? jsonSchema;
 
     let response;
     response = wrapInLayoutIfNecessary(
@@ -546,7 +579,7 @@ export const custom_generateDefaultUISchema = (
             '',
             defaultLayout,
             rootGenerating,
-            rootSchema ?? jsonSchema
+            defaultRootSchema
         ),
         defaultLayout
     );

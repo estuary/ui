@@ -13,6 +13,7 @@ import {
     Typography,
 } from '@mui/material';
 import { jsonFormsGroupHeaders } from 'context/Theme';
+import { ADVANCED, CONTAINS_REQUIRED_FIELDS } from 'services/jsonforms';
 
 export const CollapsibleGroupType = 'CollapsibleGroup';
 
@@ -40,9 +41,11 @@ const CollapsibleGroupRenderer = ({
         renderers,
     };
 
-    // Does this Group represent an advanced configuration section, which should be collapsed by
-    // default?
-    const expand = uischema.options?.advanced !== true;
+    const uiSchemaOptions = uischema.options ?? {};
+    const expand =
+        uiSchemaOptions[CONTAINS_REQUIRED_FIELDS] === true ||
+        uiSchemaOptions[ADVANCED] !== true ||
+        false;
 
     return (
         <Hidden xsUp={!visible}>
