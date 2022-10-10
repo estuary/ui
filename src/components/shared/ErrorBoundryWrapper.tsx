@@ -20,6 +20,7 @@ function ErrorFallback({ error }: { error: Error }): JSX.Element {
 
     return (
         <AlertBox
+            short
             severity="error"
             title={<FormattedMessage id="errorBoundry.title" />}
         >

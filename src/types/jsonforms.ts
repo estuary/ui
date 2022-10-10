@@ -8,6 +8,7 @@ export enum Options {
     format = 'format',
     oauthProvider = 'oauth_provider',
     oauthFields = 'oauth_fields',
+    oauthPathToFields = 'oauth_path_to_fields',
     multiLineSecret = 'multiLineSecret',
 }
 

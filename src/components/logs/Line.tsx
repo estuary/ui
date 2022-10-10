@@ -35,19 +35,14 @@ function LogLine({ line, lineNumber, disableSelect }: Props) {
                 },
             }}
         >
-            <Stack
-                direction="row"
-                spacing={2}
-                sx={{
-                    alignItems: 'center',
-                }}
-            >
+            <Stack direction="row" spacing={2}>
                 <Box
                     sx={{
                         color: lineNumberColor,
                         userSelect: 'none',
                         minWidth: 50,
                         textAlign: 'right',
+                        pt: 0.5,
                     }}
                 >
                     {lineNumber}

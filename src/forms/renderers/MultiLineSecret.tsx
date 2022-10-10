@@ -16,6 +16,7 @@ export const multiLineSecretTester: RankedTester = rankWith(
 
 // This is blank on purpose. For right now we can just show null settings are nothing
 const MultiLineSecretRenderer = (props: any) => {
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     const { handleChange, path, enabled } = props;
 
     const [isUploadOpen, setIsUploadOpen] = useState(false);

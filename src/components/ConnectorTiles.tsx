@@ -12,13 +12,13 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
-import ConnectorCard from 'components/connectors/Card';
+import ConnectorCard from 'components/connectors/card';
 import ConnectorToolbar from 'components/ConnectorToolbar';
 import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
 import {
+    connectorCardLogoBackground,
     semiTransparentBackground,
     semiTransparentBackgroundIntensified,
-    slate,
 } from 'context/Theme';
 import { useQuery, useSelect } from 'hooks/supabase-swr';
 import {
@@ -38,6 +38,10 @@ import {
 } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { getEmptyTableHeader, getEmptyTableMessage } from 'utils/table-utils';
+import ConnectorCardCTA from './connectors/card/CTA';
+import ConnectorCardDetails from './connectors/card/Details';
+import ConnectorCardLogo from './connectors/card/Logo';
+import ConnectorCardTitle from './connectors/card/Title';
 
 interface ConnectorTilesProps {
     protocolPreset?: EntityWithCreateWorkflow;
@@ -61,10 +65,7 @@ export const imageBackgroundSx: SxProps<Theme> = {
     alignItems: 'center',
     marginBottom: 2,
     borderRadius: 5,
-    background: (theme) =>
-        theme.palette.mode === 'dark'
-            ? 'rgba(172, 199, 220, 0.30)' // Brighter than desired to improve MySQL visibility.
-            : slate[25],
+    background: connectorCardLogoBackground,
 };
 
 function Tile({ children }: TileProps) {
@@ -75,13 +76,11 @@ function Tile({ children }: TileProps) {
                 'height': '100%',
                 'borderRadius': 5,
                 'background': (theme) =>
-                    semiTransparentBackground[theme.palette.mode],
+                    semiTransparentBackgroundIntensified[theme.palette.mode],
                 'padding': 1,
                 '&:hover': {
                     background: (theme) =>
-                        semiTransparentBackgroundIntensified[
-                            theme.palette.mode
-                        ],
+                        semiTransparentBackground[theme.palette.mode],
                 },
             }}
         >
@@ -188,45 +187,38 @@ function ConnectorTiles({
                     .map((row, index) => (
                         <ConnectorCard
                             key={`connector-tile-${index}`}
-                            imageSrc={row.image}
-                            lastUpdate={row.updated_at}
-                            title={row.title}
                             docsUrl={row.connector_tags[0].documentation_url}
-                            entity={row.connector_tags[0].protocol}
-                            ctaCallback={() => primaryCtaClick(row)}
-                            description={row.detail}
+                            logo={<ConnectorCardLogo imageSrc={row.image} />}
+                            title={<ConnectorCardTitle title={row.title} />}
+                            details={
+                                <ConnectorCardDetails
+                                    description={row.detail}
+                                    lastUpdate={row.updated_at}
+                                />
+                            }
+                            cta={
+                                <ConnectorCardCTA
+                                    ctaCallback={() => primaryCtaClick(row)}
+                                    entity={row.connector_tags[0].protocol}
+                                />
+                            }
                         />
                     ))
                     .concat(
-                        <Grid
+                        <ConnectorCard
                             key="connector-request-tile"
-                            item
-                            xs={2}
-                            md={4}
-                            lg={3}
-                            xl={2}
-                            sx={{ maxWidth: 275 }}
-                        >
-                            <Tile>
-                                <Box>
-                                    <Box sx={imageBackgroundSx}>
-                                        <AddBox sx={{ fontSize: '4rem' }} />
-                                    </Box>
-
-                                    <Typography align="center" marginBottom={1}>
-                                        <FormattedMessage id="connectorTable.data.connectorRequest" />
-                                    </Typography>
-
-                                    <Typography
-                                        component="p"
-                                        variant="caption"
-                                        marginBottom={2}
-                                        sx={{ px: 1 }}
-                                    >
-                                        <FormattedMessage id="connectors.main.message2.alt" />
-                                    </Typography>
-                                </Box>
-
+                            logo={<AddBox sx={{ fontSize: '4rem' }} />}
+                            details={
+                                <Typography
+                                    component="p"
+                                    variant="caption"
+                                    marginBottom={2}
+                                    sx={{ px: 1 }}
+                                >
+                                    <FormattedMessage id="connectors.main.message2.alt" />
+                                </Typography>
+                            }
+                            cta={
                                 <Button
                                     href={intl.formatMessage({
                                         id: 'connectors.main.message2.docPath',
@@ -237,8 +229,13 @@ function ConnectorTiles({
                                 >
                                     <FormattedMessage id="connectorTable.actionsCta.connectorRequest" />
                                 </Button>
-                            </Tile>
-                        </Grid>
+                            }
+                            title={
+                                <Typography align="center" marginBottom={1}>
+                                    <FormattedMessage id="connectorTable.data.connectorRequest" />
+                                </Typography>
+                            }
+                        />
                     )
             ) : isValidating || tableState.status === TableStatuses.LOADING ? (
                 Array(skeletonTileCount)
