@@ -116,7 +116,7 @@ const invariableStores = {
         SelectTableStoreNames.MATERIALIZATION
     ),
 
-    // ResourceConfigStore
+    // Resource Config Store
     [ResourceConfigStoreNames.GENERAL]: createResourceConfigStore(
         ResourceConfigStoreNames.GENERAL
     ),

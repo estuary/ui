@@ -1,27 +1,21 @@
 import { Button } from '@mui/material';
 import { discover } from 'api/discovers';
 import { createEntityDraft } from 'api/drafts';
-import { generateCaptureDraftSpec, updateDraftSpec } from 'api/draftSpecs';
-import { getLiveSpecsByLiveSpecId } from 'api/hydration';
 import { encryptConfig } from 'api/oauth';
 import {
     useEditorStore_editDraftId,
     useEditorStore_isSaving,
     useEditorStore_resetState,
-    useEditorStore_setId,
-    useEditorStore_setSpecs,
 } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { DraftSpecSwrMetadata_Mutate } from 'hooks/useDraftSpecs';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
     useDetailsForm_connectorImage_connectorId,
     useDetailsForm_connectorImage_id,
-    useDetailsForm_connectorImage_imagePath,
     useDetailsForm_details_entityName,
     useDetailsForm_errorsExist,
 } from 'stores/DetailsForm';
@@ -35,21 +29,14 @@ import {
     useFormStateStore_setFormState,
     useFormStateStore_updateStatus,
 } from 'stores/FormState';
-import { ENTITY } from 'types';
 
 interface Props {
     disabled: boolean;
     callFailed: Function;
     subscription: Function;
-    mutateDraftSpecs?: DraftSpecSwrMetadata_Mutate;
 }
 
-function CaptureGenerateButton({
-    disabled,
-    callFailed,
-    subscription,
-    mutateDraftSpecs,
-}: Props) {
+function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
     const [liveSpecId, initialConnectorId] = useGlobalSearchParams([
         GlobalSearchParams.LIVE_SPEC_ID,
         GlobalSearchParams.CONNECTOR_ID,
@@ -57,11 +44,9 @@ function CaptureGenerateButton({
 
     // Editor Store
     const editDraftId = useEditorStore_editDraftId();
-    const setDraftId = useEditorStore_setId();
 
     const isSaving = useEditorStore_isSaving();
 
-    const setDraftSpecs = useEditorStore_setSpecs();
     const resetEditorState = useEditorStore_resetState();
 
     // Form State Store
@@ -75,14 +60,13 @@ function CaptureGenerateButton({
     const entityName = useDetailsForm_details_entityName();
     const detailsFormsHasErrors = useDetailsForm_errorsExist();
     const imageConnectorTagId = useDetailsForm_connectorImage_id();
-    const imagePath = useDetailsForm_connectorImage_imagePath();
     const imageConnectorId = useDetailsForm_connectorImage_connectorId();
 
     // Endpoint Config Store
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
     const endpointConfigHasErrors = useEndpointConfigStore_errorsExist();
 
-    const editAssetsExist = liveSpecId && editDraftId && mutateDraftSpecs;
+    const editAssetsExist = liveSpecId && editDraftId;
 
     const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
@@ -97,68 +81,7 @@ function CaptureGenerateButton({
                 status: FormStatus.FAILED,
                 displayValidation: true,
             });
-        } else if (editAssetsExist && imageConnectorId === initialConnectorId) {
-            const liveSpecResponse = await getLiveSpecsByLiveSpecId(
-                liveSpecId,
-                ENTITY.CAPTURE
-            );
-            if (liveSpecResponse.error) {
-                return callFailed({
-                    error: {
-                        title: 'captureCreate.generate.failedErrorTitle',
-                        error: liveSpecResponse.error,
-                    },
-                });
-            }
-
-            if (liveSpecResponse.data) {
-                const draftSpec = generateCaptureDraftSpec(
-                    liveSpecResponse.data[0].spec.bindings,
-                    endpointConfigData,
-                    imagePath
-                );
-
-                const draftSpecsResponse = await updateDraftSpec(
-                    editDraftId,
-                    entityName,
-                    draftSpec
-                );
-                if (draftSpecsResponse.error) {
-                    return callFailed({
-                        error: {
-                            title: 'captureCreate.generate.failedErrorTitle',
-                            error: draftSpecsResponse.error,
-                        },
-                    });
-                }
-
-                if (draftSpecsResponse.data.length > 0) {
-                    setDraftSpecs(draftSpecsResponse.data);
-
-                    // TODO (optimization): The two setters directly below are likely superfluous with the latest iteration
-                    //   of draft specs mutation logic. Test to ensure they can be removed.
-                    setDraftId(editDraftId);
-                    updateFormStatus(FormStatus.GENERATED);
-
-                    void mutateDraftSpecs();
-                }
-            }
-
-            setDraftId(editDraftId);
-            updateFormStatus(FormStatus.GENERATED);
         } else {
-            resetEditorState();
-
-            const draftsResponse = await createEntityDraft(entityName);
-            if (draftsResponse.error) {
-                return callFailed({
-                    error: {
-                        title: 'captureCreate.generate.failedErrorTitle',
-                        error: draftsResponse.error,
-                    },
-                });
-            }
-
             const encryptedEndpointConfig = await encryptConfig(
                 imageConnectorId,
                 imageConnectorTagId,
@@ -178,11 +101,40 @@ function CaptureGenerateButton({
                 });
             }
 
+            let catalogName = entityName;
+            let draftId = editDraftId ?? '';
+
+            if (editAssetsExist && imageConnectorId === initialConnectorId) {
+                // The discovery RPC will insert a row into the draft spec-related tables for the given task with verbiage
+                // identifying the external source appended to the task name (e.g., '/source-postgres'). To limit duplication
+                // of draft spec-related data, the aforementioned external source identifier is removed from the task name
+                // prior to executing the discovery RPC.
+                const lastSlashIndex = entityName.lastIndexOf('/');
+
+                if (lastSlashIndex !== -1) {
+                    catalogName = entityName.slice(0, lastSlashIndex);
+                }
+            } else {
+                resetEditorState();
+
+                const draftsResponse = await createEntityDraft(entityName);
+                if (draftsResponse.error) {
+                    return callFailed({
+                        error: {
+                            title: 'captureCreate.generate.failedErrorTitle',
+                            error: draftsResponse.error,
+                        },
+                    });
+                }
+
+                draftId = draftsResponse.data[0].id;
+            }
+
             const discoverResponse = await discover(
-                entityName,
+                catalogName,
                 encryptedEndpointConfig.data,
                 imageConnectorTagId,
-                draftsResponse.data[0].id
+                draftId
             );
             if (discoverResponse.error) {
                 return callFailed({
@@ -192,7 +144,7 @@ function CaptureGenerateButton({
                     },
                 });
             }
-            subscription(draftsResponse.data[0].id);
+            subscription(draftId);
 
             setFormState({
                 logToken: discoverResponse.data[0].logs_token,

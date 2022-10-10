@@ -11,14 +11,10 @@ export interface DraftSpecQuery {
     expect_pub_id: string;
 }
 
-export type DraftSpecSwrMetadata_Mutate = KeyedMutator<
-    SuccessResponse<DraftSpecQuery>
->;
-
 export interface DraftSpecSwrMetadata {
     draftSpecs: DraftSpecQuery[];
     error: PostgrestError | undefined;
-    mutate: DraftSpecSwrMetadata_Mutate;
+    mutate: KeyedMutator<SuccessResponse<DraftSpecQuery>>;
     isValidating: boolean;
 }
 

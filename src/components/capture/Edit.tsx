@@ -6,6 +6,7 @@ import {
     useEditorStore_id,
     useEditorStore_pubId,
     useEditorStore_setId,
+    useEditorStore_setSpecs,
 } from 'components/editor/Store';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
@@ -18,13 +19,15 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
-import useDraftSpecs from 'hooks/useDraftSpecs';
+import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import LogRocket from 'logrocket';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import {
     DEFAULT_FILTER,
+    handleFailure,
+    handleSuccess,
     jobStatusPoller,
     JOB_STATUS_POLLER_ERROR,
     TABLES,
@@ -78,6 +81,8 @@ function CaptureEdit() {
     const editDraftId = useEditorStore_editDraftId();
 
     const pubId = useEditorStore_pubId();
+
+    const setDraftSpecs = useEditorStore_setSpecs();
 
     // Endpoint Config Store
     const resetEndpointConfigState = useEndpointConfigStore_reset();
@@ -164,10 +169,31 @@ function CaptureEdit() {
                     : authenticatedRoutes.materializations.create.fullPath
             );
         },
+    };
 
-        mutateDraftSpecs: () => {
-            mutateDraftSpecs;
-        },
+    const storeUpdatedDraftSpec = async () => {
+        // TODO (optimization | typing): Narrow the columns selected from the draft_specs_ext table.
+        //   More columns are selected than required to appease the typing of the editor store.
+        const draftSpecsResponse = await supabaseClient
+            .from(TABLES.DRAFT_SPECS_EXT)
+            .select(`catalog_name,draft_id,expect_pub_id,spec,spec_type`)
+            .eq('draft_id', editDraftId)
+            .eq('spec_type', ENTITY.CAPTURE)
+            .then(handleSuccess<DraftSpecQuery[]>, handleFailure);
+        if (draftSpecsResponse.error) {
+            return helpers.callFailed({
+                error: {
+                    title: 'captureCreate.generate.failedErrorTitle',
+                    error: draftSpecsResponse.error,
+                },
+            });
+        }
+
+        if (draftSpecsResponse.data && draftSpecsResponse.data.length > 0) {
+            setDraftSpecs(draftSpecsResponse.data);
+
+            void mutateDraftSpecs();
+        }
     };
 
     const discoversSubscription = (discoverDraftId: string) => {
@@ -186,10 +212,15 @@ function CaptureEdit() {
                     draft_id: discoverDraftId,
                 }),
             (payload: any) => {
+                void storeUpdatedDraftSpec();
+
+                void mutateDraftSpecs();
+
                 setDraftId(payload.draft_id);
                 setFormState({
                     status: FormStatus.GENERATED,
                 });
+
                 trackEvent(payload);
             },
             (payload: any) => {
@@ -223,7 +254,6 @@ function CaptureEdit() {
                                 disabled={!hasConnectors}
                                 callFailed={helpers.callFailed}
                                 subscription={discoversSubscription}
-                                mutateDraftSpecs={mutateDraftSpecs}
                             />
                         }
                         TestButton={
