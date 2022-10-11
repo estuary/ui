@@ -196,6 +196,9 @@ function CaptureEdit() {
         }
     };
 
+    // TODO (optimization): Consider whether the job status poller should be updated to support
+    //   the scenario where multiple discovers table entries are found. Should it be the query's
+    //   responsibility to ensure only the latest discovers table entry is selected by the poller?
     const discoversSubscription = (discoverDraftId: string) => {
         setDraftId(null);
 
@@ -205,12 +208,14 @@ function CaptureEdit() {
                 .select(
                     `
                     draft_id,
-                    job_status
+                    job_status,
+                    created_at
                 `
                 )
                 .match({
                     draft_id: discoverDraftId,
-                }),
+                })
+                .order('created_at', { ascending: false }),
             (payload: any) => {
                 void storeUpdatedDraftSpec();
 
