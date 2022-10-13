@@ -30,8 +30,14 @@ import {
     useLiveSpecsExtWithSpec,
 } from 'hooks/useLiveSpecsExt';
 import { isEmpty } from 'lodash';
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
+import {
+    handleFailure,
+    handleSuccess,
+    supabaseClient,
+    TABLES,
+} from 'services/supabase';
 import {
     Details,
     useDetailsForm_changed,
@@ -76,6 +82,10 @@ interface Props {
     showCollections?: boolean;
 }
 
+interface DiscoveryData {
+    draft_id: string;
+}
+
 interface InitializationHelpers {
     setDraftId: (id: EditorStoreState<DraftSpecQuery>['id']) => void;
     setEditDraftId: (
@@ -84,6 +94,55 @@ interface InitializationHelpers {
     setFormState: (data: Partial<FormState>) => void;
     callFailed: (formState: any, subscription?: RealtimeSubscription) => void;
 }
+
+const createDraftToEdit = async (
+    catalogName: string,
+    spec: any,
+    entityType: ENTITY,
+    lastPubId: string | null,
+    errorTitle: string,
+    {
+        setDraftId,
+        setEditDraftId,
+        setFormState,
+        callFailed,
+    }: InitializationHelpers
+) => {
+    const draftsResponse = await createEntityDraft(catalogName);
+
+    if (draftsResponse.error) {
+        return callFailed({
+            error: {
+                title: errorTitle,
+                error: draftsResponse.error,
+            },
+        });
+    }
+
+    const newDraftId = draftsResponse.data[0].id;
+
+    const draftSpecResponse = await createDraftSpec(
+        newDraftId,
+        catalogName,
+        spec,
+        entityType,
+        lastPubId
+    );
+
+    if (draftSpecResponse.error) {
+        return callFailed({
+            error: {
+                title: errorTitle,
+                error: draftSpecResponse.error,
+            },
+        });
+    }
+
+    setDraftId(newDraftId);
+    setEditDraftId(newDraftId);
+
+    setFormState({ status: FormStatus.GENERATED });
+};
 
 const initDraftToEdit = async (
     { catalog_name, spec }: LiveSpecsExtQueryWithSpec,
@@ -107,66 +166,60 @@ const initDraftToEdit = async (
 
     // TODO (defect): Correct this initialization logic so that a new draft
     //   is not created when the browser is refreshed.
+
     if (
         drafts.length === 0 ||
         draftSpecs.length === 0 ||
         lastPubId !== draftSpecs[0].expect_pub_id
     ) {
-        const draftsResponse = await createEntityDraft(catalog_name);
-
-        if (draftsResponse.error) {
-            return callFailed({
-                error: {
-                    title: errorTitle,
-                    error: draftsResponse.error,
-                },
-            });
-        }
-
-        const newDraftId = draftsResponse.data[0].id;
-
-        const draftSpecResponse = await createDraftSpec(
-            newDraftId,
+        void createDraftToEdit(
             catalog_name,
             spec,
             entityType,
-            lastPubId
+            lastPubId,
+            errorTitle,
+            { setDraftId, setEditDraftId, setFormState, callFailed }
         );
-
-        if (draftSpecResponse.error) {
-            return callFailed({
-                error: {
-                    title: errorTitle,
-                    error: draftSpecResponse.error,
-                },
-            });
-        }
-
-        setDraftId(newDraftId);
-        setEditDraftId(newDraftId);
-
-        setFormState({ status: FormStatus.GENERATED });
     } else {
         const existingDraftId = drafts[0].id;
 
-        const draftSpecResponse = await updateDraftSpec(
-            existingDraftId,
-            catalog_name,
-            spec,
-            lastPubId
-        );
+        const discoveryResponse = await supabaseClient
+            .from(TABLES.DISCOVERS)
+            .select(`draft_id`)
+            .match({
+                draft_id: existingDraftId,
+            })
+            .then(handleSuccess<DiscoveryData[]>, handleFailure);
 
-        if (draftSpecResponse.error) {
-            return callFailed({
-                error: {
-                    title: errorTitle,
-                    error: draftSpecResponse.error,
-                },
-            });
+        if (discoveryResponse.data && discoveryResponse.data.length > 0) {
+            const draftSpecResponse = await updateDraftSpec(
+                existingDraftId,
+                catalog_name,
+                spec,
+                lastPubId
+            );
+
+            if (draftSpecResponse.error) {
+                return callFailed({
+                    error: {
+                        title: errorTitle,
+                        error: draftSpecResponse.error,
+                    },
+                });
+            }
+
+            setDraftId(existingDraftId);
+            setEditDraftId(existingDraftId);
+        } else {
+            void createDraftToEdit(
+                catalog_name,
+                spec,
+                entityType,
+                lastPubId,
+                errorTitle,
+                { setDraftId, setEditDraftId, setFormState, callFailed }
+            );
         }
-
-        setDraftId(existingDraftId);
-        setEditDraftId(existingDraftId);
     }
 };
 
@@ -250,6 +303,11 @@ function EntityEdit({
     const { draftSpecs, isValidating: isValidatingDraftSpecs } =
         draftSpecMetadata;
 
+    const taskDraftSpec = useMemo(
+        () => draftSpecs.filter(({ spec_type }) => spec_type === entityType),
+        [draftSpecs, entityType]
+    );
+
     useEffect(() => {
         if (
             !isEmpty(initialSpec) &&
@@ -261,7 +319,7 @@ function EntityEdit({
                 initialSpec,
                 entityType,
                 drafts,
-                draftSpecs,
+                taskDraftSpec,
                 lastPubId,
                 {
                     setDraftId,
@@ -277,7 +335,7 @@ function EntityEdit({
         setFormState,
         callFailed,
         drafts,
-        draftSpecs,
+        taskDraftSpec,
         entityType,
         formStatus,
         initialSpec,
@@ -327,7 +385,7 @@ function EntityEdit({
 
             {connectorTagsError ? (
                 <Error error={connectorTagsError} />
-            ) : !editDraftId || draftSpecs.length === 0 ? null : (
+            ) : !editDraftId || taskDraftSpec.length === 0 ? null : (
                 <>
                     <Collapse in={formSubmitError !== null}>
                         {formSubmitError ? (
@@ -361,7 +419,7 @@ function EntityEdit({
                         <ErrorBoundryWrapper>
                             <EndpointConfig
                                 connectorImage={imageTag.id}
-                                draftSpecs={draftSpecs}
+                                draftSpecs={taskDraftSpec}
                                 readOnly={readOnly.endpointConfigForm}
                             />
                         </ErrorBoundryWrapper>
@@ -370,7 +428,7 @@ function EntityEdit({
                     {showCollections && hasLength(imageTag.id) ? (
                         <ErrorBoundryWrapper>
                             <CollectionConfig
-                                draftSpecs={draftSpecs}
+                                draftSpecs={taskDraftSpec}
                                 readOnly={readOnly.resourceConfigForm}
                             />
                         </ErrorBoundryWrapper>

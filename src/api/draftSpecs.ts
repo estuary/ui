@@ -17,7 +17,7 @@ interface CreateMatchData {
 
 interface UpdateMatchData {
     draft_id: string | null;
-    catalog_name: string;
+    catalog_name?: string;
     expect_pub_id?: string;
 }
 
@@ -61,6 +61,23 @@ export const updateDraftSpec = (
         TABLES.DRAFT_SPECS,
         {
             spec: draftSpec,
+        },
+        matchData
+    );
+};
+
+export const updateExpectedPubId = (
+    draftId: string | null,
+    lastPubId: string | null
+) => {
+    const matchData: UpdateMatchData = {
+        draft_id: draftId,
+    };
+
+    return updateSupabase(
+        TABLES.DRAFT_SPECS,
+        {
+            expect_pub_id: lastPubId,
         },
         matchData
     );

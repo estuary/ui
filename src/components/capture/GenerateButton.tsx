@@ -82,6 +82,20 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
                 displayValidation: true,
             });
         } else {
+            resetEditorState(!!editAssetsExist);
+
+            const draftsResponse = await createEntityDraft(entityName);
+            if (draftsResponse.error) {
+                return callFailed({
+                    error: {
+                        title: 'captureCreate.generate.failedErrorTitle',
+                        error: draftsResponse.error,
+                    },
+                });
+            }
+
+            const draftId = draftsResponse.data[0].id;
+
             const encryptedEndpointConfig = await encryptConfig(
                 imageConnectorId,
                 imageConnectorTagId,
@@ -102,7 +116,6 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
             }
 
             let catalogName = entityName;
-            let draftId = editDraftId ?? '';
 
             if (editAssetsExist && imageConnectorId === initialConnectorId) {
                 // The discovery RPC will insert a row into the draft spec-related tables for the given task with verbiage
@@ -114,20 +127,6 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
                 if (lastSlashIndex !== -1) {
                     catalogName = entityName.slice(0, lastSlashIndex);
                 }
-            } else {
-                resetEditorState();
-
-                const draftsResponse = await createEntityDraft(entityName);
-                if (draftsResponse.error) {
-                    return callFailed({
-                        error: {
-                            title: 'captureCreate.generate.failedErrorTitle',
-                            error: draftsResponse.error,
-                        },
-                    });
-                }
-
-                draftId = draftsResponse.data[0].id;
             }
 
             const discoverResponse = await discover(

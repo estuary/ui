@@ -1,10 +1,12 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
+import { updateExpectedPubId } from 'api/draftSpecs';
 import { authenticatedRoutes } from 'app/Authenticated';
 import CaptureGenerateButton from 'components/capture/GenerateButton';
 import {
     useEditorStore_editDraftId,
     useEditorStore_id,
     useEditorStore_pubId,
+    useEditorStore_setEditDraftId,
     useEditorStore_setId,
     useEditorStore_setSpecs,
 } from 'components/editor/Store';
@@ -79,6 +81,7 @@ function CaptureEdit() {
     const setDraftId = useEditorStore_setId();
 
     const editDraftId = useEditorStore_editDraftId();
+    const setEditDraftId = useEditorStore_setEditDraftId();
 
     const pubId = useEditorStore_pubId();
 
@@ -171,25 +174,42 @@ function CaptureEdit() {
         },
     };
 
-    const storeUpdatedDraftSpec = async () => {
+    const storeUpdatedDraftSpec = async (newDraftId: string) => {
         // TODO (optimization | typing): Narrow the columns selected from the draft_specs_ext table.
         //   More columns are selected than required to appease the typing of the editor store.
         const draftSpecsResponse = await supabaseClient
             .from(TABLES.DRAFT_SPECS_EXT)
             .select(`catalog_name,draft_id,expect_pub_id,spec,spec_type`)
-            .eq('draft_id', editDraftId)
+            .eq('draft_id', newDraftId)
             .eq('spec_type', ENTITY.CAPTURE)
             .then(handleSuccess<DraftSpecQuery[]>, handleFailure);
+
         if (draftSpecsResponse.error) {
             return helpers.callFailed({
                 error: {
-                    title: 'captureCreate.generate.failedErrorTitle',
+                    title: 'captureEdit.generate.failedErrorTitle',
                     error: draftSpecsResponse.error,
                 },
             });
         }
 
         if (draftSpecsResponse.data && draftSpecsResponse.data.length > 0) {
+            const { draft_id } = draftSpecsResponse.data[0];
+
+            const updatedDraftSpecResponse = await updateExpectedPubId(
+                draft_id,
+                lastPubId
+            );
+
+            if (updatedDraftSpecResponse.error) {
+                return helpers.callFailed({
+                    error: {
+                        title: 'captureEdit.generate.failedErrorTitle',
+                        error: updatedDraftSpecResponse.error,
+                    },
+                });
+            }
+
             setDraftSpecs(draftSpecsResponse.data);
 
             void mutateDraftSpecs();
@@ -217,11 +237,13 @@ function CaptureEdit() {
                 })
                 .order('created_at', { ascending: false }),
             (payload: any) => {
-                void storeUpdatedDraftSpec();
+                setDraftId(payload.draft_id);
+                setEditDraftId(payload.draft_id);
+
+                void storeUpdatedDraftSpec(payload.draft_id);
 
                 void mutateDraftSpecs();
 
-                setDraftId(payload.draft_id);
                 setFormState({
                     status: FormStatus.GENERATED,
                 });
