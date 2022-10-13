@@ -114,8 +114,6 @@ function EntityCreate({
     if (showConnectorTiles === null) return null;
     return (
         <>
-            {toolbar}
-
             <Box sx={{ maxHeight: 200, overflowY: 'auto', mb: 2 }}>
                 {errorSummary}
             </Box>
@@ -136,6 +134,8 @@ function EntityCreate({
                     <Error error={connectorTagsError} />
                 ) : (
                     <>
+                        {toolbar}
+
                         <Collapse in={formSubmitError !== null} unmountOnExit>
                             {formSubmitError ? (
                                 <EntityError
