@@ -3,11 +3,11 @@ import { discover } from 'api/discovers';
 import { createEntityDraft } from 'api/drafts';
 import { encryptConfig } from 'api/oauth';
 import {
-    useEditorStore_editDraftId,
     useEditorStore_isSaving,
     useEditorStore_resetState,
 } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
+import { useEntityWorkflow } from 'context/Workflow';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -20,6 +20,7 @@ import {
     useDetailsForm_errorsExist,
 } from 'stores/DetailsForm';
 import {
+    useEndpointConfigStore_changed,
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_errorsExist,
 } from 'stores/EndpointConfig';
@@ -37,14 +38,14 @@ interface Props {
 }
 
 function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
-    const [liveSpecId, initialConnectorId] = useGlobalSearchParams([
-        GlobalSearchParams.LIVE_SPEC_ID,
-        GlobalSearchParams.CONNECTOR_ID,
-    ]);
+    const initialConnectorId = useGlobalSearchParams(
+        GlobalSearchParams.CONNECTOR_ID
+    );
+
+    const workflow = useEntityWorkflow();
+    const editWorkflow = workflow === 'capture_edit';
 
     // Editor Store
-    const editDraftId = useEditorStore_editDraftId();
-
     const isSaving = useEditorStore_isSaving();
 
     const resetEditorState = useEditorStore_resetState();
@@ -64,9 +65,13 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
 
     // Endpoint Config Store
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
-    const endpointConfigHasErrors = useEndpointConfigStore_errorsExist();
+    const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
 
-    const editAssetsExist = liveSpecId && editDraftId;
+    const endpointConfigChanged = useEndpointConfigStore_changed();
+
+    const endpointConfigErrorFlag = editWorkflow
+        ? endpointConfigChanged() && endpointConfigErrorsExist
+        : endpointConfigErrorsExist;
 
     const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
@@ -75,14 +80,14 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
         if (
             isEmpty(endpointConfigData) ||
             detailsFormsHasErrors ||
-            endpointConfigHasErrors
+            endpointConfigErrorFlag
         ) {
             return setFormState({
                 status: FormStatus.FAILED,
                 displayValidation: true,
             });
         } else {
-            resetEditorState(!!editAssetsExist);
+            resetEditorState(editWorkflow);
 
             const draftsResponse = await createEntityDraft(entityName);
             if (draftsResponse.error) {
@@ -117,7 +122,7 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
 
             let catalogName = entityName;
 
-            if (editAssetsExist && imageConnectorId === initialConnectorId) {
+            if (editWorkflow && imageConnectorId === initialConnectorId) {
                 // The discovery RPC will insert a row into the draft spec-related tables for the given task with verbiage
                 // identifying the external source appended to the task name (e.g., '/source-postgres'). To limit duplication
                 // of draft spec-related data, the aforementioned external source identifier is removed from the task name

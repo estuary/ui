@@ -34,6 +34,9 @@ export interface EndpointConfigState {
     hydrationErrorsExist: boolean;
     setHydrationErrorsExist: (value: boolean) => void;
 
+    publishedEndpointConfig: JsonFormsData;
+    setPublishedEndpointConfig: (endpointConfig: JsonFormsData) => void;
+
     // Server-Form Alignment
     serverUpdateRequired: boolean;
     setServerUpdateRequired: (value: boolean) => void;
@@ -77,6 +80,7 @@ const getInitialStateData = (): Pick<
     | 'endpointSchema'
     | 'hydrated'
     | 'hydrationErrorsExist'
+    | 'publishedEndpointConfig'
     | 'serverUpdateRequired'
 > => ({
     endpointConfig: { data: {}, errors: [] },
@@ -85,6 +89,7 @@ const getInitialStateData = (): Pick<
     endpointSchema: {},
     hydrated: false,
     hydrationErrorsExist: false,
+    publishedEndpointConfig: { data: {}, errors: [] },
     serverUpdateRequired: false,
 });
 
@@ -127,9 +132,13 @@ const hydrateState = async (
         }
 
         if (data && data.length > 0) {
-            const { setEndpointConfig } = get();
+            const { setEndpointConfig, setPublishedEndpointConfig } = get();
 
             setEndpointConfig({ data: data[0].spec.endpoint.connector.config });
+
+            setPublishedEndpointConfig({
+                data: data[0].spec.endpoint.connector.config,
+            });
         }
     }
 };
@@ -186,6 +195,20 @@ const getInitialState = (
         );
     },
 
+    setPublishedEndpointConfig: (endpointConfig) => {
+        set(
+            produce((state: EndpointConfigState) => {
+                const { endpointSchema } = get();
+
+                state.publishedEndpointConfig = isEmpty(endpointConfig)
+                    ? createJSONFormDefaults(endpointSchema)
+                    : endpointConfig;
+            }),
+            false,
+            'Published Endpoint Config Set'
+        );
+    },
+
     setServerUpdateRequired: (value) => {
         set(
             produce((state: EndpointConfigState) => {
@@ -197,10 +220,9 @@ const getInitialState = (
     },
 
     stateChanged: () => {
-        const { endpointConfig } = get();
-        const { endpointConfig: initialEndpointConfig } = getInitialStateData();
+        const { endpointConfig, publishedEndpointConfig } = get();
 
-        return !isEqual(endpointConfig.data, initialEndpointConfig.data);
+        return !isEqual(endpointConfig.data, publishedEndpointConfig.data);
     },
 
     resetState: () => {
