@@ -39,7 +39,10 @@ import {
     useDetailsForm_errorsExist,
     useDetailsForm_resetState,
 } from 'stores/DetailsForm';
-import { useEndpointConfigStore_reset } from 'stores/EndpointConfig';
+import {
+    useEndpointConfigStore_reset,
+    useEndpointConfigStore_setEndpointConfig,
+} from 'stores/EndpointConfig';
 import {
     FormStatus,
     useFormStateStore_exitWhenLogsClose,
@@ -88,6 +91,8 @@ function CaptureEdit() {
     const setDraftSpecs = useEditorStore_setSpecs();
 
     // Endpoint Config Store
+    const setEndpointConfig = useEndpointConfigStore_setEndpointConfig();
+
     const resetEndpointConfigState = useEndpointConfigStore_reset();
 
     // Form State Store
@@ -213,12 +218,13 @@ function CaptureEdit() {
             setDraftSpecs(draftSpecsResponse.data);
 
             void mutateDraftSpecs();
+
+            setEndpointConfig({
+                data: draftSpecsResponse.data[0].spec.endpoint.connector.config,
+            });
         }
     };
 
-    // TODO (optimization): Consider whether the job status poller should be updated to support
-    //   the scenario where multiple discovers table entries are found. Should it be the query's
-    //   responsibility to ensure only the latest discovers table entry is selected by the poller?
     const discoversSubscription = (discoverDraftId: string) => {
         setDraftId(null);
 

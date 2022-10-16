@@ -76,6 +76,11 @@ function EndpointConfig({
 
     const endpointConfigUpdated = useMemo(() => {
         // TODO (optimization): Evaluate the performance of a hash comparator function.
+        console.log('Shared edit ENDPOINT CONFIG');
+        console.log(endpointConfig);
+        console.log('DRAFT SPECS');
+        console.log(draftSpecs);
+
         return draftSpecs.length > 0
             ? !isEqual(
                   endpointConfig,
