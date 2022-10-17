@@ -128,7 +128,9 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
 
                 onFailure({
                     error: {
-                        title: `${messagePrefix}.save.failedErrorTitle`,
+                        title: dryRun
+                            ? `${messagePrefix}.test.failedErrorTitle`
+                            : `${messagePrefix}.save.failedErrorTitle`,
                     },
                 });
             }

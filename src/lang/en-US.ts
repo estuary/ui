@@ -573,6 +573,8 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreate.createNotification.desc': `Your materialization is published and ready to be used.`,
 
     'materializationCreate.test.waitMessage': `Please wait while we test your materialization.`,
+    'materializationCreate.test.failedErrorTitle': `Materialization Test Failed`,
+
     'materializationCreate.testNotification.title': `Test Successful`,
     'materializationCreate.testNotification.desc': `Your materialization succeeded in a dry run and can be saved.`,
 };
@@ -608,6 +610,8 @@ const MaterializationEdit: ResolvedIntlConfig['messages'] = {
     'materializationEdit.createNotification.desc': `Your edited materialization is published and ready to be used.`,
 
     'materializationEdit.test.waitMessage': `Please wait while we test your materialization.`,
+    'materializationEdit.test.failedErrorTitle': `Materialization Test Failed`,
+
     'materializationEdit.testNotification.title': `Test Successful`,
     'materializationEdit.testNotification.desc': `Your materialization succeeded in a dry run and can be saved.`,
 };
