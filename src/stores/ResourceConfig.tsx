@@ -207,13 +207,15 @@ const getInitialState = (
     setResourceConfig: (key, value) => {
         set(
             produce((state: ResourceConfigState) => {
-                const { resourceSchema } = get();
+                const { resourceSchema, collections } = get();
 
                 if (typeof key === 'string') {
                     state.resourceConfig[key] =
                         value ?? createJSONFormDefaults(resourceSchema);
 
                     populateResourceConfigErrors(state.resourceConfig, state);
+
+                    state.collectionErrorsExist = isEmpty(collections);
                 } else {
                     const newResourceKeyList = key;
                     const [removedCollections, newCollections] = whatChanged(
@@ -250,6 +252,7 @@ const getInitialState = (
 
                     // Update the collections with the new array
                     state.collections = newResourceKeyList;
+                    state.collectionErrorsExist = isEmpty(newResourceKeyList);
 
                     // See if the recently updated configs have errors
                     populateResourceConfigErrors(newResourceConfig, state);
