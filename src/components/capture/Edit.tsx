@@ -219,6 +219,11 @@ function CaptureEdit() {
 
             void mutateDraftSpecs();
 
+            // An encrypted endpoint config contains a sops object that consists of data that is subject
+            // to change between discoveries. While the "core" endpoint config data in the UI store is
+            // updated by the related form, the line below is responsible for updating the sops object.
+            // To avoid the unlikely misalignment of the endpoint config record in the UI and the
+            // draft_specs_ext table, a wholesale replacement of the UI endpoint config record is performed.
             setEndpointConfig({
                 data: draftSpecsResponse.data[0].spec.endpoint.connector.config,
             });

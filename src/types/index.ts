@@ -9,6 +9,8 @@ export enum MessagePrefixes {
     MATERIALIZATION_EDIT = 'materializationEdit',
 }
 
+// TODO (typing): The type annotation for the data property of the JsonFormsData object
+//   mirrors the Schema interface. Consider using the Schema interface to type this property.
 export interface JsonFormsData extends Pick<JsonFormsCore, 'data' | 'errors'> {
     data: {
         [key: string]: any;
