@@ -1,4 +1,5 @@
 import { encryptConfig } from 'api/oauth';
+import { isPlainObject } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
 import { JsonFormsData, Schema } from 'types';
 
@@ -10,36 +11,47 @@ type SupabaseInvokeResponse =
 
 const sopsKey = 'sops';
 
+const copyEncryptedEndpointConfig = (
+    endpointConfigTemplate: { [key: string]: any },
+    encryptedEndpointConfig: { [key: string]: any },
+    encryptedSuffix: string
+) => {
+    Object.entries(encryptedEndpointConfig).forEach(([key, value]) => {
+        let truncatedKey = '';
+        const encryptedSuffixIndex = key.lastIndexOf(encryptedSuffix);
+
+        if (encryptedSuffixIndex !== -1) {
+            truncatedKey = key.slice(0, encryptedSuffixIndex);
+        }
+
+        if (isPlainObject(value)) {
+            copyEncryptedEndpointConfig(
+                endpointConfigTemplate[truncatedKey || key],
+                encryptedEndpointConfig[key],
+                encryptedSuffix
+            );
+        } else {
+            endpointConfigTemplate[truncatedKey || key] = value;
+        }
+    });
+};
+
 const parseEncryptedEndpointConfig = (
     endpointConfig: { [key: string]: any },
     endpointSchema: Schema
 ): JsonFormsData => {
     const {
         sops: { encrypted_suffix },
-        ...rawEndpointConfig
+        ...encryptedEndpointConfig
     } = endpointConfig;
 
     const endpointConfigTemplate = createJSONFormDefaults(endpointSchema);
 
-    console.log('ENDPOINT TEMPLATE');
-    console.log(endpointConfigTemplate);
-
-    // TODO (defect): Account for nested objects.
-    Object.entries(rawEndpointConfig).forEach(([key, value]) => {
-        let truncatedKey = '';
-        const encryptedSuffixIndex = key.lastIndexOf(encrypted_suffix);
-
-        if (encryptedSuffixIndex !== -1) {
-            console.log('Sops encrypted key:', key);
-
-            truncatedKey = key.slice(0, encryptedSuffixIndex);
-        }
-
-        endpointConfigTemplate.data[truncatedKey || key] = value;
-    });
-
-    console.log('ENDPOINT PARSED');
-    console.log(endpointConfigTemplate);
+    copyEncryptedEndpointConfig(
+        endpointConfigTemplate.data,
+        encryptedEndpointConfig,
+        encrypted_suffix
+    );
 
     return endpointConfigTemplate;
 };
