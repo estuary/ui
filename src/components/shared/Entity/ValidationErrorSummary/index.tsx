@@ -64,7 +64,6 @@ function ValidationErrorSummary({
                     <FormattedMessage
                         id={headerMessageId ?? defaultHeaderMessageId}
                     />
-                    s
                 </AlertTitle>
 
                 {ErrorComponent === false ? null : ErrorComponent ? (
