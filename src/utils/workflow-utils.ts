@@ -2,7 +2,8 @@ import { encryptConfig } from 'api/oauth';
 import { createJSONFormDefaults } from 'services/ajv';
 import { JsonFormsData, Schema } from 'types';
 
-// TODO (typing):
+// TODO (typing): Consider adding a type annotation for the promise returned by
+//   the invokeSupabase() function (i.e., src/services/supabase.ts).
 type SupabaseInvokeResponse =
     | { data: null; error: Error }
     | { data: any; error: null };
