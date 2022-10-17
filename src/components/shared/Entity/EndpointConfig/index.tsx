@@ -64,7 +64,7 @@ function EndpointConfig({
                 connectorTag.endpoint_spec_schema as unknown as Schema;
 
             setEndpointSchema(schema);
-            setEndpointConfig(createJSONFormDefaults(schema));
+            setEndpointConfig(createJSONFormDefaults(schema), workflow);
         }
     }, [
         setEndpointConfig,
@@ -72,6 +72,7 @@ function EndpointConfig({
         connectorId,
         connectorTag?.connector_id,
         connectorTag?.endpoint_spec_schema,
+        workflow,
     ]);
 
     const endpointConfigUpdated = useMemo(() => {
@@ -86,9 +87,14 @@ function EndpointConfig({
 
     useEffect(() => {
         if (editWorkflow) {
-            setServerUpdateRequired(endpointConfigUpdated);
+            setServerUpdateRequired(endpointConfigUpdated, workflow);
         }
-    }, [setServerUpdateRequired, editWorkflow, endpointConfigUpdated]);
+    }, [
+        setServerUpdateRequired,
+        editWorkflow,
+        endpointConfigUpdated,
+        workflow,
+    ]);
 
     const forceClose = !editWorkflow && draftId !== null;
 
@@ -116,7 +122,7 @@ function EndpointConfig({
                     </Box>
                 ) : null}
 
-                <EndpointConfigForm readOnly={readOnly} />
+                <EndpointConfigForm readOnly={readOnly} workflow={workflow} />
             </WrapperWithHeader>
         );
     } else {

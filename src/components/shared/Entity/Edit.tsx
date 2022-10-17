@@ -46,6 +46,7 @@ import {
 } from 'stores/DetailsForm';
 import {
     useEndpointConfigStore_changed,
+    useEndpointConfig_hydrated,
     useEndpointConfig_serverUpdateRequired,
 } from 'stores/EndpointConfig';
 import {
@@ -58,7 +59,10 @@ import {
     useFormStateStore_setFormState,
     useFormStateStore_status,
 } from 'stores/FormState';
-import { useResourceConfig_serverUpdateRequired } from 'stores/ResourceConfig';
+import {
+    useResourceConfig_hydrated,
+    useResourceConfig_serverUpdateRequired,
+} from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import AlertBox from '../AlertBox';
@@ -279,6 +283,7 @@ function EntityEdit({
     const setEditDraftId = useEditorStore_setEditDraftId();
 
     // Endpoint Config Store
+    const endpointConfigStoreHydrated = useEndpointConfig_hydrated();
     const endpointConfigChanged = useEndpointConfigStore_changed();
     const endpointConfigServerUpdateRequired =
         useEndpointConfig_serverUpdateRequired();
@@ -297,6 +302,7 @@ function EntityEdit({
     const setFormState = useFormStateStore_setFormState();
 
     // Resource Config Store
+    const resourceConfigStoreHydrated = useResourceConfig_hydrated();
     const resourceConfigServerUpdateRequired =
         useResourceConfig_serverUpdateRequired();
 
@@ -377,6 +383,10 @@ function EntityEdit({
 
     useUnsavedChangesPrompt(!exitWhenLogsClose && promptDataLoss, resetState);
 
+    const storeHydrationIncomplete =
+        !endpointConfigStoreHydrated ||
+        (showCollections && !resourceConfigStoreHydrated);
+
     return (
         <>
             {toolbar}
@@ -385,7 +395,9 @@ function EntityEdit({
 
             {connectorTagsError ? (
                 <Error error={connectorTagsError} />
-            ) : !editDraftId || taskDraftSpec.length === 0 ? null : (
+            ) : !editDraftId ||
+              taskDraftSpec.length === 0 ||
+              storeHydrationIncomplete ? null : (
                 <>
                     <Collapse in={formSubmitError !== null}>
                         {formSubmitError ? (

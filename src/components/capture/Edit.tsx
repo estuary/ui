@@ -6,6 +6,7 @@ import {
     useEditorStore_editDraftId,
     useEditorStore_id,
     useEditorStore_pubId,
+    useEditorStore_resetState,
     useEditorStore_setEditDraftId,
     useEditorStore_setId,
     useEditorStore_setSpecs,
@@ -90,6 +91,8 @@ function CaptureEdit() {
 
     const setDraftSpecs = useEditorStore_setSpecs();
 
+    const resetEditorStore = useEditorStore_resetState();
+
     // Endpoint Config Store
     const setEndpointConfig = useEndpointConfigStore_setEndpointConfig();
 
@@ -115,6 +118,7 @@ function CaptureEdit() {
         resetDetailsForm();
         resetEndpointConfigState();
         resetFormState();
+        resetEditorStore();
     };
 
     const helpers = {
@@ -224,9 +228,13 @@ function CaptureEdit() {
             // updated by the related form, the line below is responsible for updating the sops object.
             // To avoid the unlikely misalignment of the endpoint config record in the UI and the
             // draft_specs_ext table, a wholesale replacement of the UI endpoint config record is performed.
-            setEndpointConfig({
-                data: draftSpecsResponse.data[0].spec.endpoint.connector.config,
-            });
+            setEndpointConfig(
+                {
+                    data: draftSpecsResponse.data[0].spec.endpoint.connector
+                        .config,
+                },
+                'capture_edit'
+            );
         }
     };
 

@@ -9,11 +9,11 @@ interface Props {
 }
 
 function EndpointConfigHeader({ docsPath }: Props) {
-    const endpointConfigHasErrors = useEndpointConfigStore_errorsExist();
+    const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
 
     return (
         <>
-            {endpointConfigHasErrors ? (
+            {endpointConfigErrorsExist ? (
                 <ErrorOutlineIcon color="error" sx={{ pr: 1 }} />
             ) : null}
 

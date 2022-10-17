@@ -8,6 +8,8 @@ type SupabaseInvokeResponse =
     | { data: null; error: Error }
     | { data: any; error: null };
 
+const sopsKey = 'sops';
+
 const parseEncryptedEndpointConfig = (
     endpointConfig: { [key: string]: any },
     endpointSchema: Schema
@@ -22,6 +24,7 @@ const parseEncryptedEndpointConfig = (
     console.log('ENDPOINT TEMPLATE');
     console.log(endpointConfigTemplate);
 
+    // TODO (defect): Account for nested objects.
     Object.entries(rawEndpointConfig).forEach(([key, value]) => {
         let truncatedKey = '';
         const encryptedSuffixIndex = key.lastIndexOf(encrypted_suffix);
@@ -50,7 +53,7 @@ export async function encryptEndpointConfig(
     callFailed: Function
 ): Promise<SupabaseInvokeResponse> {
     const selectedEndpointConfig =
-        serverUpdateRequired && Object.hasOwn(endpointConfig, 'sops')
+        serverUpdateRequired && Object.hasOwn(endpointConfig, sopsKey)
             ? parseEncryptedEndpointConfig(endpointConfig, endpointSchema).data
             : endpointConfig;
 
@@ -63,7 +66,7 @@ export async function encryptEndpointConfig(
         },
     };
 
-    if (Object.hasOwn(selectedEndpointConfig, 'sops')) {
+    if (Object.hasOwn(selectedEndpointConfig, sopsKey)) {
         encryptedEndpointConfig = { data: endpointConfig, error: null };
     } else {
         encryptedEndpointConfig = await encryptConfig(

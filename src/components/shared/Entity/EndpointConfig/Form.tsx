@@ -20,14 +20,16 @@ import {
     useFormStateStore_displayValidation,
     useFormStateStore_isActive,
 } from 'stores/FormState';
+import { EntityWorkflow } from 'types';
 
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
 
 interface Props {
     readOnly: boolean;
+    workflow: EntityWorkflow | null;
 }
 
-function EndpointConfigForm({ readOnly }: Props) {
+function EndpointConfigForm({ readOnly, workflow }: Props) {
     // Endpoint Config Store
     const endpointConfig = useEndpointConfigStore_endpointConfig_data();
     const setEndpointConfig = useEndpointConfigStore_setEndpointConfig();
@@ -76,7 +78,9 @@ function EndpointConfigForm({ readOnly }: Props) {
                     config={defaultOptions}
                     readonly={readOnly || isActive}
                     validationMode={showValidationVal}
-                    onChange={setEndpointConfig}
+                    onChange={(formData) =>
+                        setEndpointConfig(formData, workflow)
+                    }
                     ajv={setDefaultsValidator}
                 />
             </Box>

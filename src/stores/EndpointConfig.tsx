@@ -11,7 +11,13 @@ import {
     useContext,
 } from 'react';
 import { createJSONFormDefaults } from 'services/ajv';
-import { ENTITY, EntityWithCreateWorkflow, JsonFormsData, Schema } from 'types';
+import {
+    ENTITY,
+    EntityWithCreateWorkflow,
+    EntityWorkflow,
+    JsonFormsData,
+    Schema,
+} from 'types';
 import useConstant from 'use-constant';
 import { devtoolsOptions } from 'utils/store-utils';
 import { createStore, StoreApi, useStore } from 'zustand';
@@ -19,7 +25,10 @@ import { devtools, NamedSet } from 'zustand/middleware';
 
 export interface EndpointConfigState {
     endpointConfig: JsonFormsData;
-    setEndpointConfig: (endpointConfig: JsonFormsData) => void;
+    setEndpointConfig: (
+        endpointConfig: JsonFormsData,
+        workflow: EntityWorkflow | null
+    ) => void;
 
     endpointConfigErrorsExist: boolean;
     endpointConfigErrors: { message: string | undefined }[];
@@ -39,7 +48,10 @@ export interface EndpointConfigState {
 
     // Server-Form Alignment
     serverUpdateRequired: boolean;
-    setServerUpdateRequired: (value: boolean) => void;
+    setServerUpdateRequired: (
+        value: boolean,
+        workflow: EntityWorkflow | null
+    ) => void;
 
     // Misc.
     stateChanged: () => boolean;
@@ -61,7 +73,8 @@ const filterErrors = (list: JsonFormsData['errors']): (string | undefined)[] =>
 
 const populateEndpointConfigErrors = (
     endpointConfig: JsonFormsData,
-    state: EndpointConfigState
+    state: EndpointConfigState,
+    workflow: EntityWorkflow | null
 ): void => {
     const endpointConfigErrors = filterErrors(fetchErrors(endpointConfig));
 
@@ -69,7 +82,13 @@ const populateEndpointConfigErrors = (
         message,
     }));
 
-    state.endpointConfigErrorsExist = !isEmpty(endpointConfigErrors);
+    const editWorkflow =
+        workflow === 'capture_edit' || workflow === 'materialization_edit';
+
+    state.endpointConfigErrorsExist =
+        editWorkflow && !state.serverUpdateRequired
+            ? false
+            : !isEmpty(endpointConfigErrors);
 };
 
 const getInitialStateData = (): Pick<
@@ -95,7 +114,8 @@ const getInitialStateData = (): Pick<
 
 const hydrateState = async (
     get: StoreApi<EndpointConfigState>['getState'],
-    entityType: EntityWithCreateWorkflow
+    entityType: EntityWithCreateWorkflow,
+    workflow: EntityWorkflow
 ): Promise<void> => {
     const searchParams = new URLSearchParams(window.location.search);
     const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
@@ -134,7 +154,10 @@ const hydrateState = async (
         if (data && data.length > 0) {
             const { setEndpointConfig, setPublishedEndpointConfig } = get();
 
-            setEndpointConfig({ data: data[0].spec.endpoint.connector.config });
+            setEndpointConfig(
+                { data: data[0].spec.endpoint.connector.config },
+                workflow
+            );
 
             setPublishedEndpointConfig({
                 data: data[0].spec.endpoint.connector.config,
@@ -149,16 +172,18 @@ const getInitialState = (
 ): EndpointConfigState => ({
     ...getInitialStateData(),
 
-    setEndpointConfig: (endpointConfig) => {
+    // TODO (optimization): Remove the workflow input argument for this action once the
+    //   create workflows have logic in place to set the serverUpdateRequired state property.
+    setEndpointConfig: (endpointConfig, workflow) => {
         set(
-            produce((state) => {
+            produce((state: EndpointConfigState) => {
                 const { endpointSchema } = get();
 
                 state.endpointConfig = isEmpty(endpointConfig)
                     ? createJSONFormDefaults(endpointSchema)
                     : endpointConfig;
 
-                populateEndpointConfigErrors(endpointConfig, state);
+                populateEndpointConfigErrors(endpointConfig, state, workflow);
             }),
             false,
             'Endpoint Config Changed'
@@ -209,10 +234,16 @@ const getInitialState = (
         );
     },
 
-    setServerUpdateRequired: (value) => {
+    // TODO (optimization): Remove the workflow input argument for this action once the
+    //   create workflows have logic in place to set the serverUpdateRequired state property.
+    setServerUpdateRequired: (updateRequired, workflow) => {
         set(
             produce((state: EndpointConfigState) => {
-                state.serverUpdateRequired = value;
+                const { endpointConfig } = get();
+
+                state.serverUpdateRequired = updateRequired;
+
+                populateEndpointConfigErrors(endpointConfig, state, workflow);
             }),
             false,
             'Server Update Required Flag Changed'
@@ -233,7 +264,8 @@ const getInitialState = (
 // TODO (research): Investigate the differences between createStore() and create().
 export const createHydratedEndpointConfigStore = (
     key: EndpointConfigStoreNames,
-    entityType: ENTITY
+    entityType: ENTITY,
+    workflow: EntityWorkflow
 ) => {
     return createStore<EndpointConfigState>()(
         devtools((set, get) => {
@@ -243,7 +275,7 @@ export const createHydratedEndpointConfigStore = (
                 entityType === ENTITY.CAPTURE ||
                 entityType === ENTITY.MATERIALIZATION
             ) {
-                hydrateState(get, entityType).then(
+                hydrateState(get, entityType, workflow).then(
                     () => {
                         const { setHydrated } = get();
 
@@ -285,7 +317,8 @@ export const EndpointConfigProvider = ({
         invariableStore[EndpointConfigStoreNames.GENERAL] = workflow
             ? createHydratedEndpointConfigStore(
                   EndpointConfigStoreNames.GENERAL,
-                  entityType
+                  entityType,
+                  workflow
               )
             : {};
 

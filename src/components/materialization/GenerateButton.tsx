@@ -38,6 +38,8 @@ interface Props {
     callFailed: Function;
 }
 
+// TODO (optimization): Combine the generate button logic for materialization creation and edit.
+
 function MaterializeGenerateButton({ disabled, callFailed }: Props) {
     // Details Form Store
     const entityName = useDetailsForm_details_entityName();

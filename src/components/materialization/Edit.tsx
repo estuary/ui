@@ -3,6 +3,7 @@ import { authenticatedRoutes } from 'app/Authenticated';
 import {
     useEditorStore_editDraftId,
     useEditorStore_id,
+    useEditorStore_resetState,
     useEditorStore_setId,
 } from 'components/editor/Store';
 import MaterializeGenerateButton from 'components/materialization/EditGenerateButton';
@@ -60,6 +61,7 @@ function MaterializationEdit() {
     const setDraftId = useEditorStore_setId();
 
     const editDraftId = useEditorStore_editDraftId();
+    const resetEditorStore = useEditorStore_resetState();
 
     // Endpoint Config Store
     const resetEndpointConfigState = useEndpointConfigStore_reset();
@@ -89,6 +91,7 @@ function MaterializationEdit() {
         resetEndpointConfigState();
         resetDetailsFormState();
         resetResourceConfigState();
+        resetEditorStore();
     };
 
     const helpers = {

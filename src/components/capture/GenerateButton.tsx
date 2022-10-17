@@ -31,7 +31,7 @@ import {
     useFormStateStore_setFormState,
     useFormStateStore_updateStatus,
 } from 'stores/FormState';
-import { encryptEndpointConfig } from 'utils/workflow-utils';
+import { encryptEndpointConfig } from 'utils/sops-utils';
 
 interface Props {
     disabled: boolean;
