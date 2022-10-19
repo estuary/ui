@@ -51,8 +51,6 @@ export const parseEncryptedEndpointConfig = (
 
     const endpointConfigTemplate = createJSONFormDefaults(endpointSchema);
 
-    console.log(endpointConfigTemplate);
-
     copyEncryptedEndpointConfig(
         endpointConfigTemplate.data,
         encryptedEndpointConfig,
@@ -89,8 +87,6 @@ export async function encryptEndpointConfig(
                 'An object initializing a the response of a Supabase function was not reassigned.',
         },
     };
-
-    console.log(selectedEndpointConfig);
 
     if (Object.hasOwn(selectedEndpointConfig, sopsKey)) {
         encryptedEndpointConfig = { data: endpointConfig, error: null };
