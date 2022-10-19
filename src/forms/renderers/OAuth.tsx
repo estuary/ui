@@ -10,6 +10,7 @@ import { useMemo, useState } from 'react';
 import GoogleButton from 'react-google-button';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useDetailsForm_connectorImage_connectorId } from 'stores/DetailsForm';
+import { useEndpointConfigStore_endpointConfig_data } from 'stores/EndpointConfig';
 import { Options } from 'types/jsonforms';
 import { hasLength } from 'utils/misc-utils';
 import { getDiscriminator } from './Overrides/material/complex/MaterialOneOfRenderer_Discriminator';
@@ -36,8 +37,8 @@ const OAuthproviderRenderer = ({
     const { options } = uischema;
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    // Feels jank - but may it is fine. Feels weird to have a JSONForms
-    //      renderer dependent on a Zustand store
+    // Fetch what we need from stores
+    const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
     const imageTag = useDetailsForm_connectorImage_connectorId();
 
     // This usually means the control is nested inside a tab
@@ -124,7 +125,11 @@ const OAuthproviderRenderer = ({
 
     // handler for the useOauth stuff
     const onSuccess = async (payload: any) => {
-        const tokenResponse = await accessToken(payload.state, payload.code);
+        const tokenResponse = await accessToken(
+            payload.state,
+            payload.code,
+            endpointConfigData
+        );
 
         if (tokenResponse.error) {
             setErrorMessage(
@@ -161,7 +166,7 @@ const OAuthproviderRenderer = ({
         setErrorMessage(null);
 
         // Make the call to know what pop url to open
-        const fetchAuthURL = await authURL(imageTag);
+        const fetchAuthURL = await authURL(imageTag, endpointConfigData);
 
         if (fetchAuthURL.error) {
             setErrorMessage(

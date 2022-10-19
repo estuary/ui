@@ -15,27 +15,28 @@ export interface AuthURLResponse {
     state: string;
 }
 
-export const authURL = (connectorId: string) => {
+export const authURL = (connectorId: string, config: any) => {
     return invokeSupabase<AuthURLResponse>(FUNCTIONS.OAUTH, {
         operation: OPERATIONS.AUTH_URL,
         connector_id: connectorId,
         redirect_uri: `${window.location.origin}/oauth`,
+        config,
     });
 };
 
-export const accessToken = (state: string, code: string) => {
+export const accessToken = (state: string, code: string, config: any) => {
     return invokeSupabase<AccessTokenResponse>(FUNCTIONS.OAUTH, {
         operation: OPERATIONS.ACCESS_TOKEN,
         redirect_uri: `${window.location.origin}/oauth`,
         state,
         code,
+        config,
     });
 };
 
 export const encryptConfig = (
     connectorId: string,
     connectorTagId: string,
-
     config: any
 ) => {
     return invokeSupabase<any>(FUNCTIONS.OAUTH, {
