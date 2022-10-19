@@ -266,7 +266,7 @@ function CaptureEdit() {
 
                 void mutateDraftSpecs();
 
-                setPreviousEndpointConfig(existingEndpointConfig);
+                setPreviousEndpointConfig({ data: existingEndpointConfig });
 
                 setFormState({
                     status: FormStatus.GENERATED,
