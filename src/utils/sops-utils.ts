@@ -84,7 +84,7 @@ export async function encryptEndpointConfig(
         error: {
             name: 'Object Not Reassigned',
             message:
-                'An object initializing a the response of a Supabase function was not reassigned.',
+                'An object initializing the response of a Supabase function was not reassigned.',
         },
     };
 
