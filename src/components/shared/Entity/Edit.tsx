@@ -431,7 +431,6 @@ function EntityEdit({
                         <ErrorBoundryWrapper>
                             <EndpointConfig
                                 connectorImage={imageTag.id}
-                                draftSpecs={taskDraftSpec}
                                 readOnly={readOnly.endpointConfigForm}
                             />
                         </ErrorBoundryWrapper>

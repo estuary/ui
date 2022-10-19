@@ -39,6 +39,11 @@ export interface EndpointConfigState {
         workflow: EntityWorkflow | null
     ) => void;
 
+    previousEndpointConfig: JsonFormsData;
+    setPreviousEndpointConfig: (
+        encryptedEndpointConfig: EndpointConfigState['previousEndpointConfig']
+    ) => void;
+
     endpointConfig: JsonFormsData;
     setEndpointConfig: (
         endpointConfig: JsonFormsData,
@@ -109,6 +114,7 @@ const getInitialStateData = (): Pick<
     | 'endpointSchema'
     | 'hydrated'
     | 'hydrationErrorsExist'
+    | 'previousEndpointConfig'
     | 'publishedEndpointConfig'
     | 'serverUpdateRequired'
 > => ({
@@ -119,6 +125,7 @@ const getInitialStateData = (): Pick<
     endpointSchema: {},
     hydrated: false,
     hydrationErrorsExist: false,
+    previousEndpointConfig: { data: {}, errors: [] },
     publishedEndpointConfig: { data: {}, errors: [] },
     serverUpdateRequired: false,
 });
@@ -166,6 +173,7 @@ const hydrateState = async (
             const {
                 setEncryptedEndpointConfig,
                 setEndpointConfig,
+                setPreviousEndpointConfig,
                 setPublishedEndpointConfig,
                 endpointSchema,
             } = get();
@@ -184,6 +192,8 @@ const hydrateState = async (
                 encryptedEndpointConfig,
                 endpointSchema
             );
+
+            setPreviousEndpointConfig(endpointConfig);
 
             setEndpointConfig(endpointConfig, workflow);
         }
@@ -235,6 +245,20 @@ const getInitialState = (
             }),
             false,
             'Encrypted Endpoint Config Set'
+        );
+    },
+
+    setPreviousEndpointConfig: (endpointConfig) => {
+        set(
+            produce((state: EndpointConfigState) => {
+                const { endpointSchema } = get();
+
+                state.previousEndpointConfig = isEmpty(endpointConfig)
+                    ? createJSONFormDefaults(endpointSchema)
+                    : endpointConfig;
+            }),
+            false,
+            'Previous Endpoint Config Changed'
         );
     },
 
@@ -473,6 +497,24 @@ export const useEndpointConfigStore_setEncryptedEndpointConfig = () => {
         EndpointConfigState,
         EndpointConfigState['setEncryptedEndpointConfig']
     >(getStoreName(entityType), (state) => state.setEncryptedEndpointConfig);
+};
+
+export const useEndpointConfigStore_previousEndpointConfig_data = () => {
+    const entityType = useEntityType();
+
+    return useEndpointConfigStore<
+        EndpointConfigState,
+        EndpointConfigState['previousEndpointConfig']['data']
+    >(getStoreName(entityType), (state) => state.previousEndpointConfig.data);
+};
+
+export const useEndpointConfigStore_setPreviousEndpointConfig = () => {
+    const entityType = useEntityType();
+
+    return useEndpointConfigStore<
+        EndpointConfigState,
+        EndpointConfigState['setPreviousEndpointConfig']
+    >(getStoreName(entityType), (state) => state.setPreviousEndpointConfig);
 };
 
 export const useEndpointConfigStore_endpointConfig_data = () => {

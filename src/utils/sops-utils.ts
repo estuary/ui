@@ -18,12 +18,12 @@ const copyEncryptedEndpointConfig = (
     overrideJsonFormDefaults?: boolean
 ) => {
     Object.entries(encryptedEndpointConfig).forEach(([key, value]) => {
-        let truncatedKey = '';
         const encryptedSuffixIndex = key.lastIndexOf(encryptedSuffix);
 
-        if (encryptedSuffixIndex !== -1) {
-            truncatedKey = key.slice(0, encryptedSuffixIndex);
-        }
+        const truncatedKey =
+            encryptedSuffixIndex !== -1
+                ? key.slice(0, encryptedSuffixIndex)
+                : '';
 
         if (isPlainObject(value)) {
             copyEncryptedEndpointConfig(

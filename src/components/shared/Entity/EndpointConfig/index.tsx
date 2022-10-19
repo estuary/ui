@@ -10,32 +10,26 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useConnectorTag from 'hooks/useConnectorTag';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isEqual } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { createJSONFormDefaults } from 'services/ajv';
 import {
     useEndpointConfigStore_endpointConfig_data,
-    useEndpointConfigStore_endpointSchema,
+    useEndpointConfigStore_previousEndpointConfig_data,
     useEndpointConfigStore_setEndpointConfig,
     useEndpointConfigStore_setEndpointSchema,
+    useEndpointConfigStore_setPreviousEndpointConfig,
     useEndpointConfig_setServerUpdateRequired,
 } from 'stores/EndpointConfig';
 import { Schema } from 'types';
-import { parseEncryptedEndpointConfig } from 'utils/sops-utils';
 
 interface Props {
     connectorImage: string;
-    draftSpecs?: DraftSpecQuery[];
     readOnly?: boolean;
 }
 
-function EndpointConfig({
-    connectorImage,
-    draftSpecs = [],
-    readOnly = false,
-}: Props) {
+function EndpointConfig({ connectorImage, readOnly = false }: Props) {
     const intl = useIntl();
 
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
@@ -53,7 +47,11 @@ function EndpointConfig({
     const endpointConfig = useEndpointConfigStore_endpointConfig_data();
     const setEndpointConfig = useEndpointConfigStore_setEndpointConfig();
 
-    const endpointSchema = useEndpointConfigStore_endpointSchema();
+    const previousEndpointConfig =
+        useEndpointConfigStore_previousEndpointConfig_data();
+    const setPreviousEndpointConfig =
+        useEndpointConfigStore_setPreviousEndpointConfig();
+
     const setEndpointSchema = useEndpointConfigStore_setEndpointSchema();
 
     const setServerUpdateRequired = useEndpointConfig_setServerUpdateRequired();
@@ -67,11 +65,16 @@ function EndpointConfig({
                 connectorTag.endpoint_spec_schema as unknown as Schema;
 
             setEndpointSchema(schema);
-            setEndpointConfig(createJSONFormDefaults(schema), workflow);
+
+            const defaultConfig = createJSONFormDefaults(schema);
+
+            setEndpointConfig(defaultConfig, workflow);
+            setPreviousEndpointConfig(defaultConfig);
         }
     }, [
         setEndpointConfig,
         setEndpointSchema,
+        setPreviousEndpointConfig,
         connectorId,
         connectorTag?.connector_id,
         connectorTag?.endpoint_spec_schema,
@@ -79,17 +82,8 @@ function EndpointConfig({
     ]);
 
     const endpointConfigUpdated = useMemo(() => {
-        if (draftSpecs.length > 0) {
-            const serverEndpointConfig = parseEncryptedEndpointConfig(
-                draftSpecs[0].spec.endpoint.connector.config,
-                endpointSchema
-            );
-
-            return !isEqual(endpointConfig, serverEndpointConfig.data);
-        } else {
-            return false;
-        }
-    }, [draftSpecs, endpointConfig, endpointSchema]);
+        return !isEqual(endpointConfig, previousEndpointConfig);
+    }, [endpointConfig, previousEndpointConfig]);
 
     useEffect(() => {
         if (editWorkflow) {

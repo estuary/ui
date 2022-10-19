@@ -43,6 +43,7 @@ import {
 import {
     useEndpointConfigStore_reset,
     useEndpointConfigStore_setEncryptedEndpointConfig,
+    useEndpointConfigStore_setPreviousEndpointConfig,
 } from 'stores/EndpointConfig';
 import {
     FormStatus,
@@ -51,7 +52,7 @@ import {
     useFormStateStore_resetState,
     useFormStateStore_setFormState,
 } from 'stores/FormState';
-import { ENTITY } from 'types';
+import { ENTITY, JsonFormsData } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
 
 const trackEvent = (payload: any) => {
@@ -96,6 +97,9 @@ function CaptureEdit() {
     // Endpoint Config Store
     const setEncryptedEndpointConfig =
         useEndpointConfigStore_setEncryptedEndpointConfig();
+
+    const setPreviousEndpointConfig =
+        useEndpointConfigStore_setPreviousEndpointConfig();
 
     const resetEndpointConfigState = useEndpointConfigStore_reset();
 
@@ -234,7 +238,10 @@ function CaptureEdit() {
         }
     };
 
-    const discoversSubscription = (discoverDraftId: string) => {
+    const discoversSubscription = (
+        discoverDraftId: string,
+        existingEndpointConfig: JsonFormsData
+    ) => {
         setDraftId(null);
 
         jobStatusPoller(
@@ -258,6 +265,8 @@ function CaptureEdit() {
                 void storeUpdatedDraftSpec(payload.draft_id);
 
                 void mutateDraftSpecs();
+
+                setPreviousEndpointConfig(existingEndpointConfig);
 
                 setFormState({
                     status: FormStatus.GENERATED,

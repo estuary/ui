@@ -150,7 +150,7 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
                     },
                 });
             }
-            subscription(draftId);
+            subscription(draftId, endpointConfigData);
 
             setFormState({
                 logToken: discoverResponse.data[0].logs_token,

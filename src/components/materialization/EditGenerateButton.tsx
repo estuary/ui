@@ -21,6 +21,7 @@ import {
     useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_errorsExist,
     useEndpointConfigStore_setEncryptedEndpointConfig,
+    useEndpointConfigStore_setPreviousEndpointConfig,
     useEndpointConfig_serverUpdateRequired,
 } from 'stores/EndpointConfig';
 import {
@@ -71,6 +72,9 @@ function MaterializeGenerateButton({
         useEndpointConfigStore_encryptedEndpointConfig_data();
     const setEncryptedEndpointConfig =
         useEndpointConfigStore_setEncryptedEndpointConfig();
+
+    const setPreviousEndpointConfig =
+        useEndpointConfigStore_setPreviousEndpointConfig();
 
     const endpointConfigHasErrors = useEndpointConfigStore_errorsExist();
     const serverUpdateRequired = useEndpointConfig_serverUpdateRequired();
@@ -147,6 +151,8 @@ function MaterializeGenerateButton({
                 },
                 'materialization_edit'
             );
+
+            setPreviousEndpointConfig({ data: endpointConfigData });
 
             setDraftId(editDraftId);
             setFormState({
