@@ -14,7 +14,8 @@ const sopsKey = 'sops';
 const copyEncryptedEndpointConfig = (
     endpointConfigTemplate: { [key: string]: any },
     encryptedEndpointConfig: { [key: string]: any },
-    encryptedSuffix: string
+    encryptedSuffix: string,
+    overrideJsonFormDefaults?: boolean
 ) => {
     Object.entries(encryptedEndpointConfig).forEach(([key, value]) => {
         let truncatedKey = '';
@@ -30,15 +31,18 @@ const copyEncryptedEndpointConfig = (
                 encryptedEndpointConfig[key],
                 encryptedSuffix
             );
-        } else {
-            endpointConfigTemplate[truncatedKey || key] = value;
+        } else if (overrideJsonFormDefaults && truncatedKey) {
+            endpointConfigTemplate[truncatedKey] = value;
+        } else if (!truncatedKey) {
+            endpointConfigTemplate[key] = value;
         }
     });
 };
 
-const parseEncryptedEndpointConfig = (
+export const parseEncryptedEndpointConfig = (
     endpointConfig: { [key: string]: any },
-    endpointSchema: Schema
+    endpointSchema: Schema,
+    overrideJsonFormDefaults?: boolean
 ): JsonFormsData => {
     const {
         sops: { encrypted_suffix },
@@ -47,10 +51,13 @@ const parseEncryptedEndpointConfig = (
 
     const endpointConfigTemplate = createJSONFormDefaults(endpointSchema);
 
+    console.log(endpointConfigTemplate);
+
     copyEncryptedEndpointConfig(
         endpointConfigTemplate.data,
         encryptedEndpointConfig,
-        encrypted_suffix
+        encrypted_suffix,
+        overrideJsonFormDefaults
     );
 
     return endpointConfigTemplate;
@@ -62,11 +69,16 @@ export async function encryptEndpointConfig(
     serverUpdateRequired: boolean,
     imageConnectorId: string,
     imageConnectorTagId: string,
-    callFailed: Function
+    callFailed: Function,
+    { overrideJsonFormDefaults }: { overrideJsonFormDefaults: boolean }
 ): Promise<SupabaseInvokeResponse> {
     const selectedEndpointConfig =
         serverUpdateRequired && Object.hasOwn(endpointConfig, sopsKey)
-            ? parseEncryptedEndpointConfig(endpointConfig, endpointSchema).data
+            ? parseEncryptedEndpointConfig(
+                  endpointConfig,
+                  endpointSchema,
+                  overrideJsonFormDefaults
+              ).data
             : endpointConfig;
 
     let encryptedEndpointConfig: SupabaseInvokeResponse = {
@@ -77,6 +89,8 @@ export async function encryptEndpointConfig(
                 'An object initializing a the response of a Supabase function was not reassigned.',
         },
     };
+
+    console.log(selectedEndpointConfig);
 
     if (Object.hasOwn(selectedEndpointConfig, sopsKey)) {
         encryptedEndpointConfig = { data: endpointConfig, error: null };

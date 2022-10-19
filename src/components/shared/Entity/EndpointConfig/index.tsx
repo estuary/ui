@@ -17,11 +17,13 @@ import { useIntl } from 'react-intl';
 import { createJSONFormDefaults } from 'services/ajv';
 import {
     useEndpointConfigStore_endpointConfig_data,
+    useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_setEndpointConfig,
     useEndpointConfigStore_setEndpointSchema,
     useEndpointConfig_setServerUpdateRequired,
 } from 'stores/EndpointConfig';
 import { Schema } from 'types';
+import { parseEncryptedEndpointConfig } from 'utils/sops-utils';
 
 interface Props {
     connectorImage: string;
@@ -51,6 +53,7 @@ function EndpointConfig({
     const endpointConfig = useEndpointConfigStore_endpointConfig_data();
     const setEndpointConfig = useEndpointConfigStore_setEndpointConfig();
 
+    const endpointSchema = useEndpointConfigStore_endpointSchema();
     const setEndpointSchema = useEndpointConfigStore_setEndpointSchema();
 
     const setServerUpdateRequired = useEndpointConfig_setServerUpdateRequired();
@@ -76,14 +79,17 @@ function EndpointConfig({
     ]);
 
     const endpointConfigUpdated = useMemo(() => {
-        // TODO (optimization): Evaluate the performance of a hash comparator function.
-        return draftSpecs.length > 0
-            ? !isEqual(
-                  endpointConfig,
-                  draftSpecs[0]?.spec.endpoint.connector.config
-              )
-            : false;
-    }, [draftSpecs, endpointConfig]);
+        if (draftSpecs.length > 0) {
+            const serverEndpointConfig = parseEncryptedEndpointConfig(
+                draftSpecs[0].spec.endpoint.connector.config,
+                endpointSchema
+            );
+
+            return !isEqual(endpointConfig, serverEndpointConfig.data);
+        } else {
+            return false;
+        }
+    }, [draftSpecs, endpointConfig, endpointSchema]);
 
     useEffect(() => {
         if (editWorkflow) {

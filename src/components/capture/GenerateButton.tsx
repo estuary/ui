@@ -20,6 +20,7 @@ import {
 } from 'stores/DetailsForm';
 import {
     useEndpointConfigStore_changed,
+    useEndpointConfigStore_encryptedEndpointConfig_data,
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_errorsExist,
@@ -69,6 +70,9 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
     const endpointSchema = useEndpointConfigStore_endpointSchema();
 
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
+
+    const serverEndpointConfigData =
+        useEndpointConfigStore_encryptedEndpointConfig_data();
     const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
 
     const endpointConfigChanged = useEndpointConfigStore_changed();
@@ -107,12 +111,15 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
             const draftId = draftsResponse.data[0].id;
 
             const encryptedEndpointConfig = await encryptEndpointConfig(
-                endpointConfigData,
+                serverUpdateRequired
+                    ? endpointConfigData
+                    : serverEndpointConfigData,
                 endpointSchema,
                 serverUpdateRequired,
                 imageConnectorId,
                 imageConnectorTagId,
-                callFailed
+                callFailed,
+                { overrideJsonFormDefaults: true }
             );
 
             let catalogName = entityName;

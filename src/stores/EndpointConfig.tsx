@@ -19,11 +19,26 @@ import {
     Schema,
 } from 'types';
 import useConstant from 'use-constant';
+import { parseEncryptedEndpointConfig } from 'utils/sops-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { createStore, StoreApi, useStore } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 
 export interface EndpointConfigState {
+    endpointSchema: Schema;
+    setEndpointSchema: (val: EndpointConfigState['endpointSchema']) => void;
+
+    publishedEndpointConfig: JsonFormsData;
+    setPublishedEndpointConfig: (
+        endpointConfig: EndpointConfigState['publishedEndpointConfig']
+    ) => void;
+
+    encryptedEndpointConfig: JsonFormsData;
+    setEncryptedEndpointConfig: (
+        encryptedEndpointConfig: EndpointConfigState['encryptedEndpointConfig'],
+        workflow: EntityWorkflow | null
+    ) => void;
+
     endpointConfig: JsonFormsData;
     setEndpointConfig: (
         endpointConfig: JsonFormsData,
@@ -33,18 +48,12 @@ export interface EndpointConfigState {
     endpointConfigErrorsExist: boolean;
     endpointConfigErrors: { message: string | undefined }[];
 
-    endpointSchema: Schema;
-    setEndpointSchema: (val: EndpointConfigState['endpointSchema']) => void;
-
     // Hydration
     hydrated: boolean;
     setHydrated: (value: boolean) => void;
 
     hydrationErrorsExist: boolean;
     setHydrationErrorsExist: (value: boolean) => void;
-
-    publishedEndpointConfig: JsonFormsData;
-    setPublishedEndpointConfig: (endpointConfig: JsonFormsData) => void;
 
     // Server-Form Alignment
     serverUpdateRequired: boolean;
@@ -93,6 +102,7 @@ const populateEndpointConfigErrors = (
 
 const getInitialStateData = (): Pick<
     EndpointConfigState,
+    | 'encryptedEndpointConfig'
     | 'endpointConfig'
     | 'endpointConfigErrorsExist'
     | 'endpointConfigErrors'
@@ -102,6 +112,7 @@ const getInitialStateData = (): Pick<
     | 'publishedEndpointConfig'
     | 'serverUpdateRequired'
 > => ({
+    encryptedEndpointConfig: { data: {}, errors: [] },
     endpointConfig: { data: {}, errors: [] },
     endpointConfigErrorsExist: true,
     endpointConfigErrors: [],
@@ -152,16 +163,29 @@ const hydrateState = async (
         }
 
         if (data && data.length > 0) {
-            const { setEndpointConfig, setPublishedEndpointConfig } = get();
+            const {
+                setEncryptedEndpointConfig,
+                setEndpointConfig,
+                setPublishedEndpointConfig,
+                endpointSchema,
+            } = get();
 
-            setEndpointConfig(
-                { data: data[0].spec.endpoint.connector.config },
+            const encryptedEndpointConfig =
+                data[0].spec.endpoint.connector.config;
+
+            setEncryptedEndpointConfig(
+                { data: encryptedEndpointConfig },
                 workflow
             );
 
-            setPublishedEndpointConfig({
-                data: data[0].spec.endpoint.connector.config,
-            });
+            setPublishedEndpointConfig({ data: encryptedEndpointConfig });
+
+            const endpointConfig = parseEncryptedEndpointConfig(
+                encryptedEndpointConfig,
+                endpointSchema
+            );
+
+            setEndpointConfig(endpointConfig, workflow);
         }
     }
 };
@@ -172,8 +196,48 @@ const getInitialState = (
 ): EndpointConfigState => ({
     ...getInitialStateData(),
 
+    setEndpointSchema: (val) => {
+        set(
+            produce((state) => {
+                state.endpointSchema = val;
+            }),
+            false,
+            'Endpoint Schema Set'
+        );
+    },
+
+    setPublishedEndpointConfig: (endpointConfig) => {
+        set(
+            produce((state: EndpointConfigState) => {
+                const { endpointSchema } = get();
+
+                state.publishedEndpointConfig = isEmpty(endpointConfig)
+                    ? createJSONFormDefaults(endpointSchema)
+                    : endpointConfig;
+            }),
+            false,
+            'Published Endpoint Config Set'
+        );
+    },
+
     // TODO (optimization): Remove the workflow input argument for this action once the
     //   create workflows have logic in place to set the serverUpdateRequired state property.
+    setEncryptedEndpointConfig: (endpointConfig, workflow) => {
+        set(
+            produce((state: EndpointConfigState) => {
+                const { endpointSchema } = get();
+
+                state.encryptedEndpointConfig = isEmpty(endpointConfig)
+                    ? createJSONFormDefaults(endpointSchema)
+                    : endpointConfig;
+
+                populateEndpointConfigErrors(endpointConfig, state, workflow);
+            }),
+            false,
+            'Encrypted Endpoint Config Set'
+        );
+    },
+
     setEndpointConfig: (endpointConfig, workflow) => {
         set(
             produce((state: EndpointConfigState) => {
@@ -187,16 +251,6 @@ const getInitialState = (
             }),
             false,
             'Endpoint Config Changed'
-        );
-    },
-
-    setEndpointSchema: (val) => {
-        set(
-            produce((state) => {
-                state.endpointSchema = val;
-            }),
-            false,
-            'Endpoint Schema Set'
         );
     },
 
@@ -220,20 +274,6 @@ const getInitialState = (
         );
     },
 
-    setPublishedEndpointConfig: (endpointConfig) => {
-        set(
-            produce((state: EndpointConfigState) => {
-                const { endpointSchema } = get();
-
-                state.publishedEndpointConfig = isEmpty(endpointConfig)
-                    ? createJSONFormDefaults(endpointSchema)
-                    : endpointConfig;
-            }),
-            false,
-            'Published Endpoint Config Set'
-        );
-    },
-
     // TODO (optimization): Remove the workflow input argument for this action once the
     //   create workflows have logic in place to set the serverUpdateRequired state property.
     setServerUpdateRequired: (updateRequired, workflow) => {
@@ -251,9 +291,9 @@ const getInitialState = (
     },
 
     stateChanged: () => {
-        const { endpointConfig, publishedEndpointConfig } = get();
+        const { encryptedEndpointConfig, publishedEndpointConfig } = get();
 
-        return !isEqual(endpointConfig.data, publishedEndpointConfig.data);
+        return !isEqual(encryptedEndpointConfig, publishedEndpointConfig);
     },
 
     resetState: () => {
@@ -415,6 +455,24 @@ export const useEndpointConfigStore_setEndpointSchema = () => {
         EndpointConfigState,
         EndpointConfigState['setEndpointSchema']
     >(getStoreName(entityType), (state) => state.setEndpointSchema);
+};
+
+export const useEndpointConfigStore_encryptedEndpointConfig_data = () => {
+    const entityType = useEntityType();
+
+    return useEndpointConfigStore<
+        EndpointConfigState,
+        EndpointConfigState['encryptedEndpointConfig']['data']
+    >(getStoreName(entityType), (state) => state.encryptedEndpointConfig.data);
+};
+
+export const useEndpointConfigStore_setEncryptedEndpointConfig = () => {
+    const entityType = useEntityType();
+
+    return useEndpointConfigStore<
+        EndpointConfigState,
+        EndpointConfigState['setEncryptedEndpointConfig']
+    >(getStoreName(entityType), (state) => state.setEncryptedEndpointConfig);
 };
 
 export const useEndpointConfigStore_endpointConfig_data = () => {

@@ -16,10 +16,11 @@ import {
     useDetailsForm_errorsExist,
 } from 'stores/DetailsForm';
 import {
+    useEndpointConfigStore_encryptedEndpointConfig_data,
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_errorsExist,
-    useEndpointConfigStore_setEndpointConfig,
+    useEndpointConfigStore_setEncryptedEndpointConfig,
     useEndpointConfig_serverUpdateRequired,
 } from 'stores/EndpointConfig';
 import {
@@ -65,7 +66,11 @@ function MaterializeGenerateButton({
     const endpointSchema = useEndpointConfigStore_endpointSchema();
 
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
-    const setEndpointConfig = useEndpointConfigStore_setEndpointConfig();
+
+    const serverEndpointConfigData =
+        useEndpointConfigStore_encryptedEndpointConfig_data();
+    const setEncryptedEndpointConfig =
+        useEndpointConfigStore_setEncryptedEndpointConfig();
 
     const endpointConfigHasErrors = useEndpointConfigStore_errorsExist();
     const serverUpdateRequired = useEndpointConfig_serverUpdateRequired();
@@ -104,12 +109,15 @@ function MaterializeGenerateButton({
             setDraftId(null);
 
             const encryptedEndpointConfig = await encryptEndpointConfig(
-                endpointConfigData,
+                serverUpdateRequired
+                    ? endpointConfigData
+                    : serverEndpointConfigData,
                 endpointSchema,
                 serverUpdateRequired,
                 imageConnectorId,
                 imageConnectorTagId,
-                callFailed
+                callFailed,
+                { overrideJsonFormDefaults: true }
             );
 
             const draftSpec = generateDraftSpec(
@@ -132,7 +140,7 @@ function MaterializeGenerateButton({
                 });
             }
 
-            setEndpointConfig(
+            setEncryptedEndpointConfig(
                 {
                     data: draftSpecsResponse.data[0].spec.endpoint.connector
                         .config,
