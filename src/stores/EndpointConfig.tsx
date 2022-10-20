@@ -31,7 +31,7 @@ export interface EndpointConfigState {
     // Encrypted Endpoint Configs
     publishedEndpointConfig: JsonFormsData;
     setPublishedEndpointConfig: (
-        endpointConfig: EndpointConfigState['publishedEndpointConfig']
+        encryptedEndpointConfig: EndpointConfigState['publishedEndpointConfig']
     ) => void;
 
     encryptedEndpointConfig: JsonFormsData;
@@ -43,7 +43,7 @@ export interface EndpointConfigState {
     // JSON Form Compatible-Endpoint Configs
     previousEndpointConfig: JsonFormsData;
     setPreviousEndpointConfig: (
-        encryptedEndpointConfig: EndpointConfigState['previousEndpointConfig']
+        endpointConfig: EndpointConfigState['previousEndpointConfig']
     ) => void;
 
     endpointConfig: JsonFormsData;
@@ -218,14 +218,14 @@ const getInitialState = (
         );
     },
 
-    setPublishedEndpointConfig: (endpointConfig) => {
+    setPublishedEndpointConfig: (encryptedEndpointConfig) => {
         set(
             produce((state: EndpointConfigState) => {
                 const { endpointSchema } = get();
 
-                state.publishedEndpointConfig = isEmpty(endpointConfig)
+                state.publishedEndpointConfig = isEmpty(encryptedEndpointConfig)
                     ? createJSONFormDefaults(endpointSchema)
-                    : endpointConfig;
+                    : encryptedEndpointConfig;
             }),
             false,
             'Published Endpoint Config Set'
@@ -234,16 +234,20 @@ const getInitialState = (
 
     // TODO (optimization): Remove the workflow input argument for this action once the
     //   create workflows have logic in place to set the serverUpdateRequired state property.
-    setEncryptedEndpointConfig: (endpointConfig, workflow) => {
+    setEncryptedEndpointConfig: (encryptedEndpointConfig, workflow) => {
         set(
             produce((state: EndpointConfigState) => {
                 const { endpointSchema } = get();
 
-                state.encryptedEndpointConfig = isEmpty(endpointConfig)
+                state.encryptedEndpointConfig = isEmpty(encryptedEndpointConfig)
                     ? createJSONFormDefaults(endpointSchema)
-                    : endpointConfig;
+                    : encryptedEndpointConfig;
 
-                populateEndpointConfigErrors(endpointConfig, state, workflow);
+                populateEndpointConfigErrors(
+                    encryptedEndpointConfig,
+                    state,
+                    workflow
+                );
             }),
             false,
             'Encrypted Endpoint Config Set'
