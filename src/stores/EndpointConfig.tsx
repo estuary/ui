@@ -28,6 +28,7 @@ export interface EndpointConfigState {
     endpointSchema: Schema;
     setEndpointSchema: (val: EndpointConfigState['endpointSchema']) => void;
 
+    // Encrypted Endpoint Configs
     publishedEndpointConfig: JsonFormsData;
     setPublishedEndpointConfig: (
         endpointConfig: EndpointConfigState['publishedEndpointConfig']
@@ -39,6 +40,7 @@ export interface EndpointConfigState {
         workflow: EntityWorkflow | null
     ) => void;
 
+    // JSON Form Compatible-Endpoint Configs
     previousEndpointConfig: JsonFormsData;
     setPreviousEndpointConfig: (
         encryptedEndpointConfig: EndpointConfigState['previousEndpointConfig']
