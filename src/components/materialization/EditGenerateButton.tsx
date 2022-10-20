@@ -9,13 +9,20 @@ import { buttonSx } from 'components/shared/Entity/Header';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
+    useDetailsForm_connectorImage_connectorId,
+    useDetailsForm_connectorImage_id,
     useDetailsForm_connectorImage_imagePath,
     useDetailsForm_details_entityName,
     useDetailsForm_errorsExist,
 } from 'stores/DetailsForm';
 import {
+    useEndpointConfigStore_encryptedEndpointConfig_data,
     useEndpointConfigStore_endpointConfig_data,
+    useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_errorsExist,
+    useEndpointConfigStore_setEncryptedEndpointConfig,
+    useEndpointConfigStore_setPreviousEndpointConfig,
+    useEndpointConfig_serverUpdateRequired,
 } from 'stores/EndpointConfig';
 import {
     FormStatus,
@@ -27,16 +34,26 @@ import {
     useResourceConfig_resourceConfig,
     useResourceConfig_resourceConfigErrorsExist,
 } from 'stores/ResourceConfig';
+import { encryptEndpointConfig } from 'utils/sops-utils';
 
 interface Props {
     disabled: boolean;
     callFailed: Function;
+    mutateDraftSpecs: Function;
 }
 
-function MaterializeGenerateButton({ disabled, callFailed }: Props) {
+// TODO (optimization): Combine the generate button logic for materialization creation and edit.
+
+function MaterializeGenerateButton({
+    disabled,
+    callFailed,
+    mutateDraftSpecs,
+}: Props) {
     // Details Form Store
     const entityName = useDetailsForm_details_entityName();
     const detailsFormsHasErrors = useDetailsForm_errorsExist();
+    const imageConnectorTagId = useDetailsForm_connectorImage_id();
+    const imageConnectorId = useDetailsForm_connectorImage_connectorId();
     const imagePath = useDetailsForm_connectorImage_imagePath();
 
     // Draft Editor Store
@@ -47,8 +64,20 @@ function MaterializeGenerateButton({ disabled, callFailed }: Props) {
     const editDraftId = useEditorStore_editDraftId();
 
     // Endpoint Config Store
+    const endpointSchema = useEndpointConfigStore_endpointSchema();
+
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
+
+    const serverEndpointConfigData =
+        useEndpointConfigStore_encryptedEndpointConfig_data();
+    const setEncryptedEndpointConfig =
+        useEndpointConfigStore_setEncryptedEndpointConfig();
+
+    const setPreviousEndpointConfig =
+        useEndpointConfigStore_setPreviousEndpointConfig();
+
     const endpointConfigHasErrors = useEndpointConfigStore_errorsExist();
+    const serverUpdateRequired = useEndpointConfig_serverUpdateRequired();
 
     // Form State Store
     const formActive = useFormStateStore_isActive();
@@ -83,30 +112,20 @@ function MaterializeGenerateButton({ disabled, callFailed }: Props) {
         } else {
             setDraftId(null);
 
-            // TODO (Edit) We can add this back when you can change the endpoint config
-            //  Might be better to just get the create GenerateButton sharable for edit
-
-            // const encryptedEndpointConfig = await encryptConfig(
-            //     imageConnectorId,
-            //     imageConnectorTagId,
-            //     endpointConfigData
-            // );
-            // if (
-            //     encryptedEndpointConfig.error ||
-            //     encryptedEndpointConfig.data.error
-            // ) {
-            //     return callFailed({
-            //         error: {
-            //             title: 'entityCreate.sops.failedTitle',
-            //             error:
-            //                 encryptedEndpointConfig.error ??
-            //                 encryptedEndpointConfig.data.error,
-            //         },
-            //     });
-            // }
+            const encryptedEndpointConfig = await encryptEndpointConfig(
+                serverUpdateRequired
+                    ? endpointConfigData
+                    : serverEndpointConfigData,
+                endpointSchema,
+                serverUpdateRequired,
+                imageConnectorId,
+                imageConnectorTagId,
+                callFailed,
+                { overrideJsonFormDefaults: true }
+            );
 
             const draftSpec = generateDraftSpec(
-                endpointConfigData,
+                encryptedEndpointConfig.data,
                 imagePath,
                 resourceConfig
             );
@@ -125,10 +144,22 @@ function MaterializeGenerateButton({ disabled, callFailed }: Props) {
                 });
             }
 
+            setEncryptedEndpointConfig(
+                {
+                    data: draftSpecsResponse.data[0].spec.endpoint.connector
+                        .config,
+                },
+                'materialization_edit'
+            );
+
+            setPreviousEndpointConfig({ data: endpointConfigData });
+
             setDraftId(editDraftId);
             setFormState({
                 status: FormStatus.GENERATED,
             });
+
+            return mutateDraftSpecs();
         }
     };
 

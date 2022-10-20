@@ -1,5 +1,7 @@
+import { PostgrestError } from '@supabase/postgrest-js';
 import { TABLES } from 'services/supabase';
-import { useQuery, useSelect } from './supabase-swr/';
+import { KeyedMutator } from 'swr';
+import { SuccessResponse, useQuery, useSelect } from './supabase-swr/';
 
 export interface DraftSpecQuery {
     catalog_name: string;
@@ -7,6 +9,13 @@ export interface DraftSpecQuery {
     spec: any;
     draft_id: string;
     expect_pub_id: string;
+}
+
+export interface DraftSpecSwrMetadata {
+    draftSpecs: DraftSpecQuery[];
+    error: PostgrestError | undefined;
+    mutate: KeyedMutator<SuccessResponse<DraftSpecQuery>>;
+    isValidating: boolean;
 }
 
 const DRAFT_SPEC_COLS = [
@@ -18,7 +27,10 @@ const DRAFT_SPEC_COLS = [
 ];
 const defaultResponse: DraftSpecQuery[] = [];
 
-function useDraftSpecs(draftId: string | null, lastPubId?: string | null) {
+function useDraftSpecs(
+    draftId: string | null,
+    lastPubId?: string | null
+): DraftSpecSwrMetadata {
     const draftSpecQuery = useQuery<DraftSpecQuery>(
         TABLES.DRAFT_SPECS,
         {

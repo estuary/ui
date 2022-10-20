@@ -53,7 +53,7 @@ export interface EditorStoreState<T> {
     status: EditorStatus;
     setStatus: (newVal: EditorStatus) => void;
 
-    resetState: () => void;
+    resetState: (excludeEditDraftId?: boolean) => void;
 }
 
 const getInitialStateData = () => {
@@ -154,8 +154,18 @@ const getInitialState = <T,>(
             );
         },
 
-        resetState: () => {
-            set(getInitialStateData(), false, 'Resetting Editor State');
+        // This is a hacky, temporary solution to preserve the edit draft ID
+        // when the discovery operation is run in the capture edit workflow.
+        resetState: (excludeEditDraftId) => {
+            set(
+                () => {
+                    const { editDraftId, ...rest } = getInitialStateData();
+
+                    return excludeEditDraftId ? rest : { editDraftId, ...rest };
+                },
+                false,
+                'Resetting Editor State'
+            );
         },
     };
 };

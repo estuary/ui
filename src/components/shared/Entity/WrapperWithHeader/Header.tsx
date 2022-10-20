@@ -22,11 +22,7 @@ function Header({ children, disableClose, expanded, readOnly }: Props) {
             {children}
 
             <Fade in={!expanded}>
-                <Typography
-                    sx={{
-                        ml: 'auto',
-                    }}
-                >
+                <Typography sx={{ ml: 'auto' }}>
                     <FormattedMessage
                         id={readOnly ? 'cta.expandToView' : 'cta.expandToEdit'}
                     />

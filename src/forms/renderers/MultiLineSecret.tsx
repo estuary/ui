@@ -70,9 +70,9 @@ const MultiLineSecretRenderer = (props: any) => {
 
                 <Box>
                     <Button
-                        sx={{ whiteSpace: 'nowrap' }}
-                        onClick={() => setIsUploadOpen(!isUploadOpen)}
                         disabled={!enabled}
+                        onClick={() => setIsUploadOpen(!isUploadOpen)}
+                        sx={{ whiteSpace: 'nowrap' }}
                     >
                         Use secret from file
                     </Button>

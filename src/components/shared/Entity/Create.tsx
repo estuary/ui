@@ -17,19 +17,21 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
-import useConnectorTag from 'hooks/useConnectorTag';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { ReactNode, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useDetailsForm_connectorImage } from 'stores/DetailsForm';
-import { useEndpointConfigStore_setEndpointSchema } from 'stores/EndpointConfig';
+import {
+    useDetailsForm_changed,
+    useDetailsForm_connectorImage,
+} from 'stores/DetailsForm';
+import { useEndpointConfigStore_changed } from 'stores/EndpointConfig';
 import {
     useFormStateStore_error,
     useFormStateStore_exitWhenLogsClose,
     useFormStateStore_logToken,
     useFormStateStore_messagePrefix,
 } from 'stores/FormState';
-import { EntityWithCreateWorkflow, Schema } from 'types';
+import { EntityWithCreateWorkflow } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import AlertBox from '../AlertBox';
 
@@ -37,10 +39,9 @@ interface Props {
     title: string;
     connectorType: EntityWithCreateWorkflow;
     toolbar: ReactNode;
-    showCollections?: boolean;
-    promptDataLoss: any;
     errorSummary: ReactNode;
     resetState: () => void;
+    showCollections?: boolean;
 }
 
 function EntityCreate({
@@ -48,7 +49,6 @@ function EntityCreate({
     connectorType,
     toolbar,
     showCollections,
-    promptDataLoss,
     resetState,
     errorSummary,
 }: Props) {
@@ -76,13 +76,14 @@ function EntityCreate({
 
     // Details Form Store
     const imageTag = useDetailsForm_connectorImage();
+    const detailsFormChanged = useDetailsForm_changed();
 
     // Draft Editor Store
     const draftId = useEditorStore_id();
     const setDraftId = useEditorStore_setId();
 
     // Endpoint Config Store
-    const setEndpointSchema = useEndpointConfigStore_setEndpointSchema();
+    const endpointConfigChanged = useEndpointConfigStore_changed();
 
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
@@ -98,16 +99,6 @@ function EntityCreate({
         setDraftId(null);
     }, [imageTag, setDraftId]);
 
-    const { connectorTag } = useConnectorTag(imageTag.id);
-
-    useEffect(() => {
-        if (connectorTag?.endpoint_spec_schema) {
-            setEndpointSchema(
-                connectorTag.endpoint_spec_schema as unknown as Schema
-            );
-        }
-    }, [setEndpointSchema, connectorTag?.endpoint_spec_schema]);
-
     useEffect(() => {
         if (typeof connectorID === 'string') {
             setShowConnectorTiles(false);
@@ -115,6 +106,8 @@ function EntityCreate({
             setShowConnectorTiles(true);
         }
     }, [connectorID]);
+
+    const promptDataLoss = detailsFormChanged() || endpointConfigChanged();
 
     useUnsavedChangesPrompt(!exitWhenLogsClose && promptDataLoss, resetState);
 

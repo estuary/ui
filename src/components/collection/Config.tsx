@@ -3,6 +3,7 @@ import MessageWithLink from 'components/content/MessageWithLink';
 import BindingsMultiEditor from 'components/editor/Bindings';
 import AlertBox from 'components/shared/AlertBox';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
+import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { FormattedMessage } from 'react-intl';
 import {
     useResourceConfig_collectionErrorsExist,
@@ -11,10 +12,11 @@ import {
 } from 'stores/ResourceConfig';
 
 interface Props {
+    draftSpecs?: DraftSpecQuery[];
     readOnly?: boolean;
 }
 
-function CollectionConfig({ readOnly = false }: Props) {
+function CollectionConfig({ draftSpecs, readOnly = false }: Props) {
     // Resource Config Store
     const resourceConfigHydrationErrorsExist =
         useResourceConfig_hydrationErrorsExist();
@@ -52,7 +54,10 @@ function CollectionConfig({ readOnly = false }: Props) {
                     <MessageWithLink messageID="error.message" />
                 </AlertBox>
             ) : (
-                <BindingsMultiEditor readOnly={readOnly} />
+                <BindingsMultiEditor
+                    draftSpecs={draftSpecs}
+                    readOnly={readOnly}
+                />
             )}
         </WrapperWithHeader>
     );

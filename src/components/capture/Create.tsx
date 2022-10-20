@@ -9,7 +9,7 @@ import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
 import EntityToolbar from 'components/shared/Entity/Header';
-import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary/capture';
+import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
 import PageContainer from 'components/shared/PageContainer';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
@@ -25,16 +25,11 @@ import {
     TABLES,
 } from 'services/supabase';
 import {
-    useDetailsForm_changed,
     useDetailsForm_connectorImage,
     useDetailsForm_errorsExist,
     useDetailsForm_resetState,
 } from 'stores/DetailsForm';
-import {
-    useEndpointConfigStore_changed,
-    useEndpointConfigStore_errorsExist,
-    useEndpointConfigStore_reset,
-} from 'stores/EndpointConfig';
+import { useEndpointConfigStore_reset } from 'stores/EndpointConfig';
 import {
     FormStatus,
     useFormStateStore_exitWhenLogsClose,
@@ -69,7 +64,7 @@ function CaptureCreate() {
     // Details Form Store
     const imageTag = useDetailsForm_connectorImage();
     const detailsFormErrorsExist = useDetailsForm_errorsExist();
-    const detailsFormChanged = useDetailsForm_changed();
+    const resetDetailsForm = useDetailsForm_resetState();
 
     // Draft Editor Store
     const draftId = useEditorStore_id();
@@ -78,10 +73,7 @@ function CaptureCreate() {
     const pubId = useEditorStore_pubId();
 
     // Endpoint Config Store
-    const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
     const resetEndpointConfigState = useEndpointConfigStore_reset();
-    const endpointConfigChanged = useEndpointConfigStore_changed();
-    const resetDetailsForm = useDetailsForm_resetState();
 
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
@@ -191,13 +183,10 @@ function CaptureCreate() {
             <EntityCreate
                 title="browserTitle.captureCreate"
                 connectorType={entityType}
-                promptDataLoss={detailsFormChanged() || endpointConfigChanged()}
                 resetState={resetState}
                 errorSummary={
                     <ValidationErrorSummary
-                        errorsExist={
-                            detailsFormErrorsExist || endpointConfigErrorsExist
-                        }
+                        errorsExist={detailsFormErrorsExist}
                     />
                 }
                 toolbar={

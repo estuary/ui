@@ -6,6 +6,7 @@ import {
     useContext,
 } from 'react';
 import { createFormStateStore } from 'stores/FormState';
+import { createResourceConfigStore } from 'stores/ResourceConfig';
 import { createShardDetailStore } from 'stores/ShardDetail';
 import { MessagePrefixes } from 'types';
 import useConstant from 'use-constant';
@@ -23,8 +24,7 @@ export enum EditorStoreNames {
 }
 
 export enum EndpointConfigStoreNames {
-    CAPTURE = 'capture-endpoint-config',
-    MATERIALIZATION = 'materialization-endpoint-config',
+    GENERAL = 'general-endpoint-config',
 }
 
 export enum FormStateStoreNames {
@@ -35,7 +35,7 @@ export enum FormStateStoreNames {
 }
 
 export enum ResourceConfigStoreNames {
-    MATERIALIZATION = 'Materialization-Resource-Config',
+    GENERAL = 'general-resource-config',
 }
 
 export enum SelectTableStoreNames {
@@ -116,6 +116,11 @@ const invariableStores = {
         SelectTableStoreNames.MATERIALIZATION
     ),
 
+    // Resource Config Store
+    [ResourceConfigStoreNames.GENERAL]: createResourceConfigStore(
+        ResourceConfigStoreNames.GENERAL
+    ),
+
     // Shard Detail Store
     [ShardDetailStoreNames.CAPTURE]: createShardDetailStore(
         ShardDetailStoreNames.CAPTURE
@@ -167,8 +172,8 @@ export const useZustandStore = <S extends Object, U>(
     );
 };
 
-// TODO (zustand) decide on how we'll store stores that are used
-//  right now only details create uses this approach
+// TODO (zustand): Determine a method to store UI stores. The following stores
+// use this method: details form.
 const storeMap = new Map<StoreName, any>();
 export const registerStores = (storeKeys: StoreName[], create: Function) => {
     storeKeys.forEach((key) => {

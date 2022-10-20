@@ -414,7 +414,7 @@ const Collections: ResolvedIntlConfig['messages'] = {
     'collections.message2.docLink': `collections`,
     'collections.message2.docPath': `https://docs.estuary.dev/concepts/collections/`,
     'collectionsPreview.notFound.title': `Not Found`,
-    'collectionsPreview.notFound.message': `We were unable to find the journals to display the preview. This could mean there is no injested data yet.`,
+    'collectionsPreview.notFound.message': `We were unable to find any data which could mean the Capture has not ingested data yet or is not running. Check the status on the Captures page to make sure it is running.`,
     'collectionsPreview.tooFewDocuments.title': `Low document count`,
     'collectionsPreview.tooFewDocuments.message': `Fewer documents than desired were found. This could mean that your collection isn't seeing very much data.`,
     'collectionsPreview.tooManyBytes.title': `Large documents`,
@@ -423,27 +423,27 @@ const Collections: ResolvedIntlConfig['messages'] = {
     'collectionsPreview.tooManyBytesAndNoDocuments.message': `We reached the limit of how much data a web browser can comfortably read, and didn't find even reach the end of one document! This probably means that your documents are huge.`,
 };
 
-const entityCreateHeader = `Endpoint Config`;
+const endpointConfigHeader = `Endpoint Config`;
 const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.catalogEditor.heading': `Specification Editor`,
     'entityCreate.ctas.docs': `Connector Help`,
     'entityCreate.errors.collapseTitle': `View logs`,
     'entityCreate.errors.collapseTitleOpen': `Hide logs`,
     'entityCreate.sops.failedTitle': `Configuration Encryption Failed`,
-    'entityCreate.endpointConfig.heading': `${entityCreateHeader}`,
+    'entityCreate.endpointConfig.heading': `${endpointConfigHeader}`,
     'entityCreate.endpointConfig.errorSummary': `There are issues with the form.`,
     'entityCreate.instructions': `To start select a Connector below. Once you make a selection the rest of the form will display and you can configure your endpoint. You can search by name and if you do not find what you are looking for please let us know by requesting the connector.`,
 
     'entityCreate.endpointConfig.detailsHaveErrors': `The Details section has errors:`,
-    'entityCreate.endpointConfig.resourceConfigHaveErrors': `The Collections Resource Configuration section has errors:`,
-    'entityCreate.endpointConfig.endpointConfigHaveErrors': `The ${entityCreateHeader} section has errors:`,
+    'entityCreate.endpointConfig.resourceConfigHaveErrors': `The Output Collections section has errors:`,
+    'entityCreate.endpointConfig.endpointConfigHaveErrors': `The ${endpointConfigHeader} section has errors:`,
 
     'entityCreate.endpointConfig.noConnectorSelectedTitle': `Please select a Connector to begin`,
     'entityCreate.endpointConfig.noConnectorSelected': `To start the creation process you must select a Connector. You can change this later.`,
 
     'entityCreate.endpointConfig.entityNameMissing': `Name missing`,
     'entityCreate.endpointConfig.connectorMissing': `Connector missing`,
-    'entityCreate.endpointConfig.endpointConfigMissing': `${entityCreateHeader} empty`,
+    'entityCreate.endpointConfig.endpointConfigMissing': `${endpointConfigHeader} empty`,
     'entityCreate.endpointConfig.collectionsMissing': `${CommonMessages['terms.collections']} missing`,
     'entityCreate.endpointConfig.resourceConfigInvalid': `Resource Config invalid`,
 
@@ -508,7 +508,7 @@ const CaptureEdit: ResolvedIntlConfig['messages'] = {
     'captureEdit.config.source.homepage': `Home`,
     'captureEdit.save.failed': `Capture edit failed. See below for details:`,
     'captureEdit.editor.default': `Before you can edit the capture specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.capture']}." `,
-    'captureEdit.finalReview.instructions': `The following specification was generated from the details you provided. To make changes, edit the YAML file directly. Click "${CTAs['cta.saveEntity']}" to proceed.`,
+    'captureEdit.finalReview.instructions': `The following Flow specification was generated from the details you provided. To make changes, you can enter new values in the form above or edit the YAML file directly. Click "${CTAs['cta.saveEntity']}" to proceed.`,
 
     'captureEdit.test.failedErrorTitle': `Configuration Test Failed`,
     'captureEdit.test.serverUnreachable': `Unable to reach server while testing configuration.`,
@@ -573,6 +573,8 @@ const MaterializationCreate: ResolvedIntlConfig['messages'] = {
     'materializationCreate.createNotification.desc': `Your materialization is published and ready to be used.`,
 
     'materializationCreate.test.waitMessage': `Please wait while we test your materialization.`,
+    'materializationCreate.test.failedErrorTitle': `Materialization Test Failed`,
+
     'materializationCreate.testNotification.title': `Test Successful`,
     'materializationCreate.testNotification.desc': `Your materialization succeeded in a dry run and can be saved.`,
 };
@@ -582,7 +584,7 @@ const MaterializationEdit: ResolvedIntlConfig['messages'] = {
     'materializationEdit.collections.heading': `Output Collections`,
     'materializationEdit.config.source.doclink': `Connector Help`,
     'materializationEdit.editor.default': `Before you can edit the materialization specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.materialization']}".`,
-    'materializationEdit.finalReview.instructions': `The following specification was generated from the details you provided. To make changes, edit the YAML file directly. Click "${CTAs['cta.saveEntity']}," to proceed.`,
+    'materializationEdit.finalReview.instructions': `The following Flow specification was generated from the details you provided. To make changes, you can enter new values in the form above or edit the YAML file directly. Click "${CTAs['cta.saveEntity']}" to proceed.`,
     'materializationEdit.heading': `Edit Materialization`,
     'materializationEdit.instructions': `The name and destination of your existing materialization.`,
     'materializationEdit.missingConnectors': `No connectors installed. A materialization connector must be installed before a materialization can be edited.`,
@@ -598,7 +600,7 @@ const MaterializationEdit: ResolvedIntlConfig['messages'] = {
     'materializationEdit.test.inProgress': `Please wait while we try to connect to the destination.`,
 
     'materializationEdit.collectionSelector.heading': `Collection Selector`,
-    'materializationEdit.collectionSelector.instructions': `The collections bound to your existing materialization. To make changes, edit the YAML file shown in the ${EntityCreate['entityCreate.catalogEditor.heading']} section below.`,
+    'materializationEdit.collectionSelector.instructions': `The collections bound to your existing materialization. To make changes, you can enter new values in the this section of the form or edit the YAML file shown in the ${EntityCreate['entityCreate.catalogEditor.heading']} section below.`,
 
     'materializationEdit.resourceConfig.heading': `Resource Configuration`,
     'materializationEdit.save.failedErrorTitle': `Materialization Save Failed`,
@@ -608,12 +610,15 @@ const MaterializationEdit: ResolvedIntlConfig['messages'] = {
     'materializationEdit.createNotification.desc': `Your edited materialization is published and ready to be used.`,
 
     'materializationEdit.test.waitMessage': `Please wait while we test your materialization.`,
+    'materializationEdit.test.failedErrorTitle': `Materialization Test Failed`,
+
     'materializationEdit.testNotification.title': `Test Successful`,
     'materializationEdit.testNotification.desc': `Your materialization succeeded in a dry run and can be saved.`,
 };
 
 // TODO (optimization): Consolidate duplicate create and edit messages.
 const Workflows: ResolvedIntlConfig['messages'] = {
+    'workflows.error.endpointConfig.empty': `${endpointConfigHeader} empty`,
     'workflows.error.initForm': `An issue was encountered initializing the form.`,
     'workflows.error.initFormSection': `An issue was encountered initializing this section of the form.`,
 };

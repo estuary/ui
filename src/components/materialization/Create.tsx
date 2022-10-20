@@ -8,30 +8,28 @@ import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
 import EntityToolbar from 'components/shared/Entity/Header';
-import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary/materialization';
+import ExtendedValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary/extensions/WithResourceConfigErrors';
 import PageContainer from 'components/shared/PageContainer';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import {
-    useDetailsForm_changed,
     useDetailsForm_connectorImage,
     useDetailsForm_errorsExist,
     useDetailsForm_resetState,
 } from 'stores/DetailsForm';
-import {
-    useEndpointConfigStore_changed,
-    useEndpointConfigStore_errorsExist,
-    useEndpointConfigStore_reset,
-} from 'stores/EndpointConfig';
+import { useEndpointConfigStore_reset } from 'stores/EndpointConfig';
 import {
     FormStatus,
     useFormStateStore_exitWhenLogsClose,
     useFormStateStore_resetState,
     useFormStateStore_setFormState,
 } from 'stores/FormState';
-import { ResourceConfigProvider } from 'stores/ResourceConfig';
+import {
+    ResourceConfigHydrator,
+    useResourceConfig_resetState,
+} from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
 
 function MaterializationCreate() {
@@ -46,7 +44,6 @@ function MaterializationCreate() {
     // Details Form Store
     const imageTag = useDetailsForm_connectorImage();
     const detailsFormErrorsExist = useDetailsForm_errorsExist();
-    const detailsFormChanged = useDetailsForm_changed();
     const resetDetailsForm = useDetailsForm_resetState();
 
     // Draft Editor Store
@@ -55,17 +52,17 @@ function MaterializationCreate() {
     const setDraftId = useEditorStore_setId();
 
     // Endpoint Config Store
-    const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
     const resetEndpointConfigState = useEndpointConfigStore_reset();
-    const endpointConfigChanged = useEndpointConfigStore_changed();
 
     // Form State Store
     const setFormState = useFormStateStore_setFormState();
     const resetFormState = useFormStateStore_resetState();
     const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
 
+    // TODO (placement): Relocate resource config-related store selectors.
     // Resource Config Store
     // const resourceConfigChanged = useResourceConfig_stateChanged();
+    const resetResourceConfigState = useResourceConfig_resetState();
 
     // Reset the catalog if the connector changes
     useEffect(() => {
@@ -76,6 +73,7 @@ function MaterializationCreate() {
         resetEndpointConfigState();
         resetDetailsForm();
         resetFormState();
+        resetResourceConfigState();
     };
 
     const helpers = {
@@ -122,23 +120,15 @@ function MaterializationCreate() {
                     'https://docs.estuary.dev/guides/create-dataflow/#create-a-materialization',
             }}
         >
-            <ResourceConfigProvider workflow="materialization_create">
+            <ResourceConfigHydrator>
                 <EntityCreate
                     title="browserTitle.materializationCreate"
                     connectorType={entityType}
                     showCollections
-                    promptDataLoss={
-                        endpointConfigChanged() ||
-                        // resourceConfigChanged() ||
-                        detailsFormChanged()
-                    }
                     resetState={resetState}
                     errorSummary={
-                        <ValidationErrorSummary
-                            errorsExist={
-                                detailsFormErrorsExist ||
-                                endpointConfigErrorsExist
-                            }
+                        <ExtendedValidationErrorSummary
+                            errorsExist={detailsFormErrorsExist}
                         />
                     }
                     toolbar={
@@ -170,7 +160,7 @@ function MaterializationCreate() {
                         />
                     }
                 />
-            </ResourceConfigProvider>
+            </ResourceConfigHydrator>
         </PageContainer>
     );
 }

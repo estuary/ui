@@ -6,7 +6,6 @@ import CollectionConfig from 'components/collection/Config';
 import {
     EditorStoreState,
     useEditorStore_editDraftId,
-    useEditorStore_id,
     useEditorStore_setEditDraftId,
     useEditorStore_setId,
 } from 'components/editor/Store';
@@ -23,23 +22,33 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
-import useConnectorTag from 'hooks/useConnectorTag';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import useDraft, { DraftQuery } from 'hooks/useDraft';
-import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { DraftSpecQuery, DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
 import {
     LiveSpecsExtQueryWithSpec,
     useLiveSpecsExtWithSpec,
 } from 'hooks/useLiveSpecsExt';
 import { isEmpty } from 'lodash';
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
+    handleFailure,
+    handleSuccess,
+    supabaseClient,
+    TABLES,
+} from 'services/supabase';
+import {
     Details,
+    useDetailsForm_changed,
     useDetailsForm_connectorImage,
     useDetailsForm_setDetails,
 } from 'stores/DetailsForm';
-import { useEndpointConfigStore_setEndpointSchema } from 'stores/EndpointConfig';
+import {
+    useEndpointConfigStore_changed,
+    useEndpointConfig_hydrated,
+    useEndpointConfig_serverUpdateRequired,
+} from 'stores/EndpointConfig';
 import {
     FormState,
     FormStatus,
@@ -50,24 +59,35 @@ import {
     useFormStateStore_setFormState,
     useFormStateStore_status,
 } from 'stores/FormState';
-import { ENTITY, JsonFormsData, Schema } from 'types';
+import {
+    useResourceConfig_hydrated,
+    useResourceConfig_serverUpdateRequired,
+} from 'stores/ResourceConfig';
+import { ENTITY } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import AlertBox from '../AlertBox';
 
 interface Props {
     title: string;
     entityType: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
-    promptDataLoss: boolean;
     readOnly: {
         detailsForm?: true;
         endpointConfigForm?: true;
         resourceConfigForm?: true;
     };
+    draftSpecMetadata: Pick<
+        DraftSpecSwrMetadata,
+        'draftSpecs' | 'isValidating' | 'error'
+    >;
     callFailed: (formState: any, subscription?: RealtimeSubscription) => void;
     resetState: () => void;
+    errorSummary: ReactNode;
     toolbar: ReactNode;
     showCollections?: boolean;
-    errorSummary: ReactNode;
+}
+
+interface DiscoveryData {
+    draft_id: string;
 }
 
 interface InitializationHelpers {
@@ -78,6 +98,55 @@ interface InitializationHelpers {
     setFormState: (data: Partial<FormState>) => void;
     callFailed: (formState: any, subscription?: RealtimeSubscription) => void;
 }
+
+const createDraftToEdit = async (
+    catalogName: string,
+    spec: any,
+    entityType: ENTITY,
+    lastPubId: string | null,
+    errorTitle: string,
+    {
+        setDraftId,
+        setEditDraftId,
+        setFormState,
+        callFailed,
+    }: InitializationHelpers
+) => {
+    const draftsResponse = await createEntityDraft(catalogName);
+
+    if (draftsResponse.error) {
+        return callFailed({
+            error: {
+                title: errorTitle,
+                error: draftsResponse.error,
+            },
+        });
+    }
+
+    const newDraftId = draftsResponse.data[0].id;
+
+    const draftSpecResponse = await createDraftSpec(
+        newDraftId,
+        catalogName,
+        spec,
+        entityType,
+        lastPubId
+    );
+
+    if (draftSpecResponse.error) {
+        return callFailed({
+            error: {
+                title: errorTitle,
+                error: draftSpecResponse.error,
+            },
+        });
+    }
+
+    setDraftId(newDraftId);
+    setEditDraftId(newDraftId);
+
+    setFormState({ status: FormStatus.GENERATED });
+};
 
 const initDraftToEdit = async (
     { catalog_name, spec }: LiveSpecsExtQueryWithSpec,
@@ -101,64 +170,60 @@ const initDraftToEdit = async (
 
     // TODO (defect): Correct this initialization logic so that a new draft
     //   is not created when the browser is refreshed.
+
     if (
         drafts.length === 0 ||
         draftSpecs.length === 0 ||
         lastPubId !== draftSpecs[0].expect_pub_id
     ) {
-        const draftsResponse = await createEntityDraft(catalog_name);
-
-        if (draftsResponse.error) {
-            return callFailed({
-                error: {
-                    title: errorTitle,
-                    error: draftsResponse.error,
-                },
-            });
-        }
-
-        const newDraftId = draftsResponse.data[0].id;
-
-        const draftSpecResponse = await createDraftSpec(
-            newDraftId,
+        void createDraftToEdit(
             catalog_name,
             spec,
             entityType,
-            lastPubId
+            lastPubId,
+            errorTitle,
+            { setDraftId, setEditDraftId, setFormState, callFailed }
         );
-
-        if (draftSpecResponse.error) {
-            return callFailed({
-                error: {
-                    title: errorTitle,
-                    error: draftSpecResponse.error,
-                },
-            });
-        }
-
-        setDraftId(newDraftId);
-        setEditDraftId(newDraftId);
     } else {
         const existingDraftId = drafts[0].id;
 
-        const draftSpecResponse = await updateDraftSpec(
-            existingDraftId,
-            catalog_name,
-            spec,
-            lastPubId
-        );
+        const discoveryResponse = await supabaseClient
+            .from(TABLES.DISCOVERS)
+            .select(`draft_id`)
+            .match({
+                draft_id: existingDraftId,
+            })
+            .then(handleSuccess<DiscoveryData[]>, handleFailure);
 
-        if (draftSpecResponse.error) {
-            return callFailed({
-                error: {
-                    title: errorTitle,
-                    error: draftSpecResponse.error,
-                },
-            });
+        if (discoveryResponse.data && discoveryResponse.data.length > 0) {
+            const draftSpecResponse = await updateDraftSpec(
+                existingDraftId,
+                catalog_name,
+                spec,
+                lastPubId
+            );
+
+            if (draftSpecResponse.error) {
+                return callFailed({
+                    error: {
+                        title: errorTitle,
+                        error: draftSpecResponse.error,
+                    },
+                });
+            }
+
+            setDraftId(existingDraftId);
+            setEditDraftId(existingDraftId);
+        } else {
+            void createDraftToEdit(
+                catalog_name,
+                spec,
+                entityType,
+                lastPubId,
+                errorTitle,
+                { setDraftId, setEditDraftId, setFormState, callFailed }
+            );
         }
-
-        setDraftId(existingDraftId);
-        setEditDraftId(existingDraftId);
     }
 };
 
@@ -166,19 +231,15 @@ const initDraftToEdit = async (
 function EntityEdit({
     title,
     entityType,
-    toolbar,
-    callFailed,
-    showCollections,
     readOnly,
-    promptDataLoss,
+    draftSpecMetadata,
+    callFailed,
     resetState,
     errorSummary,
+    toolbar,
+    showCollections,
 }: Props) {
     useBrowserTitle(title);
-
-    const [endpointConfig, setEndpointConfig] = useState<JsonFormsData | null>(
-        null
-    );
 
     // Supabase stuff
     const { combinedGrants } = useCombinedGrantsExt({
@@ -213,16 +274,19 @@ function EntityEdit({
     // Details Form Store
     const setDetails = useDetailsForm_setDetails();
     const imageTag = useDetailsForm_connectorImage();
+    const detailsFormChanged = useDetailsForm_changed();
 
     // Draft Editor Store
-    const draftId = useEditorStore_id();
     const setDraftId = useEditorStore_setId();
 
     const editDraftId = useEditorStore_editDraftId();
     const setEditDraftId = useEditorStore_setEditDraftId();
 
     // Endpoint Config Store
-    const setEndpointSchema = useEndpointConfigStore_setEndpointSchema();
+    const endpointConfigStoreHydrated = useEndpointConfig_hydrated();
+    const endpointConfigChanged = useEndpointConfigStore_changed();
+    const endpointConfigServerUpdateRequired =
+        useEndpointConfig_serverUpdateRequired();
 
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
@@ -237,9 +301,17 @@ function EntityEdit({
 
     const setFormState = useFormStateStore_setFormState();
 
-    const { draftSpecs, isValidating: isValidatingDraftSpecs } = useDraftSpecs(
-        editDraftId,
-        lastPubId
+    // Resource Config Store
+    const resourceConfigStoreHydrated = useResourceConfig_hydrated();
+    const resourceConfigServerUpdateRequired =
+        useResourceConfig_serverUpdateRequired();
+
+    const { draftSpecs, isValidating: isValidatingDraftSpecs } =
+        draftSpecMetadata;
+
+    const taskDraftSpec = useMemo(
+        () => draftSpecs.filter(({ spec_type }) => spec_type === entityType),
+        [draftSpecs, entityType]
     );
 
     useEffect(() => {
@@ -253,7 +325,7 @@ function EntityEdit({
                 initialSpec,
                 entityType,
                 drafts,
-                draftSpecs,
+                taskDraftSpec,
                 lastPubId,
                 {
                     setDraftId,
@@ -269,7 +341,7 @@ function EntityEdit({
         setFormState,
         callFailed,
         drafts,
-        draftSpecs,
+        taskDraftSpec,
         entityType,
         formStatus,
         initialSpec,
@@ -293,39 +365,27 @@ function EntityEdit({
         }
     }, [setDetails, initialSpec, initialConnectorTag]);
 
-    const { connectorTag } = useConnectorTag(imageTag.id);
-
     useEffect(() => {
-        if (
-            connectorTag &&
-            !isEmpty(initialSpec) &&
-            !isEmpty(initialConnectorTag) &&
-            (formStatus === FormStatus.GENERATING ||
-                formStatus == FormStatus.GENERATED ||
-                formStatus === FormStatus.FAILED)
-        ) {
-            setEndpointConfig(
-                connectorTag.connector_id === initialConnectorTag.id
-                    ? { data: initialSpec.spec.endpoint.connector.config }
-                    : null
-            );
-
-            setEndpointSchema(
-                connectorTag.endpoint_spec_schema as unknown as Schema
-            );
-
-            setFormState({ status: FormStatus.GENERATED });
-        }
+        setDraftId(
+            endpointConfigServerUpdateRequired ||
+                resourceConfigServerUpdateRequired
+                ? null
+                : editDraftId
+        );
     }, [
-        connectorTag,
-        initialSpec,
-        initialConnectorTag,
-        formStatus,
-        setEndpointSchema,
-        setFormState,
+        setDraftId,
+        editDraftId,
+        endpointConfigServerUpdateRequired,
+        resourceConfigServerUpdateRequired,
     ]);
 
+    const promptDataLoss = detailsFormChanged() || endpointConfigChanged();
+
     useUnsavedChangesPrompt(!exitWhenLogsClose && promptDataLoss, resetState);
+
+    const storeHydrationIncomplete =
+        !endpointConfigStoreHydrated ||
+        (showCollections && !resourceConfigStoreHydrated);
 
     return (
         <>
@@ -335,7 +395,9 @@ function EntityEdit({
 
             {connectorTagsError ? (
                 <Error error={connectorTagsError} />
-            ) : !editDraftId || draftSpecs.length === 0 ? null : (
+            ) : !editDraftId ||
+              taskDraftSpec.length === 0 ||
+              storeHydrationIncomplete ? null : (
                 <>
                     <Collapse in={formSubmitError !== null}>
                         {formSubmitError ? (
@@ -343,7 +405,7 @@ function EntityEdit({
                                 title={formSubmitError.title}
                                 error={formSubmitError.error}
                                 logToken={logToken}
-                                draftId={draftId}
+                                draftId={editDraftId}
                             />
                         ) : null}
                     </Collapse>
@@ -370,7 +432,6 @@ function EntityEdit({
                             <EndpointConfig
                                 connectorImage={imageTag.id}
                                 readOnly={readOnly.endpointConfigForm}
-                                initialEndpointConfig={endpointConfig}
                             />
                         </ErrorBoundryWrapper>
                     ) : null}
@@ -378,6 +439,7 @@ function EntityEdit({
                     {showCollections && hasLength(imageTag.id) ? (
                         <ErrorBoundryWrapper>
                             <CollectionConfig
+                                draftSpecs={taskDraftSpec}
                                 readOnly={readOnly.resourceConfigForm}
                             />
                         </ErrorBoundryWrapper>

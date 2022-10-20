@@ -8,17 +8,34 @@ import {
 } from 'services/supabase';
 import { ENTITY } from 'types';
 
-type ConnectorTagData = Pick<
+// TODO (naming): Consider removing he tight coupling between this file and the stores.
+//  These APIs are truly general purpose. Perhaps break them out by supabase table.
+type ConnectorTagResourceData = Pick<
     ConnectorTag,
     'connector_id' | 'resource_spec_schema'
 >;
 
-export const getResourceSchema = async (connectorId: string | null) => {
+type ConnectorTagEndpointData = Pick<
+    ConnectorTag,
+    'connector_id' | 'endpoint_spec_schema'
+>;
+
+export const getSchema_Endpoint = async (connectorId: string | null) => {
+    const endpointSchema = await supabaseClient
+        .from(TABLES.CONNECTOR_TAGS)
+        .select(`connector_id,endpoint_spec_schema`)
+        .eq('connector_id', connectorId)
+        .then(handleSuccess<ConnectorTagEndpointData[]>, handleFailure);
+
+    return endpointSchema;
+};
+
+export const getSchema_Resource = async (connectorId: string | null) => {
     const resourceSchema = await supabaseClient
         .from(TABLES.CONNECTOR_TAGS)
         .select(`connector_id,resource_spec_schema`)
         .eq('connector_id', connectorId)
-        .then(handleSuccess<ConnectorTagData[]>, handleFailure);
+        .then(handleSuccess<ConnectorTagResourceData[]>, handleFailure);
 
     return resourceSchema;
 };

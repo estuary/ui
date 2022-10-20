@@ -146,7 +146,7 @@ export const createFormStateStore = (
 };
 
 // Selector Hooks
-const storeName = (workflow: EntityWorkflow): FormStateStoreNames => {
+const storeName = (workflow: EntityWorkflow | null): FormStateStoreNames => {
     switch (workflow) {
         case 'capture_create':
             return FormStateStoreNames.CAPTURE_CREATE;

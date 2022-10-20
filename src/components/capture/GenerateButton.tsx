@@ -1,12 +1,15 @@
 import { Button } from '@mui/material';
 import { discover } from 'api/discovers';
 import { createEntityDraft } from 'api/drafts';
-import { encryptConfig } from 'api/oauth';
 import {
     useEditorStore_isSaving,
     useEditorStore_resetState,
 } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
+import { useEntityWorkflow } from 'context/Workflow';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -16,8 +19,12 @@ import {
     useDetailsForm_errorsExist,
 } from 'stores/DetailsForm';
 import {
+    useEndpointConfigStore_changed,
+    useEndpointConfigStore_encryptedEndpointConfig_data,
     useEndpointConfigStore_endpointConfig_data,
+    useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_errorsExist,
+    useEndpointConfig_serverUpdateRequired,
 } from 'stores/EndpointConfig';
 import {
     FormStatus,
@@ -25,6 +32,7 @@ import {
     useFormStateStore_setFormState,
     useFormStateStore_updateStatus,
 } from 'stores/FormState';
+import { encryptEndpointConfig } from 'utils/sops-utils';
 
 interface Props {
     disabled: boolean;
@@ -33,6 +41,13 @@ interface Props {
 }
 
 function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
+    const initialConnectorId = useGlobalSearchParams(
+        GlobalSearchParams.CONNECTOR_ID
+    );
+
+    const workflow = useEntityWorkflow();
+    const editWorkflow = workflow === 'capture_edit';
+
     // Editor Store
     const isSaving = useEditorStore_isSaving();
 
@@ -52,8 +67,20 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
     const imageConnectorId = useDetailsForm_connectorImage_connectorId();
 
     // Endpoint Config Store
+    const endpointSchema = useEndpointConfigStore_endpointSchema();
+
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
-    const endpointConfigHasErrors = useEndpointConfigStore_errorsExist();
+
+    const serverEndpointConfigData =
+        useEndpointConfigStore_encryptedEndpointConfig_data();
+    const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
+
+    const endpointConfigChanged = useEndpointConfigStore_changed();
+    const serverUpdateRequired = useEndpointConfig_serverUpdateRequired();
+
+    const endpointConfigErrorFlag = editWorkflow
+        ? endpointConfigChanged() && endpointConfigErrorsExist
+        : endpointConfigErrorsExist;
 
     const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
@@ -62,14 +89,15 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
         if (
             isEmpty(endpointConfigData) ||
             detailsFormsHasErrors ||
-            endpointConfigHasErrors
+            endpointConfigErrorFlag
         ) {
             return setFormState({
                 status: FormStatus.FAILED,
                 displayValidation: true,
             });
         } else {
-            resetEditorState();
+            resetEditorState(editWorkflow);
+
             const draftsResponse = await createEntityDraft(entityName);
             if (draftsResponse.error) {
                 return callFailed({
@@ -80,30 +108,39 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
                 });
             }
 
-            const encryptedEndpointConfig = await encryptConfig(
+            const draftId = draftsResponse.data[0].id;
+
+            const encryptedEndpointConfig = await encryptEndpointConfig(
+                serverUpdateRequired
+                    ? endpointConfigData
+                    : serverEndpointConfigData,
+                endpointSchema,
+                serverUpdateRequired,
                 imageConnectorId,
                 imageConnectorTagId,
-                endpointConfigData
+                callFailed,
+                { overrideJsonFormDefaults: true }
             );
-            if (
-                encryptedEndpointConfig.error ||
-                encryptedEndpointConfig.data.error
-            ) {
-                return callFailed({
-                    error: {
-                        title: 'entityCreate.sops.failedTitle',
-                        error:
-                            encryptedEndpointConfig.error ??
-                            encryptedEndpointConfig.data.error,
-                    },
-                });
+
+            let catalogName = entityName;
+
+            if (editWorkflow && imageConnectorId === initialConnectorId) {
+                // The discovery RPC will insert a row into the draft spec-related tables for the given task with verbiage
+                // identifying the external source appended to the task name (e.g., '/source-postgres'). To limit duplication
+                // of draft spec-related data, the aforementioned external source identifier is removed from the task name
+                // prior to executing the discovery RPC.
+                const lastSlashIndex = entityName.lastIndexOf('/');
+
+                if (lastSlashIndex !== -1) {
+                    catalogName = entityName.slice(0, lastSlashIndex);
+                }
             }
 
             const discoverResponse = await discover(
-                entityName,
+                catalogName,
                 encryptedEndpointConfig.data,
                 imageConnectorTagId,
-                draftsResponse.data[0].id
+                draftId
             );
             if (discoverResponse.error) {
                 return callFailed({
@@ -113,7 +150,7 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
                     },
                 });
             }
-            subscription(draftsResponse.data[0].id);
+            subscription(draftId, endpointConfigData);
 
             setFormState({
                 logToken: discoverResponse.data[0].logs_token,

@@ -1,14 +1,14 @@
 import SectionError from 'components/shared/Entity/ValidationErrorSummary/SectionError';
 import {
     useResourceConfig_collections,
-    useResourceConfig_resourceConfigErrorsExist,
+    useResourceConfig_resourceConfigErrors,
 } from 'stores/ResourceConfig';
 
 function ResourceConfigErrors() {
     const collections = useResourceConfig_collections();
 
     const filteredResourceConfigErrors =
-        useResourceConfig_resourceConfigErrorsExist();
+        useResourceConfig_resourceConfigErrors();
 
     return (
         <SectionError

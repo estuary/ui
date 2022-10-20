@@ -1,7 +1,9 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { authenticatedRoutes } from 'app/Authenticated';
 import {
+    useEditorStore_editDraftId,
     useEditorStore_id,
+    useEditorStore_resetState,
     useEditorStore_setId,
 } from 'components/editor/Store';
 import MaterializeGenerateButton from 'components/materialization/EditGenerateButton';
@@ -9,34 +11,37 @@ import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityEdit from 'components/shared/Entity/Edit';
 import EntityToolbar from 'components/shared/Entity/Header';
-import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary/materialization';
+import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary/extensions/WithResourceConfigErrors';
 import PageContainer from 'components/shared/PageContainer';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
+import useDraftSpecs from 'hooks/useDraftSpecs';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import {
-    useDetailsForm_changed,
     useDetailsForm_connectorImage,
     useDetailsForm_errorsExist,
     useDetailsForm_resetState,
 } from 'stores/DetailsForm';
-import {
-    useEndpointConfigStore_changed,
-    useEndpointConfigStore_errorsExist,
-    useEndpointConfigStore_reset,
-} from 'stores/EndpointConfig';
+import { useEndpointConfigStore_reset } from 'stores/EndpointConfig';
 import {
     FormStatus,
     useFormStateStore_exitWhenLogsClose,
     useFormStateStore_resetState,
     useFormStateStore_setFormState,
 } from 'stores/FormState';
-import { ResourceConfigProvider } from 'stores/ResourceConfig';
+import {
+    ResourceConfigHydrator,
+    useResourceConfig_resetState,
+} from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
 
 function MaterializationEdit() {
+    const lastPubId = useGlobalSearchParams(GlobalSearchParams.LAST_PUB_ID);
     const navigate = useNavigate();
 
     const entityType = ENTITY.MATERIALIZATION;
@@ -49,25 +54,32 @@ function MaterializationEdit() {
     // Details Form Store
     const imageTag = useDetailsForm_connectorImage();
     const detailsFormErrorsExist = useDetailsForm_errorsExist();
-    const detailsFormChanged = useDetailsForm_changed();
     const resetDetailsFormState = useDetailsForm_resetState();
 
     // Draft Editor Store
     const draftId = useEditorStore_id();
     const setDraftId = useEditorStore_setId();
 
+    const editDraftId = useEditorStore_editDraftId();
+    const resetEditorStore = useEditorStore_resetState();
+
     // Endpoint Config Store
-    const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
     const resetEndpointConfigState = useEndpointConfigStore_reset();
-    const endpointConfigChanged = useEndpointConfigStore_changed();
 
     // Form State Store
     const setFormState = useFormStateStore_setFormState();
     const resetFormState = useFormStateStore_resetState();
     const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
 
+    // TODO (placement): Relocate resource config-related store selectors.
     // Resource Config Store
     // const resourceConfigChanged = useResourceConfig_stateChanged();
+    const resetResourceConfigState = useResourceConfig_resetState();
+
+    const { mutate: mutateDraftSpecs, ...draftSpecsMetadata } = useDraftSpecs(
+        editDraftId,
+        lastPubId
+    );
 
     // Reset the catalog if the connector changes
     useEffect(() => {
@@ -78,6 +90,8 @@ function MaterializationEdit() {
         resetFormState();
         resetEndpointConfigState();
         resetDetailsFormState();
+        resetResourceConfigState();
+        resetEditorStore();
     };
 
     const helpers = {
@@ -131,28 +145,18 @@ function MaterializationEdit() {
 
     return (
         <PageContainer>
-            <ResourceConfigProvider workflow="materialization_edit">
+            <ResourceConfigHydrator>
                 <EntityEdit
                     title="browserTitle.materializationEdit"
                     entityType={entityType}
+                    readOnly={{ detailsForm: true }}
+                    draftSpecMetadata={draftSpecsMetadata}
                     showCollections
-                    promptDataLoss={
-                        endpointConfigChanged() ||
-                        // resourceConfigChanged() ||
-                        detailsFormChanged()
-                    }
-                    readOnly={{
-                        detailsForm: true,
-                        endpointConfigForm: true,
-                    }}
-                    resetState={resetState}
                     callFailed={helpers.callFailed}
+                    resetState={resetState}
                     errorSummary={
                         <ValidationErrorSummary
-                            errorsExist={
-                                detailsFormErrorsExist ||
-                                endpointConfigErrorsExist
-                            }
+                            errorsExist={detailsFormErrorsExist}
                         />
                     }
                     toolbar={
@@ -161,6 +165,7 @@ function MaterializationEdit() {
                                 <MaterializeGenerateButton
                                     disabled={!hasConnectors}
                                     callFailed={helpers.callFailed}
+                                    mutateDraftSpecs={mutateDraftSpecs}
                                 />
                             }
                             TestButton={
@@ -182,7 +187,7 @@ function MaterializationEdit() {
                         />
                     }
                 />
-            </ResourceConfigProvider>
+            </ResourceConfigHydrator>
         </PageContainer>
     );
 }

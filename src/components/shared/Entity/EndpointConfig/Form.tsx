@@ -3,8 +3,8 @@ import { JsonForms } from '@jsonforms/react';
 import { Box, StyledEngineProvider } from '@mui/material';
 import { jsonFormsPadding } from 'context/Theme';
 import { isEmpty } from 'lodash';
-import { useEffect, useMemo } from 'react';
-import { createJSONFormDefaults, setDefaultsValidator } from 'services/ajv';
+import { useMemo } from 'react';
+import { setDefaultsValidator } from 'services/ajv';
 import {
     custom_generateDefaultUISchema,
     defaultOptions,
@@ -20,33 +20,26 @@ import {
     useFormStateStore_displayValidation,
     useFormStateStore_isActive,
 } from 'stores/FormState';
-import { JsonFormsData } from 'types';
+import { EntityWorkflow } from 'types';
 
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
 
 interface Props {
     readOnly: boolean;
-    initialEndpointConfig?: JsonFormsData | null;
+    workflow: EntityWorkflow | null;
 }
 
-function EndpointConfigForm({ readOnly, initialEndpointConfig }: Props) {
+function EndpointConfigForm({ readOnly, workflow }: Props) {
     // Endpoint Config Store
-    const setSpec = useEndpointConfigStore_setEndpointConfig();
-    const formData = useEndpointConfigStore_endpointConfig_data();
+    const endpointConfig = useEndpointConfigStore_endpointConfig_data();
+    const setEndpointConfig = useEndpointConfigStore_setEndpointConfig();
+
     const endpointSchema = useEndpointConfigStore_endpointSchema();
 
     // Form State Store
     const displayValidation = useFormStateStore_displayValidation();
 
     const isActive = useFormStateStore_isActive();
-
-    useEffect(() => {
-        if (!isEmpty(endpointSchema)) {
-            setSpec(
-                initialEndpointConfig ?? createJSONFormDefaults(endpointSchema)
-            );
-        }
-    }, [setSpec, endpointSchema, initialEndpointConfig]);
 
     const categoryLikeSchema = useMemo(() => {
         if (!isEmpty(endpointSchema)) {
@@ -79,13 +72,15 @@ function EndpointConfigForm({ readOnly, initialEndpointConfig }: Props) {
                 <JsonForms
                     schema={endpointSchema}
                     uischema={categoryLikeSchema}
-                    data={formData}
+                    data={endpointConfig}
                     renderers={defaultRenderers}
                     cells={materialCells}
                     config={defaultOptions}
                     readonly={readOnly || isActive}
                     validationMode={showValidationVal}
-                    onChange={setSpec}
+                    onChange={(formData) =>
+                        setEndpointConfig(formData, workflow)
+                    }
                     ajv={setDefaultsValidator}
                 />
             </Box>

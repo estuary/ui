@@ -105,7 +105,7 @@ function TableView({
     }
 
     return (
-        <Grid item xs={12}>
+        <Grid item xs={12} data-private>
             <Paper
                 variant="outlined"
                 sx={{
