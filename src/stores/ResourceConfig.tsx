@@ -9,7 +9,7 @@ import { ResourceConfigStoreNames, useZustandStore } from 'context/Zustand';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
-import { difference, has, isEmpty, isEqual, map, omit } from 'lodash';
+import { difference, has, isEmpty, isEqual, map, omit, pick } from 'lodash';
 import { ReactNode } from 'react';
 import { useEffectOnce } from 'react-use';
 import { createJSONFormDefaults } from 'services/ajv';
@@ -35,6 +35,13 @@ export interface ResourceConfigState {
     collections: string[] | null;
     preFillEmptyCollections: (collections: LiveSpecsExtQuery[]) => void;
     preFillCollections: (liveSpecsData: LiveSpecsExtQuery[]) => void;
+    removeCollection: (value: string) => void;
+
+    collectionRemovalMetadata: {
+        selectedCollection: string | null;
+        removedCollection: string;
+        index: number;
+    };
 
     collectionErrorsExist: boolean;
 
@@ -117,6 +124,7 @@ const getInitialStateData = (): Pick<
     ResourceConfigState,
     | 'collections'
     | 'collectionErrorsExist'
+    | 'collectionRemovalMetadata'
     | 'currentCollection'
     | 'hydrated'
     | 'hydrationErrorsExist'
@@ -128,6 +136,11 @@ const getInitialStateData = (): Pick<
 > => ({
     collections: [],
     collectionErrorsExist: true,
+    collectionRemovalMetadata: {
+        selectedCollection: null,
+        removedCollection: '',
+        index: -1,
+    },
     currentCollection: null,
     hydrated: false,
     hydrationErrorsExist: false,
@@ -194,10 +207,77 @@ const getInitialState = (
         );
     },
 
+    removeCollection: (value) => {
+        set(
+            produce((state: ResourceConfigState) => {
+                const { collections, currentCollection, resourceConfig } =
+                    get();
+
+                if (collections?.includes(value)) {
+                    state.collectionRemovalMetadata = {
+                        selectedCollection: currentCollection,
+                        removedCollection: value,
+                        index: collections.findIndex(
+                            (collection) => collection === value
+                        ),
+                    };
+
+                    state.collections = collections.filter(
+                        (collection) => collection !== value
+                    );
+
+                    const updatedResourceConfig = pick(
+                        resourceConfig,
+                        state.collections
+                    ) as ResourceConfigDictionary;
+
+                    state.resourceConfig = updatedResourceConfig;
+                }
+            }),
+            false,
+            'Collection Removed'
+        );
+    },
+
     setCurrentCollection: (value) => {
         set(
             produce((state: ResourceConfigState) => {
-                state.currentCollection = value;
+                const {
+                    collections,
+                    collectionRemovalMetadata: {
+                        selectedCollection,
+                        removedCollection,
+                        index: removedCollectionIndex,
+                    },
+                } = get();
+
+                const collectionCount = collections?.length;
+
+                if (
+                    selectedCollection !== removedCollection &&
+                    value &&
+                    collections?.includes(value)
+                ) {
+                    state.currentCollection = value;
+                } else if (
+                    collectionCount &&
+                    selectedCollection === removedCollection
+                ) {
+                    if (
+                        removedCollectionIndex &&
+                        removedCollectionIndex < collections.length
+                    ) {
+                        state.currentCollection =
+                            collections[removedCollectionIndex];
+                    } else if (removedCollectionIndex === collections.length) {
+                        state.currentCollection =
+                            collections[removedCollectionIndex - 1];
+                    }
+                } else if (removedCollection === value) {
+                    state.currentCollection = selectedCollection;
+                } else {
+                    state.currentCollection = null;
+                }
             }),
             false,
             'Current Collection Changed'
@@ -441,6 +521,15 @@ export const useResourceConfig_preFillCollections = () => {
         ResourceConfigState,
         ResourceConfigState['preFillCollections']
     >(getStoreName(entityType), (state) => state.preFillCollections);
+};
+
+export const useResourceConfig_removeCollection = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['removeCollection']
+    >(getStoreName(entityType), (state) => state.removeCollection);
 };
 
 export const useResourceConfig_collectionErrorsExist = () => {

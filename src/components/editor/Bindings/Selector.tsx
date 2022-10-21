@@ -1,5 +1,6 @@
+import { Clear } from '@mui/icons-material';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import { ListItemText } from '@mui/material';
+import { IconButton, ListItemText } from '@mui/material';
 import {
     DataGrid,
     GridColDef,
@@ -12,9 +13,32 @@ import { useEffect, useRef, useState } from 'react';
 import { useUnmount } from 'react-use';
 import {
     useResourceConfig_currentCollection,
+    useResourceConfig_removeCollection,
     useResourceConfig_resourceConfig,
     useResourceConfig_setCurrentCollection,
 } from 'stores/ResourceConfig';
+
+interface DeleteButtonProps {
+    collection: string;
+}
+
+function DeleteButton({ collection }: DeleteButtonProps) {
+    const removeCollection = useResourceConfig_removeCollection();
+
+    const handlers = {
+        removeCollection: (event: React.MouseEvent<HTMLElement>) => {
+            event.preventDefault();
+
+            removeCollection(collection);
+        },
+    };
+
+    return (
+        <IconButton size="small" onClick={handlers.removeCollection}>
+            <Clear />
+        </IconButton>
+    );
+}
 
 const initialState = {
     columns: {
@@ -50,11 +74,19 @@ function BindingSelector() {
                         <>
                             <ErrorOutlineIcon color="error" sx={{ pr: 1 }} />
                             <ListItemText primary={params.row} />
+
+                            <DeleteButton collection={params.row} />
                         </>
                     );
                 }
 
-                return <ListItemText primary={params.row} />;
+                return (
+                    <>
+                        <ListItemText primary={params.row} />
+
+                        <DeleteButton collection={params.row} />
+                    </>
+                );
             },
             valueGetter: (params: GridValueGetterParams) => params.row,
         },
