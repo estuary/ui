@@ -14,7 +14,7 @@ export interface Props {
 }
 
 const MIN_RESIZE_WIDTH = 25;
-const INITIAL_SELECTOR_WIDTH = 250;
+const INITIAL_SELECTOR_WIDTH = 350;
 
 function ListAndDetails({ backgroundColor, list, details, height }: Props) {
     const heightVal = (height ?? DEFAULT_HEIGHT) + DEFAULT_TOOLBAR_HEIGHT;

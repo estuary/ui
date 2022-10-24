@@ -1,8 +1,7 @@
-import { Autocomplete, Box, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, TextField } from '@mui/material';
 import useLiveSpecs from 'hooks/useLiveSpecs';
 import { useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
-import { useFormStateStore_messagePrefix } from 'stores/FormState';
+import { useIntl } from 'react-intl';
 import {
     useResourceConfig_collections,
     useResourceConfig_setResourceConfig,
@@ -24,9 +23,6 @@ function CollectionPicker({ readOnly = false }: Props) {
 
     const { liveSpecs: collectionData, error } = useLiveSpecs('collection');
 
-    // Form State Store
-    const messagePrefix = useFormStateStore_messagePrefix();
-
     // Resource Config Store
     const collections = useResourceConfig_collections();
 
@@ -41,45 +37,35 @@ function CollectionPicker({ readOnly = false }: Props) {
         },
     };
 
+    // TODO (design): Determine whether the component should have a label or merely placeholder text.
+    //   If a label is desired, the reflex container surrounding the collection selector instance
+    //   requires padding to display the label when the field is active. If placeholder text will do,
+    //   style overrides are necessary.
     return collections && collectionData.length > 0 && !error ? (
-        <Box>
-            <Typography variant="h5" sx={{ mb: 1 }}>
-                <FormattedMessage
-                    id={`${messagePrefix}.collectionSelector.heading`}
-                />
-            </Typography>
-
-            <Typography sx={{ mb: 2 }}>
-                <FormattedMessage
-                    id={`${messagePrefix}.collectionSelector.instructions`}
-                />
-            </Typography>
-
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Autocomplete
-                    disabled={readOnly}
-                    multiple
-                    options={collectionData.map(
-                        ({ catalog_name }) => catalog_name
-                    )}
-                    value={collections}
-                    size="small"
-                    filterSelectedOptions
-                    fullWidth
-                    onChange={handlers.updateCollections}
-                    blurOnSelect={false}
-                    disableCloseOnSelect
-                    renderInput={(params) => (
-                        <TextField
-                            {...params}
-                            label={collectionsLabel}
-                            required
-                            error={missingInput}
-                            onBlur={handlers.validateSelection}
-                        />
-                    )}
-                />
-            </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Autocomplete
+                disabled={readOnly}
+                multiple
+                options={collectionData.map(({ catalog_name }) => catalog_name)}
+                value={collections}
+                size="small"
+                filterSelectedOptions
+                fullWidth
+                onChange={handlers.updateCollections}
+                blurOnSelect={false}
+                disableCloseOnSelect
+                limitTags={1}
+                renderTags={() => {}}
+                renderInput={(params) => (
+                    <TextField
+                        {...params}
+                        placeholder={collectionsLabel}
+                        required
+                        error={missingInput}
+                        onBlur={handlers.validateSelection}
+                    />
+                )}
+            />
         </Box>
     ) : null;
 }

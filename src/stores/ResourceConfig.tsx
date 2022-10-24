@@ -253,11 +253,7 @@ const getInitialState = (
 
                 const collectionCount = collections?.length;
 
-                if (
-                    selectedCollection !== removedCollection &&
-                    value &&
-                    collections?.includes(value)
-                ) {
+                if (value && collections?.includes(value)) {
                     state.currentCollection = value;
                 } else if (
                     collectionCount &&
@@ -273,7 +269,7 @@ const getInitialState = (
                         state.currentCollection =
                             collections[removedCollectionIndex - 1];
                     }
-                } else if (removedCollection === value) {
+                } else if (collectionCount && removedCollection === value) {
                     state.currentCollection = selectedCollection;
                 } else {
                     state.currentCollection = null;

@@ -8,6 +8,7 @@ import {
     GridSelectionModel,
     GridValueGetterParams,
 } from '@mui/x-data-grid';
+import CollectionPicker from 'components/collection/Picker';
 import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
 import { useEffect, useRef, useState } from 'react';
 import { useUnmount } from 'react-use';
@@ -98,6 +99,7 @@ function BindingSelector() {
                         sx={{
                             'display': 'flex',
                             'flexGrow': 1,
+                            'alignItems': 'center',
                             '&:hover .MuiIconButton-root': {
                                 display: 'inline-flex',
                             },
@@ -122,44 +124,50 @@ function BindingSelector() {
     });
 
     return (
-        <DataGrid
-            components={{
-                NoRowsOverlay: SelectorEmpty,
-            }}
-            rows={resourceConfigKeys}
-            columns={columns}
-            headerHeight={40}
-            rowCount={resourceConfigKeys.length}
-            hideFooter
-            disableColumnSelector
-            onSelectionModelChange={(newSelectionModel) => {
-                setSelectionModel(newSelectionModel);
-            }}
-            onRowClick={(params: any) => {
-                // This is hacky but it works. It clears out the
-                //  current collection before switching.
-                //  If a user is typing quickly in a form and then selects a
-                //  different binding VERY quickly it could cause the updates
-                //  to go into the wrong form.
-                setCurrentCollection(null);
-                onSelectTimeOut.current = window.setTimeout(() => {
-                    setCurrentCollection(params.row);
-                });
-            }}
-            getRowId={(resourceConfigKey) => {
-                return resourceConfigKey;
-            }}
-            selectionModel={selectionModel}
-            initialState={initialState}
-            sx={{
-                '& .MuiDataGrid-row ': {
-                    cursor: 'pointer',
-                },
-                '& .MuiDataGrid-columnSeparator': {
-                    display: 'none',
-                },
-            }}
-        />
+        <>
+            <CollectionPicker readOnly={false} />
+
+            <Box sx={{ height: 310 }}>
+                <DataGrid
+                    components={{
+                        NoRowsOverlay: SelectorEmpty,
+                    }}
+                    rows={resourceConfigKeys}
+                    columns={columns}
+                    headerHeight={40}
+                    rowCount={resourceConfigKeys.length}
+                    hideFooter
+                    disableColumnSelector
+                    onSelectionModelChange={(newSelectionModel) => {
+                        setSelectionModel(newSelectionModel);
+                    }}
+                    onRowClick={(params: any) => {
+                        // This is hacky but it works. It clears out the
+                        //  current collection before switching.
+                        //  If a user is typing quickly in a form and then selects a
+                        //  different binding VERY quickly it could cause the updates
+                        //  to go into the wrong form.
+                        setCurrentCollection(null);
+                        onSelectTimeOut.current = window.setTimeout(() => {
+                            setCurrentCollection(params.row);
+                        });
+                    }}
+                    getRowId={(resourceConfigKey) => {
+                        return resourceConfigKey;
+                    }}
+                    selectionModel={selectionModel}
+                    initialState={initialState}
+                    sx={{
+                        '& .MuiDataGrid-row ': {
+                            cursor: 'pointer',
+                        },
+                        '& .MuiDataGrid-columnSeparator': {
+                            display: 'none',
+                        },
+                    }}
+                />
+            </Box>
+        </>
     );
 }
 

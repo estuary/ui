@@ -1,4 +1,4 @@
-import CollectionSelector from 'components/collection/Picker';
+import { Typography } from '@mui/material';
 import BindingsEditor from 'components/editor/Bindings/Editor';
 import BindingSelector from 'components/editor/Bindings/Selector';
 import ListAndDetails from 'components/editor/ListAndDetails';
@@ -10,7 +10,9 @@ import useConnectorTag from 'hooks/useConnectorTag';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isEqual } from 'lodash';
 import { useEffect, useMemo } from 'react';
+import { FormattedMessage } from 'react-intl';
 import { useDetailsForm_connectorImage } from 'stores/DetailsForm';
+import { useFormStateStore_messagePrefix } from 'stores/FormState';
 import {
     ResourceConfigDictionary,
     useResourceConfig_resourceConfig,
@@ -31,6 +33,9 @@ function BindingsMultiEditor({ draftSpecs = [], readOnly = false }: Props) {
 
     // Details Form Store
     const imageTag = useDetailsForm_connectorImage();
+
+    // Form State Store
+    const messagePrefix = useFormStateStore_messagePrefix();
 
     // Resource Config Store
     const setResourceSchema = useResourceConfig_setResourceSchema();
@@ -84,7 +89,17 @@ function BindingsMultiEditor({ draftSpecs = [], readOnly = false }: Props) {
 
     return (
         <>
-            <CollectionSelector readOnly={readOnly} />
+            <Typography variant="h5" sx={{ mb: 1 }}>
+                <FormattedMessage
+                    id={`${messagePrefix}.collectionSelector.heading`}
+                />
+            </Typography>
+
+            <Typography sx={{ mb: 2 }}>
+                <FormattedMessage
+                    id={`${messagePrefix}.collectionSelector.instructions`}
+                />
+            </Typography>
 
             <ListAndDetails
                 list={<BindingSelector />}
