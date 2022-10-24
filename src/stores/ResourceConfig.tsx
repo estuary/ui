@@ -268,7 +268,7 @@ const getInitialState = (
                     selectedCollection === removedCollection
                 ) {
                     if (
-                        removedCollectionIndex &&
+                        removedCollectionIndex > -1 &&
                         removedCollectionIndex < collections.length
                     ) {
                         state.currentCollection =
