@@ -19,6 +19,10 @@ import {
     useResourceConfig_setCurrentCollection,
 } from 'stores/ResourceConfig';
 
+interface BindingSelectorProps {
+    readOnly?: boolean;
+}
+
 interface DeleteButtonProps {
     collection: string;
 }
@@ -56,7 +60,7 @@ const typographyTruncation: TypographyProps = {
     },
 };
 
-function BindingSelector() {
+function BindingSelector({ readOnly }: BindingSelectorProps) {
     const onSelectTimeOut = useRef<number | null>(null);
 
     const currentCollection = useResourceConfig_currentCollection();
@@ -116,7 +120,7 @@ function BindingSelector() {
 
     return (
         <>
-            <CollectionPicker readOnly={false} />
+            <CollectionPicker readOnly={readOnly} />
 
             <Box sx={{ height: 310 }}>
                 <DataGrid

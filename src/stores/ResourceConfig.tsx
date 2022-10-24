@@ -54,7 +54,7 @@ export interface ResourceConfigState {
     // Resource Config
     resourceConfig: ResourceConfigDictionary;
     setResourceConfig: (
-        key: string | [string],
+        key: string | string[],
         resourceConfig?: ResourceConfig
     ) => void;
 

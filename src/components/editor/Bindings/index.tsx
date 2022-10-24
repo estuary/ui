@@ -110,7 +110,7 @@ function BindingsMultiEditor({ draftSpecs = [], readOnly = false }: Props) {
             </Typography>
 
             <ListAndDetails
-                list={<BindingSelector />}
+                list={<BindingSelector readOnly={readOnly} />}
                 details={<BindingsEditor readOnly={readOnly} />}
             />
         </>

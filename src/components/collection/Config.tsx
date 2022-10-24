@@ -1,8 +1,10 @@
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import MessageWithLink from 'components/content/MessageWithLink';
 import BindingsMultiEditor from 'components/editor/Bindings';
+import { useEditorStore_id } from 'components/editor/Store';
 import AlertBox from 'components/shared/AlertBox';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
+import { useEntityWorkflow } from 'context/Workflow';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { FormattedMessage } from 'react-intl';
 import { useFormStateStore_messagePrefix } from 'stores/FormState';
@@ -18,6 +20,11 @@ interface Props {
 }
 
 function CollectionConfig({ draftSpecs, readOnly = false }: Props) {
+    const workflow = useEntityWorkflow();
+
+    // Draft Editor Store
+    const draftId = useEditorStore_id();
+
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
 
@@ -35,7 +42,7 @@ function CollectionConfig({ draftSpecs, readOnly = false }: Props) {
         resourceConfigHasErrors ||
         collectionsHasErrors;
 
-    return (
+    return workflow === 'capture_create' && !draftId ? null : (
         <WrapperWithHeader
             header={
                 <>
