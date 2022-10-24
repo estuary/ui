@@ -1,6 +1,6 @@
 import { Clear } from '@mui/icons-material';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import { IconButton, ListItemText } from '@mui/material';
+import { Box, IconButton, ListItemText } from '@mui/material';
 import {
     DataGrid,
     GridColDef,
@@ -34,7 +34,11 @@ function DeleteButton({ collection }: DeleteButtonProps) {
     };
 
     return (
-        <IconButton size="small" onClick={handlers.removeCollection}>
+        <IconButton
+            size="small"
+            onClick={handlers.removeCollection}
+            sx={{ display: 'none' }}
+        >
             <Clear />
         </IconButton>
     );
@@ -71,21 +75,38 @@ function BindingSelector() {
                 const currentConfig = resourceConfig[params.row];
                 if (currentConfig.errors.length > 0) {
                     return (
-                        <>
+                        <Box
+                            sx={{
+                                'display': 'flex',
+                                'flexGrow': 1,
+                                'alignItems': 'center',
+                                '&:hover .MuiIconButton-root': {
+                                    display: 'inline-flex',
+                                },
+                            }}
+                        >
                             <ErrorOutlineIcon color="error" sx={{ pr: 1 }} />
                             <ListItemText primary={params.row} />
 
                             <DeleteButton collection={params.row} />
-                        </>
+                        </Box>
                     );
                 }
 
                 return (
-                    <>
+                    <Box
+                        sx={{
+                            'display': 'flex',
+                            'flexGrow': 1,
+                            '&:hover .MuiIconButton-root': {
+                                display: 'inline-flex',
+                            },
+                        }}
+                    >
                         <ListItemText primary={params.row} />
 
                         <DeleteButton collection={params.row} />
-                    </>
+                    </Box>
                 );
             },
             valueGetter: (params: GridValueGetterParams) => params.row,
