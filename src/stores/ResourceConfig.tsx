@@ -38,6 +38,7 @@ export interface ResourceConfigState {
         liveSpecsData: LiveSpecsExtQuery[],
         entityType: ENTITY
     ) => void;
+    addCollection: (value: string) => void;
     removeCollection: (value: string) => void;
 
     collectionRemovalMetadata: {
@@ -212,6 +213,20 @@ const getInitialState = (
             }),
             false,
             'Collections Pre-filled'
+        );
+    },
+
+    addCollection: (value) => {
+        set(
+            produce((state: ResourceConfigState) => {
+                const { collections } = get();
+
+                if (collections && !collections.includes(value)) {
+                    state.collections = [...collections, value];
+                }
+            }),
+            false,
+            'Collection Added'
         );
     },
 
@@ -526,6 +541,15 @@ export const useResourceConfig_preFillCollections = () => {
         ResourceConfigState,
         ResourceConfigState['preFillCollections']
     >(getStoreName(entityType), (state) => state.preFillCollections);
+};
+
+export const useResourceConfig_addCollection = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['addCollection']
+    >(getStoreName(entityType), (state) => state.addCollection);
 };
 
 export const useResourceConfig_removeCollection = () => {

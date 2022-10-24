@@ -14,12 +14,15 @@ import PageContainer from 'components/shared/PageContainer';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
+import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import LogRocket from 'logrocket';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import {
     DEFAULT_FILTER,
+    handleFailure,
+    handleSuccess,
     jobStatusPoller,
     JOB_STATUS_POLLER_ERROR,
     TABLES,
@@ -39,7 +42,10 @@ import {
 } from 'stores/FormState';
 import {
     ResourceConfigHydrator,
+    useResourceConfig_addCollection,
     useResourceConfig_resetState,
+    useResourceConfig_setCurrentCollection,
+    useResourceConfig_setResourceConfig,
 } from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
@@ -86,6 +92,11 @@ function CaptureCreate() {
     const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
 
     // Resource Config Store
+    const addCollection = useResourceConfig_addCollection();
+    const setCurrentCollection = useResourceConfig_setCurrentCollection();
+
+    const setResourceConfig = useResourceConfig_setResourceConfig();
+
     const resetResourceConfigState = useResourceConfig_resetState();
 
     // Reset the catalog if the connector changes
@@ -149,6 +160,41 @@ function CaptureCreate() {
         },
     };
 
+    const storeDiscoveredCollections = async (newDraftId: string) => {
+        // TODO (optimization | typing): Narrow the columns selected from the draft_specs_ext table.
+        //   More columns are selected than required to appease the typing of the editor store.
+        const draftSpecsResponse = await supabaseClient
+            .from(TABLES.DRAFT_SPECS_EXT)
+            .select(`catalog_name,draft_id,expect_pub_id,spec,spec_type`)
+            .eq('draft_id', newDraftId)
+            .eq('spec_type', ENTITY.CAPTURE)
+            .then(handleSuccess<DraftSpecQuery[]>, handleFailure);
+
+        if (draftSpecsResponse.error) {
+            return helpers.callFailed({
+                error: {
+                    title: 'captureEdit.generate.failedErrorTitle',
+                    error: draftSpecsResponse.error,
+                },
+            });
+        }
+
+        if (draftSpecsResponse.data && draftSpecsResponse.data.length > 0) {
+            const bindings = draftSpecsResponse.data[0].spec.bindings;
+
+            bindings.forEach((binding: any) => {
+                addCollection(binding.target);
+
+                setResourceConfig(binding.target, {
+                    data: binding.resource,
+                    errors: [],
+                });
+            });
+
+            setCurrentCollection(bindings[0].target);
+        }
+    };
+
     const discoversSubscription = (discoverDraftId: string) => {
         setDraftId(null);
         jobStatusPoller(
@@ -165,6 +211,8 @@ function CaptureCreate() {
                 }),
             (payload: any) => {
                 setDraftId(payload.draft_id);
+
+                void storeDiscoveredCollections(payload.draft_id);
 
                 setFormState({
                     status: FormStatus.GENERATED,

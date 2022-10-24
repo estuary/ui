@@ -66,10 +66,8 @@ function CollectionPicker({ readOnly = false }: Props) {
             ];
         }
 
-        console.log(collectionsOnServer);
-
         setCollectionData(collectionsOnServer);
-    }, [setCollectionData, draftSpecs, liveSpecs, workflow]);
+    }, [setCollectionData, collections, draftSpecs, liveSpecs, workflow]);
 
     const handlers = {
         updateCollections: (
