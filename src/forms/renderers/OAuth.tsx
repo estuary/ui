@@ -138,7 +138,14 @@ const OAuthproviderRenderer = ({
                     { provider }
                 )
             );
-        } else if (!isEmpty(tokenResponse.data)) {
+        } else if (isEmpty(tokenResponse.data)) {
+            setErrorMessage(
+                intl.formatMessage(
+                    { id: 'oauth.emptyData.error' },
+                    { provider }
+                )
+            );
+        } else {
             // These are injected by the server/encryption call so just setting
             //      some value here to pass the validation
             const fakeDefaults = {
