@@ -510,6 +510,10 @@ const CaptureEdit: ResolvedIntlConfig['messages'] = {
     'captureEdit.editor.default': `Before you can edit the capture specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.capture']}." `,
     'captureEdit.finalReview.instructions': `The following Flow specification was generated from the details you provided. To make changes, you can enter new values in the form above or edit the YAML file directly. Click "${CTAs['cta.saveEntity']}" to proceed.`,
 
+    'captureEdit.collections.heading': `Output Collections`,
+    'captureEdit.collectionSelector.heading': `Collection Selector`,
+    'captureEdit.collectionSelector.instructions': `The collections bound to your existing capture. To make changes, you can enter new values in the this section of the form or edit the YAML file shown in the ${EntityCreate['entityCreate.catalogEditor.heading']} section below.`,
+
     'captureEdit.test.failedErrorTitle': `Configuration Test Failed`,
     'captureEdit.test.serverUnreachable': `Unable to reach server while testing configuration.`,
 

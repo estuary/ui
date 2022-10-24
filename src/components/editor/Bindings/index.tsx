@@ -2,6 +2,7 @@ import { Typography } from '@mui/material';
 import BindingsEditor from 'components/editor/Bindings/Editor';
 import BindingSelector from 'components/editor/Bindings/Selector';
 import ListAndDetails from 'components/editor/ListAndDetails';
+import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
 import useGlobalSearchParams, {
     GlobalSearchParams,
@@ -19,7 +20,7 @@ import {
     useResourceConfig_setResourceSchema,
     useResourceConfig_setServerUpdateRequired,
 } from 'stores/ResourceConfig';
-import { Schema } from 'types';
+import { ENTITY, Schema } from 'types';
 
 interface Props {
     draftSpecs?: DraftSpecQuery[];
@@ -29,7 +30,11 @@ interface Props {
 function BindingsMultiEditor({ draftSpecs = [], readOnly = false }: Props) {
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
+    const entityType = useEntityType();
+
     const workflow = useEntityWorkflow();
+    const editWorkflow =
+        workflow === 'materialization_edit' || workflow === 'capture_edit';
 
     // Details Form Store
     const imageTag = useDetailsForm_connectorImage();
@@ -65,10 +70,13 @@ function BindingsMultiEditor({ draftSpecs = [], readOnly = false }: Props) {
     const resourceConfigUpdated = useMemo(() => {
         let queriedResourceConfig: ResourceConfigDictionary = {};
 
+        const collectionNameProp =
+            entityType === ENTITY.MATERIALIZATION ? 'source' : 'target';
+
         draftSpecs[0]?.spec.bindings.forEach((binding: any) => {
             queriedResourceConfig = {
                 ...queriedResourceConfig,
-                [binding.source]: {
+                [binding[collectionNameProp]]: {
                     data: binding.resource,
                     errors: [],
                 },
@@ -79,13 +87,13 @@ function BindingsMultiEditor({ draftSpecs = [], readOnly = false }: Props) {
         return draftSpecs.length > 0
             ? !isEqual(resourceConfig, queriedResourceConfig)
             : false;
-    }, [draftSpecs, resourceConfig]);
+    }, [draftSpecs, entityType, resourceConfig]);
 
     useEffect(() => {
-        if (workflow === 'materialization_edit') {
+        if (editWorkflow) {
             setServerUpdateRequired(resourceConfigUpdated);
         }
-    }, [setServerUpdateRequired, resourceConfigUpdated, workflow]);
+    }, [setServerUpdateRequired, resourceConfigUpdated, editWorkflow]);
 
     return (
         <>

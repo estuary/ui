@@ -13,7 +13,7 @@ import { difference, has, isEmpty, isEqual, map, omit, pick } from 'lodash';
 import { ReactNode } from 'react';
 import { useEffectOnce } from 'react-use';
 import { createJSONFormDefaults } from 'services/ajv';
-import { ENTITY, EntityWorkflow, JsonFormsData, Schema } from 'types';
+import { ENTITY, JsonFormsData, Schema } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
 import create, { StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -34,7 +34,10 @@ export interface ResourceConfigState {
     // Collection Selector
     collections: string[] | null;
     preFillEmptyCollections: (collections: LiveSpecsExtQuery[]) => void;
-    preFillCollections: (liveSpecsData: LiveSpecsExtQuery[]) => void;
+    preFillCollections: (
+        liveSpecsData: LiveSpecsExtQuery[],
+        entityType: ENTITY
+    ) => void;
     removeCollection: (value: string) => void;
 
     collectionRemovalMetadata: {
@@ -69,7 +72,7 @@ export interface ResourceConfigState {
     hydrationErrorsExist: boolean;
     setHydrationErrorsExist: (value: boolean) => void;
 
-    hydrateState: (workflow: EntityWorkflow) => Promise<void>;
+    hydrateState: (editWorkflow: boolean, entityType: ENTITY) => Promise<void>;
 
     // Server-Form Alignment
     serverUpdateRequired: boolean;
@@ -186,13 +189,18 @@ const getInitialState = (
         );
     },
 
-    preFillCollections: (value) => {
+    preFillCollections: (value, entityType) => {
         set(
             produce((state: ResourceConfigState) => {
                 const collections: string[] = [];
 
+                const queryProp =
+                    entityType === ENTITY.MATERIALIZATION
+                        ? 'reads_from'
+                        : 'writes_to';
+
                 value.forEach((queryData) => {
-                    queryData.reads_from.forEach((collection) => {
+                    queryData[queryProp].forEach((collection) => {
                         collections.push(collection);
                     });
                 });
@@ -369,7 +377,7 @@ const getInitialState = (
         );
     },
 
-    hydrateState: async (workflow) => {
+    hydrateState: async (editWorkflow, entityType) => {
         const searchParams = new URLSearchParams(window.location.search);
         const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
         const liveSpecId = searchParams.get(GlobalSearchParams.LIVE_SPEC_ID);
@@ -393,13 +401,11 @@ const getInitialState = (
             }
         }
 
-        if (workflow === 'materialization_create') {
-            const specType = ENTITY.CAPTURE;
-
+        if (!editWorkflow) {
             if (lastPubId) {
                 const { data, error } = await getLiveSpecsByLastPubId(
                     lastPubId,
-                    specType
+                    entityType
                 );
 
                 if (error) {
@@ -414,7 +420,7 @@ const getInitialState = (
             } else if (liveSpecId) {
                 const { data, error } = await getLiveSpecsByLiveSpecId(
                     liveSpecId,
-                    specType
+                    entityType
                 );
 
                 if (error) {
@@ -427,10 +433,10 @@ const getInitialState = (
                     preFillEmptyCollections(data);
                 }
             }
-        } else if (workflow === 'materialization_edit' && liveSpecId) {
+        } else if (liveSpecId) {
             const { data, error } = await getLiveSpecsByLiveSpecId(
                 liveSpecId,
-                ENTITY.MATERIALIZATION
+                entityType
             );
 
             if (error) {
@@ -440,14 +446,17 @@ const getInitialState = (
             if (data && data.length > 0) {
                 const { setResourceConfig, preFillCollections } = get();
 
+                const collectionNameProp =
+                    entityType === ENTITY.MATERIALIZATION ? 'source' : 'target';
+
                 data[0].spec.bindings.forEach((binding: any) =>
-                    setResourceConfig(binding.source, {
+                    setResourceConfig(binding[collectionNameProp], {
                         data: binding.resource,
                         errors: [],
                     })
                 );
 
-                preFillCollections(data);
+                preFillCollections(data, entityType);
             }
         }
     },
@@ -698,7 +707,11 @@ interface ResourceConfigHydratorProps {
 export const ResourceConfigHydrator = ({
     children,
 }: ResourceConfigHydratorProps) => {
+    const entityType = useEntityType();
+
     const workflow = useEntityWorkflow();
+    const editWorkflow =
+        workflow === 'materialization_edit' || workflow === 'capture_edit';
 
     const hydrated = useResourceConfig_hydrated();
     const setHydrated = useResourceConfig_setHydrated();
@@ -709,7 +722,7 @@ export const ResourceConfigHydrator = ({
 
     useEffectOnce(() => {
         if (workflow && !hydrated) {
-            hydrateState(workflow).then(
+            hydrateState(editWorkflow, entityType).then(
                 () => {
                     setHydrated(true);
                 },

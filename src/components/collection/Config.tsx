@@ -5,6 +5,7 @@ import AlertBox from 'components/shared/AlertBox';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { FormattedMessage } from 'react-intl';
+import { useFormStateStore_messagePrefix } from 'stores/FormState';
 import {
     useResourceConfig_collectionErrorsExist,
     useResourceConfig_hydrationErrorsExist,
@@ -17,6 +18,9 @@ interface Props {
 }
 
 function CollectionConfig({ draftSpecs, readOnly = false }: Props) {
+    // Form State Store
+    const messagePrefix = useFormStateStore_messagePrefix();
+
     // Resource Config Store
     const resourceConfigHydrationErrorsExist =
         useResourceConfig_hydrationErrorsExist();
@@ -39,7 +43,9 @@ function CollectionConfig({ draftSpecs, readOnly = false }: Props) {
                         <ErrorOutlineIcon color="error" sx={{ pr: 1 }} />
                     ) : null}
 
-                    <FormattedMessage id="materializationCreate.collections.heading" />
+                    <FormattedMessage
+                        id={`${messagePrefix}.collections.heading`}
+                    />
                 </>
             }
         >

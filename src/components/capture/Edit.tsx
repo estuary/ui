@@ -52,6 +52,10 @@ import {
     useFormStateStore_resetState,
     useFormStateStore_setFormState,
 } from 'stores/FormState';
+import {
+    ResourceConfigHydrator,
+    useResourceConfig_resetState,
+} from 'stores/ResourceConfig';
 import { ENTITY, JsonFormsData } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
 
@@ -109,6 +113,9 @@ function CaptureEdit() {
     const resetFormState = useFormStateStore_resetState();
     const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
 
+    // Resource Config Store
+    const resetResourceConfigState = useResourceConfig_resetState();
+
     const { mutate: mutateDraftSpecs, ...draftSpecsMetadata } = useDraftSpecs(
         editDraftId,
         lastPubId
@@ -122,6 +129,7 @@ function CaptureEdit() {
     const resetState = () => {
         resetDetailsForm();
         resetEndpointConfigState();
+        resetResourceConfigState();
         resetFormState();
         resetEditorStore();
     };
@@ -286,47 +294,52 @@ function CaptureEdit() {
 
     return (
         <PageContainer>
-            <EntityEdit
-                title="browserTitle.captureEdit"
-                entityType={entityType}
-                readOnly={{ detailsForm: true }}
-                draftSpecMetadata={draftSpecsMetadata}
-                callFailed={helpers.callFailed}
-                resetState={resetState}
-                errorSummary={
-                    <ValidationErrorSummary
-                        errorsExist={detailsFormErrorsExist}
-                    />
-                }
-                toolbar={
-                    <EntityToolbar
-                        GenerateButton={
-                            <CaptureGenerateButton
-                                disabled={!hasConnectors}
-                                callFailed={helpers.callFailed}
-                                subscription={discoversSubscription}
-                            />
-                        }
-                        TestButton={
-                            <EntityTestButton
-                                closeLogs={handlers.closeLogs}
-                                callFailed={helpers.callFailed}
-                                disabled={!hasConnectors}
-                                logEvent={CustomEvents.CAPTURE_TEST}
-                            />
-                        }
-                        SaveButton={
-                            <EntitySaveButton
-                                closeLogs={handlers.closeLogs}
-                                callFailed={helpers.callFailed}
-                                disabled={!draftId}
-                                materialize={handlers.materializeCollections}
-                                logEvent={CustomEvents.CAPTURE_EDIT}
-                            />
-                        }
-                    />
-                }
-            />
+            <ResourceConfigHydrator>
+                <EntityEdit
+                    title="browserTitle.captureEdit"
+                    entityType={entityType}
+                    readOnly={{ detailsForm: true }}
+                    draftSpecMetadata={draftSpecsMetadata}
+                    showCollections
+                    callFailed={helpers.callFailed}
+                    resetState={resetState}
+                    errorSummary={
+                        <ValidationErrorSummary
+                            errorsExist={detailsFormErrorsExist}
+                        />
+                    }
+                    toolbar={
+                        <EntityToolbar
+                            GenerateButton={
+                                <CaptureGenerateButton
+                                    disabled={!hasConnectors}
+                                    callFailed={helpers.callFailed}
+                                    subscription={discoversSubscription}
+                                />
+                            }
+                            TestButton={
+                                <EntityTestButton
+                                    closeLogs={handlers.closeLogs}
+                                    callFailed={helpers.callFailed}
+                                    disabled={!hasConnectors}
+                                    logEvent={CustomEvents.CAPTURE_TEST}
+                                />
+                            }
+                            SaveButton={
+                                <EntitySaveButton
+                                    closeLogs={handlers.closeLogs}
+                                    callFailed={helpers.callFailed}
+                                    disabled={!draftId}
+                                    materialize={
+                                        handlers.materializeCollections
+                                    }
+                                    logEvent={CustomEvents.CAPTURE_EDIT}
+                                />
+                            }
+                        />
+                    }
+                />
+            </ResourceConfigHydrator>
         </PageContainer>
     );
 }
