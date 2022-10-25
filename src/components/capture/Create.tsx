@@ -2,8 +2,11 @@ import { generateCaptureDraftSpec, updateDraftSpec } from 'api/draftSpecs';
 import { authenticatedRoutes } from 'app/Authenticated';
 import CaptureGenerateButton from 'components/capture/GenerateButton';
 import {
+    useEditorStore_editDraftId,
     useEditorStore_id,
     useEditorStore_pubId,
+    useEditorStore_resetState,
+    useEditorStore_setEditDraftId,
     useEditorStore_setId,
 } from 'components/editor/Store';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
@@ -15,7 +18,7 @@ import PageContainer from 'components/shared/PageContainer';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import LogRocket from 'logrocket';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -82,7 +85,12 @@ function CaptureCreate() {
     const draftId = useEditorStore_id();
     const setDraftId = useEditorStore_setId();
 
+    const editDraftId = useEditorStore_editDraftId();
+    const setEditDraftId = useEditorStore_setEditDraftId();
+
     const pubId = useEditorStore_pubId();
+
+    const resetEditorStore = useEditorStore_resetState();
 
     // Endpoint Config Store
     const resetEndpointConfigState = useEndpointConfigStore_reset();
@@ -101,6 +109,9 @@ function CaptureCreate() {
 
     const resetResourceConfigState = useResourceConfig_resetState();
 
+    const { mutate: mutateDraftSpecs, ...draftSpecsMetadata } =
+        useDraftSpecs(editDraftId);
+
     // Reset the catalog if the connector changes
     useEffect(() => {
         setDraftId(null);
@@ -111,6 +122,7 @@ function CaptureCreate() {
         resetEndpointConfigState();
         resetResourceConfigState();
         resetFormState();
+        resetEditorStore();
     };
 
     const helpers = {
@@ -247,6 +259,9 @@ function CaptureCreate() {
                 setCurrentCollection(updatedBindings[0].target);
             }
         }
+
+        setDraftId(newDraftId);
+        setEditDraftId(newDraftId);
     };
 
     // TODO (optimization): Create a shared discovers table subscription.
@@ -256,6 +271,7 @@ function CaptureCreate() {
         resourceConfig: ResourceConfigDictionary
     ) => {
         setDraftId(null);
+
         jobStatusPoller(
             supabaseClient
                 .from(TABLES.DISCOVERS)
@@ -269,12 +285,12 @@ function CaptureCreate() {
                     draft_id: discoverDraftId,
                 }),
             (payload: any) => {
-                setDraftId(payload.draft_id);
-
                 void storeDiscoveredCollections(
                     payload.draft_id,
                     resourceConfig
                 );
+
+                void mutateDraftSpecs();
 
                 setFormState({
                     status: FormStatus.GENERATED,
@@ -303,7 +319,8 @@ function CaptureCreate() {
             <ResourceConfigHydrator>
                 <EntityCreate
                     title="browserTitle.captureCreate"
-                    connectorType={entityType}
+                    entityType={entityType}
+                    draftSpecMetadata={draftSpecsMetadata}
                     showCollections
                     resetState={resetState}
                     errorSummary={

@@ -3,7 +3,6 @@ import BindingsEditor from 'components/editor/Bindings/Editor';
 import BindingSelector from 'components/editor/Bindings/Selector';
 import ListAndDetails from 'components/editor/ListAndDetails';
 import { useEntityType } from 'context/EntityContext';
-import { useEntityWorkflow } from 'context/Workflow';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -27,7 +26,7 @@ import { ENTITY, Schema } from 'types';
 //   CollectionConfig component in the shared create component should mirror that
 //   of the shared edit component.
 interface Props {
-    draftSpecs?: DraftSpecQuery[];
+    draftSpecs: DraftSpecQuery[];
     readOnly?: boolean;
 }
 
@@ -35,10 +34,6 @@ function BindingsMultiEditor({ draftSpecs = [], readOnly = false }: Props) {
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
     const entityType = useEntityType();
-
-    const workflow = useEntityWorkflow();
-    const editWorkflow =
-        workflow === 'materialization_edit' || workflow === 'capture_edit';
 
     // Details Form Store
     const imageTag = useDetailsForm_connectorImage();
@@ -93,10 +88,8 @@ function BindingsMultiEditor({ draftSpecs = [], readOnly = false }: Props) {
     }, [draftSpecs, entityType, resourceConfig]);
 
     useEffect(() => {
-        if (editWorkflow) {
-            setServerUpdateRequired(resourceConfigUpdated);
-        }
-    }, [setServerUpdateRequired, resourceConfigUpdated, editWorkflow]);
+        setServerUpdateRequired(resourceConfigUpdated);
+    }, [setServerUpdateRequired, resourceConfigUpdated]);
 
     return (
         <>
