@@ -174,9 +174,6 @@ function CaptureCreate() {
         },
     };
 
-    // TODO (defect): The draft specs array must be propagated and mutated in a similar fashion
-    //   as the capture edit workflow. This will allow for the specification editor to be updated
-    //   accordingly and accurate determination of a required server update.
     const storeDiscoveredCollections = async (
         newDraftId: string,
         resourceConfig: ResourceConfigDictionary
