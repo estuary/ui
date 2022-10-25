@@ -1,5 +1,6 @@
 import { Autocomplete, Box, TextField } from '@mui/material';
 import { useEditorStore_id } from 'components/editor/Store';
+import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
 import useDraftSpecs from 'hooks/useDraftSpecs';
 import useLiveSpecs from 'hooks/useLiveSpecs';
@@ -22,6 +23,7 @@ interface CollectionData {
 }
 
 function CollectionPicker({ readOnly = false }: Props) {
+    const entityType = useEntityType();
     const workflow = useEntityWorkflow();
 
     const intl = useIntl();
@@ -47,27 +49,43 @@ function CollectionPicker({ readOnly = false }: Props) {
     const { draftSpecs, error: draftSpecsError } = useDraftSpecs(draftId);
 
     useEffect(() => {
-        let collectionsOnServer: CollectionData[] = liveSpecs.map(
-            ({ catalog_name }) => ({
-                name: catalog_name,
-                classification: 'Existing Collections',
-            })
-        );
+        const populateCollectionData =
+            entityType === ENTITY.MATERIALIZATION
+                ? liveSpecs.length > 0
+                : liveSpecs.length > 0 && draftSpecs.length > 0;
 
-        if (workflow === 'capture_create') {
-            collectionsOnServer = [
-                ...collectionsOnServer,
-                ...draftSpecs
-                    .filter(({ spec_type }) => spec_type === ENTITY.COLLECTION)
-                    .map(({ catalog_name }) => ({
-                        name: catalog_name,
-                        classification: 'Discovered Collections',
-                    })),
-            ];
+        if (populateCollectionData) {
+            let collectionsOnServer: CollectionData[] = liveSpecs.map(
+                ({ catalog_name }) => ({
+                    name: catalog_name,
+                    classification: 'Existing Collections',
+                })
+            );
+
+            if (workflow === 'capture_create') {
+                collectionsOnServer = [
+                    ...collectionsOnServer,
+                    ...draftSpecs
+                        .filter(
+                            ({ spec_type }) => spec_type === ENTITY.COLLECTION
+                        )
+                        .map(({ catalog_name }) => ({
+                            name: catalog_name,
+                            classification: 'Discovered Collections',
+                        })),
+                ];
+            }
+
+            setCollectionData(collectionsOnServer);
         }
-
-        setCollectionData(collectionsOnServer);
-    }, [setCollectionData, collections, draftSpecs, liveSpecs, workflow]);
+    }, [
+        setCollectionData,
+        collections,
+        draftSpecs,
+        entityType,
+        liveSpecs,
+        workflow,
+    ]);
 
     const handlers = {
         updateCollections: (
@@ -81,10 +99,8 @@ function CollectionPicker({ readOnly = false }: Props) {
         },
     };
 
-    // TODO (design): Determine whether the component should have a label or merely placeholder text.
-    //   If a label is desired, the reflex container surrounding the collection selector instance
-    //   requires padding to display the label when the field is active. If placeholder text will do,
-    //   style overrides are necessary.
+    // TODO (design): Replace the placeholder text with a label and introduce padding in the reflex
+    //   container surrounding the collection selector instance to ensure all text is displayed.
     return collections &&
         collectionData.length > 0 &&
         !liveSpecsError &&

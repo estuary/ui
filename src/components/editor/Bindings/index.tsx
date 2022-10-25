@@ -22,6 +22,10 @@ import {
 } from 'stores/ResourceConfig';
 import { ENTITY, Schema } from 'types';
 
+// TODO (defect): The draftSpecs component property must be required to properly
+//   determine whether a server update is required. The instance of the
+//   CollectionConfig component in the shared create component should mirror that
+//   of the shared edit component.
 interface Props {
     draftSpecs?: DraftSpecQuery[];
     readOnly?: boolean;
@@ -83,7 +87,6 @@ function BindingsMultiEditor({ draftSpecs = [], readOnly = false }: Props) {
             };
         });
 
-        // TODO (optimization): Evaluate the performance of a hash comparator function.
         return draftSpecs.length > 0
             ? !isEqual(resourceConfig, queriedResourceConfig)
             : false;

@@ -4,8 +4,9 @@ import {
     TABLES,
     updateSupabase,
 } from 'services/supabase';
+import { ResourceConfigDictionary } from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
-import { CaptureBinding, CaptureDef } from '../../flow_deps/flow';
+import { CaptureDef, CaptureEndpoint } from '../../flow_deps/flow';
 
 interface CreateMatchData {
     draft_id: string | null;
@@ -118,18 +119,29 @@ export const generateDraftSpec = (
 };
 
 export const generateCaptureDraftSpec = (
-    bindings: CaptureBinding[],
-    config: any,
-    image: string
-): CaptureDef => ({
-    bindings,
-    endpoint: {
-        connector: {
-            config,
-            image,
-        },
-    },
-});
+    resourceConfig: ResourceConfigDictionary,
+    endpoint: CaptureEndpoint
+): CaptureDef => {
+    const draftSpec: CaptureDef = {
+        bindings: [],
+        endpoint,
+    };
+
+    Object.keys(resourceConfig).forEach((collectionName) => {
+        const resources = resourceConfig[collectionName].data;
+
+        if (Object.keys(resources).length > 0) {
+            draftSpec.bindings.push({
+                target: collectionName,
+                resource: {
+                    ...resources,
+                },
+            });
+        }
+    });
+
+    return draftSpec;
+};
 
 export const deleteDraftSpec = (draftId: string) => {
     return deleteSupabase(TABLES.DRAFT_SPECS, { draft_id: draftId });

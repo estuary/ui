@@ -1,3 +1,4 @@
+import { generateCaptureDraftSpec, updateDraftSpec } from 'api/draftSpecs';
 import { authenticatedRoutes } from 'app/Authenticated';
 import CaptureGenerateButton from 'components/capture/GenerateButton';
 import {
@@ -41,13 +42,14 @@ import {
     useFormStateStore_setFormState,
 } from 'stores/FormState';
 import {
+    ResourceConfigDictionary,
     ResourceConfigHydrator,
     useResourceConfig_addCollection,
     useResourceConfig_resetState,
     useResourceConfig_setCurrentCollection,
     useResourceConfig_setResourceConfig,
 } from 'stores/ResourceConfig';
-import { ENTITY } from 'types';
+import { ENTITY, JsonFormsData } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
 
 const trackEvent = (payload: any) => {
@@ -160,7 +162,13 @@ function CaptureCreate() {
         },
     };
 
-    const storeDiscoveredCollections = async (newDraftId: string) => {
+    // TODO (defect): The draft specs array must be propagated and mutated in a similar fashion
+    //   as the capture edit workflow. This will allow for the specification editor to be updated
+    //   accordingly and accurate determination of a required server update.
+    const storeDiscoveredCollections = async (
+        newDraftId: string,
+        resourceConfig: ResourceConfigDictionary
+    ) => {
         // TODO (optimization | typing): Narrow the columns selected from the draft_specs_ext table.
         //   More columns are selected than required to appease the typing of the editor store.
         const draftSpecsResponse = await supabaseClient
@@ -180,22 +188,73 @@ function CaptureCreate() {
         }
 
         if (draftSpecsResponse.data && draftSpecsResponse.data.length > 0) {
-            const bindings = draftSpecsResponse.data[0].spec.bindings;
+            const mergedResourceConfig = {};
 
-            bindings.forEach((binding: any) => {
-                addCollection(binding.target);
-
-                setResourceConfig(binding.target, {
-                    data: binding.resource,
-                    errors: [],
-                });
+            Object.entries(resourceConfig).forEach(([key, value]) => {
+                mergedResourceConfig[key] = value;
             });
 
-            setCurrentCollection(bindings[0].target);
+            const existingCollections = Object.keys(resourceConfig);
+
+            const discoveredDraftSpecData = draftSpecsResponse.data[0];
+
+            discoveredDraftSpecData.spec.bindings.forEach((binding: any) => {
+                if (!existingCollections.includes(binding.target)) {
+                    mergedResourceConfig[binding.target] = {
+                        data: binding.resource,
+                        errors: [],
+                    };
+                }
+            });
+
+            const mergedDraftSpec = generateCaptureDraftSpec(
+                mergedResourceConfig,
+                discoveredDraftSpecData.spec.endpoint
+            );
+
+            const updatedDraftSpecsResponse = await updateDraftSpec(
+                newDraftId,
+                discoveredDraftSpecData.catalog_name,
+                mergedDraftSpec
+            );
+            if (updatedDraftSpecsResponse.error) {
+                return helpers.callFailed({
+                    error: {
+                        title: 'captureCreate.generate.failure.errorTitle',
+                        error: draftSpecsResponse.error,
+                    },
+                });
+            }
+
+            if (
+                updatedDraftSpecsResponse.data &&
+                updatedDraftSpecsResponse.data.length > 0
+            ) {
+                const updatedBindings =
+                    updatedDraftSpecsResponse.data[0].spec.bindings;
+
+                updatedBindings.forEach((binding: any) => {
+                    if (!existingCollections.includes(binding.target)) {
+                        addCollection(binding.target);
+
+                        setResourceConfig(binding.target, {
+                            data: binding.resource,
+                            errors: [],
+                        });
+                    }
+                });
+
+                setCurrentCollection(updatedBindings[0].target);
+            }
         }
     };
 
-    const discoversSubscription = (discoverDraftId: string) => {
+    // TODO (optimization): Create a shared discovers table subscription.
+    const discoversSubscription = (
+        discoverDraftId: string,
+        _existingEndpointConfig: JsonFormsData,
+        resourceConfig: ResourceConfigDictionary
+    ) => {
         setDraftId(null);
         jobStatusPoller(
             supabaseClient
@@ -212,7 +271,10 @@ function CaptureCreate() {
             (payload: any) => {
                 setDraftId(payload.draft_id);
 
-                void storeDiscoveredCollections(payload.draft_id);
+                void storeDiscoveredCollections(
+                    payload.draft_id,
+                    resourceConfig
+                );
 
                 setFormState({
                     status: FormStatus.GENERATED,
