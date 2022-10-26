@@ -197,6 +197,16 @@ export const jsonFormsGroupHeaders = {
     dark: 'transparent',
 };
 
+export const alternativeReflexContainerBackground = {
+    light: 'white',
+    dark: 'rgba(172, 199, 220, 0.05)',
+};
+
+export const alternativeDataGridHeader = {
+    light: 'white',
+    dark: slate[200],
+};
+
 export const alertTextPrimary = {
     light: 'rgba(0, 0, 0, 0.8)',
     dark: 'rgb(255, 255, 255)',

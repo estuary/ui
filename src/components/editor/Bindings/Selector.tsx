@@ -10,6 +10,7 @@ import {
 } from '@mui/x-data-grid';
 import CollectionPicker from 'components/collection/Picker';
 import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
+import { alternativeDataGridHeader, slate } from 'context/Theme';
 import { useEffect, useRef, useState } from 'react';
 import { useUnmount } from 'react-use';
 import {
@@ -78,7 +79,7 @@ function BindingSelector({ readOnly }: BindingSelectorProps) {
         {
             field: 'name',
             flex: 1,
-            headerName: 'Collection',
+            headerName: 'Collections',
             renderCell: (params: GridRenderCellParams) => {
                 const currentConfig = resourceConfig[params.row];
                 if (currentConfig.errors.length > 0) {
@@ -124,7 +125,7 @@ function BindingSelector({ readOnly }: BindingSelectorProps) {
         <>
             <CollectionPicker readOnly={readOnly} />
 
-            <Box sx={{ height: 310 }}>
+            <Box sx={{ height: 278 }}>
                 <DataGrid
                     components={{
                         NoRowsOverlay: SelectorEmpty,
@@ -155,12 +156,25 @@ function BindingSelector({ readOnly }: BindingSelectorProps) {
                     selectionModel={selectionModel}
                     initialState={initialState}
                     sx={{
+                        'border': `1px solid ${slate[200]}`,
                         '& .MuiDataGrid-row ': {
                             cursor: 'pointer',
+                        },
+                        '& .MuiDataGrid-cell': {
+                            borderBottom: `1px solid ${slate[200]}`,
                         },
                         '& .MuiDataGrid-columnSeparator': {
                             display: 'none',
                         },
+                        '& .MuiDataGrid-columnHeaders': {
+                            borderBottom: `1px solid ${slate[200]}`,
+                            bgcolor: (theme) =>
+                                alternativeDataGridHeader[theme.palette.mode],
+                        },
+                        '& .MuiDataGrid-columnHeaderTitle, & .MuiDataGrid-columnHeaders .MuiButtonBase-root':
+                            {
+                                color: slate[800],
+                            },
                     }}
                 />
             </Box>

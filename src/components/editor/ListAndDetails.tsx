@@ -4,6 +4,7 @@ import {
     DEFAULT_HEIGHT,
     DEFAULT_TOOLBAR_HEIGHT,
 } from 'components/editor/MonacoEditor';
+import { slate } from 'context/Theme';
 import { ReactNode } from 'react';
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
 
@@ -12,17 +13,19 @@ export interface Props {
     details: ReactNode;
     height?: number;
     backgroundColor?: string;
+    displayRightPaneBoarder?: boolean;
     loading?: boolean;
 }
 
 const MIN_RESIZE_WIDTH = 25;
-const INITIAL_SELECTOR_WIDTH = 350;
+const INITIAL_SELECTOR_WIDTH = 450;
 
 function ListAndDetails({
     backgroundColor,
     list,
     details,
     height,
+    displayRightPaneBoarder,
     loading,
 }: Props) {
     const heightVal = (height ?? DEFAULT_HEIGHT) + DEFAULT_TOOLBAR_HEIGHT;
@@ -70,17 +73,16 @@ function ListAndDetails({
                     )}
                 </ReflexElement>
 
-                <ReflexSplitter
-                    style={{
-                        width: 4,
-                    }}
-                />
+                <ReflexSplitter style={{ width: 10 }} />
 
                 <ReflexElement
                     className="right-pane"
                     minSize={MIN_RESIZE_WIDTH}
                     style={{
                         overflow: 'auto',
+                        border: displayRightPaneBoarder
+                            ? `1px solid ${slate[200]}`
+                            : '',
                     }}
                 >
                     {loading ? (

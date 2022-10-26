@@ -1,6 +1,7 @@
 import { Autocomplete, Box, TextField } from '@mui/material';
 import { useEditorStore_id } from 'components/editor/Store';
 import { useEntityType } from 'context/EntityContext';
+import { slate } from 'context/Theme';
 import { useEntityWorkflow } from 'context/Workflow';
 import useDraftSpecs from 'hooks/useDraftSpecs';
 import useLiveSpecs from 'hooks/useLiveSpecs';
@@ -99,13 +100,23 @@ function CollectionPicker({ readOnly = false }: Props) {
         },
     };
 
-    // TODO (design): Replace the placeholder text with a label and introduce padding in the reflex
-    //   container surrounding the collection selector instance to ensure all text is displayed.
+    console.log('collections', collections);
+    console.log('collection data', collectionData);
+    console.log('live spec error', liveSpecsError);
+    console.log('draft spec error', draftSpecsError);
+
     return collections &&
         collectionData.length > 0 &&
         !liveSpecsError &&
         !draftSpecsError ? (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box
+            sx={{
+                p: '0.5rem 0.5rem 1rem',
+                display: 'flex',
+                alignItems: 'center',
+                border: `1px solid ${slate[200]}`,
+            }}
+        >
             <Autocomplete
                 disabled={readOnly}
                 multiple
@@ -131,9 +142,10 @@ function CollectionPicker({ readOnly = false }: Props) {
                 renderInput={(params) => (
                     <TextField
                         {...params}
-                        placeholder={collectionsLabel}
+                        label={collectionsLabel}
                         required
                         error={missingInput}
+                        variant="standard"
                         onBlur={handlers.validateSelection}
                     />
                 )}

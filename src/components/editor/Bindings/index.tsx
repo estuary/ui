@@ -1,8 +1,9 @@
-import { Typography } from '@mui/material';
+import { Typography, useTheme } from '@mui/material';
 import BindingsEditor from 'components/editor/Bindings/Editor';
 import BindingSelector from 'components/editor/Bindings/Selector';
 import ListAndDetails from 'components/editor/ListAndDetails';
 import { useEntityType } from 'context/EntityContext';
+import { alternativeReflexContainerBackground } from 'context/Theme';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -27,6 +28,8 @@ interface Props {
 }
 
 function BindingsMultiEditor({ draftSpecs = [], readOnly = false }: Props) {
+    const theme = useTheme();
+
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
     const entityType = useEntityType();
@@ -104,6 +107,10 @@ function BindingsMultiEditor({ draftSpecs = [], readOnly = false }: Props) {
             </Typography>
 
             <ListAndDetails
+                backgroundColor={
+                    alternativeReflexContainerBackground[theme.palette.mode]
+                }
+                displayRightPaneBoarder={true}
                 loading={fetchingDraftSpecs}
                 list={<BindingSelector readOnly={readOnly} />}
                 details={<BindingsEditor readOnly={readOnly} />}
