@@ -193,7 +193,7 @@ function EntityCreate({
 
                         {showCollections &&
                         hasLength(imageTag.id) &&
-                        taskDraftSpec.length > 0 ? (
+                        editDraftId ? (
                             <ErrorBoundryWrapper>
                                 <CollectionConfig draftSpecs={taskDraftSpec} />
                             </ErrorBoundryWrapper>

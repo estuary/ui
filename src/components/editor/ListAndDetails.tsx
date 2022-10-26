@@ -1,3 +1,4 @@
+import { Skeleton, Stack } from '@mui/material';
 import Box from '@mui/material/Box';
 import {
     DEFAULT_HEIGHT,
@@ -11,12 +12,19 @@ export interface Props {
     details: ReactNode;
     height?: number;
     backgroundColor?: string;
+    loading?: boolean;
 }
 
 const MIN_RESIZE_WIDTH = 25;
 const INITIAL_SELECTOR_WIDTH = 350;
 
-function ListAndDetails({ backgroundColor, list, details, height }: Props) {
+function ListAndDetails({
+    backgroundColor,
+    list,
+    details,
+    height,
+    loading,
+}: Props) {
     const heightVal = (height ?? DEFAULT_HEIGHT) + DEFAULT_TOOLBAR_HEIGHT;
 
     return (
@@ -34,9 +42,32 @@ function ListAndDetails({ backgroundColor, list, details, height }: Props) {
                     size={INITIAL_SELECTOR_WIDTH}
                     minSize={MIN_RESIZE_WIDTH}
                 >
-                    <div className="pane-content" style={{ height: heightVal }}>
-                        {list}
-                    </div>
+                    {loading ? (
+                        <Box sx={{ p: 1 }}>
+                            <Skeleton
+                                variant="rectangular"
+                                height={40}
+                                sx={{ mb: 2 }}
+                            />
+
+                            <Stack spacing={1}>
+                                <Skeleton variant="rectangular" />
+
+                                <Skeleton variant="rectangular" height={60} />
+
+                                <Skeleton variant="rectangular" height={60} />
+
+                                <Skeleton variant="rectangular" height={60} />
+                            </Stack>
+                        </Box>
+                    ) : (
+                        <div
+                            className="pane-content"
+                            style={{ height: heightVal }}
+                        >
+                            {list}
+                        </div>
+                    )}
                 </ReflexElement>
 
                 <ReflexSplitter
@@ -52,7 +83,48 @@ function ListAndDetails({ backgroundColor, list, details, height }: Props) {
                         overflow: 'auto',
                     }}
                 >
-                    <div className="pane-content">{details}</div>
+                    {loading ? (
+                        <Box sx={{ p: 1 }}>
+                            <Skeleton
+                                variant="rectangular"
+                                height={40}
+                                width={250}
+                                sx={{ mb: 2 }}
+                            />
+
+                            <Box sx={{ mb: 4 }}>
+                                <Skeleton
+                                    variant="rectangular"
+                                    sx={{ mb: 1 }}
+                                />
+
+                                <Skeleton
+                                    variant="rectangular"
+                                    height={40}
+                                    sx={{ mb: 1 }}
+                                />
+
+                                <Skeleton variant="rectangular" />
+                            </Box>
+
+                            <>
+                                <Skeleton
+                                    variant="rectangular"
+                                    sx={{ mb: 1 }}
+                                />
+
+                                <Skeleton
+                                    variant="rectangular"
+                                    height={40}
+                                    sx={{ mb: 1 }}
+                                />
+
+                                <Skeleton variant="rectangular" />
+                            </>
+                        </Box>
+                    ) : (
+                        <div className="pane-content">{details}</div>
+                    )}
                 </ReflexElement>
             </ReflexContainer>
         </Box>

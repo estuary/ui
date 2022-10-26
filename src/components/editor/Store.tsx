@@ -30,6 +30,8 @@ export interface EditorStoreState<T> {
     id: string | null;
     setId: (newVal: EditorStoreState<T>['id']) => void;
 
+    // TODO (naming): Rename this property and its related action to persistedDraftId
+    //   or something unrelated to a workflow. The create workflow now makes use of this value.
     editDraftId: string | null;
     setEditDraftId: (newVal: EditorStoreState<T>['editDraftId']) => void;
 
@@ -37,7 +39,7 @@ export interface EditorStoreState<T> {
     setPubId: (newVal: EditorStoreState<T>['pubId']) => void;
 
     // TODO: Resolve conflicting type. Determine whether current catalog can be a DraftSpecQuery, LiveSpecsQuery_spec, or null.
-    // See the FileSelector component for reference.
+    //   See the FileSelector component for reference.
     currentCatalog: DraftSpecQuery | null;
     setCurrentCatalog: (newVal: EditorStoreState<T>['currentCatalog']) => void;
 

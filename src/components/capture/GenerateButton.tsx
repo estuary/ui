@@ -102,7 +102,7 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
                 displayValidation: true,
             });
         } else {
-            resetEditorState(editWorkflow);
+            resetEditorState(true);
 
             const draftsResponse = await createEntityDraft(entityName);
             if (draftsResponse.error) {

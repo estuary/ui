@@ -118,6 +118,8 @@ function BindingSelector({ readOnly }: BindingSelectorProps) {
         if (onSelectTimeOut.current) clearTimeout(onSelectTimeOut.current);
     });
 
+    // TODO (defect): Disable the collection picker, selector, and delete button
+    //   when the form is in an active state.
     return (
         <>
             <CollectionPicker readOnly={readOnly} />

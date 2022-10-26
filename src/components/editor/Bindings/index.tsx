@@ -87,6 +87,8 @@ function BindingsMultiEditor({ draftSpecs = [], readOnly = false }: Props) {
         setServerUpdateRequired(resourceConfigUpdated);
     }, [setServerUpdateRequired, resourceConfigUpdated]);
 
+    const fetchingDraftSpecs = draftSpecs.length === 0;
+
     return (
         <>
             <Typography variant="h5" sx={{ mb: 1 }}>
@@ -102,6 +104,7 @@ function BindingsMultiEditor({ draftSpecs = [], readOnly = false }: Props) {
             </Typography>
 
             <ListAndDetails
+                loading={fetchingDraftSpecs}
                 list={<BindingSelector readOnly={readOnly} />}
                 details={<BindingsEditor readOnly={readOnly} />}
             />
