@@ -22,6 +22,11 @@ interface UpdateMatchData {
     expect_pub_id?: string;
 }
 
+interface DraftSpecData {
+    spec: any;
+    expect_pub_id?: string;
+}
+
 export const createDraftSpec = (
     draftId: string | null,
     catalogName: string,
@@ -67,21 +72,21 @@ export const updateDraftSpec = (
     );
 };
 
-export const updateExpectedPubId = (
-    draftId: string | null,
-    lastPubId: string | null
+// TODO (optimization): Determine whether to replace all instances of updateDraftSpec
+//   with this modified and extendible version of that function. If that is desired,
+//   rename the function below to updateDraftSpec and remove the existing function.
+export const modifyDraftSpec = (
+    draftSpec: any,
+    matchData: UpdateMatchData,
+    lastPubId?: string
 ) => {
-    const matchData: UpdateMatchData = {
-        draft_id: draftId,
-    };
+    let data: DraftSpecData = { spec: draftSpec };
 
-    return updateSupabase(
-        TABLES.DRAFT_SPECS,
-        {
-            expect_pub_id: lastPubId,
-        },
-        matchData
-    );
+    if (lastPubId) {
+        data = { ...data, expect_pub_id: lastPubId };
+    }
+
+    return updateSupabase(TABLES.DRAFT_SPECS, data, matchData);
 };
 
 export const generateDraftSpec = (

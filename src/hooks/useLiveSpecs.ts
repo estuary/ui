@@ -3,7 +3,7 @@ import { TABLES } from 'services/supabase';
 import { hasLength } from 'utils/misc-utils';
 import { useQuery, useSelect } from './supabase-swr/';
 
-interface LiveSpecsQuery {
+export interface LiveSpecsQuery {
     catalog_name: string;
     spec_type: string;
 }

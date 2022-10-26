@@ -156,6 +156,8 @@ export const tableAlternateRowsSx: SxProps<Theme> = {
     },
 };
 
+// TODO (optimization): Store the outline style as a detached configuration that
+//   can be applied to the assortment of CSS border properties.
 export const outlineSx: SxProps<Theme> = {
     border: `1px solid ${slate[200]}`,
 };

@@ -1,5 +1,4 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
-import { updateExpectedPubId } from 'api/draftSpecs';
 import { authenticatedRoutes } from 'app/Authenticated';
 import CaptureGenerateButton from 'components/capture/GenerateButton';
 import {
@@ -9,7 +8,6 @@ import {
     useEditorStore_resetState,
     useEditorStore_setEditDraftId,
     useEditorStore_setId,
-    useEditorStore_setSpecs,
 } from 'components/editor/Store';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
@@ -53,11 +51,16 @@ import {
     useFormStateStore_setFormState,
 } from 'stores/FormState';
 import {
+    ResourceConfigDictionary,
     ResourceConfigHydrator,
+    useResourceConfig_addCollection,
     useResourceConfig_resetState,
+    useResourceConfig_setCurrentCollection,
+    useResourceConfig_setResourceConfig,
 } from 'stores/ResourceConfig';
 import { ENTITY, JsonFormsData } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
+import { modifyDiscoveredDraftSpec } from 'utils/workflow-utils';
 
 const trackEvent = (payload: any) => {
     LogRocket.track(CustomEvents.CAPTURE_DISCOVER, {
@@ -94,8 +97,6 @@ function CaptureEdit() {
 
     const pubId = useEditorStore_pubId();
 
-    const setDraftSpecs = useEditorStore_setSpecs();
-
     const resetEditorStore = useEditorStore_resetState();
 
     // Endpoint Config Store
@@ -114,6 +115,11 @@ function CaptureEdit() {
     const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
 
     // Resource Config Store
+    const addCollection = useResourceConfig_addCollection();
+    const setCurrentCollection = useResourceConfig_setCurrentCollection();
+
+    const setResourceConfig = useResourceConfig_setResourceConfig();
+
     const resetResourceConfigState = useResourceConfig_resetState();
 
     const { mutate: mutateDraftSpecs, ...draftSpecsMetadata } = useDraftSpecs(
@@ -196,7 +202,10 @@ function CaptureEdit() {
         },
     };
 
-    const storeUpdatedDraftSpec = async (newDraftId: string) => {
+    const storeUpdatedDraftSpec = async (
+        newDraftId: string,
+        resourceConfig: ResourceConfigDictionary
+    ) => {
         // TODO (optimization | typing): Narrow the columns selected from the draft_specs_ext table.
         //   More columns are selected than required to appease the typing of the editor store.
         const draftSpecsResponse = await supabaseClient
@@ -216,39 +225,62 @@ function CaptureEdit() {
         }
 
         if (draftSpecsResponse.data && draftSpecsResponse.data.length > 0) {
-            const { draft_id } = draftSpecsResponse.data[0];
+            const existingCollections = Object.keys(resourceConfig);
 
-            const updatedDraftSpecResponse = await updateExpectedPubId(
-                draft_id,
+            const updatedDraftSpecsResponse = await modifyDiscoveredDraftSpec(
+                draftSpecsResponse,
+                resourceConfig,
+                existingCollections,
                 lastPubId
             );
 
-            if (updatedDraftSpecResponse.error) {
+            if (updatedDraftSpecsResponse.error) {
                 return helpers.callFailed({
                     error: {
                         title: 'captureEdit.generate.failedErrorTitle',
-                        error: updatedDraftSpecResponse.error,
+                        error: updatedDraftSpecsResponse.error,
                     },
                 });
             }
 
-            setDraftSpecs(draftSpecsResponse.data);
+            if (
+                updatedDraftSpecsResponse.data &&
+                updatedDraftSpecsResponse.data.length > 0
+            ) {
+                const updatedBindings =
+                    updatedDraftSpecsResponse.data[0].spec.bindings;
 
-            void mutateDraftSpecs();
+                updatedBindings.forEach((binding: any) => {
+                    if (!existingCollections.includes(binding.target)) {
+                        addCollection(binding.target);
 
-            setEncryptedEndpointConfig(
-                {
-                    data: draftSpecsResponse.data[0].spec.endpoint.connector
-                        .config,
-                },
-                'capture_edit'
-            );
+                        setResourceConfig(binding.target, {
+                            data: binding.resource,
+                            errors: [],
+                        });
+                    }
+                });
+
+                setCurrentCollection(updatedBindings[0].target);
+
+                setEncryptedEndpointConfig(
+                    {
+                        data: updatedDraftSpecsResponse.data[0].spec.endpoint
+                            .connector.config,
+                    },
+                    'capture_edit'
+                );
+            }
         }
+
+        setDraftId(newDraftId);
+        setEditDraftId(newDraftId);
     };
 
     const discoversSubscription = (
         discoverDraftId: string,
-        existingEndpointConfig: JsonFormsData
+        existingEndpointConfig: JsonFormsData,
+        resourceConfig: ResourceConfigDictionary
     ) => {
         setDraftId(null);
 
@@ -267,10 +299,7 @@ function CaptureEdit() {
                 })
                 .order('created_at', { ascending: false }),
             (payload: any) => {
-                setDraftId(payload.draft_id);
-                setEditDraftId(payload.draft_id);
-
-                void storeUpdatedDraftSpec(payload.draft_id);
+                void storeUpdatedDraftSpec(payload.draft_id, resourceConfig);
 
                 void mutateDraftSpecs();
 

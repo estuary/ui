@@ -1,4 +1,3 @@
-import { generateCaptureDraftSpec, updateDraftSpec } from 'api/draftSpecs';
 import { authenticatedRoutes } from 'app/Authenticated';
 import CaptureGenerateButton from 'components/capture/GenerateButton';
 import {
@@ -54,6 +53,7 @@ import {
 } from 'stores/ResourceConfig';
 import { ENTITY, JsonFormsData } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
+import { modifyDiscoveredDraftSpec } from 'utils/workflow-utils';
 
 const trackEvent = (payload: any) => {
     LogRocket.track(CustomEvents.CAPTURE_DISCOVER, {
@@ -197,34 +197,12 @@ function CaptureCreate() {
         }
 
         if (draftSpecsResponse.data && draftSpecsResponse.data.length > 0) {
-            const mergedResourceConfig = {};
-
-            Object.entries(resourceConfig).forEach(([key, value]) => {
-                mergedResourceConfig[key] = value;
-            });
-
             const existingCollections = Object.keys(resourceConfig);
 
-            const discoveredDraftSpecData = draftSpecsResponse.data[0];
-
-            discoveredDraftSpecData.spec.bindings.forEach((binding: any) => {
-                if (!existingCollections.includes(binding.target)) {
-                    mergedResourceConfig[binding.target] = {
-                        data: binding.resource,
-                        errors: [],
-                    };
-                }
-            });
-
-            const mergedDraftSpec = generateCaptureDraftSpec(
-                mergedResourceConfig,
-                discoveredDraftSpecData.spec.endpoint
-            );
-
-            const updatedDraftSpecsResponse = await updateDraftSpec(
-                newDraftId,
-                discoveredDraftSpecData.catalog_name,
-                mergedDraftSpec
+            const updatedDraftSpecsResponse = await modifyDiscoveredDraftSpec(
+                draftSpecsResponse,
+                resourceConfig,
+                existingCollections
             );
             if (updatedDraftSpecsResponse.error) {
                 return helpers.callFailed({

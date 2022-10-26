@@ -53,7 +53,7 @@ function CollectionPicker({ readOnly = false }: Props) {
         const populateCollectionData =
             entityType === ENTITY.MATERIALIZATION
                 ? liveSpecs.length > 0
-                : liveSpecs.length > 0 && draftSpecs.length > 0;
+                : liveSpecs.length > 0 || draftSpecs.length > 0;
 
         if (populateCollectionData) {
             let collectionsOnServer: CollectionData[] = liveSpecs.map(
@@ -100,15 +100,12 @@ function CollectionPicker({ readOnly = false }: Props) {
         },
     };
 
-    console.log('collections', collections);
-    console.log('collection data', collectionData);
-    console.log('live spec error', liveSpecsError);
-    console.log('draft spec error', draftSpecsError);
+    const specError =
+        entityType === ENTITY.MATERIALIZATION
+            ? liveSpecsError
+            : liveSpecsError ?? draftSpecsError;
 
-    return collections &&
-        collectionData.length > 0 &&
-        !liveSpecsError &&
-        !draftSpecsError ? (
+    return collections && collectionData.length > 0 && !specError ? (
         <Box
             sx={{
                 p: '0.5rem 0.5rem 1rem',
