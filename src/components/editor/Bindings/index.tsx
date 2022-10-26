@@ -9,6 +9,7 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useConnectorTag from 'hooks/useConnectorTag';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import useLiveSpecs from 'hooks/useLiveSpecs';
 import { isEqual } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -90,7 +91,12 @@ function BindingsMultiEditor({ draftSpecs = [], readOnly = false }: Props) {
         setServerUpdateRequired(resourceConfigUpdated);
     }, [setServerUpdateRequired, resourceConfigUpdated]);
 
-    const fetchingDraftSpecs = draftSpecs.length === 0;
+    const { liveSpecs } = useLiveSpecs('collection');
+
+    const fetchingSpecs =
+        entityType === ENTITY.MATERIALIZATION
+            ? liveSpecs.length === 0
+            : draftSpecs.length === 0;
 
     return (
         <>
@@ -111,7 +117,7 @@ function BindingsMultiEditor({ draftSpecs = [], readOnly = false }: Props) {
                     alternativeReflexContainerBackground[theme.palette.mode]
                 }
                 displayRightPaneBoarder={true}
-                loading={fetchingDraftSpecs}
+                loading={fetchingSpecs}
                 list={<BindingSelector readOnly={readOnly} />}
                 details={<BindingsEditor readOnly={readOnly} />}
             />

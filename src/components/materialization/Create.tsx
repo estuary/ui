@@ -131,7 +131,6 @@ function MaterializationCreate() {
                     title="browserTitle.materializationCreate"
                     entityType={entityType}
                     draftSpecMetadata={draftSpecsMetadata}
-                    showCollections
                     resetState={resetState}
                     errorSummary={
                         <ExtendedValidationErrorSummary

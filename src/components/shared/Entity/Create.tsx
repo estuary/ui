@@ -34,7 +34,7 @@ import {
     useFormStateStore_messagePrefix,
 } from 'stores/FormState';
 import { useResourceConfig_serverUpdateRequired } from 'stores/ResourceConfig';
-import { EntityWithCreateWorkflow } from 'types';
+import { ENTITY, EntityWithCreateWorkflow } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import AlertBox from '../AlertBox';
 
@@ -48,7 +48,6 @@ interface Props {
     resetState: () => void;
     toolbar: ReactNode;
     errorSummary: ReactNode;
-    showCollections?: boolean;
 }
 
 function EntityCreate({
@@ -58,7 +57,6 @@ function EntityCreate({
     resetState,
     errorSummary,
     toolbar,
-    showCollections,
 }: Props) {
     useBrowserTitle(title);
 
@@ -136,6 +134,11 @@ function EntityCreate({
 
     useUnsavedChangesPrompt(!exitWhenLogsClose && promptDataLoss, resetState);
 
+    const displayResourceConfig =
+        entityType === ENTITY.MATERIALIZATION
+            ? hasLength(imageTag.id)
+            : hasLength(imageTag.id) && editDraftId;
+
     if (showConnectorTiles === null) return null;
     return (
         <>
@@ -191,9 +194,7 @@ function EntityCreate({
                             </ErrorBoundryWrapper>
                         ) : null}
 
-                        {showCollections &&
-                        hasLength(imageTag.id) &&
-                        editDraftId ? (
+                        {displayResourceConfig ? (
                             <ErrorBoundryWrapper>
                                 <CollectionConfig draftSpecs={taskDraftSpec} />
                             </ErrorBoundryWrapper>

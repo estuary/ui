@@ -296,7 +296,6 @@ function CaptureCreate() {
                     title="browserTitle.captureCreate"
                     entityType={entityType}
                     draftSpecMetadata={draftSpecsMetadata}
-                    showCollections
                     resetState={resetState}
                     errorSummary={
                         <ValidationErrorSummary
