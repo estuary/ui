@@ -395,9 +395,7 @@ function EntityEdit({
 
             {connectorTagsError ? (
                 <Error error={connectorTagsError} />
-            ) : !editDraftId ||
-              taskDraftSpec.length === 0 ||
-              storeHydrationIncomplete ? null : (
+            ) : !editDraftId || storeHydrationIncomplete ? null : (
                 <>
                     <Collapse in={formSubmitError !== null}>
                         {formSubmitError ? (
