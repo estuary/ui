@@ -1,3 +1,4 @@
+import { getDraftSpecsBySpecType } from 'api/draftSpecs';
 import { authenticatedRoutes } from 'app/Authenticated';
 import CaptureGenerateButton from 'components/capture/GenerateButton';
 import {
@@ -17,15 +18,13 @@ import PageContainer from 'components/shared/PageContainer';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
-import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import useDraftSpecs from 'hooks/useDraftSpecs';
 import LogRocket from 'logrocket';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import {
     DEFAULT_FILTER,
-    handleFailure,
-    handleSuccess,
     jobStatusPoller,
     JOB_STATUS_POLLER_ERROR,
     TABLES,
@@ -180,12 +179,10 @@ function CaptureCreate() {
     ) => {
         // TODO (optimization | typing): Narrow the columns selected from the draft_specs_ext table.
         //   More columns are selected than required to appease the typing of the editor store.
-        const draftSpecsResponse = await supabaseClient
-            .from(TABLES.DRAFT_SPECS_EXT)
-            .select(`catalog_name,draft_id,expect_pub_id,spec,spec_type`)
-            .eq('draft_id', newDraftId)
-            .eq('spec_type', ENTITY.CAPTURE)
-            .then(handleSuccess<DraftSpecQuery[]>, handleFailure);
+        const draftSpecsResponse = await getDraftSpecsBySpecType(
+            newDraftId,
+            entityType
+        );
 
         if (draftSpecsResponse.error) {
             return helpers.callFailed({

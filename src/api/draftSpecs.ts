@@ -1,6 +1,10 @@
+import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import {
     deleteSupabase,
+    handleFailure,
+    handleSuccess,
     insertSupabase,
+    supabaseClient,
     TABLES,
     updateSupabase,
 } from 'services/supabase';
@@ -150,4 +154,19 @@ export const generateCaptureDraftSpec = (
 
 export const deleteDraftSpec = (draftId: string) => {
     return deleteSupabase(TABLES.DRAFT_SPECS, { draft_id: draftId });
+};
+
+// TODO (optimization | typing): Narrow the columns selected from the draft_specs_ext table.
+//   More columns are selected than required to appease the typing of the editor store.
+//   This function is used in the capture create and edit components.
+export const getDraftSpecsBySpecType = async (
+    draftId: string,
+    specType: ENTITY
+) => {
+    return supabaseClient
+        .from(TABLES.DRAFT_SPECS_EXT)
+        .select(`catalog_name,draft_id,expect_pub_id,spec,spec_type`)
+        .eq('draft_id', draftId)
+        .eq('spec_type', specType)
+        .then(handleSuccess<DraftSpecQuery[]>, handleFailure);
 };
