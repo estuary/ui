@@ -29,6 +29,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.missing': `N/A`,
     'common.noUnDo': `This action cannot be undone.`,
     'common.version': `version`,
+    'common.tenant': `Prefix`,
 
     // Aria
     'aria.openExpand': `show more`,
@@ -156,10 +157,12 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.captureEdit': `Edit Capture`,
     'routeTitle.captures': `Captures`,
     'routeTitle.collections': `Collections`,
+    'routeTitle.directives': `Directives`,
     'routeTitle.error.pageNotFound': `Page Not Found`,
     'routeTitle.login': `Login`,
     'routeTitle.loginLoading': `Checking Credentials`,
     'routeTitle.noGrants': `Signed Up`,
+    'routeTitle.legal': `Legal`,
     'routeTitle.materializationCreate': `Create Materialization`,
     'routeTitle.materializationEdit': `Edit Materialization`,
     'routeTitle.materializations': `Materializations`,
@@ -181,6 +184,7 @@ const BrowserTitles: ResolvedIntlConfig['messages'] = {
     'browserTitle.error.pageNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.pageNotFound']}`,
     'browserTitle.login': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.login']}`,
     'browserTitle.noGrants': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.noGrants']}`,
+    'browserTitle.legal': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.legal']}`,
     'browserTitle.loginLoading': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.loginLoading']}`,
     'browserTitle.materializationCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationCreate']}`,
     'browserTitle.materializationEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationEdit']}`,
@@ -251,9 +255,6 @@ const Registration: ResolvedIntlConfig['messages'] = {
     'register.label.email': `Email`,
     'register.label.company': `Company`,
     'register.label.intendedUse': `Describe your use case.`,
-    'register.label.documentAcknowledgement': `Accept our {terms} and {privacy}`,
-    'register.label.documentAcknowledgement.terms': `Terms of Service`,
-    'register.label.documentAcknowledgement.privacy': `Privacy Policy`,
     'register.existingAccount': `Already have an account?`,
 };
 
@@ -648,6 +649,39 @@ const Supabase: ResolvedIntlConfig['messages'] = {
     'supabase.poller.failed': `We encountered a problem retrieving the status of this action. Please check your network connection and try again.`,
 };
 
+const Legal: ResolvedIntlConfig['messages'] = {
+    'legal.heading': `Legal Stuff`,
+    'legal.message': `Please use the links below to open and review the documents before checking accept and continuing.`,
+    'legal.docs.terms': `Terms of Service`,
+    'legal.docs.privacy': `Privacy Policy`,
+    'legal.docs.accept': 'I accept the {privacy} and {terms}',
+    'legal.docs.errorTitle': 'Please accept',
+    'legal.docs.errorMessage':
+        'Before you can continue using the application you must accept the listed documents.',
+};
+
+const Tenant: ResolvedIntlConfig['messages'] = {
+    'tenant.heading': `Organization Name`,
+    'tenant.message.1': `The organization name will be used as a prefix on everything you create within Estuary. This helps with scoping, controling access, labeling ownership, and more.`,
+    'tenant.message.2': `This beings as private but becomes public if you share anything or invite others to join your organization.`,
+
+    'tenant.help.title': `Can I have an example?`,
+
+    'tenant.help.example.title': `A capture would have a name like {name}`,
+    'tenant.help.example.name': `acmeCo/marketingData/googleAds`,
+
+    'tenant.help.example.details': `When naming an entity you do a few things. First, you select which prefix you want to use. Second, you provide a name. Third, we sometimes automatically add the Connector name to the end.`,
+
+    'tenant.help.example.breakdown': `A way to think about it is like this: {template}`,
+    'tenant.help.example.template': `{prefix}/{name you provide}/{connector}`,
+
+    'tenant.expectations': `What are the naming guidelines?`,
+    'tenant.expectations.1': `Letters and numbers`,
+    'tenant.expectations.2': `Separators should be _ or .`,
+    'tenant.expectations.3': `Cannot contain /`,
+    'tenant.errorMessage.empty': `You must provide a name before continuing.`,
+};
+
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
     ...CTAs,
@@ -688,6 +722,8 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...EntityEdit,
     ...Supabase,
     ...Workflows,
+    ...Legal,
+    ...Tenant,
 };
 
 export default enUSMessages;

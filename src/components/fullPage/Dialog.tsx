@@ -1,10 +1,10 @@
 import { Box, Paper, useTheme } from '@mui/material';
 import CompanyLogo from 'components/graphics/CompanyLogo';
 import { glassBkgWithoutBlur } from 'context/Theme';
-import { ReactNode } from 'react';
+import { BaseComponentProps } from 'types';
 
-interface Props {
-    children: ReactNode;
+interface Props extends BaseComponentProps {
+    maxWidth?: number;
 }
 
 function FullPageDialog({ children }: Props) {

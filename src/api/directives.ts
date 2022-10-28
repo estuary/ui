@@ -1,0 +1,60 @@
+import { DIRECTIVES } from 'directives/shared';
+import {
+    RPCS,
+    supabaseClient,
+    TABLES,
+    updateSupabase,
+} from 'services/supabase';
+import { AppliedDirective, Directive, Schema } from 'types';
+
+export interface ExchangeResponse {
+    directive: Directive;
+    applied_directive: AppliedDirective;
+}
+
+const generateMatchData = (data: ExchangeResponse) => {
+    return {
+        id: data.applied_directive.id,
+        logs_token: data.applied_directive.logs_token,
+        directive_id: data.applied_directive.directive_id,
+        user_id: data.applied_directive.user_id,
+    };
+};
+
+const callUpdate = (user_claims: Schema, response: ExchangeResponse) => {
+    return updateSupabase(
+        TABLES.APPLIED_DIRECTIVES,
+        {
+            user_claims,
+        },
+        generateMatchData(response)
+    );
+};
+
+const exchangeBearerToken = async (token: string) => {
+    return supabaseClient
+        .rpc<ExchangeResponse>(RPCS.EXCHANGE_DIRECTIVES, {
+            bearer_token: token,
+        })
+        .throwOnError()
+        .single();
+};
+
+const submitDirective = async (
+    type: keyof typeof DIRECTIVES,
+    ...dataForClaim: any[]
+) => {
+    const { data, error } = await exchangeBearerToken(DIRECTIVES[type].token);
+
+    if (error) {
+        console.error('error', error);
+        return { data: [], error };
+    } else {
+        return callUpdate(
+            DIRECTIVES[type].generateUserClaim(dataForClaim),
+            data
+        );
+    }
+};
+
+export { exchangeBearerToken, submitDirective };

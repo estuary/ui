@@ -64,6 +64,29 @@ export interface JobStatus {
     type: string;
 }
 
+export interface AppliedDirective {
+    created_at: Date;
+    detail: null;
+    id: string;
+    updated_at: Date;
+    job_status: JobStatus;
+    logs_token: string;
+    directive_id: string;
+    user_id: string;
+    user_claims: null;
+}
+
+export interface Directive {
+    created_at: Date;
+    detail: null;
+    id: string;
+    updated_at: Date;
+    catalog_prefix: string;
+    single_use: boolean;
+    spec: JobStatus;
+    token: string;
+}
+
 export interface Grants {
     capability: string;
     object_role: string;

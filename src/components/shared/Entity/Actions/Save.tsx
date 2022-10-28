@@ -10,7 +10,12 @@ import { useClient } from 'hooks/supabase-swr';
 import LogRocket from 'logrocket';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
-import { DEFAULT_FILTER, jobStatusPoller, TABLES } from 'services/supabase';
+import {
+    DEFAULT_FILTER,
+    jobStatusPoller,
+    JOB_STATUS_COLUMNS,
+    TABLES,
+} from 'services/supabase';
 import { useDetailsForm_details_description } from 'stores/DetailsForm';
 import {
     FormStatus,
@@ -79,13 +84,7 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
         jobStatusPoller(
             supabaseClient
                 .from(TABLES.PUBLICATIONS)
-                .select(
-                    `
-                    job_status,
-                    logs_token,
-                    id
-                `
-                )
+                .select(JOB_STATUS_COLUMNS)
                 .match({
                     draft_id: draftIdVal,
                     logs_token: logTokenVal,

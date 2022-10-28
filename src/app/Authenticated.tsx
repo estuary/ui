@@ -1,4 +1,3 @@
-import NoGrantsFound from 'app/NoGrantsFound';
 import { unauthenticatedRoutes } from 'app/Unauthenticated';
 import AppLayout from 'AppLayout';
 import AccessGrants from 'components/admin/AccessGrants';
@@ -6,14 +5,12 @@ import AdminApi from 'components/admin/Api';
 import AdminConnectors from 'components/admin/Connectors';
 import CaptureCreate from 'components/capture/Create';
 import CaptureEdit from 'components/capture/Edit';
-import FullPageSpinner from 'components/fullPage/Spinner';
 import MaterializationCreate from 'components/materialization/Create';
 import MaterializationEdit from 'components/materialization/Edit';
 import AuthenticatedOnlyContext from 'context/Authenticated';
 import { EntityContextProvider } from 'context/EntityContext';
 import { WorkflowContextProvider } from 'context/Workflow';
 import { OAuthPopup } from 'hooks/forks/react-use-oauth2/components';
-import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import Admin from 'pages/Admin';
 import Auth from 'pages/Auth';
@@ -23,7 +20,6 @@ import TestJsonForms from 'pages/dev/TestJsonForms';
 import PageNotFound from 'pages/error/PageNotFound';
 import Home from 'pages/Home';
 import Materializations from 'pages/Materializations';
-import Registration from 'pages/Registration';
 import { Route, Routes } from 'react-router';
 import { EndpointConfigProvider } from 'stores/EndpointConfig';
 import { ENTITY } from 'types';
@@ -108,192 +104,154 @@ const Authenticated = () => {
     // The context provider results in a duped, gateway auth token API call.
     useGatewayAuthToken();
 
-    const { combinedGrants, isValidating } = useCombinedGrantsExt({
-        singleCall: true,
-    });
-
-    if (isValidating) {
-        return <FullPageSpinner />;
-    } else if (combinedGrants.length === 0) {
-        return (
+    return (
+        <AuthenticatedOnlyContext>
             <Routes>
+                {/* TODO (routes) Need to make sure the auth path is handle in any routes. This should be worked into
+                            the move of making routes in JSON objects
+                    */}
                 <Route
                     path={unauthenticatedRoutes.auth.path}
                     element={<Auth />}
                 />
-                <Route path={authenticatedRoutes.user.path}>
+                <Route
+                    path={authenticatedRoutes.oauth.path}
+                    element={<OAuthPopup />}
+                />
+                <Route element={<AppLayout />}>
                     <Route
-                        path={authenticatedRoutes.user.registration.path}
-                        element={<Registration />}
+                        path={authenticatedRoutes.home.path}
+                        element={<Home />}
                     />
-                </Route>
-                <Route path="*" element={<NoGrantsFound />} />
-            </Routes>
-        );
-    } else {
-        return (
-            <AuthenticatedOnlyContext>
-                <Routes>
-                    {/* TODO (routes) Need to make sure the auth path is handle in any routes. This should be worked into
-                            the move of making routes in JSON objects
-                    */}
-                    <Route
-                        path={unauthenticatedRoutes.auth.path}
-                        element={<Auth />}
-                    />
-                    <Route
-                        path={authenticatedRoutes.oauth.path}
-                        element={<OAuthPopup />}
-                    />
-                    <Route element={<AppLayout />}>
-                        <Route
-                            path={authenticatedRoutes.home.path}
-                            element={<Home />}
-                        />
 
+                    <Route
+                        path={authenticatedRoutes.collections.path}
+                        element={
+                            <EntityContextProvider value={ENTITY.COLLECTION}>
+                                <Collections />
+                            </EntityContextProvider>
+                        }
+                    />
+
+                    <Route path={authenticatedRoutes.captures.path}>
                         <Route
-                            path={authenticatedRoutes.collections.path}
+                            path=""
                             element={
-                                <EntityContextProvider
-                                    value={ENTITY.COLLECTION}
-                                >
-                                    <Collections />
+                                <EntityContextProvider value={ENTITY.CAPTURE}>
+                                    <Captures />
                                 </EntityContextProvider>
                             }
                         />
 
-                        <Route path={authenticatedRoutes.captures.path}>
-                            <Route
-                                path=""
-                                element={
-                                    <EntityContextProvider
-                                        value={ENTITY.CAPTURE}
-                                    >
-                                        <Captures />
-                                    </EntityContextProvider>
-                                }
-                            />
-
-                            <Route
-                                path={authenticatedRoutes.captures.create.path}
-                                element={
-                                    <EntityContextProvider
-                                        value={ENTITY.CAPTURE}
-                                    >
-                                        <WorkflowContextProvider value="capture_create">
-                                            <EndpointConfigProvider>
-                                                <CaptureCreate />
-                                            </EndpointConfigProvider>
-                                        </WorkflowContextProvider>
-                                    </EntityContextProvider>
-                                }
-                            />
-
-                            <Route
-                                path={authenticatedRoutes.captures.edit.path}
-                                element={
-                                    <EntityContextProvider
-                                        value={ENTITY.CAPTURE}
-                                    >
-                                        <WorkflowContextProvider value="capture_edit">
-                                            <EndpointConfigProvider>
-                                                <CaptureEdit />
-                                            </EndpointConfigProvider>
-                                        </WorkflowContextProvider>
-                                    </EntityContextProvider>
-                                }
-                            />
-                        </Route>
-
-                        <Route path={authenticatedRoutes.materializations.path}>
-                            <Route
-                                path=""
-                                element={
-                                    <EntityContextProvider
-                                        value={ENTITY.MATERIALIZATION}
-                                    >
-                                        <Materializations />
-                                    </EntityContextProvider>
-                                }
-                            />
-
-                            <Route
-                                path={
-                                    authenticatedRoutes.materializations.create
-                                        .path
-                                }
-                                element={
-                                    <EntityContextProvider
-                                        value={ENTITY.MATERIALIZATION}
-                                    >
-                                        <WorkflowContextProvider value="materialization_create">
-                                            <EndpointConfigProvider>
-                                                <MaterializationCreate />
-                                            </EndpointConfigProvider>
-                                        </WorkflowContextProvider>
-                                    </EntityContextProvider>
-                                }
-                            />
-
-                            <Route
-                                path={
-                                    authenticatedRoutes.materializations.edit
-                                        .path
-                                }
-                                element={
-                                    <EntityContextProvider
-                                        value={ENTITY.MATERIALIZATION}
-                                    >
-                                        <WorkflowContextProvider value="materialization_edit">
-                                            <EndpointConfigProvider>
-                                                <MaterializationEdit />
-                                            </EndpointConfigProvider>
-                                        </WorkflowContextProvider>
-                                    </EntityContextProvider>
-                                }
-                            />
-                        </Route>
-
-                        <Route path={authenticatedRoutes.admin.path}>
-                            <Route path="" element={<Admin />} />
-                            <Route
-                                path={
-                                    authenticatedRoutes.admin.accessGrants.path
-                                }
-                                element={<AccessGrants />}
-                            />
-                            <Route
-                                path={authenticatedRoutes.admin.api.path}
-                                element={<AdminApi />}
-                            />
-                            <Route
-                                path={authenticatedRoutes.admin.connectors.path}
-                                element={<AdminConnectors />}
-                            />
-                        </Route>
-
-                        {!isProduction ? (
-                            <Route
-                                path="test/jsonforms"
-                                element={
-                                    <EntityContextProvider
-                                        value={ENTITY.CAPTURE}
-                                    >
-                                        <TestJsonForms />
-                                    </EntityContextProvider>
-                                }
-                            />
-                        ) : null}
+                        <Route
+                            path={authenticatedRoutes.captures.create.path}
+                            element={
+                                <EntityContextProvider value={ENTITY.CAPTURE}>
+                                    <WorkflowContextProvider value="capture_create">
+                                        <EndpointConfigProvider>
+                                            <CaptureCreate />
+                                        </EndpointConfigProvider>
+                                    </WorkflowContextProvider>
+                                </EntityContextProvider>
+                            }
+                        />
 
                         <Route
-                            path={authenticatedRoutes.pageNotFound.path}
-                            element={<PageNotFound />}
+                            path={authenticatedRoutes.captures.edit.path}
+                            element={
+                                <EntityContextProvider value={ENTITY.CAPTURE}>
+                                    <WorkflowContextProvider value="capture_edit">
+                                        <EndpointConfigProvider>
+                                            <CaptureEdit />
+                                        </EndpointConfigProvider>
+                                    </WorkflowContextProvider>
+                                </EntityContextProvider>
+                            }
                         />
                     </Route>
-                </Routes>
-            </AuthenticatedOnlyContext>
-        );
-    }
+
+                    <Route path={authenticatedRoutes.materializations.path}>
+                        <Route
+                            path=""
+                            element={
+                                <EntityContextProvider
+                                    value={ENTITY.MATERIALIZATION}
+                                >
+                                    <Materializations />
+                                </EntityContextProvider>
+                            }
+                        />
+
+                        <Route
+                            path={
+                                authenticatedRoutes.materializations.create.path
+                            }
+                            element={
+                                <EntityContextProvider
+                                    value={ENTITY.MATERIALIZATION}
+                                >
+                                    <WorkflowContextProvider value="materialization_create">
+                                        <EndpointConfigProvider>
+                                            <MaterializationCreate />
+                                        </EndpointConfigProvider>
+                                    </WorkflowContextProvider>
+                                </EntityContextProvider>
+                            }
+                        />
+
+                        <Route
+                            path={
+                                authenticatedRoutes.materializations.edit.path
+                            }
+                            element={
+                                <EntityContextProvider
+                                    value={ENTITY.MATERIALIZATION}
+                                >
+                                    <WorkflowContextProvider value="materialization_edit">
+                                        <EndpointConfigProvider>
+                                            <MaterializationEdit />
+                                        </EndpointConfigProvider>
+                                    </WorkflowContextProvider>
+                                </EntityContextProvider>
+                            }
+                        />
+                    </Route>
+
+                    <Route path={authenticatedRoutes.admin.path}>
+                        <Route path="" element={<Admin />} />
+                        <Route
+                            path={authenticatedRoutes.admin.accessGrants.path}
+                            element={<AccessGrants />}
+                        />
+                        <Route
+                            path={authenticatedRoutes.admin.api.path}
+                            element={<AdminApi />}
+                        />
+                        <Route
+                            path={authenticatedRoutes.admin.connectors.path}
+                            element={<AdminConnectors />}
+                        />
+                    </Route>
+
+                    {!isProduction ? (
+                        <Route
+                            path="test/jsonforms"
+                            element={
+                                <EntityContextProvider value={ENTITY.CAPTURE}>
+                                    <TestJsonForms />
+                                </EntityContextProvider>
+                            }
+                        />
+                    ) : null}
+
+                    <Route
+                        path={authenticatedRoutes.pageNotFound.path}
+                        element={<PageNotFound />}
+                    />
+                </Route>
+            </Routes>
+        </AuthenticatedOnlyContext>
+    );
 };
 
 export default Authenticated;
