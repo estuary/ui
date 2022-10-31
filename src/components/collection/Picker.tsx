@@ -6,6 +6,7 @@ import useDraftSpecs from 'hooks/useDraftSpecs';
 import useLiveSpecs from 'hooks/useLiveSpecs';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useFormStateStore_isActive } from 'stores/FormState';
 import {
     useResourceConfig_collections,
     useResourceConfig_setResourceConfig,
@@ -44,6 +45,9 @@ function CollectionPicker({ readOnly = false }: Props) {
 
     // Draft Editor Store
     const editDraftId = useEditorStore_editDraftId();
+
+    // Form State Store
+    const formActive = useFormStateStore_isActive();
 
     // Resource Config Store
     const collections = useResourceConfig_collections();
@@ -123,7 +127,7 @@ function CollectionPicker({ readOnly = false }: Props) {
             }}
         >
             <Autocomplete
-                disabled={readOnly}
+                disabled={readOnly || formActive}
                 multiple
                 options={collectionData}
                 groupBy={(option) => option.classification}
@@ -143,6 +147,7 @@ function CollectionPicker({ readOnly = false }: Props) {
                 onChange={handlers.updateCollections}
                 blurOnSelect={false}
                 disableCloseOnSelect
+                disableClearable
                 renderTags={() => {}}
                 renderInput={(params) => (
                     <TextField

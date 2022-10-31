@@ -13,6 +13,7 @@ import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
 import { alternativeDataGridHeader, slate, slateOutline } from 'context/Theme';
 import { useEffect, useRef, useState } from 'react';
 import { useUnmount } from 'react-use';
+import { useFormStateStore_isActive } from 'stores/FormState';
 import {
     useResourceConfig_currentCollection,
     useResourceConfig_removeCollection,
@@ -26,9 +27,10 @@ interface BindingSelectorProps {
 
 interface DeleteButtonProps {
     collection: string;
+    disabled: boolean;
 }
 
-function DeleteButton({ collection }: DeleteButtonProps) {
+function DeleteButton({ collection, disabled }: DeleteButtonProps) {
     const removeCollection = useResourceConfig_removeCollection();
 
     const handlers = {
@@ -40,7 +42,11 @@ function DeleteButton({ collection }: DeleteButtonProps) {
     };
 
     return (
-        <IconButton size="small" onClick={handlers.removeCollection}>
+        <IconButton
+            disabled={disabled}
+            size="small"
+            onClick={handlers.removeCollection}
+        >
             <Clear />
         </IconButton>
     );
@@ -64,6 +70,10 @@ const typographyTruncation: TypographyProps = {
 function BindingSelector({ readOnly }: BindingSelectorProps) {
     const onSelectTimeOut = useRef<number | null>(null);
 
+    // Form State Store
+    const formActive = useFormStateStore_isActive();
+
+    // Resource Config Store
     const currentCollection = useResourceConfig_currentCollection();
     const setCurrentCollection = useResourceConfig_setCurrentCollection();
 
@@ -91,7 +101,10 @@ function BindingSelector({ readOnly }: BindingSelectorProps) {
                                 primaryTypographyProps={typographyTruncation}
                             />
 
-                            <DeleteButton collection={params.row} />
+                            <DeleteButton
+                                collection={params.row}
+                                disabled={formActive}
+                            />
                         </>
                     );
                 }
@@ -103,7 +116,10 @@ function BindingSelector({ readOnly }: BindingSelectorProps) {
                             primaryTypographyProps={typographyTruncation}
                         />
 
-                        <DeleteButton collection={params.row} />
+                        <DeleteButton
+                            collection={params.row}
+                            disabled={formActive}
+                        />
                     </>
                 );
             },
@@ -119,8 +135,6 @@ function BindingSelector({ readOnly }: BindingSelectorProps) {
         if (onSelectTimeOut.current) clearTimeout(onSelectTimeOut.current);
     });
 
-    // TODO (defect): Disable the collection picker, selector, and delete button
-    //   when the form is in an active state.
     return (
         <>
             <CollectionPicker readOnly={readOnly} />
