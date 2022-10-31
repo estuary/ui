@@ -1,7 +1,6 @@
 import { Autocomplete, Box, TextField } from '@mui/material';
 import { useEditorStore_editDraftId } from 'components/editor/Store';
 import { useEntityType } from 'context/EntityContext';
-import { slate } from 'context/Theme';
 import { useEntityWorkflow } from 'context/Workflow';
 import useDraftSpecs from 'hooks/useDraftSpecs';
 import useLiveSpecs from 'hooks/useLiveSpecs';
@@ -121,7 +120,6 @@ function CollectionPicker({ readOnly = false }: Props) {
                 p: '0.5rem 0.5rem 1rem',
                 display: 'flex',
                 alignItems: 'center',
-                border: `1px solid ${slate[200]}`,
             }}
         >
             <Autocomplete

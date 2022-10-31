@@ -122,7 +122,7 @@ function BindingsMultiEditor({ draftSpecs = [], readOnly = false }: Props) {
                 backgroundColor={
                     alternativeReflexContainerBackground[theme.palette.mode]
                 }
-                displayRightPaneBoarder={true}
+                displayBorder={true}
                 loading={fetchingSpecs}
                 leftPaneSkeleton={<CollectionSelectorSkeleton />}
                 rightPaneSkeleton={<ResourceConfigFormSkeleton />}

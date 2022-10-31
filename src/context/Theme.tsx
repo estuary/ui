@@ -146,6 +146,9 @@ const chipDeleteIndex = buttonHoverIndex + zIndexIncrement;
 const accordionButton = zIndexIncrement * 5;
 
 // Styles
+
+// TODO (optimization): Store the outline style as a detached configuration that
+//   can be applied to the assortment of CSS border properties.
 export const tableBorderSx: SxProps<Theme> = {
     borderBottom: `1px solid ${slate[200]}`,
 };
@@ -156,8 +159,11 @@ export const tableAlternateRowsSx: SxProps<Theme> = {
     },
 };
 
-// TODO (optimization): Store the outline style as a detached configuration that
-//   can be applied to the assortment of CSS border properties.
+// TODO (optimization): Replace instances of outlineSx with slateOutline.
+export const slateOutline = {
+    200: `1px solid ${slate[200]}`,
+};
+
 export const outlineSx: SxProps<Theme> = {
     border: `1px solid ${slate[200]}`,
 };

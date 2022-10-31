@@ -3,7 +3,7 @@ import {
     DEFAULT_HEIGHT,
     DEFAULT_TOOLBAR_HEIGHT,
 } from 'components/editor/MonacoEditor';
-import { slate } from 'context/Theme';
+import { slateOutline } from 'context/Theme';
 import { ReactNode } from 'react';
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
 
@@ -12,7 +12,7 @@ export interface Props {
     details: ReactNode;
     height?: number;
     backgroundColor?: string;
-    displayRightPaneBoarder?: boolean;
+    displayBorder?: boolean;
     loading?: boolean;
     leftPaneSkeleton?: ReactNode;
     rightPaneSkeleton?: ReactNode;
@@ -26,7 +26,7 @@ function ListAndDetails({
     list,
     details,
     height,
-    displayRightPaneBoarder,
+    displayBorder,
     loading,
     leftPaneSkeleton,
     rightPaneSkeleton,
@@ -53,9 +53,14 @@ function ListAndDetails({
                     ) : (
                         <div
                             className="pane-content"
-                            style={{ height: heightVal }}
+                            style={{
+                                height: heightVal,
+                                border: displayBorder ? slateOutline[200] : '',
+                            }}
                         >
-                            {list}
+                            {leftPaneSkeleton && loading
+                                ? leftPaneSkeleton
+                                : list}
                         </div>
                     )}
                 </ReflexElement>
@@ -67,16 +72,14 @@ function ListAndDetails({
                     minSize={MIN_RESIZE_WIDTH}
                     style={{
                         overflow: 'auto',
-                        border: displayRightPaneBoarder
-                            ? `1px solid ${slate[200]}`
-                            : '',
+                        border: displayBorder ? slateOutline[200] : '',
                     }}
                 >
-                    {rightPaneSkeleton && loading ? (
-                        rightPaneSkeleton
-                    ) : (
-                        <div className="pane-content">{details}</div>
-                    )}
+                    <div className="pane-content">
+                        {rightPaneSkeleton && loading
+                            ? rightPaneSkeleton
+                            : details}
+                    </div>
                 </ReflexElement>
             </ReflexContainer>
         </Box>

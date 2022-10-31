@@ -10,7 +10,7 @@ import {
 } from '@mui/x-data-grid';
 import CollectionPicker from 'components/collection/Picker';
 import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
-import { alternativeDataGridHeader, slate } from 'context/Theme';
+import { alternativeDataGridHeader, slate, slateOutline } from 'context/Theme';
 import { useEffect, useRef, useState } from 'react';
 import { useUnmount } from 'react-use';
 import {
@@ -125,7 +125,7 @@ function BindingSelector({ readOnly }: BindingSelectorProps) {
         <>
             <CollectionPicker readOnly={readOnly} />
 
-            <Box sx={{ height: 278 }}>
+            <Box sx={{ height: 280 }}>
                 <DataGrid
                     components={{
                         NoRowsOverlay: SelectorEmpty,
@@ -156,18 +156,18 @@ function BindingSelector({ readOnly }: BindingSelectorProps) {
                     selectionModel={selectionModel}
                     initialState={initialState}
                     sx={{
-                        'border': `1px solid ${slate[200]}`,
+                        'borderBottom': 'none',
                         '& .MuiDataGrid-row ': {
                             cursor: 'pointer',
                         },
                         '& .MuiDataGrid-cell': {
-                            borderBottom: `1px solid ${slate[200]}`,
+                            borderBottom: slateOutline[200],
                         },
                         '& .MuiDataGrid-columnSeparator': {
                             display: 'none',
                         },
                         '& .MuiDataGrid-columnHeaders': {
-                            borderBottom: `1px solid ${slate[200]}`,
+                            borderBottom: slateOutline[200],
                             bgcolor: (theme) =>
                                 alternativeDataGridHeader[theme.palette.mode],
                         },
