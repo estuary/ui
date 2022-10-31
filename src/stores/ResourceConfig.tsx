@@ -164,14 +164,15 @@ const getInitialState = (
     preFillEmptyCollections: (value) => {
         set(
             produce((state: ResourceConfigState) => {
-                const collections: string[] = [];
-                const configs = {};
                 const { resourceSchema } = get();
 
-                value.forEach((collection) => {
-                    collection.writes_to.forEach((writes_to) => {
-                        collections.push(writes_to);
-                        configs[writes_to] =
+                const collections: string[] = [];
+                const resourceConfig = {};
+
+                value.forEach((capture) => {
+                    capture.writes_to.forEach((collection) => {
+                        collections.push(collection);
+                        resourceConfig[collection] =
                             createJSONFormDefaults(resourceSchema);
                     });
                 });
@@ -179,9 +180,9 @@ const getInitialState = (
                 state.collections = collections;
                 state.currentCollection = collections[0];
 
-                state.resourceConfig = configs;
+                state.resourceConfig = resourceConfig;
 
-                populateResourceConfigErrors(configs, state);
+                populateResourceConfigErrors(resourceConfig, state);
 
                 state.collectionErrorsExist = isEmpty(collections);
             }),
@@ -420,7 +421,7 @@ const getInitialState = (
             if (lastPubId) {
                 const { data, error } = await getLiveSpecsByLastPubId(
                     lastPubId,
-                    entityType
+                    ENTITY.CAPTURE
                 );
 
                 if (error) {

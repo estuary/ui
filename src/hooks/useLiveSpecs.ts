@@ -22,11 +22,12 @@ function useLiveSpecs(specType: string) {
         [specType]
     );
 
-    const { data, error } = useSelect(draftSpecQuery);
+    const { data, error, isValidating } = useSelect(draftSpecQuery);
 
     return {
         liveSpecs: data ? data.data : defaultResponse,
         error,
+        isValidating,
     };
 }
 

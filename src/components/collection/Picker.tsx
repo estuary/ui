@@ -1,5 +1,5 @@
 import { Autocomplete, Box, TextField } from '@mui/material';
-import { useEditorStore_id } from 'components/editor/Store';
+import { useEditorStore_editDraftId } from 'components/editor/Store';
 import { useEntityType } from 'context/EntityContext';
 import { slate } from 'context/Theme';
 import { useEntityWorkflow } from 'context/Workflow';
@@ -37,23 +37,31 @@ function CollectionPicker({ readOnly = false }: Props) {
     const [collectionData, setCollectionData] = useState<CollectionData[]>([]);
     const [missingInput, setMissingInput] = useState(false);
 
-    const { liveSpecs, error: liveSpecsError } = useLiveSpecs('collection');
+    const {
+        liveSpecs,
+        error: liveSpecsError,
+        isValidating: isValidatingLiveSpecs,
+    } = useLiveSpecs('collection');
 
     // Draft Editor Store
-    const draftId = useEditorStore_id();
+    const editDraftId = useEditorStore_editDraftId();
 
     // Resource Config Store
     const collections = useResourceConfig_collections();
 
     const setResourceConfig = useResourceConfig_setResourceConfig();
 
-    const { draftSpecs, error: draftSpecsError } = useDraftSpecs(draftId);
+    const {
+        draftSpecs,
+        error: draftSpecsError,
+        isValidating: isValidatingDraftSpecs,
+    } = useDraftSpecs(editDraftId);
 
     useEffect(() => {
         const populateCollectionData =
             entityType === ENTITY.MATERIALIZATION
                 ? liveSpecs.length > 0
-                : liveSpecs.length > 0 || draftSpecs.length > 0;
+                : !isValidatingLiveSpecs && !isValidatingDraftSpecs;
 
         if (populateCollectionData) {
             let collectionsOnServer: CollectionData[] = liveSpecs.map(
@@ -63,9 +71,8 @@ function CollectionPicker({ readOnly = false }: Props) {
                 })
             );
 
-            if (workflow === 'capture_create') {
+            if (entityType === ENTITY.CAPTURE) {
                 collectionsOnServer = [
-                    ...collectionsOnServer,
                     ...draftSpecs
                         .filter(
                             ({ spec_type }) => spec_type === ENTITY.COLLECTION
@@ -74,6 +81,7 @@ function CollectionPicker({ readOnly = false }: Props) {
                             name: catalog_name,
                             classification: 'Discovered Collections',
                         })),
+                    ...collectionsOnServer,
                 ];
             }
 
@@ -84,6 +92,8 @@ function CollectionPicker({ readOnly = false }: Props) {
         collections,
         draftSpecs,
         entityType,
+        isValidatingDraftSpecs,
+        isValidatingLiveSpecs,
         liveSpecs,
         workflow,
     ]);
