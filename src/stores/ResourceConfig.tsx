@@ -9,7 +9,16 @@ import { ResourceConfigStoreNames, useZustandStore } from 'context/Zustand';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
-import { difference, has, isEmpty, isEqual, map, omit, pick } from 'lodash';
+import {
+    difference,
+    has,
+    isEmpty,
+    isEqual,
+    map,
+    omit,
+    pick,
+    sortBy,
+} from 'lodash';
 import { ReactNode } from 'react';
 import { useEffectOnce } from 'react-use';
 import { createJSONFormDefaults } from 'services/ajv';
@@ -465,7 +474,11 @@ const getInitialState = (
                 const collectionNameProp =
                     entityType === ENTITY.MATERIALIZATION ? 'source' : 'target';
 
-                data[0].spec.bindings.forEach((binding: any) =>
+                const sortedBindings = sortBy(data[0].spec.bindings, [
+                    collectionNameProp,
+                ]);
+
+                sortedBindings.forEach((binding: any) =>
                     setResourceConfig(binding[collectionNameProp], {
                         data: binding.resource,
                         errors: [],
