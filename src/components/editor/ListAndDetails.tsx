@@ -1,9 +1,11 @@
+import { DragIndicator } from '@mui/icons-material';
+import { useTheme } from '@mui/material';
 import Box from '@mui/material/Box';
 import {
     DEFAULT_HEIGHT,
     DEFAULT_TOOLBAR_HEIGHT,
 } from 'components/editor/MonacoEditor';
-import { slateOutline } from 'context/Theme';
+import { reflexSplitterBackground, slateOutline } from 'context/Theme';
 import { ReactNode } from 'react';
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
 
@@ -31,6 +33,8 @@ function ListAndDetails({
     leftPaneSkeleton,
     rightPaneSkeleton,
 }: Props) {
+    const theme = useTheme();
+
     const heightVal = (height ?? DEFAULT_HEIGHT) + DEFAULT_TOOLBAR_HEIGHT;
 
     return (
@@ -59,7 +63,18 @@ function ListAndDetails({
                     </div>
                 </ReflexElement>
 
-                <ReflexSplitter style={{ width: 10 }} />
+                <ReflexSplitter
+                    style={{
+                        width: 24,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor:
+                            reflexSplitterBackground[theme.palette.mode],
+                    }}
+                >
+                    <DragIndicator />
+                </ReflexSplitter>
 
                 <ReflexElement
                     className="right-pane"

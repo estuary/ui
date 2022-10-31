@@ -205,6 +205,11 @@ export const jsonFormsGroupHeaders = {
     dark: 'transparent',
 };
 
+export const reflexSplitterBackground = {
+    light: slate[25],
+    dark: slate[200],
+};
+
 export const alternativeReflexContainerBackground = {
     light: 'white',
     dark: 'rgba(172, 199, 220, 0.05)',
