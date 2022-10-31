@@ -1,4 +1,3 @@
-import { Skeleton, Stack } from '@mui/material';
 import Box from '@mui/material/Box';
 import {
     DEFAULT_HEIGHT,
@@ -15,6 +14,8 @@ export interface Props {
     backgroundColor?: string;
     displayRightPaneBoarder?: boolean;
     loading?: boolean;
+    leftPaneSkeleton?: ReactNode;
+    rightPaneSkeleton?: ReactNode;
 }
 
 const MIN_RESIZE_WIDTH = 25;
@@ -27,6 +28,8 @@ function ListAndDetails({
     height,
     displayRightPaneBoarder,
     loading,
+    leftPaneSkeleton,
+    rightPaneSkeleton,
 }: Props) {
     const heightVal = (height ?? DEFAULT_HEIGHT) + DEFAULT_TOOLBAR_HEIGHT;
 
@@ -45,24 +48,8 @@ function ListAndDetails({
                     size={INITIAL_SELECTOR_WIDTH}
                     minSize={MIN_RESIZE_WIDTH}
                 >
-                    {loading ? (
-                        <Box sx={{ p: 1 }}>
-                            <Skeleton
-                                variant="rectangular"
-                                height={40}
-                                sx={{ mb: 2 }}
-                            />
-
-                            <Stack spacing={1}>
-                                <Skeleton variant="rectangular" />
-
-                                <Skeleton variant="rectangular" height={60} />
-
-                                <Skeleton variant="rectangular" height={60} />
-
-                                <Skeleton variant="rectangular" height={60} />
-                            </Stack>
-                        </Box>
+                    {leftPaneSkeleton && loading ? (
+                        leftPaneSkeleton
                     ) : (
                         <div
                             className="pane-content"
@@ -85,45 +72,8 @@ function ListAndDetails({
                             : '',
                     }}
                 >
-                    {loading ? (
-                        <Box sx={{ p: 1 }}>
-                            <Skeleton
-                                variant="rectangular"
-                                height={40}
-                                width={250}
-                                sx={{ mb: 2 }}
-                            />
-
-                            <Box sx={{ mb: 4 }}>
-                                <Skeleton
-                                    variant="rectangular"
-                                    sx={{ mb: 1 }}
-                                />
-
-                                <Skeleton
-                                    variant="rectangular"
-                                    height={40}
-                                    sx={{ mb: 1 }}
-                                />
-
-                                <Skeleton variant="rectangular" />
-                            </Box>
-
-                            <>
-                                <Skeleton
-                                    variant="rectangular"
-                                    sx={{ mb: 1 }}
-                                />
-
-                                <Skeleton
-                                    variant="rectangular"
-                                    height={40}
-                                    sx={{ mb: 1 }}
-                                />
-
-                                <Skeleton variant="rectangular" />
-                            </>
-                        </Box>
+                    {rightPaneSkeleton && loading ? (
+                        rightPaneSkeleton
                     ) : (
                         <div className="pane-content">{details}</div>
                     )}
