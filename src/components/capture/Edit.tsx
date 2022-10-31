@@ -324,7 +324,11 @@ function CaptureEdit() {
     };
 
     return (
-        <PageContainer>
+        <PageContainer
+            pageTitleProps={{
+                header: authenticatedRoutes.captures.edit.title,
+            }}
+        >
             <ResourceConfigHydrator>
                 <EntityEdit
                     title="browserTitle.captureEdit"

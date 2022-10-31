@@ -144,7 +144,11 @@ function MaterializationEdit() {
     };
 
     return (
-        <PageContainer>
+        <PageContainer
+            pageTitleProps={{
+                header: authenticatedRoutes.materializations.edit.title,
+            }}
+        >
             <ResourceConfigHydrator>
                 <EntityEdit
                     title="browserTitle.materializationEdit"
