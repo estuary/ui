@@ -3,12 +3,12 @@ import { getDraftSpecsBySpecType } from 'api/draftSpecs';
 import { authenticatedRoutes } from 'app/Authenticated';
 import CaptureGenerateButton from 'components/capture/GenerateButton';
 import {
-    useEditorStore_editDraftId,
     useEditorStore_id,
+    useEditorStore_persistedDraftId,
     useEditorStore_pubId,
     useEditorStore_resetState,
-    useEditorStore_setEditDraftId,
     useEditorStore_setId,
+    useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
@@ -91,8 +91,8 @@ function CaptureEdit() {
     const draftId = useEditorStore_id();
     const setDraftId = useEditorStore_setId();
 
-    const editDraftId = useEditorStore_editDraftId();
-    const setEditDraftId = useEditorStore_setEditDraftId();
+    const persistedDraftId = useEditorStore_persistedDraftId();
+    const setPersistedDraftId = useEditorStore_setPersistedDraftId();
 
     const pubId = useEditorStore_pubId();
 
@@ -122,7 +122,7 @@ function CaptureEdit() {
     const resetResourceConfigState = useResourceConfig_resetState();
 
     const { mutate: mutateDraftSpecs, ...draftSpecsMetadata } = useDraftSpecs(
-        editDraftId,
+        persistedDraftId,
         lastPubId
     );
 
@@ -269,7 +269,7 @@ function CaptureEdit() {
         }
 
         setDraftId(newDraftId);
-        setEditDraftId(newDraftId);
+        setPersistedDraftId(newDraftId);
     };
 
     const discoversSubscription = (

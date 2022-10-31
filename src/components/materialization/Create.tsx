@@ -1,7 +1,7 @@
 import { authenticatedRoutes } from 'app/Authenticated';
 import {
-    useEditorStore_editDraftId,
     useEditorStore_id,
+    useEditorStore_persistedDraftId,
     useEditorStore_setId,
 } from 'components/editor/Store';
 import MaterializeGenerateButton from 'components/materialization/GenerateButton';
@@ -52,7 +52,7 @@ function MaterializationCreate() {
     const draftId = useEditorStore_id();
     const setDraftId = useEditorStore_setId();
 
-    const editDraftId = useEditorStore_editDraftId();
+    const persistedDraftId = useEditorStore_persistedDraftId();
 
     // Endpoint Config Store
     const resetEndpointConfigState = useEndpointConfigStore_reset();
@@ -68,7 +68,7 @@ function MaterializationCreate() {
     const resetResourceConfigState = useResourceConfig_resetState();
 
     const { mutate: mutateDraftSpecs, ...draftSpecsMetadata } =
-        useDraftSpecs(editDraftId);
+        useDraftSpecs(persistedDraftId);
 
     // Reset the catalog if the connector changes
     useEffect(() => {

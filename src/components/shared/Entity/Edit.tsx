@@ -5,9 +5,9 @@ import { createDraftSpec, updateDraftSpec } from 'api/draftSpecs';
 import CollectionConfig from 'components/collection/Config';
 import {
     EditorStoreState,
-    useEditorStore_editDraftId,
-    useEditorStore_setEditDraftId,
+    useEditorStore_persistedDraftId,
     useEditorStore_setId,
+    useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
@@ -92,10 +92,10 @@ interface DiscoveryData {
 
 interface InitializationHelpers {
     setDraftId: (id: EditorStoreState<DraftSpecQuery>['id']) => void;
-    setEditDraftId: (
-        id: EditorStoreState<DraftSpecQuery>['editDraftId']
-    ) => void;
     setFormState: (data: Partial<FormState>) => void;
+    setPersistedDraftId: (
+        id: EditorStoreState<DraftSpecQuery>['persistedDraftId']
+    ) => void;
     callFailed: (formState: any, subscription?: RealtimeSubscription) => void;
 }
 
@@ -107,8 +107,8 @@ const createDraftToEdit = async (
     errorTitle: string,
     {
         setDraftId,
-        setEditDraftId,
         setFormState,
+        setPersistedDraftId,
         callFailed,
     }: InitializationHelpers
 ) => {
@@ -143,7 +143,7 @@ const createDraftToEdit = async (
     }
 
     setDraftId(newDraftId);
-    setEditDraftId(newDraftId);
+    setPersistedDraftId(newDraftId);
 
     setFormState({ status: FormStatus.GENERATED });
 };
@@ -156,8 +156,8 @@ const initDraftToEdit = async (
     lastPubId: string | null,
     {
         setDraftId,
-        setEditDraftId,
         setFormState,
+        setPersistedDraftId,
         callFailed,
     }: InitializationHelpers
 ) => {
@@ -182,7 +182,7 @@ const initDraftToEdit = async (
             entityType,
             lastPubId,
             errorTitle,
-            { setDraftId, setEditDraftId, setFormState, callFailed }
+            { setDraftId, setFormState, setPersistedDraftId, callFailed }
         );
     } else {
         const existingDraftId = drafts[0].id;
@@ -213,7 +213,7 @@ const initDraftToEdit = async (
             }
 
             setDraftId(existingDraftId);
-            setEditDraftId(existingDraftId);
+            setPersistedDraftId(existingDraftId);
         } else {
             void createDraftToEdit(
                 catalog_name,
@@ -221,7 +221,7 @@ const initDraftToEdit = async (
                 entityType,
                 lastPubId,
                 errorTitle,
-                { setDraftId, setEditDraftId, setFormState, callFailed }
+                { setDraftId, setFormState, setPersistedDraftId, callFailed }
             );
         }
     }
@@ -279,8 +279,8 @@ function EntityEdit({
     // Draft Editor Store
     const setDraftId = useEditorStore_setId();
 
-    const editDraftId = useEditorStore_editDraftId();
-    const setEditDraftId = useEditorStore_setEditDraftId();
+    const persistedDraftId = useEditorStore_persistedDraftId();
+    const setPersistedDraftId = useEditorStore_setPersistedDraftId();
 
     // Endpoint Config Store
     const endpointConfigStoreHydrated = useEndpointConfig_hydrated();
@@ -329,16 +329,16 @@ function EntityEdit({
                 lastPubId,
                 {
                     setDraftId,
-                    setEditDraftId,
                     setFormState,
+                    setPersistedDraftId,
                     callFailed,
                 }
             );
         }
     }, [
         setDraftId,
-        setEditDraftId,
         setFormState,
+        setPersistedDraftId,
         callFailed,
         drafts,
         taskDraftSpec,
@@ -370,11 +370,11 @@ function EntityEdit({
             endpointConfigServerUpdateRequired ||
                 resourceConfigServerUpdateRequired
                 ? null
-                : editDraftId
+                : persistedDraftId
         );
     }, [
         setDraftId,
-        editDraftId,
+        persistedDraftId,
         endpointConfigServerUpdateRequired,
         resourceConfigServerUpdateRequired,
     ]);
@@ -395,7 +395,7 @@ function EntityEdit({
 
             {connectorTagsError ? (
                 <Error error={connectorTagsError} />
-            ) : !editDraftId || storeHydrationIncomplete ? null : (
+            ) : !persistedDraftId || storeHydrationIncomplete ? null : (
                 <>
                     <Collapse in={formSubmitError !== null}>
                         {formSubmitError ? (
@@ -403,7 +403,7 @@ function EntityEdit({
                                 title={formSubmitError.title}
                                 error={formSubmitError.error}
                                 logToken={logToken}
-                                draftId={editDraftId}
+                                draftId={persistedDraftId}
                             />
                         ) : null}
                     </Collapse>

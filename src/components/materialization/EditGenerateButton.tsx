@@ -1,8 +1,8 @@
 import { Button } from '@mui/material';
 import { generateDraftSpec, updateDraftSpec } from 'api/draftSpecs';
 import {
-    useEditorStore_editDraftId,
     useEditorStore_isSaving,
+    useEditorStore_persistedDraftId,
     useEditorStore_setId,
 } from 'components/editor/Store';
 import { buttonSx } from 'components/shared/Entity/Header';
@@ -61,7 +61,7 @@ function MaterializeGenerateButton({
 
     const setDraftId = useEditorStore_setId();
 
-    const editDraftId = useEditorStore_editDraftId();
+    const persistedDraftId = useEditorStore_persistedDraftId();
 
     // Endpoint Config Store
     const endpointSchema = useEndpointConfigStore_endpointSchema();
@@ -131,7 +131,7 @@ function MaterializeGenerateButton({
             );
 
             const draftSpecsResponse = await updateDraftSpec(
-                editDraftId,
+                persistedDraftId,
                 entityName,
                 draftSpec
             );
@@ -154,7 +154,7 @@ function MaterializeGenerateButton({
 
             setPreviousEndpointConfig({ data: endpointConfigData });
 
-            setDraftId(editDraftId);
+            setDraftId(persistedDraftId);
             setFormState({
                 status: FormStatus.GENERATED,
             });

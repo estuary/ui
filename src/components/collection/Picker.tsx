@@ -1,5 +1,5 @@
 import { Autocomplete, Box, TextField } from '@mui/material';
-import { useEditorStore_editDraftId } from 'components/editor/Store';
+import { useEditorStore_persistedDraftId } from 'components/editor/Store';
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
 import useDraftSpecs from 'hooks/useDraftSpecs';
@@ -44,7 +44,7 @@ function CollectionPicker({ readOnly = false }: Props) {
     } = useLiveSpecs('collection');
 
     // Draft Editor Store
-    const editDraftId = useEditorStore_editDraftId();
+    const persistedDraftId = useEditorStore_persistedDraftId();
 
     // Form State Store
     const formActive = useFormStateStore_isActive();
@@ -58,7 +58,7 @@ function CollectionPicker({ readOnly = false }: Props) {
         draftSpecs,
         error: draftSpecsError,
         isValidating: isValidatingDraftSpecs,
-    } = useDraftSpecs(editDraftId);
+    } = useDraftSpecs(persistedDraftId);
 
     useEffect(() => {
         const populateCollectionData =

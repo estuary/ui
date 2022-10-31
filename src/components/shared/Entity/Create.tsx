@@ -2,8 +2,8 @@ import { Box, Collapse, Typography } from '@mui/material';
 import CollectionConfig from 'components/collection/Config';
 import ConnectorTiles from 'components/ConnectorTiles';
 import {
-    useEditorStore_editDraftId,
     useEditorStore_id,
+    useEditorStore_persistedDraftId,
     useEditorStore_setId,
 } from 'components/editor/Store';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
@@ -88,7 +88,7 @@ function EntityCreate({
     const draftId = useEditorStore_id();
     const setDraftId = useEditorStore_setId();
 
-    const editDraftId = useEditorStore_editDraftId();
+    const persistedDraftId = useEditorStore_persistedDraftId();
 
     // Endpoint Config Store
     const endpointConfigChanged = useEndpointConfigStore_changed();
@@ -127,8 +127,10 @@ function EntityCreate({
     }, [connectorID]);
 
     useEffect(() => {
-        setDraftId(resourceConfigServerUpdateRequired ? null : editDraftId);
-    }, [setDraftId, editDraftId, resourceConfigServerUpdateRequired]);
+        setDraftId(
+            resourceConfigServerUpdateRequired ? null : persistedDraftId
+        );
+    }, [setDraftId, persistedDraftId, resourceConfigServerUpdateRequired]);
 
     const promptDataLoss = detailsFormChanged() || endpointConfigChanged();
 
@@ -137,7 +139,7 @@ function EntityCreate({
     const displayResourceConfig =
         entityType === ENTITY.MATERIALIZATION
             ? hasLength(imageTag.id)
-            : hasLength(imageTag.id) && editDraftId;
+            : hasLength(imageTag.id) && persistedDraftId;
 
     if (showConnectorTiles === null) return null;
     return (
