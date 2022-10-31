@@ -53,7 +53,10 @@ import {
 } from 'stores/ResourceConfig';
 import { ENTITY, JsonFormsData } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
-import { modifyDiscoveredDraftSpec } from 'utils/workflow-utils';
+import {
+    modifyDiscoveredDraftSpec,
+    storeUpdatedBindings,
+} from 'utils/workflow-utils';
 
 const trackEvent = (payload: any) => {
     LogRocket.track(CustomEvents.CAPTURE_DISCOVER, {
@@ -219,26 +222,14 @@ function CaptureCreate() {
                 updatedDraftSpecsResponse.data &&
                 updatedDraftSpecsResponse.data.length > 0
             ) {
-                const updatedBindings =
-                    updatedDraftSpecsResponse.data[0].spec.bindings;
-
-                updatedBindings.forEach((binding: any) => {
-                    if (
-                        !existingCollections.includes(binding.target) &&
-                        !restrictedDiscoveredCollections.includes(
-                            binding.target
-                        )
-                    ) {
-                        addCollection(binding.target);
-
-                        setResourceConfig(binding.target, {
-                            data: binding.resource,
-                            errors: [],
-                        });
-                    }
-                });
-
-                setCurrentCollection(updatedBindings[0].target);
+                storeUpdatedBindings(
+                    updatedDraftSpecsResponse,
+                    existingCollections,
+                    restrictedDiscoveredCollections,
+                    addCollection,
+                    setResourceConfig,
+                    setCurrentCollection
+                );
             }
         }
 

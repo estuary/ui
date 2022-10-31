@@ -63,3 +63,30 @@ export const modifyDiscoveredDraftSpec = async (
         lastPubId
     );
 };
+
+export const storeUpdatedBindings = (
+    response: any,
+    existingCollections: string[],
+    restrictedDiscoveredCollections: string[],
+    addCollection: Function,
+    setResourceConfig: Function,
+    setCurrentCollection: Function
+): void => {
+    const updatedBindings = response.data[0].spec.bindings;
+
+    updatedBindings.forEach((binding: any) => {
+        if (
+            !existingCollections.includes(binding.target) &&
+            !restrictedDiscoveredCollections.includes(binding.target)
+        ) {
+            addCollection(binding.target);
+
+            setResourceConfig(binding.target, {
+                data: binding.resource,
+                errors: [],
+            });
+        }
+    });
+
+    setCurrentCollection(updatedBindings[0].target);
+};
