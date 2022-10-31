@@ -10,7 +10,7 @@ import {
 } from '@mui/x-data-grid';
 import CollectionPicker from 'components/collection/Picker';
 import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
-import { alternativeDataGridHeader, slate, slateOutline } from 'context/Theme';
+import { alternativeDataGridHeader, slateOutline } from 'context/Theme';
 import { useEffect, useRef, useState } from 'react';
 import { useUnmount } from 'react-use';
 import { useFormStateStore_isActive } from 'stores/FormState';
@@ -186,14 +186,11 @@ function BindingSelector({ readOnly }: BindingSelectorProps) {
                             display: 'none',
                         },
                         '& .MuiDataGrid-columnHeaders': {
+                            borderTop: slateOutline[200],
                             borderBottom: slateOutline[200],
                             bgcolor: (theme) =>
                                 alternativeDataGridHeader[theme.palette.mode],
                         },
-                        '& .MuiDataGrid-columnHeaderTitle, & .MuiDataGrid-columnHeaders .MuiButtonBase-root':
-                            {
-                                color: slate[800],
-                            },
                     }}
                 />
             </Box>

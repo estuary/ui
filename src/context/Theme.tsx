@@ -217,7 +217,7 @@ export const alternativeReflexContainerBackground = {
 
 export const alternativeDataGridHeader = {
     light: 'white',
-    dark: slate[200],
+    dark: 'transparent',
 };
 
 export const alertTextPrimary = {
