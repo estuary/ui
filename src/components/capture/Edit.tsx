@@ -54,7 +54,9 @@ import {
     ResourceConfigHydrator,
     useResourceConfig_addCollection,
     useResourceConfig_resetState,
+    useResourceConfig_restrictedDiscoveredCollections,
     useResourceConfig_setCurrentCollection,
+    useResourceConfig_setDiscoveredCollections,
     useResourceConfig_setResourceConfig,
 } from 'stores/ResourceConfig';
 import { ENTITY, JsonFormsData } from 'types';
@@ -96,6 +98,9 @@ function CaptureEdit() {
 
     const pubId = useEditorStore_pubId();
 
+    const setDiscoveredCollections =
+        useResourceConfig_setDiscoveredCollections();
+
     const resetEditorStore = useEditorStore_resetState();
 
     // Endpoint Config Store
@@ -114,6 +119,9 @@ function CaptureEdit() {
     const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
 
     // Resource Config Store
+    const restrictedDiscoveredCollections =
+        useResourceConfig_restrictedDiscoveredCollections();
+
     const addCollection = useResourceConfig_addCollection();
     const setCurrentCollection = useResourceConfig_setCurrentCollection();
 
@@ -222,10 +230,13 @@ function CaptureEdit() {
         if (draftSpecsResponse.data && draftSpecsResponse.data.length > 0) {
             const existingCollections = Object.keys(resourceConfig);
 
+            setDiscoveredCollections(draftSpecsResponse.data[0]);
+
             const updatedDraftSpecsResponse = await modifyDiscoveredDraftSpec(
                 draftSpecsResponse,
                 resourceConfig,
                 existingCollections,
+                restrictedDiscoveredCollections,
                 lastPubId
             );
 
@@ -246,7 +257,12 @@ function CaptureEdit() {
                     updatedDraftSpecsResponse.data[0].spec.bindings;
 
                 updatedBindings.forEach((binding: any) => {
-                    if (!existingCollections.includes(binding.target)) {
+                    if (
+                        !existingCollections.includes(binding.target) &&
+                        !restrictedDiscoveredCollections.includes(
+                            binding.target
+                        )
+                    ) {
                         addCollection(binding.target);
 
                         setResourceConfig(binding.target, {

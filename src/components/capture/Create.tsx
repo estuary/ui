@@ -47,6 +47,7 @@ import {
     ResourceConfigHydrator,
     useResourceConfig_addCollection,
     useResourceConfig_resetState,
+    useResourceConfig_restrictedDiscoveredCollections,
     useResourceConfig_setCurrentCollection,
     useResourceConfig_setResourceConfig,
 } from 'stores/ResourceConfig';
@@ -101,6 +102,9 @@ function CaptureCreate() {
     const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
 
     // Resource Config Store
+    const restrictedDiscoveredCollections =
+        useResourceConfig_restrictedDiscoveredCollections();
+
     const addCollection = useResourceConfig_addCollection();
     const setCurrentCollection = useResourceConfig_setCurrentCollection();
 
@@ -199,7 +203,8 @@ function CaptureCreate() {
             const updatedDraftSpecsResponse = await modifyDiscoveredDraftSpec(
                 draftSpecsResponse,
                 resourceConfig,
-                existingCollections
+                existingCollections,
+                restrictedDiscoveredCollections
             );
             if (updatedDraftSpecsResponse.error) {
                 return helpers.callFailed({
@@ -218,7 +223,12 @@ function CaptureCreate() {
                     updatedDraftSpecsResponse.data[0].spec.bindings;
 
                 updatedBindings.forEach((binding: any) => {
-                    if (!existingCollections.includes(binding.target)) {
+                    if (
+                        !existingCollections.includes(binding.target) &&
+                        !restrictedDiscoveredCollections.includes(
+                            binding.target
+                        )
+                    ) {
                         addCollection(binding.target);
 
                         setResourceConfig(binding.target, {

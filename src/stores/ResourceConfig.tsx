@@ -7,6 +7,7 @@ import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
 import { ResourceConfigStoreNames, useZustandStore } from 'context/Zustand';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
+import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
 import {
@@ -60,6 +61,12 @@ export interface ResourceConfigState {
 
     currentCollection: string | null;
     setCurrentCollection: (collections: string | null) => void;
+
+    discoveredCollections: string[] | null;
+    setDiscoveredCollections: (value: DraftSpecQuery) => void;
+
+    restrictedDiscoveredCollections: string[];
+    setRestrictedDiscoveredCollections: (collection: string) => void;
 
     // Resource Config
     resourceConfig: ResourceConfigDictionary;
@@ -139,12 +146,14 @@ const getInitialStateData = (): Pick<
     | 'collectionErrorsExist'
     | 'collectionRemovalMetadata'
     | 'currentCollection'
+    | 'discoveredCollections'
     | 'hydrated'
     | 'hydrationErrorsExist'
     | 'resourceConfig'
     | 'resourceConfigErrorsExist'
     | 'resourceConfigErrors'
     | 'resourceSchema'
+    | 'restrictedDiscoveredCollections'
     | 'serverUpdateRequired'
 > => ({
     collections: [],
@@ -155,12 +164,14 @@ const getInitialStateData = (): Pick<
         index: -1,
     },
     currentCollection: null,
+    discoveredCollections: null,
     hydrated: false,
     hydrationErrorsExist: false,
     resourceConfig: {},
     resourceConfigErrorsExist: true,
     resourceConfigErrors: [],
     resourceSchema: {},
+    restrictedDiscoveredCollections: [],
     serverUpdateRequired: false,
 });
 
@@ -310,6 +321,47 @@ const getInitialState = (
             }),
             false,
             'Current Collection Changed'
+        );
+    },
+
+    setDiscoveredCollections: (value) => {
+        set(
+            produce((state: ResourceConfigState) => {
+                const discoveredCollections: string[] = [];
+
+                value.spec.bindings.forEach((binding: any) => {
+                    discoveredCollections.push(binding.target);
+                });
+
+                state.discoveredCollections = discoveredCollections;
+            }),
+            false,
+            'Discovered Collections Set'
+        );
+    },
+
+    setRestrictedDiscoveredCollections: (value) => {
+        set(
+            produce((state: ResourceConfigState) => {
+                const {
+                    discoveredCollections,
+                    restrictedDiscoveredCollections,
+                } = get();
+
+                if (restrictedDiscoveredCollections.includes(value)) {
+                    state.restrictedDiscoveredCollections =
+                        restrictedDiscoveredCollections.filter(
+                            (collection) => collection !== value
+                        );
+                } else if (discoveredCollections?.includes(value)) {
+                    state.restrictedDiscoveredCollections = [
+                        value,
+                        ...restrictedDiscoveredCollections,
+                    ];
+                }
+            }),
+            false,
+            'Restricted Discovered Collections Set'
         );
     },
 
@@ -600,6 +652,48 @@ export const useResourceConfig_setCurrentCollection = () => {
         ResourceConfigState,
         ResourceConfigState['setCurrentCollection']
     >(getStoreName(entityType), (state) => state.setCurrentCollection);
+};
+
+export const useResourceConfig_discoveredCollections = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['discoveredCollections']
+    >(getStoreName(entityType), (state) => state.discoveredCollections);
+};
+
+export const useResourceConfig_setDiscoveredCollections = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['setDiscoveredCollections']
+    >(getStoreName(entityType), (state) => state.setDiscoveredCollections);
+};
+
+export const useResourceConfig_restrictedDiscoveredCollections = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['restrictedDiscoveredCollections']
+    >(
+        getStoreName(entityType),
+        (state) => state.restrictedDiscoveredCollections
+    );
+};
+
+export const useResourceConfig_setRestrictedDiscoveredCollections = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['setRestrictedDiscoveredCollections']
+    >(
+        getStoreName(entityType),
+        (state) => state.setRestrictedDiscoveredCollections
+    );
 };
 
 export const useResourceConfig_resourceConfig = () => {

@@ -9,7 +9,9 @@ import { useIntl } from 'react-intl';
 import { useFormStateStore_isActive } from 'stores/FormState';
 import {
     useResourceConfig_collections,
+    useResourceConfig_discoveredCollections,
     useResourceConfig_setResourceConfig,
+    useResourceConfig_setRestrictedDiscoveredCollections,
 } from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
 import useConstant from 'use-constant';
@@ -51,6 +53,9 @@ function CollectionPicker({ readOnly = false }: Props) {
 
     // Resource Config Store
     const collections = useResourceConfig_collections();
+    const discoveredCollections = useResourceConfig_discoveredCollections();
+    const setRestrictedDiscoveredCollections =
+        useResourceConfig_setRestrictedDiscoveredCollections();
 
     const setResourceConfig = useResourceConfig_setResourceConfig();
 
@@ -107,6 +112,12 @@ function CollectionPicker({ readOnly = false }: Props) {
             value: CollectionData[]
         ) => {
             setResourceConfig(value.map(({ name }) => name));
+
+            value
+                .filter(({ name }) => discoveredCollections?.includes(name))
+                .forEach(({ name }) => {
+                    setRestrictedDiscoveredCollections(name);
+                });
         },
         validateSelection: () => {
             setMissingInput(!collections || collections.length === 0);

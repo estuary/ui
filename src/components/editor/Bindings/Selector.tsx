@@ -19,6 +19,7 @@ import {
     useResourceConfig_removeCollection,
     useResourceConfig_resourceConfig,
     useResourceConfig_setCurrentCollection,
+    useResourceConfig_setRestrictedDiscoveredCollections,
 } from 'stores/ResourceConfig';
 
 interface BindingSelectorProps {
@@ -33,11 +34,15 @@ interface DeleteButtonProps {
 function DeleteButton({ collection, disabled }: DeleteButtonProps) {
     const removeCollection = useResourceConfig_removeCollection();
 
+    const setRestrictedDiscoveredCollections =
+        useResourceConfig_setRestrictedDiscoveredCollections();
+
     const handlers = {
         removeCollection: (event: React.MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
             removeCollection(collection);
+            setRestrictedDiscoveredCollections(collection);
         },
     };
 

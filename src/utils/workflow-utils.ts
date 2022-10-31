@@ -6,7 +6,8 @@ import { ResourceConfigDictionary } from 'stores/ResourceConfig';
 const mergeResourceConfigs = (
     queryData: DraftSpecQuery,
     resourceConfig: ResourceConfigDictionary,
-    existingCollections: string[]
+    existingCollections: string[],
+    restrictedDiscoveredCollections: string[]
 ): ResourceConfigDictionary => {
     const mergedResourceConfig = {};
 
@@ -15,7 +16,10 @@ const mergeResourceConfigs = (
     });
 
     queryData.spec.bindings.forEach((binding: any) => {
-        if (!existingCollections.includes(binding.target)) {
+        if (
+            !existingCollections.includes(binding.target) &&
+            !restrictedDiscoveredCollections.includes(binding.target)
+        ) {
             mergedResourceConfig[binding.target] = {
                 data: binding.resource,
                 errors: [],
@@ -33,6 +37,7 @@ export const modifyDiscoveredDraftSpec = async (
     },
     resourceConfig: ResourceConfigDictionary,
     existingCollections: string[],
+    restrictedDiscoveredCollections: string[],
     lastPubId?: string
 ): Promise<CallSupabaseResponse<any>> => {
     const draftSpecData = response.data[0];
@@ -40,7 +45,8 @@ export const modifyDiscoveredDraftSpec = async (
     const mergedResourceConfig = mergeResourceConfigs(
         draftSpecData,
         resourceConfig,
-        existingCollections
+        existingCollections,
+        restrictedDiscoveredCollections
     );
 
     const mergedDraftSpec = generateCaptureDraftSpec(
