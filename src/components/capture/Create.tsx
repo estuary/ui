@@ -194,7 +194,7 @@ function CaptureCreate() {
         if (draftSpecsResponse.error) {
             return helpers.callFailed({
                 error: {
-                    title: 'captureEdit.generate.failedErrorTitle',
+                    title: 'captureCreate.generate.failedErrorTitle',
                     error: draftSpecsResponse.error,
                 },
             });
@@ -212,7 +212,7 @@ function CaptureCreate() {
             if (updatedDraftSpecsResponse.error) {
                 return helpers.callFailed({
                     error: {
-                        title: 'captureCreate.generate.failure.errorTitle',
+                        title: 'captureCreate.generate.failedErrorTitle',
                         error: draftSpecsResponse.error,
                     },
                 });
