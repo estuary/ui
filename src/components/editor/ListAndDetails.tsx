@@ -48,21 +48,15 @@ function ListAndDetails({
                     size={INITIAL_SELECTOR_WIDTH}
                     minSize={MIN_RESIZE_WIDTH}
                 >
-                    {leftPaneSkeleton && loading ? (
-                        leftPaneSkeleton
-                    ) : (
-                        <div
-                            className="pane-content"
-                            style={{
-                                height: heightVal,
-                                border: displayBorder ? slateOutline[200] : '',
-                            }}
-                        >
-                            {leftPaneSkeleton && loading
-                                ? leftPaneSkeleton
-                                : list}
-                        </div>
-                    )}
+                    <div
+                        className="pane-content"
+                        style={{
+                            height: heightVal,
+                            border: displayBorder ? slateOutline[200] : '',
+                        }}
+                    >
+                        {leftPaneSkeleton && loading ? leftPaneSkeleton : list}
+                    </div>
                 </ReflexElement>
 
                 <ReflexSplitter style={{ width: 10 }} />
