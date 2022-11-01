@@ -487,6 +487,7 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreate.test.serverUnreachable': `Unable to reach server while testing configuration.`,
 
     'captureCreate.save.failedErrorTitle': `Capture Save Failed`,
+    'captureCreate.save.failure.errorTitle': `Capture Save Failed`,
     'captureCreate.save.serverUnreachable': `Unable to reach server while saving capture`,
     'captureCreate.save.waitMessage': `Please wait while we test, save, and publish your capture.`,
 
@@ -522,6 +523,7 @@ const CaptureEdit: ResolvedIntlConfig['messages'] = {
     'captureEdit.test.serverUnreachable': `Unable to reach server while testing configuration.`,
 
     'captureEdit.save.failedErrorTitle': `Capture Save Failed`,
+    'captureEdit.save.failure.errorTitle': `Capture Save Failed`,
     'captureEdit.save.serverUnreachable': `Unable to reach server while saving capture`,
     'captureEdit.save.waitMessage': `Please wait while we test, save, and publish your capture.`,
 
