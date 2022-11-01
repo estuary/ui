@@ -481,7 +481,7 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
 
     'captureCreate.collections.heading': `Output Collections`,
     'captureCreate.collectionSelector.heading': `Collection Selector`,
-    'captureCreate.collectionSelector.instructions': `The collections bound to your existing capture. To make changes, you can enter new values in the this section of the form or edit the YAML file shown in the ${EntityCreate['entityCreate.catalogEditor.heading']} section below.`,
+    'captureCreate.collectionSelector.instructions': `The collections bound to your capture. To make changes, you can enter new values in the this section of the form or edit the YAML file shown in the ${EntityCreate['entityCreate.catalogEditor.heading']} section below.`,
 
     'captureCreate.test.failedErrorTitle': `Configuration Test Failed`,
     'captureCreate.test.serverUnreachable': `Unable to reach server while testing configuration.`,
