@@ -1,4 +1,9 @@
-import { Autocomplete, Box, TextField } from '@mui/material';
+import {
+    Autocomplete,
+    AutocompleteChangeReason,
+    Box,
+    TextField,
+} from '@mui/material';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store';
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
@@ -108,16 +113,24 @@ function CollectionPicker({ readOnly = false }: Props) {
 
     const handlers = {
         updateCollections: (
-            _event: React.SyntheticEvent,
-            value: CollectionData[]
+            event: React.SyntheticEvent,
+            value: CollectionData[],
+            reason: AutocompleteChangeReason
         ) => {
-            setResourceConfig(value.map(({ name }) => name));
+            const removeOptionWithBackspace =
+                event.type === 'keydown' &&
+                (event as React.KeyboardEvent).key === 'Backspace' &&
+                reason === 'removeOption';
 
-            value
-                .filter(({ name }) => discoveredCollections?.includes(name))
-                .forEach(({ name }) => {
-                    setRestrictedDiscoveredCollections(name);
-                });
+            if (!removeOptionWithBackspace) {
+                setResourceConfig(value.map(({ name }) => name));
+
+                value
+                    .filter(({ name }) => discoveredCollections?.includes(name))
+                    .forEach(({ name }) => {
+                        setRestrictedDiscoveredCollections(name);
+                    });
+            }
         },
         validateSelection: () => {
             setMissingInput(!collections || collections.length === 0);
@@ -159,7 +172,7 @@ function CollectionPicker({ readOnly = false }: Props) {
                 blurOnSelect={false}
                 disableCloseOnSelect
                 disableClearable
-                renderTags={() => {}}
+                renderTags={() => null}
                 renderInput={(params) => (
                     <TextField
                         {...params}
