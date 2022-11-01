@@ -52,7 +52,7 @@ import {
     useFormStateStore_resetState,
     useFormStateStore_setFormState,
 } from 'stores/FormState';
-import { ENTITY, JsonFormsData } from 'types';
+import { JsonFormsData } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
 
 const trackEvent = (payload: any) => {
@@ -68,7 +68,7 @@ function CaptureEdit() {
     const lastPubId = useGlobalSearchParams(GlobalSearchParams.LAST_PUB_ID);
     const navigate = useNavigate();
 
-    const entityType = ENTITY.CAPTURE;
+    const entityType = 'capture';
 
     // Supabase stuff
     const supabaseClient = useClient();
@@ -195,7 +195,7 @@ function CaptureEdit() {
             .from(TABLES.DRAFT_SPECS_EXT)
             .select(`catalog_name,draft_id,expect_pub_id,spec,spec_type`)
             .eq('draft_id', newDraftId)
-            .eq('spec_type', ENTITY.CAPTURE)
+            .eq('spec_type', 'capture')
             .then(handleSuccess<DraftSpecQuery[]>, handleFailure);
 
         if (draftSpecsResponse.error) {

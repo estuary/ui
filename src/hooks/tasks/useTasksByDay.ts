@@ -1,5 +1,5 @@
 import { TABLES } from 'services/supabase';
-import { ENTITY } from 'types';
+import { Entity } from 'types';
 import { useQuery, useSelect } from '../supabase-swr/';
 
 export interface Meta {
@@ -37,14 +37,14 @@ export interface TaskFlowDocument {
 export interface TasksByDayQuery {
     name: string;
     ts: Date;
-    kind: ENTITY;
+    kind: Entity;
     flow_document: TaskFlowDocument;
 }
 
 const TASK_BY_DAY_COLS = ['name', 'ts', 'kind', 'flow_document'];
 const TASK_BY_DAY_QUERY = TASK_BY_DAY_COLS.join(', ');
 
-function useTasksByDay(name: string | null, kind: ENTITY | null) {
+function useTasksByDay(name: string | null, kind: Entity | null) {
     const taskByDayQuery = useQuery<TasksByDayQuery>(
         TABLES.TASKS_BY_DAY,
         {

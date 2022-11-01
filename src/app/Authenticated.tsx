@@ -22,7 +22,6 @@ import Home from 'pages/Home';
 import Materializations from 'pages/Materializations';
 import { Route, Routes } from 'react-router';
 import { EndpointConfigProvider } from 'stores/EndpointConfig';
-import { ENTITY } from 'types';
 import { isProduction } from 'utils/env-utils';
 
 export const authenticatedRoutes = {
@@ -127,7 +126,7 @@ const Authenticated = () => {
                     <Route
                         path={authenticatedRoutes.collections.path}
                         element={
-                            <EntityContextProvider value={ENTITY.COLLECTION}>
+                            <EntityContextProvider value="collection">
                                 <Collections />
                             </EntityContextProvider>
                         }
@@ -137,7 +136,7 @@ const Authenticated = () => {
                         <Route
                             path=""
                             element={
-                                <EntityContextProvider value={ENTITY.CAPTURE}>
+                                <EntityContextProvider value="capture">
                                     <Captures />
                                 </EntityContextProvider>
                             }
@@ -146,7 +145,7 @@ const Authenticated = () => {
                         <Route
                             path={authenticatedRoutes.captures.create.path}
                             element={
-                                <EntityContextProvider value={ENTITY.CAPTURE}>
+                                <EntityContextProvider value="capture">
                                     <WorkflowContextProvider value="capture_create">
                                         <EndpointConfigProvider>
                                             <CaptureCreate />
@@ -159,7 +158,7 @@ const Authenticated = () => {
                         <Route
                             path={authenticatedRoutes.captures.edit.path}
                             element={
-                                <EntityContextProvider value={ENTITY.CAPTURE}>
+                                <EntityContextProvider value="capture">
                                     <WorkflowContextProvider value="capture_edit">
                                         <EndpointConfigProvider>
                                             <CaptureEdit />
@@ -174,9 +173,7 @@ const Authenticated = () => {
                         <Route
                             path=""
                             element={
-                                <EntityContextProvider
-                                    value={ENTITY.MATERIALIZATION}
-                                >
+                                <EntityContextProvider value="materialization">
                                     <Materializations />
                                 </EntityContextProvider>
                             }
@@ -187,9 +184,7 @@ const Authenticated = () => {
                                 authenticatedRoutes.materializations.create.path
                             }
                             element={
-                                <EntityContextProvider
-                                    value={ENTITY.MATERIALIZATION}
-                                >
+                                <EntityContextProvider value="materialization">
                                     <WorkflowContextProvider value="materialization_create">
                                         <EndpointConfigProvider>
                                             <MaterializationCreate />
@@ -204,9 +199,7 @@ const Authenticated = () => {
                                 authenticatedRoutes.materializations.edit.path
                             }
                             element={
-                                <EntityContextProvider
-                                    value={ENTITY.MATERIALIZATION}
-                                >
+                                <EntityContextProvider value="materialization">
                                     <WorkflowContextProvider value="materialization_edit">
                                         <EndpointConfigProvider>
                                             <MaterializationEdit />
@@ -237,7 +230,7 @@ const Authenticated = () => {
                         <Route
                             path="test/jsonforms"
                             element={
-                                <EntityContextProvider value={ENTITY.CAPTURE}>
+                                <EntityContextProvider value="capture">
                                     <TestJsonForms />
                                 </EntityContextProvider>
                             }

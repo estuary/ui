@@ -19,8 +19,7 @@ import useShardsList from 'hooks/useShardsList';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { QUERY_PARAM_CONNECTOR_TITLE } from 'services/supabase';
-import { useShardDetail_setShards } from 'stores/ShardDetail';
-import { ENTITY } from 'types';
+import { useShardDetail_setShards } from 'stores/ShardDetail/hooks';
 import { getPathWithParams } from 'utils/misc-utils';
 
 interface RowsProps {
@@ -130,7 +129,7 @@ function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
                 detailsExpanded={detailsExpanded}
                 lastPubId={row.last_pub_id}
                 colSpan={tableColumns.length}
-                entityType={ENTITY.CAPTURE}
+                entityType="capture"
                 entityName={row.catalog_name}
                 collectionNames={row.writes_to}
             />

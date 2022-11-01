@@ -14,7 +14,7 @@ import {
     useResourceConfig_currentCollection,
     useResourceConfig_resourceConfig,
     useResourceConfig_setCurrentCollection,
-} from 'stores/ResourceConfig';
+} from 'stores/ResourceConfig/hooks';
 
 const initialState = {
     columns: {

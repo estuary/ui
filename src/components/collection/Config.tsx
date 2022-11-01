@@ -9,7 +9,7 @@ import {
     useResourceConfig_collectionErrorsExist,
     useResourceConfig_hydrationErrorsExist,
     useResourceConfig_resourceConfigErrorsExist,
-} from 'stores/ResourceConfig';
+} from 'stores/ResourceConfig/hooks';
 
 interface Props {
     draftSpecs?: DraftSpecQuery[];

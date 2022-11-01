@@ -20,13 +20,13 @@ import { EditorStoreNames } from 'context/Zustand';
 import { concat } from 'lodash';
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { ENTITY } from 'types';
+import { Entity } from 'types';
 
 interface Props {
     detailsExpanded: boolean;
     lastPubId: string;
     colSpan: number;
-    entityType: ENTITY;
+    entityType: Entity;
     entityName: string;
     collectionNames?: string[];
     disableLogs?: boolean; // TODO (detail logs) We'll start using this again when we have better logs
@@ -45,7 +45,7 @@ function DetailsPanel({
         [collectionNames, entityName]
     ) as string[];
 
-    const isCollection = entityType === ENTITY.COLLECTION;
+    const isCollection = entityType === 'collection';
 
     return (
         <TableRow>

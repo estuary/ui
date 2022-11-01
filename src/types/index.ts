@@ -107,7 +107,7 @@ export interface LiveSpecsExtBaseQuery {
     last_pub_user_avatar_url: string | null;
     last_pub_user_email: string;
     last_pub_user_full_name: string | null;
-    spec_type: ENTITY;
+    spec_type: Entity;
     updated_at: string;
 }
 
@@ -121,14 +121,8 @@ export enum CONNECTOR_TYPES {
     MATERIALIZATION = 'materialization',
 }
 
-export enum ENTITY {
-    CAPTURE = 'capture',
-    MATERIALIZATION = 'materialization',
-    COLLECTION = 'collection',
-}
-
-export type EntityWithCreateWorkflow = ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
-
+export type Entity = 'capture' | 'materialization' | 'collection';
+export type EntityWithCreateWorkflow = 'capture' | 'materialization';
 export type EntityWorkflow =
     | 'capture_create'
     | 'capture_edit'

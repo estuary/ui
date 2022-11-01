@@ -665,7 +665,7 @@ const Tenant: ResolvedIntlConfig['messages'] = {
     'tenant.message.1': `The organization name will be used as a prefix on everything you create within Estuary. This helps with scoping, controling access, labeling ownership, and more.`,
     'tenant.message.2': `This beings as private but becomes public if you share anything or invite others to join your organization.`,
 
-    'tenant.help.title': `Can I have an example?`,
+    'tenant.help.title': `Example`,
 
     'tenant.help.example.title': `A capture would have a name like {name}`,
     'tenant.help.example.name': `acmeCo/marketingData/googleAds`,
@@ -675,10 +675,10 @@ const Tenant: ResolvedIntlConfig['messages'] = {
     'tenant.help.example.breakdown': `A way to think about it is like this: {template}`,
     'tenant.help.example.template': `{prefix}/{name you provide}/{connector}`,
 
-    'tenant.expectations': `What are the naming guidelines?`,
-    'tenant.expectations.1': `Letters and numbers`,
-    'tenant.expectations.2': `Separators should be _ or .`,
-    'tenant.expectations.3': `Cannot contain /`,
+    'tenant.expectations': `You can use letters, numbers, periods, underscores, and hyphens`,
+    'tenant.expectations.error': `Sorry, only letters(a-z), numbers(0-9), periods(.), underscores(_), and hyphens(-) allowed.`,
+
+    'tenant.input.placeholder': `acmeCo`,
     'tenant.errorMessage.empty': `You must provide a name before continuing.`,
 };
 

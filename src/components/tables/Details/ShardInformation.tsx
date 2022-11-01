@@ -26,7 +26,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import {
     useShardDetail_getTaskShards,
     useShardDetail_shards,
-} from 'stores/ShardDetail';
+} from 'stores/ShardDetail/hooks';
 import { EntityWithCreateWorkflow } from 'types';
 
 interface Props {

@@ -4,15 +4,15 @@ import {
     AccordionDetails,
     AccordionSummary,
     Button,
-    Paper,
     Stack,
     TextField,
     Typography,
 } from '@mui/material';
 import { submitDirective } from 'api/directives';
 import AlertBox from 'components/shared/AlertBox';
+import { PREFIX_NAME_PATTERN } from 'components/tables/Details/StatusIndicatorAndLabel';
 import { useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { jobStatusPoller } from 'services/supabase';
 import { hasLength } from 'utils/misc-utils';
@@ -25,6 +25,7 @@ const submit_onboard = async (requestedTenant: string) => {
 const BetaOnboard = () => {
     console.log('Guard:Form:BetaOnboard');
 
+    const intl = useIntl();
     const navigate = useNavigate();
 
     const [requestedTenant, setRequestedTenant] = useState<string>('');
@@ -92,74 +93,50 @@ const BetaOnboard = () => {
                     <FormattedMessage id="tenant.message.2" />
                 </Typography>
 
-                <Paper>
-                    <Accordion>
-                        <AccordionSummary>
-                            <Button variant="text">
-                                <FormattedMessage id="tenant.help.title" />
-                            </Button>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <Stack spacing={2}>
-                                <Typography>
-                                    <FormattedMessage
-                                        id="tenant.help.example.title"
-                                        values={{
-                                            name: (
-                                                <Typography
-                                                    sx={{ fontWeight: 'bold' }}
-                                                >
-                                                    <FormattedMessage id="tenant.help.example.name" />
-                                                </Typography>
-                                            ),
-                                        }}
-                                    />
-                                </Typography>
+                <Accordion>
+                    <AccordionSummary>
+                        <Button variant="text">
+                            <FormattedMessage id="tenant.help.title" />
+                        </Button>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Stack spacing={2}>
+                            <Typography>
+                                <FormattedMessage
+                                    id="tenant.help.example.title"
+                                    values={{
+                                        name: (
+                                            <Typography
+                                                sx={{ fontWeight: 'bold' }}
+                                            >
+                                                <FormattedMessage id="tenant.help.example.name" />
+                                            </Typography>
+                                        ),
+                                    }}
+                                />
+                            </Typography>
 
-                                <Typography>
-                                    <FormattedMessage id="tenant.help.example.details" />
-                                </Typography>
+                            <Typography>
+                                <FormattedMessage id="tenant.help.example.details" />
+                            </Typography>
 
-                                <Typography>
-                                    <FormattedMessage
-                                        id="tenant.help.example.breakdown"
-                                        values={{
-                                            template: (
-                                                <Typography
-                                                    sx={{ fontWeight: 'bold' }}
-                                                >
-                                                    <FormattedMessage id="tenant.help.example.template" />
-                                                </Typography>
-                                            ),
-                                        }}
-                                    />
-                                </Typography>
-                            </Stack>
-                        </AccordionDetails>
-                    </Accordion>
-                </Paper>
-                <Paper>
-                    <Accordion defaultExpanded>
-                        <AccordionSummary>
-                            <Button variant="text">
-                                <FormattedMessage id="tenant.expectations" />
-                            </Button>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <Stack spacing={2}>
-                                <Typography>
-                                    <FormattedMessage id="tenant.expectations.1" />
-                                </Typography>
-                                <Typography>
-                                    <FormattedMessage id="tenant.expectations.2" />
-                                </Typography>
-                                <Typography>
-                                    <FormattedMessage id="tenant.expectations.3" />
-                                </Typography>
-                            </Stack>
-                        </AccordionDetails>
-                    </Accordion>
-                </Paper>
+                            <Typography>
+                                <FormattedMessage
+                                    id="tenant.help.example.breakdown"
+                                    values={{
+                                        template: (
+                                            <Typography
+                                                sx={{ fontWeight: 'bold' }}
+                                            >
+                                                <FormattedMessage id="tenant.help.example.template" />
+                                            </Typography>
+                                        ),
+                                    }}
+                                />
+                            </Typography>
+                        </Stack>
+                    </AccordionDetails>
+                </Accordion>
 
                 {showErrors ? (
                     <AlertBox
@@ -184,12 +161,24 @@ const BetaOnboard = () => {
                 }}
             >
                 <TextField
+                    fullWidth
+                    placeholder={intl.formatMessage({
+                        id: 'tenant.input.placeholder',
+                    })}
+                    helperText={intl.formatMessage({
+                        id: showErrors
+                            ? 'tenant.expectations.error'
+                            : 'tenant.expectations',
+                    })}
                     error={showErrors}
                     id="requestedTenant"
                     label={<FormattedMessage id="common.tenant" />}
                     value={requestedTenant}
                     onChange={(event) => handlers.update(event.target.value)}
                     required
+                    inputProps={{
+                        pattern: PREFIX_NAME_PATTERN,
+                    }}
                 />
 
                 <LoadingButton

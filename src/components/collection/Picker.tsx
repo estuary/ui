@@ -6,7 +6,7 @@ import { useFormStateStore_messagePrefix } from 'stores/FormState';
 import {
     useResourceConfig_collections,
     useResourceConfig_setResourceConfig,
-} from 'stores/ResourceConfig';
+} from 'stores/ResourceConfig/hooks';
 import useConstant from 'use-constant';
 
 interface Props {

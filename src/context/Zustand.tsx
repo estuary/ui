@@ -5,9 +5,11 @@ import {
     ReactNode,
     useContext,
 } from 'react';
-import { createFormStateStore } from 'stores/FormState';
-import { createResourceConfigStore } from 'stores/ResourceConfig';
-import { createShardDetailStore } from 'stores/ShardDetail';
+import {
+    createFormStateStore,
+    createResourceConfigStore,
+    createShardDetailStore,
+} from 'stores';
 import { MessagePrefixes } from 'types';
 import useConstant from 'use-constant';
 import { StoreApi, useStore } from 'zustand';
@@ -75,6 +77,14 @@ interface ZustandProviderProps {
 }
 
 const invariableStores = {
+    // Shard Detail Store
+    [ShardDetailStoreNames.CAPTURE]: createShardDetailStore(
+        ShardDetailStoreNames.CAPTURE
+    ),
+    [ShardDetailStoreNames.MATERIALIZATION]: createShardDetailStore(
+        ShardDetailStoreNames.MATERIALIZATION
+    ),
+
     // Editor Store
     [EditorStoreNames.CAPTURE]: createEditorStore(EditorStoreNames.CAPTURE),
     [EditorStoreNames.MATERIALIZATION]: createEditorStore(
@@ -99,6 +109,11 @@ const invariableStores = {
         MessagePrefixes.MATERIALIZATION_EDIT
     ),
 
+    // Resource Config Store
+    [ResourceConfigStoreNames.GENERAL]: createResourceConfigStore(
+        ResourceConfigStoreNames.GENERAL
+    ),
+
     // Select Table Store
     [SelectTableStoreNames.ACCESS_GRANTS]: createSelectableTableStore(
         SelectTableStoreNames.ACCESS_GRANTS
@@ -114,19 +129,6 @@ const invariableStores = {
     ),
     [SelectTableStoreNames.MATERIALIZATION]: createSelectableTableStore(
         SelectTableStoreNames.MATERIALIZATION
-    ),
-
-    // Resource Config Store
-    [ResourceConfigStoreNames.GENERAL]: createResourceConfigStore(
-        ResourceConfigStoreNames.GENERAL
-    ),
-
-    // Shard Detail Store
-    [ShardDetailStoreNames.CAPTURE]: createShardDetailStore(
-        ShardDetailStoreNames.CAPTURE
-    ),
-    [ShardDetailStoreNames.MATERIALIZATION]: createShardDetailStore(
-        ShardDetailStoreNames.MATERIALIZATION
     ),
 };
 

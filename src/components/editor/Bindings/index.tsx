@@ -12,11 +12,11 @@ import { isEqual } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import { useDetailsForm_connectorImage } from 'stores/DetailsForm';
 import {
-    ResourceConfigDictionary,
     useResourceConfig_resourceConfig,
     useResourceConfig_setResourceSchema,
     useResourceConfig_setServerUpdateRequired,
-} from 'stores/ResourceConfig';
+} from 'stores/ResourceConfig/hooks';
+import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import { Schema } from 'types';
 
 interface Props {

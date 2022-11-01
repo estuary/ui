@@ -21,7 +21,7 @@ import {
 import usePublications from 'hooks/usePublications';
 import { useEffect, useState } from 'react';
 import { jobSucceeded } from 'services/supabase';
-import { ENTITY } from 'types';
+import { Entity } from 'types';
 
 export interface UpdateEntityProps {
     entity: LiveSpecsExtQuery;
@@ -29,7 +29,7 @@ export interface UpdateEntityProps {
     generateNewSpec: (
         spec: LiveSpecsExtQueryWithSpec['spec']
     ) => any | Promise<void>;
-    generateNewSpecType: (entity: LiveSpecsExtQuery) => ENTITY | null;
+    generateNewSpecType: (entity: LiveSpecsExtQuery) => Entity | null;
     runningMessageID: SharedProgressProps['runningMessageID'];
     successMessageID: SharedProgressProps['successMessageID'];
     selectableStoreName:

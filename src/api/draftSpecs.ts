@@ -4,14 +4,14 @@ import {
     TABLES,
     updateSupabase,
 } from 'services/supabase';
-import { ENTITY } from 'types';
+import { Entity } from 'types';
 import { CaptureBinding, CaptureDef } from '../../flow_deps/flow';
 
 interface CreateMatchData {
     draft_id: string | null;
     catalog_name: string;
     spec: any;
-    spec_type?: ENTITY | null;
+    spec_type?: Entity | null;
     expect_pub_id?: string;
 }
 
@@ -25,7 +25,7 @@ export const createDraftSpec = (
     draftId: string | null,
     catalogName: string,
     draftSpec: any,
-    specType?: ENTITY | null,
+    specType?: Entity | null,
     lastPubId?: string | null
 ) => {
     let matchData: CreateMatchData = {

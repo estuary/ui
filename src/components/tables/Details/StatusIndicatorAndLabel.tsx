@@ -2,15 +2,17 @@ import { TableCell, Typography, useTheme } from '@mui/material';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { FormattedMessage } from 'react-intl';
 import {
-    ShardStatusColor,
     useShardDetail_evaluateShardProcessingState,
     useShardDetail_getShardStatusColor,
     useShardDetail_getShardStatusMessageId,
-} from 'stores/ShardDetail';
+} from 'stores/ShardDetail/hooks';
+import { ShardStatusColor } from 'stores/ShardDetail/types';
 
 interface Props {
     shard: Shard;
 }
+
+export const PREFIX_NAME_PATTERN = `[a-zA-Z0-9-_.]+`;
 
 function StatusIndicatorAndLabel({ shard }: Props) {
     const { id } = shard.spec;

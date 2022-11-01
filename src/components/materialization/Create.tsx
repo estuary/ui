@@ -26,16 +26,13 @@ import {
     useFormStateStore_resetState,
     useFormStateStore_setFormState,
 } from 'stores/FormState';
-import {
-    ResourceConfigHydrator,
-    useResourceConfig_resetState,
-} from 'stores/ResourceConfig';
-import { ENTITY } from 'types';
+import { useResourceConfig_resetState } from 'stores/ResourceConfig/hooks';
+import ResourceConfigHydrator from 'stores/ResourceConfig/Hydrator';
 
 function MaterializationCreate() {
     const navigate = useNavigate();
 
-    const entityType = ENTITY.MATERIALIZATION;
+    const entityType = 'materialization';
 
     // Supabase
     const { connectorTags } = useConnectorWithTagDetail(entityType);

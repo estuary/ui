@@ -37,7 +37,6 @@ import {
     useFormStateStore_resetState,
     useFormStateStore_setFormState,
 } from 'stores/FormState';
-import { ENTITY } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
 
 const trackEvent = (payload: any) => {
@@ -53,7 +52,7 @@ const trackEvent = (payload: any) => {
 function CaptureCreate() {
     const navigate = useNavigate();
 
-    const entityType = ENTITY.CAPTURE;
+    const entityType = 'capture';
 
     // Supabase stuff
     const supabaseClient = useClient();

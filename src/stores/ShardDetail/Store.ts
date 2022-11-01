@@ -1,69 +1,18 @@
-import { useEntityType } from 'context/EntityContext';
-import {
-    errorMain,
-    SemanticColor,
-    successMain,
-    warningMain,
-} from 'context/Theme';
-import { ShardDetailStoreNames, useZustandStore } from 'context/Zustand';
+import { errorMain, successMain, warningMain } from 'context/Theme';
+import { ShardDetailStoreNames } from 'context/Zustand';
 import { ReplicaStatusCode } from 'data-plane-gateway/types/gen/consumer/protocol/consumer';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import produce from 'immer';
-import { ENTITY } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
 import create, { StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
-
-// TODO: Determine a way to access an interface property with a function type.
-export type SetShards = (shards: Shard[]) => void;
-
-export enum ShardStatusMessageIds {
-    PRIMARY = 'shardStatus.primary',
-    FAILED = 'shardStatus.failed',
-    IDLE = 'shardStatus.idle',
-    STANDBY = 'shardStatus.standby',
-    BACKFILL = 'shardStatus.backfill',
-    DISABLED = 'shardStatus.disabled',
-    NONE = 'shardStatus.none',
-}
-
-// The hex string additions correspond to slate[25] | slate[800].
-export type ShardStatusColor = SemanticColor | '#EEF8FF' | '#04192A';
-
-export interface TaskShardDetails {
-    messageId: ShardStatusMessageIds;
-    color: ShardStatusColor;
-    disabled?: boolean;
-}
-
-export interface ShardDetails {
-    id: string | undefined;
-    errors: string[] | undefined;
-}
-
-export interface ShardDetailStore {
-    shards: Shard[];
-    setShards: SetShards;
-    getTaskShards: (
-        catalogNamespace: string | undefined,
-        shards: Shard[]
-    ) => Shard[];
-    getTaskShardDetails: (
-        taskShards: Shard[],
-        defaultStatusColor: ShardStatusColor
-    ) => TaskShardDetails[];
-    getTaskStatusColor: (
-        taskShardDetails: TaskShardDetails[],
-        defaultStatusColor: ShardStatusColor
-    ) => ShardStatusColor;
-    getShardDetails: (shards: Shard[]) => ShardDetails[];
-    getShardStatusColor: (
-        shardId: string,
-        defaultStatusColor: ShardStatusColor
-    ) => ShardStatusColor;
-    getShardStatusMessageId: (shardId: string) => ShardStatusMessageIds;
-    evaluateShardProcessingState: (shardId: string) => boolean;
-}
+import {
+    ShardDetails,
+    ShardDetailStore,
+    ShardStatusColor,
+    ShardStatusMessageIds,
+    TaskShardDetails,
+} from './types';
 
 const evaluateTaskShardStatus = (
     { spec, status }: Shard,
@@ -380,98 +329,4 @@ export const createShardDetailStore = (key: ShardDetailStoreNames) => {
     return create<ShardDetailStore>()(
         devtools((set, get) => getInitialState(set, get), devtoolsOptions(key))
     );
-};
-
-// Selector Hooks
-const storeName = (entityType: ENTITY): ShardDetailStoreNames => {
-    switch (entityType) {
-        case ENTITY.CAPTURE:
-            return ShardDetailStoreNames.CAPTURE;
-        case ENTITY.MATERIALIZATION:
-            return ShardDetailStoreNames.MATERIALIZATION;
-        default: {
-            throw new Error('Invalid ShardDetail store name');
-        }
-    }
-};
-
-export const useShardDetail_shards = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<ShardDetailStore, ShardDetailStore['shards']>(
-        storeName(entityType),
-        (state) => state.shards
-    );
-};
-
-export const useShardDetail_setShards = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<ShardDetailStore, ShardDetailStore['setShards']>(
-        storeName(entityType),
-        (state) => state.setShards
-    );
-};
-
-export const useShardDetail_getTaskShards = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<ShardDetailStore, ShardDetailStore['getTaskShards']>(
-        storeName(entityType),
-        (state) => state.getTaskShards
-    );
-};
-
-export const useShardDetail_getTaskShardDetails = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        ShardDetailStore,
-        ShardDetailStore['getTaskShardDetails']
-    >(storeName(entityType), (state) => state.getTaskShardDetails);
-};
-
-export const useShardDetail_getTaskStatusColor = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        ShardDetailStore,
-        ShardDetailStore['getTaskStatusColor']
-    >(storeName(entityType), (state) => state.getTaskStatusColor);
-};
-
-export const useShardDetail_getShardDetails = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        ShardDetailStore,
-        ShardDetailStore['getShardDetails']
-    >(storeName(entityType), (state) => state.getShardDetails);
-};
-
-export const useShardDetail_getShardStatusColor = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        ShardDetailStore,
-        ShardDetailStore['getShardStatusColor']
-    >(storeName(entityType), (state) => state.getShardStatusColor);
-};
-
-export const useShardDetail_getShardStatusMessageId = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        ShardDetailStore,
-        ShardDetailStore['getShardStatusMessageId']
-    >(storeName(entityType), (state) => state.getShardStatusMessageId);
-};
-
-export const useShardDetail_evaluateShardProcessingState = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        ShardDetailStore,
-        ShardDetailStore['evaluateShardProcessingState']
-    >(storeName(entityType), (state) => state.evaluateShardProcessingState);
 };

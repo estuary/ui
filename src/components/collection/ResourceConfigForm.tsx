@@ -17,7 +17,7 @@ import {
     useResourceConfig_resourceConfig,
     useResourceConfig_resourceSchema,
     useResourceConfig_setResourceConfig,
-} from 'stores/ResourceConfig';
+} from 'stores/ResourceConfig/hooks';
 
 type Props = {
     collectionName: string;

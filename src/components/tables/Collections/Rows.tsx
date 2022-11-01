@@ -7,7 +7,6 @@ import TimeStamp from 'components/tables/cells/TimeStamp';
 import DetailsPanel from 'components/tables/Details/DetailsPanel';
 import { getEntityTableRowSx } from 'context/Theme';
 import { useState } from 'react';
-import { ENTITY } from 'types';
 
 interface RowProps {
     row: LiveSpecsExtQuery;
@@ -66,7 +65,7 @@ function Row({ row, showEntityStatus }: RowProps) {
                 detailsExpanded={detailsExpanded}
                 lastPubId={row.last_pub_id}
                 colSpan={tableColumns.length}
-                entityType={ENTITY.COLLECTION}
+                entityType="collection"
                 entityName={row.catalog_name}
                 disableLogs
             />

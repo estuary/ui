@@ -5,6 +5,7 @@ import { useEditorStore_isSaving } from 'components/editor/Store';
 import AlertBox from 'components/shared/AlertBox';
 import { Props } from 'components/shared/Entity/DetailsForm/types';
 import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
+import { PREFIX_NAME_PATTERN } from 'components/tables/Details/StatusIndicatorAndLabel';
 import { CATALOG_NAME_SCOPE } from 'forms/renderers/CatalogName';
 import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
 import useGlobalSearchParams, {
@@ -132,7 +133,7 @@ function DetailsFormForm({
                     type: 'string',
                     pattern: `^(${accessGrantsOneOf.join(
                         '|'
-                    )})([a-zA-Z0-9-_.]+/)*[a-zA-Z0-9-_.]+$`,
+                    )})(${PREFIX_NAME_PATTERN}/)*${PREFIX_NAME_PATTERN}$`,
                 },
                 description: {
                     description: intl.formatMessage({

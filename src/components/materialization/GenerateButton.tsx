@@ -30,8 +30,7 @@ import {
 import {
     useResourceConfig_resourceConfig,
     useResourceConfig_resourceConfigErrorsExist,
-} from 'stores/ResourceConfig';
-import { ENTITY } from 'types';
+} from 'stores/ResourceConfig/hooks';
 
 interface Props {
     disabled: boolean;
@@ -133,7 +132,7 @@ function MaterializeGenerateButton({ disabled, callFailed }: Props) {
                 newDraftId,
                 entityName,
                 draftSpec,
-                ENTITY.MATERIALIZATION
+                'materialization'
             );
             if (draftSpecsResponse.error) {
                 return callFailed({

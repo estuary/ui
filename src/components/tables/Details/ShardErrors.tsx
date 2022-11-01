@@ -13,10 +13,8 @@ import {
 } from '@mui/material';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { FormattedMessage } from 'react-intl';
-import {
-    ShardDetails,
-    useShardDetail_getShardDetails,
-} from 'stores/ShardDetail';
+import { useShardDetail_getShardDetails } from 'stores/ShardDetail/hooks';
+import { ShardDetails } from 'stores/ShardDetail/types';
 import { unescapeString } from 'utils/misc-utils';
 
 interface Props {

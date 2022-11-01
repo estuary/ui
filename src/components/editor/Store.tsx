@@ -7,7 +7,7 @@ import {
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
 import produce from 'immer';
-import { ENTITY } from 'types';
+import { Entity } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
 import create from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -177,14 +177,14 @@ export const createEditorStore = <T,>(key: string) => {
 };
 
 const storeName = (
-    entityType: ENTITY,
+    entityType: Entity,
     localScope?: boolean
 ): EditorStoreNames => {
     if (localScope) {
         return EditorStoreNames.GENERAL;
-    } else if (entityType === ENTITY.CAPTURE) {
+    } else if (entityType === 'capture') {
         return EditorStoreNames.CAPTURE;
-    } else if (entityType === ENTITY.MATERIALIZATION) {
+    } else if (entityType === 'materialization') {
         return EditorStoreNames.MATERIALIZATION;
     } else {
         throw new Error('Invalid Editor store name');

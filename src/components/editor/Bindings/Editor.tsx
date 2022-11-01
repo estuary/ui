@@ -1,5 +1,5 @@
 import ResourceConfig from 'components/collection/ResourceConfig';
-import { useResourceConfig_currentCollection } from 'stores/ResourceConfig';
+import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
 
 interface Props {
     readOnly?: boolean;

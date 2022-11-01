@@ -23,7 +23,7 @@ import {
 } from 'react';
 import { useIntl } from 'react-intl';
 import { CONNECTOR_NAME } from 'services/supabase';
-import { ENTITY, SortDirection } from 'types';
+import { Entity, SortDirection } from 'types';
 import useConstant from 'use-constant';
 
 interface Props {
@@ -39,7 +39,7 @@ interface Props {
 }
 
 interface ProtocolOption {
-    protocol: ENTITY | null;
+    protocol: Entity | null;
     message: string;
 }
 
@@ -85,13 +85,13 @@ function ConnectorToolbar({
             }),
         },
         {
-            protocol: ENTITY.CAPTURE,
+            protocol: 'capture',
             message: intl.formatMessage({
                 id: 'terms.capture',
             }),
         },
         {
-            protocol: ENTITY.MATERIALIZATION,
+            protocol: 'materialization',
             message: intl.formatMessage({
                 id: 'terms.materialization',
             }),

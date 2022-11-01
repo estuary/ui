@@ -62,14 +62,14 @@ import {
 import {
     useResourceConfig_hydrated,
     useResourceConfig_serverUpdateRequired,
-} from 'stores/ResourceConfig';
-import { ENTITY } from 'types';
+} from 'stores/ResourceConfig/hooks';
+import { Entity } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import AlertBox from '../AlertBox';
 
 interface Props {
     title: string;
-    entityType: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
+    entityType: 'capture' | 'materialization';
     readOnly: {
         detailsForm?: true;
         endpointConfigForm?: true;
@@ -102,7 +102,7 @@ interface InitializationHelpers {
 const createDraftToEdit = async (
     catalogName: string,
     spec: any,
-    entityType: ENTITY,
+    entityType: Entity,
     lastPubId: string | null,
     errorTitle: string,
     {
@@ -150,7 +150,7 @@ const createDraftToEdit = async (
 
 const initDraftToEdit = async (
     { catalog_name, spec }: LiveSpecsExtQueryWithSpec,
-    entityType: ENTITY,
+    entityType: Entity,
     drafts: DraftQuery[],
     draftSpecs: DraftSpecQuery[],
     lastPubId: string | null,
@@ -164,7 +164,7 @@ const initDraftToEdit = async (
     setFormState({ status: FormStatus.GENERATING });
 
     const errorTitle =
-        entityType === ENTITY.MATERIALIZATION
+        entityType === 'materialization'
             ? 'materializationEdit.generate.failure.errorTitle'
             : 'captureEdit.generate.failedErrorTitle';
 

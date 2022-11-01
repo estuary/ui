@@ -33,7 +33,7 @@ import {
 import {
     useResourceConfig_resourceConfig,
     useResourceConfig_resourceConfigErrorsExist,
-} from 'stores/ResourceConfig';
+} from 'stores/ResourceConfig/hooks';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 
 interface Props {

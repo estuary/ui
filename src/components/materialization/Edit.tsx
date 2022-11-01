@@ -34,17 +34,14 @@ import {
     useFormStateStore_resetState,
     useFormStateStore_setFormState,
 } from 'stores/FormState';
-import {
-    ResourceConfigHydrator,
-    useResourceConfig_resetState,
-} from 'stores/ResourceConfig';
-import { ENTITY } from 'types';
+import { useResourceConfig_resetState } from 'stores/ResourceConfig/hooks';
+import ResourceConfigHydrator from 'stores/ResourceConfig/Hydrator';
 
 function MaterializationEdit() {
     const lastPubId = useGlobalSearchParams(GlobalSearchParams.LAST_PUB_ID);
     const navigate = useNavigate();
 
-    const entityType = ENTITY.MATERIALIZATION;
+    const entityType = 'materialization';
 
     // Supabase
     const supabaseClient = useClient();
