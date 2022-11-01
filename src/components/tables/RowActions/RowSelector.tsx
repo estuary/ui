@@ -9,7 +9,7 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
-import { useZustandStore } from 'context/Zustand';
+import { useZustandStore } from 'context/Zustand/hooks';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';

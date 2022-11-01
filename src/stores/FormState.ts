@@ -1,6 +1,6 @@
 import { PostgrestError } from '@supabase/postgrest-js';
 import { useEntityWorkflow } from 'context/Workflow';
-import { useZustandStore } from 'context/Zustand';
+import { useZustandStore } from 'context/Zustand/hooks';
 import produce from 'immer';
 import { EntityWorkflow, MessagePrefixes } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';

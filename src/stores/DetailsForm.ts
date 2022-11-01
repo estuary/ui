@@ -1,6 +1,6 @@
 import { JsonFormsCore } from '@jsonforms/core';
 import { useEntityType } from 'context/EntityContext';
-import { registerStores, useZustandStoreMap } from 'context/Zustand';
+import { registerStores, useZustandStoreMap } from 'context/Zustand/hooks';
 import produce from 'immer';
 import { isEmpty, isEqual } from 'lodash';
 import { Entity } from 'types';

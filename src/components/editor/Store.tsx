@@ -1,6 +1,6 @@
 import { useEntityType } from 'context/EntityContext';
 import { useLocalZustandStore } from 'context/LocalZustand';
-import { useZustandStore as useGlobalZustandStore } from 'context/Zustand';
+import { useZustandStore as useGlobalZustandStore } from 'context/Zustand/hooks';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
 import produce from 'immer';

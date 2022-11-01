@@ -1,6 +1,6 @@
 import ConfirmationModalContextProvider from 'context/Confirmation';
 import { PreFetchDataProvider } from 'context/PreFetchData';
-import { ZustandProvider } from 'context/Zustand';
+import { ZustandProvider } from 'context/Zustand/provider';
 import { BaseComponentProps } from 'types';
 
 // This is for contexts that should only be added to the app after the user has authenticated

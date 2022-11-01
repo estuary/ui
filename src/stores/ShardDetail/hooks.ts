@@ -1,5 +1,5 @@
 import { useEntityType } from 'context/EntityContext';
-import { useZustandStore } from 'context/Zustand';
+import { useZustandStore } from 'context/Zustand/hooks';
 import { ShardDetailStoreNames } from 'stores/names';
 import { Entity } from 'types';
 import { ShardDetailStore } from './types';

@@ -24,7 +24,7 @@ import {
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
 import Title from 'components/tables/Title';
-import { useZustandStore } from 'context/Zustand';
+import { useZustandStore } from 'context/Zustand/hooks';
 import { Query, useSelect } from 'hooks/supabase-swr';
 import { debounce } from 'lodash';
 import {
