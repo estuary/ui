@@ -2,7 +2,7 @@ import GroupIcon from '@mui/icons-material/Group';
 import MediationIcon from '@mui/icons-material/Mediation';
 import TerminalIcon from '@mui/icons-material/Terminal';
 import { Box, Tab, Tabs } from '@mui/material';
-import { authenticatedRoutes } from 'app/Authenticated';
+import { authenticatedRoutes } from 'app/routes';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Link, useLocation } from 'react-router-dom';

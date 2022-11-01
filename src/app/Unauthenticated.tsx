@@ -1,16 +1,7 @@
 import Auth from 'pages/Auth';
 import Login from 'pages/Login';
 import { Route, Routes } from 'react-router';
-
-export const unauthenticatedRoutes = {
-    path: '',
-    auth: {
-        path: '/auth',
-    },
-    magicLink: {
-        path: '/magicLink',
-    },
-};
+import { unauthenticatedRoutes } from './routes';
 
 const Unauthenticated = () => {
     return (

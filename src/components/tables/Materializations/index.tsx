@@ -1,7 +1,6 @@
 import { Box } from '@mui/material';
 import EntityTable, { getPagination } from 'components/tables/EntityTable';
 import Rows, { tableColumns } from 'components/tables/Materializations/Rows';
-import { SelectTableStoreNames } from 'context/Zustand';
 import { useQuery } from 'hooks/supabase-swr';
 import { useState } from 'react';
 import {
@@ -11,6 +10,7 @@ import {
     QUERY_PARAM_CONNECTOR_TITLE,
     TABLES,
 } from 'services/supabase';
+import { SelectTableStoreNames } from 'stores/names';
 import { LiveSpecsExtBaseQuery, SortDirection } from 'types';
 
 // TODO: Consider consolidating query interface instances.

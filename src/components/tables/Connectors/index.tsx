@@ -1,7 +1,6 @@
 import { Box } from '@mui/material';
 import Rows, { tableColumns } from 'components/tables/Connectors/Rows';
 import EntityTable, { getPagination } from 'components/tables/EntityTable';
-import { SelectTableStoreNames } from 'context/Zustand';
 import { useQuery } from 'hooks/supabase-swr';
 import {
     ConnectorWithTagDetailQuery,
@@ -9,6 +8,7 @@ import {
 } from 'hooks/useConnectorWithTagDetail';
 import { useState } from 'react';
 import { CONNECTOR_NAME, defaultTableFilter, TABLES } from 'services/supabase';
+import { SelectTableStoreNames } from 'stores/names';
 import { SortDirection } from 'types';
 
 function ConnectorsTable() {

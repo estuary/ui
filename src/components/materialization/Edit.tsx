@@ -1,5 +1,5 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
-import { authenticatedRoutes } from 'app/Authenticated';
+import { authenticatedRoutes } from 'app/routes';
 import {
     useEditorStore_editDraftId,
     useEditorStore_id,

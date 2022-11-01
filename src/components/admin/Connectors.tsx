@@ -1,5 +1,5 @@
 import { Stack, Toolbar, Typography } from '@mui/material';
-import { authenticatedRoutes } from 'app/Authenticated';
+import { authenticatedRoutes } from 'app/routes';
 import AdminTabs from 'components/admin/Tabs';
 import ConnectorTiles from 'components/ConnectorTiles';
 import PageContainer from 'components/shared/PageContainer';

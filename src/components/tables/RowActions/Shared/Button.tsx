@@ -7,9 +7,10 @@ import {
 } from 'components/tables/Store';
 import { useConfirmationModalContext } from 'context/Confirmation';
 import { glassBkgWithoutBlur } from 'context/Theme';
-import { SelectTableStoreNames, useZustandStore } from 'context/Zustand';
+import { useZustandStore } from 'context/Zustand';
 import { ReactNode, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { SelectTableStoreNames } from 'stores/names';
 
 interface Props {
     confirmationMessage?: ReactNode;

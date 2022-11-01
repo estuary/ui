@@ -1,5 +1,5 @@
 import { Divider, Stack, Typography } from '@mui/material';
-import { authenticatedRoutes } from 'app/Authenticated';
+import { authenticatedRoutes } from 'app/routes';
 import AdminTabs from 'components/admin/Tabs';
 import MessageWithLink from 'components/content/MessageWithLink';
 import PageContainer from 'components/shared/PageContainer';

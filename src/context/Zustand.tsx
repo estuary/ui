@@ -5,62 +5,20 @@ import {
     ReactNode,
     useContext,
 } from 'react';
+import { createFormStateStore } from 'stores/FormState';
 import {
-    createFormStateStore,
-    createResourceConfigStore,
-    createShardDetailStore,
-} from 'stores';
+    EditorStoreNames,
+    FormStateStoreNames,
+    ResourceConfigStoreNames,
+    SelectTableStoreNames,
+    ShardDetailStoreNames,
+    StoreName,
+} from 'stores/names';
+import { createResourceConfigStore } from 'stores/ResourceConfig/Store';
+import { createShardDetailStore } from 'stores/ShardDetail/Store';
 import { MessagePrefixes } from 'types';
 import useConstant from 'use-constant';
 import { StoreApi, useStore } from 'zustand';
-
-export enum DetailsFormStoreNames {
-    CAPTURE = 'capture-details-form',
-    MATERIALIZATION = 'materialization-details-form',
-}
-
-export enum EditorStoreNames {
-    CAPTURE = 'capture_editor_store',
-    GENERAL = 'general_editor_store',
-    MATERIALIZATION = 'materialization_editor_store',
-}
-
-export enum EndpointConfigStoreNames {
-    GENERAL = 'general-endpoint-config',
-}
-
-export enum FormStateStoreNames {
-    CAPTURE_CREATE = 'Capture-Create-Form-State',
-    CAPTURE_EDIT = 'Capture-Edit-Form-State',
-    MATERIALIZATION_CREATE = 'Materialization-Create-Form-State',
-    MATERIALIZATION_EDIT = 'Materialization-Edit-Form-State',
-}
-
-export enum ResourceConfigStoreNames {
-    GENERAL = 'general-resource-config',
-}
-
-export enum SelectTableStoreNames {
-    ACCESS_GRANTS = 'AccessGrants-Selectable-Table',
-    CAPTURE = 'Captures-Selectable-Table',
-    COLLECTION = 'Collections-Selectable-Table',
-    CONNECTOR = 'Connectors-Selectable-Table',
-    MATERIALIZATION = 'Materializations-Selectable-Table',
-}
-
-export enum ShardDetailStoreNames {
-    CAPTURE = 'Capture-Shard-Detail',
-    MATERIALIZATION = 'Materialization-Shard-Detail',
-}
-
-export type StoreName =
-    | DetailsFormStoreNames
-    | EditorStoreNames
-    | EndpointConfigStoreNames
-    | FormStateStoreNames
-    | ResourceConfigStoreNames
-    | SelectTableStoreNames
-    | ShardDetailStoreNames;
 
 export type UseZustandStore = <S extends Object, U>(
     storeName: StoreName,

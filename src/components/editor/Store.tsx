@@ -1,12 +1,10 @@
 import { useEntityType } from 'context/EntityContext';
 import { useLocalZustandStore } from 'context/LocalZustand';
-import {
-    EditorStoreNames,
-    useZustandStore as useGlobalZustandStore,
-} from 'context/Zustand';
+import { useZustandStore as useGlobalZustandStore } from 'context/Zustand';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
 import produce from 'immer';
+import { EditorStoreNames } from 'stores/names';
 import { Entity } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
 import create from 'zustand';

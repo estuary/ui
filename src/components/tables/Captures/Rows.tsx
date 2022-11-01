@@ -1,5 +1,5 @@
 import { TableRow, useTheme } from '@mui/material';
-import { authenticatedRoutes } from 'app/Authenticated';
+import { authenticatedRoutes } from 'app/routes';
 import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import ChipList from 'components/tables/cells/ChipList';
 import Connector from 'components/tables/cells/Connector';
@@ -13,12 +13,13 @@ import {
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
 import { getEntityTableRowSx } from 'context/Theme';
-import { SelectTableStoreNames, useZustandStore } from 'context/Zustand';
+import { useZustandStore } from 'context/Zustand';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useShardsList from 'hooks/useShardsList';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { QUERY_PARAM_CONNECTOR_TITLE } from 'services/supabase';
+import { SelectTableStoreNames } from 'stores/names';
 import { useShardDetail_setShards } from 'stores/ShardDetail/hooks';
 import { getPathWithParams } from 'utils/misc-utils';
 

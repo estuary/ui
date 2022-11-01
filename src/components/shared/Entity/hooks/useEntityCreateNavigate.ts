@@ -1,4 +1,4 @@
-import { authenticatedRoutes } from 'app/Authenticated';
+import { authenticatedRoutes } from 'app/routes';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useSearchParamAppend from 'hooks/searchParams/useSearchParamAppend';
 import { useCallback } from 'react';

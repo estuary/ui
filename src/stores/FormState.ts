@@ -1,11 +1,12 @@
 import { PostgrestError } from '@supabase/postgrest-js';
 import { useEntityWorkflow } from 'context/Workflow';
-import { FormStateStoreNames, useZustandStore } from 'context/Zustand';
+import { useZustandStore } from 'context/Zustand';
 import produce from 'immer';
 import { EntityWorkflow, MessagePrefixes } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
 import create, { StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
+import { FormStateStoreNames } from './names';
 
 export interface FormState {
     displayValidation: boolean;

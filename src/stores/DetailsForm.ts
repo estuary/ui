@@ -1,16 +1,13 @@
 import { JsonFormsCore } from '@jsonforms/core';
 import { useEntityType } from 'context/EntityContext';
-import {
-    DetailsFormStoreNames,
-    registerStores,
-    useZustandStoreMap,
-} from 'context/Zustand';
+import { registerStores, useZustandStoreMap } from 'context/Zustand';
 import produce from 'immer';
 import { isEmpty, isEqual } from 'lodash';
 import { Entity } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
 import { createStore, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
+import { DetailsFormStoreNames } from './names';
 
 const storeName = (entityType: Entity): DetailsFormStoreNames => {
     switch (entityType) {

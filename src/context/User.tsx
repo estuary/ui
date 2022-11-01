@@ -1,5 +1,5 @@
 import { Auth } from '@supabase/ui';
-import { unauthenticatedRoutes } from 'app/Unauthenticated';
+import { unauthenticatedRoutes } from 'app/routes';
 import { useClient } from 'hooks/supabase-swr';
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';

@@ -1,9 +1,9 @@
-import { StoreName } from 'context/Zustand';
 import {
     createContext as createReactContext,
     ReactNode,
     useContext,
 } from 'react';
+import { StoreName } from 'stores/names';
 import useConstant from 'use-constant';
 import { StoreApi, useStore } from 'zustand';
 

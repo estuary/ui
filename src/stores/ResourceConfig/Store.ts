@@ -3,11 +3,11 @@ import {
     getLiveSpecsByLiveSpecId,
     getSchema_Resource,
 } from 'api/hydration';
-import { ResourceConfigStoreNames } from 'context/Zustand';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import { difference, has, isEmpty, isEqual, map, omit } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
+import { ResourceConfigStoreNames } from 'stores/names';
 import { Schema } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
 import create, { StoreApi } from 'zustand';

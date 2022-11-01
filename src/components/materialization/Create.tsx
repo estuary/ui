@@ -1,4 +1,4 @@
-import { authenticatedRoutes } from 'app/Authenticated';
+import { authenticatedRoutes } from 'app/routes';
 import {
     useEditorStore_id,
     useEditorStore_setId,

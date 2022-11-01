@@ -24,7 +24,7 @@ import {
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
 import Title from 'components/tables/Title';
-import { SelectTableStoreNames, useZustandStore } from 'context/Zustand';
+import { useZustandStore } from 'context/Zustand';
 import { Query, useSelect } from 'hooks/supabase-swr';
 import { debounce } from 'lodash';
 import {
@@ -38,6 +38,7 @@ import {
 } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useEffectOnce } from 'react-use';
+import { SelectTableStoreNames } from 'stores/names';
 import {
     SortDirection,
     TableIntlConfig,

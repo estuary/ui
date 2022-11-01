@@ -16,10 +16,10 @@ import {
     semiTransparentBackgroundIntensified,
     tableBorderSx,
 } from 'context/Theme';
-import { EditorStoreNames } from 'context/Zustand';
 import { concat } from 'lodash';
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { EditorStoreNames } from 'stores/names';
 import { Entity } from 'types';
 
 interface Props {

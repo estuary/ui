@@ -1,10 +1,7 @@
 import { useEntityType } from 'context/EntityContext';
-import { ShardDetailStoreNames, useZustandStore } from 'context/Zustand';
+import { useZustandStore } from 'context/Zustand';
+import { ShardDetailStoreNames } from 'stores/names';
 import { Entity } from 'types';
-import { devtoolsOptions } from 'utils/store-utils';
-import create from 'zustand';
-import { devtools } from 'zustand/middleware';
-import { getInitialState } from './Store';
 import { ShardDetailStore } from './types';
 
 const storeName = (entityType: Entity): ShardDetailStoreNames => {
@@ -17,12 +14,6 @@ const storeName = (entityType: Entity): ShardDetailStoreNames => {
             throw new Error('Invalid ShardDetail store name');
         }
     }
-};
-
-export const createShardDetailStore = (key: ShardDetailStoreNames) => {
-    return create<ShardDetailStore>()(
-        devtools((set, get) => getInitialState(set, get), devtoolsOptions(key))
-    );
 };
 
 export const useShardDetail_shards = () => {

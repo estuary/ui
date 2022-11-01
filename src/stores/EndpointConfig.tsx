@@ -1,7 +1,6 @@
 import { getLiveSpecsByLiveSpecId, getSchema_Endpoint } from 'api/hydration';
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
-import { EndpointConfigStoreNames } from 'context/Zustand';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import { isEmpty, isEqual, map } from 'lodash';
@@ -23,6 +22,7 @@ import { parseEncryptedEndpointConfig } from 'utils/sops-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { createStore, StoreApi, useStore } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
+import { EndpointConfigStoreNames } from './names';
 
 export interface EndpointConfigState {
     endpointSchema: Schema;

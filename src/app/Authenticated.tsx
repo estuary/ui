@@ -1,4 +1,3 @@
-import { unauthenticatedRoutes } from 'app/Unauthenticated';
 import AppLayout from 'AppLayout';
 import AccessGrants from 'components/admin/AccessGrants';
 import AdminApi from 'components/admin/Api';
@@ -23,80 +22,7 @@ import Materializations from 'pages/Materializations';
 import { Route, Routes } from 'react-router';
 import { EndpointConfigProvider } from 'stores/EndpointConfig';
 import { isProduction } from 'utils/env-utils';
-
-export const authenticatedRoutes = {
-    oauth: {
-        path: '/oauth',
-    },
-    admin: {
-        title: 'routeTitle.admin',
-        path: '/admin',
-        accessGrants: {
-            title: 'routeTitle.admin.accessGrants',
-            path: 'accessGrants',
-            fullPath: '/admin/accessGrants',
-        },
-        api: {
-            title: 'routeTitle.admin.api',
-            path: 'api',
-            fullPath: '/admin/api',
-        },
-        connectors: {
-            title: 'routeTitle.admin.connectors',
-            path: 'connectors',
-            fullPath: '/admin/connectors',
-        },
-    },
-    captures: {
-        title: 'routeTitle.captures',
-        path: '/captures',
-        create: {
-            title: 'routeTitle.captureCreate',
-            path: `create`,
-            fullPath: '/captures/create',
-        },
-        edit: {
-            title: 'routeTitle.captureEdit',
-            path: `edit`,
-            fullPath: '/captures/edit',
-        },
-    },
-    collections: {
-        title: 'routeTitle.collections',
-        path: '/collections',
-    },
-    home: {
-        title: 'routeTitle.home',
-        path: '/',
-    },
-    materializations: {
-        title: 'routeTitle.materializations',
-        path: '/materializations',
-        create: {
-            title: 'routeTitle.materializationCreate',
-            path: 'create',
-            fullPath: '/materializations/create',
-        },
-        edit: {
-            title: 'routeTitle.materializationEdit',
-            path: 'edit',
-            fullPath: '/materializations/edit',
-        },
-    },
-    user: {
-        title: 'routeTitle.user',
-        path: '/user',
-        registration: {
-            title: 'routeTitle.registration',
-            path: 'register',
-            fullPath: '/user/register',
-        },
-    },
-    pageNotFound: {
-        title: 'routeTitle.error.pageNotFound',
-        path: '*',
-    },
-};
+import { authenticatedRoutes, unauthenticatedRoutes } from './routes';
 
 const Authenticated = () => {
     // TODO: Determine whether a context provider or a hook should be used to fetch the initial auth gateway URL and token.

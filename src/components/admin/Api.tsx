@@ -6,7 +6,7 @@ import {
     Typography,
 } from '@mui/material';
 import { Auth } from '@supabase/ui';
-import { authenticatedRoutes } from 'app/Authenticated';
+import { authenticatedRoutes } from 'app/routes';
 import AdminTabs from 'components/admin/Tabs';
 import PageContainer from 'components/shared/PageContainer';
 import useBrowserTitle from 'hooks/useBrowserTitle';

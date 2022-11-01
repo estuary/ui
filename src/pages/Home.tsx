@@ -1,6 +1,6 @@
 //TODO (UI / UX) - These icons are not final
 import { Toolbar, Typography } from '@mui/material';
-import { authenticatedRoutes } from 'app/Authenticated';
+import { authenticatedRoutes } from 'app/routes';
 import HeroImageAndDescription from 'components/hero';
 import PageContainer from 'components/shared/PageContainer';
 import useBrowserTitle from 'hooks/useBrowserTitle';

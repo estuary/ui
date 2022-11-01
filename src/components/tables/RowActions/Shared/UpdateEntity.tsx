@@ -13,7 +13,7 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
-import { SelectTableStoreNames, useZustandStore } from 'context/Zustand';
+import { useZustandStore } from 'context/Zustand';
 import {
     LiveSpecsExtQueryWithSpec,
     useLiveSpecsExtWithSpec,
@@ -21,6 +21,7 @@ import {
 import usePublications from 'hooks/usePublications';
 import { useEffect, useState } from 'react';
 import { jobSucceeded } from 'services/supabase';
+import { SelectTableStoreNames } from 'stores/names';
 import { Entity } from 'types';
 
 export interface UpdateEntityProps {

@@ -1,4 +1,4 @@
-import { authenticatedRoutes } from 'app/Authenticated';
+import { authenticatedRoutes } from 'app/routes';
 import CaptureGenerateButton from 'components/capture/GenerateButton';
 import {
     useEditorStore_id,
