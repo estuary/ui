@@ -213,7 +213,7 @@ function CaptureCreate() {
                 return helpers.callFailed({
                     error: {
                         title: 'captureCreate.generate.failedErrorTitle',
-                        error: draftSpecsResponse.error,
+                        error: updatedDraftSpecsResponse.error,
                     },
                 });
             }
