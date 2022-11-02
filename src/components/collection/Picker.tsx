@@ -20,6 +20,7 @@ import {
 } from 'stores/ResourceConfig';
 import { ENTITY } from 'types';
 import useConstant from 'use-constant';
+import { detectRemoveOptionWithBackspace } from 'utils/mui-utils';
 
 interface Props {
     readOnly?: boolean;
@@ -117,10 +118,10 @@ function CollectionPicker({ readOnly = false }: Props) {
             value: CollectionData[],
             reason: AutocompleteChangeReason
         ) => {
-            const removeOptionWithBackspace =
-                event.type === 'keydown' &&
-                (event as React.KeyboardEvent).key === 'Backspace' &&
-                reason === 'removeOption';
+            const removeOptionWithBackspace = detectRemoveOptionWithBackspace(
+                event,
+                reason
+            );
 
             if (!removeOptionWithBackspace) {
                 setResourceConfig(value.map(({ name }) => name));
