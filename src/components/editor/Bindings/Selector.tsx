@@ -1,6 +1,6 @@
 import { Clear } from '@mui/icons-material';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import { Box, IconButton, ListItemText, TypographyProps } from '@mui/material';
+import { Box, IconButton, ListItemText } from '@mui/material';
 import {
     DataGrid,
     GridColDef,
@@ -10,7 +10,11 @@ import {
 } from '@mui/x-data-grid';
 import CollectionPicker from 'components/collection/Picker';
 import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
-import { alternativeDataGridHeader, slateOutline } from 'context/Theme';
+import {
+    alternativeDataGridHeader,
+    slateOutline,
+    typographyTruncation,
+} from 'context/Theme';
 import { useEntityWorkflow } from 'context/Workflow';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -98,13 +102,6 @@ const initialState = {
         columnVisibilityModel: {
             spec_type: false,
         },
-    },
-};
-
-const typographyTruncation: TypographyProps = {
-    noWrap: true,
-    sx: {
-        minWidth: 0,
     },
 };
 

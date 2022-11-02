@@ -5,6 +5,7 @@ import {
     Theme,
     ThemeOptions,
     ThemeProvider as MUIThemeProvider,
+    TypographyProps,
     useMediaQuery,
 } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -166,6 +167,13 @@ export const slateOutline = {
 
 export const outlineSx: SxProps<Theme> = {
     border: `1px solid ${slate[200]}`,
+};
+
+export const typographyTruncation: TypographyProps = {
+    noWrap: true,
+    sx: {
+        minWidth: 0,
+    },
 };
 
 // TODO (Colors) need to follow a pattern where all colors are in the theme file.
