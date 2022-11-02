@@ -38,13 +38,13 @@ interface BindingSelectorProps {
     readOnly?: boolean;
 }
 
-interface DeleteButtonProps {
+interface RowProps {
     collection: string;
     task: string;
     disabled: boolean;
 }
 
-function DeleteButton({ collection, task, disabled }: DeleteButtonProps) {
+function Row({ collection, task, disabled }: RowProps) {
     const workflow = useEntityWorkflow();
 
     const discoveredCollections = useResourceConfig_discoveredCollections();
@@ -87,13 +87,20 @@ function DeleteButton({ collection, task, disabled }: DeleteButtonProps) {
     };
 
     return (
-        <IconButton
-            disabled={disabled}
-            size="small"
-            onClick={handlers.removeCollection}
-        >
-            <Clear />
-        </IconButton>
+        <>
+            <ListItemText
+                primary={collection}
+                primaryTypographyProps={typographyTruncation}
+            />
+
+            <IconButton
+                disabled={disabled}
+                size="small"
+                onClick={handlers.removeCollection}
+            >
+                <Clear />
+            </IconButton>
+        </>
     );
 }
 
@@ -148,12 +155,8 @@ function BindingSelector({
                     return (
                         <>
                             <ErrorOutlineIcon color="error" sx={{ pr: 1 }} />
-                            <ListItemText
-                                primary={params.row}
-                                primaryTypographyProps={typographyTruncation}
-                            />
 
-                            <DeleteButton
+                            <Row
                                 collection={params.row}
                                 task={task}
                                 disabled={formActive}
@@ -163,18 +166,11 @@ function BindingSelector({
                 }
 
                 return (
-                    <>
-                        <ListItemText
-                            primary={params.row}
-                            primaryTypographyProps={typographyTruncation}
-                        />
-
-                        <DeleteButton
-                            collection={params.row}
-                            task={task}
-                            disabled={formActive}
-                        />
-                    </>
+                    <Row
+                        collection={params.row}
+                        task={task}
+                        disabled={formActive}
+                    />
                 );
             },
             valueGetter: (params: GridValueGetterParams) => params.row,
