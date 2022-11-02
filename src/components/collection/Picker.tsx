@@ -9,7 +9,7 @@ import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
 import useDraftSpecs from 'hooks/useDraftSpecs';
 import useLiveSpecs from 'hooks/useLiveSpecs';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useFormStateStore_isActive } from 'stores/FormState';
 import {
@@ -71,12 +71,18 @@ function CollectionPicker({ readOnly = false }: Props) {
         isValidating: isValidatingDraftSpecs,
     } = useDraftSpecs(persistedDraftId);
 
-    useEffect(() => {
-        const populateCollectionData =
-            entityType === ENTITY.MATERIALIZATION
-                ? liveSpecs.length > 0
-                : !isValidatingLiveSpecs && !isValidatingDraftSpecs;
+    const populateCollectionData = useMemo(() => {
+        return entityType === ENTITY.MATERIALIZATION
+            ? liveSpecs.length > 0
+            : !isValidatingLiveSpecs && !isValidatingDraftSpecs;
+    }, [
+        entityType,
+        liveSpecs.length,
+        isValidatingDraftSpecs,
+        isValidatingLiveSpecs,
+    ]);
 
+    useEffect(() => {
         if (populateCollectionData) {
             let collectionsOnServer: CollectionData[] = liveSpecs.map(
                 ({ catalog_name }) => ({
@@ -106,9 +112,8 @@ function CollectionPicker({ readOnly = false }: Props) {
         collections,
         draftSpecs,
         entityType,
-        isValidatingDraftSpecs,
-        isValidatingLiveSpecs,
         liveSpecs,
+        populateCollectionData,
         workflow,
     ]);
 
