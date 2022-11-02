@@ -50,9 +50,7 @@ function ListAndDetails({
                         className="pane-content"
                         style={{
                             height: heightVal,
-                            border: displayBorder
-                                ? slateOutline[200]
-                                : undefined,
+                            border: displayBorder ? slateOutline : undefined,
                         }}
                     >
                         {list}
@@ -77,7 +75,7 @@ function ListAndDetails({
                     minSize={MIN_RESIZE_WIDTH}
                     style={{
                         overflow: 'auto',
-                        border: displayBorder ? slateOutline[200] : '',
+                        border: displayBorder ? slateOutline : undefined,
                     }}
                 >
                     <div className="pane-content">{details}</div>

@@ -231,14 +231,14 @@ function BindingSelector({
                             cursor: 'pointer',
                         },
                         '& .MuiDataGrid-cell': {
-                            borderBottom: slateOutline[200],
+                            borderBottom: slateOutline,
                         },
                         '& .MuiDataGrid-columnSeparator': {
                             display: 'none',
                         },
                         '& .MuiDataGrid-columnHeaders': {
-                            borderTop: slateOutline[200],
-                            borderBottom: slateOutline[200],
+                            borderTop: slateOutline,
+                            borderBottom: slateOutline,
                             bgcolor: (theme) =>
                                 alternativeDataGridHeader[theme.palette.mode],
                         },

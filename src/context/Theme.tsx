@@ -161,9 +161,7 @@ export const tableAlternateRowsSx: SxProps<Theme> = {
 };
 
 // TODO (optimization): Replace instances of outlineSx with slateOutline.
-export const slateOutline = {
-    200: `1px solid ${slate[200]}`,
-};
+export const slateOutline = `1px solid ${slate[200]}`;
 
 export const outlineSx: SxProps<Theme> = {
     border: `1px solid ${slate[200]}`,
