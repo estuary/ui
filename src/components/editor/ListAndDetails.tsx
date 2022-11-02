@@ -50,7 +50,9 @@ function ListAndDetails({
                         className="pane-content"
                         style={{
                             height: heightVal,
-                            border: displayBorder ? slateOutline[200] : '',
+                            border: displayBorder
+                                ? slateOutline[200]
+                                : undefined,
                         }}
                     >
                         {list}
