@@ -201,12 +201,9 @@ function CaptureCreate() {
         }
 
         if (draftSpecsResponse.data && draftSpecsResponse.data.length > 0) {
-            const existingCollections = Object.keys(resourceConfig);
-
             const updatedDraftSpecsResponse = await modifyDiscoveredDraftSpec(
                 draftSpecsResponse,
                 resourceConfig,
-                existingCollections,
                 restrictedDiscoveredCollections
             );
             if (updatedDraftSpecsResponse.error) {
@@ -224,7 +221,7 @@ function CaptureCreate() {
             ) {
                 storeUpdatedBindings(
                     updatedDraftSpecsResponse,
-                    existingCollections,
+                    resourceConfig,
                     restrictedDiscoveredCollections,
                     addCollection,
                     setResourceConfig,

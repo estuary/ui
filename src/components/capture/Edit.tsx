@@ -231,14 +231,11 @@ function CaptureEdit() {
         }
 
         if (draftSpecsResponse.data && draftSpecsResponse.data.length > 0) {
-            const existingCollections = Object.keys(resourceConfig);
-
             setDiscoveredCollections(draftSpecsResponse.data[0]);
 
             const updatedDraftSpecsResponse = await modifyDiscoveredDraftSpec(
                 draftSpecsResponse,
                 resourceConfig,
-                existingCollections,
                 restrictedDiscoveredCollections,
                 lastPubId
             );
@@ -258,7 +255,7 @@ function CaptureEdit() {
             ) {
                 storeUpdatedBindings(
                     updatedDraftSpecsResponse,
-                    existingCollections,
+                    resourceConfig,
                     restrictedDiscoveredCollections,
                     addCollection,
                     setResourceConfig,

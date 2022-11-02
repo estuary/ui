@@ -6,9 +6,9 @@ import { ResourceConfigDictionary } from 'stores/ResourceConfig';
 const mergeResourceConfigs = (
     queryData: DraftSpecQuery,
     resourceConfig: ResourceConfigDictionary,
-    existingCollections: string[],
     restrictedDiscoveredCollections: string[]
 ): ResourceConfigDictionary => {
+    const existingCollections = Object.keys(resourceConfig);
     const mergedResourceConfig = {};
 
     Object.entries(resourceConfig).forEach(([key, value]) => {
@@ -36,7 +36,6 @@ export const modifyDiscoveredDraftSpec = async (
         error?: undefined;
     },
     resourceConfig: ResourceConfigDictionary,
-    existingCollections: string[],
     restrictedDiscoveredCollections: string[],
     lastPubId?: string
 ): Promise<CallSupabaseResponse<any>> => {
@@ -45,7 +44,6 @@ export const modifyDiscoveredDraftSpec = async (
     const mergedResourceConfig = mergeResourceConfigs(
         draftSpecData,
         resourceConfig,
-        existingCollections,
         restrictedDiscoveredCollections
     );
 
@@ -66,12 +64,13 @@ export const modifyDiscoveredDraftSpec = async (
 
 export const storeUpdatedBindings = (
     response: any,
-    existingCollections: string[],
+    resourceConfig: ResourceConfigDictionary,
     restrictedDiscoveredCollections: string[],
     addCollection: Function,
     setResourceConfig: Function,
     setCurrentCollection: Function
 ): void => {
+    const existingCollections = Object.keys(resourceConfig);
     const updatedBindings = response.data[0].spec.bindings;
 
     updatedBindings.forEach((binding: any) => {
