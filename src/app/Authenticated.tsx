@@ -29,6 +29,8 @@ const Authenticated = () => {
     // The context provider results in a duped, gateway auth token API call.
     useGatewayAuthToken();
 
+    console.log('Authenticated');
+
     return (
         <AuthenticatedOnlyContext>
             <Routes>

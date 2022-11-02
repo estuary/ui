@@ -667,12 +667,12 @@ const Tenant: ResolvedIntlConfig['messages'] = {
 
     'tenant.help.title': `Example`,
 
-    'tenant.help.example.title': `A capture would have a name like {name}`,
+    'tenant.help.example.title': `A capture could have a name like: {name}`,
     'tenant.help.example.name': `acmeCo/marketingData/googleAds`,
 
-    'tenant.help.example.details': `When naming an entity you do a few things. First, you select which prefix you want to use. Second, you provide a name. Third, we sometimes automatically add the Connector name to the end.`,
+    'tenant.help.example.details': `When naming an entity you do a few things. First, you select which prefix (acmeCo) you want to use. Second, you provide a name (marketingData). Third, we sometimes automatically add the Connector name (googleAds) to the end.`,
 
-    'tenant.help.example.breakdown': `A way to think about it is like this: {template}`,
+    'tenant.help.example.breakdown': `The basic template is this: {template}`,
     'tenant.help.example.template': `{prefix}/{name you provide}/{connector}`,
 
     'tenant.expectations': `You can use letters, numbers, periods, underscores, and hyphens`,

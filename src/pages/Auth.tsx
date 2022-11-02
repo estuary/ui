@@ -1,3 +1,4 @@
+import { Auth as SupabaseAuth } from '@supabase/ui';
 import { authenticatedRoutes } from 'app/routes';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import { useClient } from 'hooks/supabase-swr';
@@ -16,6 +17,7 @@ const Auth = () => {
     const navigate = useNavigate();
     const supabaseClient = useClient();
     const { enqueueSnackbar } = useSnackbar();
+    const { user } = SupabaseAuth.useUser();
 
     const failed = async (error: string) => {
         enqueueSnackbar(error, {
@@ -29,18 +31,26 @@ const Auth = () => {
         await supabaseClient.auth.signOut();
     };
 
-    supabaseClient.auth
-        .getSessionFromUrl({
-            storeSession: true,
-        })
-        .then(async (response) => {
-            if (response.error) {
-                await failed(response.error.message);
-            }
+    const success = () => {
+        navigate(authenticatedRoutes.home.path);
+    };
 
-            navigate(authenticatedRoutes.home.path);
-        })
-        .catch(() => {});
+    if (!user) {
+        supabaseClient.auth
+            .getSessionFromUrl({
+                storeSession: true,
+            })
+            .then(async (response) => {
+                if (response.error) {
+                    await failed(response.error.message);
+                }
+
+                success();
+            })
+            .catch(() => {});
+    } else {
+        success();
+    }
 
     return <FullPageSpinner />;
 };
