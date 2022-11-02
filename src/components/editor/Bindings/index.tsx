@@ -1,7 +1,7 @@
 import { Typography, useTheme } from '@mui/material';
 import {
-    CollectionSelectorSkeleton,
-    ResourceConfigFormSkeleton,
+    BindingsEditorSkeleton,
+    BindingsSelectorSkeleton,
 } from 'components/collection/CollectionSkeletons';
 import BindingsEditor from 'components/editor/Bindings/Editor';
 import BindingSelector from 'components/editor/Bindings/Selector';
@@ -117,15 +117,24 @@ function BindingsMultiEditor({ draftSpecs = [], readOnly = false }: Props) {
             </Typography>
 
             <ListAndDetails
-                list={<BindingSelector readOnly={readOnly} />}
-                details={<BindingsEditor readOnly={readOnly} />}
+                list={
+                    <BindingSelector
+                        loading={fetchingSpecs}
+                        skeleton={<BindingsSelectorSkeleton />}
+                        readOnly={readOnly}
+                    />
+                }
+                details={
+                    <BindingsEditor
+                        loading={fetchingSpecs}
+                        skeleton={<BindingsEditorSkeleton />}
+                        readOnly={readOnly}
+                    />
+                }
                 backgroundColor={
                     alternativeReflexContainerBackground[theme.palette.mode]
                 }
                 displayBorder={true}
-                loading={fetchingSpecs}
-                leftPaneSkeleton={<CollectionSelectorSkeleton />}
-                rightPaneSkeleton={<ResourceConfigFormSkeleton />}
             />
         </>
     );

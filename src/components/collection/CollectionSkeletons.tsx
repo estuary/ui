@@ -1,6 +1,6 @@
 import { Box, Skeleton, Stack } from '@mui/material';
 
-export function CollectionSelectorSkeleton() {
+export function BindingsSelectorSkeleton() {
     return (
         <Box sx={{ p: 1 }}>
             <Skeleton variant="rectangular" height={40} sx={{ mb: 2 }} />
@@ -18,7 +18,7 @@ export function CollectionSelectorSkeleton() {
     );
 }
 
-export function ResourceConfigFormSkeleton() {
+export function BindingsEditorSkeleton() {
     return (
         <Box sx={{ p: 1 }}>
             <Skeleton

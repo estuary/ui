@@ -66,7 +66,10 @@ export interface ResourceConfigState {
     setDiscoveredCollections: (value: DraftSpecQuery) => void;
 
     restrictedDiscoveredCollections: string[];
-    setRestrictedDiscoveredCollections: (collection: string) => void;
+    setRestrictedDiscoveredCollections: (
+        collection: string,
+        nativeCollectionFlag?: boolean
+    ) => void;
 
     // Resource Config
     resourceConfig: ResourceConfigDictionary;
@@ -340,7 +343,7 @@ const getInitialState = (
         );
     },
 
-    setRestrictedDiscoveredCollections: (value) => {
+    setRestrictedDiscoveredCollections: (value, nativeCollectionFlag) => {
         set(
             produce((state: ResourceConfigState) => {
                 const {
@@ -348,17 +351,25 @@ const getInitialState = (
                     restrictedDiscoveredCollections,
                 } = get();
 
+                let restrictedCollections: string[] =
+                    restrictedDiscoveredCollections;
+
                 if (restrictedDiscoveredCollections.includes(value)) {
-                    state.restrictedDiscoveredCollections =
+                    restrictedCollections =
                         restrictedDiscoveredCollections.filter(
                             (collection) => collection !== value
                         );
-                } else if (discoveredCollections?.includes(value)) {
-                    state.restrictedDiscoveredCollections = [
+                } else if (
+                    discoveredCollections?.includes(value) ||
+                    nativeCollectionFlag
+                ) {
+                    restrictedCollections = [
                         value,
                         ...restrictedDiscoveredCollections,
                     ];
                 }
+
+                state.restrictedDiscoveredCollections = restrictedCollections;
             }),
             false,
             'Restricted Discovered Collections Set'

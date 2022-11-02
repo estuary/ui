@@ -41,6 +41,16 @@ function CollectionPicker({ readOnly = false }: Props) {
             id: 'entityCreate.bindingsConfig.collectionsLabel',
         })
     );
+    const discoveredCollectionsLabel = useConstant(() =>
+        intl.formatMessage({
+            id: 'workflows.collectionSelector.label.discoveredCollections',
+        })
+    );
+    const existingCollectionsLabel = useConstant(() =>
+        intl.formatMessage({
+            id: 'workflows.collectionSelector.label.existingCollections',
+        })
+    );
 
     const [collectionData, setCollectionData] = useState<CollectionData[]>([]);
     const [missingInput, setMissingInput] = useState(false);
@@ -74,8 +84,11 @@ function CollectionPicker({ readOnly = false }: Props) {
     const populateCollectionData = useMemo(() => {
         return entityType === ENTITY.MATERIALIZATION
             ? liveSpecs.length > 0
-            : !isValidatingLiveSpecs && !isValidatingDraftSpecs;
+            : !isValidatingLiveSpecs &&
+                  !isValidatingDraftSpecs &&
+                  draftSpecs.length > 0;
     }, [
+        draftSpecs.length,
         entityType,
         liveSpecs.length,
         isValidatingDraftSpecs,
@@ -87,7 +100,7 @@ function CollectionPicker({ readOnly = false }: Props) {
             let collectionsOnServer: CollectionData[] = liveSpecs.map(
                 ({ catalog_name }) => ({
                     name: catalog_name,
-                    classification: 'Existing Collections',
+                    classification: existingCollectionsLabel,
                 })
             );
 
@@ -99,7 +112,7 @@ function CollectionPicker({ readOnly = false }: Props) {
                         )
                         .map(({ catalog_name }) => ({
                             name: catalog_name,
-                            classification: 'Discovered Collections',
+                            classification: discoveredCollectionsLabel,
                         })),
                     ...collectionsOnServer,
                 ];
@@ -110,8 +123,10 @@ function CollectionPicker({ readOnly = false }: Props) {
     }, [
         setCollectionData,
         collections,
+        discoveredCollectionsLabel,
         draftSpecs,
         entityType,
+        existingCollectionsLabel,
         liveSpecs,
         populateCollectionData,
         workflow,
@@ -168,7 +183,7 @@ function CollectionPicker({ readOnly = false }: Props) {
                             ({ name }) => name === collectionName
                         ) ?? {
                             name: collectionName,
-                            classification: 'Existing Collections',
+                            classification: existingCollectionsLabel,
                         }
                 )}
                 size="small"

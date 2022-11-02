@@ -15,9 +15,6 @@ export interface Props {
     height?: number;
     backgroundColor?: string;
     displayBorder?: boolean;
-    loading?: boolean;
-    leftPaneSkeleton?: ReactNode;
-    rightPaneSkeleton?: ReactNode;
 }
 
 const MIN_RESIZE_WIDTH = 25;
@@ -29,9 +26,6 @@ function ListAndDetails({
     details,
     height,
     displayBorder,
-    loading,
-    leftPaneSkeleton,
-    rightPaneSkeleton,
 }: Props) {
     const theme = useTheme();
 
@@ -59,7 +53,7 @@ function ListAndDetails({
                             border: displayBorder ? slateOutline[200] : '',
                         }}
                     >
-                        {leftPaneSkeleton && loading ? leftPaneSkeleton : list}
+                        {list}
                     </div>
                 </ReflexElement>
 
@@ -84,11 +78,7 @@ function ListAndDetails({
                         border: displayBorder ? slateOutline[200] : '',
                     }}
                 >
-                    <div className="pane-content">
-                        {rightPaneSkeleton && loading
-                            ? rightPaneSkeleton
-                            : details}
-                    </div>
+                    <div className="pane-content">{details}</div>
                 </ReflexElement>
             </ReflexContainer>
         </Box>

@@ -49,6 +49,7 @@ import {
     useResourceConfig_resetState,
     useResourceConfig_restrictedDiscoveredCollections,
     useResourceConfig_setCurrentCollection,
+    useResourceConfig_setDiscoveredCollections,
     useResourceConfig_setResourceConfig,
 } from 'stores/ResourceConfig';
 import { ENTITY, JsonFormsData } from 'types';
@@ -110,6 +111,9 @@ function CaptureCreate() {
 
     const addCollection = useResourceConfig_addCollection();
     const setCurrentCollection = useResourceConfig_setCurrentCollection();
+
+    const setDiscoveredCollections =
+        useResourceConfig_setDiscoveredCollections();
 
     const setResourceConfig = useResourceConfig_setResourceConfig();
 
@@ -201,6 +205,8 @@ function CaptureCreate() {
         }
 
         if (draftSpecsResponse.data && draftSpecsResponse.data.length > 0) {
+            setDiscoveredCollections(draftSpecsResponse.data[0]);
+
             const updatedDraftSpecsResponse = await modifyDiscoveredDraftSpec(
                 draftSpecsResponse,
                 resourceConfig,

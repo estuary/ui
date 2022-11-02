@@ -11,27 +11,39 @@ import {
 import CollectionPicker from 'components/collection/Picker';
 import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
 import { alternativeDataGridHeader, slateOutline } from 'context/Theme';
-import { useEffect, useRef, useState } from 'react';
+import { useEntityWorkflow } from 'context/Workflow';
+import { ReactNode, useEffect, useRef, useState } from 'react';
+import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
+import { useDetailsForm_details_entityName } from 'stores/DetailsForm';
 import { useFormStateStore_isActive } from 'stores/FormState';
 import {
     useResourceConfig_currentCollection,
+    useResourceConfig_discoveredCollections,
     useResourceConfig_removeCollection,
     useResourceConfig_resourceConfig,
     useResourceConfig_setCurrentCollection,
     useResourceConfig_setRestrictedDiscoveredCollections,
 } from 'stores/ResourceConfig';
+import useConstant from 'use-constant';
+import { hasLength } from 'utils/misc-utils';
 
 interface BindingSelectorProps {
+    loading: boolean;
+    skeleton: ReactNode;
     readOnly?: boolean;
 }
 
 interface DeleteButtonProps {
     collection: string;
+    task: string;
     disabled: boolean;
 }
 
-function DeleteButton({ collection, disabled }: DeleteButtonProps) {
+function DeleteButton({ collection, task, disabled }: DeleteButtonProps) {
+    const workflow = useEntityWorkflow();
+
+    const discoveredCollections = useResourceConfig_discoveredCollections();
     const removeCollection = useResourceConfig_removeCollection();
 
     const setRestrictedDiscoveredCollections =
@@ -42,7 +54,31 @@ function DeleteButton({ collection, disabled }: DeleteButtonProps) {
             event.preventDefault();
 
             removeCollection(collection);
-            setRestrictedDiscoveredCollections(collection);
+
+            if (
+                workflow === 'capture_edit' &&
+                !hasLength(discoveredCollections)
+            ) {
+                let catalogName = task;
+
+                const lastSlashIndex = task.lastIndexOf('/');
+
+                if (lastSlashIndex !== -1) {
+                    catalogName = task.slice(0, lastSlashIndex);
+                }
+
+                const nativeCollectionDetected =
+                    collection.includes(catalogName);
+
+                nativeCollectionDetected
+                    ? setRestrictedDiscoveredCollections(
+                          collection,
+                          nativeCollectionDetected
+                      )
+                    : setRestrictedDiscoveredCollections(collection);
+            } else {
+                setRestrictedDiscoveredCollections(collection);
+            }
         },
     };
 
@@ -72,8 +108,22 @@ const typographyTruncation: TypographyProps = {
     },
 };
 
-function BindingSelector({ readOnly }: BindingSelectorProps) {
+function BindingSelector({
+    loading,
+    skeleton,
+    readOnly,
+}: BindingSelectorProps) {
     const onSelectTimeOut = useRef<number | null>(null);
+
+    const intl = useIntl();
+    const collectionsLabel = useConstant(() =>
+        intl.formatMessage({
+            id: 'workflows.collectionSelector.label.listHeader',
+        })
+    );
+
+    // Details Form Store
+    const task = useDetailsForm_details_entityName();
 
     // Form State Store
     const formActive = useFormStateStore_isActive();
@@ -94,7 +144,7 @@ function BindingSelector({ readOnly }: BindingSelectorProps) {
         {
             field: 'name',
             flex: 1,
-            headerName: 'Collections',
+            headerName: collectionsLabel,
             renderCell: (params: GridRenderCellParams) => {
                 const currentConfig = resourceConfig[params.row];
                 if (currentConfig.errors.length > 0) {
@@ -108,6 +158,7 @@ function BindingSelector({ readOnly }: BindingSelectorProps) {
 
                             <DeleteButton
                                 collection={params.row}
+                                task={task}
                                 disabled={formActive}
                             />
                         </>
@@ -123,6 +174,7 @@ function BindingSelector({ readOnly }: BindingSelectorProps) {
 
                         <DeleteButton
                             collection={params.row}
+                            task={task}
                             disabled={formActive}
                         />
                     </>
@@ -140,7 +192,9 @@ function BindingSelector({ readOnly }: BindingSelectorProps) {
         if (onSelectTimeOut.current) clearTimeout(onSelectTimeOut.current);
     });
 
-    return (
+    return loading ? (
+        <Box>{skeleton}</Box>
+    ) : (
         <>
             <CollectionPicker readOnly={readOnly} />
 
