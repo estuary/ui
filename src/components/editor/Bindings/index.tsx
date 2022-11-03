@@ -127,8 +127,6 @@ function BindingsMultiEditor({ draftSpecs = [], readOnly = false }: Props) {
                 );
             }
 
-            console.log('truncated catalog', truncatedServerCatalogName);
-
             return truncatedServerCatalogName
                 ? truncatedServerCatalogName !== catalogName
                 : false;

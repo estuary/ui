@@ -442,10 +442,6 @@ const getInitialState = (
                 const { collections, discoveredCollections, resourceConfig } =
                     get();
 
-                console.log('collections', collections);
-                console.log('discovered collections', discoveredCollections);
-                console.log('config', resourceConfig);
-
                 if (collections && discoveredCollections) {
                     state.collections = collections.filter(
                         (collection) =>
@@ -457,8 +453,6 @@ const getInitialState = (
                             ? state.collections[0]
                             : null;
 
-                    console.log('filtered collections', state.collections);
-
                     const reducedResourceConfig = {};
 
                     Object.entries(resourceConfig).forEach(([key, value]) => {
@@ -466,8 +460,6 @@ const getInitialState = (
                             reducedResourceConfig[key] = value;
                         }
                     });
-
-                    console.log('reduced config', reducedResourceConfig);
 
                     state.resourceConfig = reducedResourceConfig;
                 }
