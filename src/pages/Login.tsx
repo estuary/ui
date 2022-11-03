@@ -18,7 +18,7 @@ const Login = () => {
 
     return (
         <FullPageDialog>
-            <Box>
+            <Box sx={{ mt: 2 }}>
                 <Typography align="center" sx={{ mb: 4 }}>
                     <FormattedMessage id="login.oidc.message" />
                 </Typography>

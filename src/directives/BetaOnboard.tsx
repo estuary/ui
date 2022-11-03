@@ -1,38 +1,24 @@
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { LoadingButton } from '@mui/lab';
-import {
-    Box,
-    Button,
-    Collapse,
-    Stack,
-    TextField,
-    Toolbar,
-    Typography,
-} from '@mui/material';
+import { Stack, TextField, Toolbar, Typography } from '@mui/material';
 import { submitDirective } from 'api/directives';
 import AlertBox from 'components/shared/AlertBox';
+import ExternalLink from 'components/shared/ExternalLink';
 import { PREFIX_NAME_PATTERN } from 'components/tables/Details/StatusIndicatorAndLabel';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useNavigate } from 'react-router-dom';
 import { jobStatusPoller } from 'services/supabase';
 import { hasLength } from 'utils/misc-utils';
 import { DirectiveStates, jobStatusQuery } from './shared';
+import { DirectiveProps } from './types';
 
 const submit_onboard = async (requestedTenant: string, directive: any) => {
     return submitDirective('betaOnboard', directive, requestedTenant);
 };
 
-interface Props {
-    directive: any;
-    status: DirectiveStates;
-}
-
-const BetaOnboard = ({ directive, status }: Props) => {
+const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
     console.log('Guard:Form:BetaOnBoard', { directive, status });
 
     const intl = useIntl();
-    const navigate = useNavigate();
 
     const exchangedTokenAlready = status === DirectiveStates.IN_PROGRESS;
 
@@ -40,11 +26,6 @@ const BetaOnboard = ({ directive, status }: Props) => {
     const [saving, setSaving] = useState(false);
     const [nameMissing, setNameMissing] = useState(false);
     const [serverError, setServerError] = useState<string | null>(null);
-
-    const [showExample, setShowExample] = useState(false);
-    const toggleExample = () => {
-        setShowExample(!showExample);
-    };
 
     const handlers = {
         update: (updatedValue: string) => {
@@ -76,7 +57,7 @@ const BetaOnboard = ({ directive, status }: Props) => {
                 jobStatusPoller(
                     jobStatusQuery(data),
                     async () => {
-                        navigate(0);
+                        void mutate();
                     },
                     async (payload: any) => {
                         setSaving(false);
@@ -130,64 +111,22 @@ const BetaOnboard = ({ directive, status }: Props) => {
                     <FormattedMessage id="tenant.message.2" />
                 </Typography>
 
-                <Box>
-                    <Button
-                        variant="text"
-                        onClick={toggleExample}
-                        endIcon={
-                            <ExpandMoreIcon
-                                sx={{
-                                    transform: `rotate(${
-                                        showExample ? '180' : '0'
-                                    }deg)`,
-                                    transition: (theme) =>
-                                        `${theme.transitions.duration.shortest}ms`,
-                                }}
-                            />
-                        }
-                    >
-                        <FormattedMessage id="tenant.help.title" />
-                    </Button>
-                    <Collapse in={showExample} unmountOnExit>
-                        <Box sx={{ p: 2, pt: 0 }}>
-                            <Stack spacing={2}>
-                                <Typography>
-                                    <FormattedMessage
-                                        id="tenant.help.example.title"
-                                        values={{
-                                            name: (
-                                                <Typography
-                                                    sx={{ fontWeight: 'bold' }}
-                                                >
-                                                    <FormattedMessage id="tenant.help.example.name" />
-                                                </Typography>
-                                            ),
-                                        }}
-                                    />
-                                </Typography>
-
-                                <Typography>
-                                    <FormattedMessage id="tenant.help.example.details" />
-                                </Typography>
-
-                                <Typography>
-                                    <FormattedMessage
-                                        id="tenant.help.example.breakdown"
-                                        values={{
-                                            template: (
-                                                <Typography
-                                                    sx={{ fontWeight: 'bold' }}
-                                                >
-                                                    <FormattedMessage id="tenant.help.example.template" />
-                                                </Typography>
-                                            ),
-                                        }}
-                                    />
-                                </Typography>
-                            </Stack>
-                        </Box>
-                    </Collapse>
-                </Box>
+                <Typography>
+                    <FormattedMessage
+                        id="tenant.docs.message"
+                        values={{
+                            link: (
+                                <ExternalLink
+                                    link={intl.formatMessage({
+                                        id: 'tenant.docs.message.link',
+                                    })}
+                                >
+                                    <FormattedMessage id="terms.documentation" />
+                                </ExternalLink>
+                            ),
+                        }}
+                    />
+                </Typography>
             </Stack>
 
             <form noValidate onSubmit={handlers.submit}>

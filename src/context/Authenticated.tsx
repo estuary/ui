@@ -6,11 +6,13 @@ import { BaseComponentProps } from 'types';
 // This is for contexts that should only be added to the app after the user has authenticated
 function AuthenticatedOnlyContext({ children }: BaseComponentProps) {
     return (
-        <ConfirmationModalContextProvider>
-            <PreFetchDataProvider>
-                <ZustandProvider>{children}</ZustandProvider>
-            </PreFetchDataProvider>
-        </ConfirmationModalContextProvider>
+        <PreFetchDataProvider>
+            <ZustandProvider>
+                <ConfirmationModalContextProvider>
+                    {children}
+                </ConfirmationModalContextProvider>
+            </ZustandProvider>
+        </PreFetchDataProvider>
     );
 }
 

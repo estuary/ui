@@ -6,15 +6,18 @@ import OnboardGuard from './OnboardGuard';
 function TenantGuard({ children }: BaseComponentProps) {
     console.log('Guard:Tenant');
 
-    const { combinedGrants, isValidating: checkingGrants } =
-        useCombinedGrantsExt({
-            singleCall: true,
-        });
+    const {
+        combinedGrants,
+        isValidating: checkingGrants,
+        mutate,
+    } = useCombinedGrantsExt({
+        singleCall: true,
+    });
 
     if (checkingGrants) {
         return <FullPageSpinner />;
     } else if (combinedGrants.length === 0) {
-        return <OnboardGuard />;
+        return <OnboardGuard grantsMutate={mutate} />;
     } else {
         // eslint-disable-next-line react/jsx-no-useless-fragment
         return <>{children}</>;

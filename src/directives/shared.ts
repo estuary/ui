@@ -69,7 +69,7 @@ export const DIRECTIVES: Directives = {
                 appliedDirective.user_claims.requestedTenant &&
                 appliedDirective.user_claims.requestedTenant.length > 0
             ) {
-                return DirectiveStates.OUTDATED;
+                return DirectiveStates.IN_PROGRESS;
             }
 
             if (appliedDirective.job_status.type === 'success') {

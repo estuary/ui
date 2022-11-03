@@ -11,14 +11,14 @@ import AlertBox from 'components/shared/AlertBox';
 import ExternalLink from 'components/shared/ExternalLink';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useNavigate } from 'react-router-dom';
 import { jobStatusPoller } from 'services/supabase';
 import { getUrls } from 'utils/env-utils';
 import { DirectiveStates, jobStatusQuery } from './shared';
+import { DirectiveProps } from './types';
 
 const urls = getUrls();
 
-export const CLICK_TO_ACCEPT_LATEST_VERSION = 'v1';
+export const CLICK_TO_ACCEPT_LATEST_VERSION = 'v2';
 
 const submit_clickToAccept = async (directive: any) => {
     return submitDirective(
@@ -28,15 +28,10 @@ const submit_clickToAccept = async (directive: any) => {
     );
 };
 
-interface Props {
-    directive: any;
-    status: DirectiveStates;
-}
-
-const ClickToAccept = ({ directive, status }: Props) => {
+const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
     console.log('Guard:Form:ClickToAccept', { directive, status });
 
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     const [acknowledgedDocuments, setAcknowledgedDocuments] =
         useState<boolean>(false);
@@ -74,7 +69,7 @@ const ClickToAccept = ({ directive, status }: Props) => {
                 jobStatusPoller(
                     jobStatusQuery(data),
                     async () => {
-                        navigate(0);
+                        void mutate();
                     },
                     async (payload: any) => {
                         setSaving(false);
@@ -107,20 +102,6 @@ const ClickToAccept = ({ directive, status }: Props) => {
                     />
                 </Typography>
 
-                <FormattedMessage
-                    id={!outdated ? 'legal.message' : 'legal.message.outdated'}
-                />
-
-                <Stack spacing={1}>
-                    <ExternalLink link={urls.privacyPolicy}>
-                        <FormattedMessage id="legal.docs.privacy" />
-                    </ExternalLink>
-
-                    <ExternalLink link={urls.termsOfService}>
-                        <FormattedMessage id="legal.docs.terms" />
-                    </ExternalLink>
-                </Stack>
-
                 {showErrors ? (
                     <AlertBox
                         short
@@ -140,6 +121,26 @@ const ClickToAccept = ({ directive, status }: Props) => {
                         {serverError}
                     </AlertBox>
                 ) : null}
+
+                <Typography>
+                    <FormattedMessage
+                        id={
+                            !outdated
+                                ? 'legal.message'
+                                : 'legal.message.outdated'
+                        }
+                    />
+                </Typography>
+
+                <Stack spacing={1}>
+                    <ExternalLink link={urls.privacyPolicy}>
+                        <FormattedMessage id="legal.docs.privacy" />
+                    </ExternalLink>
+
+                    <ExternalLink link={urls.termsOfService}>
+                        <FormattedMessage id="legal.docs.terms" />
+                    </ExternalLink>
+                </Stack>
             </Stack>
 
             <form

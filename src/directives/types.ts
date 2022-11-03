@@ -1,4 +1,6 @@
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
+import { SuccessResponse } from 'hooks/supabase-swr';
+import { KeyedMutator } from 'swr';
 import { AppliedDirective, JoinedAppliedDirective } from 'types';
 import { DirectiveStates } from './shared';
 
@@ -22,4 +24,10 @@ export interface DirectiveSettings<T> {
     calculateStatus: (
         appliedDirective?: AppliedDirective<T> | null
     ) => DirectiveStates;
+}
+
+export interface DirectiveProps {
+    directive: any;
+    status: DirectiveStates;
+    mutate: KeyedMutator<SuccessResponse<JoinedAppliedDirective>>;
 }

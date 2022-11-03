@@ -8,7 +8,7 @@ import useDirectiveGuard from './hooks';
 const SELECTED_DIRECTIVE = 'clickToAccept';
 
 function LegalGuard({ children }: BaseComponentProps) {
-    const { directive, loading, status } =
+    const { directive, loading, status, mutate } =
         useDirectiveGuard(SELECTED_DIRECTIVE);
 
     if (loading || status === null) {
@@ -16,7 +16,11 @@ function LegalGuard({ children }: BaseComponentProps) {
     } else if (status !== DirectiveStates.FUFILLED) {
         return (
             <FullPageWrapper>
-                <ClickToAccept directive={directive} status={status} />
+                <ClickToAccept
+                    directive={directive}
+                    status={status}
+                    mutate={mutate}
+                />
             </FullPageWrapper>
         );
     } else {

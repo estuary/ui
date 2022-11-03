@@ -12,12 +12,14 @@ function useAppliedDirectives(directive: keyof typeof DIRECTIVES) {
         TABLES.APPLIED_DIRECTIVES,
         {
             columns: `
+                id,
+                directive_id,
                 job_status,
-                    logs_token,
-                    user_id,
-                    user_claims,
-                    updated_at,
-                    directives !inner(spec->>type)
+                logs_token,
+                user_id,
+                user_claims,
+                updated_at,
+                directives !inner(spec->>type)
             `,
             filter: (query) => {
                 let queryBuilder = query;

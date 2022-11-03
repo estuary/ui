@@ -63,6 +63,7 @@
         "react-reflex": "^4.0.9",
         "react-router": "^6.3.0",
         "react-router-dom": "^6.3.0",
+        "react-social-login-buttons": "^3.6.1",
         "react-stay-scrolled": "^8.0.0",
         "react-use": "^17.4.0",
         "safe-stable-stringify": "^2.3.1",

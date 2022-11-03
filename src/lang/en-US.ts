@@ -67,6 +67,9 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'alert.warning': 'Warning!',
     'alert.success': 'Success!',
     'alert.info': 'Important!',
+
+    // Used in directives
+    'directives.returning': `Welcome back. You still need to provide some information before using the application.`,
 };
 
 const CTAs: ResolvedIntlConfig['messages'] = {
@@ -98,6 +101,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.table': `Table`,
     'cta.list': `List`,
     'cta.expandToView': `Expand to view`,
+    'cta.login.github': `Sign in with GitHub`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
@@ -279,6 +283,7 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
     'login.separator': 'or',
     'login.loginFailed': 'Failed to sign in',
     'login.loginFailed.google': 'Failed to sign in with Google',
+    'login.loginFailed.github': 'Failed to sign in with GitHub',
     'login.userNotFound': 'User not found. Please sign up below.',
 };
 
@@ -653,7 +658,7 @@ const Legal: ResolvedIntlConfig['messages'] = {
     'legal.heading': `Legal Stuff`,
     'legal.heading.outdated': `Updated Legal Stuff`,
     'legal.message': `Please use the links below to open and review the documents before checking accept and continuing.`,
-    'legal.message.outdated': `There has been changes to our legal documents you need to review. Please use the links below to view the documents before checking accept and continuing.`,
+    'legal.message.outdated': `There have been changes to our legal documents you need to review. Please use the links below to view the documents before checking accept and continuing.`,
     'legal.docs.terms': `Terms of Service`,
     'legal.docs.privacy': `Privacy Policy`,
     'legal.docs.accept': 'I accept the {privacy} and {terms}',
@@ -667,21 +672,14 @@ const Tenant: ResolvedIntlConfig['messages'] = {
     'tenant.message.1': `The organization name will be used as a prefix on everything you create within Estuary. This helps with scoping, controling access, labeling ownership, and more.`,
     'tenant.message.2': `This beings as private but becomes public if you share anything or invite others to join your organization.`,
 
-    'tenant.help.title': `Example`,
-
-    'tenant.help.example.title': `A capture could have a name like: {name}`,
-    'tenant.help.example.name': `acmeCo/marketingData/googleAds`,
-
-    'tenant.help.example.details': `When naming an entity you do a few things. First, you select which prefix (acmeCo) you want to use. Second, you provide a name (marketingData). Third, we sometimes automatically add the Connector name (googleAds) to the end.`,
-
-    'tenant.help.example.breakdown': `The basic template is this: {template}`,
-    'tenant.help.example.template': `{prefix}/{name you provide}/{connector}`,
-
     'tenant.expectations': `You can use letters, numbers, periods, underscores, and hyphens`,
     'tenant.expectations.error': `Sorry, only letters(a-z), numbers(0-9), periods(.), underscores(_), and hyphens(-) allowed.`,
 
     'tenant.input.placeholder': `acmeCo`,
     'tenant.errorMessage.empty': `You must provide a name before continuing.`,
+
+    'tenant.docs.message': `To see a detail explination please view our {link}`,
+    'tenant.docs.message.link': `https://docs.estuary.dev/concepts/catalogs/#namespace`,
 };
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {
