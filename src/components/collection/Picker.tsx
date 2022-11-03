@@ -183,7 +183,11 @@ function CollectionPicker({ readOnly = false }: Props) {
                             ({ name }) => name === collectionName
                         ) ?? {
                             name: collectionName,
-                            classification: existingCollectionsLabel,
+                            classification: discoveredCollections?.includes(
+                                collectionName
+                            )
+                                ? discoveredCollectionsLabel
+                                : existingCollectionsLabel,
                         }
                 )}
                 size="small"
