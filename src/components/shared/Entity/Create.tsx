@@ -3,6 +3,7 @@ import CollectionConfig from 'components/collection/Config';
 import ConnectorTiles from 'components/ConnectorTiles';
 import {
     useEditorStore_id,
+    useEditorStore_persistedDraftId,
     useEditorStore_setId,
 } from 'components/editor/Store';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
@@ -18,7 +19,8 @@ import useGlobalSearchParams, {
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
-import { ReactNode, useEffect, useState } from 'react';
+import { DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     useDetailsForm_changed,
@@ -31,26 +33,30 @@ import {
     useFormStateStore_logToken,
     useFormStateStore_messagePrefix,
 } from 'stores/FormState';
-import { EntityWithCreateWorkflow } from 'types';
+import { useResourceConfig_serverUpdateRequired } from 'stores/ResourceConfig';
+import { ENTITY, EntityWithCreateWorkflow } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import AlertBox from '../AlertBox';
 
 interface Props {
     title: string;
-    connectorType: EntityWithCreateWorkflow;
+    entityType: EntityWithCreateWorkflow;
+    draftSpecMetadata: Pick<
+        DraftSpecSwrMetadata,
+        'draftSpecs' | 'isValidating' | 'error'
+    >;
+    resetState: () => void;
     toolbar: ReactNode;
     errorSummary: ReactNode;
-    resetState: () => void;
-    showCollections?: boolean;
 }
 
 function EntityCreate({
     title,
-    connectorType,
-    toolbar,
-    showCollections,
+    entityType,
+    draftSpecMetadata,
     resetState,
     errorSummary,
+    toolbar,
 }: Props) {
     useBrowserTitle(title);
 
@@ -72,7 +78,7 @@ function EntityCreate({
         connectorTags,
         error: connectorTagsError,
         isValidating,
-    } = useConnectorWithTagDetail(connectorType);
+    } = useConnectorWithTagDetail(entityType);
 
     // Details Form Store
     const imageTag = useDetailsForm_connectorImage();
@@ -81,6 +87,8 @@ function EntityCreate({
     // Draft Editor Store
     const draftId = useEditorStore_id();
     const setDraftId = useEditorStore_setId();
+
+    const persistedDraftId = useEditorStore_persistedDraftId();
 
     // Endpoint Config Store
     const endpointConfigChanged = useEndpointConfigStore_changed();
@@ -93,6 +101,17 @@ function EntityCreate({
     const logToken = useFormStateStore_logToken();
 
     const formSubmitError = useFormStateStore_error();
+
+    // Resource Config Store
+    const resourceConfigServerUpdateRequired =
+        useResourceConfig_serverUpdateRequired();
+
+    const { draftSpecs } = draftSpecMetadata;
+
+    const taskDraftSpec = useMemo(
+        () => draftSpecs.filter(({ spec_type }) => spec_type === entityType),
+        [draftSpecs, entityType]
+    );
 
     // Reset the catalog if the connector changes
     useEffect(() => {
@@ -107,9 +126,20 @@ function EntityCreate({
         }
     }, [connectorID]);
 
+    useEffect(() => {
+        setDraftId(
+            resourceConfigServerUpdateRequired ? null : persistedDraftId
+        );
+    }, [setDraftId, persistedDraftId, resourceConfigServerUpdateRequired]);
+
     const promptDataLoss = detailsFormChanged() || endpointConfigChanged();
 
     useUnsavedChangesPrompt(!exitWhenLogsClose && promptDataLoss, resetState);
+
+    const displayResourceConfig =
+        entityType === ENTITY.MATERIALIZATION
+            ? hasLength(imageTag.id)
+            : hasLength(imageTag.id) && persistedDraftId;
 
     if (showConnectorTiles === null) return null;
     return (
@@ -123,10 +153,7 @@ function EntityCreate({
                     <FormattedMessage id="entityCreate.instructions" />
                 </Typography>
 
-                <ConnectorTiles
-                    protocolPreset={connectorType}
-                    replaceOnNavigate
-                />
+                <ConnectorTiles protocolPreset={entityType} replaceOnNavigate />
             </Collapse>
 
             <Collapse in={!showConnectorTiles} unmountOnExit>
@@ -158,7 +185,7 @@ function EntityCreate({
                                 <DetailsForm
                                     connectorTags={connectorTags}
                                     accessGrants={combinedGrants}
-                                    entityType={connectorType}
+                                    entityType={entityType}
                                 />
                             </ErrorBoundryWrapper>
                         ) : null}
@@ -169,9 +196,9 @@ function EntityCreate({
                             </ErrorBoundryWrapper>
                         ) : null}
 
-                        {showCollections && hasLength(imageTag.id) ? (
+                        {displayResourceConfig ? (
                             <ErrorBoundryWrapper>
-                                <CollectionConfig />
+                                <CollectionConfig draftSpecs={taskDraftSpec} />
                             </ErrorBoundryWrapper>
                         ) : null}
 

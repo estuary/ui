@@ -40,7 +40,7 @@ export const getSchema_Resource = async (connectorId: string | null) => {
     return resourceSchema;
 };
 
-const liveSpecColumns = `id,spec_type,spec,writes_to,reads_from`;
+const liveSpecColumns = `id,spec_type,spec,writes_to,reads_from,last_pub_id`;
 
 export const getLiveSpecsByLiveSpecId = async (
     liveSpecId: string,

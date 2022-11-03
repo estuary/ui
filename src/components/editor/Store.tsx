@@ -30,14 +30,16 @@ export interface EditorStoreState<T> {
     id: string | null;
     setId: (newVal: EditorStoreState<T>['id']) => void;
 
-    editDraftId: string | null;
-    setEditDraftId: (newVal: EditorStoreState<T>['editDraftId']) => void;
+    persistedDraftId: string | null;
+    setPersistedDraftId: (
+        newVal: EditorStoreState<T>['persistedDraftId']
+    ) => void;
 
     pubId: string | null;
     setPubId: (newVal: EditorStoreState<T>['pubId']) => void;
 
     // TODO: Resolve conflicting type. Determine whether current catalog can be a DraftSpecQuery, LiveSpecsQuery_spec, or null.
-    // See the FileSelector component for reference.
+    //   See the FileSelector component for reference.
     currentCatalog: DraftSpecQuery | null;
     setCurrentCatalog: (newVal: EditorStoreState<T>['currentCatalog']) => void;
 
@@ -60,7 +62,7 @@ const getInitialStateData = () => {
     return {
         currentCatalog: null,
         id: null,
-        editDraftId: null,
+        persistedDraftId: null,
         pubId: null,
         specs: null,
         isSaving: false,
@@ -85,13 +87,13 @@ const getInitialState = <T,>(
             );
         },
 
-        setEditDraftId: (newVal) => {
+        setPersistedDraftId: (newVal) => {
             set(
                 produce((state) => {
-                    state.editDraftId = newVal;
+                    state.persistedDraftId = newVal;
                 }),
                 false,
-                'Set edit draft id'
+                'Set persisted draft id'
             );
         },
 
@@ -159,9 +161,11 @@ const getInitialState = <T,>(
         resetState: (excludeEditDraftId) => {
             set(
                 () => {
-                    const { editDraftId, ...rest } = getInitialStateData();
+                    const { persistedDraftId, ...rest } = getInitialStateData();
 
-                    return excludeEditDraftId ? rest : { editDraftId, ...rest };
+                    return excludeEditDraftId
+                        ? rest
+                        : { persistedDraftId, ...rest };
                 },
                 false,
                 'Resetting Editor State'
@@ -226,7 +230,7 @@ export const useEditorStore_setId = (params?: SelectorParams | undefined) => {
     >(storeName(entityType, localScope), (state) => state.setId);
 };
 
-export const useEditorStore_editDraftId = (
+export const useEditorStore_persistedDraftId = (
     params?: SelectorParams | undefined
 ) => {
     const localScope = params?.localScope;
@@ -239,11 +243,11 @@ export const useEditorStore_editDraftId = (
 
     return useZustandStore<
         EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['editDraftId']
-    >(storeName(entityType, localScope), (state) => state.editDraftId);
+        EditorStoreState<DraftSpecQuery>['persistedDraftId']
+    >(storeName(entityType, localScope), (state) => state.persistedDraftId);
 };
 
-export const useEditorStore_setEditDraftId = (
+export const useEditorStore_setPersistedDraftId = (
     params?: SelectorParams | undefined
 ) => {
     const localScope = params?.localScope;
@@ -256,8 +260,8 @@ export const useEditorStore_setEditDraftId = (
 
     return useZustandStore<
         EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['setEditDraftId']
-    >(storeName(entityType, localScope), (state) => state.setEditDraftId);
+        EditorStoreState<DraftSpecQuery>['setPersistedDraftId']
+    >(storeName(entityType, localScope), (state) => state.setPersistedDraftId);
 };
 
 export const useEditorStore_pubId = (params?: SelectorParams | undefined) => {

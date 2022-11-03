@@ -1,9 +1,13 @@
+import { getDraftSpecsBySpecType } from 'api/draftSpecs';
 import { authenticatedRoutes } from 'app/Authenticated';
 import CaptureGenerateButton from 'components/capture/GenerateButton';
 import {
     useEditorStore_id,
+    useEditorStore_persistedDraftId,
     useEditorStore_pubId,
+    useEditorStore_resetState,
     useEditorStore_setId,
+    useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
@@ -14,6 +18,7 @@ import PageContainer from 'components/shared/PageContainer';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
+import useDraftSpecs from 'hooks/useDraftSpecs';
 import LogRocket from 'logrocket';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -37,8 +42,22 @@ import {
     useFormStateStore_resetState,
     useFormStateStore_setFormState,
 } from 'stores/FormState';
-import { ENTITY } from 'types';
+import {
+    ResourceConfigDictionary,
+    ResourceConfigHydrator,
+    useResourceConfig_addCollection,
+    useResourceConfig_resetState,
+    useResourceConfig_restrictedDiscoveredCollections,
+    useResourceConfig_setCurrentCollection,
+    useResourceConfig_setDiscoveredCollections,
+    useResourceConfig_setResourceConfig,
+} from 'stores/ResourceConfig';
+import { ENTITY, JsonFormsData } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
+import {
+    modifyDiscoveredDraftSpec,
+    storeUpdatedBindings,
+} from 'utils/workflow-utils';
 
 const trackEvent = (payload: any) => {
     LogRocket.track(CustomEvents.CAPTURE_DISCOVER, {
@@ -70,7 +89,12 @@ function CaptureCreate() {
     const draftId = useEditorStore_id();
     const setDraftId = useEditorStore_setId();
 
+    const persistedDraftId = useEditorStore_persistedDraftId();
+    const setPersistedDraftId = useEditorStore_setPersistedDraftId();
+
     const pubId = useEditorStore_pubId();
+
+    const resetEditorStore = useEditorStore_resetState();
 
     // Endpoint Config Store
     const resetEndpointConfigState = useEndpointConfigStore_reset();
@@ -81,6 +105,23 @@ function CaptureCreate() {
     const resetFormState = useFormStateStore_resetState();
     const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
 
+    // Resource Config Store
+    const restrictedDiscoveredCollections =
+        useResourceConfig_restrictedDiscoveredCollections();
+
+    const addCollection = useResourceConfig_addCollection();
+    const setCurrentCollection = useResourceConfig_setCurrentCollection();
+
+    const setDiscoveredCollections =
+        useResourceConfig_setDiscoveredCollections();
+
+    const setResourceConfig = useResourceConfig_setResourceConfig();
+
+    const resetResourceConfigState = useResourceConfig_resetState();
+
+    const { mutate: mutateDraftSpecs, ...draftSpecsMetadata } =
+        useDraftSpecs(persistedDraftId);
+
     // Reset the catalog if the connector changes
     useEffect(() => {
         setDraftId(null);
@@ -89,7 +130,9 @@ function CaptureCreate() {
     const resetState = () => {
         resetDetailsForm();
         resetEndpointConfigState();
+        resetResourceConfigState();
         resetFormState();
+        resetEditorStore();
     };
 
     const helpers = {
@@ -141,8 +184,70 @@ function CaptureCreate() {
         },
     };
 
-    const discoversSubscription = (discoverDraftId: string) => {
+    const storeDiscoveredCollections = async (
+        newDraftId: string,
+        resourceConfig: ResourceConfigDictionary
+    ) => {
+        // TODO (optimization | typing): Narrow the columns selected from the draft_specs_ext table.
+        //   More columns are selected than required to appease the typing of the editor store.
+        const draftSpecsResponse = await getDraftSpecsBySpecType(
+            newDraftId,
+            entityType
+        );
+
+        if (draftSpecsResponse.error) {
+            return helpers.callFailed({
+                error: {
+                    title: 'captureCreate.generate.failedErrorTitle',
+                    error: draftSpecsResponse.error,
+                },
+            });
+        }
+
+        if (draftSpecsResponse.data && draftSpecsResponse.data.length > 0) {
+            setDiscoveredCollections(draftSpecsResponse.data[0]);
+
+            const updatedDraftSpecsResponse = await modifyDiscoveredDraftSpec(
+                draftSpecsResponse,
+                resourceConfig,
+                restrictedDiscoveredCollections
+            );
+            if (updatedDraftSpecsResponse.error) {
+                return helpers.callFailed({
+                    error: {
+                        title: 'captureCreate.generate.failedErrorTitle',
+                        error: updatedDraftSpecsResponse.error,
+                    },
+                });
+            }
+
+            if (
+                updatedDraftSpecsResponse.data &&
+                updatedDraftSpecsResponse.data.length > 0
+            ) {
+                storeUpdatedBindings(
+                    updatedDraftSpecsResponse,
+                    resourceConfig,
+                    restrictedDiscoveredCollections,
+                    addCollection,
+                    setResourceConfig,
+                    setCurrentCollection
+                );
+            }
+        }
+
+        setDraftId(newDraftId);
+        setPersistedDraftId(newDraftId);
+    };
+
+    // TODO (optimization): Create a shared discovers table subscription.
+    const discoversSubscription = (
+        discoverDraftId: string,
+        _existingEndpointConfig: JsonFormsData,
+        resourceConfig: ResourceConfigDictionary
+    ) => {
         setDraftId(null);
+
         jobStatusPoller(
             supabaseClient
                 .from(TABLES.DISCOVERS)
@@ -156,10 +261,17 @@ function CaptureCreate() {
                     draft_id: discoverDraftId,
                 }),
             (payload: any) => {
-                setDraftId(payload.draft_id);
+                void storeDiscoveredCollections(
+                    payload.draft_id,
+                    resourceConfig
+                );
+
+                void mutateDraftSpecs();
+
                 setFormState({
                     status: FormStatus.GENERATED,
                 });
+
                 trackEvent(payload);
             },
             (payload: any) => {
@@ -180,44 +292,49 @@ function CaptureCreate() {
                     'https://docs.estuary.dev/guides/create-dataflow/#create-a-capture',
             }}
         >
-            <EntityCreate
-                title="browserTitle.captureCreate"
-                connectorType={entityType}
-                resetState={resetState}
-                errorSummary={
-                    <ValidationErrorSummary
-                        errorsExist={detailsFormErrorsExist}
-                    />
-                }
-                toolbar={
-                    <EntityToolbar
-                        GenerateButton={
-                            <CaptureGenerateButton
-                                disabled={!hasConnectors}
-                                callFailed={helpers.callFailed}
-                                subscription={discoversSubscription}
-                            />
-                        }
-                        TestButton={
-                            <EntityTestButton
-                                closeLogs={handlers.closeLogs}
-                                callFailed={helpers.callFailed}
-                                disabled={!hasConnectors}
-                                logEvent={CustomEvents.CAPTURE_TEST}
-                            />
-                        }
-                        SaveButton={
-                            <EntitySaveButton
-                                closeLogs={handlers.closeLogs}
-                                callFailed={helpers.callFailed}
-                                disabled={!draftId}
-                                materialize={handlers.materializeCollections}
-                                logEvent={CustomEvents.CAPTURE_CREATE}
-                            />
-                        }
-                    />
-                }
-            />
+            <ResourceConfigHydrator>
+                <EntityCreate
+                    title="browserTitle.captureCreate"
+                    entityType={entityType}
+                    draftSpecMetadata={draftSpecsMetadata}
+                    resetState={resetState}
+                    errorSummary={
+                        <ValidationErrorSummary
+                            errorsExist={detailsFormErrorsExist}
+                        />
+                    }
+                    toolbar={
+                        <EntityToolbar
+                            GenerateButton={
+                                <CaptureGenerateButton
+                                    disabled={!hasConnectors}
+                                    callFailed={helpers.callFailed}
+                                    subscription={discoversSubscription}
+                                />
+                            }
+                            TestButton={
+                                <EntityTestButton
+                                    closeLogs={handlers.closeLogs}
+                                    callFailed={helpers.callFailed}
+                                    disabled={!hasConnectors}
+                                    logEvent={CustomEvents.CAPTURE_TEST}
+                                />
+                            }
+                            SaveButton={
+                                <EntitySaveButton
+                                    closeLogs={handlers.closeLogs}
+                                    callFailed={helpers.callFailed}
+                                    disabled={!draftId}
+                                    materialize={
+                                        handlers.materializeCollections
+                                    }
+                                    logEvent={CustomEvents.CAPTURE_CREATE}
+                                />
+                            }
+                        />
+                    }
+                />
+            </ResourceConfigHydrator>
         </PageContainer>
     );
 }

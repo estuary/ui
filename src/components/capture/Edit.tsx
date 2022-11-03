@@ -1,15 +1,14 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
-import { updateExpectedPubId } from 'api/draftSpecs';
+import { getDraftSpecsBySpecType } from 'api/draftSpecs';
 import { authenticatedRoutes } from 'app/Authenticated';
 import CaptureGenerateButton from 'components/capture/GenerateButton';
 import {
-    useEditorStore_editDraftId,
     useEditorStore_id,
+    useEditorStore_persistedDraftId,
     useEditorStore_pubId,
     useEditorStore_resetState,
-    useEditorStore_setEditDraftId,
     useEditorStore_setId,
-    useEditorStore_setSpecs,
+    useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
@@ -22,15 +21,13 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
-import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import useDraftSpecs from 'hooks/useDraftSpecs';
 import LogRocket from 'logrocket';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import {
     DEFAULT_FILTER,
-    handleFailure,
-    handleSuccess,
     jobStatusPoller,
     JOB_STATUS_POLLER_ERROR,
     TABLES,
@@ -52,8 +49,22 @@ import {
     useFormStateStore_resetState,
     useFormStateStore_setFormState,
 } from 'stores/FormState';
+import {
+    ResourceConfigDictionary,
+    ResourceConfigHydrator,
+    useResourceConfig_addCollection,
+    useResourceConfig_resetState,
+    useResourceConfig_restrictedDiscoveredCollections,
+    useResourceConfig_setCurrentCollection,
+    useResourceConfig_setDiscoveredCollections,
+    useResourceConfig_setResourceConfig,
+} from 'stores/ResourceConfig';
 import { ENTITY, JsonFormsData } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
+import {
+    modifyDiscoveredDraftSpec,
+    storeUpdatedBindings,
+} from 'utils/workflow-utils';
 
 const trackEvent = (payload: any) => {
     LogRocket.track(CustomEvents.CAPTURE_DISCOVER, {
@@ -85,12 +96,13 @@ function CaptureEdit() {
     const draftId = useEditorStore_id();
     const setDraftId = useEditorStore_setId();
 
-    const editDraftId = useEditorStore_editDraftId();
-    const setEditDraftId = useEditorStore_setEditDraftId();
+    const persistedDraftId = useEditorStore_persistedDraftId();
+    const setPersistedDraftId = useEditorStore_setPersistedDraftId();
 
     const pubId = useEditorStore_pubId();
 
-    const setDraftSpecs = useEditorStore_setSpecs();
+    const setDiscoveredCollections =
+        useResourceConfig_setDiscoveredCollections();
 
     const resetEditorStore = useEditorStore_resetState();
 
@@ -109,8 +121,19 @@ function CaptureEdit() {
     const resetFormState = useFormStateStore_resetState();
     const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
 
+    // Resource Config Store
+    const restrictedDiscoveredCollections =
+        useResourceConfig_restrictedDiscoveredCollections();
+
+    const addCollection = useResourceConfig_addCollection();
+    const setCurrentCollection = useResourceConfig_setCurrentCollection();
+
+    const setResourceConfig = useResourceConfig_setResourceConfig();
+
+    const resetResourceConfigState = useResourceConfig_resetState();
+
     const { mutate: mutateDraftSpecs, ...draftSpecsMetadata } = useDraftSpecs(
-        editDraftId,
+        persistedDraftId,
         lastPubId
     );
 
@@ -122,6 +145,7 @@ function CaptureEdit() {
     const resetState = () => {
         resetDetailsForm();
         resetEndpointConfigState();
+        resetResourceConfigState();
         resetFormState();
         resetEditorStore();
     };
@@ -188,15 +212,14 @@ function CaptureEdit() {
         },
     };
 
-    const storeUpdatedDraftSpec = async (newDraftId: string) => {
-        // TODO (optimization | typing): Narrow the columns selected from the draft_specs_ext table.
-        //   More columns are selected than required to appease the typing of the editor store.
-        const draftSpecsResponse = await supabaseClient
-            .from(TABLES.DRAFT_SPECS_EXT)
-            .select(`catalog_name,draft_id,expect_pub_id,spec,spec_type`)
-            .eq('draft_id', newDraftId)
-            .eq('spec_type', ENTITY.CAPTURE)
-            .then(handleSuccess<DraftSpecQuery[]>, handleFailure);
+    const storeUpdatedDraftSpec = async (
+        newDraftId: string,
+        resourceConfig: ResourceConfigDictionary
+    ) => {
+        const draftSpecsResponse = await getDraftSpecsBySpecType(
+            newDraftId,
+            entityType
+        );
 
         if (draftSpecsResponse.error) {
             return helpers.callFailed({
@@ -208,39 +231,55 @@ function CaptureEdit() {
         }
 
         if (draftSpecsResponse.data && draftSpecsResponse.data.length > 0) {
-            const { draft_id } = draftSpecsResponse.data[0];
+            setDiscoveredCollections(draftSpecsResponse.data[0]);
 
-            const updatedDraftSpecResponse = await updateExpectedPubId(
-                draft_id,
+            const updatedDraftSpecsResponse = await modifyDiscoveredDraftSpec(
+                draftSpecsResponse,
+                resourceConfig,
+                restrictedDiscoveredCollections,
                 lastPubId
             );
 
-            if (updatedDraftSpecResponse.error) {
+            if (updatedDraftSpecsResponse.error) {
                 return helpers.callFailed({
                     error: {
                         title: 'captureEdit.generate.failedErrorTitle',
-                        error: updatedDraftSpecResponse.error,
+                        error: updatedDraftSpecsResponse.error,
                     },
                 });
             }
 
-            setDraftSpecs(draftSpecsResponse.data);
+            if (
+                updatedDraftSpecsResponse.data &&
+                updatedDraftSpecsResponse.data.length > 0
+            ) {
+                storeUpdatedBindings(
+                    updatedDraftSpecsResponse,
+                    resourceConfig,
+                    restrictedDiscoveredCollections,
+                    addCollection,
+                    setResourceConfig,
+                    setCurrentCollection
+                );
 
-            void mutateDraftSpecs();
-
-            setEncryptedEndpointConfig(
-                {
-                    data: draftSpecsResponse.data[0].spec.endpoint.connector
-                        .config,
-                },
-                'capture_edit'
-            );
+                setEncryptedEndpointConfig(
+                    {
+                        data: updatedDraftSpecsResponse.data[0].spec.endpoint
+                            .connector.config,
+                    },
+                    'capture_edit'
+                );
+            }
         }
+
+        setDraftId(newDraftId);
+        setPersistedDraftId(newDraftId);
     };
 
     const discoversSubscription = (
         discoverDraftId: string,
-        existingEndpointConfig: JsonFormsData
+        existingEndpointConfig: JsonFormsData,
+        resourceConfig: ResourceConfigDictionary
     ) => {
         setDraftId(null);
 
@@ -259,10 +298,7 @@ function CaptureEdit() {
                 })
                 .order('created_at', { ascending: false }),
             (payload: any) => {
-                setDraftId(payload.draft_id);
-                setEditDraftId(payload.draft_id);
-
-                void storeUpdatedDraftSpec(payload.draft_id);
+                void storeUpdatedDraftSpec(payload.draft_id, resourceConfig);
 
                 void mutateDraftSpecs();
 
@@ -285,48 +321,57 @@ function CaptureEdit() {
     };
 
     return (
-        <PageContainer>
-            <EntityEdit
-                title="browserTitle.captureEdit"
-                entityType={entityType}
-                readOnly={{ detailsForm: true }}
-                draftSpecMetadata={draftSpecsMetadata}
-                callFailed={helpers.callFailed}
-                resetState={resetState}
-                errorSummary={
-                    <ValidationErrorSummary
-                        errorsExist={detailsFormErrorsExist}
-                    />
-                }
-                toolbar={
-                    <EntityToolbar
-                        GenerateButton={
-                            <CaptureGenerateButton
-                                disabled={!hasConnectors}
-                                callFailed={helpers.callFailed}
-                                subscription={discoversSubscription}
-                            />
-                        }
-                        TestButton={
-                            <EntityTestButton
-                                closeLogs={handlers.closeLogs}
-                                callFailed={helpers.callFailed}
-                                disabled={!hasConnectors}
-                                logEvent={CustomEvents.CAPTURE_TEST}
-                            />
-                        }
-                        SaveButton={
-                            <EntitySaveButton
-                                closeLogs={handlers.closeLogs}
-                                callFailed={helpers.callFailed}
-                                disabled={!draftId}
-                                materialize={handlers.materializeCollections}
-                                logEvent={CustomEvents.CAPTURE_EDIT}
-                            />
-                        }
-                    />
-                }
-            />
+        <PageContainer
+            pageTitleProps={{
+                header: authenticatedRoutes.captures.edit.title,
+            }}
+        >
+            <ResourceConfigHydrator>
+                <EntityEdit
+                    title="browserTitle.captureEdit"
+                    entityType={entityType}
+                    readOnly={{ detailsForm: true }}
+                    draftSpecMetadata={draftSpecsMetadata}
+                    showCollections
+                    callFailed={helpers.callFailed}
+                    resetState={resetState}
+                    errorSummary={
+                        <ValidationErrorSummary
+                            errorsExist={detailsFormErrorsExist}
+                        />
+                    }
+                    toolbar={
+                        <EntityToolbar
+                            GenerateButton={
+                                <CaptureGenerateButton
+                                    disabled={!hasConnectors}
+                                    callFailed={helpers.callFailed}
+                                    subscription={discoversSubscription}
+                                />
+                            }
+                            TestButton={
+                                <EntityTestButton
+                                    closeLogs={handlers.closeLogs}
+                                    callFailed={helpers.callFailed}
+                                    disabled={!hasConnectors}
+                                    logEvent={CustomEvents.CAPTURE_TEST}
+                                />
+                            }
+                            SaveButton={
+                                <EntitySaveButton
+                                    closeLogs={handlers.closeLogs}
+                                    callFailed={helpers.callFailed}
+                                    disabled={!draftId}
+                                    materialize={
+                                        handlers.materializeCollections
+                                    }
+                                    logEvent={CustomEvents.CAPTURE_EDIT}
+                                />
+                            }
+                        />
+                    }
+                />
+            </ResourceConfigHydrator>
         </PageContainer>
     );
 }

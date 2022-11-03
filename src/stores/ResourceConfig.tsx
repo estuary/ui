@@ -7,13 +7,23 @@ import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
 import { ResourceConfigStoreNames, useZustandStore } from 'context/Zustand';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
+import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
-import { difference, has, isEmpty, isEqual, map, omit } from 'lodash';
+import {
+    difference,
+    has,
+    isEmpty,
+    isEqual,
+    map,
+    omit,
+    pick,
+    sortBy,
+} from 'lodash';
 import { ReactNode } from 'react';
 import { useEffectOnce } from 'react-use';
 import { createJSONFormDefaults } from 'services/ajv';
-import { ENTITY, EntityWorkflow, JsonFormsData, Schema } from 'types';
+import { ENTITY, JsonFormsData, Schema } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
 import create, { StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -34,17 +44,37 @@ export interface ResourceConfigState {
     // Collection Selector
     collections: string[] | null;
     preFillEmptyCollections: (collections: LiveSpecsExtQuery[]) => void;
-    preFillCollections: (liveSpecsData: LiveSpecsExtQuery[]) => void;
+    preFillCollections: (
+        liveSpecsData: LiveSpecsExtQuery[],
+        entityType: ENTITY
+    ) => void;
+    addCollection: (value: string) => void;
+    removeCollection: (value: string) => void;
+
+    collectionRemovalMetadata: {
+        selectedCollection: string | null;
+        removedCollection: string;
+        index: number;
+    };
 
     collectionErrorsExist: boolean;
 
     currentCollection: string | null;
     setCurrentCollection: (collections: string | null) => void;
 
+    discoveredCollections: string[] | null;
+    setDiscoveredCollections: (value: DraftSpecQuery) => void;
+
+    restrictedDiscoveredCollections: string[];
+    setRestrictedDiscoveredCollections: (
+        collection: string,
+        nativeCollectionFlag?: boolean
+    ) => void;
+
     // Resource Config
     resourceConfig: ResourceConfigDictionary;
     setResourceConfig: (
-        key: string | [string],
+        key: string | string[],
         resourceConfig?: ResourceConfig
     ) => void;
 
@@ -62,7 +92,7 @@ export interface ResourceConfigState {
     hydrationErrorsExist: boolean;
     setHydrationErrorsExist: (value: boolean) => void;
 
-    hydrateState: (workflow: EntityWorkflow) => Promise<void>;
+    hydrateState: (editWorkflow: boolean, entityType: ENTITY) => Promise<void>;
 
     // Server-Form Alignment
     serverUpdateRequired: boolean;
@@ -117,24 +147,34 @@ const getInitialStateData = (): Pick<
     ResourceConfigState,
     | 'collections'
     | 'collectionErrorsExist'
+    | 'collectionRemovalMetadata'
     | 'currentCollection'
+    | 'discoveredCollections'
     | 'hydrated'
     | 'hydrationErrorsExist'
     | 'resourceConfig'
     | 'resourceConfigErrorsExist'
     | 'resourceConfigErrors'
     | 'resourceSchema'
+    | 'restrictedDiscoveredCollections'
     | 'serverUpdateRequired'
 > => ({
     collections: [],
     collectionErrorsExist: true,
+    collectionRemovalMetadata: {
+        selectedCollection: null,
+        removedCollection: '',
+        index: -1,
+    },
     currentCollection: null,
+    discoveredCollections: null,
     hydrated: false,
     hydrationErrorsExist: false,
     resourceConfig: {},
     resourceConfigErrorsExist: true,
     resourceConfigErrors: [],
     resourceSchema: {},
+    restrictedDiscoveredCollections: [],
     serverUpdateRequired: false,
 });
 
@@ -147,14 +187,15 @@ const getInitialState = (
     preFillEmptyCollections: (value) => {
         set(
             produce((state: ResourceConfigState) => {
-                const collections: string[] = [];
-                const configs = {};
                 const { resourceSchema } = get();
 
-                value.forEach((collection) => {
-                    collection.writes_to.forEach((writes_to) => {
-                        collections.push(writes_to);
-                        configs[writes_to] =
+                const collections: string[] = [];
+                const resourceConfig = {};
+
+                value.forEach((capture) => {
+                    capture.writes_to.forEach((collection) => {
+                        collections.push(collection);
+                        resourceConfig[collection] =
                             createJSONFormDefaults(resourceSchema);
                     });
                 });
@@ -162,9 +203,9 @@ const getInitialState = (
                 state.collections = collections;
                 state.currentCollection = collections[0];
 
-                state.resourceConfig = configs;
+                state.resourceConfig = resourceConfig;
 
-                populateResourceConfigErrors(configs, state);
+                populateResourceConfigErrors(resourceConfig, state);
 
                 state.collectionErrorsExist = isEmpty(collections);
             }),
@@ -173,13 +214,18 @@ const getInitialState = (
         );
     },
 
-    preFillCollections: (value) => {
+    preFillCollections: (value, entityType) => {
         set(
             produce((state: ResourceConfigState) => {
                 const collections: string[] = [];
 
+                const queryProp =
+                    entityType === ENTITY.MATERIALIZATION
+                        ? 'reads_from'
+                        : 'writes_to';
+
                 value.forEach((queryData) => {
-                    queryData.reads_from.forEach((collection) => {
+                    queryData[queryProp].forEach((collection) => {
                         collections.push(collection);
                     });
                 });
@@ -194,13 +240,139 @@ const getInitialState = (
         );
     },
 
+    addCollection: (value) => {
+        set(
+            produce((state: ResourceConfigState) => {
+                const { collections } = get();
+
+                if (collections && !collections.includes(value)) {
+                    state.collections = [...collections, value];
+                }
+            }),
+            false,
+            'Collection Added'
+        );
+    },
+
+    removeCollection: (value) => {
+        set(
+            produce((state: ResourceConfigState) => {
+                const { collections, currentCollection, resourceConfig } =
+                    get();
+
+                if (collections?.includes(value)) {
+                    state.collectionRemovalMetadata = {
+                        selectedCollection: currentCollection,
+                        removedCollection: value,
+                        index: collections.findIndex(
+                            (collection) => collection === value
+                        ),
+                    };
+
+                    state.collections = collections.filter(
+                        (collection) => collection !== value
+                    );
+
+                    const updatedResourceConfig = pick(
+                        resourceConfig,
+                        state.collections
+                    ) as ResourceConfigDictionary;
+
+                    state.resourceConfig = updatedResourceConfig;
+                }
+            }),
+            false,
+            'Collection Removed'
+        );
+    },
+
     setCurrentCollection: (value) => {
         set(
             produce((state: ResourceConfigState) => {
-                state.currentCollection = value;
+                const {
+                    collections,
+                    collectionRemovalMetadata: {
+                        selectedCollection,
+                        removedCollection,
+                        index: removedCollectionIndex,
+                    },
+                } = get();
+
+                const collectionCount = collections?.length;
+
+                if (value && collections?.includes(value)) {
+                    state.currentCollection = value;
+                } else if (
+                    collectionCount &&
+                    selectedCollection === removedCollection
+                ) {
+                    if (
+                        removedCollectionIndex > -1 &&
+                        removedCollectionIndex < collections.length
+                    ) {
+                        state.currentCollection =
+                            collections[removedCollectionIndex];
+                    } else if (removedCollectionIndex === collections.length) {
+                        state.currentCollection =
+                            collections[removedCollectionIndex - 1];
+                    }
+                } else if (collectionCount && removedCollection === value) {
+                    state.currentCollection = selectedCollection;
+                } else {
+                    state.currentCollection = null;
+                }
             }),
             false,
             'Current Collection Changed'
+        );
+    },
+
+    setDiscoveredCollections: (value) => {
+        set(
+            produce((state: ResourceConfigState) => {
+                const discoveredCollections: string[] = [];
+
+                value.spec.bindings.forEach((binding: any) => {
+                    discoveredCollections.push(binding.target);
+                });
+
+                state.discoveredCollections = discoveredCollections;
+            }),
+            false,
+            'Discovered Collections Set'
+        );
+    },
+
+    setRestrictedDiscoveredCollections: (value, nativeCollectionFlag) => {
+        set(
+            produce((state: ResourceConfigState) => {
+                const {
+                    discoveredCollections,
+                    restrictedDiscoveredCollections,
+                } = get();
+
+                let restrictedCollections: string[] =
+                    restrictedDiscoveredCollections;
+
+                if (restrictedDiscoveredCollections.includes(value)) {
+                    restrictedCollections =
+                        restrictedDiscoveredCollections.filter(
+                            (collection) => collection !== value
+                        );
+                } else if (
+                    discoveredCollections?.includes(value) ||
+                    nativeCollectionFlag
+                ) {
+                    restrictedCollections = [
+                        value,
+                        ...restrictedDiscoveredCollections,
+                    ];
+                }
+
+                state.restrictedDiscoveredCollections = restrictedCollections;
+            }),
+            false,
+            'Restricted Discovered Collections Set'
         );
     },
 
@@ -293,7 +465,7 @@ const getInitialState = (
         );
     },
 
-    hydrateState: async (workflow) => {
+    hydrateState: async (editWorkflow, entityType) => {
         const searchParams = new URLSearchParams(window.location.search);
         const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
         const liveSpecId = searchParams.get(GlobalSearchParams.LIVE_SPEC_ID);
@@ -317,13 +489,11 @@ const getInitialState = (
             }
         }
 
-        if (workflow === 'materialization_create') {
-            const specType = ENTITY.CAPTURE;
-
+        if (!editWorkflow) {
             if (lastPubId) {
                 const { data, error } = await getLiveSpecsByLastPubId(
                     lastPubId,
-                    specType
+                    ENTITY.CAPTURE
                 );
 
                 if (error) {
@@ -338,7 +508,7 @@ const getInitialState = (
             } else if (liveSpecId) {
                 const { data, error } = await getLiveSpecsByLiveSpecId(
                     liveSpecId,
-                    specType
+                    entityType
                 );
 
                 if (error) {
@@ -351,10 +521,10 @@ const getInitialState = (
                     preFillEmptyCollections(data);
                 }
             }
-        } else if (workflow === 'materialization_edit' && liveSpecId) {
+        } else if (liveSpecId) {
             const { data, error } = await getLiveSpecsByLiveSpecId(
                 liveSpecId,
-                ENTITY.MATERIALIZATION
+                entityType
             );
 
             if (error) {
@@ -364,14 +534,21 @@ const getInitialState = (
             if (data && data.length > 0) {
                 const { setResourceConfig, preFillCollections } = get();
 
-                data[0].spec.bindings.forEach((binding: any) =>
-                    setResourceConfig(binding.source, {
+                const collectionNameProp =
+                    entityType === ENTITY.MATERIALIZATION ? 'source' : 'target';
+
+                const sortedBindings = sortBy(data[0].spec.bindings, [
+                    collectionNameProp,
+                ]);
+
+                sortedBindings.forEach((binding: any) =>
+                    setResourceConfig(binding[collectionNameProp], {
                         data: binding.resource,
                         errors: [],
                     })
                 );
 
-                preFillCollections(data);
+                preFillCollections(data, entityType);
             }
         }
     },
@@ -443,6 +620,24 @@ export const useResourceConfig_preFillCollections = () => {
     >(getStoreName(entityType), (state) => state.preFillCollections);
 };
 
+export const useResourceConfig_addCollection = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['addCollection']
+    >(getStoreName(entityType), (state) => state.addCollection);
+};
+
+export const useResourceConfig_removeCollection = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['removeCollection']
+    >(getStoreName(entityType), (state) => state.removeCollection);
+};
+
 export const useResourceConfig_collectionErrorsExist = () => {
     const entityType = useEntityType();
 
@@ -468,6 +663,48 @@ export const useResourceConfig_setCurrentCollection = () => {
         ResourceConfigState,
         ResourceConfigState['setCurrentCollection']
     >(getStoreName(entityType), (state) => state.setCurrentCollection);
+};
+
+export const useResourceConfig_discoveredCollections = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['discoveredCollections']
+    >(getStoreName(entityType), (state) => state.discoveredCollections);
+};
+
+export const useResourceConfig_setDiscoveredCollections = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['setDiscoveredCollections']
+    >(getStoreName(entityType), (state) => state.setDiscoveredCollections);
+};
+
+export const useResourceConfig_restrictedDiscoveredCollections = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['restrictedDiscoveredCollections']
+    >(
+        getStoreName(entityType),
+        (state) => state.restrictedDiscoveredCollections
+    );
+};
+
+export const useResourceConfig_setRestrictedDiscoveredCollections = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['setRestrictedDiscoveredCollections']
+    >(
+        getStoreName(entityType),
+        (state) => state.setRestrictedDiscoveredCollections
+    );
 };
 
 export const useResourceConfig_resourceConfig = () => {
@@ -613,7 +850,11 @@ interface ResourceConfigHydratorProps {
 export const ResourceConfigHydrator = ({
     children,
 }: ResourceConfigHydratorProps) => {
+    const entityType = useEntityType();
+
     const workflow = useEntityWorkflow();
+    const editWorkflow =
+        workflow === 'materialization_edit' || workflow === 'capture_edit';
 
     const hydrated = useResourceConfig_hydrated();
     const setHydrated = useResourceConfig_setHydrated();
@@ -624,7 +865,7 @@ export const ResourceConfigHydrator = ({
 
     useEffectOnce(() => {
         if (workflow && !hydrated) {
-            hydrateState(workflow).then(
+            hydrateState(editWorkflow, entityType).then(
                 () => {
                     setHydrated(true);
                 },

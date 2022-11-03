@@ -5,6 +5,7 @@ import {
     Theme,
     ThemeOptions,
     ThemeProvider as MUIThemeProvider,
+    TypographyProps,
     useMediaQuery,
 } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -146,6 +147,9 @@ const chipDeleteIndex = buttonHoverIndex + zIndexIncrement;
 const accordionButton = zIndexIncrement * 5;
 
 // Styles
+
+// TODO (optimization): Store the outline style as a detached configuration that
+//   can be applied to the assortment of CSS border properties.
 export const tableBorderSx: SxProps<Theme> = {
     borderBottom: `1px solid ${slate[200]}`,
 };
@@ -156,8 +160,18 @@ export const tableAlternateRowsSx: SxProps<Theme> = {
     },
 };
 
+// TODO (optimization): Replace instances of outlineSx with slateOutline.
+export const slateOutline = `1px solid ${slate[200]}`;
+
 export const outlineSx: SxProps<Theme> = {
     border: `1px solid ${slate[200]}`,
+};
+
+export const typographyTruncation: TypographyProps = {
+    noWrap: true,
+    sx: {
+        minWidth: 0,
+    },
 };
 
 // TODO (Colors) need to follow a pattern where all colors are in the theme file.
@@ -194,6 +208,21 @@ export const semiTransparentBackgroundIntensified = {
 
 export const jsonFormsGroupHeaders = {
     light: slate[25],
+    dark: 'transparent',
+};
+
+export const reflexSplitterBackground = {
+    light: slate[25],
+    dark: slate[200],
+};
+
+export const alternativeReflexContainerBackground = {
+    light: 'white',
+    dark: 'rgba(172, 199, 220, 0.05)',
+};
+
+export const alternativeDataGridHeader = {
+    light: 'white',
     dark: 'transparent',
 };
 
