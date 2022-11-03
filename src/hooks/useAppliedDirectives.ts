@@ -1,45 +1,56 @@
 import { Auth } from '@supabase/ui';
 import { singleCallSettings } from 'context/SWR';
-import { DIRECTIVES, DirectivesList } from 'directives/shared';
+import { DIRECTIVES } from 'directives/shared';
 import { DEFAULT_FILTER, TABLES } from 'services/supabase';
-import { AppliedDirective } from 'types';
-import { useQuery, useSelect } from './supabase-swr/';
+import { JoinedAppliedDirective } from 'types';
+import { useQuery, useSelectSingle } from './supabase-swr/';
 
-const defaultResponse: AppliedDirective[] = [];
-
-function useAppliedDirectives(directives: DirectivesList) {
+function useAppliedDirectives(directive: keyof typeof DIRECTIVES) {
     const { user } = Auth.useUser();
 
-    console.log('useAppliedDirectives', { directives });
+    console.log('useAppliedDirectives', { directive });
 
-    const appliedDirectivesQuery = useQuery<AppliedDirective>(
+    const appliedDirectivesQuery = useQuery<JoinedAppliedDirective>(
         TABLES.APPLIED_DIRECTIVES,
         {
-            columns: ['*'],
+            columns: `
+                job_status,
+                    logs_token,
+                    user_id,
+                    user_claims,
+                    updated_at,
+                    directives !inner(spec->>type)
+            `,
             filter: (query) => {
                 let queryBuilder = query;
 
-                const directiveArray = directives.map((directive) => {
-                    return DIRECTIVES[directive].id;
-                });
-
-                queryBuilder = queryBuilder.or(
-                    `directive_id.in.(${directiveArray})`
+                queryBuilder = queryBuilder.eq(
+                    'directives.spec->>type',
+                    directive
+                );
+                queryBuilder = queryBuilder.eq(
+                    'user_id',
+                    user?.id ?? DEFAULT_FILTER
                 );
 
-                return queryBuilder.eq('user_id', user?.id ?? DEFAULT_FILTER);
+                return DIRECTIVES[directive]
+                    .queryFilter(queryBuilder)
+                    .order('updated_at', { ascending: false })
+                    .limit(1);
             },
         },
         []
     );
 
-    const { data, error, mutate, isValidating } = useSelect(
+    const { data, error, mutate, isValidating } = useSelectSingle(
         user?.id ? appliedDirectivesQuery : null,
         singleCallSettings
     );
 
+    console.log('data', data);
+
     return {
-        appliedDirectives: data ? data.data : defaultResponse,
+        appliedDirective: data ? data.data : null,
         error,
         mutate,
         isValidating,

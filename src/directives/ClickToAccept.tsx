@@ -18,7 +18,7 @@ import { jobStatusQuery } from './shared';
 
 const urls = getUrls();
 
-export const CLICK_TO_ACCEPT_LATEST_VERSION = 'v1';
+export const CLICK_TO_ACCEPT_LATEST_VERSION = 'v2';
 
 const submit_clickToAccept = async () => {
     return submitDirective('clickToAccept', CLICK_TO_ACCEPT_LATEST_VERSION);

@@ -4,6 +4,7 @@ import FullPageSpinner from 'components/fullPage/Spinner';
 import { useClient } from 'hooks/supabase-swr';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { useSnackbar } from 'notistack';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // This is the main "controller" for checking auth status for Supabase when coming into the app
@@ -19,38 +20,40 @@ const Auth = () => {
     const { enqueueSnackbar } = useSnackbar();
     const { user } = SupabaseAuth.useUser();
 
-    const failed = async (error: string) => {
-        enqueueSnackbar(error, {
-            anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'center',
-            },
-            preventDuplicate: true,
-            variant: 'error',
-        });
-        await supabaseClient.auth.signOut();
-    };
+    useEffect(() => {
+        const failed = async (error: string) => {
+            enqueueSnackbar(error, {
+                anchorOrigin: {
+                    vertical: 'top',
+                    horizontal: 'center',
+                },
+                preventDuplicate: true,
+                variant: 'error',
+            });
+            await supabaseClient.auth.signOut();
+        };
 
-    const success = () => {
-        navigate(authenticatedRoutes.home.path);
-    };
+        const success = () => {
+            navigate(authenticatedRoutes.home.path);
+        };
 
-    if (!user) {
-        supabaseClient.auth
-            .getSessionFromUrl({
-                storeSession: true,
-            })
-            .then(async (response) => {
-                if (response.error) {
-                    await failed(response.error.message);
-                }
+        if (!user) {
+            supabaseClient.auth
+                .getSessionFromUrl({
+                    storeSession: true,
+                })
+                .then(async (response) => {
+                    if (response.error) {
+                        await failed(response.error.message);
+                    }
 
-                success();
-            })
-            .catch(() => {});
-    } else {
-        success();
-    }
+                    success();
+                })
+                .catch(() => {});
+        } else {
+            success();
+        }
+    });
 
     return <FullPageSpinner />;
 };

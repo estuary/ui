@@ -1,3 +1,4 @@
+import FullPageSpinner from 'components/fullPage/Spinner';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import * as React from 'react';
 import 'react-reflex/styles.css';
@@ -10,11 +11,11 @@ const AuthenticatedApp = React.lazy(
 function App() {
     useBrowserTitle('browserTitle.loginLoading');
 
-    console.log('1');
-
     return (
         <AppGuards>
-            <AuthenticatedApp />
+            <React.Suspense fallback={<FullPageSpinner />}>
+                <AuthenticatedApp />
+            </React.Suspense>
         </AppGuards>
     );
 }

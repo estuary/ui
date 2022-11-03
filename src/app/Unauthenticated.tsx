@@ -4,8 +4,6 @@ import { Route, Routes } from 'react-router';
 import { unauthenticatedRoutes } from './routes';
 
 const Unauthenticated = () => {
-    console.log('Unauthenticated');
-
     return (
         <Routes>
             <Route path={unauthenticatedRoutes.auth.path} element={<Auth />} />

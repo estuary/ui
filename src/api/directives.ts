@@ -1,4 +1,5 @@
 import { DIRECTIVES } from 'directives/shared';
+import { UserClaims } from 'directives/types';
 import {
     RPCS,
     supabaseClient,
@@ -9,7 +10,7 @@ import { AppliedDirective, Directive, Schema } from 'types';
 
 export interface ExchangeResponse {
     directive: Directive;
-    applied_directive: AppliedDirective;
+    applied_directive: AppliedDirective<UserClaims>;
 }
 
 const generateMatchData = (data: ExchangeResponse) => {

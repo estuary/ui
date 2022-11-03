@@ -1,11 +1,10 @@
 import FullPageSpinner from 'components/fullPage/Spinner';
 import FullPageWrapper from 'directives/FullPageWrapper';
-import { DIRECTIVES } from 'directives/shared';
+import { DIRECTIVES, DirectiveStates } from 'directives/shared';
 import useAppliedDirectives from 'hooks/useAppliedDirectives';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { ReactNode, useMemo } from 'react';
 import { BaseComponentProps } from 'types';
-import { hasLength } from 'utils/misc-utils';
 
 interface Props extends BaseComponentProps {
     form: ReactNode;
@@ -17,31 +16,32 @@ const DirectiveGuard = ({ children, form, selectedDirective }: Props) => {
 
     console.log(`Guard:${selectedDirective}`);
 
-    const { appliedDirectives, isValidating } = useAppliedDirectives([
-        selectedDirective,
-    ]);
+    const { appliedDirective, isValidating } =
+        useAppliedDirectives(selectedDirective);
 
-    const isClaimFulfilled = useMemo(
-        () => DIRECTIVES[selectedDirective].isClaimFulfilled,
+    const calculateStatus = useMemo(
+        () => DIRECTIVES[selectedDirective].calculateStatus,
         [selectedDirective]
     );
 
-    const directiveUnfulfilled = useMemo(() => {
-        if (hasLength(appliedDirectives)) {
-            return !isClaimFulfilled(appliedDirectives[0]);
+    console.log('appliedDirective', appliedDirective);
+
+    const directiveState = useMemo(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        if (isValidating || !appliedDirective) {
+            return null;
         }
 
-        return true;
-    }, [appliedDirectives, isClaimFulfilled]);
+        return calculateStatus(appliedDirective);
+    }, [isValidating, appliedDirective, calculateStatus]);
 
-    console.log(
-        `${selectedDirective} directiveUnfulfilled`,
-        directiveUnfulfilled
-    );
+    console.log(`${selectedDirective} directiveState`, {
+        directiveState,
+    });
 
     if (isValidating) {
         return <FullPageSpinner />;
-    } else if (directiveUnfulfilled) {
+    } else if (directiveState !== DirectiveStates.FUFILLED) {
         return <FullPageWrapper>{form}</FullPageWrapper>;
     } else {
         // Only returning the child and need the JSX Fragment

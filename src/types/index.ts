@@ -64,7 +64,7 @@ export interface JobStatus {
     type: string;
 }
 
-export interface AppliedDirective {
+export interface AppliedDirective<T> {
     created_at: Date;
     detail: null;
     id: string;
@@ -73,7 +73,15 @@ export interface AppliedDirective {
     logs_token: string;
     directive_id: string;
     user_id: string;
-    user_claims: null;
+    user_claims: T | null;
+}
+
+export interface JoinedAppliedDirective extends AppliedDirective<any> {
+    // FILTERING HACK
+    ['applied_directives']: AppliedDirective<any>;
+    ['spec->>type']: undefined;
+    ['applied_directives.user_id']: undefined;
+    ['directives.spec->>type']: undefined;
 }
 
 export interface Directive {

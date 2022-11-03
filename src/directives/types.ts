@@ -1,7 +1,9 @@
-import { AppliedDirective } from 'types';
+import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
+import { AppliedDirective, JoinedAppliedDirective } from 'types';
+import { DirectiveStates } from './shared';
 
 export interface ClickToAcceptClaim {
-    version: Date;
+    version: string;
 }
 
 export interface OnboardClaim {
@@ -10,9 +12,14 @@ export interface OnboardClaim {
 
 export type UserClaims = ClickToAcceptClaim | OnboardClaim;
 
-export interface DirectiveSettings {
+export interface DirectiveSettings<T> {
     id: string;
     token: string;
-    generateUserClaim: (args: any[]) => UserClaims;
-    isClaimFulfilled: (appliedDirective?: AppliedDirective) => boolean;
+    queryFilter: (
+        queryBuilder: PostgrestFilterBuilder<JoinedAppliedDirective>
+    ) => PostgrestFilterBuilder<JoinedAppliedDirective>;
+    generateUserClaim: (args: any[]) => T;
+    calculateStatus: (
+        appliedDirective?: AppliedDirective<T>
+    ) => DirectiveStates;
 }

@@ -9,8 +9,6 @@ import { BaseComponentProps } from 'types';
 const UnauthenticatedApp = React.lazy(() => import('../Unauthenticated'));
 
 function UserGuard({ children }: BaseComponentProps) {
-    console.log('Guards:User');
-
     const { user } = Auth.useUser();
 
     useEffect(() => {
