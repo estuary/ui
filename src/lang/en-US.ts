@@ -651,7 +651,9 @@ const Supabase: ResolvedIntlConfig['messages'] = {
 
 const Legal: ResolvedIntlConfig['messages'] = {
     'legal.heading': `Legal Stuff`,
+    'legal.heading.outdated': `Updated Legal Stuff`,
     'legal.message': `Please use the links below to open and review the documents before checking accept and continuing.`,
+    'legal.message.outdated': `There has been changes to our legal documents you need to review. Please use the links below to view the documents before checking accept and continuing.`,
     'legal.docs.terms': `Terms of Service`,
     'legal.docs.privacy': `Privacy Policy`,
     'legal.docs.accept': 'I accept the {privacy} and {terms}',

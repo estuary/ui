@@ -20,6 +20,6 @@ export interface DirectiveSettings<T> {
     ) => PostgrestFilterBuilder<JoinedAppliedDirective>;
     generateUserClaim: (args: any[]) => T;
     calculateStatus: (
-        appliedDirective?: AppliedDirective<T>
+        appliedDirective?: AppliedDirective<T> | null
     ) => DirectiveStates;
 }

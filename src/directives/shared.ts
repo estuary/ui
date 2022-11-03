@@ -56,11 +56,27 @@ export const DIRECTIVES: Directives = {
             return { requestedTenant: args[0] };
         },
         calculateStatus: (appliedDirective) => {
-            if (!appliedDirective || !isEmpty(appliedDirective)) {
+            if (!appliedDirective || isEmpty(appliedDirective)) {
                 return DirectiveStates.UNFULFILLED;
             }
 
-            return DirectiveStates.FUFILLED;
+            if (!appliedDirective.user_claims) {
+                return DirectiveStates.IN_PROGRESS;
+            }
+
+            if (
+                appliedDirective.job_status.type !== 'success' &&
+                appliedDirective.user_claims.requestedTenant &&
+                appliedDirective.user_claims.requestedTenant.length > 0
+            ) {
+                return DirectiveStates.OUTDATED;
+            }
+
+            if (appliedDirective.job_status.type === 'success') {
+                return DirectiveStates.FUFILLED;
+            }
+
+            return DirectiveStates.UNFULFILLED;
         },
     },
     clickToAccept: {
@@ -91,7 +107,11 @@ export const DIRECTIVES: Directives = {
                 return DirectiveStates.OUTDATED;
             }
 
-            return DirectiveStates.FUFILLED;
+            if (appliedDirective.job_status.type === 'success') {
+                return DirectiveStates.FUFILLED;
+            }
+
+            return DirectiveStates.UNFULFILLED;
         },
     },
 };

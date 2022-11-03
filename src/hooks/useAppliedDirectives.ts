@@ -2,13 +2,11 @@ import { Auth } from '@supabase/ui';
 import { singleCallSettings } from 'context/SWR';
 import { DIRECTIVES } from 'directives/shared';
 import { DEFAULT_FILTER, TABLES } from 'services/supabase';
-import { JoinedAppliedDirective } from 'types';
-import { useQuery, useSelectSingle } from './supabase-swr/';
+import { AppliedDirective, JoinedAppliedDirective } from 'types';
+import { useQuery, useSelect } from './supabase-swr/';
 
 function useAppliedDirectives(directive: keyof typeof DIRECTIVES) {
     const { user } = Auth.useUser();
-
-    console.log('useAppliedDirectives', { directive });
 
     const appliedDirectivesQuery = useQuery<JoinedAppliedDirective>(
         TABLES.APPLIED_DIRECTIVES,
@@ -42,15 +40,13 @@ function useAppliedDirectives(directive: keyof typeof DIRECTIVES) {
         []
     );
 
-    const { data, error, mutate, isValidating } = useSelectSingle(
+    const { data, error, mutate, isValidating } = useSelect(
         user?.id ? appliedDirectivesQuery : null,
         singleCallSettings
     );
 
-    console.log('data', data);
-
     return {
-        appliedDirective: data ? data.data : null,
+        appliedDirective: data ? (data.data[0] as AppliedDirective<any>) : null,
         error,
         mutate,
         isValidating,

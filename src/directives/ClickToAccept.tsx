@@ -14,18 +14,27 @@ import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { jobStatusPoller } from 'services/supabase';
 import { getUrls } from 'utils/env-utils';
-import { jobStatusQuery } from './shared';
+import { DirectiveStates, jobStatusQuery } from './shared';
 
 const urls = getUrls();
 
-export const CLICK_TO_ACCEPT_LATEST_VERSION = 'v2';
+export const CLICK_TO_ACCEPT_LATEST_VERSION = 'v1';
 
-const submit_clickToAccept = async () => {
-    return submitDirective('clickToAccept', CLICK_TO_ACCEPT_LATEST_VERSION);
+const submit_clickToAccept = async (directive: any) => {
+    return submitDirective(
+        'clickToAccept',
+        directive,
+        CLICK_TO_ACCEPT_LATEST_VERSION
+    );
 };
 
-const ClickToAccept = () => {
-    console.log('Guard:Form:ClickToAccept');
+interface Props {
+    directive: any;
+    status: DirectiveStates;
+}
+
+const ClickToAccept = ({ directive, status }: Props) => {
+    console.log('Guard:Form:ClickToAccept', { directive, status });
 
     const navigate = useNavigate();
 
@@ -33,6 +42,10 @@ const ClickToAccept = () => {
         useState<boolean>(false);
     const [saving, setSaving] = useState(false);
     const [showErrors, setShowErrors] = useState(false);
+    const [serverError, setServerError] = useState<string | null>(null);
+
+    const exchangedTokenAlready = status === DirectiveStates.IN_PROGRESS;
+    const outdated = status === DirectiveStates.OUTDATED;
 
     const handlers = {
         update: (_event: React.SyntheticEvent, checked: boolean) => {
@@ -49,7 +62,9 @@ const ClickToAccept = () => {
                 setShowErrors(false);
                 setSaving(true);
 
-                const clickToAcceptResponse = await submit_clickToAccept();
+                const clickToAcceptResponse = await submit_clickToAccept(
+                    exchangedTokenAlready ? directive : null
+                );
 
                 if (clickToAcceptResponse.error) {
                     return console.log(clickToAcceptResponse.error);
@@ -62,8 +77,8 @@ const ClickToAccept = () => {
                         navigate(0);
                     },
                     async (payload: any) => {
-                        console.log('failed', payload);
                         setSaving(false);
+                        setServerError(payload.job_status.error);
                     }
                 );
             }
@@ -83,10 +98,18 @@ const ClickToAccept = () => {
                 }}
             >
                 <Typography variant="h6" align="center" sx={{ mb: 1.5 }}>
-                    <FormattedMessage id="legal.heading" />
+                    <FormattedMessage
+                        id={
+                            !outdated
+                                ? 'legal.heading'
+                                : 'legal.heading.outdated'
+                        }
+                    />
                 </Typography>
 
-                <FormattedMessage id="legal.message" />
+                <FormattedMessage
+                    id={!outdated ? 'legal.message' : 'legal.message.outdated'}
+                />
 
                 <Stack spacing={1}>
                     <ExternalLink link={urls.privacyPolicy}>
@@ -105,6 +128,16 @@ const ClickToAccept = () => {
                         title={<FormattedMessage id="error.title" />}
                     >
                         <FormattedMessage id="legal.docs.errorMessage" />
+                    </AlertBox>
+                ) : null}
+
+                {serverError ? (
+                    <AlertBox
+                        severity="error"
+                        short
+                        title={<FormattedMessage id="common.fail" />}
+                    >
+                        {serverError}
                     </AlertBox>
                 ) : null}
             </Stack>

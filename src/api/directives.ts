@@ -43,9 +43,17 @@ const exchangeBearerToken = async (token: string) => {
 
 const submitDirective = async (
     type: keyof typeof DIRECTIVES,
+    existingDirective?: any,
     ...dataForClaim: any[]
 ) => {
-    const { data, error } = await exchangeBearerToken(DIRECTIVES[type].token);
+    let data, error;
+    if (!existingDirective) {
+        const response = await exchangeBearerToken(DIRECTIVES[type].token);
+        data = response.data;
+        error = response.error;
+    } else {
+        data = existingDirective;
+    }
 
     if (error) {
         console.error('error', error);

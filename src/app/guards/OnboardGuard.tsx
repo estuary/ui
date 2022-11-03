@@ -1,13 +1,13 @@
 import FullPageSpinner from 'components/fullPage/Spinner';
-import ClickToAccept from 'directives/ClickToAccept';
+import BetaOnboard from 'directives/BetaOnboard';
 import FullPageWrapper from 'directives/FullPageWrapper';
 import { DirectiveStates } from 'directives/shared';
 import { BaseComponentProps } from 'types';
 import useDirectiveGuard from './hooks';
 
-const SELECTED_DIRECTIVE = 'clickToAccept';
+const SELECTED_DIRECTIVE = 'betaOnboard';
 
-function LegalGuard({ children }: BaseComponentProps) {
+function OnboardGuard({ children }: BaseComponentProps) {
     const { directive, loading, status } =
         useDirectiveGuard(SELECTED_DIRECTIVE);
 
@@ -16,7 +16,7 @@ function LegalGuard({ children }: BaseComponentProps) {
     } else if (status !== DirectiveStates.FUFILLED) {
         return (
             <FullPageWrapper>
-                <ClickToAccept directive={directive} status={status} />
+                <BetaOnboard directive={directive} status={status} />
             </FullPageWrapper>
         );
     } else {
@@ -26,4 +26,4 @@ function LegalGuard({ children }: BaseComponentProps) {
     }
 }
 
-export default LegalGuard;
+export default OnboardGuard;
