@@ -97,7 +97,7 @@ function CollectionPicker({ readOnly = false }: Props) {
 
     useEffect(() => {
         if (populateCollectionData) {
-            let collectionsOnServer: CollectionData[] =
+            const liveSpecCollectionData: CollectionData[] =
                 workflow === 'capture_create'
                     ? []
                     : liveSpecs.map(({ catalog_name }) => ({
@@ -105,25 +105,33 @@ function CollectionPicker({ readOnly = false }: Props) {
                           classification: existingCollectionsLabel,
                       }));
 
-            if (entityType === ENTITY.CAPTURE) {
-                collectionsOnServer = [
-                    ...draftSpecs
-                        .filter(
-                            ({ spec_type }) => spec_type === ENTITY.COLLECTION
-                        )
-                        .map(({ catalog_name }) => ({
-                            name: catalog_name,
-                            classification: discoveredCollectionsLabel,
-                        })),
-                    ...collectionsOnServer,
-                ];
-            }
+            const draftSpecCollectionData: CollectionData[] =
+                entityType === ENTITY.CAPTURE
+                    ? draftSpecs
+                          .filter(
+                              ({ spec_type }) => spec_type === ENTITY.COLLECTION
+                          )
+                          .map(({ catalog_name }) => ({
+                              name: catalog_name,
+                              classification: discoveredCollectionsLabel,
+                          }))
+                    : [];
+
+            const draftSpecCollections: string[] = draftSpecCollectionData.map(
+                (collection) => collection.name
+            );
+
+            const collectionsOnServer: CollectionData[] = [
+                ...draftSpecCollectionData,
+                ...liveSpecCollectionData.filter(
+                    ({ name }) => !draftSpecCollections.includes(name)
+                ),
+            ];
 
             setCollectionData(collectionsOnServer);
         }
     }, [
         setCollectionData,
-        collections,
         discoveredCollectionsLabel,
         draftSpecs,
         entityType,
