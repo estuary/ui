@@ -14,11 +14,8 @@ import useGlobalSearchParams, {
 import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import {
-    defaultOptions,
-    defaultRenderers,
-    showValidation,
-} from 'services/jsonforms';
+import defaultRenderers from 'services/jsonforms/defaultRenderers';
+import { defaultOptions, showValidation } from 'services/jsonforms/shared';
 import {
     Details,
     useDetailsForm_details,

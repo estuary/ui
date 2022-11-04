@@ -1,7 +1,6 @@
 import FullPageSpinner from 'components/fullPage/Spinner';
 import ClickToAccept from 'directives/ClickToAccept';
 import FullPageWrapper from 'directives/FullPageWrapper';
-import { DirectiveStates } from 'directives/shared';
 import { BaseComponentProps } from 'types';
 import useDirectiveGuard from './hooks';
 
@@ -13,7 +12,7 @@ function LegalGuard({ children }: BaseComponentProps) {
 
     if (loading || status === null) {
         return <FullPageSpinner />;
-    } else if (status !== DirectiveStates.FUFILLED) {
+    } else if (status !== 'fulfilled') {
         return (
             <FullPageWrapper>
                 <ClickToAccept

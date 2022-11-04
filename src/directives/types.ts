@@ -2,7 +2,18 @@ import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import { SuccessResponse } from 'hooks/supabase-swr';
 import { KeyedMutator } from 'swr';
 import { AppliedDirective, JoinedAppliedDirective } from 'types';
-import { DirectiveStates } from './shared';
+
+// THESE MUST STAY IN SYNC WITH THE DB
+export interface Directives {
+    betaOnboard: DirectiveSettings<OnboardClaim>;
+    clickToAccept: DirectiveSettings<ClickToAcceptClaim>;
+}
+
+export type DirectiveStates =
+    | 'unfulfilled'
+    | 'in progress'
+    | 'fulfilled'
+    | 'outdated';
 
 export interface ClickToAcceptClaim {
     version: string;

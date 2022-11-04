@@ -13,13 +13,15 @@ import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { jobStatusPoller } from 'services/supabase';
 import { getUrls } from 'utils/env-utils';
-import { DirectiveStates, jobStatusQuery, trackEvent } from './shared';
+import {
+    CLICK_TO_ACCEPT_LATEST_VERSION,
+    jobStatusQuery,
+    trackEvent,
+} from './shared';
 import { DirectiveProps } from './types';
 
 const urls = getUrls();
 const directiveName = 'clickToAccept';
-
-export const CLICK_TO_ACCEPT_LATEST_VERSION = 'v1';
 
 const submit_clickToAccept = async (directive: any) => {
     return submitDirective(
@@ -36,7 +38,7 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
     const [showErrors, setShowErrors] = useState(false);
     const [serverError, setServerError] = useState<string | null>(null);
 
-    const outdated = status === DirectiveStates.OUTDATED;
+    const outdated = status === 'outdated';
 
     const handlers = {
         update: (_event: React.SyntheticEvent, checked: boolean) => {

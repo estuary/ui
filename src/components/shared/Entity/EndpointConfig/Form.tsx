@@ -5,12 +5,9 @@ import { jsonFormsPadding } from 'context/Theme';
 import { isEmpty } from 'lodash';
 import { useMemo } from 'react';
 import { setDefaultsValidator } from 'services/ajv';
-import {
-    custom_generateDefaultUISchema,
-    defaultOptions,
-    defaultRenderers,
-    showValidation,
-} from 'services/jsonforms';
+import { custom_generateDefaultUISchema } from 'services/jsonforms';
+import defaultRenderers from 'services/jsonforms/defaultRenderers';
+import { defaultOptions, showValidation } from 'services/jsonforms/shared';
 import {
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_endpointSchema,

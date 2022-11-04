@@ -3,12 +3,9 @@ import { JsonForms } from '@jsonforms/react';
 import { StyledEngineProvider } from '@mui/material';
 import { useEffect, useRef } from 'react';
 import { setDefaultsValidator } from 'services/ajv';
-import {
-    custom_generateDefaultUISchema,
-    defaultOptions,
-    defaultRenderers,
-    showValidation,
-} from 'services/jsonforms';
+import { custom_generateDefaultUISchema } from 'services/jsonforms';
+import defaultRenderers from 'services/jsonforms/defaultRenderers';
+import { defaultOptions, showValidation } from 'services/jsonforms/shared';
 import {
     useFormStateStore_displayValidation,
     useFormStateStore_isActive,

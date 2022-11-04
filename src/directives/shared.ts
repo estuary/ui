@@ -2,26 +2,9 @@ import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 import { JOB_STATUS_COLUMNS, supabaseClient, TABLES } from 'services/supabase';
 import { AppliedDirective } from 'types';
-import { CLICK_TO_ACCEPT_LATEST_VERSION } from './ClickToAccept';
-import {
-    ClickToAcceptClaim,
-    DirectiveSettings,
-    OnboardClaim,
-    UserClaims,
-} from './types';
+import { Directives, UserClaims } from './types';
 
-export enum DirectiveStates {
-    UNFULFILLED = 'unfulfilled',
-    IN_PROGRESS = 'in progress',
-    FUFILLED = 'fulfilled',
-    OUTDATED = 'outdated',
-}
-
-// THESE MUST STAY IN SYNC WITH THE DB
-interface Directives {
-    betaOnboard: DirectiveSettings<OnboardClaim>;
-    clickToAccept: DirectiveSettings<ClickToAcceptClaim>;
-}
+export const CLICK_TO_ACCEPT_LATEST_VERSION = 'v1';
 
 export const jobCompleted = (
     appliedDirective?: AppliedDirective<UserClaims>
@@ -58,11 +41,11 @@ export const DIRECTIVES: Directives = {
         },
         calculateStatus: (appliedDirective) => {
             if (!appliedDirective || isEmpty(appliedDirective)) {
-                return DirectiveStates.UNFULFILLED;
+                return 'unfulfilled';
             }
 
             if (!appliedDirective.user_claims) {
-                return DirectiveStates.IN_PROGRESS;
+                return 'in progress';
             }
 
             if (
@@ -70,14 +53,14 @@ export const DIRECTIVES: Directives = {
                 appliedDirective.user_claims.requestedTenant &&
                 appliedDirective.user_claims.requestedTenant.length > 0
             ) {
-                return DirectiveStates.IN_PROGRESS;
+                return 'in progress';
             }
 
             if (appliedDirective.job_status.type === 'success') {
-                return DirectiveStates.FUFILLED;
+                return 'fulfilled';
             }
 
-            return DirectiveStates.UNFULFILLED;
+            return 'unfulfilled';
         },
     },
     clickToAccept: {
@@ -93,11 +76,11 @@ export const DIRECTIVES: Directives = {
         },
         calculateStatus: (appliedDirective?) => {
             if (!appliedDirective || isEmpty(appliedDirective)) {
-                return DirectiveStates.UNFULFILLED;
+                return 'unfulfilled';
             }
 
             if (!appliedDirective.user_claims) {
-                return DirectiveStates.IN_PROGRESS;
+                return 'in progress';
             }
 
             if (
@@ -105,14 +88,14 @@ export const DIRECTIVES: Directives = {
                 appliedDirective.user_claims.version !==
                     CLICK_TO_ACCEPT_LATEST_VERSION
             ) {
-                return DirectiveStates.OUTDATED;
+                return 'outdated';
             }
 
             if (appliedDirective.job_status.type === 'success') {
-                return DirectiveStates.FUFILLED;
+                return 'fulfilled';
             }
 
-            return DirectiveStates.UNFULFILLED;
+            return 'unfulfilled';
         },
     },
 };

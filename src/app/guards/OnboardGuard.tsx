@@ -1,7 +1,6 @@
 import FullPageSpinner from 'components/fullPage/Spinner';
 import BetaOnboard from 'directives/BetaOnboard';
 import FullPageWrapper from 'directives/FullPageWrapper';
-import { DirectiveStates } from 'directives/shared';
 import { BaseComponentProps } from 'types';
 import useDirectiveGuard from './hooks';
 
@@ -22,7 +21,7 @@ function OnboardGuard({ children, grantsMutate }: Props) {
 
     if (loading || status === null) {
         return <FullPageSpinner />;
-    } else if (status !== DirectiveStates.FUFILLED) {
+    } else if (status !== 'fulfilled') {
         return (
             <FullPageWrapper>
                 <BetaOnboard

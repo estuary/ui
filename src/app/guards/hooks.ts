@@ -1,5 +1,5 @@
 import { exchangeBearerToken } from 'api/directives';
-import { DIRECTIVES, DirectiveStates } from 'directives/shared';
+import { DIRECTIVES } from 'directives/shared';
 import { UserClaims } from 'directives/types';
 import useAppliedDirectives from 'hooks/useAppliedDirectives';
 import { useSnackbar } from 'notistack';
@@ -30,7 +30,7 @@ const useDirectiveGuard = (selectedDirective: keyof typeof DIRECTIVES) => {
     const [freshDirective, setFreshDirective] =
         useState<AppliedDirective<UserClaims> | null>(null);
     useEffect(() => {
-        if (directiveState === DirectiveStates.UNFULFILLED) {
+        if (directiveState === 'unfulfilled') {
             const fetchDirective = async () => {
                 return exchangeBearerToken(DIRECTIVES[selectedDirective].token);
             };
@@ -42,7 +42,7 @@ const useDirectiveGuard = (selectedDirective: keyof typeof DIRECTIVES) => {
                     }
                 })
                 .catch(() => {});
-        } else if (directiveState === DirectiveStates.IN_PROGRESS) {
+        } else if (directiveState === 'in progress') {
             enqueueSnackbar(
                 intl.formatMessage({
                     id: 'directives.returning',

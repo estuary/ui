@@ -8,12 +8,12 @@ import { isEmpty } from 'lodash';
 import { useSnackbar, VariantType } from 'notistack';
 import React, { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import {
     defaultOptions,
-    defaultRenderers,
     hideValidation,
     showValidation,
-} from 'services/jsonforms';
+} from 'services/jsonforms/shared';
 
 interface Props {
     onSubmit: Function;

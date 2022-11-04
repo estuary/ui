@@ -1,6 +1,6 @@
 {
     "name": "estuary-ui",
-    "version": "0.1.0-alpha",
+    "version": "0.1.0-alpha_fake",
     "description": "A web based UI to assist in working with Estuary Flow",
     "main": "index.js",
     "private": true,
@@ -21,7 +21,8 @@
         "save-local-supabase-data": "cd supabase_data && ./fetch-connector_tags.sh",
         "__build_deploy__": "npm run build; serve -s build",
         "maintenance:on": "touch public/maintenance",
-        "maintenance:off": "rm public/maintenance"
+        "maintenance:off": "rm public/maintenance",
+        "pre_commit": "npm run lint-staged; npm run depcheck"
     },
     "dependencies": {
         "@emotion/react": "^11.10.0",

@@ -2,6 +2,8 @@ import { JsonFormsCore } from '@jsonforms/core';
 import { PostgrestError } from '@supabase/supabase-js';
 import { ReactNode } from 'react';
 
+export type fake = 'fake';
+
 export enum MessagePrefixes {
     CAPTURE_CREATE = 'captureCreate',
     CAPTURE_EDIT = 'captureEdit',
