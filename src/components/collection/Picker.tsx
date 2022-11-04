@@ -4,7 +4,7 @@ import {
     Box,
     TextField,
 } from '@mui/material';
-import { useEditorStore_persistedDraftId } from 'components/editor/Store';
+import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
 import useDraftSpecs from 'hooks/useDraftSpecs';

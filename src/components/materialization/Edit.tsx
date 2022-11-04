@@ -5,7 +5,7 @@ import {
     useEditorStore_persistedDraftId,
     useEditorStore_resetState,
     useEditorStore_setId,
-} from 'components/editor/Store';
+} from 'components/editor/Store/hooks';
 import MaterializeGenerateButton from 'components/materialization/EditGenerateButton';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';

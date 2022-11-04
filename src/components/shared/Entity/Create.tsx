@@ -5,7 +5,7 @@ import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
     useEditorStore_setId,
-} from 'components/editor/Store';
+} from 'components/editor/Store/hooks';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';

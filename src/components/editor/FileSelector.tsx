@@ -10,7 +10,7 @@ import {
     useEditorStore_isSaving,
     useEditorStore_setCurrentCatalog,
     useEditorStore_specs,
-} from 'components/editor/Store';
+} from 'components/editor/Store/hooks';
 import { slate } from 'context/Theme';
 import { useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';

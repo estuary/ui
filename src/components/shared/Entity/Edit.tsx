@@ -4,11 +4,11 @@ import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec, updateDraftSpec } from 'api/draftSpecs';
 import CollectionConfig from 'components/collection/Config';
 import {
-    EditorStoreState,
     useEditorStore_persistedDraftId,
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
-} from 'components/editor/Store';
+} from 'components/editor/Store/hooks';
+import { EditorStoreState } from 'components/editor/Store/types';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import { getConnectorImageDetails } from 'components/shared/Entity/DetailsForm/Form';

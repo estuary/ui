@@ -1,4 +1,4 @@
-import { useEditorStore_id } from 'components/editor/Store';
+import { useEditorStore_id } from 'components/editor/Store/hooks';
 import DetailsFormForm from 'components/shared/Entity/DetailsForm/Form';
 import DetailsFormHeader from 'components/shared/Entity/DetailsForm/Header';
 import { Props } from 'components/shared/Entity/DetailsForm/types';

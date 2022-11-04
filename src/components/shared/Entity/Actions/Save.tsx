@@ -4,7 +4,7 @@ import {
     useEditorStore_id,
     useEditorStore_isSaving,
     useEditorStore_setPubId,
-} from 'components/editor/Store';
+} from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
 import { useClient } from 'hooks/supabase-swr';
 import LogRocket from 'logrocket';

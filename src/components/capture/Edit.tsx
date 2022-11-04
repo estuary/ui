@@ -9,7 +9,7 @@ import {
     useEditorStore_resetState,
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
-} from 'components/editor/Store';
+} from 'components/editor/Store/hooks';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityEdit from 'components/shared/Entity/Edit';

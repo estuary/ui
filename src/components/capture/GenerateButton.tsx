@@ -4,7 +4,7 @@ import { createEntityDraft } from 'api/drafts';
 import {
     useEditorStore_isSaving,
     useEditorStore_resetState,
-} from 'components/editor/Store';
+} from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
 import { useEntityWorkflow } from 'context/Workflow';
 import useGlobalSearchParams, {

@@ -14,7 +14,7 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import { useEditorStore_specs } from 'components/editor/Store';
+import { useEditorStore_specs } from 'components/editor/Store/hooks';
 import ExternalLink from 'components/shared/ExternalLink';
 import ShardErrors from 'components/tables/Details/ShardErrors';
 import StatusIndicatorAndLabel from 'components/tables/Details/StatusIndicatorAndLabel';

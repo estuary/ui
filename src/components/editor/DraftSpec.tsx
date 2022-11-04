@@ -4,7 +4,7 @@ import {
     useEditorStore_currentCatalog,
     useEditorStore_id,
     useEditorStore_setSpecs,
-} from 'components/editor/Store';
+} from 'components/editor/Store/hooks';
 import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useEffect, useState } from 'react';
 

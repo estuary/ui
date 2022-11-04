@@ -3,7 +3,7 @@ import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
     useEditorStore_setId,
-} from 'components/editor/Store';
+} from 'components/editor/Store/hooks';
 import MaterializeGenerateButton from 'components/materialization/GenerateButton';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';

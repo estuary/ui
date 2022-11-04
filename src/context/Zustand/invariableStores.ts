@@ -1,4 +1,4 @@
-import { createEditorStore } from 'components/editor/Store';
+import { createEditorStore } from 'components/editor/Store/create';
 import { createSelectableTableStore } from 'components/tables/Store';
 import { createFormStateStore } from 'stores/FormState';
 import {

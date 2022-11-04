@@ -8,7 +8,7 @@ import {
     Typography,
 } from '@mui/material';
 import { DataPreview } from 'components/collection/DataPreview';
-import { createEditorStore } from 'components/editor/Store';
+import { createEditorStore } from 'components/editor/Store/create';
 import EditorAndLogs from 'components/tables/Details/EditorAndLogs';
 import ShardInformation from 'components/tables/Details/ShardInformation';
 import { LocalZustandProvider } from 'context/LocalZustand';

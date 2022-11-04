@@ -4,7 +4,7 @@ import { DEFAULT_TOTAL_HEIGHT } from 'components/editor/MonacoEditor';
 import {
     useEditorStore_setId,
     useEditorStore_setSpecs,
-} from 'components/editor/Store';
+} from 'components/editor/Store/hooks';
 import Logs from 'components/logs';
 import AlertBox from 'components/shared/AlertBox';
 import Error from 'components/shared/Error';

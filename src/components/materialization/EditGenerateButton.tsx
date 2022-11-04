@@ -4,7 +4,7 @@ import {
     useEditorStore_isSaving,
     useEditorStore_persistedDraftId,
     useEditorStore_setId,
-} from 'components/editor/Store';
+} from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';

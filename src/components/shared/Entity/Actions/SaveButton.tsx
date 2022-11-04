@@ -1,4 +1,4 @@
-import { useEditorStore_id } from 'components/editor/Store';
+import { useEditorStore_id } from 'components/editor/Store/hooks';
 import EntityCreateSave from 'components/shared/Entity/Actions/Save';
 import LogDialog from 'components/shared/Entity/LogDialog';
 import LogDialogActions from 'components/shared/Entity/LogDialogActions';
