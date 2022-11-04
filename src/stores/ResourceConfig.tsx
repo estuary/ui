@@ -77,6 +77,7 @@ export interface ResourceConfigState {
         key: string | string[],
         resourceConfig?: ResourceConfig
     ) => void;
+    resetResourceConfigAndCollections: () => void;
 
     resourceConfigErrorsExist: boolean;
     resourceConfigErrors: (string | undefined)[];
@@ -435,6 +436,39 @@ const getInitialState = (
         );
     },
 
+    resetResourceConfigAndCollections: () => {
+        set(
+            produce((state: ResourceConfigState) => {
+                const { collections, discoveredCollections, resourceConfig } =
+                    get();
+
+                if (collections && discoveredCollections) {
+                    state.collections = collections.filter(
+                        (collection) =>
+                            !discoveredCollections.includes(collection)
+                    );
+
+                    state.currentCollection =
+                        state.collections.length > 0
+                            ? state.collections[0]
+                            : null;
+
+                    const reducedResourceConfig = {};
+
+                    Object.entries(resourceConfig).forEach(([key, value]) => {
+                        if (state.collections?.includes(key)) {
+                            reducedResourceConfig[key] = value;
+                        }
+                    });
+
+                    state.resourceConfig = reducedResourceConfig;
+                }
+            }),
+            false,
+            'Resource Config and Collections Reset'
+        );
+    },
+
     setResourceSchema: (val) => {
         set(
             produce((state: ResourceConfigState) => {
@@ -723,6 +757,18 @@ export const useResourceConfig_setResourceConfig = () => {
         ResourceConfigState,
         ResourceConfigState['setResourceConfig']
     >(getStoreName(entityType), (state) => state.setResourceConfig);
+};
+
+export const useResourceConfig_resetResourceConfigAndCollections = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['resetResourceConfigAndCollections']
+    >(
+        getStoreName(entityType),
+        (state) => state.resetResourceConfigAndCollections
+    );
 };
 
 export const useResourceConfig_resourceConfigErrorsExist = () => {

@@ -97,12 +97,13 @@ function CollectionPicker({ readOnly = false }: Props) {
 
     useEffect(() => {
         if (populateCollectionData) {
-            let collectionsOnServer: CollectionData[] = liveSpecs.map(
-                ({ catalog_name }) => ({
-                    name: catalog_name,
-                    classification: existingCollectionsLabel,
-                })
-            );
+            let collectionsOnServer: CollectionData[] =
+                workflow === 'capture_create'
+                    ? []
+                    : liveSpecs.map(({ catalog_name }) => ({
+                          name: catalog_name,
+                          classification: existingCollectionsLabel,
+                      }));
 
             if (entityType === ENTITY.CAPTURE) {
                 collectionsOnServer = [
@@ -183,7 +184,11 @@ function CollectionPicker({ readOnly = false }: Props) {
                             ({ name }) => name === collectionName
                         ) ?? {
                             name: collectionName,
-                            classification: existingCollectionsLabel,
+                            classification: discoveredCollections?.includes(
+                                collectionName
+                            )
+                                ? discoveredCollectionsLabel
+                                : existingCollectionsLabel,
                         }
                 )}
                 size="small"

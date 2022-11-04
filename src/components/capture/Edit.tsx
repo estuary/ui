@@ -1,5 +1,8 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
-import { getDraftSpecsBySpecType } from 'api/draftSpecs';
+import {
+    deleteDraftSpecsByCatalogName,
+    getDraftSpecsBySpecType,
+} from 'api/draftSpecs';
 import { authenticatedRoutes } from 'app/Authenticated';
 import CaptureGenerateButton from 'components/capture/GenerateButton';
 import {
@@ -269,6 +272,22 @@ function CaptureEdit() {
                     },
                     'capture_edit'
                 );
+            }
+        }
+
+        if (restrictedDiscoveredCollections.length > 0) {
+            const deleteDraftSpecsResponse =
+                await deleteDraftSpecsByCatalogName(
+                    newDraftId,
+                    restrictedDiscoveredCollections
+                );
+            if (deleteDraftSpecsResponse.error) {
+                return helpers.callFailed({
+                    error: {
+                        title: 'captureEdit.generate.failedErrorTitle',
+                        error: deleteDraftSpecsResponse.error,
+                    },
+                });
             }
         }
 
