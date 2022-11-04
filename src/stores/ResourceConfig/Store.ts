@@ -5,7 +5,16 @@ import {
 } from 'api/hydration';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
-import { difference, has, isEmpty, isEqual, map, omit } from 'lodash';
+import {
+    difference,
+    has,
+    isEmpty,
+    isEqual,
+    map,
+    omit,
+    pick,
+    sortBy,
+} from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
 import { ResourceConfigStoreNames } from 'stores/names';
 import { Schema } from 'types';
@@ -58,24 +67,34 @@ const getInitialStateData = (): Pick<
     ResourceConfigState,
     | 'collections'
     | 'collectionErrorsExist'
+    | 'collectionRemovalMetadata'
     | 'currentCollection'
+    | 'discoveredCollections'
     | 'hydrated'
     | 'hydrationErrorsExist'
     | 'resourceConfig'
     | 'resourceConfigErrorsExist'
     | 'resourceConfigErrors'
     | 'resourceSchema'
+    | 'restrictedDiscoveredCollections'
     | 'serverUpdateRequired'
 > => ({
     collections: [],
     collectionErrorsExist: true,
+    collectionRemovalMetadata: {
+        selectedCollection: null,
+        removedCollection: '',
+        index: -1,
+    },
     currentCollection: null,
+    discoveredCollections: null,
     hydrated: false,
     hydrationErrorsExist: false,
     resourceConfig: {},
     resourceConfigErrorsExist: true,
     resourceConfigErrors: [],
     resourceSchema: {},
+    restrictedDiscoveredCollections: [],
     serverUpdateRequired: false,
 });
 
@@ -88,14 +107,15 @@ const getInitialState = (
     preFillEmptyCollections: (value) => {
         set(
             produce((state: ResourceConfigState) => {
-                const collections: string[] = [];
-                const configs = {};
                 const { resourceSchema } = get();
 
-                value.forEach((collection) => {
-                    collection.writes_to.forEach((writes_to) => {
-                        collections.push(writes_to);
-                        configs[writes_to] =
+                const collections: string[] = [];
+                const resourceConfig = {};
+
+                value.forEach((capture) => {
+                    capture.writes_to.forEach((collection) => {
+                        collections.push(collection);
+                        resourceConfig[collection] =
                             createJSONFormDefaults(resourceSchema);
                     });
                 });
@@ -103,9 +123,9 @@ const getInitialState = (
                 state.collections = collections;
                 state.currentCollection = collections[0];
 
-                state.resourceConfig = configs;
+                state.resourceConfig = resourceConfig;
 
-                populateResourceConfigErrors(configs, state);
+                populateResourceConfigErrors(resourceConfig, state);
 
                 state.collectionErrorsExist = isEmpty(collections);
             }),
@@ -114,13 +134,18 @@ const getInitialState = (
         );
     },
 
-    preFillCollections: (value) => {
+    preFillCollections: (value, entityType) => {
         set(
             produce((state: ResourceConfigState) => {
                 const collections: string[] = [];
 
+                const queryProp =
+                    entityType === 'materialization'
+                        ? 'reads_from'
+                        : 'writes_to';
+
                 value.forEach((queryData) => {
-                    queryData.reads_from.forEach((collection) => {
+                    queryData[queryProp].forEach((collection) => {
                         collections.push(collection);
                     });
                 });
@@ -135,13 +160,139 @@ const getInitialState = (
         );
     },
 
+    addCollection: (value) => {
+        set(
+            produce((state: ResourceConfigState) => {
+                const { collections } = get();
+
+                if (collections && !collections.includes(value)) {
+                    state.collections = [...collections, value];
+                }
+            }),
+            false,
+            'Collection Added'
+        );
+    },
+
+    removeCollection: (value) => {
+        set(
+            produce((state: ResourceConfigState) => {
+                const { collections, currentCollection, resourceConfig } =
+                    get();
+
+                if (collections?.includes(value)) {
+                    state.collectionRemovalMetadata = {
+                        selectedCollection: currentCollection,
+                        removedCollection: value,
+                        index: collections.findIndex(
+                            (collection) => collection === value
+                        ),
+                    };
+
+                    state.collections = collections.filter(
+                        (collection) => collection !== value
+                    );
+
+                    const updatedResourceConfig = pick(
+                        resourceConfig,
+                        state.collections
+                    ) as ResourceConfigDictionary;
+
+                    state.resourceConfig = updatedResourceConfig;
+                }
+            }),
+            false,
+            'Collection Removed'
+        );
+    },
+
     setCurrentCollection: (value) => {
         set(
             produce((state: ResourceConfigState) => {
-                state.currentCollection = value;
+                const {
+                    collections,
+                    collectionRemovalMetadata: {
+                        selectedCollection,
+                        removedCollection,
+                        index: removedCollectionIndex,
+                    },
+                } = get();
+
+                const collectionCount = collections?.length;
+
+                if (value && collections?.includes(value)) {
+                    state.currentCollection = value;
+                } else if (
+                    collectionCount &&
+                    selectedCollection === removedCollection
+                ) {
+                    if (
+                        removedCollectionIndex > -1 &&
+                        removedCollectionIndex < collections.length
+                    ) {
+                        state.currentCollection =
+                            collections[removedCollectionIndex];
+                    } else if (removedCollectionIndex === collections.length) {
+                        state.currentCollection =
+                            collections[removedCollectionIndex - 1];
+                    }
+                } else if (collectionCount && removedCollection === value) {
+                    state.currentCollection = selectedCollection;
+                } else {
+                    state.currentCollection = null;
+                }
             }),
             false,
             'Current Collection Changed'
+        );
+    },
+
+    setDiscoveredCollections: (value) => {
+        set(
+            produce((state: ResourceConfigState) => {
+                const discoveredCollections: string[] = [];
+
+                value.spec.bindings.forEach((binding: any) => {
+                    discoveredCollections.push(binding.target);
+                });
+
+                state.discoveredCollections = discoveredCollections;
+            }),
+            false,
+            'Discovered Collections Set'
+        );
+    },
+
+    setRestrictedDiscoveredCollections: (value, nativeCollectionFlag) => {
+        set(
+            produce((state: ResourceConfigState) => {
+                const {
+                    discoveredCollections,
+                    restrictedDiscoveredCollections,
+                } = get();
+
+                let restrictedCollections: string[] =
+                    restrictedDiscoveredCollections;
+
+                if (restrictedDiscoveredCollections.includes(value)) {
+                    restrictedCollections =
+                        restrictedDiscoveredCollections.filter(
+                            (collection) => collection !== value
+                        );
+                } else if (
+                    discoveredCollections?.includes(value) ||
+                    nativeCollectionFlag
+                ) {
+                    restrictedCollections = [
+                        value,
+                        ...restrictedDiscoveredCollections,
+                    ];
+                }
+
+                state.restrictedDiscoveredCollections = restrictedCollections;
+            }),
+            false,
+            'Restricted Discovered Collections Set'
         );
     },
 
@@ -234,7 +385,7 @@ const getInitialState = (
         );
     },
 
-    hydrateState: async (workflow) => {
+    hydrateState: async (editWorkflow, entityType) => {
         const searchParams = new URLSearchParams(window.location.search);
         const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
         const liveSpecId = searchParams.get(GlobalSearchParams.LIVE_SPEC_ID);
@@ -258,13 +409,11 @@ const getInitialState = (
             }
         }
 
-        if (workflow === 'materialization_create') {
-            const specType = 'capture';
-
+        if (!editWorkflow) {
             if (lastPubId) {
                 const { data, error } = await getLiveSpecsByLastPubId(
                     lastPubId,
-                    specType
+                    'capture'
                 );
 
                 if (error) {
@@ -279,7 +428,7 @@ const getInitialState = (
             } else if (liveSpecId) {
                 const { data, error } = await getLiveSpecsByLiveSpecId(
                     liveSpecId,
-                    specType
+                    entityType
                 );
 
                 if (error) {
@@ -292,10 +441,10 @@ const getInitialState = (
                     preFillEmptyCollections(data);
                 }
             }
-        } else if (workflow === 'materialization_edit' && liveSpecId) {
+        } else if (liveSpecId) {
             const { data, error } = await getLiveSpecsByLiveSpecId(
                 liveSpecId,
-                'materialization'
+                entityType
             );
 
             if (error) {
@@ -305,14 +454,21 @@ const getInitialState = (
             if (data && data.length > 0) {
                 const { setResourceConfig, preFillCollections } = get();
 
-                data[0].spec.bindings.forEach((binding: any) =>
-                    setResourceConfig(binding.source, {
+                const collectionNameProp =
+                    entityType === 'materialization' ? 'source' : 'target';
+
+                const sortedBindings = sortBy(data[0].spec.bindings, [
+                    collectionNameProp,
+                ]);
+
+                sortedBindings.forEach((binding: any) =>
+                    setResourceConfig(binding[collectionNameProp], {
                         data: binding.resource,
                         errors: [],
                     })
                 );
 
-                preFillCollections(data);
+                preFillCollections(data, entityType);
             }
         }
     },

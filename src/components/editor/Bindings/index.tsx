@@ -1,16 +1,24 @@
-import CollectionSelector from 'components/collection/Picker';
+import { Typography, useTheme } from '@mui/material';
+import {
+    BindingsEditorSkeleton,
+    BindingsSelectorSkeleton,
+} from 'components/collection/CollectionSkeletons';
 import BindingsEditor from 'components/editor/Bindings/Editor';
 import BindingSelector from 'components/editor/Bindings/Selector';
 import ListAndDetails from 'components/editor/ListAndDetails';
-import { useEntityWorkflow } from 'context/Workflow';
+import { useEntityType } from 'context/EntityContext';
+import { alternativeReflexContainerBackground } from 'context/Theme';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useConnectorTag from 'hooks/useConnectorTag';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import useLiveSpecs from 'hooks/useLiveSpecs';
 import { isEqual } from 'lodash';
 import { useEffect, useMemo } from 'react';
+import { FormattedMessage } from 'react-intl';
 import { useDetailsForm_connectorImage } from 'stores/DetailsForm';
+import { useFormStateStore_messagePrefix } from 'stores/FormState';
 import {
     useResourceConfig_resourceConfig,
     useResourceConfig_setResourceSchema,
@@ -20,17 +28,22 @@ import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import { Schema } from 'types';
 
 interface Props {
-    draftSpecs?: DraftSpecQuery[];
+    draftSpecs: DraftSpecQuery[];
     readOnly?: boolean;
 }
 
 function BindingsMultiEditor({ draftSpecs = [], readOnly = false }: Props) {
+    const theme = useTheme();
+
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
-    const workflow = useEntityWorkflow();
+    const entityType = useEntityType();
 
     // Details Form Store
     const imageTag = useDetailsForm_connectorImage();
+
+    // Form State Store
+    const messagePrefix = useFormStateStore_messagePrefix();
 
     // Resource Config Store
     const setResourceSchema = useResourceConfig_setResourceSchema();
@@ -60,35 +73,68 @@ function BindingsMultiEditor({ draftSpecs = [], readOnly = false }: Props) {
     const resourceConfigUpdated = useMemo(() => {
         let queriedResourceConfig: ResourceConfigDictionary = {};
 
+        const collectionNameProp =
+            entityType === 'materialization' ? 'source' : 'target';
+
         draftSpecs[0]?.spec.bindings.forEach((binding: any) => {
             queriedResourceConfig = {
                 ...queriedResourceConfig,
-                [binding.source]: {
+                [binding[collectionNameProp]]: {
                     data: binding.resource,
                     errors: [],
                 },
             };
         });
 
-        // TODO (optimization): Evaluate the performance of a hash comparator function.
         return draftSpecs.length > 0
             ? !isEqual(resourceConfig, queriedResourceConfig)
             : false;
-    }, [draftSpecs, resourceConfig]);
+    }, [draftSpecs, entityType, resourceConfig]);
 
     useEffect(() => {
-        if (workflow === 'materialization_edit') {
-            setServerUpdateRequired(resourceConfigUpdated);
-        }
-    }, [setServerUpdateRequired, resourceConfigUpdated, workflow]);
+        setServerUpdateRequired(resourceConfigUpdated);
+    }, [setServerUpdateRequired, resourceConfigUpdated]);
+
+    const { liveSpecs } = useLiveSpecs('collection');
+
+    const fetchingSpecs =
+        entityType === 'materialization'
+            ? liveSpecs.length === 0
+            : draftSpecs.length === 0;
 
     return (
         <>
-            <CollectionSelector readOnly={readOnly} />
+            <Typography variant="h5" sx={{ mb: 1 }}>
+                <FormattedMessage
+                    id={`${messagePrefix}.collectionSelector.heading`}
+                />
+            </Typography>
+
+            <Typography sx={{ mb: 2 }}>
+                <FormattedMessage
+                    id={`${messagePrefix}.collectionSelector.instructions`}
+                />
+            </Typography>
 
             <ListAndDetails
-                list={<BindingSelector />}
-                details={<BindingsEditor readOnly={readOnly} />}
+                list={
+                    <BindingSelector
+                        loading={fetchingSpecs}
+                        skeleton={<BindingsSelectorSkeleton />}
+                        readOnly={readOnly}
+                    />
+                }
+                details={
+                    <BindingsEditor
+                        loading={fetchingSpecs}
+                        skeleton={<BindingsEditorSkeleton />}
+                        readOnly={readOnly}
+                    />
+                }
+                backgroundColor={
+                    alternativeReflexContainerBackground[theme.palette.mode]
+                }
+                displayBorder={true}
             />
         </>
     );

@@ -1,6 +1,7 @@
 import { authenticatedRoutes } from 'app/routes';
 import {
     useEditorStore_id,
+    useEditorStore_persistedDraftId,
     useEditorStore_setId,
 } from 'components/editor/Store';
 import MaterializeGenerateButton from 'components/materialization/GenerateButton';
@@ -11,6 +12,7 @@ import EntityToolbar from 'components/shared/Entity/Header';
 import ExtendedValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary/extensions/WithResourceConfigErrors';
 import PageContainer from 'components/shared/PageContainer';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
+import useDraftSpecs from 'hooks/useDraftSpecs';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
@@ -45,8 +47,9 @@ function MaterializationCreate() {
 
     // Draft Editor Store
     const draftId = useEditorStore_id();
-
     const setDraftId = useEditorStore_setId();
+
+    const persistedDraftId = useEditorStore_persistedDraftId();
 
     // Endpoint Config Store
     const resetEndpointConfigState = useEndpointConfigStore_reset();
@@ -60,6 +63,9 @@ function MaterializationCreate() {
     // Resource Config Store
     // const resourceConfigChanged = useResourceConfig_stateChanged();
     const resetResourceConfigState = useResourceConfig_resetState();
+
+    const { mutate: mutateDraftSpecs, ...draftSpecsMetadata } =
+        useDraftSpecs(persistedDraftId);
 
     // Reset the catalog if the connector changes
     useEffect(() => {
@@ -120,8 +126,8 @@ function MaterializationCreate() {
             <ResourceConfigHydrator>
                 <EntityCreate
                     title="browserTitle.materializationCreate"
-                    connectorType={entityType}
-                    showCollections
+                    entityType={entityType}
+                    draftSpecMetadata={draftSpecsMetadata}
                     resetState={resetState}
                     errorSummary={
                         <ExtendedValidationErrorSummary

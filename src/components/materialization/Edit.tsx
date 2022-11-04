@@ -1,8 +1,8 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { authenticatedRoutes } from 'app/routes';
 import {
-    useEditorStore_editDraftId,
     useEditorStore_id,
+    useEditorStore_persistedDraftId,
     useEditorStore_resetState,
     useEditorStore_setId,
 } from 'components/editor/Store';
@@ -57,7 +57,7 @@ function MaterializationEdit() {
     const draftId = useEditorStore_id();
     const setDraftId = useEditorStore_setId();
 
-    const editDraftId = useEditorStore_editDraftId();
+    const persistedDraftId = useEditorStore_persistedDraftId();
     const resetEditorStore = useEditorStore_resetState();
 
     // Endpoint Config Store
@@ -74,7 +74,7 @@ function MaterializationEdit() {
     const resetResourceConfigState = useResourceConfig_resetState();
 
     const { mutate: mutateDraftSpecs, ...draftSpecsMetadata } = useDraftSpecs(
-        editDraftId,
+        persistedDraftId,
         lastPubId
     );
 
@@ -141,7 +141,11 @@ function MaterializationEdit() {
     };
 
     return (
-        <PageContainer>
+        <PageContainer
+            pageTitleProps={{
+                header: authenticatedRoutes.materializations.edit.title,
+            }}
+        >
             <ResourceConfigHydrator>
                 <EntityEdit
                     title="browserTitle.materializationEdit"

@@ -485,10 +485,15 @@ const CaptureCreate: ResolvedIntlConfig['messages'] = {
     'captureCreate.editor.default': `Before you can edit the capture specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.capture']}." `,
     'captureCreate.finalReview.instructions': `The following Flow specification was generated from the details you provided. To make changes, you can enter new values in the form above and click "${CTAs['cta.generateCatalog.capture']}" again. You can also edit the specification file directly. Click "${CTAs['cta.saveEntity']}" to proceed.`,
 
+    'captureCreate.collections.heading': `Output Collections`,
+    'captureCreate.collectionSelector.heading': `Collection Selector`,
+    'captureCreate.collectionSelector.instructions': `The collections bound to your capture. To make changes, you can enter new values in the this section of the form or edit the YAML file shown in the ${EntityCreate['entityCreate.catalogEditor.heading']} section below.`,
+
     'captureCreate.test.failedErrorTitle': `Configuration Test Failed`,
     'captureCreate.test.serverUnreachable': `Unable to reach server while testing configuration.`,
 
     'captureCreate.save.failedErrorTitle': `Capture Save Failed`,
+    'captureCreate.save.failure.errorTitle': `Capture Save Failed`,
     'captureCreate.save.serverUnreachable': `Unable to reach server while saving capture`,
     'captureCreate.save.waitMessage': `Please wait while we test, save, and publish your capture.`,
 
@@ -516,10 +521,15 @@ const CaptureEdit: ResolvedIntlConfig['messages'] = {
     'captureEdit.editor.default': `Before you can edit the capture specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.capture']}." `,
     'captureEdit.finalReview.instructions': `The following Flow specification was generated from the details you provided. To make changes, you can enter new values in the form above or edit the YAML file directly. Click "${CTAs['cta.saveEntity']}" to proceed.`,
 
+    'captureEdit.collections.heading': `Output Collections`,
+    'captureEdit.collectionSelector.heading': `Collection Selector`,
+    'captureEdit.collectionSelector.instructions': `The collections bound to your existing capture. To make changes, you can enter new values in the this section of the form or edit the YAML file shown in the ${EntityCreate['entityCreate.catalogEditor.heading']} section below.`,
+
     'captureEdit.test.failedErrorTitle': `Configuration Test Failed`,
     'captureEdit.test.serverUnreachable': `Unable to reach server while testing configuration.`,
 
     'captureEdit.save.failedErrorTitle': `Capture Save Failed`,
+    'captureEdit.save.failure.errorTitle': `Capture Save Failed`,
     'captureEdit.save.serverUnreachable': `Unable to reach server while saving capture`,
     'captureEdit.save.waitMessage': `Please wait while we test, save, and publish your capture.`,
 
@@ -627,6 +637,10 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.error.endpointConfig.empty': `${endpointConfigHeader} empty`,
     'workflows.error.initForm': `An issue was encountered initializing the form.`,
     'workflows.error.initFormSection': `An issue was encountered initializing this section of the form.`,
+
+    'workflows.collectionSelector.label.listHeader': `Collections`,
+    'workflows.collectionSelector.label.discoveredCollections': `Discovered Collections`,
+    'workflows.collectionSelector.label.existingCollections': `Existing Collections`,
 };
 
 const ShardStatus: ResolvedIntlConfig['messages'] = {
@@ -641,9 +655,10 @@ const ShardStatus: ResolvedIntlConfig['messages'] = {
 
 const OAuth: ResolvedIntlConfig['messages'] = {
     'oauth.instructions': `Authenticate your {provider} account by clicking below. A pop up will open where you can authorize access. No data will be accessed during authorization.`,
-    'oauth.fetchAuthURL.error': `We were unable to fetch the proper URL to start OAuth. ${Error['error.tryAgain']}`,
+    'oauth.fetchAuthURL.error': `We failed to fetch the proper URL to start OAuth. ${Error['error.tryAgain']}`,
     'oauth.authentication.denied': `To use OAuth as your authentication you must allow our app access to your {provider} account.`,
     'oauth.accessToken.error': `There was an issue attempting to get the access token from {provider}. ${Error['error.tryAgain']}`,
+    'oauth.emptyData.error': `We failed to get the data we need to populate the {provider} OAuth configuration. ${Error['error.tryAgain']}`,
     'oauth.authenticated': `Authenticated`,
     'oauth.unauthenticated': `Not Authenticated`,
     'oauth.authenticate': `Authenticate your {provider} account`,

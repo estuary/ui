@@ -32,8 +32,10 @@ import {
     useFormStateStore_setFormState,
     useFormStateStore_updateStatus,
 } from 'stores/FormState';
+import { useResourceConfig_resourceConfig } from 'stores/ResourceConfig';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 
+// TODO (typing): Narrow the type annotation attributed to the subscription property.
 interface Props {
     disabled: boolean;
     callFailed: Function;
@@ -63,8 +65,9 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
     // Details Form Store
     const entityName = useDetailsForm_details_entityName();
     const detailsFormsHasErrors = useDetailsForm_errorsExist();
-    const imageConnectorTagId = useDetailsForm_connectorImage_id();
+
     const imageConnectorId = useDetailsForm_connectorImage_connectorId();
+    const imageConnectorTagId = useDetailsForm_connectorImage_id();
 
     // Endpoint Config Store
     const endpointSchema = useEndpointConfigStore_endpointSchema();
@@ -77,6 +80,9 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
 
     const endpointConfigChanged = useEndpointConfigStore_changed();
     const serverUpdateRequired = useEndpointConfig_serverUpdateRequired();
+
+    // Resource Config Store
+    const resourceConfig = useResourceConfig_resourceConfig();
 
     const endpointConfigErrorFlag = editWorkflow
         ? endpointConfigChanged() && endpointConfigErrorsExist
@@ -96,7 +102,7 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
                 displayValidation: true,
             });
         } else {
-            resetEditorState(editWorkflow);
+            resetEditorState(true);
 
             const draftsResponse = await createEntityDraft(entityName);
             if (draftsResponse.error) {
@@ -150,7 +156,7 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
                     },
                 });
             }
-            subscription(draftId, endpointConfigData);
+            subscription(draftId, endpointConfigData, resourceConfig);
 
             setFormState({
                 logToken: discoverResponse.data[0].logs_token,

@@ -1,11 +1,16 @@
+import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import {
     deleteSupabase,
+    handleFailure,
+    handleSuccess,
     insertSupabase,
+    supabaseClient,
     TABLES,
     updateSupabase,
 } from 'services/supabase';
+import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import { Entity } from 'types';
-import { CaptureBinding, CaptureDef } from '../../flow_deps/flow';
+import { CaptureDef, CaptureEndpoint } from '../../flow_deps/flow';
 
 interface CreateMatchData {
     draft_id: string | null;
@@ -18,6 +23,11 @@ interface CreateMatchData {
 interface UpdateMatchData {
     draft_id: string | null;
     catalog_name?: string;
+    expect_pub_id?: string;
+}
+
+interface DraftSpecData {
+    spec: any;
     expect_pub_id?: string;
 }
 
@@ -66,21 +76,21 @@ export const updateDraftSpec = (
     );
 };
 
-export const updateExpectedPubId = (
-    draftId: string | null,
-    lastPubId: string | null
+// TODO (optimization): Determine whether to replace all instances of updateDraftSpec
+//   with this modified and extendible version of that function. If that is desired,
+//   rename the function below to updateDraftSpec and remove the existing function.
+export const modifyDraftSpec = (
+    draftSpec: any,
+    matchData: UpdateMatchData,
+    lastPubId?: string
 ) => {
-    const matchData: UpdateMatchData = {
-        draft_id: draftId,
-    };
+    let data: DraftSpecData = { spec: draftSpec };
 
-    return updateSupabase(
-        TABLES.DRAFT_SPECS,
-        {
-            expect_pub_id: lastPubId,
-        },
-        matchData
-    );
+    if (lastPubId) {
+        data = { ...data, expect_pub_id: lastPubId };
+    }
+
+    return updateSupabase(TABLES.DRAFT_SPECS, data, matchData);
 };
 
 export const generateDraftSpec = (
@@ -118,19 +128,45 @@ export const generateDraftSpec = (
 };
 
 export const generateCaptureDraftSpec = (
-    bindings: CaptureBinding[],
-    config: any,
-    image: string
-): CaptureDef => ({
-    bindings,
-    endpoint: {
-        connector: {
-            config,
-            image,
-        },
-    },
-});
+    resourceConfig: ResourceConfigDictionary,
+    endpoint: CaptureEndpoint
+): CaptureDef => {
+    const draftSpec: CaptureDef = {
+        bindings: [],
+        endpoint,
+    };
+
+    Object.keys(resourceConfig).forEach((collectionName) => {
+        const resources = resourceConfig[collectionName].data;
+
+        if (Object.keys(resources).length > 0) {
+            draftSpec.bindings.push({
+                target: collectionName,
+                resource: {
+                    ...resources,
+                },
+            });
+        }
+    });
+
+    return draftSpec;
+};
 
 export const deleteDraftSpec = (draftId: string) => {
     return deleteSupabase(TABLES.DRAFT_SPECS, { draft_id: draftId });
+};
+
+// TODO (optimization | typing): Narrow the columns selected from the draft_specs_ext table.
+//   More columns are selected than required to appease the typing of the editor store.
+//   This function is used in the capture create and edit components.
+export const getDraftSpecsBySpecType = async (
+    draftId: string,
+    specType: Entity
+) => {
+    return supabaseClient
+        .from(TABLES.DRAFT_SPECS_EXT)
+        .select(`catalog_name,draft_id,expect_pub_id,spec,spec_type`)
+        .eq('draft_id', draftId)
+        .eq('spec_type', specType)
+        .then(handleSuccess<DraftSpecQuery[]>, handleFailure);
 };

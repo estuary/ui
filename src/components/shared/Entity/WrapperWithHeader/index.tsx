@@ -53,7 +53,7 @@ function WrapperWithHeader({
             expanded={expanded}
             onChange={handlers.change}
             sx={{
-                mt: 2,
+                my: 2,
             }}
         >
             <Header
