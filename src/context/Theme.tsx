@@ -14,6 +14,13 @@ import { useLocalStorage } from 'react-use';
 import { BaseComponentProps } from 'types';
 import { LocalStorageKeys } from 'utils/localStorage-utils';
 
+// Navigation width
+export enum NavWidths {
+    MOBILE = 0,
+    RAIL = 57,
+    FULL = 225,
+}
+
 // Colors
 export const teal = {
     25: '#E6FFFF',
@@ -288,6 +295,17 @@ export const LINK_BUTTON_STYLING: SxProps<Theme> = {
         fontWeight: 700,
         textDecoration: 'underline',
     },
+};
+
+export const connectorImageBackgroundSx: SxProps<Theme> = {
+    width: '100%',
+    height: 125,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 2,
+    borderRadius: 5,
+    background: connectorCardLogoBackground,
 };
 
 const themeSettings = createTheme({

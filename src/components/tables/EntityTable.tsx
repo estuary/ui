@@ -16,15 +16,13 @@ import {
     Toolbar,
     Typography,
 } from '@mui/material';
-import RowSelector, {
-    RowSelectorProps,
-} from 'components/tables/RowActions/RowSelector';
+import RowSelector from 'components/tables/RowActions/RowSelector';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
 import Title from 'components/tables/Title';
-import { useZustandStore } from 'context/Zustand/hooks';
+import { useZustandStore } from 'context/Zustand/provider';
 import { Query, useSelect } from 'hooks/supabase-swr';
 import { debounce } from 'lodash';
 import {
@@ -46,6 +44,7 @@ import {
     TableStatuses,
 } from 'types';
 import { getEmptyTableHeader, getEmptyTableMessage } from 'utils/table-utils';
+import { RowSelectorProps } from './RowActions/types';
 
 interface Props {
     columns: {

@@ -11,12 +11,8 @@ import {
     TABLES,
 } from 'services/supabase';
 import { SelectTableStoreNames } from 'stores/names';
-import { LiveSpecsExtBaseQuery, SortDirection } from 'types';
-
-// TODO: Consider consolidating query interface instances.
-export interface LiveSpecsExtQuery extends LiveSpecsExtBaseQuery {
-    writes_to: string[];
-}
+import { SortDirection } from 'types';
+import { LiveSpecsExtQuery } from './types';
 
 const queryColumns = [
     'catalog_name',

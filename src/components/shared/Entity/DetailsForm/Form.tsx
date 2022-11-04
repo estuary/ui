@@ -26,7 +26,7 @@ import {
     useFormStateStore_displayValidation,
     useFormStateStore_isActive,
     useFormStateStore_messagePrefix,
-} from 'stores/FormState';
+} from 'stores/FormState/hooks';
 import { hasLength } from 'utils/misc-utils';
 
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';

@@ -1,5 +1,4 @@
 import { TableRow, useTheme } from '@mui/material';
-import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import Actions from 'components/tables/cells/Actions';
 import EntityName from 'components/tables/cells/EntityName';
 import ExpandDetails from 'components/tables/cells/ExpandDetails';
@@ -7,6 +6,7 @@ import TimeStamp from 'components/tables/cells/TimeStamp';
 import DetailsPanel from 'components/tables/Details/DetailsPanel';
 import { getEntityTableRowSx } from 'context/Theme';
 import { useState } from 'react';
+import { LiveSpecsExtQuery } from '../Captures/types';
 
 interface RowProps {
     row: LiveSpecsExtQuery;

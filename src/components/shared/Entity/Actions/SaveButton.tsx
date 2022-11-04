@@ -5,12 +5,12 @@ import LogDialogActions from 'components/shared/Entity/LogDialogActions';
 import { FormattedMessage } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
 import {
-    FormStatus,
     useFormStateStore_logToken,
     useFormStateStore_messagePrefix,
     useFormStateStore_showLogs,
     useFormStateStore_status,
-} from 'stores/FormState';
+} from 'stores/FormState/hooks';
+import { FormStatus } from 'stores/FormState/types';
 
 interface Props {
     closeLogs: Function;

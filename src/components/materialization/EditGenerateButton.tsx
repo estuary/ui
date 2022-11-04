@@ -25,11 +25,11 @@ import {
     useEndpointConfig_serverUpdateRequired,
 } from 'stores/EndpointConfig';
 import {
-    FormStatus,
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
     useFormStateStore_updateStatus,
-} from 'stores/FormState';
+} from 'stores/FormState/hooks';
+import { FormStatus } from 'stores/FormState/types';
 import {
     useResourceConfig_resourceConfig,
     useResourceConfig_resourceConfigErrorsExist,

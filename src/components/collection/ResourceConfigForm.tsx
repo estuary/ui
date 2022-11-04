@@ -9,7 +9,7 @@ import { defaultOptions, showValidation } from 'services/jsonforms/shared';
 import {
     useFormStateStore_displayValidation,
     useFormStateStore_isActive,
-} from 'stores/FormState';
+} from 'stores/FormState/hooks';
 import {
     useResourceConfig_resourceConfig,
     useResourceConfig_resourceSchema,

@@ -43,12 +43,12 @@ import {
     useEndpointConfigStore_setPreviousEndpointConfig,
 } from 'stores/EndpointConfig';
 import {
-    FormStatus,
     useFormStateStore_exitWhenLogsClose,
     useFormStateStore_messagePrefix,
     useFormStateStore_resetState,
     useFormStateStore_setFormState,
-} from 'stores/FormState';
+} from 'stores/FormState/hooks';
+import { FormStatus } from 'stores/FormState/types';
 import {
     useResourceConfig_addCollection,
     useResourceConfig_resetState,

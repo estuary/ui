@@ -6,8 +6,6 @@ import {
     Paper,
     Skeleton,
     Stack,
-    SxProps,
-    Theme,
     Typography,
     useMediaQuery,
     useTheme,
@@ -16,7 +14,6 @@ import ConnectorCard from 'components/connectors/card';
 import ConnectorToolbar from 'components/ConnectorToolbar';
 import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
 import {
-    connectorCardLogoBackground,
     semiTransparentBackground,
     semiTransparentBackgroundIntensified,
 } from 'context/Theme';
@@ -55,17 +52,6 @@ const skeletonTileCount = 6;
 const intlConfig: TableIntlConfig = {
     header: 'connectors.main.message1',
     message: 'connectors.main.message2',
-};
-
-export const imageBackgroundSx: SxProps<Theme> = {
-    width: '100%',
-    height: 125,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 2,
-    borderRadius: 5,
-    background: connectorCardLogoBackground,
 };
 
 function Tile({ children }: TileProps) {

@@ -7,13 +7,12 @@ import OptionsMenu from 'components/tables/cells/OptionsMenu';
 import RowSelect from 'components/tables/cells/RowSelect';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import DetailsPanel from 'components/tables/Details/DetailsPanel';
-import { LiveSpecsExtQuery } from 'components/tables/Materializations';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
 import { getEntityTableRowSx } from 'context/Theme';
-import { useZustandStore } from 'context/Zustand/hooks';
+import { useZustandStore } from 'context/Zustand/provider';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useShardsList from 'hooks/useShardsList';
 import { useEffect, useState } from 'react';
@@ -22,6 +21,7 @@ import { QUERY_PARAM_CONNECTOR_TITLE } from 'services/supabase';
 import { SelectTableStoreNames } from 'stores/names';
 import { useShardDetail_setShards } from 'stores/ShardDetail/hooks';
 import { getPathWithParams } from 'utils/misc-utils';
+import { LiveSpecsExtQuery } from './types';
 
 interface RowsProps {
     data: LiveSpecsExtQuery[];

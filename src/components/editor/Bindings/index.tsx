@@ -18,7 +18,7 @@ import { isEqual } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useDetailsForm_connectorImage } from 'stores/DetailsForm';
-import { useFormStateStore_messagePrefix } from 'stores/FormState';
+import { useFormStateStore_messagePrefix } from 'stores/FormState/hooks';
 import {
     useResourceConfig_resourceConfig,
     useResourceConfig_setResourceSchema,

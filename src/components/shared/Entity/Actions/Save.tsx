@@ -18,12 +18,12 @@ import {
 } from 'services/supabase';
 import { useDetailsForm_details_description } from 'stores/DetailsForm';
 import {
-    FormStatus,
     useFormStateStore_isActive,
     useFormStateStore_messagePrefix,
     useFormStateStore_setFormState,
     useFormStateStore_updateStatus,
-} from 'stores/FormState';
+} from 'stores/FormState/hooks';
+import { FormStatus } from 'stores/FormState/types';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';

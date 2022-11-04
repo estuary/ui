@@ -1,7 +1,7 @@
 import { Box, Grid, Paper, Stack } from '@mui/material';
-import { imageBackgroundSx } from 'components/ConnectorTiles';
 import ExternalLink from 'components/shared/ExternalLink';
 import {
+    connectorImageBackgroundSx,
     semiTransparentBackground,
     semiTransparentBackgroundIntensified,
 } from 'context/Theme';
@@ -53,7 +53,7 @@ function ConnectorCard({ cta, docsUrl, logo, title, details }: Props) {
                     }}
                 >
                     <Box>
-                        <Box sx={imageBackgroundSx}>
+                        <Box sx={connectorImageBackgroundSx}>
                             <Stack
                                 sx={{
                                     justifyContent: 'center',

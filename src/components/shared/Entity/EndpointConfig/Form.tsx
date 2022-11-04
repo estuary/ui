@@ -16,7 +16,7 @@ import {
 import {
     useFormStateStore_displayValidation,
     useFormStateStore_isActive,
-} from 'stores/FormState';
+} from 'stores/FormState/hooks';
 import { EntityWorkflow } from 'types';
 
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';

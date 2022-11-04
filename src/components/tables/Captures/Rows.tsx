@@ -1,6 +1,5 @@
 import { TableRow, useTheme } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
-import { LiveSpecsExtQuery } from 'components/tables/Captures';
 import ChipList from 'components/tables/cells/ChipList';
 import Connector from 'components/tables/cells/Connector';
 import EntityName from 'components/tables/cells/EntityName';
@@ -13,7 +12,7 @@ import {
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
 import { getEntityTableRowSx } from 'context/Theme';
-import { useZustandStore } from 'context/Zustand/hooks';
+import { useZustandStore } from 'context/Zustand/provider';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useShardsList from 'hooks/useShardsList';
 import { useEffect, useState } from 'react';
@@ -22,6 +21,7 @@ import { QUERY_PARAM_CONNECTOR_TITLE } from 'services/supabase';
 import { SelectTableStoreNames } from 'stores/names';
 import { useShardDetail_setShards } from 'stores/ShardDetail/hooks';
 import { getPathWithParams } from 'utils/misc-utils';
+import { LiveSpecsExtQuery } from './types';
 
 interface RowsProps {
     data: LiveSpecsExtQuery[];

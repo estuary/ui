@@ -4,7 +4,7 @@ import { createDraftSpec } from 'api/draftSpecs';
 import { createPublication } from 'api/publications';
 import DraftErrors from 'components/shared/Entity/Error/DraftErrors';
 import Error from 'components/shared/Error';
-import { LiveSpecsExtQuery } from 'components/tables/Captures';
+import { LiveSpecsExtQuery } from 'components/tables/Captures/types';
 import SharedProgress, {
     ProgressStates,
     SharedProgressProps,
@@ -13,7 +13,7 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
-import { useZustandStore } from 'context/Zustand/hooks';
+import { useZustandStore } from 'context/Zustand/provider';
 import {
     LiveSpecsExtQueryWithSpec,
     useLiveSpecsExtWithSpec,

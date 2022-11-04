@@ -6,9 +6,9 @@ import {
     Tooltip,
 } from '@mui/material';
 import RouterLink from 'components/navigation/RouterLink';
+import { NavWidths } from 'context/Theme';
 import { ReactNode } from 'react';
 import { useIntl } from 'react-intl';
-import { Widths } from '../../AppLayout';
 
 interface Props {
     icon: ReactNode;
@@ -42,7 +42,7 @@ const ListItemLink = ({
                 placement="right-end"
                 enterDelay={tooltipDelay ? tooltipDelay : undefined}
             >
-                {menuWidth === Widths.FULL ? (
+                {menuWidth === NavWidths.FULL ? (
                     <ListItemButton
                         component={typeof link === 'string' ? RouterLink : 'a'}
                         to={typeof link === 'string' ? link : undefined}

@@ -20,7 +20,7 @@ import { ReactNode, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
 import { useDetailsForm_details_entityName } from 'stores/DetailsForm';
-import { useFormStateStore_isActive } from 'stores/FormState';
+import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import {
     useResourceConfig_currentCollection,
     useResourceConfig_discoveredCollections,

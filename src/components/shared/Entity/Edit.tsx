@@ -50,15 +50,14 @@ import {
     useEndpointConfig_serverUpdateRequired,
 } from 'stores/EndpointConfig';
 import {
-    FormState,
-    FormStatus,
     useFormStateStore_error,
     useFormStateStore_exitWhenLogsClose,
     useFormStateStore_logToken,
     useFormStateStore_messagePrefix,
     useFormStateStore_setFormState,
     useFormStateStore_status,
-} from 'stores/FormState';
+} from 'stores/FormState/hooks';
+import { FormState, FormStatus } from 'stores/FormState/types';
 import {
     useResourceConfig_hydrated,
     useResourceConfig_serverUpdateRequired,

@@ -1,7 +1,8 @@
 import { Box, Button, Stack } from '@mui/material';
 import Status from 'components/shared/Entity/Status';
 import { FormattedMessage } from 'react-intl';
-import { FormStatus, useFormStateStore_status } from 'stores/FormState';
+import { useFormStateStore_status } from 'stores/FormState/hooks';
+import { FormStatus } from 'stores/FormState/types';
 
 interface Props {
     close: any;

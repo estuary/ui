@@ -32,7 +32,7 @@ import {
     useFormStateStore_exitWhenLogsClose,
     useFormStateStore_logToken,
     useFormStateStore_messagePrefix,
-} from 'stores/FormState';
+} from 'stores/FormState/hooks';
 import { useResourceConfig_serverUpdateRequired } from 'stores/ResourceConfig/hooks';
 import { EntityWithCreateWorkflow } from 'types';
 import { hasLength } from 'utils/misc-utils';

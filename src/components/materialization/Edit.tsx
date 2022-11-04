@@ -29,11 +29,11 @@ import {
 } from 'stores/DetailsForm';
 import { useEndpointConfigStore_reset } from 'stores/EndpointConfig';
 import {
-    FormStatus,
     useFormStateStore_exitWhenLogsClose,
     useFormStateStore_resetState,
     useFormStateStore_setFormState,
-} from 'stores/FormState';
+} from 'stores/FormState/hooks';
+import { FormStatus } from 'stores/FormState/types';
 import { useResourceConfig_resetState } from 'stores/ResourceConfig/hooks';
 import ResourceConfigHydrator from 'stores/ResourceConfig/Hydrator';
 

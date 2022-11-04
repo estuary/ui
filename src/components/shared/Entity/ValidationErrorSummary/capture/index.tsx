@@ -7,7 +7,7 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { FormattedMessage } from 'react-intl';
-import { useFormStateStore_displayValidation } from 'stores/FormState';
+import { useFormStateStore_displayValidation } from 'stores/FormState/hooks';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {

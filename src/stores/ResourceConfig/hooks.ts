@@ -1,5 +1,5 @@
 import { useEntityType } from 'context/EntityContext';
-import { useZustandStore } from 'context/Zustand/hooks';
+import { useZustandStore } from 'context/Zustand/provider';
 import { ResourceConfigStoreNames } from 'stores/names';
 import { Entity } from 'types';
 import shallow from 'zustand/shallow';

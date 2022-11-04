@@ -5,7 +5,7 @@ import AlertBox from 'components/shared/AlertBox';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { FormattedMessage } from 'react-intl';
-import { useFormStateStore_messagePrefix } from 'stores/FormState';
+import { useFormStateStore_messagePrefix } from 'stores/FormState/hooks';
 import {
     useResourceConfig_collectionErrorsExist,
     useResourceConfig_hydrationErrorsExist,
