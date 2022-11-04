@@ -32,7 +32,7 @@ import {
     useFormStateStore_setFormState,
     useFormStateStore_updateStatus,
 } from 'stores/FormState';
-import { useResourceConfig_resourceConfig } from 'stores/ResourceConfig';
+import { useResourceConfig_resourceConfig } from 'stores/ResourceConfig/hooks';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 
 // TODO (typing): Narrow the type annotation attributed to the subscription property.

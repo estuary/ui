@@ -1,3 +1,4 @@
+import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
 import { ReactNode } from 'react';
 import { useEffectOnce } from 'react-use';
@@ -12,10 +13,12 @@ interface ResourceConfigHydratorProps {
     children: ReactNode;
 }
 
-export default function ResourceConfigHydrator({
-    children,
-}: ResourceConfigHydratorProps) {
+const ResourceConfigHydrator = ({ children }: ResourceConfigHydratorProps) => {
+    const entityType = useEntityType();
+
     const workflow = useEntityWorkflow();
+    const editWorkflow =
+        workflow === 'materialization_edit' || workflow === 'capture_edit';
 
     const hydrated = useResourceConfig_hydrated();
     const setHydrated = useResourceConfig_setHydrated();
@@ -26,7 +29,7 @@ export default function ResourceConfigHydrator({
 
     useEffectOnce(() => {
         if (workflow && !hydrated) {
-            hydrateState(workflow).then(
+            hydrateState(editWorkflow, entityType).then(
                 () => {
                     setHydrated(true);
                 },
@@ -39,4 +42,6 @@ export default function ResourceConfigHydrator({
     });
 
     return <div>{children}</div>;
-}
+};
+
+export default ResourceConfigHydrator;

@@ -1,5 +1,6 @@
+import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
-import { EntityWorkflow, JsonFormsData, Schema } from 'types';
+import { Entity, JsonFormsData, Schema } from 'types';
 
 export interface ResourceConfig {
     [key: string]: JsonFormsData | any[];
@@ -16,17 +17,37 @@ export interface ResourceConfigState {
     // Collection Selector
     collections: string[] | null;
     preFillEmptyCollections: (collections: LiveSpecsExtQuery[]) => void;
-    preFillCollections: (liveSpecsData: LiveSpecsExtQuery[]) => void;
+    preFillCollections: (
+        liveSpecsData: LiveSpecsExtQuery[],
+        entityType: Entity
+    ) => void;
+    addCollection: (value: string) => void;
+    removeCollection: (value: string) => void;
+
+    collectionRemovalMetadata: {
+        selectedCollection: string | null;
+        removedCollection: string;
+        index: number;
+    };
 
     collectionErrorsExist: boolean;
 
     currentCollection: string | null;
     setCurrentCollection: (collections: string | null) => void;
 
+    discoveredCollections: string[] | null;
+    setDiscoveredCollections: (value: DraftSpecQuery) => void;
+
+    restrictedDiscoveredCollections: string[];
+    setRestrictedDiscoveredCollections: (
+        collection: string,
+        nativeCollectionFlag?: boolean
+    ) => void;
+
     // Resource Config
     resourceConfig: ResourceConfigDictionary;
     setResourceConfig: (
-        key: string | [string],
+        key: string | string[],
         resourceConfig?: ResourceConfig
     ) => void;
 
@@ -44,7 +65,7 @@ export interface ResourceConfigState {
     hydrationErrorsExist: boolean;
     setHydrationErrorsExist: (value: boolean) => void;
 
-    hydrateState: (workflow: EntityWorkflow) => Promise<void>;
+    hydrateState: (editWorkflow: boolean, entityType: Entity) => Promise<void>;
 
     // Server-Form Alignment
     serverUpdateRequired: boolean;

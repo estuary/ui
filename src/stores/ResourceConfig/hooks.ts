@@ -41,6 +41,24 @@ export const useResourceConfig_preFillCollections = () => {
     >(getStoreName(entityType), (state) => state.preFillCollections);
 };
 
+export const useResourceConfig_addCollection = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['addCollection']
+    >(getStoreName(entityType), (state) => state.addCollection);
+};
+
+export const useResourceConfig_removeCollection = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['removeCollection']
+    >(getStoreName(entityType), (state) => state.removeCollection);
+};
+
 export const useResourceConfig_collectionErrorsExist = () => {
     const entityType = useEntityType();
 
@@ -66,6 +84,48 @@ export const useResourceConfig_setCurrentCollection = () => {
         ResourceConfigState,
         ResourceConfigState['setCurrentCollection']
     >(getStoreName(entityType), (state) => state.setCurrentCollection);
+};
+
+export const useResourceConfig_discoveredCollections = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['discoveredCollections']
+    >(getStoreName(entityType), (state) => state.discoveredCollections);
+};
+
+export const useResourceConfig_setDiscoveredCollections = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['setDiscoveredCollections']
+    >(getStoreName(entityType), (state) => state.setDiscoveredCollections);
+};
+
+export const useResourceConfig_restrictedDiscoveredCollections = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['restrictedDiscoveredCollections']
+    >(
+        getStoreName(entityType),
+        (state) => state.restrictedDiscoveredCollections
+    );
+};
+
+export const useResourceConfig_setRestrictedDiscoveredCollections = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['setRestrictedDiscoveredCollections']
+    >(
+        getStoreName(entityType),
+        (state) => state.setRestrictedDiscoveredCollections
+    );
 };
 
 export const useResourceConfig_resourceConfig = () => {

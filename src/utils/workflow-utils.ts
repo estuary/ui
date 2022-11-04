@@ -1,7 +1,7 @@
 import { generateCaptureDraftSpec, modifyDraftSpec } from 'api/draftSpecs';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { CallSupabaseResponse } from 'services/supabase';
-import { ResourceConfigDictionary } from 'stores/ResourceConfig';
+import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 
 const mergeResourceConfigs = (
     queryData: DraftSpecQuery,

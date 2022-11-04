@@ -33,8 +33,8 @@ import {
     useFormStateStore_logToken,
     useFormStateStore_messagePrefix,
 } from 'stores/FormState';
-import { useResourceConfig_serverUpdateRequired } from 'stores/ResourceConfig';
-import { ENTITY, EntityWithCreateWorkflow } from 'types';
+import { useResourceConfig_serverUpdateRequired } from 'stores/ResourceConfig/hooks';
+import { EntityWithCreateWorkflow } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import AlertBox from '../AlertBox';
 
@@ -137,7 +137,7 @@ function EntityCreate({
     useUnsavedChangesPrompt(!exitWhenLogsClose && promptDataLoss, resetState);
 
     const displayResourceConfig =
-        entityType === ENTITY.MATERIALIZATION
+        entityType === 'materialization'
             ? hasLength(imageTag.id)
             : hasLength(imageTag.id) && persistedDraftId;
 
