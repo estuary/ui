@@ -4,8 +4,6 @@ import { BaseComponentProps } from 'types';
 import OnboardGuard from './OnboardGuard';
 
 function TenantGuard({ children }: BaseComponentProps) {
-    console.log('Guard:Tenant');
-
     const {
         combinedGrants,
         isValidating: checkingGrants,

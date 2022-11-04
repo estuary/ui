@@ -13,33 +13,29 @@ import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { jobStatusPoller } from 'services/supabase';
 import { getUrls } from 'utils/env-utils';
-import { DirectiveStates, jobStatusQuery } from './shared';
+import { DirectiveStates, jobStatusQuery, trackEvent } from './shared';
 import { DirectiveProps } from './types';
 
 const urls = getUrls();
+const directiveName = 'clickToAccept';
 
-export const CLICK_TO_ACCEPT_LATEST_VERSION = 'v2';
+export const CLICK_TO_ACCEPT_LATEST_VERSION = 'v1';
 
 const submit_clickToAccept = async (directive: any) => {
     return submitDirective(
-        'clickToAccept',
+        directiveName,
         directive,
         CLICK_TO_ACCEPT_LATEST_VERSION
     );
 };
 
 const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
-    console.log('Guard:Form:ClickToAccept', { directive, status });
-
-    // const navigate = useNavigate();
-
     const [acknowledgedDocuments, setAcknowledgedDocuments] =
         useState<boolean>(false);
     const [saving, setSaving] = useState(false);
     const [showErrors, setShowErrors] = useState(false);
     const [serverError, setServerError] = useState<string | null>(null);
 
-    const exchangedTokenAlready = status === DirectiveStates.IN_PROGRESS;
     const outdated = status === DirectiveStates.OUTDATED;
 
     const handlers = {
@@ -58,7 +54,7 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
                 setSaving(true);
 
                 const clickToAcceptResponse = await submit_clickToAccept(
-                    exchangedTokenAlready ? directive : null
+                    directive
                 );
 
                 if (clickToAcceptResponse.error) {
@@ -69,9 +65,11 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
                 jobStatusPoller(
                     jobStatusQuery(data),
                     async () => {
+                        trackEvent(directiveName, directive);
                         void mutate();
                     },
                     async (payload: any) => {
+                        trackEvent(`${directiveName}:error`, directive);
                         setSaving(false);
                         setServerError(payload.job_status.error);
                     }

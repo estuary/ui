@@ -27,24 +27,17 @@ const useDirectiveGuard = (selectedDirective: keyof typeof DIRECTIVES) => {
         return calculateStatus(appliedDirective);
     }, [isValidating, appliedDirective, calculateStatus]);
 
-    console.log(`${selectedDirective} directiveState`, {
-        directiveState,
-    });
-
     const [freshDirective, setFreshDirective] =
         useState<AppliedDirective<UserClaims> | null>(null);
     useEffect(() => {
         if (directiveState === DirectiveStates.UNFULFILLED) {
             const fetchDirective = async () => {
-                console.log('fetching a fresh directive');
                 return exchangeBearerToken(DIRECTIVES[selectedDirective].token);
             };
 
             fetchDirective()
                 .then((response) => {
-                    if (response.error) {
-                        console.log('error fetching', response.error);
-                    } else {
+                    if (response.data) {
                         setFreshDirective(response.data.applied_directive);
                     }
                 })

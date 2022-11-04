@@ -8,19 +8,17 @@ import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { jobStatusPoller } from 'services/supabase';
 import { hasLength } from 'utils/misc-utils';
-import { DirectiveStates, jobStatusQuery } from './shared';
+import { jobStatusQuery, trackEvent } from './shared';
 import { DirectiveProps } from './types';
 
+const directiveName = 'betaOnboard';
+
 const submit_onboard = async (requestedTenant: string, directive: any) => {
-    return submitDirective('betaOnboard', directive, requestedTenant);
+    return submitDirective(directiveName, directive, requestedTenant);
 };
 
-const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
-    console.log('Guard:Form:BetaOnBoard', { directive, status });
-
+const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
     const intl = useIntl();
-
-    const exchangedTokenAlready = status === DirectiveStates.IN_PROGRESS;
 
     const [requestedTenant, setRequestedTenant] = useState<string>('');
     const [saving, setSaving] = useState(false);
@@ -46,7 +44,7 @@ const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
 
                 const clickToAcceptResponse = await submit_onboard(
                     requestedTenant,
-                    exchangedTokenAlready ? directive : null
+                    directive
                 );
 
                 if (clickToAcceptResponse.error) {
@@ -57,9 +55,11 @@ const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
                 jobStatusPoller(
                     jobStatusQuery(data),
                     async () => {
+                        trackEvent(directiveName, directive);
                         void mutate();
                     },
                     async (payload: any) => {
+                        trackEvent(`${directiveName}:error`, directive);
                         setSaving(false);
                         setServerError(payload.job_status.error);
                     }

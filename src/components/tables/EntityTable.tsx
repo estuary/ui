@@ -363,35 +363,37 @@ function EntityTable({
                               tableState.status === TableStatuses.LOADING ? (
                                 loadingRows
                             ) : (
-                                <TableCell colSpan={columns.length}>
-                                    <Box
-                                        sx={{
-                                            display: 'flex',
-                                            justifyContent: 'center',
-                                        }}
-                                    >
-                                        <Box width={450}>
-                                            <Typography
-                                                variant="h6"
-                                                align="center"
-                                                sx={{ mb: 2 }}
-                                            >
-                                                <FormattedMessage
-                                                    id={getEmptyTableHeader(
+                                <TableRow>
+                                    <TableCell colSpan={columns.length}>
+                                        <Box
+                                            sx={{
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                            }}
+                                        >
+                                            <Box width={450}>
+                                                <Typography
+                                                    variant="h6"
+                                                    align="center"
+                                                    sx={{ mb: 2 }}
+                                                >
+                                                    <FormattedMessage
+                                                        id={getEmptyTableHeader(
+                                                            tableState.status,
+                                                            noExistingDataContentIds
+                                                        )}
+                                                    />
+                                                </Typography>
+                                                <Typography component="div">
+                                                    {getEmptyTableMessage(
                                                         tableState.status,
                                                         noExistingDataContentIds
                                                     )}
-                                                />
-                                            </Typography>
-                                            <Typography component="div">
-                                                {getEmptyTableMessage(
-                                                    tableState.status,
-                                                    noExistingDataContentIds
-                                                )}
-                                            </Typography>
+                                                </Typography>
+                                            </Box>
                                         </Box>
-                                    </Box>
-                                </TableCell>
+                                    </TableCell>
+                                </TableRow>
                             )}
                         </TableBody>
 

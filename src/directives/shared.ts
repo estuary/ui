@@ -1,4 +1,5 @@
 import { isEmpty } from 'lodash';
+import LogRocket from 'logrocket';
 import { JOB_STATUS_COLUMNS, supabaseClient, TABLES } from 'services/supabase';
 import { AppliedDirective } from 'types';
 import { CLICK_TO_ACCEPT_LATEST_VERSION } from './ClickToAccept';
@@ -116,3 +117,15 @@ export const DIRECTIVES: Directives = {
     },
 };
 export type DirectivesList = (keyof typeof DIRECTIVES)[];
+
+export const trackEvent = (
+    type: string,
+    directive: AppliedDirective<UserClaims>
+) => {
+    LogRocket.track(`directive:${type}`, {
+        id: directive.id,
+        directive_id: directive.directive_id,
+        logs_token: directive.logs_token,
+        status: directive.job_status.type,
+    });
+};

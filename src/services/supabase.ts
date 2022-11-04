@@ -244,7 +244,6 @@ export const jobStatusPoller = (
     failure: Function,
     initWait?: number
 ) => {
-    console.log('jobStatusPoller');
     let pollerTimeout: PollerTimeout;
     let interval = DEFAULT_POLLING_INTERVAL;
     const makeApiCall = () => {
