@@ -26,7 +26,6 @@ export interface OnboardClaim {
 export type UserClaims = ClickToAcceptClaim | OnboardClaim;
 
 export interface DirectiveSettings<T> {
-    id: string;
     token: string;
     queryFilter: (
         queryBuilder: PostgrestFilterBuilder<JoinedAppliedDirective>

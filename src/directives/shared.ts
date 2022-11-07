@@ -31,7 +31,6 @@ export const jobStatusQuery = (data: AppliedDirective<UserClaims>) => {
 
 export const DIRECTIVES: Directives = {
     betaOnboard: {
-        id: '07:af:85:52:70:00:10:00',
         token: '453e00cd-e12a-4ce5-b12d-3837aa385751',
         queryFilter: (queryBuilder) => {
             return queryBuilder;
@@ -64,7 +63,6 @@ export const DIRECTIVES: Directives = {
         },
     },
     clickToAccept: {
-        id: '07:af:85:52:70:00:0c:00',
         token: 'd4a37dd7-1bf5-40e3-b715-60c4edd0f6dc',
         queryFilter: (queryBuilder) => {
             return queryBuilder;
