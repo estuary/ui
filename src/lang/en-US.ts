@@ -382,7 +382,8 @@ const ConnectorsPage: ResolvedIntlConfig['messages'] = {
 };
 
 const NoGrants: ResolvedIntlConfig['messages'] = {
-    'noGrants.main.message': `Thanks for signing up. Our team is reviewing your account and will get back to you shortly.`,
+    'noGrants.main.message': `Our team is reviewing your account and will get back to you shortly.`,
+    'noGrants.main.title': `Thanks For Signing Up`,
 };
 
 const Captures: ResolvedIntlConfig['messages'] = {

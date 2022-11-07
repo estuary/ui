@@ -5,6 +5,7 @@ export enum GlobalSearchParams {
     CONNECTOR_ID = 'connectorId',
     LIVE_SPEC_ID = 'liveSpecId',
     LAST_PUB_ID = 'lastPubId',
+    HIDDEN_SHOW_BETA = 'showBetaOnboard',
 }
 
 function useGlobalSearchParams(key: GlobalSearchParams): string;
