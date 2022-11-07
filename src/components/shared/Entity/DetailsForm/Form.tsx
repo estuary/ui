@@ -5,7 +5,6 @@ import { useEditorStore_isSaving } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import { Props } from 'components/shared/Entity/DetailsForm/types';
 import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
-import { PREFIX_NAME_PATTERN } from 'components/tables/Details/StatusIndicatorAndLabel';
 import { CATALOG_NAME_SCOPE } from 'forms/renderers/CatalogName';
 import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
 import useGlobalSearchParams, {
@@ -27,7 +26,7 @@ import {
     useFormStateStore_isActive,
     useFormStateStore_messagePrefix,
 } from 'stores/FormState/hooks';
-import { hasLength } from 'utils/misc-utils';
+import { hasLength, PREFIX_NAME_PATTERN } from 'utils/misc-utils';
 
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
 

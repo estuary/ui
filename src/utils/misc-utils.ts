@@ -1,5 +1,7 @@
 import { createSearchParams } from 'react-router-dom';
 
+export const PREFIX_NAME_PATTERN = `[a-zA-Z0-9-_.]+`;
+
 export const stripPathing = (stringVal: string) => {
     if (!stringVal) return stringVal;
 

@@ -4,11 +4,10 @@ import { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
 import AlertBox from 'components/shared/AlertBox';
 import ExternalLink from 'components/shared/ExternalLink';
-import { PREFIX_NAME_PATTERN } from 'components/tables/Details/StatusIndicatorAndLabel';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { jobStatusPoller } from 'services/supabase';
-import { hasLength } from 'utils/misc-utils';
+import { hasLength, PREFIX_NAME_PATTERN } from 'utils/misc-utils';
 import { jobStatusQuery, trackEvent } from './shared';
 import { DirectiveProps } from './types';
 
