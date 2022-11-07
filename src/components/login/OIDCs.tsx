@@ -51,14 +51,14 @@ function OIDCs() {
         <Stack
             spacing={3}
             sx={{
-                justifyContent: 'center',
+                alignItems: 'center',
             }}
         >
             <Box>
-                <GoogleButton onClick={() => login('google')} />
+                <GithubButton login={() => login('github')} />
             </Box>
             <Box>
-                <GithubButton login={() => login('github')} />
+                <GoogleButton onClick={() => login('google')} />
             </Box>
         </Stack>
     );
