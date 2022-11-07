@@ -1,6 +1,6 @@
 import { createEditorStore } from 'components/editor/Store/create';
 import { createSelectableTableStore } from 'components/tables/Store';
-import { createFormStateStore } from 'stores/FormState';
+import { createFormStateStore } from 'stores/FormState/Store';
 import {
     EditorStoreNames,
     FormStateStoreNames,

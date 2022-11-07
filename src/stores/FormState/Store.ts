@@ -3,8 +3,8 @@ import { MessagePrefixes } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
 import create, { StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
-import { EntityFormState, FormStatus } from './FormState/types';
-import { FormStateStoreNames } from './names';
+import { FormStateStoreNames } from '../names';
+import { EntityFormState, FormStatus } from './types';
 
 const formActive = (status: FormStatus) => {
     return (
