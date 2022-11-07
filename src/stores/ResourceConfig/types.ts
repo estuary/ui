@@ -50,6 +50,7 @@ export interface ResourceConfigState {
         key: string | string[],
         resourceConfig?: ResourceConfig
     ) => void;
+    resetResourceConfigAndCollections: () => void;
 
     resourceConfigErrorsExist: boolean;
     resourceConfigErrors: (string | undefined)[];

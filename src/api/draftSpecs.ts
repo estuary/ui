@@ -170,3 +170,14 @@ export const getDraftSpecsBySpecType = async (
         .eq('spec_type', specType)
         .then(handleSuccess<DraftSpecQuery[]>, handleFailure);
 };
+
+export const deleteDraftSpecsByCatalogName = (
+    draftId: string,
+    catalogNames: string[]
+) => {
+    return supabaseClient
+        .from(TABLES.DRAFT_SPECS)
+        .delete()
+        .eq('draft_id', draftId)
+        .in('catalog_name', catalogNames);
+};

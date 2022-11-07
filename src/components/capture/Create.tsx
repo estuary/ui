@@ -1,4 +1,7 @@
-import { getDraftSpecsBySpecType } from 'api/draftSpecs';
+import {
+    deleteDraftSpecsByCatalogName,
+    getDraftSpecsBySpecType,
+} from 'api/draftSpecs';
 import { authenticatedRoutes } from 'app/routes';
 import CaptureGenerateButton from 'components/capture/GenerateButton';
 import {
@@ -233,6 +236,22 @@ function CaptureCreate() {
                     setResourceConfig,
                     setCurrentCollection
                 );
+            }
+        }
+
+        if (restrictedDiscoveredCollections.length > 0) {
+            const deleteDraftSpecsResponse =
+                await deleteDraftSpecsByCatalogName(
+                    newDraftId,
+                    restrictedDiscoveredCollections
+                );
+            if (deleteDraftSpecsResponse.error) {
+                return helpers.callFailed({
+                    error: {
+                        title: 'captureCreate.generate.failedErrorTitle',
+                        error: deleteDraftSpecsResponse.error,
+                    },
+                });
             }
         }
 

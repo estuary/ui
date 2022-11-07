@@ -86,17 +86,13 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
 
     const endpointConfigErrorFlag = editWorkflow
         ? endpointConfigChanged() && endpointConfigErrorsExist
-        : endpointConfigErrorsExist;
+        : endpointConfigErrorsExist && isEmpty(endpointConfigData);
 
     const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
         updateFormStatus(FormStatus.GENERATING);
 
-        if (
-            isEmpty(endpointConfigData) ||
-            detailsFormsHasErrors ||
-            endpointConfigErrorFlag
-        ) {
+        if (detailsFormsHasErrors || endpointConfigErrorFlag) {
             return setFormState({
                 status: FormStatus.FAILED,
                 displayValidation: true,
@@ -116,10 +112,13 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
 
             const draftId = draftsResponse.data[0].id;
 
-            const encryptedEndpointConfig = await encryptEndpointConfig(
+            const selectedEndpointConfig =
                 !editWorkflow || serverUpdateRequired
                     ? endpointConfigData
-                    : serverEndpointConfigData,
+                    : serverEndpointConfigData;
+
+            const encryptedEndpointConfig = await encryptEndpointConfig(
+                selectedEndpointConfig,
                 endpointSchema,
                 serverUpdateRequired,
                 imageConnectorId,

@@ -146,6 +146,18 @@ export const useResourceConfig_setResourceConfig = () => {
     >(getStoreName(entityType), (state) => state.setResourceConfig);
 };
 
+export const useResourceConfig_resetResourceConfigAndCollections = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['resetResourceConfigAndCollections']
+    >(
+        getStoreName(entityType),
+        (state) => state.resetResourceConfigAndCollections
+    );
+};
+
 export const useResourceConfig_resourceConfigErrorsExist = () => {
     const entityType = useEntityType();
 

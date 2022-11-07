@@ -355,6 +355,39 @@ const getInitialState = (
         );
     },
 
+    resetResourceConfigAndCollections: () => {
+        set(
+            produce((state: ResourceConfigState) => {
+                const { collections, discoveredCollections, resourceConfig } =
+                    get();
+
+                if (collections && discoveredCollections) {
+                    state.collections = collections.filter(
+                        (collection) =>
+                            !discoveredCollections.includes(collection)
+                    );
+
+                    state.currentCollection =
+                        state.collections.length > 0
+                            ? state.collections[0]
+                            : null;
+
+                    const reducedResourceConfig = {};
+
+                    Object.entries(resourceConfig).forEach(([key, value]) => {
+                        if (state.collections?.includes(key)) {
+                            reducedResourceConfig[key] = value;
+                        }
+                    });
+
+                    state.resourceConfig = reducedResourceConfig;
+                }
+            }),
+            false,
+            'Resource Config and Collections Reset'
+        );
+    },
+
     setResourceSchema: (val) => {
         set(
             produce((state: ResourceConfigState) => {

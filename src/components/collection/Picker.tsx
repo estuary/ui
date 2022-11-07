@@ -96,30 +96,39 @@ function CollectionPicker({ readOnly = false }: Props) {
 
     useEffect(() => {
         if (populateCollectionData) {
-            let collectionsOnServer: CollectionData[] = liveSpecs.map(
-                ({ catalog_name }) => ({
-                    name: catalog_name,
-                    classification: existingCollectionsLabel,
-                })
+            const liveSpecCollectionData: CollectionData[] =
+                workflow === 'capture_create'
+                    ? []
+                    : liveSpecs.map(({ catalog_name }) => ({
+                          name: catalog_name,
+                          classification: existingCollectionsLabel,
+                      }));
+
+            const draftSpecCollectionData: CollectionData[] =
+                entityType === 'capture'
+                    ? draftSpecs
+                          .filter(({ spec_type }) => spec_type === 'collection')
+                          .map(({ catalog_name }) => ({
+                              name: catalog_name,
+                              classification: discoveredCollectionsLabel,
+                          }))
+                    : [];
+
+            const draftSpecCollections: string[] = draftSpecCollectionData.map(
+                (collection) => collection.name
             );
 
-            if (entityType === 'capture') {
-                collectionsOnServer = [
-                    ...draftSpecs
-                        .filter(({ spec_type }) => spec_type === 'collection')
-                        .map(({ catalog_name }) => ({
-                            name: catalog_name,
-                            classification: discoveredCollectionsLabel,
-                        })),
-                    ...collectionsOnServer,
-                ];
-            }
+            const collectionsOnServer: CollectionData[] = [
+                ...draftSpecCollectionData,
+                ...liveSpecCollectionData.filter(
+                    ({ name }) => !draftSpecCollections.includes(name)
+                ),
+            ];
 
             setCollectionData(collectionsOnServer);
         }
     }, [
         setCollectionData,
-        collections,
         discoveredCollectionsLabel,
         draftSpecs,
         entityType,
@@ -180,7 +189,11 @@ function CollectionPicker({ readOnly = false }: Props) {
                             ({ name }) => name === collectionName
                         ) ?? {
                             name: collectionName,
-                            classification: existingCollectionsLabel,
+                            classification: discoveredCollections?.includes(
+                                collectionName
+                            )
+                                ? discoveredCollectionsLabel
+                                : existingCollectionsLabel,
                         }
                 )}
                 size="small"

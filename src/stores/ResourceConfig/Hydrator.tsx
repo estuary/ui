@@ -9,11 +9,14 @@ import {
     useResourceConfig_setHydrationErrorsExist,
 } from './hooks';
 
+// Hydrator
 interface ResourceConfigHydratorProps {
     children: ReactNode;
 }
 
-const ResourceConfigHydrator = ({ children }: ResourceConfigHydratorProps) => {
+export const ResourceConfigHydrator = ({
+    children,
+}: ResourceConfigHydratorProps) => {
     const entityType = useEntityType();
 
     const workflow = useEntityWorkflow();
