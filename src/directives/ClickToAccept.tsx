@@ -6,6 +6,7 @@ import {
     Stack,
     Typography,
 } from '@mui/material';
+import { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
 import AlertBox from 'components/shared/AlertBox';
 import ExternalLink from 'components/shared/ExternalLink';
@@ -60,7 +61,9 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
                 );
 
                 if (clickToAcceptResponse.error) {
-                    return console.log(clickToAcceptResponse.error);
+                    return setServerError(
+                        (clickToAcceptResponse.error as PostgrestError).message
+                    );
                 }
 
                 const data = clickToAcceptResponse.data[0];

@@ -1,5 +1,6 @@
 import { LoadingButton } from '@mui/lab';
 import { Stack, TextField, Toolbar, Typography } from '@mui/material';
+import { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
 import AlertBox from 'components/shared/AlertBox';
 import ExternalLink from 'components/shared/ExternalLink';
@@ -48,7 +49,9 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                 );
 
                 if (clickToAcceptResponse.error) {
-                    return console.log(clickToAcceptResponse.error);
+                    return setServerError(
+                        (clickToAcceptResponse.error as PostgrestError).message
+                    );
                 }
 
                 const data = clickToAcceptResponse.data[0];

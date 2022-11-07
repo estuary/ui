@@ -51,9 +51,14 @@ const submitDirective = async (
 ) => {
     let data: ExchangeResponse | null, error;
     if (!existingDirective) {
-        const response = await exchangeBearerToken(DIRECTIVES[type].token);
-        data = response.data;
-        error = response.error;
+        try {
+            const response = await exchangeBearerToken(DIRECTIVES[type].token);
+            data = response.data;
+            error = response.error;
+        } catch (e: unknown) {
+            data = null;
+            error = e;
+        }
     } else {
         data = { directive: null, applied_directive: existingDirective };
     }
