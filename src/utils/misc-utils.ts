@@ -39,8 +39,8 @@ export const timeoutCleanUp = (pollerTimeout: number | undefined) => {
     }
 };
 
-export const INTERVAL_MAX = 5000;
-export const INTERVAL_INCREMENT = 500;
+const INTERVAL_MAX = 5000;
+const INTERVAL_INCREMENT = 500;
 export const incrementInterval = (
     interval: number,
     max: number | undefined = INTERVAL_MAX
