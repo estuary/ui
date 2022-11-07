@@ -86,7 +86,7 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
 
     const endpointConfigErrorFlag = editWorkflow
         ? endpointConfigChanged() && endpointConfigErrorsExist
-        : endpointConfigErrorsExist && isEmpty(endpointConfigData);
+        : endpointConfigErrorsExist || isEmpty(endpointConfigData);
 
     const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
