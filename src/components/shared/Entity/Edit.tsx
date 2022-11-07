@@ -62,13 +62,13 @@ import {
     useResourceConfig_hydrated,
     useResourceConfig_serverUpdateRequired,
 } from 'stores/ResourceConfig/hooks';
-import { Entity } from 'types';
+import { Entity, EntityWithCreateWorkflow } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import AlertBox from '../AlertBox';
 
 interface Props {
     title: string;
-    entityType: 'capture' | 'materialization';
+    entityType: EntityWithCreateWorkflow;
     readOnly: {
         detailsForm?: true;
         endpointConfigForm?: true;
