@@ -2,7 +2,6 @@
     "compilerOptions": {
         "incremental": true,
         "outDir": "build/lib",
-        "explainFiles": true,
         "target": "es5",
         "lib": ["es6", "dom", "dom.iterable", "esnext", "ES2022.Object"],
         "sourceMap": true,
