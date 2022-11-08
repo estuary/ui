@@ -1,3 +1,4 @@
+import FullPageSpinner from 'components/fullPage/Spinner';
 import { useQuery, useSelect } from 'hooks/supabase-swr';
 import { createContext, useContext } from 'react';
 import { TABLES } from 'services/supabase';
@@ -21,11 +22,15 @@ const PreFetchDataProvider = ({ children }: BaseComponentProps) => {
         { columns: `id, object_role` },
         []
     );
-    const { data: grants } = useSelect(combinedGrantsQuery);
+    const { data: grants, isValidating } = useSelect(combinedGrantsQuery);
 
     const value: PreFetchData | null = grants?.data
         ? { grantDetails: grants.data }
         : null;
+
+    if (isValidating || value === null) {
+        return <FullPageSpinner />;
+    }
 
     return (
         <PreFetchDataContext.Provider value={value}>
