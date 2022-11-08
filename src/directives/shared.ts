@@ -40,26 +40,35 @@ export const DIRECTIVES: Directives = {
             return { requestedTenant: args[0] };
         },
         calculateStatus: (appliedDirective) => {
+            // If there is no directive to check it is unfulfilled
             if (!appliedDirective || isEmpty(appliedDirective)) {
                 return 'unfulfilled';
             }
 
-            if (!appliedDirective.user_claims) {
-                return 'in progress';
-            }
-
+            // If directive already queued and no claim is there we can just use that directive again
             if (
-                appliedDirective.job_status.type !== 'success' &&
-                appliedDirective.user_claims.requestedTenant &&
-                appliedDirective.user_claims.requestedTenant.length > 0
+                appliedDirective.job_status.type === 'queued' &&
+                !appliedDirective.user_claims
             ) {
                 return 'in progress';
             }
 
+            // If the status is not success AND they submitted something... we need a new directive
+            if (appliedDirective.job_status.type !== 'success') {
+                if (
+                    appliedDirective.user_claims?.requestedTenant &&
+                    appliedDirective.user_claims.requestedTenant.length > 0
+                ) {
+                    return 'outdated';
+                }
+            }
+
+            // If it was success and passed all the other checks we're good
             if (appliedDirective.job_status.type === 'success') {
                 return 'fulfilled';
             }
 
+            // Catch all for edge cases like a "invalidClaim" status
             return 'unfulfilled';
         },
     },
@@ -74,26 +83,34 @@ export const DIRECTIVES: Directives = {
             };
         },
         calculateStatus: (appliedDirective?) => {
+            // If there is no directive to check it is unfulfilled
             if (!appliedDirective || isEmpty(appliedDirective)) {
                 return 'unfulfilled';
             }
 
-            if (!appliedDirective.user_claims) {
+            // If directive already queued and no claim is there we can just use that directive again
+            if (
+                appliedDirective.job_status.type === 'queued' &&
+                !appliedDirective.user_claims
+            ) {
                 return 'in progress';
             }
 
+            // If previous claim is outdate then we need a new directive
             if (
-                appliedDirective.user_claims.version &&
+                appliedDirective.user_claims?.version &&
                 appliedDirective.user_claims.version !==
                     CLICK_TO_ACCEPT_LATEST_VERSION
             ) {
                 return 'outdated';
             }
 
+            // If it was success and passed all the other checks we're good
             if (appliedDirective.job_status.type === 'success') {
                 return 'fulfilled';
             }
 
+            // Catch all for edge cases like a "invalidClaim" status
             return 'unfulfilled';
         },
     },

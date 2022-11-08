@@ -49,6 +49,8 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                 );
 
                 if (clickToAcceptResponse.error) {
+                    setSaving(false);
+
                     return setServerError(
                         (clickToAcceptResponse.error as PostgrestError).message
                     );

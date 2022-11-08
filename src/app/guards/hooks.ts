@@ -29,8 +29,12 @@ const useDirectiveGuard = (selectedDirective: keyof typeof DIRECTIVES) => {
 
     const [freshDirective, setFreshDirective] =
         useState<AppliedDirective<UserClaims> | null>(null);
+
     useEffect(() => {
-        if (directiveState === 'unfulfilled') {
+        // Need to exchange for a fresh directive because:
+        //   unfulfilled : user never exchanged a token before
+        //   outdated    : user has exchanged AND submitted something before
+        if (directiveState === 'unfulfilled' || directiveState === 'outdated') {
             const fetchDirective = async () => {
                 return exchangeBearerToken(DIRECTIVES[selectedDirective].token);
             };
@@ -42,7 +46,10 @@ const useDirectiveGuard = (selectedDirective: keyof typeof DIRECTIVES) => {
                     }
                 })
                 .catch(() => {});
-        } else if (directiveState === 'in progress') {
+        }
+
+        // Show a message to remind the user why they are seeing the directive page
+        if (directiveState === 'in progress') {
             enqueueSnackbar(
                 intl.formatMessage({
                     id: 'directives.returning',
