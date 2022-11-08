@@ -5,7 +5,7 @@ import { JOB_STATUS_COLUMNS, supabaseClient, TABLES } from 'services/supabase';
 import { AppliedDirective } from 'types';
 import { Directives, UserClaims } from './types';
 
-export const CLICK_TO_ACCEPT_LATEST_VERSION = 'v1';
+export const CLICK_TO_ACCEPT_LATEST_VERSION = 'v2';
 
 export const jobCompleted = (
     appliedDirective?: AppliedDirective<UserClaims>
