@@ -673,8 +673,8 @@ const Supabase: ResolvedIntlConfig['messages'] = {
 const Legal: ResolvedIntlConfig['messages'] = {
     'legal.heading': `Legal Stuff`,
     'legal.heading.outdated': `Updated Legal Stuff`,
-    'legal.message': `Please use the links below to open and review the documents before checking accept and continuing.`,
-    'legal.message.outdated': `There have been changes to our legal documents you need to review. Please use the links below to view the documents before checking accept and continuing.`,
+    'legal.message': `Please use the links below to open and review the documents before you continue.`,
+    'legal.message.outdated': `There have been changes to our legal documents you need to review. Please use the links below to view the documents before you continue.`,
     'legal.docs.terms': `Terms of Service`,
     'legal.docs.privacy': `Privacy Policy`,
     'legal.docs.accept': 'I accept the {privacy} and {terms}',
@@ -685,8 +685,8 @@ const Legal: ResolvedIntlConfig['messages'] = {
 
 const Tenant: ResolvedIntlConfig['messages'] = {
     'tenant.heading': `Organization Name`,
-    'tenant.message.1': `The organization name will be used as a prefix on everything you create within Estuary. This helps with scoping, controling access, labeling ownership, and more.`,
-    'tenant.message.2': `This beings as private but becomes public if you share anything or invite others to join your organization.`,
+    'tenant.message.1': `The organization name will be used as a prefix on everything you create within Estuary. This helps with scoping, controlling access, labeling ownership, and more.`,
+    'tenant.message.2': `This begins as private but becomes public if you share anything or invite others to join your organization.`,
 
     'tenant.expectations': `You can use letters, numbers, periods, underscores, and hyphens`,
     'tenant.expectations.error': `Sorry, only letters(a-z), numbers(0-9), periods(.), underscores(_), and hyphens(-) allowed.`,

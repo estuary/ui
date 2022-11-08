@@ -1,5 +1,6 @@
 import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
+import { CustomEvents } from 'services/logrocket';
 import { JOB_STATUS_COLUMNS, supabaseClient, TABLES } from 'services/supabase';
 import { AppliedDirective } from 'types';
 import { Directives, UserClaims } from './types';
@@ -101,12 +102,17 @@ export type DirectivesList = (keyof typeof DIRECTIVES)[];
 
 export const trackEvent = (
     type: string,
-    directive: AppliedDirective<UserClaims>
+    directive?: AppliedDirective<UserClaims>
 ) => {
-    LogRocket.track(`directive:${type}`, {
-        id: directive.id,
-        directive_id: directive.directive_id,
-        logs_token: directive.logs_token,
-        status: directive.job_status.type,
-    });
+    LogRocket.track(
+        `${CustomEvents.DIRECTIVE}:${type}`,
+        directive
+            ? {
+                  id: directive.id,
+                  directive_id: directive.directive_id,
+                  logs_token: directive.logs_token,
+                  status: directive.job_status.type,
+              }
+            : undefined
+    );
 };

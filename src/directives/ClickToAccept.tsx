@@ -33,6 +33,8 @@ const submit_clickToAccept = async (directive: any) => {
 };
 
 const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
+    trackEvent(`${directiveName}:Viewed`);
+
     const [acknowledgedDocuments, setAcknowledgedDocuments] =
         useState<boolean>(false);
     const [saving, setSaving] = useState(false);
@@ -70,11 +72,11 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
                 jobStatusPoller(
                     jobStatusQuery(data),
                     async () => {
-                        trackEvent(directiveName, directive);
+                        trackEvent(`${directiveName}:Complete`, directive);
                         void mutate();
                     },
                     async (payload: any) => {
-                        trackEvent(`${directiveName}:error`, directive);
+                        trackEvent(`${directiveName}:Error`, directive);
                         setSaving(false);
                         setServerError(payload.job_status.error);
                     }

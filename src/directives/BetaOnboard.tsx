@@ -18,8 +18,9 @@ const submit_onboard = async (requestedTenant: string, directive: any) => {
 };
 
 const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
-    const intl = useIntl();
+    trackEvent(`${directiveName}:Viewed`);
 
+    const intl = useIntl();
     const [requestedTenant, setRequestedTenant] = useState<string>('');
     const [saving, setSaving] = useState(false);
     const [nameMissing, setNameMissing] = useState(false);
@@ -57,11 +58,11 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                 jobStatusPoller(
                     jobStatusQuery(data),
                     async () => {
-                        trackEvent(directiveName, directive);
+                        trackEvent(`${directiveName}:Complete`, directive);
                         void mutate();
                     },
                     async (payload: any) => {
-                        trackEvent(`${directiveName}:error`, directive);
+                        trackEvent(`${directiveName}:Error`, directive);
                         setSaving(false);
                         setServerError(payload.job_status.error);
                     }

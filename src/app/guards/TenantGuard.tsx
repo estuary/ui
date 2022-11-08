@@ -1,9 +1,9 @@
-import NoGrantsFound from 'app/NoGrantsFound';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
+import NoGrants from 'pages/NoGrants';
 import { BaseComponentProps } from 'types';
 import OnboardGuard from './OnboardGuard';
 
@@ -28,7 +28,7 @@ function TenantGuard({ children }: BaseComponentProps) {
         if (showBeta === hiddenSearchParam) {
             return <OnboardGuard grantsMutate={mutate} />;
         } else {
-            return <NoGrantsFound />;
+            return <NoGrants />;
         }
     } else {
         // eslint-disable-next-line react/jsx-no-useless-fragment
