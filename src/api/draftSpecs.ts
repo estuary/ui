@@ -8,15 +8,15 @@ import {
     TABLES,
     updateSupabase,
 } from 'services/supabase';
-import { ResourceConfigDictionary } from 'stores/ResourceConfig';
-import { ENTITY } from 'types';
+import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
+import { Entity } from 'types';
 import { CaptureDef, CaptureEndpoint } from '../../flow_deps/flow';
 
 interface CreateMatchData {
     draft_id: string | null;
     catalog_name: string;
     spec: any;
-    spec_type?: ENTITY | null;
+    spec_type?: Entity | null;
     expect_pub_id?: string;
 }
 
@@ -35,7 +35,7 @@ export const createDraftSpec = (
     draftId: string | null,
     catalogName: string,
     draftSpec: any,
-    specType?: ENTITY | null,
+    specType?: Entity | null,
     lastPubId?: string | null
 ) => {
     let matchData: CreateMatchData = {
@@ -161,7 +161,7 @@ export const deleteDraftSpec = (draftId: string) => {
 //   This function is used in the capture create and edit components.
 export const getDraftSpecsBySpecType = async (
     draftId: string,
-    specType: ENTITY
+    specType: Entity
 ) => {
     return supabaseClient
         .from(TABLES.DRAFT_SPECS_EXT)

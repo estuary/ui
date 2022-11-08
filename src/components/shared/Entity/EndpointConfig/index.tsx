@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { useEditorStore_id } from 'components/editor/Store';
+import { useEditorStore_id } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import EndpointConfigForm from 'components/shared/Entity/EndpointConfig/Form';
 import EndpointConfigHeader from 'components/shared/Entity/EndpointConfig/Header';

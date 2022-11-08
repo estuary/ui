@@ -4,7 +4,7 @@ import { createEntityDraft } from 'api/drafts';
 import {
     useEditorStore_isSaving,
     useEditorStore_resetState,
-} from 'components/editor/Store';
+} from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
 import { useEntityWorkflow } from 'context/Workflow';
 import useGlobalSearchParams, {
@@ -27,12 +27,12 @@ import {
     useEndpointConfig_serverUpdateRequired,
 } from 'stores/EndpointConfig';
 import {
-    FormStatus,
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
     useFormStateStore_updateStatus,
-} from 'stores/FormState';
-import { useResourceConfig_resourceConfig } from 'stores/ResourceConfig';
+} from 'stores/FormState/hooks';
+import { FormStatus } from 'stores/FormState/types';
+import { useResourceConfig_resourceConfig } from 'stores/ResourceConfig/hooks';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 
 // TODO (typing): Narrow the type annotation attributed to the subscription property.
@@ -86,7 +86,7 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
 
     const endpointConfigErrorFlag = editWorkflow
         ? endpointConfigChanged() && endpointConfigErrorsExist
-        : endpointConfigErrorsExist && isEmpty(endpointConfigData);
+        : endpointConfigErrorsExist || isEmpty(endpointConfigData);
 
     const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();

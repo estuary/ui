@@ -32,6 +32,7 @@ export enum CustomEvents {
     MATERIALIZATION_CREATE = 'Materialization_Create',
     MATERIALIZATION_TEST = 'Materialization_Test',
     MATERIALIZATION_EDIT = 'Materialization_Edit',
+    DIRECTIVE = 'Directive',
 }
 
 const logRocketSettings = getLogRocketSettings();

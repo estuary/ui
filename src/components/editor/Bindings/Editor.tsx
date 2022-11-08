@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import ResourceConfig from 'components/collection/ResourceConfig';
 import { ReactNode } from 'react';
-import { useResourceConfig_currentCollection } from 'stores/ResourceConfig';
+import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
 
 interface Props {
     loading: boolean;

@@ -2,7 +2,7 @@ import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSumm
 import {
     useResourceConfig_hydrationErrorsExist,
     useResourceConfig_resourceConfigErrorsExist,
-} from 'stores/ResourceConfig';
+} from 'stores/ResourceConfig/hooks';
 
 interface Props {
     errorsExist: boolean;

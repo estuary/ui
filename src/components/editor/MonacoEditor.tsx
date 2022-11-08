@@ -5,12 +5,12 @@ import Saved from 'components/editor/Status/Saved';
 import Saving from 'components/editor/Status/Saving';
 import ServerDiff from 'components/editor/Status/ServerDiff';
 import {
-    EditorStatus,
     useEditorStore_currentCatalog,
     useEditorStore_serverUpdate,
     useEditorStore_setStatus,
     useEditorStore_status,
-} from 'components/editor/Store';
+} from 'components/editor/Store/hooks';
+import { EditorStatus } from 'components/editor/Store/types';
 import { debounce } from 'lodash';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useCallback, useMemo, useRef, useState } from 'react';

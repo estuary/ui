@@ -4,21 +4,20 @@ import {
     Box,
     TextField,
 } from '@mui/material';
-import { useEditorStore_persistedDraftId } from 'components/editor/Store';
+import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
 import useDraftSpecs from 'hooks/useDraftSpecs';
 import useLiveSpecs from 'hooks/useLiveSpecs';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useFormStateStore_isActive } from 'stores/FormState';
+import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import {
     useResourceConfig_collections,
     useResourceConfig_discoveredCollections,
     useResourceConfig_setResourceConfig,
     useResourceConfig_setRestrictedDiscoveredCollections,
-} from 'stores/ResourceConfig';
-import { ENTITY } from 'types';
+} from 'stores/ResourceConfig/hooks';
 import useConstant from 'use-constant';
 import { detectRemoveOptionWithBackspace } from 'utils/mui-utils';
 
@@ -82,7 +81,7 @@ function CollectionPicker({ readOnly = false }: Props) {
     } = useDraftSpecs(persistedDraftId);
 
     const populateCollectionData = useMemo(() => {
-        return entityType === ENTITY.MATERIALIZATION
+        return entityType === 'materialization'
             ? liveSpecs.length > 0
             : !isValidatingLiveSpecs &&
                   !isValidatingDraftSpecs &&
@@ -106,11 +105,9 @@ function CollectionPicker({ readOnly = false }: Props) {
                       }));
 
             const draftSpecCollectionData: CollectionData[] =
-                entityType === ENTITY.CAPTURE
+                entityType === 'capture'
                     ? draftSpecs
-                          .filter(
-                              ({ spec_type }) => spec_type === ENTITY.COLLECTION
-                          )
+                          .filter(({ spec_type }) => spec_type === 'collection')
                           .map(({ catalog_name }) => ({
                               name: catalog_name,
                               classification: discoveredCollectionsLabel,
@@ -168,7 +165,7 @@ function CollectionPicker({ readOnly = false }: Props) {
     };
 
     const specError =
-        entityType === ENTITY.MATERIALIZATION
+        entityType === 'materialization'
             ? liveSpecsError
             : liveSpecsError ?? draftSpecsError;
 

@@ -1,6 +1,6 @@
 import { PostgrestError } from '@supabase/postgrest-js';
 import { TABLES } from 'services/supabase';
-import { ENTITY } from 'types';
+import { Entity } from 'types';
 import { useQuery, useSelect } from './supabase-swr/';
 
 // TODO: Consider consolidating query interface instances.
@@ -42,17 +42,17 @@ type EntityID = string[] | string | null;
 
 function useLiveSpecsExt(
     draftId: EntityID,
-    specType: ENTITY,
+    specType: Entity,
     includeSpec: true
 ): Response<LiveSpecsExtQueryWithSpec>;
 function useLiveSpecsExt(
     draftId: EntityID,
-    specType: ENTITY,
+    specType: Entity,
     includeSpec?: false
 ): Response<LiveSpecsExtQuery>;
 function useLiveSpecsExt(
     draftId: EntityID,
-    specType: ENTITY,
+    specType: Entity,
     includeSpec?: boolean
 ): Response<LiveSpecsExtQuery> | Response<LiveSpecsExtQueryWithSpec> {
     const draftSpecQuery = useQuery<
@@ -89,14 +89,14 @@ function useLiveSpecsExt(
 
 export function useLiveSpecsExtWithSpec(
     draftId: EntityID,
-    specType: ENTITY
+    specType: Entity
 ): Response<LiveSpecsExtQueryWithSpec> {
     return useLiveSpecsExt(draftId, specType, true);
 }
 
 export function useLiveSpecsExtWithOutSpec(
     draftId: EntityID,
-    specType: ENTITY
+    specType: Entity
 ): Response<LiveSpecsExtQuery> {
     return useLiveSpecsExt(draftId, specType, false);
 }
@@ -110,7 +110,7 @@ export function useLiveSpecsExtWithOutSpec(
 
 export function useLiveSpecsExtByLastPubId(
     lastPubId: EntityID,
-    specType: ENTITY
+    specType: Entity
 ): Response<LiveSpecsExtQuery> | Response<LiveSpecsExtQueryWithSpec> {
     const draftSpecQuery = useQuery<
         LiveSpecsExtQueryWithSpec | LiveSpecsExtQuery

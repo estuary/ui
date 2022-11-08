@@ -16,15 +16,13 @@ import {
     Toolbar,
     Typography,
 } from '@mui/material';
-import RowSelector, {
-    RowSelectorProps,
-} from 'components/tables/RowActions/RowSelector';
+import RowSelector from 'components/tables/RowActions/RowSelector';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
 import Title from 'components/tables/Title';
-import { SelectTableStoreNames, useZustandStore } from 'context/Zustand';
+import { useZustandStore } from 'context/Zustand/provider';
 import { Query, useSelect } from 'hooks/supabase-swr';
 import { debounce } from 'lodash';
 import {
@@ -38,6 +36,7 @@ import {
 } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useEffectOnce } from 'react-use';
+import { SelectTableStoreNames } from 'stores/names';
 import {
     SortDirection,
     TableIntlConfig,
@@ -45,6 +44,7 @@ import {
     TableStatuses,
 } from 'types';
 import { getEmptyTableHeader, getEmptyTableMessage } from 'utils/table-utils';
+import { RowSelectorProps } from './RowActions/types';
 
 interface Props {
     columns: {
@@ -362,35 +362,37 @@ function EntityTable({
                               tableState.status === TableStatuses.LOADING ? (
                                 loadingRows
                             ) : (
-                                <TableCell colSpan={columns.length}>
-                                    <Box
-                                        sx={{
-                                            display: 'flex',
-                                            justifyContent: 'center',
-                                        }}
-                                    >
-                                        <Box width={450}>
-                                            <Typography
-                                                variant="h6"
-                                                align="center"
-                                                sx={{ mb: 2 }}
-                                            >
-                                                <FormattedMessage
-                                                    id={getEmptyTableHeader(
+                                <TableRow>
+                                    <TableCell colSpan={columns.length}>
+                                        <Box
+                                            sx={{
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                            }}
+                                        >
+                                            <Box width={450}>
+                                                <Typography
+                                                    variant="h6"
+                                                    align="center"
+                                                    sx={{ mb: 2 }}
+                                                >
+                                                    <FormattedMessage
+                                                        id={getEmptyTableHeader(
+                                                            tableState.status,
+                                                            noExistingDataContentIds
+                                                        )}
+                                                    />
+                                                </Typography>
+                                                <Typography component="div">
+                                                    {getEmptyTableMessage(
                                                         tableState.status,
                                                         noExistingDataContentIds
                                                     )}
-                                                />
-                                            </Typography>
-                                            <Typography component="div">
-                                                {getEmptyTableMessage(
-                                                    tableState.status,
-                                                    noExistingDataContentIds
-                                                )}
-                                            </Typography>
+                                                </Typography>
+                                            </Box>
                                         </Box>
-                                    </Box>
-                                </TableCell>
+                                    </TableCell>
+                                </TableRow>
                             )}
                         </TableBody>
 

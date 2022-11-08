@@ -1,5 +1,5 @@
 import { TableRow, useTheme } from '@mui/material';
-import { authenticatedRoutes } from 'app/Authenticated';
+import { authenticatedRoutes } from 'app/routes';
 import ChipList from 'components/tables/cells/ChipList';
 import Connector from 'components/tables/cells/Connector';
 import EntityName from 'components/tables/cells/EntityName';
@@ -7,21 +7,21 @@ import OptionsMenu from 'components/tables/cells/OptionsMenu';
 import RowSelect from 'components/tables/cells/RowSelect';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import DetailsPanel from 'components/tables/Details/DetailsPanel';
-import { LiveSpecsExtQuery } from 'components/tables/Materializations';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
 import { getEntityTableRowSx } from 'context/Theme';
-import { SelectTableStoreNames, useZustandStore } from 'context/Zustand';
+import { useZustandStore } from 'context/Zustand/provider';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useShardsList from 'hooks/useShardsList';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { QUERY_PARAM_CONNECTOR_TITLE } from 'services/supabase';
-import { useShardDetail_setShards } from 'stores/ShardDetail';
-import { ENTITY } from 'types';
+import { SelectTableStoreNames } from 'stores/names';
+import { useShardDetail_setShards } from 'stores/ShardDetail/hooks';
 import { getPathWithParams } from 'utils/misc-utils';
+import { LiveSpecsExtQuery } from './types';
 
 interface RowsProps {
     data: LiveSpecsExtQuery[];
@@ -124,7 +124,7 @@ function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
                 detailsExpanded={detailsExpanded}
                 lastPubId={row.last_pub_id}
                 colSpan={tableColumns.length}
-                entityType={ENTITY.MATERIALIZATION}
+                entityType="materialization"
                 entityName={row.catalog_name}
             />
         </>

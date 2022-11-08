@@ -4,7 +4,7 @@ import {
     useEditorStore_isSaving,
     useEditorStore_persistedDraftId,
     useEditorStore_setId,
-} from 'components/editor/Store';
+} from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
@@ -25,15 +25,15 @@ import {
     useEndpointConfig_serverUpdateRequired,
 } from 'stores/EndpointConfig';
 import {
-    FormStatus,
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
     useFormStateStore_updateStatus,
-} from 'stores/FormState';
+} from 'stores/FormState/hooks';
+import { FormStatus } from 'stores/FormState/types';
 import {
     useResourceConfig_resourceConfig,
     useResourceConfig_resourceConfigErrorsExist,
-} from 'stores/ResourceConfig';
+} from 'stores/ResourceConfig/hooks';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 
 interface Props {

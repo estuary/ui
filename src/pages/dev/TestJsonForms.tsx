@@ -15,11 +15,9 @@ import PageContainer from 'components/shared/PageContainer';
 import { jsonFormsPadding } from 'context/Theme';
 import { useState } from 'react';
 import { setDefaultsValidator } from 'services/ajv';
-import {
-    custom_generateDefaultUISchema,
-    defaultOptions,
-    defaultRenderers,
-} from 'services/jsonforms';
+import { custom_generateDefaultUISchema } from 'services/jsonforms';
+import defaultRenderers from 'services/jsonforms/defaultRenderers';
+import { defaultOptions } from 'services/jsonforms/shared';
 
 const TITLE = 'Test JSON Forms';
 

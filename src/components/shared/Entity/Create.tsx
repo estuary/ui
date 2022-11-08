@@ -5,7 +5,7 @@ import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
     useEditorStore_setId,
-} from 'components/editor/Store';
+} from 'components/editor/Store/hooks';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
@@ -32,9 +32,9 @@ import {
     useFormStateStore_exitWhenLogsClose,
     useFormStateStore_logToken,
     useFormStateStore_messagePrefix,
-} from 'stores/FormState';
-import { useResourceConfig_serverUpdateRequired } from 'stores/ResourceConfig';
-import { ENTITY, EntityWithCreateWorkflow } from 'types';
+} from 'stores/FormState/hooks';
+import { useResourceConfig_serverUpdateRequired } from 'stores/ResourceConfig/hooks';
+import { EntityWithCreateWorkflow } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import AlertBox from '../AlertBox';
 
@@ -137,7 +137,7 @@ function EntityCreate({
     useUnsavedChangesPrompt(!exitWhenLogsClose && promptDataLoss, resetState);
 
     const displayResourceConfig =
-        entityType === ENTITY.MATERIALIZATION
+        entityType === 'materialization'
             ? hasLength(imageTag.id)
             : hasLength(imageTag.id) && persistedDraftId;
 

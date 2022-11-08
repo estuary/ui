@@ -1,5 +1,7 @@
 import { createSearchParams } from 'react-router-dom';
 
+export const PREFIX_NAME_PATTERN = `[a-zA-Z0-9-_.]+`;
+
 export const stripPathing = (stringVal: string) => {
     if (!stringVal) return stringVal;
 
@@ -39,8 +41,8 @@ export const timeoutCleanUp = (pollerTimeout: number | undefined) => {
     }
 };
 
-export const INTERVAL_MAX = 5000;
-export const INTERVAL_INCREMENT = 500;
+const INTERVAL_MAX = 5000;
+const INTERVAL_INCREMENT = 500;
 export const incrementInterval = (
     interval: number,
     max: number | undefined = INTERVAL_MAX

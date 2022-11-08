@@ -1,22 +1,19 @@
 import { JsonFormsCore } from '@jsonforms/core';
 import { useEntityType } from 'context/EntityContext';
-import {
-    DetailsFormStoreNames,
-    registerStores,
-    useZustandStoreMap,
-} from 'context/Zustand';
+import { registerStores, useZustandStoreMap } from 'context/Zustand/hooks';
 import produce from 'immer';
 import { isEmpty, isEqual } from 'lodash';
-import { ENTITY } from 'types';
+import { Entity } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
 import { createStore, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
+import { DetailsFormStoreNames } from './names';
 
-const storeName = (entityType: ENTITY): DetailsFormStoreNames => {
+const storeName = (entityType: Entity): DetailsFormStoreNames => {
     switch (entityType) {
-        case ENTITY.CAPTURE:
+        case 'capture':
             return DetailsFormStoreNames.CAPTURE;
-        case ENTITY.MATERIALIZATION:
+        case 'materialization':
             return DetailsFormStoreNames.MATERIALIZATION;
         default: {
             throw new Error('Invalid DetailsForm store name');
@@ -251,6 +248,6 @@ export const useDetailsForm_resetState = () => {
 };
 
 registerStores(
-    [storeName(ENTITY.CAPTURE), storeName(ENTITY.MATERIALIZATION)],
+    [storeName('capture'), storeName('materialization')],
     createDetailsFormStore
 );

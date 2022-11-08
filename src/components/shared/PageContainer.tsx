@@ -11,6 +11,7 @@ import AlertBox from './AlertBox';
 interface Props {
     children: ReactNode | ReactNode[];
     pageTitleProps?: PageTitleProps;
+    hideBackground?: boolean;
 }
 
 const selectors = {
@@ -20,7 +21,7 @@ const selectors = {
         state.updateNotificationHistory,
 };
 
-function PageContainer({ children, pageTitleProps }: Props) {
+function PageContainer({ children, hideBackground, pageTitleProps }: Props) {
     const theme = useTheme();
     const backgroundSx = glassBkgWithBlur[theme.palette.mode];
 
@@ -43,6 +44,8 @@ function PageContainer({ children, pageTitleProps }: Props) {
             }
         },
     };
+
+    const backgroundMixin = hideBackground ? {} : backgroundSx;
 
     return (
         <Container
@@ -70,7 +73,7 @@ function PageContainer({ children, pageTitleProps }: Props) {
                 sx={{
                     p: 2,
                     width: '100%',
-                    ...backgroundSx,
+                    ...backgroundMixin,
                 }}
             >
                 {children}

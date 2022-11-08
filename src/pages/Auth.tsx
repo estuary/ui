@@ -1,8 +1,10 @@
-import { authenticatedRoutes } from 'app/Authenticated';
+import { Auth as SupabaseAuth } from '@supabase/ui';
+import { authenticatedRoutes } from 'app/routes';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import { useClient } from 'hooks/supabase-swr';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { useSnackbar } from 'notistack';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // This is the main "controller" for checking auth status for Supabase when coming into the app
@@ -16,31 +18,42 @@ const Auth = () => {
     const navigate = useNavigate();
     const supabaseClient = useClient();
     const { enqueueSnackbar } = useSnackbar();
+    const { user } = SupabaseAuth.useUser();
 
-    const failed = async (error: string) => {
-        enqueueSnackbar(error, {
-            anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'center',
-            },
-            preventDuplicate: true,
-            variant: 'error',
-        });
-        await supabaseClient.auth.signOut();
-    };
+    useEffect(() => {
+        const failed = async (error: string) => {
+            enqueueSnackbar(error, {
+                anchorOrigin: {
+                    vertical: 'top',
+                    horizontal: 'center',
+                },
+                preventDuplicate: true,
+                variant: 'error',
+            });
+            await supabaseClient.auth.signOut();
+        };
 
-    supabaseClient.auth
-        .getSessionFromUrl({
-            storeSession: true,
-        })
-        .then(async (response) => {
-            if (response.error) {
-                await failed(response.error.message);
-            }
-
+        const success = () => {
             navigate(authenticatedRoutes.home.path);
-        })
-        .catch(() => {});
+        };
+
+        if (!user) {
+            supabaseClient.auth
+                .getSessionFromUrl({
+                    storeSession: true,
+                })
+                .then(async (response) => {
+                    if (response.error) {
+                        await failed(response.error.message);
+                    }
+
+                    success();
+                })
+                .catch(() => {});
+        } else {
+            success();
+        }
+    });
 
     return <FullPageSpinner />;
 };

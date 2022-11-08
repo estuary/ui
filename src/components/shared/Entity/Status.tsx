@@ -1,10 +1,10 @@
 import { AlertColor, Typography } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 import {
-    FormStatus,
     useFormStateStore_isActive,
     useFormStateStore_status,
-} from 'stores/FormState';
+} from 'stores/FormState/hooks';
+import { FormStatus } from 'stores/FormState/types';
 import AlertBox from '../AlertBox';
 
 function Status() {

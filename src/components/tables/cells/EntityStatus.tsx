@@ -3,13 +3,12 @@ import { Shard } from 'data-plane-gateway/types/shard_client';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
-    ShardStatusColor,
-    TaskShardDetails,
     useShardDetail_getTaskShardDetails,
     useShardDetail_getTaskShards,
     useShardDetail_getTaskStatusColor,
     useShardDetail_shards,
-} from 'stores/ShardDetail';
+} from 'stores/ShardDetail/hooks';
+import { ShardStatusColor, TaskShardDetails } from 'stores/ShardDetail/types';
 
 interface Props {
     name: string;

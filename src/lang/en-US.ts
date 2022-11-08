@@ -29,6 +29,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.missing': `N/A`,
     'common.noUnDo': `This action cannot be undone.`,
     'common.version': `version`,
+    'common.tenant': `Prefix`,
 
     // Aria
     'aria.openExpand': `show more`,
@@ -66,6 +67,9 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'alert.warning': 'Warning!',
     'alert.success': 'Success!',
     'alert.info': 'Important!',
+
+    // Used in directives
+    'directives.returning': `Welcome back. You still need to provide some information before using the application.`,
 };
 
 const CTAs: ResolvedIntlConfig['messages'] = {
@@ -97,6 +101,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.table': `Table`,
     'cta.list': `List`,
     'cta.expandToView': `Expand to view`,
+    'cta.login.github': `Sign in with GitHub`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
@@ -156,10 +161,12 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.captureEdit': `Edit Capture`,
     'routeTitle.captures': `Captures`,
     'routeTitle.collections': `Collections`,
+    'routeTitle.directives': `Directives`,
     'routeTitle.error.pageNotFound': `Page Not Found`,
     'routeTitle.login': `Login`,
     'routeTitle.loginLoading': `Checking Credentials`,
     'routeTitle.noGrants': `Signed Up`,
+    'routeTitle.legal': `Legal`,
     'routeTitle.materializationCreate': `Create Materialization`,
     'routeTitle.materializationEdit': `Edit Materialization`,
     'routeTitle.materializations': `Materializations`,
@@ -181,6 +188,7 @@ const BrowserTitles: ResolvedIntlConfig['messages'] = {
     'browserTitle.error.pageNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.pageNotFound']}`,
     'browserTitle.login': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.login']}`,
     'browserTitle.noGrants': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.noGrants']}`,
+    'browserTitle.legal': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.legal']}`,
     'browserTitle.loginLoading': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.loginLoading']}`,
     'browserTitle.materializationCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationCreate']}`,
     'browserTitle.materializationEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.materializationEdit']}`,
@@ -251,9 +259,6 @@ const Registration: ResolvedIntlConfig['messages'] = {
     'register.label.email': `Email`,
     'register.label.company': `Company`,
     'register.label.intendedUse': `Describe your use case.`,
-    'register.label.documentAcknowledgement': `Accept our {terms} and {privacy}`,
-    'register.label.documentAcknowledgement.terms': `Terms of Service`,
-    'register.label.documentAcknowledgement.privacy': `Privacy Policy`,
     'register.existingAccount': `Already have an account?`,
 };
 
@@ -278,6 +283,7 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
     'login.separator': 'or',
     'login.loginFailed': 'Failed to sign in',
     'login.loginFailed.google': 'Failed to sign in with Google',
+    'login.loginFailed.github': 'Failed to sign in with GitHub',
     'login.userNotFound': 'User not found. Please sign up below.',
 };
 
@@ -376,7 +382,8 @@ const ConnectorsPage: ResolvedIntlConfig['messages'] = {
 };
 
 const NoGrants: ResolvedIntlConfig['messages'] = {
-    'noGrants.main.message': `Thanks for signing up. Our team is reviewing your account and will get back to you shortly.`,
+    'noGrants.main.message': `Our team is reviewing your account and will get back to you shortly.`,
+    'noGrants.main.title': `Thanks For Signing Up`,
 };
 
 const Captures: ResolvedIntlConfig['messages'] = {
@@ -663,6 +670,34 @@ const Supabase: ResolvedIntlConfig['messages'] = {
     'supabase.poller.failed': `We encountered a problem retrieving the status of this action. Please check your network connection and try again.`,
 };
 
+const Legal: ResolvedIntlConfig['messages'] = {
+    'legal.heading': `Legal Stuff`,
+    'legal.heading.outdated': `Updated Legal Stuff`,
+    'legal.message': `Please use the links below to open and review the documents before you continue.`,
+    'legal.message.outdated': `There have been changes to our legal documents you need to review. Please use the links below to view the documents before you continue.`,
+    'legal.docs.terms': `Terms of Service`,
+    'legal.docs.privacy': `Privacy Policy`,
+    'legal.docs.accept': 'I accept the {privacy} and {terms}',
+    'legal.docs.errorTitle': 'Please accept',
+    'legal.docs.errorMessage':
+        'Before you can continue using the application you must accept the listed documents.',
+};
+
+const Tenant: ResolvedIntlConfig['messages'] = {
+    'tenant.heading': `Organization Name`,
+    'tenant.message.1': `The organization name will be used as a prefix on everything you create within Estuary. This helps with scoping, controlling access, labeling ownership, and more.`,
+    'tenant.message.2': `This begins as private but becomes public if you share anything or invite others to join your organization.`,
+
+    'tenant.expectations': `You can use letters, numbers, periods, underscores, and hyphens`,
+    'tenant.expectations.error': `Sorry, only letters(a-z), numbers(0-9), periods(.), underscores(_), and hyphens(-) allowed.`,
+
+    'tenant.input.placeholder': `acmeCo`,
+    'tenant.errorMessage.empty': `You must provide a name before continuing.`,
+
+    'tenant.docs.message': `To see a detail explination please view our {link}`,
+    'tenant.docs.message.link': `https://docs.estuary.dev/concepts/catalogs/#namespace`,
+};
+
 const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CommonMessages,
     ...CTAs,
@@ -703,6 +738,8 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...EntityEdit,
     ...Supabase,
     ...Workflows,
+    ...Legal,
+    ...Tenant,
 };
 
 export default enUSMessages;

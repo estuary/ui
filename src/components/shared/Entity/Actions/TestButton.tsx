@@ -1,16 +1,16 @@
-import { useEditorStore_id } from 'components/editor/Store';
+import { useEditorStore_id } from 'components/editor/Store/hooks';
 import EntityCreateSave from 'components/shared/Entity/Actions/Save';
 import LogDialog from 'components/shared/Entity/LogDialog';
 import LogDialogActions from 'components/shared/Entity/LogDialogActions';
 import { FormattedMessage } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
 import {
-    FormStatus,
     useFormStateStore_logToken,
     useFormStateStore_messagePrefix,
     useFormStateStore_showLogs,
     useFormStateStore_status,
-} from 'stores/FormState';
+} from 'stores/FormState/hooks';
+import { FormStatus } from 'stores/FormState/types';
 
 interface Props {
     closeLogs: Function;

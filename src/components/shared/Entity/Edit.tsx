@@ -4,11 +4,11 @@ import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec, updateDraftSpec } from 'api/draftSpecs';
 import CollectionConfig from 'components/collection/Config';
 import {
-    EditorStoreState,
     useEditorStore_persistedDraftId,
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
-} from 'components/editor/Store';
+} from 'components/editor/Store/hooks';
+import { EditorStoreState } from 'components/editor/Store/types';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import { getConnectorImageDetails } from 'components/shared/Entity/DetailsForm/Form';
@@ -50,26 +50,25 @@ import {
     useEndpointConfig_serverUpdateRequired,
 } from 'stores/EndpointConfig';
 import {
-    FormState,
-    FormStatus,
     useFormStateStore_error,
     useFormStateStore_exitWhenLogsClose,
     useFormStateStore_logToken,
     useFormStateStore_messagePrefix,
     useFormStateStore_setFormState,
     useFormStateStore_status,
-} from 'stores/FormState';
+} from 'stores/FormState/hooks';
+import { FormState, FormStatus } from 'stores/FormState/types';
 import {
     useResourceConfig_hydrated,
     useResourceConfig_serverUpdateRequired,
-} from 'stores/ResourceConfig';
-import { ENTITY } from 'types';
+} from 'stores/ResourceConfig/hooks';
+import { Entity, EntityWithCreateWorkflow } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import AlertBox from '../AlertBox';
 
 interface Props {
     title: string;
-    entityType: ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
+    entityType: EntityWithCreateWorkflow;
     readOnly: {
         detailsForm?: true;
         endpointConfigForm?: true;
@@ -102,7 +101,7 @@ interface InitializationHelpers {
 const createDraftToEdit = async (
     catalogName: string,
     spec: any,
-    entityType: ENTITY,
+    entityType: Entity,
     lastPubId: string | null,
     errorTitle: string,
     {
@@ -150,7 +149,7 @@ const createDraftToEdit = async (
 
 const initDraftToEdit = async (
     { catalog_name, spec }: LiveSpecsExtQueryWithSpec,
-    entityType: ENTITY,
+    entityType: Entity,
     drafts: DraftQuery[],
     draftSpecs: DraftSpecQuery[],
     lastPubId: string | null,
@@ -164,7 +163,7 @@ const initDraftToEdit = async (
     setFormState({ status: FormStatus.GENERATING });
 
     const errorTitle =
-        entityType === ENTITY.MATERIALIZATION
+        entityType === 'materialization'
             ? 'materializationEdit.generate.failure.errorTitle'
             : 'captureEdit.generate.failedErrorTitle';
 

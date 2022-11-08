@@ -11,11 +11,8 @@ import { isEmpty } from 'lodash';
 import { useSnackbar, VariantType } from 'notistack';
 import React, { useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import {
-    defaultOptions,
-    defaultRenderers,
-    showValidation,
-} from 'services/jsonforms';
+import defaultRenderers from 'services/jsonforms/defaultRenderers';
+import { defaultOptions, showValidation } from 'services/jsonforms/shared';
 import { getUserDetails } from 'services/supabase';
 
 // TODO (password reset) This is not used right now but will probably be in the future

@@ -1,7 +1,6 @@
 import { getLiveSpecsByLiveSpecId, getSchema_Endpoint } from 'api/hydration';
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
-import { EndpointConfigStoreNames } from 'context/Zustand';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import { isEmpty, isEqual, map } from 'lodash';
@@ -12,7 +11,7 @@ import {
 } from 'react';
 import { createJSONFormDefaults } from 'services/ajv';
 import {
-    ENTITY,
+    Entity,
     EntityWithCreateWorkflow,
     EntityWorkflow,
     JsonFormsData,
@@ -23,6 +22,7 @@ import { parseEncryptedEndpointConfig } from 'utils/sops-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { createStore, StoreApi, useStore } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
+import { EndpointConfigStoreNames } from './names';
 
 export interface EndpointConfigState {
     endpointSchema: Schema;
@@ -334,17 +334,14 @@ const getInitialState = (
 // TODO (research): Investigate the differences between createStore() and create().
 export const createHydratedEndpointConfigStore = (
     key: EndpointConfigStoreNames,
-    entityType: ENTITY,
+    entityType: Entity,
     workflow: EntityWorkflow
 ) => {
     return createStore<EndpointConfigState>()(
         devtools((set, get) => {
             const coreState = getInitialState(set, get);
 
-            if (
-                entityType === ENTITY.CAPTURE ||
-                entityType === ENTITY.MATERIALIZATION
-            ) {
+            if (entityType === 'capture' || entityType === 'materialization') {
                 hydrateState(get, entityType, workflow).then(
                     () => {
                         const { setHydrated } = get();
@@ -422,11 +419,8 @@ const useEndpointConfigStore = <S extends Object, U>(
 };
 
 // Selector Hooks
-const getStoreName = (entityType: ENTITY): EndpointConfigStoreNames => {
-    if (
-        entityType === ENTITY.CAPTURE ||
-        entityType === ENTITY.MATERIALIZATION
-    ) {
+const getStoreName = (entityType: Entity): EndpointConfigStoreNames => {
+    if (entityType === 'capture' || entityType === 'materialization') {
         return EndpointConfigStoreNames.GENERAL;
     } else {
         throw new Error('Invalid EndpointConfig store name');

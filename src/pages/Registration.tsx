@@ -283,7 +283,7 @@ const Registration = () => {
                     </FormControl>
 
                     <Typography sx={{ mb: 2 }}>
-                        <FormattedMessage id="register.existingAccount" />{' '}
+                        <FormattedMessage id="register.existingAccount" />
                         <Link href="/" underline="hover">
                             <FormattedMessage id="cta.login" />
                         </Link>

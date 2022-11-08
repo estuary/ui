@@ -1,7 +1,7 @@
 import DeleteConfirmation from 'components/tables/RowActions/Delete/Confirmation';
 import RowActionButton from 'components/tables/RowActions/Shared/Button';
 import UpdateEntity from 'components/tables/RowActions/Shared/UpdateEntity';
-import { SelectTableStoreNames } from 'context/Zustand';
+import { SelectTableStoreNames } from 'stores/names';
 
 interface Props {
     selectableTableStoreName:

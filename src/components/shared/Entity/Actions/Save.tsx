@@ -4,21 +4,26 @@ import {
     useEditorStore_id,
     useEditorStore_isSaving,
     useEditorStore_setPubId,
-} from 'components/editor/Store';
+} from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
 import { useClient } from 'hooks/supabase-swr';
 import LogRocket from 'logrocket';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { CustomEvents } from 'services/logrocket';
-import { DEFAULT_FILTER, jobStatusPoller, TABLES } from 'services/supabase';
+import {
+    DEFAULT_FILTER,
+    jobStatusPoller,
+    JOB_STATUS_COLUMNS,
+    TABLES,
+} from 'services/supabase';
 import { useDetailsForm_details_description } from 'stores/DetailsForm';
 import {
-    FormStatus,
     useFormStateStore_isActive,
     useFormStateStore_messagePrefix,
     useFormStateStore_setFormState,
     useFormStateStore_updateStatus,
-} from 'stores/FormState';
+} from 'stores/FormState/hooks';
+import { FormStatus } from 'stores/FormState/types';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
@@ -79,13 +84,7 @@ function EntityCreateSave({ disabled, dryRun, onFailure, logEvent }: Props) {
         jobStatusPoller(
             supabaseClient
                 .from(TABLES.PUBLICATIONS)
-                .select(
-                    `
-                    job_status,
-                    logs_token,
-                    id
-                `
-                )
+                .select(JOB_STATUS_COLUMNS)
                 .match({
                     draft_id: draftIdVal,
                     logs_token: logTokenVal,

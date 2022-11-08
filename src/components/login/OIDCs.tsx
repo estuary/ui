@@ -1,9 +1,10 @@
-import { Box } from '@mui/material';
+import { Box, Stack } from '@mui/material';
 import { Provider } from '@supabase/supabase-js';
 import { useClient } from 'hooks/supabase-swr';
 import { useSnackbar } from 'notistack';
 import GoogleButton from 'react-google-button';
 import { useIntl } from 'react-intl';
+import GithubButton from './GithubButton';
 
 // TODO (routes) This is hardcoded because unauthenticated routes... (same as MagicLink)
 const redirectTo = `${window.location.origin}/auth`;
@@ -47,14 +48,19 @@ function OIDCs() {
     };
 
     return (
-        <Box
+        <Stack
+            spacing={3}
             sx={{
-                display: 'flex',
-                justifyContent: 'center',
+                alignItems: 'center',
             }}
         >
-            <GoogleButton onClick={() => login('google')} />
-        </Box>
+            <Box>
+                <GithubButton login={() => login('github')} />
+            </Box>
+            <Box>
+                <GoogleButton onClick={() => login('google')} />
+            </Box>
+        </Stack>
     );
 }
 

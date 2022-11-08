@@ -2,7 +2,7 @@ import SectionError from 'components/shared/Entity/ValidationErrorSummary/Sectio
 import {
     useResourceConfig_collections,
     useResourceConfig_resourceConfigErrors,
-} from 'stores/ResourceConfig';
+} from 'stores/ResourceConfig/hooks';
 
 function ResourceConfigErrors() {
     const collections = useResourceConfig_collections();

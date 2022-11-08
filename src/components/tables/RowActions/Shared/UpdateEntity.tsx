@@ -4,7 +4,7 @@ import { createDraftSpec } from 'api/draftSpecs';
 import { createPublication } from 'api/publications';
 import DraftErrors from 'components/shared/Entity/Error/DraftErrors';
 import Error from 'components/shared/Error';
-import { LiveSpecsExtQuery } from 'components/tables/Captures';
+import { LiveSpecsExtQuery } from 'components/tables/Captures/types';
 import SharedProgress, {
     ProgressStates,
     SharedProgressProps,
@@ -13,7 +13,7 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
-import { SelectTableStoreNames, useZustandStore } from 'context/Zustand';
+import { useZustandStore } from 'context/Zustand/provider';
 import {
     LiveSpecsExtQueryWithSpec,
     useLiveSpecsExtWithSpec,
@@ -21,7 +21,8 @@ import {
 import usePublications from 'hooks/usePublications';
 import { useEffect, useState } from 'react';
 import { jobSucceeded } from 'services/supabase';
-import { ENTITY } from 'types';
+import { SelectTableStoreNames } from 'stores/names';
+import { Entity } from 'types';
 
 export interface UpdateEntityProps {
     entity: LiveSpecsExtQuery;
@@ -29,7 +30,7 @@ export interface UpdateEntityProps {
     generateNewSpec: (
         spec: LiveSpecsExtQueryWithSpec['spec']
     ) => any | Promise<void>;
-    generateNewSpecType: (entity: LiveSpecsExtQuery) => ENTITY | null;
+    generateNewSpecType: (entity: LiveSpecsExtQuery) => Entity | null;
     runningMessageID: SharedProgressProps['runningMessageID'];
     successMessageID: SharedProgressProps['successMessageID'];
     selectableStoreName:

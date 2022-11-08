@@ -1,7 +1,7 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Box, Stack, Typography } from '@mui/material';
-import { useEditorStore_isSaving } from 'components/editor/Store';
+import { useEditorStore_isSaving } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import { Props } from 'components/shared/Entity/DetailsForm/types';
 import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
@@ -13,11 +13,8 @@ import useGlobalSearchParams, {
 import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import {
-    defaultOptions,
-    defaultRenderers,
-    showValidation,
-} from 'services/jsonforms';
+import defaultRenderers from 'services/jsonforms/defaultRenderers';
+import { defaultOptions, showValidation } from 'services/jsonforms/shared';
 import {
     Details,
     useDetailsForm_details,
@@ -28,8 +25,8 @@ import {
     useFormStateStore_displayValidation,
     useFormStateStore_isActive,
     useFormStateStore_messagePrefix,
-} from 'stores/FormState';
-import { hasLength } from 'utils/misc-utils';
+} from 'stores/FormState/hooks';
+import { hasLength, PREFIX_NAME_PATTERN } from 'utils/misc-utils';
 
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
 
@@ -132,7 +129,7 @@ function DetailsFormForm({
                     type: 'string',
                     pattern: `^(${accessGrantsOneOf.join(
                         '|'
-                    )})([a-zA-Z0-9-_.]+/)*[a-zA-Z0-9-_.]+$`,
+                    )})(${PREFIX_NAME_PATTERN}/)*${PREFIX_NAME_PATTERN}$`,
                 },
                 description: {
                     description: intl.formatMessage({

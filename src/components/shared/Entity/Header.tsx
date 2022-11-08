@@ -7,7 +7,7 @@ import {
     Toolbar,
 } from '@mui/material';
 import { ReactNode } from 'react';
-import { useFormStateStore_isActive } from 'stores/FormState';
+import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 
 interface Props {
     GenerateButton: ReactNode;

@@ -19,7 +19,7 @@ import {
     useTheme,
 } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
-import { authenticatedRoutes } from 'app/Authenticated';
+import { authenticatedRoutes } from 'app/routes';
 import ModeSwitch from 'components/navigation/ModeSwitch';
 import { glassBkgWithBlur } from 'context/Theme';
 import { useIntl } from 'react-intl';

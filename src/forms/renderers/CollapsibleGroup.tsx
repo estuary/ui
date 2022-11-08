@@ -13,7 +13,7 @@ import {
     Typography,
 } from '@mui/material';
 import { jsonFormsGroupHeaders } from 'context/Theme';
-import { ADVANCED, CONTAINS_REQUIRED_FIELDS } from 'services/jsonforms';
+import { ADVANCED, CONTAINS_REQUIRED_FIELDS } from 'services/jsonforms/shared';
 
 export const CollapsibleGroupType = 'CollapsibleGroup';
 

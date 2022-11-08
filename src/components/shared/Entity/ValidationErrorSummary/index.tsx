@@ -12,7 +12,7 @@ import {
     useEndpointConfigStore_errorsExist,
     useEndpointConfig_hydrationErrorsExist,
 } from 'stores/EndpointConfig';
-import { useFormStateStore_displayValidation } from 'stores/FormState';
+import { useFormStateStore_displayValidation } from 'stores/FormState/hooks';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {

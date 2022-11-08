@@ -1,9 +1,9 @@
-import { authenticatedRoutes } from 'app/Authenticated';
+import { authenticatedRoutes } from 'app/routes';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useSearchParamAppend from 'hooks/searchParams/useSearchParamAppend';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router';
-import { ENTITY } from 'types';
+import { EntityWithCreateWorkflow } from 'types';
 import { getPathWithParams, hasLength } from 'utils/misc-utils';
 
 export default function useEntityCreateNavigate() {
@@ -12,7 +12,7 @@ export default function useEntityCreateNavigate() {
 
     return useCallback(
         (
-            entity: ENTITY.CAPTURE | ENTITY.MATERIALIZATION,
+            entity: EntityWithCreateWorkflow,
             id?: string | null | undefined,
             replace?: boolean
         ) => {
@@ -24,7 +24,7 @@ export default function useEntityCreateNavigate() {
             }
 
             let newPath: string | null = null;
-            if (entity === ENTITY.CAPTURE) {
+            if (entity === 'capture') {
                 newPath = authenticatedRoutes.captures.create.fullPath;
             } else {
                 newPath = authenticatedRoutes.materializations.create.fullPath;

@@ -1,11 +1,11 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
-import { authenticatedRoutes } from 'app/Authenticated';
+import { authenticatedRoutes } from 'app/routes';
 import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
     useEditorStore_resetState,
     useEditorStore_setId,
-} from 'components/editor/Store';
+} from 'components/editor/Store/hooks';
 import MaterializeGenerateButton from 'components/materialization/EditGenerateButton';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
@@ -29,22 +29,19 @@ import {
 } from 'stores/DetailsForm';
 import { useEndpointConfigStore_reset } from 'stores/EndpointConfig';
 import {
-    FormStatus,
     useFormStateStore_exitWhenLogsClose,
     useFormStateStore_resetState,
     useFormStateStore_setFormState,
-} from 'stores/FormState';
-import {
-    ResourceConfigHydrator,
-    useResourceConfig_resetState,
-} from 'stores/ResourceConfig';
-import { ENTITY } from 'types';
+} from 'stores/FormState/hooks';
+import { FormStatus } from 'stores/FormState/types';
+import { useResourceConfig_resetState } from 'stores/ResourceConfig/hooks';
+import ResourceConfigHydrator from 'stores/ResourceConfig/Hydrator';
 
 function MaterializationEdit() {
     const lastPubId = useGlobalSearchParams(GlobalSearchParams.LAST_PUB_ID);
     const navigate = useNavigate();
 
-    const entityType = ENTITY.MATERIALIZATION;
+    const entityType = 'materialization';
 
     // Supabase
     const supabaseClient = useClient();

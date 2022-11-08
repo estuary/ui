@@ -2,6 +2,8 @@ import { JsonFormsCore } from '@jsonforms/core';
 import { PostgrestError } from '@supabase/supabase-js';
 import { ReactNode } from 'react';
 
+export type fake = 'fake';
+
 export enum MessagePrefixes {
     CAPTURE_CREATE = 'captureCreate',
     CAPTURE_EDIT = 'captureEdit',
@@ -64,6 +66,37 @@ export interface JobStatus {
     type: string;
 }
 
+export interface AppliedDirective<T> {
+    created_at: Date;
+    detail: null;
+    id: string;
+    updated_at: Date;
+    job_status: JobStatus;
+    logs_token: string;
+    directive_id: string;
+    user_id: string;
+    user_claims: T | null;
+}
+
+export interface JoinedAppliedDirective extends AppliedDirective<any> {
+    // FILTERING HACK
+    ['applied_directives']: AppliedDirective<any>;
+    ['spec->>type']: undefined;
+    ['applied_directives.user_id']: undefined;
+    ['directives.spec->>type']: undefined;
+}
+
+export interface Directive {
+    created_at: Date;
+    detail: null;
+    id: string;
+    updated_at: Date;
+    catalog_prefix: string;
+    single_use: boolean;
+    spec: JobStatus;
+    token: string;
+}
+
 export interface Grants {
     capability: string;
     object_role: string;
@@ -84,7 +117,7 @@ export interface LiveSpecsExtBaseQuery {
     last_pub_user_avatar_url: string | null;
     last_pub_user_email: string;
     last_pub_user_full_name: string | null;
-    spec_type: ENTITY;
+    spec_type: Entity;
     updated_at: string;
 }
 
@@ -98,14 +131,8 @@ export enum CONNECTOR_TYPES {
     MATERIALIZATION = 'materialization',
 }
 
-export enum ENTITY {
-    CAPTURE = 'capture',
-    MATERIALIZATION = 'materialization',
-    COLLECTION = 'collection',
-}
-
-export type EntityWithCreateWorkflow = ENTITY.CAPTURE | ENTITY.MATERIALIZATION;
-
+export type Entity = 'capture' | 'materialization' | 'collection';
+export type EntityWithCreateWorkflow = 'capture' | 'materialization';
 export type EntityWorkflow =
     | 'capture_create'
     | 'capture_edit'

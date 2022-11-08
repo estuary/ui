@@ -1,7 +1,6 @@
 import { Box } from '@mui/material';
 import EntityTable, { getPagination } from 'components/tables/EntityTable';
 import Rows, { tableColumns } from 'components/tables/Materializations/Rows';
-import { SelectTableStoreNames } from 'context/Zustand';
 import { useQuery } from 'hooks/supabase-swr';
 import { useState } from 'react';
 import {
@@ -11,12 +10,9 @@ import {
     QUERY_PARAM_CONNECTOR_TITLE,
     TABLES,
 } from 'services/supabase';
-import { LiveSpecsExtBaseQuery, SortDirection } from 'types';
-
-// TODO: Consider consolidating query interface instances.
-export interface LiveSpecsExtQuery extends LiveSpecsExtBaseQuery {
-    reads_from: string[];
-}
+import { SelectTableStoreNames } from 'stores/names';
+import { SortDirection } from 'types';
+import { LiveSpecsExtQuery } from './types';
 
 const queryColumns = [
     'catalog_name',

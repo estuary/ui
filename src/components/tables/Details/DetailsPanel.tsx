@@ -8,7 +8,7 @@ import {
     Typography,
 } from '@mui/material';
 import { DataPreview } from 'components/collection/DataPreview';
-import { createEditorStore } from 'components/editor/Store';
+import { createEditorStore } from 'components/editor/Store/create';
 import EditorAndLogs from 'components/tables/Details/EditorAndLogs';
 import ShardInformation from 'components/tables/Details/ShardInformation';
 import { LocalZustandProvider } from 'context/LocalZustand';
@@ -16,17 +16,17 @@ import {
     semiTransparentBackgroundIntensified,
     tableBorderSx,
 } from 'context/Theme';
-import { EditorStoreNames } from 'context/Zustand';
 import { concat } from 'lodash';
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { ENTITY } from 'types';
+import { EditorStoreNames } from 'stores/names';
+import { Entity } from 'types';
 
 interface Props {
     detailsExpanded: boolean;
     lastPubId: string;
     colSpan: number;
-    entityType: ENTITY;
+    entityType: Entity;
     entityName: string;
     collectionNames?: string[];
     disableLogs?: boolean; // TODO (detail logs) We'll start using this again when we have better logs
@@ -45,7 +45,7 @@ function DetailsPanel({
         [collectionNames, entityName]
     ) as string[];
 
-    const isCollection = entityType === ENTITY.COLLECTION;
+    const isCollection = entityType === 'collection';
 
     return (
         <TableRow>

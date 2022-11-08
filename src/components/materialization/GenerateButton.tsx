@@ -6,7 +6,7 @@ import {
     useEditorStore_isSaving,
     useEditorStore_resetState,
     useEditorStore_setId,
-} from 'components/editor/Store';
+} from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
@@ -22,16 +22,15 @@ import {
     useEndpointConfigStore_errorsExist,
 } from 'stores/EndpointConfig';
 import {
-    FormStatus,
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
     useFormStateStore_updateStatus,
-} from 'stores/FormState';
+} from 'stores/FormState/hooks';
+import { FormStatus } from 'stores/FormState/types';
 import {
     useResourceConfig_resourceConfig,
     useResourceConfig_resourceConfigErrorsExist,
-} from 'stores/ResourceConfig';
-import { ENTITY } from 'types';
+} from 'stores/ResourceConfig/hooks';
 
 interface Props {
     disabled: boolean;
@@ -133,7 +132,7 @@ function MaterializeGenerateButton({ disabled, callFailed }: Props) {
                 newDraftId,
                 entityName,
                 draftSpec,
-                ENTITY.MATERIALIZATION
+                'materialization'
             );
             if (draftSpecsResponse.error) {
                 return callFailed({

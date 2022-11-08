@@ -34,10 +34,12 @@ export const ERROR_MESSAGES = {
 export const DEFAULT_FILTER = '__unknown__';
 
 export enum TABLES {
+    APPLIED_DIRECTIVES = 'applied_directives',
     COMBINED_GRANTS_EXT = 'combined_grants_ext',
     CONNECTOR_TAGS = 'connector_tags',
     CONNECTORS = 'connectors',
     DISCOVERS = 'discovers',
+    DIRECTIVES = 'directives',
     DRAFT_ERRORS = 'draft_errors',
     DRAFT_SPECS = 'draft_specs',
     DRAFT_SPECS_EXT = 'draft_specs_ext',
@@ -57,6 +59,7 @@ export enum TABLES {
 }
 
 export enum RPCS {
+    EXCHANGE_DIRECTIVES = 'exchange_directive_token',
     VIEW_LOGS = 'view_logs',
 }
 
@@ -232,13 +235,15 @@ export const jobSucceeded = (jobStatus?: JobStatus) => {
 type PollerTimeout = number | undefined;
 
 export const JOB_STATUS_POLLER_ERROR = 'supabase.poller.failed';
+
+// These columns are not always what you want... but okay for a "default" constant
+export const JOB_STATUS_COLUMNS = `job_status, logs_token, id`;
 export const jobStatusPoller = (
     query: any,
     success: Function,
     failure: Function,
     initWait?: number
 ) => {
-    console.log('jobStatusPoller');
     let pollerTimeout: PollerTimeout;
     let interval = DEFAULT_POLLING_INTERVAL;
     const makeApiCall = () => {

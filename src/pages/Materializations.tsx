@@ -1,6 +1,6 @@
 import AddIcon from '@mui/icons-material/Add';
 import { Box, Button, SxProps, Theme, Toolbar } from '@mui/material';
-import { authenticatedRoutes } from 'app/Authenticated';
+import { authenticatedRoutes } from 'app/routes';
 import PageContainer from 'components/shared/PageContainer';
 import MaterializationsTable from 'components/tables/Materializations';
 import useBrowserTitle from 'hooks/useBrowserTitle';

@@ -2,7 +2,7 @@ import {
     deleteDraftSpecsByCatalogName,
     getDraftSpecsBySpecType,
 } from 'api/draftSpecs';
-import { authenticatedRoutes } from 'app/Authenticated';
+import { authenticatedRoutes } from 'app/routes';
 import CaptureGenerateButton from 'components/capture/GenerateButton';
 import {
     useEditorStore_id,
@@ -11,7 +11,7 @@ import {
     useEditorStore_resetState,
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
-} from 'components/editor/Store';
+} from 'components/editor/Store/hooks';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
@@ -39,23 +39,23 @@ import {
 } from 'stores/DetailsForm';
 import { useEndpointConfigStore_reset } from 'stores/EndpointConfig';
 import {
-    FormStatus,
     useFormStateStore_exitWhenLogsClose,
     useFormStateStore_messagePrefix,
     useFormStateStore_resetState,
     useFormStateStore_setFormState,
-} from 'stores/FormState';
+} from 'stores/FormState/hooks';
+import { FormStatus } from 'stores/FormState/types';
 import {
-    ResourceConfigDictionary,
-    ResourceConfigHydrator,
     useResourceConfig_addCollection,
     useResourceConfig_resetState,
     useResourceConfig_restrictedDiscoveredCollections,
     useResourceConfig_setCurrentCollection,
     useResourceConfig_setDiscoveredCollections,
     useResourceConfig_setResourceConfig,
-} from 'stores/ResourceConfig';
-import { ENTITY, JsonFormsData } from 'types';
+} from 'stores/ResourceConfig/hooks';
+import ResourceConfigHydrator from 'stores/ResourceConfig/Hydrator';
+import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
+import { JsonFormsData } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
 import {
     modifyDiscoveredDraftSpec,
@@ -75,7 +75,7 @@ const trackEvent = (payload: any) => {
 function CaptureCreate() {
     const navigate = useNavigate();
 
-    const entityType = ENTITY.CAPTURE;
+    const entityType = 'capture';
 
     // Supabase stuff
     const supabaseClient = useClient();

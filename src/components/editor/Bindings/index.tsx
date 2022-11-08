@@ -22,16 +22,16 @@ import {
     useDetailsForm_connectorImage,
     useDetailsForm_details_entityName,
 } from 'stores/DetailsForm';
-import { useFormStateStore_messagePrefix } from 'stores/FormState';
+import { useFormStateStore_messagePrefix } from 'stores/FormState/hooks';
 import {
-    ResourceConfigDictionary,
     useResourceConfig_discoveredCollections,
     useResourceConfig_resetResourceConfigAndCollections,
     useResourceConfig_resourceConfig,
     useResourceConfig_setResourceSchema,
     useResourceConfig_setServerUpdateRequired,
-} from 'stores/ResourceConfig';
-import { ENTITY, Schema } from 'types';
+} from 'stores/ResourceConfig/hooks';
+import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
+import { Schema } from 'types';
 
 interface Props {
     draftSpecs: DraftSpecQuery[];
@@ -86,7 +86,7 @@ function BindingsMultiEditor({ draftSpecs = [], readOnly = false }: Props) {
         let queriedResourceConfig: ResourceConfigDictionary = {};
 
         const collectionNameProp =
-            entityType === ENTITY.MATERIALIZATION ? 'source' : 'target';
+            entityType === 'materialization' ? 'source' : 'target';
 
         draftSpecs[0]?.spec.bindings.forEach((binding: any) => {
             queriedResourceConfig = {
@@ -144,7 +144,7 @@ function BindingsMultiEditor({ draftSpecs = [], readOnly = false }: Props) {
     const { liveSpecs } = useLiveSpecs('collection');
 
     const fetchingSpecs =
-        entityType === ENTITY.MATERIALIZATION
+        entityType === 'materialization'
             ? liveSpecs.length === 0
             : draftSpecs.length === 0;
 
