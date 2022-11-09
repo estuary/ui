@@ -86,6 +86,21 @@ export interface JoinedAppliedDirective extends AppliedDirective<any> {
     ['directives.spec->>type']: undefined;
 }
 
+export interface CatalogStats {
+    catalog_name: string;
+    grain: string;
+    bytes_written_by_me: number;
+    docs_written_by_me: number;
+    bytes_read_by_me: number;
+    docs_read_by_me: number;
+    bytes_written_to_me: number;
+    docs_written_to_me: number;
+    bytes_read_from_me: number;
+    docs_read_from_me: number;
+    ts: Date;
+    flow_document: any;
+}
+
 export interface Directive {
     created_at: Date;
     detail: null;

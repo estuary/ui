@@ -7,6 +7,8 @@ import DetailsPanel from 'components/tables/Details/DetailsPanel';
 import { getEntityTableRowSx } from 'context/Theme';
 import { useState } from 'react';
 import { LiveSpecsExtQuery } from '../Captures/types';
+import Bytes from '../cells/stats/Bytes';
+import Docs from '../cells/stats/Docs';
 
 interface RowProps {
     row: LiveSpecsExtQuery;
@@ -22,6 +24,14 @@ export const tableColumns = [
     {
         field: 'catalog_name',
         headerIntlKey: 'entityTable.data.entity',
+    },
+    {
+        field: null,
+        headerIntlKey: 'entityTable.stats.bytes_written_to_me',
+    },
+    {
+        field: null,
+        headerIntlKey: 'entityTable.stats.docs_written_to_me',
     },
     {
         field: 'updated_at',
@@ -47,6 +57,18 @@ function Row({ row, showEntityStatus }: RowProps) {
                 <EntityName
                     name={row.catalog_name}
                     showEntityStatus={showEntityStatus}
+                />
+
+                <Bytes
+                    name={row.catalog_name}
+                    val={37577749}
+                    time="2022-11-10 04:00:00+00"
+                />
+
+                <Docs
+                    name={row.catalog_name}
+                    val={2149}
+                    time="2022-11-10 04:00:00+00"
                 />
 
                 <TimeStamp time={row.updated_at} />

@@ -21,6 +21,8 @@ import { QUERY_PARAM_CONNECTOR_TITLE } from 'services/supabase';
 import { SelectTableStoreNames } from 'stores/names';
 import { useShardDetail_setShards } from 'stores/ShardDetail/hooks';
 import { getPathWithParams } from 'utils/misc-utils';
+import Bytes from '../cells/stats/Bytes';
+import Docs from '../cells/stats/Docs';
 import { LiveSpecsExtQuery } from './types';
 
 interface RowsProps {
@@ -47,6 +49,14 @@ export const tableColumns = [
     {
         field: QUERY_PARAM_CONNECTOR_TITLE,
         headerIntlKey: 'data.type',
+    },
+    {
+        field: null,
+        headerIntlKey: 'entityTable.stats.bytes_read_by_me',
+    },
+    {
+        field: null,
+        headerIntlKey: 'entityTable.stats.docs_read_by_me',
     },
     {
         field: 'reads_from',
@@ -106,6 +116,18 @@ function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
                     connectorImage={row.image}
                     connectorName={row.title}
                     imageTag={`${row.connector_image_name}${row.connector_image_tag}`}
+                />
+
+                <Bytes
+                    name={row.catalog_name}
+                    val={37577749}
+                    time="2022-11-10 04:00:00+00"
+                />
+
+                <Docs
+                    name={row.catalog_name}
+                    val={2149}
+                    time="2022-11-10 04:00:00+00"
                 />
 
                 <ChipList strings={row.reads_from} />
