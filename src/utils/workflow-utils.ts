@@ -2,6 +2,7 @@ import { generateCaptureDraftSpec, modifyDraftSpec } from 'api/draftSpecs';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { CallSupabaseResponse } from 'services/supabase';
 import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
+import { hasLength } from 'utils/misc-utils';
 
 const mergeResourceConfigs = (
     queryData: DraftSpecQuery,
@@ -87,5 +88,7 @@ export const storeUpdatedBindings = (
         }
     });
 
-    setCurrentCollection(updatedBindings[0].target);
+    setCurrentCollection(
+        hasLength(updatedBindings) ? updatedBindings[0].target : null
+    );
 };

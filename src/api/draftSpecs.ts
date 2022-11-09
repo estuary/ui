@@ -184,12 +184,13 @@ export const deleteDraftSpecsByCatalogName = async (
     const promises: Array<Promise<PostgrestResponse<any>>> = [];
     let index = 0;
 
-    const deletePromiseGenerator = (idx: number) =>
-        supabaseClient
+    const deletePromiseGenerator = (idx: number) => {
+        return supabaseClient
             .from(TABLES.DRAFT_SPECS)
             .delete()
             .eq('draft_id', draftId)
-            .in('catalog_name', catalogNames.slice(idx, idx + CHUNK_SIZE - 1));
+            .in('catalog_name', catalogNames.slice(idx, idx + CHUNK_SIZE));
+    };
 
     // This could probably be written in a fancy functional-programming way with
     // clever calls to concat and map and slice and stuff,
@@ -199,7 +200,7 @@ export const deleteDraftSpecsByCatalogName = async (
         const prom = deletePromiseGenerator(index);
         promises.push(limiter(() => prom));
 
-        index = index + Math.min(index + CHUNK_SIZE, catalogNames.length);
+        index = index + CHUNK_SIZE;
     }
 
     const res = await Promise.all(promises);

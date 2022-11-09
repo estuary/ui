@@ -209,16 +209,30 @@ const getInitialState = (
     removeAllCollections: () => {
         set(
             produce((state: ResourceConfigState) => {
+                const {
+                    discoveredCollections,
+                    resourceConfig,
+                    restrictedDiscoveredCollections,
+                } = get();
+
                 state.currentCollection = null;
-                const { resourceConfig } = get();
                 state.collections = [];
 
-                const updatedResourceConfig = pick(
-                    resourceConfig,
-                    state.collections
-                ) as ResourceConfigDictionary;
+                const additionalRestrictedCollections: string[] =
+                    discoveredCollections?.filter(
+                        (collection) =>
+                            Object.hasOwn(resourceConfig, collection) &&
+                            !restrictedDiscoveredCollections.includes(
+                                collection
+                            )
+                    ) ?? [];
 
-                state.resourceConfig = updatedResourceConfig;
+                state.restrictedDiscoveredCollections = [
+                    ...restrictedDiscoveredCollections,
+                    ...additionalRestrictedCollections,
+                ];
+
+                state.resourceConfig = {};
             }),
             false,
             'Removed All Selected Collections'
