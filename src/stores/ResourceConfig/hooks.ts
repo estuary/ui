@@ -59,6 +59,15 @@ export const useResourceConfig_removeCollection = () => {
     >(getStoreName(entityType), (state) => state.removeCollection);
 };
 
+export const useResourceConfig_removeAllCollections = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['removeAllCollections']
+    >(getStoreName(entityType), (state) => state.removeAllCollections);
+};
+
 export const useResourceConfig_collectionErrorsExist = () => {
     const entityType = useEntityType();
 

@@ -49,7 +49,10 @@ function ListAndDetails({
                     <div
                         className="pane-content"
                         style={{
-                            height: heightVal,
+                            // height: heightVal,
+                            height: '100%',
+                            display: 'flex',
+                            flexDirection: 'column',
                             border: displayBorder ? slateOutline : undefined,
                         }}
                     >

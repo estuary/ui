@@ -206,6 +206,25 @@ const getInitialState = (
         );
     },
 
+    removeAllCollections: () => {
+        set(
+            produce((state: ResourceConfigState) => {
+                state.currentCollection = null;
+                const { resourceConfig } = get();
+                state.collections = [];
+
+                const updatedResourceConfig = pick(
+                    resourceConfig,
+                    state.collections
+                ) as ResourceConfigDictionary;
+
+                state.resourceConfig = updatedResourceConfig;
+            }),
+            false,
+            'Removed All Selected Collections'
+        );
+    },
+
     setCurrentCollection: (value) => {
         set(
             produce((state: ResourceConfigState) => {
