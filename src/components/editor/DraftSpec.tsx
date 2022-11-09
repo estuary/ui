@@ -5,19 +5,27 @@ import {
     useEditorStore_id,
     useEditorStore_setSpecs,
 } from 'components/editor/Store/hooks';
+import { useEntityType } from 'context/EntityContext';
 import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useEffect, useState } from 'react';
+import { useResourceConfig_collections } from 'stores/ResourceConfig/hooks';
 
 export interface Props {
     disabled?: boolean;
 }
 
 function DraftSpecEditor({ disabled }: Props) {
+    const entityType = useEntityType();
+
+    // Draft Editor Store
     const currentCatalog = useEditorStore_currentCatalog();
 
     const setSpecs = useEditorStore_setSpecs();
 
     const draftId = useEditorStore_id();
+
+    // Resource Config Store
+    const collections = useResourceConfig_collections();
 
     const { draftSpecs, mutate } = useDraftSpecs(draftId);
     const [draftSpec, setDraftSpec] = useState<DraftSpecQuery | null>(null);
@@ -44,9 +52,15 @@ function DraftSpecEditor({ disabled }: Props) {
 
     useEffect(() => {
         if (draftSpecs.length > 0) {
-            setSpecs(draftSpecs);
+            const filteredDraftSpecs = draftSpecs.filter(
+                (response) =>
+                    response.spec_type === entityType ||
+                    (response.spec_type === 'collection' &&
+                        collections?.includes(response.catalog_name))
+            );
+            setSpecs(filteredDraftSpecs);
         }
-    }, [draftSpecs, setSpecs]);
+    }, [setSpecs, collections, draftSpecs, entityType]);
 
     useEffect(() => {
         if (currentCatalog) {

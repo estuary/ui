@@ -176,6 +176,7 @@ export const getDraftSpecsBySpecType = async (
 const CHUNK_SIZE = 10;
 export const deleteDraftSpecsByCatalogName = async (
     draftId: string,
+    specType: Entity,
     catalogNames: string[]
 ) => {
     // In case we get an absolutely massive amount of catalogs to delete,
@@ -189,6 +190,7 @@ export const deleteDraftSpecsByCatalogName = async (
             .from(TABLES.DRAFT_SPECS)
             .delete()
             .eq('draft_id', draftId)
+            .eq('spec_type', specType)
             .in('catalog_name', catalogNames.slice(idx, idx + CHUNK_SIZE));
     };
 
