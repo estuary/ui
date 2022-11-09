@@ -23,7 +23,6 @@ export interface ResourceConfigState {
     ) => void;
     addCollection: (value: string) => void;
     removeCollection: (value: string) => void;
-    addAllCollections: () => void;
     removeAllCollections: () => void;
 
     collectionRemovalMetadata: {

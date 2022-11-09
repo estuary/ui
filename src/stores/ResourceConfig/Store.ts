@@ -225,35 +225,6 @@ const getInitialState = (
         );
     },
 
-    addAllCollections: () => {
-        set(
-            produce((_state: ResourceConfigState) => {
-                const {
-                    discoveredCollections,
-                    setResourceConfig,
-                    setRestrictedDiscoveredCollections,
-                } = get();
-
-                const collections = discoveredCollections ?? [];
-
-                setResourceConfig(collections);
-
-                collections.forEach((collection) =>
-                    setRestrictedDiscoveredCollections(collection)
-                );
-
-                const all = get();
-                console.log(all);
-
-                // if (collections.length > 0) {
-                //     state.currentCollection = collections[0];
-                // }
-            }),
-            false,
-            'All Collections Added'
-        );
-    },
-
     setCurrentCollection: (value) => {
         set(
             produce((state: ResourceConfigState) => {
