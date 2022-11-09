@@ -1,6 +1,12 @@
 import { Clear } from '@mui/icons-material';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import { Box, IconButton, ListItemText } from '@mui/material';
+import {
+    Box,
+    Button,
+    ButtonGroup,
+    IconButton,
+    ListItemText,
+} from '@mui/material';
 import {
     DataGrid,
     GridColDef,
@@ -24,9 +30,11 @@ import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import {
     useResourceConfig_currentCollection,
     useResourceConfig_discoveredCollections,
+    useResourceConfig_removeAllCollections,
     useResourceConfig_removeCollection,
     useResourceConfig_resourceConfig,
     useResourceConfig_setCurrentCollection,
+    useResourceConfig_setResourceConfig,
     useResourceConfig_setRestrictedDiscoveredCollections,
 } from 'stores/ResourceConfig/hooks';
 import useConstant from 'use-constant';
@@ -137,6 +145,10 @@ function BindingSelector({
     const setCurrentCollection = useResourceConfig_setCurrentCollection();
 
     const resourceConfig = useResourceConfig_resourceConfig();
+    const discoveredCollections = useResourceConfig_discoveredCollections();
+
+    const setResourceConfig = useResourceConfig_setResourceConfig();
+    const removeAllCollection = useResourceConfig_removeAllCollections();
 
     const resourceConfigKeys = Object.keys(resourceConfig);
 
@@ -190,6 +202,29 @@ function BindingSelector({
     ) : (
         <>
             <CollectionPicker readOnly={readOnly} />
+            <ButtonGroup
+                sx={{
+                    flex: 1,
+                    display: 'flex',
+                }}
+                variant="text"
+                aria-label="outlined button group"
+            >
+                <Button
+                    sx={{ flex: 1, borderRadius: 0 }}
+                    onClick={removeAllCollection}
+                >
+                    Remove All
+                </Button>
+                <Button
+                    sx={{ flex: 1, borderRadius: 0 }}
+                    onClick={() => {
+                        setResourceConfig(discoveredCollections ?? []);
+                    }}
+                >
+                    Add All
+                </Button>
+            </ButtonGroup>
 
             <Box sx={{ height: 280 }}>
                 <DataGrid
