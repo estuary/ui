@@ -222,6 +222,7 @@ function BindingSelector({
                     Remove All
                 </Button>
                 <Button
+                    disabled
                     sx={{ flex: 1, borderRadius: 0 }}
                     onClick={() => {
                         const collections =
