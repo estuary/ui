@@ -1,4 +1,6 @@
+import { PostgrestResponse } from '@supabase/postgrest-js';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import pLimit from 'p-limit';
 import {
     deleteSupabase,
     handleFailure,
@@ -171,13 +173,38 @@ export const getDraftSpecsBySpecType = async (
         .then(handleSuccess<DraftSpecQuery[]>, handleFailure);
 };
 
-export const deleteDraftSpecsByCatalogName = (
+const CHUNK_SIZE = 10;
+export const deleteDraftSpecsByCatalogName = async (
     draftId: string,
     catalogNames: string[]
 ) => {
-    return supabaseClient
-        .from(TABLES.DRAFT_SPECS)
-        .delete()
-        .eq('draft_id', draftId)
-        .in('catalog_name', catalogNames);
+    // In case we get an absolutely massive amount of catalogs to delete,
+    // we don't want to spam supabase
+    const limiter = pLimit(3);
+    const promises: Array<Promise<PostgrestResponse<any>>> = [];
+    let index = 0;
+
+    const deletePromiseGenerator = (idx: number) =>
+        supabaseClient
+            .from(TABLES.DRAFT_SPECS)
+            .delete()
+            .eq('draft_id', draftId)
+            .in('catalog_name', catalogNames.slice(idx, idx + CHUNK_SIZE - 1));
+
+    // This could probably be written in a fancy functional-programming way with
+    // clever calls to concat and map and slice and stuff,
+    // but I want it to be dead obvious what's happening here.
+    while (index < catalogNames.length) {
+        // Have to do this to capture `index` correctly
+        const prom = deletePromiseGenerator(index);
+        promises.push(limiter(() => prom));
+
+        index = index + Math.min(index + CHUNK_SIZE, catalogNames.length);
+    }
+
+    const res = await Promise.all(promises);
+
+    const errors = res.filter((r) => r.error);
+
+    return errors[0] ?? res[0];
 };

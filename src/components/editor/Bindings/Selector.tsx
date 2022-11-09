@@ -22,6 +22,7 @@ import {
     typographyTruncation,
 } from 'context/Theme';
 import { useEntityWorkflow } from 'context/Workflow';
+import useLiveSpecs from 'hooks/useLiveSpecs';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
@@ -57,6 +58,7 @@ function Row({ collection, task, disabled }: RowProps) {
 
     const discoveredCollections = useResourceConfig_discoveredCollections();
     const removeCollection = useResourceConfig_removeCollection();
+    const updateSelection = useResourceConfig_setCurrentCollection();
 
     const setRestrictedDiscoveredCollections =
         useResourceConfig_setRestrictedDiscoveredCollections();
@@ -66,6 +68,7 @@ function Row({ collection, task, disabled }: RowProps) {
             event.preventDefault();
 
             removeCollection(collection);
+            updateSelection(null);
 
             if (
                 workflow === 'capture_edit' &&
@@ -133,6 +136,8 @@ function BindingSelector({
             id: 'workflows.collectionSelector.label.listHeader',
         })
     );
+
+    const { liveSpecs } = useLiveSpecs('collection');
 
     // Details Form Store
     const task = useDetailsForm_details_entityName();
@@ -219,7 +224,17 @@ function BindingSelector({
                 <Button
                     sx={{ flex: 1, borderRadius: 0 }}
                     onClick={() => {
-                        setResourceConfig(discoveredCollections ?? []);
+                        const collections =
+                            discoveredCollections ??
+                            liveSpecs
+                                .filter(
+                                    ({ spec_type }) =>
+                                        spec_type === 'collection'
+                                )
+                                .flatMap((spec) => spec.catalog_name);
+                        console.log('Adding collections: ', collections);
+
+                        setResourceConfig(collections);
                     }}
                 >
                     Add All
