@@ -16,6 +16,7 @@ import {
     Toolbar,
     Typography,
 } from '@mui/material';
+import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import RowSelector from 'components/tables/RowActions/RowSelector';
 import {
     SelectableTableStore,
@@ -23,7 +24,7 @@ import {
 } from 'components/tables/Store';
 import Title from 'components/tables/Title';
 import { useZustandStore } from 'context/Zustand/provider';
-import { Query, useSelect } from 'hooks/supabase-swr';
+import { useSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
 import { debounce } from 'lodash';
 import {
     ChangeEvent,
@@ -51,7 +52,7 @@ interface Props {
         field: string | null;
         headerIntlKey: string | null;
     }[];
-    query: Query<any>;
+    query: PostgrestFilterBuilder<any>;
     renderTableRows: (data: any, showEntityStatus: boolean) => ReactNode;
     setPagination: (data: any) => void;
     setSearchQuery: (data: any) => void;
@@ -103,10 +104,10 @@ function EntityTable({
     const isFiltering = useRef(false);
 
     const {
-        data: useSelectResponse,
         isValidating,
+        data: useSelectResponse,
         mutate: mutateSelectData,
-    } = useSelect(query);
+    } = useSelectNew<any>(query);
     const selectData = useSelectResponse ? useSelectResponse.data : null;
 
     const intl = useIntl();

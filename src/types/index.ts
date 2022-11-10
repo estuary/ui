@@ -129,9 +129,6 @@ export interface LiveSpecsExtBaseQuery {
     title: string;
     id: string;
     last_pub_id: string;
-    last_pub_user_avatar_url: string | null;
-    last_pub_user_email: string;
-    last_pub_user_full_name: string | null;
     spec_type: Entity;
     updated_at: string;
 }

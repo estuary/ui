@@ -1,4 +1,5 @@
 import { TableRow, useTheme } from '@mui/material';
+import { CollectionQuery } from 'api/liveSpecsExt';
 import Actions from 'components/tables/cells/Actions';
 import EntityName from 'components/tables/cells/EntityName';
 import ExpandDetails from 'components/tables/cells/ExpandDetails';
@@ -6,17 +7,16 @@ import TimeStamp from 'components/tables/cells/TimeStamp';
 import DetailsPanel from 'components/tables/Details/DetailsPanel';
 import { getEntityTableRowSx } from 'context/Theme';
 import { useState } from 'react';
-import { LiveSpecsExtQuery } from '../Captures/types';
 import Bytes from '../cells/stats/Bytes';
 import Docs from '../cells/stats/Docs';
 
 interface RowProps {
-    row: LiveSpecsExtQuery;
+    row: CollectionQuery;
     showEntityStatus: boolean;
 }
 
 interface RowsProps {
-    data: LiveSpecsExtQuery[];
+    data: CollectionQuery[];
     showEntityStatus: boolean;
 }
 
@@ -59,17 +59,9 @@ function Row({ row, showEntityStatus }: RowProps) {
                     showEntityStatus={showEntityStatus}
                 />
 
-                <Bytes
-                    name={row.catalog_name}
-                    val={37577749}
-                    time="2022-11-10 04:00:00+00"
-                />
+                <Bytes val={37577749} />
 
-                <Docs
-                    name={row.catalog_name}
-                    val={2149}
-                    time="2022-11-10 04:00:00+00"
-                />
+                <Docs val={2149} />
 
                 <TimeStamp time={row.updated_at} />
 

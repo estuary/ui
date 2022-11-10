@@ -1,13 +1,10 @@
 import { Box } from '@mui/material';
+import { getGrantsForEverything } from 'api/combinedGrantsExt';
 import Rows, { tableColumns } from 'components/tables/AccessGrants/Rows';
 import EntityTable, { getPagination } from 'components/tables/EntityTable';
-import { useQuery } from 'hooks/supabase-swr';
-import { useState } from 'react';
-import { defaultTableFilter, TABLES } from 'services/supabase';
+import { useMemo, useState } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
 import { SortDirection } from 'types';
-
-// const queryColumns = ['id', 'spec_type', 'catalog_name', 'updated_at'];
 
 function AccessGrantsTable() {
     const rowsPerPage = 10;
@@ -18,24 +15,14 @@ function AccessGrantsTable() {
     const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
     const [columnToSort, setColumnToSort] = useState<any>('user_full_name');
 
-    const rolesQuery = useQuery<any>(
-        TABLES.COMBINED_GRANTS_EXT,
-        {
-            columns: `id, subject_role, object_role, capability, user_avatar_url, user_full_name, user_email, updated_at`,
-            count: 'exact',
-            filter: (query) => {
-                return defaultTableFilter<any>(
-                    query,
-                    ['user_full_name', 'subject_role', 'object_role'],
-                    searchQuery,
-                    columnToSort,
-                    sortDirection,
-                    pagination
-                );
-            },
-        },
-        [pagination, searchQuery, columnToSort, sortDirection]
-    );
+    const query = useMemo(() => {
+        return getGrantsForEverything(
+            pagination,
+            searchQuery,
+            columnToSort,
+            sortDirection
+        );
+    }, [columnToSort, pagination, searchQuery, sortDirection]);
 
     return (
         <Box>
@@ -46,7 +33,7 @@ function AccessGrantsTable() {
                     disableDoclink: true,
                 }}
                 columns={tableColumns}
-                query={rolesQuery}
+                query={query}
                 renderTableRows={(data) => <Rows data={data} />}
                 setPagination={setPagination}
                 setSearchQuery={setSearchQuery}

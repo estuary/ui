@@ -1,20 +1,24 @@
+import { TableCell } from '@mui/material';
+import { tableBorderSx } from 'context/Theme';
 import prettyBytes from 'pretty-bytes';
-import Stats from '.';
 
 interface Props {
-    name: string;
     val: number;
-    time: string;
 }
 
-const Bytes = ({ val, name, time }: Props) => {
+const Bytes = ({ val }: Props) => {
     return (
-        <Stats time={time} name={name}>
+        <TableCell
+            sx={{
+                ...tableBorderSx,
+                maxWidth: 'min-content',
+            }}
+        >
             {prettyBytes(val, {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
             })}
-        </Stats>
+        </TableCell>
     );
 };
 

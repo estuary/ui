@@ -1,26 +1,10 @@
 import { Box } from '@mui/material';
+import { getLiveSpecs_collections } from 'api/liveSpecsExt';
 import Rows, { tableColumns } from 'components/tables/Collections/Rows';
 import EntityTable, { getPagination } from 'components/tables/EntityTable';
-import { useQuery } from 'hooks/supabase-swr';
-import { useState } from 'react';
-import { defaultTableFilter, TABLES } from 'services/supabase';
+import { useMemo, useState } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
 import { SortDirection } from 'types';
-
-export interface LiveSpecsQuery {
-    spec_type: string;
-    catalog_name: string;
-    updated_at: string;
-    id: string;
-}
-
-const queryColumns = [
-    'id',
-    'spec_type',
-    'catalog_name',
-    'updated_at',
-    'last_pub_id',
-];
 
 function CollectionsTable() {
     const rowsPerPage = 10;
@@ -31,24 +15,14 @@ function CollectionsTable() {
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
     const [columnToSort, setColumnToSort] = useState<any>('updated_at');
 
-    const liveSpecQuery = useQuery<LiveSpecsQuery>(
-        TABLES.LIVE_SPECS_EXT,
-        {
-            columns: queryColumns,
-            count: 'exact',
-            filter: (query) => {
-                return defaultTableFilter<LiveSpecsQuery>(
-                    query,
-                    ['catalog_name'],
-                    searchQuery,
-                    columnToSort,
-                    sortDirection,
-                    pagination
-                ).eq('spec_type', 'collection');
-            },
-        },
-        [pagination, searchQuery, columnToSort, sortDirection]
-    );
+    const query = useMemo(() => {
+        return getLiveSpecs_collections(
+            pagination,
+            searchQuery,
+            columnToSort,
+            sortDirection
+        );
+    }, [columnToSort, pagination, searchQuery, sortDirection]);
 
     return (
         <Box>
@@ -58,7 +32,7 @@ function CollectionsTable() {
                     message: 'collections.message2',
                 }}
                 columns={tableColumns}
-                query={liveSpecQuery}
+                query={query}
                 renderTableRows={(data, showEntityStatus) => (
                     <Rows data={data} showEntityStatus={showEntityStatus} />
                 )}

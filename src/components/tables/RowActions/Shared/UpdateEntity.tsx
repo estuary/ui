@@ -1,10 +1,10 @@
 import { Alert } from '@mui/material';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec } from 'api/draftSpecs';
+import { CaptureQuery } from 'api/liveSpecsExt';
 import { createPublication } from 'api/publications';
 import DraftErrors from 'components/shared/Entity/Error/DraftErrors';
 import Error from 'components/shared/Error';
-import { LiveSpecsExtQuery } from 'components/tables/Captures/types';
 import SharedProgress, {
     ProgressStates,
     SharedProgressProps,
@@ -25,12 +25,12 @@ import { SelectTableStoreNames } from 'stores/names';
 import { Entity } from 'types';
 
 export interface UpdateEntityProps {
-    entity: LiveSpecsExtQuery;
+    entity: CaptureQuery;
     onFinish: (response: any) => void;
     generateNewSpec: (
         spec: LiveSpecsExtQueryWithSpec['spec']
     ) => any | Promise<void>;
-    generateNewSpecType: (entity: LiveSpecsExtQuery) => Entity | null;
+    generateNewSpecType: (entity: CaptureQuery) => Entity | null;
     runningMessageID: SharedProgressProps['runningMessageID'];
     successMessageID: SharedProgressProps['successMessageID'];
     selectableStoreName:
@@ -72,7 +72,7 @@ function UpdateEntity({
 
         if (liveSpecs.length > 0) {
             const updateEntity = async (
-                targetEntity: LiveSpecsExtQuery,
+                targetEntity: CaptureQuery,
                 spec: LiveSpecsExtQueryWithSpec['spec']
             ) => {
                 const entityName = targetEntity.catalog_name;

@@ -1,32 +1,10 @@
 import { Box } from '@mui/material';
+import { getLiveSpecs_captures } from 'api/liveSpecsExt';
 import Rows, { tableColumns } from 'components/tables/Captures/Rows';
 import EntityTable, { getPagination } from 'components/tables/EntityTable';
-import { useQuery } from 'hooks/supabase-swr';
-import { useState } from 'react';
-import {
-    CONNECTOR_IMAGE,
-    CONNECTOR_TITLE,
-    defaultTableFilter,
-    QUERY_PARAM_CONNECTOR_TITLE,
-    TABLES,
-} from 'services/supabase';
+import { useMemo, useState } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
 import { SortDirection } from 'types';
-import { LiveSpecsExtQuery } from './types';
-
-const queryColumns = [
-    'catalog_name',
-    'connector_id',
-    'connector_image_name',
-    'connector_image_tag',
-    CONNECTOR_IMAGE,
-    CONNECTOR_TITLE,
-    'id',
-    'last_pub_id',
-    'spec_type',
-    'updated_at',
-    'writes_to',
-];
 
 function CapturesTable() {
     const rowsPerPage = 10;
@@ -37,24 +15,14 @@ function CapturesTable() {
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
     const [columnToSort, setColumnToSort] = useState<any>('updated_at');
 
-    const liveSpecQuery = useQuery<LiveSpecsExtQuery>(
-        TABLES.LIVE_SPECS_EXT,
-        {
-            columns: queryColumns,
-            count: 'exact',
-            filter: (query) => {
-                return defaultTableFilter<LiveSpecsExtQuery>(
-                    query,
-                    ['catalog_name', QUERY_PARAM_CONNECTOR_TITLE],
-                    searchQuery,
-                    columnToSort,
-                    sortDirection,
-                    pagination
-                ).eq('spec_type', 'capture');
-            },
-        },
-        [pagination, searchQuery, columnToSort, sortDirection]
-    );
+    const query = useMemo(() => {
+        return getLiveSpecs_captures(
+            pagination,
+            searchQuery,
+            columnToSort,
+            sortDirection
+        );
+    }, [columnToSort, pagination, searchQuery, sortDirection]);
 
     return (
         <Box>
@@ -64,7 +32,7 @@ function CapturesTable() {
                     message: 'captures.message2',
                 }}
                 columns={tableColumns}
-                query={liveSpecQuery}
+                query={query}
                 renderTableRows={(data, showEntityStatus) => (
                     <Rows data={data} showEntityStatus={showEntityStatus} />
                 )}

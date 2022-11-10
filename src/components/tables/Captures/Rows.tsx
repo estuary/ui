@@ -1,4 +1,5 @@
 import { TableRow, useTheme } from '@mui/material';
+import { CaptureQuery } from 'api/liveSpecsExt';
 import { authenticatedRoutes } from 'app/routes';
 import ChipList from 'components/tables/cells/ChipList';
 import Connector from 'components/tables/cells/Connector';
@@ -23,15 +24,14 @@ import { useShardDetail_setShards } from 'stores/ShardDetail/hooks';
 import { getPathWithParams } from 'utils/misc-utils';
 import Bytes from '../cells/stats/Bytes';
 import Docs from '../cells/stats/Docs';
-import { LiveSpecsExtQuery } from './types';
 
 interface RowsProps {
-    data: LiveSpecsExtQuery[];
+    data: CaptureQuery[];
     showEntityStatus: boolean;
 }
 
 export interface RowProps {
-    row: LiveSpecsExtQuery;
+    row: CaptureQuery;
     setRow: any;
     isSelected: boolean;
     showEntityStatus: boolean;
@@ -125,17 +125,9 @@ function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
                     imageTag={`${row.connector_image_name}${row.connector_image_tag}`}
                 />
 
-                <Bytes
-                    name={row.catalog_name}
-                    val={37577749}
-                    time="2022-11-10 04:00:00+00"
-                />
+                <Bytes val={37577749} />
 
-                <Docs
-                    name={row.catalog_name}
-                    val={2149}
-                    time="2022-11-10 04:00:00+00"
-                />
+                <Docs val={2149} />
 
                 <ChipList strings={row.writes_to} />
 

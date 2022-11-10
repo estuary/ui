@@ -1,19 +1,7 @@
-import { Stack, TableCell, Typography } from '@mui/material';
+import { TableCell } from '@mui/material';
 import { tableBorderSx } from 'context/Theme';
-import useCatalogStats from 'hooks/useCatalogStats';
-import { FormattedDate, FormattedMessage } from 'react-intl';
-import { BaseComponentProps } from 'types';
 
-interface Props extends BaseComponentProps {
-    name: string;
-    time: string;
-}
-
-const Stats = ({ children, name }: Props) => {
-    const { stats, error, isValidating } = useCatalogStats(name);
-
-    console.log('stats', stats);
-
+const Stats = () => {
     return (
         <TableCell
             sx={{
@@ -21,11 +9,15 @@ const Stats = ({ children, name }: Props) => {
                 maxWidth: 'min-content',
             }}
         >
-            {isValidating ? (
-                <>loading...</>
-            ) : error ? (
-                <>uh oh</>
+            {/*{isValidating ? (
+                <Skeleton />
             ) : stats ? (
+                <Tooltip
+                    title={<FormattedMessage id="entityTable.stats.error" />}
+                >
+                    <ErrorOutlineIcon color="error" />
+                </Tooltip>
+            ) : error ? (
                 <Stack direction="row" spacing={1}>
                     <Typography sx={{ fontFamily: 'Monospace' }}>
                         {children}
@@ -37,11 +29,11 @@ const Stats = ({ children, name }: Props) => {
                         <FormattedDate
                             hour="numeric"
                             timeZoneName="short"
-                            value={stats.ts}
+                            value=""
                         />
                     </Typography>
                 </Stack>
-            ) : null}
+            ) : null}*/}
         </TableCell>
     );
 };

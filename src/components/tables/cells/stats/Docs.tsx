@@ -1,16 +1,21 @@
-import Stats from '.';
+import { TableCell } from '@mui/material';
+import { tableBorderSx } from 'context/Theme';
+import { FormattedNumber } from 'react-intl';
 
 interface Props {
-    name: string;
     val: number;
-    time: string;
 }
 
-const Docs = ({ val, name, time }: Props) => {
+const Docs = ({ val }: Props) => {
     return (
-        <Stats time={time} name={name}>
-            {val}
-        </Stats>
+        <TableCell
+            sx={{
+                ...tableBorderSx,
+                maxWidth: 'min-content',
+            }}
+        >
+            <FormattedNumber value={val} />
+        </TableCell>
     );
 };
 

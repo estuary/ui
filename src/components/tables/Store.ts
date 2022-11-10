@@ -1,3 +1,4 @@
+import { getStatsByName } from 'api/stats';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
 import { devtoolsOptions } from 'utils/store-utils';
@@ -21,6 +22,10 @@ export interface SelectableTableStore {
 
     resetState: () => void;
 }
+
+export const hydrateState = async () => {
+    await getStatsByName(['']);
+};
 
 export const initialCreateStates = {
     rows: () => {

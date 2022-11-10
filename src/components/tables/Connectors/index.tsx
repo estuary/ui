@@ -1,13 +1,9 @@
 import { Box } from '@mui/material';
+import { getConnectors } from 'api/connectors';
 import Rows, { tableColumns } from 'components/tables/Connectors/Rows';
 import EntityTable, { getPagination } from 'components/tables/EntityTable';
-import { useQuery } from 'hooks/supabase-swr';
-import {
-    ConnectorWithTagDetailQuery,
-    CONNECTOR_WITH_TAG_QUERY,
-} from 'hooks/useConnectorWithTagDetail';
-import { useState } from 'react';
-import { CONNECTOR_NAME, defaultTableFilter, TABLES } from 'services/supabase';
+import { useMemo, useState } from 'react';
+import { CONNECTOR_NAME } from 'services/supabase';
 import { SelectTableStoreNames } from 'stores/names';
 import { SortDirection } from 'types';
 
@@ -20,24 +16,14 @@ function ConnectorsTable() {
     const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
     const [columnToSort, setColumnToSort] = useState<any>(CONNECTOR_NAME);
 
-    const liveSpecQuery = useQuery<ConnectorWithTagDetailQuery>(
-        TABLES.CONNECTORS,
-        {
-            columns: CONNECTOR_WITH_TAG_QUERY,
-            count: 'exact',
-            filter: (query) => {
-                return defaultTableFilter<ConnectorWithTagDetailQuery>(
-                    query,
-                    [CONNECTOR_NAME],
-                    searchQuery,
-                    columnToSort,
-                    sortDirection,
-                    pagination
-                );
-            },
-        },
-        [pagination, searchQuery, columnToSort, sortDirection]
-    );
+    const query = useMemo(() => {
+        return getConnectors(
+            pagination,
+            searchQuery,
+            columnToSort,
+            sortDirection
+        );
+    }, [columnToSort, pagination, searchQuery, sortDirection]);
 
     return (
         <Box>
@@ -47,7 +33,7 @@ function ConnectorsTable() {
                     message: 'connectors.main.message2',
                 }}
                 columns={tableColumns}
-                query={liveSpecQuery}
+                query={query}
                 renderTableRows={(data) => <Rows data={data} />}
                 setPagination={setPagination}
                 setSearchQuery={setSearchQuery}
