@@ -185,14 +185,13 @@ export const deleteDraftSpecsByCatalogName = async (
     const promises: Array<Promise<PostgrestResponse<any>>> = [];
     let index = 0;
 
-    const deletePromiseGenerator = (idx: number) => {
-        return supabaseClient
+    const deletePromiseGenerator = (idx: number) =>
+        supabaseClient
             .from(TABLES.DRAFT_SPECS)
             .delete()
             .eq('draft_id', draftId)
             .eq('spec_type', specType)
             .in('catalog_name', catalogNames.slice(idx, idx + CHUNK_SIZE));
-    };
 
     // This could probably be written in a fancy functional-programming way with
     // clever calls to concat and map and slice and stuff,

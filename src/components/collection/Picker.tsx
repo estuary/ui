@@ -152,11 +152,13 @@ function CollectionPicker({ readOnly = false }: Props) {
             if (!removeOptionWithBackspace) {
                 setResourceConfig(value.map(({ name }) => name));
 
-                value
-                    .filter(({ name }) => discoveredCollections?.includes(name))
-                    .forEach(({ name }) => {
-                        setRestrictedDiscoveredCollections(name);
-                    });
+                if (value.length > 0 && discoveredCollections) {
+                    const latestCollection = value[value.length - 1].name;
+
+                    if (discoveredCollections.includes(latestCollection)) {
+                        setRestrictedDiscoveredCollections(latestCollection);
+                    }
+                }
             }
         },
         validateSelection: () => {
