@@ -74,6 +74,10 @@ export const storeUpdatedBindings = (
     const existingCollections = Object.keys(resourceConfig);
     const updatedBindings = response.data[0].spec.bindings;
 
+    // TODO (defect): Handle updating the list of collections and resource config inside
+    //   the resource config store. By updating the list of collections in a single call, the
+    //   latency incurred when generating the collection autocomplete values should decrease.
+    //   The loading condition for the BindingsMultiEditor component will need to be updated.
     updatedBindings.forEach((binding: any) => {
         if (
             !existingCollections.includes(binding.target) &&
