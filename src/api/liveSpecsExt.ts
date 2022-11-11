@@ -6,7 +6,7 @@ import {
     supabaseClient,
     TABLES,
 } from 'services/supabase';
-import { LiveSpecsExtBaseQuery } from 'types';
+import { CatalogStats, LiveSpecsExtBaseQuery } from 'types';
 
 const baseColumns = [
     'catalog_name',
@@ -28,13 +28,22 @@ const commonColumns = baseColumns.concat([
 export interface CaptureQuery extends LiveSpecsExtBaseQuery {
     writes_to: string[];
 }
+export interface CaptureQueryWithStats extends CaptureQuery {
+    stats: CatalogStats;
+}
 export interface MaterializationQuery extends LiveSpecsExtBaseQuery {
     reads_from: string[];
+}
+export interface MaterializationQueryWithStats extends MaterializationQuery {
+    stats: CatalogStats;
 }
 export type CollectionQuery = Pick<
     LiveSpecsExtBaseQuery,
     'spec_type' | 'catalog_name' | 'updated_at' | 'id' | 'last_pub_id'
 >;
+export interface CollectionQueryWithStats extends CollectionQuery {
+    stats: CatalogStats;
+}
 
 const captureColumns = commonColumns
     .concat(['connector_image_name', 'writes_to'])
