@@ -3,7 +3,7 @@ import { tableBorderSx } from 'context/Theme';
 import prettyBytes from 'pretty-bytes';
 
 interface Props {
-    val: number;
+    val?: number;
 }
 
 const Bytes = ({ val }: Props) => {
@@ -14,7 +14,7 @@ const Bytes = ({ val }: Props) => {
                 maxWidth: 'min-content',
             }}
         >
-            {prettyBytes(val, {
+            {prettyBytes(val ?? 0, {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
             })}

@@ -61,15 +61,19 @@ function Row({ row, showEntityStatus }: RowProps) {
 
                 <Bytes
                     val={
-                        row.stats.bytes_written_by_me +
-                        row.stats.bytes_written_to_me
+                        row.stats
+                            ? row.stats.bytes_written_by_me +
+                              row.stats.bytes_written_to_me
+                            : 0
                     }
                 />
 
                 <Docs
                     val={
-                        row.stats.docs_written_by_me +
-                        row.stats.docs_written_to_me
+                        row.stats
+                            ? row.stats.docs_written_by_me +
+                              row.stats.docs_written_to_me
+                            : 0
                     }
                 />
 

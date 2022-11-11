@@ -3,7 +3,7 @@ import { tableBorderSx } from 'context/Theme';
 import { FormattedNumber } from 'react-intl';
 
 interface Props {
-    val: number;
+    val?: number;
 }
 
 const Docs = ({ val }: Props) => {
@@ -14,7 +14,7 @@ const Docs = ({ val }: Props) => {
                 maxWidth: 'min-content',
             }}
         >
-            <FormattedNumber value={val} />
+            <FormattedNumber value={val ?? 0} />
         </TableCell>
     );
 };

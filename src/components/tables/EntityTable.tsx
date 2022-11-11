@@ -183,11 +183,9 @@ function EntityTable({
                     } catch (e: unknown) {
                         console.error('Uh oh ', e);
                     }
-                } else {
-                    newRows = rowData;
                 }
 
-                setSelectData(newRows);
+                setSelectData(newRows ?? rowData);
             }
         })();
     }, [addStatsToQuery, useSelectResponse]);

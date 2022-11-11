@@ -29,20 +29,20 @@ export interface CaptureQuery extends LiveSpecsExtBaseQuery {
     writes_to: string[];
 }
 export interface CaptureQueryWithStats extends CaptureQuery {
-    stats: CatalogStats;
+    stats?: CatalogStats;
 }
 export interface MaterializationQuery extends LiveSpecsExtBaseQuery {
     reads_from: string[];
 }
 export interface MaterializationQueryWithStats extends MaterializationQuery {
-    stats: CatalogStats;
+    stats?: CatalogStats;
 }
 export type CollectionQuery = Pick<
     LiveSpecsExtBaseQuery,
     'spec_type' | 'catalog_name' | 'updated_at' | 'id' | 'last_pub_id'
 >;
 export interface CollectionQueryWithStats extends CollectionQuery {
-    stats: CatalogStats;
+    stats?: CatalogStats;
 }
 
 const captureColumns = commonColumns

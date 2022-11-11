@@ -10,6 +10,8 @@ export interface SelectableTableStore {
     setRows: (val: LiveSpecsExtQuery[]) => void;
     removeRows: () => void;
 
+    setStats: () => void;
+
     selected: Map<string, any>;
     setSelected: (
         val: SelectableTableStore['selected'],
@@ -21,11 +23,13 @@ export interface SelectableTableStore {
     incrementSuccessfulTransformations: () => void;
 
     resetState: () => void;
-}
 
-export const hydrateState = async () => {
-    await getStatsByName(['']);
-};
+    hydrated: boolean;
+    setHydrated: (value: boolean) => void;
+
+    hydrationErrorsExist: boolean;
+    setHydrationErrorsExist: (value: boolean) => void;
+}
 
 export const initialCreateStates = {
     rows: () => {
@@ -39,9 +43,15 @@ export const initialCreateStates = {
 
 export const getInitialStateData = (): Pick<
     SelectableTableStore,
-    'selected' | 'rows' | 'successfulTransformations'
+    | 'selected'
+    | 'rows'
+    | 'successfulTransformations'
+    | 'hydrated'
+    | 'hydrationErrorsExist'
 > => {
     return {
+        hydrated: false,
+        hydrationErrorsExist: false,
         selected: initialCreateStates.selected(),
         rows: initialCreateStates.rows(),
         successfulTransformations:
@@ -99,6 +109,34 @@ export const getInitialState = (
             );
         },
 
+        setStats: async () => {
+            const { rows } = get();
+            const catalogNames = Array.from(rows.keys());
+
+            if (catalogNames.length > 0) {
+                const { data, error } = await getStatsByName(catalogNames);
+
+                if (error) {
+                    const { setHydrationErrorsExist } = get();
+                    setHydrationErrorsExist(true);
+                }
+
+                if (data && data.length > 0) {
+                    data.forEach((el) => {
+                        const currRow = rows.get(el.catalog_name);
+                        if (currRow) {
+                            rows.set(el.catalog_name, {
+                                ...currRow,
+                                ...el,
+                            });
+                        }
+                    });
+
+                    set({ rows });
+                }
+            }
+        },
+
         removeRows: () => {
             set(
                 produce(({ rows }) => {
@@ -122,6 +160,26 @@ export const getInitialState = (
         resetState: () => {
             set(getInitialStateData(), false, 'Resetting State');
         },
+
+        setHydrated: (value) => {
+            set(
+                produce((state) => {
+                    state.hydrated = value;
+                }),
+                false,
+                'Table Store Hydrated'
+            );
+        },
+
+        setHydrationErrorsExist: (value) => {
+            set(
+                produce((state) => {
+                    state.hydrationErrorsExist = value;
+                }),
+                false,
+                'Table Store Hydrated'
+            );
+        },
     };
 };
 
@@ -132,6 +190,9 @@ export const createSelectableTableStore = (key: string) => {
 };
 
 export const selectableTableStoreSelectors = {
+    stats: {
+        set: (state: SelectableTableStore) => state.setStats,
+    },
     rows: {
         get: (state: SelectableTableStore) => state.rows,
         set: (state: SelectableTableStore) => state.setRows,
