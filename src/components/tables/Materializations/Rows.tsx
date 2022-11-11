@@ -1,5 +1,5 @@
 import { TableRow, useTheme } from '@mui/material';
-import { MaterializationQuery } from 'api/liveSpecsExt';
+import { MaterializationQueryWithStats } from 'api/liveSpecsExt';
 import { authenticatedRoutes } from 'app/routes';
 import ChipList from 'components/tables/cells/ChipList';
 import Connector from 'components/tables/cells/Connector';
@@ -26,12 +26,12 @@ import Bytes from '../cells/stats/Bytes';
 import Docs from '../cells/stats/Docs';
 
 interface RowsProps {
-    data: MaterializationQuery[];
+    data: MaterializationQueryWithStats[];
     showEntityStatus: boolean;
 }
 
 interface RowProps {
-    row: MaterializationQuery;
+    row: MaterializationQueryWithStats;
     setRow: any;
     isSelected: boolean;
     showEntityStatus: boolean;
@@ -118,9 +118,9 @@ function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
                     imageTag={`${row.connector_image_name}${row.connector_image_tag}`}
                 />
 
-                <Bytes val={37577749} />
+                <Bytes val={row.stats.bytes_read_by_me} />
 
-                <Docs val={2149} />
+                <Docs val={row.stats.docs_read_by_me} />
 
                 <ChipList strings={row.reads_from} />
 

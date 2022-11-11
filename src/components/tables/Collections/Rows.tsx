@@ -1,5 +1,5 @@
 import { TableRow, useTheme } from '@mui/material';
-import { CollectionQuery } from 'api/liveSpecsExt';
+import { CollectionQueryWithStats } from 'api/liveSpecsExt';
 import Actions from 'components/tables/cells/Actions';
 import EntityName from 'components/tables/cells/EntityName';
 import ExpandDetails from 'components/tables/cells/ExpandDetails';
@@ -11,12 +11,12 @@ import Bytes from '../cells/stats/Bytes';
 import Docs from '../cells/stats/Docs';
 
 interface RowProps {
-    row: CollectionQuery;
+    row: CollectionQueryWithStats;
     showEntityStatus: boolean;
 }
 
 interface RowsProps {
-    data: CollectionQuery[];
+    data: CollectionQueryWithStats[];
     showEntityStatus: boolean;
 }
 
@@ -59,9 +59,19 @@ function Row({ row, showEntityStatus }: RowProps) {
                     showEntityStatus={showEntityStatus}
                 />
 
-                <Bytes val={37577749} />
+                <Bytes
+                    val={
+                        row.stats.bytes_written_by_me +
+                        row.stats.bytes_written_to_me
+                    }
+                />
 
-                <Docs val={2149} />
+                <Docs
+                    val={
+                        row.stats.docs_written_by_me +
+                        row.stats.docs_written_to_me
+                    }
+                />
 
                 <TimeStamp time={row.updated_at} />
 

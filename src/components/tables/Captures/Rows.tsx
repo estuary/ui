@@ -1,5 +1,5 @@
 import { TableRow, useTheme } from '@mui/material';
-import { CaptureQuery } from 'api/liveSpecsExt';
+import { CaptureQueryWithStats } from 'api/liveSpecsExt';
 import { authenticatedRoutes } from 'app/routes';
 import ChipList from 'components/tables/cells/ChipList';
 import Connector from 'components/tables/cells/Connector';
@@ -26,12 +26,12 @@ import Bytes from '../cells/stats/Bytes';
 import Docs from '../cells/stats/Docs';
 
 interface RowsProps {
-    data: CaptureQuery[];
+    data: CaptureQueryWithStats[];
     showEntityStatus: boolean;
 }
 
 export interface RowProps {
-    row: CaptureQuery;
+    row: CaptureQueryWithStats;
     setRow: any;
     isSelected: boolean;
     showEntityStatus: boolean;
@@ -125,9 +125,9 @@ function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
                     imageTag={`${row.connector_image_name}${row.connector_image_tag}`}
                 />
 
-                <Bytes val={37577749} />
+                <Bytes val={row.stats.bytes_written_to_me} />
 
-                <Docs val={2149} />
+                <Docs val={row.stats.docs_written_to_me} />
 
                 <ChipList strings={row.writes_to} />
 
