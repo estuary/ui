@@ -17,6 +17,7 @@ import {
     Typography,
 } from '@mui/material';
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
+import { getStatsByName } from 'api/stats';
 import RowSelector from 'components/tables/RowActions/RowSelector';
 import {
     SelectableTableStore,
@@ -67,6 +68,7 @@ interface Props {
     noExistingDataContentIds: TableIntlConfig;
     showEntityStatus?: boolean;
     selectableTableStoreName: SelectTableStoreNames;
+    addStatsToQuery?: boolean;
 }
 
 export const getPagination = (currPage: number, size: number) => {
@@ -99,6 +101,7 @@ function EntityTable({
     rowSelectorProps,
     showEntityStatus = false,
     selectableTableStoreName,
+    addStatsToQuery,
 }: Props) {
     const [page, setPage] = useState(0);
     const isFiltering = useRef(false);
@@ -108,7 +111,8 @@ function EntityTable({
         data: useSelectResponse,
         mutate: mutateSelectData,
     } = useSelectNew<any>(query);
-    const selectData = useSelectResponse ? useSelectResponse.data : null;
+
+    const [selectData, setSelectData] = useState<any[] | null>(null);
 
     const intl = useIntl();
 
@@ -139,6 +143,54 @@ function EntityTable({
     const [tableState, setTableState] = useState<TableState>({
         status: TableStatuses.LOADING,
     });
+
+    // TODO (tables) THIS IS SO GROSS I AM SORRY
+    // So this is super hacky but works for getting stats out quickly without
+    //  overhauling TOO much right now. A follow up to this should be to get
+    //  tables working off of a store to render and then we can hydrate however
+    //  each table needs.
+    useEffect(() => {
+        void (async () => {
+            if (useSelectResponse) {
+                let newRows = null;
+                const rowData = useSelectResponse.data;
+
+                if (addStatsToQuery) {
+                    try {
+                        const { data: statsData, error } = await getStatsByName(
+                            rowData.map((rowDatum) => rowDatum.catalog_name)
+                        );
+
+                        if (error) {
+                            console.error('Uh oh ', error);
+                        }
+
+                        if (statsData && statsData.length > 0) {
+                            newRows = [];
+                            statsData.forEach((stats) => {
+                                rowData.forEach((row) => {
+                                    if (
+                                        stats.catalog_name === row.catalog_name
+                                    ) {
+                                        newRows.push({
+                                            ...row,
+                                            stats,
+                                        });
+                                    }
+                                });
+                            });
+                        }
+                    } catch (e: unknown) {
+                        console.error('Uh oh ', e);
+                    }
+                } else {
+                    newRows = rowData;
+                }
+
+                setSelectData(newRows);
+            }
+        })();
+    }, [addStatsToQuery, useSelectResponse]);
 
     useEffect(() => {
         if (selectData && selectData.length > 0) {
