@@ -112,6 +112,7 @@ function EntityTable({
         mutate: mutateSelectData,
     } = useSelectNew<any>(query);
 
+    const [statsLoaded, setStatsLoaded] = useState(!addStatsToQuery);
     const [selectData, setSelectData] = useState<any[] | null>(null);
 
     const intl = useIntl();
@@ -157,6 +158,7 @@ function EntityTable({
 
                 if (addStatsToQuery) {
                     try {
+                        setStatsLoaded(false);
                         const { data: statsData, error } = await getStatsByName(
                             rowData.map((rowDatum) => rowDatum.catalog_name)
                         );
@@ -167,16 +169,17 @@ function EntityTable({
 
                         if (statsData && statsData.length > 0) {
                             newRows = [];
-                            statsData.forEach((stats) => {
-                                rowData.forEach((row) => {
-                                    if (
-                                        stats.catalog_name === row.catalog_name
-                                    ) {
-                                        newRows.push({
-                                            ...row,
-                                            stats,
-                                        });
-                                    }
+                            console.log('statsData', statsData);
+                            rowData.forEach((row) => {
+                                statsData.forEach((stats) => {
+                                    newRows.push({
+                                        ...row,
+                                        stats:
+                                            stats.catalog_name ===
+                                            row.catalog_name
+                                                ? stats
+                                                : undefined,
+                                    });
                                 });
                             });
                         }
@@ -185,6 +188,7 @@ function EntityTable({
                     }
                 }
 
+                setStatsLoaded(true);
                 setSelectData(newRows ?? rowData);
             }
         })();
@@ -409,7 +413,8 @@ function EntityTable({
                         <TableBody>
                             {dataRows ? (
                                 dataRows
-                            ) : isValidating ||
+                            ) : !statsLoaded ||
+                              isValidating ||
                               tableState.status === TableStatuses.LOADING ? (
                                 loadingRows
                             ) : (

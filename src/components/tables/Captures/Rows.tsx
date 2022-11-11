@@ -125,9 +125,9 @@ function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
                     imageTag={`${row.connector_image_name}${row.connector_image_tag}`}
                 />
 
-                <Bytes val={row.stats?.bytes_written_to_me} />
+                <Bytes val={row.stats?.bytes_written_by_me} />
 
-                <Docs val={row.stats?.docs_written_to_me} />
+                <Docs val={row.stats?.docs_written_by_me} />
 
                 <ChipList strings={row.writes_to} />
 
