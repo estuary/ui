@@ -297,8 +297,8 @@ function CaptureEdit() {
                     draft_id: discoverDraftId,
                 })
                 .order('created_at', { ascending: false }),
-            (payload: any) => {
-                void storeUpdatedDraftSpec(payload.draft_id, resourceConfig);
+            async (payload: any) => {
+                await storeUpdatedDraftSpec(payload.draft_id, resourceConfig);
 
                 void mutateDraftSpecs();
 

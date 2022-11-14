@@ -260,8 +260,8 @@ function CaptureCreate() {
                 .match({
                     draft_id: discoverDraftId,
                 }),
-            (payload: any) => {
-                void storeDiscoveredCollections(
+            async (payload: any) => {
+                await storeDiscoveredCollections(
                     payload.draft_id,
                     resourceConfig
                 );
