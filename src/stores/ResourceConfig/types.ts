@@ -21,7 +21,7 @@ export interface ResourceConfigState {
         liveSpecsData: LiveSpecsExtQuery[],
         entityType: Entity
     ) => void;
-    addCollection: (value: string) => void;
+    addCollections: (value: string[]) => void;
     removeCollection: (value: string) => void;
     removeAllCollections: () => void;
 

@@ -67,23 +67,21 @@ export const storeUpdatedBindings = (
     response: any,
     resourceConfig: ResourceConfigDictionary,
     restrictedDiscoveredCollections: string[],
-    addCollection: Function,
+    addCollections: Function,
     setResourceConfig: Function,
     setCurrentCollection: Function
 ): void => {
     const existingCollections = Object.keys(resourceConfig);
     const updatedBindings = response.data[0].spec.bindings;
 
-    // TODO (defect): Handle updating the list of collections and resource config inside
-    //   the resource config store. By updating the list of collections in a single call, the
-    //   latency incurred when generating the collection autocomplete values should decrease.
-    //   The loading condition for the BindingsMultiEditor component will need to be updated.
+    let collectionsToAdd: string[] = [];
+
     updatedBindings.forEach((binding: any) => {
         if (
             !existingCollections.includes(binding.target) &&
             !restrictedDiscoveredCollections.includes(binding.target)
         ) {
-            addCollection(binding.target);
+            collectionsToAdd = [binding.target, ...collectionsToAdd];
 
             setResourceConfig(binding.target, {
                 data: binding.resource,
@@ -91,6 +89,8 @@ export const storeUpdatedBindings = (
             });
         }
     });
+
+    addCollections(collectionsToAdd);
 
     setCurrentCollection(
         hasLength(updatedBindings) ? updatedBindings[0].target : null

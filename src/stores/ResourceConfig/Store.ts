@@ -160,14 +160,20 @@ const getInitialState = (
         );
     },
 
-    addCollection: (value) => {
+    addCollections: (value) => {
         set(
             produce((state: ResourceConfigState) => {
                 const { collections } = get();
 
-                if (collections && !collections.includes(value)) {
-                    state.collections = [...collections, value];
-                }
+                state.collections = collections
+                    ? [
+                          ...collections,
+                          ...value.filter(
+                              (newCollection) =>
+                                  !collections.includes(newCollection)
+                          ),
+                      ]
+                    : value;
             }),
             false,
             'Collection Added'

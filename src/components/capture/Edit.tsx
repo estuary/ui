@@ -50,7 +50,7 @@ import {
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import {
-    useResourceConfig_addCollection,
+    useResourceConfig_addCollections,
     useResourceConfig_resetState,
     useResourceConfig_restrictedDiscoveredCollections,
     useResourceConfig_setCurrentCollection,
@@ -125,7 +125,7 @@ function CaptureEdit() {
     const restrictedDiscoveredCollections =
         useResourceConfig_restrictedDiscoveredCollections();
 
-    const addCollection = useResourceConfig_addCollection();
+    const addCollections = useResourceConfig_addCollections();
     const setCurrentCollection = useResourceConfig_setCurrentCollection();
 
     const setResourceConfig = useResourceConfig_setResourceConfig();
@@ -257,7 +257,7 @@ function CaptureEdit() {
                     updatedDraftSpecsResponse,
                     resourceConfig,
                     restrictedDiscoveredCollections,
-                    addCollection,
+                    addCollections,
                     setResourceConfig,
                     setCurrentCollection
                 );
