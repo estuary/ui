@@ -166,6 +166,7 @@ function BindingSelector({
 
                     <Button
                         variant="text"
+                        disabled={formActive}
                         onClick={removeAllCollections}
                         sx={{ borderRadius: 0 }}
                     >
