@@ -28,8 +28,12 @@ function AccessGrantsTable() {
                     query,
                     ['user_full_name', 'subject_role', 'object_role'],
                     searchQuery,
-                    columnToSort,
-                    sortDirection,
+                    [
+                        {
+                            col: columnToSort,
+                            direction: sortDirection,
+                        },
+                    ],
                     pagination
                 );
             },

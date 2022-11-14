@@ -30,8 +30,12 @@ function ConnectorsTable() {
                     query,
                     [CONNECTOR_NAME],
                     searchQuery,
-                    columnToSort,
-                    sortDirection,
+                    [
+                        {
+                            col: columnToSort,
+                            direction: sortDirection,
+                        },
+                    ],
                     pagination
                 );
             },

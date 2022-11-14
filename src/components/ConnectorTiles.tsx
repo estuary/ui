@@ -24,7 +24,12 @@ import {
 } from 'hooks/useConnectorWithTagDetail';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { CONNECTOR_NAME, defaultTableFilter, TABLES } from 'services/supabase';
+import {
+    CONNECTOR_NAME,
+    CONNECTOR_RECOMMENDED,
+    defaultTableFilter,
+    TABLES,
+} from 'services/supabase';
 import {
     BaseComponentProps,
     EntityWithCreateWorkflow,
@@ -43,6 +48,7 @@ import ConnectorCardTitle from './connectors/card/Title';
 interface ConnectorTilesProps {
     protocolPreset?: EntityWithCreateWorkflow;
     replaceOnNavigate?: boolean;
+    hideSort?: boolean;
 }
 
 type TileProps = BaseComponentProps;
@@ -85,6 +91,7 @@ function Tile({ children }: TileProps) {
 function ConnectorTiles({
     protocolPreset,
     replaceOnNavigate,
+    hideSort,
 }: ConnectorTilesProps) {
     const navigateToCreate = useEntityCreateNavigate();
     const isFiltering = useRef(false);
@@ -114,8 +121,16 @@ function ConnectorTiles({
                     query,
                     [columnToSort],
                     searchQuery,
-                    columnToSort,
-                    sortDirection,
+                    [
+                        {
+                            col: CONNECTOR_RECOMMENDED,
+                            direction: 'desc',
+                        },
+                        {
+                            col: columnToSort,
+                            direction: sortDirection,
+                        },
+                    ],
                     undefined,
                     { column: 'connector_tags.protocol', value: protocol }
                 );
@@ -165,6 +180,7 @@ function ConnectorTiles({
                     setProtocol={setProtocol}
                     setSortDirection={setSortDirection}
                     setSearchQuery={setSearchQuery}
+                    hideSort={hideSort}
                 />
             </Grid>
 
@@ -188,6 +204,7 @@ function ConnectorTiles({
                                     entity={row.connector_tags[0].protocol}
                                 />
                             }
+                            recommended={row.recommended}
                         />
                     ))
                     .concat(

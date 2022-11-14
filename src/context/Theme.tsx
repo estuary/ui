@@ -297,6 +297,7 @@ export const LINK_BUTTON_STYLING: SxProps<Theme> = {
     },
 };
 
+export const connectorImageBackgroundRadius = 5;
 export const connectorImageBackgroundSx: SxProps<Theme> = {
     width: '100%',
     height: 125,
@@ -304,7 +305,7 @@ export const connectorImageBackgroundSx: SxProps<Theme> = {
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 2,
-    borderRadius: 5,
+    borderRadius: connectorImageBackgroundRadius,
     background: connectorCardLogoBackground,
 };
 

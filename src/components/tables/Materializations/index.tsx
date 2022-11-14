@@ -46,8 +46,12 @@ function MaterializationsTable() {
                     query,
                     ['catalog_name', QUERY_PARAM_CONNECTOR_TITLE],
                     searchQuery,
-                    columnToSort,
-                    sortDirection,
+                    [
+                        {
+                            col: columnToSort,
+                            direction: sortDirection,
+                        },
+                    ],
                     pagination
                 ).eq('spec_type', 'materialization');
             },

@@ -30,6 +30,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.noUnDo': `This action cannot be undone.`,
     'common.version': `version`,
     'common.tenant': `Prefix`,
+    'common.recommended': `Recommended`,
 
     // Aria
     'aria.openExpand': `show more`,
