@@ -9,6 +9,7 @@ import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
 import useDraftSpecs from 'hooks/useDraftSpecs';
 import useLiveSpecs from 'hooks/useLiveSpecs';
+import { isEqual } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
@@ -223,6 +224,7 @@ function CollectionPicker({ readOnly = false }: Props) {
                 options={collectionOptions}
                 groupBy={(option) => option.classification}
                 getOptionLabel={(option) => option.name}
+                isOptionEqualToValue={(option, value) => isEqual(option, value)}
                 value={collectionValues}
                 size="small"
                 filterSelectedOptions
