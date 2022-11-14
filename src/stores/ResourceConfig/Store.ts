@@ -18,6 +18,7 @@ import {
 import { createJSONFormDefaults } from 'services/ajv';
 import { ResourceConfigStoreNames } from 'stores/names';
 import { Schema } from 'types';
+import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import create, { StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -552,6 +553,67 @@ const getInitialState = (
             }),
             false,
             'Server Update Required Flag Changed'
+        );
+    },
+
+    evaluateDiscoveredCollections: (draftSpecResponse) => {
+        set(
+            produce((state: ResourceConfigState) => {
+                const {
+                    collections,
+                    resourceConfig,
+                    restrictedDiscoveredCollections,
+                } = get();
+
+                const existingCollections = Object.keys(resourceConfig);
+                const updatedBindings = draftSpecResponse.data[0].spec.bindings;
+
+                let collectionsToAdd: string[] = [];
+                let modifiedResourceConfig: ResourceConfigDictionary = {};
+
+                updatedBindings.forEach((binding: any) => {
+                    if (
+                        !existingCollections.includes(binding.target) &&
+                        !restrictedDiscoveredCollections.includes(
+                            binding.target
+                        )
+                    ) {
+                        collectionsToAdd = [
+                            binding.target,
+                            ...collectionsToAdd,
+                        ];
+
+                        modifiedResourceConfig = {
+                            [binding.target]: {
+                                data: binding.resource,
+                                errors: [],
+                            },
+                            ...modifiedResourceConfig,
+                        };
+                    }
+                });
+
+                state.resourceConfig = {
+                    ...resourceConfig,
+                    ...modifiedResourceConfig,
+                };
+
+                state.collections = collections
+                    ? [
+                          ...collections,
+                          ...collectionsToAdd.filter(
+                              (newCollection) =>
+                                  !collections.includes(newCollection)
+                          ),
+                      ]
+                    : collectionsToAdd;
+
+                state.currentCollection = hasLength(updatedBindings)
+                    ? updatedBindings[0].target
+                    : null;
+            }),
+            false,
+            'Discovered Collections Evaluated'
         );
     },
 

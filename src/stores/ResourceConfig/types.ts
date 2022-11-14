@@ -1,5 +1,6 @@
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
+import { CallSupabaseResponse } from 'services/supabase';
 import { Entity, JsonFormsData, Schema } from 'types';
 
 export interface ResourceConfig {
@@ -72,6 +73,10 @@ export interface ResourceConfigState {
     // Server-Form Alignment
     serverUpdateRequired: boolean;
     setServerUpdateRequired: (value: boolean) => void;
+
+    evaluateDiscoveredCollections: (
+        response: CallSupabaseResponse<any>
+    ) => void;
 
     // Misc.
     stateChanged: () => boolean;

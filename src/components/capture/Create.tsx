@@ -43,21 +43,16 @@ import {
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import {
-    useResourceConfig_addCollections,
+    useResourceConfig_evaluateDiscoveredCollections,
     useResourceConfig_resetState,
     useResourceConfig_restrictedDiscoveredCollections,
-    useResourceConfig_setCurrentCollection,
     useResourceConfig_setDiscoveredCollections,
-    useResourceConfig_setResourceConfig,
 } from 'stores/ResourceConfig/hooks';
 import ResourceConfigHydrator from 'stores/ResourceConfig/Hydrator';
 import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import { JsonFormsData } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
-import {
-    modifyDiscoveredDraftSpec,
-    storeUpdatedBindings,
-} from 'utils/workflow-utils';
+import { modifyDiscoveredDraftSpec } from 'utils/workflow-utils';
 
 const trackEvent = (payload: any) => {
     LogRocket.track(CustomEvents.CAPTURE_DISCOVER, {
@@ -109,13 +104,11 @@ function CaptureCreate() {
     const restrictedDiscoveredCollections =
         useResourceConfig_restrictedDiscoveredCollections();
 
-    const addCollections = useResourceConfig_addCollections();
-    const setCurrentCollection = useResourceConfig_setCurrentCollection();
-
     const setDiscoveredCollections =
         useResourceConfig_setDiscoveredCollections();
 
-    const setResourceConfig = useResourceConfig_setResourceConfig();
+    const evaluateDiscoveredCollections =
+        useResourceConfig_evaluateDiscoveredCollections();
 
     const resetResourceConfigState = useResourceConfig_resetState();
 
@@ -225,14 +218,7 @@ function CaptureCreate() {
                 updatedDraftSpecsResponse.data &&
                 updatedDraftSpecsResponse.data.length > 0
             ) {
-                storeUpdatedBindings(
-                    updatedDraftSpecsResponse,
-                    resourceConfig,
-                    restrictedDiscoveredCollections,
-                    addCollections,
-                    setResourceConfig,
-                    setCurrentCollection
-                );
+                evaluateDiscoveredCollections(updatedDraftSpecsResponse);
             }
         }
 

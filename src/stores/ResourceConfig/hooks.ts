@@ -283,3 +283,12 @@ export const useResourceConfig_setServerUpdateRequired = () => {
         ResourceConfigState['setServerUpdateRequired']
     >(getStoreName(entityType), (state) => state.setServerUpdateRequired);
 };
+
+export const useResourceConfig_evaluateDiscoveredCollections = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['evaluateDiscoveredCollections']
+    >(getStoreName(entityType), (state) => state.evaluateDiscoveredCollections);
+};
