@@ -269,14 +269,19 @@ function BindingSelector({
                             bgcolor: (theme) =>
                                 alternativeDataGridHeader[theme.palette.mode],
                         },
-                        '& .MuiDataGrid-columnHeader:hover .MuiDataGrid-columnHeaderTitleContainerContent':
-                            {
-                                mr: 0,
+                        '& .MuiDataGrid-columnHeader:hover': {
+                            '& .MuiDataGrid-columnHeaderTitleContainerContent':
+                                {
+                                    mr: 0.5,
+                                },
+                            '& .MuiDataGrid-menuIcon': {
+                                width: '2rem',
                             },
+                        },
                         '& .MuiDataGrid-columnHeaderTitleContainerContent': {
                             width: '100%',
                             justifyContent: 'space-between',
-                            mr: '30px',
+                            mr: 4.5,
                         },
                     }}
                 />
