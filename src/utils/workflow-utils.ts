@@ -37,7 +37,7 @@ export const modifyDiscoveredDraftSpec = async (
     },
     resourceConfig: ResourceConfigDictionary,
     restrictedDiscoveredCollections: string[],
-    lastPubId?: string
+    supabaseConfig?: { catalogName: string; lastPubId: string }
 ): Promise<CallSupabaseResponse<any>> => {
     const draftSpecData = response.data[0];
 
@@ -58,6 +58,7 @@ export const modifyDiscoveredDraftSpec = async (
             draft_id: draftSpecData.draft_id,
             catalog_name: draftSpecData.catalog_name,
         },
-        lastPubId
+        supabaseConfig?.catalogName,
+        supabaseConfig?.lastPubId
     );
 };

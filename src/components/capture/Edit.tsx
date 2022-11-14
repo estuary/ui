@@ -34,6 +34,7 @@ import {
 } from 'services/supabase';
 import {
     useDetailsForm_connectorImage,
+    useDetailsForm_details_entityName,
     useDetailsForm_errorsExist,
     useDetailsForm_resetState,
 } from 'stores/DetailsForm';
@@ -83,6 +84,7 @@ function CaptureEdit() {
     const hasConnectors = connectorTags.length > 0;
 
     // Details Form Store
+    const catalogName = useDetailsForm_details_entityName();
     const imageTag = useDetailsForm_connectorImage();
     const detailsFormErrorsExist = useDetailsForm_errorsExist();
     const resetDetailsForm = useDetailsForm_resetState();
@@ -230,7 +232,7 @@ function CaptureEdit() {
                 draftSpecsResponse,
                 resourceConfig,
                 restrictedDiscoveredCollections,
-                lastPubId
+                { catalogName, lastPubId }
             );
 
             if (updatedDraftSpecsResponse.error) {
