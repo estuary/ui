@@ -78,6 +78,11 @@ const tonalOffset = 0.1;
 // const borderWidth = 2;
 // const borderColor = "rgba(0, 0, 0, 0.13)";
 
+export const logoColors = {
+    purple: '#5974ea',
+    teal: '#75d4d5',
+};
+
 // Breakpoints
 const xl = 1600;
 const lg = 1440;

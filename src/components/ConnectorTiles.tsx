@@ -209,12 +209,7 @@ function ConnectorTiles({
                             key="connector-request-tile"
                             logo={<AddBox sx={{ fontSize: '4rem' }} />}
                             details={
-                                <Typography
-                                    component="p"
-                                    variant="caption"
-                                    marginBottom={2}
-                                    sx={{ px: 1 }}
-                                >
+                                <Typography component="p" sx={{ px: 1 }}>
                                     <FormattedMessage id="connectors.main.message2.alt" />
                                 </Typography>
                             }
@@ -231,9 +226,11 @@ function ConnectorTiles({
                                 </Button>
                             }
                             title={
-                                <Typography align="center" marginBottom={1}>
-                                    <FormattedMessage id="connectorTable.data.connectorRequest" />
-                                </Typography>
+                                <ConnectorCardTitle
+                                    title={intl.formatMessage({
+                                        id: 'connectorTable.data.connectorRequest',
+                                    })}
+                                />
                             }
                         />
                     )

@@ -99,13 +99,12 @@ function ConnectorCard({
                             {recommended ? (
                                 <Box
                                     sx={{
-                                        bgcolor: teal[500],
+                                        bgcolor: teal[700],
                                         color: 'white',
                                         borderBottomLeftRadius:
                                             connectorImageBackgroundRadius,
                                         borderBottomRightRadius:
                                             connectorImageBackgroundRadius,
-                                        opacity: 0.75,
                                         textAlign: 'center',
                                     }}
                                 >
