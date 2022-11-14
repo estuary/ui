@@ -269,9 +269,14 @@ function BindingSelector({
                             bgcolor: (theme) =>
                                 alternativeDataGridHeader[theme.palette.mode],
                         },
+                        '& .MuiDataGrid-columnHeader:hover .MuiDataGrid-columnHeaderTitleContainerContent':
+                            {
+                                mr: 0,
+                            },
                         '& .MuiDataGrid-columnHeaderTitleContainerContent': {
                             width: '100%',
                             justifyContent: 'space-between',
+                            mr: '30px',
                         },
                     }}
                 />
