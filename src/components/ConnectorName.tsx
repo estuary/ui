@@ -22,6 +22,7 @@ function ConnectorName({ title, iconPath, iconSize }: Props) {
         <Stack
             direction="row"
             sx={{
+                'wordBreak': 'break-word',
                 'alignItems': 'center',
                 'justifyContent': 'flex-start',
                 '& > div    ': {
