@@ -18,7 +18,7 @@ import {
 import { createJSONFormDefaults } from 'services/ajv';
 import { ResourceConfigStoreNames } from 'stores/names';
 import { Schema } from 'types';
-import { hasLength } from 'utils/misc-utils';
+import { hasLength, truncateCatalogName } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import create, { StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -213,10 +213,11 @@ const getInitialState = (
         );
     },
 
-    removeAllCollections: () => {
+    removeAllCollections: (workflow, task) => {
         set(
             produce((state: ResourceConfigState) => {
                 const {
+                    collections,
                     discoveredCollections,
                     resourceConfig,
                     restrictedDiscoveredCollections,
@@ -225,14 +226,32 @@ const getInitialState = (
                 state.currentCollection = null;
                 state.collections = [];
 
-                const additionalRestrictedCollections: string[] =
-                    discoveredCollections?.filter(
+                let additionalRestrictedCollections: string[] = [];
+
+                if (discoveredCollections) {
+                    additionalRestrictedCollections =
+                        discoveredCollections.filter(
+                            (collection) =>
+                                Object.hasOwn(resourceConfig, collection) &&
+                                !restrictedDiscoveredCollections.includes(
+                                    collection
+                                )
+                        );
+                } else if (workflow === 'capture_edit' && collections) {
+                    const catalogName = truncateCatalogName(task);
+
+                    const nativeCollections = collections.filter((collection) =>
+                        collection.includes(catalogName)
+                    );
+
+                    additionalRestrictedCollections = nativeCollections.filter(
                         (collection) =>
                             Object.hasOwn(resourceConfig, collection) &&
                             !restrictedDiscoveredCollections.includes(
                                 collection
                             )
-                    ) ?? [];
+                    );
+                }
 
                 state.restrictedDiscoveredCollections = [
                     ...restrictedDiscoveredCollections,

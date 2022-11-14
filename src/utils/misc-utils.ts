@@ -2,6 +2,7 @@ import { createSearchParams } from 'react-router-dom';
 
 export const PREFIX_NAME_PATTERN = `[a-zA-Z0-9-_.]+`;
 
+// TODO (optimization): Combine the stripPathing and truncateCatalogName utility functions.
 export const stripPathing = (stringVal: string) => {
     if (!stringVal) return stringVal;
 
@@ -9,6 +10,12 @@ export const stripPathing = (stringVal: string) => {
         stringVal.lastIndexOf('/') + 1,
         stringVal.length
     );
+};
+
+export const truncateCatalogName = (value: string): string => {
+    const lastOccurrence = value.lastIndexOf('/');
+
+    return lastOccurrence === -1 ? value : value.slice(0, lastOccurrence);
 };
 
 export const hasLength = (val: string | any[] | null | undefined): boolean => {

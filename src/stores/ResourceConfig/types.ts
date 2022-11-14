@@ -1,7 +1,7 @@
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import { CallSupabaseResponse } from 'services/supabase';
-import { Entity, JsonFormsData, Schema } from 'types';
+import { Entity, EntityWorkflow, JsonFormsData, Schema } from 'types';
 
 export interface ResourceConfig {
     [key: string]: JsonFormsData | any[];
@@ -24,7 +24,10 @@ export interface ResourceConfigState {
     ) => void;
     addCollections: (value: string[]) => void;
     removeCollection: (value: string) => void;
-    removeAllCollections: () => void;
+    removeAllCollections: (
+        workflow: EntityWorkflow | null,
+        catalogName: string
+    ) => void;
 
     collectionRemovalMetadata: {
         selectedCollection: string | null;

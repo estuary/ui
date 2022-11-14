@@ -37,8 +37,9 @@ import {
     useResourceConfig_setCurrentCollection,
     useResourceConfig_setRestrictedDiscoveredCollections,
 } from 'stores/ResourceConfig/hooks';
+import { EntityWorkflow } from 'types';
 import useConstant from 'use-constant';
-import { hasLength } from 'utils/misc-utils';
+import { hasLength, truncateCatalogName } from 'utils/misc-utils';
 
 interface BindingSelectorProps {
     loading: boolean;
@@ -49,12 +50,11 @@ interface BindingSelectorProps {
 interface RowProps {
     collection: string;
     task: string;
+    workflow: EntityWorkflow | null;
     disabled: boolean;
 }
 
-function Row({ collection, task, disabled }: RowProps) {
-    const workflow = useEntityWorkflow();
-
+function Row({ collection, task, workflow, disabled }: RowProps) {
     const discoveredCollections = useResourceConfig_discoveredCollections();
     const removeCollection = useResourceConfig_removeCollection();
 
@@ -71,13 +71,7 @@ function Row({ collection, task, disabled }: RowProps) {
                 workflow === 'capture_edit' &&
                 !hasLength(discoveredCollections)
             ) {
-                let catalogName = task;
-
-                const lastSlashIndex = task.lastIndexOf('/');
-
-                if (lastSlashIndex !== -1) {
-                    catalogName = task.slice(0, lastSlashIndex);
-                }
+                const catalogName = truncateCatalogName(task);
 
                 const nativeCollectionDetected =
                     collection.includes(catalogName);
@@ -127,6 +121,8 @@ function BindingSelector({
 }: BindingSelectorProps) {
     const onSelectTimeOut = useRef<number | null>(null);
 
+    const workflow = useEntityWorkflow();
+
     const intl = useIntl();
     const collectionsLabel = useConstant(() =>
         intl.formatMessage({
@@ -154,6 +150,14 @@ function BindingSelector({
         []
     );
 
+    const handlers = {
+        removeAllCollections: (event: React.MouseEvent<HTMLElement>) => {
+            event.stopPropagation();
+
+            removeAllCollections(workflow, task);
+        },
+    };
+
     const columns: GridColDef[] = [
         {
             field: 'name',
@@ -167,7 +171,7 @@ function BindingSelector({
                     <Button
                         variant="text"
                         disabled={formActive}
-                        onClick={removeAllCollections}
+                        onClick={handlers.removeAllCollections}
                         sx={{ borderRadius: 0 }}
                     >
                         <FormattedMessage id="workflows.collectionSelector.cta.delete" />
@@ -184,6 +188,7 @@ function BindingSelector({
                             <Row
                                 collection={params.row}
                                 task={task}
+                                workflow={workflow}
                                 disabled={formActive}
                             />
                         </>
@@ -194,6 +199,7 @@ function BindingSelector({
                     <Row
                         collection={params.row}
                         task={task}
+                        workflow={workflow}
                         disabled={formActive}
                     />
                 );
