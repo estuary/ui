@@ -48,7 +48,6 @@ import ConnectorCardTitle from './connectors/card/Title';
 interface ConnectorTilesProps {
     protocolPreset?: EntityWithCreateWorkflow;
     replaceOnNavigate?: boolean;
-    hideSort?: boolean;
 }
 
 type TileProps = BaseComponentProps;
@@ -91,7 +90,6 @@ function Tile({ children }: TileProps) {
 function ConnectorTiles({
     protocolPreset,
     replaceOnNavigate,
-    hideSort,
 }: ConnectorTilesProps) {
     const navigateToCreate = useEntityCreateNavigate();
     const isFiltering = useRef(false);
@@ -180,7 +178,6 @@ function ConnectorTiles({
                     setProtocol={setProtocol}
                     setSortDirection={setSortDirection}
                     setSearchQuery={setSearchQuery}
-                    hideSort={hideSort}
                 />
             </Grid>
 

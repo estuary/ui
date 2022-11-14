@@ -153,11 +153,7 @@ function EntityCreate({
                     <FormattedMessage id="entityCreate.instructions" />
                 </Typography>
 
-                <ConnectorTiles
-                    protocolPreset={entityType}
-                    replaceOnNavigate
-                    hideSort
-                />
+                <ConnectorTiles protocolPreset={entityType} replaceOnNavigate />
             </Collapse>
 
             <Collapse in={!showConnectorTiles} unmountOnExit>

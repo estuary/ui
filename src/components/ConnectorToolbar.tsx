@@ -33,7 +33,6 @@ interface Props {
         SetStateAction<keyof ConnectorWithTagDetailQuery>
     >;
     hideProtocol?: boolean;
-    hideSort?: boolean;
     setProtocol: Dispatch<SetStateAction<string | null>>;
     setSortDirection: Dispatch<SetStateAction<SortDirection>>;
     setSearchQuery: Dispatch<SetStateAction<string | null>>;
@@ -71,7 +70,6 @@ function ConnectorToolbar({
     gridSpacing,
     setColumnToSort,
     hideProtocol,
-    hideSort,
     setProtocol,
     setSortDirection,
     setSearchQuery,
@@ -204,69 +202,63 @@ function ConnectorToolbar({
                     />
                 </Grid>
 
-                {!hideSort ? (
-                    <>
-                        <Grid item xs={hideProtocol ? 6 : 4} md={2}>
-                            <Autocomplete
-                                options={sortByOptions.map(
-                                    ({ message }) => message
-                                )}
-                                renderInput={({
-                                    InputProps,
-                                    ...params
-                                }: AutocompleteRenderInputParams) => (
-                                    <TextField
-                                        {...params}
-                                        InputProps={{
-                                            ...InputProps,
-                                            ...inputProps,
-                                        }}
-                                        label={intl.formatMessage({
-                                            id: 'connectorTable.label.sortBy',
-                                        })}
-                                        variant="filled"
-                                    />
-                                )}
-                                defaultValue={intl.formatMessage({
-                                    id: 'connectorTable.data.title',
+                <Grid item xs={hideProtocol ? 6 : 4} md={2}>
+                    <Autocomplete
+                        options={sortByOptions.map(({ message }) => message)}
+                        renderInput={({
+                            InputProps,
+                            ...params
+                        }: AutocompleteRenderInputParams) => (
+                            <TextField
+                                {...params}
+                                InputProps={{
+                                    ...InputProps,
+                                    ...inputProps,
+                                }}
+                                label={intl.formatMessage({
+                                    id: 'connectorTable.label.sortBy',
                                 })}
-                                disableClearable
-                                onChange={handlers.setSortBy}
-                                sx={toolbarSectionSx}
+                                variant="filled"
                             />
-                        </Grid>
+                        )}
+                        defaultValue={intl.formatMessage({
+                            id: 'connectorTable.data.title',
+                        })}
+                        disableClearable
+                        onChange={handlers.setSortBy}
+                        sx={toolbarSectionSx}
+                    />
+                </Grid>
 
-                        <Grid item xs={hideProtocol ? 6 : 4} md={2}>
-                            <Autocomplete
-                                options={sortDirectionOptions.map(
-                                    ({ message }) => message
-                                )}
-                                renderInput={({
-                                    InputProps,
-                                    ...params
-                                }: AutocompleteRenderInputParams) => (
-                                    <TextField
-                                        {...params}
-                                        InputProps={{
-                                            ...InputProps,
-                                            ...inputProps,
-                                        }}
-                                        label={intl.formatMessage({
-                                            id: 'connectorTable.label.sortDirection',
-                                        })}
-                                        variant="filled"
-                                    />
-                                )}
-                                defaultValue={intl.formatMessage({
-                                    id: 'sortDirection.ascending',
+                <Grid item xs={hideProtocol ? 6 : 4} md={2}>
+                    <Autocomplete
+                        options={sortDirectionOptions.map(
+                            ({ message }) => message
+                        )}
+                        renderInput={({
+                            InputProps,
+                            ...params
+                        }: AutocompleteRenderInputParams) => (
+                            <TextField
+                                {...params}
+                                InputProps={{
+                                    ...InputProps,
+                                    ...inputProps,
+                                }}
+                                label={intl.formatMessage({
+                                    id: 'connectorTable.label.sortDirection',
                                 })}
-                                disableClearable
-                                onChange={handlers.switchSortDirection}
-                                sx={toolbarSectionSx}
+                                variant="filled"
                             />
-                        </Grid>
-                    </>
-                ) : null}
+                        )}
+                        defaultValue={intl.formatMessage({
+                            id: 'sortDirection.ascending',
+                        })}
+                        disableClearable
+                        onChange={handlers.switchSortDirection}
+                        sx={toolbarSectionSx}
+                    />
+                </Grid>
 
                 {hideProtocol ? null : (
                     <Grid item xs={4} md={2}>
