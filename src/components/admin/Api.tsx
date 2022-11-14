@@ -43,7 +43,17 @@ function AdminApi() {
                 <TextareaAutosize
                     minRows={4}
                     cols={50}
-                    value={session?.access_token}
+                    value={
+                        session
+                            ? JSON.stringify({
+                                  access_token: session.access_token,
+                                  refresh_token: session.refresh_token,
+                                  expires_at:
+                                      (session.expires_at ?? 0) +
+                                      (session.expires_in ?? 0),
+                              })
+                            : ''
+                    }
                     id="accessTokenValue"
                 />
             </Box>
