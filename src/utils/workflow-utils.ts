@@ -37,7 +37,7 @@ export const modifyDiscoveredDraftSpec = async (
     },
     resourceConfig: ResourceConfigDictionary,
     restrictedDiscoveredCollections: string[],
-    lastPubId?: string
+    supabaseConfig?: { catalogName: string; lastPubId: string }
 ): Promise<CallSupabaseResponse<any>> => {
     const draftSpecData = response.data[0];
 
@@ -58,34 +58,7 @@ export const modifyDiscoveredDraftSpec = async (
             draft_id: draftSpecData.draft_id,
             catalog_name: draftSpecData.catalog_name,
         },
-        lastPubId
+        supabaseConfig?.catalogName,
+        supabaseConfig?.lastPubId
     );
-};
-
-export const storeUpdatedBindings = (
-    response: any,
-    resourceConfig: ResourceConfigDictionary,
-    restrictedDiscoveredCollections: string[],
-    addCollection: Function,
-    setResourceConfig: Function,
-    setCurrentCollection: Function
-): void => {
-    const existingCollections = Object.keys(resourceConfig);
-    const updatedBindings = response.data[0].spec.bindings;
-
-    updatedBindings.forEach((binding: any) => {
-        if (
-            !existingCollections.includes(binding.target) &&
-            !restrictedDiscoveredCollections.includes(binding.target)
-        ) {
-            addCollection(binding.target);
-
-            setResourceConfig(binding.target, {
-                data: binding.resource,
-                errors: [],
-            });
-        }
-    });
-
-    setCurrentCollection(updatedBindings[0].target);
 };
