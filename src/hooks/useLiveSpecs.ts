@@ -31,6 +31,40 @@ function useLiveSpecs(specType: string) {
     };
 }
 
+export interface LiveSpecsQuery_spec_general {
+    catalog_name: string;
+    spec: {
+        schema: {
+            properties: Record<string, any>;
+            required?: string[];
+        };
+        key: string[];
+    };
+    spec_type: string;
+}
+const queryColumns_spec_general = ['catalog_name', 'spec', 'spec_type'];
+
+export function useLiveSpecs_spec_general(specType: string) {
+    const liveSpecQuery = useQuery<LiveSpecsQuery_spec_general>(
+        TABLES.LIVE_SPECS_EXT,
+        {
+            columns: queryColumns_spec_general,
+            filter: (query) => query.eq('spec_type', specType),
+        },
+        [specType]
+    );
+
+    const { data, error, isValidating } = useSelect(liveSpecQuery);
+
+    return {
+        liveSpecs: data
+            ? data.data
+            : (defaultResponse as LiveSpecsQuery_spec_general[]),
+        error,
+        isValidating,
+    };
+}
+
 export interface LiveSpecsQuery_spec {
     id: string;
     catalog_name: string;

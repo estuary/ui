@@ -639,10 +639,13 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.error.initForm': `An issue was encountered initializing the form.`,
     'workflows.error.initFormSection': `An issue was encountered initializing this section of the form.`,
 
-    'workflows.collectionSelector.label.listHeader': `Collections`,
+    'workflows.collectionSelector.cta.delete': `Remove All`,
+    'workflows.collectionSelector.error.title.missingCollectionSchema': `Failed to fetch collection schema`,
     'workflows.collectionSelector.label.discoveredCollections': `Discovered Collections`,
     'workflows.collectionSelector.label.existingCollections': `Existing Collections`,
-    'workflows.collectionSelector.cta.delete': `Remove All`,
+    'workflows.collectionSelector.label.listHeader': `Collections`,
+    'workflows.collectionSelector.tab.resourceConfig': `Config`,
+    'workflows.collectionSelector.tab.collectionSchema': `Schema`,
 };
 
 const ShardStatus: ResolvedIntlConfig['messages'] = {
