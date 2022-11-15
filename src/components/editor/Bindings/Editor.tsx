@@ -1,5 +1,6 @@
 import { Box, Typography, useTheme } from '@mui/material';
 import ResourceConfig from 'components/collection/ResourceConfig';
+import MessageWithButton from 'components/content/MessageWithButton';
 import MessageWithLink from 'components/content/MessageWithLink';
 import BindingsTabs from 'components/editor/Bindings/Tabs';
 import { tabProps } from 'components/editor/Bindings/types';
@@ -83,6 +84,12 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                 },
                             }}
                         >
+                            <Box sx={{ mb: 2 }}>
+                                <AlertBox severity="info" short>
+                                    <MessageWithButton messageID="workflows.collectionSelector.alert.message.schemaEdit" />
+                                </AlertBox>
+                            </Box>
+
                             <Typography variant="h6" sx={{ mb: 2 }}>
                                 <FormattedMessage id="workflows.collectionSelector.header.collectionSchema" />
                             </Typography>

@@ -639,6 +639,8 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.error.initForm': `An issue was encountered initializing the form.`,
     'workflows.error.initFormSection': `An issue was encountered initializing this section of the form.`,
 
+    'workflows.collectionSelector.alert.message.schemaEdit': `Collection schemas can be edited via the command line. {buttonLabel}`,
+    'workflows.collectionSelector.alert.message.schemaEdit.buttonLabel': `View CLI Commands`,
     'workflows.collectionSelector.cta.delete': `Remove All`,
     'workflows.collectionSelector.error.title.missingCollectionSchema': `Failed to fetch collection schema`,
     'workflows.collectionSelector.header.collectionSchema': `Collection Schema`,
@@ -647,6 +649,14 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.label.listHeader': `Collections`,
     'workflows.collectionSelector.tab.resourceConfig': `Config`,
     'workflows.collectionSelector.tab.collectionSchema': `Schema`,
+
+    'workflows.collectionSelector.schemaEdit.header': `CLI`,
+    'workflows.collectionSelector.schemaEdit.description': `Use the commands below to edit the collection schemas associated with this draft.`,
+    'workflows.collectionSelector.schemaEdit.message1': `Pull down the draft to edit`,
+    'workflows.collectionSelector.schemaEdit.message2': `Push your changes up to the server`,
+    'workflows.collectionSelector.schemaEdit.command1': `flowctl draft select --id {draftId}`,
+    'workflows.collectionSelector.schemaEdit.command2': `flowctl draft develop`,
+    'workflows.collectionSelector.schemaEdit.command3': `flowctl draft author --source <flow_catalog_file_location>`,
 };
 
 const ShardStatus: ResolvedIntlConfig['messages'] = {
