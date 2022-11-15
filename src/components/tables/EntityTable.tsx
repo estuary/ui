@@ -46,6 +46,7 @@ import {
     TableStatuses,
 } from 'types';
 import { getEmptyTableHeader, getEmptyTableMessage } from 'utils/table-utils';
+import DateFilter from './Filters/Date';
 import { RowSelectorProps } from './RowActions/types';
 
 interface Props {
@@ -64,6 +65,7 @@ interface Props {
     header: string;
     filterLabel: string;
     enableSelection?: boolean;
+    enableTimeFiltering?: boolean;
     rowSelectorProps?: RowSelectorProps;
     noExistingDataContentIds: TableIntlConfig;
     showEntityStatus?: boolean;
@@ -98,6 +100,7 @@ function EntityTable({
     header,
     filterLabel,
     enableSelection,
+    enableTimeFiltering,
     rowSelectorProps,
     showEntityStatus = false,
     selectableTableStoreName,
@@ -329,6 +332,8 @@ function EntityTable({
                     ) : (
                         <Title header={header} />
                     )}
+
+                    {enableTimeFiltering ? <DateFilter /> : null}
 
                     <Box
                         sx={{
