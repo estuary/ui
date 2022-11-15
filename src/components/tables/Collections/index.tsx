@@ -41,8 +41,12 @@ function CollectionsTable() {
                     query,
                     ['catalog_name'],
                     searchQuery,
-                    columnToSort,
-                    sortDirection,
+                    [
+                        {
+                            col: columnToSort,
+                            direction: sortDirection,
+                        },
+                    ],
                     pagination
                 ).eq('spec_type', 'collection');
             },
