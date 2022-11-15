@@ -1,4 +1,4 @@
-import { Box, useTheme } from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
 import ResourceConfig from 'components/collection/ResourceConfig';
 import MessageWithLink from 'components/content/MessageWithLink';
 import BindingsTabs from 'components/editor/Bindings/Tabs';
@@ -83,6 +83,10 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                 },
                             }}
                         >
+                            <Typography variant="h6" sx={{ mb: 2 }}>
+                                <FormattedMessage id="workflows.collectionSelector.header.collectionSchema" />
+                            </Typography>
+
                             <ReactJson
                                 quotesOnKeys={false}
                                 src={collectionData.spec}

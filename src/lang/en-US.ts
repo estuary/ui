@@ -641,6 +641,7 @@ const Workflows: ResolvedIntlConfig['messages'] = {
 
     'workflows.collectionSelector.cta.delete': `Remove All`,
     'workflows.collectionSelector.error.title.missingCollectionSchema': `Failed to fetch collection schema`,
+    'workflows.collectionSelector.header.collectionSchema': `Collection Schema`,
     'workflows.collectionSelector.label.discoveredCollections': `Discovered Collections`,
     'workflows.collectionSelector.label.existingCollections': `Existing Collections`,
     'workflows.collectionSelector.label.listHeader': `Collections`,
