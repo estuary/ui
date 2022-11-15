@@ -1,9 +1,10 @@
-import { Box, Button, useTheme } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import ResourceConfig from 'components/collection/ResourceConfig';
 import MessageWithLink from 'components/content/MessageWithLink';
+import BindingsTabs from 'components/editor/Bindings/Tabs';
+import { tabProps } from 'components/editor/Bindings/types';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
-import { slate, slateOutline } from 'context/Theme';
 import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import {
     LiveSpecsQuery_spec_general,
@@ -23,8 +24,6 @@ interface Props {
     readOnly?: boolean;
 }
 
-type Tab = 'config' | 'schema';
-
 function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
     const theme = useTheme();
     const jsonTheme =
@@ -37,7 +36,7 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
     const currentCollection = useResourceConfig_currentCollection();
     const discoveredCollections = useResourceConfig_discoveredCollections();
 
-    const [activeTab, setActiveTab] = useState<Tab>('config');
+    const [activeTab, setActiveTab] = useState<number>(0);
 
     const { liveSpecs } = useLiveSpecs_spec_general('collection');
     const { draftSpecs } = useDraftSpecs(persistedDraftId, null, 'collection');
@@ -64,38 +63,13 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
             <Box>{skeleton}</Box>
         ) : (
             <Box sx={{ p: 1 }}>
-                <Button
-                    variant="text"
-                    onClick={() => setActiveTab('config')}
-                    sx={{
-                        px: 3,
-                        backgroundColor:
-                            activeTab === 'config' ? slate[200] : 'transparent',
-                        border: slateOutline,
-                        borderRadius: 0,
-                        color: 'text.primary',
-                    }}
-                >
-                    <FormattedMessage id="workflows.collectionSelector.tab.resourceConfig" />
-                </Button>
+                <BindingsTabs
+                    selectedTab={activeTab}
+                    setSelectedTab={setActiveTab}
+                />
 
-                <Button
-                    variant="text"
-                    onClick={() => setActiveTab('schema')}
-                    sx={{
-                        px: 3,
-                        backgroundColor:
-                            activeTab === 'schema' ? slate[200] : 'transparent',
-                        border: slateOutline,
-                        borderRadius: 0,
-                        color: 'text.primary',
-                    }}
-                >
-                    <FormattedMessage id="workflows.collectionSelector.tab.collectionSchema" />
-                </Button>
-
-                <Box sx={{ border: slateOutline }}>
-                    {activeTab === 'config' ? (
+                <Box>
+                    {tabProps[activeTab].value === 'config' ? (
                         <ResourceConfig
                             collectionName={currentCollection}
                             readOnly={readOnly}
