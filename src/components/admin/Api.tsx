@@ -45,13 +45,13 @@ function AdminApi() {
                     cols={50}
                     value={
                         session
-                            ? JSON.stringify({
+                            ? `'${JSON.stringify({
                                   access_token: session.access_token,
                                   refresh_token: session.refresh_token,
                                   expires_at:
                                       (session.expires_at ?? 0) +
                                       (session.expires_in ?? 0),
-                              })
+                              })}' | flowctl auth service-account -`
                             : ''
                     }
                     id="accessTokenValue"
