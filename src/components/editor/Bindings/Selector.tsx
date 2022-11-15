@@ -3,13 +3,14 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import {
     Box,
     Button,
-    ButtonGroup,
     IconButton,
     ListItemText,
+    Typography,
 } from '@mui/material';
 import {
     DataGrid,
     GridColDef,
+    GridColumnHeaderParams,
     GridRenderCellParams,
     GridSelectionModel,
     GridValueGetterParams,
@@ -22,9 +23,8 @@ import {
     typographyTruncation,
 } from 'context/Theme';
 import { useEntityWorkflow } from 'context/Workflow';
-import useLiveSpecs from 'hooks/useLiveSpecs';
 import { ReactNode, useEffect, useRef, useState } from 'react';
-import { useIntl } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
 import { useDetailsForm_details_entityName } from 'stores/DetailsForm';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
@@ -35,11 +35,11 @@ import {
     useResourceConfig_removeCollection,
     useResourceConfig_resourceConfig,
     useResourceConfig_setCurrentCollection,
-    useResourceConfig_setResourceConfig,
     useResourceConfig_setRestrictedDiscoveredCollections,
 } from 'stores/ResourceConfig/hooks';
+import { EntityWorkflow } from 'types';
 import useConstant from 'use-constant';
-import { hasLength } from 'utils/misc-utils';
+import { hasLength, truncateCatalogName } from 'utils/misc-utils';
 
 interface BindingSelectorProps {
     loading: boolean;
@@ -50,15 +50,13 @@ interface BindingSelectorProps {
 interface RowProps {
     collection: string;
     task: string;
+    workflow: EntityWorkflow | null;
     disabled: boolean;
 }
 
-function Row({ collection, task, disabled }: RowProps) {
-    const workflow = useEntityWorkflow();
-
+function Row({ collection, task, workflow, disabled }: RowProps) {
     const discoveredCollections = useResourceConfig_discoveredCollections();
     const removeCollection = useResourceConfig_removeCollection();
-    const updateSelection = useResourceConfig_setCurrentCollection();
 
     const setRestrictedDiscoveredCollections =
         useResourceConfig_setRestrictedDiscoveredCollections();
@@ -68,19 +66,12 @@ function Row({ collection, task, disabled }: RowProps) {
             event.preventDefault();
 
             removeCollection(collection);
-            updateSelection(null);
 
             if (
                 workflow === 'capture_edit' &&
                 !hasLength(discoveredCollections)
             ) {
-                let catalogName = task;
-
-                const lastSlashIndex = task.lastIndexOf('/');
-
-                if (lastSlashIndex !== -1) {
-                    catalogName = task.slice(0, lastSlashIndex);
-                }
+                const catalogName = truncateCatalogName(task);
 
                 const nativeCollectionDetected =
                     collection.includes(catalogName);
@@ -130,14 +121,14 @@ function BindingSelector({
 }: BindingSelectorProps) {
     const onSelectTimeOut = useRef<number | null>(null);
 
+    const workflow = useEntityWorkflow();
+
     const intl = useIntl();
     const collectionsLabel = useConstant(() =>
         intl.formatMessage({
             id: 'workflows.collectionSelector.label.listHeader',
         })
     );
-
-    const { liveSpecs } = useLiveSpecs('collection');
 
     // Details Form Store
     const task = useDetailsForm_details_entityName();
@@ -150,10 +141,8 @@ function BindingSelector({
     const setCurrentCollection = useResourceConfig_setCurrentCollection();
 
     const resourceConfig = useResourceConfig_resourceConfig();
-    const discoveredCollections = useResourceConfig_discoveredCollections();
 
-    const setResourceConfig = useResourceConfig_setResourceConfig();
-    const removeAllCollection = useResourceConfig_removeAllCollections();
+    const removeAllCollections = useResourceConfig_removeAllCollections();
 
     const resourceConfigKeys = Object.keys(resourceConfig);
 
@@ -161,11 +150,34 @@ function BindingSelector({
         []
     );
 
+    const handlers = {
+        removeAllCollections: (event: React.MouseEvent<HTMLElement>) => {
+            event.stopPropagation();
+
+            removeAllCollections(workflow, task);
+        },
+    };
+
     const columns: GridColDef[] = [
         {
             field: 'name',
             flex: 1,
             headerName: collectionsLabel,
+            sortable: false,
+            renderHeader: (params: GridColumnHeaderParams) => (
+                <>
+                    <Typography>{params.colDef.headerName}</Typography>
+
+                    <Button
+                        variant="text"
+                        disabled={formActive}
+                        onClick={handlers.removeAllCollections}
+                        sx={{ borderRadius: 0 }}
+                    >
+                        <FormattedMessage id="workflows.collectionSelector.cta.delete" />
+                    </Button>
+                </>
+            ),
             renderCell: (params: GridRenderCellParams) => {
                 const currentConfig = resourceConfig[params.row];
                 if (currentConfig.errors.length > 0) {
@@ -176,6 +188,7 @@ function BindingSelector({
                             <Row
                                 collection={params.row}
                                 task={task}
+                                workflow={workflow}
                                 disabled={formActive}
                             />
                         </>
@@ -186,6 +199,7 @@ function BindingSelector({
                     <Row
                         collection={params.row}
                         task={task}
+                        workflow={workflow}
                         disabled={formActive}
                     />
                 );
@@ -207,40 +221,6 @@ function BindingSelector({
     ) : (
         <>
             <CollectionPicker readOnly={readOnly} />
-            <ButtonGroup
-                sx={{
-                    flex: 1,
-                    display: 'flex',
-                }}
-                variant="text"
-                aria-label="outlined button group"
-            >
-                <Button
-                    sx={{ flex: 1, borderRadius: 0 }}
-                    onClick={removeAllCollection}
-                >
-                    Remove All
-                </Button>
-                <Button
-                    disabled
-                    sx={{ flex: 1, borderRadius: 0 }}
-                    onClick={() => {
-                        const collections =
-                            discoveredCollections ??
-                            liveSpecs
-                                .filter(
-                                    ({ spec_type }) =>
-                                        spec_type === 'collection'
-                                )
-                                .flatMap((spec) => spec.catalog_name);
-                        console.log('Adding collections: ', collections);
-
-                        setResourceConfig(collections);
-                    }}
-                >
-                    Add All
-                </Button>
-            </ButtonGroup>
 
             <Box sx={{ height: 280 }}>
                 <DataGrid
@@ -288,6 +268,20 @@ function BindingSelector({
                             borderBottom: slateOutline,
                             bgcolor: (theme) =>
                                 alternativeDataGridHeader[theme.palette.mode],
+                        },
+                        '& .MuiDataGrid-columnHeader:hover': {
+                            '& .MuiDataGrid-columnHeaderTitleContainerContent':
+                                {
+                                    mr: 0.5,
+                                },
+                            '& .MuiDataGrid-menuIcon': {
+                                width: '2rem',
+                            },
+                        },
+                        '& .MuiDataGrid-columnHeaderTitleContainerContent': {
+                            width: '100%',
+                            justifyContent: 'space-between',
+                            mr: 4.5,
                         },
                     }}
                 />
