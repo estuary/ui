@@ -152,55 +152,6 @@ function EntityTable({
         status: TableStatuses.LOADING,
     });
 
-    // TODO (tables) THIS IS SO GROSS I AM SORRY
-    // So this is super hacky but works for getting stats out quickly without
-    //  overhauling TOO much right now. A follow up to this should be to get
-    //  tables working off of a store to render and then we can hydrate however
-    //  each table needs.
-    // useEffect(() => {
-    //     void (async () => {
-    //         if (useSelectResponse) {
-    //             let newRows = null;
-    //             const rowData = useSelectResponse.data;
-
-    //             if (addStatsToQuery) {
-    //                 try {
-    //                     setStatsLoaded(false);
-    //                     const { data: statsData, error } = await getStatsByName(
-    //                         rowData.map((rowDatum) => rowDatum.catalog_name)
-    //                     );
-
-    //                     if (error) {
-    //                         console.error('Uh oh ', error);
-    //                     }
-
-    //                     if (statsData && statsData.length > 0) {
-    //                         newRows = [];
-    //                         console.log('statsData', statsData);
-    //                         rowData.forEach((row) => {
-    //                             statsData.forEach((stats) => {
-    //                                 newRows.push({
-    //                                     ...row,
-    //                                     stats:
-    //                                         stats.catalog_name ===
-    //                                         row.catalog_name
-    //                                             ? stats
-    //                                             : undefined,
-    //                                 });
-    //                             });
-    //                         });
-    //                     }
-    //                 } catch (e: unknown) {
-    //                     console.error('Uh oh ', e);
-    //                 }
-    //             }
-
-    //             setStatsLoaded(true);
-    //             setSelectData(newRows ?? rowData);
-    //         }
-    //     })();
-    // }, [addStatsToQuery, useSelectResponse]);
-
     useEffect(() => {
         if (selectData && selectData.length > 0) {
             setTableState({ status: TableStatuses.DATA_FETCHED });
