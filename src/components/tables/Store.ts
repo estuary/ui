@@ -251,6 +251,9 @@ export const createSelectableTableStore = (key: string) => {
 };
 
 export const selectableTableStoreSelectors = {
+    state: {
+        reset: (state: SelectableTableStore) => state.resetState,
+    },
     stats: {
         set: (state: SelectableTableStore) => state.setStats,
         get: (state: SelectableTableStore) => state.stats,
