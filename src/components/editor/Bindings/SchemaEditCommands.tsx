@@ -49,10 +49,6 @@ function SchemaEditCommands() {
                         }}
                     />
                 </Typography>
-
-                <Typography>
-                    <FormattedMessage id="workflows.collectionSelector.schemaEdit.command2" />
-                </Typography>
             </Box>
 
             <Typography sx={{ mb: 1 }}>
@@ -67,7 +63,7 @@ function SchemaEditCommands() {
                 }}
             >
                 <Typography>
-                    <FormattedMessage id="workflows.collectionSelector.schemaEdit.command3" />
+                    <FormattedMessage id="workflows.collectionSelector.schemaEdit.command2" />
                 </Typography>
             </Box>
         </>
