@@ -1,7 +1,8 @@
 import { Box, Typography, useTheme } from '@mui/material';
 import ResourceConfig from 'components/collection/ResourceConfig';
-import MessageWithButton from 'components/content/MessageWithButton';
 import MessageWithLink from 'components/content/MessageWithLink';
+import MessageWithPopper from 'components/content/MessageWithPopper';
+import SchemaEditCommands from 'components/editor/Bindings/SchemaEditCommands';
 import BindingsTabs from 'components/editor/Bindings/Tabs';
 import { tabProps } from 'components/editor/Bindings/types';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
@@ -86,7 +87,10 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                         >
                             <Box sx={{ mb: 2 }}>
                                 <AlertBox severity="info" short>
-                                    <MessageWithButton messageID="workflows.collectionSelector.alert.message.schemaEdit" />
+                                    <MessageWithPopper
+                                        messageId="workflows.collectionSelector.alert.message.schemaEdit"
+                                        popper={<SchemaEditCommands />}
+                                    />
                                 </AlertBox>
                             </Box>
 
