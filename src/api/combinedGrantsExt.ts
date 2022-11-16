@@ -6,6 +6,7 @@ import {
 } from 'services/supabase';
 import { Grants } from 'types';
 
+// Used when getting grants for a user to know what tenant to list
 const getGrantsForUser = (userId: string, adminOnly?: boolean) => {
     let queryBuilder = supabaseClient
         .from<Grants>(TABLES.COMBINED_GRANTS_EXT)
@@ -18,6 +19,7 @@ const getGrantsForUser = (userId: string, adminOnly?: boolean) => {
     return queryBuilder.eq('user_id', userId);
 };
 
+// Used to display all the grants for everything in the admin page
 const getGrantsForEverything = (
     pagination: any,
     searchQuery: any,
@@ -50,6 +52,7 @@ const getGrantsForEverything = (
     return queryBuilder;
 };
 
+// Used to find out what prefixes we can use in the data plane gateway
 const getGrantsForAuthToken = () => {
     return supabaseClient
         .from<Grants>(TABLES.COMBINED_GRANTS_EXT)
