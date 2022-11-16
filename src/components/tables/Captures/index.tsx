@@ -21,12 +21,12 @@ function CapturesTable() {
     } = useTableState('updated_at', 'desc');
 
     const query = useMemo(() => {
-        return getLiveSpecs_captures(
-            pagination,
-            searchQuery,
-            columnToSort,
-            sortDirection
-        );
+        return getLiveSpecs_captures(pagination, searchQuery, [
+            {
+                col: columnToSort,
+                direction: sortDirection,
+            },
+        ]);
     }, [columnToSort, pagination, searchQuery, sortDirection]);
 
     return (

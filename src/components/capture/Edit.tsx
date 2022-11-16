@@ -1,8 +1,5 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
-import {
-    deleteDraftSpecsByCatalogName,
-    getDraftSpecsBySpecType,
-} from 'api/draftSpecs';
+import { getDraftSpecsBySpecType } from 'api/draftSpecs';
 import { authenticatedRoutes } from 'app/routes';
 import CaptureGenerateButton from 'components/capture/GenerateButton';
 import {
@@ -37,6 +34,7 @@ import {
 } from 'services/supabase';
 import {
     useDetailsForm_connectorImage,
+    useDetailsForm_details_entityName,
     useDetailsForm_errorsExist,
     useDetailsForm_resetState,
 } from 'stores/DetailsForm';
@@ -53,21 +51,16 @@ import {
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import {
-    useResourceConfig_addCollection,
+    useResourceConfig_evaluateDiscoveredCollections,
     useResourceConfig_resetState,
     useResourceConfig_restrictedDiscoveredCollections,
-    useResourceConfig_setCurrentCollection,
     useResourceConfig_setDiscoveredCollections,
-    useResourceConfig_setResourceConfig,
 } from 'stores/ResourceConfig/hooks';
 import ResourceConfigHydrator from 'stores/ResourceConfig/Hydrator';
 import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import { JsonFormsData } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
-import {
-    modifyDiscoveredDraftSpec,
-    storeUpdatedBindings,
-} from 'utils/workflow-utils';
+import { modifyDiscoveredDraftSpec } from 'utils/workflow-utils';
 
 const trackEvent = (payload: any) => {
     LogRocket.track(CustomEvents.CAPTURE_DISCOVER, {
@@ -91,6 +84,7 @@ function CaptureEdit() {
     const hasConnectors = connectorTags.length > 0;
 
     // Details Form Store
+    const catalogName = useDetailsForm_details_entityName();
     const imageTag = useDetailsForm_connectorImage();
     const detailsFormErrorsExist = useDetailsForm_errorsExist();
     const resetDetailsForm = useDetailsForm_resetState();
@@ -103,9 +97,6 @@ function CaptureEdit() {
     const setPersistedDraftId = useEditorStore_setPersistedDraftId();
 
     const pubId = useEditorStore_pubId();
-
-    const setDiscoveredCollections =
-        useResourceConfig_setDiscoveredCollections();
 
     const resetEditorStore = useEditorStore_resetState();
 
@@ -128,10 +119,11 @@ function CaptureEdit() {
     const restrictedDiscoveredCollections =
         useResourceConfig_restrictedDiscoveredCollections();
 
-    const addCollection = useResourceConfig_addCollection();
-    const setCurrentCollection = useResourceConfig_setCurrentCollection();
+    const setDiscoveredCollections =
+        useResourceConfig_setDiscoveredCollections();
 
-    const setResourceConfig = useResourceConfig_setResourceConfig();
+    const evaluateDiscoveredCollections =
+        useResourceConfig_evaluateDiscoveredCollections();
 
     const resetResourceConfigState = useResourceConfig_resetState();
 
@@ -240,7 +232,7 @@ function CaptureEdit() {
                 draftSpecsResponse,
                 resourceConfig,
                 restrictedDiscoveredCollections,
-                lastPubId
+                { catalogName, lastPubId }
             );
 
             if (updatedDraftSpecsResponse.error) {
@@ -256,14 +248,7 @@ function CaptureEdit() {
                 updatedDraftSpecsResponse.data &&
                 updatedDraftSpecsResponse.data.length > 0
             ) {
-                storeUpdatedBindings(
-                    updatedDraftSpecsResponse,
-                    resourceConfig,
-                    restrictedDiscoveredCollections,
-                    addCollection,
-                    setResourceConfig,
-                    setCurrentCollection
-                );
+                evaluateDiscoveredCollections(updatedDraftSpecsResponse);
 
                 setEncryptedEndpointConfig(
                     {
@@ -272,22 +257,6 @@ function CaptureEdit() {
                     },
                     'capture_edit'
                 );
-            }
-        }
-
-        if (restrictedDiscoveredCollections.length > 0) {
-            const deleteDraftSpecsResponse =
-                await deleteDraftSpecsByCatalogName(
-                    newDraftId,
-                    restrictedDiscoveredCollections
-                );
-            if (deleteDraftSpecsResponse.error) {
-                return helpers.callFailed({
-                    error: {
-                        title: 'captureEdit.generate.failedErrorTitle',
-                        error: deleteDraftSpecsResponse.error,
-                    },
-                });
             }
         }
 
@@ -316,8 +285,8 @@ function CaptureEdit() {
                     draft_id: discoverDraftId,
                 })
                 .order('created_at', { ascending: false }),
-            (payload: any) => {
-                void storeUpdatedDraftSpec(payload.draft_id, resourceConfig);
+            async (payload: any) => {
+                await storeUpdatedDraftSpec(payload.draft_id, resourceConfig);
 
                 void mutateDraftSpecs();
 

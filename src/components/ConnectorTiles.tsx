@@ -24,7 +24,12 @@ import {
 } from 'hooks/useConnectorWithTagDetail';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { CONNECTOR_NAME, defaultTableFilter, TABLES } from 'services/supabase';
+import {
+    CONNECTOR_NAME,
+    CONNECTOR_RECOMMENDED,
+    defaultTableFilter,
+    TABLES,
+} from 'services/supabase';
 import {
     BaseComponentProps,
     EntityWithCreateWorkflow,
@@ -114,8 +119,16 @@ function ConnectorTiles({
                     query,
                     [columnToSort],
                     searchQuery,
-                    columnToSort,
-                    sortDirection,
+                    [
+                        {
+                            col: CONNECTOR_RECOMMENDED,
+                            direction: 'desc',
+                        },
+                        {
+                            col: columnToSort,
+                            direction: sortDirection,
+                        },
+                    ],
                     undefined,
                     { column: 'connector_tags.protocol', value: protocol }
                 );
@@ -188,6 +201,7 @@ function ConnectorTiles({
                                     entity={row.connector_tags[0].protocol}
                                 />
                             }
+                            recommended={row.recommended}
                         />
                     ))
                     .concat(
@@ -195,12 +209,7 @@ function ConnectorTiles({
                             key="connector-request-tile"
                             logo={<AddBox sx={{ fontSize: '4rem' }} />}
                             details={
-                                <Typography
-                                    component="p"
-                                    variant="caption"
-                                    marginBottom={2}
-                                    sx={{ px: 1 }}
-                                >
+                                <Typography component="p" sx={{ px: 1 }}>
                                     <FormattedMessage id="connectors.main.message2.alt" />
                                 </Typography>
                             }
@@ -217,9 +226,11 @@ function ConnectorTiles({
                                 </Button>
                             }
                             title={
-                                <Typography align="center" marginBottom={1}>
-                                    <FormattedMessage id="connectorTable.data.connectorRequest" />
-                                </Typography>
+                                <ConnectorCardTitle
+                                    title={intl.formatMessage({
+                                        id: 'connectorTable.data.connectorRequest',
+                                    })}
+                                />
                             }
                         />
                     )

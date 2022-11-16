@@ -20,12 +20,12 @@ function AccessGrantsTable() {
     } = useTableState('user_full_name');
 
     const query = useMemo(() => {
-        return getGrantsForEverything(
-            pagination,
-            searchQuery,
-            columnToSort,
-            sortDirection
-        );
+        return getGrantsForEverything(pagination, searchQuery, [
+            {
+                col: columnToSort,
+                direction: sortDirection,
+            },
+        ]);
     }, [columnToSort, pagination, searchQuery, sortDirection]);
 
     return (

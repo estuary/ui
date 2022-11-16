@@ -1,8 +1,8 @@
 import { PostgrestError, PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import { createClient, User } from '@supabase/supabase-js';
-import { isEmpty } from 'lodash';
+import { forEach, isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
-import { JobStatus } from 'types';
+import { JobStatus, SortDirection } from 'types';
 import { hasLength, incrementInterval, timeoutCleanUp } from 'utils/misc-utils';
 
 if (
@@ -82,13 +82,16 @@ export const supabaseClient = createClient(
     }
 );
 
+export interface SortingProps<Data> {
+    col: keyof Data;
+    direction: SortDirection;
+}
 export const DEFAULT_POLLING_INTERVAL = 750;
 export const defaultTableFilter = <Data>(
     query: PostgrestFilterBuilder<Data>,
     searchParam: Array<keyof Data | any>, // TODO (typing) added any because of how Supabase handles keys. Hoping Supabase 2.0 fixes https://github.com/supabase/supabase-js/issues/170
     searchQuery: string | null,
-    columnToSort: keyof Data,
-    sortDirection: string,
+    sorting: SortingProps<Data>[],
     pagination?: { from: number; to: number },
     protocol?: { column: keyof Data; value: string | null }
 ) => {
@@ -104,8 +107,10 @@ export const defaultTableFilter = <Data>(
         );
     }
 
-    queryBuilder = queryBuilder.order(columnToSort, {
-        ascending: sortDirection === 'asc',
+    forEach(sorting, (sort) => {
+        queryBuilder = queryBuilder.order(sort.col, {
+            ascending: sort.direction === 'asc',
+        });
     });
 
     if (pagination) {

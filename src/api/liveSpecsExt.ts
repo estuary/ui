@@ -3,6 +3,7 @@ import {
     CONNECTOR_TITLE,
     defaultTableFilter,
     QUERY_PARAM_CONNECTOR_TITLE,
+    SortingProps,
     supabaseClient,
     TABLES,
 } from 'services/supabase';
@@ -56,8 +57,7 @@ const collectionColums = baseColumns.join(',');
 const getLiveSpecs_captures = (
     pagination: any,
     searchQuery: any,
-    columnToSort: any,
-    sortDirection: any
+    sorting: SortingProps<any>[]
 ) => {
     let queryBuilder = supabaseClient
         .from<CaptureQuery>(TABLES.LIVE_SPECS_EXT)
@@ -69,8 +69,7 @@ const getLiveSpecs_captures = (
         queryBuilder,
         ['catalog_name', QUERY_PARAM_CONNECTOR_TITLE],
         searchQuery,
-        columnToSort,
-        sortDirection,
+        sorting,
         pagination
     ).eq('spec_type', 'capture');
 
@@ -80,8 +79,7 @@ const getLiveSpecs_captures = (
 const getLiveSpecs_materializations = (
     pagination: any,
     searchQuery: any,
-    columnToSort: any,
-    sortDirection: any
+    sorting: SortingProps<any>[]
 ) => {
     let queryBuilder = supabaseClient
         .from<MaterializationQuery>(TABLES.LIVE_SPECS_EXT)
@@ -93,8 +91,7 @@ const getLiveSpecs_materializations = (
         queryBuilder,
         ['catalog_name', QUERY_PARAM_CONNECTOR_TITLE],
         searchQuery,
-        columnToSort,
-        sortDirection,
+        sorting,
         pagination
     ).eq('spec_type', 'materialization');
 
@@ -104,8 +101,7 @@ const getLiveSpecs_materializations = (
 const getLiveSpecs_collections = (
     pagination: any,
     searchQuery: any,
-    columnToSort: any,
-    sortDirection: any
+    sorting: SortingProps<any>[]
 ) => {
     let queryBuilder = supabaseClient
         .from<CollectionQuery>(TABLES.LIVE_SPECS_EXT)
@@ -117,8 +113,7 @@ const getLiveSpecs_collections = (
         queryBuilder,
         ['catalog_name'],
         searchQuery,
-        columnToSort,
-        sortDirection,
+        sorting,
         pagination
     ).eq('spec_type', 'collection');
 

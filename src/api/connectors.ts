@@ -5,6 +5,7 @@ import {
 import {
     CONNECTOR_NAME,
     defaultTableFilter,
+    SortingProps,
     supabaseClient,
     TABLES,
 } from 'services/supabase';
@@ -12,8 +13,7 @@ import {
 const getConnectors = (
     pagination: any,
     searchQuery: any,
-    columnToSort: any,
-    sortDirection: any
+    sorting: SortingProps<any>[]
 ) => {
     let queryBuilder = supabaseClient
         .from<ConnectorWithTagDetailQuery>(TABLES.CONNECTORS)
@@ -25,8 +25,7 @@ const getConnectors = (
         queryBuilder,
         [CONNECTOR_NAME],
         searchQuery,
-        columnToSort,
-        sortDirection,
+        sorting,
         pagination
     );
 

@@ -1,4 +1,9 @@
-import { defaultTableFilter, supabaseClient, TABLES } from 'services/supabase';
+import {
+    defaultTableFilter,
+    SortingProps,
+    supabaseClient,
+    TABLES,
+} from 'services/supabase';
 import { Grants } from 'types';
 
 const getGrantsForUser = (userId: string, adminOnly?: boolean) => {
@@ -16,20 +21,19 @@ const getGrantsForUser = (userId: string, adminOnly?: boolean) => {
 const getGrantsForEverything = (
     pagination: any,
     searchQuery: any,
-    columnToSort: any,
-    sortDirection: any
+    sorting: SortingProps<any>[]
 ) => {
     let queryBuilder = supabaseClient.from(TABLES.COMBINED_GRANTS_EXT).select(
         `
-			id, 
-			subject_role, 
-			object_role, 
-			capability,
-			user_avatar_url,
-			user_full_name,
-			user_email,
-			updated_at
-		`,
+            id, 
+            subject_role, 
+            object_role, 
+            capability,
+            user_avatar_url,
+            user_full_name,
+            user_email,
+            updated_at
+        `,
         {
             count: 'exact',
         }
@@ -39,8 +43,7 @@ const getGrantsForEverything = (
         queryBuilder,
         ['user_full_name', 'subject_role', 'object_role'],
         searchQuery,
-        columnToSort,
-        sortDirection,
+        sorting,
         pagination
     );
 

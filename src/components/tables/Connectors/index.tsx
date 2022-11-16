@@ -21,12 +21,12 @@ function ConnectorsTable() {
     } = useTableState(CONNECTOR_NAME);
 
     const query = useMemo(() => {
-        return getConnectors(
-            pagination,
-            searchQuery,
-            columnToSort,
-            sortDirection
-        );
+        return getConnectors(pagination, searchQuery, [
+            {
+                col: columnToSort,
+                direction: sortDirection,
+            },
+        ]);
     }, [columnToSort, pagination, searchQuery, sortDirection]);
 
     return (

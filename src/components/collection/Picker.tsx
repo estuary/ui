@@ -9,6 +9,7 @@ import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
 import useDraftSpecs from 'hooks/useDraftSpecs';
 import useLiveSpecs from 'hooks/useLiveSpecs';
+import { isEqual } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
@@ -51,7 +52,12 @@ function CollectionPicker({ readOnly = false }: Props) {
         })
     );
 
-    const [collectionData, setCollectionData] = useState<CollectionData[]>([]);
+    const [collectionValues, setCollectionValues] = useState<CollectionData[]>(
+        []
+    );
+    const [collectionOptions, setCollectionOptions] = useState<
+        CollectionData[]
+    >([]);
     const [missingInput, setMissingInput] = useState(false);
 
     const {
@@ -80,7 +86,7 @@ function CollectionPicker({ readOnly = false }: Props) {
         isValidating: isValidatingDraftSpecs,
     } = useDraftSpecs(persistedDraftId);
 
-    const populateCollectionData = useMemo(() => {
+    const populateCollectionOptions = useMemo(() => {
         return entityType === 'materialization'
             ? liveSpecs.length > 0
             : !isValidatingLiveSpecs &&
@@ -95,8 +101,8 @@ function CollectionPicker({ readOnly = false }: Props) {
     ]);
 
     useEffect(() => {
-        if (populateCollectionData) {
-            const liveSpecCollectionData: CollectionData[] =
+        if (populateCollectionOptions) {
+            const liveSpecCollectionOptions: CollectionData[] =
                 workflow === 'capture_create'
                     ? []
                     : liveSpecs.map(({ catalog_name }) => ({
@@ -104,7 +110,7 @@ function CollectionPicker({ readOnly = false }: Props) {
                           classification: existingCollectionsLabel,
                       }));
 
-            const draftSpecCollectionData: CollectionData[] =
+            const draftSpecCollectionOptions: CollectionData[] =
                 entityType === 'capture'
                     ? draftSpecs
                           .filter(({ spec_type }) => spec_type === 'collection')
@@ -114,28 +120,61 @@ function CollectionPicker({ readOnly = false }: Props) {
                           }))
                     : [];
 
-            const draftSpecCollections: string[] = draftSpecCollectionData.map(
-                (collection) => collection.name
-            );
+            const draftSpecCollections: string[] =
+                draftSpecCollectionOptions.map((collection) => collection.name);
 
             const collectionsOnServer: CollectionData[] = [
-                ...draftSpecCollectionData,
-                ...liveSpecCollectionData.filter(
+                ...draftSpecCollectionOptions,
+                ...liveSpecCollectionOptions.filter(
                     ({ name }) => !draftSpecCollections.includes(name)
                 ),
             ];
 
-            setCollectionData(collectionsOnServer);
+            setCollectionOptions(collectionsOnServer);
         }
     }, [
-        setCollectionData,
+        setCollectionOptions,
         discoveredCollectionsLabel,
         draftSpecs,
         entityType,
         existingCollectionsLabel,
         liveSpecs,
-        populateCollectionData,
+        populateCollectionOptions,
         workflow,
+    ]);
+
+    const populateCollectionValues = useMemo(() => {
+        return collections?.every((collection) =>
+            collectionOptions.find(({ name }) => name === collection)
+        );
+    }, [collections, collectionOptions]);
+
+    useEffect(() => {
+        if (populateCollectionValues && collections) {
+            const values = collections.map(
+                (collection) =>
+                    collectionOptions.find(
+                        ({ name }) => name === collection
+                    ) ?? {
+                        name: collection,
+                        classification: discoveredCollections?.includes(
+                            collection
+                        )
+                            ? discoveredCollectionsLabel
+                            : existingCollectionsLabel,
+                    }
+            );
+
+            setCollectionValues(values);
+        }
+    }, [
+        setCollectionValues,
+        collections,
+        collectionOptions,
+        discoveredCollections,
+        discoveredCollectionsLabel,
+        existingCollectionsLabel,
+        populateCollectionValues,
     ]);
 
     const handlers = {
@@ -152,11 +191,13 @@ function CollectionPicker({ readOnly = false }: Props) {
             if (!removeOptionWithBackspace) {
                 setResourceConfig(value.map(({ name }) => name));
 
-                value
-                    .filter(({ name }) => discoveredCollections?.includes(name))
-                    .forEach(({ name }) => {
-                        setRestrictedDiscoveredCollections(name);
-                    });
+                if (value.length > 0 && discoveredCollections) {
+                    const latestCollection = value[value.length - 1].name;
+
+                    if (discoveredCollections.includes(latestCollection)) {
+                        setRestrictedDiscoveredCollections(latestCollection);
+                    }
+                }
             }
         },
         validateSelection: () => {
@@ -169,7 +210,7 @@ function CollectionPicker({ readOnly = false }: Props) {
             ? liveSpecsError
             : liveSpecsError ?? draftSpecsError;
 
-    return collections && collectionData.length > 0 && !specError ? (
+    return collectionOptions.length > 0 && !specError ? (
         <Box
             sx={{
                 p: '0.5rem 0.5rem 1rem',
@@ -180,22 +221,11 @@ function CollectionPicker({ readOnly = false }: Props) {
             <Autocomplete
                 disabled={readOnly || formActive}
                 multiple
-                options={collectionData}
+                options={collectionOptions}
                 groupBy={(option) => option.classification}
                 getOptionLabel={(option) => option.name}
-                value={collections.map(
-                    (collectionName) =>
-                        collectionData.find(
-                            ({ name }) => name === collectionName
-                        ) ?? {
-                            name: collectionName,
-                            classification: discoveredCollections?.includes(
-                                collectionName
-                            )
-                                ? discoveredCollectionsLabel
-                                : existingCollectionsLabel,
-                        }
-                )}
+                isOptionEqualToValue={(option, value) => isEqual(option, value)}
+                value={collectionValues}
                 size="small"
                 filterSelectedOptions
                 fullWidth

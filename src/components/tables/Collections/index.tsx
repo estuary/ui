@@ -20,12 +20,12 @@ function CollectionsTable() {
     } = useTableState('updated_at', 'desc');
 
     const query = useMemo(() => {
-        return getLiveSpecs_collections(
-            pagination,
-            searchQuery,
-            columnToSort,
-            sortDirection
-        );
+        return getLiveSpecs_collections(pagination, searchQuery, [
+            {
+                col: columnToSort,
+                direction: sortDirection,
+            },
+        ]);
     }, [columnToSort, pagination, searchQuery, sortDirection]);
 
     return (

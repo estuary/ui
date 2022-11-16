@@ -20,12 +20,12 @@ function MaterializationsTable() {
     } = useTableState('updated_at', 'desc');
 
     const query = useMemo(() => {
-        return getLiveSpecs_materializations(
-            pagination,
-            searchQuery,
-            columnToSort,
-            sortDirection
-        );
+        return getLiveSpecs_materializations(pagination, searchQuery, [
+            {
+                col: columnToSort,
+                direction: sortDirection,
+            },
+        ]);
     }, [columnToSort, pagination, searchQuery, sortDirection]);
 
     return (
