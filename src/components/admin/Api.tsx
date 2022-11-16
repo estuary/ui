@@ -40,18 +40,24 @@ function AdminApi() {
                     <FormattedMessage id="admin.accessToken.message" />
                 </Typography>
 
+                <Typography sx={{ mb: 2 }}>
+                    <FormattedMessage id="admin.accessToken.upgrade" />
+                </Typography>
+
                 <TextareaAutosize
                     minRows={4}
                     cols={50}
                     value={
                         session
-                            ? `'${JSON.stringify({
-                                  access_token: session.access_token,
-                                  refresh_token: session.refresh_token,
-                                  expires_at:
-                                      (session.expires_at ?? 0) +
-                                      (session.expires_in ?? 0),
-                              })}' | flowctl auth service-account -`
+                            ? `flowctl auth token --token='${btoa(
+                                  JSON.stringify({
+                                      access_token: session.access_token,
+                                      refresh_token: session.refresh_token,
+                                      expires_at:
+                                          (session.expires_at ?? 0) +
+                                          (session.expires_in ?? 0),
+                                  })
+                              )}'`
                             : ''
                     }
                     id="accessTokenValue"

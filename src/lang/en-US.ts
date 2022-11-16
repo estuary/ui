@@ -338,6 +338,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.roles.message.docPath': `https://go.estuary.dev/provision`,
     'admin.accessToken': `Service Account`,
     'admin.accessToken.message': `Copy the command below to authenticate the CLI client.`,
+    'admin.accessToken.upgrade': `We have made some changes to improve your authentication experience with flowctl, please upgrade to the latest flowctl to use this new system. https://github.com/estuary/flowctl/releases`,
     'admin.tabs.users': `Users`,
     'admin.tabs.connectors': `Connectors`,
     'admin.tabs.api': `CLI-API`,
