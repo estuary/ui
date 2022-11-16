@@ -17,7 +17,6 @@ import {
     Typography,
 } from '@mui/material';
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
-import { getStatsByName } from 'api/stats';
 import RowSelector from 'components/tables/RowActions/RowSelector';
 import {
     SelectableTableStore,
@@ -70,7 +69,6 @@ interface Props {
     noExistingDataContentIds: TableIntlConfig;
     showEntityStatus?: boolean;
     selectableTableStoreName: SelectTableStoreNames;
-    addStatsToQuery?: boolean;
 }
 
 export const getPagination = (currPage: number, size: number) => {
@@ -104,21 +102,29 @@ function EntityTable({
     rowSelectorProps,
     showEntityStatus = false,
     selectableTableStoreName,
-    addStatsToQuery,
 }: Props) {
     const [page, setPage] = useState(0);
     const isFiltering = useRef(false);
 
-    const {
-        isValidating,
-        data: useSelectResponse,
-        mutate: mutateSelectData,
-    } = useSelectNew<any>(query);
-
-    const [statsLoaded, setStatsLoaded] = useState(!addStatsToQuery);
-    const [selectData, setSelectData] = useState<any[] | null>(null);
+    const { mutate: mutateSelectData } = useSelectNew<any>(query);
+    // const selectData = useSelectResponse ? useSelectResponse.data : null;
 
     const intl = useIntl();
+
+    const isValidating = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['query']['loading']
+    >(selectableTableStoreName, selectableTableStoreSelectors.query.loading);
+
+    const selectData = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['query']['response']
+    >(selectableTableStoreName, selectableTableStoreSelectors.query.response);
+
+    const selectDataCount = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['query']['count']
+    >(selectableTableStoreName, selectableTableStoreSelectors.query.count);
 
     const setRows = useZustandStore<
         SelectableTableStore,
@@ -153,49 +159,49 @@ function EntityTable({
     //  overhauling TOO much right now. A follow up to this should be to get
     //  tables working off of a store to render and then we can hydrate however
     //  each table needs.
-    useEffect(() => {
-        void (async () => {
-            if (useSelectResponse) {
-                let newRows = null;
-                const rowData = useSelectResponse.data;
+    // useEffect(() => {
+    //     void (async () => {
+    //         if (useSelectResponse) {
+    //             let newRows = null;
+    //             const rowData = useSelectResponse.data;
 
-                if (addStatsToQuery) {
-                    try {
-                        setStatsLoaded(false);
-                        const { data: statsData, error } = await getStatsByName(
-                            rowData.map((rowDatum) => rowDatum.catalog_name)
-                        );
+    //             if (addStatsToQuery) {
+    //                 try {
+    //                     setStatsLoaded(false);
+    //                     const { data: statsData, error } = await getStatsByName(
+    //                         rowData.map((rowDatum) => rowDatum.catalog_name)
+    //                     );
 
-                        if (error) {
-                            console.error('Uh oh ', error);
-                        }
+    //                     if (error) {
+    //                         console.error('Uh oh ', error);
+    //                     }
 
-                        if (statsData && statsData.length > 0) {
-                            newRows = [];
-                            console.log('statsData', statsData);
-                            rowData.forEach((row) => {
-                                statsData.forEach((stats) => {
-                                    newRows.push({
-                                        ...row,
-                                        stats:
-                                            stats.catalog_name ===
-                                            row.catalog_name
-                                                ? stats
-                                                : undefined,
-                                    });
-                                });
-                            });
-                        }
-                    } catch (e: unknown) {
-                        console.error('Uh oh ', e);
-                    }
-                }
+    //                     if (statsData && statsData.length > 0) {
+    //                         newRows = [];
+    //                         console.log('statsData', statsData);
+    //                         rowData.forEach((row) => {
+    //                             statsData.forEach((stats) => {
+    //                                 newRows.push({
+    //                                     ...row,
+    //                                     stats:
+    //                                         stats.catalog_name ===
+    //                                         row.catalog_name
+    //                                             ? stats
+    //                                             : undefined,
+    //                                 });
+    //                             });
+    //                         });
+    //                     }
+    //                 } catch (e: unknown) {
+    //                     console.error('Uh oh ', e);
+    //                 }
+    //             }
 
-                setStatsLoaded(true);
-                setSelectData(newRows ?? rowData);
-            }
-        })();
-    }, [addStatsToQuery, useSelectResponse]);
+    //             setStatsLoaded(true);
+    //             setSelectData(newRows ?? rowData);
+    //         }
+    //     })();
+    // }, [addStatsToQuery, useSelectResponse]);
 
     useEffect(() => {
         if (selectData && selectData.length > 0) {
@@ -418,8 +424,7 @@ function EntityTable({
                         <TableBody>
                             {dataRows ? (
                                 dataRows
-                            ) : !statsLoaded ||
-                              isValidating ||
+                            ) : isValidating ||
                               tableState.status === TableStatuses.LOADING ? (
                                 loadingRows
                             ) : (
@@ -457,12 +462,12 @@ function EntityTable({
                             )}
                         </TableBody>
 
-                        {dataRows && useSelectResponse?.count ? (
+                        {dataRows && selectDataCount ? (
                             <TableFooter>
                                 <TableRow>
                                     <TablePagination
                                         rowsPerPageOptions={rowsPerPageOptions}
-                                        count={useSelectResponse.count}
+                                        count={selectDataCount}
                                         rowsPerPage={rowsPerPage}
                                         page={page}
                                         onPageChange={handlers.changePage}

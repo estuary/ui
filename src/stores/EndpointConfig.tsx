@@ -22,9 +22,10 @@ import { parseEncryptedEndpointConfig } from 'utils/sops-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { createStore, StoreApi, useStore } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
+import { getStoreWithHydrationSettings, StoreWithHydration } from './Hydration';
 import { EndpointConfigStoreNames } from './names';
 
-export interface EndpointConfigState {
+export interface EndpointConfigState extends StoreWithHydration {
     endpointSchema: Schema;
     setEndpointSchema: (val: EndpointConfigState['endpointSchema']) => void;
 
@@ -54,13 +55,6 @@ export interface EndpointConfigState {
 
     endpointConfigErrorsExist: boolean;
     endpointConfigErrors: { message: string | undefined }[];
-
-    // Hydration
-    hydrated: boolean;
-    setHydrated: (value: boolean) => void;
-
-    hydrationErrorsExist: boolean;
-    setHydrationErrorsExist: (value: boolean) => void;
 
     // Server-Form Alignment
     serverUpdateRequired: boolean;
@@ -207,6 +201,7 @@ const getInitialState = (
     get: StoreApi<EndpointConfigState>['getState']
 ): EndpointConfigState => ({
     ...getInitialStateData(),
+    ...getStoreWithHydrationSettings('Endpoint Config', set),
 
     setEndpointSchema: (val) => {
         set(
@@ -281,26 +276,6 @@ const getInitialState = (
             }),
             false,
             'Endpoint Config Changed'
-        );
-    },
-
-    setHydrated: (value) => {
-        set(
-            produce((state: EndpointConfigState) => {
-                state.hydrated = value;
-            }),
-            false,
-            'Endpoint Config State Hydrated'
-        );
-    },
-
-    setHydrationErrorsExist: (value) => {
-        set(
-            produce((state: EndpointConfigState) => {
-                state.hydrationErrorsExist = value;
-            }),
-            false,
-            'Endpoint Config Hydration Errors Detected'
         );
     },
 
