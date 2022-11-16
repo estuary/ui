@@ -1,20 +1,23 @@
 import { Box } from '@mui/material';
 import { getLiveSpecs_captures } from 'api/liveSpecsExt';
 import Rows, { tableColumns } from 'components/tables/Captures/Rows';
-import EntityTable, { getPagination } from 'components/tables/EntityTable';
-import { useMemo, useState } from 'react';
+import EntityTable from 'components/tables/EntityTable';
+import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
 import TableHydrator from 'stores/Tables/Hydrator';
-import { SortDirection } from 'types';
+import useTableState from '../hooks';
 
 function CapturesTable() {
-    const rowsPerPage = 10;
-    const [pagination, setPagination] = useState<{ from: number; to: number }>(
-        getPagination(0, rowsPerPage)
-    );
-    const [searchQuery, setSearchQuery] = useState<string | null>(null);
-    const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
-    const [columnToSort, setColumnToSort] = useState<any>('updated_at');
+    const {
+        pagination,
+        setPagination,
+        searchQuery,
+        setSearchQuery,
+        sortDirection,
+        setSortDirection,
+        columnToSort,
+        setColumnToSort,
+    } = useTableState('updated_at', 'desc');
 
     const query = useMemo(() => {
         return getLiveSpecs_captures(
