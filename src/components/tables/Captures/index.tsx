@@ -52,7 +52,6 @@ function CapturesTable() {
                     header="captureTable.header"
                     filterLabel="capturesTable.filterLabel"
                     enableSelection
-                    enableTimeFiltering
                     rowSelectorProps={{
                         selectableTableStoreName: SelectTableStoreNames.CAPTURE,
                         showMaterialize: true,
