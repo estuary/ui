@@ -1,4 +1,7 @@
-import { Box, Typography, useTheme } from '@mui/material';
+import { Refresh } from '@mui/icons-material';
+import { Box, IconButton, Stack, Typography, useTheme } from '@mui/material';
+import { getDraftSpecsByCatalogName } from 'api/draftSpecs';
+import { getLiveSpecsByCatalogName } from 'api/liveSpecs';
 import ResourceConfig from 'components/collection/ResourceConfig';
 import MessageWithLink from 'components/content/MessageWithLink';
 import MessageWithPopper from 'components/content/MessageWithPopper';
@@ -7,11 +10,8 @@ import BindingsTabs from 'components/editor/Bindings/Tabs';
 import { tabProps } from 'components/editor/Bindings/types';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
-import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import {
-    LiveSpecsQuery_spec_general,
-    useLiveSpecs_spec_general,
-} from 'hooks/useLiveSpecs';
+import useDraftSpecs from 'hooks/useDraftSpecs';
+import { useLiveSpecs_spec_general } from 'hooks/useLiveSpecs';
 import { ReactNode, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import ReactJson from 'react-json-view';
@@ -24,6 +24,11 @@ interface Props {
     loading: boolean;
     skeleton: ReactNode;
     readOnly?: boolean;
+}
+
+interface CollectionData {
+    spec: any;
+    belongsToDraft: boolean;
 }
 
 function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
@@ -43,22 +48,42 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
     const { liveSpecs } = useLiveSpecs_spec_general('collection');
     const { draftSpecs } = useDraftSpecs(persistedDraftId, null, 'collection');
 
-    const collectionData:
-        | LiveSpecsQuery_spec_general
-        | DraftSpecQuery
-        | undefined = useMemo(() => {
+    const collectionData: CollectionData | null = useMemo(() => {
         if (currentCollection) {
-            return discoveredCollections?.includes(currentCollection)
+            const belongsToDraft: boolean =
+                discoveredCollections?.includes(currentCollection) ?? false;
+
+            const queryData = belongsToDraft
                 ? draftSpecs.find(
                       (query) => query.catalog_name === currentCollection
                   )
                 : liveSpecs.find(
                       (query) => query.catalog_name === currentCollection
                   );
+
+            return queryData ? { spec: queryData.spec, belongsToDraft } : null;
         } else {
-            return undefined;
+            return null;
         }
     }, [currentCollection, discoveredCollections, draftSpecs, liveSpecs]);
+
+    const handlers = {
+        updateSchema: () => {
+            if (currentCollection && collectionData) {
+                if (collectionData.belongsToDraft) {
+                    void getDraftSpecsByCatalogName(
+                        currentCollection,
+                        'collection'
+                    );
+                } else {
+                    void getLiveSpecsByCatalogName(
+                        currentCollection,
+                        'collection'
+                    );
+                }
+            }
+        },
+    };
 
     if (currentCollection) {
         return loading ? (
@@ -77,7 +102,8 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                             readOnly={readOnly}
                         />
                     ) : collectionData ? (
-                        <Box
+                        <Stack
+                            spacing={2}
                             sx={{
                                 'p': 1,
                                 '& .react-json-view': {
@@ -85,18 +111,22 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                 },
                             }}
                         >
-                            <Box sx={{ mb: 2 }}>
-                                <AlertBox severity="info" short>
-                                    <MessageWithPopper
-                                        messageId="workflows.collectionSelector.alert.message.schemaEdit"
-                                        popper={<SchemaEditCommands />}
-                                    />
-                                </AlertBox>
-                            </Box>
+                            <AlertBox severity="info" short>
+                                <MessageWithPopper
+                                    messageId="workflows.collectionSelector.alert.message.schemaEdit"
+                                    popper={<SchemaEditCommands />}
+                                />
+                            </AlertBox>
 
-                            <Typography variant="h6" sx={{ mb: 2 }}>
-                                <FormattedMessage id="workflows.collectionSelector.header.collectionSchema" />
-                            </Typography>
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                <Typography variant="h6" sx={{ mr: 1 }}>
+                                    <FormattedMessage id="workflows.collectionSelector.header.collectionSchema" />
+                                </Typography>
+
+                                <IconButton onClick={handlers.updateSchema}>
+                                    <Refresh />
+                                </IconButton>
+                            </Box>
 
                             <ReactJson
                                 quotesOnKeys={false}
@@ -105,7 +135,7 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                 displayObjectSize={false}
                                 displayDataTypes={false}
                             />
-                        </Box>
+                        </Stack>
                     ) : (
                         <AlertBox
                             severity="error"

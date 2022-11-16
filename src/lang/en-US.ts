@@ -634,6 +634,9 @@ const MaterializationEdit: ResolvedIntlConfig['messages'] = {
 };
 
 // TODO (optimization): Consolidate duplicate create and edit messages.
+
+// TODO (cleanup): Remove the follow piece of content if we decide an icon button
+//   is sufficient to update the collection schema: workflows.collectionSelector.cta.updateSchema.
 const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.error.endpointConfig.empty': `${endpointConfigHeader} empty`,
     'workflows.error.initForm': `An issue was encountered initializing the form.`,
@@ -642,6 +645,7 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.alert.message.schemaEdit': `Collection schemas can be edited via the command line. {buttonLabel}`,
     'workflows.collectionSelector.alert.message.schemaEdit.buttonLabel': `View CLI Commands`,
     'workflows.collectionSelector.cta.delete': `Remove All`,
+    'workflows.collectionSelector.cta.updateSchema': `Refresh Schema`,
     'workflows.collectionSelector.error.title.missingCollectionSchema': `Failed to fetch collection schema`,
     'workflows.collectionSelector.header.collectionSchema': `Collection Schema`,
     'workflows.collectionSelector.label.discoveredCollections': `Discovered Collections`,
