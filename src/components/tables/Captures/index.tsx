@@ -6,7 +6,6 @@ import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
 import TableHydrator from 'stores/Tables/Hydrator';
 import useTableState from '../hooks';
-import StatsHydrator from './StatsHydrator';
 
 function CapturesTable() {
     const {
@@ -35,40 +34,32 @@ function CapturesTable() {
                 query={query}
                 selectableTableStoreName={SelectTableStoreNames.CAPTURE}
             >
-                <StatsHydrator
+                <EntityTable
+                    noExistingDataContentIds={{
+                        header: 'captures.message1',
+                        message: 'captures.message2',
+                    }}
+                    columns={tableColumns}
+                    renderTableRows={(data, showEntityStatus) => (
+                        <Rows data={data} showEntityStatus={showEntityStatus} />
+                    )}
+                    setPagination={setPagination}
+                    setSearchQuery={setSearchQuery}
+                    sortDirection={sortDirection}
+                    setSortDirection={setSortDirection}
+                    columnToSort={columnToSort}
+                    setColumnToSort={setColumnToSort}
+                    header="captureTable.header"
+                    filterLabel="capturesTable.filterLabel"
+                    enableSelection
+                    enableTimeFiltering
+                    rowSelectorProps={{
+                        selectableTableStoreName: SelectTableStoreNames.CAPTURE,
+                        showMaterialize: true,
+                    }}
+                    showEntityStatus={true}
                     selectableTableStoreName={SelectTableStoreNames.CAPTURE}
-                >
-                    <EntityTable
-                        noExistingDataContentIds={{
-                            header: 'captures.message1',
-                            message: 'captures.message2',
-                        }}
-                        columns={tableColumns}
-                        renderTableRows={(data, showEntityStatus) => (
-                            <Rows
-                                data={data}
-                                showEntityStatus={showEntityStatus}
-                            />
-                        )}
-                        setPagination={setPagination}
-                        setSearchQuery={setSearchQuery}
-                        sortDirection={sortDirection}
-                        setSortDirection={setSortDirection}
-                        columnToSort={columnToSort}
-                        setColumnToSort={setColumnToSort}
-                        header="captureTable.header"
-                        filterLabel="capturesTable.filterLabel"
-                        enableSelection
-                        enableTimeFiltering
-                        rowSelectorProps={{
-                            selectableTableStoreName:
-                                SelectTableStoreNames.CAPTURE,
-                            showMaterialize: true,
-                        }}
-                        showEntityStatus={true}
-                        selectableTableStoreName={SelectTableStoreNames.CAPTURE}
-                    />
-                </StatsHydrator>
+                />
             </TableHydrator>
         </Box>
     );

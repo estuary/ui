@@ -7,8 +7,6 @@ import TimeStamp from 'components/tables/cells/TimeStamp';
 import DetailsPanel from 'components/tables/Details/DetailsPanel';
 import { getEntityTableRowSx } from 'context/Theme';
 import { useState } from 'react';
-import Bytes from '../cells/stats/Bytes';
-import Docs from '../cells/stats/Docs';
 
 interface RowProps {
     row: CollectionQueryWithStats;
@@ -25,14 +23,14 @@ export const tableColumns = [
         field: 'catalog_name',
         headerIntlKey: 'entityTable.data.entity',
     },
-    {
-        field: null,
-        headerIntlKey: 'entityTable.stats.bytes_written_to_me',
-    },
-    {
-        field: null,
-        headerIntlKey: 'entityTable.stats.docs_written_to_me',
-    },
+    // {
+    //     field: null,
+    //     headerIntlKey: 'entityTable.stats.bytes_written_to_me',
+    // },
+    // {
+    //     field: null,
+    //     headerIntlKey: 'entityTable.stats.docs_written_to_me',
+    // },
     {
         field: 'updated_at',
         headerIntlKey: 'entityTable.data.lastPublished',
@@ -59,7 +57,7 @@ function Row({ row, showEntityStatus }: RowProps) {
                     showEntityStatus={showEntityStatus}
                 />
 
-                <Bytes
+                {/*                <Bytes
                     val={
                         row.stats
                             ? row.stats.bytes_written_by_me +
@@ -75,7 +73,7 @@ function Row({ row, showEntityStatus }: RowProps) {
                               row.stats.docs_written_to_me
                             : 0
                     }
-                />
+                />*/}
 
                 <TimeStamp time={row.updated_at} />
 
