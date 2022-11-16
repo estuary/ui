@@ -1,5 +1,5 @@
-import { Box, Button, Fade, Popper, useTheme } from '@mui/material';
-import { glassBkgWithBlur } from 'context/Theme';
+import { Box, Button, Fade, Popper } from '@mui/material';
+import { logDialogBackground } from 'context/Theme';
 import { MouseEvent, ReactNode, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
@@ -8,9 +8,10 @@ interface Props {
     popper: ReactNode;
 }
 
+// TODO (defect): Determine whether a Popover component or a modified Popper component
+//   should be used. Both have a number of tradeoffs, so it is truly a matter of what
+//   component is easiest to manipulate to achieve the desired functionality.
 function MessageWithPopper({ messageId, popper }: Props) {
-    const theme = useTheme();
-
     const [open, setOpen] = useState<boolean>(false);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -50,9 +51,10 @@ function MessageWithPopper({ messageId, popper }: Props) {
                                         sx={{
                                             p: 2,
                                             borderRadius: 5,
-                                            ...glassBkgWithBlur[
-                                                theme.palette.mode
-                                            ],
+                                            bgcolor: (theme) =>
+                                                logDialogBackground[
+                                                    theme.palette.mode
+                                                ],
                                         }}
                                     >
                                         {popper}
