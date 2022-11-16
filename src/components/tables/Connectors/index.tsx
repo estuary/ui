@@ -41,7 +41,6 @@ function ConnectorsTable() {
                         message: 'connectors.main.message2',
                     }}
                     columns={tableColumns}
-                    query={query}
                     renderTableRows={(data) => <Rows data={data} />}
                     setPagination={setPagination}
                     setSearchQuery={setSearchQuery}

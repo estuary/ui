@@ -16,7 +16,6 @@ import {
     Toolbar,
     Typography,
 } from '@mui/material';
-import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import RowSelector from 'components/tables/RowActions/RowSelector';
 import {
     SelectableTableStore,
@@ -24,7 +23,6 @@ import {
 } from 'components/tables/Store';
 import Title from 'components/tables/Title';
 import { useZustandStore } from 'context/Zustand/provider';
-import { useSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
 import { debounce } from 'lodash';
 import {
     ChangeEvent,
@@ -53,7 +51,6 @@ interface Props {
         field: string | null;
         headerIntlKey: string | null;
     }[];
-    query: PostgrestFilterBuilder<any>;
     renderTableRows: (data: any, showEntityStatus: boolean) => ReactNode;
     setPagination: (data: any) => void;
     setSearchQuery: (data: any) => void;
@@ -87,7 +84,6 @@ const rowsPerPageOptions = [10, 25, 50];
 function EntityTable({
     columns,
     noExistingDataContentIds,
-    query,
     renderTableRows,
     setPagination,
     setSearchQuery,
@@ -106,9 +102,6 @@ function EntityTable({
     const [page, setPage] = useState(0);
     const isFiltering = useRef(false);
 
-    const { mutate: mutateSelectData } = useSelectNew<any>(query);
-    // const selectData = useSelectResponse ? useSelectResponse.data : null;
-
     const intl = useIntl();
 
     const isValidating = useZustandStore<
@@ -125,6 +118,11 @@ function EntityTable({
         SelectableTableStore,
         SelectableTableStore['query']['count']
     >(selectableTableStoreName, selectableTableStoreSelectors.query.count);
+
+    const hydrate = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['hydrate']
+    >(selectableTableStoreName, selectableTableStoreSelectors.query.hydrate);
 
     const setRows = useZustandStore<
         SelectableTableStore,
@@ -216,9 +214,9 @@ function EntityTable({
 
     useEffect(() => {
         if (successfulTransformations > 0) {
-            mutateSelectData().catch(() => {});
+            hydrate();
         }
-    }, [mutateSelectData, successfulTransformations]);
+    }, [hydrate, successfulTransformations]);
 
     const resetSelection = () => {
         if (enableSelection) {

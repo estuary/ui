@@ -40,7 +40,6 @@ function MaterializationsTable() {
                         message: 'materializations.message2',
                     }}
                     columns={tableColumns}
-                    query={query}
                     renderTableRows={(data, showEntityStatus) => (
                         <Rows data={data} showEntityStatus={showEntityStatus} />
                     )}

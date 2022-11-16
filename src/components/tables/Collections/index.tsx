@@ -40,7 +40,6 @@ function CollectionsTable() {
                         message: 'collections.message2',
                     }}
                     columns={tableColumns}
-                    query={query}
                     renderTableRows={(data, showEntityStatus) => (
                         <Rows data={data} showEntityStatus={showEntityStatus} />
                     )}

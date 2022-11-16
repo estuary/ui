@@ -41,7 +41,6 @@ function AccessGrantsTable() {
                         disableDoclink: true,
                     }}
                     columns={tableColumns}
-                    query={query}
                     renderTableRows={(data) => <Rows data={data} />}
                     setPagination={setPagination}
                     setSearchQuery={setSearchQuery}

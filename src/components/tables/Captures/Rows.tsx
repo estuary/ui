@@ -31,6 +31,7 @@ interface RowsProps {
 }
 
 export interface RowProps {
+    stats?: any;
     row: CaptureQueryWithStats;
     setRow: any;
     isSelected: boolean;
@@ -72,7 +73,7 @@ export const tableColumns = [
     },
 ];
 
-function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
+function Row({ stats, isSelected, setRow, row, showEntityStatus }: RowProps) {
     const navigate = useNavigate();
     const theme = useTheme();
 
@@ -125,9 +126,9 @@ function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
                     imageTag={`${row.connector_image_name}${row.connector_image_tag}`}
                 />
 
-                <Bytes val={row.stats?.bytes_written_by_me} />
+                <Bytes val={stats?.[row.catalog_name]?.bytes_written_by_me} />
 
-                <Docs val={row.stats?.docs_written_by_me} />
+                <Docs val={stats?.[row.catalog_name]?.docs_written_by_me} />
 
                 <ChipList strings={row.writes_to} />
 
@@ -174,6 +175,11 @@ function Rows({ data, showEntityStatus }: RowsProps) {
         selectableTableStoreSelectors.successfulTransformations.get
     );
 
+    const stats = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['stats']
+    >(selectTableStoreName, selectableTableStoreSelectors.stats.get);
+
     // Shard Detail Store
     const setShards = useShardDetail_setShards();
 
@@ -193,6 +199,7 @@ function Rows({ data, showEntityStatus }: RowsProps) {
         <>
             {data.map((row) => (
                 <Row
+                    stats={stats}
                     row={row}
                     key={row.id}
                     isSelected={selected.has(row.id)}

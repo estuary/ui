@@ -2,12 +2,14 @@ import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import { getStatsByName } from 'api/stats';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
+import { flatMap } from 'lodash';
 import {
     AsyncOperationProps,
     getAsyncDefault,
     getStoreWithHydrationSettings,
     StoreWithHydration,
 } from 'stores/Hydration';
+import { Schema } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
 import create, { StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -33,7 +35,8 @@ export interface SelectableTableStore extends StoreWithHydration {
     query: AsyncOperationProps;
     hydrate: () => void;
 
-    setStats: (query: PostgrestFilterBuilder<any>) => void;
+    setStats: () => void;
+    stats: Schema | null;
 }
 
 export const initialCreateStates = {
@@ -48,9 +51,10 @@ export const initialCreateStates = {
 
 export const getInitialStateData = (): Pick<
     SelectableTableStore,
-    'selected' | 'rows' | 'successfulTransformations' | 'query'
+    'selected' | 'rows' | 'successfulTransformations' | 'query' | 'stats'
 > => {
     return {
+        stats: null,
         query: getAsyncDefault(),
         selected: initialCreateStates.selected(),
         rows: initialCreateStates.rows(),
@@ -112,10 +116,12 @@ export const getInitialState = (
         },
 
         setStats: async () => {
-            const { rows } = get();
-            const catalogNames = Array.from(rows.keys());
+            const { response } = get().query;
+            const catalogNames = flatMap(response, (data) => {
+                return data.catalog_name;
+            });
 
-            if (catalogNames.length > 0) {
+            if (response.length > 0) {
                 const { data, error } = await getStatsByName(catalogNames);
 
                 if (error) {
@@ -124,17 +130,35 @@ export const getInitialState = (
                 }
 
                 if (data && data.length > 0) {
-                    data.forEach((el) => {
-                        const currRow = rows.get(el.catalog_name);
-                        if (currRow) {
-                            rows.set(el.catalog_name, {
-                                ...currRow,
-                                ...el,
-                            });
+                    const statsData = {};
+                    data.forEach((datum) => {
+                        const { catalog_name } = datum;
+                        const currentStat = statsData[catalog_name];
+
+                        if (currentStat) {
+                            Object.entries(currentStat).forEach(
+                                ([key, value]) => {
+                                    if (typeof value === 'number') {
+                                        currentStat[key] =
+                                            currentStat[key] || 0;
+                                        currentStat[key] += datum[key];
+                                    }
+                                }
+                            );
+                        } else {
+                            statsData[catalog_name] = datum;
                         }
+                        return datum;
                     });
 
-                    set({ rows });
+                    console.log('setting stats', statsData);
+                    set(
+                        produce((state) => {
+                            state.stats = statsData;
+                        }),
+                        false,
+                        'Table Store Stats Hydration Success'
+                    );
                 }
             }
         },
@@ -205,48 +229,12 @@ export const getInitialState = (
                 false,
                 'Table Store Hydration Success'
             );
-
-            // try {
-            //     // setStatsLoaded(false);
-            //     const { data: statsData, error: statsError } =
-            //         await getStatsByName(
-            //             rowData.map((rowDatum) => rowDatum.catalog_name)
-            //         );
-
-            //     if (statsError) {
-            //         console.error('Uh oh ', statsError);
-            //         return setHydrationErrorsExist(true);
-            //     }
-
-            //     if (statsData && statsData.length > 0) {
-            //         newRows = [];
-            //         console.log('statsData', statsData);
-
-            //         rowData.forEach((row) => {
-            //             statsData.forEach((stats) => {
-            //                 const foo = find(newRows, {
-            //                     catalog_name: row.catalog_name,
-            //                 });
-            //                 if (newRows && !foo?.stats) {
-            //                     newRows.push({
-            //                         ...row,
-            //                         stats:
-            //                             stats.catalog_name === row.catalog_name
-            //                                 ? stats
-            //                                 : undefined,
-            //                     });
-            //                 }
-            //             });
-            //         });
-            //     }
-            // } catch (e: unknown) {
-            //     return setHydrationErrorsExist(true);
-            // }
         },
 
         setQuery: async (query) => {
             set(
                 produce((state) => {
+                    state.query.loading = true;
                     state.query.fetcher = query;
                 }),
                 false,
@@ -265,6 +253,7 @@ export const createSelectableTableStore = (key: string) => {
 export const selectableTableStoreSelectors = {
     stats: {
         set: (state: SelectableTableStore) => state.setStats,
+        get: (state: SelectableTableStore) => state.stats,
     },
     query: {
         hydrate: (state: SelectableTableStore) => state.hydrate,
