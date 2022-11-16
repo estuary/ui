@@ -186,18 +186,21 @@ export const getDraftSpecsBySpecType = async (
 // TODO (optimization | typing): This is temporary typing given the supabase package upgrade will
 //   considerably alter our approach to typing.
 interface DraftSpecsExtQuery_ByCatalogName {
+    draft_id: string;
     catalog_name: string;
     spec_type: string;
     spec: any;
 }
 
 export const getDraftSpecsByCatalogName = async (
+    draftId: string,
     catalogName: string,
     specType: Entity
 ) => {
     const data = await supabaseClient
         .from(TABLES.DRAFT_SPECS_EXT)
-        .select(`catalog_name,spec_type,spec`)
+        .select(`draft_id,catalog_name,spec_type,spec`)
+        .eq('draft_id', draftId)
         .eq('catalog_name', catalogName)
         .eq('spec_type', specType)
         .then(handleSuccess<DraftSpecsExtQuery_ByCatalogName>, handleFailure);

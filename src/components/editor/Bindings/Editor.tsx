@@ -1,5 +1,12 @@
 import { Refresh } from '@mui/icons-material';
-import { Box, IconButton, Stack, Typography, useTheme } from '@mui/material';
+import {
+    Box,
+    CircularProgress,
+    IconButton,
+    Stack,
+    Typography,
+    useTheme,
+} from '@mui/material';
 import { getDraftSpecsByCatalogName } from 'api/draftSpecs';
 import { getLiveSpecsByCatalogName } from 'api/liveSpecs';
 import ResourceConfig from 'components/collection/ResourceConfig';
@@ -44,6 +51,7 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
     const discoveredCollections = useResourceConfig_discoveredCollections();
 
     const [activeTab, setActiveTab] = useState<number>(0);
+    const [schemaUpdated, setSchemaUpdated] = useState<boolean>(true);
 
     const { liveSpecs } = useLiveSpecs_spec_general('collection');
     const { draftSpecs } = useDraftSpecs(persistedDraftId, null, 'collection');
@@ -70,15 +78,40 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
     const handlers = {
         updateSchema: () => {
             if (currentCollection && collectionData) {
-                if (collectionData.belongsToDraft) {
-                    void getDraftSpecsByCatalogName(
+                setSchemaUpdated(false);
+
+                if (collectionData.belongsToDraft && persistedDraftId) {
+                    getDraftSpecsByCatalogName(
+                        persistedDraftId,
                         currentCollection,
                         'collection'
+                    ).then(
+                        (response) => {
+                            if (response.data) {
+                                collectionData.spec = response.data[0].spec;
+                            }
+
+                            setSchemaUpdated(true);
+                        },
+                        () => {
+                            setSchemaUpdated(true);
+                        }
                     );
                 } else {
-                    void getLiveSpecsByCatalogName(
+                    getLiveSpecsByCatalogName(
                         currentCollection,
                         'collection'
+                    ).then(
+                        (response) => {
+                            if (response.data) {
+                                collectionData.spec = response.data[0].spec;
+                            }
+
+                            setSchemaUpdated(true);
+                        },
+                        () => {
+                            setSchemaUpdated(true);
+                        }
                     );
                 }
             }
@@ -123,9 +156,16 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                     <FormattedMessage id="workflows.collectionSelector.header.collectionSchema" />
                                 </Typography>
 
-                                <IconButton onClick={handlers.updateSchema}>
-                                    <Refresh />
-                                </IconButton>
+                                {schemaUpdated ? (
+                                    <IconButton onClick={handlers.updateSchema}>
+                                        <Refresh />
+                                    </IconButton>
+                                ) : (
+                                    <CircularProgress
+                                        size="1.5rem"
+                                        sx={{ ml: 1 }}
+                                    />
+                                )}
                             </Box>
 
                             <ReactJson
