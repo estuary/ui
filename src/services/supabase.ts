@@ -35,6 +35,7 @@ export const DEFAULT_FILTER = '__unknown__';
 
 export enum TABLES {
     APPLIED_DIRECTIVES = 'applied_directives',
+    CATALOG_STATS = 'catalog_stats',
     COMBINED_GRANTS_EXT = 'combined_grants_ext',
     CONNECTOR_TAGS = 'connector_tags',
     CONNECTORS = 'connectors',
@@ -81,7 +82,7 @@ export const supabaseClient = createClient(
     }
 );
 
-interface SortingProps<Data> {
+export interface SortingProps<Data> {
     col: keyof Data;
     direction: SortDirection;
 }

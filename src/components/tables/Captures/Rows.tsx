@@ -1,4 +1,5 @@
 import { TableRow, useTheme } from '@mui/material';
+import { CaptureQueryWithStats } from 'api/liveSpecsExt';
 import { authenticatedRoutes } from 'app/routes';
 import ChipList from 'components/tables/cells/ChipList';
 import Connector from 'components/tables/cells/Connector';
@@ -21,15 +22,15 @@ import { QUERY_PARAM_CONNECTOR_TITLE } from 'services/supabase';
 import { SelectTableStoreNames } from 'stores/names';
 import { useShardDetail_setShards } from 'stores/ShardDetail/hooks';
 import { getPathWithParams } from 'utils/misc-utils';
-import { LiveSpecsExtQuery } from './types';
 
 interface RowsProps {
-    data: LiveSpecsExtQuery[];
+    data: CaptureQueryWithStats[];
     showEntityStatus: boolean;
 }
 
 export interface RowProps {
-    row: LiveSpecsExtQuery;
+    stats?: any;
+    row: CaptureQueryWithStats;
     setRow: any;
     isSelected: boolean;
     showEntityStatus: boolean;
@@ -48,6 +49,14 @@ export const tableColumns = [
         field: QUERY_PARAM_CONNECTOR_TITLE,
         headerIntlKey: 'entityTable.data.connectorType',
     },
+    // {
+    //     field: null,
+    //     headerIntlKey: 'entityTable.stats.bytes_written_by_me',
+    // },
+    // {
+    //     field: null,
+    //     headerIntlKey: 'entityTable.stats.docs_written_by_me',
+    // },
     {
         field: 'writes_to',
         headerIntlKey: 'entityTable.data.writesTo',
@@ -115,6 +124,10 @@ function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
                     imageTag={`${row.connector_image_name}${row.connector_image_tag}`}
                 />
 
+                {/*                <Bytes val={stats?.[row.catalog_name]?.bytes_written_by_me} />
+
+                <Docs val={stats?.[row.catalog_name]?.docs_written_by_me} />*/}
+
                 <ChipList strings={row.writes_to} />
 
                 <TimeStamp time={row.updated_at} />
@@ -160,6 +173,11 @@ function Rows({ data, showEntityStatus }: RowsProps) {
         selectableTableStoreSelectors.successfulTransformations.get
     );
 
+    const stats = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['stats']
+    >(selectTableStoreName, selectableTableStoreSelectors.stats.get);
+
     // Shard Detail Store
     const setShards = useShardDetail_setShards();
 
@@ -179,6 +197,7 @@ function Rows({ data, showEntityStatus }: RowsProps) {
         <>
             {data.map((row) => (
                 <Row
+                    stats={stats}
                     row={row}
                     key={row.id}
                     isSelected={selected.has(row.id)}
