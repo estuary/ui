@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { getGrantsForEverything } from 'api/combinedGrantsExt';
+import { getGrants } from 'api/combinedGrantsExt';
 import Rows, { tableColumns } from 'components/tables/AccessGrants/Rows';
 import EntityTable from 'components/tables/EntityTable';
 import { useMemo } from 'react';
@@ -20,7 +20,7 @@ function AccessGrantsTable() {
     } = useTableState('user_full_name');
 
     const query = useMemo(() => {
-        return getGrantsForEverything(pagination, searchQuery, [
+        return getGrants(pagination, searchQuery, [
             {
                 col: columnToSort,
                 direction: sortDirection,

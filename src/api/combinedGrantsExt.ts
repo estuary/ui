@@ -6,21 +6,8 @@ import {
 } from 'services/supabase';
 import { Grants } from 'types';
 
-// Used when getting grants for a user to know what tenant to list
-const getGrantsForUser = (userId: string, adminOnly?: boolean) => {
-    let queryBuilder = supabaseClient
-        .from<Grants>(TABLES.COMBINED_GRANTS_EXT)
-        .select(`*`);
-
-    if (adminOnly) {
-        queryBuilder = queryBuilder.eq('capability', 'admin');
-    }
-
-    return queryBuilder.eq('user_id', userId);
-};
-
 // Used to display all the grants for everything in the admin page
-const getGrantsForEverything = (
+const getGrants = (
     pagination: any,
     searchQuery: any,
     sorting: SortingProps<any>[]
@@ -52,6 +39,19 @@ const getGrantsForEverything = (
     return queryBuilder;
 };
 
+// Used when getting grants for a user to know what tenant to list
+const getGrantsForUser = (userId: string, adminOnly?: boolean) => {
+    let queryBuilder = supabaseClient
+        .from<Grants>(TABLES.COMBINED_GRANTS_EXT)
+        .select(`*`);
+
+    if (adminOnly) {
+        queryBuilder = queryBuilder.eq('capability', 'admin');
+    }
+
+    return queryBuilder.eq('user_id', userId);
+};
+
 // Used to find out what prefixes we can use in the data plane gateway
 const getGrantsForAuthToken = () => {
     return supabaseClient
@@ -59,4 +59,4 @@ const getGrantsForAuthToken = () => {
         .select(`id, object_role`);
 };
 
-export { getGrantsForAuthToken, getGrantsForEverything, getGrantsForUser };
+export { getGrantsForAuthToken, getGrants, getGrantsForUser };
