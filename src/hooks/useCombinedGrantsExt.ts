@@ -1,10 +1,8 @@
 import { Auth } from '@supabase/ui';
+import { getGrantsForUser } from 'api/combinedGrantsExt';
 import { singleCallSettings } from 'context/SWR';
-import { DEFAULT_FILTER, TABLES } from 'services/supabase';
 import { Grants } from 'types';
-import { useQuery, useSelect } from './supabase-swr/';
-
-const COMBINED_GRANTS_EXT_COLS = ['*'];
+import { useSelectNew } from './supabase-swr/hooks/useSelect';
 
 interface Props {
     adminOnly?: boolean;
@@ -15,30 +13,13 @@ const defaultResponse: Grants[] = [];
 function useCombinedGrantsExt({ adminOnly, singleCall }: Props) {
     const { user } = Auth.useUser();
 
-    const combinedGrantsExtQuery = useQuery<Grants>(
-        TABLES.COMBINED_GRANTS_EXT,
-        {
-            columns: COMBINED_GRANTS_EXT_COLS,
-            filter: (query) => {
-                let queryBuilder = query;
-
-                if (adminOnly) {
-                    queryBuilder = queryBuilder.eq('capability', 'admin');
-                }
-
-                return queryBuilder.eq('user_id', user?.id ?? DEFAULT_FILTER);
-            },
-        },
-        [adminOnly, singleCall]
-    );
-
-    const { data, error, mutate, isValidating } = useSelect(
-        user?.id ? combinedGrantsExtQuery : null,
+    const { data, error, mutate, isValidating } = useSelectNew(
+        user?.id ? getGrantsForUser(user.id, adminOnly) : null,
         singleCall ? singleCallSettings : undefined
     );
 
     return {
-        combinedGrants: data ? data.data : defaultResponse,
+        combinedGrants: data ? (data.data as Grants[]) : defaultResponse,
         error,
         mutate,
         isValidating,

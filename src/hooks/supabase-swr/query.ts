@@ -6,7 +6,7 @@ export type QueryConfig<Data> = {
     count?: Count;
     head?: boolean;
 };
-export type Query<Data> = [string | (() => string), QueryConfig<Data>] | null;
+export type Query<Data> = [string, QueryConfig<Data>] | null;
 
 export const createQuery = <Data>(
     table: string,

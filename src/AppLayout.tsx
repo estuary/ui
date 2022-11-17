@@ -8,10 +8,10 @@ import Navigation from './components/navigation/Navigation';
 function AppLayout() {
     const [navigationConfig, setNavigationConfig] = useLocalStorage(
         LocalStorageKeys.NAVIGATION_SETTINGS,
-        { open: true }
+        { open: false }
     );
 
-    const navigationOpen = navigationConfig?.open ?? true;
+    const navigationOpen = navigationConfig?.open ?? false;
     const navigationWidth: NavWidths = navigationConfig?.open
         ? NavWidths.FULL
         : NavWidths.RAIL;

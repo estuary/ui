@@ -71,6 +71,14 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
 
     // Used in directives
     'directives.returning': `Welcome back. You still need to provide some information before using the application.`,
+
+    // User in filters for tables
+    'filter.time.today': `Today`,
+    'filter.time.yesterday': `Yesterday`,
+    'filter.time.lastWeek': `Last Week`,
+    'filter.time.thisWeek': `This Week`,
+    'filter.time.lastMonth': `Last Month`,
+    'filter.time.thisMonth': `This Month`,
 };
 
 const CTAs: ResolvedIntlConfig['messages'] = {
@@ -310,6 +318,19 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.data.capability': `Capability`,
     'entityTable.data.objectRole': `Object`,
     'entityTable.data.lastPubUserFullName': `Last Updated By`,
+
+    'entityTable.stats.bytes_written_by_me': `Bytes Written`,
+    'entityTable.stats.docs_written_by_me': `Docs Written`,
+    'entityTable.stats.bytes_read_by_me': `Bytes Read`,
+    'entityTable.stats.docs_read_by_me': `Docs Read`,
+
+    'entityTable.stats.bytes_written_to_me': `Bytes Written`,
+    'entityTable.stats.docs_written_to_me': `Docs Written`,
+    'entityTable.stats.bytes_read_to_me': `Bytes Read`,
+    'entityTable.stats.docs_read_to_me': `Docs Read`,
+
+    'entityTable.stats.error': `Failed to fetch stats.`,
+    'entityTable.stats.filterMenu': `Stats for {currentOption}`,
 
     'entityTable.unmatchedFilter.header': `No results found.`,
     'entityTable.unmatchedFilter.message': `We couldn't find any data matching your search. Please try a different filter.`,

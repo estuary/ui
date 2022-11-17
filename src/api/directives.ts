@@ -6,7 +6,12 @@ import {
     TABLES,
     updateSupabase,
 } from 'services/supabase';
-import { AppliedDirective, Directive, Schema } from 'types';
+import {
+    AppliedDirective,
+    Directive,
+    JoinedAppliedDirective,
+    Schema,
+} from 'types';
 
 export interface ExchangeResponse {
     directive: Directive | null; //Only null so we can "fake" this respose below
@@ -74,4 +79,30 @@ const submitDirective = async (
     }
 };
 
-export { exchangeBearerToken, submitDirective };
+const getAppliedDirectives = (
+    type: keyof typeof DIRECTIVES,
+    userId: string
+) => {
+    let queryBuilder = supabaseClient.from<JoinedAppliedDirective>(
+        TABLES.APPLIED_DIRECTIVES
+    ).select(`
+            id,
+            directive_id,
+            job_status,
+            logs_token,
+            user_id,
+            user_claims,
+            updated_at,
+            directives !inner(spec->>type)
+        `);
+
+    queryBuilder = queryBuilder.eq('directives.spec->>type', type);
+    queryBuilder = queryBuilder.eq('user_id', userId);
+
+    return DIRECTIVES[type]
+        .queryFilter(queryBuilder)
+        .order('updated_at', { ascending: false })
+        .limit(1);
+};
+
+export { exchangeBearerToken, getAppliedDirectives, submitDirective };

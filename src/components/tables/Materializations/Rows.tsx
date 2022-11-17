@@ -1,4 +1,5 @@
 import { TableRow, useTheme } from '@mui/material';
+import { MaterializationQueryWithStats } from 'api/liveSpecsExt';
 import { authenticatedRoutes } from 'app/routes';
 import ChipList from 'components/tables/cells/ChipList';
 import Connector from 'components/tables/cells/Connector';
@@ -21,15 +22,14 @@ import { QUERY_PARAM_CONNECTOR_TITLE } from 'services/supabase';
 import { SelectTableStoreNames } from 'stores/names';
 import { useShardDetail_setShards } from 'stores/ShardDetail/hooks';
 import { getPathWithParams } from 'utils/misc-utils';
-import { LiveSpecsExtQuery } from './types';
 
 interface RowsProps {
-    data: LiveSpecsExtQuery[];
+    data: MaterializationQueryWithStats[];
     showEntityStatus: boolean;
 }
 
 interface RowProps {
-    row: LiveSpecsExtQuery;
+    row: MaterializationQueryWithStats;
     setRow: any;
     isSelected: boolean;
     showEntityStatus: boolean;
@@ -48,6 +48,14 @@ export const tableColumns = [
         field: QUERY_PARAM_CONNECTOR_TITLE,
         headerIntlKey: 'data.type',
     },
+    // {
+    //     field: null,
+    //     headerIntlKey: 'entityTable.stats.bytes_read_by_me',
+    // },
+    // {
+    //     field: null,
+    //     headerIntlKey: 'entityTable.stats.docs_read_by_me',
+    // },
     {
         field: 'reads_from',
         headerIntlKey: 'entityTable.data.readsFrom',
@@ -107,6 +115,10 @@ function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
                     connectorName={row.title}
                     imageTag={`${row.connector_image_name}${row.connector_image_tag}`}
                 />
+
+                {/*                <Bytes val={row.stats?.bytes_read_by_me} />
+
+                <Docs val={row.stats?.docs_read_by_me} />*/}
 
                 <ChipList strings={row.reads_from} />
 

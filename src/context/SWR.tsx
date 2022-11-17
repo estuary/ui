@@ -60,6 +60,7 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
 
                     // TODO (SWR) this is nice but we need some UX built out before turning it back on
                     revalidateOnFocus: false,
+                    dedupingInterval: 5000,
                 }}
             >
                 {children}
