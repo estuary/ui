@@ -23,7 +23,6 @@ import {
 } from 'components/tables/Store';
 import Title from 'components/tables/Title';
 import { useZustandStore } from 'context/Zustand/provider';
-import { Query, useSelect } from 'hooks/supabase-swr';
 import { debounce } from 'lodash';
 import {
     ChangeEvent,
@@ -44,6 +43,7 @@ import {
     TableStatuses,
 } from 'types';
 import { getEmptyTableHeader, getEmptyTableMessage } from 'utils/table-utils';
+import DateFilter from './Filters/Date';
 import { RowSelectorProps } from './RowActions/types';
 
 interface Props {
@@ -51,7 +51,6 @@ interface Props {
         field: string | null;
         headerIntlKey: string | null;
     }[];
-    query: Query<any>;
     renderTableRows: (data: any, showEntityStatus: boolean) => ReactNode;
     setPagination: (data: any) => void;
     setSearchQuery: (data: any) => void;
@@ -62,6 +61,7 @@ interface Props {
     header: string;
     filterLabel: string;
     enableSelection?: boolean;
+    enableTimeFiltering?: boolean;
     rowSelectorProps?: RowSelectorProps;
     noExistingDataContentIds: TableIntlConfig;
     showEntityStatus?: boolean;
@@ -84,7 +84,6 @@ const rowsPerPageOptions = [10, 25, 50];
 function EntityTable({
     columns,
     noExistingDataContentIds,
-    query,
     renderTableRows,
     setPagination,
     setSearchQuery,
@@ -95,6 +94,7 @@ function EntityTable({
     header,
     filterLabel,
     enableSelection,
+    enableTimeFiltering,
     rowSelectorProps,
     showEntityStatus = false,
     selectableTableStoreName,
@@ -102,14 +102,27 @@ function EntityTable({
     const [page, setPage] = useState(0);
     const isFiltering = useRef(false);
 
-    const {
-        data: useSelectResponse,
-        isValidating,
-        mutate: mutateSelectData,
-    } = useSelect(query);
-    const selectData = useSelectResponse ? useSelectResponse.data : null;
-
     const intl = useIntl();
+
+    const isValidating = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['query']['loading']
+    >(selectableTableStoreName, selectableTableStoreSelectors.query.loading);
+
+    const selectData = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['query']['response']
+    >(selectableTableStoreName, selectableTableStoreSelectors.query.response);
+
+    const selectDataCount = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['query']['count']
+    >(selectableTableStoreName, selectableTableStoreSelectors.query.count);
+
+    const hydrate = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['hydrate']
+    >(selectableTableStoreName, selectableTableStoreSelectors.query.hydrate);
 
     const setRows = useZustandStore<
         SelectableTableStore,
@@ -152,9 +165,9 @@ function EntityTable({
 
     useEffect(() => {
         if (successfulTransformations > 0) {
-            mutateSelectData().catch(() => {});
+            hydrate();
         }
-    }, [mutateSelectData, successfulTransformations]);
+    }, [hydrate, successfulTransformations]);
 
     const resetSelection = () => {
         if (enableSelection) {
@@ -274,6 +287,8 @@ function EntityTable({
                     ) : (
                         <Title header={header} />
                     )}
+
+                    {enableTimeFiltering ? <DateFilter /> : null}
 
                     <Box
                         sx={{
@@ -396,12 +411,12 @@ function EntityTable({
                             )}
                         </TableBody>
 
-                        {dataRows && useSelectResponse?.count ? (
+                        {dataRows && selectDataCount ? (
                             <TableFooter>
                                 <TableRow>
                                     <TablePagination
                                         rowsPerPageOptions={rowsPerPageOptions}
-                                        count={useSelectResponse.count}
+                                        count={selectDataCount}
                                         rowsPerPage={rowsPerPage}
                                         page={page}
                                         onPageChange={handlers.changePage}

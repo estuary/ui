@@ -30,6 +30,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.noUnDo': `This action cannot be undone.`,
     'common.version': `version`,
     'common.tenant': `Prefix`,
+    'common.recommended': `Recommended`,
 
     // Aria
     'aria.openExpand': `show more`,
@@ -70,6 +71,14 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
 
     // Used in directives
     'directives.returning': `Welcome back. You still need to provide some information before using the application.`,
+
+    // User in filters for tables
+    'filter.time.today': `Today`,
+    'filter.time.yesterday': `Yesterday`,
+    'filter.time.lastWeek': `Last Week`,
+    'filter.time.thisWeek': `This Week`,
+    'filter.time.lastMonth': `Last Month`,
+    'filter.time.thisMonth': `This Month`,
 };
 
 const CTAs: ResolvedIntlConfig['messages'] = {
@@ -101,7 +110,10 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.table': `Table`,
     'cta.list': `List`,
     'cta.expandToView': `Expand to view`,
+    'cta.login.google': `Sign in with Google`,
+    'cta.register.google': `Register with Google`,
     'cta.login.github': `Sign in with GitHub`,
+    'cta.register.github': `Register with GitHub`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
@@ -263,9 +275,13 @@ const Registration: ResolvedIntlConfig['messages'] = {
 };
 
 const LoginPage: ResolvedIntlConfig['messages'] = {
-    'login.oidc.message': `Sign in to continue to ${CommonMessages.productName}.`,
     'login.documentAcknowledgement': `By accessing ${CommonMessages.productName} you agree to our {terms} and {privacy}.`,
     'login.jwtExpired': 'Your authorization has expired. Please sign in again.',
+
+    'login.tabs.login': `Sign In`,
+    'login.tabs.register': `Register`,
+    'login.login.message': `Sign in to continue to ${CommonMessages.productName}.`,
+    'login.register.message': `Please use a provider below to regisiter for a free trial of ${CommonMessages.productName}.`,
 
     'login.passwordReset': 'You should not need to reset your password.',
 
@@ -284,6 +300,9 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
     'login.loginFailed': 'Failed to sign in',
     'login.loginFailed.google': 'Failed to sign in with Google',
     'login.loginFailed.github': 'Failed to sign in with GitHub',
+    'login.registerFailed': 'Failed to register',
+    'login.registerFailed.google': 'Failed to register with Google',
+    'login.registerFailed.github': 'Failed to register with GitHub',
     'login.userNotFound': 'User not found. Please sign up below.',
 };
 
@@ -309,6 +328,19 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.data.capability': `Capability`,
     'entityTable.data.objectRole': `Object`,
     'entityTable.data.lastPubUserFullName': `Last Updated By`,
+
+    'entityTable.stats.bytes_written_by_me': `Bytes Written`,
+    'entityTable.stats.docs_written_by_me': `Docs Written`,
+    'entityTable.stats.bytes_read_by_me': `Bytes Read`,
+    'entityTable.stats.docs_read_by_me': `Docs Read`,
+
+    'entityTable.stats.bytes_written_to_me': `Bytes Written`,
+    'entityTable.stats.docs_written_to_me': `Docs Written`,
+    'entityTable.stats.bytes_read_to_me': `Bytes Read`,
+    'entityTable.stats.docs_read_to_me': `Docs Read`,
+
+    'entityTable.stats.error': `Failed to fetch stats.`,
+    'entityTable.stats.filterMenu': `Stats for {currentOption}`,
 
     'entityTable.unmatchedFilter.header': `No results found.`,
     'entityTable.unmatchedFilter.message': `We couldn't find any data matching your search. Please try a different filter.`,
@@ -369,14 +401,14 @@ const ConnectorsPage: ResolvedIntlConfig['messages'] = {
     'connectorTable.data.documentation_url': `Documentation`,
     'connectorTable.data.external_url': `Homepage`,
     'connectorTable.data.actions': `Actions`,
-    'connectorTable.data.connectorRequest': `Request a New Connector`,
+    'connectorTable.data.connectorRequest': `New Connector`,
     'connectorTable.actionsCta.capture': `Capture`,
     'connectorTable.actionsCta.materialization': `Materialize`,
     'connectorTable.actionsCta.connectorRequest': `Contact Estuary`,
     'connectors.header': `Connectors`,
     'connectors.main.message1': `There are no connectors available matching your search.`,
-    'connectors.main.message2.alt': `If you'd like to request a connector for a system that isn't yet supported, click "Contact Estuary" to submit a connector request form.`,
-    'connectors.main.message2': `If you'd like to request a connector for a system that isn't yet supported, {docLink}.`,
+    'connectors.main.message2.alt': `To request a connector for a new system, click "Contact Estuary" and submit the form.`,
+    'connectors.main.message2': `To request a connector for a system that isn't yet supported, {docLink}.`,
     'connectors.main.message2.docLink': `contact Estuary`,
     'connectors.main.message2.docPath': `https://github.com/estuary/connectors/issues/new?assignees=&labels=new+connector&template=request-new-connector-form.yaml&title=Request+a+connector+to+%5Bcapture+from+%7C+materialize+to%5D+%5Byour+favorite+system%5D`,
 };

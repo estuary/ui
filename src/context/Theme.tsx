@@ -78,6 +78,11 @@ const tonalOffset = 0.1;
 // const borderWidth = 2;
 // const borderColor = "rgba(0, 0, 0, 0.13)";
 
+export const logoColors = {
+    purple: '#5974ea',
+    teal: '#75d4d5',
+};
+
 // Breakpoints
 const xl = 1600;
 const lg = 1440;
@@ -297,6 +302,7 @@ export const LINK_BUTTON_STYLING: SxProps<Theme> = {
     },
 };
 
+export const connectorImageBackgroundRadius = 5;
 export const connectorImageBackgroundSx: SxProps<Theme> = {
     width: '100%',
     height: 125,
@@ -304,7 +310,7 @@ export const connectorImageBackgroundSx: SxProps<Theme> = {
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 2,
-    borderRadius: 5,
+    borderRadius: connectorImageBackgroundRadius,
     background: connectorCardLogoBackground,
 };
 

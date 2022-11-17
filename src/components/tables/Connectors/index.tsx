@@ -1,64 +1,58 @@
 import { Box } from '@mui/material';
+import { getConnectors } from 'api/connectors';
 import Rows, { tableColumns } from 'components/tables/Connectors/Rows';
-import EntityTable, { getPagination } from 'components/tables/EntityTable';
-import { useQuery } from 'hooks/supabase-swr';
-import {
-    ConnectorWithTagDetailQuery,
-    CONNECTOR_WITH_TAG_QUERY,
-} from 'hooks/useConnectorWithTagDetail';
-import { useState } from 'react';
-import { CONNECTOR_NAME, defaultTableFilter, TABLES } from 'services/supabase';
+import EntityTable from 'components/tables/EntityTable';
+import { useMemo } from 'react';
+import { CONNECTOR_NAME } from 'services/supabase';
 import { SelectTableStoreNames } from 'stores/names';
-import { SortDirection } from 'types';
+import TableHydrator from 'stores/Tables/Hydrator';
+import useTableState from '../hooks';
 
 function ConnectorsTable() {
-    const rowsPerPage = 10;
-    const [pagination, setPagination] = useState<{ from: number; to: number }>(
-        getPagination(0, rowsPerPage)
-    );
-    const [searchQuery, setSearchQuery] = useState<string | null>(null);
-    const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
-    const [columnToSort, setColumnToSort] = useState<any>(CONNECTOR_NAME);
+    const {
+        pagination,
+        setPagination,
+        searchQuery,
+        setSearchQuery,
+        sortDirection,
+        setSortDirection,
+        columnToSort,
+        setColumnToSort,
+    } = useTableState(CONNECTOR_NAME);
 
-    const liveSpecQuery = useQuery<ConnectorWithTagDetailQuery>(
-        TABLES.CONNECTORS,
-        {
-            columns: CONNECTOR_WITH_TAG_QUERY,
-            count: 'exact',
-            filter: (query) => {
-                return defaultTableFilter<ConnectorWithTagDetailQuery>(
-                    query,
-                    [CONNECTOR_NAME],
-                    searchQuery,
-                    columnToSort,
-                    sortDirection,
-                    pagination
-                );
+    const query = useMemo(() => {
+        return getConnectors(pagination, searchQuery, [
+            {
+                col: columnToSort,
+                direction: sortDirection,
             },
-        },
-        [pagination, searchQuery, columnToSort, sortDirection]
-    );
+        ]);
+    }, [columnToSort, pagination, searchQuery, sortDirection]);
 
     return (
         <Box>
-            <EntityTable
-                noExistingDataContentIds={{
-                    header: 'connectors.main.message1',
-                    message: 'connectors.main.message2',
-                }}
-                columns={tableColumns}
-                query={liveSpecQuery}
-                renderTableRows={(data) => <Rows data={data} />}
-                setPagination={setPagination}
-                setSearchQuery={setSearchQuery}
-                sortDirection={sortDirection}
-                setSortDirection={setSortDirection}
-                columnToSort={columnToSort}
-                setColumnToSort={setColumnToSort}
-                header="connectorTable.title"
-                filterLabel="connectorTable.filterLabel"
+            <TableHydrator
+                query={query}
                 selectableTableStoreName={SelectTableStoreNames.CONNECTOR}
-            />
+            >
+                <EntityTable
+                    noExistingDataContentIds={{
+                        header: 'connectors.main.message1',
+                        message: 'connectors.main.message2',
+                    }}
+                    columns={tableColumns}
+                    renderTableRows={(data) => <Rows data={data} />}
+                    setPagination={setPagination}
+                    setSearchQuery={setSearchQuery}
+                    sortDirection={sortDirection}
+                    setSortDirection={setSortDirection}
+                    columnToSort={columnToSort}
+                    setColumnToSort={setColumnToSort}
+                    header="connectorTable.title"
+                    filterLabel="connectorTable.filterLabel"
+                    selectableTableStoreName={SelectTableStoreNames.CONNECTOR}
+                />
+            </TableHydrator>
         </Box>
     );
 }

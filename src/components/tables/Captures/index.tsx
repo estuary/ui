@@ -1,89 +1,65 @@
 import { Box } from '@mui/material';
+import { getLiveSpecs_captures } from 'api/liveSpecsExt';
 import Rows, { tableColumns } from 'components/tables/Captures/Rows';
-import EntityTable, { getPagination } from 'components/tables/EntityTable';
-import { useQuery } from 'hooks/supabase-swr';
-import { useState } from 'react';
-import {
-    CONNECTOR_IMAGE,
-    CONNECTOR_TITLE,
-    defaultTableFilter,
-    QUERY_PARAM_CONNECTOR_TITLE,
-    TABLES,
-} from 'services/supabase';
+import EntityTable from 'components/tables/EntityTable';
+import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
-import { SortDirection } from 'types';
-import { LiveSpecsExtQuery } from './types';
-
-const queryColumns = [
-    'catalog_name',
-    'connector_id',
-    'connector_image_name',
-    'connector_image_tag',
-    CONNECTOR_IMAGE,
-    CONNECTOR_TITLE,
-    'id',
-    'last_pub_id',
-    'spec_type',
-    'updated_at',
-    'writes_to',
-];
+import TableHydrator from 'stores/Tables/Hydrator';
+import useTableState from '../hooks';
 
 function CapturesTable() {
-    const rowsPerPage = 10;
-    const [pagination, setPagination] = useState<{ from: number; to: number }>(
-        getPagination(0, rowsPerPage)
-    );
-    const [searchQuery, setSearchQuery] = useState<string | null>(null);
-    const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
-    const [columnToSort, setColumnToSort] = useState<any>('updated_at');
+    const {
+        pagination,
+        setPagination,
+        searchQuery,
+        setSearchQuery,
+        sortDirection,
+        setSortDirection,
+        columnToSort,
+        setColumnToSort,
+    } = useTableState('updated_at', 'desc');
 
-    const liveSpecQuery = useQuery<LiveSpecsExtQuery>(
-        TABLES.LIVE_SPECS_EXT,
-        {
-            columns: queryColumns,
-            count: 'exact',
-            filter: (query) => {
-                return defaultTableFilter<LiveSpecsExtQuery>(
-                    query,
-                    ['catalog_name', QUERY_PARAM_CONNECTOR_TITLE],
-                    searchQuery,
-                    columnToSort,
-                    sortDirection,
-                    pagination
-                ).eq('spec_type', 'capture');
+    const query = useMemo(() => {
+        return getLiveSpecs_captures(pagination, searchQuery, [
+            {
+                col: columnToSort,
+                direction: sortDirection,
             },
-        },
-        [pagination, searchQuery, columnToSort, sortDirection]
-    );
+        ]);
+    }, [columnToSort, pagination, searchQuery, sortDirection]);
 
     return (
         <Box>
-            <EntityTable
-                noExistingDataContentIds={{
-                    header: 'captures.message1',
-                    message: 'captures.message2',
-                }}
-                columns={tableColumns}
-                query={liveSpecQuery}
-                renderTableRows={(data, showEntityStatus) => (
-                    <Rows data={data} showEntityStatus={showEntityStatus} />
-                )}
-                setPagination={setPagination}
-                setSearchQuery={setSearchQuery}
-                sortDirection={sortDirection}
-                setSortDirection={setSortDirection}
-                columnToSort={columnToSort}
-                setColumnToSort={setColumnToSort}
-                header="captureTable.header"
-                filterLabel="capturesTable.filterLabel"
-                enableSelection
-                rowSelectorProps={{
-                    selectableTableStoreName: SelectTableStoreNames.CAPTURE,
-                    showMaterialize: true,
-                }}
-                showEntityStatus={true}
+            <TableHydrator
+                query={query}
                 selectableTableStoreName={SelectTableStoreNames.CAPTURE}
-            />
+            >
+                <EntityTable
+                    noExistingDataContentIds={{
+                        header: 'captures.message1',
+                        message: 'captures.message2',
+                    }}
+                    columns={tableColumns}
+                    renderTableRows={(data, showEntityStatus) => (
+                        <Rows data={data} showEntityStatus={showEntityStatus} />
+                    )}
+                    setPagination={setPagination}
+                    setSearchQuery={setSearchQuery}
+                    sortDirection={sortDirection}
+                    setSortDirection={setSortDirection}
+                    columnToSort={columnToSort}
+                    setColumnToSort={setColumnToSort}
+                    header="captureTable.header"
+                    filterLabel="capturesTable.filterLabel"
+                    enableSelection
+                    rowSelectorProps={{
+                        selectableTableStoreName: SelectTableStoreNames.CAPTURE,
+                        showMaterialize: true,
+                    }}
+                    showEntityStatus={true}
+                    selectableTableStoreName={SelectTableStoreNames.CAPTURE}
+                />
+            </TableHydrator>
         </Box>
     );
 }

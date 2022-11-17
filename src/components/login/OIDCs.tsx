@@ -9,7 +9,11 @@ import GithubButton from './GithubButton';
 // TODO (routes) This is hardcoded because unauthenticated routes... (same as MagicLink)
 const redirectTo = `${window.location.origin}/auth`;
 
-function OIDCs() {
+interface Props {
+    isRegister?: boolean;
+}
+
+function OIDCs({ isRegister }: Props) {
     const supabaseClient = useClient();
     const intl = useIntl();
 
@@ -18,7 +22,9 @@ function OIDCs() {
     const loginFailed = (key: Provider) => {
         enqueueSnackbar(
             intl.formatMessage({
-                id: `login.loginFailed.${key}`,
+                id: `login.${
+                    isRegister ? 'registerFailed' : 'loginFailed'
+                }.${key}`,
             }),
             {
                 anchorOrigin: {
@@ -55,10 +61,20 @@ function OIDCs() {
             }}
         >
             <Box>
-                <GithubButton login={() => login('github')} />
+                <GithubButton
+                    isRegister={isRegister}
+                    login={() => login('github')}
+                />
             </Box>
             <Box>
-                <GoogleButton onClick={() => login('google')} />
+                <GoogleButton
+                    label={intl.formatMessage({
+                        id: isRegister
+                            ? 'cta.register.google'
+                            : 'cta.login.google',
+                    })}
+                    onClick={() => login('google')}
+                />
             </Box>
         </Stack>
     );
