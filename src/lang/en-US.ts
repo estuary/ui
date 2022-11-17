@@ -110,7 +110,10 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.table': `Table`,
     'cta.list': `List`,
     'cta.expandToView': `Expand to view`,
+    'cta.login.google': `Sign in with Google`,
+    'cta.register.google': `Register with Google`,
     'cta.login.github': `Sign in with GitHub`,
+    'cta.register.github': `Register with GitHub`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
@@ -272,9 +275,13 @@ const Registration: ResolvedIntlConfig['messages'] = {
 };
 
 const LoginPage: ResolvedIntlConfig['messages'] = {
-    'login.oidc.message': `Sign in to continue to ${CommonMessages.productName}.`,
     'login.documentAcknowledgement': `By accessing ${CommonMessages.productName} you agree to our {terms} and {privacy}.`,
     'login.jwtExpired': 'Your authorization has expired. Please sign in again.',
+
+    'login.tabs.login': `Sign In`,
+    'login.tabs.register': `Register`,
+    'login.login.message': `Sign in to continue to ${CommonMessages.productName}.`,
+    'login.register.message': `Please use a provider below to regisiter for a free trial of ${CommonMessages.productName}.`,
 
     'login.passwordReset': 'You should not need to reset your password.',
 
@@ -293,6 +300,9 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
     'login.loginFailed': 'Failed to sign in',
     'login.loginFailed.google': 'Failed to sign in with Google',
     'login.loginFailed.github': 'Failed to sign in with GitHub',
+    'login.registerFailed': 'Failed to register',
+    'login.registerFailed.google': 'Failed to register with Google',
+    'login.registerFailed.github': 'Failed to register with GitHub',
     'login.userNotFound': 'User not found. Please sign up below.',
 };
 
