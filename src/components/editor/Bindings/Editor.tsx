@@ -52,6 +52,8 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
 
     const [activeTab, setActiveTab] = useState<number>(0);
     const [schemaUpdated, setSchemaUpdated] = useState<boolean>(true);
+    const [schemaUpdateErrored, setSchemaUpdateErrored] =
+        useState<boolean>(false);
 
     const { liveSpecs } = useLiveSpecs_spec_general('collection');
     const { draftSpecs } = useDraftSpecs(persistedDraftId, null, 'collection');
@@ -91,9 +93,14 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                 collectionData.spec = response.data[0].spec;
                             }
 
+                            if (schemaUpdateErrored) {
+                                setSchemaUpdateErrored(false);
+                            }
+
                             setSchemaUpdated(true);
                         },
                         () => {
+                            setSchemaUpdateErrored(true);
                             setSchemaUpdated(true);
                         }
                     );
@@ -107,9 +114,14 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                 collectionData.spec = response.data[0].spec;
                             }
 
+                            if (schemaUpdateErrored) {
+                                setSchemaUpdateErrored(false);
+                            }
+
                             setSchemaUpdated(true);
                         },
                         () => {
+                            setSchemaUpdateErrored(true);
                             setSchemaUpdated(true);
                         }
                     );
@@ -150,6 +162,12 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                     popper={<SchemaEditCommands />}
                                 />
                             </AlertBox>
+
+                            {schemaUpdateErrored ? (
+                                <AlertBox severity="warning" short>
+                                    <FormattedMessage id="workflows.collectionSelector.alert.message.schemaUpdateError" />
+                                </AlertBox>
+                            ) : null}
 
                             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                 <Typography variant="h6" sx={{ mr: 1 }}>
