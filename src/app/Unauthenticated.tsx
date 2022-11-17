@@ -11,6 +11,10 @@ const Unauthenticated = () => {
                 path={unauthenticatedRoutes.magicLink.path}
                 element={<Auth />}
             />
+            <Route
+                path={unauthenticatedRoutes.register.path}
+                element={<Login showRegister={true} />}
+            />
             <Route path="*" element={<Login />} />
         </Routes>
     );

@@ -3,6 +3,9 @@ export const unauthenticatedRoutes = {
     auth: {
         path: '/auth',
     },
+    register: {
+        path: '/register',
+    },
     magicLink: {
         path: '/magicLink',
     },
