@@ -12,17 +12,17 @@ import { LocalStorageKeys } from 'utils/localStorage-utils';
 const loginSettings = getLoginSettings();
 
 interface Props {
-    showRegister?: boolean;
+    showRegistration?: boolean;
 }
 
-const Login = ({ showRegister }: Props) => {
+const Login = ({ showRegistration }: Props) => {
     useBrowserTitle('browserTitle.login');
 
     const { 2: clearGatewayConfig } = useLocalStorage(LocalStorageKeys.GATEWAY);
     useEffectOnce(() => clearGatewayConfig());
 
     const intl = useIntl();
-    const [tabIndex, setTabIndex] = useState(showRegister ? 1 : 0);
+    const [tabIndex, setTabIndex] = useState(showRegistration ? 1 : 0);
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setTabIndex(newValue);
     };
@@ -66,7 +66,7 @@ const Login = ({ showRegister }: Props) => {
                         <OIDCs isRegister={isRegister} />
                     </Box>
 
-                    {loginSettings.showEmail ? (
+                    {!isRegister && loginSettings.showEmail ? (
                         <>
                             <Divider flexItem>
                                 <FormattedMessage id="login.separator" />

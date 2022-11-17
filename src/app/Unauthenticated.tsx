@@ -13,7 +13,7 @@ const Unauthenticated = () => {
             />
             <Route
                 path={unauthenticatedRoutes.register.path}
-                element={<Login showRegister={true} />}
+                element={<Login showRegistration={true} />}
             />
             <Route path="*" element={<Login />} />
         </Routes>
