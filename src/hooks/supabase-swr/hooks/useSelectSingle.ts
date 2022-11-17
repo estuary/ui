@@ -22,7 +22,6 @@ export const useSelectSingleNew = <Data>(
         () => () => fetcher.throwOnError().single(),
         [fetcher]
     );
-    console.log('select single new', key);
     return useSWR(key, fetchFunction, swrConfig);
 };
 
