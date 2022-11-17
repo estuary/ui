@@ -79,7 +79,10 @@ const submitDirective = async (
     }
 };
 
-const getApplieDirectives = (type: keyof typeof DIRECTIVES, userId: string) => {
+const getAppliedDirectives = (
+    type: keyof typeof DIRECTIVES,
+    userId: string
+) => {
     let queryBuilder = supabaseClient.from<JoinedAppliedDirective>(
         TABLES.APPLIED_DIRECTIVES
     ).select(`
@@ -102,4 +105,4 @@ const getApplieDirectives = (type: keyof typeof DIRECTIVES, userId: string) => {
         .limit(1);
 };
 
-export { exchangeBearerToken, getApplieDirectives, submitDirective };
+export { exchangeBearerToken, getAppliedDirectives, submitDirective };

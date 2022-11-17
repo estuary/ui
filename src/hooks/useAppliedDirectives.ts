@@ -1,5 +1,5 @@
 import { Auth } from '@supabase/ui';
-import { getApplieDirectives } from 'api/directives';
+import { getAppliedDirectives } from 'api/directives';
 import { DIRECTIVES } from 'directives/shared';
 import { AppliedDirective, JoinedAppliedDirective } from 'types';
 import { useSelectNew } from './supabase-swr/hooks/useSelect';
@@ -9,7 +9,7 @@ function useAppliedDirectives(type: keyof typeof DIRECTIVES) {
 
     const { data, error, mutate, isValidating } =
         useSelectNew<JoinedAppliedDirective>(
-            user?.id ? getApplieDirectives(type, user.id) : null
+            user?.id ? getAppliedDirectives(type, user.id) : null
         );
 
     return {
