@@ -131,3 +131,12 @@ export const getSupabaseAnonymousKey = () => {
         );
     }
 };
+
+export const getGoogleTageManagerSettings = () => {
+    const settings = {
+        enabled: process.env.REACT_APP_GOOGLE_TAG_MANAGER_ENABLED === ENABLED,
+        id: process.env.REACT_APP_GOOGLE_TAG_MANAGER_ID,
+    };
+
+    return settings;
+};

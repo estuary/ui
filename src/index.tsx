@@ -1,9 +1,10 @@
+import 'consent-manager/dist/consent-manager.css';
 import 'polyfills/transformStream';
 
 import { enableMapSet } from 'immer';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { initLogRocket } from 'services/logrocket';
+import { initTracking } from 'services/tracking';
 import App from './app';
 import AppProviders from './context';
 
@@ -21,7 +22,7 @@ import AppProviders from './context';
 //     console.log('  Deet > ', { inter, phase });
 // };
 
-initLogRocket();
+initTracking();
 enableMapSet();
 
 ReactDOM.render(

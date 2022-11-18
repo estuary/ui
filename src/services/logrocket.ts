@@ -9,6 +9,7 @@ import {
     getLogRocketSettings,
     isProduction,
 } from 'utils/env-utils';
+import { consentManager } from './tracking/consent';
 
 // Based on node_modules/logrocket/dist/types.d.ts
 interface IUserTraits {
@@ -156,6 +157,7 @@ const maskContent = (requestResponse: any) => {
 // More info about the dom settings
 //  https://docs.logrocket.com/reference/dom
 export const initLogRocket = () => {
+    console.log('consentManager', consentManager);
     if (isProduction && logRocketSettings.appID) {
         const settings: Settings = {
             release: getAppVersion(),
