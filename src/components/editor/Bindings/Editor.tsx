@@ -23,10 +23,7 @@ import { useLiveSpecs_spec_general } from 'hooks/useLiveSpecs';
 import { ReactNode, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import ReactJson from 'react-json-view';
-import {
-    useResourceConfig_currentCollection,
-    useResourceConfig_discoveredCollections,
-} from 'stores/ResourceConfig/hooks';
+import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
 
 interface Props {
     loading: boolean;
@@ -49,7 +46,6 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
 
     // Resource Config Store
     const currentCollection = useResourceConfig_currentCollection();
-    const discoveredCollections = useResourceConfig_discoveredCollections();
 
     const [activeTab, setActiveTab] = useState<number>(0);
     const [schemaUpdated, setSchemaUpdated] = useState<boolean>(true);
@@ -59,10 +55,14 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
     const { liveSpecs } = useLiveSpecs_spec_general('collection');
     const { draftSpecs } = useDraftSpecs(persistedDraftId, null, 'collection');
 
+    // TODO (defect): Preserve existing collections attached to the draft via the command line.
+    //   When discovery is run after an existing collection is added to the draft, it is not included
+    //   in the new draft. We will need to actively keep track of the spec and expected pub ID for that collection.
     const collectionData: CollectionData | null = useMemo(() => {
         if (currentCollection) {
-            const belongsToDraft: boolean =
-                discoveredCollections?.includes(currentCollection) ?? false;
+            const belongsToDraft: boolean = draftSpecs
+                .map(({ catalog_name }) => catalog_name)
+                .includes(currentCollection);
 
             const queryData = belongsToDraft
                 ? draftSpecs.find(
@@ -76,7 +76,7 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
         } else {
             return null;
         }
-    }, [currentCollection, discoveredCollections, draftSpecs, liveSpecs]);
+    }, [currentCollection, draftSpecs, liveSpecs]);
 
     const handlers = {
         updateSchema: () => {
