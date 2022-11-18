@@ -688,11 +688,14 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.tab.collectionSchema': `Schema`,
 
     'workflows.collectionSelector.schemaEdit.header': `CLI`,
-    'workflows.collectionSelector.schemaEdit.description': `Use the commands below to edit the collection schemas associated with this draft.`,
+    'workflows.collectionSelector.schemaEdit.description': `Use the commands below to edit the schema for this collection.`,
     'workflows.collectionSelector.schemaEdit.message1': `Pull down the draft to edit`,
     'workflows.collectionSelector.schemaEdit.message2': `Push your changes up to the server`,
-    'workflows.collectionSelector.schemaEdit.command1': `flowctl draft select --id {draftId} && flowctl draft develop`,
-    'workflows.collectionSelector.schemaEdit.command2': `flowctl draft author --source <flow_catalog_file_location>`,
+    'workflows.collectionSelector.schemaEdit.discoveredCollection.command1': `flowctl draft select --id {draftId} && flowctl draft develop`,
+    'workflows.collectionSelector.schemaEdit.discoveredCollection.command2': `flowctl draft author --source <flow_catalog_file_location>`,
+    'workflows.collectionSelector.schemaEdit.existingCollection.command1': `flowctl draft select --id {draftId}`,
+    'workflows.collectionSelector.schemaEdit.existingCollection.command2': `flowctl catalog draft --name {catalogName} && flowctl draft develop`,
+    'workflows.collectionSelector.schemaEdit.existingCollection.command3': `flowctl draft author --source <flow_catalog_file_location>`,
 };
 
 const ShardStatus: ResolvedIntlConfig['messages'] = {

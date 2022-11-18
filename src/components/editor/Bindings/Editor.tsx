@@ -12,7 +12,8 @@ import { getLiveSpecsByCatalogName } from 'api/liveSpecs';
 import ResourceConfig from 'components/collection/ResourceConfig';
 import MessageWithLink from 'components/content/MessageWithLink';
 import MessageWithPopper from 'components/content/MessageWithPopper';
-import SchemaEditCommands from 'components/editor/Bindings/SchemaEditCommands';
+import DiscoveredSchemaCommands from 'components/editor/Bindings/SchemaEditCommands/DiscoveredSchema';
+import ExistingSchemaCommands from 'components/editor/Bindings/SchemaEditCommands/ExistingSchema';
 import BindingsTabs from 'components/editor/Bindings/Tabs';
 import { tabProps } from 'components/editor/Bindings/types';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
@@ -159,7 +160,13 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                             <AlertBox severity="info" short>
                                 <MessageWithPopper
                                     messageId="workflows.collectionSelector.alert.message.schemaEdit"
-                                    popper={<SchemaEditCommands />}
+                                    popper={
+                                        collectionData.belongsToDraft ? (
+                                            <DiscoveredSchemaCommands />
+                                        ) : (
+                                            <ExistingSchemaCommands />
+                                        )
+                                    }
                                 />
                             </AlertBox>
 

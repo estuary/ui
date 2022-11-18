@@ -3,11 +3,16 @@ import { Box, Typography, useTheme } from '@mui/material';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import { semiTransparentBackground } from 'context/Theme';
 import { FormattedMessage } from 'react-intl';
+import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
 
-function SchemaEditCommands() {
+function ExistingSchemaCommands() {
     const theme = useTheme();
 
+    // Draft Editor Store
     const persistedDraftId = useEditorStore_persistedDraftId();
+
+    // Resource Config Store
+    const currentCollection = useResourceConfig_currentCollection();
 
     return (
         <>
@@ -41,11 +46,20 @@ function SchemaEditCommands() {
                     borderRadius: 3,
                 }}
             >
-                <Typography>
+                <Typography sx={{ mb: 1 }}>
                     <FormattedMessage
-                        id="workflows.collectionSelector.schemaEdit.command1"
+                        id="workflows.collectionSelector.schemaEdit.existingCollection.command1"
                         values={{
                             draftId: persistedDraftId,
+                        }}
+                    />
+                </Typography>
+
+                <Typography>
+                    <FormattedMessage
+                        id="workflows.collectionSelector.schemaEdit.existingCollection.command2"
+                        values={{
+                            catalogName: currentCollection,
                         }}
                     />
                 </Typography>
@@ -63,11 +77,11 @@ function SchemaEditCommands() {
                 }}
             >
                 <Typography>
-                    <FormattedMessage id="workflows.collectionSelector.schemaEdit.command2" />
+                    <FormattedMessage id="workflows.collectionSelector.schemaEdit.existingCollection.command3" />
                 </Typography>
             </Box>
         </>
     );
 }
 
-export default SchemaEditCommands;
+export default ExistingSchemaCommands;
