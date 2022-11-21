@@ -1,5 +1,6 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { getDraftSpecsBySpecType } from 'api/draftSpecs';
+import { getLiveSpecsByCatalogNames } from 'api/liveSpecs';
 import { authenticatedRoutes } from 'app/routes';
 import CaptureGenerateButton from 'components/capture/GenerateButton';
 import {
@@ -22,6 +23,7 @@ import useGlobalSearchParams, {
 import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import useDraftSpecs from 'hooks/useDraftSpecs';
+import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -60,7 +62,11 @@ import ResourceConfigHydrator from 'stores/ResourceConfig/Hydrator';
 import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import { JsonFormsData } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
-import { modifyDiscoveredDraftSpec } from 'utils/workflow-utils';
+import {
+    getBoundCollectionSpecs,
+    modifyDiscoveredCollectionDraftSpec,
+    modifyDiscoveredDraftSpec,
+} from 'utils/workflow-utils';
 
 const trackEvent = (payload: any) => {
     LogRocket.track(CustomEvents.CAPTURE_DISCOVER, {
@@ -207,6 +213,76 @@ function CaptureEdit() {
         },
     };
 
+    const propagateDraftCollections = async (
+        newDraftId: string,
+        previousDraftId: string,
+        boundCollections: string[]
+    ) => {
+        const draftSpecsResponse = await getDraftSpecsBySpecType(
+            previousDraftId,
+            'collection'
+        );
+
+        if (draftSpecsResponse.error) {
+            return helpers.callFailed({
+                error: {
+                    title: 'captureEdit.generate.failedErrorTitle',
+                    error: draftSpecsResponse.error,
+                },
+            });
+        }
+
+        const liveSpecsResponse = await getLiveSpecsByCatalogNames(
+            'collection',
+            boundCollections
+        );
+
+        if (liveSpecsResponse.error) {
+            return helpers.callFailed({
+                error: {
+                    title: 'captureEdit.generate.failedErrorTitle',
+                    error: liveSpecsResponse.error,
+                },
+            });
+        }
+
+        const collectionSpecs = getBoundCollectionSpecs(
+            boundCollections,
+            draftSpecsResponse.data ?? [],
+            liveSpecsResponse.data
+        );
+
+        if (!isEmpty(collectionSpecs)) {
+            const updatedDraftSpecsPromises =
+                await modifyDiscoveredCollectionDraftSpec(
+                    newDraftId,
+                    collectionSpecs,
+                    'captureEdit.generate.failedErrorTitle',
+                    helpers.callFailed
+                );
+
+            if (updatedDraftSpecsPromises) {
+                const updatedDraftSpecsResponse = await Promise.all(
+                    updatedDraftSpecsPromises
+                );
+
+                const updatedDraftSpecsErrors =
+                    updatedDraftSpecsResponse.filter(
+                        (response) => response.error
+                    );
+
+                if (updatedDraftSpecsErrors.length > 0) {
+                    return helpers.callFailed({
+                        error: {
+                            title: 'captureEdit.generate.failedErrorTitle',
+                            error: updatedDraftSpecsErrors,
+                        },
+                    });
+                }
+            }
+        }
+    };
+
     const storeUpdatedDraftSpec = async (
         newDraftId: string,
         resourceConfig: ResourceConfigDictionary
@@ -286,6 +362,16 @@ function CaptureEdit() {
                 })
                 .order('created_at', { ascending: false }),
             async (payload: any) => {
+                const boundCollections = Object.keys(resourceConfig);
+
+                if (boundCollections.length > 0 && persistedDraftId) {
+                    await propagateDraftCollections(
+                        payload.draft_id,
+                        persistedDraftId,
+                        boundCollections
+                    );
+                }
+
                 await storeUpdatedDraftSpec(payload.draft_id, resourceConfig);
 
                 void mutateDraftSpecs();

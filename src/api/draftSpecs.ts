@@ -26,6 +26,7 @@ interface UpdateMatchData {
     draft_id: string | null;
     catalog_name?: string;
     expect_pub_id?: string;
+    spec_type?: Entity | null;
 }
 
 interface DraftSpecData {
