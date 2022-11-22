@@ -232,24 +232,40 @@ function CaptureEdit() {
             });
         }
 
-        const liveSpecsResponse = await getLiveSpecsByCatalogNames(
-            'collection',
-            boundCollections
-        );
+        const previousDraftCollections: string[] = draftSpecsResponse.data
+            ? draftSpecsResponse.data.map(({ catalog_name }) => catalog_name)
+            : [];
 
-        if (liveSpecsResponse.error) {
-            return helpers.callFailed({
-                error: {
-                    title: 'captureEdit.generate.failedErrorTitle',
-                    error: liveSpecsResponse.error,
-                },
-            });
+        const boundExistingCollections: string[] =
+            previousDraftCollections.length > 0
+                ? boundCollections.filter(
+                      (collection) =>
+                          !previousDraftCollections.includes(collection)
+                  )
+                : boundCollections;
+
+        let liveSpecsResponse = null;
+
+        if (boundExistingCollections.length > 0) {
+            liveSpecsResponse = await getLiveSpecsByCatalogNames(
+                'collection',
+                boundExistingCollections
+            );
+
+            if (liveSpecsResponse.error) {
+                return helpers.callFailed({
+                    error: {
+                        title: 'captureEdit.generate.failedErrorTitle',
+                        error: liveSpecsResponse.error,
+                    },
+                });
+            }
         }
 
         const collectionSpecs = getBoundCollectionSpecs(
             boundCollections,
             draftSpecsResponse.data ?? [],
-            liveSpecsResponse.data
+            liveSpecsResponse ? liveSpecsResponse.data : []
         );
 
         if (!isEmpty(collectionSpecs)) {
