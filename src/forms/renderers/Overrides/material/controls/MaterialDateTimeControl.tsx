@@ -43,6 +43,9 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import merge from 'lodash/merge';
 import { useMemo } from 'react';
 
+// Nothing is really custom here besides disabling am/pm.
+// Eventually this should house some more functionality like making
+//  the manual editing of the input better.
 export const Custom_MaterialDateTimeControl = (props: ControlProps) => {
     const [focused, onFocus, onBlur] = useFocus();
     const {
