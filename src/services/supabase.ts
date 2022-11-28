@@ -82,6 +82,63 @@ export const supabaseClient = createClient(
     }
 );
 
+// The `flowctl` CLI needs to use a separate session from the UI.
+// This is somewhat at odds with how the supabase JS libs think of
+// things. The client is stateful, and it also needs to store state
+// in localStorage so that things work properly if for example you
+// open a magic link in a new tab. So we use a separate supabase client
+// just for authenticating the CLI. And this client needs to share
+// localStorage with the normal client without them clobbering each
+// others credentials. The `cliScopedLocalStorage` solves that by
+// prepending all of the client's localStorage keys with this
+// prefix.
+const CLI_AUTH_KEY: string = 'cli-auth.';
+
+const cliAuthKey = function cliAuthKey(key: any): string {
+    return `${CLI_AUTH_KEY}${key}`;
+};
+
+export const cliScopedLocalStorage = {
+    setItem: function setItem(key: any, val: any) {
+        localStorage.setItem(cliAuthKey(key), val);
+    },
+    getItem: function getItem(key: any) {
+        return localStorage.getItem(cliAuthKey(key));
+    },
+    removeItem: function removeItem(key: any) {
+        localStorage.removeItem(cliAuthKey(key));
+    },
+    clear: function clear() {
+        const toRemove: string[] = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
+            if (k && k.startsWith(CLI_AUTH_KEY)) {
+                toRemove.push(k);
+            }
+        }
+
+        console.log('clear', toRemove);
+        toRemove.forEach((k: string) => {
+            localStorage.removeItem(k);
+        });
+    },
+};
+export const cliAuthClient = createClient(
+    supabaseSettings.url,
+    supabaseSettings.anonKey,
+    {
+        // use our scoped local storage
+        localStorage: cliScopedLocalStorage,
+        // Disable multitab, which doesn't work anyway since it
+        // watches localStorage directly and doesn't see our prefixed keys
+        multiTab: false,
+        // don't refresh the token in the browser, since it could invalidate
+        // a refresh token in use by flowctl.
+        autoRefreshToken: false,
+    }
+);
+
 export interface SortingProps<Data> {
     col: keyof Data;
     direction: SortDirection;

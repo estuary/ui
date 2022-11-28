@@ -9,6 +9,20 @@ export const unauthenticatedRoutes = {
     magicLink: {
         path: '/magicLink',
     },
+    cliAuth: {
+        title: 'routeTitle.cliAuth',
+        path: '/cli-auth',
+        login: {
+            title: 'routeTitle.cliAuth.login',
+            path: 'login',
+            fullPath: '/cli-auth/login',
+        },
+        success: {
+            title: 'routeTitle.cliAuth.success',
+            path: 'success',
+            fullPath: '/cli-auth/success',
+        },
+    },
 };
 
 export const authenticatedRoutes = {

@@ -173,6 +173,9 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.captureEdit': `Edit Capture`,
     'routeTitle.captures': `Captures`,
     'routeTitle.collections': `Collections`,
+    'routeTitle.cliAuth': `Flowctl Login`,
+    'routeTitle.cliAuth.login': `Flowctl Login`,
+    'routeTitle.cliAuth.success': `Flowctl Login Successful`,
     'routeTitle.directives': `Directives`,
     'routeTitle.error.pageNotFound': `Page Not Found`,
     'routeTitle.login': `Login`,
@@ -192,6 +195,8 @@ const BrowserTitles: ResolvedIntlConfig['messages'] = {
     'browserTitle.admin': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin']}`,
     'browserTitle.admin.accessGrants': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.accessGrants']}`,
     'browserTitle.admin.api': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.api']}`,
+
+    'browserTitle.cliAuth.success': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.cliAuth.success']}`,
     'browserTitle.admin.connectors': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.connectors']}`,
     'browserTitle.captureCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureCreate']}`,
     'browserTitle.captureEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureEdit']}`,
@@ -304,6 +309,12 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
     'login.registerFailed.google': 'Failed to register with Google',
     'login.registerFailed.github': 'Failed to register with GitHub',
     'login.userNotFound': 'User not found. Please sign up below.',
+};
+
+const CliAuth: ResolvedIntlConfig['messages'] = {
+    'cliAuth.accessToken': 'Access Token',
+    'cliAuth.accessToken.message': `Copy the access token below and paste it into your terminal.`,
+    'cliAuth.accessToken.copyButton': 'Copy Token',
 };
 
 const EntityStatus: ResolvedIntlConfig['messages'] = {
@@ -755,6 +766,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...Error,
     ...NoGrants,
     ...LoginPage,
+    ...CliAuth,
     ...AccessGrants,
     ...Collections,
     ...Materializations,

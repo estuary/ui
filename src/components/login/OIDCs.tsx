@@ -6,14 +6,12 @@ import GoogleButton from 'react-google-button';
 import { useIntl } from 'react-intl';
 import GithubButton from './GithubButton';
 
-// TODO (routes) This is hardcoded because unauthenticated routes... (same as MagicLink)
-const redirectTo = `${window.location.origin}/auth`;
-
 interface Props {
     isRegister?: boolean;
+    redirectTo: string;
 }
 
-function OIDCs({ isRegister }: Props) {
+function OIDCs({ isRegister, redirectTo }: Props) {
     const supabaseClient = useClient();
     const intl = useIntl();
 

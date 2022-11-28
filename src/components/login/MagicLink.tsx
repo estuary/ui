@@ -6,12 +6,11 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { custom_generateDefaultUISchema } from 'services/jsonforms';
 import useConstant from 'use-constant';
 
-// TODO (routes) This is hardcoded because unauthenticated routes is not yet invoked
-//   need to move the routes to a single location. Also... just need to make the route
-//   settings in all JSON probably.
-const redirectTo = `${window.location.origin}/auth`;
+interface Props {
+    redirectTo: string;
+}
 
-const MagicLink = () => {
+const MagicLink = ({ redirectTo }: Props) => {
     const [showTokenValidation, setShowTokenValidation] = useState(false);
 
     const supabaseClient = useClient();
@@ -68,6 +67,10 @@ const MagicLink = () => {
 
     custom_generateDefaultUISchema;
 
+    // Redirects need to be handled manually using the react router api, which
+    // only deals with paths, not full urls.
+    const redirectUrl = new URL(redirectTo);
+
     return (
         <Stack direction="column" spacing={1}>
             {showTokenValidation ? (
@@ -79,13 +82,12 @@ const MagicLink = () => {
                                 token: formData.token,
                                 type: 'magiclink',
                             },
-                            {
-                                redirectTo,
-                            }
+                            {}
                         );
                     }}
                     schema={verifySchema}
                     uiSchema={verifyUiSchema}
+                    navigateOnSuccess={`${redirectUrl.pathname}${redirectUrl.search}`}
                 />
             ) : (
                 <MagicLinkInputs

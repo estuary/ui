@@ -33,6 +33,7 @@ export enum CustomEvents {
     MATERIALIZATION_TEST = 'Materialization_Test',
     MATERIALIZATION_EDIT = 'Materialization_Edit',
     DIRECTIVE = 'Directive',
+    FLOWCTL_LOGIN = 'Flowctl_Login',
 }
 
 const logRocketSettings = getLogRocketSettings();

@@ -13,9 +13,10 @@ const loginSettings = getLoginSettings();
 
 interface Props {
     showRegistration?: boolean;
+    redirectTo: string;
 }
 
-const Login = ({ showRegistration }: Props) => {
+export const Login = ({ showRegistration, redirectTo }: Props) => {
     useBrowserTitle('browserTitle.login');
 
     const { 2: clearGatewayConfig } = useLocalStorage(LocalStorageKeys.GATEWAY);
@@ -63,7 +64,10 @@ const Login = ({ showRegistration }: Props) => {
 
                 <Stack direction="column" spacing={2}>
                     <Box>
-                        <OIDCs isRegister={isRegister} />
+                        <OIDCs
+                            isRegister={isRegister}
+                            redirectTo={redirectTo}
+                        />
                     </Box>
 
                     {!isRegister && loginSettings.showEmail ? (
@@ -73,7 +77,7 @@ const Login = ({ showRegistration }: Props) => {
                             </Divider>
 
                             <Box>
-                                <MagicLink />
+                                <MagicLink redirectTo={redirectTo} />
                             </Box>
                         </>
                     ) : null}
