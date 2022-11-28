@@ -22,10 +22,6 @@ import Materializations from 'pages/Materializations';
 import { Route, Routes } from 'react-router';
 import { EndpointConfigProvider } from 'stores/EndpointConfig';
 import { isProduction } from 'utils/env-utils';
-
-import CliAuthContextLayout from 'components/CliAuthContextLayout';
-import { CliAuthSuccess } from 'components/CliAuthSuccess';
-import { Login } from 'pages/Login';
 import { authenticatedRoutes, unauthenticatedRoutes } from './routes';
 
 const Authenticated = () => {
@@ -153,27 +149,6 @@ const Authenticated = () => {
                         <Route
                             path={authenticatedRoutes.admin.connectors.path}
                             element={<AdminConnectors />}
-                        />
-                    </Route>
-
-                    <Route
-                        path={authenticatedRoutes.cliAuth.path}
-                        element={<CliAuthContextLayout />}
-                    >
-                        <Route
-                            path={authenticatedRoutes.cliAuth.login.path}
-                            element={
-                                <Login
-                                    redirectTo={
-                                        authenticatedRoutes.cliAuth.success
-                                            .fullPath
-                                    }
-                                />
-                            }
-                        />
-                        <Route
-                            path={authenticatedRoutes.cliAuth.success.path}
-                            element={<CliAuthSuccess />}
                         />
                     </Route>
 

@@ -9,7 +9,8 @@ import { authenticatedRoutes } from 'app/routes';
 import PageContainer from 'components/shared/PageContainer';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { FormattedMessage } from 'react-intl';
-import { cliAuthClient } from 'services/supabase';
+//import { cliAuthClient } from 'services/supabase';
+import { Auth } from '@supabase/ui';
 
 const boxStyling: SxProps<Theme> = {
     marginBottom: 2,
@@ -21,8 +22,9 @@ export function CliAuthSuccess() {
 
     // TODO: this is probably the wrong way to do this
     //const user = cliAuthClient.auth.user();
-    const session = cliAuthClient.auth.session();
-    console.log('cliAuthSuccess', session);
+    const user = Auth.useUser();
+    const session = user.session;
+    console.log('CliAuthSuccess', session, user);
 
     return (
         <PageContainer

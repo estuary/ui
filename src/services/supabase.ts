@@ -82,6 +82,59 @@ export const supabaseClient = createClient(
     }
 );
 
+const CLI_AUTH_KEY: string = 'cli-auth.';
+
+const cliAuthKey = function cliAuthKey(key: any): string {
+    return `${CLI_AUTH_KEY}${key}`;
+};
+
+export const fakeLocalStorage = {
+    setItem: function setItem(key: any, val: any) {
+        localStorage.setItem(cliAuthKey(key), val);
+        // const store = localStorage.getItem(CLI_AUTH_KEY);
+        // console.log("setItem", key, val, store);
+        // if (store) {
+        //     store[key] = val;
+        // } else {
+        //     store = {};
+        //     store[key] = val;
+        // }
+        // localStorage.setItem(CLI_AUTH_KEY, store);
+    },
+    getItem: function getItem(key: any) {
+        return localStorage.getItem(cliAuthKey(key));
+        // console.log("getItem", key, store);
+        // if (store) {
+        //     return store[key];
+        // } else {
+        //     return null;
+        // }
+    },
+    removeItem: function removeItem(key: any) {
+        // const store = localStorage.getItem(CLI_AUTH_KEY);
+        // console.log("removeItem", key, store);
+        // if (store) {
+        //     store[key] = null;
+        //     localStorage.setItem(CLI_AUTH_KEY, store);
+        // }
+        localStorage.removeItem(cliAuthKey(key));
+    },
+    clear: function clear() {
+        const toRemove: string[] = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
+            if (k && k.startsWith(CLI_AUTH_KEY)) {
+                toRemove.push(k);
+            }
+        }
+
+        console.log('clear', toRemove);
+        toRemove.forEach((k: string) => {
+            localStorage.removeItem(k);
+        });
+    },
+};
 export const cliAuthClient = createClient(
     supabaseSettings.url,
     supabaseSettings.anonKey,
@@ -93,6 +146,7 @@ export const cliAuthClient = createClient(
                 LogRocket.log('Realtime : ', kind, msg, data);
             },
         },
+        localStorage: fakeLocalStorage,
     }
 );
 
