@@ -1,6 +1,7 @@
 import {
     Box,
     Button,
+    ClickAwayListener,
     Fade,
     Popper,
     useMediaQuery,
@@ -28,9 +29,14 @@ function MessageWithPopper({ messageId, popper }: Props) {
     const canBeOpen = open && Boolean(anchorEl);
     const id = canBeOpen ? 'transition-popper' : undefined;
 
-    const handleClick = (event: MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
-        setOpen((previousOpen) => !previousOpen);
+    const handlers = {
+        togglePopper: (event: MouseEvent<HTMLElement>) => {
+            setAnchorEl(event.currentTarget);
+            setOpen((previousOpen) => !previousOpen);
+        },
+        externalAreaClicked: () => {
+            setOpen(false);
+        },
     };
 
     return (
@@ -43,7 +49,7 @@ function MessageWithPopper({ messageId, popper }: Props) {
                         <Button
                             variant="text"
                             size="small"
-                            onClick={handleClick}
+                            onClick={handlers.togglePopper}
                             sx={{ mb: 0.5 }}
                         >
                             <FormattedMessage id={`${messageId}.buttonLabel`} />
@@ -57,21 +63,25 @@ function MessageWithPopper({ messageId, popper }: Props) {
                             sx={{ zIndex: popperIndex }}
                         >
                             {({ TransitionProps }) => (
-                                <Fade {...TransitionProps} timeout={350}>
-                                    <Box
-                                        sx={{
-                                            maxWidth: belowMd ? 450 : 650,
-                                            p: 2,
-                                            borderRadius: 5,
-                                            bgcolor:
-                                                logDialogBackground[
-                                                    theme.palette.mode
-                                                ],
-                                        }}
-                                    >
-                                        {popper}
-                                    </Box>
-                                </Fade>
+                                <ClickAwayListener
+                                    onClickAway={handlers.externalAreaClicked}
+                                >
+                                    <Fade {...TransitionProps} timeout={350}>
+                                        <Box
+                                            sx={{
+                                                maxWidth: belowMd ? 450 : 650,
+                                                p: 2,
+                                                borderRadius: 5,
+                                                bgcolor:
+                                                    logDialogBackground[
+                                                        theme.palette.mode
+                                                    ],
+                                            }}
+                                        >
+                                            {popper}
+                                        </Box>
+                                    </Fade>
+                                </ClickAwayListener>
                             )}
                         </Popper>
                     </>
