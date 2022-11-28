@@ -1,4 +1,11 @@
-import { Box, Button, Fade, Popper } from '@mui/material';
+import {
+    Box,
+    Button,
+    Fade,
+    Popper,
+    useMediaQuery,
+    useTheme,
+} from '@mui/material';
 import { logDialogBackground, popperIndex } from 'context/Theme';
 import { MouseEvent, ReactNode, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -12,6 +19,9 @@ interface Props {
 //   should be used. Both have a number of tradeoffs, so it is truly a matter of what
 //   component is easiest to manipulate to achieve the desired functionality.
 function MessageWithPopper({ messageId, popper }: Props) {
+    const theme = useTheme();
+    const belowMd = useMediaQuery(theme.breakpoints.down('md'));
+
     const [open, setOpen] = useState<boolean>(false);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -50,10 +60,10 @@ function MessageWithPopper({ messageId, popper }: Props) {
                                 <Fade {...TransitionProps} timeout={350}>
                                     <Box
                                         sx={{
-                                            maxWidth: 650,
+                                            maxWidth: belowMd ? 450 : 650,
                                             p: 2,
                                             borderRadius: 5,
-                                            bgcolor: (theme) =>
+                                            bgcolor:
                                                 logDialogBackground[
                                                     theme.palette.mode
                                                 ],

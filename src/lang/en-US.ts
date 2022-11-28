@@ -31,6 +31,8 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.version': `version`,
     'common.tenant': `Prefix`,
     'common.recommended': `Recommended`,
+    'common.copied': `Copied`,
+    'common.copyFailed': `Failed to copy`,
 
     // Aria
     'aria.openExpand': `show more`,
