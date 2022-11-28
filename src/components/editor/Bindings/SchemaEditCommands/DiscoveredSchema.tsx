@@ -1,13 +1,26 @@
 import { Code } from '@mui/icons-material';
-import { Box, Typography, useTheme } from '@mui/material';
+import { Box, Typography } from '@mui/material';
+import SingleLineCode from 'components/content/SingleLineCode';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
-import { semiTransparentBackground } from 'context/Theme';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 function DiscoveredSchemaCommands() {
-    const theme = useTheme();
+    const intl = useIntl();
 
     const persistedDraftId = useEditorStore_persistedDraftId();
+
+    const pullDraftCommand = intl.formatMessage(
+        {
+            id: 'workflows.collectionSelector.schemaEdit.discoveredCollection.command1',
+        },
+        {
+            draftId: persistedDraftId,
+        }
+    );
+
+    const pushLocalEditsCommand = intl.formatMessage({
+        id: 'workflows.collectionSelector.schemaEdit.discoveredCollection.command2',
+    });
 
     return (
         <>
@@ -33,39 +46,13 @@ function DiscoveredSchemaCommands() {
                 <FormattedMessage id="workflows.collectionSelector.schemaEdit.message1" />
             </Typography>
 
-            <Box
-                sx={{
-                    mb: 3,
-                    p: 1,
-                    bgcolor: semiTransparentBackground[theme.palette.mode],
-                    borderRadius: 3,
-                }}
-            >
-                <Typography>
-                    <FormattedMessage
-                        id="workflows.collectionSelector.schemaEdit.discoveredCollection.command1"
-                        values={{
-                            draftId: persistedDraftId,
-                        }}
-                    />
-                </Typography>
-            </Box>
+            <SingleLineCode formattedMessage={pullDraftCommand} />
 
-            <Typography sx={{ mb: 1 }}>
+            <Typography sx={{ mt: 3, mb: 1 }}>
                 <FormattedMessage id="workflows.collectionSelector.schemaEdit.message2" />
             </Typography>
 
-            <Box
-                sx={{
-                    p: 1,
-                    bgcolor: semiTransparentBackground[theme.palette.mode],
-                    borderRadius: 3,
-                }}
-            >
-                <Typography>
-                    <FormattedMessage id="workflows.collectionSelector.schemaEdit.discoveredCollection.command2" />
-                </Typography>
-            </Box>
+            <SingleLineCode formattedMessage={pushLocalEditsCommand} />
         </>
     );
 }

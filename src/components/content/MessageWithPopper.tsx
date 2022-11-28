@@ -50,6 +50,7 @@ function MessageWithPopper({ messageId, popper }: Props) {
                                 <Fade {...TransitionProps} timeout={350}>
                                     <Box
                                         sx={{
+                                            maxWidth: 650,
                                             p: 2,
                                             borderRadius: 5,
                                             bgcolor: (theme) =>

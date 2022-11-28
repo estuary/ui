@@ -1,18 +1,41 @@
 import { Code } from '@mui/icons-material';
-import { Box, Typography, useTheme } from '@mui/material';
+import { Box, Typography } from '@mui/material';
+import SingleLineCode from 'components/content/SingleLineCode';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
-import { semiTransparentBackground } from 'context/Theme';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
 
 function ExistingSchemaCommands() {
-    const theme = useTheme();
+    const intl = useIntl();
 
     // Draft Editor Store
     const persistedDraftId = useEditorStore_persistedDraftId();
 
     // Resource Config Store
     const currentCollection = useResourceConfig_currentCollection();
+
+    const pullDraftCommands = {
+        1: intl.formatMessage(
+            {
+                id: 'workflows.collectionSelector.schemaEdit.existingCollection.command1',
+            },
+            {
+                draftId: persistedDraftId,
+            }
+        ),
+        2: intl.formatMessage(
+            {
+                id: 'workflows.collectionSelector.schemaEdit.existingCollection.command2',
+            },
+            {
+                catalogName: currentCollection,
+            }
+        ),
+    };
+
+    const pushLocalEditsCommand = intl.formatMessage({
+        id: 'workflows.collectionSelector.schemaEdit.existingCollection.command3',
+    });
 
     return (
         <>
@@ -38,48 +61,18 @@ function ExistingSchemaCommands() {
                 <FormattedMessage id="workflows.collectionSelector.schemaEdit.message1" />
             </Typography>
 
-            <Box
-                sx={{
-                    mb: 3,
-                    p: 1,
-                    bgcolor: semiTransparentBackground[theme.palette.mode],
-                    borderRadius: 3,
-                }}
-            >
-                <Typography sx={{ mb: 1 }}>
-                    <FormattedMessage
-                        id="workflows.collectionSelector.schemaEdit.existingCollection.command1"
-                        values={{
-                            draftId: persistedDraftId,
-                        }}
-                    />
-                </Typography>
+            <SingleLineCode
+                formattedMessage={pullDraftCommands[1]}
+                subsequentCommandExists={true}
+            />
 
-                <Typography>
-                    <FormattedMessage
-                        id="workflows.collectionSelector.schemaEdit.existingCollection.command2"
-                        values={{
-                            catalogName: currentCollection,
-                        }}
-                    />
-                </Typography>
-            </Box>
+            <SingleLineCode formattedMessage={pullDraftCommands[2]} />
 
-            <Typography sx={{ mb: 1 }}>
+            <Typography sx={{ mt: 3, mb: 1 }}>
                 <FormattedMessage id="workflows.collectionSelector.schemaEdit.message2" />
             </Typography>
 
-            <Box
-                sx={{
-                    p: 1,
-                    bgcolor: semiTransparentBackground[theme.palette.mode],
-                    borderRadius: 3,
-                }}
-            >
-                <Typography>
-                    <FormattedMessage id="workflows.collectionSelector.schemaEdit.existingCollection.command3" />
-                </Typography>
-            </Box>
+            <SingleLineCode formattedMessage={pushLocalEditsCommand} />
         </>
     );
 }
