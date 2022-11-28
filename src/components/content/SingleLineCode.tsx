@@ -1,15 +1,43 @@
-import { ContentCopy } from '@mui/icons-material';
+import { Check, ContentCopy, ErrorOutline } from '@mui/icons-material';
 import { Box, Button, Typography } from '@mui/material';
 import { semiTransparentBackground } from 'context/Theme';
+import { ReactNode, useState } from 'react';
 
 interface Props {
     formattedMessage: string;
     subsequentCommandExists?: boolean;
 }
 
+type TransientButtonState = 'success' | 'error' | undefined;
+
+const getButtonIcon = (buttonState: TransientButtonState): ReactNode => {
+    switch (buttonState) {
+        case 'success':
+            return <Check />;
+        case 'error':
+            return <ErrorOutline />;
+        default:
+            return <ContentCopy />;
+    }
+};
+
 function SingleLineCode({ formattedMessage, subsequentCommandExists }: Props) {
-    const copyToClipboard = async () => {
-        await navigator.clipboard.writeText(formattedMessage);
+    const [transientButtonState, setTransientButtonState] =
+        useState<TransientButtonState>(undefined);
+
+    const copyToClipboard = () => {
+        navigator.clipboard.writeText(formattedMessage).then(
+            () => {
+                setTransientButtonState('success');
+
+                setTimeout(() => setTransientButtonState(undefined), 2000);
+            },
+            () => {
+                setTransientButtonState('error');
+
+                setTimeout(() => setTransientButtonState(undefined), 2000);
+            }
+        );
     };
 
     return (
@@ -36,6 +64,7 @@ function SingleLineCode({ formattedMessage, subsequentCommandExists }: Props) {
 
             <Button
                 variant="outlined"
+                color={transientButtonState}
                 onClick={copyToClipboard}
                 sx={{
                     px: 1,
@@ -45,7 +74,7 @@ function SingleLineCode({ formattedMessage, subsequentCommandExists }: Props) {
                     borderBottomRightRadius: 3,
                 }}
             >
-                <ContentCopy />
+                {getButtonIcon(transientButtonState)}
             </Button>
         </Box>
     );
