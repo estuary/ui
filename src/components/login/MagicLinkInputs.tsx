@@ -77,17 +77,17 @@ const MagicLinkInputs = ({ onSubmit, schema, uiSchema }: Props) => {
             setShowErrors(false);
             setLoading(true);
 
-            const { error } = await onSubmit(formData).finally(() => {
-                setLoading(false);
-            });
+            const { error } = await onSubmit(formData);
 
             if (error) {
                 setSubmitError(error);
+                setLoading(false);
                 return;
             }
 
             if (!hasToken) {
                 displayNotification('login.magicLink', 'success');
+                setLoading(false);
             }
         },
     };
