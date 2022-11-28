@@ -1,5 +1,5 @@
 import { Box, Button, Fade, Popper } from '@mui/material';
-import { logDialogBackground } from 'context/Theme';
+import { logDialogBackground, popperIndex } from 'context/Theme';
 import { MouseEvent, ReactNode, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
@@ -44,6 +44,7 @@ function MessageWithPopper({ messageId, popper }: Props) {
                             open={open}
                             anchorEl={anchorEl}
                             transition
+                            sx={{ zIndex: popperIndex }}
                         >
                             {({ TransitionProps }) => (
                                 <Fade {...TransitionProps} timeout={350}>

@@ -151,6 +151,9 @@ export const zIndexIncrement = 5;
 // Need to make the sticky header be on top
 export const headerLinkIndex = zIndexIncrement * 30;
 
+// Popper component z index must be greater than 100, the z index of the reflex splitter component.
+export const popperIndex = zIndexIncrement * 25;
+
 // Makes sure the hovering styling can be seen
 const buttonHoverIndex = zIndexIncrement * 4;
 // To make the delete in a multi select to work
