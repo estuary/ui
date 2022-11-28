@@ -6,12 +6,11 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { custom_generateDefaultUISchema } from 'services/jsonforms';
 import useConstant from 'use-constant';
 
-// TODO (routes) This is hardcoded because unauthenticated routes is not yet invoked
-//   need to move the routes to a single location. Also... just need to make the route
-//   settings in all JSON probably.
-const redirectTo = `${window.location.origin}/auth`;
+interface Props {
+    redirectTo: string;
+}
 
-const MagicLink = () => {
+const MagicLink = ({ redirectTo }: Props) => {
     const [showTokenValidation, setShowTokenValidation] = useState(false);
 
     const supabaseClient = useClient();

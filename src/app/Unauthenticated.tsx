@@ -13,9 +13,19 @@ const Unauthenticated = () => {
             />
             <Route
                 path={unauthenticatedRoutes.register.path}
-                element={<Login showRegistration={true} />}
+                element={
+                    <Login
+                        showRegistration={true}
+                        redirectTo={`${window.location.origin}/auth`}
+                    />
+                }
             />
-            <Route path="*" element={<Login />} />
+            <Route
+                path="*"
+                element={
+                    <Login redirectTo={`${window.location.origin}/auth`} />
+                }
+            />
         </Routes>
     );
 };

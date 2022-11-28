@@ -82,6 +82,20 @@ export const supabaseClient = createClient(
     }
 );
 
+export const cliAuthClient = createClient(
+    supabaseSettings.url,
+    supabaseSettings.anonKey,
+    {
+        // TODO (realtime) This is temporary until we figure out why some
+        //      subscriptions just hang forever.
+        realtime: {
+            logger: (kind: string, msg: string, data?: any) => {
+                LogRocket.log('Realtime : ', kind, msg, data);
+            },
+        },
+    }
+);
+
 export interface SortingProps<Data> {
     col: keyof Data;
     direction: SortDirection;

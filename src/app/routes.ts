@@ -34,6 +34,21 @@ export const authenticatedRoutes = {
             fullPath: '/admin/connectors',
         },
     },
+    cliAuth: {
+        // TODO: set titles
+        title: 'routeTitle.admin',
+        path: '/cli-auth',
+        login: {
+            title: 'routeTitle.admin.api',
+            path: 'login',
+            fullPath: '/cli-auth/login',
+        },
+        success: {
+            title: 'routeTitle.admin.connectors',
+            path: 'success',
+            fullPath: '/cli-auth/success',
+        },
+    },
     captures: {
         title: 'routeTitle.captures',
         path: '/captures',
