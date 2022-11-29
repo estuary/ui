@@ -113,7 +113,7 @@ const useOAuth2 = <TData = AuthTokenPayload>(props: Oauth2Props<TData>) => {
                     // Popup was closed before completing auth...
                     setLoading(false);
                     await onError(
-                        'Warning: Popup was closed before completing authentication.'
+                        'Pop-up was closed before completing authentication. Your browser may be blocking it from opening. Please ensure your browser allows popups.'
                     );
                     clearInterval(intervalRef.current);
                     removeState();
