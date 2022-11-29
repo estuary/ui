@@ -1,4 +1,4 @@
-import { Refresh } from '@mui/icons-material';
+import { Refresh, Terminal } from '@mui/icons-material';
 import {
     Box,
     CircularProgress,
@@ -11,13 +11,13 @@ import { getDraftSpecsByCatalogName } from 'api/draftSpecs';
 import { getLiveSpecsByCatalogName } from 'api/liveSpecs';
 import ResourceConfig from 'components/collection/ResourceConfig';
 import MessageWithLink from 'components/content/MessageWithLink';
-import MessageWithPopper from 'components/content/MessageWithPopper';
 import DiscoveredSchemaCommands from 'components/editor/Bindings/SchemaEditCommands/DiscoveredSchema';
 import ExistingSchemaCommands from 'components/editor/Bindings/SchemaEditCommands/ExistingSchema';
 import BindingsTabs from 'components/editor/Bindings/Tabs';
 import { tabProps } from 'components/editor/Bindings/types';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
+import ButtonWithPopper from 'components/shared/ButtonWithPopper';
 import useDraftSpecs from 'hooks/useDraftSpecs';
 import { useLiveSpecs_spec_general } from 'hooks/useLiveSpecs';
 import { ReactNode, useMemo, useState } from 'react';
@@ -157,9 +157,45 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                 },
                             }}
                         >
-                            <AlertBox severity="info" short>
-                                <MessageWithPopper
-                                    messageId="workflows.collectionSelector.alert.message.schemaEdit"
+                            {schemaUpdateErrored ? (
+                                <AlertBox severity="warning" short>
+                                    <FormattedMessage id="workflows.collectionSelector.alert.message.schemaUpdateError" />
+                                </AlertBox>
+                            ) : null}
+
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                }}
+                            >
+                                <Box
+                                    sx={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                    }}
+                                >
+                                    <Typography variant="h6" sx={{ mr: 1 }}>
+                                        <FormattedMessage id="workflows.collectionSelector.header.collectionSchema" />
+                                    </Typography>
+
+                                    {schemaUpdated ? (
+                                        <IconButton
+                                            onClick={handlers.updateSchema}
+                                        >
+                                            <Refresh />
+                                        </IconButton>
+                                    ) : (
+                                        <CircularProgress
+                                            size="1.5rem"
+                                            sx={{ ml: 1 }}
+                                        />
+                                    )}
+                                </Box>
+
+                                <ButtonWithPopper
+                                    messageId="workflows.collectionSelector.cta.schemaEdit"
                                     popper={
                                         collectionData.belongsToDraft ? (
                                             <DiscoveredSchemaCommands />
@@ -167,30 +203,8 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                             <ExistingSchemaCommands />
                                         )
                                     }
+                                    startIcon={<Terminal />}
                                 />
-                            </AlertBox>
-
-                            {schemaUpdateErrored ? (
-                                <AlertBox severity="warning" short>
-                                    <FormattedMessage id="workflows.collectionSelector.alert.message.schemaUpdateError" />
-                                </AlertBox>
-                            ) : null}
-
-                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                <Typography variant="h6" sx={{ mr: 1 }}>
-                                    <FormattedMessage id="workflows.collectionSelector.header.collectionSchema" />
-                                </Typography>
-
-                                {schemaUpdated ? (
-                                    <IconButton onClick={handlers.updateSchema}>
-                                        <Refresh />
-                                    </IconButton>
-                                ) : (
-                                    <CircularProgress
-                                        size="1.5rem"
-                                        sx={{ ml: 1 }}
-                                    />
-                                )}
                             </Box>
 
                             <ReactJson

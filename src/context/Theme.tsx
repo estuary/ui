@@ -251,6 +251,11 @@ export const alertBackground = {
 };
 export const connectorCardLogoBackground = 'rgba(172, 199, 220, 0.30)';
 
+export const codeBackground = {
+    light: slate[50],
+    dark: 'rgba(172, 199, 220, 0.12)',
+};
+
 export const logDialogBackground = {
     light: slate[25],
     dark: slate[800],

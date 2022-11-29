@@ -1,6 +1,6 @@
 import { Check, ContentCopy, ErrorOutline } from '@mui/icons-material';
 import { Box, Button, Tooltip, Typography } from '@mui/material';
-import { semiTransparentBackground } from 'context/Theme';
+import { codeBackground } from 'context/Theme';
 import { ReactNode, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -50,8 +50,7 @@ function SingleLineCode({ formattedMessage, subsequentCommandExists }: Props) {
             sx={{
                 mb: subsequentCommandExists ? 1 : undefined,
                 display: 'flex',
-                bgcolor: (theme) =>
-                    semiTransparentBackground[theme.palette.mode],
+                bgcolor: (theme) => codeBackground[theme.palette.mode],
                 borderRadius,
             }}
         >

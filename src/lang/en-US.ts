@@ -681,6 +681,7 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.alert.message.schemaEdit.buttonLabel': `View CLI Commands`,
     'workflows.collectionSelector.cta.delete': `Remove All`,
     'workflows.collectionSelector.cta.updateSchema': `Refresh Schema`,
+    'workflows.collectionSelector.cta.schemaEdit': `CLI`,
     'workflows.collectionSelector.error.title.missingCollectionSchema': `Failed to fetch collection schema`,
     'workflows.collectionSelector.header.collectionSchema': `Collection Schema`,
     'workflows.collectionSelector.label.discoveredCollections': `Discovered Collections`,

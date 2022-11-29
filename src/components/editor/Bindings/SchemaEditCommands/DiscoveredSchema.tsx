@@ -1,4 +1,4 @@
-import { Code } from '@mui/icons-material';
+import { Terminal } from '@mui/icons-material';
 import { Box, Typography } from '@mui/material';
 import SingleLineCode from 'components/content/SingleLineCode';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
@@ -31,7 +31,7 @@ function DiscoveredSchemaCommands() {
                     alignItems: 'center',
                 }}
             >
-                <Code />
+                <Terminal />
 
                 <Typography variant="h6" sx={{ ml: 1 }}>
                     <FormattedMessage id="workflows.collectionSelector.schemaEdit.header" />
