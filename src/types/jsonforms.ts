@@ -14,11 +14,17 @@ export enum Options {
 
 export enum Formats {
     password = 'password',
+    date = 'date',
     dateTime = 'date-time',
+    time = 'time',
 }
 
+// These are DayJS formats!
+// https://day.js.org/docs/en/display/format
 export enum Patterns {
-    dateTime = 'YYYY-MM-DDThh:mm:ssZ',
+    date = 'YYYY-MM-DD',
+    dateTime = 'YYYY-MM-DDTHH:mm:ssZ',
+    time = 'HH:mm:ss',
 }
 
 export enum Annotations {
