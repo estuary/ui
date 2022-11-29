@@ -1,7 +1,4 @@
 import { Login } from 'pages/Login';
-
-import FullPageSpinner from 'components/fullPage/Spinner';
-import * as React from 'react';
 import { unauthenticatedRoutes } from '../../app/routes';
 
 export const CliLogin = () => {
@@ -19,9 +16,5 @@ export const CliLogin = () => {
             redirectTo + unauthenticatedRoutes.cliAuth.success.fullPath;
     }
 
-    return (
-        <React.Suspense fallback={<FullPageSpinner />}>
-            <Login redirectTo={redirectTo} />
-        </React.Suspense>
-    );
+    return <Login redirectTo={redirectTo} />;
 };
