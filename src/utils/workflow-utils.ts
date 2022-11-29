@@ -3,13 +3,12 @@ import {
     getDraftSpecsBySpecType,
     modifyDraftSpec,
 } from 'api/draftSpecs';
-import { LiveSpecsExtQuery } from 'api/liveSpecs';
+import { LiveSpecsExtQuery_ByCatalogNames } from 'api/liveSpecs';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isEmpty, isEqual } from 'lodash';
 import pLimit from 'p-limit';
 import { CallSupabaseResponse } from 'services/supabase';
 import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
-import { Schema } from 'types';
 
 const mergeResourceConfigs = (
     queryData: DraftSpecQuery,
@@ -71,12 +70,19 @@ export const modifyDiscoveredDraftSpec = async (
     );
 };
 
+interface CollectionData {
+    [key: string]: {
+        spec: any;
+        expect_pub_id: string | null;
+    };
+}
+
 export const getBoundCollectionSpecs = (
     boundCollections: string[],
     draftSpecData: DraftSpecQuery[],
-    liveSpecData: LiveSpecsExtQuery[]
-): Schema => {
-    let collectionSpecs: Schema = {};
+    liveSpecData: LiveSpecsExtQuery_ByCatalogNames[]
+): CollectionData => {
+    let collectionSpecs: CollectionData = {};
 
     boundCollections.forEach((collection) => {
         const draftSpecQuery = draftSpecData.find(
@@ -87,14 +93,18 @@ export const getBoundCollectionSpecs = (
         );
 
         if (draftSpecQuery) {
+            const { spec, expect_pub_id } = draftSpecQuery;
+
             collectionSpecs = {
                 ...collectionSpecs,
-                [collection]: draftSpecQuery.spec,
+                [collection]: { spec, expect_pub_id },
             };
         } else if (liveSpecQuery) {
+            const { spec, last_pub_id } = liveSpecQuery;
+
             collectionSpecs = {
                 ...collectionSpecs,
-                [collection]: liveSpecQuery.spec,
+                [collection]: { spec, expect_pub_id: last_pub_id },
             };
         } else {
             console.log(`Could not find any collection data for ${collection}`);
@@ -106,7 +116,7 @@ export const getBoundCollectionSpecs = (
 
 export const modifyDiscoveredCollectionDraftSpec = async (
     currentDraftId: string,
-    collectionSpecs: Schema,
+    collectionData: CollectionData,
     errorTitle: string,
     callFailed: Function
 ): Promise<PromiseLike<CallSupabaseResponse<any>>[] | null> => {
@@ -129,23 +139,28 @@ export const modifyDiscoveredCollectionDraftSpec = async (
         const promises: PromiseLike<CallSupabaseResponse<any>>[] = [];
 
         draftSpecsResponse.data.forEach((query) => {
-            const boundCollectionSpec = Object.hasOwn(
-                collectionSpecs,
+            const boundCollectionData = Object.hasOwn(
+                collectionData,
                 query.catalog_name
             )
-                ? collectionSpecs[query.catalog_name]
+                ? collectionData[query.catalog_name]
                 : null;
 
             if (
-                !isEmpty(boundCollectionSpec) &&
-                !isEqual(query.spec, boundCollectionSpec)
+                boundCollectionData &&
+                !isEmpty(boundCollectionData.spec) &&
+                !isEqual(query.spec, boundCollectionData.spec)
             ) {
-                // TODO (defect): Propagate the expected pub ID associated with the previous query.
-                const promise = modifyDraftSpec(boundCollectionSpec, {
-                    draft_id: currentDraftId,
-                    catalog_name: query.catalog_name,
-                    spec_type: 'collection',
-                });
+                const promise = modifyDraftSpec(
+                    boundCollectionData.spec,
+                    {
+                        draft_id: currentDraftId,
+                        catalog_name: query.catalog_name,
+                        spec_type: 'collection',
+                    },
+                    null,
+                    boundCollectionData.expect_pub_id
+                );
 
                 promises.push(limiter(() => promise));
             }

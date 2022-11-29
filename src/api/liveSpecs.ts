@@ -8,7 +8,7 @@ import {
 } from 'services/supabase';
 import { Entity } from 'types';
 
-export interface LiveSpecsExtQuery {
+export interface LiveSpecsExtQuery_ByCatalogName {
     catalog_name: string;
     spec_type: string;
     spec: any;
@@ -23,10 +23,17 @@ export const getLiveSpecsByCatalogName = async (
         .select(`catalog_name,spec_type,spec`)
         .eq('catalog_name', catalogName)
         .eq('spec_type', specType)
-        .then(handleSuccess<LiveSpecsExtQuery>, handleFailure);
+        .then(handleSuccess<LiveSpecsExtQuery_ByCatalogName>, handleFailure);
 
     return data;
 };
+
+export interface LiveSpecsExtQuery_ByCatalogNames {
+    catalog_name: string;
+    spec_type: string;
+    spec: any;
+    last_pub_id: string;
+}
 
 const CHUNK_SIZE = 10;
 export const getLiveSpecsByCatalogNames = async (
@@ -34,19 +41,18 @@ export const getLiveSpecsByCatalogNames = async (
     catalogNames: string[]
 ) => {
     const limiter = pLimit(3);
-    const promises: Array<Promise<PostgrestResponse<any>>> = [];
+    const promises: Array<
+        Promise<PostgrestResponse<LiveSpecsExtQuery_ByCatalogNames>>
+    > = [];
     let index = 0;
 
     const queryPromiseGenerator = (idx: number) =>
         supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
-            .select(`catalog_name,spec_type,spec`)
+            .select(`catalog_name,spec_type,spec,last_pub_id`)
             .eq('spec_type', specType)
             .in('catalog_name', catalogNames.slice(idx, idx + CHUNK_SIZE));
 
-    // This could probably be written in a fancy functional-programming way with
-    // clever calls to concat and map and slice and stuff,
-    // but I want it to be dead obvious what's happening here.
     while (index < catalogNames.length) {
         // Have to do this to capture `index` correctly
         const prom = queryPromiseGenerator(index);

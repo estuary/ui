@@ -86,8 +86,8 @@ export const updateDraftSpec = (
 export const modifyDraftSpec = (
     draftSpec: any,
     matchData: UpdateMatchData,
-    catalogName?: string,
-    lastPubId?: string
+    catalogName?: string | null,
+    lastPubId?: string | null
 ) => {
     let data: DraftSpecData = { spec: draftSpec };
 
