@@ -21,3 +21,5 @@ We have to check after every JSONForms update if these need updated.
 # Upcoming Customizations
 
 1. Allow anchor tags to be rendered in forms
+2. Show description for array
+3. Selecting multiple values from array displaying as tag list

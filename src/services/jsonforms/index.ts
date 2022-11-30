@@ -38,7 +38,7 @@ import {
     toDataPath,
     UISchemaElement,
 } from '@jsonforms/core';
-import { concat, includes, orderBy } from 'lodash';
+import { concat, forEach, includes, orderBy } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 import keys from 'lodash/keys';
 import startCase from 'lodash/startCase';
@@ -48,6 +48,24 @@ import { ADVANCED, CONTAINS_REQUIRED_FIELDS } from './shared';
 /////////////////////////////////////////////////////////
 //  CUSTOM FUNCTIONS AND SETTINGS
 /////////////////////////////////////////////////////////
+
+// This is where we do all the "pre processing" that the UI requires
+//  1. Replace timezone string so validation works
+export const processSchemaForRendering = (endpointSchema: JsonSchema) => {
+    forEach(endpointSchema.properties, (value) => {
+        if (value.properties) {
+            processSchemaForRendering(value.properties);
+        } else if (value.pattern?.endsWith('Z$')) {
+            value.pattern = value.pattern.replace(
+                'Z$',
+                `[-+]{1}[0-9]{2}:[0-9]{2}$`
+            );
+        }
+    });
+
+    return endpointSchema;
+};
+
 const addOption = (elem: ControlElement | Layout, key: string, value: any) => {
     if (!elem.options) {
         elem.options = {};
@@ -80,10 +98,28 @@ const isMultilineText = (schema: JsonSchema): boolean => {
     }
 };
 
+const isDateText = (schema: JsonSchema): boolean => {
+    if (schema.type === 'string' && Object.hasOwn(schema, 'format')) {
+        // eslint-disable-next-line @typescript-eslint/dot-notation
+        return schema['format'] === 'date';
+    } else {
+        return false;
+    }
+};
+
 const isDateTimeText = (schema: JsonSchema): boolean => {
     if (schema.type === 'string' && Object.hasOwn(schema, 'format')) {
         // eslint-disable-next-line @typescript-eslint/dot-notation
         return schema['format'] === 'date-time';
+    } else {
+        return false;
+    }
+};
+
+const isTimeText = (schema: JsonSchema): boolean => {
+    if (schema.type === 'string' && Object.hasOwn(schema, 'format')) {
+        // eslint-disable-next-line @typescript-eslint/dot-notation
+        return schema['format'] === 'time';
     } else {
         return false;
     }
@@ -468,23 +504,31 @@ const generateUISchema = (
     // After that we check if it is just multiline.
 
     const controlObject: ControlElement = createControlElement(currentRef);
-    if (isDateTimeText(jsonSchema)) {
-        const newControl = addOption(
-            controlObject,
-            Options.format,
-            Formats.dateTime
-        );
-        if (newControl.options) {
-            newControl.options.dateTimeFormat = Patterns.dateTime;
-            newControl.options.dateTimeSaveFormat = Patterns.dateTime;
-        }
-    } else if (isSecretText(jsonSchema)) {
+    if (isSecretText(jsonSchema)) {
         addOption(controlObject, Options.format, Formats.password);
         if (isMultilineText(jsonSchema)) {
             addOption(controlObject, Options.multiLineSecret, true);
         }
     } else if (isMultilineText(jsonSchema)) {
         addOption(controlObject, Options.multi, true);
+    } else if (isDateTimeText(jsonSchema)) {
+        addOption(controlObject, Options.format, Formats.dateTime);
+        if (controlObject.options) {
+            controlObject.options.dateTimeFormat = Patterns.dateTime;
+            controlObject.options.dateTimeSaveFormat = Patterns.dateTime;
+        }
+    } else if (isDateText(jsonSchema)) {
+        addOption(controlObject, Options.format, Formats.date);
+        if (controlObject.options) {
+            controlObject.options.dateFormat = Patterns.date;
+            controlObject.options.dateSaveFormat = Patterns.date;
+        }
+    } else if (isTimeText(jsonSchema)) {
+        addOption(controlObject, Options.format, Formats.time);
+        if (controlObject.options) {
+            controlObject.options.timeFormat = Patterns.time;
+            controlObject.options.timeSaveFormat = Patterns.time;
+        }
     }
 
     switch (types[0]) {

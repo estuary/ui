@@ -17,6 +17,9 @@ import { oAuthProviderTester, OAuthType } from 'forms/renderers/OAuth';
 import MaterialOneOfRenderer_Discriminator, {
     materialOneOfControlTester_Discriminator,
 } from 'forms/renderers/Overrides/material/complex/MaterialOneOfRenderer_Discriminator';
+import MaterialDateTimeControl, {
+    materialDateTimeControlTester,
+} from 'forms/renderers/Overrides/material/controls/MaterialDateTimeControl';
 
 const defaultRenderers = [
     ...materialRenderers,
@@ -24,6 +27,10 @@ const defaultRenderers = [
     {
         renderer: MaterialOneOfRenderer_Discriminator,
         tester: materialOneOfControlTester_Discriminator,
+    },
+    {
+        renderer: MaterialDateTimeControl,
+        tester: materialDateTimeControlTester,
     },
 
     // Custom layouts
