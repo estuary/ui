@@ -11,7 +11,7 @@ import { unauthenticatedRoutes } from 'app/routes';
 import PageContainer from 'components/shared/PageContainer';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import LogRocket from 'logrocket';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router';
 import { CustomEvents } from 'services/logrocket';
@@ -22,17 +22,27 @@ const boxStyling: SxProps<Theme> = {
 };
 
 export function CliAuthSuccess() {
+    useBrowserTitle('browserTitle.cliAuth.success');
+
     const navigate = useNavigate();
     const user = Auth.useUser();
     const session = user.session;
-    const tokenValue = btoa(
-        JSON.stringify({
-            access_token: session?.access_token,
-            refresh_token: session?.refresh_token,
-            expires_at: (session?.expires_at ?? 0) + (session?.expires_in ?? 0),
-        })
+
+    const tokenValue = useMemo(
+        () =>
+            session
+                ? btoa(
+                      JSON.stringify({
+                          access_token: session.access_token,
+                          refresh_token: session.refresh_token,
+                          expires_at:
+                              (session.expires_at ?? 0) +
+                              (session.expires_in ?? 0),
+                      })
+                  )
+                : null,
+        [session]
     );
-    useBrowserTitle('browserTitle.cliAuth.success');
 
     useEffect(() => {
         if (!session) {
@@ -47,7 +57,7 @@ export function CliAuthSuccess() {
     }, [tokenValue, session, navigate]);
 
     const copyToken = () => {
-        void navigator.clipboard.writeText(tokenValue);
+        void navigator.clipboard.writeText(tokenValue ?? '');
     };
 
     return (
@@ -70,7 +80,7 @@ export function CliAuthSuccess() {
                 <TextareaAutosize
                     minRows={4}
                     cols={50}
-                    value={tokenValue}
+                    value={tokenValue ?? ''}
                     id="accessTokenValue"
                 />
             </Box>

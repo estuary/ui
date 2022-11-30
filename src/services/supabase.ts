@@ -118,7 +118,6 @@ export const cliScopedLocalStorage = {
             }
         }
 
-        console.log('clear', toRemove);
         toRemove.forEach((k: string) => {
             localStorage.removeItem(k);
         });
