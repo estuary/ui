@@ -13,6 +13,7 @@ import useBrowserTitle from 'hooks/useBrowserTitle';
 import LogRocket from 'logrocket';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { useNavigate } from 'react-router';
 import { CustomEvents } from 'services/logrocket';
 
 const boxStyling: SxProps<Theme> = {
@@ -21,6 +22,7 @@ const boxStyling: SxProps<Theme> = {
 };
 
 export function CliAuthSuccess() {
+    const navigate = useNavigate();
     const user = Auth.useUser();
     const session = user.session;
     const tokenValue = btoa(
@@ -33,13 +35,19 @@ export function CliAuthSuccess() {
     useBrowserTitle('browserTitle.cliAuth.success');
 
     useEffect(() => {
-        LogRocket.track(CustomEvents.FLOWCTL_LOGIN, {
-            user_id: session?.user?.id,
-        });
-    }, [tokenValue, session?.user?.id]);
+        if (!session) {
+            return navigate(unauthenticatedRoutes.cliAuth.login.fullPath, {
+                replace: true,
+            });
+        } else {
+            LogRocket.track(CustomEvents.FLOWCTL_LOGIN, {
+                user_id: session.user?.id,
+            });
+        }
+    }, [tokenValue, session, navigate]);
 
     const copyToken = () => {
-        navigator.clipboard.writeText(tokenValue);
+        void navigator.clipboard.writeText(tokenValue);
     };
 
     return (
