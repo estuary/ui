@@ -36,6 +36,7 @@
         "@mui/material": "^5.9.3",
         "@mui/utils": "^5.9.3",
         "@mui/x-data-grid": "^5.15.1",
+        "@segment/analytics-next": "^1.46.4",
         "@supabase/postgrest-js": "^0.37.4",
         "@supabase/supabase-js": "^1.35.5",
         "@supabase/ui": "^0.36.5",
