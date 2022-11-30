@@ -18,9 +18,8 @@ import { tabProps } from 'components/editor/Bindings/types';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import ButtonWithPopper from 'components/shared/ButtonWithPopper';
-import useDraftSpecs from 'hooks/useDraftSpecs';
-import { useLiveSpecs_spec_general } from 'hooks/useLiveSpecs';
-import { ReactNode, useMemo, useState } from 'react';
+import { isEmpty } from 'lodash';
+import { ReactNode, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import ReactJson from 'react-json-view';
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
@@ -36,6 +35,30 @@ interface CollectionData {
     belongsToDraft: boolean;
 }
 
+const evaluateCollectionData = async (
+    draftId: string,
+    catalogName: string
+): Promise<CollectionData | null> => {
+    const draftSpecResponse = await getDraftSpecsByCatalogName(
+        draftId,
+        catalogName,
+        'collection'
+    );
+
+    if (isEmpty(draftSpecResponse.data)) {
+        const liveSpecResponse = await getLiveSpecsByCatalogName(
+            catalogName,
+            'collection'
+        );
+
+        return isEmpty(liveSpecResponse.data)
+            ? null
+            : { spec: liveSpecResponse.data, belongsToDraft: false };
+    } else {
+        return { spec: draftSpecResponse.data, belongsToDraft: true };
+    }
+};
+
 function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
     const theme = useTheme();
     const jsonTheme =
@@ -48,85 +71,47 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
     const currentCollection = useResourceConfig_currentCollection();
 
     const [activeTab, setActiveTab] = useState<number>(0);
+    const [collectionData, setCollectionData] = useState<CollectionData | null>(
+        null
+    );
     const [schemaUpdated, setSchemaUpdated] = useState<boolean>(true);
     const [schemaUpdateErrored, setSchemaUpdateErrored] =
         useState<boolean>(false);
 
-    const { liveSpecs } = useLiveSpecs_spec_general('collection');
-    const { draftSpecs } = useDraftSpecs(persistedDraftId, null, 'collection');
-
-    // TODO (defect): Preserve existing collections attached to the draft via the command line.
-    //   When discovery is run after an existing collection is added to the draft, it is not included
-    //   in the new draft. We will need to actively keep track of the spec and expected pub ID for that collection.
-    const collectionData: CollectionData | null = useMemo(() => {
-        if (currentCollection) {
-            const belongsToDraft: boolean = draftSpecs
-                .map(({ catalog_name }) => catalog_name)
-                .includes(currentCollection);
-
-            const queryData = belongsToDraft
-                ? draftSpecs.find(
-                      (query) => query.catalog_name === currentCollection
-                  )
-                : liveSpecs.find(
-                      (query) => query.catalog_name === currentCollection
-                  );
-
-            return queryData ? { spec: queryData.spec, belongsToDraft } : null;
+    useEffect(() => {
+        if (currentCollection && persistedDraftId) {
+            evaluateCollectionData(persistedDraftId, currentCollection).then(
+                (response) => setCollectionData(response),
+                () => setCollectionData(null)
+            );
         } else {
-            return null;
+            setCollectionData(null);
         }
-    }, [currentCollection, draftSpecs, liveSpecs]);
+    }, [setCollectionData, currentCollection, persistedDraftId]);
 
     const handlers = {
         updateSchema: () => {
-            if (currentCollection && collectionData) {
+            if (persistedDraftId && currentCollection && collectionData) {
                 setSchemaUpdated(false);
 
-                if (collectionData.belongsToDraft && persistedDraftId) {
-                    getDraftSpecsByCatalogName(
-                        persistedDraftId,
-                        currentCollection,
-                        'collection'
-                    ).then(
-                        (response) => {
-                            if (response.data) {
-                                collectionData.spec = response.data[0].spec;
-                            }
-
-                            if (schemaUpdateErrored) {
-                                setSchemaUpdateErrored(false);
-                            }
-
-                            setSchemaUpdated(true);
-                        },
-                        () => {
-                            setSchemaUpdateErrored(true);
-                            setSchemaUpdated(true);
+                evaluateCollectionData(
+                    persistedDraftId,
+                    currentCollection
+                ).then(
+                    (response) => {
+                        if (schemaUpdateErrored) {
+                            setSchemaUpdateErrored(false);
                         }
-                    );
-                } else {
-                    getLiveSpecsByCatalogName(
-                        currentCollection,
-                        'collection'
-                    ).then(
-                        (response) => {
-                            if (response.data) {
-                                collectionData.spec = response.data[0].spec;
-                            }
 
-                            if (schemaUpdateErrored) {
-                                setSchemaUpdateErrored(false);
-                            }
+                        setCollectionData(response);
 
-                            setSchemaUpdated(true);
-                        },
-                        () => {
-                            setSchemaUpdateErrored(true);
-                            setSchemaUpdated(true);
-                        }
-                    );
-                }
+                        setSchemaUpdated(true);
+                    },
+                    () => {
+                        setSchemaUpdateErrored(true);
+                        setSchemaUpdated(true);
+                    }
+                );
             }
         },
     };
