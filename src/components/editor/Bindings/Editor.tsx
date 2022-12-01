@@ -53,9 +53,9 @@ const evaluateCollectionData = async (
 
         return isEmpty(liveSpecResponse.data)
             ? null
-            : { spec: liveSpecResponse.data, belongsToDraft: false };
+            : { spec: liveSpecResponse.data[0].spec, belongsToDraft: false };
     } else {
-        return { spec: draftSpecResponse.data, belongsToDraft: true };
+        return { spec: draftSpecResponse.data[0].spec, belongsToDraft: true };
     }
 };
 
