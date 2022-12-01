@@ -38,7 +38,7 @@ import {
     toDataPath,
     UISchemaElement,
 } from '@jsonforms/core';
-import { concat, forEach, includes, orderBy } from 'lodash';
+import { concat, includes, orderBy } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 import keys from 'lodash/keys';
 import startCase from 'lodash/startCase';
@@ -48,24 +48,6 @@ import { ADVANCED, CONTAINS_REQUIRED_FIELDS } from './shared';
 /////////////////////////////////////////////////////////
 //  CUSTOM FUNCTIONS AND SETTINGS
 /////////////////////////////////////////////////////////
-
-// This is where we do all the "pre processing" that the UI requires
-//  1. Replace timezone string so validation works
-export const processSchemaForRendering = (endpointSchema: JsonSchema) => {
-    forEach(endpointSchema.properties, (value) => {
-        if (value.properties) {
-            processSchemaForRendering(value.properties);
-        } else if (value.pattern?.endsWith('Z$')) {
-            value.pattern = value.pattern.replace(
-                'Z$',
-                `[-+]{1}[0-9]{2}:[0-9]{2}$`
-            );
-        }
-    });
-
-    return endpointSchema;
-};
-
 const addOption = (elem: ControlElement | Layout, key: string, value: any) => {
     if (!elem.options) {
         elem.options = {};
