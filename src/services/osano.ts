@@ -1,3 +1,7 @@
+export const getWidgetHidingStyling = () => {
+    return '.osano-cm-widget {display: none;}';
+};
+
 export const showCookieDrawer = () => {
     if (window.Osano?.cm?.showDrawer) {
         window.Osano.cm.showDrawer('osano-cm-dom-info-dialog-open');

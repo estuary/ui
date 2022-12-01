@@ -146,3 +146,11 @@ export const getGoogleTageManagerSettings = () => {
 
     return settings;
 };
+
+export const getOsanoSettings = () => {
+    const settings = {
+        bodyClass: process.env.REACT_APP_OSANO_HIDE_WIDGET_CLASS ?? '',
+    };
+
+    return settings;
+};
