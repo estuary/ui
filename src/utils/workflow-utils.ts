@@ -135,10 +135,10 @@ export const modifyDiscoveredCollectionDraftSpecs = async (
         });
     }
 
-    if (draftSpecsResponse.data && draftSpecsResponse.data.length > 0) {
-        const limiter = pLimit(3);
-        const promises: PromiseLike<CallSupabaseResponse<any>>[] = [];
+    const limiter = pLimit(3);
+    const promises: PromiseLike<CallSupabaseResponse<any>>[] = [];
 
+    if (draftSpecsResponse.data && draftSpecsResponse.data.length > 0) {
         draftSpecsResponse.data.forEach((query) => {
             const boundCollectionData = Object.hasOwn(
                 collectionData,
@@ -184,9 +184,19 @@ export const modifyDiscoveredCollectionDraftSpecs = async (
                 promises.push(limiter(() => promise));
             }
         });
-
-        return promises.length > 0 ? promises : null;
     } else {
-        return null;
+        Object.entries(collectionData).forEach(([collection, data]) => {
+            const promise = createDraftSpec(
+                currentDraftId,
+                collection,
+                data.spec,
+                'collection',
+                data.expect_pub_id
+            );
+
+            promises.push(limiter(() => promise));
+        });
     }
+
+    return promises.length > 0 ? promises : null;
 };
