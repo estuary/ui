@@ -1,4 +1,5 @@
 import {
+    createDraftSpec,
     generateCaptureDraftSpec,
     getDraftSpecsBySpecType,
     modifyDraftSpec,
@@ -114,7 +115,7 @@ export const getBoundCollectionSpecs = (
     return collectionSpecs;
 };
 
-export const modifyDiscoveredCollectionDraftSpec = async (
+export const modifyDiscoveredCollectionDraftSpecs = async (
     currentDraftId: string,
     collectionData: CollectionData,
     errorTitle: string,
@@ -160,6 +161,24 @@ export const modifyDiscoveredCollectionDraftSpec = async (
                     },
                     null,
                     boundCollectionData.expect_pub_id
+                );
+
+                promises.push(limiter(() => promise));
+            }
+        });
+
+        const discoveredCollections: string[] = draftSpecsResponse.data.map(
+            ({ catalog_name }) => catalog_name
+        );
+
+        Object.entries(collectionData).forEach(([collection, data]) => {
+            if (!discoveredCollections.includes(collection)) {
+                const promise = createDraftSpec(
+                    currentDraftId,
+                    collection,
+                    data.spec,
+                    'collection',
+                    data.expect_pub_id
                 );
 
                 promises.push(limiter(() => promise));

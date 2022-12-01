@@ -64,7 +64,7 @@ import { JsonFormsData } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
 import {
     getBoundCollectionSpecs,
-    modifyDiscoveredCollectionDraftSpec,
+    modifyDiscoveredCollectionDraftSpecs,
     modifyDiscoveredDraftSpec,
 } from 'utils/workflow-utils';
 
@@ -270,7 +270,7 @@ function CaptureEdit() {
 
         if (!isEmpty(collectionSpecs)) {
             const updatedDraftSpecsPromises =
-                await modifyDiscoveredCollectionDraftSpec(
+                await modifyDiscoveredCollectionDraftSpecs(
                     newDraftId,
                     collectionSpecs,
                     'captureEdit.generate.failedErrorTitle',
