@@ -23,8 +23,8 @@ export enum Formats {
 // https://day.js.org/docs/en/display/format
 export enum Patterns {
     date = 'YYYY-MM-DD',
-    dateTime = 'YYYY-MM-DDTHH:mm:ssZ',
-    time = 'HH:mm:ss',
+    dateTime = 'YYYY-MM-DDTHH:mm:ss[Z]',
+    time = 'HH:mm:ss[Z]',
 }
 
 export enum Annotations {
