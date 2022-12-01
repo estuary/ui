@@ -10,7 +10,6 @@ import {
     useContext,
 } from 'react';
 import { createJSONFormDefaults } from 'services/ajv';
-import { processSchemaForRendering } from 'services/jsonforms';
 import {
     Entity,
     EntityWithCreateWorkflow,
@@ -207,7 +206,7 @@ const getInitialState = (
     setEndpointSchema: (val) => {
         set(
             produce((state) => {
-                state.endpointSchema = processSchemaForRendering(val);
+                state.endpointSchema = val;
             }),
             false,
             'Endpoint Schema Set'
