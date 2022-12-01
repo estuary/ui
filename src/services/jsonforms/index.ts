@@ -55,11 +55,6 @@ export const processSchemaForRendering = (endpointSchema: JsonSchema) => {
     forEach(endpointSchema.properties, (value) => {
         if (value.properties) {
             processSchemaForRendering(value.properties);
-        } else if (value.pattern?.endsWith('Z$')) {
-            value.pattern = value.pattern.replace(
-                'Z$',
-                `[-+]{1}[0-9]{2}:[0-9]{2}$`
-            );
         }
     });
 
