@@ -1,11 +1,11 @@
 import TagManager from 'react-gtm-module';
-import { getGoogleTageManagerSettings } from 'utils/env-utils';
+import { getGoogleTageManagerSettings, isProduction } from 'utils/env-utils';
 
 const googleTagManagerSettings = getGoogleTageManagerSettings();
 
 export const initGoogleTagManager = () => {
     if (
-        // isProduction &&
+        isProduction &&
         googleTagManagerSettings.enabled &&
         googleTagManagerSettings.id
     ) {
