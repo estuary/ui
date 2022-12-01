@@ -18,7 +18,7 @@ export function BindingsSelectorSkeleton() {
     );
 }
 
-export function BindingsEditorSkeleton() {
+export function BindingsEditorConfigSkeleton() {
     return (
         <Box sx={{ p: 1 }}>
             <Skeleton
@@ -43,6 +43,26 @@ export function BindingsEditorSkeleton() {
 
                 <Skeleton variant="rectangular" />
             </>
+        </Box>
+    );
+}
+
+export function BindingsEditorSchemaSkeleton() {
+    return (
+        <Box sx={{ p: 1 }}>
+            <Skeleton variant="rectangular" width={50} sx={{ mb: 1 }} />
+
+            <Skeleton variant="rectangular" width={250} sx={{ mb: 1 }} />
+
+            <Skeleton variant="rectangular" width={300} sx={{ mb: 1 }} />
+
+            <Skeleton variant="rectangular" width={350} sx={{ mb: 1 }} />
+
+            <Skeleton variant="rectangular" width={300} sx={{ mb: 1 }} />
+
+            <Skeleton variant="rectangular" width={250} sx={{ mb: 1 }} />
+
+            <Skeleton variant="rectangular" width={50} />
         </Box>
     );
 }

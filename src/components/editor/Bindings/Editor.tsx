@@ -3,12 +3,14 @@ import {
     Box,
     CircularProgress,
     IconButton,
+    Skeleton,
     Stack,
     Typography,
     useTheme,
 } from '@mui/material';
 import { getDraftSpecsByCatalogName } from 'api/draftSpecs';
 import { getLiveSpecsByCatalogName } from 'api/liveSpecs';
+import { BindingsEditorSchemaSkeleton } from 'components/collection/CollectionSkeletons';
 import ResourceConfig from 'components/collection/ResourceConfig';
 import MessageWithLink from 'components/content/MessageWithLink';
 import DiscoveredSchemaCommands from 'components/editor/Bindings/SchemaEditCommands/DiscoveredSchema';
@@ -71,9 +73,9 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
     const currentCollection = useResourceConfig_currentCollection();
 
     const [activeTab, setActiveTab] = useState<number>(0);
-    const [collectionData, setCollectionData] = useState<CollectionData | null>(
-        null
-    );
+    const [collectionData, setCollectionData] = useState<
+        CollectionData | null | undefined
+    >(null);
     const [schemaUpdated, setSchemaUpdated] = useState<boolean>(true);
     const [schemaUpdateErrored, setSchemaUpdateErrored] =
         useState<boolean>(false);
@@ -82,7 +84,7 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
         if (currentCollection && persistedDraftId) {
             evaluateCollectionData(persistedDraftId, currentCollection).then(
                 (response) => setCollectionData(response),
-                () => setCollectionData(null)
+                () => setCollectionData(undefined)
             );
         } else {
             setCollectionData(null);
@@ -132,7 +134,7 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                             collectionName={currentCollection}
                             readOnly={readOnly}
                         />
-                    ) : collectionData ? (
+                    ) : collectionData || collectionData === null ? (
                         <Stack
                             spacing={2}
                             sx={{
@@ -179,26 +181,37 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                     )}
                                 </Box>
 
-                                <ButtonWithPopper
-                                    messageId="workflows.collectionSelector.cta.schemaEdit"
-                                    popper={
-                                        collectionData.belongsToDraft ? (
-                                            <DiscoveredSchemaCommands />
-                                        ) : (
-                                            <ExistingSchemaCommands />
-                                        )
-                                    }
-                                    startIcon={<Terminal />}
-                                />
+                                {collectionData ? (
+                                    <ButtonWithPopper
+                                        messageId="workflows.collectionSelector.cta.schemaEdit"
+                                        popper={
+                                            collectionData.belongsToDraft ? (
+                                                <DiscoveredSchemaCommands />
+                                            ) : (
+                                                <ExistingSchemaCommands />
+                                            )
+                                        }
+                                        startIcon={<Terminal />}
+                                    />
+                                ) : (
+                                    <Skeleton
+                                        variant="rectangular"
+                                        width={75}
+                                    />
+                                )}
                             </Box>
 
-                            <ReactJson
-                                quotesOnKeys={false}
-                                src={collectionData.spec}
-                                theme={jsonTheme}
-                                displayObjectSize={false}
-                                displayDataTypes={false}
-                            />
+                            {collectionData ? (
+                                <ReactJson
+                                    quotesOnKeys={false}
+                                    src={collectionData.spec}
+                                    theme={jsonTheme}
+                                    displayObjectSize={false}
+                                    displayDataTypes={false}
+                                />
+                            ) : (
+                                <BindingsEditorSchemaSkeleton />
+                            )}
                         </Stack>
                     ) : (
                         <AlertBox

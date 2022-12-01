@@ -1,6 +1,6 @@
 import { Typography, useTheme } from '@mui/material';
 import {
-    BindingsEditorSkeleton,
+    BindingsEditorConfigSkeleton,
     BindingsSelectorSkeleton,
 } from 'components/collection/CollectionSkeletons';
 import BindingsEditor from 'components/editor/Bindings/Editor';
@@ -173,7 +173,7 @@ function BindingsMultiEditor({ draftSpecs = [], readOnly = false }: Props) {
                 details={
                     <BindingsEditor
                         loading={fetchingSpecs}
-                        skeleton={<BindingsEditorSkeleton />}
+                        skeleton={<BindingsEditorConfigSkeleton />}
                         readOnly={readOnly}
                     />
                 }
