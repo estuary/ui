@@ -44,7 +44,6 @@
         "data-plane-gateway": "https://gitpkg.now.sh/estuary/data-plane-gateway/client/dist?main",
         "date-fns": "^2.29.1",
         "filter-obj": "^3.0.0",
-        "hubspot": "^2.3.14",
         "immer": "^9.0.15",
         "jose": "^4.8.3",
         "json-ptr": "^3.1.1",
