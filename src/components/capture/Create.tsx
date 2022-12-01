@@ -195,7 +195,7 @@ function CaptureCreate() {
         if (draftSpecsResponse.error) {
             return helpers.callFailed({
                 error: {
-                    title: 'captureEdit.generate.failedErrorTitle',
+                    title: 'captureCreate.generate.failedErrorTitle',
                     error: draftSpecsResponse.error,
                 },
             });
@@ -212,7 +212,7 @@ function CaptureCreate() {
                 await modifyDiscoveredCollectionDraftSpecs(
                     newDraftId,
                     collectionData,
-                    'captureEdit.generate.failedErrorTitle',
+                    'captureCreate.generate.failedErrorTitle',
                     helpers.callFailed
                 );
 
@@ -229,7 +229,7 @@ function CaptureCreate() {
                 if (updatedDraftSpecsErrors.length > 0) {
                     return helpers.callFailed({
                         error: {
-                            title: 'captureEdit.generate.failedErrorTitle',
+                            title: 'captureCreate.generate.failedErrorTitle',
                             error: updatedDraftSpecsErrors,
                         },
                     });
