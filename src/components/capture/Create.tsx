@@ -19,6 +19,7 @@ import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import useDraftSpecs from 'hooks/useDraftSpecs';
+import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -52,7 +53,11 @@ import ResourceConfigHydrator from 'stores/ResourceConfig/Hydrator';
 import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import { JsonFormsData } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
-import { modifyDiscoveredDraftSpec } from 'utils/workflow-utils';
+import {
+    getBoundCollectionData,
+    modifyDiscoveredCollectionDraftSpecs,
+    modifyDiscoveredDraftSpec,
+} from 'utils/workflow-utils';
 
 const trackEvent = (payload: any) => {
     LogRocket.track(CustomEvents.CAPTURE_DISCOVER, {
@@ -177,6 +182,62 @@ function CaptureCreate() {
         },
     };
 
+    const propagateDraftCollections = async (
+        newDraftId: string,
+        previousDraftId: string,
+        boundCollections: string[]
+    ) => {
+        const draftSpecsResponse = await getDraftSpecsBySpecType(
+            previousDraftId,
+            'collection'
+        );
+
+        if (draftSpecsResponse.error) {
+            return helpers.callFailed({
+                error: {
+                    title: 'captureEdit.generate.failedErrorTitle',
+                    error: draftSpecsResponse.error,
+                },
+            });
+        }
+
+        const collectionData = getBoundCollectionData(
+            boundCollections,
+            draftSpecsResponse.data ?? [],
+            []
+        );
+
+        if (!isEmpty(collectionData)) {
+            const updatedDraftSpecsPromises =
+                await modifyDiscoveredCollectionDraftSpecs(
+                    newDraftId,
+                    collectionData,
+                    'captureEdit.generate.failedErrorTitle',
+                    helpers.callFailed
+                );
+
+            if (updatedDraftSpecsPromises) {
+                const updatedDraftSpecsResponse = await Promise.all(
+                    updatedDraftSpecsPromises
+                );
+
+                const updatedDraftSpecsErrors =
+                    updatedDraftSpecsResponse.filter(
+                        (response) => response.error
+                    );
+
+                if (updatedDraftSpecsErrors.length > 0) {
+                    return helpers.callFailed({
+                        error: {
+                            title: 'captureEdit.generate.failedErrorTitle',
+                            error: updatedDraftSpecsErrors,
+                        },
+                    });
+                }
+            }
+        }
+    };
+
     const storeDiscoveredCollections = async (
         newDraftId: string,
         resourceConfig: ResourceConfigDictionary
@@ -247,6 +308,16 @@ function CaptureCreate() {
                     draft_id: discoverDraftId,
                 }),
             async (payload: any) => {
+                const boundCollections = Object.keys(resourceConfig);
+
+                if (boundCollections.length > 0 && persistedDraftId) {
+                    await propagateDraftCollections(
+                        payload.draft_id,
+                        persistedDraftId,
+                        boundCollections
+                    );
+                }
+
                 await storeDiscoveredCollections(
                     payload.draft_id,
                     resourceConfig

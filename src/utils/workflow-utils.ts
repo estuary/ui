@@ -78,12 +78,12 @@ interface CollectionData {
     };
 }
 
-export const getBoundCollectionSpecs = (
+export const getBoundCollectionData = (
     boundCollections: string[],
     draftSpecData: DraftSpecQuery[],
     liveSpecData: LiveSpecsExtQuery_ByCatalogNames[]
 ): CollectionData => {
-    let collectionSpecs: CollectionData = {};
+    let collectionData: CollectionData = {};
 
     boundCollections.forEach((collection) => {
         const draftSpecQuery = draftSpecData.find(
@@ -96,15 +96,15 @@ export const getBoundCollectionSpecs = (
         if (draftSpecQuery) {
             const { spec, expect_pub_id } = draftSpecQuery;
 
-            collectionSpecs = {
-                ...collectionSpecs,
+            collectionData = {
+                ...collectionData,
                 [collection]: { spec, expect_pub_id },
             };
         } else if (liveSpecQuery) {
             const { spec, last_pub_id } = liveSpecQuery;
 
-            collectionSpecs = {
-                ...collectionSpecs,
+            collectionData = {
+                ...collectionData,
                 [collection]: { spec, expect_pub_id: last_pub_id },
             };
         } else {
@@ -112,7 +112,7 @@ export const getBoundCollectionSpecs = (
         }
     });
 
-    return collectionSpecs;
+    return collectionData;
 };
 
 export const modifyDiscoveredCollectionDraftSpecs = async (

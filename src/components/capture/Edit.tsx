@@ -63,7 +63,7 @@ import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import { JsonFormsData } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
 import {
-    getBoundCollectionSpecs,
+    getBoundCollectionData,
     modifyDiscoveredCollectionDraftSpecs,
     modifyDiscoveredDraftSpec,
 } from 'utils/workflow-utils';
@@ -262,17 +262,17 @@ function CaptureEdit() {
             }
         }
 
-        const collectionSpecs = getBoundCollectionSpecs(
+        const collectionData = getBoundCollectionData(
             boundCollections,
             draftSpecsResponse.data ?? [],
             liveSpecsResponse ? liveSpecsResponse.data : []
         );
 
-        if (!isEmpty(collectionSpecs)) {
+        if (!isEmpty(collectionData)) {
             const updatedDraftSpecsPromises =
                 await modifyDiscoveredCollectionDraftSpecs(
                     newDraftId,
-                    collectionSpecs,
+                    collectionData,
                     'captureEdit.generate.failedErrorTitle',
                     helpers.callFailed
                 );

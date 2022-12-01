@@ -16,9 +16,6 @@ interface Props {
     popper: ReactNode;
 }
 
-// TODO (defect): Determine whether a Popover component or a modified Popper component
-//   should be used. Both have a number of tradeoffs, so it is truly a matter of what
-//   component is easiest to manipulate to achieve the desired functionality.
 function MessageWithPopper({ messageId, popper }: Props) {
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
