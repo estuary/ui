@@ -5,6 +5,12 @@ declare global {
             auth_url: string | null;
         } | null;
         monaco: any;
+        Osano?: {
+            cm?: {
+                mode?: 'permissive' | 'debug' | 'production';
+                showDrawer?: (arg: string) => void;
+            };
+        };
     }
 }
 
