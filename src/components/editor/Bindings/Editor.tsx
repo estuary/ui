@@ -9,7 +9,7 @@ import {
     useTheme,
 } from '@mui/material';
 import { getDraftSpecsByCatalogName } from 'api/draftSpecs';
-import { getLiveSpecsByCatalogName } from 'api/liveSpecs';
+import { getLiveSpecsByCatalogName } from 'api/liveSpecsExt';
 import { BindingsEditorSchemaSkeleton } from 'components/collection/CollectionSkeletons';
 import ResourceConfig from 'components/collection/ResourceConfig';
 import MessageWithLink from 'components/content/MessageWithLink';

@@ -1,6 +1,6 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { getDraftSpecsBySpecType } from 'api/draftSpecs';
-import { getLiveSpecsByCatalogNames } from 'api/liveSpecs';
+import { getLiveSpecsByCatalogNames } from 'api/liveSpecsExt';
 import { authenticatedRoutes } from 'app/routes';
 import CaptureGenerateButton from 'components/capture/GenerateButton';
 import {
