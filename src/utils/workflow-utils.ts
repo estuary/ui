@@ -107,8 +107,6 @@ export const getBoundCollectionData = (
                 ...collectionData,
                 [collection]: { spec, expect_pub_id: last_pub_id },
             };
-        } else {
-            console.log(`Could not find any collection data for ${collection}`);
         }
     });
 
