@@ -9,5 +9,5 @@ export const showCookieDrawer = () => {
 };
 
 export const osanoActive = () => {
-    return window.Osano?.cm?.mode !== 'debug';
+    return window.Osano?.cm?.mode && window.Osano.cm.mode !== 'debug';
 };
