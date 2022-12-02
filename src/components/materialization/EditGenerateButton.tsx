@@ -144,13 +144,9 @@ function MaterializeGenerateButton({
                 });
             }
 
-            setEncryptedEndpointConfig(
-                {
-                    data: draftSpecsResponse.data[0].spec.endpoint.connector
-                        .config,
-                },
-                'materialization_edit'
-            );
+            setEncryptedEndpointConfig({
+                data: draftSpecsResponse.data[0].spec.endpoint.connector.config,
+            });
 
             setPreviousEndpointConfig({ data: endpointConfigData });
 

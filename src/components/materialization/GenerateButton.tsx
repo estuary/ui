@@ -1,7 +1,6 @@
 import { Button } from '@mui/material';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec, generateDraftSpec } from 'api/draftSpecs';
-import { encryptConfig } from 'api/oauth';
 import {
     useEditorStore_isSaving,
     useEditorStore_resetState,
@@ -18,8 +17,13 @@ import {
     useDetailsForm_errorsExist,
 } from 'stores/DetailsForm';
 import {
+    useEndpointConfigStore_encryptedEndpointConfig_data,
     useEndpointConfigStore_endpointConfig_data,
+    useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_errorsExist,
+    useEndpointConfigStore_setEncryptedEndpointConfig,
+    useEndpointConfigStore_setPreviousEndpointConfig,
+    useEndpointConfig_serverUpdateRequired,
 } from 'stores/EndpointConfig';
 import {
     useFormStateStore_isActive,
@@ -31,6 +35,7 @@ import {
     useResourceConfig_resourceConfig,
     useResourceConfig_resourceConfigErrorsExist,
 } from 'stores/ResourceConfig/hooks';
+import { encryptEndpointConfig } from 'utils/sops-utils';
 
 interface Props {
     disabled: boolean;
@@ -55,8 +60,20 @@ function MaterializeGenerateButton({ disabled, callFailed }: Props) {
     const setDraftId = useEditorStore_setId();
 
     // Endpoint Config Store
+    const endpointSchema = useEndpointConfigStore_endpointSchema();
+
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
+
+    const serverEndpointConfigData =
+        useEndpointConfigStore_encryptedEndpointConfig_data();
+    const setEncryptedEndpointConfig =
+        useEndpointConfigStore_setEncryptedEndpointConfig();
+
+    const setPreviousEndpointConfig =
+        useEndpointConfigStore_setPreviousEndpointConfig();
+
     const endpointConfigHasErrors = useEndpointConfigStore_errorsExist();
+    const serverUpdateRequired = useEndpointConfig_serverUpdateRequired();
 
     // Form State Store
     const formActive = useFormStateStore_isActive();
@@ -102,24 +119,17 @@ function MaterializeGenerateButton({ disabled, callFailed }: Props) {
                 });
             }
 
-            const encryptedEndpointConfig = await encryptConfig(
+            const encryptedEndpointConfig = await encryptEndpointConfig(
+                serverUpdateRequired
+                    ? endpointConfigData
+                    : serverEndpointConfigData,
+                endpointSchema,
+                serverUpdateRequired,
                 imageConnectorId,
                 imageConnectorTagId,
-                endpointConfigData
+                callFailed,
+                { overrideJsonFormDefaults: true }
             );
-            if (
-                encryptedEndpointConfig.error ||
-                encryptedEndpointConfig.data.error
-            ) {
-                return callFailed({
-                    error: {
-                        title: 'entityCreate.sops.failedTitle',
-                        error:
-                            encryptedEndpointConfig.error ??
-                            encryptedEndpointConfig.data.error,
-                    },
-                });
-            }
 
             const newDraftId = draftsResponse.data[0].id;
             const draftSpec = generateDraftSpec(
@@ -142,6 +152,12 @@ function MaterializeGenerateButton({ disabled, callFailed }: Props) {
                     },
                 });
             }
+
+            setEncryptedEndpointConfig({
+                data: draftSpecsResponse.data[0].spec.endpoint.connector.config,
+            });
+
+            setPreviousEndpointConfig({ data: endpointConfigData });
 
             setDraftId(newDraftId);
             setFormState({

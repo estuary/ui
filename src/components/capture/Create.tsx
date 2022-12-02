@@ -34,7 +34,11 @@ import {
     useDetailsForm_errorsExist,
     useDetailsForm_resetState,
 } from 'stores/DetailsForm';
-import { useEndpointConfigStore_reset } from 'stores/EndpointConfig';
+import {
+    useEndpointConfigStore_reset,
+    useEndpointConfigStore_setEncryptedEndpointConfig,
+    useEndpointConfigStore_setPreviousEndpointConfig,
+} from 'stores/EndpointConfig';
 import {
     useFormStateStore_exitWhenLogsClose,
     useFormStateStore_messagePrefix,
@@ -92,6 +96,12 @@ function CaptureCreate() {
     const resetEditorStore = useEditorStore_resetState();
 
     // Endpoint Config Store
+    const setEncryptedEndpointConfig =
+        useEndpointConfigStore_setEncryptedEndpointConfig();
+
+    const setPreviousEndpointConfig =
+        useEndpointConfigStore_setPreviousEndpointConfig();
+
     const resetEndpointConfigState = useEndpointConfigStore_reset();
 
     // Form State Store
@@ -219,6 +229,11 @@ function CaptureCreate() {
                 updatedDraftSpecsResponse.data.length > 0
             ) {
                 evaluateDiscoveredCollections(updatedDraftSpecsResponse);
+
+                setEncryptedEndpointConfig({
+                    data: updatedDraftSpecsResponse.data[0].spec.endpoint
+                        .connector.config,
+                });
             }
         }
 
@@ -229,7 +244,7 @@ function CaptureCreate() {
     // TODO (optimization): Create a shared discovers table subscription.
     const discoversSubscription = (
         discoverDraftId: string,
-        _existingEndpointConfig: JsonFormsData,
+        existingEndpointConfig: JsonFormsData,
         resourceConfig: ResourceConfigDictionary
     ) => {
         setDraftId(null);
@@ -253,6 +268,8 @@ function CaptureCreate() {
                 );
 
                 void mutateDraftSpecs();
+
+                setPreviousEndpointConfig({ data: existingEndpointConfig });
 
                 setFormState({
                     status: FormStatus.GENERATED,

@@ -68,7 +68,7 @@ function EndpointConfig({ connectorImage, readOnly = false }: Props) {
 
             const defaultConfig = createJSONFormDefaults(schema);
 
-            setEndpointConfig(defaultConfig, workflow);
+            setEndpointConfig(defaultConfig);
             setPreviousEndpointConfig(defaultConfig);
         }
     }, [
@@ -78,7 +78,6 @@ function EndpointConfig({ connectorImage, readOnly = false }: Props) {
         connectorId,
         connectorTag?.connector_id,
         connectorTag?.endpoint_spec_schema,
-        workflow,
     ]);
 
     const endpointConfigUpdated = useMemo(() => {
@@ -86,8 +85,8 @@ function EndpointConfig({ connectorImage, readOnly = false }: Props) {
     }, [endpointConfig, previousEndpointConfig]);
 
     useEffect(() => {
-        setServerUpdateRequired(endpointConfigUpdated, workflow);
-    }, [setServerUpdateRequired, endpointConfigUpdated, workflow]);
+        setServerUpdateRequired(endpointConfigUpdated);
+    }, [setServerUpdateRequired, endpointConfigUpdated]);
 
     const forceClose = !editWorkflow && draftId !== null;
 
@@ -115,7 +114,7 @@ function EndpointConfig({ connectorImage, readOnly = false }: Props) {
                     </Box>
                 ) : null}
 
-                <EndpointConfigForm readOnly={readOnly} workflow={workflow} />
+                <EndpointConfigForm readOnly={readOnly} />
             </WrapperWithHeader>
         );
     } else {

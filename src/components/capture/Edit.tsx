@@ -250,13 +250,10 @@ function CaptureEdit() {
             ) {
                 evaluateDiscoveredCollections(updatedDraftSpecsResponse);
 
-                setEncryptedEndpointConfig(
-                    {
-                        data: updatedDraftSpecsResponse.data[0].spec.endpoint
-                            .connector.config,
-                    },
-                    'capture_edit'
-                );
+                setEncryptedEndpointConfig({
+                    data: updatedDraftSpecsResponse.data[0].spec.endpoint
+                        .connector.config,
+                });
             }
         }
 
