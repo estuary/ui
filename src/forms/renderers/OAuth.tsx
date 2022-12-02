@@ -9,6 +9,7 @@ import { every, includes, isEmpty, startCase } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import GoogleButton from 'react-google-button';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { useMount } from 'react-use';
 import { useDetailsForm_connectorImage_connectorId } from 'stores/DetailsForm';
 import {
     useEndpointConfigStore_endpointConfig_data,
@@ -16,7 +17,10 @@ import {
 } from 'stores/EndpointConfig';
 import { Options } from 'types/jsonforms';
 import { hasLength } from 'utils/misc-utils';
-import { getDiscriminator } from './Overrides/material/complex/MaterialOneOfRenderer_Discriminator';
+import {
+    getDefaultValue,
+    getDiscriminator,
+} from './Overrides/material/complex/MaterialOneOfRenderer_Discriminator';
 
 const NO_PROVIDER = 'noProviderFound';
 const CLIENT_ID = 'client_id';
@@ -36,7 +40,6 @@ export const oAuthProviderTester: RankedTester = rankWith(
 );
 
 const OAuthproviderRenderer = ({
-    errors,
     data,
     path,
     handleChange,
@@ -70,7 +73,7 @@ const OAuthproviderRenderer = ({
 
     // This is the field in an anyOf/oneOf/etc. that is used
     //      to tell which option is selected
-    const descriminatorProperty = useMemo(() => {
+    const discriminatorProperty = useMemo(() => {
         let schemaToCheck;
 
         if (hasOwnPathProp) {
@@ -91,7 +94,7 @@ const OAuthproviderRenderer = ({
         [options]
     );
 
-    const removeCofig = () => {
+    const removeConfig = () => {
         handleChange(onChangePath, undefined);
     };
 
@@ -106,7 +109,7 @@ const OAuthproviderRenderer = ({
             }
 
             // When inside a oneOf/anOf/etc. we need to check we have the descriminator
-            if (descriminatorProperty && field === descriminatorProperty) {
+            if (discriminatorProperty && field === discriminatorProperty) {
                 return true;
             }
 
@@ -126,7 +129,7 @@ const OAuthproviderRenderer = ({
             // Didn't find anything - return false
             return false;
         });
-    }, [data, descriminatorProperty, onChangePath, requiredFields]);
+    }, [data, discriminatorProperty, onChangePath, requiredFields]);
 
     // Pull out the provider so we can render the button
     const providerVal = options ? options[Options.oauthProvider] : NO_PROVIDER;
@@ -188,7 +191,7 @@ const OAuthproviderRenderer = ({
 
     const openPopUp = async () => {
         // As we start clear out errors and current credentials
-        removeCofig();
+        removeConfig();
         setErrorMessage(null);
 
         // Make the call to know what pop url to open
@@ -204,32 +207,43 @@ const OAuthproviderRenderer = ({
         }
     };
 
+    useMount(() => {
+        const defaults = getDefaultValue(
+            schema.properties,
+            discriminatorProperty
+        );
+        handleChange(onChangePath, {
+            ...defaults,
+            ...fakeDefaults,
+        });
+    });
+
     // https://github.com/eclipsesource/jsonforms/issues/1469
     //  Since this is a very custom renderer we need to pass errors to the
     //      store so they can be passed to the JsonForms component.
     useEffect(() => {
+        console.log('oauth effect');
         const customErrors = [];
 
         // Used to set an error for the OAuth Renderer
-        //  Check if there are already errors related to the renderer
-        //  so we do not end up with redundant error messages.
-        if (!hasAllRequiredProps && !hasLength(errors)) {
+        if (!hasAllRequiredProps) {
             customErrors.push({
                 instancePath: path,
-                message: `must have required property 'OAuth'`,
+                message: `need to complete OAuth`,
                 schemaPath: '',
                 keyword: '',
                 params: {},
             });
         }
 
+        console.log('   customErrors = ', customErrors);
         setCustomErrors(customErrors);
 
         return () => {
             // Make sure we clean up the custom errors if we leave this component
             setCustomErrors([]);
         };
-    }, [errors, hasAllRequiredProps, path, setCustomErrors]);
+    }, [hasAllRequiredProps, path, setCustomErrors]);
 
     return (
         <Box
@@ -289,7 +303,7 @@ const OAuthproviderRenderer = ({
                                 <FormattedMessage id="oauth.authenticated" />
                             }
                             color="success"
-                            onDelete={removeCofig}
+                            onDelete={removeConfig}
                         />
                     ) : (
                         <Chip

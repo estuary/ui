@@ -54,7 +54,6 @@ import {
 import { forIn, keys } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 import { useCallback, useState } from 'react';
-import { useMount } from 'react-use';
 import CombinatorProperties from './CombinatorProperties';
 
 export interface OwnOneOfProps extends OwnPropsOfControl {
@@ -67,6 +66,27 @@ export const getDiscriminator = (schema: any) => {
     return (schema as any)[discriminator]
         ? (schema as any)[discriminator].propertyName
         : null;
+};
+
+export const getDefaultValue = (
+    tabSchemaProps: any,
+    descriminatorProperty: string
+) => {
+    // Go through all the props and set them into the object.
+    //  If it is the descriminator then try to set the default
+    //      value, then the const, and finally default to an empty string.
+    //  If it is any other value then go ahead and create the value
+    const defaultVal: {
+        [k: string]: any;
+    } = {};
+    forIn(tabSchemaProps, (val: any, key: string) => {
+        defaultVal[key] =
+            key === descriminatorProperty
+                ? val.default ?? val.const ?? ''
+                : createDefaultValue(val);
+    });
+
+    return defaultVal;
 };
 
 export const Custom_MaterialOneOfRenderer_Discriminator = ({
@@ -118,19 +138,10 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
         const { properties: tabSchemaProps } = tabSchema;
 
         // Customization: Handle setting the oneOf descriminator properly
-        // Go through all the props and set them into the object.
-        //  If it is the descriminator then try to set the default
-        //      value, then the const, and finally default to an empty string.
-        //  If it is any other value then go ahead and create the value
-        const defaultVal: {
-            [k: string]: any;
-        } = {};
-        forIn(tabSchemaProps, (val: any, key: string) => {
-            defaultVal[key] =
-                key === descriminatorProperty
-                    ? val.default ?? val.const ?? ''
-                    : createDefaultValue(val);
-        });
+        const defaultVal = getDefaultValue(
+            tabSchemaProps,
+            descriminatorProperty
+        );
 
         handleChange(path, defaultVal);
         setSelectedIndex(newIndex);
@@ -161,9 +172,9 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
         [setOpen, setSelectedIndex, data]
     );
 
-    useMount(() => {
-        // handleTabChange(null, selectedIndex);
-    });
+    // useEffectOnce(() => {
+    //     handleTabChange(null, selectedIndex);
+    // });
 
     return (
         <Hidden xsUp={!visible}>
