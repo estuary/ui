@@ -5,6 +5,7 @@ import {
     useEditorStore_isSaving,
     useEditorStore_resetState,
     useEditorStore_setId,
+    useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
 import { isEmpty } from 'lodash';
@@ -58,6 +59,7 @@ function MaterializeGenerateButton({ disabled, callFailed }: Props) {
     const resetEditorState = useEditorStore_resetState();
 
     const setDraftId = useEditorStore_setId();
+    const setPersistedDraftId = useEditorStore_setPersistedDraftId();
 
     // Endpoint Config Store
     const endpointSchema = useEndpointConfigStore_endpointSchema();
@@ -160,6 +162,8 @@ function MaterializeGenerateButton({ disabled, callFailed }: Props) {
             setPreviousEndpointConfig({ data: endpointConfigData });
 
             setDraftId(newDraftId);
+            setPersistedDraftId(newDraftId);
+
             setFormState({
                 status: FormStatus.INIT,
             });
