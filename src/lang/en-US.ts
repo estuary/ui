@@ -674,8 +674,6 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.error.initFormSection': `An issue was encountered initializing this section of the form.`,
 
     'workflows.collectionSelector.alert.message.schemaUpdateError': `An error was encountered fetching your updated collection schema to display. This does not mean that there was a problem updating the server. Click the refresh button below to try again.`,
-    'workflows.collectionSelector.alert.message.schemaEdit': `Collection schemas can be edited via the command line. {buttonLabel}`,
-    'workflows.collectionSelector.alert.message.schemaEdit.buttonLabel': `View CLI Commands`,
     'workflows.collectionSelector.cta.delete': `Remove All`,
     'workflows.collectionSelector.cta.schemaEdit': `CLI`,
     'workflows.collectionSelector.error.title.missingCollectionSchema': `Failed to fetch collection schema`,
