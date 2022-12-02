@@ -16,7 +16,10 @@ import MessageWithLink from 'components/content/MessageWithLink';
 import DiscoveredSchemaCommands from 'components/editor/Bindings/SchemaEditCommands/DiscoveredSchema';
 import ExistingSchemaCommands from 'components/editor/Bindings/SchemaEditCommands/ExistingSchema';
 import BindingsTabs, { tabProps } from 'components/editor/Bindings/Tabs';
-import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
+import {
+    useEditorStore_id,
+    useEditorStore_persistedDraftId,
+} from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import ButtonWithPopper from 'components/shared/ButtonWithPopper';
 import { isEmpty } from 'lodash';
@@ -37,16 +40,22 @@ interface CollectionData {
 }
 
 const evaluateCollectionData = async (
-    draftId: string,
+    draftId: string | null,
     catalogName: string
 ): Promise<CollectionData | null> => {
-    const draftSpecResponse = await getDraftSpecsByCatalogName(
-        draftId,
-        catalogName,
-        'collection'
-    );
+    let draftSpecResponse = null;
 
-    if (isEmpty(draftSpecResponse.data)) {
+    if (draftId) {
+        draftSpecResponse = await getDraftSpecsByCatalogName(
+            draftId,
+            catalogName,
+            'collection'
+        );
+    }
+
+    if (draftSpecResponse && !isEmpty(draftSpecResponse.data)) {
+        return { spec: draftSpecResponse.data[0].spec, belongsToDraft: true };
+    } else {
         const liveSpecResponse = await getLiveSpecsByCatalogName(
             catalogName,
             'collection'
@@ -55,8 +64,6 @@ const evaluateCollectionData = async (
         return isEmpty(liveSpecResponse.data)
             ? null
             : { spec: liveSpecResponse.data[0].spec, belongsToDraft: false };
-    } else {
-        return { spec: draftSpecResponse.data[0].spec, belongsToDraft: true };
     }
 };
 
@@ -66,6 +73,7 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
         theme.palette.mode === 'dark' ? 'bright' : 'bright:inverted';
 
     // Draft Editor Store
+    const draftId = useEditorStore_id();
     const persistedDraftId = useEditorStore_persistedDraftId();
 
     // Resource Config Store
@@ -80,23 +88,26 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
         useState<boolean>(false);
 
     useEffect(() => {
-        if (currentCollection && persistedDraftId) {
-            evaluateCollectionData(persistedDraftId, currentCollection).then(
+        if (currentCollection) {
+            evaluateCollectionData(
+                persistedDraftId ?? draftId,
+                currentCollection
+            ).then(
                 (response) => setCollectionData(response),
                 () => setCollectionData(undefined)
             );
         } else {
             setCollectionData(null);
         }
-    }, [setCollectionData, currentCollection, persistedDraftId]);
+    }, [setCollectionData, currentCollection, draftId, persistedDraftId]);
 
     const handlers = {
         updateSchema: () => {
-            if (persistedDraftId && currentCollection && collectionData) {
+            if (currentCollection && collectionData) {
                 setSchemaUpdated(false);
 
                 evaluateCollectionData(
-                    persistedDraftId,
+                    persistedDraftId ?? draftId,
                     currentCollection
                 ).then(
                     (response) => {
@@ -149,56 +160,62 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                 </AlertBox>
                             ) : null}
 
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between',
-                                }}
-                            >
+                            {persistedDraftId || draftId ? (
                                 <Box
                                     sx={{
-                                        display: 'inline-flex',
+                                        display: 'flex',
                                         alignItems: 'center',
+                                        justifyContent: 'space-between',
                                     }}
                                 >
-                                    <Typography variant="h6" sx={{ mr: 1 }}>
-                                        <FormattedMessage id="workflows.collectionSelector.header.collectionSchema" />
-                                    </Typography>
+                                    <Box
+                                        sx={{
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                        }}
+                                    >
+                                        <Typography variant="h6" sx={{ mr: 1 }}>
+                                            <FormattedMessage id="workflows.collectionSelector.header.collectionSchema" />
+                                        </Typography>
 
-                                    {schemaUpdated ? (
-                                        <IconButton
-                                            onClick={handlers.updateSchema}
-                                        >
-                                            <Refresh />
-                                        </IconButton>
+                                        {schemaUpdated ? (
+                                            <IconButton
+                                                onClick={handlers.updateSchema}
+                                            >
+                                                <Refresh />
+                                            </IconButton>
+                                        ) : (
+                                            <CircularProgress
+                                                size="1.5rem"
+                                                sx={{ ml: 1 }}
+                                            />
+                                        )}
+                                    </Box>
+
+                                    {collectionData ? (
+                                        <ButtonWithPopper
+                                            messageId="workflows.collectionSelector.cta.schemaEdit"
+                                            popper={
+                                                collectionData.belongsToDraft ? (
+                                                    <DiscoveredSchemaCommands />
+                                                ) : (
+                                                    <ExistingSchemaCommands />
+                                                )
+                                            }
+                                            startIcon={<Terminal />}
+                                        />
                                     ) : (
-                                        <CircularProgress
-                                            size="1.5rem"
-                                            sx={{ ml: 1 }}
+                                        <Skeleton
+                                            variant="rectangular"
+                                            width={75}
                                         />
                                     )}
                                 </Box>
-
-                                {collectionData ? (
-                                    <ButtonWithPopper
-                                        messageId="workflows.collectionSelector.cta.schemaEdit"
-                                        popper={
-                                            collectionData.belongsToDraft ? (
-                                                <DiscoveredSchemaCommands />
-                                            ) : (
-                                                <ExistingSchemaCommands />
-                                            )
-                                        }
-                                        startIcon={<Terminal />}
-                                    />
-                                ) : (
-                                    <Skeleton
-                                        variant="rectangular"
-                                        width={75}
-                                    />
-                                )}
-                            </Box>
+                            ) : (
+                                <Typography variant="h6" sx={{ mr: 1 }}>
+                                    <FormattedMessage id="workflows.collectionSelector.header.collectionSchema" />
+                                </Typography>
+                            )}
 
                             {collectionData ? (
                                 <ReactJson

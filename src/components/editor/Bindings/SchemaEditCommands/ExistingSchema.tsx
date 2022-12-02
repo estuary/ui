@@ -1,7 +1,10 @@
 import { Typography } from '@mui/material';
 import SingleLineCode from 'components/content/SingleLineCode';
 import EditCommandsHeader from 'components/editor/Bindings/SchemaEditCommands/Header';
-import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
+import {
+    useEditorStore_id,
+    useEditorStore_persistedDraftId,
+} from 'components/editor/Store/hooks';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
 
@@ -9,6 +12,7 @@ function ExistingSchemaCommands() {
     const intl = useIntl();
 
     // Draft Editor Store
+    const draftId = useEditorStore_id();
     const persistedDraftId = useEditorStore_persistedDraftId();
 
     // Resource Config Store
@@ -20,7 +24,7 @@ function ExistingSchemaCommands() {
                 id: 'workflows.collectionSelector.schemaEdit.existingCollection.command1',
             },
             {
-                draftId: persistedDraftId,
+                draftId: persistedDraftId ?? draftId,
             }
         ),
         2: intl.formatMessage(
