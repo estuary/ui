@@ -9,7 +9,6 @@ import { every, includes, isEmpty, startCase } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import GoogleButton from 'react-google-button';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useMount } from 'react-use';
 import { useDetailsForm_connectorImage_connectorId } from 'stores/DetailsForm';
 import {
     useEndpointConfigStore_endpointConfig_data,
@@ -73,9 +72,12 @@ const OAuthproviderRenderer = ({
     //      to tell which option is selected
     const descriminatorProperty = useMemo(() => {
         let schemaToCheck;
+
         if (hasOwnPathProp) {
+            // First check the parent if we are nested
             schemaToCheck = rootSchema.properties?.[path];
         } else {
+            // Now just check the schema we're in
             schemaToCheck = schema;
         }
 
@@ -202,6 +204,9 @@ const OAuthproviderRenderer = ({
         }
     };
 
+    // https://github.com/eclipsesource/jsonforms/issues/1469
+    //  Since this is a very custom renderer we need to pass errors to the
+    //      store so they can be passed to the JsonForms component.
     useEffect(() => {
         const customErrors = [];
 
@@ -221,16 +226,10 @@ const OAuthproviderRenderer = ({
         setCustomErrors(customErrors);
 
         return () => {
+            // Make sure we clean up the custom errors if we leave this component
             setCustomErrors([]);
         };
     }, [errors, hasAllRequiredProps, path, setCustomErrors]);
-
-    useMount(() => {
-        console.log('mounted oauth', {
-            data,
-            path,
-        });
-    });
 
     return (
         <Box
