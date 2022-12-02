@@ -26,7 +26,10 @@ import {
     useDetailsForm_changed,
     useDetailsForm_connectorImage,
 } from 'stores/DetailsForm';
-import { useEndpointConfigStore_changed } from 'stores/EndpointConfig';
+import {
+    useEndpointConfigStore_changed,
+    useEndpointConfig_serverUpdateRequired,
+} from 'stores/EndpointConfig';
 import {
     useFormStateStore_error,
     useFormStateStore_exitWhenLogsClose,
@@ -92,6 +95,8 @@ function EntityCreate({
 
     // Endpoint Config Store
     const endpointConfigChanged = useEndpointConfigStore_changed();
+    const endpointConfigServerUpdateRequired =
+        useEndpointConfig_serverUpdateRequired();
 
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
@@ -128,9 +133,17 @@ function EntityCreate({
 
     useEffect(() => {
         setDraftId(
-            resourceConfigServerUpdateRequired ? null : persistedDraftId
+            endpointConfigServerUpdateRequired ||
+                resourceConfigServerUpdateRequired
+                ? null
+                : persistedDraftId
         );
-    }, [setDraftId, persistedDraftId, resourceConfigServerUpdateRequired]);
+    }, [
+        setDraftId,
+        endpointConfigServerUpdateRequired,
+        persistedDraftId,
+        resourceConfigServerUpdateRequired,
+    ]);
 
     const promptDataLoss = detailsFormChanged() || endpointConfigChanged();
 

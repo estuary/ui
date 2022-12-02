@@ -86,15 +86,8 @@ function EndpointConfig({ connectorImage, readOnly = false }: Props) {
     }, [endpointConfig, previousEndpointConfig]);
 
     useEffect(() => {
-        if (editWorkflow) {
-            setServerUpdateRequired(endpointConfigUpdated, workflow);
-        }
-    }, [
-        setServerUpdateRequired,
-        editWorkflow,
-        endpointConfigUpdated,
-        workflow,
-    ]);
+        setServerUpdateRequired(endpointConfigUpdated, workflow);
+    }, [setServerUpdateRequired, endpointConfigUpdated, workflow]);
 
     const forceClose = !editWorkflow && draftId !== null;
 
