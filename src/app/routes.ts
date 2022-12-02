@@ -33,6 +33,11 @@ export const authenticatedRoutes = {
             path: 'connectors',
             fullPath: '/admin/connectors',
         },
+        cookies: {
+            title: 'routeTitle.admin.cookies',
+            path: 'cookies',
+            fullPath: '/admin/cookies',
+        },
     },
     captures: {
         title: 'routeTitle.captures',

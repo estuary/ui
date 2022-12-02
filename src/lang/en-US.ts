@@ -116,6 +116,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.register.google': `Register with Google`,
     'cta.login.github': `Sign in with GitHub`,
     'cta.register.github': `Register with GitHub`,
+    'cta.configure': `Configure`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
@@ -171,6 +172,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.admin.accessGrants': `Access Grants`,
     'routeTitle.admin.api': `CLI - API`,
     'routeTitle.admin.connectors': `Connectors`,
+    'routeTitle.admin.cookies': `Cookie Preferences`,
     'routeTitle.captureCreate': `Create Capture`,
     'routeTitle.captureEdit': `Edit Capture`,
     'routeTitle.captures': `Captures`,
@@ -195,6 +197,7 @@ const BrowserTitles: ResolvedIntlConfig['messages'] = {
     'browserTitle.admin.accessGrants': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.accessGrants']}`,
     'browserTitle.admin.api': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.api']}`,
     'browserTitle.admin.connectors': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.connectors']}`,
+    'browserTitle.admin.cookies': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.cookies']}`,
     'browserTitle.captureCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureCreate']}`,
     'browserTitle.captureEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureEdit']}`,
     'browserTitle.captures': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captures']}`,
@@ -372,9 +375,12 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.roles.message.docPath': `https://go.estuary.dev/provision`,
     'admin.accessToken': `Access Token`,
     'admin.accessToken.message': `Copy the access token below to authenticate the CLI client.`,
+    'admin.cookies': `Cookie Preference Management`,
+    'admin.cookies.message': `Click below to manage your preferences.`,
     'admin.tabs.users': `Users`,
     'admin.tabs.connectors': `Connectors`,
     'admin.tabs.api': `CLI-API`,
+    'admin.tabs.cookies': `Cookie Preferences`,
 };
 
 const Welcome: ResolvedIntlConfig['messages'] = {
