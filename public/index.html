@@ -1,13 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <% if ( process.env.REACT_APP_OSANO_PATH) { %>
         <!-- Make sure this loads quick -->
         <script src="%REACT_APP_OSANO_PATH%"></script>
-
-        <meta charset="utf-8" />
-        <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
-        <meta name="viewport" content="initial-scale=1, width=device-width" />
-        <meta name="theme-color" content="#000000" />
 
         <!-- Used to hide the Cookie Widget -->
         <style type="text/css">
@@ -15,6 +11,12 @@
                 display: none;
             }
         </style>
+        <% } %>
+
+        <meta charset="utf-8" />
+        <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
+        <meta name="viewport" content="initial-scale=1, width=device-width" />
+        <meta name="theme-color" content="#000000" />
 
         <!--
       manifest.json provides metadata used when your web app is installed on a
