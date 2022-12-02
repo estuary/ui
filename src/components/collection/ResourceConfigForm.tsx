@@ -1,6 +1,7 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { StyledEngineProvider } from '@mui/material';
+import { cloneDeep } from 'lodash';
 import { useEffect, useRef } from 'react';
 import { setDefaultsValidator } from 'services/ajv';
 import { custom_generateDefaultUISchema } from 'services/jsonforms';
@@ -21,6 +22,8 @@ type Props = {
     readOnly?: boolean;
 };
 
+const COLLECTION_NAME_ANNOTATION = 'x-collection-name';
+
 function ResourceConfigForm({ collectionName, readOnly = false }: Props) {
     const name = useRef(collectionName);
 
@@ -28,7 +31,7 @@ function ResourceConfigForm({ collectionName, readOnly = false }: Props) {
     const resourceConfig = useResourceConfig_resourceConfig();
     const setConfig = useResourceConfig_setResourceConfig();
 
-    const formData = resourceConfig[collectionName].data;
+    let formData = resourceConfig[collectionName].data;
 
     const resourceSchema = useResourceConfig_resourceSchema();
 
@@ -49,6 +52,21 @@ function ResourceConfigForm({ collectionName, readOnly = false }: Props) {
             setConfig(configName, form);
         },
     };
+
+    // Find field with x-collection-name annotation and fill it with the
+    // collection name
+    if (resourceSchema.properties) {
+        const collectionNameField = Object.entries(resourceSchema.properties)
+          .find(([_, value]) => value && COLLECTION_NAME_ANNOTATION in value) ?? [];
+        const collectionNameFieldKey = collectionNameField[0];
+
+        if (collectionNameFieldKey) {
+            const collectionNameSplit = collectionName.split('/');
+            formData = cloneDeep(formData);
+            formData[collectionNameFieldKey] =
+                collectionNameSplit[collectionNameSplit.length - 1];
+        }
+    }
 
     return (
         <StyledEngineProvider injectFirst>
