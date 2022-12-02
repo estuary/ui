@@ -687,6 +687,7 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.tab.collectionSchema': `Schema`,
 
     'workflows.collectionSelector.schemaEdit.header': `CLI`,
+    'workflows.collectionSelector.schemaEdit.flowctlDocLink': `https://docs.estuary.dev/concepts/flowctl/`,
     'workflows.collectionSelector.schemaEdit.description': `Use the commands below to edit the schema for this collection.`,
     'workflows.collectionSelector.schemaEdit.message1': `Pull down the draft to edit`,
     'workflows.collectionSelector.schemaEdit.message2': `Push your changes up to the server`,

@@ -1,6 +1,6 @@
-import { Terminal } from '@mui/icons-material';
-import { Box, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import SingleLineCode from 'components/content/SingleLineCode';
+import EditCommandsHeader from 'components/editor/Bindings/SchemaEditCommands/Header';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import { FormattedMessage, useIntl } from 'react-intl';
 
@@ -24,19 +24,7 @@ function DiscoveredSchemaCommands() {
 
     return (
         <>
-            <Box
-                sx={{
-                    mb: 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                }}
-            >
-                <Terminal />
-
-                <Typography variant="h6" sx={{ ml: 1 }}>
-                    <FormattedMessage id="workflows.collectionSelector.schemaEdit.header" />
-                </Typography>
-            </Box>
+            <EditCommandsHeader />
 
             <Typography sx={{ mb: 3 }}>
                 <FormattedMessage id="workflows.collectionSelector.schemaEdit.description" />
