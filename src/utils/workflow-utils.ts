@@ -4,7 +4,7 @@ import {
     getDraftSpecsBySpecType,
     modifyDraftSpec,
 } from 'api/draftSpecs';
-import { LiveSpecsExtQuery_ByCatalogNames } from 'api/liveSpecs';
+import { LiveSpecsExtQuery_ByCatalogNames } from 'api/liveSpecsExt';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isEmpty, isEqual } from 'lodash';
 import pLimit from 'p-limit';
