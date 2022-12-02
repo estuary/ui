@@ -5,6 +5,12 @@ declare global {
             auth_url: string | null;
         } | null;
         monaco: any;
+        Osano?: {
+            cm?: {
+                mode?: 'permissive' | 'debug' | 'production';
+                showDrawer?: (arg: string) => void;
+            };
+        };
     }
 }
 
@@ -130,4 +136,21 @@ export const getSupabaseAnonymousKey = () => {
             'Missing Supabase anonymous key: REACT_APP_SUPABASE_ANON_KEY'
         );
     }
+};
+
+export const getGoogleTageManagerSettings = () => {
+    const settings = {
+        enabled: process.env.REACT_APP_GOOGLE_TAG_MANAGER_ENABLED === ENABLED,
+        id: process.env.REACT_APP_GOOGLE_TAG_MANAGER_ID,
+    };
+
+    return settings;
+};
+
+export const getOsanoSettings = () => {
+    const settings = {
+        bodyClass: process.env.REACT_APP_OSANO_HIDE_WIDGET_CLASS ?? '',
+    };
+
+    return settings;
 };
