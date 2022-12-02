@@ -6,11 +6,15 @@ import FullPageSpinner from 'components/fullPage/Spinner';
 import { optionExists } from 'forms/renderers/Overrides/testers/testers';
 import { useOAuth2 } from 'hooks/forks/react-use-oauth2/components';
 import { every, includes, isEmpty, startCase } from 'lodash';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import GoogleButton from 'react-google-button';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { useMount } from 'react-use';
 import { useDetailsForm_connectorImage_connectorId } from 'stores/DetailsForm';
-import { useEndpointConfigStore_endpointConfig_data } from 'stores/EndpointConfig';
+import {
+    useEndpointConfigStore_endpointConfig_data,
+    useEndpointConfigStore_setEndpointCustomErrors,
+} from 'stores/EndpointConfig';
 import { Options } from 'types/jsonforms';
 import { hasLength } from 'utils/misc-utils';
 import { getDiscriminator } from './Overrides/material/complex/MaterialOneOfRenderer_Discriminator';
@@ -20,18 +24,27 @@ const CLIENT_ID = 'client_id';
 const CLIENT_SECRET = 'client_secret';
 const INJECTED = '_injectedDuringEncryption_'; //MUST stay in sync with animate-carnival/supabase/functions/oauth/encrypt-config.ts
 
+// These are injected by the server/encryption call so just setting
+//      some value here to pass the validation
+const fakeDefaults = {
+    [CLIENT_ID]: INJECTED,
+    [CLIENT_SECRET]: INJECTED,
+};
+
 export const oAuthProviderTester: RankedTester = rankWith(
     1000,
     optionExists(Options.oauthProvider)
 );
 
 const OAuthproviderRenderer = ({
+    errors,
     data,
     path,
     handleChange,
     uischema,
     enabled,
     schema,
+    rootSchema,
 }: ControlProps) => {
     const intl = useIntl();
     const { options } = uischema;
@@ -40,6 +53,7 @@ const OAuthproviderRenderer = ({
     // Fetch what we need from stores
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
     const imageTag = useDetailsForm_connectorImage_connectorId();
+    const setCustomErrors = useEndpointConfigStore_setEndpointCustomErrors();
 
     // This usually means the control is nested inside a tab
     const hasOwnPathProp = hasLength(path);
@@ -57,7 +71,16 @@ const OAuthproviderRenderer = ({
 
     // This is the field in an anyOf/oneOf/etc. that is used
     //      to tell which option is selected
-    const descriminatorProperty = getDiscriminator(schema);
+    const descriminatorProperty = useMemo(() => {
+        let schemaToCheck;
+        if (hasOwnPathProp) {
+            schemaToCheck = rootSchema.properties?.[path];
+        } else {
+            schemaToCheck = schema;
+        }
+
+        return getDiscriminator(schemaToCheck);
+    }, [hasOwnPathProp, path, rootSchema.properties, schema]);
 
     // Need to know the list of required fields so we can manually
     //      check them down below
@@ -146,12 +169,6 @@ const OAuthproviderRenderer = ({
                 )
             );
         } else {
-            // These are injected by the server/encryption call so just setting
-            //      some value here to pass the validation
-            const fakeDefaults = {
-                [CLIENT_ID]: INJECTED,
-                [CLIENT_SECRET]: INJECTED,
-            };
             handleChange(onChangePath, {
                 ...fakeDefaults,
                 ...(!hasOwnPathProp ? data?.[onChangePath] : data),
@@ -184,6 +201,36 @@ const OAuthproviderRenderer = ({
             getAuth(fetchAuthURL.data.url, fetchAuthURL.data.state);
         }
     };
+
+    useEffect(() => {
+        const customErrors = [];
+
+        // Used to set an error for the OAuth Renderer
+        //  Check if there are already errors related to the renderer
+        //  so we do not end up with redundant error messages.
+        if (!hasAllRequiredProps && !hasLength(errors)) {
+            customErrors.push({
+                instancePath: path,
+                message: `must have required property 'OAuth'`,
+                schemaPath: '',
+                keyword: '',
+                params: {},
+            });
+        }
+
+        setCustomErrors(customErrors);
+
+        return () => {
+            setCustomErrors([]);
+        };
+    }, [errors, hasAllRequiredProps, path, setCustomErrors]);
+
+    useMount(() => {
+        console.log('mounted oauth', {
+            data,
+            path,
+        });
+    });
 
     return (
         <Box

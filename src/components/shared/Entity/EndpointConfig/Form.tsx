@@ -10,6 +10,7 @@ import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import { defaultOptions, showValidation } from 'services/jsonforms/shared';
 import {
     useEndpointConfigStore_endpointConfig_data,
+    useEndpointConfigStore_endpointCustomErrors,
     useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_setEndpointConfig,
 } from 'stores/EndpointConfig';
@@ -32,6 +33,7 @@ function EndpointConfigForm({ readOnly, workflow }: Props) {
     const setEndpointConfig = useEndpointConfigStore_setEndpointConfig();
 
     const endpointSchema = useEndpointConfigStore_endpointSchema();
+    const endpointCustomErrors = useEndpointConfigStore_endpointCustomErrors();
 
     // Form State Store
     const displayValidation = useFormStateStore_displayValidation();
@@ -79,6 +81,7 @@ function EndpointConfigForm({ readOnly, workflow }: Props) {
                         setEndpointConfig(formData, workflow)
                     }
                     ajv={setDefaultsValidator}
+                    additionalErrors={endpointCustomErrors}
                 />
             </Box>
         </StyledEngineProvider>

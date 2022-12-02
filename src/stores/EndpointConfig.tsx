@@ -29,6 +29,12 @@ export interface EndpointConfigState extends StoreWithHydration {
     endpointSchema: Schema;
     setEndpointSchema: (val: EndpointConfigState['endpointSchema']) => void;
 
+    // Used to display custom errors in JsonForms
+    endpointCustomErrors: any[];
+    setEndpointCustomErrors: (
+        val: EndpointConfigState['endpointCustomErrors']
+    ) => void;
+
     // Encrypted Endpoint Configs
     publishedEndpointConfig: JsonFormsData;
     setPublishedEndpointConfig: (
@@ -83,6 +89,7 @@ const filterErrors = (list: JsonFormsData['errors']): (string | undefined)[] =>
 
 const populateEndpointConfigErrors = (
     endpointConfig: JsonFormsData,
+    endpointCustomErrors: any[],
     state: EndpointConfigState,
     workflow: EntityWorkflow | null
 ): void => {
@@ -98,7 +105,7 @@ const populateEndpointConfigErrors = (
     state.endpointConfigErrorsExist =
         editWorkflow && !state.serverUpdateRequired
             ? false
-            : !isEmpty(endpointConfigErrors);
+            : !isEmpty(endpointConfigErrors) || !isEmpty(endpointCustomErrors);
 };
 
 const getInitialStateData = (): Pick<
@@ -113,6 +120,7 @@ const getInitialStateData = (): Pick<
     | 'previousEndpointConfig'
     | 'publishedEndpointConfig'
     | 'serverUpdateRequired'
+    | 'endpointCustomErrors'
 > => ({
     encryptedEndpointConfig: { data: {}, errors: [] },
     endpointConfig: { data: {}, errors: [] },
@@ -124,6 +132,7 @@ const getInitialStateData = (): Pick<
     previousEndpointConfig: { data: {}, errors: [] },
     publishedEndpointConfig: { data: {}, errors: [] },
     serverUpdateRequired: false,
+    endpointCustomErrors: [],
 });
 
 const hydrateState = async (
@@ -203,6 +212,16 @@ const getInitialState = (
     ...getInitialStateData(),
     ...getStoreWithHydrationSettings('Endpoint Config', set),
 
+    setEndpointCustomErrors: (val) => {
+        set(
+            produce((state) => {
+                state.endpointCustomErrors = val;
+            }),
+            false,
+            'Endpoint Custom Errors Set'
+        );
+    },
+
     setEndpointSchema: (val) => {
         set(
             produce((state) => {
@@ -232,7 +251,7 @@ const getInitialState = (
     setEncryptedEndpointConfig: (encryptedEndpointConfig, workflow) => {
         set(
             produce((state: EndpointConfigState) => {
-                const { endpointSchema } = get();
+                const { endpointSchema, endpointCustomErrors } = get();
 
                 state.encryptedEndpointConfig = isEmpty(encryptedEndpointConfig)
                     ? createJSONFormDefaults(endpointSchema)
@@ -240,6 +259,7 @@ const getInitialState = (
 
                 populateEndpointConfigErrors(
                     encryptedEndpointConfig,
+                    endpointCustomErrors,
                     state,
                     workflow
                 );
@@ -266,13 +286,18 @@ const getInitialState = (
     setEndpointConfig: (endpointConfig, workflow) => {
         set(
             produce((state: EndpointConfigState) => {
-                const { endpointSchema } = get();
+                const { endpointSchema, endpointCustomErrors } = get();
 
                 state.endpointConfig = isEmpty(endpointConfig)
                     ? createJSONFormDefaults(endpointSchema)
                     : endpointConfig;
 
-                populateEndpointConfigErrors(endpointConfig, state, workflow);
+                populateEndpointConfigErrors(
+                    endpointConfig,
+                    endpointCustomErrors,
+                    state,
+                    workflow
+                );
             }),
             false,
             'Endpoint Config Changed'
@@ -284,11 +309,16 @@ const getInitialState = (
     setServerUpdateRequired: (updateRequired, workflow) => {
         set(
             produce((state: EndpointConfigState) => {
-                const { endpointConfig } = get();
+                const { endpointConfig, endpointCustomErrors } = get();
 
                 state.serverUpdateRequired = updateRequired;
 
-                populateEndpointConfigErrors(endpointConfig, state, workflow);
+                populateEndpointConfigErrors(
+                    endpointConfig,
+                    endpointCustomErrors,
+                    state,
+                    workflow
+                );
             }),
             false,
             'Server Update Required Flag Changed'
@@ -445,6 +475,24 @@ export const useEndpointConfigStore_endpointSchema = () => {
         EndpointConfigState,
         EndpointConfigState['endpointSchema']
     >(getStoreName(entityType), (state) => state.endpointSchema);
+};
+
+export const useEndpointConfigStore_endpointCustomErrors = () => {
+    const entityType = useEntityType();
+
+    return useEndpointConfigStore<
+        EndpointConfigState,
+        EndpointConfigState['endpointCustomErrors']
+    >(getStoreName(entityType), (state) => state.endpointCustomErrors);
+};
+
+export const useEndpointConfigStore_setEndpointCustomErrors = () => {
+    const entityType = useEntityType();
+
+    return useEndpointConfigStore<
+        EndpointConfigState,
+        EndpointConfigState['setEndpointCustomErrors']
+    >(getStoreName(entityType), (state) => state.setEndpointCustomErrors);
 };
 
 export const useEndpointConfigStore_setEndpointSchema = () => {
