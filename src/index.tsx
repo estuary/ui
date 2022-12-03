@@ -1,6 +1,6 @@
 import 'polyfills/transformStream';
 
-import { enableMapSet } from 'immer';
+import { enableMapSet, setAutoFreeze } from 'immer';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { initGoogleTagManager } from 'services/gtm';
@@ -24,7 +24,10 @@ import AppProviders from './context';
 
 initGoogleTagManager();
 initLogRocket();
+
+// Setup immer
 enableMapSet();
+setAutoFreeze(false);
 
 ReactDOM.render(
     <React.StrictMode>
