@@ -139,26 +139,6 @@ const OAuthproviderRenderer = ({
         return response;
     }, [data, discriminatorProperty, onChangePath, requiredFields]);
 
-    useEffect(() => {
-        if (!hasAllRequiredProps) {
-            setCustomErrors([
-                {
-                    instancePath: path,
-                    message: `need to complete OAuth`,
-                    schemaPath: '',
-                    keyword: '',
-                    params: {},
-                },
-            ]);
-        } else {
-            setCustomErrors([]);
-        }
-
-        return () => {
-            setCustomErrors([]);
-        };
-    }, [hasAllRequiredProps, path, setCustomErrors]);
-
     // Pull out the provider so we can render the button
     const providerVal = options ? options[Options.oauthProvider] : NO_PROVIDER;
     const provider = useMemo(() => startCase(providerVal), [providerVal]);
