@@ -27,7 +27,6 @@ interface Props {
 }
 
 function EndpointConfigForm({ readOnly, workflow }: Props) {
-    console.log('EndpointConfigForm');
     // Endpoint Config Store
     const endpointConfig = useEndpointConfigStore_endpointConfig_data();
     const setEndpointConfig = useEndpointConfigStore_setEndpointConfig();
@@ -75,9 +74,7 @@ function EndpointConfigForm({ readOnly, workflow }: Props) {
                     readonly={readOnly || isActive}
                     validationMode={showValidationVal}
                     onChange={(formData) => {
-                        console.log('Config change', formData);
                         setEndpointConfig(formData, workflow);
-                        console.log('Config change done', endpointConfig);
                     }}
                     ajv={setDefaultsValidator}
                 />
