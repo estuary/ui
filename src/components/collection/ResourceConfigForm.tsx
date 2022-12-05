@@ -74,7 +74,7 @@ function ResourceConfigForm({ collectionName, readOnly = false }: Props) {
             return response;
         }
 
-        return resourceSchema.properties;
+        return resourceSchema;
     }, [collectionName, collectionNameFieldKey, resourceSchema]);
 
     const uiSchema = useMemo(
