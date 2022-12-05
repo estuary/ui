@@ -10,7 +10,6 @@ import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import { defaultOptions, showValidation } from 'services/jsonforms/shared';
 import {
     useEndpointConfigStore_endpointConfig_data,
-    useEndpointConfigStore_endpointCustomErrors,
     useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_setEndpointConfig,
 } from 'stores/EndpointConfig';
@@ -28,16 +27,14 @@ interface Props {
 }
 
 function EndpointConfigForm({ readOnly, workflow }: Props) {
+    console.log('EndpointConfigForm');
     // Endpoint Config Store
     const endpointConfig = useEndpointConfigStore_endpointConfig_data();
     const setEndpointConfig = useEndpointConfigStore_setEndpointConfig();
-
     const endpointSchema = useEndpointConfigStore_endpointSchema();
-    const endpointCustomErrors = useEndpointConfigStore_endpointCustomErrors();
 
     // Form State Store
     const displayValidation = useFormStateStore_displayValidation();
-
     const isActive = useFormStateStore_isActive();
 
     const categoryLikeSchema = useMemo(() => {
@@ -77,11 +74,12 @@ function EndpointConfigForm({ readOnly, workflow }: Props) {
                     config={defaultOptions}
                     readonly={readOnly || isActive}
                     validationMode={showValidationVal}
-                    onChange={(formData) =>
-                        setEndpointConfig(formData, workflow)
-                    }
+                    onChange={(formData) => {
+                        console.log('Config change', formData);
+                        setEndpointConfig(formData, workflow);
+                        console.log('Config change done', endpointConfig);
+                    }}
                     ajv={setDefaultsValidator}
-                    additionalErrors={endpointCustomErrors}
                 />
             </Box>
         </StyledEngineProvider>
