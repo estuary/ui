@@ -94,15 +94,22 @@ const OAuthproviderRenderer = ({
         [options]
     );
 
-    const removeConfig = () => {
-        handleChange(onChangePath, undefined);
+    const setConfigToDefault = () => {
+        const defaults = getDefaultValue(
+            schema.properties,
+            discriminatorProperty
+        );
+        handleChange(onChangePath, {
+            ...defaults,
+            ...fakeDefaults,
+        });
     };
 
     const hasAllRequiredProps = useMemo(() => {
         const dataKeys = Object.keys(data ?? {});
         const nestedKeys = Object.keys(data?.[onChangePath] ?? {});
 
-        return every(requiredFields, (field: string) => {
+        const response = every(requiredFields, (field: string) => {
             // We know we should always have at least these two
             if (field === CLIENT_ID || field === CLIENT_SECRET) {
                 return true;
@@ -129,7 +136,28 @@ const OAuthproviderRenderer = ({
             // Didn't find anything - return false
             return false;
         });
+        return response;
     }, [data, discriminatorProperty, onChangePath, requiredFields]);
+
+    useEffect(() => {
+        if (!hasAllRequiredProps) {
+            setCustomErrors([
+                {
+                    instancePath: path,
+                    message: `need to complete OAuth`,
+                    schemaPath: '',
+                    keyword: '',
+                    params: {},
+                },
+            ]);
+        } else {
+            setCustomErrors([]);
+        }
+
+        return () => {
+            setCustomErrors([]);
+        };
+    }, [hasAllRequiredProps, path, setCustomErrors]);
 
     // Pull out the provider so we can render the button
     const providerVal = options ? options[Options.oauthProvider] : NO_PROVIDER;
@@ -191,7 +219,7 @@ const OAuthproviderRenderer = ({
 
     const openPopUp = async () => {
         // As we start clear out errors and current credentials
-        removeConfig();
+        // setConfigToDefault();
         setErrorMessage(null);
 
         // Make the call to know what pop url to open
@@ -207,22 +235,11 @@ const OAuthproviderRenderer = ({
         }
     };
 
-    useMount(() => {
-        const defaults = getDefaultValue(
-            schema.properties,
-            discriminatorProperty
-        );
-        handleChange(onChangePath, {
-            ...defaults,
-            ...fakeDefaults,
-        });
-    });
+    // Need to set defaults when loading the renderer
+    useMount(() => setConfigToDefault());
 
-    // https://github.com/eclipsesource/jsonforms/issues/1469
-    //  Since this is a very custom renderer we need to pass errors to the
-    //      store so they can be passed to the JsonForms component.
+    // Need to manually set an error to prevent submitting the form
     useEffect(() => {
-        console.log('oauth effect');
         const customErrors = [];
 
         // Used to set an error for the OAuth Renderer
@@ -236,7 +253,6 @@ const OAuthproviderRenderer = ({
             });
         }
 
-        console.log('   customErrors = ', customErrors);
         setCustomErrors(customErrors);
 
         return () => {
@@ -303,7 +319,7 @@ const OAuthproviderRenderer = ({
                                 <FormattedMessage id="oauth.authenticated" />
                             }
                             color="success"
-                            onDelete={removeConfig}
+                            onDelete={setConfigToDefault}
                         />
                     ) : (
                         <Chip
