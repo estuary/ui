@@ -49,13 +49,25 @@ export interface DetailsFormState {
     setConnectors: (val: DetailsFormState['connectors']) => void;
 
     // Misc.
+    draftedEntityName: string;
+    setDraftedEntityName: (
+        value: DetailsFormState['draftedEntityName']
+    ) => void;
+
+    entityNameChanged: boolean;
+    setEntityNameChanged: (value: string) => void;
+
     stateChanged: () => boolean;
     resetState: () => void;
 }
 
 const getInitialStateData = (): Pick<
     DetailsFormState,
-    'details' | 'detailsFormErrorsExist' | 'connectors'
+    | 'details'
+    | 'detailsFormErrorsExist'
+    | 'draftedEntityName'
+    | 'entityNameChanged'
+    | 'connectors'
 > => ({
     details: {
         data: {
@@ -70,6 +82,9 @@ const getInitialStateData = (): Pick<
         errors: [],
     },
     detailsFormErrorsExist: true,
+
+    draftedEntityName: '',
+    entityNameChanged: false,
 
     connectors: [],
 });
@@ -121,6 +136,29 @@ export const getInitialState = (
             }),
             false,
             'Connector Response Cached'
+        );
+    },
+
+    setDraftedEntityName: (value) => {
+        set(
+            produce((state: DetailsFormState) => {
+                state.draftedEntityName = value;
+                state.entityNameChanged = false;
+            }),
+            false,
+            'Drafted Entity Name Set'
+        );
+    },
+
+    setEntityNameChanged: (value) => {
+        set(
+            produce((state: DetailsFormState) => {
+                const { draftedEntityName } = state;
+
+                state.entityNameChanged = value !== draftedEntityName;
+            }),
+            false,
+            'Entity Name Change Flag Set'
         );
     },
 
@@ -229,6 +267,33 @@ export const useDetailsForm_errorsExist = () => {
         DetailsFormState,
         DetailsFormState['detailsFormErrorsExist']
     >(storeName(entityType), errorsExistSelector);
+};
+
+export const useDetailsForm_setDraftedEntityName = () => {
+    const entityType = useEntityType();
+
+    return useZustandStoreMap<
+        DetailsFormState,
+        DetailsFormState['setDraftedEntityName']
+    >(storeName(entityType), (state) => state.setDraftedEntityName);
+};
+
+export const useDetailsForm_entityNameChanged = () => {
+    const entityType = useEntityType();
+
+    return useZustandStoreMap<
+        DetailsFormState,
+        DetailsFormState['entityNameChanged']
+    >(storeName(entityType), (state) => state.entityNameChanged);
+};
+
+export const useDetailsForm_setEntityNameChanged = () => {
+    const entityType = useEntityType();
+
+    return useZustandStoreMap<
+        DetailsFormState,
+        DetailsFormState['setEntityNameChanged']
+    >(storeName(entityType), (state) => state.setEntityNameChanged);
 };
 
 export const useDetailsForm_changed = () => {

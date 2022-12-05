@@ -33,6 +33,7 @@ import {
     useDetailsForm_connectorImage,
     useDetailsForm_errorsExist,
     useDetailsForm_resetState,
+    useDetailsForm_setDraftedEntityName,
 } from 'stores/DetailsForm';
 import {
     useEndpointConfigStore_reset,
@@ -83,6 +84,8 @@ function CaptureCreate() {
     const imageTag = useDetailsForm_connectorImage();
     const detailsFormErrorsExist = useDetailsForm_errorsExist();
     const resetDetailsForm = useDetailsForm_resetState();
+
+    const setDraftedEntityName = useDetailsForm_setDraftedEntityName();
 
     // Draft Editor Store
     const draftId = useEditorStore_id();
@@ -254,6 +257,7 @@ function CaptureCreate() {
                 .from(TABLES.DISCOVERS)
                 .select(
                     `
+                    capture_name,
                     draft_id,
                     job_status
                 `
@@ -268,6 +272,8 @@ function CaptureCreate() {
                 );
 
                 void mutateDraftSpecs();
+
+                setDraftedEntityName(payload.capture_name);
 
                 setPreviousEndpointConfig({ data: existingEndpointConfig });
 

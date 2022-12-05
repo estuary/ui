@@ -25,6 +25,7 @@ import { FormattedMessage } from 'react-intl';
 import {
     useDetailsForm_changed,
     useDetailsForm_connectorImage,
+    useDetailsForm_entityNameChanged,
 } from 'stores/DetailsForm';
 import {
     useEndpointConfigStore_changed,
@@ -87,6 +88,8 @@ function EntityCreate({
     const imageTag = useDetailsForm_connectorImage();
     const detailsFormChanged = useDetailsForm_changed();
 
+    const entityNameChanged = useDetailsForm_entityNameChanged();
+
     // Draft Editor Store
     const draftId = useEditorStore_id();
     const setDraftId = useEditorStore_setId();
@@ -132,15 +135,16 @@ function EntityCreate({
     }, [connectorID]);
 
     useEffect(() => {
-        setDraftId(
+        const resetDraftIdFlag =
+            entityNameChanged ||
             endpointConfigServerUpdateRequired ||
-                resourceConfigServerUpdateRequired
-                ? null
-                : persistedDraftId
-        );
+            resourceConfigServerUpdateRequired;
+
+        setDraftId(resetDraftIdFlag ? null : persistedDraftId);
     }, [
         setDraftId,
         endpointConfigServerUpdateRequired,
+        entityNameChanged,
         persistedDraftId,
         resourceConfigServerUpdateRequired,
     ]);

@@ -16,6 +16,7 @@ import {
     useDetailsForm_connectorImage_imagePath,
     useDetailsForm_details_entityName,
     useDetailsForm_errorsExist,
+    useDetailsForm_setDraftedEntityName,
 } from 'stores/DetailsForm';
 import {
     useEndpointConfigStore_encryptedEndpointConfig_data,
@@ -52,6 +53,8 @@ function MaterializeGenerateButton({ disabled, callFailed }: Props) {
     const imageConnectorTagId = useDetailsForm_connectorImage_id();
     const imageConnectorId = useDetailsForm_connectorImage_connectorId();
     const imagePath = useDetailsForm_connectorImage_imagePath();
+
+    const setDraftedEntityName = useDetailsForm_setDraftedEntityName();
 
     // Draft Editor Store
     const isSaving = useEditorStore_isSaving();
@@ -163,6 +166,8 @@ function MaterializeGenerateButton({ disabled, callFailed }: Props) {
 
             setDraftId(newDraftId);
             setPersistedDraftId(newDraftId);
+
+            setDraftedEntityName(draftSpecsResponse.data[0].catalog_name);
 
             setFormState({
                 status: FormStatus.INIT,
