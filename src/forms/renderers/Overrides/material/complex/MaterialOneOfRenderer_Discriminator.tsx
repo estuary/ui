@@ -172,10 +172,6 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
         [setOpen, setSelectedIndex, data]
     );
 
-    // useEffectOnce(() => {
-    //     handleTabChange(null, selectedIndex);
-    // });
-
     return (
         <Hidden xsUp={!visible}>
             <CombinatorProperties
