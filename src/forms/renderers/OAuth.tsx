@@ -218,8 +218,6 @@ const OAuthproviderRenderer = ({
     });
 
     const openPopUp = async () => {
-        // As we start clear out errors and current credentials
-        // setConfigToDefault();
         setErrorMessage(null);
 
         // Make the call to know what pop url to open
