@@ -33,4 +33,5 @@ export enum Annotations {
     multiline = 'multiline',
     order = 'order',
     secret = 'secret',
+    defaultResourceConfigName = 'x-collection-name',
 }
