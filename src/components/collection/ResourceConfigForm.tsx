@@ -41,9 +41,6 @@ function ResourceConfigForm({ collectionName, readOnly = false }: Props) {
         name.current = collectionName;
     }, [collectionName]);
 
-    const uiSchema = custom_generateDefaultUISchema(resourceSchema);
-    const showValidationVal = showValidation(displayValidation);
-
     const handlers = {
         onChange: (configName: string, form: any) => {
             setConfig(configName, form);
@@ -79,6 +76,15 @@ function ResourceConfigForm({ collectionName, readOnly = false }: Props) {
 
         return resourceSchema.properties;
     }, [collectionName, collectionNameFieldKey, resourceSchema]);
+
+    const uiSchema = useMemo(
+        () => custom_generateDefaultUISchema(resourceSchema),
+        [resourceSchema]
+    );
+    const showValidationVal = useMemo(
+        () => showValidation(displayValidation),
+        [displayValidation]
+    );
 
     return (
         <StyledEngineProvider injectFirst>
