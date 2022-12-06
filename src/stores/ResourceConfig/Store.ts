@@ -507,8 +507,6 @@ const getInitialState = (
             if (lastPubId) {
                 // Prefills collections in the materialization create workflow when the Materialize CTA
                 // on the Captures page is clicked.
-                console.log('A');
-
                 const { data, error } = await getLiveSpecsByLastPubId(
                     lastPubId,
                     'capture'
