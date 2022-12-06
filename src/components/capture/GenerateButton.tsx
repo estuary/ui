@@ -112,10 +112,9 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
 
             const draftId = draftsResponse.data[0].id;
 
-            const selectedEndpointConfig =
-                !editWorkflow || serverUpdateRequired
-                    ? endpointConfigData
-                    : serverEndpointConfigData;
+            const selectedEndpointConfig = serverUpdateRequired
+                ? endpointConfigData
+                : serverEndpointConfigData;
 
             const encryptedEndpointConfig = await encryptEndpointConfig(
                 selectedEndpointConfig,

@@ -25,8 +25,12 @@ import { FormattedMessage } from 'react-intl';
 import {
     useDetailsForm_changed,
     useDetailsForm_connectorImage,
+    useDetailsForm_entityNameChanged,
 } from 'stores/DetailsForm';
-import { useEndpointConfigStore_changed } from 'stores/EndpointConfig';
+import {
+    useEndpointConfigStore_changed,
+    useEndpointConfig_serverUpdateRequired,
+} from 'stores/EndpointConfig';
 import {
     useFormStateStore_error,
     useFormStateStore_exitWhenLogsClose,
@@ -84,6 +88,8 @@ function EntityCreate({
     const imageTag = useDetailsForm_connectorImage();
     const detailsFormChanged = useDetailsForm_changed();
 
+    const entityNameChanged = useDetailsForm_entityNameChanged();
+
     // Draft Editor Store
     const draftId = useEditorStore_id();
     const setDraftId = useEditorStore_setId();
@@ -92,6 +98,8 @@ function EntityCreate({
 
     // Endpoint Config Store
     const endpointConfigChanged = useEndpointConfigStore_changed();
+    const endpointConfigServerUpdateRequired =
+        useEndpointConfig_serverUpdateRequired();
 
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
@@ -127,10 +135,19 @@ function EntityCreate({
     }, [connectorID]);
 
     useEffect(() => {
-        setDraftId(
-            resourceConfigServerUpdateRequired ? null : persistedDraftId
-        );
-    }, [setDraftId, persistedDraftId, resourceConfigServerUpdateRequired]);
+        const resetDraftIdFlag =
+            entityNameChanged ||
+            endpointConfigServerUpdateRequired ||
+            resourceConfigServerUpdateRequired;
+
+        setDraftId(resetDraftIdFlag ? null : persistedDraftId);
+    }, [
+        setDraftId,
+        endpointConfigServerUpdateRequired,
+        entityNameChanged,
+        persistedDraftId,
+        resourceConfigServerUpdateRequired,
+    ]);
 
     const promptDataLoss = detailsFormChanged() || endpointConfigChanged();
 
@@ -139,7 +156,7 @@ function EntityCreate({
     const displayResourceConfig =
         entityType === 'materialization'
             ? hasLength(imageTag.id)
-            : hasLength(imageTag.id) && persistedDraftId;
+            : hasLength(imageTag.id) && !entityNameChanged && persistedDraftId;
 
     if (showConnectorTiles === null) return null;
     return (
