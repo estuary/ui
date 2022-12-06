@@ -32,6 +32,11 @@ function BindingsTabs({ selectedTab, setSelectedTab }: BindingTabsProps) {
                     })}
                     component={Button}
                     onClick={() => setSelectedTab(index)}
+                    sx={{
+                        '&:hover': {
+                            backgroundColor: 'transparent',
+                        },
+                    }}
                 />
             )),
         [setSelectedTab, intl]
