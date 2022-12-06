@@ -42,7 +42,6 @@ import {
     Details,
     useDetailsForm_changed,
     useDetailsForm_connectorImage,
-    useDetailsForm_entityNameChanged,
     useDetailsForm_setDetails,
 } from 'stores/DetailsForm';
 import {
@@ -276,8 +275,6 @@ function EntityEdit({
     const setDetails = useDetailsForm_setDetails();
     const detailsFormChanged = useDetailsForm_changed();
 
-    const entityNameChanged = useDetailsForm_entityNameChanged();
-
     // Draft Editor Store
     const setDraftId = useEditorStore_setId();
 
@@ -369,7 +366,6 @@ function EntityEdit({
 
     useEffect(() => {
         const resetDraftIdFlag =
-            entityNameChanged ||
             endpointConfigServerUpdateRequired ||
             resourceConfigServerUpdateRequired;
 
@@ -377,7 +373,6 @@ function EntityEdit({
     }, [
         setDraftId,
         endpointConfigServerUpdateRequired,
-        entityNameChanged,
         persistedDraftId,
         resourceConfigServerUpdateRequired,
     ]);
