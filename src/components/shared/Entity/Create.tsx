@@ -156,7 +156,7 @@ function EntityCreate({
     const displayResourceConfig =
         entityType === 'materialization'
             ? hasLength(imageTag.id)
-            : hasLength(imageTag.id) && persistedDraftId;
+            : hasLength(imageTag.id) && !entityNameChanged && persistedDraftId;
 
     if (showConnectorTiles === null) return null;
     return (
