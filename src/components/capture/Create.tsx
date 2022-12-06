@@ -33,8 +33,13 @@ import {
     useDetailsForm_connectorImage,
     useDetailsForm_errorsExist,
     useDetailsForm_resetState,
+    useDetailsForm_setDraftedEntityName,
 } from 'stores/DetailsForm';
-import { useEndpointConfigStore_reset } from 'stores/EndpointConfig';
+import {
+    useEndpointConfigStore_reset,
+    useEndpointConfigStore_setEncryptedEndpointConfig,
+    useEndpointConfigStore_setPreviousEndpointConfig,
+} from 'stores/EndpointConfig';
 import {
     useFormStateStore_exitWhenLogsClose,
     useFormStateStore_messagePrefix,
@@ -80,6 +85,8 @@ function CaptureCreate() {
     const detailsFormErrorsExist = useDetailsForm_errorsExist();
     const resetDetailsForm = useDetailsForm_resetState();
 
+    const setDraftedEntityName = useDetailsForm_setDraftedEntityName();
+
     // Draft Editor Store
     const draftId = useEditorStore_id();
     const setDraftId = useEditorStore_setId();
@@ -92,6 +99,12 @@ function CaptureCreate() {
     const resetEditorStore = useEditorStore_resetState();
 
     // Endpoint Config Store
+    const setEncryptedEndpointConfig =
+        useEndpointConfigStore_setEncryptedEndpointConfig();
+
+    const setPreviousEndpointConfig =
+        useEndpointConfigStore_setPreviousEndpointConfig();
+
     const resetEndpointConfigState = useEndpointConfigStore_reset();
 
     // Form State Store
@@ -219,6 +232,11 @@ function CaptureCreate() {
                 updatedDraftSpecsResponse.data.length > 0
             ) {
                 evaluateDiscoveredCollections(updatedDraftSpecsResponse);
+
+                setEncryptedEndpointConfig({
+                    data: updatedDraftSpecsResponse.data[0].spec.endpoint
+                        .connector.config,
+                });
             }
         }
 
@@ -229,7 +247,7 @@ function CaptureCreate() {
     // TODO (optimization): Create a shared discovers table subscription.
     const discoversSubscription = (
         discoverDraftId: string,
-        _existingEndpointConfig: JsonFormsData,
+        existingEndpointConfig: JsonFormsData,
         resourceConfig: ResourceConfigDictionary
     ) => {
         setDraftId(null);
@@ -239,6 +257,7 @@ function CaptureCreate() {
                 .from(TABLES.DISCOVERS)
                 .select(
                     `
+                    capture_name,
                     draft_id,
                     job_status
                 `
@@ -253,6 +272,10 @@ function CaptureCreate() {
                 );
 
                 void mutateDraftSpecs();
+
+                setDraftedEntityName(payload.capture_name);
+
+                setPreviousEndpointConfig({ data: existingEndpointConfig });
 
                 setFormState({
                     status: FormStatus.GENERATED,
