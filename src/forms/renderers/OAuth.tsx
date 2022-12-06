@@ -2,7 +2,9 @@ import { ControlProps, RankedTester, rankWith } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
 import { Alert, Box, Button, Chip, Stack, Typography } from '@mui/material';
 import { accessToken, authURL } from 'api/oauth';
+import { useEditorStore_id } from 'components/editor/Store/hooks';
 import FullPageSpinner from 'components/fullPage/Spinner';
+import { useEntityWorkflow } from 'context/Workflow';
 import { optionExists } from 'forms/renderers/Overrides/testers/testers';
 import { useOAuth2 } from 'hooks/forks/react-use-oauth2/components';
 import { every, includes, isEmpty, startCase } from 'lodash';
@@ -57,6 +59,12 @@ const OAuthproviderRenderer = ({
     const imageTag = useDetailsForm_connectorImage_connectorId();
     const setCustomErrors = useEndpointConfigStore_setEndpointCustomErrors();
 
+    // Used to make a better UX for users editing a config
+    const draftId = useEditorStore_id();
+    const workflow = useEntityWorkflow();
+    const isEdit =
+        workflow === 'capture_edit' || workflow === 'materialization_edit';
+
     // This usually means the control is nested inside a tab
     const hasOwnPathProp = hasLength(path);
 
@@ -105,7 +113,8 @@ const OAuthproviderRenderer = ({
         });
     };
 
-    const hasAllRequiredProps = useMemo(() => {
+    const [hasAllRequiredProps, setHasAllRequiredProps] = useState(false);
+    useEffect(() => {
         const dataKeys = Object.keys(data ?? {});
         const nestedKeys = Object.keys(data?.[onChangePath] ?? {});
 
@@ -136,7 +145,8 @@ const OAuthproviderRenderer = ({
             // Didn't find anything - return false
             return false;
         });
-        return response;
+
+        setHasAllRequiredProps(response);
     }, [data, discriminatorProperty, onChangePath, requiredFields]);
 
     // Pull out the provider so we can render the button
@@ -214,7 +224,13 @@ const OAuthproviderRenderer = ({
     };
 
     // Need to set defaults when loading the renderer
-    useMount(() => setConfigToDefault());
+    useMount(() => {
+        if (isEdit) {
+            setHasAllRequiredProps(false);
+        } else {
+            setConfigToDefault();
+        }
+    });
 
     // Need to manually set an error to prevent submitting the form
     useEffect(() => {
@@ -255,6 +271,17 @@ const OAuthproviderRenderer = ({
                     />
                 </Typography>
 
+                {isEdit ? (
+                    <Alert
+                        severity="info"
+                        sx={{
+                            maxWidth: '50%',
+                        }}
+                    >
+                        <FormattedMessage id="oauth.edit.message" />
+                    </Alert>
+                ) : null}
+
                 {hasLength(errorMessage) ? (
                     <Alert
                         severity="error"
@@ -290,7 +317,7 @@ const OAuthproviderRenderer = ({
                         </Button>
                     )}
 
-                    {hasAllRequiredProps ? (
+                    {(isEdit && draftId) || (!isEdit && hasAllRequiredProps) ? (
                         <Chip
                             disabled={!enabled || loading}
                             label={

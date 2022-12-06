@@ -703,6 +703,7 @@ const OAuth: ResolvedIntlConfig['messages'] = {
     'oauth.unauthenticated': `Not Authenticated`,
     'oauth.authenticate': `Authenticate your {provider} account`,
     'oauth.remove': `Remove`,
+    'oauth.edit.message': `If you edit your endpoint config and want to continue using OAuth you must reauthenticate.`,
 };
 
 const Supabase: ResolvedIntlConfig['messages'] = {
