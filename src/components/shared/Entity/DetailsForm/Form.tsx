@@ -20,6 +20,7 @@ import {
     useDetailsForm_details,
     useDetailsForm_setDetails,
     useDetailsForm_setDetails_connector,
+    useDetailsForm_setEntityNameChanged,
 } from 'stores/DetailsForm';
 import {
     useFormStateStore_displayValidation,
@@ -57,6 +58,8 @@ function DetailsFormForm({
 
     const setDetails = useDetailsForm_setDetails();
     const setDetails_connector = useDetailsForm_setDetails_connector();
+
+    const setEntityNameChanged = useDetailsForm_setEntityNameChanged();
 
     // Draft Editor Store
     const isSaving = useEditorStore_isSaving();
@@ -187,6 +190,8 @@ function DetailsFormForm({
             } else {
                 // Set the details before navigating to reduce "flicker"
                 setDetails(details);
+                setEntityNameChanged(details.data.entityName);
+
                 navigateToCreate(
                     entityType,
                     details.data.connectorImage.id,
@@ -195,6 +200,7 @@ function DetailsFormForm({
             }
         } else {
             setDetails(details);
+            setEntityNameChanged(details.data.entityName);
         }
     };
 

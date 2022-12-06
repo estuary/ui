@@ -42,6 +42,7 @@ import {
     Details,
     useDetailsForm_changed,
     useDetailsForm_connectorImage,
+    useDetailsForm_entityNameChanged,
     useDetailsForm_setDetails,
 } from 'stores/DetailsForm';
 import {
@@ -271,9 +272,11 @@ function EntityEdit({
     );
 
     // Details Form Store
-    const setDetails = useDetailsForm_setDetails();
     const imageTag = useDetailsForm_connectorImage();
+    const setDetails = useDetailsForm_setDetails();
     const detailsFormChanged = useDetailsForm_changed();
+
+    const entityNameChanged = useDetailsForm_entityNameChanged();
 
     // Draft Editor Store
     const setDraftId = useEditorStore_setId();
@@ -365,16 +368,17 @@ function EntityEdit({
     }, [setDetails, initialSpec, initialConnectorTag]);
 
     useEffect(() => {
-        setDraftId(
+        const resetDraftIdFlag =
+            entityNameChanged ||
             endpointConfigServerUpdateRequired ||
-                resourceConfigServerUpdateRequired
-                ? null
-                : persistedDraftId
-        );
+            resourceConfigServerUpdateRequired;
+
+        setDraftId(resetDraftIdFlag ? null : persistedDraftId);
     }, [
         setDraftId,
-        persistedDraftId,
         endpointConfigServerUpdateRequired,
+        entityNameChanged,
+        persistedDraftId,
         resourceConfigServerUpdateRequired,
     ]);
 

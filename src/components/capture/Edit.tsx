@@ -39,6 +39,7 @@ import {
     useDetailsForm_details_entityName,
     useDetailsForm_errorsExist,
     useDetailsForm_resetState,
+    useDetailsForm_setDraftedEntityName,
 } from 'stores/DetailsForm';
 import {
     useEndpointConfigStore_reset,
@@ -94,6 +95,8 @@ function CaptureEdit() {
     const imageTag = useDetailsForm_connectorImage();
     const detailsFormErrorsExist = useDetailsForm_errorsExist();
     const resetDetailsForm = useDetailsForm_resetState();
+
+    const setDraftedEntityName = useDetailsForm_setDraftedEntityName();
 
     // Draft Editor Store
     const draftId = useEditorStore_id();
@@ -342,13 +345,10 @@ function CaptureEdit() {
             ) {
                 evaluateDiscoveredCollections(updatedDraftSpecsResponse);
 
-                setEncryptedEndpointConfig(
-                    {
-                        data: updatedDraftSpecsResponse.data[0].spec.endpoint
-                            .connector.config,
-                    },
-                    'capture_edit'
-                );
+                setEncryptedEndpointConfig({
+                    data: updatedDraftSpecsResponse.data[0].spec.endpoint
+                        .connector.config,
+                });
             }
         }
 
@@ -368,6 +368,7 @@ function CaptureEdit() {
                 .from(TABLES.DISCOVERS)
                 .select(
                     `
+                    capture_name,
                     draft_id,
                     job_status,
                     created_at
@@ -391,6 +392,8 @@ function CaptureEdit() {
                 await storeUpdatedDraftSpec(payload.draft_id, resourceConfig);
 
                 void mutateDraftSpecs();
+
+                setDraftedEntityName(payload.capture_name);
 
                 setPreviousEndpointConfig({ data: existingEndpointConfig });
 
