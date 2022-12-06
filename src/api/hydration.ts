@@ -43,7 +43,7 @@ export const getSchema_Resource = async (connectorId: string | null) => {
 const liveSpecColumns = `id,spec_type,spec,writes_to,reads_from,last_pub_id`;
 
 export const getLiveSpecsByLiveSpecId = async (
-    liveSpecId: string,
+    liveSpecId: string | string[],
     specType: Entity
 ) => {
     const draftArray: string[] =
@@ -60,7 +60,7 @@ export const getLiveSpecsByLiveSpecId = async (
 };
 
 export const getLiveSpecsByLastPubId = async (
-    lastPubId: string,
+    lastPubId: string | string[],
     specType: Entity
 ) => {
     const draftArray: string[] =

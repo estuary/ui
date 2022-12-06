@@ -22,7 +22,6 @@ export const hasLength = (val: string | any[] | null | undefined): boolean => {
     return Boolean(val && val.length > 0);
 };
 
-// TODO: Replace instances of getPathWithParam with the expanded utility function below.
 export const getPathWithParams = (
     baseURL: string,
     params: { [key: string]: string | string[] } | URLSearchParams
