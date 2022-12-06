@@ -480,8 +480,10 @@ const getInitialState = (
     hydrateState: async (editWorkflow, entityType) => {
         const searchParams = new URLSearchParams(window.location.search);
         const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
-        const liveSpecId = searchParams.get(GlobalSearchParams.LIVE_SPEC_ID);
         const lastPubId = searchParams.get(GlobalSearchParams.LAST_PUB_ID);
+        const liveSpecIds = searchParams.getAll(
+            GlobalSearchParams.LIVE_SPEC_ID
+        );
 
         const { setHydrationErrorsExist } = get();
 
@@ -503,6 +505,10 @@ const getInitialState = (
 
         if (!editWorkflow) {
             if (lastPubId) {
+                // Prefills collections in the materialization create workflow when the Materialize CTA
+                // on the Captures page is clicked.
+                console.log('A');
+
                 const { data, error } = await getLiveSpecsByLastPubId(
                     lastPubId,
                     'capture'
@@ -517,10 +523,12 @@ const getInitialState = (
 
                     preFillEmptyCollections(data);
                 }
-            } else if (liveSpecId) {
+            } else if (liveSpecIds.length > 0) {
+                // Prefills collections in the materialization create workflow when the Materialize CTA
+                // on the capture pubilication log dialog is clicked.
                 const { data, error } = await getLiveSpecsByLiveSpecId(
-                    liveSpecId,
-                    entityType
+                    liveSpecIds,
+                    'capture'
                 );
 
                 if (error) {
@@ -533,9 +541,9 @@ const getInitialState = (
                     preFillEmptyCollections(data);
                 }
             }
-        } else if (liveSpecId) {
+        } else if (liveSpecIds.length > 0) {
             const { data, error } = await getLiveSpecsByLiveSpecId(
-                liveSpecId,
+                liveSpecIds[0],
                 entityType
             );
 
