@@ -7,7 +7,9 @@ import {
 import { LiveSpecsExtQuery_ByCatalogNames } from 'api/liveSpecsExt';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isEmpty, isEqual } from 'lodash';
+import LogRocket from 'logrocket';
 import pLimit from 'p-limit';
+import { CustomEvents } from 'services/logrocket';
 import { CallSupabaseResponse } from 'services/supabase';
 import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 
@@ -107,6 +109,10 @@ export const getBoundCollectionData = (
                 ...collectionData,
                 [collection]: { spec, expect_pub_id: last_pub_id },
             };
+        } else {
+            LogRocket.track(CustomEvents.UNKNOWN_BOUND_COLLECTION, {
+                collection,
+            });
         }
     });
 
