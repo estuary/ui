@@ -317,7 +317,9 @@ const OAuthproviderRenderer = ({
                         </Button>
                     )}
 
-                    {(isEdit && draftId) || (!isEdit && hasAllRequiredProps) ? (
+                    {(isEdit && draftId) ||
+                    (isEdit && !draftId && hasAllRequiredProps) ||
+                    (!isEdit && hasAllRequiredProps) ? (
                         <Chip
                             disabled={!enabled || loading}
                             label={
