@@ -1,6 +1,7 @@
 import { getDraftSpecsBySpecType } from 'api/draftSpecs';
 import { authenticatedRoutes } from 'app/routes';
 import CaptureGenerateButton from 'components/capture/GenerateButton';
+import RediscoverButton from 'components/capture/RediscoverButton';
 import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
@@ -340,6 +341,13 @@ function CaptureCreate() {
                                     logEvent={CustomEvents.CAPTURE_CREATE}
                                 />
                             }
+                        />
+                    }
+                    RediscoverButton={
+                        <RediscoverButton
+                            disabled={!hasConnectors}
+                            callFailed={helpers.callFailed}
+                            subscription={discoversSubscription}
                         />
                     }
                 />

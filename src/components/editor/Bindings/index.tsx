@@ -1,4 +1,4 @@
-import { Typography, useTheme } from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
 import {
     BindingsEditorSkeleton,
     BindingsSelectorSkeleton,
@@ -16,7 +16,7 @@ import useConnectorTag from 'hooks/useConnectorTag';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import useLiveSpecs from 'hooks/useLiveSpecs';
 import { isEqual } from 'lodash';
-import { useEffect, useMemo } from 'react';
+import { ReactNode, useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     useDetailsForm_connectorImage,
@@ -36,9 +36,14 @@ import { Schema } from 'types';
 interface Props {
     draftSpecs: DraftSpecQuery[];
     readOnly?: boolean;
+    RediscoverButton?: ReactNode;
 }
 
-function BindingsMultiEditor({ draftSpecs = [], readOnly = false }: Props) {
+function BindingsMultiEditor({
+    draftSpecs = [],
+    readOnly = false,
+    RediscoverButton,
+}: Props) {
     const theme = useTheme();
 
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
@@ -150,11 +155,30 @@ function BindingsMultiEditor({ draftSpecs = [], readOnly = false }: Props) {
 
     return (
         <>
-            <Typography variant="h5" sx={{ mb: 1 }}>
-                <FormattedMessage
-                    id={`${messagePrefix}.collectionSelector.heading`}
-                />
-            </Typography>
+            {/* {entityType === 'capture' ? ( */}
+            <Box
+                sx={{
+                    mb: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                }}
+            >
+                <Typography variant="h5">
+                    <FormattedMessage
+                        id={`${messagePrefix}.collectionSelector.heading`}
+                    />
+                </Typography>
+
+                {RediscoverButton ?? null}
+            </Box>
+            {/* ) : (
+                <Typography variant="h5" sx={{ mb: 1 }}>
+                    <FormattedMessage
+                        id={`${messagePrefix}.collectionSelector.heading`}
+                    />
+                </Typography>
+            )} */}
 
             <Typography sx={{ mb: 2 }}>
                 <FormattedMessage
