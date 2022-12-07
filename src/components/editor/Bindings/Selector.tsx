@@ -3,8 +3,10 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import {
     Box,
     Button,
+    Divider,
     IconButton,
     ListItemText,
+    Stack,
     Typography,
 } from '@mui/material';
 import {
@@ -119,6 +121,8 @@ function BindingSelector({
     skeleton,
     readOnly,
 }: BindingSelectorProps) {
+    // const { generateCatalog, isSaving } = useCaptureDiscover();
+
     const onSelectTimeOut = useRef<number | null>(null);
 
     const workflow = useEntityWorkflow();
@@ -165,18 +169,7 @@ function BindingSelector({
             headerName: collectionsLabel,
             sortable: false,
             renderHeader: (params: GridColumnHeaderParams) => (
-                <>
-                    <Typography>{params.colDef.headerName}</Typography>
-
-                    <Button
-                        variant="text"
-                        disabled={formActive}
-                        onClick={handlers.removeAllCollections}
-                        sx={{ borderRadius: 0 }}
-                    >
-                        <FormattedMessage id="workflows.collectionSelector.cta.delete" />
-                    </Button>
-                </>
+                <Typography>{params.colDef.headerName}</Typography>
             ),
             renderCell: (params: GridRenderCellParams) => {
                 const currentConfig = resourceConfig[params.row];
@@ -221,6 +214,41 @@ function BindingSelector({
     ) : (
         <>
             <CollectionPicker readOnly={readOnly} />
+
+            <Box
+                sx={{
+                    marginLeft: 'auto',
+                }}
+            >
+                <Stack
+                    direction="row"
+                    spacing={1}
+                    divider={
+                        <Divider
+                            orientation="vertical"
+                            variant="middle"
+                            flexItem
+                        />
+                    }
+                >
+                    <Button
+                        variant="text"
+                        disabled={formActive}
+                        onClick={handlers.removeAllCollections}
+                        sx={{ borderRadius: 0 }}
+                    >
+                        <FormattedMessage id="workflows.collectionSelector.cta.rediscover" />
+                    </Button>
+                    <Button
+                        variant="text"
+                        disabled={formActive}
+                        onClick={handlers.removeAllCollections}
+                        sx={{ borderRadius: 0 }}
+                    >
+                        <FormattedMessage id="workflows.collectionSelector.cta.delete" />
+                    </Button>
+                </Stack>
+            </Box>
 
             <Box sx={{ height: 280 }}>
                 <DataGrid

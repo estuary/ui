@@ -681,6 +681,7 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.label.discoveredCollections': `Discovered Collections`,
     'workflows.collectionSelector.label.existingCollections': `Existing Collections`,
     'workflows.collectionSelector.cta.delete': `Remove All`,
+    'workflows.collectionSelector.cta.rediscover': `Rediscover`,
 };
 
 const ShardStatus: ResolvedIntlConfig['messages'] = {
