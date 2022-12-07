@@ -124,7 +124,7 @@ const OAuthproviderRenderer = ({
                 return true;
             }
 
-            // When inside a oneOf/anOf/etc. we need to check we have the descriminator
+            // When inside a oneOf/anOf/etc. we need to check we have the discriminator
             if (discriminatorProperty && field === discriminatorProperty) {
                 return true;
             }
