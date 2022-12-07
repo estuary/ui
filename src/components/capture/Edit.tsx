@@ -338,6 +338,8 @@ function CaptureEdit() {
                                     disabled={!hasConnectors}
                                     callFailed={helpers.callFailed}
                                     subscription={discoversSubscription}
+                                    entityType={entityType}
+                                    postGenerateMutate={mutateDraftSpecs}
                                 />
                             }
                             TestButton={
