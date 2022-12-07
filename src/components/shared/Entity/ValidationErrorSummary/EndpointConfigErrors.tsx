@@ -12,7 +12,7 @@ function EndpointConfigErrors() {
 
     return (
         <SectionError
-            errors={endpointErrors.concat(endpointCustomErrors)}
+            errors={endpointCustomErrors.concat(endpointErrors)}
             config={endpointSchema}
             configEmptyMessage="workflows.error.endpointConfig.empty"
             title="entityCreate.endpointConfig.endpointConfigHaveErrors"
