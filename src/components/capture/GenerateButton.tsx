@@ -2,6 +2,7 @@ import { Button } from '@mui/material';
 import { discover } from 'api/discovers';
 import { createEntityDraft } from 'api/drafts';
 import {
+    useEditorStore_id,
     useEditorStore_isSaving,
     useEditorStore_resetState,
 } from 'components/editor/Store/hooks';
@@ -11,6 +12,7 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { isEmpty } from 'lodash';
+import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     useDetailsForm_connectorImage_connectorId,
@@ -51,15 +53,13 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
     const editWorkflow = workflow === 'capture_edit';
 
     // Editor Store
+    const draftId = useEditorStore_id();
     const isSaving = useEditorStore_isSaving();
-
     const resetEditorState = useEditorStore_resetState();
 
     // Form State Store
     const formActive = useFormStateStore_isActive();
-
     const setFormState = useFormStateStore_setFormState();
-
     const updateFormStatus = useFormStateStore_updateStatus();
 
     // Details Form Store
@@ -84,9 +84,18 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
     // Resource Config Store
     const resourceConfig = useResourceConfig_resourceConfig();
 
-    const endpointConfigErrorFlag = editWorkflow
-        ? endpointConfigChanged() && endpointConfigErrorsExist
-        : endpointConfigErrorsExist || isEmpty(endpointConfigData);
+    const endpointConfigErrorFlag = useMemo(() => {
+        return editWorkflow
+            ? (endpointConfigChanged() && endpointConfigErrorsExist) ||
+                  (!draftId && endpointConfigErrorsExist)
+            : endpointConfigErrorsExist || isEmpty(endpointConfigData);
+    }, [
+        draftId,
+        editWorkflow,
+        endpointConfigChanged,
+        endpointConfigData,
+        endpointConfigErrorsExist,
+    ]);
 
     const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
@@ -110,7 +119,7 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
                 });
             }
 
-            const draftId = draftsResponse.data[0].id;
+            const newDraftId = draftsResponse.data[0].id;
 
             const selectedEndpointConfig = serverUpdateRequired
                 ? endpointConfigData
@@ -144,7 +153,7 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
                 catalogName,
                 encryptedEndpointConfig.data,
                 imageConnectorTagId,
-                draftId
+                newDraftId
             );
             if (discoverResponse.error) {
                 return callFailed({
@@ -154,7 +163,7 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
                     },
                 });
             }
-            subscription(draftId, endpointConfigData, resourceConfig);
+            subscription(newDraftId, endpointConfigData, resourceConfig);
 
             setFormState({
                 logToken: discoverResponse.data[0].logs_token,
