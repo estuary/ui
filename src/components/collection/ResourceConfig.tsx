@@ -9,7 +9,7 @@ interface Props {
 
 function ResourceConfig({ collectionName, readOnly = false }: Props) {
     return (
-        <Box sx={{ p: 1 }}>
+        <>
             <Typography variant="h6" sx={{ mb: 2 }}>
                 <FormattedMessage id="materializationCreate.resourceConfig.heading" />
             </Typography>
@@ -20,7 +20,7 @@ function ResourceConfig({ collectionName, readOnly = false }: Props) {
                     readOnly={readOnly}
                 />
             </Box>
-        </Box>
+        </>
     );
 }
 

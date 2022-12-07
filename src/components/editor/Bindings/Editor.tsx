@@ -138,7 +138,7 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                     setSelectedTab={setActiveTab}
                 />
 
-                <Box>
+                <Box sx={{ p: 1 }}>
                     {tabProps[activeTab].value === 'config' ? (
                         <ResourceConfig
                             collectionName={currentCollection}
@@ -148,7 +148,6 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                         <Stack
                             spacing={2}
                             sx={{
-                                'p': 1,
                                 '& .react-json-view': {
                                     backgroundColor: 'transparent !important',
                                 },
