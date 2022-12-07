@@ -223,7 +223,14 @@ const OAuthproviderRenderer = ({
         }
     };
 
-    // Need to set defaults when loading the renderer
+    // When loading we need to handle Create and Edit differently
+    // For create we want to set defaults so the discriminator and injected values are set
+    //      This allows for the best UX when displaying errors. Otherwise we get a bunch of
+    //      ajv errors about the schema not matching.
+    // For edit we have all the props from the previous version but since they contain
+    //      SOPS fields then we know for sure we do not ahve all the required props.
+    //      But down below in edit we know to show the Authenticated tag by default since
+    //      the user does not need to reauthenticate until they change the Endpoint Config
     useMount(() => {
         if (isEdit) {
             setHasAllRequiredProps(false);
