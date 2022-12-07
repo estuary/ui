@@ -13,6 +13,10 @@ import {
     useEndpointConfig_hydrationErrorsExist,
 } from 'stores/EndpointConfig';
 import { useFormStateStore_displayValidation } from 'stores/FormState/hooks';
+import {
+    useResourceConfig_hydrationErrorsExist,
+    useResourceConfig_resourceConfigErrorsExist,
+} from 'stores/ResourceConfig/hooks';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
@@ -20,10 +24,6 @@ interface Props {
     ErrorComponent?: any | boolean;
     hideIcon?: boolean;
     headerMessageId?: string;
-    resourceConfigErrorsExist?: {
-        hydration: boolean;
-        form: boolean;
-    };
 }
 
 function ValidationErrorSummary({
@@ -31,7 +31,6 @@ function ValidationErrorSummary({
     hideIcon,
     ErrorComponent,
     errorsExist,
-    resourceConfigErrorsExist,
 }: Props) {
     const connectorID = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
@@ -44,14 +43,19 @@ function ValidationErrorSummary({
     // Form State Store
     const displayValidation = useFormStateStore_displayValidation();
 
+    // Resource Config Store
+    const resourceConfigHydrationErrorsExist =
+        useResourceConfig_hydrationErrorsExist();
+
+    const resourceConfigErrorsExist =
+        useResourceConfig_resourceConfigErrorsExist();
+
     const hydrationErrorsExist =
         endpointConfigHydrationErrorsExist ||
-        resourceConfigErrorsExist?.hydration;
+        resourceConfigHydrationErrorsExist;
 
     const formErrorsExist =
-        errorsExist ||
-        endpointConfigErrorsExist ||
-        resourceConfigErrorsExist?.form;
+        errorsExist || endpointConfigErrorsExist || resourceConfigErrorsExist;
 
     const defaultHeaderMessageId = hydrationErrorsExist
         ? 'workflows.error.initForm'

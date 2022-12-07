@@ -19,7 +19,6 @@ import {
     useDetailsForm_errorsExist,
 } from 'stores/DetailsForm';
 import {
-    useEndpointConfigStore_changed,
     useEndpointConfigStore_encryptedEndpointConfig_data,
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_endpointSchema,
@@ -32,7 +31,10 @@ import {
     useFormStateStore_updateStatus,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { useResourceConfig_resourceConfig } from 'stores/ResourceConfig/hooks';
+import {
+    useResourceConfig_resourceConfig,
+    useResourceConfig_resourceConfigErrorsExist,
+} from 'stores/ResourceConfig/hooks';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 
 // TODO (typing): Narrow the type annotation attributed to the subscription property.
@@ -78,21 +80,26 @@ function CaptureGenerateButton({ disabled, callFailed, subscription }: Props) {
         useEndpointConfigStore_encryptedEndpointConfig_data();
     const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
 
-    const endpointConfigChanged = useEndpointConfigStore_changed();
     const serverUpdateRequired = useEndpointConfig_serverUpdateRequired();
 
     // Resource Config Store
     const resourceConfig = useResourceConfig_resourceConfig();
+    const resourceConfigErrorsExist =
+        useResourceConfig_resourceConfigErrorsExist();
 
     const endpointConfigErrorFlag = editWorkflow
-        ? endpointConfigChanged() && endpointConfigErrorsExist
+        ? endpointConfigErrorsExist
         : endpointConfigErrorsExist || isEmpty(endpointConfigData);
 
     const generateCatalog = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
         updateFormStatus(FormStatus.GENERATING);
 
-        if (detailsFormsHasErrors || endpointConfigErrorFlag) {
+        if (
+            detailsFormsHasErrors ||
+            endpointConfigErrorFlag ||
+            resourceConfigErrorsExist
+        ) {
             return setFormState({
                 status: FormStatus.FAILED,
                 displayValidation: true,
