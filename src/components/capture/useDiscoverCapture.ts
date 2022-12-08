@@ -204,14 +204,19 @@ function useDiscoverCapture(
             }
         },
         [
+            callFailed,
+            editWorkflow,
+            entityName,
+            entityType,
             evaluateDiscoveredCollections,
+            lastPubId,
+            options?.initiateRediscovery,
+            resetCollections,
+            restrictedDiscoveredCollections,
             setDiscoveredCollections,
             setDraftId,
             setEncryptedEndpointConfig,
             setPersistedDraftId,
-            callFailed,
-            entityType,
-            restrictedDiscoveredCollections,
         ]
     );
 

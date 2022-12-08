@@ -54,7 +54,7 @@ function RediscoverButton({
         rediscoveryRequested: (event: React.MouseEvent<HTMLElement>) => {
             setOpen(false);
 
-            generateCatalog(event);
+            void generateCatalog(event);
         },
     };
 
