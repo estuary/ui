@@ -42,20 +42,27 @@ export const modifyDiscoveredDraftSpec = async (
     },
     resourceConfig: ResourceConfigDictionary,
     restrictedDiscoveredCollections: string[],
-    supabaseConfig?: SupabaseConfig | null
+    supabaseConfig?: SupabaseConfig | null,
+    rediscoveryInitiated?: boolean
 ): Promise<CallSupabaseResponse<any>> => {
     const draftSpecData = response.data[0];
 
-    const mergedResourceConfig = mergeResourceConfigs(
-        draftSpecData,
-        resourceConfig,
-        restrictedDiscoveredCollections
-    );
+    const mergedResourceConfig = rediscoveryInitiated
+        ? null
+        : mergeResourceConfigs(
+              draftSpecData,
+              resourceConfig,
+              restrictedDiscoveredCollections
+          );
 
     const mergedDraftSpec = generateCaptureDraftSpec(
-        mergedResourceConfig,
-        draftSpecData.spec.endpoint
+        draftSpecData.spec.endpoint,
+        mergedResourceConfig
     );
+
+    if (rediscoveryInitiated) {
+        mergedDraftSpec.bindings = draftSpecData.spec.bindings;
+    }
 
     return modifyDraftSpec(
         mergedDraftSpec,

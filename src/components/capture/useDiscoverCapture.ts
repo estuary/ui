@@ -47,6 +47,7 @@ import {
 import { FormStatus } from 'stores/FormState/types';
 import {
     useResourceConfig_evaluateDiscoveredCollections,
+    useResourceConfig_resetConfigAndCollections,
     useResourceConfig_resourceConfig,
     useResourceConfig_resourceConfigErrorsExist,
     useResourceConfig_restrictedDiscoveredCollections,
@@ -73,7 +74,8 @@ const trackEvent = (payload: any) => {
 function useDiscoverCapture(
     entityType: Entity,
     callFailed: Function,
-    postGenerateMutate: Function
+    postGenerateMutate: Function,
+    options?: { initiateRediscovery: boolean }
 ) {
     const supabaseClient = useClient();
 
@@ -128,6 +130,7 @@ function useDiscoverCapture(
         useResourceConfig_evaluateDiscoveredCollections();
     const resourceConfigHasErrors =
         useResourceConfig_resourceConfigErrorsExist();
+    const resetCollections = useResourceConfig_resetConfigAndCollections();
 
     const endpointConfigErrorFlag = editWorkflow
         ? endpointConfigErrorsExist
@@ -155,6 +158,10 @@ function useDiscoverCapture(
             }
 
             if (draftSpecsResponse.data && draftSpecsResponse.data.length > 0) {
+                if (options?.initiateRediscovery) {
+                    resetCollections();
+                }
+
                 setDiscoveredCollections(draftSpecsResponse.data[0]);
 
                 const supabaseConfig: SupabaseConfig | null =
@@ -167,7 +174,8 @@ function useDiscoverCapture(
                         draftSpecsResponse,
                         resourceConfigForDiscovery,
                         restrictedDiscoveredCollections,
-                        supabaseConfig
+                        supabaseConfig,
+                        options?.initiateRediscovery
                     );
 
                 if (updatedDraftSpecsResponse.error) {
@@ -190,10 +198,10 @@ function useDiscoverCapture(
                             .connector.config,
                     });
                 }
-            }
 
-            setDraftId(newDraftId);
-            setPersistedDraftId(newDraftId);
+                setDraftId(newDraftId);
+                setPersistedDraftId(newDraftId);
+            }
         },
         [
             evaluateDiscoveredCollections,

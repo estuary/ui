@@ -19,7 +19,8 @@ function RediscoverButton({
     const { generateCatalog, isSaving, formActive } = useDiscoverCapture(
         entityType,
         callFailed,
-        postGenerateMutate
+        postGenerateMutate,
+        { initiateRediscovery: true }
     );
 
     return (
