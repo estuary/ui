@@ -13,6 +13,7 @@ import useConnectorTag from 'hooks/useConnectorTag';
 import { isEqual } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
+import { useUpdateEffect } from 'react-use';
 import { createJSONFormDefaults } from 'services/ajv';
 import {
     useEndpointConfigStore_endpointConfig_data,
@@ -84,7 +85,7 @@ function EndpointConfig({ connectorImage, readOnly = false }: Props) {
         return !isEqual(endpointConfig, previousEndpointConfig);
     }, [endpointConfig, previousEndpointConfig]);
 
-    useEffect(() => {
+    useUpdateEffect(() => {
         setServerUpdateRequired(endpointConfigUpdated);
     }, [setServerUpdateRequired, endpointConfigUpdated]);
 

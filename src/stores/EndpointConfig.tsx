@@ -10,7 +10,13 @@ import {
     useContext,
 } from 'react';
 import { createJSONFormDefaults } from 'services/ajv';
-import { Entity, EntityWithCreateWorkflow, JsonFormsData, Schema } from 'types';
+import {
+    Entity,
+    EntityWithCreateWorkflow,
+    EntityWorkflow,
+    JsonFormsData,
+    Schema,
+} from 'types';
 import useConstant from 'use-constant';
 import { parseEncryptedEndpointConfig } from 'utils/sops-utils';
 import { devtoolsOptions } from 'utils/store-utils';
@@ -83,7 +89,9 @@ const populateEndpointConfigErrors = (
         : !isEmpty(endpointConfigErrors);
 };
 
-const getInitialStateData = (): Pick<
+const getInitialStateData = (
+    workflow?: EntityWorkflow
+): Pick<
     EndpointConfigState,
     | 'encryptedEndpointConfig'
     | 'endpointConfig'
@@ -105,7 +113,8 @@ const getInitialStateData = (): Pick<
     hydrationErrorsExist: false,
     previousEndpointConfig: { data: {}, errors: [] },
     publishedEndpointConfig: { data: {}, errors: [] },
-    serverUpdateRequired: false,
+    serverUpdateRequired:
+        workflow === 'capture_create' || workflow === 'materialization_create',
 });
 
 const hydrateState = async (
@@ -176,9 +185,10 @@ const hydrateState = async (
 
 const getInitialState = (
     set: NamedSet<EndpointConfigState>,
-    get: StoreApi<EndpointConfigState>['getState']
+    get: StoreApi<EndpointConfigState>['getState'],
+    workflow: EntityWorkflow
 ): EndpointConfigState => ({
-    ...getInitialStateData(),
+    ...getInitialStateData(workflow),
     ...getStoreWithHydrationSettings('Endpoint Config', set),
 
     setEndpointSchema: (val) => {
@@ -279,11 +289,12 @@ const getInitialState = (
 // TODO (research): Investigate the differences between createStore() and create().
 export const createHydratedEndpointConfigStore = (
     key: EndpointConfigStoreNames,
-    entityType: Entity
+    entityType: Entity,
+    workflow: EntityWorkflow
 ) => {
     return createStore<EndpointConfigState>()(
         devtools((set, get) => {
-            const coreState = getInitialState(set, get);
+            const coreState = getInitialState(set, get, workflow);
 
             if (entityType === 'capture' || entityType === 'materialization') {
                 hydrateState(get, entityType).then(
@@ -328,7 +339,8 @@ export const EndpointConfigProvider = ({
         invariableStore[EndpointConfigStoreNames.GENERAL] = workflow
             ? createHydratedEndpointConfigStore(
                   EndpointConfigStoreNames.GENERAL,
-                  entityType
+                  entityType,
+                  workflow
               )
             : {};
 
