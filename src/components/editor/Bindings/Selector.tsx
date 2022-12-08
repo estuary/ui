@@ -221,7 +221,9 @@ function BindingSelector({
 
             <Box
                 sx={{
-                    marginLeft: 'auto',
+                    ml: 'auto',
+                    borderTop: slateOutline,
+                    borderLeft: slateOutline,
                 }}
             >
                 <Stack
