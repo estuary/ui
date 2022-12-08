@@ -30,6 +30,11 @@ const mergeResourceConfigs = (
     return mergedResourceConfig;
 };
 
+export interface SupabaseConfig {
+    catalogName: string;
+    lastPubId: string;
+}
+
 export const modifyDiscoveredDraftSpec = async (
     response: {
         data: DraftSpecQuery[];
@@ -37,7 +42,7 @@ export const modifyDiscoveredDraftSpec = async (
     },
     resourceConfig: ResourceConfigDictionary,
     restrictedDiscoveredCollections: string[],
-    supabaseConfig?: { catalogName: string; lastPubId: string }
+    supabaseConfig?: SupabaseConfig | null
 ): Promise<CallSupabaseResponse<any>> => {
     const draftSpecData = response.data[0];
 

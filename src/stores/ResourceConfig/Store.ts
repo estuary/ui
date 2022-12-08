@@ -92,7 +92,7 @@ const getInitialStateData = (): Pick<
     hydrated: false,
     hydrationErrorsExist: false,
     resourceConfig: {},
-    resourceConfigErrorsExist: true,
+    resourceConfigErrorsExist: false,
     resourceConfigErrors: [],
     resourceSchema: {},
     restrictedDiscoveredCollections: [],

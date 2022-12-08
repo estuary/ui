@@ -1,4 +1,4 @@
-import { Box, Typography, useTheme } from '@mui/material';
+import { Typography, useTheme } from '@mui/material';
 import {
     BindingsEditorSkeleton,
     BindingsSelectorSkeleton,
@@ -155,30 +155,11 @@ function BindingsMultiEditor({
 
     return (
         <>
-            {/* {entityType === 'capture' ? ( */}
-            <Box
-                sx={{
-                    mb: 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                }}
-            >
-                <Typography variant="h5">
-                    <FormattedMessage
-                        id={`${messagePrefix}.collectionSelector.heading`}
-                    />
-                </Typography>
-
-                {RediscoverButton ?? null}
-            </Box>
-            {/* ) : (
-                <Typography variant="h5" sx={{ mb: 1 }}>
-                    <FormattedMessage
-                        id={`${messagePrefix}.collectionSelector.heading`}
-                    />
-                </Typography>
-            )} */}
+            <Typography variant="h5" sx={{ mb: 1 }}>
+                <FormattedMessage
+                    id={`${messagePrefix}.collectionSelector.heading`}
+                />
+            </Typography>
 
             <Typography sx={{ mb: 2 }}>
                 <FormattedMessage
@@ -192,6 +173,7 @@ function BindingsMultiEditor({
                         loading={fetchingSpecs}
                         skeleton={<BindingsSelectorSkeleton />}
                         readOnly={readOnly}
+                        RediscoverButton={RediscoverButton}
                     />
                 }
                 details={

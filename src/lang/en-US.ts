@@ -104,7 +104,6 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.disable': `Disable`,
     'cta.testConfig': `Test`,
     'cta.generateCatalog.capture': `Next`,
-    'cta.rediscoverCatalog.capture': `Rediscover`,
     'cta.generateCatalog.materialization': `Next`,
     'cta.expandToEdit': `Expand to edit`,
     'cta.refresh': `Refresh`,
@@ -682,6 +681,7 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.label.discoveredCollections': `Discovered Collections`,
     'workflows.collectionSelector.label.existingCollections': `Existing Collections`,
     'workflows.collectionSelector.cta.delete': `Remove All`,
+    'workflows.collectionSelector.cta.rediscover': `Rediscover`,
 };
 
 const ShardStatus: ResolvedIntlConfig['messages'] = {
