@@ -102,6 +102,7 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
     uischema,
     uischemas,
     data,
+    enabled,
 }: CombinatorRendererProps) => {
     const [open, setOpen] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(
@@ -184,6 +185,7 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
                     <Tab
                         key={oneOfRenderInfo.label}
                         label={oneOfRenderInfo.label}
+                        disabled={!enabled}
                     />
                 ))}
             </Tabs>
