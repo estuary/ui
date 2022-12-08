@@ -28,6 +28,7 @@ export interface ResourceConfigState {
         workflow: EntityWorkflow | null,
         catalogName: string
     ) => void;
+    resetConfigAndCollections: () => void;
 
     collectionRemovalMetadata: {
         selectedCollection: string | null;

@@ -17,6 +17,10 @@ export const defaultAjvSettings: any = {
     // `date-time` format to mean ISO8601 instead of RFC3339. Another is that some schemas seem to
     // use made-up format strings that we won't recognize.
     validateFormats: false,
+    // This requires that all schemas are unique in ID and you cannot call AJV multiple
+    // times with a schema with the same ID. This is good to turn back on eventually because
+    // compiling AJV multiple times makes no sense but this is easiest currently.
+    addUsedSchema: false,
 };
 
 export const addKeywords = (ajv: Ajv) => {

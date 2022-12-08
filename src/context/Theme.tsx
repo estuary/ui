@@ -253,6 +253,16 @@ export const logDialogBackground = {
     dark: slate[800],
 };
 
+export const secondaryButtonBackground = {
+    light: slate[100],
+    dark: slate[50],
+};
+
+export const secondaryButtonHoverBackground = {
+    light: slate[200],
+    dark: slate[100],
+};
+
 const expandedRowBgColor = {
     light: slate[50],
     dark: slate[800],
