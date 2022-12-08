@@ -43,6 +43,7 @@
         "ansicolor": "^1.1.100",
         "data-plane-gateway": "https://gitpkg.now.sh/estuary/data-plane-gateway/client/dist?main",
         "date-fns": "^2.29.1",
+        "dayjs": "^1.11.7",
         "filter-obj": "^3.0.0",
         "immer": "^9.0.15",
         "jose": "^4.8.3",

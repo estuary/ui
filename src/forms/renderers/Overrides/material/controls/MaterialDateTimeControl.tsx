@@ -30,18 +30,15 @@ import {
     RankedTester,
     rankWith,
 } from '@jsonforms/core';
-import {
-    createOnChangeHandler,
-    getData,
-    ResettableTextField,
-    useFocus,
-} from '@jsonforms/material-renderers';
+import { useFocus } from '@jsonforms/material-renderers';
 import { withJsonFormsControlProps } from '@jsonforms/react';
-import { FormHelperText, Hidden } from '@mui/material';
+import { FormHelperText, Hidden, TextField } from '@mui/material';
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs, { Dayjs } from 'dayjs';
+import { debounce } from 'lodash';
 import merge from 'lodash/merge';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 // Nothing is really custom here besides disabling am/pm.
 // Eventually this should house some more functionality like making
@@ -89,20 +86,52 @@ export const Custom_MaterialDateTimeControl = (props: ControlProps) => {
         : null;
     const secondFormHelperText = showDescription && !isValid ? errors : null;
 
-    const onChangeHandler = useMemo(
-        () => createOnChangeHandler(path, handleChange, saveFormat),
+    const onChange = useMemo(
+        () =>
+            debounce((value: any, keyboardInput?: string | undefined) => {
+                // Try to use value from the date picker first
+                if (value) {
+                    const formattedValue = dayjs(value).format(saveFormat);
+                    if (formattedValue && formattedValue !== 'Invalid Date') {
+                        return handleChange(path, formattedValue);
+                    }
+                }
+
+                /*
+                // Now see if there is something types in we can use
+                const formattedData = dayjs(keyboardInput, saveFormat);
+                if (formattedData.toString() !== 'Invalid Date') {
+                    // If there is formattedData then we know the user typed enough
+                    //   for us to intelligently format that date
+                    const formattedKeyboardInput = dayjs(
+                        keyboardInput ?? ''
+                    ).format(saveFormat);
+                    if (
+                        formattedKeyboardInput &&
+                        formattedKeyboardInput !== 'Invalid Date'
+                    ) {
+                        return handleChange(path, formattedKeyboardInput);
+                    }
+                }
+                */
+
+                // Default to setting the value to whatever the user typed
+                return handleChange(path, keyboardInput);
+            }, 300),
         [path, handleChange, saveFormat]
     );
 
-    const onChange = useMemo(
-        () => (value: any, keyboardInput?: string | undefined) => {
-            onChangeHandler(value, keyboardInput ?? '');
-        },
-        [onChangeHandler]
-    );
+    const [value, setValue] = useState<Dayjs | null>(dayjs(data, saveFormat));
 
-    const value = getData(data, saveFormat);
-    const valueInInputFormat = value ? value.format(format) : '';
+    useEffect(() => {
+        const formattedData = dayjs(data, saveFormat);
+        if (formattedData.toString() !== 'Invalid Date') {
+            setValue(formattedData);
+        }
+    }, [data, saveFormat]);
+
+    console.log('data', data);
+    console.log('value', value);
 
     return (
         <Hidden xsUp={!visible}>
@@ -125,11 +154,8 @@ export const Custom_MaterialDateTimeControl = (props: ControlProps) => {
                         },
                     }}
                     renderInput={(params) => (
-                        <ResettableTextField
+                        <TextField
                             {...params}
-                            rawValue={data}
-                            dayjsValueIsValid={value !== null}
-                            valueInInputFormat={valueInInputFormat}
                             focused={focused}
                             id={`${id}-input`}
                             required={
@@ -151,6 +177,32 @@ export const Custom_MaterialDateTimeControl = (props: ControlProps) => {
                             onBlur={onBlur}
                             variant="standard"
                         />
+                        // <ResettableTextField
+                        //     {...params}
+                        //     rawValue={data}
+                        //     dayjsValueIsValid={false}
+                        //     valueInInputFormat={data}
+                        //     focused={focused}
+                        //     id={`${id}-input`}
+                        //     required={
+                        //         required
+                        //             ? !appliedUiSchemaOptions.hideRequiredAsterisk
+                        //             : undefined
+                        //     }
+                        //     autoFocus={appliedUiSchemaOptions.focus}
+                        //     error={!isValid}
+                        //     fullWidth={!appliedUiSchemaOptions.trim}
+                        //     inputProps={{
+                        //         ...params.inputProps,
+                        //         type: 'text',
+                        //     }}
+                        //     InputLabelProps={
+                        //         data ? { shrink: true } : undefined
+                        //     }
+                        //     onFocus={onFocus}
+                        //     onBlur={onBlur}
+                        //     variant="standard"
+                        // />
                     )}
                 />
                 <FormHelperText error={!isValid ? !showDescription : undefined}>
