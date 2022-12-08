@@ -6,7 +6,11 @@ import {
     DialogContent,
     DialogTitle,
 } from '@mui/material';
-import { glassBkgWithoutBlur, slate } from 'context/Theme';
+import {
+    glassBkgWithoutBlur,
+    secondaryButtonBackground,
+    secondaryButtonHoverBackground,
+} from 'context/Theme';
 import { createContext, ReactNode, useContext, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { BaseComponentProps } from 'types';
@@ -108,15 +112,13 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
                     <Button
                         onClick={handlers.dismiss}
                         sx={{
-                            'backgroundColor': (themes) =>
-                                themes.palette.mode === 'dark'
-                                    ? slate[50]
-                                    : slate[100],
+                            'backgroundColor': (theme) =>
+                                secondaryButtonBackground[theme.palette.mode],
                             '&:hover': {
-                                backgroundColor: (themes) =>
-                                    themes.palette.mode === 'dark'
-                                        ? slate[100]
-                                        : slate[200],
+                                backgroundColor: (theme) =>
+                                    secondaryButtonHoverBackground[
+                                        theme.palette.mode
+                                    ],
                             },
                         }}
                     >

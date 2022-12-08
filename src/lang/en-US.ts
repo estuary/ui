@@ -682,6 +682,10 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.label.existingCollections': `Existing Collections`,
     'workflows.collectionSelector.cta.delete': `Remove All`,
     'workflows.collectionSelector.cta.rediscover': `Rediscover`,
+
+    'workflows.collectionSelector.rediscoverDialog.title': `Are you sure?`,
+    'workflows.collectionSelector.rediscoverDialog.message1': `Rediscovering a capture will replace the current capture configuration with one generated automatically by Flow. Discovery identifies one or more resources — tables, data streams, or the equivalent — and generates bindings so that each will be mapped to a data collection in Flow.`,
+    'workflows.collectionSelector.rediscoverDialog.message2': `If there are any aspects of your current capture configuration you would like to preserve, take note of them before proceeding with this action.`,
 };
 
 const ShardStatus: ResolvedIntlConfig['messages'] = {
