@@ -681,7 +681,7 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.label.discoveredCollections': `Discovered Collections`,
     'workflows.collectionSelector.label.existingCollections': `Existing Collections`,
     'workflows.collectionSelector.cta.delete': `Remove All`,
-    'workflows.collectionSelector.cta.rediscover': `Rediscover All`,
+    'workflows.collectionSelector.cta.rediscover': `Refresh`,
 
     'workflows.collectionSelector.rediscoverDialog.title': `Are you sure?`,
     'workflows.collectionSelector.rediscoverDialog.message1': `Rediscovering a capture will replace the current capture configuration with one generated automatically by Flow. Discovery identifies one or more resources — tables, data streams, or the equivalent — and generates bindings so that each will be mapped to a data collection in Flow.`,
