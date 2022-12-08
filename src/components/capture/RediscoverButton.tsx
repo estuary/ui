@@ -51,6 +51,11 @@ function RediscoverButton({
 
             setOpen(false);
         },
+        rediscoveryRequested: (event: React.MouseEvent<HTMLElement>) => {
+            setOpen(false);
+
+            generateCatalog(event);
+        },
     };
 
     return (
@@ -104,7 +109,7 @@ function RediscoverButton({
                         <FormattedMessage id="cta.cancel" />
                     </Button>
 
-                    <Button onClick={generateCatalog}>
+                    <Button onClick={handlers.rediscoveryRequested}>
                         <FormattedMessage id="cta.continue" />
                     </Button>
                 </DialogActions>

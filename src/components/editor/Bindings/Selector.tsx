@@ -19,7 +19,6 @@ import {
 } from '@mui/x-data-grid';
 import CollectionPicker from 'components/collection/Picker';
 import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
-import { useEditorStore_id } from 'components/editor/Store/hooks';
 import {
     alternativeDataGridHeader,
     slateOutline,
@@ -138,9 +137,6 @@ function BindingSelector({
     // Details Form Store
     const task = useDetailsForm_details_entityName();
 
-    // Draft Editor Store
-    const draftId = useEditorStore_id();
-
     // Form State Store
     const formActive = useFormStateStore_isActive();
 
@@ -230,7 +226,7 @@ function BindingSelector({
                     direction="row"
                     spacing={1}
                     divider={
-                        draftId && RediscoverButton ? (
+                        RediscoverButton ? (
                             <Divider
                                 orientation="vertical"
                                 variant="middle"
@@ -239,7 +235,7 @@ function BindingSelector({
                         ) : null
                     }
                 >
-                    {draftId && RediscoverButton ? RediscoverButton : null}
+                    {RediscoverButton ? RediscoverButton : null}
 
                     <Button
                         variant="text"
