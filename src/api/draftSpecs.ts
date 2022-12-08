@@ -140,26 +140,28 @@ export const generateDraftSpec = (
 };
 
 export const generateCaptureDraftSpec = (
-    resourceConfig: ResourceConfigDictionary,
-    endpoint: CaptureEndpoint
+    endpoint: CaptureEndpoint,
+    resourceConfig: ResourceConfigDictionary | null
 ): CaptureDef => {
     const draftSpec: CaptureDef = {
         bindings: [],
         endpoint,
     };
 
-    Object.keys(resourceConfig).forEach((collectionName) => {
-        const resources = resourceConfig[collectionName].data;
+    if (resourceConfig) {
+        Object.keys(resourceConfig).forEach((collectionName) => {
+            const resources = resourceConfig[collectionName].data;
 
-        if (Object.keys(resources).length > 0) {
-            draftSpec.bindings.push({
-                target: collectionName,
-                resource: {
-                    ...resources,
-                },
-            });
-        }
-    });
+            if (Object.keys(resources).length > 0) {
+                draftSpec.bindings.push({
+                    target: collectionName,
+                    resource: {
+                        ...resources,
+                    },
+                });
+            }
+        });
+    }
 
     return draftSpec;
 };

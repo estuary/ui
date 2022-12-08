@@ -4,6 +4,7 @@ import BindingsMultiEditor from 'components/editor/Bindings';
 import AlertBox from 'components/shared/AlertBox';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useFormStateStore_messagePrefix } from 'stores/FormState/hooks';
 import {
@@ -15,9 +16,14 @@ import {
 interface Props {
     draftSpecs: DraftSpecQuery[];
     readOnly?: boolean;
+    RediscoverButton?: ReactNode;
 }
 
-function CollectionConfig({ draftSpecs, readOnly = false }: Props) {
+function CollectionConfig({
+    draftSpecs,
+    readOnly = false,
+    RediscoverButton,
+}: Props) {
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
 
@@ -63,6 +69,7 @@ function CollectionConfig({ draftSpecs, readOnly = false }: Props) {
                 <BindingsMultiEditor
                     draftSpecs={draftSpecs}
                     readOnly={readOnly}
+                    RediscoverButton={RediscoverButton}
                 />
             )}
         </WrapperWithHeader>

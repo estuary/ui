@@ -30,6 +30,11 @@ const mergeResourceConfigs = (
     return mergedResourceConfig;
 };
 
+export interface SupabaseConfig {
+    catalogName: string;
+    lastPubId: string;
+}
+
 export const modifyDiscoveredDraftSpec = async (
     response: {
         data: DraftSpecQuery[];
@@ -37,20 +42,27 @@ export const modifyDiscoveredDraftSpec = async (
     },
     resourceConfig: ResourceConfigDictionary,
     restrictedDiscoveredCollections: string[],
-    supabaseConfig?: { catalogName: string; lastPubId: string }
+    supabaseConfig?: SupabaseConfig | null,
+    rediscoveryInitiated?: boolean
 ): Promise<CallSupabaseResponse<any>> => {
     const draftSpecData = response.data[0];
 
-    const mergedResourceConfig = mergeResourceConfigs(
-        draftSpecData,
-        resourceConfig,
-        restrictedDiscoveredCollections
-    );
+    const mergedResourceConfig = rediscoveryInitiated
+        ? null
+        : mergeResourceConfigs(
+              draftSpecData,
+              resourceConfig,
+              restrictedDiscoveredCollections
+          );
 
     const mergedDraftSpec = generateCaptureDraftSpec(
-        mergedResourceConfig,
-        draftSpecData.spec.endpoint
+        draftSpecData.spec.endpoint,
+        mergedResourceConfig
     );
+
+    if (rediscoveryInitiated) {
+        mergedDraftSpec.bindings = draftSpecData.spec.bindings;
+    }
 
     return modifyDraftSpec(
         mergedDraftSpec,

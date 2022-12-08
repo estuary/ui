@@ -265,6 +265,21 @@ const getInitialState = (
         );
     },
 
+    resetConfigAndCollections: () => {
+        set(
+            produce((state: ResourceConfigState) => {
+                state.currentCollection = null;
+                state.collections = [];
+
+                state.restrictedDiscoveredCollections = [];
+
+                state.resourceConfig = {};
+            }),
+            false,
+            'Resource Config and Collections Reset'
+        );
+    },
+
     setCurrentCollection: (value) => {
         set(
             produce((state: ResourceConfigState) => {
