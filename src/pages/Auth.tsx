@@ -1,11 +1,11 @@
 import { Auth as SupabaseAuth } from '@supabase/ui';
-import { authenticatedRoutes } from 'app/routes';
+import { authenticatedRoutes, REDIRECT_TO_PARAM_NAME } from 'app/routes';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import { useClient } from 'hooks/supabase-swr';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { useSnackbar } from 'notistack';
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 // This is the main "controller" for checking auth status for Supabase when coming into the app
 //    - This is used for both OIDC auth AND magic link auth.
@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 const Auth = () => {
     useBrowserTitle('browserTitle.loginLoading');
 
+    const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const supabaseClient = useClient();
     const { enqueueSnackbar } = useSnackbar();
@@ -34,7 +35,11 @@ const Auth = () => {
         };
 
         const success = () => {
-            navigate(authenticatedRoutes.home.path);
+            const redirectParam = searchParams.get(REDIRECT_TO_PARAM_NAME);
+            navigate(
+                (redirectParam && decodeURIComponent(redirectParam)) ??
+                    authenticatedRoutes.home.path
+            );
         };
 
         if (!user) {
