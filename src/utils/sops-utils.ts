@@ -12,7 +12,7 @@ type SupabaseInvokeResponse =
 const sopsKey = 'sops';
 
 const copyEncryptedEndpointConfig = (
-    endpointConfigTemplate: { [key: string]: any } | undefined,
+    endpointConfigTemplate: { [key: string]: any },
     encryptedEndpointConfig: { [key: string]: any },
     encryptedSuffix: string,
     overrideJsonFormDefaults?: boolean
@@ -25,10 +25,9 @@ const copyEncryptedEndpointConfig = (
                 ? key.slice(0, encryptedSuffixIndex)
                 : '';
 
-        endpointConfigTemplate = endpointConfigTemplate ?? {};
         if (isPlainObject(value)) {
             copyEncryptedEndpointConfig(
-                endpointConfigTemplate[truncatedKey || key],
+                endpointConfigTemplate[truncatedKey || key] ?? {},
                 encryptedEndpointConfig[key],
                 encryptedSuffix
             );
