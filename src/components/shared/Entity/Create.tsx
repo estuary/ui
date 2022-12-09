@@ -52,6 +52,7 @@ interface Props {
     resetState: () => void;
     toolbar: ReactNode;
     errorSummary: ReactNode;
+    RediscoverButton?: ReactNode;
 }
 
 function EntityCreate({
@@ -61,6 +62,7 @@ function EntityCreate({
     resetState,
     errorSummary,
     toolbar,
+    RediscoverButton,
 }: Props) {
     useBrowserTitle(title);
 
@@ -215,7 +217,10 @@ function EntityCreate({
 
                         {displayResourceConfig ? (
                             <ErrorBoundryWrapper>
-                                <CollectionConfig draftSpecs={taskDraftSpec} />
+                                <CollectionConfig
+                                    draftSpecs={taskDraftSpec}
+                                    RediscoverButton={RediscoverButton}
+                                />
                             </ErrorBoundryWrapper>
                         ) : null}
 

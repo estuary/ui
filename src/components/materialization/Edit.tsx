@@ -11,7 +11,7 @@ import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityEdit from 'components/shared/Entity/Edit';
 import EntityToolbar from 'components/shared/Entity/Header';
-import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary/extensions/WithResourceConfigErrors';
+import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
 import PageContainer from 'components/shared/PageContainer';
 import useGlobalSearchParams, {
     GlobalSearchParams,

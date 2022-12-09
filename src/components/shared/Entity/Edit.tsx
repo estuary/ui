@@ -82,6 +82,7 @@ interface Props {
     resetState: () => void;
     errorSummary: ReactNode;
     toolbar: ReactNode;
+    RediscoverButton?: ReactNode;
     showCollections?: boolean;
 }
 
@@ -236,6 +237,7 @@ function EntityEdit({
     resetState,
     errorSummary,
     toolbar,
+    RediscoverButton,
     showCollections,
 }: Props) {
     useBrowserTitle(title);
@@ -437,6 +439,7 @@ function EntityEdit({
                             <CollectionConfig
                                 draftSpecs={taskDraftSpec}
                                 readOnly={readOnly.resourceConfigForm}
+                                RediscoverButton={RediscoverButton}
                             />
                         </ErrorBoundryWrapper>
                     ) : null}

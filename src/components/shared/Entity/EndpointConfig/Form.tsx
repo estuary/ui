@@ -28,12 +28,10 @@ function EndpointConfigForm({ readOnly }: Props) {
     // Endpoint Config Store
     const endpointConfig = useEndpointConfigStore_endpointConfig_data();
     const setEndpointConfig = useEndpointConfigStore_setEndpointConfig();
-
     const endpointSchema = useEndpointConfigStore_endpointSchema();
 
     // Form State Store
     const displayValidation = useFormStateStore_displayValidation();
-
     const isActive = useFormStateStore_isActive();
 
     const categoryLikeSchema = useMemo(() => {

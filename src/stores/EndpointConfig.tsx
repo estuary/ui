@@ -4,13 +4,20 @@ import { useEntityWorkflow } from 'context/Workflow';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import { isEmpty, isEqual, map } from 'lodash';
+import LogRocket from 'logrocket';
 import {
     createContext as createReactContext,
     ReactNode,
     useContext,
 } from 'react';
 import { createJSONFormDefaults } from 'services/ajv';
-import { Entity, EntityWithCreateWorkflow, JsonFormsData, Schema } from 'types';
+import {
+    Entity,
+    EntityWithCreateWorkflow,
+    EntityWorkflow,
+    JsonFormsData,
+    Schema,
+} from 'types';
 import useConstant from 'use-constant';
 import { parseEncryptedEndpointConfig } from 'utils/sops-utils';
 import { devtoolsOptions } from 'utils/store-utils';
@@ -22,6 +29,12 @@ import { EndpointConfigStoreNames } from './names';
 export interface EndpointConfigState extends StoreWithHydration {
     endpointSchema: Schema;
     setEndpointSchema: (val: EndpointConfigState['endpointSchema']) => void;
+
+    // Used to display custom errors in JsonForms
+    endpointCustomErrors: any[];
+    setEndpointCustomErrors: (
+        val: EndpointConfigState['endpointCustomErrors']
+    ) => void;
 
     // Encrypted Endpoint Configs
     publishedEndpointConfig: JsonFormsData;
@@ -70,6 +83,7 @@ const filterErrors = (list: JsonFormsData['errors']): (string | undefined)[] =>
 
 const populateEndpointConfigErrors = (
     endpointConfig: JsonFormsData,
+    endpointCustomErrors: any[],
     state: EndpointConfigState
 ): void => {
     const endpointConfigErrors = filterErrors(fetchErrors(endpointConfig));
@@ -80,10 +94,12 @@ const populateEndpointConfigErrors = (
 
     state.endpointConfigErrorsExist = !state.serverUpdateRequired
         ? false
-        : !isEmpty(endpointConfigErrors);
+        : !isEmpty(endpointConfigErrors) || !isEmpty(endpointCustomErrors);
 };
 
-const getInitialStateData = (): Pick<
+const getInitialStateData = (
+    workflow?: EntityWorkflow
+): Pick<
     EndpointConfigState,
     | 'encryptedEndpointConfig'
     | 'endpointConfig'
@@ -95,6 +111,7 @@ const getInitialStateData = (): Pick<
     | 'previousEndpointConfig'
     | 'publishedEndpointConfig'
     | 'serverUpdateRequired'
+    | 'endpointCustomErrors'
 > => ({
     encryptedEndpointConfig: { data: {}, errors: [] },
     endpointConfig: { data: {}, errors: [] },
@@ -105,7 +122,9 @@ const getInitialStateData = (): Pick<
     hydrationErrorsExist: false,
     previousEndpointConfig: { data: {}, errors: [] },
     publishedEndpointConfig: { data: {}, errors: [] },
-    serverUpdateRequired: false,
+    endpointCustomErrors: [],
+    serverUpdateRequired:
+        workflow === 'capture_create' || workflow === 'materialization_create',
 });
 
 const hydrateState = async (
@@ -176,10 +195,21 @@ const hydrateState = async (
 
 const getInitialState = (
     set: NamedSet<EndpointConfigState>,
-    get: StoreApi<EndpointConfigState>['getState']
+    get: StoreApi<EndpointConfigState>['getState'],
+    workflow: EntityWorkflow
 ): EndpointConfigState => ({
-    ...getInitialStateData(),
+    ...getInitialStateData(workflow),
     ...getStoreWithHydrationSettings('Endpoint Config', set),
+
+    setEndpointCustomErrors: (val) => {
+        set(
+            produce((state) => {
+                state.endpointCustomErrors = val;
+            }),
+            false,
+            'Endpoint Custom Errors Set'
+        );
+    },
 
     setEndpointSchema: (val) => {
         set(
@@ -208,13 +238,17 @@ const getInitialState = (
     setEncryptedEndpointConfig: (encryptedEndpointConfig) => {
         set(
             produce((state: EndpointConfigState) => {
-                const { endpointSchema } = get();
+                const { endpointSchema, endpointCustomErrors } = get();
 
                 state.encryptedEndpointConfig = isEmpty(encryptedEndpointConfig)
                     ? createJSONFormDefaults(endpointSchema)
                     : encryptedEndpointConfig;
 
-                populateEndpointConfigErrors(encryptedEndpointConfig, state);
+                populateEndpointConfigErrors(
+                    encryptedEndpointConfig,
+                    endpointCustomErrors,
+                    state
+                );
             }),
             false,
             'Encrypted Endpoint Config Set'
@@ -238,13 +272,17 @@ const getInitialState = (
     setEndpointConfig: (endpointConfig) => {
         set(
             produce((state: EndpointConfigState) => {
-                const { endpointSchema } = get();
+                const { endpointSchema, endpointCustomErrors } = get();
 
                 state.endpointConfig = isEmpty(endpointConfig)
                     ? createJSONFormDefaults(endpointSchema)
                     : endpointConfig;
 
-                populateEndpointConfigErrors(endpointConfig, state);
+                populateEndpointConfigErrors(
+                    endpointConfig,
+                    endpointCustomErrors,
+                    state
+                );
             }),
             false,
             'Endpoint Config Changed'
@@ -254,11 +292,15 @@ const getInitialState = (
     setServerUpdateRequired: (updateRequired) => {
         set(
             produce((state: EndpointConfigState) => {
-                const { endpointConfig } = get();
+                const { endpointConfig, endpointCustomErrors } = get();
 
                 state.serverUpdateRequired = updateRequired;
 
-                populateEndpointConfigErrors(endpointConfig, state);
+                populateEndpointConfigErrors(
+                    endpointConfig,
+                    endpointCustomErrors,
+                    state
+                );
             }),
             false,
             'Server Update Required Flag Changed'
@@ -279,11 +321,12 @@ const getInitialState = (
 // TODO (research): Investigate the differences between createStore() and create().
 export const createHydratedEndpointConfigStore = (
     key: EndpointConfigStoreNames,
-    entityType: Entity
+    entityType: Entity,
+    workflow: EntityWorkflow
 ) => {
     return createStore<EndpointConfigState>()(
         devtools((set, get) => {
-            const coreState = getInitialState(set, get);
+            const coreState = getInitialState(set, get, workflow);
 
             if (entityType === 'capture' || entityType === 'materialization') {
                 hydrateState(get, entityType).then(
@@ -292,7 +335,12 @@ export const createHydratedEndpointConfigStore = (
 
                         setHydrated(true);
                     },
-                    () => {
+                    (error: any) => {
+                        LogRocket.log(
+                            'Failed to hydrate endpoint config',
+                            error
+                        );
+
                         const { setHydrated, setHydrationErrorsExist } = get();
 
                         setHydrated(true);
@@ -328,7 +376,8 @@ export const EndpointConfigProvider = ({
         invariableStore[EndpointConfigStoreNames.GENERAL] = workflow
             ? createHydratedEndpointConfigStore(
                   EndpointConfigStoreNames.GENERAL,
-                  entityType
+                  entityType,
+                  workflow
               )
             : {};
 
@@ -413,6 +462,24 @@ export const useEndpointConfigStore_endpointSchema = () => {
         EndpointConfigState,
         EndpointConfigState['endpointSchema']
     >(getStoreName(entityType), (state) => state.endpointSchema);
+};
+
+export const useEndpointConfigStore_endpointCustomErrors = () => {
+    const entityType = useEntityType();
+
+    return useEndpointConfigStore<
+        EndpointConfigState,
+        EndpointConfigState['endpointCustomErrors']
+    >(getStoreName(entityType), (state) => state.endpointCustomErrors);
+};
+
+export const useEndpointConfigStore_setEndpointCustomErrors = () => {
+    const entityType = useEntityType();
+
+    return useEndpointConfigStore<
+        EndpointConfigState,
+        EndpointConfigState['setEndpointCustomErrors']
+    >(getStoreName(entityType), (state) => state.setEndpointCustomErrors);
 };
 
 export const useEndpointConfigStore_setEndpointSchema = () => {

@@ -92,7 +92,7 @@ const getInitialStateData = (): Pick<
     hydrated: false,
     hydrationErrorsExist: false,
     resourceConfig: {},
-    resourceConfigErrorsExist: true,
+    resourceConfigErrorsExist: false,
     resourceConfigErrors: [],
     resourceSchema: {},
     restrictedDiscoveredCollections: [],
@@ -262,6 +262,21 @@ const getInitialState = (
             }),
             false,
             'Removed All Selected Collections'
+        );
+    },
+
+    resetConfigAndCollections: () => {
+        set(
+            produce((state: ResourceConfigState) => {
+                state.currentCollection = null;
+                state.collections = [];
+
+                state.restrictedDiscoveredCollections = [];
+
+                state.resourceConfig = {};
+            }),
+            false,
+            'Resource Config and Collections Reset'
         );
     },
 

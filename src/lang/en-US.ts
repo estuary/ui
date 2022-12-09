@@ -681,6 +681,11 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.label.discoveredCollections': `Discovered Collections`,
     'workflows.collectionSelector.label.existingCollections': `Existing Collections`,
     'workflows.collectionSelector.cta.delete': `Remove All`,
+    'workflows.collectionSelector.cta.rediscover': `Refresh`,
+
+    'workflows.collectionSelector.rediscoverDialog.title': `Are you sure?`,
+    'workflows.collectionSelector.rediscoverDialog.message1': `Proceeding with this action will replace the current capture configuration with one generated automatically by Flow. Discovery identifies one or more resources — tables, data streams, or the equivalent — and generates bindings so that each will be mapped to a data collection in Flow.`,
+    'workflows.collectionSelector.rediscoverDialog.message2': `If there are any aspects of your current capture configuration you would like to preserve, take note of them before proceeding with this action.`,
 };
 
 const ShardStatus: ResolvedIntlConfig['messages'] = {
@@ -703,6 +708,7 @@ const OAuth: ResolvedIntlConfig['messages'] = {
     'oauth.unauthenticated': `Not Authenticated`,
     'oauth.authenticate': `Authenticate your {provider} account`,
     'oauth.remove': `Remove`,
+    'oauth.edit.message': `If you edit your endpoint config and want to continue using OAuth you must reauthenticate.`,
 };
 
 const Supabase: ResolvedIntlConfig['messages'] = {
