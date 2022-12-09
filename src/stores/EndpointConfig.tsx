@@ -4,6 +4,7 @@ import { useEntityWorkflow } from 'context/Workflow';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import { isEmpty, isEqual, map } from 'lodash';
+import LogRocket from 'logrocket';
 import {
     createContext as createReactContext,
     ReactNode,
@@ -334,8 +335,11 @@ export const createHydratedEndpointConfigStore = (
 
                         setHydrated(true);
                     },
-                    (arg: any) => {
-                        console.log('arg', arg);
+                    (error: any) => {
+                        LogRocket.log(
+                            'Failed to hydrate endpoint config',
+                            error
+                        );
 
                         const { setHydrated, setHydrationErrorsExist } = get();
 
