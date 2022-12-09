@@ -26,52 +26,56 @@
 import {
     ControlProps,
     isDateTimeControl,
-    isDescriptionHidden,
     RankedTester,
     rankWith,
 } from '@jsonforms/core';
-import { useFocus } from '@jsonforms/material-renderers';
+import {
+    MaterialInputControl,
+    MuiInputText,
+} from '@jsonforms/material-renderers';
 import { withJsonFormsControlProps } from '@jsonforms/react';
-import { FormHelperText, Hidden, TextField } from '@mui/material';
-import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs, { Dayjs } from 'dayjs';
-import { debounce } from 'lodash';
+import EventIcon from '@mui/icons-material/Event';
+import { Box, Hidden, IconButton, Popover, Stack } from '@mui/material';
+import {
+    LocalizationProvider,
+    StaticDateTimePicker,
+} from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { format, formatRFC3339 } from 'date-fns';
 import merge from 'lodash/merge';
-import { useEffect, useMemo, useState } from 'react';
+import {
+    bindPopover,
+    bindTrigger,
+    usePopupState,
+} from 'material-ui-popup-state/hooks';
+import { useCallback } from 'react';
 
-// Nothing is really custom here besides disabling am/pm.
-// Eventually this should house some more functionality like making
-//  the manual editing of the input better.
+const INVALID_DATE = 'Invalid Date';
+
+// function removeTimezoneOffset(date: Date) {
+//     const tzOffset = date.getTimezoneOffset();
+//     return new Date(date.valueOf() + tzOffset * 60 * 1000);
+// }
+
+// This is SUPER customized. We change how this works a lot to make the form
+//  simpler for users.
+// Customizations:
+//  1. Use Static Date Time Picker
+//      We stopped using the MUI DateTimePicker and switched to the static one
+//      This allows us to format the input only when the user is using the date
+//      picker. The original approach would try to format the input on every keystroke
+//      and it made it difficult to edit.
+//  2. Use Date Fns
+//      We already have a date format library so DayJS was not needed. Also, it
+//      tries REALLY hard to understand what a user is meaning and will basically
+//      work around almost anything you type and give you a date back. Example:
+//      if a user types "2020" into the input then DayJS immedietly will format that to
+//      something like "2020-01-01T01:00:00Z"
 export const Custom_MaterialDateTimeControl = (props: ControlProps) => {
-    const [focused, onFocus, onBlur] = useFocus();
-    const {
-        id,
-        description,
-        errors,
-        label,
-        uischema,
-        visible,
-        enabled,
-        required,
-        path,
-        handleChange,
-        data,
-        config,
-    } = props;
+    const { id, uischema, visible, enabled, path, handleChange, data, config } =
+        props;
     const appliedUiSchemaOptions = merge({}, config, uischema.options);
-    const isValid = errors.length === 0;
-
-    const showDescription = !isDescriptionHidden(
-        visible,
-        description,
-        focused,
-        appliedUiSchemaOptions.showUnfocusedDescription
-    );
-
-    const format = appliedUiSchemaOptions.dateTimeFormat ?? 'YYYY-MM-DD HH:mm';
     const saveFormat = appliedUiSchemaOptions.dateTimeSaveFormat ?? undefined;
-
     const views = appliedUiSchemaOptions.views ?? [
         'year',
         'day',
@@ -79,139 +83,99 @@ export const Custom_MaterialDateTimeControl = (props: ControlProps) => {
         'minutes',
     ];
 
-    const firstFormHelperText = showDescription
-        ? description
-        : !isValid
-        ? errors
-        : null;
-    const secondFormHelperText = showDescription && !isValid ? errors : null;
+    const popupState = usePopupState({
+        variant: 'popover',
+        popupId: `date-time-${id}`,
+    });
 
-    const onChange = useMemo(
-        () =>
-            debounce((value: any, keyboardInput?: string | undefined) => {
-                // Try to use value from the date picker first
-                if (value) {
-                    const formattedValue = dayjs(value).format(saveFormat);
-                    if (formattedValue && formattedValue !== 'Invalid Date') {
-                        return handleChange(path, formattedValue);
-                    }
-                }
+    const formatDate = useCallback(
+        (value: Date) => {
+            try {
+                const result = formatRFC3339(new Date(2019, 8, 18, 19, 0, 52));
+                const foo = formatRFC3339(value);
+                const bar = format(value, saveFormat);
 
-                /*
-                // Now see if there is something types in we can use
-                const formattedData = dayjs(keyboardInput, saveFormat);
-                if (formattedData.toString() !== 'Invalid Date') {
-                    // If there is formattedData then we know the user typed enough
-                    //   for us to intelligently format that date
-                    const formattedKeyboardInput = dayjs(
-                        keyboardInput ?? ''
-                    ).format(saveFormat);
-                    if (
-                        formattedKeyboardInput &&
-                        formattedKeyboardInput !== 'Invalid Date'
-                    ) {
-                        return handleChange(path, formattedKeyboardInput);
-                    }
-                }
-                */
-
-                // Default to setting the value to whatever the user typed
-                return handleChange(path, keyboardInput);
-            }, 300),
-        [path, handleChange, saveFormat]
+                console.log('result', result);
+                console.log('value', value);
+                console.log('{foo, bar}', { foo, bar });
+                return foo;
+            } catch (e: unknown) {
+                return INVALID_DATE;
+            }
+        },
+        [saveFormat]
     );
 
-    const [value, setValue] = useState<Dayjs | null>(dayjs(data, saveFormat));
+    const closePopover = () => {
+        popupState.close();
+    };
 
-    useEffect(() => {
-        const formattedData = dayjs(data, saveFormat);
-        if (formattedData.toString() !== 'Invalid Date') {
-            setValue(formattedData);
-        }
-    }, [data, saveFormat]);
+    const onChange = useCallback(
+        (value: any, keyboardInput?: string | undefined) => {
+            // Try to use value from the date picker first
+            if (value) {
+                const formattedValue = formatDate(value);
+                if (formattedValue && formattedValue !== INVALID_DATE) {
+                    return handleChange(path, formattedValue);
+                }
+            }
 
-    console.log('data', data);
-    console.log('value', value);
+            // Default to setting the value to whatever the user typed
+            return handleChange(path, keyboardInput);
+        },
+        [formatDate, handleChange, path]
+    );
 
     return (
         <Hidden xsUp={!visible}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DateTimePicker
-                    label={label}
-                    value={value}
-                    onChange={onChange}
-                    inputFormat={format}
-                    disableMaskedInput
-                    ampm={false}
-                    views={views}
-                    disabled={!enabled}
-                    componentsProps={{
-                        actionBar: {
-                            actions: (variant) =>
-                                variant === 'desktop'
-                                    ? []
-                                    : ['clear', 'cancel', 'accept'],
-                        },
+            <Stack
+                sx={{
+                    alignItems: 'top',
+                }}
+                direction="row"
+            >
+                <MaterialInputControl input={MuiInputText} {...props} />
+                <Box sx={{ paddingTop: 1 }}>
+                    <IconButton
+                        aria-label="delete"
+                        disabled={!enabled}
+                        {...bindTrigger(popupState)}
+                    >
+                        <EventIcon />
+                    </IconButton>
+                </Box>
+
+                <Popover
+                    {...bindPopover(popupState)}
+                    anchorOrigin={{
+                        vertical: 'center',
+                        horizontal: 'left',
                     }}
-                    renderInput={(params) => (
-                        <TextField
-                            {...params}
-                            focused={focused}
-                            id={`${id}-input`}
-                            required={
-                                required
-                                    ? !appliedUiSchemaOptions.hideRequiredAsterisk
-                                    : undefined
-                            }
-                            autoFocus={appliedUiSchemaOptions.focus}
-                            error={!isValid}
-                            fullWidth={!appliedUiSchemaOptions.trim}
-                            inputProps={{
-                                ...params.inputProps,
-                                type: 'text',
-                            }}
-                            InputLabelProps={
-                                data ? { shrink: true } : undefined
-                            }
-                            onFocus={onFocus}
-                            onBlur={onBlur}
-                            variant="standard"
+                    transformOrigin={{
+                        vertical: 'center',
+                        horizontal: 'right',
+                    }}
+                >
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                        <StaticDateTimePicker
+                            ignoreInvalidInputs
+                            disableMaskedInput
+                            ampm={false}
+                            disabled={!enabled}
+                            displayStaticWrapperAs="desktop"
+                            openTo="day"
+                            views={views}
+                            value={data}
+                            onChange={onChange}
+                            onAccept={closePopover}
+                            closeOnSelect={true}
+                            // We don't need an input
+                            // eslint-disable-next-line react/jsx-no-useless-fragment
+                            renderInput={() => <></>}
                         />
-                        // <ResettableTextField
-                        //     {...params}
-                        //     rawValue={data}
-                        //     dayjsValueIsValid={false}
-                        //     valueInInputFormat={data}
-                        //     focused={focused}
-                        //     id={`${id}-input`}
-                        //     required={
-                        //         required
-                        //             ? !appliedUiSchemaOptions.hideRequiredAsterisk
-                        //             : undefined
-                        //     }
-                        //     autoFocus={appliedUiSchemaOptions.focus}
-                        //     error={!isValid}
-                        //     fullWidth={!appliedUiSchemaOptions.trim}
-                        //     inputProps={{
-                        //         ...params.inputProps,
-                        //         type: 'text',
-                        //     }}
-                        //     InputLabelProps={
-                        //         data ? { shrink: true } : undefined
-                        //     }
-                        //     onFocus={onFocus}
-                        //     onBlur={onBlur}
-                        //     variant="standard"
-                        // />
-                    )}
-                />
-                <FormHelperText error={!isValid ? !showDescription : undefined}>
-                    {firstFormHelperText}
-                </FormHelperText>
-                <FormHelperText error={!isValid}>
-                    {secondFormHelperText}
-                </FormHelperText>
-            </LocalizationProvider>
+                    </LocalizationProvider>
+                </Popover>
+            </Stack>
         </Hidden>
     );
 };
