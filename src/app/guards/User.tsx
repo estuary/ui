@@ -3,7 +3,6 @@ import FullPageSpinner from 'components/fullPage/Spinner';
 import * as React from 'react';
 import { useEffect } from 'react';
 import 'react-reflex/styles.css';
-import { identifyUser } from 'services/logrocket';
 import { BaseComponentProps } from 'types';
 
 const UnauthenticatedApp = React.lazy(() => import('../Unauthenticated'));
@@ -13,7 +12,7 @@ function UserGuard({ children }: BaseComponentProps) {
 
     useEffect(() => {
         if (user) {
-            identifyUser(user);
+            // identifyUser(user);
         }
     }, [user]);
 
