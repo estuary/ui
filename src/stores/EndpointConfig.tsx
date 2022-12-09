@@ -334,7 +334,9 @@ export const createHydratedEndpointConfigStore = (
 
                         setHydrated(true);
                     },
-                    () => {
+                    (arg: any) => {
+                        console.log('arg', arg);
+
                         const { setHydrated, setHydrationErrorsExist } = get();
 
                         setHydrated(true);
