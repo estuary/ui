@@ -1,8 +1,9 @@
 import 'polyfills/transformStream';
 
-import { enableMapSet } from 'immer';
+import { enableMapSet, setAutoFreeze } from 'immer';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { initGoogleTagManager } from 'services/gtm';
 import { initLogRocket } from 'services/logrocket';
 import App from './app';
 import AppProviders from './context';
@@ -21,8 +22,12 @@ import AppProviders from './context';
 //     console.log('  Deet > ', { inter, phase });
 // };
 
+initGoogleTagManager();
 initLogRocket();
+
+// Setup immer
 enableMapSet();
+setAutoFreeze(false);
 
 ReactDOM.render(
     <React.StrictMode>

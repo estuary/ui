@@ -13,6 +13,7 @@ import useConnectorTag from 'hooks/useConnectorTag';
 import { isEqual } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
+import { useUpdateEffect } from 'react-use';
 import { createJSONFormDefaults } from 'services/ajv';
 import {
     useEndpointConfigStore_endpointConfig_data,
@@ -68,7 +69,7 @@ function EndpointConfig({ connectorImage, readOnly = false }: Props) {
 
             const defaultConfig = createJSONFormDefaults(schema);
 
-            setEndpointConfig(defaultConfig, workflow);
+            setEndpointConfig(defaultConfig);
             setPreviousEndpointConfig(defaultConfig);
         }
     }, [
@@ -78,23 +79,15 @@ function EndpointConfig({ connectorImage, readOnly = false }: Props) {
         connectorId,
         connectorTag?.connector_id,
         connectorTag?.endpoint_spec_schema,
-        workflow,
     ]);
 
     const endpointConfigUpdated = useMemo(() => {
         return !isEqual(endpointConfig, previousEndpointConfig);
     }, [endpointConfig, previousEndpointConfig]);
 
-    useEffect(() => {
-        if (editWorkflow) {
-            setServerUpdateRequired(endpointConfigUpdated, workflow);
-        }
-    }, [
-        setServerUpdateRequired,
-        editWorkflow,
-        endpointConfigUpdated,
-        workflow,
-    ]);
+    useUpdateEffect(() => {
+        setServerUpdateRequired(endpointConfigUpdated);
+    }, [setServerUpdateRequired, endpointConfigUpdated]);
 
     const forceClose = !editWorkflow && draftId !== null;
 
@@ -122,7 +115,7 @@ function EndpointConfig({ connectorImage, readOnly = false }: Props) {
                     </Box>
                 ) : null}
 
-                <EndpointConfigForm readOnly={readOnly} workflow={workflow} />
+                <EndpointConfigForm readOnly={readOnly} />
             </WrapperWithHeader>
         );
     } else {

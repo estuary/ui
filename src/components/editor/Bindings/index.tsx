@@ -16,8 +16,9 @@ import useConnectorTag from 'hooks/useConnectorTag';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import useLiveSpecs from 'hooks/useLiveSpecs';
 import { isEqual } from 'lodash';
-import { useEffect, useMemo } from 'react';
+import { ReactNode, useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { useUpdateEffect } from 'react-use';
 import {
     useDetailsForm_connectorImage,
     useDetailsForm_details_entityName,
@@ -36,9 +37,14 @@ import { Schema } from 'types';
 interface Props {
     draftSpecs: DraftSpecQuery[];
     readOnly?: boolean;
+    RediscoverButton?: ReactNode;
 }
 
-function BindingsMultiEditor({ draftSpecs = [], readOnly = false }: Props) {
+function BindingsMultiEditor({
+    draftSpecs = [],
+    readOnly = false,
+    RediscoverButton,
+}: Props) {
     const theme = useTheme();
 
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
@@ -103,7 +109,7 @@ function BindingsMultiEditor({ draftSpecs = [], readOnly = false }: Props) {
             : false;
     }, [draftSpecs, entityType, resourceConfig]);
 
-    useEffect(() => {
+    useUpdateEffect(() => {
         setServerUpdateRequired(resourceConfigUpdated);
     }, [setServerUpdateRequired, resourceConfigUpdated]);
 
@@ -168,6 +174,7 @@ function BindingsMultiEditor({ draftSpecs = [], readOnly = false }: Props) {
                         loading={fetchingSpecs}
                         skeleton={<BindingsSelectorSkeleton />}
                         readOnly={readOnly}
+                        RediscoverButton={RediscoverButton}
                     />
                 }
                 details={

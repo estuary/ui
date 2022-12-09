@@ -68,6 +68,27 @@ export const getDiscriminator = (schema: any) => {
         : null;
 };
 
+export const getDefaultValue = (
+    tabSchemaProps: any,
+    discriminatorProperty: string
+) => {
+    // Go through all the props and set them into the object.
+    //  If it is the discriminator then try to set the default
+    //      value, then the const, and finally default to an empty string.
+    //  If it is any other value then go ahead and create the value
+    const defaultVal: {
+        [k: string]: any;
+    } = {};
+    forIn(tabSchemaProps, (val: any, key: string) => {
+        defaultVal[key] =
+            key === discriminatorProperty
+                ? val.default ?? val.const ?? ''
+                : createDefaultValue(val);
+    });
+
+    return defaultVal;
+};
+
 export const Custom_MaterialOneOfRenderer_Discriminator = ({
     handleChange,
     schema,
@@ -81,6 +102,7 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
     uischema,
     uischemas,
     data,
+    enabled,
 }: CombinatorRendererProps) => {
     const [open, setOpen] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(
@@ -101,7 +123,7 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
         uischemas
     );
 
-    const descriminatorProperty = getDiscriminator(schema);
+    const discriminatorProperty = getDiscriminator(schema);
 
     // Customization: Run through the elements and clear out the ones without elements
     oneOfRenderInfos.map((renderer) => {
@@ -116,20 +138,11 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
         const tabSchema = oneOfRenderInfos[newIndex].schema;
         const { properties: tabSchemaProps } = tabSchema;
 
-        // Customization: Handle setting the oneOf descriminator properly
-        // Go through all the props and set them into the object.
-        //  If it is the descriminator then try to set the default
-        //      value, then the const, and finally default to an empty string.
-        //  If it is any other value then go ahead and create the value
-        const defaultVal: {
-            [k: string]: any;
-        } = {};
-        forIn(tabSchemaProps, (val: any, key: string) => {
-            defaultVal[key] =
-                key === descriminatorProperty
-                    ? val.default ?? val.const ?? ''
-                    : createDefaultValue(val);
-        });
+        // Customization: Handle setting the oneOf discriminator properly
+        const defaultVal = getDefaultValue(
+            tabSchemaProps,
+            discriminatorProperty
+        );
 
         handleChange(path, defaultVal);
         setSelectedIndex(newIndex);
@@ -145,11 +158,11 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
         (_event: any, newOneOfIndex: number) => {
             setNewSelectedIndex(newOneOfIndex);
             // Customization: do not prompt user if they are only
-            //  overwriting the descriminator as it is a single property.
+            //  overwriting the discriminator as it is a single property.
             const keysInData = keys(data);
             if (
                 (keysInData.length === 1 &&
-                    keysInData[0] === descriminatorProperty) ||
+                    keysInData[0] === discriminatorProperty) ||
                 isEmpty(data)
             ) {
                 openNewTab(newOneOfIndex);
@@ -172,6 +185,7 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
                     <Tab
                         key={oneOfRenderInfo.label}
                         label={oneOfRenderInfo.label}
+                        disabled={!enabled}
                     />
                 ))}
             </Tabs>

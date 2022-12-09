@@ -103,8 +103,8 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.enable': `Enable`,
     'cta.disable': `Disable`,
     'cta.testConfig': `Test`,
-    'cta.generateCatalog.capture': `Discover Endpoint`,
-    'cta.generateCatalog.materialization': `Discover Endpoint`,
+    'cta.generateCatalog.capture': `Next`,
+    'cta.generateCatalog.materialization': `Next`,
     'cta.expandToEdit': `Expand to edit`,
     'cta.refresh': `Refresh`,
     'cta.table': `Table`,
@@ -114,6 +114,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.register.google': `Register with Google`,
     'cta.login.github': `Sign in with GitHub`,
     'cta.register.github': `Register with GitHub`,
+    'cta.configure': `Configure`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
@@ -169,6 +170,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.admin.accessGrants': `Access Grants`,
     'routeTitle.admin.api': `CLI - API`,
     'routeTitle.admin.connectors': `Connectors`,
+    'routeTitle.admin.cookies': `Cookie Preferences`,
     'routeTitle.captureCreate': `Create Capture`,
     'routeTitle.captureEdit': `Edit Capture`,
     'routeTitle.captures': `Captures`,
@@ -193,6 +195,7 @@ const BrowserTitles: ResolvedIntlConfig['messages'] = {
     'browserTitle.admin.accessGrants': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.accessGrants']}`,
     'browserTitle.admin.api': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.api']}`,
     'browserTitle.admin.connectors': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.connectors']}`,
+    'browserTitle.admin.cookies': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.cookies']}`,
     'browserTitle.captureCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureCreate']}`,
     'browserTitle.captureEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureEdit']}`,
     'browserTitle.captures': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captures']}`,
@@ -370,9 +373,12 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.roles.message.docPath': `https://go.estuary.dev/provision`,
     'admin.accessToken': `Access Token`,
     'admin.accessToken.message': `Copy the access token below to authenticate the CLI client.`,
+    'admin.cookies': `Cookie Preference Management`,
+    'admin.cookies.message': `Click below to manage your preferences.`,
     'admin.tabs.users': `Users`,
     'admin.tabs.connectors': `Connectors`,
     'admin.tabs.api': `CLI-API`,
+    'admin.tabs.cookies': `Cookie Preferences`,
 };
 
 const Welcome: ResolvedIntlConfig['messages'] = {
@@ -675,6 +681,11 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.label.discoveredCollections': `Discovered Collections`,
     'workflows.collectionSelector.label.existingCollections': `Existing Collections`,
     'workflows.collectionSelector.cta.delete': `Remove All`,
+    'workflows.collectionSelector.cta.rediscover': `Refresh`,
+
+    'workflows.collectionSelector.rediscoverDialog.title': `Are you sure?`,
+    'workflows.collectionSelector.rediscoverDialog.message1': `Proceeding with this action will replace the current capture configuration with one generated automatically by Flow. Discovery identifies one or more resources — tables, data streams, or the equivalent — and generates bindings so that each will be mapped to a data collection in Flow.`,
+    'workflows.collectionSelector.rediscoverDialog.message2': `If there are any aspects of your current capture configuration you would like to preserve, take note of them before proceeding with this action.`,
 };
 
 const ShardStatus: ResolvedIntlConfig['messages'] = {
@@ -697,6 +708,7 @@ const OAuth: ResolvedIntlConfig['messages'] = {
     'oauth.unauthenticated': `Not Authenticated`,
     'oauth.authenticate': `Authenticate your {provider} account`,
     'oauth.remove': `Remove`,
+    'oauth.edit.message': `If you edit your endpoint config and want to continue using OAuth you must reauthenticate.`,
 };
 
 const Supabase: ResolvedIntlConfig['messages'] = {

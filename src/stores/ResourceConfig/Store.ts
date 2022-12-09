@@ -92,7 +92,7 @@ const getInitialStateData = (): Pick<
     hydrated: false,
     hydrationErrorsExist: false,
     resourceConfig: {},
-    resourceConfigErrorsExist: true,
+    resourceConfigErrorsExist: false,
     resourceConfigErrors: [],
     resourceSchema: {},
     restrictedDiscoveredCollections: [],
@@ -262,6 +262,21 @@ const getInitialState = (
             }),
             false,
             'Removed All Selected Collections'
+        );
+    },
+
+    resetConfigAndCollections: () => {
+        set(
+            produce((state: ResourceConfigState) => {
+                state.currentCollection = null;
+                state.collections = [];
+
+                state.restrictedDiscoveredCollections = [];
+
+                state.resourceConfig = {};
+            }),
+            false,
+            'Resource Config and Collections Reset'
         );
     },
 
@@ -480,8 +495,10 @@ const getInitialState = (
     hydrateState: async (editWorkflow, entityType) => {
         const searchParams = new URLSearchParams(window.location.search);
         const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
-        const liveSpecId = searchParams.get(GlobalSearchParams.LIVE_SPEC_ID);
         const lastPubId = searchParams.get(GlobalSearchParams.LAST_PUB_ID);
+        const liveSpecIds = searchParams.getAll(
+            GlobalSearchParams.LIVE_SPEC_ID
+        );
 
         const { setHydrationErrorsExist } = get();
 
@@ -503,6 +520,8 @@ const getInitialState = (
 
         if (!editWorkflow) {
             if (lastPubId) {
+                // Prefills collections in the materialization create workflow when the Materialize CTA
+                // on the Captures page is clicked.
                 const { data, error } = await getLiveSpecsByLastPubId(
                     lastPubId,
                     'capture'
@@ -517,10 +536,12 @@ const getInitialState = (
 
                     preFillEmptyCollections(data);
                 }
-            } else if (liveSpecId) {
+            } else if (liveSpecIds.length > 0) {
+                // Prefills collections in the materialization create workflow when the Materialize CTA
+                // on the capture pubilication log dialog is clicked.
                 const { data, error } = await getLiveSpecsByLiveSpecId(
-                    liveSpecId,
-                    entityType
+                    liveSpecIds,
+                    'capture'
                 );
 
                 if (error) {
@@ -533,9 +554,9 @@ const getInitialState = (
                     preFillEmptyCollections(data);
                 }
             }
-        } else if (liveSpecId) {
+        } else if (liveSpecIds.length > 0) {
             const { data, error } = await getLiveSpecsByLiveSpecId(
-                liveSpecId,
+                liveSpecIds[0],
                 entityType
             );
 

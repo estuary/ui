@@ -27,7 +27,7 @@ const copyEncryptedEndpointConfig = (
 
         if (isPlainObject(value)) {
             copyEncryptedEndpointConfig(
-                endpointConfigTemplate[truncatedKey || key],
+                endpointConfigTemplate[truncatedKey || key] ?? {},
                 encryptedEndpointConfig[key],
                 encryptedSuffix
             );
@@ -44,21 +44,31 @@ export const parseEncryptedEndpointConfig = (
     endpointSchema: Schema,
     overrideJsonFormDefaults?: boolean
 ): JsonFormsData => {
-    const {
-        sops: { encrypted_suffix },
-        ...encryptedEndpointConfig
-    } = endpointConfig;
+    // This should ALMOST always be true. However, people can insert
+    //      bad data and we just need to be safe.
+    if (endpointConfig.sops) {
+        const {
+            sops: { encrypted_suffix },
+            ...encryptedEndpointConfig
+        } = endpointConfig;
 
-    const endpointConfigTemplate = createJSONFormDefaults(endpointSchema);
+        const endpointConfigTemplate = createJSONFormDefaults(endpointSchema);
 
-    copyEncryptedEndpointConfig(
-        endpointConfigTemplate.data,
-        encryptedEndpointConfig,
-        encrypted_suffix,
-        overrideJsonFormDefaults
-    );
+        copyEncryptedEndpointConfig(
+            endpointConfigTemplate.data,
+            encryptedEndpointConfig,
+            encrypted_suffix,
+            overrideJsonFormDefaults
+        );
 
-    return endpointConfigTemplate;
+        return endpointConfigTemplate;
+    } else {
+        // If there is no SOPS then the data is not encrypted
+        //      so we just return whatever was sent back in data.
+        //  We are defaulting to empty errors because we assume
+        //      the data is valid.
+        return { data: endpointConfig, errors: [] };
+    }
 };
 
 export async function encryptEndpointConfig(
