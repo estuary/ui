@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <% if ( process.env.REACT_APP_OSANO_PATH) { %>
+        <!-- Make sure this loads quick -->
+        <script src="%REACT_APP_OSANO_PATH%"></script>
+
+        <!-- Used to hide the Cookie Widget -->
+        <style type="text/css">
+            body.%REACT_APP_OSANO_HIDE_WIDGET_CLASS% .osano-cm-widget {
+                display: none;
+            }
+        </style>
+        <% } %>
+
         <meta charset="utf-8" />
         <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
         <meta name="viewport" content="initial-scale=1, width=device-width" />
