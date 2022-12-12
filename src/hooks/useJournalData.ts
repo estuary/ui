@@ -219,6 +219,7 @@ function isJournalRecord(val: any): val is JournalRecord {
 const useJournalData = (
     journalName?: string,
     desiredCount: number = 50,
+    // 16mb, which is the max document size, ensuring we'll always get at least 1 doc if it exists
     maxBytes: number = 16 * 10 ** 6
 ) => {
     const [gatewayConfig] = useLocalStorage(
