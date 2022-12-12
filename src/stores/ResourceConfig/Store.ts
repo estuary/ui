@@ -18,6 +18,7 @@ import {
 import { createJSONFormDefaults } from 'services/ajv';
 import { ResourceConfigStoreNames } from 'stores/names';
 import { Schema } from 'types';
+import { hasLength, truncateCatalogName } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import create, { StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -91,7 +92,7 @@ const getInitialStateData = (): Pick<
     hydrated: false,
     hydrationErrorsExist: false,
     resourceConfig: {},
-    resourceConfigErrorsExist: true,
+    resourceConfigErrorsExist: false,
     resourceConfigErrors: [],
     resourceSchema: {},
     restrictedDiscoveredCollections: [],
@@ -160,14 +161,20 @@ const getInitialState = (
         );
     },
 
-    addCollection: (value) => {
+    addCollections: (value) => {
         set(
             produce((state: ResourceConfigState) => {
                 const { collections } = get();
 
-                if (collections && !collections.includes(value)) {
-                    state.collections = [...collections, value];
-                }
+                state.collections = collections
+                    ? [
+                          ...collections,
+                          ...value.filter(
+                              (newCollection) =>
+                                  !collections.includes(newCollection)
+                          ),
+                      ]
+                    : value;
             }),
             false,
             'Collection Added'
@@ -206,22 +213,70 @@ const getInitialState = (
         );
     },
 
-    removeAllCollections: () => {
+    removeAllCollections: (workflow, task) => {
         set(
             produce((state: ResourceConfigState) => {
+                const {
+                    collections,
+                    discoveredCollections,
+                    resourceConfig,
+                    restrictedDiscoveredCollections,
+                } = get();
+
                 state.currentCollection = null;
-                const { resourceConfig } = get();
                 state.collections = [];
 
-                const updatedResourceConfig = pick(
-                    resourceConfig,
-                    state.collections
-                ) as ResourceConfigDictionary;
+                let additionalRestrictedCollections: string[] = [];
 
-                state.resourceConfig = updatedResourceConfig;
+                if (discoveredCollections) {
+                    additionalRestrictedCollections =
+                        discoveredCollections.filter(
+                            (collection) =>
+                                Object.hasOwn(resourceConfig, collection) &&
+                                !restrictedDiscoveredCollections.includes(
+                                    collection
+                                )
+                        );
+                } else if (workflow === 'capture_edit' && collections) {
+                    const catalogName = truncateCatalogName(task);
+
+                    const nativeCollections = collections.filter((collection) =>
+                        collection.includes(catalogName)
+                    );
+
+                    additionalRestrictedCollections = nativeCollections.filter(
+                        (collection) =>
+                            Object.hasOwn(resourceConfig, collection) &&
+                            !restrictedDiscoveredCollections.includes(
+                                collection
+                            )
+                    );
+                }
+
+                state.restrictedDiscoveredCollections = [
+                    ...restrictedDiscoveredCollections,
+                    ...additionalRestrictedCollections,
+                ];
+
+                state.resourceConfig = {};
             }),
             false,
             'Removed All Selected Collections'
+        );
+    },
+
+    resetConfigAndCollections: () => {
+        set(
+            produce((state: ResourceConfigState) => {
+                state.currentCollection = null;
+                state.collections = [];
+
+                state.restrictedDiscoveredCollections = [];
+
+                state.resourceConfig = {};
+            }),
+            false,
+            'Resource Config and Collections Reset'
         );
     },
 
@@ -440,8 +495,10 @@ const getInitialState = (
     hydrateState: async (editWorkflow, entityType) => {
         const searchParams = new URLSearchParams(window.location.search);
         const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
-        const liveSpecId = searchParams.get(GlobalSearchParams.LIVE_SPEC_ID);
         const lastPubId = searchParams.get(GlobalSearchParams.LAST_PUB_ID);
+        const liveSpecIds = searchParams.getAll(
+            GlobalSearchParams.LIVE_SPEC_ID
+        );
 
         const { setHydrationErrorsExist } = get();
 
@@ -463,6 +520,8 @@ const getInitialState = (
 
         if (!editWorkflow) {
             if (lastPubId) {
+                // Prefills collections in the materialization create workflow when the Materialize CTA
+                // on the Captures page is clicked.
                 const { data, error } = await getLiveSpecsByLastPubId(
                     lastPubId,
                     'capture'
@@ -477,10 +536,12 @@ const getInitialState = (
 
                     preFillEmptyCollections(data);
                 }
-            } else if (liveSpecId) {
+            } else if (liveSpecIds.length > 0) {
+                // Prefills collections in the materialization create workflow when the Materialize CTA
+                // on the capture pubilication log dialog is clicked.
                 const { data, error } = await getLiveSpecsByLiveSpecId(
-                    liveSpecId,
-                    entityType
+                    liveSpecIds,
+                    'capture'
                 );
 
                 if (error) {
@@ -493,9 +554,9 @@ const getInitialState = (
                     preFillEmptyCollections(data);
                 }
             }
-        } else if (liveSpecId) {
+        } else if (liveSpecIds.length > 0) {
             const { data, error } = await getLiveSpecsByLiveSpecId(
-                liveSpecId,
+                liveSpecIds[0],
                 entityType
             );
 
@@ -532,6 +593,67 @@ const getInitialState = (
             }),
             false,
             'Server Update Required Flag Changed'
+        );
+    },
+
+    evaluateDiscoveredCollections: (draftSpecResponse) => {
+        set(
+            produce((state: ResourceConfigState) => {
+                const {
+                    collections,
+                    resourceConfig,
+                    restrictedDiscoveredCollections,
+                } = get();
+
+                const existingCollections = Object.keys(resourceConfig);
+                const updatedBindings = draftSpecResponse.data[0].spec.bindings;
+
+                let collectionsToAdd: string[] = [];
+                let modifiedResourceConfig: ResourceConfigDictionary = {};
+
+                updatedBindings.forEach((binding: any) => {
+                    if (
+                        !existingCollections.includes(binding.target) &&
+                        !restrictedDiscoveredCollections.includes(
+                            binding.target
+                        )
+                    ) {
+                        collectionsToAdd = [
+                            binding.target,
+                            ...collectionsToAdd,
+                        ];
+
+                        modifiedResourceConfig = {
+                            [binding.target]: {
+                                data: binding.resource,
+                                errors: [],
+                            },
+                            ...modifiedResourceConfig,
+                        };
+                    }
+                });
+
+                state.resourceConfig = {
+                    ...resourceConfig,
+                    ...modifiedResourceConfig,
+                };
+
+                state.collections = collections
+                    ? [
+                          ...collections,
+                          ...collectionsToAdd.filter(
+                              (newCollection) =>
+                                  !collections.includes(newCollection)
+                          ),
+                      ]
+                    : collectionsToAdd;
+
+                state.currentCollection = hasLength(updatedBindings)
+                    ? updatedBindings[0].target
+                    : null;
+            }),
+            false,
+            'Discovered Collections Evaluated'
         );
     },
 

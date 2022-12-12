@@ -1,7 +1,8 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { StyledEngineProvider } from '@mui/material';
-import { useEffect, useRef } from 'react';
+import { cloneDeep } from 'lodash';
+import { useEffect, useMemo, useRef } from 'react';
 import { setDefaultsValidator } from 'services/ajv';
 import { custom_generateDefaultUISchema } from 'services/jsonforms';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
@@ -15,6 +16,8 @@ import {
     useResourceConfig_resourceSchema,
     useResourceConfig_setResourceConfig,
 } from 'stores/ResourceConfig/hooks';
+import { Annotations } from 'types/jsonforms';
+import { stripPathing } from 'utils/misc-utils';
 
 type Props = {
     collectionName: string;
@@ -27,22 +30,16 @@ function ResourceConfigForm({ collectionName, readOnly = false }: Props) {
     // Resource Config Store
     const resourceConfig = useResourceConfig_resourceConfig();
     const setConfig = useResourceConfig_setResourceConfig();
-
-    const formData = resourceConfig[collectionName].data;
-
     const resourceSchema = useResourceConfig_resourceSchema();
+    const formData = resourceConfig[collectionName].data;
 
     // Form State Store
     const displayValidation = useFormStateStore_displayValidation();
-
     const isActive = useFormStateStore_isActive();
 
     useEffect(() => {
         name.current = collectionName;
     }, [collectionName]);
-
-    const uiSchema = custom_generateDefaultUISchema(resourceSchema);
-    const showValidationVal = showValidation(displayValidation);
 
     const handlers = {
         onChange: (configName: string, form: any) => {
@@ -50,10 +47,49 @@ function ResourceConfigForm({ collectionName, readOnly = false }: Props) {
         },
     };
 
+    // Find field with x-collection-name annotation
+    const collectionNameFieldKey = useMemo(() => {
+        if (resourceSchema.properties) {
+            // Find the field with the collection name annotation
+            const collectionNameField =
+                Object.entries(resourceSchema.properties).find(
+                    ([_, value]) =>
+                        value && Annotations.defaultResourceConfigName in value
+                ) ?? [];
+
+            // Try to fetch the key
+            return collectionNameField[0];
+        }
+
+        return null;
+    }, [resourceSchema.properties]);
+
+    // Check if we need to add a default value
+    const preparedResourceSchema = useMemo(() => {
+        if (collectionNameFieldKey) {
+            // Add a default property set to the stripped collection name
+            const response = cloneDeep(resourceSchema);
+            response.properties[collectionNameFieldKey].default =
+                stripPathing(collectionName);
+            return response;
+        }
+
+        return resourceSchema;
+    }, [collectionName, collectionNameFieldKey, resourceSchema]);
+
+    const uiSchema = useMemo(
+        () => custom_generateDefaultUISchema(resourceSchema),
+        [resourceSchema]
+    );
+    const showValidationVal = useMemo(
+        () => showValidation(displayValidation),
+        [displayValidation]
+    );
+
     return (
         <StyledEngineProvider injectFirst>
             <JsonForms
-                schema={resourceSchema}
+                schema={preparedResourceSchema}
                 uischema={uiSchema}
                 data={formData}
                 renderers={defaultRenderers}

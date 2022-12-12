@@ -1,5 +1,7 @@
 import { createAjv } from '@jsonforms/core';
 
+type Ajv = ReturnType<typeof createAjv>;
+
 // TODO (typing) Need to get this typed as the AJV Options type
 export const defaultAjvSettings: any = {
     // Causes it to mutate its input to set default values.
@@ -15,9 +17,13 @@ export const defaultAjvSettings: any = {
     // `date-time` format to mean ISO8601 instead of RFC3339. Another is that some schemas seem to
     // use made-up format strings that we won't recognize.
     validateFormats: false,
+    // This requires that all schemas are unique in ID and you cannot call AJV multiple
+    // times with a schema with the same ID. This is good to turn back on eventually because
+    // compiling AJV multiple times makes no sense but this is easiest currently.
+    addUsedSchema: false,
 };
 
-export const addKeywords = (ajv: any) => {
+export const addKeywords = (ajv: Ajv) => {
     // Flow allows some extra annotations, some of which are used to control how forms are rendered
     // in the UI. The full list of allowed annotations is defined in:
     // https://github.com/estuary/flow/blob/master/crates/doc/src/annotation.rs
@@ -30,6 +36,7 @@ export const addKeywords = (ajv: any) => {
     ajv.addKeyword('advanced'); // Should be collapsed by default (over ridden if section contains required fields)
     ajv.addKeyword('order'); // Used to order the fields in the UI
     ajv.addKeyword('x-oauth2-provider'); // Used to display OAuth
+    ajv.addKeyword('x-collection-name'); // Used to default name in resource configs
     ajv.addKeyword('discriminator'); // Used to know what field in a complex oneOf should be unique (ex: parser)
     return ajv;
 };

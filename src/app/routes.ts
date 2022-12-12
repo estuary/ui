@@ -5,6 +5,9 @@ export const unauthenticatedRoutes = {
     auth: {
         path: '/auth',
     },
+    register: {
+        path: '/register',
+    },
     magicLink: {
         path: '/magicLink',
     },
@@ -31,6 +34,11 @@ export const authenticatedRoutes = {
             title: 'routeTitle.admin.connectors',
             path: 'connectors',
             fullPath: '/admin/connectors',
+        },
+        cookies: {
+            title: 'routeTitle.admin.cookies',
+            path: 'cookies',
+            fullPath: '/admin/cookies',
         },
     },
     captures: {

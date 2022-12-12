@@ -41,13 +41,13 @@ export const useResourceConfig_preFillCollections = () => {
     >(getStoreName(entityType), (state) => state.preFillCollections);
 };
 
-export const useResourceConfig_addCollection = () => {
+export const useResourceConfig_addCollections = () => {
     const entityType = useEntityType();
 
     return useZustandStore<
         ResourceConfigState,
-        ResourceConfigState['addCollection']
-    >(getStoreName(entityType), (state) => state.addCollection);
+        ResourceConfigState['addCollections']
+    >(getStoreName(entityType), (state) => state.addCollections);
 };
 
 export const useResourceConfig_removeCollection = () => {
@@ -66,6 +66,15 @@ export const useResourceConfig_removeAllCollections = () => {
         ResourceConfigState,
         ResourceConfigState['removeAllCollections']
     >(getStoreName(entityType), (state) => state.removeAllCollections);
+};
+
+export const useResourceConfig_resetConfigAndCollections = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['resetConfigAndCollections']
+    >(getStoreName(entityType), (state) => state.resetConfigAndCollections);
 };
 
 export const useResourceConfig_collectionErrorsExist = () => {
@@ -282,4 +291,13 @@ export const useResourceConfig_setServerUpdateRequired = () => {
         ResourceConfigState,
         ResourceConfigState['setServerUpdateRequired']
     >(getStoreName(entityType), (state) => state.setServerUpdateRequired);
+};
+
+export const useResourceConfig_evaluateDiscoveredCollections = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ResourceConfigState,
+        ResourceConfigState['evaluateDiscoveredCollections']
+    >(getStoreName(entityType), (state) => state.evaluateDiscoveredCollections);
 };

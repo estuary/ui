@@ -6,6 +6,7 @@ import {
     Theme,
     Toolbar,
 } from '@mui/material';
+import { useEditorStore_id } from 'components/editor/Store/hooks';
 import { ReactNode } from 'react';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 
@@ -18,6 +19,10 @@ interface Props {
 export const buttonSx: SxProps<Theme> = { ml: 1 };
 
 function EntityToolbar({ GenerateButton, TestButton, SaveButton }: Props) {
+    // Editor Store
+    const draftId = useEditorStore_id();
+
+    // Form State Store
     const formActive = useFormStateStore_isActive();
 
     return (
@@ -35,11 +40,15 @@ function EntityToolbar({ GenerateButton, TestButton, SaveButton }: Props) {
                         },
                     }}
                 >
-                    {GenerateButton}
+                    {draftId ? (
+                        <>
+                            {TestButton}
 
-                    {TestButton}
-
-                    {SaveButton}
+                            {SaveButton}
+                        </>
+                    ) : (
+                        GenerateButton
+                    )}
                 </Stack>
             </Toolbar>
 

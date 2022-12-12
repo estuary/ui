@@ -82,6 +82,7 @@ interface Props {
     resetState: () => void;
     errorSummary: ReactNode;
     toolbar: ReactNode;
+    RediscoverButton?: ReactNode;
     showCollections?: boolean;
 }
 
@@ -236,6 +237,7 @@ function EntityEdit({
     resetState,
     errorSummary,
     toolbar,
+    RediscoverButton,
     showCollections,
 }: Props) {
     useBrowserTitle(title);
@@ -271,8 +273,8 @@ function EntityEdit({
     );
 
     // Details Form Store
-    const setDetails = useDetailsForm_setDetails();
     const imageTag = useDetailsForm_connectorImage();
+    const setDetails = useDetailsForm_setDetails();
     const detailsFormChanged = useDetailsForm_changed();
 
     // Draft Editor Store
@@ -365,16 +367,15 @@ function EntityEdit({
     }, [setDetails, initialSpec, initialConnectorTag]);
 
     useEffect(() => {
-        setDraftId(
+        const resetDraftIdFlag =
             endpointConfigServerUpdateRequired ||
-                resourceConfigServerUpdateRequired
-                ? null
-                : persistedDraftId
-        );
+            resourceConfigServerUpdateRequired;
+
+        setDraftId(resetDraftIdFlag ? null : persistedDraftId);
     }, [
         setDraftId,
-        persistedDraftId,
         endpointConfigServerUpdateRequired,
+        persistedDraftId,
         resourceConfigServerUpdateRequired,
     ]);
 
@@ -438,6 +439,7 @@ function EntityEdit({
                             <CollectionConfig
                                 draftSpecs={taskDraftSpec}
                                 readOnly={readOnly.resourceConfigForm}
+                                RediscoverButton={RediscoverButton}
                             />
                         </ErrorBoundryWrapper>
                     ) : null}

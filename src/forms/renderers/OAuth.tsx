@@ -2,23 +2,39 @@ import { ControlProps, RankedTester, rankWith } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
 import { Alert, Box, Button, Chip, Stack, Typography } from '@mui/material';
 import { accessToken, authURL } from 'api/oauth';
+import { useEditorStore_id } from 'components/editor/Store/hooks';
 import FullPageSpinner from 'components/fullPage/Spinner';
+import { useEntityWorkflow } from 'context/Workflow';
 import { optionExists } from 'forms/renderers/Overrides/testers/testers';
 import { useOAuth2 } from 'hooks/forks/react-use-oauth2/components';
 import { every, includes, isEmpty, startCase } from 'lodash';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import GoogleButton from 'react-google-button';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { useMount } from 'react-use';
 import { useDetailsForm_connectorImage_connectorId } from 'stores/DetailsForm';
-import { useEndpointConfigStore_endpointConfig_data } from 'stores/EndpointConfig';
+import {
+    useEndpointConfigStore_endpointConfig_data,
+    useEndpointConfigStore_setEndpointCustomErrors,
+} from 'stores/EndpointConfig';
 import { Options } from 'types/jsonforms';
 import { hasLength } from 'utils/misc-utils';
-import { getDiscriminator } from './Overrides/material/complex/MaterialOneOfRenderer_Discriminator';
+import {
+    getDefaultValue,
+    getDiscriminator,
+} from './Overrides/material/complex/MaterialOneOfRenderer_Discriminator';
 
 const NO_PROVIDER = 'noProviderFound';
 const CLIENT_ID = 'client_id';
 const CLIENT_SECRET = 'client_secret';
 const INJECTED = '_injectedDuringEncryption_'; //MUST stay in sync with animate-carnival/supabase/functions/oauth/encrypt-config.ts
+
+// These are injected by the server/encryption call so just setting
+//      some value here to pass the validation
+const fakeDefaults = {
+    [CLIENT_ID]: INJECTED,
+    [CLIENT_SECRET]: INJECTED,
+};
 
 export const oAuthProviderTester: RankedTester = rankWith(
     1000,
@@ -32,6 +48,7 @@ const OAuthproviderRenderer = ({
     uischema,
     enabled,
     schema,
+    rootSchema,
 }: ControlProps) => {
     const intl = useIntl();
     const { options } = uischema;
@@ -40,6 +57,13 @@ const OAuthproviderRenderer = ({
     // Fetch what we need from stores
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
     const imageTag = useDetailsForm_connectorImage_connectorId();
+    const setCustomErrors = useEndpointConfigStore_setEndpointCustomErrors();
+
+    // Used to make a better UX for users editing a config
+    const draftId = useEditorStore_id();
+    const workflow = useEntityWorkflow();
+    const isEdit =
+        workflow === 'capture_edit' || workflow === 'materialization_edit';
 
     // This usually means the control is nested inside a tab
     const hasOwnPathProp = hasLength(path);
@@ -57,7 +81,19 @@ const OAuthproviderRenderer = ({
 
     // This is the field in an anyOf/oneOf/etc. that is used
     //      to tell which option is selected
-    const descriminatorProperty = getDiscriminator(schema);
+    const discriminatorProperty = useMemo(() => {
+        let schemaToCheck;
+
+        if (hasOwnPathProp) {
+            // First check the parent if we are nested
+            schemaToCheck = rootSchema.properties?.[path];
+        } else {
+            // Now just check the schema we're in
+            schemaToCheck = schema;
+        }
+
+        return getDiscriminator(schemaToCheck);
+    }, [hasOwnPathProp, path, rootSchema.properties, schema]);
 
     // Need to know the list of required fields so we can manually
     //      check them down below
@@ -66,22 +102,30 @@ const OAuthproviderRenderer = ({
         [options]
     );
 
-    const removeCofig = () => {
-        handleChange(onChangePath, undefined);
+    const setConfigToDefault = () => {
+        const defaults = getDefaultValue(
+            schema.properties,
+            discriminatorProperty
+        );
+        handleChange(onChangePath, {
+            ...defaults,
+            ...fakeDefaults,
+        });
     };
 
-    const hasAllRequiredProps = useMemo(() => {
+    const [hasAllRequiredProps, setHasAllRequiredProps] = useState(false);
+    useEffect(() => {
         const dataKeys = Object.keys(data ?? {});
         const nestedKeys = Object.keys(data?.[onChangePath] ?? {});
 
-        return every(requiredFields, (field: string) => {
+        const response = every(requiredFields, (field: string) => {
             // We know we should always have at least these two
             if (field === CLIENT_ID || field === CLIENT_SECRET) {
                 return true;
             }
 
-            // When inside a oneOf/anOf/etc. we need to check we have the descriminator
-            if (descriminatorProperty && field === descriminatorProperty) {
+            // When inside a oneOf/anOf/etc. we need to check we have the discriminator
+            if (discriminatorProperty && field === discriminatorProperty) {
                 return true;
             }
 
@@ -101,7 +145,9 @@ const OAuthproviderRenderer = ({
             // Didn't find anything - return false
             return false;
         });
-    }, [data, descriminatorProperty, onChangePath, requiredFields]);
+
+        setHasAllRequiredProps(response);
+    }, [data, discriminatorProperty, onChangePath, requiredFields]);
 
     // Pull out the provider so we can render the button
     const providerVal = options ? options[Options.oauthProvider] : NO_PROVIDER;
@@ -146,12 +192,6 @@ const OAuthproviderRenderer = ({
                 )
             );
         } else {
-            // These are injected by the server/encryption call so just setting
-            //      some value here to pass the validation
-            const fakeDefaults = {
-                [CLIENT_ID]: INJECTED,
-                [CLIENT_SECRET]: INJECTED,
-            };
             handleChange(onChangePath, {
                 ...fakeDefaults,
                 ...(!hasOwnPathProp ? data?.[onChangePath] : data),
@@ -168,8 +208,6 @@ const OAuthproviderRenderer = ({
     });
 
     const openPopUp = async () => {
-        // As we start clear out errors and current credentials
-        removeCofig();
         setErrorMessage(null);
 
         // Make the call to know what pop url to open
@@ -184,6 +222,45 @@ const OAuthproviderRenderer = ({
             getAuth(fetchAuthURL.data.url, fetchAuthURL.data.state);
         }
     };
+
+    // When loading we need to handle Create and Edit differently
+    // For create we want to set defaults so the discriminator and injected values are set
+    //      This allows for the best UX when displaying errors. Otherwise we get a bunch of
+    //      ajv errors about the schema not matching.
+    // For edit we have all the props from the previous version but since they contain
+    //      SOPS fields then we know for sure we do not ahve all the required props.
+    //      But down below in edit we know to show the Authenticated tag by default since
+    //      the user does not need to reauthenticate until they change the Endpoint Config
+    useMount(() => {
+        if (isEdit) {
+            setHasAllRequiredProps(false);
+        } else {
+            setConfigToDefault();
+        }
+    });
+
+    // Need to manually set an error to prevent submitting the form
+    useEffect(() => {
+        const customErrors = [];
+
+        // Used to set an error for the OAuth Renderer
+        if (!hasAllRequiredProps) {
+            customErrors.push({
+                instancePath: path,
+                message: `need to complete OAuth`,
+                schemaPath: '',
+                keyword: '',
+                params: {},
+            });
+        }
+
+        setCustomErrors(customErrors);
+
+        return () => {
+            // Make sure we clean up the custom errors if we leave this component
+            setCustomErrors([]);
+        };
+    }, [hasAllRequiredProps, path, setCustomErrors]);
 
     return (
         <Box
@@ -200,6 +277,17 @@ const OAuthproviderRenderer = ({
                         values={{ provider }}
                     />
                 </Typography>
+
+                {isEdit ? (
+                    <Alert
+                        severity="info"
+                        sx={{
+                            maxWidth: '50%',
+                        }}
+                    >
+                        <FormattedMessage id="oauth.edit.message" />
+                    </Alert>
+                ) : null}
 
                 {hasLength(errorMessage) ? (
                     <Alert
@@ -236,14 +324,16 @@ const OAuthproviderRenderer = ({
                         </Button>
                     )}
 
-                    {hasAllRequiredProps ? (
+                    {(isEdit && draftId) ||
+                    (isEdit && !draftId && hasAllRequiredProps) ||
+                    (!isEdit && hasAllRequiredProps) ? (
                         <Chip
                             disabled={!enabled || loading}
                             label={
                                 <FormattedMessage id="oauth.authenticated" />
                             }
                             color="success"
-                            onDelete={removeCofig}
+                            onDelete={setConfigToDefault}
                         />
                     ) : (
                         <Chip

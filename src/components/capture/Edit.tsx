@@ -1,17 +1,13 @@
 import { RealtimeSubscription } from '@supabase/supabase-js';
-import {
-    deleteDraftSpecsByCatalogName,
-    getDraftSpecsBySpecType,
-} from 'api/draftSpecs';
 import { authenticatedRoutes } from 'app/routes';
 import CaptureGenerateButton from 'components/capture/GenerateButton';
+import RediscoverButton from 'components/capture/RediscoverButton';
 import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
     useEditorStore_pubId,
     useEditorStore_resetState,
     useEditorStore_setId,
-    useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
@@ -25,59 +21,25 @@ import useGlobalSearchParams, {
 import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import useDraftSpecs from 'hooks/useDraftSpecs';
-import LogRocket from 'logrocket';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
-import {
-    DEFAULT_FILTER,
-    jobStatusPoller,
-    JOB_STATUS_POLLER_ERROR,
-    TABLES,
-} from 'services/supabase';
 import {
     useDetailsForm_connectorImage,
     useDetailsForm_errorsExist,
     useDetailsForm_resetState,
 } from 'stores/DetailsForm';
-import {
-    useEndpointConfigStore_reset,
-    useEndpointConfigStore_setEncryptedEndpointConfig,
-    useEndpointConfigStore_setPreviousEndpointConfig,
-} from 'stores/EndpointConfig';
+import { useEndpointConfigStore_reset } from 'stores/EndpointConfig';
 import {
     useFormStateStore_exitWhenLogsClose,
-    useFormStateStore_messagePrefix,
     useFormStateStore_resetState,
     useFormStateStore_setFormState,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import {
-    useResourceConfig_addCollection,
-    useResourceConfig_resetState,
-    useResourceConfig_restrictedDiscoveredCollections,
-    useResourceConfig_setCurrentCollection,
-    useResourceConfig_setDiscoveredCollections,
-    useResourceConfig_setResourceConfig,
-} from 'stores/ResourceConfig/hooks';
+import { useResourceConfig_resetState } from 'stores/ResourceConfig/hooks';
 import ResourceConfigHydrator from 'stores/ResourceConfig/Hydrator';
-import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
-import { JsonFormsData } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
-import {
-    modifyDiscoveredDraftSpec,
-    storeUpdatedBindings,
-} from 'utils/workflow-utils';
 
-const trackEvent = (payload: any) => {
-    LogRocket.track(CustomEvents.CAPTURE_DISCOVER, {
-        name: payload.capture_name ?? DEFAULT_FILTER,
-        id: payload.id ?? DEFAULT_FILTER,
-        draft_id: payload.draft_id ?? DEFAULT_FILTER,
-        logs_token: payload.logs_token ?? DEFAULT_FILTER,
-        status: payload.job_status?.type ?? DEFAULT_FILTER,
-    });
-};
 function CaptureEdit() {
     const lastPubId = useGlobalSearchParams(GlobalSearchParams.LAST_PUB_ID);
     const navigate = useNavigate();
@@ -100,39 +62,20 @@ function CaptureEdit() {
     const setDraftId = useEditorStore_setId();
 
     const persistedDraftId = useEditorStore_persistedDraftId();
-    const setPersistedDraftId = useEditorStore_setPersistedDraftId();
 
     const pubId = useEditorStore_pubId();
-
-    const setDiscoveredCollections =
-        useResourceConfig_setDiscoveredCollections();
 
     const resetEditorStore = useEditorStore_resetState();
 
     // Endpoint Config Store
-    const setEncryptedEndpointConfig =
-        useEndpointConfigStore_setEncryptedEndpointConfig();
-
-    const setPreviousEndpointConfig =
-        useEndpointConfigStore_setPreviousEndpointConfig();
-
     const resetEndpointConfigState = useEndpointConfigStore_reset();
 
     // Form State Store
-    const messagePrefix = useFormStateStore_messagePrefix();
     const setFormState = useFormStateStore_setFormState();
     const resetFormState = useFormStateStore_resetState();
     const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
 
     // Resource Config Store
-    const restrictedDiscoveredCollections =
-        useResourceConfig_restrictedDiscoveredCollections();
-
-    const addCollection = useResourceConfig_addCollection();
-    const setCurrentCollection = useResourceConfig_setCurrentCollection();
-
-    const setResourceConfig = useResourceConfig_setResourceConfig();
-
     const resetResourceConfigState = useResourceConfig_resetState();
 
     const { mutate: mutateDraftSpecs, ...draftSpecsMetadata } = useDraftSpecs(
@@ -215,130 +158,6 @@ function CaptureEdit() {
         },
     };
 
-    const storeUpdatedDraftSpec = async (
-        newDraftId: string,
-        resourceConfig: ResourceConfigDictionary
-    ) => {
-        const draftSpecsResponse = await getDraftSpecsBySpecType(
-            newDraftId,
-            entityType
-        );
-
-        if (draftSpecsResponse.error) {
-            return helpers.callFailed({
-                error: {
-                    title: 'captureEdit.generate.failedErrorTitle',
-                    error: draftSpecsResponse.error,
-                },
-            });
-        }
-
-        if (draftSpecsResponse.data && draftSpecsResponse.data.length > 0) {
-            setDiscoveredCollections(draftSpecsResponse.data[0]);
-
-            const updatedDraftSpecsResponse = await modifyDiscoveredDraftSpec(
-                draftSpecsResponse,
-                resourceConfig,
-                restrictedDiscoveredCollections,
-                lastPubId
-            );
-
-            if (updatedDraftSpecsResponse.error) {
-                return helpers.callFailed({
-                    error: {
-                        title: 'captureEdit.generate.failedErrorTitle',
-                        error: updatedDraftSpecsResponse.error,
-                    },
-                });
-            }
-
-            if (
-                updatedDraftSpecsResponse.data &&
-                updatedDraftSpecsResponse.data.length > 0
-            ) {
-                storeUpdatedBindings(
-                    updatedDraftSpecsResponse,
-                    resourceConfig,
-                    restrictedDiscoveredCollections,
-                    addCollection,
-                    setResourceConfig,
-                    setCurrentCollection
-                );
-
-                setEncryptedEndpointConfig(
-                    {
-                        data: updatedDraftSpecsResponse.data[0].spec.endpoint
-                            .connector.config,
-                    },
-                    'capture_edit'
-                );
-            }
-        }
-
-        if (restrictedDiscoveredCollections.length > 0) {
-            const deleteDraftSpecsResponse =
-                await deleteDraftSpecsByCatalogName(
-                    newDraftId,
-                    restrictedDiscoveredCollections
-                );
-            if (deleteDraftSpecsResponse.error) {
-                return helpers.callFailed({
-                    error: {
-                        title: 'captureEdit.generate.failedErrorTitle',
-                        error: deleteDraftSpecsResponse.error,
-                    },
-                });
-            }
-        }
-
-        setDraftId(newDraftId);
-        setPersistedDraftId(newDraftId);
-    };
-
-    const discoversSubscription = (
-        discoverDraftId: string,
-        existingEndpointConfig: JsonFormsData,
-        resourceConfig: ResourceConfigDictionary
-    ) => {
-        setDraftId(null);
-
-        jobStatusPoller(
-            supabaseClient
-                .from(TABLES.DISCOVERS)
-                .select(
-                    `
-                    draft_id,
-                    job_status,
-                    created_at
-                `
-                )
-                .match({
-                    draft_id: discoverDraftId,
-                })
-                .order('created_at', { ascending: false }),
-            (payload: any) => {
-                void storeUpdatedDraftSpec(payload.draft_id, resourceConfig);
-
-                void mutateDraftSpecs();
-
-                setPreviousEndpointConfig({ data: existingEndpointConfig });
-
-                setFormState({
-                    status: FormStatus.GENERATED,
-                });
-
-                trackEvent(payload);
-            },
-            (payload: any) => {
-                if (payload.error === JOB_STATUS_POLLER_ERROR) {
-                    helpers.jobFailed(payload.error);
-                } else {
-                    helpers.jobFailed(`${messagePrefix}.test.failedErrorTitle`);
-                }
-            }
-        );
-    };
-
     return (
         <PageContainer
             pageTitleProps={{
@@ -363,9 +182,10 @@ function CaptureEdit() {
                         <EntityToolbar
                             GenerateButton={
                                 <CaptureGenerateButton
+                                    entityType={entityType}
                                     disabled={!hasConnectors}
                                     callFailed={helpers.callFailed}
-                                    subscription={discoversSubscription}
+                                    postGenerateMutate={mutateDraftSpecs}
                                 />
                             }
                             TestButton={
@@ -387,6 +207,14 @@ function CaptureEdit() {
                                     logEvent={CustomEvents.CAPTURE_EDIT}
                                 />
                             }
+                        />
+                    }
+                    RediscoverButton={
+                        <RediscoverButton
+                            entityType={entityType}
+                            disabled={!hasConnectors}
+                            callFailed={helpers.callFailed}
+                            postGenerateMutate={mutateDraftSpecs}
                         />
                     }
                 />

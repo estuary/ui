@@ -1,4 +1,5 @@
 import { TableRow, useTheme } from '@mui/material';
+import { CollectionQueryWithStats } from 'api/liveSpecsExt';
 import Actions from 'components/tables/cells/Actions';
 import EntityName from 'components/tables/cells/EntityName';
 import ExpandDetails from 'components/tables/cells/ExpandDetails';
@@ -6,15 +7,14 @@ import TimeStamp from 'components/tables/cells/TimeStamp';
 import DetailsPanel from 'components/tables/Details/DetailsPanel';
 import { getEntityTableRowSx } from 'context/Theme';
 import { useState } from 'react';
-import { LiveSpecsExtQuery } from '../Captures/types';
 
 interface RowProps {
-    row: LiveSpecsExtQuery;
+    row: CollectionQueryWithStats;
     showEntityStatus: boolean;
 }
 
 interface RowsProps {
-    data: LiveSpecsExtQuery[];
+    data: CollectionQueryWithStats[];
     showEntityStatus: boolean;
 }
 
@@ -23,6 +23,14 @@ export const tableColumns = [
         field: 'catalog_name',
         headerIntlKey: 'entityTable.data.entity',
     },
+    // {
+    //     field: null,
+    //     headerIntlKey: 'entityTable.stats.bytes_written_to_me',
+    // },
+    // {
+    //     field: null,
+    //     headerIntlKey: 'entityTable.stats.docs_written_to_me',
+    // },
     {
         field: 'updated_at',
         headerIntlKey: 'entityTable.data.lastPublished',
@@ -48,6 +56,24 @@ function Row({ row, showEntityStatus }: RowProps) {
                     name={row.catalog_name}
                     showEntityStatus={showEntityStatus}
                 />
+
+                {/*                <Bytes
+                    val={
+                        row.stats
+                            ? row.stats.bytes_written_by_me +
+                              row.stats.bytes_written_to_me
+                            : 0
+                    }
+                />
+
+                <Docs
+                    val={
+                        row.stats
+                            ? row.stats.docs_written_by_me +
+                              row.stats.docs_written_to_me
+                            : 0
+                    }
+                />*/}
 
                 <TimeStamp time={row.updated_at} />
 

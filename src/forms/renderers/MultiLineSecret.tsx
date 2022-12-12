@@ -79,36 +79,38 @@ const MultiLineSecretRenderer = (props: any) => {
                 </Box>
             </Stack>
 
-            <DropzoneDialog
-                open={isUploadOpen}
-                onSave={submitFile}
-                filesLimit={1}
-                clearOnUnmount={true}
-                showPreviews={false}
-                showPreviewsInDropzone={true}
-                useChipsForPreview={true}
-                maxFileSize={5000000} //bytes
-                onClose={() => setIsUploadOpen(false)}
-                alertSnackbarProps={{
-                    anchorOrigin: {
-                        horizontal: 'center',
-                        vertical: 'top',
-                    },
-                    autoHideDuration: 6000,
-                }}
-                dialogProps={{
-                    open: isUploadOpen,
-                    sx: {
-                        '& .MuiDropzoneArea-root': {
-                            'minHeight': 150,
-                            'padding': 5,
-                            '& .MuiDropzonePreviewList-root': {
-                                justifyContent: 'center',
+            {isUploadOpen ? (
+                <DropzoneDialog
+                    open={isUploadOpen}
+                    onSave={submitFile}
+                    filesLimit={1}
+                    clearOnUnmount={true}
+                    showPreviews={false}
+                    showPreviewsInDropzone={true}
+                    useChipsForPreview={true}
+                    maxFileSize={5000000} //bytes
+                    onClose={() => setIsUploadOpen(false)}
+                    alertSnackbarProps={{
+                        anchorOrigin: {
+                            horizontal: 'center',
+                            vertical: 'top',
+                        },
+                        autoHideDuration: 6000,
+                    }}
+                    dialogProps={{
+                        open: isUploadOpen,
+                        sx: {
+                            '& .MuiDropzoneArea-root': {
+                                'minHeight': 150,
+                                'padding': 5,
+                                '& .MuiDropzonePreviewList-root': {
+                                    justifyContent: 'center',
+                                },
                             },
                         },
-                    },
-                }}
-            />
+                    }}
+                />
+            ) : null}
         </>
     );
 };

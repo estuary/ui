@@ -17,25 +17,21 @@ import {
     useFormStateStore_displayValidation,
     useFormStateStore_isActive,
 } from 'stores/FormState/hooks';
-import { EntityWorkflow } from 'types';
 
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
 
 interface Props {
     readOnly: boolean;
-    workflow: EntityWorkflow | null;
 }
 
-function EndpointConfigForm({ readOnly, workflow }: Props) {
+function EndpointConfigForm({ readOnly }: Props) {
     // Endpoint Config Store
     const endpointConfig = useEndpointConfigStore_endpointConfig_data();
     const setEndpointConfig = useEndpointConfigStore_setEndpointConfig();
-
     const endpointSchema = useEndpointConfigStore_endpointSchema();
 
     // Form State Store
     const displayValidation = useFormStateStore_displayValidation();
-
     const isActive = useFormStateStore_isActive();
 
     const categoryLikeSchema = useMemo(() => {
@@ -75,9 +71,7 @@ function EndpointConfigForm({ readOnly, workflow }: Props) {
                     config={defaultOptions}
                     readonly={readOnly || isActive}
                     validationMode={showValidationVal}
-                    onChange={(formData) =>
-                        setEndpointConfig(formData, workflow)
-                    }
+                    onChange={setEndpointConfig}
                     ajv={setDefaultsValidator}
                 />
             </Box>
