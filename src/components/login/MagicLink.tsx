@@ -70,7 +70,7 @@ const MagicLink = () => {
     custom_generateDefaultUISchema;
 
     const redirectTo = `${redirectToBase}?${REDIRECT_TO_PARAM_NAME}=${encodeURIComponent(
-        window.location.pathname
+        `${window.location.pathname}${window.location.search}`
     )}`;
 
     return (

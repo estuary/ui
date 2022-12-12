@@ -17,7 +17,7 @@ function OIDCs() {
     const { enqueueSnackbar } = useSnackbar();
 
     const redirectTo = `${redirectToBase}?${REDIRECT_TO_PARAM_NAME}=${encodeURIComponent(
-        window.location.pathname
+        `${window.location.pathname}${window.location.search}`
     )}`;
 
     const loginFailed = (key: Provider) => {
