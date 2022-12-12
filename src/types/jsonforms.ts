@@ -19,12 +19,12 @@ export enum Formats {
     time = 'time',
 }
 
-// These are DayJS formats!
-// https://day.js.org/docs/en/display/format
+// These are Date Fns formats!
+// https://date-fns.org/v2.29.3/docs/format
 export enum Patterns {
-    date = 'YYYY-MM-DD',
-    dateTime = 'YYYY-MM-DDTHH:mm:ss[Z]',
-    time = 'HH:mm:ss[Z]',
+    date = 'yyyy-MM-dd',
+    dateTime = "yyyy-MM-dd'T'HH:mm:ss'Z'",
+    time = "HH:mm:ss'Z'",
 }
 
 export enum Annotations {

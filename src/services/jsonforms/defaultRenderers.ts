@@ -23,7 +23,7 @@ import MaterialDateTimeControl, {
 
 const defaultRenderers = [
     ...materialRenderers,
-    // These are basically the same as JSONForm's but with tweaks to default functionality
+    // These are normal renderers but customized to our needs
     {
         renderer: MaterialOneOfRenderer_Discriminator,
         tester: materialOneOfControlTester_Discriminator,

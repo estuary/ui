@@ -495,10 +495,6 @@ const generateUISchema = (
         addOption(controlObject, Options.multi, true);
     } else if (isDateTimeText(jsonSchema)) {
         addOption(controlObject, Options.format, Formats.dateTime);
-        if (controlObject.options) {
-            controlObject.options.dateTimeFormat = Patterns.dateTime;
-            controlObject.options.dateTimeSaveFormat = Patterns.dateTime;
-        }
     } else if (isDateText(jsonSchema)) {
         addOption(controlObject, Options.format, Formats.date);
         if (controlObject.options) {
