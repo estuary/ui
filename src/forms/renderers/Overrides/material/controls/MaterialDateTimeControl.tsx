@@ -26,140 +26,155 @@
 import {
     ControlProps,
     isDateTimeControl,
-    isDescriptionHidden,
     RankedTester,
     rankWith,
 } from '@jsonforms/core';
 import {
-    createOnChangeHandler,
-    getData,
-    ResettableTextField,
-    useFocus,
+    MaterialInputControl,
+    MuiInputText,
 } from '@jsonforms/material-renderers';
 import { withJsonFormsControlProps } from '@jsonforms/react';
-import { FormHelperText, Hidden } from '@mui/material';
-import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import merge from 'lodash/merge';
-import { useMemo } from 'react';
+import EventIcon from '@mui/icons-material/Event';
+import { Box, Hidden, IconButton, Popover, Stack } from '@mui/material';
+import {
+    LocalizationProvider,
+    StaticDateTimePicker,
+} from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { formatRFC3339 } from 'date-fns';
+import {
+    bindPopover,
+    bindTrigger,
+    usePopupState,
+} from 'material-ui-popup-state/hooks';
+import { useIntl } from 'react-intl';
 
-// Nothing is really custom here besides disabling am/pm.
-// Eventually this should house some more functionality like making
-//  the manual editing of the input better.
+const INVALID_DATE = 'Invalid Date';
+const TIMEZONE_OFFSET = new RegExp('([+-][0-9]{2}:[0-9]{2})$');
+const TIMEZONE_OFFSET_REPLACEMENT = 'Z';
+
+// This is SUPER customized
+// Customizations:
+//  1. Use Static Date Time Picker
+//      We stopped using the MUI DateTimePicker and switched to the static one
+//      This allows us to format the input only when the user is using the date
+//      picker. The original approach would try to format the input on every keystroke
+//      and it made it difficult to edit.
+//  2. Use Date Fns
+//      We already have a date format library so DayJS was not needed. Also, it
+//      tries REALLY hard to understand what a user is meaning and will basically
+//      work around almost anything you type and give you a date back. Example:
+//      if a user types "2020" into the input then DayJS immedietly will format that to
+//      something like "2020-01-01T01:00:00Z"
+//  3. Mess with data format
+//      We always want to send back an actual "Z" with this input and never send
+//      back an actual time zone offset. To accomplish this we just mess with the
+//      value onChange. However, to make sure when a user opens the DateTimePicker
+//      it opens to their selection we need to feed the data back into the picker.
+//      This requires that we remove the "Z" (that we inject) before opening the picker
+//      otherwise the picker will try to adjust the timezone again.
+
 export const Custom_MaterialDateTimeControl = (props: ControlProps) => {
-    const [focused, onFocus, onBlur] = useFocus();
-    const {
-        id,
-        description,
-        errors,
-        label,
-        uischema,
-        visible,
-        enabled,
-        required,
-        path,
-        handleChange,
-        data,
-        config,
-    } = props;
-    const appliedUiSchemaOptions = merge({}, config, uischema.options);
-    const isValid = errors.length === 0;
+    const { data, id, visible, enabled, path, handleChange, label } = props;
 
-    const showDescription = !isDescriptionHidden(
-        visible,
-        description,
-        focused,
-        appliedUiSchemaOptions.showUnfocusedDescription
-    );
+    const intl = useIntl();
+    const popupState = usePopupState({
+        variant: 'popover',
+        popupId: `date-time-${id}`,
+    });
 
-    const format = appliedUiSchemaOptions.dateTimeFormat ?? 'YYYY-MM-DD HH:mm';
-    const saveFormat = appliedUiSchemaOptions.dateTimeSaveFormat ?? undefined;
+    // We have a special handler that formats the date so that
+    //  it can handle if there was an error formatting, always
+    //  use RFC3339, replace the seconds with 'OO'
+    //  and replace the TZ Offset with an actual "Z"
+    const formatDate = (value: Date) => {
+        try {
+            return formatRFC3339(value).replace(
+                TIMEZONE_OFFSET,
+                TIMEZONE_OFFSET_REPLACEMENT
+            );
+        } catch (e: unknown) {
+            return INVALID_DATE;
+        }
+    };
 
-    const views = appliedUiSchemaOptions.views ?? [
-        'year',
-        'day',
-        'hours',
-        'minutes',
-    ];
+    const onChange = (value: any, keyboardInput?: string | undefined) => {
+        if (value) {
+            const formattedValue = formatDate(value);
+            if (formattedValue && formattedValue !== INVALID_DATE) {
+                return handleChange(path, formattedValue);
+            }
+        }
 
-    const firstFormHelperText = showDescription
-        ? description
-        : !isValid
-        ? errors
+        // Default to setting to what user typed
+        //  This is a super backup as with the Date Fn adapter
+        //  it never fell through to this... but wanted to be safe
+        return handleChange(path, keyboardInput);
+    };
+
+    // We need to remove the Z here so that the date time picker
+    //  can open up to the proper date time but not try to adjust
+    //  it with the local timezone offset
+    const dateTimePickerValue = data
+        ? data.replace(TIMEZONE_OFFSET_REPLACEMENT, '')
         : null;
-    const secondFormHelperText = showDescription && !isValid ? errors : null;
-
-    const onChangeHandler = useMemo(
-        () => createOnChangeHandler(path, handleChange, saveFormat),
-        [path, handleChange, saveFormat]
-    );
-
-    const onChange = useMemo(
-        () => (value: any, keyboardInput?: string | undefined) => {
-            onChangeHandler(value, keyboardInput ?? '');
-        },
-        [onChangeHandler]
-    );
-
-    const value = getData(data, saveFormat);
-    const valueInInputFormat = value ? value.format(format) : '';
 
     return (
         <Hidden xsUp={!visible}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DateTimePicker
-                    label={label}
-                    value={value}
-                    onChange={onChange}
-                    inputFormat={format}
-                    disableMaskedInput
-                    ampm={false}
-                    views={views}
-                    disabled={!enabled}
-                    componentsProps={{
-                        actionBar: {
-                            actions: (variant) =>
-                                variant === 'desktop'
-                                    ? []
-                                    : ['clear', 'cancel', 'accept'],
-                        },
+            <Stack
+                sx={{
+                    alignItems: 'top',
+                }}
+                direction="row"
+            >
+                <MaterialInputControl input={MuiInputText} {...props} />
+                <Box sx={{ paddingTop: 2 }}>
+                    <IconButton
+                        aria-label={intl.formatMessage(
+                            {
+                                id: 'datePicker.buttom.ariaLabel',
+                            },
+                            {
+                                label,
+                            }
+                        )}
+                        disabled={!enabled}
+                        {...bindTrigger(popupState)}
+                    >
+                        <EventIcon />
+                    </IconButton>
+                </Box>
+
+                <Popover
+                    {...bindPopover(popupState)}
+                    anchorOrigin={{
+                        vertical: 'center',
+                        horizontal: 'left',
                     }}
-                    renderInput={(params) => (
-                        <ResettableTextField
-                            {...params}
-                            rawValue={data}
-                            dayjsValueIsValid={value !== null}
-                            valueInInputFormat={valueInInputFormat}
-                            focused={focused}
-                            id={`${id}-input`}
-                            required={
-                                required
-                                    ? !appliedUiSchemaOptions.hideRequiredAsterisk
-                                    : undefined
-                            }
-                            autoFocus={appliedUiSchemaOptions.focus}
-                            error={!isValid}
-                            fullWidth={!appliedUiSchemaOptions.trim}
-                            inputProps={{
-                                ...params.inputProps,
-                                type: 'text',
-                            }}
-                            InputLabelProps={
-                                data ? { shrink: true } : undefined
-                            }
-                            onFocus={onFocus}
-                            onBlur={onBlur}
-                            variant="standard"
+                    transformOrigin={{
+                        vertical: 'center',
+                        horizontal: 'right',
+                    }}
+                >
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                        <StaticDateTimePicker
+                            ignoreInvalidInputs
+                            disableMaskedInput
+                            displayStaticWrapperAs="desktop"
+                            openTo="day"
+                            ampm={false}
+                            disabled={!enabled}
+                            value={dateTimePickerValue}
+                            onChange={onChange}
+                            onAccept={popupState.close}
+                            closeOnSelect={true}
+                            // We don't need an input
+                            // eslint-disable-next-line react/jsx-no-useless-fragment
+                            renderInput={() => <></>}
                         />
-                    )}
-                />
-                <FormHelperText error={!isValid ? !showDescription : undefined}>
-                    {firstFormHelperText}
-                </FormHelperText>
-                <FormHelperText error={!isValid}>
-                    {secondFormHelperText}
-                </FormHelperText>
-            </LocalizationProvider>
+                    </LocalizationProvider>
+                </Popover>
+            </Stack>
         </Hidden>
     );
 };
