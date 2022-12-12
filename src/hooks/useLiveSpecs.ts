@@ -6,6 +6,8 @@ import { useQuery, useSelect } from './supabase-swr/';
 export interface LiveSpecsQuery {
     catalog_name: string;
     spec_type: string;
+    // Filtering only
+    updated_at: undefined;
 }
 
 const queryColumns = ['catalog_name', 'spec_type'];
@@ -17,7 +19,10 @@ function useLiveSpecs(specType: string) {
         TABLES.LIVE_SPECS_EXT,
         {
             columns: queryColumns,
-            filter: (query) => query.eq('spec_type', specType),
+            filter: (query) =>
+                query.eq('spec_type', specType).order('updated_at', {
+                    ascending: false,
+                }),
         },
         [specType]
     );
@@ -31,9 +36,8 @@ function useLiveSpecs(specType: string) {
     };
 }
 
-export interface LiveSpecsQuery_spec {
+export interface LiveSpecsQuery_spec extends LiveSpecsQuery {
     id: string;
-    catalog_name: string;
     spec: {
         schema: {
             properties: Record<string, any>;
@@ -41,7 +45,6 @@ export interface LiveSpecsQuery_spec {
         };
         key: string[];
     };
-    spec_type: string;
 }
 const specQuery = ['id', 'catalog_name', 'spec', 'spec_type'];
 
