@@ -1,3 +1,5 @@
+export const REDIRECT_TO_PARAM_NAME = 'redirect_to';
+
 export const unauthenticatedRoutes = {
     path: '',
     auth: {

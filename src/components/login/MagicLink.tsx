@@ -1,4 +1,5 @@
 import { Button, Stack } from '@mui/material';
+import { REDIRECT_TO_PARAM_NAME } from 'app/routes';
 import MagicLinkInputs from 'components/login/MagicLinkInputs';
 import { useClient } from 'hooks/supabase-swr';
 import { useState } from 'react';
@@ -9,7 +10,7 @@ import useConstant from 'use-constant';
 // TODO (routes) This is hardcoded because unauthenticated routes is not yet invoked
 //   need to move the routes to a single location. Also... just need to make the route
 //   settings in all JSON probably.
-const redirectTo = `${window.location.origin}/auth`;
+const redirectToBase = `${window.location.origin}/auth`;
 
 const MagicLink = () => {
     const [showTokenValidation, setShowTokenValidation] = useState(false);
@@ -67,6 +68,10 @@ const MagicLink = () => {
     );
 
     custom_generateDefaultUISchema;
+
+    const redirectTo = `${redirectToBase}?${REDIRECT_TO_PARAM_NAME}=${encodeURIComponent(
+        `${window.location.pathname}${window.location.search}`
+    )}`;
 
     return (
         <Stack direction="column" spacing={1}>
