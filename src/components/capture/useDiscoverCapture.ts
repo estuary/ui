@@ -132,9 +132,14 @@ function useDiscoverCapture(
         useResourceConfig_resourceConfigErrorsExist();
     const resetCollections = useResourceConfig_resetConfigAndCollections();
 
+    // Errors if:
+    // * If we're in the edit workflow, defer to state
+    // * If we're in create workflow
+    //   * If we have an empty config, then there's no error
+    //   * If we don't have an empty config, defer to state
     const endpointConfigErrorFlag = editWorkflow
         ? endpointConfigErrorsExist
-        : endpointConfigErrorsExist || isEmpty(endpointConfigData);
+        : !isEmpty(endpointConfigData) && endpointConfigErrorsExist;
 
     const storeDiscoveredCollections = useCallback(
         async (
