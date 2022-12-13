@@ -98,6 +98,7 @@ function ListView({
                             }}
                         >
                             <ReactJson
+                                style={{ wordBreak: 'break-all' }}
                                 quotesOnKeys={false}
                                 src={rowsByKey[selectedKey]}
                                 theme={jsonTheme}

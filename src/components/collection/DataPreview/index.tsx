@@ -129,9 +129,10 @@ export function DataPreview({ collectionName }: Props) {
                         <FormattedMessage id="collectionsPreview.tooManyBytes.message" />
                     </AlertBox>
                 </Box>
-            ) : (
+            ) : null}
+            {(journalData.data?.documents.length ?? 0) > 0 ? (
                 <ListView journalData={journalData} spec={spec} />
-            )}
+            ) : null}
             {/*             : (
                 <TableView journalData={journalData} spec={spec} />
             )}*/}

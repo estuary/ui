@@ -119,7 +119,7 @@ async function* streamAsyncIterator<T>(stream: ReadableStream<T>) {
 
 // We increment the read window by this many bytes every time we get back
 // fewer than the desired number of rows.
-const INCREMENT = 1024 * 10;
+const INCREMENT = 1024 * 1024;
 
 async function readAllDocuments<T>(stream: ReadableStream<T>) {
     const accum: T[] = [];
@@ -171,12 +171,15 @@ async function loadDocuments({
 
     let documents: JournalRecord[] = [];
 
+    let attempt = 0;
+
     while (
         documents.length < documentCount &&
         start > 0 &&
         head - start < maxBytes
     ) {
-        start = Math.max(0, start - INCREMENT);
+        attempt += 1;
+        start = Math.max(0, start - INCREMENT * attempt);
         const stream = (
             await client.read({
                 journal: journalName,
@@ -216,7 +219,8 @@ function isJournalRecord(val: any): val is JournalRecord {
 const useJournalData = (
     journalName?: string,
     desiredCount: number = 50,
-    maxBytes: number = 5 * 10 ** 6
+    // 16mb, which is the max document size, ensuring we'll always get at least 1 doc if it exists
+    maxBytes: number = 16 * 10 ** 6
 ) => {
     const [gatewayConfig] = useLocalStorage(
         LocalStorageKeys.GATEWAY,
@@ -243,7 +247,7 @@ const useJournalData = (
 
     useEffect(() => {
         void (async () => {
-            if (journalName && journalClient) {
+            if (journalName && journalClient && !loading && !data) {
                 try {
                     setLoading(true);
                     const docs = await loadDocuments({
@@ -260,7 +264,15 @@ const useJournalData = (
                 }
             }
         })();
-    }, [desiredCount, journalClient, journalName, maxBytes, refreshCount]);
+    }, [
+        desiredCount,
+        journalClient,
+        journalName,
+        maxBytes,
+        refreshCount,
+        loading,
+        data,
+    ]);
 
     return {
         data,
