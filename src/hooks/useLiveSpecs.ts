@@ -46,7 +46,7 @@ export interface LiveSpecsQuery_spec extends LiveSpecsQuery {
         key: string[];
     };
 }
-const specQuery = ['id', 'catalog_name', 'spec', 'spec_type'];
+const specQuery = queryColumns.concat(['id', 'spec']);
 
 const withKey =
     (key: string) =>
