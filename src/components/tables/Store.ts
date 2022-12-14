@@ -1,5 +1,5 @@
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
-import { getStatsByName } from 'api/stats';
+import { getStatsByName, StatsFilter } from 'api/stats';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
 import { flatMap } from 'lodash';
@@ -37,6 +37,9 @@ export interface SelectableTableStore extends StoreWithHydration {
 
     setStats: () => void;
     stats: Schema | null;
+
+    statsFilter: StatsFilter;
+    setStatsFilter: (val: SelectableTableStore['statsFilter']) => void;
 }
 
 export const initialCreateStates = {
@@ -51,10 +54,16 @@ export const initialCreateStates = {
 
 export const getInitialStateData = (): Pick<
     SelectableTableStore,
-    'selected' | 'rows' | 'successfulTransformations' | 'query' | 'stats'
+    | 'selected'
+    | 'rows'
+    | 'successfulTransformations'
+    | 'query'
+    | 'stats'
+    | 'statsFilter'
 > => {
     return {
         stats: null,
+        statsFilter: 'today',
         query: getAsyncDefault(),
         selected: initialCreateStates.selected(),
         rows: initialCreateStates.rows(),
@@ -113,6 +122,24 @@ export const getInitialState = (
                 false,
                 'Rows populated'
             );
+        },
+
+        setStatsFilter: (val) => {
+            const { setStats, statsFilter } = get();
+            const filterChanged = statsFilter !== val;
+
+            if (filterChanged) {
+                set(
+                    produce((state) => {
+                        state.statsFilter = val;
+                    }),
+                    false,
+                    'Setting stats filter'
+                );
+
+                // Need to update stats if the filter changed
+                setStats();
+            }
         },
 
         setStats: async () => {
@@ -257,6 +284,10 @@ export const selectableTableStoreSelectors = {
     stats: {
         set: (state: SelectableTableStore) => state.setStats,
         get: (state: SelectableTableStore) => state.stats,
+    },
+    statsFilter: {
+        set: (state: SelectableTableStore) => state.setStatsFilter,
+        get: (state: SelectableTableStore) => state.statsFilter,
     },
     query: {
         hydrate: (state: SelectableTableStore) => state.hydrate,

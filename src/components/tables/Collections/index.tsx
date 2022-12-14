@@ -5,6 +5,7 @@ import EntityTable from 'components/tables/EntityTable';
 import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
 import TableHydrator from 'stores/Tables/Hydrator';
+import StatsHydrator from '../Captures/StatsHydrator';
 import useTableState from '../hooks';
 
 function CollectionsTable() {
@@ -34,25 +35,35 @@ function CollectionsTable() {
                 query={query}
                 selectableTableStoreName={SelectTableStoreNames.COLLECTION}
             >
-                <EntityTable
-                    noExistingDataContentIds={{
-                        header: 'collections.message1',
-                        message: 'collections.message2',
-                    }}
-                    columns={tableColumns}
-                    renderTableRows={(data, showEntityStatus) => (
-                        <Rows data={data} showEntityStatus={showEntityStatus} />
-                    )}
-                    setPagination={setPagination}
-                    setSearchQuery={setSearchQuery}
-                    sortDirection={sortDirection}
-                    setSortDirection={setSortDirection}
-                    columnToSort={columnToSort}
-                    setColumnToSort={setColumnToSort}
-                    header="collectionsTable.title"
-                    filterLabel="collectionsTable.filterLabel"
+                <StatsHydrator
                     selectableTableStoreName={SelectTableStoreNames.COLLECTION}
-                />
+                >
+                    <EntityTable
+                        enableTimeFiltering
+                        noExistingDataContentIds={{
+                            header: 'collections.message1',
+                            message: 'collections.message2',
+                        }}
+                        columns={tableColumns}
+                        renderTableRows={(data, showEntityStatus) => (
+                            <Rows
+                                data={data}
+                                showEntityStatus={showEntityStatus}
+                            />
+                        )}
+                        setPagination={setPagination}
+                        setSearchQuery={setSearchQuery}
+                        sortDirection={sortDirection}
+                        setSortDirection={setSortDirection}
+                        columnToSort={columnToSort}
+                        setColumnToSort={setColumnToSort}
+                        header="collectionsTable.title"
+                        filterLabel="collectionsTable.filterLabel"
+                        selectableTableStoreName={
+                            SelectTableStoreNames.COLLECTION
+                        }
+                    />
+                </StatsHydrator>
             </TableHydrator>
         </Box>
     );

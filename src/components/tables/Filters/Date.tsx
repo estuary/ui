@@ -1,22 +1,26 @@
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { Button, Menu, MenuItem, Stack } from '@mui/material';
-import subDays from 'date-fns/subDays';
+import { StatsFilter } from 'api/stats';
+import { useZustandStore } from 'context/Zustand/provider';
 import React, { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { SelectTableStoreNames } from 'stores/names';
+import { SelectableTableStore, selectableTableStoreSelectors } from '../Store';
 
-type FilterOptions =
-    | `today`
-    | `yesterday`
-    | `lastWeek`
-    | `thisWeek`
-    | `lastMonth`
-    | `thisMonth`;
+interface Props {
+    selectableTableStoreName: SelectTableStoreNames;
+}
 
-function DateFilter() {
-    const [currentOption, setCurrentOption] = useState<FilterOptions>('today');
+function DateFilter({ selectableTableStoreName }: Props) {
+    const [currentOption, setCurrentOption] = useState<StatsFilter>('today');
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
+
+    const setStatsFilter = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['setStatsFilter']
+    >(selectableTableStoreName, selectableTableStoreSelectors.statsFilter.set);
 
     const handlers = {
         closeMenu: () => {
@@ -25,19 +29,8 @@ function DateFilter() {
         openMenu: (event: React.MouseEvent<HTMLButtonElement>) => {
             setAnchorEl(event.currentTarget);
         },
-        setFilter: (option: FilterOptions) => {
-            let foo;
-            switch (option) {
-                case 'yesterday':
-                    foo = subDays(new Date(), 1);
-                    break;
-                default: {
-                    foo = new Date();
-                    break;
-                }
-            }
-
-            console.log('foo', foo);
+        setFilter: (option: StatsFilter) => {
+            setStatsFilter(option);
             setCurrentOption(option);
             handlers.closeMenu();
         },

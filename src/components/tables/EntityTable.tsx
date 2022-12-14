@@ -288,7 +288,11 @@ function EntityTable({
                         <Title header={header} />
                     )}
 
-                    {enableTimeFiltering ? <DateFilter /> : null}
+                    {enableTimeFiltering ? (
+                        <DateFilter
+                            selectableTableStoreName={selectableTableStoreName}
+                        />
+                    ) : null}
 
                     <Box
                         sx={{

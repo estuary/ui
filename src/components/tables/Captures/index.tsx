@@ -39,6 +39,8 @@ function CapturesTable() {
                     selectableTableStoreName={SelectTableStoreNames.CAPTURE}
                 >
                     <EntityTable
+                        enableSelection
+                        enableTimeFiltering
                         noExistingDataContentIds={{
                             header: 'captures.message1',
                             message: 'captures.message2',
@@ -58,7 +60,6 @@ function CapturesTable() {
                         setColumnToSort={setColumnToSort}
                         header="captureTable.header"
                         filterLabel="capturesTable.filterLabel"
-                        enableSelection
                         rowSelectorProps={{
                             selectableTableStoreName:
                                 SelectTableStoreNames.CAPTURE,

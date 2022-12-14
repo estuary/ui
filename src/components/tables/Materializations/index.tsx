@@ -41,6 +41,8 @@ function MaterializationsTable() {
                     }
                 >
                     <EntityTable
+                        enableSelection
+                        enableTimeFiltering
                         noExistingDataContentIds={{
                             header: 'materializations.message1',
                             message: 'materializations.message2',
@@ -65,7 +67,6 @@ function MaterializationsTable() {
                                 SelectTableStoreNames.MATERIALIZATION,
                         }}
                         showEntityStatus={true}
-                        enableSelection
                         selectableTableStoreName={
                             SelectTableStoreNames.MATERIALIZATION
                         }

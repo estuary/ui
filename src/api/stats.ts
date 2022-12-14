@@ -7,9 +7,16 @@ import {
 } from 'services/supabase';
 import { CatalogStats } from 'types';
 
-const getStatsByName = (names: string[]) => {
-    console.log('getting stats by name');
-    return supabaseClient
+export type StatsFilter =
+    | 'today'
+    | 'yesterday'
+    | 'lastWeek'
+    | 'thisWeek'
+    | 'lastMonth'
+    | 'thisMonth';
+
+const getStatsByName = (names: string[], filter?: StatsFilter) => {
+    let queryBuilder = supabaseClient
         .from<CatalogStats>(TABLES.CATALOG_STATS)
         .select(
             `    
@@ -27,10 +34,20 @@ const getStatsByName = (names: string[]) => {
                 `
         )
         .in('catalog_name', names)
-        .gte('ts', formatISO(endOfYesterday()))
-        .eq('grain', 'hourly')
-        .order('catalog_name')
-        .then(handleSuccess<CatalogStats[]>, handleFailure);
+        .order('catalog_name');
+
+    // TODO (stats) : finish the queries
+    switch (filter) {
+        case 'today':
+            queryBuilder = queryBuilder
+                .gte('ts', formatISO(endOfYesterday()))
+                .eq('grain', 'hourly');
+            break;
+        default:
+            throw new Error('Unsupported filter used in Stats Query');
+    }
+
+    return queryBuilder.then(handleSuccess<CatalogStats[]>, handleFailure);
 };
 
 export { getStatsByName };
