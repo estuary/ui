@@ -49,7 +49,8 @@ import { Patterns } from 'types/jsonforms';
 
 const INVALID_DATE = 'Invalid Date';
 
-// This is pretty customized. Look at MaterialDateTimeControl for extra notes
+// This is pretty customized
+//  Look at MaterialDateTimeControl for extra notes
 //  as this is based on that but made to support Date Picker
 export const Custom_MaterialDateControl = (props: ControlProps) => {
     const { data, id, visible, enabled, path, handleChange, label } = props;

@@ -82,6 +82,9 @@ export const Custom_MaterialTimeControl = (props: ControlProps) => {
         defaultValue.setHours(...args);
 
         return defaultValue;
+
+        // We only really care to set this once on load
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const [timePickerValue, setTimePickerValue] = useState(defaultTime);
@@ -122,7 +125,7 @@ export const Custom_MaterialTimeControl = (props: ControlProps) => {
                     <IconButton
                         aria-label={intl.formatMessage(
                             {
-                                id: 'dateTimePicker.button.ariaLabel',
+                                id: 'timePicker.button.ariaLabel',
                             },
                             {
                                 label,

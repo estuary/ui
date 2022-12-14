@@ -746,6 +746,7 @@ const Tenant: ResolvedIntlConfig['messages'] = {
 const CustomRenderers: ResolvedIntlConfig['messages'] = {
     'dateTimePicker.button.ariaLabel': `Open date time picker for {label}`,
     'datePicker.button.ariaLabel': `Open date picker for {label}`,
+    'timePicker.button.ariaLabel': `Open time picker for {label}`,
 };
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {

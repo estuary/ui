@@ -23,6 +23,9 @@ import MaterialDateControl, {
 import MaterialDateTimeControl, {
     materialDateTimeControlTester,
 } from 'forms/renderers/Overrides/material/controls/MaterialDateTimeControl';
+import MaterialTimeControl, {
+    materialTimeControlTester,
+} from 'forms/renderers/Overrides/material/controls/MaterialTimeControl';
 
 const defaultRenderers = [
     ...materialRenderers,
@@ -38,6 +41,10 @@ const defaultRenderers = [
     {
         renderer: MaterialDateControl,
         tester: materialDateControlTester,
+    },
+    {
+        renderer: MaterialTimeControl,
+        tester: materialTimeControlTester,
     },
 
     // Custom layouts
