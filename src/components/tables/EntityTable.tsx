@@ -282,17 +282,22 @@ function EntityTable({
                         alignItems: 'baseline',
                     }}
                 >
-                    {enableSelection ? (
-                        <RowSelector {...rowSelectorProps} />
-                    ) : (
-                        <Title header={header} />
-                    )}
+                    <Stack direction="row" spacing={2}>
+                        {enableSelection ? (
+                            <RowSelector {...rowSelectorProps} />
+                        ) : (
+                            <Title header={header} />
+                        )}
 
-                    {enableTimeFiltering ? (
-                        <DateFilter
-                            selectableTableStoreName={selectableTableStoreName}
-                        />
-                    ) : null}
+                        {enableTimeFiltering ? (
+                            <DateFilter
+                                disabled={!dataRows}
+                                selectableTableStoreName={
+                                    selectableTableStoreName
+                                }
+                            />
+                        ) : null}
+                    </Stack>
 
                     <Box
                         sx={{

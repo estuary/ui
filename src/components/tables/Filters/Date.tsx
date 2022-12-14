@@ -1,4 +1,4 @@
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { Button, Menu, MenuItem, Stack } from '@mui/material';
 import { StatsFilter } from 'api/stats';
 import { useZustandStore } from 'context/Zustand/provider';
@@ -8,10 +8,11 @@ import { SelectTableStoreNames } from 'stores/names';
 import { SelectableTableStore, selectableTableStoreSelectors } from '../Store';
 
 interface Props {
+    disabled: boolean;
     selectableTableStoreName: SelectTableStoreNames;
 }
 
-function DateFilter({ selectableTableStoreName }: Props) {
+function DateFilter({ disabled, selectableTableStoreName }: Props) {
     const [currentOption, setCurrentOption] = useState<StatsFilter>('today');
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -43,10 +44,11 @@ function DateFilter({ selectableTableStoreName }: Props) {
                 aria-controls={open ? 'stat-filter-selector-menu' : undefined}
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
-                variant="contained"
+                variant="outlined"
                 disableElevation
                 onClick={handlers.openMenu}
-                startIcon={<AccessTimeIcon />}
+                endIcon={<KeyboardArrowDownIcon />}
+                disabled={disabled}
             >
                 <FormattedMessage
                     id="entityTable.stats.filterMenu"
