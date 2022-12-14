@@ -22,6 +22,8 @@ import { QUERY_PARAM_CONNECTOR_TITLE } from 'services/supabase';
 import { SelectTableStoreNames } from 'stores/names';
 import { useShardDetail_setShards } from 'stores/ShardDetail/hooks';
 import { getPathWithParams } from 'utils/misc-utils';
+import Bytes from '../cells/stats/Bytes';
+import Docs from '../cells/stats/Docs';
 
 interface RowsProps {
     data: CaptureQueryWithStats[];
@@ -49,14 +51,14 @@ export const tableColumns = [
         field: QUERY_PARAM_CONNECTOR_TITLE,
         headerIntlKey: 'entityTable.data.connectorType',
     },
-    // {
-    //     field: null,
-    //     headerIntlKey: 'entityTable.stats.bytes_written_by_me',
-    // },
-    // {
-    //     field: null,
-    //     headerIntlKey: 'entityTable.stats.docs_written_by_me',
-    // },
+    {
+        field: null,
+        headerIntlKey: 'entityTable.stats.bytes_written_by_me',
+    },
+    {
+        field: null,
+        headerIntlKey: 'entityTable.stats.docs_written_by_me',
+    },
     {
         field: 'writes_to',
         headerIntlKey: 'entityTable.data.writesTo',
@@ -71,7 +73,7 @@ export const tableColumns = [
     },
 ];
 
-function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
+function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
     const navigate = useNavigate();
     const theme = useTheme();
 
@@ -124,9 +126,9 @@ function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
                     imageTag={`${row.connector_image_name}${row.connector_image_tag}`}
                 />
 
-                {/*                <Bytes val={stats?.[row.catalog_name]?.bytes_written_by_me} />
+                <Bytes val={stats?.[row.catalog_name]?.bytes_written_by_me} />
 
-                <Docs val={stats?.[row.catalog_name]?.docs_written_by_me} />*/}
+                <Docs val={stats?.[row.catalog_name]?.docs_written_by_me} />
 
                 <ChipList strings={row.writes_to} />
 

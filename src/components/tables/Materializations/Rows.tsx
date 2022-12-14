@@ -22,6 +22,8 @@ import { QUERY_PARAM_CONNECTOR_TITLE } from 'services/supabase';
 import { SelectTableStoreNames } from 'stores/names';
 import { useShardDetail_setShards } from 'stores/ShardDetail/hooks';
 import { getPathWithParams } from 'utils/misc-utils';
+import Bytes from '../cells/stats/Bytes';
+import Docs from '../cells/stats/Docs';
 
 interface RowsProps {
     data: MaterializationQueryWithStats[];
@@ -48,14 +50,14 @@ export const tableColumns = [
         field: QUERY_PARAM_CONNECTOR_TITLE,
         headerIntlKey: 'data.type',
     },
-    // {
-    //     field: null,
-    //     headerIntlKey: 'entityTable.stats.bytes_read_by_me',
-    // },
-    // {
-    //     field: null,
-    //     headerIntlKey: 'entityTable.stats.docs_read_by_me',
-    // },
+    {
+        field: null,
+        headerIntlKey: 'entityTable.stats.bytes_read_by_me',
+    },
+    {
+        field: null,
+        headerIntlKey: 'entityTable.stats.docs_read_by_me',
+    },
     {
         field: 'reads_from',
         headerIntlKey: 'entityTable.data.readsFrom',
@@ -116,9 +118,9 @@ function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
                     imageTag={`${row.connector_image_name}${row.connector_image_tag}`}
                 />
 
-                {/*                <Bytes val={row.stats?.bytes_read_by_me} />
+                <Bytes val={row.stats?.bytes_read_by_me} />
 
-                <Docs val={row.stats?.docs_read_by_me} />*/}
+                <Docs val={row.stats?.docs_read_by_me} />
 
                 <ChipList strings={row.reads_from} />
 

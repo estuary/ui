@@ -5,6 +5,7 @@ import Rows, { tableColumns } from 'components/tables/Materializations/Rows';
 import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
 import TableHydrator from 'stores/Tables/Hydrator';
+import StatsHydrator from '../Captures/StatsHydrator';
 import useTableState from '../hooks';
 
 function MaterializationsTable() {
@@ -34,33 +35,42 @@ function MaterializationsTable() {
                 query={query}
                 selectableTableStoreName={SelectTableStoreNames.MATERIALIZATION}
             >
-                <EntityTable
-                    noExistingDataContentIds={{
-                        header: 'materializations.message1',
-                        message: 'materializations.message2',
-                    }}
-                    columns={tableColumns}
-                    renderTableRows={(data, showEntityStatus) => (
-                        <Rows data={data} showEntityStatus={showEntityStatus} />
-                    )}
-                    setPagination={setPagination}
-                    setSearchQuery={setSearchQuery}
-                    sortDirection={sortDirection}
-                    setSortDirection={setSortDirection}
-                    columnToSort={columnToSort}
-                    setColumnToSort={setColumnToSort}
-                    header="materializationsTable.title"
-                    filterLabel="materializationsTable.filterLabel"
-                    rowSelectorProps={{
-                        selectableTableStoreName:
-                            SelectTableStoreNames.MATERIALIZATION,
-                    }}
-                    showEntityStatus={true}
-                    enableSelection
+                <StatsHydrator
                     selectableTableStoreName={
                         SelectTableStoreNames.MATERIALIZATION
                     }
-                />
+                >
+                    <EntityTable
+                        noExistingDataContentIds={{
+                            header: 'materializations.message1',
+                            message: 'materializations.message2',
+                        }}
+                        columns={tableColumns}
+                        renderTableRows={(data, showEntityStatus) => (
+                            <Rows
+                                data={data}
+                                showEntityStatus={showEntityStatus}
+                            />
+                        )}
+                        setPagination={setPagination}
+                        setSearchQuery={setSearchQuery}
+                        sortDirection={sortDirection}
+                        setSortDirection={setSortDirection}
+                        columnToSort={columnToSort}
+                        setColumnToSort={setColumnToSort}
+                        header="materializationsTable.title"
+                        filterLabel="materializationsTable.filterLabel"
+                        rowSelectorProps={{
+                            selectableTableStoreName:
+                                SelectTableStoreNames.MATERIALIZATION,
+                        }}
+                        showEntityStatus={true}
+                        enableSelection
+                        selectableTableStoreName={
+                            SelectTableStoreNames.MATERIALIZATION
+                        }
+                    />
+                </StatsHydrator>
             </TableHydrator>
         </Box>
     );
