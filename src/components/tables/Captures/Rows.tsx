@@ -11,6 +11,7 @@ import DetailsPanel from 'components/tables/Details/DetailsPanel';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
+    StatsResponse,
 } from 'components/tables/Store';
 import { getEntityTableRowSx } from 'context/Theme';
 import { useZustandStore } from 'context/Zustand/provider';
@@ -31,7 +32,7 @@ interface RowsProps {
 }
 
 export interface RowProps {
-    stats?: any;
+    stats?: StatsResponse;
     row: CaptureQueryWithStats;
     setRow: any;
     isSelected: boolean;
@@ -126,9 +127,21 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
                     imageTag={`${row.connector_image_name}${row.connector_image_tag}`}
                 />
 
-                <Bytes val={stats?.[row.catalog_name]?.bytes_written_by_me} />
+                <Bytes
+                    val={
+                        stats
+                            ? stats[row.catalog_name]?.bytes_written_by_me
+                            : null
+                    }
+                />
 
-                <Docs val={stats?.[row.catalog_name]?.docs_written_by_me} />
+                <Docs
+                    val={
+                        stats
+                            ? stats[row.catalog_name]?.docs_written_by_me
+                            : null
+                    }
+                />
 
                 <ChipList strings={row.writes_to} />
 

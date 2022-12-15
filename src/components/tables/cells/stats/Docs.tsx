@@ -1,9 +1,9 @@
-import { TableCell } from '@mui/material';
+import { Box, LinearProgress, TableCell, Typography } from '@mui/material';
 import { tableBorderSx } from 'context/Theme';
 import { FormattedNumber } from 'react-intl';
 
 interface Props {
-    val?: number;
+    val?: number | null;
 }
 
 const Docs = ({ val }: Props) => {
@@ -14,7 +14,12 @@ const Docs = ({ val }: Props) => {
                 maxWidth: 'min-content',
             }}
         >
-            <FormattedNumber value={val ?? 0} />
+            <Box sx={{ maxWidth: 'fit-content' }}>
+                <Typography>
+                    <FormattedNumber value={val ?? 0} />
+                </Typography>
+                {val === null ? <LinearProgress color="inherit" /> : null}
+            </Box>
         </TableCell>
     );
 };

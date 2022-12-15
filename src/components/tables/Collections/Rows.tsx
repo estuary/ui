@@ -6,11 +6,19 @@ import ExpandDetails from 'components/tables/cells/ExpandDetails';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import DetailsPanel from 'components/tables/Details/DetailsPanel';
 import { getEntityTableRowSx } from 'context/Theme';
-import { useState } from 'react';
+import { useZustandStore } from 'context/Zustand/provider';
+import { useMemo, useState } from 'react';
+import { SelectTableStoreNames } from 'stores/names';
 import Bytes from '../cells/stats/Bytes';
 import Docs from '../cells/stats/Docs';
+import {
+    SelectableTableStore,
+    selectableTableStoreSelectors,
+    StatsResponse,
+} from '../Store';
 
 interface RowProps {
+    stats?: StatsResponse;
     row: CollectionQueryWithStats;
     showEntityStatus: boolean;
 }
@@ -43,10 +51,32 @@ export const tableColumns = [
     },
 ];
 
-function Row({ row, showEntityStatus }: RowProps) {
+function Row({ row, stats, showEntityStatus }: RowProps) {
     const theme = useTheme();
 
     const [detailsExpanded, setDetailsExpanded] = useState(false);
+
+    const calculatedBytes = useMemo(() => {
+        if (stats) {
+            return (
+                (stats[row.catalog_name]?.bytes_written_by_me ?? 0) +
+                (stats[row.catalog_name]?.bytes_written_to_me ?? 0)
+            );
+        } else {
+            return 0;
+        }
+    }, [row.catalog_name, stats]);
+
+    const calculatedDocs = useMemo(() => {
+        if (stats) {
+            return (
+                (stats[row.catalog_name]?.docs_written_by_me ?? 0) +
+                (stats[row.catalog_name]?.docs_written_to_me ?? 0)
+            );
+        } else {
+            return 0;
+        }
+    }, [row.catalog_name, stats]);
 
     return (
         <>
@@ -59,23 +89,9 @@ function Row({ row, showEntityStatus }: RowProps) {
                     showEntityStatus={showEntityStatus}
                 />
 
-                <Bytes
-                    val={
-                        row.stats
-                            ? row.stats.bytes_written_by_me +
-                              row.stats.bytes_written_to_me
-                            : 0
-                    }
-                />
+                <Bytes val={stats ? calculatedBytes : null} />
 
-                <Docs
-                    val={
-                        row.stats
-                            ? row.stats.docs_written_by_me +
-                              row.stats.docs_written_to_me
-                            : 0
-                    }
-                />
+                <Docs val={stats ? calculatedDocs : null} />
 
                 <TimeStamp time={row.updated_at} />
 
@@ -102,10 +118,18 @@ function Row({ row, showEntityStatus }: RowProps) {
 }
 
 function Rows({ data, showEntityStatus }: RowsProps) {
+    const selectTableStoreName = SelectTableStoreNames.COLLECTION;
+
+    const stats = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['stats']
+    >(selectTableStoreName, selectableTableStoreSelectors.stats.get);
+
     return (
         <>
             {data.map((row) => (
                 <Row
+                    stats={stats}
                     row={row}
                     showEntityStatus={showEntityStatus}
                     key={row.id}

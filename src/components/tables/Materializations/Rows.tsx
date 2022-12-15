@@ -11,6 +11,7 @@ import DetailsPanel from 'components/tables/Details/DetailsPanel';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
+    StatsResponse,
 } from 'components/tables/Store';
 import { getEntityTableRowSx } from 'context/Theme';
 import { useZustandStore } from 'context/Zustand/provider';
@@ -31,6 +32,7 @@ interface RowsProps {
 }
 
 interface RowProps {
+    stats?: StatsResponse;
     row: MaterializationQueryWithStats;
     setRow: any;
     isSelected: boolean;
@@ -72,7 +74,7 @@ export const tableColumns = [
     },
 ];
 
-function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
+function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
     const navigate = useNavigate();
     const theme = useTheme();
 
@@ -118,9 +120,17 @@ function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
                     imageTag={`${row.connector_image_name}${row.connector_image_tag}`}
                 />
 
-                <Bytes val={row.stats?.bytes_read_by_me} />
+                <Bytes
+                    val={
+                        stats ? stats[row.catalog_name]?.bytes_read_by_me : null
+                    }
+                />
 
-                <Docs val={row.stats?.docs_read_by_me} />
+                <Docs
+                    val={
+                        stats ? stats[row.catalog_name]?.docs_read_by_me : null
+                    }
+                />
 
                 <ChipList strings={row.reads_from} />
 
@@ -167,6 +177,11 @@ function Rows({ data, showEntityStatus }: RowsProps) {
         selectableTableStoreSelectors.successfulTransformations.get
     );
 
+    const stats = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['stats']
+    >(selectTableStoreName, selectableTableStoreSelectors.stats.get);
+
     // Shard Detail Store
     const setShards = useShardDetail_setShards();
 
@@ -186,6 +201,7 @@ function Rows({ data, showEntityStatus }: RowsProps) {
         <>
             {data.map((row) => (
                 <Row
+                    stats={stats}
                     row={row}
                     key={row.id}
                     isSelected={selected.has(row.id)}
