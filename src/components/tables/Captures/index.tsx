@@ -40,7 +40,6 @@ function CapturesTable() {
                 >
                     <EntityTable
                         enableSelection
-                        enableTimeFiltering
                         noExistingDataContentIds={{
                             header: 'captures.message1',
                             message: 'captures.message2',

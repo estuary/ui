@@ -39,7 +39,6 @@ function CollectionsTable() {
                     selectableTableStoreName={SelectTableStoreNames.COLLECTION}
                 >
                     <EntityTable
-                        enableTimeFiltering
                         noExistingDataContentIds={{
                             header: 'collections.message1',
                             message: 'collections.message2',

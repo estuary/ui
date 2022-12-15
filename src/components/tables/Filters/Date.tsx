@@ -1,6 +1,7 @@
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { Button, Menu, MenuItem, Stack } from '@mui/material';
 import { StatsFilter } from 'api/stats';
+import { LINK_BUTTON_STYLING } from 'context/Theme';
 import { useZustandStore } from 'context/Zustand/provider';
 import React, { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -39,27 +40,20 @@ function DateFilter({ disabled, selectableTableStoreName }: Props) {
 
     return (
         <Stack direction="row" spacing={2}>
+            <FormattedMessage id="entityTable.stats.filterMenu" />
             <Button
                 id="stat-filter-selector-button"
                 aria-controls={open ? 'stat-filter-selector-menu' : undefined}
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
-                variant="outlined"
+                variant="text"
                 disableElevation
                 onClick={handlers.openMenu}
                 endIcon={<KeyboardArrowDownIcon />}
                 disabled={disabled}
+                sx={{ ...LINK_BUTTON_STYLING }}
             >
-                <FormattedMessage
-                    id="entityTable.stats.filterMenu"
-                    values={{
-                        currentOption: (
-                            <FormattedMessage
-                                id={`filter.time.${currentOption}`}
-                            />
-                        ),
-                    }}
-                />
+                <FormattedMessage id={`filter.time.${currentOption}`} />
             </Button>
             <Menu
                 id="stat-filter-selector-menu"

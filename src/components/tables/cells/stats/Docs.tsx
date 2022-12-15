@@ -1,12 +1,14 @@
 import { Box, LinearProgress, TableCell, Typography } from '@mui/material';
 import { tableBorderSx } from 'context/Theme';
-import { FormattedNumber } from 'react-intl';
+import readable from 'readable-numbers';
 
 interface Props {
     val?: number | null;
 }
 
 const Docs = ({ val }: Props) => {
+    const number = readable(val ?? 111156789);
+
     return (
         <TableCell
             sx={{
@@ -15,9 +17,7 @@ const Docs = ({ val }: Props) => {
             }}
         >
             <Box sx={{ maxWidth: 'fit-content' }}>
-                <Typography>
-                    <FormattedNumber value={val ?? 0} />
-                </Typography>
+                <Typography>{number} docs</Typography>
                 {val === null ? <LinearProgress color="inherit" /> : null}
             </Box>
         </TableCell>

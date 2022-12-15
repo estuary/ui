@@ -25,6 +25,8 @@ import { useShardDetail_setShards } from 'stores/ShardDetail/hooks';
 import { getPathWithParams } from 'utils/misc-utils';
 import Bytes from '../cells/stats/Bytes';
 import Docs from '../cells/stats/Docs';
+import StatsHeader from '../cells/stats/Header';
+import { ColumnProps } from '../EntityTable';
 
 interface RowsProps {
     data: CaptureQueryWithStats[];
@@ -39,7 +41,7 @@ export interface RowProps {
     showEntityStatus: boolean;
 }
 
-export const tableColumns = [
+export const tableColumns: ColumnProps[] = [
     {
         field: null,
         headerIntlKey: '',
@@ -54,12 +56,26 @@ export const tableColumns = [
     },
     {
         field: null,
-        headerIntlKey: 'entityTable.stats.bytes_written_by_me',
+        renderHeader: (_index, selectableTableStoreName) => {
+            return (
+                <StatsHeader
+                    header="entityTable.stats.bytes_written_by_me"
+                    selectableTableStoreName={selectableTableStoreName}
+                />
+            );
+        },
     },
-    {
-        field: null,
-        headerIntlKey: 'entityTable.stats.docs_written_by_me',
-    },
+    // {
+    //     field: null,
+    //     renderHeader: (_index, selectableTableStoreName) => {
+    //         return (
+    //             <StatsHeader
+    //                 header="entityTable.stats.docs_written_by_me"
+    //                 selectableTableStoreName={selectableTableStoreName}
+    //             />
+    //         );
+    //     },
+    // },
     {
         field: 'writes_to',
         headerIntlKey: 'entityTable.data.writesTo',
