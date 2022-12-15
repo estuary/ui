@@ -31,6 +31,8 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.version': `version`,
     'common.tenant': `Prefix`,
     'common.recommended': `Recommended`,
+    'common.copied': `Copied`,
+    'common.copyFailed': `Failed to copy`,
 
     // Aria
     'aria.openExpand': `show more`,
@@ -677,15 +679,32 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.error.initForm': `An issue was encountered initializing the form.`,
     'workflows.error.initFormSection': `An issue was encountered initializing this section of the form.`,
 
-    'workflows.collectionSelector.label.listHeader': `Collections`,
-    'workflows.collectionSelector.label.discoveredCollections': `Discovered Collections`,
-    'workflows.collectionSelector.label.existingCollections': `Existing Collections`,
+    'workflows.collectionSelector.alert.message.schemaUpdateError': `An error was encountered fetching your updated collection schema to display. This does not mean that there was a problem updating the server. Click the refresh button below to try again.`,
     'workflows.collectionSelector.cta.delete': `Remove All`,
     'workflows.collectionSelector.cta.rediscover': `Refresh`,
+    'workflows.collectionSelector.cta.schemaEdit': `CLI`,
+    'workflows.collectionSelector.error.title.missingCollectionSchema': `Failed to fetch collection schema`,
+    'workflows.collectionSelector.header.collectionSchema': `Collection Schema`,
+    'workflows.collectionSelector.label.discoveredCollections': `Discovered Collections`,
+    'workflows.collectionSelector.label.existingCollections': `Existing Collections`,
+    'workflows.collectionSelector.label.listHeader': `Collections`,
+    'workflows.collectionSelector.tab.collectionSchema': `Schema`,
+    'workflows.collectionSelector.tab.resourceConfig': `Config`,
 
     'workflows.collectionSelector.rediscoverDialog.title': `Are you sure?`,
     'workflows.collectionSelector.rediscoverDialog.message1': `Proceeding with this action will replace the current capture configuration with one generated automatically by Flow. Discovery identifies one or more resources — tables, data streams, or the equivalent — and generates bindings so that each will be mapped to a data collection in Flow.`,
     'workflows.collectionSelector.rediscoverDialog.message2': `If there are any aspects of your current capture configuration you would like to preserve, take note of them before proceeding with this action.`,
+
+    'workflows.collectionSelector.schemaEdit.header': `CLI`,
+    'workflows.collectionSelector.schemaEdit.flowctlDocLink': `https://docs.estuary.dev/concepts/flowctl/`,
+    'workflows.collectionSelector.schemaEdit.description': `Use the commands below to edit the schema for this collection.`,
+    'workflows.collectionSelector.schemaEdit.message1': `Pull down the draft to edit`,
+    'workflows.collectionSelector.schemaEdit.message2': `Push your changes up to the server`,
+    'workflows.collectionSelector.schemaEdit.discoveredCollection.command1': `flowctl draft select --id {draftId} && flowctl draft develop`,
+    'workflows.collectionSelector.schemaEdit.discoveredCollection.command2': `flowctl draft author --source <flow_catalog_file_location>`,
+    'workflows.collectionSelector.schemaEdit.existingCollection.command1': `flowctl draft select --id {draftId}`,
+    'workflows.collectionSelector.schemaEdit.existingCollection.command2': `flowctl catalog draft --name {catalogName} && flowctl draft develop`,
+    'workflows.collectionSelector.schemaEdit.existingCollection.command3': `flowctl draft author --source <flow_catalog_file_location>`,
 };
 
 const ShardStatus: ResolvedIntlConfig['messages'] = {

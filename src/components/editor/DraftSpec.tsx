@@ -1,5 +1,5 @@
 import { updateDraftSpec } from 'api/draftSpecs';
-import EditorWithFileSelector from 'components/editor/EditorWithFileSelector';
+import MonacoEditor from 'components/editor/MonacoEditor';
 import {
     useEditorStore_currentCatalog,
     useEditorStore_id,
@@ -27,7 +27,7 @@ function DraftSpecEditor({ disabled }: Props) {
     // Resource Config Store
     const collections = useResourceConfig_collections();
 
-    const { draftSpecs, mutate } = useDraftSpecs(draftId);
+    const { draftSpecs, mutate } = useDraftSpecs(draftId, null, entityType);
     const [draftSpec, setDraftSpec] = useState<DraftSpecQuery | null>(null);
 
     const handlers = {
@@ -52,13 +52,7 @@ function DraftSpecEditor({ disabled }: Props) {
 
     useEffect(() => {
         if (draftSpecs.length > 0) {
-            const filteredDraftSpecs = draftSpecs.filter(
-                (response) =>
-                    response.spec_type === entityType ||
-                    (response.spec_type === 'collection' &&
-                        collections?.includes(response.catalog_name))
-            );
-            setSpecs(filteredDraftSpecs);
+            setSpecs(draftSpecs);
         }
     }, [setSpecs, collections, draftSpecs, entityType]);
 
@@ -94,7 +88,7 @@ function DraftSpecEditor({ disabled }: Props) {
 
     if (draftSpec) {
         return (
-            <EditorWithFileSelector
+            <MonacoEditor
                 disabled={disabled}
                 localZustandScope={false}
                 onChange={handlers.change}
