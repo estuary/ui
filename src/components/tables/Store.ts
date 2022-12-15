@@ -143,13 +143,17 @@ export const getInitialState = (
         },
 
         setStats: async () => {
-            const { response } = get().query;
+            const { query, statsFilter } = get();
+            const { response } = query;
             const catalogNames = flatMap(response, (data) => {
                 return data.catalog_name;
             });
 
             if (response.length > 0) {
-                const { data, error } = await getStatsByName(catalogNames);
+                const { data, error } = await getStatsByName(
+                    catalogNames,
+                    statsFilter
+                );
 
                 if (error) {
                     const { setHydrationErrorsExist } = get();
@@ -178,7 +182,6 @@ export const getInitialState = (
                         return datum;
                     });
 
-                    console.log('setting stats', statsData);
                     set(
                         produce((state) => {
                             state.stats = statsData;

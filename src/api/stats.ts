@@ -1,4 +1,14 @@
-import { endOfYesterday, formatISO } from 'date-fns';
+import {
+    endOfMonth,
+    endOfWeek,
+    endOfYesterday,
+    formatISO,
+    startOfMonth,
+    startOfWeek,
+    startOfYesterday,
+    subMonths,
+    subWeeks,
+} from 'date-fns';
 import {
     handleFailure,
     handleSuccess,
@@ -36,6 +46,10 @@ const getStatsByName = (names: string[], filter?: StatsFilter) => {
         .in('catalog_name', names)
         .order('catalog_name');
 
+    const today = new Date();
+    const lastWeek = subWeeks(today, 1);
+    const lastMonth = subMonths(today, 1);
+
     // TODO (stats) : finish the queries
     switch (filter) {
         case 'today':
@@ -43,6 +57,39 @@ const getStatsByName = (names: string[], filter?: StatsFilter) => {
                 .gte('ts', formatISO(endOfYesterday()))
                 .eq('grain', 'hourly');
             break;
+        case 'yesterday':
+            queryBuilder = queryBuilder
+                .gte('ts', formatISO(startOfYesterday()))
+                .lte('ts', formatISO(endOfYesterday()))
+                .eq('grain', 'hourly');
+            break;
+
+        case 'thisWeek':
+            queryBuilder = queryBuilder
+                .gte('ts', formatISO(startOfWeek(today)))
+                .lte('ts', formatISO(endOfWeek(today)))
+                .eq('grain', 'daily');
+            break;
+        case 'lastWeek':
+            queryBuilder = queryBuilder
+                .gte('ts', formatISO(startOfWeek(lastWeek)))
+                .lte('ts', formatISO(endOfWeek(lastWeek)))
+                .eq('grain', 'daily');
+            break;
+
+        case 'thisMonth':
+            queryBuilder = queryBuilder
+                .gte('ts', formatISO(startOfMonth(today)))
+                .lte('ts', formatISO(endOfMonth(today)))
+                .eq('grain', 'monthly');
+            break;
+        case 'lastMonth':
+            queryBuilder = queryBuilder
+                .gte('ts', formatISO(startOfMonth(lastMonth)))
+                .lte('ts', formatISO(endOfMonth(lastMonth)))
+                .eq('grain', 'monthly');
+            break;
+
         default:
             throw new Error('Unsupported filter used in Stats Query');
     }
