@@ -406,8 +406,12 @@ const generateUISchema = (
         // This happens when there is a type "null" INSIDE of a combinator
         // need more work but this keeps the form from blowing up at least.
         console.error(`Likely invalid schema at ${currentRef}`, jsonSchema);
-        // @ts-expect-error see above
-        return null;
+        return {
+            type: 'NullType',
+            options: {
+                ref: currentRef,
+            },
+        };
     }
 
     if (types.length > 1) {
@@ -452,38 +456,29 @@ const generateUISchema = (
             const nextRef: string = `${currentRef}/properties`;
 
             // Step through the ordered properties
-            layout.elements = orderedProps
-                .map((propName) => {
-                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                    let value: JsonSchema = jsonSchema.properties![propName];
-                    const ref = `${nextRef}/${encode(propName)}`;
+            layout.elements = orderedProps.map((propName) => {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                let value: JsonSchema = jsonSchema.properties![propName];
+                const ref = `${nextRef}/${encode(propName)}`;
 
-                    if (value.$ref !== undefined) {
-                        value = resolveSchema(
-                            rootSchema as JsonSchema,
-                            value.$ref,
-                            rootSchema as JsonSchema
-                        );
-                    }
-
-                    return generateUISchema(
-                        value,
-                        layout.elements,
-                        ref,
-                        propName,
-                        layoutType,
-                        rootGenerating,
-                        rootSchema
+                if (value.$ref !== undefined) {
+                    value = resolveSchema(
+                        rootSchema as JsonSchema,
+                        value.$ref,
+                        rootSchema as JsonSchema
                     );
-                })
-                // Comment above explains when this could be null, basically
-                // it happens if you have a field that doesn't define a `"type"`
-                // and the logic here doesn't know what to do with you.
-                // If we didn't filter this out, then the nulls will cause
-                // strange artifacts when rendering. Generally "silent" failures
-                // aren't a good idea, but we are error-logging above
-                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                .filter((element) => element !== null);
+                }
+
+                return generateUISchema(
+                    value,
+                    layout.elements,
+                    ref,
+                    propName,
+                    layoutType,
+                    rootGenerating,
+                    rootSchema
+                );
+            });
         }
 
         return layout;
