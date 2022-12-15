@@ -1,6 +1,6 @@
 import { LayoutProps, RankedTester, rankWith, uiTypeIs } from '@jsonforms/core';
 import { withJsonFormsLayoutProps } from '@jsonforms/react';
-import { Hidden, Typography } from '@mui/material';
+import { Alert, Hidden } from '@mui/material';
 
 export const nullTypeTester: RankedTester = rankWith(999, uiTypeIs('NullType'));
 
@@ -13,12 +13,12 @@ const NullTypeRenderer = (props: LayoutProps) => {
     } = props;
     return (
         <Hidden xsUp={!visible}>
-            <Typography variant="body1" color="error">
+            <Alert severity="error">
                 Error: Invalid field definition at{' '}
                 <code>
                     {path}: {schemaOptions?.ref}
                 </code>
-            </Typography>
+            </Alert>
         </Hidden>
     );
 };
