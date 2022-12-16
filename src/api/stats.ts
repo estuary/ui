@@ -25,6 +25,10 @@ export type StatsFilter =
     | 'lastMonth'
     | 'thisMonth';
 
+// TODO (stats) add support for which stats columns each entity wants
+//  Right now all tables run the same query even though they only need
+//  2 - 4 columns. However, not a huge deal perf wise because the other cols
+//  are all 0.
 const getStatsByName = (names: string[], filter?: StatsFilter) => {
     let queryBuilder = supabaseClient
         .from<CatalogStats>(TABLES.CATALOG_STATS)
