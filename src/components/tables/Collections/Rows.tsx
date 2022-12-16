@@ -11,6 +11,8 @@ import { useMemo, useState } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
 import Bytes from '../cells/stats/Bytes';
 import Docs from '../cells/stats/Docs';
+import StatsHeader from '../cells/stats/Header';
+import { ColumnProps } from '../EntityTable';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
@@ -28,18 +30,21 @@ interface RowsProps {
     showEntityStatus: boolean;
 }
 
-export const tableColumns = [
+export const tableColumns: ColumnProps[] = [
     {
         field: 'catalog_name',
         headerIntlKey: 'entityTable.data.entity',
     },
     {
         field: null,
-        headerIntlKey: 'entityTable.stats.bytes_written_to_me',
-    },
-    {
-        field: null,
-        headerIntlKey: 'entityTable.stats.docs_written_to_me',
+        renderHeader: (_index, selectableTableStoreName) => {
+            return (
+                <StatsHeader
+                    header="entityTable.stats.bytes_written_by_me"
+                    selectableTableStoreName={selectableTableStoreName}
+                />
+            );
+        },
     },
     {
         field: 'updated_at',

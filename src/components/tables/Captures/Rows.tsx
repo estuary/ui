@@ -65,17 +65,6 @@ export const tableColumns: ColumnProps[] = [
             );
         },
     },
-    // {
-    //     field: null,
-    //     renderHeader: (_index, selectableTableStoreName) => {
-    //         return (
-    //             <StatsHeader
-    //                 header="entityTable.stats.docs_written_by_me"
-    //                 selectableTableStoreName={selectableTableStoreName}
-    //             />
-    //         );
-    //     },
-    // },
     {
         field: 'writes_to',
         headerIntlKey: 'entityTable.data.writesTo',

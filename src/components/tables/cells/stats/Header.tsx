@@ -9,7 +9,6 @@ interface Props {
 
 const StatsHeader = ({ selectableTableStoreName }: Props) => (
     <TableCell colSpan={2}>
-        {' '}
         <DateFilter
             disabled={false}
             selectableTableStoreName={selectableTableStoreName}
