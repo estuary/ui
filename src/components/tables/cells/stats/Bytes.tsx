@@ -1,5 +1,8 @@
-import { Box, LinearProgress, TableCell, Typography } from '@mui/material';
-import { tableBorderSx } from 'context/Theme';
+import { Box, TableCell, Typography } from '@mui/material';
+import {
+    semiTransparentBackgroundIntensified,
+    tableBorderSx,
+} from 'context/Theme';
 import prettyBytes from 'pretty-bytes';
 
 interface Props {
@@ -7,6 +10,8 @@ interface Props {
 }
 
 const Bytes = ({ val }: Props) => {
+    const statsLoading = val === null;
+
     return (
         <TableCell
             sx={{
@@ -17,7 +22,13 @@ const Bytes = ({ val }: Props) => {
             <Box sx={{ maxWidth: 'fit-content' }}>
                 <Typography
                     sx={{
-                        maxWidth: 'max-content',
+                        transitionDelay: statsLoading ? '800ms' : '0ms',
+                        color: (theme) =>
+                            statsLoading
+                                ? semiTransparentBackgroundIntensified[
+                                      theme.palette.mode
+                                  ]
+                                : null,
                     }}
                 >
                     {prettyBytes(val ?? 0, {
@@ -25,7 +36,6 @@ const Bytes = ({ val }: Props) => {
                         maximumFractionDigits: 2,
                     })}
                 </Typography>
-                {val === null ? <LinearProgress color="inherit" /> : null}
             </Box>
         </TableCell>
     );

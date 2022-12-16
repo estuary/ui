@@ -1,5 +1,5 @@
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import { Button, LinearProgress, Menu, MenuItem, Stack } from '@mui/material';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import { Button, Menu, MenuItem, Stack, Typography } from '@mui/material';
 import { StatsFilter } from 'api/stats';
 import { LINK_BUTTON_STYLING } from 'context/Theme';
 import { useZustandStore } from 'context/Zustand/provider';
@@ -24,10 +24,10 @@ function DateFilter({ disabled, selectableTableStoreName }: Props) {
         SelectableTableStore['setStatsFilter']
     >(selectableTableStoreName, selectableTableStoreSelectors.statsFilter.set);
 
-    const stats = useZustandStore<
-        SelectableTableStore,
-        SelectableTableStore['stats']
-    >(selectableTableStoreName, selectableTableStoreSelectors.stats.get);
+    // const stats = useZustandStore<
+    //     SelectableTableStore,
+    //     SelectableTableStore['stats']
+    // >(selectableTableStoreName, selectableTableStoreSelectors.stats.get);
 
     const handlers = {
         closeMenu: () => {
@@ -44,8 +44,10 @@ function DateFilter({ disabled, selectableTableStoreName }: Props) {
     };
 
     return (
-        <Stack direction="row" spacing={2}>
-            <FormattedMessage id="entityTable.stats.filterMenu" />{' '}
+        <Stack direction="row" spacing={1}>
+            <Typography sx={{ whiteSpace: 'nowrap' }}>
+                <FormattedMessage id="entityTable.stats.filterMenu" />
+            </Typography>
             <Button
                 id="stat-filter-selector-button"
                 aria-controls={open ? 'stat-filter-selector-menu' : undefined}
@@ -54,7 +56,7 @@ function DateFilter({ disabled, selectableTableStoreName }: Props) {
                 variant="text"
                 disableElevation
                 onClick={handlers.openMenu}
-                endIcon={<KeyboardArrowDownIcon />}
+                endIcon={<FilterListIcon />}
                 disabled={disabled}
                 sx={{ ...LINK_BUTTON_STYLING }}
             >
@@ -89,7 +91,6 @@ function DateFilter({ disabled, selectableTableStoreName }: Props) {
                     <FormattedMessage id="filter.time.lastMonth" />
                 </MenuItem>
             </Menu>
-            {stats === null ? <LinearProgress /> : null}
         </Stack>
     );
 }

@@ -1,5 +1,8 @@
-import { Box, LinearProgress, TableCell, Typography } from '@mui/material';
-import { tableBorderSx } from 'context/Theme';
+import { Box, TableCell, Typography } from '@mui/material';
+import {
+    semiTransparentBackgroundIntensified,
+    tableBorderSx,
+} from 'context/Theme';
 import readable from 'readable-numbers';
 
 interface Props {
@@ -7,7 +10,8 @@ interface Props {
 }
 
 const Docs = ({ val }: Props) => {
-    const number = readable(val ?? 111156789);
+    const number = readable(val ?? 0);
+    const statsLoading = val === null;
 
     return (
         <TableCell
@@ -17,8 +21,19 @@ const Docs = ({ val }: Props) => {
             }}
         >
             <Box sx={{ maxWidth: 'fit-content' }}>
-                <Typography>{number} docs</Typography>
-                {val === null ? <LinearProgress color="inherit" /> : null}
+                <Typography
+                    sx={{
+                        transitionDelay: statsLoading ? '800ms' : '0ms',
+                        color: (theme) =>
+                            statsLoading
+                                ? semiTransparentBackgroundIntensified[
+                                      theme.palette.mode
+                                  ]
+                                : null,
+                    }}
+                >
+                    {number} docs
+                </Typography>
             </Box>
         </TableCell>
     );
