@@ -15,7 +15,7 @@ interface Props {
 const Bytes = ({ read, val }: Props) => {
     const intl = useIntl();
     const statsLoading = val === null;
-    const defaultedVal = val ?? 100000;
+    const defaultedVal = val ?? 0;
     const number = useMemo(
         () =>
             prettyBytes(defaultedVal, {
