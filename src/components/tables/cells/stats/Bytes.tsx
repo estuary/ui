@@ -29,6 +29,7 @@ const Bytes = ({ read, val }: Props) => {
         <TableCell
             sx={{
                 ...tableBorderSx,
+                minWidth: 'min-content',
                 maxWidth: 'min-content',
             }}
         >
