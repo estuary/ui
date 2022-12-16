@@ -405,8 +405,13 @@ const generateUISchema = (
         // TODO (jsonforms)
         // This happens when there is a type "null" INSIDE of a combinator
         // need more work but this keeps the form from blowing up at least.
-        // @ts-expect-error see above
-        return null;
+        console.error(`Likely invalid schema at ${currentRef}`, jsonSchema);
+        return {
+            type: 'NullType',
+            options: {
+                ref: currentRef,
+            },
+        };
     }
 
     if (types.length > 1) {
