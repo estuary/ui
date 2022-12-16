@@ -1,5 +1,12 @@
 import FilterListIcon from '@mui/icons-material/FilterList';
-import { Button, Menu, MenuItem, Stack, Typography } from '@mui/material';
+import {
+    Button,
+    CircularProgress,
+    Menu,
+    MenuItem,
+    Stack,
+    Typography,
+} from '@mui/material';
 import { StatsFilter } from 'api/stats';
 import { LINK_BUTTON_STYLING } from 'context/Theme';
 import { useZustandStore } from 'context/Zustand/provider';
@@ -24,10 +31,10 @@ function DateFilter({ disabled, selectableTableStoreName }: Props) {
         SelectableTableStore['setStatsFilter']
     >(selectableTableStoreName, selectableTableStoreSelectors.statsFilter.set);
 
-    // const stats = useZustandStore<
-    //     SelectableTableStore,
-    //     SelectableTableStore['stats']
-    // >(selectableTableStoreName, selectableTableStoreSelectors.stats.get);
+    const stats = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['stats']
+    >(selectableTableStoreName, selectableTableStoreSelectors.stats.get);
 
     const handlers = {
         closeMenu: () => {
@@ -56,7 +63,13 @@ function DateFilter({ disabled, selectableTableStoreName }: Props) {
                 variant="text"
                 disableElevation
                 onClick={handlers.openMenu}
-                endIcon={<FilterListIcon />}
+                endIcon={
+                    stats === null ? (
+                        <CircularProgress size={15} />
+                    ) : (
+                        <FilterListIcon />
+                    )
+                }
                 disabled={disabled}
                 sx={{ ...LINK_BUTTON_STYLING }}
             >
