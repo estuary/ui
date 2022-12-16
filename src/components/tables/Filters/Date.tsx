@@ -16,11 +16,12 @@ import { SelectTableStoreNames } from 'stores/names';
 import { SelectableTableStore, selectableTableStoreSelectors } from '../Store';
 
 interface Props {
+    header: string;
     disabled: boolean;
     selectableTableStoreName: SelectTableStoreNames;
 }
 
-function DateFilter({ disabled, selectableTableStoreName }: Props) {
+function DateFilter({ disabled, header, selectableTableStoreName }: Props) {
     const [currentOption, setCurrentOption] = useState<StatsFilter>('today');
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -53,7 +54,7 @@ function DateFilter({ disabled, selectableTableStoreName }: Props) {
     return (
         <Stack direction="row" spacing={1}>
             <Typography sx={{ whiteSpace: 'nowrap' }}>
-                <FormattedMessage id="entityTable.stats.filterMenu" />
+                <FormattedMessage id={header} />
             </Typography>
             <Button
                 id="stat-filter-selector-button"

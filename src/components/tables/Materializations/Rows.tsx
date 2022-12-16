@@ -60,7 +60,7 @@ export const tableColumns: ColumnProps[] = [
             return (
                 <StatsHeader
                     key={`materializations-statsHeader-${index}`}
-                    header="entityTable.stats.bytes_written_by_me"
+                    header="entityTable.stats.read"
                     selectableTableStoreName={selectableTableStoreName}
                 />
             );

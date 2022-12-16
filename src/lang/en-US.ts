@@ -342,6 +342,9 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.stats.bytes_read_to_me': `Bytes Read`,
     'entityTable.stats.docs_read_to_me': `Docs Read`,
 
+    'entityTable.stats.written': `Data Written`,
+    'entityTable.stats.read': `Data Read`,
+
     'entityTable.stats.error': `Failed to fetch stats.`,
     'entityTable.stats.filterMenu': `Stats for`,
 

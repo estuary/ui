@@ -12,7 +12,7 @@ interface Props {
     selectableTableStoreName: SelectTableStoreNames;
 }
 
-const StatsHeader = ({ selectableTableStoreName }: Props) => {
+const StatsHeader = ({ header, selectableTableStoreName }: Props) => {
     const isValidating = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['query']['loading']
@@ -26,6 +26,7 @@ const StatsHeader = ({ selectableTableStoreName }: Props) => {
     return (
         <TableCell colSpan={2}>
             <DateFilter
+                header={header}
                 disabled={isValidating || queryCount === 0}
                 selectableTableStoreName={selectableTableStoreName}
             />
