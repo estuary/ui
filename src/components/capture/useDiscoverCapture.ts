@@ -12,7 +12,6 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
-import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 import { useCallback, useMemo } from 'react';
 import { CustomEvents } from 'services/logrocket';
@@ -131,15 +130,6 @@ function useDiscoverCapture(
     const resourceConfigHasErrors =
         useResourceConfig_resourceConfigErrorsExist();
     const resetCollections = useResourceConfig_resetConfigAndCollections();
-
-    // Errors if:
-    // * If we're in the edit workflow, defer to state
-    // * If we're in create workflow
-    //   * If we have an empty config, then there's no error
-    //   * If we don't have an empty config, defer to state
-    const endpointConfigErrorFlag = editWorkflow
-        ? endpointConfigErrorsExist
-        : !isEmpty(endpointConfigData) && endpointConfigErrorsExist;
 
     const storeDiscoveredCollections = useCallback(
         async (
@@ -307,7 +297,7 @@ function useDiscoverCapture(
 
             if (
                 detailsFormsHasErrors ||
-                endpointConfigErrorFlag ||
+                endpointConfigErrorsExist ||
                 resourceConfigHasErrors
             ) {
                 return setFormState({
@@ -391,7 +381,7 @@ function useDiscoverCapture(
             detailsFormsHasErrors,
             editWorkflow,
             endpointConfigData,
-            endpointConfigErrorFlag,
+            endpointConfigErrorsExist,
             endpointSchema,
             entityName,
             imageConnectorId,
