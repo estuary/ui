@@ -56,9 +56,10 @@ export const tableColumns: ColumnProps[] = [
     },
     {
         field: null,
-        renderHeader: (_index, selectableTableStoreName) => {
+        renderHeader: (index, selectableTableStoreName) => {
             return (
                 <StatsHeader
+                    key={`captures-statsHeader-${index}`}
                     header="entityTable.stats.bytes_written_by_me"
                     selectableTableStoreName={selectableTableStoreName}
                 />
