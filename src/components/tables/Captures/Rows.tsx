@@ -163,7 +163,7 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
             <DetailsPanel
                 detailsExpanded={detailsExpanded}
                 lastPubId={row.last_pub_id}
-                colSpan={tableColumns.length}
+                colSpan={tableColumns.length + 1}
                 entityType="capture"
                 entityName={row.catalog_name}
                 collectionNames={row.writes_to}

@@ -114,7 +114,7 @@ function Row({ row, stats, showEntityStatus }: RowProps) {
             <DetailsPanel
                 detailsExpanded={detailsExpanded}
                 lastPubId={row.last_pub_id}
-                colSpan={tableColumns.length}
+                colSpan={tableColumns.length + 1}
                 entityType="collection"
                 entityName={row.catalog_name}
                 disableLogs

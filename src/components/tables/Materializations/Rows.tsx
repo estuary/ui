@@ -155,7 +155,7 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
                 collectionNames={row.reads_from}
                 detailsExpanded={detailsExpanded}
                 lastPubId={row.last_pub_id}
-                colSpan={tableColumns.length}
+                colSpan={tableColumns.length + 1}
                 entityType="materialization"
                 entityName={row.catalog_name}
             />
