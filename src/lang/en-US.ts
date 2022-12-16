@@ -43,6 +43,8 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'terms.materialization': `Materialization`,
     'terms.capture': `Capture`,
     'terms.documentation': `Docs`,
+    'terms.bytes': `bytes`,
+    'terms.documents': `docs`, // Meant for the documents we process
 
     // Common fields
     'entityPrefix.label': `Prefix`,
@@ -332,15 +334,10 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.data.objectRole': `Object`,
     'entityTable.data.lastPubUserFullName': `Last Updated By`,
 
-    'entityTable.stats.bytes_written_by_me': `Bytes Written`,
-    'entityTable.stats.docs_written_by_me': `Docs Written`,
-    'entityTable.stats.bytes_read_by_me': `Bytes Read`,
-    'entityTable.stats.docs_read_by_me': `Docs Read`,
-
-    'entityTable.stats.bytes_written_to_me': `Bytes Written`,
-    'entityTable.stats.docs_written_to_me': `Docs Written`,
-    'entityTable.stats.bytes_read_to_me': `Bytes Read`,
-    'entityTable.stats.docs_read_to_me': `Docs Read`,
+    'entityTable.stats.bytes_read': `Bytes Read`,
+    'entityTable.stats.docs_read': `Docs Read`,
+    'entityTable.stats.bytes_written': `Bytes Written`,
+    'entityTable.stats.docs_written': `Docs Written`,
 
     'entityTable.stats.written': `Data Written`,
     'entityTable.stats.read': `Data Read`,

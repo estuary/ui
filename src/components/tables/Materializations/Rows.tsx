@@ -127,12 +127,14 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
                 />
 
                 <Bytes
+                    read
                     val={
                         stats ? stats[row.catalog_name]?.bytes_read_by_me : null
                     }
                 />
 
                 <Docs
+                    read
                     val={
                         stats ? stats[row.catalog_name]?.docs_read_by_me : null
                     }

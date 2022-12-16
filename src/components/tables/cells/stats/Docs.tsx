@@ -1,17 +1,25 @@
-import { Box, TableCell, Typography } from '@mui/material';
+import { Box, TableCell, Tooltip, Typography } from '@mui/material';
 import {
     semiTransparentBackgroundIntensified,
     tableBorderSx,
 } from 'context/Theme';
+import { useMemo } from 'react';
+import { useIntl } from 'react-intl';
 import readable from 'readable-numbers';
 
 interface Props {
+    read?: boolean;
     val?: number | null;
 }
 
-const Docs = ({ val }: Props) => {
-    const number = readable(val ?? 0);
+const Docs = ({ read, val }: Props) => {
+    const intl = useIntl();
     const statsLoading = val === null;
+    const defaultedVal = val ?? 0;
+    const number = useMemo(
+        () => readable(defaultedVal, 2, false),
+        [defaultedVal]
+    );
 
     return (
         <TableCell
@@ -21,19 +29,27 @@ const Docs = ({ val }: Props) => {
             }}
         >
             <Box sx={{ maxWidth: 'fit-content' }}>
-                <Typography
-                    sx={{
-                        transitionDelay: statsLoading ? '800ms' : '0ms',
-                        color: (theme) =>
-                            statsLoading
-                                ? semiTransparentBackgroundIntensified[
-                                      theme.palette.mode
-                                  ]
-                                : null,
-                    }}
+                <Tooltip
+                    title={`${defaultedVal} ${intl.formatMessage({
+                        id: read
+                            ? 'entityTable.stats.docs_read'
+                            : 'entityTable.stats.docs_written',
+                    })}`}
                 >
-                    {number} docs
-                </Typography>
+                    <Typography
+                        sx={{
+                            transitionDelay: statsLoading ? '800ms' : '0ms',
+                            color: (theme) =>
+                                statsLoading
+                                    ? semiTransparentBackgroundIntensified[
+                                          theme.palette.mode
+                                      ]
+                                    : null,
+                        }}
+                    >
+                        {number} docs
+                    </Typography>
+                </Tooltip>
             </Box>
         </TableCell>
     );
