@@ -12,6 +12,7 @@ interface Props {
     val?: number | null;
 }
 
+// TODO (stats) we can combine this with the Docs component.
 const Bytes = ({ read, val }: Props) => {
     const intl = useIntl();
     const statsLoading = val === null;
