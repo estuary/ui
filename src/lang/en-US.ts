@@ -43,8 +43,6 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'terms.materialization': `Materialization`,
     'terms.capture': `Capture`,
     'terms.documentation': `Docs`,
-    'terms.bytes': `bytes`,
-    'terms.documents': `docs`, // Meant for the documents we process
 
     // Common fields
     'entityPrefix.label': `Prefix`,
