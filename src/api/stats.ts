@@ -54,7 +54,9 @@ const getStatsByName = (names: string[], filter?: StatsFilter) => {
     const lastWeek = subWeeks(today, 1);
     const lastMonth = subMonths(today, 1);
 
-    // TODO (stats) : finish the queries
+    // TODO (stats) we need to make a final call on if we want to query
+    //  with ranges or with exact equals. The backend is storing stats
+    //  at the earliest timestamp for each grain so we could use an eq
     switch (filter) {
         case 'today':
             queryBuilder = queryBuilder
