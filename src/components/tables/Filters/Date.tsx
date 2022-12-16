@@ -64,7 +64,7 @@ function DateFilter({ disabled, selectableTableStoreName }: Props) {
                 disableElevation
                 onClick={handlers.openMenu}
                 endIcon={
-                    stats === null ? (
+                    !disabled && stats === null ? (
                         <CircularProgress size={15} />
                     ) : (
                         <FilterListIcon />
