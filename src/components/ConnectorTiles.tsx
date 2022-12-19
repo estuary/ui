@@ -42,7 +42,7 @@ import { hasLength } from 'utils/misc-utils';
 import { getEmptyTableHeader, getEmptyTableMessage } from 'utils/table-utils';
 import ConnectorCardCTA from './connectors/card/CTA';
 import ConnectorCardDetails from './connectors/card/Details';
-import ConnectorCardLogo from './connectors/card/Logo';
+import ConnectorLogo from './connectors/card/Logo';
 import ConnectorCardTitle from './connectors/card/Title';
 
 interface ConnectorTilesProps {
@@ -187,7 +187,7 @@ function ConnectorTiles({
                         <ConnectorCard
                             key={`connector-tile-${index}`}
                             docsUrl={row.connector_tags[0].documentation_url}
-                            logo={<ConnectorCardLogo imageSrc={row.image} />}
+                            logo={<ConnectorLogo imageSrc={row.image} />}
                             title={<ConnectorCardTitle title={row.title} />}
                             details={
                                 <ConnectorCardDetails

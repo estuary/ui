@@ -324,6 +324,15 @@ export const connectorImageBackgroundSx: SxProps<Theme> = {
     background: connectorCardLogoBackground,
 };
 
+export const alternateConnectorImageBackgroundSx: SxProps<Theme> = {
+    height: 75,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: connectorImageBackgroundRadius,
+    background: connectorCardLogoBackground,
+};
+
 const themeSettings = createTheme({
     breakpoints: {
         values: {

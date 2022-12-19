@@ -10,6 +10,7 @@ import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
 import EntityError from 'components/shared/Entity/Error';
+import ExistingEntityCard from 'components/shared/Entity/ExistingEntityCards/ExistingEntityCard';
 import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedChangesPrompt';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
@@ -173,6 +174,14 @@ function EntityCreate({
                 </Typography>
 
                 <ConnectorTiles protocolPreset={entityType} replaceOnNavigate />
+            </Collapse>
+
+            <Collapse in={!showConnectorTiles} unmountOnExit>
+                <Typography sx={{ mb: 2 }}>
+                    Placeholder for some instructions.
+                </Typography>
+
+                <ExistingEntityCard entityType={entityType} />
             </Collapse>
 
             <Collapse in={!showConnectorTiles} unmountOnExit>

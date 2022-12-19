@@ -2,12 +2,18 @@ import {
     CONNECTOR_IMAGE,
     CONNECTOR_TITLE,
     defaultTableFilter,
+    handleFailure,
+    handleSuccess,
     QUERY_PARAM_CONNECTOR_TITLE,
     SortingProps,
     supabaseClient,
     TABLES,
 } from 'services/supabase';
-import { CatalogStats, LiveSpecsExtBaseQuery } from 'types';
+import {
+    CatalogStats,
+    EntityWithCreateWorkflow,
+    LiveSpecsExtBaseQuery,
+} from 'types';
 
 const baseColumns = [
     'catalog_name',
@@ -23,7 +29,6 @@ const commonColumns = baseColumns.concat([
     'connector_image_tag',
     CONNECTOR_IMAGE,
     CONNECTOR_TITLE,
-    'writes_to',
 ]);
 
 export interface CaptureQuery extends LiveSpecsExtBaseQuery {
@@ -46,14 +51,13 @@ export interface CollectionQueryWithStats extends CollectionQuery {
     stats?: CatalogStats;
 }
 
-const captureColumns = commonColumns
-    .concat(['connector_image_name', 'writes_to'])
-    .join(',');
+const captureColumns = commonColumns.concat(['writes_to']).join(',');
 
 const materializationsColumns = commonColumns.concat(['reads_from']).join(',');
 
-const collectionColums = baseColumns.join(',');
+const collectionColumns = baseColumns.join(',');
 
+// Entity table-specific queries
 const getLiveSpecs_captures = (
     pagination: any,
     searchQuery: any,
@@ -105,7 +109,7 @@ const getLiveSpecs_collections = (
 ) => {
     let queryBuilder = supabaseClient
         .from<CollectionQuery>(TABLES.LIVE_SPECS_EXT)
-        .select(collectionColums, {
+        .select(collectionColumns, {
             count: 'exact',
         });
 
@@ -120,8 +124,31 @@ const getLiveSpecs_collections = (
     return queryBuilder;
 };
 
+// Multipurpose queries
+const getLiveSpecsByConnectorId = async <
+    T = CaptureQuery[] | MaterializationQuery[]
+>(
+    specType: EntityWithCreateWorkflow,
+    connectorTagId: string
+) => {
+    const taskColumns: string =
+        specType === 'capture' ? captureColumns : materializationsColumns;
+
+    const columns = taskColumns.concat(',connector_tag_id');
+
+    const data = await supabaseClient
+        .from(TABLES.LIVE_SPECS_EXT)
+        .select(columns)
+        .eq('connector_tag_id', connectorTagId)
+        .eq('spec_type', specType)
+        .then(handleSuccess<T>, handleFailure);
+
+    return data;
+};
+
 export {
     getLiveSpecs_captures,
     getLiveSpecs_collections,
     getLiveSpecs_materializations,
+    getLiveSpecsByConnectorId,
 };

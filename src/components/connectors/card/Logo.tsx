@@ -2,9 +2,10 @@ import { Cable } from '@mui/icons-material';
 
 interface Props {
     imageSrc: string | null | undefined;
+    maxHeight?: number;
 }
 
-function ConnectorCardLogo({ imageSrc }: Props) {
+function ConnectorLogo({ imageSrc, maxHeight }: Props) {
     if (imageSrc) {
         return (
             <img
@@ -13,7 +14,7 @@ function ConnectorCardLogo({ imageSrc }: Props) {
                 alt=""
                 style={{
                     width: 'auto',
-                    maxHeight: 75,
+                    maxHeight: maxHeight ?? 75,
                     padding: '0 1rem',
                 }}
             />
@@ -23,4 +24,4 @@ function ConnectorCardLogo({ imageSrc }: Props) {
     }
 }
 
-export default ConnectorCardLogo;
+export default ConnectorLogo;
