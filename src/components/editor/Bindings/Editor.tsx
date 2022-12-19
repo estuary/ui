@@ -1,7 +1,9 @@
 import { Refresh, Terminal } from '@mui/icons-material';
 import {
     Box,
+    Checkbox,
     CircularProgress,
+    FormControlLabel,
     IconButton,
     Skeleton,
     Stack,
@@ -16,17 +18,21 @@ import MessageWithLink from 'components/content/MessageWithLink';
 import DiscoveredSchemaCommands from 'components/editor/Bindings/SchemaEditCommands/DiscoveredSchema';
 import ExistingSchemaCommands from 'components/editor/Bindings/SchemaEditCommands/ExistingSchema';
 import BindingsTabs, { tabProps } from 'components/editor/Bindings/Tabs';
-import {
-    useEditorStore_id,
-    useEditorStore_persistedDraftId,
-} from 'components/editor/Store/hooks';
+import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import ButtonWithPopper from 'components/shared/ButtonWithPopper';
 import { isEmpty } from 'lodash';
 import { ReactNode, useEffect, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import ReactJson from 'react-json-view';
+import { useLocalStorage } from 'react-use';
+import getInferredSchema from 'services/schema-inference';
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
+import { Schema } from 'types';
+import {
+    getStoredGatewayAuthConfig,
+    LocalStorageKeys,
+} from 'utils/localStorage-utils';
 
 interface Props {
     loading: boolean;
@@ -68,12 +74,12 @@ const evaluateCollectionData = async (
 };
 
 function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
+    const intl = useIntl();
     const theme = useTheme();
     const jsonTheme =
         theme.palette.mode === 'dark' ? 'bright' : 'bright:inverted';
 
     // Draft Editor Store
-    const draftId = useEditorStore_id();
     const persistedDraftId = useEditorStore_persistedDraftId();
 
     // Resource Config Store
@@ -83,23 +89,53 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
     const [collectionData, setCollectionData] = useState<
         CollectionData | null | undefined
     >(null);
+    const [inferredSchema, setInferredSchema] = useState<
+        Schema | null | undefined
+    >(null);
     const [schemaUpdated, setSchemaUpdated] = useState<boolean>(true);
     const [schemaUpdateErrored, setSchemaUpdateErrored] =
         useState<boolean>(false);
 
+    const [gatewayConfig] = useLocalStorage(
+        LocalStorageKeys.GATEWAY,
+        getStoredGatewayAuthConfig()
+    );
+
     useEffect(() => {
         if (currentCollection) {
-            evaluateCollectionData(
-                persistedDraftId ?? draftId,
-                currentCollection
-            ).then(
+            if (gatewayConfig?.gateway_url) {
+                getInferredSchema(gatewayConfig, currentCollection).then(
+                    (response) => {
+                        setInferredSchema(
+                            !isEmpty(response.schema) ? response.schema : null
+                        );
+
+                        console.log('success', response);
+                    },
+                    (error) => {
+                        setInferredSchema(
+                            error?.code === 404 ? null : undefined
+                        );
+
+                        console.log('failure', error);
+                    }
+                );
+            }
+
+            evaluateCollectionData(persistedDraftId, currentCollection).then(
                 (response) => setCollectionData(response),
                 () => setCollectionData(undefined)
             );
         } else {
             setCollectionData(null);
         }
-    }, [setCollectionData, currentCollection, draftId, persistedDraftId]);
+    }, [
+        setCollectionData,
+        setInferredSchema,
+        currentCollection,
+        gatewayConfig?.gateway_url,
+        persistedDraftId,
+    ]);
 
     const handlers = {
         updateSchema: () => {
@@ -107,7 +143,7 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                 setSchemaUpdated(false);
 
                 evaluateCollectionData(
-                    persistedDraftId ?? draftId,
+                    persistedDraftId,
                     currentCollection
                 ).then(
                     (response) => {
@@ -159,7 +195,7 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                 </AlertBox>
                             ) : null}
 
-                            {persistedDraftId || draftId ? (
+                            {persistedDraftId ? (
                                 <Box
                                     sx={{
                                         display: 'flex',
@@ -217,13 +253,23 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                             )}
 
                             {collectionData ? (
-                                <ReactJson
-                                    quotesOnKeys={false}
-                                    src={collectionData.spec}
-                                    theme={jsonTheme}
-                                    displayObjectSize={false}
-                                    displayDataTypes={false}
-                                />
+                                <>
+                                    <ReactJson
+                                        quotesOnKeys={false}
+                                        src={collectionData.spec}
+                                        theme={jsonTheme}
+                                        displayObjectSize={false}
+                                        displayDataTypes={false}
+                                    />
+
+                                    <FormControlLabel
+                                        disabled={!inferredSchema}
+                                        control={<Checkbox />}
+                                        label={intl.formatMessage({
+                                            id: 'workflows.collectionSelector.cta.schemaInference',
+                                        })}
+                                    />
+                                </>
                             ) : (
                                 <BindingsEditorSchemaSkeleton />
                             )}
