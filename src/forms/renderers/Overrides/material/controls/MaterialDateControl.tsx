@@ -25,7 +25,7 @@
 */
 import {
     ControlProps,
-    isDateTimeControl,
+    isDateControl,
     RankedTester,
     rankWith,
 } from '@jsonforms/core';
@@ -36,63 +36,34 @@ import {
 import { withJsonFormsControlProps } from '@jsonforms/react';
 import EventIcon from '@mui/icons-material/Event';
 import { Box, Hidden, IconButton, Popover, Stack } from '@mui/material';
-import {
-    LocalizationProvider,
-    StaticDateTimePicker,
-} from '@mui/x-date-pickers';
+import { LocalizationProvider, StaticDatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { formatRFC3339 } from 'date-fns';
+import { format } from 'date-fns';
 import {
     bindPopover,
     bindTrigger,
     usePopupState,
 } from 'material-ui-popup-state/hooks';
 import { useIntl } from 'react-intl';
+import { Patterns } from 'types/jsonforms';
 
 const INVALID_DATE = 'Invalid Date';
-const TIMEZONE_OFFSET = new RegExp('([+-][0-9]{2}:[0-9]{2})$');
-const TIMEZONE_OFFSET_REPLACEMENT = 'Z';
 
-// This is SUPER customized
-// Customizations:
-//  1. Use Static Date Time Picker
-//      We stopped using the MUI DateTimePicker and switched to the static one
-//      This allows us to format the input only when the user is using the date
-//      picker. The original approach would try to format the input on every keystroke
-//      and it made it difficult to edit.
-//  2. Use Date Fns
-//      We already have a date format library so DayJS was not needed. Also, it
-//      tries REALLY hard to understand what a user is meaning and will basically
-//      work around almost anything you type and give you a date back. Example:
-//      if a user types "2020" into the input then DayJS immedietly will format that to
-//      something like "2020-01-01T01:00:00Z"
-//  3. Mess with data format
-//      We always want to send back an actual "Z" with this input and never send
-//      back an actual time zone offset. To accomplish this we just mess with the
-//      value onChange. However, to make sure when a user opens the DateTimePicker
-//      it opens to their selection we need to feed the data back into the picker.
-//      This requires that we remove the "Z" (that we inject) before opening the picker
-//      otherwise the picker will try to adjust the timezone again.
-
-export const Custom_MaterialDateTimeControl = (props: ControlProps) => {
+// This is pretty customized
+//  Look at MaterialDateTimeControl for extra notes
+//  as this is based on that but made to support Date Picker
+export const Custom_MaterialDateControl = (props: ControlProps) => {
     const { data, id, visible, enabled, path, handleChange, label } = props;
 
     const intl = useIntl();
     const popupState = usePopupState({
         variant: 'popover',
-        popupId: `date-time-picker-${id}`,
+        popupId: `date-picker-${id}`,
     });
 
-    // We have a special handler that formats the date so that
-    //  it can handle if there was an error formatting, always
-    //  use RFC3339, replace the seconds with 'OO'
-    //  and replace the TZ Offset with an actual "Z"
     const formatDate = (value: Date) => {
         try {
-            return formatRFC3339(value).replace(
-                TIMEZONE_OFFSET,
-                TIMEZONE_OFFSET_REPLACEMENT
-            );
+            return format(value, Patterns.date);
         } catch (e: unknown) {
             return INVALID_DATE;
         }
@@ -112,13 +83,6 @@ export const Custom_MaterialDateTimeControl = (props: ControlProps) => {
         return handleChange(path, keyboardInput);
     };
 
-    // We need to remove the Z here so that the date time picker
-    //  can open up to the proper date time but not try to adjust
-    //  it with the local timezone offset
-    const dateTimePickerValue = data
-        ? data.replace(TIMEZONE_OFFSET_REPLACEMENT, '')
-        : null;
-
     return (
         <Hidden xsUp={!visible}>
             <Stack
@@ -132,7 +96,7 @@ export const Custom_MaterialDateTimeControl = (props: ControlProps) => {
                     <IconButton
                         aria-label={intl.formatMessage(
                             {
-                                id: 'dateTimePicker.button.ariaLabel',
+                                id: 'datePicker.button.ariaLabel',
                             },
                             {
                                 label,
@@ -157,14 +121,13 @@ export const Custom_MaterialDateTimeControl = (props: ControlProps) => {
                     }}
                 >
                     <LocalizationProvider dateAdapter={AdapterDateFns}>
-                        <StaticDateTimePicker
+                        <StaticDatePicker
                             ignoreInvalidInputs
                             disableMaskedInput
                             displayStaticWrapperAs="desktop"
                             openTo="day"
-                            ampm={false}
                             disabled={!enabled}
-                            value={dateTimePickerValue}
+                            value={data}
                             onChange={onChange}
                             onAccept={popupState.close}
                             closeOnSelect={true}
@@ -179,9 +142,9 @@ export const Custom_MaterialDateTimeControl = (props: ControlProps) => {
     );
 };
 
-export const materialDateTimeControlTester: RankedTester = rankWith(
+export const materialDateControlTester: RankedTester = rankWith(
     10,
-    isDateTimeControl
+    isDateControl
 );
 
-export default withJsonFormsControlProps(Custom_MaterialDateTimeControl);
+export default withJsonFormsControlProps(Custom_MaterialDateControl);
