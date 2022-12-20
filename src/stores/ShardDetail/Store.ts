@@ -216,12 +216,14 @@ export const getInitialState = (
             const defaultTaskShardDetail = {
                 messageId: ShardStatusMessageIds.NONE,
                 color: defaultStatusColor,
+                shard: null,
             };
 
             if (taskShards.length > 0) {
-                const statusIndicators = taskShards.map((shard) =>
-                    evaluateTaskShardStatus(shard, defaultStatusColor)
-                );
+                const statusIndicators = taskShards.map((shard) => ({
+                    ...evaluateTaskShardStatus(shard, defaultStatusColor),
+                    shard,
+                }));
 
                 return statusIndicators.length > 0
                     ? statusIndicators

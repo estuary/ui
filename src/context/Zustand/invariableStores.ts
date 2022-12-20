@@ -20,6 +20,9 @@ const invariableStores = {
     [ShardDetailStoreNames.MATERIALIZATION]: createShardDetailStore(
         ShardDetailStoreNames.MATERIALIZATION
     ),
+    [ShardDetailStoreNames.COLLECTION]: createShardDetailStore(
+        ShardDetailStoreNames.COLLECTION
+    ),
 
     // Editor Store
     [EditorStoreNames.CAPTURE]: createEditorStore(EditorStoreNames.CAPTURE),

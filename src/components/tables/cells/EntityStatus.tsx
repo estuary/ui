@@ -8,22 +8,27 @@ import {
     useShardDetail_getTaskStatusColor,
     useShardDetail_shards,
 } from 'stores/ShardDetail/hooks';
-import { ShardStatusColor, TaskShardDetails } from 'stores/ShardDetail/types';
+import {
+    ShardStatusColor,
+    ShardStatusMessageIds,
+    TaskShardDetailsWithShard,
+} from 'stores/ShardDetail/types';
 
 interface Props {
     name: string;
+    hideIfNone: boolean;
 }
 
 const indicatorSize = 16;
 
-function EntityStatus({ name }: Props) {
+function EntityStatus({ name, hideIfNone = false }: Props) {
     const theme = useTheme();
 
     const defaultStatusColor: ShardStatusColor =
         theme.palette.mode === 'dark' ? '#EEF8FF' : '#04192A';
 
     const [taskShardDetails, setTaskShardDetails] = useState<
-        TaskShardDetails[]
+        TaskShardDetailsWithShard[]
     >([]);
     const [compositeStatusColor, setCompositeStatusColor] =
         useState<ShardStatusColor>(defaultStatusColor);
@@ -38,7 +43,7 @@ function EntityStatus({ name }: Props) {
     useEffect(() => {
         const taskShards: Shard[] = getTaskShards(name, shards);
 
-        const shardDetails: TaskShardDetails[] = getTaskShardDetails(
+        const shardDetails: TaskShardDetailsWithShard[] = getTaskShardDetails(
             taskShards,
             defaultStatusColor
         );
@@ -65,59 +70,72 @@ function EntityStatus({ name }: Props) {
         defaultStatusColor,
     ]);
 
-    return (
-        <Tooltip
-            title={taskShardDetails.map((shard, index) => (
-                <Box
-                    key={`${index}-shard-status-tooltip`}
-                    sx={{ display: 'flex', alignItems: 'center' }}
-                >
-                    <span
-                        style={{
-                            height: 12,
-                            width: 12,
-                            marginRight: 4,
-                            border: shard.disabled
-                                ? `solid 2px ${shard.color}`
-                                : 0,
-                            backgroundColor: shard.disabled ? '' : shard.color,
-                            borderRadius: 50,
-                            display: 'inline-block',
-                            verticalAlign: 'middle',
-                        }}
-                    />
-
-                    <Typography
-                        variant="caption"
-                        sx={{ display: 'inline-block' }}
+    if (
+        hideIfNone &&
+        taskShardDetails.every(
+            (details) => details.messageId === ShardStatusMessageIds.NONE
+        )
+    ) {
+        return null;
+    } else {
+        return (
+            <Tooltip
+                title={taskShardDetails.map((shard, index) => (
+                    <Box
+                        key={`${index}-shard-status-tooltip`}
+                        sx={{ display: 'flex', alignItems: 'center' }}
                     >
-                        <FormattedMessage id={shard.messageId} />
-                    </Typography>
-                </Box>
-            ))}
-            placement="bottom-start"
-        >
-            <span
-                style={{
-                    height: indicatorSize,
-                    width: indicatorSize,
-                    minWidth: indicatorSize,
-                    maxWidth: indicatorSize,
-                    minHeight: indicatorSize,
-                    maxHeight: indicatorSize,
+                        <span
+                            style={{
+                                height: 12,
+                                width: 12,
+                                marginRight: 4,
+                                border: shard.disabled
+                                    ? `solid 2px ${shard.color}`
+                                    : 0,
+                                backgroundColor: shard.disabled
+                                    ? ''
+                                    : shard.color,
+                                borderRadius: 50,
+                                display: 'inline-block',
+                                verticalAlign: 'middle',
+                            }}
+                        />
 
-                    marginRight: 12,
-                    border: taskDisabled
-                        ? `solid 2px ${compositeStatusColor}`
-                        : 0,
-                    backgroundColor: taskDisabled ? '' : compositeStatusColor,
-                    borderRadius: 50,
-                    display: 'inline-block',
-                    verticalAlign: 'middle',
-                }}
-            />
-        </Tooltip>
-    );
+                        <Typography
+                            variant="caption"
+                            sx={{ display: 'inline-block' }}
+                        >
+                            <FormattedMessage id={shard.messageId} />
+                        </Typography>
+                    </Box>
+                ))}
+                placement="bottom-start"
+            >
+                <span
+                    style={{
+                        height: indicatorSize,
+                        width: indicatorSize,
+                        minWidth: indicatorSize,
+                        maxWidth: indicatorSize,
+                        minHeight: indicatorSize,
+                        maxHeight: indicatorSize,
+
+                        marginRight: 12,
+                        border: taskDisabled
+                            ? `solid 2px ${compositeStatusColor}`
+                            : 0,
+                        backgroundColor: taskDisabled
+                            ? ''
+                            : compositeStatusColor,
+                        borderRadius: 50,
+                        display: 'inline-block',
+                        verticalAlign: 'middle',
+                    }}
+                />
+            </Tooltip>
+        );
+    }
 }
 
 export default EntityStatus;

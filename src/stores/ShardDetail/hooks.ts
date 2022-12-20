@@ -10,6 +10,8 @@ const storeName = (entityType: Entity): ShardDetailStoreNames => {
             return ShardDetailStoreNames.CAPTURE;
         case 'materialization':
             return ShardDetailStoreNames.MATERIALIZATION;
+        case 'collection':
+            return ShardDetailStoreNames.COLLECTION;
         default: {
             throw new Error('Invalid ShardDetail store name');
         }

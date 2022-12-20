@@ -6,7 +6,9 @@ import ExpandDetails from 'components/tables/cells/ExpandDetails';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import DetailsPanel from 'components/tables/Details/DetailsPanel';
 import { getEntityTableRowSx } from 'context/Theme';
-import { useState } from 'react';
+import useShardsList from 'hooks/useShardsList';
+import { useEffect, useState } from 'react';
+import { useShardDetail_setShards } from 'stores/ShardDetail/hooks';
 
 interface RowProps {
     row: CollectionQueryWithStats;
@@ -55,6 +57,7 @@ function Row({ row, showEntityStatus }: RowProps) {
                 <EntityName
                     name={row.catalog_name}
                     showEntityStatus={showEntityStatus}
+                    hideEntityStatusIfNoShards
                 />
 
                 {/*                <Bytes
@@ -100,6 +103,17 @@ function Row({ row, showEntityStatus }: RowProps) {
 }
 
 function Rows({ data, showEntityStatus }: RowsProps) {
+    // Shard Detail Store
+    const setShards = useShardDetail_setShards();
+
+    const { data: shardsData } = useShardsList(data);
+
+    useEffect(() => {
+        if (shardsData && shardsData.shards.length > 0) {
+            setShards(shardsData.shards);
+        }
+    }, [setShards, shardsData]);
+
     return (
         <>
             {data.map((row) => (

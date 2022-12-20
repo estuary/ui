@@ -51,6 +51,7 @@ function CollectionsTable() {
                     setColumnToSort={setColumnToSort}
                     header="collectionsTable.title"
                     filterLabel="collectionsTable.filterLabel"
+                    showEntityStatus
                     selectableTableStoreName={SelectTableStoreNames.COLLECTION}
                 />
             </TableHydrator>

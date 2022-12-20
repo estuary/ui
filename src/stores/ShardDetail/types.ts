@@ -23,6 +23,10 @@ export interface TaskShardDetails {
     disabled?: boolean;
 }
 
+export interface TaskShardDetailsWithShard extends TaskShardDetails {
+    shard: Shard | null;
+}
+
 export interface ShardDetails {
     id: string | undefined;
     errors: string[] | undefined;
@@ -38,7 +42,7 @@ export interface ShardDetailStore {
     getTaskShardDetails: (
         taskShards: Shard[],
         defaultStatusColor: ShardStatusColor
-    ) => TaskShardDetails[];
+    ) => TaskShardDetailsWithShard[];
     getTaskStatusColor: (
         taskShardDetails: TaskShardDetails[],
         defaultStatusColor: ShardStatusColor
