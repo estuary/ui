@@ -706,6 +706,10 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.schemaEdit.existingCollection.command1': `flowctl draft select --id {draftId}`,
     'workflows.collectionSelector.schemaEdit.existingCollection.command2': `flowctl catalog draft --name {catalogName} && flowctl draft develop`,
     'workflows.collectionSelector.schemaEdit.existingCollection.command3': `flowctl draft author --source <flow_catalog_file_location>`,
+
+    'workflows.collectionSelector.schemaInference.header': `Review Collection Schema Changes`,
+    'workflows.collectionSelector.schemaInference.message': `The difference between the current collection schema and the inferred schema is highlighted below.`,
+    'workflows.collectionSelector.schemaInference.cta.continue': `Apply Inferred Schema`,
 };
 
 const ShardStatus: ResolvedIntlConfig['messages'] = {

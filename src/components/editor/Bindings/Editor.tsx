@@ -8,6 +8,7 @@ import {
     Skeleton,
     Stack,
     Typography,
+    useMediaQuery,
     useTheme,
 } from '@mui/material';
 import { getDraftSpecsByCatalogName } from 'api/draftSpecs';
@@ -15,9 +16,11 @@ import { getLiveSpecsByCatalogName } from 'api/liveSpecsExt';
 import { BindingsEditorSchemaSkeleton } from 'components/collection/CollectionSkeletons';
 import ResourceConfig from 'components/collection/ResourceConfig';
 import MessageWithLink from 'components/content/MessageWithLink';
+import InferredSchemaDialog from 'components/editor/Bindings/InferredSchemaDialog';
 import DiscoveredSchemaCommands from 'components/editor/Bindings/SchemaEditCommands/DiscoveredSchema';
 import ExistingSchemaCommands from 'components/editor/Bindings/SchemaEditCommands/ExistingSchema';
 import BindingsTabs, { tabProps } from 'components/editor/Bindings/Tabs';
+import { DEFAULT_HEIGHT } from 'components/editor/MonacoEditor';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import ButtonWithPopper from 'components/shared/ButtonWithPopper';
@@ -79,6 +82,8 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
     const jsonTheme =
         theme.palette.mode === 'dark' ? 'bright' : 'bright:inverted';
 
+    const belowMd = useMediaQuery(theme.breakpoints.down('md'));
+
     // Draft Editor Store
     const persistedDraftId = useEditorStore_persistedDraftId();
 
@@ -89,11 +94,15 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
     const [collectionData, setCollectionData] = useState<
         CollectionData | null | undefined
     >(null);
+
+    const [schemaUpdated, setSchemaUpdated] = useState<boolean>(true);
+    const [schemaUpdateErrored, setSchemaUpdateErrored] =
+        useState<boolean>(false);
+
     const [inferredSchema, setInferredSchema] = useState<
         Schema | null | undefined
     >(null);
-    const [schemaUpdated, setSchemaUpdated] = useState<boolean>(true);
-    const [schemaUpdateErrored, setSchemaUpdateErrored] =
+    const [openSchemaInferenceDialog, setSchemaInferenceDialogOpen] =
         useState<boolean>(false);
 
     const [gatewayConfig] = useLocalStorage(
@@ -161,6 +170,11 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                     }
                 );
             }
+        },
+        openInferredSchemaDialog: (event: React.MouseEvent<HTMLElement>) => {
+            event.preventDefault();
+
+            setSchemaInferenceDialogOpen(true);
         },
     };
 
@@ -262,12 +276,34 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                         displayDataTypes={false}
                                     />
 
+                                    {inferredSchema ? (
+                                        <InferredSchemaDialog
+                                            catalogName={currentCollection}
+                                            originalSchema={collectionData.spec}
+                                            inferredSchema={inferredSchema}
+                                            open={openSchemaInferenceDialog}
+                                            setOpen={
+                                                setSchemaInferenceDialogOpen
+                                            }
+                                            height={
+                                                belowMd ? DEFAULT_HEIGHT : 600
+                                            }
+                                        />
+                                    ) : (
+                                        <AlertBox severity="warning">
+                                            No data
+                                        </AlertBox>
+                                    )}
+
                                     <FormControlLabel
                                         disabled={!inferredSchema}
                                         control={<Checkbox />}
                                         label={intl.formatMessage({
                                             id: 'workflows.collectionSelector.cta.schemaInference',
                                         })}
+                                        onClick={
+                                            handlers.openInferredSchemaDialog
+                                        }
                                     />
                                 </>
                             ) : (
