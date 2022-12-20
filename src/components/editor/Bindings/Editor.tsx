@@ -20,6 +20,7 @@ import InferredSchemaDialog from 'components/editor/Bindings/InferredSchemaDialo
 import DiscoveredSchemaCommands from 'components/editor/Bindings/SchemaEditCommands/DiscoveredSchema';
 import ExistingSchemaCommands from 'components/editor/Bindings/SchemaEditCommands/ExistingSchema';
 import BindingsTabs, { tabProps } from 'components/editor/Bindings/Tabs';
+import { CollectionData } from 'components/editor/Bindings/types';
 import { DEFAULT_HEIGHT } from 'components/editor/MonacoEditor';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
@@ -41,11 +42,6 @@ interface Props {
     loading: boolean;
     skeleton: ReactNode;
     readOnly?: boolean;
-}
-
-interface CollectionData {
-    spec: any;
-    belongsToDraft: boolean;
 }
 
 const evaluateCollectionData = async (
@@ -268,29 +264,24 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
 
                             {collectionData ? (
                                 <>
-                                    <ReactJson
-                                        quotesOnKeys={false}
-                                        src={collectionData.spec}
-                                        theme={jsonTheme}
-                                        displayObjectSize={false}
-                                        displayDataTypes={false}
-                                    />
-
                                     {inferredSchema ? (
                                         <InferredSchemaDialog
                                             catalogName={currentCollection}
-                                            originalSchema={collectionData.spec}
+                                            collectionData={collectionData}
                                             inferredSchema={inferredSchema}
                                             open={openSchemaInferenceDialog}
                                             setOpen={
                                                 setSchemaInferenceDialogOpen
+                                            }
+                                            setCollectionData={
+                                                setCollectionData
                                             }
                                             height={
                                                 belowMd ? DEFAULT_HEIGHT : 600
                                             }
                                         />
                                     ) : (
-                                        <AlertBox severity="warning">
+                                        <AlertBox severity="warning" short>
                                             No data
                                         </AlertBox>
                                     )}
@@ -304,6 +295,14 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                         onClick={
                                             handlers.openInferredSchemaDialog
                                         }
+                                    />
+
+                                    <ReactJson
+                                        quotesOnKeys={false}
+                                        src={collectionData.spec}
+                                        theme={jsonTheme}
+                                        displayObjectSize={false}
+                                        displayDataTypes={false}
                                     />
                                 </>
                             ) : (

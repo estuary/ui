@@ -130,6 +130,7 @@ export interface LiveSpecsExtQuery_ByCatalogName {
     catalog_name: string;
     spec_type: string;
     spec: any;
+    last_pub_id: string;
 }
 
 const getLiveSpecsByCatalogName = async (
@@ -138,7 +139,7 @@ const getLiveSpecsByCatalogName = async (
 ) => {
     const data = await supabaseClient
         .from(TABLES.LIVE_SPECS_EXT)
-        .select(`catalog_name,spec_type,spec`)
+        .select(`catalog_name,spec_type,spec,last_pub_id`)
         .eq('catalog_name', catalogName)
         .eq('spec_type', specType)
         .then(handleSuccess<LiveSpecsExtQuery_ByCatalogName>, handleFailure);
