@@ -12,7 +12,6 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
-import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 import { useCallback, useMemo } from 'react';
 import { CustomEvents } from 'services/logrocket';
@@ -131,10 +130,6 @@ function useDiscoverCapture(
     const resourceConfigHasErrors =
         useResourceConfig_resourceConfigErrorsExist();
     const resetCollections = useResourceConfig_resetConfigAndCollections();
-
-    const endpointConfigErrorFlag = editWorkflow
-        ? endpointConfigErrorsExist
-        : endpointConfigErrorsExist || isEmpty(endpointConfigData);
 
     const storeDiscoveredCollections = useCallback(
         async (
@@ -302,7 +297,7 @@ function useDiscoverCapture(
 
             if (
                 detailsFormsHasErrors ||
-                endpointConfigErrorFlag ||
+                endpointConfigErrorsExist ||
                 resourceConfigHasErrors
             ) {
                 return setFormState({
@@ -386,7 +381,7 @@ function useDiscoverCapture(
             detailsFormsHasErrors,
             editWorkflow,
             endpointConfigData,
-            endpointConfigErrorFlag,
+            endpointConfigErrorsExist,
             endpointSchema,
             entityName,
             imageConnectorId,
