@@ -1,9 +1,8 @@
 import {
-    endOfMonth,
     endOfWeek,
-    endOfYesterday,
-    formatISO,
+    format,
     startOfMonth,
+    startOfToday,
     startOfWeek,
     startOfYesterday,
     subMonths,
@@ -24,6 +23,15 @@ export type StatsFilter =
     | 'thisWeek'
     | 'lastMonth'
     | 'thisMonth';
+
+// This will format the date so that it just gets the month, day, year, and hour
+//  We do not need the full minute/house/offset because the backend is not saving those
+export const formatToUTC = (date: any) =>
+    format(
+        date,
+        // addMinutes(date, date.getTimezoneOffset()),
+        "yyyy-MM-dd' 'HH':00:00+00'"
+    );
 
 // TODO (stats) add support for which stats columns each entity wants
 //  Right now all tables run the same query even though they only need
@@ -58,41 +66,42 @@ const getStatsByName = (names: string[], filter?: StatsFilter) => {
     //  with ranges or with exact equals. The backend is storing stats
     //  at the earliest timestamp for each grain so we could use an eq
     switch (filter) {
+        // Day Range
         case 'today':
             queryBuilder = queryBuilder
-                .gte('ts', formatISO(endOfYesterday()))
-                .eq('grain', 'hourly');
+                .eq('ts', formatToUTC(startOfToday()))
+                .eq('grain', 'daily');
             break;
         case 'yesterday':
             queryBuilder = queryBuilder
-                .gte('ts', formatISO(startOfYesterday()))
-                .lte('ts', formatISO(endOfYesterday()))
+                .eq('ts', formatToUTC(startOfYesterday()))
                 .eq('grain', 'daily');
             break;
 
+        // Week Range
         case 'thisWeek':
             queryBuilder = queryBuilder
-                .gte('ts', formatISO(startOfWeek(today)))
-                .lte('ts', formatISO(endOfWeek(today)))
+                .gte('ts', formatToUTC(startOfWeek(today)))
+                .lte('ts', formatToUTC(endOfWeek(today)))
                 .eq('grain', 'daily');
             break;
         case 'lastWeek':
             queryBuilder = queryBuilder
-                .gte('ts', formatISO(startOfWeek(lastWeek)))
-                .lte('ts', formatISO(endOfWeek(lastWeek)))
+                .gte('ts', formatToUTC(startOfWeek(lastWeek)))
+                .lte('ts', formatToUTC(endOfWeek(lastWeek)))
                 .eq('grain', 'daily');
             break;
 
+        // Month Range
         case 'thisMonth':
             queryBuilder = queryBuilder
-                .gte('ts', formatISO(startOfMonth(today)))
-                .lte('ts', formatISO(endOfMonth(today)))
+                .eq('ts', formatToUTC(startOfMonth(today)))
                 .eq('grain', 'monthly');
+
             break;
         case 'lastMonth':
             queryBuilder = queryBuilder
-                .gte('ts', formatISO(startOfMonth(lastMonth)))
-                .lte('ts', formatISO(endOfMonth(lastMonth)))
+                .eq('ts', formatToUTC(startOfMonth(lastMonth)))
                 .eq('grain', 'monthly');
             break;
 
