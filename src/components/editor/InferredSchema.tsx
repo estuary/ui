@@ -24,7 +24,10 @@ import {
 } from 'components/editor/MonacoEditor';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
-import { monacoEditor } from 'context/Theme';
+import {
+    monacoEditorHeaderBackground,
+    monacoEditorWidgetBackground,
+} from 'context/Theme';
 import { isEmpty, isEqual } from 'lodash';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -284,7 +287,8 @@ function InferredSchema({
                     sx={{
                         p: 1,
                         minHeight: toolbarHeight,
-                        backgroundColor: monacoEditor.editorHeaderBackground,
+                        backgroundColor:
+                            monacoEditorHeaderBackground[theme.palette.mode],
                     }}
                 >
                     <Stack
@@ -331,7 +335,9 @@ function InferredSchema({
                         sx={{
                             p: 1,
                             backgroundColor:
-                                monacoEditor.editorWidgetBackground,
+                                monacoEditorWidgetBackground[
+                                    theme.palette.mode
+                                ],
                         }}
                     >
                         {loading ? (

@@ -62,11 +62,6 @@ export const slate = {
     800: '#04192A',
 };
 
-export const monacoEditor = {
-    editorHeaderBackground: '#121212',
-    editorWidgetBackground: '#252526',
-};
-
 // Status Colors
 export type SemanticColor = '#40B763' | '#F5D75E' | '#CA3B55' | '#4FD6FF';
 
@@ -255,6 +250,16 @@ export const alertBackground = {
     dark: semiTransparentBackgroundIntensified.dark,
 };
 export const connectorCardLogoBackground = 'rgba(172, 199, 220, 0.30)';
+
+export const monacoEditorHeaderBackground = {
+    light: slate[50],
+    dark: '#121212',
+};
+
+export const monacoEditorWidgetBackground = {
+    light: 'white',
+    dark: '#252526',
+};
 
 export const codeBackground = {
     light: slate[50],
