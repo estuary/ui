@@ -16,6 +16,7 @@ import {
 import { createDraftSpec, modifyDraftSpec } from 'api/draftSpecs';
 import { getLiveSpecsByCatalogName } from 'api/liveSpecsExt';
 import { BindingsEditorSchemaSkeleton } from 'components/collection/CollectionSkeletons';
+import MessageWithLink from 'components/content/MessageWithLink';
 import { CollectionData } from 'components/editor/Bindings/types';
 import {
     DEFAULT_HEIGHT,
@@ -32,6 +33,7 @@ import getInferredSchema, {
     InferSchemaResponse,
 } from 'services/schema-inference';
 import { stringifyJSON } from 'services/stringify';
+import { CallSupabaseResponse } from 'services/supabase';
 import { Schema } from 'types';
 import {
     getStoredGatewayAuthConfig,
@@ -84,6 +86,35 @@ const handleInferredSchemaFailure = (
     setLoading(false);
 };
 
+const processDraftSpecResponse = (
+    draftSpecResponse: CallSupabaseResponse<any>,
+    schemaUpdateErrored: boolean,
+    setSchemaUpdateErrored: Dispatch<SetStateAction<boolean>>,
+    setLoading: Dispatch<SetStateAction<boolean>>,
+    setCollectionData: Dispatch<
+        SetStateAction<CollectionData | null | undefined>
+    >
+) => {
+    if (draftSpecResponse.error) {
+        setSchemaUpdateErrored(true);
+        setLoading(false);
+    } else if (draftSpecResponse.data && draftSpecResponse.data.length > 0) {
+        if (schemaUpdateErrored) {
+            setSchemaUpdateErrored(false);
+        }
+
+        setCollectionData({
+            spec: draftSpecResponse.data[0].spec,
+            belongsToDraft: true,
+        });
+
+        setLoading(false);
+    } else {
+        setSchemaUpdateErrored(true);
+        setLoading(false);
+    }
+};
+
 function InferredSchema({
     catalogName,
     collectionData,
@@ -100,6 +131,9 @@ function InferredSchema({
     const [inferredSchema, setInferredSchema] = useState<
         Schema | null | undefined
     >(null);
+
+    const [schemaUpdateErrored, setSchemaUpdateErrored] =
+        useState<boolean>(false);
 
     const [gatewayConfig] = useLocalStorage(
         LocalStorageKeys.GATEWAY,
@@ -132,6 +166,7 @@ function InferredSchema({
         refreshInferredSchema: (event: React.MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
+            setSchemaUpdateErrored(false);
             setLoading(true);
 
             if (gatewayConfig?.gateway_url) {
@@ -158,19 +193,24 @@ function InferredSchema({
             event.preventDefault();
 
             if (persistedDraftId && inferredSchema) {
+                setSchemaUpdateErrored(false);
                 setLoading(true);
 
                 if (collectionData.belongsToDraft) {
-                    modifyDraftSpec(inferredSchema, {
-                        draft_id: persistedDraftId,
-                        catalog_name: catalogName,
-                    }).then(
-                        () => setLoading(false),
-                        (error) => {
-                            setLoading(false);
-
-                            console.log('schema update error', error);
+                    const draftSpecResponse = await modifyDraftSpec(
+                        inferredSchema,
+                        {
+                            draft_id: persistedDraftId,
+                            catalog_name: catalogName,
                         }
+                    );
+
+                    processDraftSpecResponse(
+                        draftSpecResponse,
+                        schemaUpdateErrored,
+                        setSchemaUpdateErrored,
+                        setLoading,
+                        setCollectionData
                     );
                 } else {
                     const liveSpecsResponse = await getLiveSpecsByCatalogName(
@@ -179,16 +219,10 @@ function InferredSchema({
                     );
 
                     if (liveSpecsResponse.error) {
+                        setSchemaUpdateErrored(true);
                         setLoading(false);
-
-                        console.log(
-                            'live spec call failed',
-                            liveSpecsResponse.error
-                        );
                     } else if (liveSpecsResponse.data) {
                         const { last_pub_id } = liveSpecsResponse.data[0];
-
-                        console.log('expected pub', last_pub_id);
 
                         const draftSpecResponse = await createDraftSpec(
                             persistedDraftId,
@@ -198,26 +232,17 @@ function InferredSchema({
                             last_pub_id
                         );
 
-                        if (draftSpecResponse.error) {
-                            setLoading(false);
-
-                            console.log(
-                                'draft spec call failed',
-                                draftSpecResponse.error
-                            );
-                        } else if (
-                            draftSpecResponse.data &&
-                            draftSpecResponse.data.length > 0
-                        ) {
-                            setCollectionData({
-                                spec: draftSpecResponse.data[0].spec,
-                                belongsToDraft: true,
-                            });
-
-                            setLoading(false);
-                        }
+                        processDraftSpecResponse(
+                            draftSpecResponse,
+                            schemaUpdateErrored,
+                            setSchemaUpdateErrored,
+                            setLoading,
+                            setCollectionData
+                        );
                     }
                 }
+            } else {
+                setSchemaUpdateErrored(true);
             }
         },
     };
@@ -240,7 +265,21 @@ function InferredSchema({
                 <FormattedMessage id="workflows.collectionSelector.schemaInference.message.schemaDiff" />
             </Typography>
 
-            <Box sx={{ mb: 3 }}>
+            {schemaUpdateErrored ? (
+                <AlertBox
+                    severity="error"
+                    short
+                    title={
+                        <Typography>
+                            <FormattedMessage id="workflows.collectionSelector.schemaInference.alert.generalError.header" />
+                        </Typography>
+                    }
+                >
+                    <MessageWithLink messageID="workflows.collectionSelector.schemaInference.alert.patchService.message" />
+                </AlertBox>
+            ) : null}
+
+            <Box sx={{ my: 3 }}>
                 <Box
                     sx={{
                         p: 1,
@@ -322,7 +361,7 @@ function InferredSchema({
                                 }
                             >
                                 <Typography>
-                                    <FormattedMessage id="workflows.collectionSelector.schemaInference.alert.generalError.message" />
+                                    <FormattedMessage id="workflows.collectionSelector.schemaInference.alert.inferenceService.message" />
                                 </Typography>
                             </AlertBox>
                         )}
@@ -340,7 +379,8 @@ function InferredSchema({
                 <Button
                     disabled={
                         !inferredSchema ||
-                        isEqual(collectionData.spec, inferredSchema)
+                        isEqual(collectionData.spec, inferredSchema) ||
+                        loading
                     }
                     onClick={handlers.updateServer}
                 >

@@ -713,7 +713,10 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.schemaInference.alert.noDocuments.header': `No Documents Found`,
     'workflows.collectionSelector.schemaInference.alert.noDocuments.message': `We were unable to find any documents in this collection. Consequently, could not infer the shape of its data.`,
     'workflows.collectionSelector.schemaInference.alert.generalError.header': `Server Error`,
-    'workflows.collectionSelector.schemaInference.alert.generalError.message': `An error was encountered while inferring the shape of the documents in this collection.`,
+    'workflows.collectionSelector.schemaInference.alert.inferenceService.message': `This is not something you did wrong. An error was encountered while inferring the shape of the documents in this collection.`,
+    'workflows.collectionSelector.schemaInference.alert.patchService.message': `This is not something you did wrong. An error was encountered while applying the inferred schema. Please try again and, if the error persists {docLink}`,
+    'workflows.collectionSelector.schemaInference.alert.patchService.message.docLink': `contact support`,
+    'workflows.collectionSelector.schemaInference.alert.patchService.message.docPath': `mailto:support@estuary.dev`,
     'workflows.collectionSelector.schemaInference.cta.continue': `Apply Inferred Schema`,
 };
 
