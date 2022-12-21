@@ -61,10 +61,15 @@ const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
 
 const handleInferredSchemaSuccess = (
     response: InferSchemaResponse,
+    collectionSchema: Schema,
     setInferredSchema: Dispatch<SetStateAction<Schema | null | undefined>>,
     setLoading: Dispatch<SetStateAction<boolean>>
 ) => {
-    setInferredSchema(!isEmpty(response.schema) ? response.schema : null);
+    setInferredSchema(
+        !isEmpty(response.schema)
+            ? { ...collectionSchema, schema: response.schema }
+            : null
+    );
 
     setLoading(false);
 };
@@ -107,6 +112,7 @@ function InferredSchema({
                 (response) =>
                     handleInferredSchemaSuccess(
                         response,
+                        collectionData.spec,
                         setInferredSchema,
                         setLoading
                     ),
@@ -133,6 +139,7 @@ function InferredSchema({
                     (response) =>
                         handleInferredSchemaSuccess(
                             response,
+                            collectionData.spec,
                             setInferredSchema,
                             setLoading
                         ),
@@ -238,7 +245,7 @@ function InferredSchema({
                     sx={{
                         p: 1,
                         minHeight: toolbarHeight,
-                        backgroundColor: '#121212',
+                        backgroundColor: monacoEditor.editorHeaderBackground,
                     }}
                 >
                     <Stack

@@ -63,6 +63,7 @@ export const slate = {
 };
 
 export const monacoEditor = {
+    editorHeaderBackground: '#121212',
     editorWidgetBackground: '#252526',
 };
 
