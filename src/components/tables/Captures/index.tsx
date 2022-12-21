@@ -1,12 +1,13 @@
 import { Box } from '@mui/material';
 import { getLiveSpecs_captures } from 'api/liveSpecsExt';
-import Rows, { tableColumns } from 'components/tables/Captures/Rows';
+import Rows from 'components/tables/Captures/Rows';
 import EntityTable from 'components/tables/EntityTable';
 import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
 import TableHydrator from 'stores/Tables/Hydrator';
 import useTableState from '../hooks';
 import StatsHydrator from './StatsHydrator';
+import useCaptureColumns from './useCaptureColumns';
 
 function CapturesTable() {
     const {
@@ -19,6 +20,7 @@ function CapturesTable() {
         columnToSort,
         setColumnToSort,
     } = useTableState('updated_at', 'desc');
+    const tableColumns = useCaptureColumns();
 
     const query = useMemo(() => {
         return getLiveSpecs_captures(pagination, searchQuery, [

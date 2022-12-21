@@ -4,8 +4,10 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
+import { useTenantDetails } from 'context/fetcher/Tenant';
 import { useZustandStore } from 'context/Zustand/provider';
 import { SelectTableStoreNames } from 'stores/names';
+import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     header: string;
@@ -13,6 +15,9 @@ interface Props {
 }
 
 const StatsHeader = ({ header, selectableTableStoreName }: Props) => {
+    const tenantDetails = useTenantDetails();
+    const hasStats = hasLength(tenantDetails);
+
     const isValidating = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['query']['loading']
@@ -27,7 +32,7 @@ const StatsHeader = ({ header, selectableTableStoreName }: Props) => {
         <TableCell colSpan={2}>
             <DateFilter
                 header={header}
-                disabled={isValidating || queryCount === 0}
+                disabled={!hasStats || isValidating || queryCount === 0}
                 selectableTableStoreName={selectableTableStoreName}
             />
         </TableCell>

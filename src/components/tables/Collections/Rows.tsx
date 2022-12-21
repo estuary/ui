@@ -5,19 +5,20 @@ import EntityName from 'components/tables/cells/EntityName';
 import ExpandDetails from 'components/tables/cells/ExpandDetails';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import DetailsPanel from 'components/tables/Details/DetailsPanel';
+import { useTenantDetails } from 'context/fetcher/Tenant';
 import { getEntityTableRowSx } from 'context/Theme';
 import { useZustandStore } from 'context/Zustand/provider';
 import { useMemo, useState } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
+import { hasLength } from 'utils/misc-utils';
 import Bytes from '../cells/stats/Bytes';
 import Docs from '../cells/stats/Docs';
-import StatsHeader from '../cells/stats/Header';
-import { ColumnProps } from '../EntityTable';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
     StatsResponse,
 } from '../Store';
+import useCollectionColumns from './useCollectionColumns';
 
 interface RowProps {
     stats?: StatsResponse;
@@ -30,35 +31,10 @@ interface RowsProps {
     showEntityStatus: boolean;
 }
 
-export const tableColumns: ColumnProps[] = [
-    {
-        field: 'catalog_name',
-        headerIntlKey: 'entityTable.data.entity',
-    },
-    {
-        field: null,
-        renderHeader: (index, selectableTableStoreName) => {
-            return (
-                <StatsHeader
-                    key={`collection-statsHeader-${index}`}
-                    header="entityTable.stats.written"
-                    selectableTableStoreName={selectableTableStoreName}
-                />
-            );
-        },
-    },
-    {
-        field: 'updated_at',
-        headerIntlKey: 'entityTable.data.lastPublished',
-    },
-    {
-        field: null,
-        headerIntlKey: null,
-    },
-];
-
 function Row({ row, stats, showEntityStatus }: RowProps) {
     const theme = useTheme();
+    const tenantDetails = useTenantDetails();
+    const tableColumns = useCollectionColumns();
 
     const [detailsExpanded, setDetailsExpanded] = useState(false);
 
@@ -95,9 +71,13 @@ function Row({ row, stats, showEntityStatus }: RowProps) {
                     showEntityStatus={showEntityStatus}
                 />
 
-                <Bytes val={stats ? calculatedBytes : null} />
+                {hasLength(tenantDetails) ? (
+                    <>
+                        <Bytes val={stats ? calculatedBytes : null} />
 
-                <Docs val={stats ? calculatedDocs : null} />
+                        <Docs val={stats ? calculatedDocs : null} />
+                    </>
+                ) : null}
 
                 <TimeStamp time={row.updated_at} />
 

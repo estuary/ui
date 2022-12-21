@@ -1,12 +1,13 @@
 import { Box } from '@mui/material';
 import { getLiveSpecs_materializations } from 'api/liveSpecsExt';
 import EntityTable from 'components/tables/EntityTable';
-import Rows, { tableColumns } from 'components/tables/Materializations/Rows';
+import Rows from 'components/tables/Materializations/Rows';
 import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
 import TableHydrator from 'stores/Tables/Hydrator';
 import StatsHydrator from '../Captures/StatsHydrator';
 import useTableState from '../hooks';
+import useMaterializationColumns from './useMaterializationColumns';
 
 function MaterializationsTable() {
     const {
@@ -19,6 +20,7 @@ function MaterializationsTable() {
         columnToSort,
         setColumnToSort,
     } = useTableState('updated_at', 'desc');
+    const tableColumns = useMaterializationColumns();
 
     const query = useMemo(() => {
         return getLiveSpecs_materializations(pagination, searchQuery, [
