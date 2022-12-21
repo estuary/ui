@@ -27,10 +27,10 @@ import {
     useShardDetail_getTaskShards,
     useShardDetail_shards,
 } from 'stores/ShardDetail/hooks';
-import { EntityWithCreateWorkflow } from 'types';
+import { Entity } from 'types';
 
 interface Props {
-    entityType?: EntityWithCreateWorkflow;
+    entityType?: Entity;
 }
 
 const rowsPerPage = 3;

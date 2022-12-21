@@ -11,14 +11,9 @@ import { tableBorderSx } from 'context/Theme';
 interface Props {
     name: string;
     showEntityStatus: boolean;
-    hideEntityStatusIfNoShards?: boolean;
 }
 
-function EntityName({
-    name,
-    showEntityStatus,
-    hideEntityStatusIfNoShards = false,
-}: Props) {
+function EntityName({ name, showEntityStatus }: Props) {
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -36,12 +31,7 @@ function EntityName({
                     alignItems: 'center',
                 }}
             >
-                {showEntityStatus ? (
-                    <EntityStatus
-                        name={name}
-                        hideIfNone={hideEntityStatusIfNoShards}
-                    />
-                ) : null}
+                {showEntityStatus ? <EntityStatus name={name} /> : null}
 
                 <Typography
                     sx={

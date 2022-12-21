@@ -11,6 +11,7 @@ export enum ShardStatusMessageIds {
     STANDBY = 'shardStatus.standby',
     BACKFILL = 'shardStatus.backfill',
     DISABLED = 'shardStatus.disabled',
+    COLLECTION = 'shardStatus.basicCollection',
     NONE = 'shardStatus.none',
 }
 

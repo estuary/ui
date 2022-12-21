@@ -57,7 +57,6 @@ function Row({ row, showEntityStatus }: RowProps) {
                 <EntityName
                     name={row.catalog_name}
                     showEntityStatus={showEntityStatus}
-                    hideEntityStatusIfNoShards
                 />
 
                 {/*                <Bytes

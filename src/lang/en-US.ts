@@ -695,6 +695,7 @@ const ShardStatus: ResolvedIntlConfig['messages'] = {
     'shardStatus.standby': `PENDING`,
     'shardStatus.backfill': `PENDING`,
     'shardStatus.disabled': `DISABLED`,
+    'shardStatus.basicCollection': `Collection`,
     'shardStatus.none': `No shard status found.`,
 };
 
