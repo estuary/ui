@@ -61,7 +61,7 @@ const useShardsList = <T extends LiveSpecsExtBaseQuery>(specs: T[]) => {
             specs.length > 0
                 ? `shards-${
                       gatewayConfig?.gateway_url ?? '__missing_gateway_url__'
-                  }`
+                  }-${specs.map((spec) => spec.id).join('-')}`
                 : null,
             fetcher,
             {
