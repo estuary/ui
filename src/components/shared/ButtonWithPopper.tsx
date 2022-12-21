@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import { Button, SxProps, Theme } from '@mui/material';
 import PopperWrapper from 'components/shared/PopperWrapper';
 import { MouseEvent, ReactNode, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -7,9 +7,10 @@ interface Props {
     messageId: string;
     popper: ReactNode;
     startIcon?: ReactNode;
+    buttonSx?: SxProps<Theme>;
 }
 
-function ButtonWithPopper({ messageId, popper, startIcon }: Props) {
+function ButtonWithPopper({ messageId, popper, startIcon, buttonSx }: Props) {
     const [open, setOpen] = useState<boolean>(false);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -20,11 +21,7 @@ function ButtonWithPopper({ messageId, popper, startIcon }: Props) {
 
     return (
         <>
-            <Button
-                startIcon={startIcon}
-                onClick={togglePopper}
-                sx={{ mb: 0.5 }}
-            >
+            <Button startIcon={startIcon} onClick={togglePopper} sx={buttonSx}>
                 <FormattedMessage id={messageId} />
             </Button>
 

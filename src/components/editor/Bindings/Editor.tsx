@@ -1,9 +1,7 @@
-import { Refresh, Terminal } from '@mui/icons-material';
+import { DataObject, Refresh, Terminal } from '@mui/icons-material';
 import {
     Box,
-    Checkbox,
     CircularProgress,
-    FormControlLabel,
     IconButton,
     Skeleton,
     Stack,
@@ -16,27 +14,21 @@ import { getLiveSpecsByCatalogName } from 'api/liveSpecsExt';
 import { BindingsEditorSchemaSkeleton } from 'components/collection/CollectionSkeletons';
 import ResourceConfig from 'components/collection/ResourceConfig';
 import MessageWithLink from 'components/content/MessageWithLink';
-import InferredSchemaDialog from 'components/editor/Bindings/InferredSchemaDialog';
 import DiscoveredSchemaCommands from 'components/editor/Bindings/SchemaEditCommands/DiscoveredSchema';
 import ExistingSchemaCommands from 'components/editor/Bindings/SchemaEditCommands/ExistingSchema';
 import BindingsTabs, { tabProps } from 'components/editor/Bindings/Tabs';
 import { CollectionData } from 'components/editor/Bindings/types';
+import InferredSchema from 'components/editor/InferredSchema';
 import { DEFAULT_HEIGHT } from 'components/editor/MonacoEditor';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import ButtonWithPopper from 'components/shared/ButtonWithPopper';
+import { useEntityWorkflow } from 'context/Workflow';
 import { isEmpty } from 'lodash';
 import { ReactNode, useEffect, useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import ReactJson from 'react-json-view';
-import { useLocalStorage } from 'react-use';
-import getInferredSchema from 'services/schema-inference';
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
-import { Schema } from 'types';
-import {
-    getStoredGatewayAuthConfig,
-    LocalStorageKeys,
-} from 'utils/localStorage-utils';
 
 interface Props {
     loading: boolean;
@@ -73,7 +65,8 @@ const evaluateCollectionData = async (
 };
 
 function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
-    const intl = useIntl();
+    const workflow = useEntityWorkflow();
+
     const theme = useTheme();
     const jsonTheme =
         theme.palette.mode === 'dark' ? 'bright' : 'bright:inverted';
@@ -95,38 +88,8 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
     const [schemaUpdateErrored, setSchemaUpdateErrored] =
         useState<boolean>(false);
 
-    const [inferredSchema, setInferredSchema] = useState<
-        Schema | null | undefined
-    >(null);
-    const [openSchemaInferenceDialog, setSchemaInferenceDialogOpen] =
-        useState<boolean>(false);
-
-    const [gatewayConfig] = useLocalStorage(
-        LocalStorageKeys.GATEWAY,
-        getStoredGatewayAuthConfig()
-    );
-
     useEffect(() => {
         if (currentCollection) {
-            if (gatewayConfig?.gateway_url) {
-                getInferredSchema(gatewayConfig, currentCollection).then(
-                    (response) => {
-                        setInferredSchema(
-                            !isEmpty(response.schema) ? response.schema : null
-                        );
-
-                        console.log('success', response);
-                    },
-                    (error) => {
-                        setInferredSchema(
-                            error?.code === 404 ? null : undefined
-                        );
-
-                        console.log('failure', error);
-                    }
-                );
-            }
-
             evaluateCollectionData(persistedDraftId, currentCollection).then(
                 (response) => setCollectionData(response),
                 () => setCollectionData(undefined)
@@ -134,13 +97,7 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
         } else {
             setCollectionData(null);
         }
-    }, [
-        setCollectionData,
-        setInferredSchema,
-        currentCollection,
-        gatewayConfig?.gateway_url,
-        persistedDraftId,
-    ]);
+    }, [setCollectionData, currentCollection, persistedDraftId]);
 
     const handlers = {
         updateSchema: () => {
@@ -166,11 +123,6 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                     }
                 );
             }
-        },
-        openInferredSchemaDialog: (event: React.MouseEvent<HTMLElement>) => {
-            event.preventDefault();
-
-            setSchemaInferenceDialogOpen(true);
         },
     };
 
@@ -238,17 +190,46 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                     </Box>
 
                                     {collectionData ? (
-                                        <ButtonWithPopper
-                                            messageId="workflows.collectionSelector.cta.schemaEdit"
-                                            popper={
-                                                collectionData.belongsToDraft ? (
-                                                    <DiscoveredSchemaCommands />
-                                                ) : (
-                                                    <ExistingSchemaCommands />
-                                                )
-                                            }
-                                            startIcon={<Terminal />}
-                                        />
+                                        <Box>
+                                            {workflow ===
+                                            'capture_create' ? null : (
+                                                <ButtonWithPopper
+                                                    messageId="workflows.collectionSelector.cta.schemaInference"
+                                                    popper={
+                                                        <InferredSchema
+                                                            catalogName={
+                                                                currentCollection
+                                                            }
+                                                            collectionData={
+                                                                collectionData
+                                                            }
+                                                            setCollectionData={
+                                                                setCollectionData
+                                                            }
+                                                            height={
+                                                                belowMd
+                                                                    ? DEFAULT_HEIGHT
+                                                                    : 600
+                                                            }
+                                                        />
+                                                    }
+                                                    startIcon={<DataObject />}
+                                                    buttonSx={{ mr: 1 }}
+                                                />
+                                            )}
+
+                                            <ButtonWithPopper
+                                                messageId="workflows.collectionSelector.cta.schemaEdit"
+                                                popper={
+                                                    collectionData.belongsToDraft ? (
+                                                        <DiscoveredSchemaCommands />
+                                                    ) : (
+                                                        <ExistingSchemaCommands />
+                                                    )
+                                                }
+                                                startIcon={<Terminal />}
+                                            />
+                                        </Box>
                                     ) : (
                                         <Skeleton
                                             variant="rectangular"
@@ -263,48 +244,13 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                             )}
 
                             {collectionData ? (
-                                <>
-                                    {inferredSchema ? (
-                                        <InferredSchemaDialog
-                                            catalogName={currentCollection}
-                                            collectionData={collectionData}
-                                            inferredSchema={inferredSchema}
-                                            open={openSchemaInferenceDialog}
-                                            setOpen={
-                                                setSchemaInferenceDialogOpen
-                                            }
-                                            setCollectionData={
-                                                setCollectionData
-                                            }
-                                            height={
-                                                belowMd ? DEFAULT_HEIGHT : 600
-                                            }
-                                        />
-                                    ) : (
-                                        <AlertBox severity="warning" short>
-                                            No data
-                                        </AlertBox>
-                                    )}
-
-                                    <FormControlLabel
-                                        disabled={!inferredSchema}
-                                        control={<Checkbox />}
-                                        label={intl.formatMessage({
-                                            id: 'workflows.collectionSelector.cta.schemaInference',
-                                        })}
-                                        onClick={
-                                            handlers.openInferredSchemaDialog
-                                        }
-                                    />
-
-                                    <ReactJson
-                                        quotesOnKeys={false}
-                                        src={collectionData.spec}
-                                        theme={jsonTheme}
-                                        displayObjectSize={false}
-                                        displayDataTypes={false}
-                                    />
-                                </>
+                                <ReactJson
+                                    quotesOnKeys={false}
+                                    src={collectionData.spec}
+                                    theme={jsonTheme}
+                                    displayObjectSize={false}
+                                    displayDataTypes={false}
+                                />
                             ) : (
                                 <BindingsEditorSchemaSkeleton />
                             )}

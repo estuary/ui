@@ -683,7 +683,7 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.cta.delete': `Remove All`,
     'workflows.collectionSelector.cta.rediscover': `Refresh`,
     'workflows.collectionSelector.cta.schemaEdit': `CLI`,
-    'workflows.collectionSelector.cta.schemaInference': `Compare existing schema to inferred schema`,
+    'workflows.collectionSelector.cta.schemaInference': `Schema Inference`,
     'workflows.collectionSelector.error.title.missingCollectionSchema': `Failed to fetch collection schema`,
     'workflows.collectionSelector.header.collectionSchema': `Collection Schema`,
     'workflows.collectionSelector.label.discoveredCollections': `Discovered Collections`,
@@ -707,8 +707,13 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.schemaEdit.existingCollection.command2': `flowctl catalog draft --name {catalogName} && flowctl draft develop`,
     'workflows.collectionSelector.schemaEdit.existingCollection.command3': `flowctl draft author --source <flow_catalog_file_location>`,
 
-    'workflows.collectionSelector.schemaInference.header': `Review Collection Schema Changes`,
-    'workflows.collectionSelector.schemaInference.message': `The difference between the current collection schema and the inferred schema is highlighted below.`,
+    'workflows.collectionSelector.schemaInference.header': `Schema Inference`,
+    'workflows.collectionSelector.schemaInference.message': `Flow can help you tighten your collection schemas. It will review the documents in a collection and approximate the shape of your data.`,
+    'workflows.collectionSelector.schemaInference.message.schemaDiff': `The difference between the current collection schema and the inferred schema is highlighted below.`,
+    'workflows.collectionSelector.schemaInference.alert.noDocuments.header': `No Documents Found`,
+    'workflows.collectionSelector.schemaInference.alert.noDocuments.message': `We were unable to find any documents in this collection. Consequently, could not infer the shape of its data.`,
+    'workflows.collectionSelector.schemaInference.alert.generalError.header': `Server Error`,
+    'workflows.collectionSelector.schemaInference.alert.generalError.message': `An error was encountered while inferring the shape of the documents in this collection.`,
     'workflows.collectionSelector.schemaInference.cta.continue': `Apply Inferred Schema`,
 };
 

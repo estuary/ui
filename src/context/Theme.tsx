@@ -62,6 +62,10 @@ export const slate = {
     800: '#04192A',
 };
 
+export const monacoEditor = {
+    editorWidgetBackground: '#252526',
+};
+
 // Status Colors
 export type SemanticColor = '#40B763' | '#F5D75E' | '#CA3B55' | '#4FD6FF';
 
