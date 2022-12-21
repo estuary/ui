@@ -3,6 +3,7 @@ import { DataObject, Refresh } from '@mui/icons-material';
 import {
     Box,
     Button,
+    CircularProgress,
     IconButton,
     Stack,
     styled,
@@ -27,7 +28,9 @@ import { isEmpty, isEqual } from 'lodash';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useEffectOnce, useLocalStorage } from 'react-use';
-import getInferredSchema from 'services/schema-inference';
+import getInferredSchema, {
+    InferSchemaResponse,
+} from 'services/schema-inference';
 import { stringifyJSON } from 'services/stringify';
 import { Schema } from 'types';
 import {
@@ -56,6 +59,26 @@ const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
     },
 });
 
+const handleInferredSchemaSuccess = (
+    response: InferSchemaResponse,
+    setInferredSchema: Dispatch<SetStateAction<Schema | null | undefined>>,
+    setLoading: Dispatch<SetStateAction<boolean>>
+) => {
+    setInferredSchema(!isEmpty(response.schema) ? response.schema : null);
+
+    setLoading(false);
+};
+
+const handleInferredSchemaFailure = (
+    error: any,
+    setInferredSchema: Dispatch<SetStateAction<Schema | null | undefined>>,
+    setLoading: Dispatch<SetStateAction<boolean>>
+) => {
+    setInferredSchema(error?.code === 404 ? null : undefined);
+
+    setLoading(false);
+};
+
 function InferredSchema({
     catalogName,
     collectionData,
@@ -81,18 +104,18 @@ function InferredSchema({
     useEffectOnce(() => {
         if (gatewayConfig?.gateway_url) {
             getInferredSchema(gatewayConfig, catalogName).then(
-                (response) => {
-                    setInferredSchema(
-                        !isEmpty(response.schema) ? response.schema : null
-                    );
-
-                    setLoading(false);
-                },
-                (error) => {
-                    setInferredSchema(error?.code === 404 ? null : undefined);
-
-                    setLoading(false);
-                }
+                (response) =>
+                    handleInferredSchemaSuccess(
+                        response,
+                        setInferredSchema,
+                        setLoading
+                    ),
+                (error) =>
+                    handleInferredSchemaFailure(
+                        error,
+                        setInferredSchema,
+                        setLoading
+                    )
             );
         } else {
             setLoading(false);
@@ -100,6 +123,30 @@ function InferredSchema({
     });
 
     const handlers = {
+        refreshInferredSchema: (event: React.MouseEvent<HTMLElement>) => {
+            event.preventDefault();
+
+            setLoading(true);
+
+            if (gatewayConfig?.gateway_url) {
+                getInferredSchema(gatewayConfig, catalogName).then(
+                    (response) =>
+                        handleInferredSchemaSuccess(
+                            response,
+                            setInferredSchema,
+                            setLoading
+                        ),
+                    (error) =>
+                        handleInferredSchemaFailure(
+                            error,
+                            setInferredSchema,
+                            setLoading
+                        )
+                );
+            } else {
+                setLoading(false);
+            }
+        },
         updateServer: async (event: React.MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
@@ -210,9 +257,17 @@ function InferredSchema({
                             </Typography>
                         </CustomWidthTooltip>
 
-                        <IconButton disabled={loading}>
-                            <Refresh />
-                        </IconButton>
+                        {loading ? (
+                            <Box sx={{ px: 1, pt: 1 }}>
+                                <CircularProgress size="1.5rem" />
+                            </Box>
+                        ) : (
+                            <IconButton
+                                onClick={handlers.refreshInferredSchema}
+                            >
+                                <Refresh />
+                            </IconButton>
+                        )}
                     </Stack>
                 </Box>
 
