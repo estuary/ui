@@ -177,7 +177,7 @@ export const getInitialState = (
                     setHydrationErrorsExist(true);
                 } else if (data) {
                     if (data.length > 0) {
-                        const statsData = {};
+                        const statsData: StatsSchema = {};
                         data.forEach((datum) => {
                             const { catalog_name } = datum;
                             const currentStat = statsData[catalog_name];
