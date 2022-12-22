@@ -1,6 +1,7 @@
 import { Auth } from '@supabase/ui';
 import { usePreFetchData } from 'context/PreFetchData';
 import { ShardClient, ShardSelector } from 'data-plane-gateway';
+import LogRocket from 'logrocket';
 import { useMemo } from 'react';
 import { useLocalStorage } from 'react-use';
 import getGatewayAuthConfig from 'services/gateway-auth-config';
@@ -48,13 +49,22 @@ const useShardsList = <T extends LiveSpecsExtBaseQuery>(specs: T[]) => {
             .forEach((name) => taskSelector.task(name));
 
         const fetcher = (_url: string) => {
-            return shardClient.list(taskSelector).then((result) => {
-                const shards = result.unwrap();
+            return shardClient.list(taskSelector).then(
+                (result) => {
+                    const shards = result.unwrap();
 
-                return {
-                    shards: shards.length > 0 ? shards : [],
-                };
-            });
+                    return {
+                        shards: shards.length > 0 ? shards : [],
+                    };
+                },
+                (error: any) => {
+                    LogRocket.log('ShardsList : error : ', error);
+                    // TODO (shards) Need to pass back an error and then handle the response
+                    return {
+                        shards: [],
+                    };
+                }
+            );
         };
 
         return useSWR(
@@ -68,7 +78,11 @@ const useShardsList = <T extends LiveSpecsExtBaseQuery>(specs: T[]) => {
                 errorRetryInterval: INTERVAL / 2,
                 refreshInterval: INTERVAL,
                 revalidateOnFocus: false, // We're already refreshing and these status do not change often
-                onError: (error: string) => {
+                onError: (error: string | Error) => {
+                    if (typeof error === 'object') {
+                        return Promise.reject(error.message);
+                    }
+
                     if (
                         error.includes(ErrorFlags.TOKEN_INVALID) ||
                         error.includes(ErrorFlags.TOKEN_NOT_FOUND)
