@@ -339,6 +339,10 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
 
     'entityTable.stats.written': `Data Written`,
     'entityTable.stats.read': `Data Read`,
+    'entityTable.stats.docs': `{docCount} {docCount, plural,
+        one {doc}
+        other {docs}
+    }`,
 
     'entityTable.stats.error': `Failed to fetch stats.`,
     'entityTable.stats.filterMenu': `Stats for`,

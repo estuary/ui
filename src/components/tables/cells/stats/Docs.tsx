@@ -4,7 +4,7 @@ import {
     tableBorderSx,
 } from 'context/Theme';
 import { useMemo } from 'react';
-import { useIntl } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import readable from 'readable-numbers';
 
 interface Props {
@@ -48,7 +48,12 @@ const Docs = ({ read, val }: Props) => {
                                     : null,
                         }}
                     >
-                        {number} docs
+                        <FormattedMessage
+                            id="entityTable.stats.docs"
+                            values={{
+                                docCount: number,
+                            }}
+                        />
                     </Typography>
                 </Tooltip>
             </Box>
