@@ -2,6 +2,7 @@ import { createEditorStore } from 'components/editor/Store/create';
 import { createSelectableTableStore } from 'components/tables/Store';
 import { createFormStateStore } from 'stores/FormState/Store';
 import {
+    AdminStoreNames,
     EditorStoreNames,
     FormStateStoreNames,
     ResourceConfigStoreNames,
@@ -10,6 +11,7 @@ import {
 } from 'stores/names';
 import { createResourceConfigStore } from 'stores/ResourceConfig/Store';
 import { createShardDetailStore } from 'stores/ShardDetail/Store';
+import { createStorageMappingsStore } from 'stores/StorageMappings/Store';
 import { MessagePrefixes } from 'types';
 
 const invariableStores = {
@@ -71,6 +73,11 @@ const invariableStores = {
     ),
     [SelectTableStoreNames.MATERIALIZATION]: createSelectableTableStore(
         SelectTableStoreNames.MATERIALIZATION
+    ),
+
+    // Admin Storage Mappings
+    [AdminStoreNames.STORAGE_MAPPINGS]: createStorageMappingsStore(
+        AdminStoreNames.STORAGE_MAPPINGS
     ),
 };
 

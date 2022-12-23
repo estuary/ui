@@ -3,6 +3,7 @@ import AccessGrants from 'components/admin/AccessGrants';
 import AdminApi from 'components/admin/Api';
 import AdminConnectors from 'components/admin/Connectors';
 import AdminCookies from 'components/admin/Cookies';
+import StorageMappings from 'components/admin/StorageMappings';
 import CaptureCreate from 'components/capture/Create';
 import CaptureEdit from 'components/capture/Edit';
 import MaterializationCreate from 'components/materialization/Create';
@@ -22,6 +23,7 @@ import Home from 'pages/Home';
 import Materializations from 'pages/Materializations';
 import { Route, Routes } from 'react-router';
 import { EndpointConfigProvider } from 'stores/EndpointConfig';
+import StorageMappingsHydrator from 'stores/StorageMappings/Hydrator';
 import { isProduction } from 'utils/env-utils';
 import { authenticatedRoutes, unauthenticatedRoutes } from './routes';
 
@@ -154,6 +156,16 @@ const Authenticated = () => {
                         <Route
                             path={authenticatedRoutes.admin.cookies.path}
                             element={<AdminCookies />}
+                        />
+                        <Route
+                            path={
+                                authenticatedRoutes.admin.storageMappings.path
+                            }
+                            element={
+                                <StorageMappingsHydrator>
+                                    <StorageMappings />
+                                </StorageMappingsHydrator>
+                            }
                         />
                     </Route>
 

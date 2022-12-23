@@ -23,6 +23,11 @@ function AdminTabs() {
                 path: authenticatedRoutes.admin.accessGrants.fullPath,
             },
             {
+                label: 'admin.tabs.storageMappings',
+                icon: GroupIcon,
+                path: authenticatedRoutes.admin.storageMappings.fullPath,
+            },
+            {
                 label: 'admin.tabs.connectors',
                 icon: MediationIcon,
                 path: authenticatedRoutes.admin.connectors.fullPath,

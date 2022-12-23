@@ -53,6 +53,7 @@ export enum TABLES {
     PUBLICATION_SPECS_EXT = 'publication_specs_ext',
     PUBLICATIONS = 'publications',
     ROLE_GRANTS = 'role_grants',
+    STORAGE_MAPPINGS = 'storage_mappings',
     TASKS_BY_DAY = 'task_stats_by_day',
     TASKS_BY_HOUR = 'task_stats_by_hour',
     TASKS_BY_MINUTE = 'task_stats_by_minute',

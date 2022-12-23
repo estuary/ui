@@ -38,6 +38,10 @@ export enum ShardDetailStoreNames {
     COLLECTION = 'Collection-Shard-Detail',
 }
 
+export enum AdminStoreNames {
+    STORAGE_MAPPINGS = 'Storage-Mappings',
+}
+
 export type StoreName =
     | DetailsFormStoreNames
     | EditorStoreNames
@@ -45,4 +49,5 @@ export type StoreName =
     | FormStateStoreNames
     | ResourceConfigStoreNames
     | SelectTableStoreNames
-    | ShardDetailStoreNames;
+    | ShardDetailStoreNames
+    | AdminStoreNames;

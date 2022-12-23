@@ -171,6 +171,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.admin.api': `CLI - API`,
     'routeTitle.admin.connectors': `Connectors`,
     'routeTitle.admin.cookies': `Cookie Preferences`,
+    'routeTitle.admin.storageMappings': `Storage Mappings`,
     'routeTitle.captureCreate': `Create Capture`,
     'routeTitle.captureEdit': `Edit Capture`,
     'routeTitle.captures': `Captures`,
@@ -196,6 +197,7 @@ const BrowserTitles: ResolvedIntlConfig['messages'] = {
     'browserTitle.admin.api': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.api']}`,
     'browserTitle.admin.connectors': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.connectors']}`,
     'browserTitle.admin.cookies': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.cookies']}`,
+    'browserTitle.admin.storageMappings': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.storageMappings']}`,
     'browserTitle.captureCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureCreate']}`,
     'browserTitle.captureEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureEdit']}`,
     'browserTitle.captures': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captures']}`,
@@ -381,6 +383,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.tabs.connectors': `Connectors`,
     'admin.tabs.api': `CLI-API`,
     'admin.tabs.cookies': `Cookie Preferences`,
+    'admin.tabs.storageMappings': `Storage Mappings`,
 };
 
 const Welcome: ResolvedIntlConfig['messages'] = {
@@ -393,6 +396,16 @@ const AccessGrants: ResolvedIntlConfig['messages'] = {
     'accessGrantsTable.filterLabel': `Filter User or Object`,
     'accessGrants.message1': `No results found.`,
     'accessGrants.message2': `We couldn't find any results matching your search. Please try a different filter.`,
+};
+
+const StorageMappings: ResolvedIntlConfig['messages'] = {
+    'storageMappings.header': `Cloud Storage`,
+    'storageMappings.prefix.description': `The Flow prefix you want to configure`,
+    'storageMappings.provider.label': `Provider`,
+    'storageMappings.provider.description': `The provider (ex: S3, GCP) you are using`,
+    'storageMappings.bucket.label': `Bucket`,
+    'storageMappings.bucket.description': `The name of the bucket you have setup to store data in.`,
+    'storageMappings.lastUpdated.label': `Last Updated`,
 };
 
 const ConnectorsPage: ResolvedIntlConfig['messages'] = {
@@ -795,6 +808,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...Legal,
     ...Tenant,
     ...CustomRenderers,
+    ...StorageMappings,
 };
 
 export default enUSMessages;
