@@ -52,7 +52,7 @@ function DateFilter({ disabled, header, selectableTableStoreName }: Props) {
     };
 
     return (
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
             <Typography sx={{ whiteSpace: 'nowrap' }}>
                 <FormattedMessage id={header} />
             </Typography>
