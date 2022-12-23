@@ -170,12 +170,15 @@ export const getInitialState = (
                     ? statusIndicators
                     : [defaultTaskShardDetail];
             } else if (entityType === 'collection') {
+                const messageId = error
+                    ? ShardStatusMessageIds.NONE
+                    : ShardStatusMessageIds.COLLECTION;
+                const color = error ? defaultStatusColor : successMain;
+
                 return [
                     {
-                        messageId: error
-                            ? ShardStatusMessageIds.NONE
-                            : ShardStatusMessageIds.COLLECTION,
-                        color: error ? defaultStatusColor : successMain,
+                        messageId,
+                        color,
                         shard: null,
                     },
                 ];
