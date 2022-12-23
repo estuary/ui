@@ -152,6 +152,8 @@ export const getInitialState = (
                 : [];
         },
         getTaskShardDetails: (taskShards, defaultStatusColor) => {
+            const { error } = get();
+
             const defaultTaskShardDetail = {
                 messageId: ShardStatusMessageIds.NONE,
                 color: defaultStatusColor,
@@ -170,8 +172,10 @@ export const getInitialState = (
             } else if (entityType === 'collection') {
                 return [
                     {
-                        messageId: ShardStatusMessageIds.COLLECTION,
-                        color: successMain,
+                        messageId: error
+                            ? ShardStatusMessageIds.NONE
+                            : ShardStatusMessageIds.COLLECTION,
+                        color: error ? defaultStatusColor : successMain,
                         shard: null,
                     },
                 ];
