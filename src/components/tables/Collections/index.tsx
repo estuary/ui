@@ -63,6 +63,7 @@ function CollectionsTable() {
                         selectableTableStoreName={
                             SelectTableStoreNames.COLLECTION
                         }
+                        showEntityStatus
                     />
                 </StatsHydrator>
             </TableHydrator>

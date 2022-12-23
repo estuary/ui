@@ -11,6 +11,7 @@ export enum ShardStatusMessageIds {
     STANDBY = 'shardStatus.standby',
     BACKFILL = 'shardStatus.backfill',
     DISABLED = 'shardStatus.disabled',
+    COLLECTION = 'shardStatus.basicCollection',
     NONE = 'shardStatus.none',
 }
 
@@ -23,6 +24,10 @@ export interface TaskShardDetails {
     disabled?: boolean;
 }
 
+export interface TaskShardDetailsWithShard extends TaskShardDetails {
+    shard: Shard | null;
+}
+
 export interface ShardDetails {
     id: string | undefined;
     errors: string[] | undefined;
@@ -31,6 +36,8 @@ export interface ShardDetails {
 export interface ShardDetailStore {
     shards: Shard[];
     setShards: SetShards;
+    error: Error | string | null;
+    setError: (val: ShardDetailStore['error']) => void;
     getTaskShards: (
         catalogNamespace: string | undefined,
         shards: Shard[]
@@ -38,7 +45,7 @@ export interface ShardDetailStore {
     getTaskShardDetails: (
         taskShards: Shard[],
         defaultStatusColor: ShardStatusColor
-    ) => TaskShardDetails[];
+    ) => TaskShardDetailsWithShard[];
     getTaskStatusColor: (
         taskShardDetails: TaskShardDetails[],
         defaultStatusColor: ShardStatusColor
