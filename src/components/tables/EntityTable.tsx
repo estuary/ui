@@ -43,14 +43,19 @@ import {
     TableStatuses,
 } from 'types';
 import { getEmptyTableHeader, getEmptyTableMessage } from 'utils/table-utils';
-import DateFilter from './Filters/Date';
 import { RowSelectorProps } from './RowActions/types';
 
+export interface ColumnProps {
+    field: string | null;
+    headerIntlKey?: string | null;
+    renderHeader?: (
+        index: number,
+        storeName: SelectTableStoreNames
+    ) => ReactNode;
+}
+
 interface Props {
-    columns: {
-        field: string | null;
-        headerIntlKey: string | null;
-    }[];
+    columns: ColumnProps[];
     renderTableRows: (data: any, showEntityStatus: boolean) => ReactNode;
     setPagination: (data: any) => void;
     setSearchQuery: (data: any) => void;
@@ -61,7 +66,6 @@ interface Props {
     header: string;
     filterLabel: string;
     enableSelection?: boolean;
-    enableTimeFiltering?: boolean;
     rowSelectorProps?: RowSelectorProps;
     noExistingDataContentIds: TableIntlConfig;
     showEntityStatus?: boolean;
@@ -94,7 +98,6 @@ function EntityTable({
     header,
     filterLabel,
     enableSelection,
-    enableTimeFiltering,
     rowSelectorProps,
     showEntityStatus = false,
     selectableTableStoreName,
@@ -288,8 +291,6 @@ function EntityTable({
                         <Title header={header} />
                     )}
 
-                    {enableTimeFiltering ? <DateFilter /> : null}
-
                     <Box
                         sx={{
                             display: 'flex',
@@ -326,6 +327,13 @@ function EntityTable({
                                 }}
                             >
                                 {columns.map((column, index) => {
+                                    if (column.renderHeader) {
+                                        return column.renderHeader(
+                                            index,
+                                            selectableTableStoreName
+                                        );
+                                    }
+
                                     return (
                                         <TableCell
                                             key={`${column.field}-${index}`}
