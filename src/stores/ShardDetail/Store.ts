@@ -128,6 +128,16 @@ export const getInitialState = (
                 'Shard List Set'
             );
         },
+        error: null,
+        setError: (error) => {
+            set(
+                produce((state) => {
+                    state.error = error;
+                }),
+                false,
+                'Shard List Error Set'
+            );
+        },
         getTaskShards: (catalogNamespace, shards) => {
             return catalogNamespace && shards.length > 0
                 ? shards.filter(({ spec }) => {
@@ -170,7 +180,10 @@ export const getInitialState = (
             }
         },
         getTaskStatusColor: (taskShardDetails, defaultStatusColor) => {
-            if (taskShardDetails.length === 1) {
+            const { error } = get();
+            if (error) {
+                return defaultStatusColor;
+            } else if (taskShardDetails.length === 1) {
                 return taskShardDetails[0].color;
             } else if (taskShardDetails.length > 1) {
                 const statusMessageIds: ShardStatusMessageIds[] =

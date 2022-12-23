@@ -36,6 +36,24 @@ export const useShardDetail_setShards = () => {
     );
 };
 
+export const useShardDetail_error = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<ShardDetailStore, ShardDetailStore['error']>(
+        storeName(entityType),
+        (state) => state.error
+    );
+};
+
+export const useShardDetail_setError = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<ShardDetailStore, ShardDetailStore['setError']>(
+        storeName(entityType),
+        (state) => state.setError
+    );
+};
+
 export const useShardDetail_getTaskShards = () => {
     const entityType = useEntityType();
 

@@ -36,6 +36,8 @@ export interface ShardDetails {
 export interface ShardDetailStore {
     shards: Shard[];
     setShards: SetShards;
+    error: Error | string | null;
+    setError: (val: ShardDetailStore['error']) => void;
     getTaskShards: (
         catalogNamespace: string | undefined,
         shards: Shard[]
