@@ -11,7 +11,10 @@ import { useZustandStore } from 'context/Zustand/provider';
 import useShardsList from 'hooks/useShardsList';
 import { useEffect, useMemo, useState } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
-import { useShardDetail_setShards } from 'stores/ShardDetail/hooks';
+import {
+    useShardDetail_setError,
+    useShardDetail_setShards,
+} from 'stores/ShardDetail/hooks';
 import { hasLength } from 'utils/misc-utils';
 import Bytes from '../cells/stats/Bytes';
 import Docs from '../cells/stats/Docs';
@@ -108,14 +111,20 @@ function Row({ row, stats, showEntityStatus }: RowProps) {
 function Rows({ data, showEntityStatus }: RowsProps) {
     // Shard Detail Store
     const setShards = useShardDetail_setShards();
+    const setShardsError = useShardDetail_setError();
 
     const { data: shardsData } = useShardsList(data);
 
+    // Collection is the only entity (as of Dec 2022) that actually checks
+    //  the error. This is because the default color for Collections is
+    //  success and the other ones default to nothing.
     useEffect(() => {
-        if (shardsData && shardsData.shards.length > 0) {
+        if (shardsData?.error) {
+            setShardsError(shardsData.error);
+        } else if (shardsData && shardsData.shards.length > 0) {
             setShards(shardsData.shards);
         }
-    }, [setShards, shardsData]);
+    }, [setShards, setShardsError, shardsData]);
 
     const selectTableStoreName = SelectTableStoreNames.COLLECTION;
 

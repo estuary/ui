@@ -3,6 +3,7 @@ import { Shard } from 'data-plane-gateway/types/shard_client';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
+    useShardDetail_error,
     useShardDetail_getTaskShardDetails,
     useShardDetail_getTaskShards,
     useShardDetail_getTaskStatusColor,
@@ -33,11 +34,14 @@ function EntityStatus({ name }: Props) {
     const [taskDisabled, setTaskDisabled] = useState<boolean>(false);
 
     const shards = useShardDetail_shards();
+    const shardError = useShardDetail_error();
 
     const getTaskShards = useShardDetail_getTaskShards();
     const getTaskShardDetails = useShardDetail_getTaskShardDetails();
     const getTaskStatusColor = useShardDetail_getTaskStatusColor();
 
+    // TODO (shards) the details and color should be put into the store
+    //  similar to stats so we can control this stuff from within the store
     useEffect(() => {
         const taskShards: Shard[] = getTaskShards(name, shards);
 
@@ -58,6 +62,7 @@ function EntityStatus({ name }: Props) {
         setCompositeStatusColor(statusColor);
         setTaskDisabled(disabled);
     }, [
+        shardError, // Need to rerun this if there is an error
         getTaskShards,
         getTaskShardDetails,
         setTaskShardDetails,
