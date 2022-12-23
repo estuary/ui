@@ -56,6 +56,7 @@ export enum TABLES {
     TASKS_BY_DAY = 'task_stats_by_day',
     TASKS_BY_HOUR = 'task_stats_by_hour',
     TASKS_BY_MINUTE = 'task_stats_by_minute',
+    TENANTS = 'tenants',
     USER_GRANTS = 'user_grants',
 }
 

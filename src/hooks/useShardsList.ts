@@ -1,5 +1,5 @@
 import { Auth } from '@supabase/ui';
-import { usePreFetchData } from 'context/PreFetchData';
+import { useGrantDetails } from 'context/fetcher/GrantDetails';
 import { ShardClient, ShardSelector } from 'data-plane-gateway';
 import LogRocket from 'logrocket';
 import { useMemo } from 'react';
@@ -23,7 +23,7 @@ const INTERVAL = 30000;
 
 const useShardsList = <T extends LiveSpecsExtBaseQuery>(specs: T[]) => {
     const { session } = Auth.useUser();
-    const { grantDetails } = usePreFetchData();
+    const grantDetails = useGrantDetails();
 
     const [gatewayConfig, setGatewayConfig] = useLocalStorage(
         LocalStorageKeys.GATEWAY,

@@ -86,6 +86,16 @@ export interface JoinedAppliedDirective extends AppliedDirective<any> {
     ['directives.spec->>type']: undefined;
 }
 
+export interface Tenants {
+    id: string;
+    tasks_quota: number;
+    collections_quota: number;
+    detail: string;
+    tenant: string;
+    created_at: string;
+    updated_at: string;
+}
+
 export interface CatalogStats {
     catalog_name: string;
     grain: string;

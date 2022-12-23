@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
 import { Auth } from '@supabase/ui';
-import { usePreFetchData } from 'context/PreFetchData';
+import { useGrantDetails } from 'context/fetcher/GrantDetails';
 import {
     JournalClient,
     JournalSelector,
@@ -23,7 +23,7 @@ enum ErrorFlags {
 
 const useJournalsForCollection = (collectionName: string) => {
     const { session } = Auth.useUser();
-    const { grantDetails } = usePreFetchData();
+    const grantDetails = useGrantDetails();
 
     const [gatewayConfig, setGatewayConfig] = useLocalStorage(
         LocalStorageKeys.GATEWAY,
