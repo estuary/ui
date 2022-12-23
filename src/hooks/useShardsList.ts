@@ -55,13 +55,15 @@ const useShardsList = <T extends LiveSpecsExtBaseQuery>(specs: T[]) => {
 
                     return {
                         shards: shards.length > 0 ? shards : [],
+                        error: null,
                     };
                 },
                 (error: any) => {
                     LogRocket.log('ShardsList : error : ', error);
-                    // TODO (shards) Need to pass back an error and then handle the response
+
                     return {
                         shards: [],
+                        error: error.message ?? error,
                     };
                 }
             );
