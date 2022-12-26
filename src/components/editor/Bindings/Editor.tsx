@@ -1,12 +1,12 @@
 import { DataObject, Refresh, Terminal } from '@mui/icons-material';
 import {
     Box,
+    Button,
     CircularProgress,
     IconButton,
     Skeleton,
     Stack,
     Typography,
-    useMediaQuery,
     useTheme,
 } from '@mui/material';
 import { getDraftSpecsByCatalogName } from 'api/draftSpecs';
@@ -16,10 +16,9 @@ import ResourceConfig from 'components/collection/ResourceConfig';
 import MessageWithLink from 'components/content/MessageWithLink';
 import DiscoveredSchemaCommands from 'components/editor/Bindings/SchemaEditCommands/DiscoveredSchema';
 import ExistingSchemaCommands from 'components/editor/Bindings/SchemaEditCommands/ExistingSchema';
+import InferredSchemaDialog from 'components/editor/Bindings/SchemaInference/InferredSchemaDialog';
 import BindingsTabs, { tabProps } from 'components/editor/Bindings/Tabs';
 import { CollectionData } from 'components/editor/Bindings/types';
-import InferredSchema from 'components/editor/InferredSchema';
-import { DEFAULT_HEIGHT } from 'components/editor/MonacoEditor';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import ButtonWithPopper from 'components/shared/ButtonWithPopper';
@@ -71,8 +70,6 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
     const jsonTheme =
         theme.palette.mode === 'dark' ? 'bright' : 'bright:inverted';
 
-    const belowMd = useMediaQuery(theme.breakpoints.down('md'));
-
     // Draft Editor Store
     const persistedDraftId = useEditorStore_persistedDraftId();
 
@@ -86,6 +83,9 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
 
     const [schemaUpdated, setSchemaUpdated] = useState<boolean>(true);
     const [schemaUpdateErrored, setSchemaUpdateErrored] =
+        useState<boolean>(false);
+
+    const [openSchemaInferenceDialog, setOpenSchemaInferenceDialog] =
         useState<boolean>(false);
 
     useEffect(() => {
@@ -123,6 +123,11 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                     }
                 );
             }
+        },
+        openSchemaInferenceDialog: (event: React.MouseEvent<HTMLElement>) => {
+            event.preventDefault();
+
+            setOpenSchemaInferenceDialog(true);
         },
     };
 
@@ -193,29 +198,34 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                         <Box>
                                             {workflow ===
                                             'capture_create' ? null : (
-                                                <ButtonWithPopper
-                                                    messageId="workflows.collectionSelector.cta.schemaInference"
-                                                    popper={
-                                                        <InferredSchema
-                                                            catalogName={
-                                                                currentCollection
-                                                            }
-                                                            collectionData={
-                                                                collectionData
-                                                            }
-                                                            setCollectionData={
-                                                                setCollectionData
-                                                            }
-                                                            height={
-                                                                belowMd
-                                                                    ? DEFAULT_HEIGHT
-                                                                    : 600
-                                                            }
-                                                        />
-                                                    }
-                                                    startIcon={<DataObject />}
-                                                    buttonSx={{ mr: 1 }}
-                                                />
+                                                <>
+                                                    <Button
+                                                        startIcon={
+                                                            <DataObject />
+                                                        }
+                                                        sx={{ mr: 1 }}
+                                                        onClick={
+                                                            handlers.openSchemaInferenceDialog
+                                                        }
+                                                    >
+                                                        <FormattedMessage id="workflows.collectionSelector.cta.schemaInference" />
+                                                    </Button>
+
+                                                    <InferredSchemaDialog
+                                                        collectionData={
+                                                            collectionData
+                                                        }
+                                                        open={
+                                                            openSchemaInferenceDialog
+                                                        }
+                                                        setOpen={
+                                                            setOpenSchemaInferenceDialog
+                                                        }
+                                                        setCollectionData={
+                                                            setCollectionData
+                                                        }
+                                                    />
+                                                </>
                                             )}
 
                                             <ButtonWithPopper
@@ -231,10 +241,21 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                             />
                                         </Box>
                                     ) : (
-                                        <Skeleton
-                                            variant="rectangular"
-                                            width={75}
-                                        />
+                                        <Stack direction="row">
+                                            {workflow ===
+                                            'capture_create' ? null : (
+                                                <Skeleton
+                                                    variant="rectangular"
+                                                    width={125}
+                                                    sx={{ mr: 1 }}
+                                                />
+                                            )}
+
+                                            <Skeleton
+                                                variant="rectangular"
+                                                width={75}
+                                            />
+                                        </Stack>
                                     )}
                                 </Box>
                             ) : (
