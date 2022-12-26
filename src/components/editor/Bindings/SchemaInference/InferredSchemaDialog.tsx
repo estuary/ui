@@ -20,10 +20,6 @@ import { createDraftSpec, modifyDraftSpec } from 'api/draftSpecs';
 import { getLiveSpecsByCatalogName } from 'api/liveSpecsExt';
 import { BindingsEditorSchemaSkeleton } from 'components/collection/CollectionSkeletons';
 import MessageWithLink from 'components/content/MessageWithLink';
-import {
-    handleInferredSchemaFailure,
-    handleInferredSchemaSuccess,
-} from 'components/editor/Bindings/SchemaInference/service-utils';
 import { CollectionData } from 'components/editor/Bindings/types';
 import { DEFAULT_HEIGHT } from 'components/editor/MonacoEditor';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
@@ -35,11 +31,13 @@ import {
     secondaryButtonBackground,
     secondaryButtonHoverBackground,
 } from 'context/Theme';
-import { isEqual } from 'lodash';
+import { isEmpty, isEqual } from 'lodash';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useEffectOnce, useLocalStorage } from 'react-use';
-import getInferredSchema from 'services/schema-inference';
+import getInferredSchema, {
+    InferSchemaResponse,
+} from 'services/schema-inference';
 import { stringifyJSON } from 'services/stringify';
 import { CallSupabaseResponse } from 'services/supabase';
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
@@ -69,6 +67,31 @@ const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
         overflowWrap: 'break-word',
     },
 });
+
+const handleInferredSchemaSuccess = (
+    response: InferSchemaResponse,
+    collectionSchema: Schema,
+    setInferredSchema: Dispatch<SetStateAction<Schema | null | undefined>>,
+    setLoading: Dispatch<SetStateAction<boolean>>
+) => {
+    setInferredSchema(
+        !isEmpty(response.schema)
+            ? { ...collectionSchema, schema: response.schema }
+            : null
+    );
+
+    setLoading(false);
+};
+
+const handleInferredSchemaFailure = (
+    error: any,
+    setInferredSchema: Dispatch<SetStateAction<Schema | null | undefined>>,
+    setLoading: Dispatch<SetStateAction<boolean>>
+) => {
+    setInferredSchema(error?.code === 404 ? null : undefined);
+
+    setLoading(false);
+};
 
 const processDraftSpecResponse = (
     draftSpecResponse: CallSupabaseResponse<any>,
