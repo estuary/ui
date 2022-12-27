@@ -10,6 +10,7 @@ import {
     StyledEngineProvider,
 } from '@mui/material';
 import AlertBox from 'components/shared/AlertBox';
+import InferredProperties from 'components/shared/InferredProperties';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import PageContainer from 'components/shared/PageContainer';
 import { jsonFormsPadding } from 'context/Theme';
@@ -18,9 +19,6 @@ import { setDefaultsValidator } from 'services/ajv';
 import { custom_generateDefaultUISchema } from 'services/jsonforms';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import { defaultOptions } from 'services/jsonforms/shared';
-import * as flowWeb from 'flow-web';
-
-
 
 const TITLE = 'Test JSON Forms';
 
@@ -62,11 +60,6 @@ const TestJsonForms = () => {
         }
     };
     
-    const testWASM = async () => {
-        //const flowWeb = await import('flow-web');
-        flowWeb.yeet();
-    }
-
     return (
         <PageContainer pageTitleProps={{ header: TITLE }}>
             <Stack
@@ -88,10 +81,11 @@ const TestJsonForms = () => {
                 />
 
                 <Button onClick={parseSchema}>Render</Button>
-                <Button onClick={testWASM}>Test WASM</Button>
 
-                <Divider flexItem>Form will render below this line</Divider>
+                <Divider flexItem>Inferred properties</Divider>
             </Stack>
+            <InferredProperties schema={ schema } />
+            <Divider flexItem>Form will render below this line</Divider>
             <WrapperWithHeader header={<>Fake Form Header</>}>
                 {schema !== null && uiSchema !== null ? (
                     <StyledEngineProvider injectFirst>

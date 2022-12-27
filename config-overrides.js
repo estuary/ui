@@ -46,8 +46,8 @@ module.exports = function override(config) {
     const wasmExtensionRegExp = /\.wasm$/;
     config.resolve.extensions.push('.wasm');
     config.experiments = {
-        asyncWebAssembly: false,
-        syncWebAssembly: true,
+        asyncWebAssembly: true,
+        syncWebAssembly: false,
     };
     config.resolve.fallback = {
         buffer: require.resolve('buffer/')
