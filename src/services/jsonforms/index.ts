@@ -401,7 +401,7 @@ const generateUISchema = (
     }
 
     const types = deriveTypes(jsonSchema);
-    if (types.length === 0) {
+    if (types.length === 0 && !isCombinator(jsonSchema)) {
         // TODO (jsonforms)
         // This happens when there is a type "null" INSIDE of a combinator
         // need more work but this keeps the form from blowing up at least.
@@ -421,7 +421,9 @@ const generateUISchema = (
     }
 
     if (
-        (currentRef === '#' && types[0] === 'object') ||
+        (currentRef === '#' &&
+            types[0] === 'object' &&
+            jsonSchema.additionalProperties !== true) ||
         jsonSchema.properties !== undefined
     ) {
         let layout: Layout | GroupLayout;

@@ -10,6 +10,7 @@ const NullTypeRenderer = (props: LayoutProps) => {
         visible,
         path,
         uischema: { options: schemaOptions },
+        schema,
     } = props;
     return (
         <Hidden xsUp={!visible}>
@@ -18,6 +19,7 @@ const NullTypeRenderer = (props: LayoutProps) => {
                 <code>
                     {path}: {schemaOptions?.ref}
                 </code>
+                <pre>{JSON.stringify(schema, null, 4)}</pre>
             </Alert>
         </Hidden>
     );

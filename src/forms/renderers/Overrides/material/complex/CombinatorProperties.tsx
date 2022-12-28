@@ -29,6 +29,7 @@ import omit from 'lodash/omit';
 import React from 'react';
 
 interface CombinatorPropertiesProps {
+    rootSchema: JsonSchema;
     schema: JsonSchema;
     combinatorKeyword: 'oneOf' | 'anyOf';
     path: string;
@@ -42,7 +43,7 @@ export class CombinatorProperties extends React.Component<
     {}
 > {
     render() {
-        const { schema, combinatorKeyword, path } = this.props;
+        const { schema, combinatorKeyword, path, rootSchema } = this.props;
 
         const otherProps: JsonSchema = omit(
             schema,
@@ -50,11 +51,23 @@ export class CombinatorProperties extends React.Component<
         ) as JsonSchema;
         const foundUISchema: UISchemaElement = Generate.uiSchema(
             otherProps,
-            'VerticalLayout'
+            'VerticalLayout',
+            undefined,
+            rootSchema
         );
         let isLayoutWithElements = false;
-        if (foundUISchema !== null && isLayout(foundUISchema)) {
-            isLayoutWithElements = foundUISchema.elements.length > 0;
+        if (
+            foundUISchema !== null &&
+            isLayout(foundUISchema) &&
+            foundUISchema.elements.length > 0
+        ) {
+            // Customization: generateUiSchema used to return null when a schema without
+            // a type or combinator was passed. We decided that was an error, and made it
+            // instead return a special NullType error control to make schema debugging easier.
+            // In order to retain the previous behavior, the consequence is that we now have to
+            // explicitly check for that error conmponent, instead of relying on a null return
+            isLayoutWithElements =
+                foundUISchema.elements[0].type !== 'NullType';
         }
 
         if (isLayoutWithElements) {

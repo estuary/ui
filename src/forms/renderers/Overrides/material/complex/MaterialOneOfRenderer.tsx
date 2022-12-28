@@ -1,8 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
-/* eslint-disable import/no-named-as-default */
-/* eslint-disable react-hooks/exhaustive-deps */
-/*
-
 /*
   The MIT License
   
@@ -27,17 +22,17 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
+import isEmpty from 'lodash/isEmpty';
+import { useCallback, useState } from 'react';
+
 import {
-    and,
     CombinatorRendererProps,
     createCombinatorRenderInfos,
     createDefaultValue,
     isOneOfControl,
-    JsonSchema,
     OwnPropsOfControl,
     RankedTester,
     rankWith,
-    schemaMatches,
 } from '@jsonforms/core';
 import { JsonFormsDispatch, withJsonFormsOneOfProps } from '@jsonforms/react';
 import {
@@ -51,45 +46,17 @@ import {
     Tab,
     Tabs,
 } from '@mui/material';
-import { forIn, keys } from 'lodash';
-import isEmpty from 'lodash/isEmpty';
-import { useCallback, useState } from 'react';
-import CombinatorProperties from './CombinatorProperties';
+// Customization: Replace CombinatorProperties in order to avoid unneccesarily
+// rendering a `NullType` error due to jsonforms internally "abusing" the fact
+// that generateUISchema returned null when it didn't know what to do,
+// even though actually _rendering_ a null breaks things
+import { CombinatorProperties } from 'forms/renderers/Overrides/material/complex/CombinatorProperties';
 
 export interface OwnOneOfProps extends OwnPropsOfControl {
     indexOfFittingSchema?: number;
 }
 
-const discriminator = 'discriminator';
-
-export const getDiscriminator = (schema: any) => {
-    return (schema as any)[discriminator]
-        ? (schema as any)[discriminator].propertyName
-        : null;
-};
-
-export const getDefaultValue = (
-    tabSchemaProps: any,
-    discriminatorProperty: string
-) => {
-    // Go through all the props and set them into the object.
-    //  If it is the discriminator then try to set the default
-    //      value, then the const, and finally default to an empty string.
-    //  If it is any other value then go ahead and create the value
-    const defaultVal: {
-        [k: string]: any;
-    } = {};
-    forIn(tabSchemaProps, (val: any, key: string) => {
-        defaultVal[key] =
-            key === discriminatorProperty
-                ? val.default ?? val.const ?? ''
-                : createDefaultValue(val);
-    });
-
-    return defaultVal;
-};
-
-export const Custom_MaterialOneOfRenderer_Discriminator = ({
+export const MaterialOneOfRenderer = ({
     handleChange,
     schema,
     path,
@@ -102,7 +69,6 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
     uischema,
     uischemas,
     data,
-    enabled,
 }: CombinatorRendererProps) => {
     const [open, setOpen] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(
@@ -113,9 +79,8 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
     const cancel = useCallback(() => {
         setOpen(false);
     }, [setOpen]);
-
     const oneOfRenderInfos = createCombinatorRenderInfos(
-        (schema as JsonSchema).oneOf as JsonSchema[],
+        schema.oneOf ?? [],
         rootSchema,
         'oneOf',
         uischema,
@@ -123,54 +88,31 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
         uischemas
     );
 
-    const discriminatorProperty = getDiscriminator(schema);
-
-    // Customization: Run through the elements and clear out the ones without elements
-    oneOfRenderInfos.map((renderer) => {
-        const { uischema: rendererUischema } = renderer as any;
-        rendererUischema.elements = rendererUischema.elements.filter(
-            (el: any) => el !== null
-        );
-        return renderer;
-    });
-
-    const openNewTab = (newIndex: number) => {
-        const tabSchema = oneOfRenderInfos[newIndex].schema;
-        const { properties: tabSchemaProps } = tabSchema;
-
-        // Customization: Handle setting the oneOf discriminator properly
-        const defaultVal = getDefaultValue(
-            tabSchemaProps,
-            discriminatorProperty
-        );
-
-        handleChange(path, defaultVal);
-        setSelectedIndex(newIndex);
-    };
+    const openNewTab = useCallback(
+        (newIndex: number) => {
+            handleChange(
+                path,
+                createDefaultValue(oneOfRenderInfos[newIndex].schema)
+            );
+            setSelectedIndex(newIndex);
+        },
+        [handleChange, oneOfRenderInfos, path]
+    );
 
     const confirm = useCallback(() => {
-        handleChange(path, null);
         openNewTab(newSelectedIndex);
         setOpen(false);
-    }, [handleChange, createDefaultValue, newSelectedIndex]);
-
+    }, [openNewTab, newSelectedIndex]);
     const handleTabChange = useCallback(
         (_event: any, newOneOfIndex: number) => {
             setNewSelectedIndex(newOneOfIndex);
-            // Customization: do not prompt user if they are only
-            //  overwriting the discriminator as it is a single property.
-            const keysInData = keys(data);
-            if (
-                (keysInData.length === 1 &&
-                    keysInData[0] === discriminatorProperty) ||
-                isEmpty(data)
-            ) {
+            if (isEmpty(data)) {
                 openNewTab(newOneOfIndex);
             } else {
                 setOpen(true);
             }
         },
-        [setOpen, setSelectedIndex, data]
+        [data, openNewTab]
     );
 
     return (
@@ -186,7 +128,6 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
                     <Tab
                         key={oneOfRenderInfo.label}
                         label={oneOfRenderInfo.label}
-                        disabled={!enabled}
                     />
                 ))}
             </Tabs>
@@ -236,14 +177,9 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
     );
 };
 
-export const materialOneOfControlTester_Discriminator: RankedTester = rankWith(
+export const materialOneOfControlTester: RankedTester = rankWith(
     10,
-    and(
-        isOneOfControl,
-        schemaMatches((schema) => Object.hasOwn(schema, discriminator))
-    )
+    isOneOfControl
 );
 
-export default withJsonFormsOneOfProps(
-    Custom_MaterialOneOfRenderer_Discriminator
-);
+export default withJsonFormsOneOfProps(MaterialOneOfRenderer);

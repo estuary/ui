@@ -8,12 +8,20 @@ import {
     collapsibleGroupTester,
 } from 'forms/renderers/CollapsibleGroup';
 import { ConnectorType, connectorTypeTester } from 'forms/renderers/Connectors';
+import { FreeFormType, freeFormTypeTester } from 'forms/renderers/FreeFormType';
+import { MapType, mapTypeTester } from 'forms/renderers/MapType';
 import {
     MultiLineSecret,
     multiLineSecretTester,
 } from 'forms/renderers/MultiLineSecret';
 import { NullType, nullTypeTester } from 'forms/renderers/NullType';
 import { oAuthProviderTester, OAuthType } from 'forms/renderers/OAuth';
+import MaterialAnyOfRenderer, {
+    materialAnyOfControlTester,
+} from 'forms/renderers/Overrides/material/complex/MaterialAnyOfRenderer';
+import MaterialOneOfRenderer, {
+    materialOneOfControlTester,
+} from 'forms/renderers/Overrides/material/complex/MaterialOneOfRenderer';
 import MaterialOneOfRenderer_Discriminator, {
     materialOneOfControlTester_Discriminator,
 } from 'forms/renderers/Overrides/material/complex/MaterialOneOfRenderer_Discriminator';
@@ -33,6 +41,14 @@ const defaultRenderers = [
     {
         renderer: MaterialOneOfRenderer_Discriminator,
         tester: materialOneOfControlTester_Discriminator,
+    },
+    {
+        renderer: MaterialAnyOfRenderer,
+        tester: materialAnyOfControlTester,
+    },
+    {
+        renderer: MaterialOneOfRenderer,
+        tester: materialOneOfControlTester,
     },
     {
         renderer: MaterialDateTimeControl,
@@ -56,6 +72,8 @@ const defaultRenderers = [
     { renderer: ConnectorType, tester: connectorTypeTester },
     { renderer: CatalogName, tester: catalogNameTypeTester },
     { renderer: MultiLineSecret, tester: multiLineSecretTester },
+    { renderer: MapType, tester: mapTypeTester },
+    { renderer: FreeFormType, tester: freeFormTypeTester },
 ];
 
 export default defaultRenderers;
