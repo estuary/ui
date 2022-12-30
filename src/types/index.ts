@@ -89,9 +89,10 @@ export interface JoinedAppliedDirective extends AppliedDirective<any> {
 export interface StorageMappingStore {
     provider: string;
     bucket: string;
+    prefix: string;
 }
 export interface StorageMappings {
-    // id: string;
+    id: string;
     // detail: string;
     catalog_prefix: string;
     spec: { stores: StorageMappingStore[] };

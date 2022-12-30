@@ -2,7 +2,7 @@ import { Divider, Stack, Typography } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
 import AdminTabs from 'components/admin/Tabs';
 import PageContainer from 'components/shared/PageContainer';
-import Form from 'components/storageMappings/Form';
+import StorageMappingsTable from 'components/tables/StorageMappings';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { FormattedMessage } from 'react-intl';
 
@@ -14,7 +14,7 @@ function StorageMappings() {
             pageTitleProps={{
                 header: authenticatedRoutes.admin.storageMappings.title,
                 headerLink:
-                    'https://docs.estuary.dev/concepts/#storage-mappings',
+                    'https://docs.estuary.dev/concepts/storage-mappings/',
             }}
         >
             <AdminTabs />
@@ -28,9 +28,12 @@ function StorageMappings() {
                 >
                     <FormattedMessage id="storageMappings.header" />
                 </Typography>
+                <Typography>
+                    <FormattedMessage id="storageMappings.message" />
+                </Typography>
                 <Divider />
-                <Form />
             </Stack>
+            <StorageMappingsTable />
         </PageContainer>
     );
 }

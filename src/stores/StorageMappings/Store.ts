@@ -1,4 +1,4 @@
-import { getStorageMappings } from 'api/storageMappings';
+import { getStorageMapping } from 'api/storageMappings';
 import produce from 'immer';
 import { devtoolsOptions } from 'utils/store-utils';
 import create from 'zustand';
@@ -21,7 +21,7 @@ const getInitialState = (
     ...getInitialStateData(),
 
     hydrate: async () => {
-        const { data, error } = await getStorageMappings();
+        const { data, error } = await getStorageMapping('name goes here');
 
         if (error) {
             return set(

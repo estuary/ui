@@ -23,7 +23,6 @@ import Home from 'pages/Home';
 import Materializations from 'pages/Materializations';
 import { Route, Routes } from 'react-router';
 import { EndpointConfigProvider } from 'stores/EndpointConfig';
-import StorageMappingsHydrator from 'stores/StorageMappings/Hydrator';
 import { isProduction } from 'utils/env-utils';
 import { authenticatedRoutes, unauthenticatedRoutes } from './routes';
 
@@ -161,11 +160,7 @@ const Authenticated = () => {
                             path={
                                 authenticatedRoutes.admin.storageMappings.path
                             }
-                            element={
-                                <StorageMappingsHydrator>
-                                    <StorageMappings />
-                                </StorageMappingsHydrator>
-                            }
+                            element={<StorageMappings />}
                         />
                     </Route>
 

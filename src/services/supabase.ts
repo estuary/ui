@@ -89,13 +89,15 @@ export interface SortingProps<Data> {
     direction: SortDirection;
 }
 export const DEFAULT_POLLING_INTERVAL = 750;
+export type Pagination = { from: number; to: number };
+export type Protocol<Data> = { column: keyof Data; value: string | null };
 export const defaultTableFilter = <Data>(
     query: PostgrestFilterBuilder<Data>,
     searchParam: Array<keyof Data | any>, // TODO (typing) added any because of how Supabase handles keys. Hoping Supabase 2.0 fixes https://github.com/supabase/supabase-js/issues/170
     searchQuery: string | null,
     sorting: SortingProps<Data>[],
-    pagination?: { from: number; to: number },
-    protocol?: { column: keyof Data; value: string | null }
+    pagination?: Pagination,
+    protocol?: Protocol<Data>
 ) => {
     let queryBuilder = query;
 

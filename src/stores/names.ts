@@ -25,11 +25,13 @@ export enum ResourceConfigStoreNames {
 }
 
 export enum SelectTableStoreNames {
-    ACCESS_GRANTS = 'AccessGrants-Selectable-Table',
+    ACCESS_GRANTS_USERS = 'AccessGrants-Selectable-Table-Users',
+    ACCESS_GRANTS_PREFIXES = 'AccessGrants-Selectable-Table-Prefixes',
     CAPTURE = 'Captures-Selectable-Table',
     COLLECTION = 'Collections-Selectable-Table',
     CONNECTOR = 'Connectors-Selectable-Table',
     MATERIALIZATION = 'Materializations-Selectable-Table',
+    STORAGE_MAPPINGS = 'Storage-Mappings-Selectable-Table',
 }
 
 export enum ShardDetailStoreNames {

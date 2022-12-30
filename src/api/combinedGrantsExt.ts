@@ -6,8 +6,41 @@ import {
 } from 'services/supabase';
 import { Grants } from 'types';
 
-// Used to display all the grants for everything in the admin page
+// Used to display prefix grants in admin page
 const getGrants = (
+    pagination: any,
+    searchQuery: any,
+    sorting: SortingProps<any>[]
+) => {
+    let queryBuilder = supabaseClient
+        .from(TABLES.COMBINED_GRANTS_EXT)
+        .select(
+            `
+            id, 
+            subject_role, 
+            object_role, 
+            capability,
+            updated_at
+        `,
+            {
+                count: 'exact',
+            }
+        )
+        .neq('subject_role', null);
+
+    queryBuilder = defaultTableFilter(
+        queryBuilder,
+        ['subject_role', 'object_role'],
+        searchQuery,
+        sorting,
+        pagination
+    );
+
+    return queryBuilder;
+};
+
+// Used to display user grants in admin page
+const getGrants_Users = (
     pagination: any,
     searchQuery: any,
     sorting: SortingProps<any>[]
@@ -15,7 +48,6 @@ const getGrants = (
     let queryBuilder = supabaseClient.from(TABLES.COMBINED_GRANTS_EXT).select(
         `
             id, 
-            subject_role, 
             object_role, 
             capability,
             user_avatar_url,
@@ -30,7 +62,7 @@ const getGrants = (
 
     queryBuilder = defaultTableFilter(
         queryBuilder,
-        ['user_full_name', 'subject_role', 'object_role'],
+        ['user_full_name', 'user_email', 'object_role'],
         searchQuery,
         sorting,
         pagination
@@ -59,4 +91,4 @@ const getGrantsForAuthToken = () => {
         .select(`id, object_role`);
 };
 
-export { getGrantsForAuthToken, getGrants, getGrantsForUser };
+export { getGrantsForAuthToken, getGrants, getGrants_Users, getGrantsForUser };

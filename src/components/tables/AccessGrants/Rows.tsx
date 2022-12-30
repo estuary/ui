@@ -8,13 +8,10 @@ interface RowProps {
 
 interface RowsProps {
     data: any[];
+    showUser?: boolean;
 }
 
-export const tableColumns = [
-    {
-        field: 'user_full_name',
-        headerIntlKey: 'entityTable.data.userFullName',
-    },
+const commonTableColumns = [
     {
         field: 'capability',
         headerIntlKey: 'entityTable.data.capability',
@@ -28,6 +25,20 @@ export const tableColumns = [
         headerIntlKey: 'entityTable.data.lastUpdated',
     },
 ];
+
+export const userTableColumns = [
+    {
+        field: 'user_full_name',
+        headerIntlKey: 'entityTable.data.userFullName',
+    },
+].concat(commonTableColumns);
+
+export const prefixTableColumns = [
+    {
+        field: 'subject_role',
+        headerIntlKey: 'entityTable.data.prefix',
+    },
+].concat(commonTableColumns);
 
 function Row({ row }: RowProps) {
     return (
@@ -55,12 +66,23 @@ function Row({ row }: RowProps) {
     );
 }
 
-function Rows({ data }: RowsProps) {
+function Rows({ data, showUser }: RowsProps) {
     return (
         <>
-            {data.map((row) => (
-                <Row row={row} key={row.id} />
-            ))}
+            {data.map((row) => {
+                const isUser = row.user_full_name || row.user_email;
+                if (showUser) {
+                    if (isUser) {
+                        return <Row row={row} key={row.id} />;
+                    } else {
+                        return null;
+                    }
+                } else if (isUser) {
+                    return null;
+                } else {
+                    return <Row row={row} key={row.id} />;
+                }
+            })}
         </>
     );
 }

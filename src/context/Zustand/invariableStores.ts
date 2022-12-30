@@ -59,8 +59,11 @@ const invariableStores = {
     ),
 
     // Select Table Store
-    [SelectTableStoreNames.ACCESS_GRANTS]: createSelectableTableStore(
-        SelectTableStoreNames.ACCESS_GRANTS
+    [SelectTableStoreNames.ACCESS_GRANTS_PREFIXES]: createSelectableTableStore(
+        SelectTableStoreNames.ACCESS_GRANTS_PREFIXES
+    ),
+    [SelectTableStoreNames.ACCESS_GRANTS_USERS]: createSelectableTableStore(
+        SelectTableStoreNames.ACCESS_GRANTS_USERS
     ),
     [SelectTableStoreNames.CAPTURE]: createSelectableTableStore(
         SelectTableStoreNames.CAPTURE
@@ -73,6 +76,9 @@ const invariableStores = {
     ),
     [SelectTableStoreNames.MATERIALIZATION]: createSelectableTableStore(
         SelectTableStoreNames.MATERIALIZATION
+    ),
+    [SelectTableStoreNames.STORAGE_MAPPINGS]: createSelectableTableStore(
+        SelectTableStoreNames.STORAGE_MAPPINGS
     ),
 
     // Admin Storage Mappings

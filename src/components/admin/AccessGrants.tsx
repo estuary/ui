@@ -34,6 +34,7 @@ function AccessGrants() {
                 <Divider />
             </Stack>
 
+            <AccessGrantsTable showUser />
             <AccessGrantsTable />
         </PageContainer>
     );

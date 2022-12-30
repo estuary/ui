@@ -1,13 +1,17 @@
 import { Box } from '@mui/material';
-import { getGrants } from 'api/combinedGrantsExt';
-import Rows, { tableColumns } from 'components/tables/AccessGrants/Rows';
+import { getGrants, getGrants_Users } from 'api/combinedGrantsExt';
+import Rows, { userTableColumns } from 'components/tables/AccessGrants/Rows';
 import EntityTable from 'components/tables/EntityTable';
 import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
 import TableHydrator from 'stores/Tables/Hydrator';
 import useTableState from '../hooks';
 
-function AccessGrantsTable() {
+interface Props {
+    showUser?: boolean;
+}
+
+function AccessGrantsTable({ showUser }: Props) {
     const {
         pagination,
         setPagination,
@@ -17,22 +21,42 @@ function AccessGrantsTable() {
         setSortDirection,
         columnToSort,
         setColumnToSort,
-    } = useTableState('user_full_name');
+    } = useTableState(showUser ? 'user_full_name' : 'subject_role');
 
     const query = useMemo(() => {
-        return getGrants(pagination, searchQuery, [
-            {
-                col: columnToSort,
-                direction: sortDirection,
-            },
-        ]);
-    }, [columnToSort, pagination, searchQuery, sortDirection]);
+        if (showUser) {
+            return getGrants_Users(pagination, searchQuery, [
+                {
+                    col: columnToSort,
+                    direction: sortDirection,
+                },
+            ]);
+        } else {
+            return getGrants(pagination, searchQuery, [
+                {
+                    col: columnToSort,
+                    direction: sortDirection,
+                },
+            ]);
+        }
+    }, [columnToSort, pagination, searchQuery, showUser, sortDirection]);
+
+    const headerKey = showUser
+        ? 'accessGrantsTable.users.title'
+        : 'accessGrantsTable.prefixes.title';
+    const filterKey = showUser
+        ? 'accessGrantsTable.users.filterLabel'
+        : 'accessGrantsTable.prefixes.filterLabel';
 
     return (
         <Box>
             <TableHydrator
                 query={query}
-                selectableTableStoreName={SelectTableStoreNames.ACCESS_GRANTS}
+                selectableTableStoreName={
+                    showUser
+                        ? SelectTableStoreNames.ACCESS_GRANTS_USERS
+                        : SelectTableStoreNames.ACCESS_GRANTS_PREFIXES
+                }
             >
                 <EntityTable
                     noExistingDataContentIds={{
@@ -40,18 +64,22 @@ function AccessGrantsTable() {
                         message: 'accessGrants.message2',
                         disableDoclink: true,
                     }}
-                    columns={tableColumns}
-                    renderTableRows={(data) => <Rows data={data} />}
+                    columns={userTableColumns}
+                    renderTableRows={(data) => (
+                        <Rows data={data} showUser={showUser} />
+                    )}
                     setPagination={setPagination}
                     setSearchQuery={setSearchQuery}
                     sortDirection={sortDirection}
                     setSortDirection={setSortDirection}
                     columnToSort={columnToSort}
                     setColumnToSort={setColumnToSort}
-                    header="accessGrantsTable.title"
-                    filterLabel="accessGrantsTable.filterLabel"
+                    header={headerKey}
+                    filterLabel={filterKey}
                     selectableTableStoreName={
-                        SelectTableStoreNames.ACCESS_GRANTS
+                        showUser
+                            ? SelectTableStoreNames.ACCESS_GRANTS_USERS
+                            : SelectTableStoreNames.ACCESS_GRANTS_PREFIXES
                     }
                 />
             </TableHydrator>
