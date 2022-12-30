@@ -1,6 +1,9 @@
 import { Box } from '@mui/material';
 import { getGrants, getGrants_Users } from 'api/combinedGrantsExt';
-import Rows, { userTableColumns } from 'components/tables/AccessGrants/Rows';
+import Rows, {
+    prefixTableColumns,
+    userTableColumns,
+} from 'components/tables/AccessGrants/Rows';
 import EntityTable from 'components/tables/EntityTable';
 import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
@@ -64,7 +67,7 @@ function AccessGrantsTable({ showUser }: Props) {
                         message: 'accessGrants.message2',
                         disableDoclink: true,
                     }}
-                    columns={userTableColumns}
+                    columns={showUser ? userTableColumns : prefixTableColumns}
                     renderTableRows={(data) => (
                         <Rows data={data} showUser={showUser} />
                     )}
