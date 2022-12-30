@@ -45,8 +45,10 @@ const getGrants_Users = (
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
-    let queryBuilder = supabaseClient.from(TABLES.COMBINED_GRANTS_EXT).select(
-        `
+    let queryBuilder = supabaseClient
+        .from(TABLES.COMBINED_GRANTS_EXT)
+        .select(
+            `
             id, 
             object_role, 
             capability,
@@ -55,10 +57,11 @@ const getGrants_Users = (
             user_email,
             updated_at
         `,
-        {
-            count: 'exact',
-        }
-    );
+            {
+                count: 'exact',
+            }
+        )
+        .or('user_email.neq.null,user_full_name.neq.null');
 
     queryBuilder = defaultTableFilter(
         queryBuilder,
