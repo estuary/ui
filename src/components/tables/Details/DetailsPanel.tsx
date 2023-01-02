@@ -77,17 +77,12 @@ function DetailsPanel({
                             )}
                         >
                             <Grid container spacing={2}>
-                                {!isCollection ? (
-                                    <Grid item xs={12}>
-                                        <Typography variant="subtitle1">
-                                            <FormattedMessage id="detailsPanel.status.header" />
-                                        </Typography>
-                                        <ShardInformation
-                                            entityType={entityType}
-                                        />
-                                    </Grid>
-                                ) : null}
-
+                                <Grid item xs={12}>
+                                    <Typography variant="subtitle1">
+                                        <FormattedMessage id="detailsPanel.status.header" />
+                                    </Typography>
+                                    <ShardInformation entityType={entityType} />
+                                </Grid>
                                 <Grid item xs={12}>
                                     <Typography variant="subtitle1">
                                         <FormattedMessage id="detailsPanel.specification.header" />

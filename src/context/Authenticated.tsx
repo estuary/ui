@@ -1,9 +1,9 @@
 import ConfirmationModalContextProvider from 'context/Confirmation';
-import { PreFetchDataProvider } from 'context/PreFetchData';
 import { ZustandProvider } from 'context/Zustand/provider';
 import { useMount, useUnmount } from 'react-use';
 import { BaseComponentProps } from 'types';
 import { getOsanoSettings } from 'utils/env-utils';
+import PreFetchDataProvider from './fetcher';
 
 const { bodyClass } = getOsanoSettings();
 

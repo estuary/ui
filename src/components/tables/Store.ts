@@ -1,5 +1,5 @@
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
-import { getStatsByName } from 'api/stats';
+import { getStatsByName, StatsFilter } from 'api/stats';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
 import { flatMap } from 'lodash';
@@ -9,10 +9,26 @@ import {
     getStoreWithHydrationSettings,
     StoreWithHydration,
 } from 'stores/Hydration';
-import { Schema } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
 import create, { StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
+
+export interface StatsSchema {
+    [k: string]:
+        | {
+              bytes_written_by_me?: number;
+              docs_written_by_me?: number;
+
+              bytes_read_by_me?: number;
+              docs_read_by_me?: number;
+
+              bytes_written_to_me?: number;
+              docs_written_to_me?: number;
+          }
+        | undefined;
+}
+
+export type StatsResponse = StatsSchema | null;
 
 export interface SelectableTableStore extends StoreWithHydration {
     rows: Map<string, any>;
@@ -36,7 +52,10 @@ export interface SelectableTableStore extends StoreWithHydration {
     hydrate: () => void;
 
     setStats: () => void;
-    stats: Schema | null;
+    stats: StatsResponse;
+
+    statsFilter: StatsFilter;
+    setStatsFilter: (val: SelectableTableStore['statsFilter']) => void;
 }
 
 export const initialCreateStates = {
@@ -51,10 +70,16 @@ export const initialCreateStates = {
 
 export const getInitialStateData = (): Pick<
     SelectableTableStore,
-    'selected' | 'rows' | 'successfulTransformations' | 'query' | 'stats'
+    | 'selected'
+    | 'rows'
+    | 'successfulTransformations'
+    | 'query'
+    | 'stats'
+    | 'statsFilter'
 > => {
     return {
         stats: null,
+        statsFilter: 'today',
         query: getAsyncDefault(),
         selected: initialCreateStates.selected(),
         rows: initialCreateStates.rows(),
@@ -115,51 +140,83 @@ export const getInitialState = (
             );
         },
 
+        setStatsFilter: (val) => {
+            const { setStats, statsFilter } = get();
+            const filterChanged = statsFilter !== val;
+
+            if (filterChanged) {
+                set(
+                    produce((state) => {
+                        // We want to set stats back to null while loading
+                        state.stats = null;
+                        state.statsFilter = val;
+                    }),
+                    false,
+                    'Setting stats filter'
+                );
+
+                // Need to update stats if the filter changed
+                setStats();
+            }
+        },
+
         setStats: async () => {
-            const { response } = get().query;
+            const { query, statsFilter, setHydrationErrorsExist } = get();
+            const { response } = query;
             const catalogNames = flatMap(response, (data) => {
                 return data.catalog_name;
             });
 
-            if (response.length > 0) {
-                const { data, error } = await getStatsByName(catalogNames);
+            if (response && response.length > 0) {
+                const { data, error } = await getStatsByName(
+                    catalogNames,
+                    statsFilter
+                );
 
                 if (error) {
-                    const { setHydrationErrorsExist } = get();
                     setHydrationErrorsExist(true);
-                }
+                } else if (data) {
+                    if (data.length > 0) {
+                        const statsData: StatsSchema = {};
+                        data.forEach((datum) => {
+                            const { catalog_name } = datum;
+                            const currentStat = statsData[catalog_name];
 
-                if (data && data.length > 0) {
-                    const statsData = {};
-                    data.forEach((datum) => {
-                        const { catalog_name } = datum;
-                        const currentStat = statsData[catalog_name];
-
-                        if (currentStat) {
-                            Object.entries(currentStat).forEach(
-                                ([key, value]) => {
-                                    if (typeof value === 'number') {
-                                        currentStat[key] =
-                                            currentStat[key] || 0;
-                                        currentStat[key] += datum[key];
+                            if (currentStat) {
+                                Object.entries(currentStat).forEach(
+                                    ([key, value]) => {
+                                        if (typeof value === 'number') {
+                                            currentStat[key] =
+                                                currentStat[key] || 0;
+                                            currentStat[key] += datum[key];
+                                        }
                                     }
-                                }
-                            );
-                        } else {
-                            statsData[catalog_name] = datum;
-                        }
-                        return datum;
-                    });
+                                );
+                            } else {
+                                statsData[catalog_name] = datum;
+                            }
+                            return datum;
+                        });
 
-                    console.log('setting stats', statsData);
-                    set(
-                        produce((state) => {
-                            state.stats = statsData;
-                        }),
-                        false,
-                        'Table Store Stats Hydration Success'
-                    );
+                        set(
+                            produce((state) => {
+                                state.stats = statsData;
+                            }),
+                            false,
+                            'Table Store Stats Hydration Success'
+                        );
+                    } else {
+                        set(
+                            produce((state) => {
+                                state.stats = [];
+                            }),
+                            false,
+                            'Table Store Stats Hydration Success : Empty'
+                        );
+                    }
                 }
+            } else {
+                setHydrationErrorsExist(true);
             }
         },
 
@@ -257,6 +314,10 @@ export const selectableTableStoreSelectors = {
     stats: {
         set: (state: SelectableTableStore) => state.setStats,
         get: (state: SelectableTableStore) => state.stats,
+    },
+    statsFilter: {
+        set: (state: SelectableTableStore) => state.setStatsFilter,
+        get: (state: SelectableTableStore) => state.statsFilter,
     },
     query: {
         hydrate: (state: SelectableTableStore) => state.hydrate,

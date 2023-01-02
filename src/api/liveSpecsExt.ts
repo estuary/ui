@@ -42,10 +42,7 @@ export interface MaterializationQuery extends LiveSpecsExtBaseQuery {
 export interface MaterializationQueryWithStats extends MaterializationQuery {
     stats?: CatalogStats;
 }
-export type CollectionQuery = Pick<
-    LiveSpecsExtBaseQuery,
-    'spec_type' | 'catalog_name' | 'updated_at' | 'id' | 'last_pub_id'
->;
+export type CollectionQuery = LiveSpecsExtBaseQuery;
 export interface CollectionQueryWithStats extends CollectionQuery {
     stats?: CatalogStats;
 }

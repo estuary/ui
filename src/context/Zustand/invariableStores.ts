@@ -15,10 +15,16 @@ import { MessagePrefixes } from 'types';
 const invariableStores = {
     // Shard Detail Store
     [ShardDetailStoreNames.CAPTURE]: createShardDetailStore(
-        ShardDetailStoreNames.CAPTURE
+        ShardDetailStoreNames.CAPTURE,
+        'capture'
     ),
     [ShardDetailStoreNames.MATERIALIZATION]: createShardDetailStore(
-        ShardDetailStoreNames.MATERIALIZATION
+        ShardDetailStoreNames.MATERIALIZATION,
+        'materialization'
+    ),
+    [ShardDetailStoreNames.COLLECTION]: createShardDetailStore(
+        ShardDetailStoreNames.COLLECTION,
+        'collection'
     ),
 
     // Editor Store

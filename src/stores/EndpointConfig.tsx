@@ -215,6 +215,14 @@ const getInitialState = (
         set(
             produce((state) => {
                 state.endpointSchema = val;
+
+                const { endpointConfig, endpointCustomErrors } = get();
+
+                populateEndpointConfigErrors(
+                    endpointConfig,
+                    endpointCustomErrors,
+                    state
+                );
             }),
             false,
             'Endpoint Schema Set'
@@ -279,7 +287,7 @@ const getInitialState = (
                     : endpointConfig;
 
                 populateEndpointConfigErrors(
-                    endpointConfig,
+                    state.endpointConfig,
                     endpointCustomErrors,
                     state
                 );

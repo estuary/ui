@@ -35,6 +35,7 @@ export enum SelectTableStoreNames {
 export enum ShardDetailStoreNames {
     CAPTURE = 'Capture-Shard-Detail',
     MATERIALIZATION = 'Materialization-Shard-Detail',
+    COLLECTION = 'Collection-Shard-Detail',
 }
 
 export type StoreName =

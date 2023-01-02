@@ -11,17 +11,21 @@ import DetailsPanel from 'components/tables/Details/DetailsPanel';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
+    StatsResponse,
 } from 'components/tables/Store';
+import { useTenantDetails } from 'context/fetcher/Tenant';
 import { getEntityTableRowSx } from 'context/Theme';
 import { useZustandStore } from 'context/Zustand/provider';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useShardsList from 'hooks/useShardsList';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { QUERY_PARAM_CONNECTOR_TITLE } from 'services/supabase';
 import { SelectTableStoreNames } from 'stores/names';
 import { useShardDetail_setShards } from 'stores/ShardDetail/hooks';
-import { getPathWithParams } from 'utils/misc-utils';
+import { getPathWithParams, hasLength } from 'utils/misc-utils';
+import Bytes from '../cells/stats/Bytes';
+import Docs from '../cells/stats/Docs';
+import useMaterializationColumns from './useMaterializationColumns';
 
 interface RowsProps {
     data: MaterializationQueryWithStats[];
@@ -29,50 +33,18 @@ interface RowsProps {
 }
 
 interface RowProps {
+    stats?: StatsResponse;
     row: MaterializationQueryWithStats;
     setRow: any;
     isSelected: boolean;
     showEntityStatus: boolean;
 }
 
-export const tableColumns = [
-    {
-        field: null,
-        headerIntlKey: '',
-    },
-    {
-        field: 'catalog_name',
-        headerIntlKey: 'entityTable.data.entity',
-    },
-    {
-        field: QUERY_PARAM_CONNECTOR_TITLE,
-        headerIntlKey: 'data.type',
-    },
-    // {
-    //     field: null,
-    //     headerIntlKey: 'entityTable.stats.bytes_read_by_me',
-    // },
-    // {
-    //     field: null,
-    //     headerIntlKey: 'entityTable.stats.docs_read_by_me',
-    // },
-    {
-        field: 'reads_from',
-        headerIntlKey: 'entityTable.data.readsFrom',
-    },
-    {
-        field: 'updated_at',
-        headerIntlKey: 'entityTable.data.lastPublished',
-    },
-    {
-        field: null,
-        headerIntlKey: null,
-    },
-];
-
-function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
+function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
     const navigate = useNavigate();
     const theme = useTheme();
+    const tableColumns = useMaterializationColumns();
+    const tenantDetails = useTenantDetails();
 
     const [detailsExpanded, setDetailsExpanded] = useState(false);
 
@@ -116,9 +88,27 @@ function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
                     imageTag={`${row.connector_image_name}${row.connector_image_tag}`}
                 />
 
-                {/*                <Bytes val={row.stats?.bytes_read_by_me} />
+                {hasLength(tenantDetails) ? (
+                    <>
+                        <Bytes
+                            read
+                            val={
+                                stats
+                                    ? stats[row.catalog_name]?.bytes_read_by_me
+                                    : null
+                            }
+                        />
 
-                <Docs val={row.stats?.docs_read_by_me} />*/}
+                        <Docs
+                            read
+                            val={
+                                stats
+                                    ? stats[row.catalog_name]?.docs_read_by_me
+                                    : null
+                            }
+                        />
+                    </>
+                ) : null}
 
                 <ChipList strings={row.reads_from} />
 
@@ -135,7 +125,7 @@ function Row({ isSelected, setRow, row, showEntityStatus }: RowProps) {
                 collectionNames={row.reads_from}
                 detailsExpanded={detailsExpanded}
                 lastPubId={row.last_pub_id}
-                colSpan={tableColumns.length}
+                colSpan={tableColumns.length + 1}
                 entityType="materialization"
                 entityName={row.catalog_name}
             />
@@ -165,6 +155,11 @@ function Rows({ data, showEntityStatus }: RowsProps) {
         selectableTableStoreSelectors.successfulTransformations.get
     );
 
+    const stats = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['stats']
+    >(selectTableStoreName, selectableTableStoreSelectors.stats.get);
+
     // Shard Detail Store
     const setShards = useShardDetail_setShards();
 
@@ -184,6 +179,7 @@ function Rows({ data, showEntityStatus }: RowsProps) {
         <>
             {data.map((row) => (
                 <Row
+                    stats={stats}
                     row={row}
                     key={row.id}
                     isSelected={selected.has(row.id)}

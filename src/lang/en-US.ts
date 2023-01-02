@@ -334,18 +334,20 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.data.objectRole': `Object`,
     'entityTable.data.lastPubUserFullName': `Last Updated By`,
 
-    'entityTable.stats.bytes_written_by_me': `Bytes Written`,
-    'entityTable.stats.docs_written_by_me': `Docs Written`,
-    'entityTable.stats.bytes_read_by_me': `Bytes Read`,
-    'entityTable.stats.docs_read_by_me': `Docs Read`,
+    'entityTable.stats.bytes_read': `Bytes Read`,
+    'entityTable.stats.docs_read': `Docs Read`,
+    'entityTable.stats.bytes_written': `Bytes Written`,
+    'entityTable.stats.docs_written': `Docs Written`,
 
-    'entityTable.stats.bytes_written_to_me': `Bytes Written`,
-    'entityTable.stats.docs_written_to_me': `Docs Written`,
-    'entityTable.stats.bytes_read_to_me': `Bytes Read`,
-    'entityTable.stats.docs_read_to_me': `Docs Read`,
+    'entityTable.stats.written': `Data Written`,
+    'entityTable.stats.read': `Data Read`,
+    'entityTable.stats.docs': `{docCount} {docCount, plural,
+        one {doc}
+        other {docs}
+    }`,
 
     'entityTable.stats.error': `Failed to fetch stats.`,
-    'entityTable.stats.filterMenu': `Stats for {currentOption}`,
+    'entityTable.stats.filterMenu': `Stats for`,
 
     'entityTable.unmatchedFilter.header': `No results found.`,
     'entityTable.unmatchedFilter.message': `We couldn't find any data matching your search. Please try a different filter.`,
@@ -727,6 +729,7 @@ const ShardStatus: ResolvedIntlConfig['messages'] = {
     'shardStatus.standby': `PENDING`,
     'shardStatus.backfill': `PENDING`,
     'shardStatus.disabled': `DISABLED`,
+    'shardStatus.basicCollection': `Collection`,
     'shardStatus.none': `No shard status found.`,
 };
 
@@ -775,8 +778,10 @@ const Tenant: ResolvedIntlConfig['messages'] = {
     'tenant.docs.message.link': `https://docs.estuary.dev/concepts/catalogs/#namespace`,
 };
 
-const DateTimeRenderer: ResolvedIntlConfig['messages'] = {
-    'datePicker.buttom.ariaLabel': `Open date time picker for {label}`,
+const CustomRenderers: ResolvedIntlConfig['messages'] = {
+    'dateTimePicker.button.ariaLabel': `Open date time picker for {label}`,
+    'datePicker.button.ariaLabel': `Open date picker for {label}`,
+    'timePicker.button.ariaLabel': `Open time picker for {label}`,
 };
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {
@@ -821,7 +826,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...Workflows,
     ...Legal,
     ...Tenant,
-    ...DateTimeRenderer,
+    ...CustomRenderers,
 };
 
 export default enUSMessages;

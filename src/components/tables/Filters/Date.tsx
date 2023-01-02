@@ -1,22 +1,41 @@
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import { Button, Menu, MenuItem, Stack } from '@mui/material';
-import subDays from 'date-fns/subDays';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import {
+    Button,
+    CircularProgress,
+    Menu,
+    MenuItem,
+    Stack,
+    Typography,
+} from '@mui/material';
+import { StatsFilter } from 'api/stats';
+import { LINK_BUTTON_STYLING } from 'context/Theme';
+import { useZustandStore } from 'context/Zustand/provider';
 import React, { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { SelectTableStoreNames } from 'stores/names';
+import { SelectableTableStore, selectableTableStoreSelectors } from '../Store';
 
-type FilterOptions =
-    | `today`
-    | `yesterday`
-    | `lastWeek`
-    | `thisWeek`
-    | `lastMonth`
-    | `thisMonth`;
+interface Props {
+    header: string;
+    disabled: boolean;
+    selectableTableStoreName: SelectTableStoreNames;
+}
 
-function DateFilter() {
-    const [currentOption, setCurrentOption] = useState<FilterOptions>('today');
+function DateFilter({ disabled, header, selectableTableStoreName }: Props) {
+    const [currentOption, setCurrentOption] = useState<StatsFilter>('today');
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
+
+    const setStatsFilter = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['setStatsFilter']
+    >(selectableTableStoreName, selectableTableStoreSelectors.statsFilter.set);
+
+    const stats = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['stats']
+    >(selectableTableStoreName, selectableTableStoreSelectors.stats.get);
 
     const handlers = {
         closeMenu: () => {
@@ -25,46 +44,37 @@ function DateFilter() {
         openMenu: (event: React.MouseEvent<HTMLButtonElement>) => {
             setAnchorEl(event.currentTarget);
         },
-        setFilter: (option: FilterOptions) => {
-            let foo;
-            switch (option) {
-                case 'yesterday':
-                    foo = subDays(new Date(), 1);
-                    break;
-                default: {
-                    foo = new Date();
-                    break;
-                }
-            }
-
-            console.log('foo', foo);
+        setFilter: (option: StatsFilter) => {
+            setStatsFilter(option);
             setCurrentOption(option);
             handlers.closeMenu();
         },
     };
 
     return (
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+            <Typography sx={{ whiteSpace: 'nowrap' }}>
+                <FormattedMessage id={header} />
+            </Typography>
             <Button
                 id="stat-filter-selector-button"
                 aria-controls={open ? 'stat-filter-selector-menu' : undefined}
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
-                variant="contained"
+                variant="text"
                 disableElevation
                 onClick={handlers.openMenu}
-                startIcon={<AccessTimeIcon />}
+                endIcon={
+                    !disabled && stats === null ? (
+                        <CircularProgress size={15} />
+                    ) : (
+                        <FilterListIcon />
+                    )
+                }
+                disabled={disabled}
+                sx={{ ...LINK_BUTTON_STYLING }}
             >
-                <FormattedMessage
-                    id="entityTable.stats.filterMenu"
-                    values={{
-                        currentOption: (
-                            <FormattedMessage
-                                id={`filter.time.${currentOption}`}
-                            />
-                        ),
-                    }}
-                />
+                <FormattedMessage id={`filter.time.${currentOption}`} />
             </Button>
             <Menu
                 id="stat-filter-selector-menu"
