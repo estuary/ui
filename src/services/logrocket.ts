@@ -33,7 +33,6 @@ export enum CustomEvents {
     MATERIALIZATION_TEST = 'Materialization_Test',
     MATERIALIZATION_EDIT = 'Materialization_Edit',
     DIRECTIVE = 'Directive',
-    UNKNOWN_BOUND_COLLECTION = 'Unknown_Bound_Collection',
 }
 
 const logRocketSettings = getLogRocketSettings();
