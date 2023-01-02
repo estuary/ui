@@ -1,7 +1,6 @@
 import { discover } from 'api/discovers';
 import { createEntityDraft } from 'api/drafts';
 import { getDraftSpecsBySpecType } from 'api/draftSpecs';
-import { getLiveSpecsByCatalogNames } from 'api/liveSpecsExt';
 import {
     useEditorStore_isSaving,
     useEditorStore_persistedDraftId,
@@ -27,6 +26,7 @@ import {
 import {
     useDetailsForm_connectorImage_connectorId,
     useDetailsForm_connectorImage_id,
+    useDetailsForm_connectorImage_imagePath,
     useDetailsForm_details_entityName,
     useDetailsForm_errorsExist,
     useDetailsForm_setDraftedEntityName,
@@ -59,9 +59,10 @@ import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import { Entity } from 'types';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 import {
-    getBoundCollectionData,
-    modifyDiscoveredCollectionDraftSpecs,
+    // getBoundCollectionData,
+    // modifyDiscoveredCollectionDraftSpecs,
     modifyDiscoveredDraftSpec,
+    modifyExistingCaptureDraftSpec,
     SupabaseConfig,
 } from 'utils/workflow-utils';
 
@@ -79,7 +80,7 @@ function useDiscoverCapture(
     entityType: Entity,
     callFailed: Function,
     postGenerateMutate: Function,
-    options?: { initiateRediscovery: boolean }
+    options?: { initiateRediscovery?: boolean; initiateDiscovery?: boolean }
 ) {
     const supabaseClient = useClient();
 
@@ -110,6 +111,7 @@ function useDiscoverCapture(
     const detailsFormsHasErrors = useDetailsForm_errorsExist();
     const imageConnectorId = useDetailsForm_connectorImage_connectorId();
     const imageConnectorTagId = useDetailsForm_connectorImage_id();
+    const imagePath = useDetailsForm_connectorImage_imagePath();
     const setDraftedEntityName = useDetailsForm_setDraftedEntityName();
 
     // Endpoint Config Store
@@ -140,95 +142,95 @@ function useDiscoverCapture(
         ? endpointConfigErrorsExist
         : endpointConfigErrorsExist || isEmpty(endpointConfigData);
 
-    const propagateDraftCollections = async (
-        newDraftId: string,
-        previousDraftId: string,
-        boundCollections: string[]
-    ) => {
-        const draftSpecsResponse = await getDraftSpecsBySpecType(
-            previousDraftId,
-            'collection'
-        );
+    // const propagateDraftCollections = async (
+    //     newDraftId: string,
+    //     previousDraftId: string,
+    //     boundCollections: string[]
+    // ) => {
+    //     const draftSpecsResponse = await getDraftSpecsBySpecType(
+    //         previousDraftId,
+    //         'collection'
+    //     );
 
-        if (draftSpecsResponse.error) {
-            return callFailed({
-                error: {
-                    title: 'captureEdit.generate.failedErrorTitle',
-                    error: draftSpecsResponse.error,
-                },
-            });
-        }
+    //     if (draftSpecsResponse.error) {
+    //         return callFailed({
+    //             error: {
+    //                 title: 'captureEdit.generate.failedErrorTitle',
+    //                 error: draftSpecsResponse.error,
+    //             },
+    //         });
+    //     }
 
-        let liveSpecsResponse = null;
+    //     let liveSpecsResponse = null;
 
-        if (editWorkflow) {
-            const previousDraftCollections: string[] = draftSpecsResponse.data
-                ? draftSpecsResponse.data.map(
-                      ({ catalog_name }) => catalog_name
-                  )
-                : [];
+    //     if (editWorkflow) {
+    //         const previousDraftCollections: string[] = draftSpecsResponse.data
+    //             ? draftSpecsResponse.data.map(
+    //                   ({ catalog_name }) => catalog_name
+    //               )
+    //             : [];
 
-            const boundExistingCollections: string[] =
-                previousDraftCollections.length > 0
-                    ? boundCollections.filter(
-                          (collection) =>
-                              !previousDraftCollections.includes(collection)
-                      )
-                    : boundCollections;
+    //         const boundExistingCollections: string[] =
+    //             previousDraftCollections.length > 0
+    //                 ? boundCollections.filter(
+    //                       (collection) =>
+    //                           !previousDraftCollections.includes(collection)
+    //                   )
+    //                 : boundCollections;
 
-            if (boundExistingCollections.length > 0) {
-                liveSpecsResponse = await getLiveSpecsByCatalogNames(
-                    'collection',
-                    boundExistingCollections
-                );
+    //         if (boundExistingCollections.length > 0) {
+    //             liveSpecsResponse = await getLiveSpecsByCatalogNames(
+    //                 'collection',
+    //                 boundExistingCollections
+    //             );
 
-                if (liveSpecsResponse.error) {
-                    return callFailed({
-                        error: {
-                            title: 'captureEdit.generate.failedErrorTitle',
-                            error: liveSpecsResponse.error,
-                        },
-                    });
-                }
-            }
-        }
+    //             if (liveSpecsResponse.error) {
+    //                 return callFailed({
+    //                     error: {
+    //                         title: 'captureEdit.generate.failedErrorTitle',
+    //                         error: liveSpecsResponse.error,
+    //                     },
+    //                 });
+    //             }
+    //         }
+    //     }
 
-        const collectionData = getBoundCollectionData(
-            boundCollections,
-            draftSpecsResponse.data ?? [],
-            liveSpecsResponse ? liveSpecsResponse.data : []
-        );
+    //     const collectionData = getBoundCollectionData(
+    //         boundCollections,
+    //         draftSpecsResponse.data ?? [],
+    //         liveSpecsResponse ? liveSpecsResponse.data : []
+    //     );
 
-        if (!isEmpty(collectionData)) {
-            const updatedDraftSpecsPromises =
-                await modifyDiscoveredCollectionDraftSpecs(
-                    newDraftId,
-                    collectionData,
-                    'captureEdit.generate.failedErrorTitle',
-                    callFailed
-                );
+    //     if (!isEmpty(collectionData)) {
+    //         const updatedDraftSpecsPromises =
+    //             await modifyDiscoveredCollectionDraftSpecs(
+    //                 newDraftId,
+    //                 collectionData,
+    //                 'captureEdit.generate.failedErrorTitle',
+    //                 callFailed
+    //             );
 
-            if (updatedDraftSpecsPromises) {
-                const updatedDraftSpecsResponse = await Promise.all(
-                    updatedDraftSpecsPromises
-                );
+    //         if (updatedDraftSpecsPromises) {
+    //             const updatedDraftSpecsResponse = await Promise.all(
+    //                 updatedDraftSpecsPromises
+    //             );
 
-                const updatedDraftSpecsErrors =
-                    updatedDraftSpecsResponse.filter(
-                        (response) => response.error
-                    );
+    //             const updatedDraftSpecsErrors =
+    //                 updatedDraftSpecsResponse.filter(
+    //                     (response) => response.error
+    //                 );
 
-                if (updatedDraftSpecsErrors.length > 0) {
-                    return callFailed({
-                        error: {
-                            title: 'captureEdit.generate.failedErrorTitle',
-                            error: updatedDraftSpecsErrors,
-                        },
-                    });
-                }
-            }
-        }
-    };
+    //             if (updatedDraftSpecsErrors.length > 0) {
+    //                 return callFailed({
+    //                     error: {
+    //                         title: 'captureEdit.generate.failedErrorTitle',
+    //                         error: updatedDraftSpecsErrors,
+    //                     },
+    //                 });
+    //             }
+    //         }
+    //     }
+    // };
 
     const storeDiscoveredCollections = useCallback(
         async (
@@ -350,15 +352,15 @@ function useDiscoverCapture(
                     })
                     .order('created_at', { ascending: false }),
                 async (payload: any) => {
-                    const boundCollections = Object.keys(resourceConfig);
+                    // const boundCollections = Object.keys(resourceConfig);
 
-                    if (boundCollections.length > 0 && persistedDraftId) {
-                        await propagateDraftCollections(
-                            payload.draft_id,
-                            persistedDraftId,
-                            boundCollections
-                        );
-                    }
+                    // if (boundCollections.length > 0 && persistedDraftId) {
+                    //     await propagateDraftCollections(
+                    //         payload.draft_id,
+                    //         persistedDraftId,
+                    //         boundCollections
+                    //     );
+                    // }
 
                     await storeDiscoveredCollections(
                         payload.draft_id,
@@ -416,18 +418,6 @@ function useDiscoverCapture(
             } else {
                 resetEditorState(true);
 
-                const draftsResponse = await createEntityDraft(entityName);
-                if (draftsResponse.error) {
-                    return callFailed({
-                        error: {
-                            title: 'captureCreate.generate.failedErrorTitle',
-                            error: draftsResponse.error,
-                        },
-                    });
-                }
-
-                const draftId = draftsResponse.data[0].id;
-
                 const selectedEndpointConfig = serverUpdateRequired
                     ? endpointConfigData
                     : serverEndpointConfigData;
@@ -456,35 +446,90 @@ function useDiscoverCapture(
                     }
                 }
 
-                const discoverResponse = await discover(
-                    catalogName,
-                    encryptedEndpointConfig.data,
-                    imageConnectorTagId,
-                    draftId
-                );
-                if (discoverResponse.error) {
-                    return callFailed({
-                        error: {
-                            title: 'captureCreate.generate.failedErrorTitle',
-                            error: discoverResponse.error,
-                        },
-                    });
-                }
-                createDiscoversSubscription(
-                    draftId,
-                    endpointConfigData,
-                    resourceConfig
-                );
+                if (
+                    options?.initiateRediscovery ||
+                    options?.initiateDiscovery
+                ) {
+                    const draftsResponse = await createEntityDraft(entityName);
+                    if (draftsResponse.error) {
+                        return callFailed({
+                            error: {
+                                title: 'captureCreate.generate.failedErrorTitle',
+                                error: draftsResponse.error,
+                            },
+                        });
+                    }
 
-                setFormState({
-                    logToken: discoverResponse.data[0].logs_token,
-                });
+                    const draftId = draftsResponse.data[0].id;
+
+                    const discoverResponse = await discover(
+                        catalogName,
+                        encryptedEndpointConfig.data,
+                        imageConnectorTagId,
+                        draftId
+                    );
+                    if (discoverResponse.error) {
+                        return callFailed({
+                            error: {
+                                title: 'captureCreate.generate.failedErrorTitle',
+                                error: discoverResponse.error,
+                            },
+                        });
+                    }
+                    createDiscoversSubscription(
+                        draftId,
+                        endpointConfigData,
+                        resourceConfig
+                    );
+
+                    setFormState({
+                        logToken: discoverResponse.data[0].logs_token,
+                    });
+                } else if (persistedDraftId) {
+                    const draftSpecsResponse =
+                        await modifyExistingCaptureDraftSpec(
+                            persistedDraftId,
+                            imagePath,
+                            encryptedEndpointConfig.data,
+                            resourceConfig
+                        );
+
+                    if (draftSpecsResponse.error) {
+                        return callFailed({
+                            error: {
+                                title: 'captureCreate.generate.failedErrorTitle',
+                                error: draftSpecsResponse.error,
+                            },
+                        });
+                    }
+
+                    setEncryptedEndpointConfig({
+                        data: draftSpecsResponse.data[0].spec.endpoint.connector
+                            .config,
+                    });
+
+                    setPreviousEndpointConfig({ data: endpointConfigData });
+
+                    setDraftId(persistedDraftId);
+
+                    void postGenerateMutate();
+
+                    setFormState({
+                        status: FormStatus.GENERATED,
+                    });
+                } else {
+                    // Throw generic error
+                }
             }
         },
         [
             createDiscoversSubscription,
+            postGenerateMutate,
             resetEditorState,
+            setEncryptedEndpointConfig,
             setFormState,
+            setPreviousEndpointConfig,
+            setDraftId,
             updateFormStatus,
             callFailed,
             detailsFormsHasErrors,
@@ -495,7 +540,11 @@ function useDiscoverCapture(
             entityName,
             imageConnectorId,
             imageConnectorTagId,
+            imagePath,
             initialConnectorId,
+            options?.initiateDiscovery,
+            options?.initiateRediscovery,
+            persistedDraftId,
             resourceConfig,
             resourceConfigHasErrors,
             serverEndpointConfigData,

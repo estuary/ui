@@ -17,7 +17,7 @@ import PageContainer from 'components/shared/PageContainer';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import useDraftSpecs from 'hooks/useDraftSpecs';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import {
@@ -66,6 +66,8 @@ function CaptureCreate() {
 
     // Resource Config Store
     const resetResourceConfigState = useResourceConfig_resetState();
+
+    const [initiateDiscovery, setInitiateDiscovery] = useState<boolean>(true);
 
     const { mutate: mutateDraftSpecs, ...draftSpecsMetadata } =
         useDraftSpecs(persistedDraftId);
@@ -159,6 +161,10 @@ function CaptureCreate() {
                                     disabled={!hasConnectors}
                                     callFailed={helpers.callFailed}
                                     postGenerateMutate={mutateDraftSpecs}
+                                    createWorkflowMetadata={{
+                                        initiateDiscovery,
+                                        setInitiateDiscovery,
+                                    }}
                                 />
                             }
                             TestButton={
