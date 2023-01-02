@@ -59,8 +59,6 @@ import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
 import { Entity } from 'types';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 import {
-    // getBoundCollectionData,
-    // modifyDiscoveredCollectionDraftSpecs,
     modifyDiscoveredDraftSpec,
     modifyExistingCaptureDraftSpec,
     SupabaseConfig,
@@ -141,96 +139,6 @@ function useDiscoverCapture(
     const endpointConfigErrorFlag = editWorkflow
         ? endpointConfigErrorsExist
         : endpointConfigErrorsExist || isEmpty(endpointConfigData);
-
-    // const propagateDraftCollections = async (
-    //     newDraftId: string,
-    //     previousDraftId: string,
-    //     boundCollections: string[]
-    // ) => {
-    //     const draftSpecsResponse = await getDraftSpecsBySpecType(
-    //         previousDraftId,
-    //         'collection'
-    //     );
-
-    //     if (draftSpecsResponse.error) {
-    //         return callFailed({
-    //             error: {
-    //                 title: 'captureEdit.generate.failedErrorTitle',
-    //                 error: draftSpecsResponse.error,
-    //             },
-    //         });
-    //     }
-
-    //     let liveSpecsResponse = null;
-
-    //     if (editWorkflow) {
-    //         const previousDraftCollections: string[] = draftSpecsResponse.data
-    //             ? draftSpecsResponse.data.map(
-    //                   ({ catalog_name }) => catalog_name
-    //               )
-    //             : [];
-
-    //         const boundExistingCollections: string[] =
-    //             previousDraftCollections.length > 0
-    //                 ? boundCollections.filter(
-    //                       (collection) =>
-    //                           !previousDraftCollections.includes(collection)
-    //                   )
-    //                 : boundCollections;
-
-    //         if (boundExistingCollections.length > 0) {
-    //             liveSpecsResponse = await getLiveSpecsByCatalogNames(
-    //                 'collection',
-    //                 boundExistingCollections
-    //             );
-
-    //             if (liveSpecsResponse.error) {
-    //                 return callFailed({
-    //                     error: {
-    //                         title: 'captureEdit.generate.failedErrorTitle',
-    //                         error: liveSpecsResponse.error,
-    //                     },
-    //                 });
-    //             }
-    //         }
-    //     }
-
-    //     const collectionData = getBoundCollectionData(
-    //         boundCollections,
-    //         draftSpecsResponse.data ?? [],
-    //         liveSpecsResponse ? liveSpecsResponse.data : []
-    //     );
-
-    //     if (!isEmpty(collectionData)) {
-    //         const updatedDraftSpecsPromises =
-    //             await modifyDiscoveredCollectionDraftSpecs(
-    //                 newDraftId,
-    //                 collectionData,
-    //                 'captureEdit.generate.failedErrorTitle',
-    //                 callFailed
-    //             );
-
-    //         if (updatedDraftSpecsPromises) {
-    //             const updatedDraftSpecsResponse = await Promise.all(
-    //                 updatedDraftSpecsPromises
-    //             );
-
-    //             const updatedDraftSpecsErrors =
-    //                 updatedDraftSpecsResponse.filter(
-    //                     (response) => response.error
-    //                 );
-
-    //             if (updatedDraftSpecsErrors.length > 0) {
-    //                 return callFailed({
-    //                     error: {
-    //                         title: 'captureEdit.generate.failedErrorTitle',
-    //                         error: updatedDraftSpecsErrors,
-    //                     },
-    //                 });
-    //             }
-    //         }
-    //     }
-    // };
 
     const storeDiscoveredCollections = useCallback(
         async (
@@ -352,16 +260,6 @@ function useDiscoverCapture(
                     })
                     .order('created_at', { ascending: false }),
                 async (payload: any) => {
-                    // const boundCollections = Object.keys(resourceConfig);
-
-                    // if (boundCollections.length > 0 && persistedDraftId) {
-                    //     await propagateDraftCollections(
-                    //         payload.draft_id,
-                    //         persistedDraftId,
-                    //         boundCollections
-                    //     );
-                    // }
-
                     await storeDiscoveredCollections(
                         payload.draft_id,
                         resourceConfigForDiscover
@@ -518,7 +416,7 @@ function useDiscoverCapture(
                         status: FormStatus.GENERATED,
                     });
                 } else {
-                    // Throw generic error
+                    // TODO (optimization): Throw generic error.
                 }
             }
         },
