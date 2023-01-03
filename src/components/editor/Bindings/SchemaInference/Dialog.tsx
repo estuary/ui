@@ -126,7 +126,7 @@ const processDraftSpecResponse = (
 
 const TITLE_ID = 'inferred-schema-dialog-title';
 
-function InferredSchemaDialog({
+function SchemaInferenceDialog({
     collectionData,
     open,
     setOpen,
@@ -413,4 +413,4 @@ function InferredSchemaDialog({
     ) : null;
 }
 
-export default InferredSchemaDialog;
+export default SchemaInferenceDialog;

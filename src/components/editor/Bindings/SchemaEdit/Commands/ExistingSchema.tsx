@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material';
 import SingleLineCode from 'components/content/SingleLineCode';
-import EditCommandsHeader from 'components/editor/Bindings/SchemaEditCommands/Header';
+import EditCommandsHeader from 'components/editor/Bindings/SchemaEdit/Commands/Header';
 import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,

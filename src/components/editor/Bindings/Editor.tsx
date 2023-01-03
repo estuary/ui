@@ -1,10 +1,8 @@
-import { DataObject, Refresh, Terminal } from '@mui/icons-material';
+import { Refresh } from '@mui/icons-material';
 import {
     Box,
-    Button,
     CircularProgress,
     IconButton,
-    Skeleton,
     Stack,
     Typography,
     useTheme,
@@ -14,15 +12,12 @@ import { getLiveSpecsByCatalogName } from 'api/liveSpecsExt';
 import { BindingsEditorSchemaSkeleton } from 'components/collection/CollectionSkeletons';
 import ResourceConfig from 'components/collection/ResourceConfig';
 import MessageWithLink from 'components/content/MessageWithLink';
-import DiscoveredSchemaCommands from 'components/editor/Bindings/SchemaEditCommands/DiscoveredSchema';
-import ExistingSchemaCommands from 'components/editor/Bindings/SchemaEditCommands/ExistingSchema';
-import InferredSchemaDialog from 'components/editor/Bindings/SchemaInference/InferredSchemaDialog';
+import SchemaEditButton from 'components/editor/Bindings/SchemaEdit/Button';
+import SchemaInferenceButton from 'components/editor/Bindings/SchemaInference/Button';
 import BindingsTabs, { tabProps } from 'components/editor/Bindings/Tabs';
 import { CollectionData } from 'components/editor/Bindings/types';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
-import ButtonWithPopper from 'components/shared/ButtonWithPopper';
-import { useEntityWorkflow } from 'context/Workflow';
 import { isEmpty } from 'lodash';
 import { ReactNode, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -64,8 +59,6 @@ const evaluateCollectionData = async (
 };
 
 function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
-    const workflow = useEntityWorkflow();
-
     const theme = useTheme();
     const jsonTheme =
         theme.palette.mode === 'dark' ? 'bright' : 'bright:inverted';
@@ -83,9 +76,6 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
 
     const [schemaUpdated, setSchemaUpdated] = useState<boolean>(true);
     const [schemaUpdateErrored, setSchemaUpdateErrored] =
-        useState<boolean>(false);
-
-    const [openSchemaInferenceDialog, setOpenSchemaInferenceDialog] =
         useState<boolean>(false);
 
     useEffect(() => {
@@ -123,11 +113,6 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                     }
                 );
             }
-        },
-        openSchemaInferenceDialog: (event: React.MouseEvent<HTMLElement>) => {
-            event.preventDefault();
-
-            setOpenSchemaInferenceDialog(true);
         },
     };
 
@@ -194,69 +179,18 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                         )}
                                     </Box>
 
-                                    {collectionData ? (
-                                        <Box>
-                                            {workflow ===
-                                            'capture_create' ? null : (
-                                                <>
-                                                    <Button
-                                                        startIcon={
-                                                            <DataObject />
-                                                        }
-                                                        sx={{ mr: 1 }}
-                                                        onClick={
-                                                            handlers.openSchemaInferenceDialog
-                                                        }
-                                                    >
-                                                        <FormattedMessage id="workflows.collectionSelector.cta.schemaInference" />
-                                                    </Button>
+                                    <Stack direction="row" spacing={1}>
+                                        <SchemaInferenceButton
+                                            collectionData={collectionData}
+                                            setCollectionData={
+                                                setCollectionData
+                                            }
+                                        />
 
-                                                    <InferredSchemaDialog
-                                                        collectionData={
-                                                            collectionData
-                                                        }
-                                                        open={
-                                                            openSchemaInferenceDialog
-                                                        }
-                                                        setOpen={
-                                                            setOpenSchemaInferenceDialog
-                                                        }
-                                                        setCollectionData={
-                                                            setCollectionData
-                                                        }
-                                                    />
-                                                </>
-                                            )}
-
-                                            <ButtonWithPopper
-                                                messageId="workflows.collectionSelector.cta.schemaEdit"
-                                                popper={
-                                                    collectionData.belongsToDraft ? (
-                                                        <DiscoveredSchemaCommands />
-                                                    ) : (
-                                                        <ExistingSchemaCommands />
-                                                    )
-                                                }
-                                                startIcon={<Terminal />}
-                                            />
-                                        </Box>
-                                    ) : (
-                                        <Stack direction="row">
-                                            {workflow ===
-                                            'capture_create' ? null : (
-                                                <Skeleton
-                                                    variant="rectangular"
-                                                    width={125}
-                                                    sx={{ mr: 1 }}
-                                                />
-                                            )}
-
-                                            <Skeleton
-                                                variant="rectangular"
-                                                width={75}
-                                            />
-                                        </Stack>
-                                    )}
+                                        <SchemaEditButton
+                                            collectionData={collectionData}
+                                        />
+                                    </Stack>
                                 </Box>
                             ) : (
                                 <Typography variant="h6" sx={{ mr: 1 }}>
