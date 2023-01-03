@@ -22,6 +22,8 @@ function SchemaInferenceButton() {
         setOpen(true);
     };
 
+    // Test commit
+
     if (workflow === 'capture_create') {
         return null;
     } else {
