@@ -14,6 +14,10 @@ import ResourceConfig from 'components/collection/ResourceConfig';
 import MessageWithLink from 'components/content/MessageWithLink';
 import SchemaEditButton from 'components/editor/Bindings/SchemaEdit/Button';
 import SchemaInferenceButton from 'components/editor/Bindings/SchemaInference/Button';
+import {
+    useBindingsEditorStore_collectionData,
+    useBindingsEditorStore_setCollectionData,
+} from 'components/editor/Bindings/Store/hooks';
 import BindingsTabs, { tabProps } from 'components/editor/Bindings/Tabs';
 import { CollectionData } from 'components/editor/Bindings/types';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
@@ -63,6 +67,10 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
     const jsonTheme =
         theme.palette.mode === 'dark' ? 'bright' : 'bright:inverted';
 
+    // Bindings Editor Store
+    const collectionData = useBindingsEditorStore_collectionData();
+    const setCollectionData = useBindingsEditorStore_setCollectionData();
+
     // Draft Editor Store
     const persistedDraftId = useEditorStore_persistedDraftId();
 
@@ -70,9 +78,6 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
     const currentCollection = useResourceConfig_currentCollection();
 
     const [activeTab, setActiveTab] = useState<number>(0);
-    const [collectionData, setCollectionData] = useState<
-        CollectionData | null | undefined
-    >(null);
 
     const [schemaUpdated, setSchemaUpdated] = useState<boolean>(true);
     const [schemaUpdateErrored, setSchemaUpdateErrored] =
@@ -180,16 +185,9 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                     </Box>
 
                                     <Stack direction="row" spacing={1}>
-                                        <SchemaInferenceButton
-                                            collectionData={collectionData}
-                                            setCollectionData={
-                                                setCollectionData
-                                            }
-                                        />
+                                        <SchemaInferenceButton />
 
-                                        <SchemaEditButton
-                                            collectionData={collectionData}
-                                        />
+                                        <SchemaEditButton />
                                     </Stack>
                                 </Box>
                             ) : (

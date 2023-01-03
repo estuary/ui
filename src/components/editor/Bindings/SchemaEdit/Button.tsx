@@ -2,14 +2,13 @@ import { Terminal } from '@mui/icons-material';
 import { Skeleton } from '@mui/material';
 import DiscoveredSchemaCommands from 'components/editor/Bindings/SchemaEdit/Commands/DiscoveredSchema';
 import ExistingSchemaCommands from 'components/editor/Bindings/SchemaEdit/Commands/ExistingSchema';
-import { CollectionData } from 'components/editor/Bindings/types';
+import { useBindingsEditorStore_collectionData } from 'components/editor/Bindings/Store/hooks';
 import ButtonWithPopper from 'components/shared/ButtonWithPopper';
 
-interface Props {
-    collectionData: CollectionData | null | undefined;
-}
+function SchemaEditButton() {
+    // Bindings Editor Store
+    const collectionData = useBindingsEditorStore_collectionData();
 
-function SchemaEditButton({ collectionData }: Props) {
     return collectionData ? (
         <ButtonWithPopper
             messageId="workflows.collectionSelector.cta.schemaEdit"

@@ -1,20 +1,16 @@
 import { DataObject } from '@mui/icons-material';
 import { Button, Skeleton } from '@mui/material';
 import SchemaInferenceDialog from 'components/editor/Bindings/SchemaInference/Dialog';
-import { CollectionData } from 'components/editor/Bindings/types';
+import { useBindingsEditorStore_collectionData } from 'components/editor/Bindings/Store/hooks';
 import { useEntityWorkflow } from 'context/Workflow';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
-interface Props {
-    collectionData: CollectionData | null | undefined;
-    setCollectionData: Dispatch<
-        SetStateAction<CollectionData | null | undefined>
-    >;
-}
-
-function SchemaInferenceButton({ collectionData, setCollectionData }: Props) {
+function SchemaInferenceButton() {
     const workflow = useEntityWorkflow();
+
+    // Bindings Editor Store
+    const collectionData = useBindingsEditorStore_collectionData();
 
     const [open, setOpen] = useState<boolean>(false);
 
@@ -42,7 +38,6 @@ function SchemaInferenceButton({ collectionData, setCollectionData }: Props) {
                     collectionData={collectionData}
                     open={open}
                     setOpen={setOpen}
-                    setCollectionData={setCollectionData}
                 />
             </>
         ) : (

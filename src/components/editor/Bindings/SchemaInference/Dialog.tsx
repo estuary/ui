@@ -20,6 +20,8 @@ import { createDraftSpec, modifyDraftSpec } from 'api/draftSpecs';
 import { getLiveSpecsByCatalogName } from 'api/liveSpecsExt';
 import { BindingsEditorSchemaSkeleton } from 'components/collection/CollectionSkeletons';
 import MessageWithLink from 'components/content/MessageWithLink';
+import { useBindingsEditorStore_setCollectionData } from 'components/editor/Bindings/Store/hooks';
+import { BindingsEditorState } from 'components/editor/Bindings/Store/types';
 import { CollectionData } from 'components/editor/Bindings/types';
 import { DEFAULT_HEIGHT } from 'components/editor/MonacoEditor';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
@@ -51,9 +53,6 @@ interface Props {
     collectionData: CollectionData;
     open: boolean;
     setOpen: Dispatch<SetStateAction<boolean>>;
-    setCollectionData: Dispatch<
-        SetStateAction<CollectionData | null | undefined>
-    >;
     height?: number;
 }
 
@@ -98,9 +97,7 @@ const processDraftSpecResponse = (
     schemaUpdateErrored: boolean,
     setSchemaUpdateErrored: Dispatch<SetStateAction<boolean>>,
     setLoading: Dispatch<SetStateAction<boolean>>,
-    setCollectionData: Dispatch<
-        SetStateAction<CollectionData | null | undefined>
-    >,
+    setCollectionData: BindingsEditorState['setCollectionData'],
     setOpen: Dispatch<SetStateAction<boolean>>
 ) => {
     if (draftSpecResponse.error) {
@@ -130,10 +127,12 @@ function SchemaInferenceDialog({
     collectionData,
     open,
     setOpen,
-    setCollectionData,
     height = DEFAULT_HEIGHT,
 }: Props) {
     const theme = useTheme();
+
+    // Bindings Editor Store
+    const setCollectionData = useBindingsEditorStore_setCollectionData();
 
     // Draft Editor Store
     const persistedDraftId = useEditorStore_persistedDraftId();
