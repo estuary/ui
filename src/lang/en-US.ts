@@ -334,10 +334,11 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.data.capability': `Capability`,
     'entityTable.data.objectRole': `Object`,
     'entityTable.data.lastPubUserFullName': `Last Updated By`,
-    'entityTable.data.catalogPrefix': `Prefix`,
+    'entityTable.data.catalogPrefix': `Flow Prefix`,
     'entityTable.data.provider': `Provider`,
     'entityTable.data.bucket': `Bucket`,
     'entityTable.data.prefix': `Prefix`,
+    'entityTable.data.storagePrefix': `Storage Prefix`,
 
     'entityTable.stats.bytes_read': `Bytes Read`,
     'entityTable.stats.docs_read': `Docs Read`,

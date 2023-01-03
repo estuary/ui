@@ -29,7 +29,7 @@ export const tableColumns = [
     },
     {
         field: null,
-        headerIntlKey: 'entityTable.data.prefix',
+        headerIntlKey: 'entityTable.data.storagePrefix',
     },
     {
         field: 'updated_at',
