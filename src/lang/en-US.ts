@@ -698,6 +698,7 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.rediscoverDialog.message1': `Proceeding with this action will replace the current capture configuration with one generated automatically by Flow. Discovery identifies one or more resources — tables, data streams, or the equivalent — and generates bindings so that each will be mapped to a data collection in Flow.`,
     'workflows.collectionSelector.rediscoverDialog.message2': `If there are any aspects of your current capture configuration you would like to preserve, take note of them before proceeding with this action.`,
 
+    'workflows.collectionSelector.schemaEdit.cta.updateSchema': `Update Schema`,
     'workflows.collectionSelector.schemaEdit.header': `CLI`,
     'workflows.collectionSelector.schemaEdit.flowctlDocLink': `https://docs.estuary.dev/concepts/flowctl/`,
     'workflows.collectionSelector.schemaEdit.description': `Use the commands below to edit the schema for this collection.`,

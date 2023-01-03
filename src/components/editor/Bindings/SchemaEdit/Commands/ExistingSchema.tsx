@@ -1,6 +1,7 @@
 import { Typography } from '@mui/material';
 import SingleLineCode from 'components/content/SingleLineCode';
 import EditCommandsHeader from 'components/editor/Bindings/SchemaEdit/Commands/Header';
+import UpdateSchemaButton from 'components/editor/Bindings/SchemaEdit/Commands/UpdateSchemaButton';
 import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
@@ -65,6 +66,8 @@ function ExistingSchemaCommands() {
             </Typography>
 
             <SingleLineCode formattedMessage={pushLocalEditsCommand} />
+
+            <UpdateSchemaButton />
         </>
     );
 }

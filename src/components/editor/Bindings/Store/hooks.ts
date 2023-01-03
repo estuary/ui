@@ -30,3 +30,57 @@ export const useBindingsEditorStore_setCollectionData = () => {
         BindingsEditorState['setCollectionData']
     >(getStoreName(entityType), (state) => state.setCollectionData);
 };
+
+export const useBindingsEditorStore_initializeCollectionData = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['initializeCollectionData']
+    >(getStoreName(entityType), (state) => state.initializeCollectionData);
+};
+
+export const useBindingsEditorStore_updateSchema = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['updateSchema']
+    >(getStoreName(entityType), (state) => state.updateSchema);
+};
+
+export const useBindingsEditorStore_schemaUpdated = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['schemaUpdated']
+    >(getStoreName(entityType), (state) => state.schemaUpdated);
+};
+
+export const useBindingsEditorStore_setSchemaUpdated = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['setSchemaUpdated']
+    >(getStoreName(entityType), (state) => state.setSchemaUpdated);
+};
+
+export const useBindingsEditorStore_schemaUpdateErrored = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['schemaUpdateErrored']
+    >(getStoreName(entityType), (state) => state.schemaUpdateErrored);
+};
+
+export const useBindingsEditorStore_setSchemaUpdateErrored = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['setSchemaUpdateErrored']
+    >(getStoreName(entityType), (state) => state.setSchemaUpdateErrored);
+};
