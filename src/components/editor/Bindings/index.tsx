@@ -188,6 +188,7 @@ function BindingsMultiEditor({
                     alternativeReflexContainerBackground[theme.palette.mode]
                 }
                 displayBorder={true}
+                height={550}
             />
         </>
     );

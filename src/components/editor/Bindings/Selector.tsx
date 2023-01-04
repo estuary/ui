@@ -248,7 +248,7 @@ function BindingSelector({
                 </Stack>
             </Box>
 
-            <Box sx={{ height: 280 }}>
+            <Box sx={{ height: 480 }}>
                 <DataGrid
                     components={{
                         NoRowsOverlay: SelectorEmpty,
