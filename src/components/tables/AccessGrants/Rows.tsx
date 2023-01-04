@@ -36,7 +36,7 @@ export const userTableColumns = [
 export const prefixTableColumns = [
     {
         field: 'subject_role',
-        headerIntlKey: 'entityTable.data.prefix',
+        headerIntlKey: 'entityTable.data.catalogPrefix',
     },
 ].concat(commonTableColumns);
 

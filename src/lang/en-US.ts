@@ -334,11 +334,11 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.data.capability': `Capability`,
     'entityTable.data.objectRole': `Object`,
     'entityTable.data.lastPubUserFullName': `Last Updated By`,
-    'entityTable.data.catalogPrefix': `Flow Prefix`,
+    'entityTable.data.catalogPrefix': `Catalog Prefix`,
     'entityTable.data.provider': `Provider`,
     'entityTable.data.bucket': `Bucket`,
     'entityTable.data.prefix': `Prefix`,
-    'entityTable.data.storagePrefix': `Storage Prefix`,
+    'entityTable.data.storagePrefix': `Prefix`,
 
     'entityTable.stats.bytes_read': `Bytes Read`,
     'entityTable.stats.docs_read': `Docs Read`,
@@ -418,7 +418,7 @@ const StorageMappings: ResolvedIntlConfig['messages'] = {
     'storageMappings.bucket.label': `Bucket`,
     'storageMappings.bucket.description': `The name of the bucket you have setup to store data in.`,
     'storageMappings.lastUpdated.label': `Last Updated`,
-    'storageMappings.message': `Below are all the ${CommonMessages['terms.storageMapping']} that you have read or admin access to. These are the locations that your data is stored. If you have admin access you can edit them below`,
+    'storageMappings.message': `Below are all the ${CommonMessages['terms.storageMapping']} that you have read or admin access to. These are the locations that your data is stored. You currently cannot edit these in the UI. If you need an update please contact support.`,
 };
 
 const ConnectorsPage: ResolvedIntlConfig['messages'] = {
