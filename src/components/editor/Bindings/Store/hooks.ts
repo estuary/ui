@@ -84,3 +84,12 @@ export const useBindingsEditorStore_setSchemaUpdateErrored = () => {
         BindingsEditorState['setSchemaUpdateErrored']
     >(getStoreName(entityType), (state) => state.setSchemaUpdateErrored);
 };
+
+export const useBindingsEditorStore_resetState = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['resetState']
+    >(getStoreName(entityType), (state) => state.resetState);
+};

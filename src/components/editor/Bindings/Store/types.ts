@@ -21,4 +21,7 @@ export interface BindingsEditorState {
     setSchemaUpdateErrored: (
         value: BindingsEditorState['schemaUpdateErrored']
     ) => void;
+
+    // Misc.
+    resetState: () => void;
 }

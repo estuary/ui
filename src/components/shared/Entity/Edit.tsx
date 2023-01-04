@@ -379,6 +379,7 @@ function EntityEdit({
         resourceConfigServerUpdateRequired,
     ]);
 
+    // TODO (defect): Trigger the prompt data loss modal if the resource config section changes.
     const promptDataLoss = detailsFormChanged() || endpointConfigChanged();
 
     useUnsavedChangesPrompt(!exitWhenLogsClose && promptDataLoss, resetState);

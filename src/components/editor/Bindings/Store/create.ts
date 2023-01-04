@@ -124,6 +124,10 @@ const getInitialState = (
             );
         }
     },
+
+    resetState: () => {
+        set(getInitialStateData(), false, 'Bindings Editor State Reset');
+    },
 });
 
 export const createBindingsEditorStore = (key: BindingsEditorStoreNames) =>
