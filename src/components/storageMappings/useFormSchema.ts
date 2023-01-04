@@ -1,6 +1,8 @@
 import { useIntl } from 'react-intl';
 import useConstant from 'use-constant';
 
+// TODO (storage mapping edit) - this is not used right now but will be when we add
+//  storage mapping editing.
 function useFormSchema() {
     const intl = useIntl();
 

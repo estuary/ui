@@ -12,6 +12,8 @@ import {
 import ProviderSelector from './ProviderSelector';
 import useFormSchema from './useFormSchema';
 
+// TODO (storage mapping edit) - this is not used right now but will be when we add
+//  storage mapping editing.
 function Form() {
     const loading = useStorageMappingsStore_loading();
     const storageMappingSpecs = useStorageMappingsStore_spec();
