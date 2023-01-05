@@ -1,7 +1,6 @@
 import { Typography } from '@mui/material';
 import SingleLineCode from 'components/content/SingleLineCode';
-import EditCommandsHeader from 'components/editor/Bindings/SchemaEdit/Commands/Header';
-import UpdateSchemaButton from 'components/editor/Bindings/SchemaEdit/Commands/UpdateSchemaButton';
+import EditCommandsWrapper from 'components/editor/Bindings/SchemaEdit/Commands/Wrapper';
 import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
@@ -28,9 +27,7 @@ function DiscoveredSchemaCommands() {
     });
 
     return (
-        <>
-            <EditCommandsHeader />
-
+        <EditCommandsWrapper>
             <Typography sx={{ mb: 3 }}>
                 <FormattedMessage id="workflows.collectionSelector.schemaEdit.description" />
             </Typography>
@@ -46,9 +43,7 @@ function DiscoveredSchemaCommands() {
             </Typography>
 
             <SingleLineCode formattedMessage={pushLocalEditsCommand} />
-
-            <UpdateSchemaButton />
-        </>
+        </EditCommandsWrapper>
     );
 }
 
