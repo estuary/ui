@@ -1,6 +1,5 @@
 import { Typography } from '@mui/material';
 import SingleLineCode from 'components/content/SingleLineCode';
-import EditCommandsWrapper from 'components/editor/Bindings/SchemaEdit/Commands/Wrapper';
 import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
@@ -42,7 +41,7 @@ function ExistingSchemaCommands() {
     });
 
     return (
-        <EditCommandsWrapper>
+        <>
             <Typography sx={{ mb: 3 }}>
                 <FormattedMessage id="workflows.collectionSelector.schemaEdit.description" />
             </Typography>
@@ -63,7 +62,7 @@ function ExistingSchemaCommands() {
             </Typography>
 
             <SingleLineCode formattedMessage={pushLocalEditsCommand} />
-        </EditCommandsWrapper>
+        </>
     );
 }
 
