@@ -70,39 +70,31 @@ const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
 const handleInferredSchemaSuccess = (
     response: InferSchemaResponse,
     collectionSchema: Schema,
-    setInferredSchema: Dispatch<SetStateAction<Schema | null | undefined>>,
-    setLoading: Dispatch<SetStateAction<boolean>>
+    setInferredSchema: Dispatch<SetStateAction<Schema | null | undefined>>
 ) => {
     setInferredSchema(
         !isEmpty(response.schema)
             ? { ...collectionSchema, schema: response.schema }
             : null
     );
-
-    setLoading(false);
 };
 
 const handleInferredSchemaFailure = (
     error: any,
-    setInferredSchema: Dispatch<SetStateAction<Schema | null | undefined>>,
-    setLoading: Dispatch<SetStateAction<boolean>>
+    setInferredSchema: Dispatch<SetStateAction<Schema | null | undefined>>
 ) => {
     setInferredSchema(error?.code === 404 ? null : undefined);
-
-    setLoading(false);
 };
 
 const processDraftSpecResponse = (
     draftSpecResponse: CallSupabaseResponse<any>,
     schemaUpdateErrored: boolean,
     setSchemaUpdateErrored: Dispatch<SetStateAction<boolean>>,
-    setLoading: Dispatch<SetStateAction<boolean>>,
     setCollectionData: BindingsEditorState['setCollectionData'],
     setOpen: Dispatch<SetStateAction<boolean>>
 ) => {
     if (draftSpecResponse.error) {
         setSchemaUpdateErrored(true);
-        setLoading(false);
     } else if (draftSpecResponse.data && draftSpecResponse.data.length > 0) {
         if (schemaUpdateErrored) {
             setSchemaUpdateErrored(false);
@@ -113,11 +105,9 @@ const processDraftSpecResponse = (
             belongsToDraft: true,
         });
 
-        setLoading(false);
         setOpen(false);
     } else {
         setSchemaUpdateErrored(true);
-        setLoading(false);
     }
 };
 
@@ -155,21 +145,18 @@ function SchemaInferenceDialog({
 
     useEffectOnce(() => {
         if (currentCollection && gatewayConfig?.gateway_url) {
-            getInferredSchema(gatewayConfig, currentCollection).then(
-                (response) =>
-                    handleInferredSchemaSuccess(
-                        response,
-                        collectionData.spec,
-                        setInferredSchema,
-                        setLoading
-                    ),
-                (error) =>
-                    handleInferredSchemaFailure(
-                        error,
-                        setInferredSchema,
-                        setLoading
-                    )
-            );
+            getInferredSchema(gatewayConfig, currentCollection)
+                .then(
+                    (response) =>
+                        handleInferredSchemaSuccess(
+                            response,
+                            collectionData.spec,
+                            setInferredSchema
+                        ),
+                    (error) =>
+                        handleInferredSchemaFailure(error, setInferredSchema)
+                )
+                .finally(() => setLoading(false));
         } else {
             setLoading(false);
         }
@@ -201,7 +188,6 @@ function SchemaInferenceDialog({
                         draftSpecResponse,
                         schemaUpdateErrored,
                         setSchemaUpdateErrored,
-                        setLoading,
                         setCollectionData,
                         setOpen
                     );
@@ -213,7 +199,6 @@ function SchemaInferenceDialog({
 
                     if (liveSpecsResponse.error) {
                         setSchemaUpdateErrored(true);
-                        setLoading(false);
                     } else if (liveSpecsResponse.data) {
                         const { last_pub_id } = liveSpecsResponse.data[0];
 
@@ -229,12 +214,13 @@ function SchemaInferenceDialog({
                             draftSpecResponse,
                             schemaUpdateErrored,
                             setSchemaUpdateErrored,
-                            setLoading,
                             setCollectionData,
                             setOpen
                         );
                     }
                 }
+
+                setLoading(false);
             } else {
                 setSchemaUpdateErrored(true);
             }
