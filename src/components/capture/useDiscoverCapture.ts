@@ -333,22 +333,8 @@ function useDiscoverCapture(
                     { overrideJsonFormDefaults: true }
                 );
 
-                let catalogName = entityName;
-
-                if (editWorkflow && imageConnectorId === initialConnectorId) {
-                    // The discovery RPC will insert a row into the draft spec-related tables for the given task with verbiage
-                    // identifying the external source appended to the task name (e.g., '/source-postgres'). To limit duplication
-                    // of draft spec-related data, the aforementioned external source identifier is removed from the task name
-                    // prior to executing the discovery RPC.
-                    const lastSlashIndex = entityName.lastIndexOf('/');
-
-                    if (lastSlashIndex !== -1) {
-                        catalogName = entityName.slice(0, lastSlashIndex);
-                    }
-                }
-
                 const discoverResponse = await discover(
-                    catalogName,
+                    entityName,
                     encryptedEndpointConfig.data,
                     imageConnectorTagId,
                     draftId
