@@ -78,10 +78,7 @@ function useDiscoverCapture(
 ) {
     const supabaseClient = useClient();
 
-    const [initialConnectorId, lastPubId] = useGlobalSearchParams([
-        GlobalSearchParams.CONNECTOR_ID,
-        GlobalSearchParams.LAST_PUB_ID,
-    ]);
+    const [lastPubId] = useGlobalSearchParams([GlobalSearchParams.LAST_PUB_ID]);
 
     const workflow = useEntityWorkflow();
     const editWorkflow = workflow === 'capture_edit';
@@ -359,24 +356,22 @@ function useDiscoverCapture(
             }
         },
         [
-            createDiscoversSubscription,
-            resetEditorState,
-            setFormState,
-            updateFormStatus,
             callFailed,
+            createDiscoversSubscription,
             detailsFormsHasErrors,
-            editWorkflow,
             endpointConfigData,
             endpointConfigErrorsExist,
             endpointSchema,
             entityName,
             imageConnectorId,
             imageConnectorTagId,
-            initialConnectorId,
+            resetEditorState,
             resourceConfig,
             resourceConfigHasErrors,
             serverEndpointConfigData,
             serverUpdateRequired,
+            setFormState,
+            updateFormStatus,
         ]
     );
 
