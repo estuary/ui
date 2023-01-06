@@ -258,7 +258,7 @@ export const monacoEditorHeaderBackground = {
 
 export const monacoEditorWidgetBackground = {
     light: 'white',
-    dark: '#252526',
+    dark: '#1e1e1e',
 };
 
 export const codeBackground = {

@@ -37,9 +37,7 @@ import { isEmpty, isEqual } from 'lodash';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useEffectOnce, useLocalStorage } from 'react-use';
-import getInferredSchema, {
-    InferSchemaResponse,
-} from 'services/schema-inference';
+import getInferredSchema from 'services/schema-inference';
 import { stringifyJSON } from 'services/stringify';
 import { CallSupabaseResponse } from 'services/supabase';
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
@@ -66,25 +64,6 @@ const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
         overflowWrap: 'break-word',
     },
 });
-
-const handleInferredSchemaSuccess = (
-    response: InferSchemaResponse,
-    collectionSchema: Schema,
-    setInferredSchema: Dispatch<SetStateAction<Schema | null | undefined>>
-) => {
-    setInferredSchema(
-        !isEmpty(response.schema)
-            ? { ...collectionSchema, schema: response.schema }
-            : null
-    );
-};
-
-const handleInferredSchemaFailure = (
-    error: any,
-    setInferredSchema: Dispatch<SetStateAction<Schema | null | undefined>>
-) => {
-    setInferredSchema(error?.code === 404 ? null : undefined);
-};
 
 const processDraftSpecResponse = (
     draftSpecResponse: CallSupabaseResponse<any>,
@@ -134,6 +113,9 @@ function SchemaInferenceDialog({
     const [inferredSchema, setInferredSchema] = useState<
         Schema | null | undefined
     >(null);
+    const [documentsRead, setDocumentsRead] = useState<
+        number | null | undefined
+    >(null);
 
     const [schemaUpdateErrored, setSchemaUpdateErrored] =
         useState<boolean>(false);
@@ -147,14 +129,25 @@ function SchemaInferenceDialog({
         if (currentCollection && gatewayConfig?.gateway_url) {
             getInferredSchema(gatewayConfig, currentCollection)
                 .then(
-                    (response) =>
-                        handleInferredSchemaSuccess(
-                            response,
-                            collectionData.spec,
-                            setInferredSchema
-                        ),
-                    (error) =>
-                        handleInferredSchemaFailure(error, setInferredSchema)
+                    (response) => {
+                        setInferredSchema(
+                            !isEmpty(response.schema)
+                                ? {
+                                      ...collectionData.spec,
+                                      schema: response.schema,
+                                  }
+                                : null
+                        );
+
+                        setDocumentsRead(response.documents_read);
+                    },
+                    (error) => {
+                        setInferredSchema(
+                            error?.code === 404 ? null : undefined
+                        );
+
+                        setDocumentsRead(undefined);
+                    }
                 )
                 .finally(() => setLoading(false));
         } else {
@@ -256,7 +249,10 @@ function SchemaInferenceDialog({
                 </Typography>
 
                 <Typography sx={{ mb: 4 }}>
-                    <FormattedMessage id="workflows.collectionSelector.schemaInference.message.schemaDiff" />
+                    <FormattedMessage
+                        id="workflows.collectionSelector.schemaInference.message.schemaDiff"
+                        values={{ documents_read: documentsRead ?? 0 }}
+                    />
                 </Typography>
 
                 {schemaUpdateErrored ? (
@@ -310,16 +306,37 @@ function SchemaInferenceDialog({
                     </Box>
 
                     {inferredSchema ? (
-                        <DiffEditor
-                            height={`${height}px`}
-                            original={stringifyJSON(collectionData.spec)}
-                            modified={stringifyJSON(inferredSchema)}
-                            theme={
-                                theme.palette.mode === 'light'
-                                    ? 'vs'
-                                    : 'vs-dark'
-                            }
-                        />
+                        <>
+                            <DiffEditor
+                                height={`${height}px`}
+                                original={stringifyJSON(collectionData.spec)}
+                                modified={stringifyJSON(inferredSchema)}
+                                theme={
+                                    theme.palette.mode === 'light'
+                                        ? 'vs'
+                                        : 'vs-dark'
+                                }
+                            />
+
+                            <Box
+                                sx={{
+                                    p: 1,
+                                    backgroundColor:
+                                        monacoEditorWidgetBackground[
+                                            theme.palette.mode
+                                        ],
+                                }}
+                            >
+                                <Typography variant="caption">
+                                    <FormattedMessage
+                                        id="workflows.collectionSelector.schemaInference.message.documentsRead"
+                                        values={{
+                                            documents_read: documentsRead ?? 0,
+                                        }}
+                                    />
+                                </Typography>
+                            </Box>
+                        </>
                     ) : (
                         <Box
                             sx={{
