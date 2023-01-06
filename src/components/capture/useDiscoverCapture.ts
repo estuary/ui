@@ -378,7 +378,7 @@ function useDiscoverCapture(
                     setFormState({
                         logToken: discoverResponse.data[0].logs_token,
                     });
-                } else if (persistedDraftId && !editWorkflow) {
+                } else if (persistedDraftId) {
                     const draftSpecsResponse =
                         await modifyExistingCaptureDraftSpec(
                             persistedDraftId,
