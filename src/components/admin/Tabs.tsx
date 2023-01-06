@@ -1,3 +1,4 @@
+import BackupIcon from '@mui/icons-material/Backup';
 import CookieIcon from '@mui/icons-material/Cookie';
 import GroupIcon from '@mui/icons-material/Group';
 import MediationIcon from '@mui/icons-material/Mediation';
@@ -21,6 +22,11 @@ function AdminTabs() {
                 label: 'admin.tabs.users',
                 icon: GroupIcon,
                 path: authenticatedRoutes.admin.accessGrants.fullPath,
+            },
+            {
+                label: 'admin.tabs.storageMappings',
+                icon: BackupIcon,
+                path: authenticatedRoutes.admin.storageMappings.fullPath,
             },
             {
                 label: 'admin.tabs.connectors',
@@ -71,7 +77,12 @@ function AdminTabs() {
 
     return (
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Tabs value={selectedTab} aria-label="basic tabs example">
+            <Tabs
+                allowScrollButtonsMobile
+                variant="scrollable"
+                scrollButtons="auto"
+                value={selectedTab}
+            >
                 {tabs}
             </Tabs>
         </Box>

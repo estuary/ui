@@ -3,6 +3,7 @@ import AccessGrants from 'components/admin/AccessGrants';
 import AdminApi from 'components/admin/Api';
 import AdminConnectors from 'components/admin/Connectors';
 import AdminCookies from 'components/admin/Cookies';
+import StorageMappings from 'components/admin/StorageMappings';
 import CaptureCreate from 'components/capture/Create';
 import CaptureEdit from 'components/capture/Edit';
 import MaterializationCreate from 'components/materialization/Create';
@@ -154,6 +155,12 @@ const Authenticated = () => {
                         <Route
                             path={authenticatedRoutes.admin.cookies.path}
                             element={<AdminCookies />}
+                        />
+                        <Route
+                            path={
+                                authenticatedRoutes.admin.storageMappings.path
+                            }
+                            element={<StorageMappings />}
                         />
                     </Route>
 

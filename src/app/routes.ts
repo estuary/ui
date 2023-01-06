@@ -40,6 +40,11 @@ export const authenticatedRoutes = {
             path: 'cookies',
             fullPath: '/admin/cookies',
         },
+        storageMappings: {
+            title: 'routeTitle.admin.storageMappings',
+            path: 'storage-mappings',
+            fullPath: '/admin/storage-mappings',
+        },
     },
     captures: {
         title: 'routeTitle.captures',
