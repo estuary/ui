@@ -1,4 +1,10 @@
-import { Box, Stack, Typography, useTheme } from '@mui/material';
+import {
+    Box,
+    CircularProgress,
+    Stack,
+    Typography,
+    useTheme,
+} from '@mui/material';
 import { BindingsEditorSchemaSkeleton } from 'components/collection/CollectionSkeletons';
 import ResourceConfig from 'components/collection/ResourceConfig';
 import MessageWithLink from 'components/content/MessageWithLink';
@@ -7,6 +13,7 @@ import SchemaInferenceButton from 'components/editor/Bindings/SchemaInference/Bu
 import {
     useBindingsEditorStore_collectionData,
     useBindingsEditorStore_initializeCollectionData,
+    useBindingsEditorStore_schemaUpdated,
     useBindingsEditorStore_schemaUpdateErrored,
 } from 'components/editor/Bindings/Store/hooks';
 import BindingsTabs, { tabProps } from 'components/editor/Bindings/Tabs';
@@ -33,6 +40,7 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
     const initializeCollectionData =
         useBindingsEditorStore_initializeCollectionData();
 
+    const schemaUpdated = useBindingsEditorStore_schemaUpdated();
     const schemaUpdateErrored = useBindingsEditorStore_schemaUpdateErrored();
 
     // Draft Editor Store
@@ -96,18 +104,17 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                             <FormattedMessage id="workflows.collectionSelector.header.collectionSchema" />
                                         </Typography>
 
-                                        {/* {schemaUpdated ? (
-                                            <IconButton
-                                                onClick={handlers.updateSchema}
-                                            >
-                                                <Refresh />
-                                            </IconButton>
-                                        ) : (
-                                            <CircularProgress
-                                                size="1.5rem"
-                                                sx={{ ml: 1 }}
-                                            />
-                                        )} */}
+                                        {
+                                            /* TODO (optimization): Determine a better placement for this loading indicator.
+                                             It serves as a progress indicator for the async call to fetch the schema of
+                                             a collection edited on the CLI. */
+                                            schemaUpdated ? null : (
+                                                <CircularProgress
+                                                    size="1.5rem"
+                                                    sx={{ ml: 1 }}
+                                                />
+                                            )
+                                        }
                                     </Box>
 
                                     <Stack direction="row" spacing={1}>
