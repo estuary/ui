@@ -378,7 +378,7 @@ function useDiscoverCapture(
                     setFormState({
                         logToken: discoverResponse.data[0].logs_token,
                     });
-                } else if (persistedDraftId) {
+                } else if (persistedDraftId && !editWorkflow) {
                     const draftSpecsResponse =
                         await modifyExistingCaptureDraftSpec(
                             persistedDraftId,
@@ -411,7 +411,10 @@ function useDiscoverCapture(
                         status: FormStatus.GENERATED,
                     });
                 } else {
-                    // TODO (optimization): Throw generic error.
+                    // TODO (optimization): This condition should be nearly impossible to reach, but we currently do not have a means to produce
+                    //   an error in this scenario. ValidationErrorSummary is not suitable for this scenario and EntityError, the error component
+                    //   that surfaces form state errors, is only rendered in the event a persisted draft ID is present. Since the likelihood of
+                    //   reaching this code block is slim, I am going to add a solution in a fast-follow to the schema inference changes.
                 }
             }
         },
