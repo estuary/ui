@@ -41,7 +41,7 @@ import {
 } from 'stores/ResourceConfig/hooks';
 import { EntityWorkflow } from 'types';
 import useConstant from 'use-constant';
-import { hasLength, truncateCatalogName } from 'utils/misc-utils';
+import { hasLength } from 'utils/misc-utils';
 
 interface BindingSelectorProps {
     loading: boolean;
@@ -74,10 +74,7 @@ function Row({ collection, task, workflow, disabled }: RowProps) {
                 workflow === 'capture_edit' &&
                 !hasLength(discoveredCollections)
             ) {
-                const catalogName = truncateCatalogName(task);
-
-                const nativeCollectionDetected =
-                    collection.includes(catalogName);
+                const nativeCollectionDetected = collection.includes(task);
 
                 nativeCollectionDetected
                     ? setRestrictedDiscoveredCollections(

@@ -78,10 +78,7 @@ function useDiscoverCapture(
 ) {
     const supabaseClient = useClient();
 
-    const [initialConnectorId, lastPubId] = useGlobalSearchParams([
-        GlobalSearchParams.CONNECTOR_ID,
-        GlobalSearchParams.LAST_PUB_ID,
-    ]);
+    const [lastPubId] = useGlobalSearchParams([GlobalSearchParams.LAST_PUB_ID]);
 
     const workflow = useEntityWorkflow();
     const editWorkflow = workflow === 'capture_edit';
@@ -333,22 +330,8 @@ function useDiscoverCapture(
                     { overrideJsonFormDefaults: true }
                 );
 
-                let catalogName = entityName;
-
-                if (editWorkflow && imageConnectorId === initialConnectorId) {
-                    // The discovery RPC will insert a row into the draft spec-related tables for the given task with verbiage
-                    // identifying the external source appended to the task name (e.g., '/source-postgres'). To limit duplication
-                    // of draft spec-related data, the aforementioned external source identifier is removed from the task name
-                    // prior to executing the discovery RPC.
-                    const lastSlashIndex = entityName.lastIndexOf('/');
-
-                    if (lastSlashIndex !== -1) {
-                        catalogName = entityName.slice(0, lastSlashIndex);
-                    }
-                }
-
                 const discoverResponse = await discover(
-                    catalogName,
+                    entityName,
                     encryptedEndpointConfig.data,
                     imageConnectorTagId,
                     draftId
@@ -373,24 +356,22 @@ function useDiscoverCapture(
             }
         },
         [
-            createDiscoversSubscription,
-            resetEditorState,
-            setFormState,
-            updateFormStatus,
             callFailed,
+            createDiscoversSubscription,
             detailsFormsHasErrors,
-            editWorkflow,
             endpointConfigData,
             endpointConfigErrorsExist,
             endpointSchema,
             entityName,
             imageConnectorId,
             imageConnectorTagId,
-            initialConnectorId,
+            resetEditorState,
             resourceConfig,
             resourceConfigHasErrors,
             serverEndpointConfigData,
             serverUpdateRequired,
+            setFormState,
+            updateFormStatus,
         ]
     );
 

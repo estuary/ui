@@ -12,12 +12,6 @@ export const stripPathing = (stringVal: string) => {
     );
 };
 
-export const truncateCatalogName = (value: string): string => {
-    const lastOccurrence = value.lastIndexOf('/');
-
-    return lastOccurrence === -1 ? value : value.slice(0, lastOccurrence);
-};
-
 export const hasLength = (val: string | any[] | null | undefined): boolean => {
     return Boolean(val && val.length > 0);
 };
