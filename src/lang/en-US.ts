@@ -43,6 +43,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'terms.materialization': `Materialization`,
     'terms.capture': `Capture`,
     'terms.documentation': `Docs`,
+    'terms.storageMapping': `Storage Mappings`,
 
     // Common fields
     'entityPrefix.label': `Prefix`,
@@ -171,6 +172,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.admin.api': `CLI - API`,
     'routeTitle.admin.connectors': `Connectors`,
     'routeTitle.admin.cookies': `Cookie Preferences`,
+    'routeTitle.admin.storageMappings': `${CommonMessages['terms.storageMapping']}`,
     'routeTitle.captureCreate': `Create Capture`,
     'routeTitle.captureEdit': `Edit Capture`,
     'routeTitle.captures': `Captures`,
@@ -196,6 +198,7 @@ const BrowserTitles: ResolvedIntlConfig['messages'] = {
     'browserTitle.admin.api': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.api']}`,
     'browserTitle.admin.connectors': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.connectors']}`,
     'browserTitle.admin.cookies': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.cookies']}`,
+    'browserTitle.admin.storageMappings': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.storageMappings']}`,
     'browserTitle.captureCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureCreate']}`,
     'browserTitle.captureEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureEdit']}`,
     'browserTitle.captures': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captures']}`,
@@ -331,6 +334,11 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.data.capability': `Capability`,
     'entityTable.data.objectRole': `Object`,
     'entityTable.data.lastPubUserFullName': `Last Updated By`,
+    'entityTable.data.catalogPrefix': `Catalog Prefix`,
+    'entityTable.data.provider': `Provider`,
+    'entityTable.data.bucket': `Bucket`,
+    'entityTable.data.prefix': `Prefix`,
+    'entityTable.data.storagePrefix': `Prefix`,
 
     'entityTable.stats.bytes_read': `Bytes Read`,
     'entityTable.stats.docs_read': `Docs Read`,
@@ -381,6 +389,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.tabs.connectors': `Connectors`,
     'admin.tabs.api': `CLI-API`,
     'admin.tabs.cookies': `Cookie Preferences`,
+    'admin.tabs.storageMappings': `${CommonMessages['terms.storageMapping']}`,
 };
 
 const Welcome: ResolvedIntlConfig['messages'] = {
@@ -389,10 +398,27 @@ const Welcome: ResolvedIntlConfig['messages'] = {
 
 const AccessGrants: ResolvedIntlConfig['messages'] = {
     'accessGrantsTable.header': `Captures`,
-    'accessGrantsTable.title': `Users`,
-    'accessGrantsTable.filterLabel': `Filter User or Object`,
+    'accessGrantsTable.users.title': `Users`,
+    'accessGrantsTable.prefixes.title': `Prefixes`,
+    'accessGrantsTable.users.filterLabel': `Filter User or Object`,
+    'accessGrantsTable.prefixes.filterLabel': `Filter Prefix or Object`,
     'accessGrants.message1': `No results found.`,
     'accessGrants.message2': `We couldn't find any results matching your search. Please try a different filter.`,
+};
+
+const StorageMappings: ResolvedIntlConfig['messages'] = {
+    'storageMappings.header': `Cloud Storage`,
+    'storageMappingsTable.title': `Storage Locations`,
+    'storageMappingsTable.filterLabel': `Filter by Prefix`,
+    'storageMappingsTable.message1': `No results found.`,
+    'storageMappingsTable.message2': `We couldn't find any results matching your search. Please try a different filter.`,
+    'storageMappings.prefix.description': `The Flow prefix you want to configure`,
+    'storageMappings.provider.label': `Provider`,
+    'storageMappings.provider.description': `The provider (ex: S3, GCP) you are using`,
+    'storageMappings.bucket.label': `Bucket`,
+    'storageMappings.bucket.description': `The name of the bucket you have setup to store data in.`,
+    'storageMappings.lastUpdated.label': `Last Updated`,
+    'storageMappings.message': `Below are all the ${CommonMessages['terms.storageMapping']} that you have read or admin access to. These are the locations that your data is stored. You currently cannot edit these in the UI. If you need an update please contact support.`,
 };
 
 const ConnectorsPage: ResolvedIntlConfig['messages'] = {
@@ -795,6 +821,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...Legal,
     ...Tenant,
     ...CustomRenderers,
+    ...StorageMappings,
 };
 
 export default enUSMessages;
