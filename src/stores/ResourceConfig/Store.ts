@@ -18,7 +18,7 @@ import {
 import { createJSONFormDefaults } from 'services/ajv';
 import { ResourceConfigStoreNames } from 'stores/names';
 import { Schema } from 'types';
-import { hasLength, truncateCatalogName } from 'utils/misc-utils';
+import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import create, { StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -238,10 +238,8 @@ const getInitialState = (
                                 )
                         );
                 } else if (workflow === 'capture_edit' && collections) {
-                    const catalogName = truncateCatalogName(task);
-
                     const nativeCollections = collections.filter((collection) =>
-                        collection.includes(catalogName)
+                        collection.includes(task)
                     );
 
                     additionalRestrictedCollections = nativeCollections.filter(

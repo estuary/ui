@@ -1,25 +1,23 @@
 import { Divider, Stack, Typography } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
 import AdminTabs from 'components/admin/Tabs';
-import MessageWithLink from 'components/content/MessageWithLink';
 import PageContainer from 'components/shared/PageContainer';
-import AccessGrantsTable from 'components/tables/AccessGrants';
+import StorageMappingsTable from 'components/tables/StorageMappings';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { FormattedMessage } from 'react-intl';
 
-function AccessGrants() {
-    useBrowserTitle('browserTitle.admin.accessGrants');
+function StorageMappings() {
+    useBrowserTitle('browserTitle.admin.storageMappings');
 
     return (
         <PageContainer
             pageTitleProps={{
-                header: authenticatedRoutes.admin.accessGrants.title,
+                header: authenticatedRoutes.admin.storageMappings.title,
                 headerLink:
-                    'https://docs.estuary.dev/reference/authentication/',
+                    'https://docs.estuary.dev/concepts/storage-mappings/',
             }}
         >
             <AdminTabs />
-
             <Stack direction="column" spacing={2} sx={{ m: 2 }}>
                 <Typography
                     component="span"
@@ -28,16 +26,16 @@ function AccessGrants() {
                         alignItems: 'center',
                     }}
                 >
-                    <FormattedMessage id="terms.permissions" />
+                    <FormattedMessage id="storageMappings.header" />
                 </Typography>
-                <MessageWithLink messageID="admin.roles.message" />
+                <Typography>
+                    <FormattedMessage id="storageMappings.message" />
+                </Typography>
                 <Divider />
             </Stack>
-
-            <AccessGrantsTable showUser />
-            <AccessGrantsTable />
+            <StorageMappingsTable />
         </PageContainer>
     );
 }
 
-export default AccessGrants;
+export default StorageMappings;

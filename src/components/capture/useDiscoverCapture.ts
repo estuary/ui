@@ -81,10 +81,7 @@ function useDiscoverCapture(
 ) {
     const supabaseClient = useClient();
 
-    const [initialConnectorId, lastPubId] = useGlobalSearchParams([
-        GlobalSearchParams.CONNECTOR_ID,
-        GlobalSearchParams.LAST_PUB_ID,
-    ]);
+    const [lastPubId] = useGlobalSearchParams([GlobalSearchParams.LAST_PUB_ID]);
 
     const workflow = useEntityWorkflow();
     const editWorkflow = workflow === 'capture_edit';
@@ -325,20 +322,6 @@ function useDiscoverCapture(
                     { overrideJsonFormDefaults: true }
                 );
 
-                let catalogName = entityName;
-
-                if (editWorkflow && imageConnectorId === initialConnectorId) {
-                    // The discovery RPC will insert a row into the draft spec-related tables for the given task with verbiage
-                    // identifying the external source appended to the task name (e.g., '/source-postgres'). To limit duplication
-                    // of draft spec-related data, the aforementioned external source identifier is removed from the task name
-                    // prior to executing the discovery RPC.
-                    const lastSlashIndex = entityName.lastIndexOf('/');
-
-                    if (lastSlashIndex !== -1) {
-                        catalogName = entityName.slice(0, lastSlashIndex);
-                    }
-                }
-
                 if (
                     options?.initiateRediscovery ||
                     options?.initiateDiscovery
@@ -356,7 +339,7 @@ function useDiscoverCapture(
                     const draftId = draftsResponse.data[0].id;
 
                     const discoverResponse = await discover(
-                        catalogName,
+                        entityName,
                         encryptedEndpointConfig.data,
                         imageConnectorTagId,
                         draftId
@@ -419,6 +402,7 @@ function useDiscoverCapture(
             }
         },
         [
+            callFailed,
             createDiscoversSubscription,
             postGenerateMutate,
             resetEditorState,
@@ -429,22 +413,18 @@ function useDiscoverCapture(
             updateFormStatus,
             callFailed,
             detailsFormsHasErrors,
-            editWorkflow,
             endpointConfigData,
             endpointConfigErrorsExist,
             endpointSchema,
             entityName,
             imageConnectorId,
             imageConnectorTagId,
-            imagePath,
-            initialConnectorId,
-            options?.initiateDiscovery,
-            options?.initiateRediscovery,
-            persistedDraftId,
             resourceConfig,
             resourceConfigHasErrors,
             serverEndpointConfigData,
             serverUpdateRequired,
+            setFormState,
+            updateFormStatus,
         ]
     );
 

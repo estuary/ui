@@ -120,21 +120,10 @@ function BindingsMultiEditor({
             discoveredCollections.length > 0 &&
             draftSpecs.length > 0
         ) {
-            let truncatedServerCatalogName: string | null = null;
-
             const catalogNameOnServer = draftSpecs[0].catalog_name;
 
-            const lastSlashIndex = catalogNameOnServer.lastIndexOf('/');
-
-            if (lastSlashIndex !== -1) {
-                truncatedServerCatalogName = catalogNameOnServer.slice(
-                    0,
-                    lastSlashIndex
-                );
-            }
-
-            return truncatedServerCatalogName
-                ? truncatedServerCatalogName !== catalogName
+            return catalogNameOnServer
+                ? !catalogNameOnServer.startsWith(catalogName)
                 : false;
         } else {
             return false;
