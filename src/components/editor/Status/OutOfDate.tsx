@@ -1,4 +1,4 @@
-import { Cloud } from '@mui/icons-material';
+import { CloudOff } from '@mui/icons-material';
 import { Typography } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 
@@ -13,12 +13,7 @@ function OutOfDate({ iconSize }: Props) {
                 <FormattedMessage id="common.outOfDate" />
             </Typography>
 
-            <Cloud
-                sx={{
-                    color: (theme) => theme.palette.error.main,
-                    fontSize: iconSize,
-                }}
-            />
+            <CloudOff sx={{ fontSize: iconSize }} />
         </>
     );
 }
