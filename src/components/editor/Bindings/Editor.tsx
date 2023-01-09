@@ -35,6 +35,9 @@ interface Props {
 }
 
 const ICON_SIZE = 15;
+const EDITOR_HEIGHT = 396;
+const EDITOR_TOOLBAR_HEIGHT = 34;
+const EDITOR_TOTAL_HEIGHT = EDITOR_TOOLBAR_HEIGHT + EDITOR_HEIGHT + 2;
 
 function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
     const theme = useTheme();
@@ -109,7 +112,7 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
 
                             <Box
                                 sx={{
-                                    height: 432,
+                                    height: EDITOR_TOTAL_HEIGHT,
                                     border: defaultOutline[theme.palette.mode],
                                 }}
                             >
@@ -119,7 +122,8 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                             spacing={1}
                                             direction="row"
                                             sx={{
-                                                minHeight: 34,
+                                                minHeight:
+                                                    EDITOR_TOOLBAR_HEIGHT,
                                                 py: 0.5,
                                                 px: 1,
                                                 alignItems: 'center',
@@ -136,8 +140,8 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                         >
                                             {
                                                 /* TODO (optimization): Determine a better placement for this loading indicator.
-                                             It serves as a progress indicator for the async call to fetch the schema of
-                                             a collection edited on the CLI. */
+                                                    It serves as a progress indicator for the async call to fetch the schema of
+                                                    a collection edited on the CLI. */
 
                                                 schemaUpdateErrored ? (
                                                     <OutOfDate
@@ -156,7 +160,7 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                         </Stack>
 
                                         <Editor
-                                            height={396}
+                                            height={EDITOR_HEIGHT}
                                             value={stringifyJSON(
                                                 collectionData.spec
                                             )}
@@ -175,7 +179,8 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                     <>
                                         <Box
                                             sx={{
-                                                minHeight: 34,
+                                                minHeight:
+                                                    EDITOR_TOOLBAR_HEIGHT,
                                                 backgroundColor:
                                                     monacoEditorHeaderBackground[
                                                         theme.palette.mode
@@ -189,7 +194,7 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
 
                                         <Box
                                             sx={{
-                                                height: 396,
+                                                height: EDITOR_HEIGHT,
                                                 p: 1,
                                                 backgroundColor:
                                                     monacoEditorWidgetBackground[
