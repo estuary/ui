@@ -175,6 +175,11 @@ export const tableAlternateRowsSx: SxProps<Theme> = {
     },
 };
 
+export const defaultOutline = {
+    light: '1px solid rgba(0, 0, 0, 0.12)',
+    dark: '1px solid rgba(255, 255, 255, 0.12)',
+};
+
 // TODO (optimization): Replace instances of outlineSx with slateOutline.
 export const slateOutline = `1px solid ${slate[200]}`;
 
@@ -252,13 +257,18 @@ export const alertBackground = {
 export const connectorCardLogoBackground = 'rgba(172, 199, 220, 0.30)';
 
 export const monacoEditorHeaderBackground = {
-    light: slate[50],
+    light: 'white',
     dark: '#121212',
 };
 
 export const monacoEditorWidgetBackground = {
     light: 'white',
     dark: '#1e1e1e',
+};
+
+export const monacoEditorComponentBackground = {
+    light: 'vs',
+    dark: 'vs-dark',
 };
 
 export const codeBackground = {

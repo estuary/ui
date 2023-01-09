@@ -1,10 +1,5 @@
-import {
-    Box,
-    CircularProgress,
-    Stack,
-    Typography,
-    useTheme,
-} from '@mui/material';
+import Editor from '@monaco-editor/react';
+import { Box, Stack, Typography, useTheme } from '@mui/material';
 import { BindingsEditorSchemaSkeleton } from 'components/collection/CollectionSkeletons';
 import ResourceConfig from 'components/collection/ResourceConfig';
 import MessageWithLink from 'components/content/MessageWithLink';
@@ -17,11 +12,19 @@ import {
     useBindingsEditorStore_schemaUpdateErrored,
 } from 'components/editor/Bindings/Store/hooks';
 import BindingsTabs, { tabProps } from 'components/editor/Bindings/Tabs';
+import OutOfDate from 'components/editor/Status/OutOfDate';
+import Updating from 'components/editor/Status/Updating';
+import UpToDate from 'components/editor/Status/UpToDate';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
+import {
+    defaultOutline,
+    monacoEditorComponentBackground,
+    monacoEditorHeaderBackground,
+} from 'context/Theme';
 import { ReactNode, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import ReactJson from 'react-json-view';
+import { stringifyJSON } from 'services/stringify';
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
 
 interface Props {
@@ -30,10 +33,10 @@ interface Props {
     readOnly?: boolean;
 }
 
+const ICON_SIZE = 15;
+
 function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
     const theme = useTheme();
-    const jsonTheme =
-        theme.palette.mode === 'dark' ? 'bright' : 'bright:inverted';
 
     // Bindings Editor Store
     const collectionData = useBindingsEditorStore_collectionData();
@@ -72,17 +75,10 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                             readOnly={readOnly}
                         />
                     ) : collectionData || collectionData === null ? (
-                        <Stack
-                            spacing={2}
-                            sx={{
-                                '& .react-json-view': {
-                                    backgroundColor: 'transparent !important',
-                                },
-                            }}
-                        >
+                        <Stack spacing={2}>
                             {schemaUpdateErrored ? (
                                 <AlertBox severity="warning" short>
-                                    <FormattedMessage id="workflows.collectionSelector.alert.message.schemaUpdateError" />
+                                    <FormattedMessage id="workflows.collectionSelector.schemaEdit.alert.message.schemaUpdateError" />
                                 </AlertBox>
                             ) : null}
 
@@ -94,28 +90,9 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                         justifyContent: 'space-between',
                                     }}
                                 >
-                                    <Box
-                                        sx={{
-                                            display: 'inline-flex',
-                                            alignItems: 'center',
-                                        }}
-                                    >
-                                        <Typography variant="h6" sx={{ mr: 1 }}>
-                                            <FormattedMessage id="workflows.collectionSelector.header.collectionSchema" />
-                                        </Typography>
-
-                                        {
-                                            /* TODO (optimization): Determine a better placement for this loading indicator.
-                                             It serves as a progress indicator for the async call to fetch the schema of
-                                             a collection edited on the CLI. */
-                                            schemaUpdated ? null : (
-                                                <CircularProgress
-                                                    size="1.5rem"
-                                                    sx={{ ml: 1 }}
-                                                />
-                                            )
-                                        }
-                                    </Box>
+                                    <Typography variant="h6" sx={{ mr: 1 }}>
+                                        <FormattedMessage id="workflows.collectionSelector.header.collectionSchema" />
+                                    </Typography>
 
                                     <Stack direction="row" spacing={1}>
                                         <SchemaInferenceButton />
@@ -130,13 +107,70 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                             )}
 
                             {collectionData ? (
-                                <ReactJson
-                                    quotesOnKeys={false}
-                                    src={collectionData.spec}
-                                    theme={jsonTheme}
-                                    displayObjectSize={false}
-                                    displayDataTypes={false}
-                                />
+                                <Box
+                                    sx={{
+                                        height: 432,
+                                        border: defaultOutline[
+                                            theme.palette.mode
+                                        ],
+                                    }}
+                                >
+                                    <Stack
+                                        spacing={1}
+                                        direction="row"
+                                        sx={{
+                                            minHeight: 20,
+                                            py: 0.5,
+                                            px: 1,
+                                            alignItems: 'center',
+                                            justifyContent: 'end',
+                                            backgroundColor:
+                                                monacoEditorHeaderBackground[
+                                                    theme.palette.mode
+                                                ],
+                                            borderBottom:
+                                                defaultOutline[
+                                                    theme.palette.mode
+                                                ],
+                                        }}
+                                    >
+                                        {
+                                            /* TODO (optimization): Determine a better placement for this loading indicator.
+                                             It serves as a progress indicator for the async call to fetch the schema of
+                                             a collection edited on the CLI. */
+
+                                            schemaUpdateErrored ? (
+                                                <OutOfDate
+                                                    iconSize={ICON_SIZE}
+                                                />
+                                            ) : schemaUpdated ? (
+                                                <UpToDate
+                                                    iconSize={ICON_SIZE}
+                                                />
+                                            ) : (
+                                                <Updating
+                                                    iconSize={ICON_SIZE}
+                                                />
+                                            )
+                                        }
+                                    </Stack>
+
+                                    <Editor
+                                        height={398}
+                                        value={stringifyJSON(
+                                            collectionData.spec
+                                        )}
+                                        defaultLanguage="json"
+                                        theme={
+                                            monacoEditorComponentBackground[
+                                                theme.palette.mode
+                                            ]
+                                        }
+                                        saveViewState={false}
+                                        path={currentCollection}
+                                        options={{ readOnly: true }}
+                                    />
+                                </Box>
                             ) : (
                                 <BindingsEditorSchemaSkeleton />
                             )}

@@ -33,6 +33,9 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.recommended': `Recommended`,
     'common.copied': `Copied`,
     'common.copyFailed': `Failed to copy`,
+    'common.updating': `Updating`,
+    'common.upToDate': `Up to Date`,
+    'common.outOfDate': `Out of Date`,
 
     // Aria
     'aria.openExpand': `show more`,
@@ -681,7 +684,6 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.error.initForm': `An issue was encountered initializing the form.`,
     'workflows.error.initFormSection': `An issue was encountered initializing this section of the form.`,
 
-    'workflows.collectionSelector.alert.message.schemaUpdateError': `An error was encountered fetching your updated collection schema to display. This does not mean that there was a problem updating the server. Click the refresh button below to try again.`,
     'workflows.collectionSelector.cta.delete': `Remove All`,
     'workflows.collectionSelector.cta.rediscover': `Refresh`,
     'workflows.collectionSelector.cta.schemaEdit': `CLI`,
@@ -709,6 +711,7 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.schemaEdit.existingCollection.command1': `flowctl draft select --id {draftId}`,
     'workflows.collectionSelector.schemaEdit.existingCollection.command2': `flowctl catalog draft --name {catalogName} && flowctl draft develop`,
     'workflows.collectionSelector.schemaEdit.existingCollection.command3': `flowctl draft author --source <flow_catalog_file_location>`,
+    'workflows.collectionSelector.schemaEdit.alert.message.schemaUpdateError': `An error was encountered fetching your updated collection schema to display. This does not mean that there was a problem updating the server. Open the CLI popper and click the Update Schema button to try again.`,
 
     'workflows.collectionSelector.schemaInference.header': `Schema Inference`,
     'workflows.collectionSelector.schemaInference.message': `Flow can help you tighten your collection schemas. It will review the documents in a collection and approximate the shape of your data.`,

@@ -27,6 +27,7 @@ import { DEFAULT_HEIGHT } from 'components/editor/MonacoEditor';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import {
+    defaultOutline,
     glassBkgWithoutBlur,
     monacoEditorHeaderBackground,
     monacoEditorWidgetBackground,
@@ -269,7 +270,7 @@ function SchemaInferenceDialog({
                     </AlertBox>
                 ) : null}
 
-                <Box sx={{ my: 3 }}>
+                <Box sx={{ my: 3, border: defaultOutline[theme.palette.mode] }}>
                     <Box
                         sx={{
                             p: 1,
@@ -278,6 +279,7 @@ function SchemaInferenceDialog({
                                 monacoEditorHeaderBackground[
                                     theme.palette.mode
                                 ],
+                            borderBottom: defaultOutline[theme.palette.mode],
                         }}
                     >
                         <Stack
@@ -325,6 +327,8 @@ function SchemaInferenceDialog({
                                         monacoEditorWidgetBackground[
                                             theme.palette.mode
                                         ],
+                                    borderTop:
+                                        defaultOutline[theme.palette.mode],
                                 }}
                             >
                                 <Typography variant="caption">
