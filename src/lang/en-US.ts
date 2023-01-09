@@ -719,6 +719,8 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.schemaInference.message.documentsRead': `A total of {documents_read} documents were evaluated to generate the inferred schema.`,
     'workflows.collectionSelector.schemaInference.alert.noDocuments.header': `No Documents Found`,
     'workflows.collectionSelector.schemaInference.alert.noDocuments.message': `We were unable to find any documents in this collection. Consequently, could not infer the shape of its data.`,
+    'workflows.collectionSelector.schemaInference.alert.lowDocumentCount.header': `Low Document Count`,
+    'workflows.collectionSelector.schemaInference.alert.lowDocumentCount.message': `Fewer documents than desired were found. This could mean that your collection isn't seeing very much data.`,
     'workflows.collectionSelector.schemaInference.alert.generalError.header': `Server Error`,
     'workflows.collectionSelector.schemaInference.alert.inferenceService.message': `This is not something you did wrong. An error was encountered while inferring the shape of the documents in this collection.`,
     'workflows.collectionSelector.schemaInference.alert.patchService.message': `This is not something you did wrong. An error was encountered while applying the inferred schema. Please try again and, if the error persists {docLink}`,

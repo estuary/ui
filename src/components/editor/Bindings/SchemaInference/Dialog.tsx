@@ -37,7 +37,7 @@ import {
 import { isEmpty, isEqual } from 'lodash';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useEffectOnce, useLocalStorage } from 'react-use';
+import { useEffectOnce, useLocalStorage, useUnmountPromise } from 'react-use';
 import getInferredSchema from 'services/schema-inference';
 import { stringifyJSON } from 'services/stringify';
 import { CallSupabaseResponse } from 'services/supabase';
@@ -93,6 +93,8 @@ const processDraftSpecResponse = (
 
 const TITLE_ID = 'inferred-schema-dialog-title';
 
+const DOCUMENT_THRESHOLD = 10000;
+
 function SchemaInferenceDialog({
     collectionData,
     open,
@@ -126,9 +128,13 @@ function SchemaInferenceDialog({
         getStoredGatewayAuthConfig()
     );
 
+    const resolveWhileMounted = useUnmountPromise();
+
     useEffectOnce(() => {
         if (currentCollection && gatewayConfig?.gateway_url) {
-            getInferredSchema(gatewayConfig, currentCollection)
+            resolveWhileMounted(
+                getInferredSchema(gatewayConfig, currentCollection)
+            )
                 .then(
                     (response) => {
                         setInferredSchema(
@@ -267,6 +273,20 @@ function SchemaInferenceDialog({
                         }
                     >
                         <MessageWithLink messageID="workflows.collectionSelector.schemaInference.alert.patchService.message" />
+                    </AlertBox>
+                ) : null}
+
+                {documentsRead && documentsRead < DOCUMENT_THRESHOLD ? (
+                    <AlertBox
+                        severity="warning"
+                        short
+                        title={
+                            <Typography>
+                                <FormattedMessage id="workflows.collectionSelector.schemaInference.alert.lowDocumentCount.header" />
+                            </Typography>
+                        }
+                    >
+                        <FormattedMessage id="workflows.collectionSelector.schemaInference.alert.lowDocumentCount.message" />
                     </AlertBox>
                 ) : null}
 
