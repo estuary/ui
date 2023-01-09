@@ -95,6 +95,7 @@ const getInitialState = (
         );
     },
 
+    // TODO (optimization): Equip stores with the proper tools to clean up after themselves; this includes managing the promises they create.
     updateSchema: (currentCollection, persistedDraftId) => {
         const {
             collectionData,
@@ -107,7 +108,10 @@ const getInitialState = (
         if (currentCollection && collectionData) {
             setSchemaUpdated(false);
 
-            evaluateCollectionData(persistedDraftId, currentCollection).then(
+            return evaluateCollectionData(
+                persistedDraftId,
+                currentCollection
+            ).then(
                 (response) => {
                     if (schemaUpdateErrored) {
                         setSchemaUpdateErrored(false);
@@ -122,6 +126,8 @@ const getInitialState = (
                     setSchemaUpdated(true);
                 }
             );
+        } else {
+            return null;
         }
     },
 
