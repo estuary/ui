@@ -21,6 +21,7 @@ import {
     defaultOutline,
     monacoEditorComponentBackground,
     monacoEditorHeaderBackground,
+    monacoEditorWidgetBackground,
 } from 'context/Theme';
 import { ReactNode, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -106,74 +107,101 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                 </Typography>
                             )}
 
-                            {collectionData ? (
-                                <Box
-                                    sx={{
-                                        height: 432,
-                                        border: defaultOutline[
-                                            theme.palette.mode
-                                        ],
-                                    }}
-                                >
-                                    <Stack
-                                        spacing={1}
-                                        direction="row"
-                                        sx={{
-                                            minHeight: 20,
-                                            py: 0.5,
-                                            px: 1,
-                                            alignItems: 'center',
-                                            justifyContent: 'end',
-                                            backgroundColor:
-                                                monacoEditorHeaderBackground[
-                                                    theme.palette.mode
-                                                ],
-                                            borderBottom:
-                                                defaultOutline[
-                                                    theme.palette.mode
-                                                ],
-                                        }}
-                                    >
-                                        {
-                                            /* TODO (optimization): Determine a better placement for this loading indicator.
+                            <Box
+                                sx={{
+                                    height: 432,
+                                    border: defaultOutline[theme.palette.mode],
+                                }}
+                            >
+                                {collectionData ? (
+                                    <>
+                                        <Stack
+                                            spacing={1}
+                                            direction="row"
+                                            sx={{
+                                                minHeight: 34,
+                                                py: 0.5,
+                                                px: 1,
+                                                alignItems: 'center',
+                                                justifyContent: 'end',
+                                                backgroundColor:
+                                                    monacoEditorHeaderBackground[
+                                                        theme.palette.mode
+                                                    ],
+                                                borderBottom:
+                                                    defaultOutline[
+                                                        theme.palette.mode
+                                                    ],
+                                            }}
+                                        >
+                                            {
+                                                /* TODO (optimization): Determine a better placement for this loading indicator.
                                              It serves as a progress indicator for the async call to fetch the schema of
                                              a collection edited on the CLI. */
 
-                                            schemaUpdateErrored ? (
-                                                <OutOfDate
-                                                    iconSize={ICON_SIZE}
-                                                />
-                                            ) : schemaUpdated ? (
-                                                <UpToDate
-                                                    iconSize={ICON_SIZE}
-                                                />
-                                            ) : (
-                                                <Updating
-                                                    iconSize={ICON_SIZE}
-                                                />
-                                            )
-                                        }
-                                    </Stack>
+                                                schemaUpdateErrored ? (
+                                                    <OutOfDate
+                                                        iconSize={ICON_SIZE}
+                                                    />
+                                                ) : schemaUpdated ? (
+                                                    <UpToDate
+                                                        iconSize={ICON_SIZE}
+                                                    />
+                                                ) : (
+                                                    <Updating
+                                                        iconSize={ICON_SIZE}
+                                                    />
+                                                )
+                                            }
+                                        </Stack>
 
-                                    <Editor
-                                        height={398}
-                                        value={stringifyJSON(
-                                            collectionData.spec
-                                        )}
-                                        defaultLanguage="json"
-                                        theme={
-                                            monacoEditorComponentBackground[
-                                                theme.palette.mode
-                                            ]
-                                        }
-                                        saveViewState={false}
-                                        path={currentCollection}
-                                        options={{ readOnly: true }}
-                                    />
-                                </Box>
-                            ) : (
-                                <BindingsEditorSchemaSkeleton />
-                            )}
+                                        <Editor
+                                            height={396}
+                                            value={stringifyJSON(
+                                                collectionData.spec
+                                            )}
+                                            defaultLanguage="json"
+                                            theme={
+                                                monacoEditorComponentBackground[
+                                                    theme.palette.mode
+                                                ]
+                                            }
+                                            saveViewState={false}
+                                            path={currentCollection}
+                                            options={{ readOnly: true }}
+                                        />
+                                    </>
+                                ) : (
+                                    <>
+                                        <Box
+                                            sx={{
+                                                minHeight: 34,
+                                                backgroundColor:
+                                                    monacoEditorHeaderBackground[
+                                                        theme.palette.mode
+                                                    ],
+                                                borderBottom:
+                                                    defaultOutline[
+                                                        theme.palette.mode
+                                                    ],
+                                            }}
+                                        />
+
+                                        <Box
+                                            sx={{
+                                                height: 396,
+                                                p: 1,
+                                                backgroundColor:
+                                                    monacoEditorWidgetBackground[
+                                                        theme.palette.mode
+                                                    ],
+                                            }}
+                                        >
+                                            <BindingsEditorSchemaSkeleton />
+                                        </Box>
+                                    </>
+                                )}
+                            </Box>
                         </Stack>
                     ) : (
                         <AlertBox
