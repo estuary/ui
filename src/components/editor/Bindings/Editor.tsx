@@ -12,9 +12,9 @@ import {
     useBindingsEditorStore_schemaUpdateErrored,
 } from 'components/editor/Bindings/Store/hooks';
 import BindingsTabs, { tabProps } from 'components/editor/Bindings/Tabs';
-import OutOfDate from 'components/editor/Status/OutOfDate';
-import Updating from 'components/editor/Status/Updating';
-import UpToDate from 'components/editor/Status/UpToDate';
+import OutOfSync from 'components/editor/Status/OutOfSync';
+import Synchronized from 'components/editor/Status/Synchronized';
+import Synchronizing from 'components/editor/Status/Synchronizing';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import {
@@ -144,15 +144,15 @@ function BindingsEditor({ loading, skeleton, readOnly = false }: Props) {
                                                     a collection edited on the CLI. */
 
                                                 schemaUpdateErrored ? (
-                                                    <OutOfDate
+                                                    <OutOfSync
                                                         iconSize={ICON_SIZE}
                                                     />
                                                 ) : schemaUpdated ? (
-                                                    <UpToDate
+                                                    <Synchronized
                                                         iconSize={ICON_SIZE}
                                                     />
                                                 ) : (
-                                                    <Updating
+                                                    <Synchronizing
                                                         iconSize={ICON_SIZE}
                                                     />
                                                 )

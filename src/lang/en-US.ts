@@ -33,9 +33,9 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.recommended': `Recommended`,
     'common.copied': `Copied`,
     'common.copyFailed': `Failed to copy`,
-    'common.updating': `Updating`,
-    'common.upToDate': `Up to Date`,
-    'common.outOfDate': `Out of Date`,
+    'common.synchronizing': `Synchronizing`,
+    'common.synchronized': `Synchronized`,
+    'common.outOfSync': `Out of Sync`,
 
     // Aria
     'aria.openExpand': `show more`,
@@ -700,10 +700,10 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.rediscoverDialog.message1': `Proceeding with this action will replace the current capture configuration with one generated automatically by Flow. Discovery identifies one or more resources — tables, data streams, or the equivalent — and generates bindings so that each will be mapped to a data collection in Flow.`,
     'workflows.collectionSelector.rediscoverDialog.message2': `If there are any aspects of your current capture configuration you would like to preserve, take note of them before proceeding with this action.`,
 
-    'workflows.collectionSelector.schemaEdit.cta.updateSchema': `Update Schema`,
+    'workflows.collectionSelector.schemaEdit.cta.syncSchema': `Synchronize Schema`,
     'workflows.collectionSelector.schemaEdit.header': `CLI`,
     'workflows.collectionSelector.schemaEdit.flowctlDocLink': `https://docs.estuary.dev/concepts/flowctl/`,
-    'workflows.collectionSelector.schemaEdit.description': `Use the commands below to edit the schema for this collection.`,
+    'workflows.collectionSelector.schemaEdit.description': `Use the commands below to edit the schema for this collection. Once executed, click the Synchronize Schema button below to pull the changes on the server into the UI.`,
     'workflows.collectionSelector.schemaEdit.message1': `Pull down the draft to edit`,
     'workflows.collectionSelector.schemaEdit.message2': `Push your changes up to the server`,
     'workflows.collectionSelector.schemaEdit.discoveredCollection.command1': `flowctl draft select --id {draftId} && flowctl draft develop`,

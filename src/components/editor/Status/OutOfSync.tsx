@@ -1,4 +1,4 @@
-import { CloudDone } from '@mui/icons-material';
+import { CloudOff } from '@mui/icons-material';
 import { Typography } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 
@@ -6,16 +6,16 @@ interface Props {
     iconSize: number;
 }
 
-function UpToDate({ iconSize }: Props) {
+function OutOfSync({ iconSize }: Props) {
     return (
         <>
             <Typography>
-                <FormattedMessage id="common.upToDate" />
+                <FormattedMessage id="common.outOfSync" />
             </Typography>
 
-            <CloudDone sx={{ fontSize: iconSize }} />
+            <CloudOff sx={{ fontSize: iconSize }} />
         </>
     );
 }
 
-export default UpToDate;
+export default OutOfSync;

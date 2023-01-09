@@ -6,11 +6,11 @@ interface Props {
     iconSize: number;
 }
 
-function Updating({ iconSize }: Props) {
+function Synchronizing({ iconSize }: Props) {
     return (
         <>
             <Typography>
-                <FormattedMessage id="common.updating" />
+                <FormattedMessage id="common.synchronizing" />
             </Typography>
 
             <CloudDownload sx={{ fontSize: iconSize }} />
@@ -18,4 +18,4 @@ function Updating({ iconSize }: Props) {
     );
 }
 
-export default Updating;
+export default Synchronizing;
