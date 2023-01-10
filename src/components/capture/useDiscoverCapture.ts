@@ -411,7 +411,6 @@ function useDiscoverCapture(
             setPreviousEndpointConfig,
             setDraftId,
             updateFormStatus,
-            callFailed,
             detailsFormsHasErrors,
             endpointConfigData,
             endpointConfigErrorsExist,
@@ -427,8 +426,6 @@ function useDiscoverCapture(
             resourceConfigHasErrors,
             serverEndpointConfigData,
             serverUpdateRequired,
-            setFormState,
-            updateFormStatus,
         ]
     );
 
