@@ -29,7 +29,9 @@ function UpdateSchemaButton() {
     };
 
     useUnmount(() => {
-        if (schemaPromise !== null) Promise.resolve(schemaPromise);
+        if (schemaPromise !== null) {
+            void Promise.resolve(schemaPromise);
+        }
     });
 
     return (
