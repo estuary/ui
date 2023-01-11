@@ -137,14 +137,37 @@ function SchemaInferenceDialog({
             )
                 .then(
                     (response) => {
-                        setInferredSchema(
-                            !isEmpty(response.schema)
-                                ? {
-                                      ...collectionData.spec,
-                                      schema: response.schema,
-                                  }
-                                : null
-                        );
+                        if (Object.hasOwn(collectionData.spec, 'schema')) {
+                            const { schema, ...additionalSpecKeys } =
+                                collectionData.spec;
+
+                            setInferredSchema(
+                                !isEmpty(response.schema)
+                                    ? {
+                                          writeSchema:
+                                              collectionData.spec.schema,
+                                          readSchema: response.schema,
+                                          ...additionalSpecKeys,
+                                      }
+                                    : null
+                            );
+                        } else if (
+                            Object.hasOwn(collectionData.spec, 'writeSchema')
+                        ) {
+                            const { writeSchema, ...additionalSpecKeys } =
+                                collectionData.spec;
+
+                            setInferredSchema(
+                                !isEmpty(response.schema)
+                                    ? {
+                                          writeSchema:
+                                              collectionData.spec.writeSchema,
+                                          readSchema: response.schema,
+                                          ...additionalSpecKeys,
+                                      }
+                                    : null
+                            );
+                        }
 
                         setDocumentsRead(response.documents_read);
                     },
