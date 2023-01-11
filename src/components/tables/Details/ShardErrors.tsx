@@ -35,6 +35,7 @@ function ShardErrors({ shards }: Props) {
             <Alert
                 severity="error"
                 sx={{
+                    'mb': 1,
                     '& .MuiAlert-message': {
                         width: '100%',
                     },
