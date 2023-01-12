@@ -29,13 +29,14 @@ import AlertBox from 'components/shared/AlertBox';
 import {
     defaultOutline,
     glassBkgWithoutBlur,
+    monacoEditorComponentBackground,
     monacoEditorHeaderBackground,
     monacoEditorWidgetBackground,
     secondaryButtonBackground,
     secondaryButtonHoverBackground,
 } from 'context/Theme';
 import { isEmpty, isEqual } from 'lodash';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useEffectOnce, useLocalStorage, useUnmountPromise } from 'react-use';
 import getInferredSchema from 'services/schema-inference';
@@ -127,6 +128,12 @@ function SchemaInferenceDialog({
         LocalStorageKeys.GATEWAY,
         getStoredGatewayAuthConfig()
     );
+
+    const originalSchema = useMemo(() => {
+        return Object.hasOwn(collectionData.spec, 'readSchema')
+            ? collectionData.spec.readSchema
+            : collectionData.spec.schema;
+    }, [collectionData.spec]);
 
     const resolveWhileMounted = useUnmountPromise();
 
@@ -352,13 +359,16 @@ function SchemaInferenceDialog({
                         <>
                             <DiffEditor
                                 height={`${height}px`}
-                                original={stringifyJSON(collectionData.spec)}
-                                modified={stringifyJSON(inferredSpec)}
+                                original={stringifyJSON(originalSchema)}
+                                modified={stringifyJSON(
+                                    inferredSpec.readSchema
+                                )}
                                 theme={
-                                    theme.palette.mode === 'light'
-                                        ? 'vs'
-                                        : 'vs-dark'
+                                    monacoEditorComponentBackground[
+                                        theme.palette.mode
+                                    ]
                                 }
+                                options={{ readOnly: true }}
                             />
 
                             <Box
@@ -448,7 +458,7 @@ function SchemaInferenceDialog({
                 <Button
                     disabled={
                         !inferredSpec ||
-                        isEqual(collectionData.spec, inferredSpec) ||
+                        isEqual(originalSchema, inferredSpec.readSchema) ||
                         loading
                     }
                     onClick={handlers.updateServer}
