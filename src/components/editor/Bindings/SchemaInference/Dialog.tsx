@@ -113,9 +113,9 @@ function SchemaInferenceDialog({
     const currentCollection = useResourceConfig_currentCollection();
 
     const [loading, setLoading] = useState<boolean>(true);
-    const [inferredSchema, setInferredSchema] = useState<
-        Schema | null | undefined
-    >(null);
+    const [inferredSpec, setInferredSpec] = useState<Schema | null | undefined>(
+        null
+    );
     const [documentsRead, setDocumentsRead] = useState<
         number | null | undefined
     >(null);
@@ -141,7 +141,7 @@ function SchemaInferenceDialog({
                             const { schema, ...additionalSpecKeys } =
                                 collectionData.spec;
 
-                            setInferredSchema(
+                            setInferredSpec(
                                 !isEmpty(response.schema)
                                     ? {
                                           writeSchema:
@@ -157,7 +157,7 @@ function SchemaInferenceDialog({
                             const { writeSchema, ...additionalSpecKeys } =
                                 collectionData.spec;
 
-                            setInferredSchema(
+                            setInferredSpec(
                                 !isEmpty(response.schema)
                                     ? {
                                           writeSchema:
@@ -172,9 +172,7 @@ function SchemaInferenceDialog({
                         setDocumentsRead(response.documents_read);
                     },
                     (error) => {
-                        setInferredSchema(
-                            error?.code === 404 ? null : undefined
-                        );
+                        setInferredSpec(error?.code === 404 ? null : undefined);
 
                         setDocumentsRead(undefined);
                     }
@@ -194,13 +192,13 @@ function SchemaInferenceDialog({
         updateServer: async (event: React.MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
-            if (currentCollection && persistedDraftId && inferredSchema) {
+            if (currentCollection && persistedDraftId && inferredSpec) {
                 setSchemaUpdateErrored(false);
                 setLoading(true);
 
                 if (collectionData.belongsToDraft) {
                     const draftSpecResponse = await modifyDraftSpec(
-                        inferredSchema,
+                        inferredSpec,
                         {
                             draft_id: persistedDraftId,
                             catalog_name: currentCollection,
@@ -228,7 +226,7 @@ function SchemaInferenceDialog({
                         const draftSpecResponse = await createDraftSpec(
                             persistedDraftId,
                             currentCollection,
-                            inferredSchema,
+                            inferredSpec,
                             'collection',
                             last_pub_id
                         );
@@ -350,12 +348,12 @@ function SchemaInferenceDialog({
                         </Stack>
                     </Box>
 
-                    {inferredSchema ? (
+                    {inferredSpec ? (
                         <>
                             <DiffEditor
                                 height={`${height}px`}
                                 original={stringifyJSON(collectionData.spec)}
-                                modified={stringifyJSON(inferredSchema)}
+                                modified={stringifyJSON(inferredSpec)}
                                 theme={
                                     theme.palette.mode === 'light'
                                         ? 'vs'
@@ -396,7 +394,7 @@ function SchemaInferenceDialog({
                         >
                             {loading ? (
                                 <BindingsEditorSchemaSkeleton />
-                            ) : inferredSchema === null ? (
+                            ) : inferredSpec === null ? (
                                 <AlertBox
                                     severity="warning"
                                     short
@@ -449,8 +447,8 @@ function SchemaInferenceDialog({
 
                 <Button
                     disabled={
-                        !inferredSchema ||
-                        isEqual(collectionData.spec, inferredSchema) ||
+                        !inferredSpec ||
+                        isEqual(collectionData.spec, inferredSpec) ||
                         loading
                     }
                     onClick={handlers.updateServer}
