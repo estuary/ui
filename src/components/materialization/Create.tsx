@@ -1,4 +1,5 @@
 import { authenticatedRoutes } from 'app/routes';
+import { useBindingsEditorStore_resetState } from 'components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
@@ -40,6 +41,9 @@ function MaterializationCreate() {
     const { connectorTags } = useConnectorWithTagDetail(entityType);
     const hasConnectors = connectorTags.length > 0;
 
+    // Bindings Editor Store
+    const resetBindingsEditorStore = useBindingsEditorStore_resetState();
+
     // Details Form Store
     const imageTag = useDetailsForm_connectorImage();
     const detailsFormErrorsExist = useDetailsForm_errorsExist();
@@ -59,9 +63,7 @@ function MaterializationCreate() {
     const resetFormState = useFormStateStore_resetState();
     const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
 
-    // TODO (placement): Relocate resource config-related store selectors.
     // Resource Config Store
-    // const resourceConfigChanged = useResourceConfig_stateChanged();
     const resetResourceConfigState = useResourceConfig_resetState();
 
     const { mutate: mutateDraftSpecs, ...draftSpecsMetadata } =
@@ -77,6 +79,7 @@ function MaterializationCreate() {
         resetDetailsForm();
         resetFormState();
         resetResourceConfigState();
+        resetBindingsEditorStore();
     };
 
     const helpers = {

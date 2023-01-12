@@ -646,8 +646,8 @@ const getInitialState = (
                       ]
                     : collectionsToAdd;
 
-                state.currentCollection = hasLength(updatedBindings)
-                    ? updatedBindings[0].target
+                state.currentCollection = hasLength(state.collections)
+                    ? state.collections[0]
                     : null;
             }),
             false,

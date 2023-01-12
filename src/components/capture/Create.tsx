@@ -1,6 +1,7 @@
 import { authenticatedRoutes } from 'app/routes';
 import CaptureGenerateButton from 'components/capture/GenerateButton';
 import RediscoverButton from 'components/capture/RediscoverButton';
+import { useBindingsEditorStore_resetState } from 'components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
@@ -17,7 +18,7 @@ import PageContainer from 'components/shared/PageContainer';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import useDraftSpecs from 'hooks/useDraftSpecs';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
 import {
@@ -44,6 +45,9 @@ function CaptureCreate() {
     const { connectorTags } = useConnectorWithTagDetail(entityType);
     const hasConnectors = connectorTags.length > 0;
 
+    // Bindings Editor Store
+    const resetBindingsEditorStore = useBindingsEditorStore_resetState();
+
     // Details Form Store
     const imageTag = useDetailsForm_connectorImage();
     const detailsFormErrorsExist = useDetailsForm_errorsExist();
@@ -67,6 +71,8 @@ function CaptureCreate() {
     // Resource Config Store
     const resetResourceConfigState = useResourceConfig_resetState();
 
+    const [initiateDiscovery, setInitiateDiscovery] = useState<boolean>(true);
+
     const { mutate: mutateDraftSpecs, ...draftSpecsMetadata } =
         useDraftSpecs(persistedDraftId);
 
@@ -81,6 +87,7 @@ function CaptureCreate() {
         resetResourceConfigState();
         resetFormState();
         resetEditorStore();
+        resetBindingsEditorStore();
     };
 
     const helpers = {
@@ -159,6 +166,10 @@ function CaptureCreate() {
                                     disabled={!hasConnectors}
                                     callFailed={helpers.callFailed}
                                     postGenerateMutate={mutateDraftSpecs}
+                                    createWorkflowMetadata={{
+                                        initiateDiscovery,
+                                        setInitiateDiscovery,
+                                    }}
                                 />
                             }
                             TestButton={

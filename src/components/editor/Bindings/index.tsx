@@ -1,6 +1,6 @@
 import { Typography, useTheme } from '@mui/material';
 import {
-    BindingsEditorSkeleton,
+    BindingsEditorConfigSkeleton,
     BindingsSelectorSkeleton,
 } from 'components/collection/CollectionSkeletons';
 import BindingsEditor from 'components/editor/Bindings/Editor';
@@ -169,7 +169,7 @@ function BindingsMultiEditor({
                 details={
                     <BindingsEditor
                         loading={fetchingSpecs}
-                        skeleton={<BindingsEditorSkeleton />}
+                        skeleton={<BindingsEditorConfigSkeleton />}
                         readOnly={readOnly}
                     />
                 }
@@ -177,6 +177,7 @@ function BindingsMultiEditor({
                     alternativeReflexContainerBackground[theme.palette.mode]
                 }
                 displayBorder={true}
+                height={550}
             />
         </>
     );
