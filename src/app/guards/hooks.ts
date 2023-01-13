@@ -35,6 +35,8 @@ const useDirectiveGuard = (
 
     useEffect(() => {
         // Need to exchange for a fresh directive because:
+        //   new&fulfilled : user has submitted a tenant but wants to try to submit another
+        //      The backend checks if they are allowed to create multiple tenants
         //   unfulfilled : user never exchanged a token before
         //   outdated    : user has exchanged AND submitted something before
         if (
