@@ -37,8 +37,11 @@ export const getAPIPath = () => {
 
 export const getLoginSettings = () => {
     const showEmail = process.env.REACT_APP_SHOW_EMAIL_LOGIN === ENABLED;
+    const enableEmailRegister =
+        process.env.REACT_APP_ALLOW_EMAIL_REGISTER === ENABLED;
 
     return {
+        enableEmailRegister,
         showEmail,
     };
 };
