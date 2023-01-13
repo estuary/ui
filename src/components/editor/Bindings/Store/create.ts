@@ -82,7 +82,7 @@ const getInitialStateData = (): Pick<
     documentsRead: null,
     inferredSchemaApplicationErrored: false,
     inferredSpec: null,
-    loadingInferredSchema: true,
+    loadingInferredSchema: false,
     schemaUpdateErrored: false,
     schemaUpdated: true,
 });
