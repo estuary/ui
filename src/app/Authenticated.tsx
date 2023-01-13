@@ -52,6 +52,11 @@ const Authenticated = () => {
                     />
 
                     <Route
+                        path={unauthenticatedRoutes.register.path}
+                        element={<Home />}
+                    />
+
+                    <Route
                         path={authenticatedRoutes.collections.path}
                         element={
                             <EntityContextProvider value="collection">
