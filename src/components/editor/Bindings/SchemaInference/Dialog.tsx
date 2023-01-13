@@ -16,15 +16,17 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import { createDraftSpec, modifyDraftSpec } from 'api/draftSpecs';
-import { getLiveSpecsByCatalogName } from 'api/liveSpecsExt';
 import { BindingsEditorSchemaSkeleton } from 'components/collection/CollectionSkeletons';
 import MessageWithLink from 'components/content/MessageWithLink';
-import { useBindingsEditorStore_setCollectionData } from 'components/editor/Bindings/Store/hooks';
-import { BindingsEditorState } from 'components/editor/Bindings/Store/types';
+import UpdateSchemaButton from 'components/editor/Bindings/SchemaInference/Dialog/UpdateSchemaButton';
+import {
+    useBindingsEditorStore_inferredSpec,
+    useBindingsEditorStore_loadingInferredSchema,
+    useBindingsEditorStore_setInferredSpec,
+    useBindingsEditorStore_setLoadingInferredSchema,
+} from 'components/editor/Bindings/Store/hooks';
 import { CollectionData } from 'components/editor/Bindings/types';
 import { DEFAULT_HEIGHT } from 'components/editor/MonacoEditor';
-import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import {
     defaultOutline,
@@ -35,15 +37,13 @@ import {
     secondaryButtonBackground,
     secondaryButtonHoverBackground,
 } from 'context/Theme';
-import { isEmpty, isEqual } from 'lodash';
+import { isEmpty } from 'lodash';
 import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useEffectOnce, useLocalStorage, useUnmountPromise } from 'react-use';
 import getInferredSchema from 'services/schema-inference';
 import { stringifyJSON } from 'services/stringify';
-import { CallSupabaseResponse } from 'services/supabase';
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
-import { Schema } from 'types';
 import {
     getStoredGatewayAuthConfig,
     LocalStorageKeys,
@@ -67,31 +67,6 @@ const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
     },
 });
 
-const processDraftSpecResponse = (
-    draftSpecResponse: CallSupabaseResponse<any>,
-    schemaUpdateErrored: boolean,
-    setSchemaUpdateErrored: Dispatch<SetStateAction<boolean>>,
-    setCollectionData: BindingsEditorState['setCollectionData'],
-    setOpen: Dispatch<SetStateAction<boolean>>
-) => {
-    if (draftSpecResponse.error) {
-        setSchemaUpdateErrored(true);
-    } else if (draftSpecResponse.data && draftSpecResponse.data.length > 0) {
-        if (schemaUpdateErrored) {
-            setSchemaUpdateErrored(false);
-        }
-
-        setCollectionData({
-            spec: draftSpecResponse.data[0].spec,
-            belongsToDraft: true,
-        });
-
-        setOpen(false);
-    } else {
-        setSchemaUpdateErrored(true);
-    }
-};
-
 const TITLE_ID = 'inferred-schema-dialog-title';
 
 const DOCUMENT_THRESHOLD = 10000;
@@ -105,24 +80,22 @@ function SchemaInferenceDialog({
     const theme = useTheme();
 
     // Bindings Editor Store
-    const setCollectionData = useBindingsEditorStore_setCollectionData();
+    const inferredSpec = useBindingsEditorStore_inferredSpec();
+    const setInferredSpec = useBindingsEditorStore_setInferredSpec();
 
-    // Draft Editor Store
-    const persistedDraftId = useEditorStore_persistedDraftId();
+    const loadingInferredSchema =
+        useBindingsEditorStore_loadingInferredSchema();
+    const setLoadingInferredSchema =
+        useBindingsEditorStore_setLoadingInferredSchema();
 
     // Resource Config Store
     const currentCollection = useResourceConfig_currentCollection();
 
-    const [loading, setLoading] = useState<boolean>(true);
-    const [inferredSpec, setInferredSpec] = useState<Schema | null | undefined>(
-        null
-    );
     const [documentsRead, setDocumentsRead] = useState<
         number | null | undefined
     >(null);
 
-    const [schemaUpdateErrored, setSchemaUpdateErrored] =
-        useState<boolean>(false);
+    const [schemaUpdateErrored] = useState<boolean>(false);
 
     const [gatewayConfig] = useLocalStorage(
         LocalStorageKeys.GATEWAY,
@@ -184,9 +157,9 @@ function SchemaInferenceDialog({
                         setDocumentsRead(undefined);
                     }
                 )
-                .finally(() => setLoading(false));
+                .finally(() => setLoadingInferredSchema(false));
         } else {
-            setLoading(false);
+            setLoadingInferredSchema(false);
         }
     });
 
@@ -195,63 +168,6 @@ function SchemaInferenceDialog({
             event.preventDefault();
 
             setOpen(false);
-        },
-        updateServer: async (event: React.MouseEvent<HTMLElement>) => {
-            event.preventDefault();
-
-            if (currentCollection && persistedDraftId && inferredSpec) {
-                setSchemaUpdateErrored(false);
-                setLoading(true);
-
-                if (collectionData.belongsToDraft) {
-                    const draftSpecResponse = await modifyDraftSpec(
-                        inferredSpec,
-                        {
-                            draft_id: persistedDraftId,
-                            catalog_name: currentCollection,
-                        }
-                    );
-
-                    processDraftSpecResponse(
-                        draftSpecResponse,
-                        schemaUpdateErrored,
-                        setSchemaUpdateErrored,
-                        setCollectionData,
-                        setOpen
-                    );
-                } else {
-                    const liveSpecsResponse = await getLiveSpecsByCatalogName(
-                        currentCollection,
-                        'collection'
-                    );
-
-                    if (liveSpecsResponse.error) {
-                        setSchemaUpdateErrored(true);
-                    } else if (liveSpecsResponse.data) {
-                        const { last_pub_id } = liveSpecsResponse.data[0];
-
-                        const draftSpecResponse = await createDraftSpec(
-                            persistedDraftId,
-                            currentCollection,
-                            inferredSpec,
-                            'collection',
-                            last_pub_id
-                        );
-
-                        processDraftSpecResponse(
-                            draftSpecResponse,
-                            schemaUpdateErrored,
-                            setSchemaUpdateErrored,
-                            setCollectionData,
-                            setOpen
-                        );
-                    }
-                }
-
-                setLoading(false);
-            } else {
-                setSchemaUpdateErrored(true);
-            }
         },
     };
 
@@ -347,7 +263,7 @@ function SchemaInferenceDialog({
                                 </Typography>
                             </CustomWidthTooltip>
 
-                            {loading ? (
+                            {loadingInferredSchema ? (
                                 <Box sx={{ px: 1, pt: 1 }}>
                                     <CircularProgress size="1.5rem" />
                                 </Box>
@@ -402,7 +318,7 @@ function SchemaInferenceDialog({
                                     ],
                             }}
                         >
-                            {loading ? (
+                            {loadingInferredSchema ? (
                                 <BindingsEditorSchemaSkeleton />
                             ) : inferredSpec === null ? (
                                 <AlertBox
@@ -455,16 +371,10 @@ function SchemaInferenceDialog({
                     <FormattedMessage id="cta.cancel" />
                 </Button>
 
-                <Button
-                    disabled={
-                        !inferredSpec ||
-                        isEqual(originalSchema, inferredSpec.readSchema) ||
-                        loading
-                    }
-                    onClick={handlers.updateServer}
-                >
-                    <FormattedMessage id="workflows.collectionSelector.schemaInference.cta.continue" />
-                </Button>
+                <UpdateSchemaButton
+                    collectionData={collectionData}
+                    setOpen={setOpen}
+                />
             </DialogActions>
         </Dialog>
     ) : null;

@@ -1,13 +1,44 @@
-import { getDraftSpecsByCatalogName } from 'api/draftSpecs';
+import {
+    createDraftSpec,
+    getDraftSpecsByCatalogName,
+    modifyDraftSpec,
+} from 'api/draftSpecs';
 import { getLiveSpecsByCatalogName } from 'api/liveSpecsExt';
 import { BindingsEditorState } from 'components/editor/Bindings/Store/types';
 import { CollectionData } from 'components/editor/Bindings/types';
 import produce from 'immer';
 import { isEmpty } from 'lodash';
+import { CallSupabaseResponse } from 'services/supabase';
 import { BindingsEditorStoreNames } from 'stores/names';
 import { devtoolsOptions } from 'utils/store-utils';
 import create, { StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
+
+const processDraftSpecResponse = (
+    draftSpecResponse: CallSupabaseResponse<any>,
+    get: StoreApi<BindingsEditorState>['getState']
+) => {
+    const {
+        inferredSchemaApplicationErrored,
+        setCollectionData,
+        setInferredSchemaApplicationErrored,
+    } = get();
+
+    if (draftSpecResponse.error) {
+        setInferredSchemaApplicationErrored(true);
+    } else if (draftSpecResponse.data && draftSpecResponse.data.length > 0) {
+        if (inferredSchemaApplicationErrored) {
+            setInferredSchemaApplicationErrored(false);
+        }
+
+        setCollectionData({
+            spec: draftSpecResponse.data[0].spec,
+            belongsToDraft: true,
+        });
+    } else {
+        setInferredSchemaApplicationErrored(true);
+    }
+};
 
 const evaluateCollectionData = async (
     draftId: string | null,
@@ -39,9 +70,17 @@ const evaluateCollectionData = async (
 
 const getInitialStateData = (): Pick<
     BindingsEditorState,
-    'collectionData' | 'schemaUpdateErrored' | 'schemaUpdated'
+    | 'collectionData'
+    | 'inferredSchemaApplicationErrored'
+    | 'inferredSpec'
+    | 'loadingInferredSchema'
+    | 'schemaUpdateErrored'
+    | 'schemaUpdated'
 > => ({
     collectionData: null,
+    inferredSchemaApplicationErrored: false,
+    inferredSpec: null,
+    loadingInferredSchema: true,
     schemaUpdateErrored: false,
     schemaUpdated: true,
 });
@@ -73,6 +112,89 @@ const getInitialState = (
             false,
             'Collection Data Set'
         );
+    },
+
+    setLoadingInferredSchema: (value) => {
+        set(
+            produce((state: BindingsEditorState) => {
+                state.loadingInferredSchema = value;
+            }),
+            false,
+            'Loading Inferred Schema Set'
+        );
+    },
+
+    setInferredSpec: (value) => {
+        set(
+            produce((state: BindingsEditorState) => {
+                state.inferredSpec = value;
+            }),
+            false,
+            'Inferred Schema Set'
+        );
+    },
+
+    setInferredSchemaApplicationErrored: (value) => {
+        set(
+            produce((state: BindingsEditorState) => {
+                state.loadingInferredSchema = value;
+            }),
+            false,
+            'Inferred Schema Application Errored Set'
+        );
+    },
+
+    applyInferredSchema: async (currentCollection, persistedDraftId) => {
+        const {
+            collectionData,
+            inferredSpec,
+            setInferredSchemaApplicationErrored,
+            setLoadingInferredSchema,
+        } = get();
+
+        if (
+            currentCollection &&
+            persistedDraftId &&
+            inferredSpec &&
+            collectionData
+        ) {
+            setInferredSchemaApplicationErrored(false);
+            setLoadingInferredSchema(true);
+
+            if (collectionData.belongsToDraft) {
+                const draftSpecResponse = await modifyDraftSpec(inferredSpec, {
+                    draft_id: persistedDraftId,
+                    catalog_name: currentCollection,
+                });
+
+                processDraftSpecResponse(draftSpecResponse, get);
+            } else {
+                const liveSpecsResponse = await getLiveSpecsByCatalogName(
+                    currentCollection,
+                    'collection'
+                );
+
+                if (liveSpecsResponse.error) {
+                    setInferredSchemaApplicationErrored(true);
+                } else if (liveSpecsResponse.data) {
+                    const { last_pub_id } = liveSpecsResponse.data[0];
+
+                    const draftSpecResponse = await createDraftSpec(
+                        persistedDraftId,
+                        currentCollection,
+                        inferredSpec,
+                        'collection',
+                        last_pub_id
+                    );
+
+                    processDraftSpecResponse(draftSpecResponse, get);
+                }
+            }
+
+            setLoadingInferredSchema(false);
+        } else {
+            setInferredSchemaApplicationErrored(true);
+        }
     },
 
     setSchemaUpdateErrored: (value) => {

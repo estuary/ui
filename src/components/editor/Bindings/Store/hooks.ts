@@ -40,6 +40,76 @@ export const useBindingsEditorStore_initializeCollectionData = () => {
     >(getStoreName(entityType), (state) => state.initializeCollectionData);
 };
 
+export const useBindingsEditorStore_inferredSpec = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['inferredSpec']
+    >(getStoreName(entityType), (state) => state.inferredSpec);
+};
+
+export const useBindingsEditorStore_setInferredSpec = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['setInferredSpec']
+    >(getStoreName(entityType), (state) => state.setInferredSpec);
+};
+
+export const useBindingsEditorStore_loadingInferredSchema = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['loadingInferredSchema']
+    >(getStoreName(entityType), (state) => state.loadingInferredSchema);
+};
+
+export const useBindingsEditorStore_setLoadingInferredSchema = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['setLoadingInferredSchema']
+    >(getStoreName(entityType), (state) => state.setLoadingInferredSchema);
+};
+
+export const useBindingsEditorStore_inferredSchemaApplicationErrored = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['inferredSchemaApplicationErrored']
+    >(
+        getStoreName(entityType),
+        (state) => state.inferredSchemaApplicationErrored
+    );
+};
+
+export const useBindingsEditorStore_setInferredSchemaApplicationErrored =
+    () => {
+        const entityType = useEntityType();
+
+        return useZustandStore<
+            BindingsEditorState,
+            BindingsEditorState['setInferredSchemaApplicationErrored']
+        >(
+            getStoreName(entityType),
+            (state) => state.setInferredSchemaApplicationErrored
+        );
+    };
+
+export const useBindingsEditorStore_applyInferredSchema = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['applyInferredSchema']
+    >(getStoreName(entityType), (state) => state.applyInferredSchema);
+};
+
 export const useBindingsEditorStore_updateSchema = () => {
     const entityType = useEntityType();
 
