@@ -50,6 +50,7 @@ function OIDCs({ isRegister }: Props) {
                 },
                 {
                     redirectTo,
+                    shouldCreateUser: isRegister,
                 }
             );
             if (error) loginFailed(provider);

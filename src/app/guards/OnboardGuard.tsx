@@ -13,15 +13,18 @@ const SELECTED_DIRECTIVE = 'betaOnboard';
 //  stop passing in the grantsMutate and pass the directiveGuard mutate.
 interface Props extends BaseComponentProps {
     grantsMutate: any;
+    forceDisplay?: boolean;
 }
 
-function OnboardGuard({ children, grantsMutate }: Props) {
-    const { directive, loading, status } =
-        useDirectiveGuard(SELECTED_DIRECTIVE);
+function OnboardGuard({ children, forceDisplay, grantsMutate }: Props) {
+    const { directive, loading, status } = useDirectiveGuard(
+        SELECTED_DIRECTIVE,
+        forceDisplay
+    );
 
     if (loading || status === null) {
         return <FullPageSpinner />;
-    } else if (status !== 'fulfilled') {
+    } else if (forceDisplay || status !== 'fulfilled') {
         return (
             <FullPageWrapper>
                 <BetaOnboard
