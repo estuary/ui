@@ -7,7 +7,10 @@ import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { AppliedDirective } from 'types';
 
-const useDirectiveGuard = (selectedDirective: keyof typeof DIRECTIVES) => {
+const useDirectiveGuard = (
+    selectedDirective: keyof typeof DIRECTIVES,
+    forceNew?: boolean
+) => {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
 
@@ -34,7 +37,11 @@ const useDirectiveGuard = (selectedDirective: keyof typeof DIRECTIVES) => {
         // Need to exchange for a fresh directive because:
         //   unfulfilled : user never exchanged a token before
         //   outdated    : user has exchanged AND submitted something before
-        if (directiveState === 'unfulfilled' || directiveState === 'outdated') {
+        if (
+            (forceNew && directiveState === 'fulfilled') ||
+            directiveState === 'unfulfilled' ||
+            directiveState === 'outdated'
+        ) {
             const fetchDirective = async () => {
                 return exchangeBearerToken(DIRECTIVES[selectedDirective].token);
             };
@@ -64,7 +71,7 @@ const useDirectiveGuard = (selectedDirective: keyof typeof DIRECTIVES) => {
                 }
             );
         }
-    }, [directiveState, enqueueSnackbar, intl, selectedDirective]);
+    }, [directiveState, enqueueSnackbar, forceNew, intl, selectedDirective]);
 
     return useMemo(() => {
         if (directiveState === null) {
