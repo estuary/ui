@@ -12,11 +12,14 @@ import {
 } from '@mui/material';
 import { BindingsEditorSchemaSkeleton } from 'components/collection/CollectionSkeletons';
 import MessageWithLink from 'components/content/MessageWithLink';
+import InferenceDiffEditorFooter from 'components/editor/Bindings/SchemaInference/Dialog/DiffEditor/Footer';
 import InferenceDiffEditorHeader from 'components/editor/Bindings/SchemaInference/Dialog/DiffEditor/Header';
 import UpdateSchemaButton from 'components/editor/Bindings/SchemaInference/Dialog/UpdateSchemaButton';
 import {
+    useBindingsEditorStore_documentsRead,
     useBindingsEditorStore_inferredSpec,
     useBindingsEditorStore_loadingInferredSchema,
+    useBindingsEditorStore_setDocumentsRead,
     useBindingsEditorStore_setInferredSpec,
     useBindingsEditorStore_setLoadingInferredSchema,
 } from 'components/editor/Bindings/Store/hooks';
@@ -66,6 +69,9 @@ function SchemaInferenceDialog({
     const inferredSpec = useBindingsEditorStore_inferredSpec();
     const setInferredSpec = useBindingsEditorStore_setInferredSpec();
 
+    const documentsRead = useBindingsEditorStore_documentsRead();
+    const setDocumentsRead = useBindingsEditorStore_setDocumentsRead();
+
     const loadingInferredSchema =
         useBindingsEditorStore_loadingInferredSchema();
     const setLoadingInferredSchema =
@@ -73,10 +79,6 @@ function SchemaInferenceDialog({
 
     // Resource Config Store
     const currentCollection = useResourceConfig_currentCollection();
-
-    const [documentsRead, setDocumentsRead] = useState<
-        number | null | undefined
-    >(null);
 
     const [schemaUpdateErrored] = useState<boolean>(false);
 
@@ -233,26 +235,7 @@ function SchemaInferenceDialog({
                                 options={{ readOnly: true }}
                             />
 
-                            <Box
-                                sx={{
-                                    p: 1,
-                                    backgroundColor:
-                                        monacoEditorWidgetBackground[
-                                            theme.palette.mode
-                                        ],
-                                    borderTop:
-                                        defaultOutline[theme.palette.mode],
-                                }}
-                            >
-                                <Typography variant="caption">
-                                    <FormattedMessage
-                                        id="workflows.collectionSelector.schemaInference.message.documentsRead"
-                                        values={{
-                                            documents_read: documentsRead ?? 0,
-                                        }}
-                                    />
-                                </Typography>
-                            </Box>
+                            <InferenceDiffEditorFooter />
                         </>
                     ) : (
                         <Box

@@ -71,6 +71,7 @@ const evaluateCollectionData = async (
 const getInitialStateData = (): Pick<
     BindingsEditorState,
     | 'collectionData'
+    | 'documentsRead'
     | 'inferredSchemaApplicationErrored'
     | 'inferredSpec'
     | 'loadingInferredSchema'
@@ -78,6 +79,7 @@ const getInitialStateData = (): Pick<
     | 'schemaUpdated'
 > => ({
     collectionData: null,
+    documentsRead: null,
     inferredSchemaApplicationErrored: false,
     inferredSpec: null,
     loadingInferredSchema: true,
@@ -131,6 +133,16 @@ const getInitialState = (
             }),
             false,
             'Inferred Schema Set'
+        );
+    },
+
+    setDocumentsRead: (value) => {
+        set(
+            produce((state: BindingsEditorState) => {
+                state.documentsRead = value;
+            }),
+            false,
+            'Documents Read Set'
         );
     },
 

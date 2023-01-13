@@ -58,6 +58,24 @@ export const useBindingsEditorStore_setInferredSpec = () => {
     >(getStoreName(entityType), (state) => state.setInferredSpec);
 };
 
+export const useBindingsEditorStore_documentsRead = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['documentsRead']
+    >(getStoreName(entityType), (state) => state.documentsRead);
+};
+
+export const useBindingsEditorStore_setDocumentsRead = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        BindingsEditorState,
+        BindingsEditorState['setDocumentsRead']
+    >(getStoreName(entityType), (state) => state.setDocumentsRead);
+};
+
 export const useBindingsEditorStore_loadingInferredSchema = () => {
     const entityType = useEntityType();
 

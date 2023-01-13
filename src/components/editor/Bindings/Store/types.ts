@@ -27,6 +27,9 @@ export interface BindingsEditorState {
     inferredSpec: Schema | null | undefined;
     setInferredSpec: (value: BindingsEditorState['inferredSpec']) => void;
 
+    documentsRead: number | null | undefined;
+    setDocumentsRead: (value: BindingsEditorState['documentsRead']) => void;
+
     loadingInferredSchema: boolean;
     setLoadingInferredSchema: (
         value: BindingsEditorState['loadingInferredSchema']
