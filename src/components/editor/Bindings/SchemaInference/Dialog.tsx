@@ -1,7 +1,5 @@
-import { DiffEditor } from '@monaco-editor/react';
 import { DataObject } from '@mui/icons-material';
 import {
-    Box,
     Button,
     Dialog,
     DialogActions,
@@ -10,36 +8,27 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import { BindingsEditorSchemaSkeleton } from 'components/collection/CollectionSkeletons';
 import MessageWithLink from 'components/content/MessageWithLink';
-import InferenceDiffEditorFooter from 'components/editor/Bindings/SchemaInference/Dialog/DiffEditor/Footer';
-import InferenceDiffEditorHeader from 'components/editor/Bindings/SchemaInference/Dialog/DiffEditor/Header';
+import InferenceDiffEditor from 'components/editor/Bindings/SchemaInference/Dialog/DiffEditor';
 import UpdateSchemaButton from 'components/editor/Bindings/SchemaInference/Dialog/UpdateSchemaButton';
 import {
     useBindingsEditorStore_documentsRead,
-    useBindingsEditorStore_inferredSpec,
-    useBindingsEditorStore_loadingInferredSchema,
     useBindingsEditorStore_setDocumentsRead,
     useBindingsEditorStore_setInferredSpec,
     useBindingsEditorStore_setLoadingInferredSchema,
 } from 'components/editor/Bindings/Store/hooks';
 import { CollectionData } from 'components/editor/Bindings/types';
-import { DEFAULT_HEIGHT } from 'components/editor/MonacoEditor';
 import AlertBox from 'components/shared/AlertBox';
 import {
-    defaultOutline,
     glassBkgWithoutBlur,
-    monacoEditorComponentBackground,
-    monacoEditorWidgetBackground,
     secondaryButtonBackground,
     secondaryButtonHoverBackground,
 } from 'context/Theme';
 import { isEmpty } from 'lodash';
-import { Dispatch, SetStateAction, useMemo, useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useEffectOnce, useLocalStorage, useUnmountPromise } from 'react-use';
 import getInferredSchema from 'services/schema-inference';
-import { stringifyJSON } from 'services/stringify';
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
 import {
     getStoredGatewayAuthConfig,
@@ -61,19 +50,16 @@ function SchemaInferenceDialog({
     collectionData,
     open,
     setOpen,
-    height = DEFAULT_HEIGHT,
+    height,
 }: Props) {
     const theme = useTheme();
 
     // Bindings Editor Store
-    const inferredSpec = useBindingsEditorStore_inferredSpec();
     const setInferredSpec = useBindingsEditorStore_setInferredSpec();
 
     const documentsRead = useBindingsEditorStore_documentsRead();
     const setDocumentsRead = useBindingsEditorStore_setDocumentsRead();
 
-    const loadingInferredSchema =
-        useBindingsEditorStore_loadingInferredSchema();
     const setLoadingInferredSchema =
         useBindingsEditorStore_setLoadingInferredSchema();
 
@@ -86,12 +72,6 @@ function SchemaInferenceDialog({
         LocalStorageKeys.GATEWAY,
         getStoredGatewayAuthConfig()
     );
-
-    const originalSchema = useMemo(() => {
-        return Object.hasOwn(collectionData.spec, 'readSchema')
-            ? collectionData.spec.readSchema
-            : collectionData.spec.schema;
-    }, [collectionData.spec]);
 
     const resolveWhileMounted = useUnmountPromise();
 
@@ -216,71 +196,10 @@ function SchemaInferenceDialog({
                     </AlertBox>
                 ) : null}
 
-                <Box sx={{ my: 3, border: defaultOutline[theme.palette.mode] }}>
-                    <InferenceDiffEditorHeader />
-
-                    {inferredSpec ? (
-                        <>
-                            <DiffEditor
-                                height={`${height}px`}
-                                original={stringifyJSON(originalSchema)}
-                                modified={stringifyJSON(
-                                    inferredSpec.readSchema
-                                )}
-                                theme={
-                                    monacoEditorComponentBackground[
-                                        theme.palette.mode
-                                    ]
-                                }
-                                options={{ readOnly: true }}
-                            />
-
-                            <InferenceDiffEditorFooter />
-                        </>
-                    ) : (
-                        <Box
-                            sx={{
-                                p: 1,
-                                backgroundColor:
-                                    monacoEditorWidgetBackground[
-                                        theme.palette.mode
-                                    ],
-                            }}
-                        >
-                            {loadingInferredSchema ? (
-                                <BindingsEditorSchemaSkeleton />
-                            ) : inferredSpec === null ? (
-                                <AlertBox
-                                    severity="warning"
-                                    short
-                                    title={
-                                        <Typography>
-                                            <FormattedMessage id="workflows.collectionSelector.schemaInference.alert.noDocuments.header" />
-                                        </Typography>
-                                    }
-                                >
-                                    <Typography>
-                                        <FormattedMessage id="workflows.collectionSelector.schemaInference.alert.noDocuments.message" />
-                                    </Typography>
-                                </AlertBox>
-                            ) : (
-                                <AlertBox
-                                    severity="error"
-                                    short
-                                    title={
-                                        <Typography>
-                                            <FormattedMessage id="workflows.collectionSelector.schemaInference.alert.generalError.header" />
-                                        </Typography>
-                                    }
-                                >
-                                    <Typography>
-                                        <FormattedMessage id="workflows.collectionSelector.schemaInference.alert.inferenceService.message" />
-                                    </Typography>
-                                </AlertBox>
-                            )}
-                        </Box>
-                    )}
-                </Box>
+                <InferenceDiffEditor
+                    collectionData={collectionData}
+                    height={height}
+                />
             </DialogContent>
 
             <DialogActions>
