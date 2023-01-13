@@ -3,21 +3,16 @@ import { DataObject } from '@mui/icons-material';
 import {
     Box,
     Button,
-    CircularProgress,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
-    Stack,
-    styled,
-    Tooltip,
-    tooltipClasses,
-    TooltipProps,
     Typography,
     useTheme,
 } from '@mui/material';
 import { BindingsEditorSchemaSkeleton } from 'components/collection/CollectionSkeletons';
 import MessageWithLink from 'components/content/MessageWithLink';
+import InferenceDiffEditorHeader from 'components/editor/Bindings/SchemaInference/Dialog/DiffEditor/Header';
 import UpdateSchemaButton from 'components/editor/Bindings/SchemaInference/Dialog/UpdateSchemaButton';
 import {
     useBindingsEditorStore_inferredSpec,
@@ -32,7 +27,6 @@ import {
     defaultOutline,
     glassBkgWithoutBlur,
     monacoEditorComponentBackground,
-    monacoEditorHeaderBackground,
     monacoEditorWidgetBackground,
     secondaryButtonBackground,
     secondaryButtonHoverBackground,
@@ -55,17 +49,6 @@ interface Props {
     setOpen: Dispatch<SetStateAction<boolean>>;
     height?: number;
 }
-
-const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
-    <Tooltip {...props} classes={{ popper: className }} />
-))({
-    [`& .${tooltipClasses.tooltip}`]: {
-        maxWidth: 400,
-    },
-    [`& .${tooltipClasses.popper}`]: {
-        overflowWrap: 'break-word',
-    },
-});
 
 const TITLE_ID = 'inferred-schema-dialog-title';
 
@@ -200,10 +183,7 @@ function SchemaInferenceDialog({
                 </Typography>
 
                 <Typography sx={{ mb: 4 }}>
-                    <FormattedMessage
-                        id="workflows.collectionSelector.schemaInference.message.schemaDiff"
-                        values={{ documents_read: documentsRead ?? 0 }}
-                    />
+                    <FormattedMessage id="workflows.collectionSelector.schemaInference.message.schemaDiff" />
                 </Typography>
 
                 {schemaUpdateErrored ? (
@@ -235,41 +215,7 @@ function SchemaInferenceDialog({
                 ) : null}
 
                 <Box sx={{ my: 3, border: defaultOutline[theme.palette.mode] }}>
-                    <Box
-                        sx={{
-                            p: 1,
-                            height: 54,
-                            backgroundColor:
-                                monacoEditorHeaderBackground[
-                                    theme.palette.mode
-                                ],
-                            borderBottom: defaultOutline[theme.palette.mode],
-                        }}
-                    >
-                        <Stack
-                            direction="row"
-                            sx={{
-                                height: '100%',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                            }}
-                        >
-                            <CustomWidthTooltip
-                                title={currentCollection}
-                                placement="bottom-start"
-                            >
-                                <Typography noWrap sx={{ mr: 2 }}>
-                                    {currentCollection}
-                                </Typography>
-                            </CustomWidthTooltip>
-
-                            {loadingInferredSchema ? (
-                                <Box sx={{ px: 1, pt: 1 }}>
-                                    <CircularProgress size="1.5rem" />
-                                </Box>
-                            ) : null}
-                        </Stack>
-                    </Box>
+                    <InferenceDiffEditorHeader />
 
                     {inferredSpec ? (
                         <>
