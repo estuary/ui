@@ -15,7 +15,6 @@ import {
     monacoEditorComponentBackground,
     monacoEditorWidgetBackground,
 } from 'context/Theme';
-import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { stringifyJSON } from 'services/stringify';
 
@@ -36,12 +35,6 @@ function InferenceDiffEditor({
     const loadingInferredSchema =
         useBindingsEditorStore_loadingInferredSchema();
 
-    const originalSchema = useMemo(() => {
-        return Object.hasOwn(collectionData.spec, 'readSchema')
-            ? collectionData.spec.readSchema
-            : collectionData.spec.schema;
-    }, [collectionData.spec]);
-
     return (
         <Box sx={{ my: 3, border: defaultOutline[theme.palette.mode] }}>
             <InferenceDiffEditorHeader />
@@ -50,8 +43,8 @@ function InferenceDiffEditor({
                 <>
                     <DiffEditor
                         height={`${height}px`}
-                        original={stringifyJSON(originalSchema)}
-                        modified={stringifyJSON(inferredSpec.readSchema)}
+                        original={stringifyJSON(collectionData.spec)}
+                        modified={stringifyJSON(inferredSpec)}
                         theme={
                             monacoEditorComponentBackground[theme.palette.mode]
                         }
