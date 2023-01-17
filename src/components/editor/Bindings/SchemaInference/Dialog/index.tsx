@@ -6,7 +6,6 @@ import {
     DialogTitle,
     Stack,
     Typography,
-    useTheme,
 } from '@mui/material';
 import LowDocumentCountAlert from 'components/editor/Bindings/SchemaInference/Dialog/Alerts/LowDocumentCount';
 import SchemaApplicationErroredAlert from 'components/editor/Bindings/SchemaInference/Dialog/Alerts/SchemaApplicationErrored';
@@ -34,8 +33,6 @@ function SchemaInferenceDialog({
     setOpen,
     height,
 }: Props) {
-    const theme = useTheme();
-
     // Resource Config Store
     const currentCollection = useResourceConfig_currentCollection();
 
@@ -46,7 +43,8 @@ function SchemaInferenceDialog({
             aria-labelledby={TITLE_ID}
             sx={{
                 '& .MuiPaper-root.MuiDialog-paper': {
-                    backgroundColor: glassBkgWithoutBlur[theme.palette.mode],
+                    backgroundColor: (theme) =>
+                        glassBkgWithoutBlur[theme.palette.mode],
                     borderRadius: 5,
                 },
             }}
