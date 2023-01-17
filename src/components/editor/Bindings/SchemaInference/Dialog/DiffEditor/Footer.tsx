@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { useBindingsEditorStore_documentsRead } from 'components/editor/Bindings/Store/hooks';
 import { defaultOutline, monacoEditorWidgetBackground } from 'context/Theme';
 import { FormattedMessage } from 'react-intl';
@@ -8,7 +8,9 @@ function InferenceDiffEditorFooter() {
     const documentsRead = useBindingsEditorStore_documentsRead();
 
     return (
-        <Box
+        <Typography
+            component="div"
+            variant="caption"
             sx={{
                 p: 1,
                 backgroundColor: (theme) =>
@@ -16,15 +18,13 @@ function InferenceDiffEditorFooter() {
                 borderTop: (theme) => defaultOutline[theme.palette.mode],
             }}
         >
-            <Typography variant="caption">
-                <FormattedMessage
-                    id="workflows.collectionSelector.schemaInference.message.documentsRead"
-                    values={{
-                        documents_read: documentsRead ?? 0,
-                    }}
-                />
-            </Typography>
-        </Box>
+            <FormattedMessage
+                id="workflows.collectionSelector.schemaInference.message.documentsRead"
+                values={{
+                    documents_read: documentsRead ?? 0,
+                }}
+            />
+        </Typography>
     );
 }
 
