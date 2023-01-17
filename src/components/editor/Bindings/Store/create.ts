@@ -8,6 +8,7 @@ import { BindingsEditorState } from 'components/editor/Bindings/Store/types';
 import { CollectionData } from 'components/editor/Bindings/types';
 import produce from 'immer';
 import { isEmpty } from 'lodash';
+import { Dispatch, SetStateAction } from 'react';
 import { CallSupabaseResponse } from 'services/supabase';
 import { BindingsEditorStoreNames } from 'stores/names';
 import { devtoolsOptions } from 'utils/store-utils';
@@ -16,6 +17,7 @@ import { devtools, NamedSet } from 'zustand/middleware';
 
 const processDraftSpecResponse = (
     draftSpecResponse: CallSupabaseResponse<any>,
+    setOpen: Dispatch<SetStateAction<boolean>>,
     get: StoreApi<BindingsEditorState>['getState']
 ) => {
     const {
@@ -35,6 +37,8 @@ const processDraftSpecResponse = (
             spec: draftSpecResponse.data[0].spec,
             belongsToDraft: true,
         });
+
+        setOpen(false);
     } else {
         setInferredSchemaApplicationErrored(true);
     }
@@ -149,14 +153,18 @@ const getInitialState = (
     setInferredSchemaApplicationErrored: (value) => {
         set(
             produce((state: BindingsEditorState) => {
-                state.loadingInferredSchema = value;
+                state.inferredSchemaApplicationErrored = value;
             }),
             false,
             'Inferred Schema Application Errored Set'
         );
     },
 
-    applyInferredSchema: async (currentCollection, persistedDraftId) => {
+    applyInferredSchema: async (
+        currentCollection,
+        persistedDraftId,
+        setOpen
+    ) => {
         const {
             collectionData,
             inferredSpec,
@@ -179,7 +187,7 @@ const getInitialState = (
                     catalog_name: currentCollection,
                 });
 
-                processDraftSpecResponse(draftSpecResponse, get);
+                processDraftSpecResponse(draftSpecResponse, setOpen, get);
             } else {
                 const liveSpecsResponse = await getLiveSpecsByCatalogName(
                     currentCollection,
@@ -199,7 +207,7 @@ const getInitialState = (
                         last_pub_id
                     );
 
-                    processDraftSpecResponse(draftSpecResponse, get);
+                    processDraftSpecResponse(draftSpecResponse, setOpen, get);
                 }
             }
 

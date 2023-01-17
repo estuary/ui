@@ -1,4 +1,5 @@
 import { CollectionData } from 'components/editor/Bindings/types';
+import { Dispatch, SetStateAction } from 'react';
 import { Schema } from 'types';
 
 export interface BindingsEditorState {
@@ -42,7 +43,8 @@ export interface BindingsEditorState {
 
     applyInferredSchema: (
         currentCollection: string | null,
-        persistedDraftId: string | null
+        persistedDraftId: string | null,
+        setOpen: Dispatch<SetStateAction<boolean>>
     ) => void;
 
     // Misc.

@@ -1,25 +1,21 @@
 import { DataObject } from '@mui/icons-material';
 import {
-    Button,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
+    Stack,
     Typography,
     useTheme,
 } from '@mui/material';
-import MessageWithLink from 'components/content/MessageWithLink';
+import LowDocumentCountAlert from 'components/editor/Bindings/SchemaInference/Dialog/Alerts/LowDocumentCount';
+import SchemaApplicationErroredAlert from 'components/editor/Bindings/SchemaInference/Dialog/Alerts/SchemaApplicationErrored';
+import CancelButton from 'components/editor/Bindings/SchemaInference/Dialog/CancelButton';
 import InferenceDiffEditor from 'components/editor/Bindings/SchemaInference/Dialog/DiffEditor';
 import UpdateSchemaButton from 'components/editor/Bindings/SchemaInference/Dialog/UpdateSchemaButton';
-import { useBindingsEditorStore_documentsRead } from 'components/editor/Bindings/Store/hooks';
 import { CollectionData } from 'components/editor/Bindings/types';
-import AlertBox from 'components/shared/AlertBox';
-import {
-    glassBkgWithoutBlur,
-    secondaryButtonBackground,
-    secondaryButtonHoverBackground,
-} from 'context/Theme';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { glassBkgWithoutBlur } from 'context/Theme';
+import { Dispatch, SetStateAction } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
 
@@ -32,8 +28,6 @@ interface Props {
 
 const TITLE_ID = 'inferred-schema-dialog-title';
 
-const DOCUMENT_THRESHOLD = 10000;
-
 function SchemaInferenceDialog({
     collectionData,
     open,
@@ -42,21 +36,8 @@ function SchemaInferenceDialog({
 }: Props) {
     const theme = useTheme();
 
-    // Bindings Editor Store
-    const documentsRead = useBindingsEditorStore_documentsRead();
-
     // Resource Config Store
     const currentCollection = useResourceConfig_currentCollection();
-
-    const [schemaUpdateErrored] = useState<boolean>(false);
-
-    const handlers = {
-        closeConfirmationDialog: (event: React.MouseEvent<HTMLElement>) => {
-            event.preventDefault();
-
-            setOpen(false);
-        },
-    };
 
     return currentCollection ? (
         <Dialog
@@ -86,37 +67,15 @@ function SchemaInferenceDialog({
                     <FormattedMessage id="workflows.collectionSelector.schemaInference.message" />
                 </Typography>
 
-                <Typography sx={{ mb: 4 }}>
+                <Typography sx={{ mb: 3 }}>
                     <FormattedMessage id="workflows.collectionSelector.schemaInference.message.schemaDiff" />
                 </Typography>
 
-                {schemaUpdateErrored ? (
-                    <AlertBox
-                        severity="error"
-                        short
-                        title={
-                            <Typography>
-                                <FormattedMessage id="workflows.collectionSelector.schemaInference.alert.generalError.header" />
-                            </Typography>
-                        }
-                    >
-                        <MessageWithLink messageID="workflows.collectionSelector.schemaInference.alert.patchService.message" />
-                    </AlertBox>
-                ) : null}
+                <Stack spacing={1}>
+                    <SchemaApplicationErroredAlert />
 
-                {documentsRead && documentsRead < DOCUMENT_THRESHOLD ? (
-                    <AlertBox
-                        severity="warning"
-                        short
-                        title={
-                            <Typography>
-                                <FormattedMessage id="workflows.collectionSelector.schemaInference.alert.lowDocumentCount.header" />
-                            </Typography>
-                        }
-                    >
-                        <FormattedMessage id="workflows.collectionSelector.schemaInference.alert.lowDocumentCount.message" />
-                    </AlertBox>
-                ) : null}
+                    <LowDocumentCountAlert />
+                </Stack>
 
                 <InferenceDiffEditor
                     collectionData={collectionData}
@@ -125,21 +84,7 @@ function SchemaInferenceDialog({
             </DialogContent>
 
             <DialogActions>
-                <Button
-                    onClick={handlers.closeConfirmationDialog}
-                    sx={{
-                        'backgroundColor':
-                            secondaryButtonBackground[theme.palette.mode],
-                        '&:hover': {
-                            backgroundColor:
-                                secondaryButtonHoverBackground[
-                                    theme.palette.mode
-                                ],
-                        },
-                    }}
-                >
-                    <FormattedMessage id="cta.cancel" />
-                </Button>
+                <CancelButton setOpen={setOpen} />
 
                 <UpdateSchemaButton
                     collectionData={collectionData}
