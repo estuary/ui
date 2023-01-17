@@ -50,6 +50,11 @@ const Authenticated = () => {
                         path={authenticatedRoutes.home.path}
                         element={<Home />}
                     />
+                    {/*This is a QUICK fix so when someone comes through register they won't land on a page not found page*/}
+                    <Route
+                        path={unauthenticatedRoutes.register.path}
+                        element={<Home />}
+                    />
 
                     <Route
                         path={authenticatedRoutes.collections.path}
