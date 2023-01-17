@@ -5,7 +5,7 @@ import produce from 'immer';
 import { ShardDetailStoreNames } from 'stores/names';
 import { Entity } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
-import create, { StoreApi } from 'zustand';
+import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import {
     ShardDetails,
