@@ -57,23 +57,7 @@ function SchemaInferenceButton() {
             )
                 .then(
                     (response) => {
-                        if (Object.hasOwn(collectionData.spec, 'schema')) {
-                            const { schema, ...additionalSpecKeys } =
-                                collectionData.spec;
-
-                            setInferredSpec(
-                                !isEmpty(response.schema)
-                                    ? {
-                                          writeSchema:
-                                              collectionData.spec.schema,
-                                          readSchema: response.schema,
-                                          ...additionalSpecKeys,
-                                      }
-                                    : null
-                            );
-                        } else if (
-                            Object.hasOwn(collectionData.spec, 'writeSchema')
-                        ) {
+                        if (Object.hasOwn(collectionData.spec, 'writeSchema')) {
                             const { writeSchema, ...additionalSpecKeys } =
                                 collectionData.spec;
 
@@ -82,6 +66,20 @@ function SchemaInferenceButton() {
                                     ? {
                                           writeSchema:
                                               collectionData.spec.writeSchema,
+                                          readSchema: response.schema,
+                                          ...additionalSpecKeys,
+                                      }
+                                    : null
+                            );
+                        } else {
+                            const { schema, ...additionalSpecKeys } =
+                                collectionData.spec;
+
+                            setInferredSpec(
+                                !isEmpty(response.schema)
+                                    ? {
+                                          writeSchema:
+                                              collectionData.spec.schema,
                                           readSchema: response.schema,
                                           ...additionalSpecKeys,
                                       }
