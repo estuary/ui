@@ -1,4 +1,6 @@
 import { CollectionData } from 'components/editor/Bindings/types';
+import { Dispatch, SetStateAction } from 'react';
+import { Schema } from 'types';
 
 export interface BindingsEditorState {
     collectionData: CollectionData | null | undefined;
@@ -20,6 +22,29 @@ export interface BindingsEditorState {
     schemaUpdateErrored: boolean;
     setSchemaUpdateErrored: (
         value: BindingsEditorState['schemaUpdateErrored']
+    ) => void;
+
+    // Schema Inference
+    inferredSpec: Schema | null | undefined;
+    setInferredSpec: (value: BindingsEditorState['inferredSpec']) => void;
+
+    documentsRead: number | null | undefined;
+    setDocumentsRead: (value: BindingsEditorState['documentsRead']) => void;
+
+    loadingInferredSchema: boolean;
+    setLoadingInferredSchema: (
+        value: BindingsEditorState['loadingInferredSchema']
+    ) => void;
+
+    inferredSchemaApplicationErrored: boolean;
+    setInferredSchemaApplicationErrored: (
+        value: BindingsEditorState['inferredSchemaApplicationErrored']
+    ) => void;
+
+    applyInferredSchema: (
+        currentCollection: string | null,
+        persistedDraftId: string | null,
+        setOpen: Dispatch<SetStateAction<boolean>>
     ) => void;
 
     // Misc.
