@@ -5,13 +5,19 @@ import { hasLength } from 'utils/misc-utils';
 import { useLogsContext } from './Context';
 import LogLine from './Line';
 import Spinner from './Spinner';
+import { SpinnerOptions } from './types';
 
 interface Props {
     height: number;
-    disableSpinner?: boolean;
+    spinnerOptions?: SpinnerOptions;
 }
 
-function LogLines({ height, disableSpinner }: Props) {
+function LogLines({ height, spinnerOptions }: Props) {
+    const disableSpinner = spinnerOptions?.disable ?? false;
+    const runningKey = spinnerOptions?.messages?.runningKey ?? undefined;
+    const stoppedKey = spinnerOptions?.messages?.stoppedKey ?? undefined;
+    const severity = spinnerOptions?.severity ?? undefined;
+
     const { logs } = useLogsContext();
 
     const scrollElementRef = useRef<HTMLDivElement>(null);
@@ -49,7 +55,13 @@ function LogLines({ height, disableSpinner }: Props) {
                         lineNumber={index}
                     />
                 ))}
-                {!disableSpinner || !hasLength(logs) ? <Spinner /> : null}
+                {!disableSpinner || !hasLength(logs) ? (
+                    <Spinner
+                        stoppedKey={stoppedKey}
+                        runningKey={runningKey}
+                        severity={severity}
+                    />
+                ) : null}
             </List>
         </Paper>
     );
