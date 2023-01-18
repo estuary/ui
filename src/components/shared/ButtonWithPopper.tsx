@@ -6,11 +6,18 @@ import { FormattedMessage } from 'react-intl';
 interface Props {
     messageId: string;
     popper: ReactNode;
+    disabled?: boolean;
     startIcon?: ReactNode;
     buttonSx?: SxProps<Theme>;
 }
 
-function ButtonWithPopper({ messageId, popper, startIcon, buttonSx }: Props) {
+function ButtonWithPopper({
+    messageId,
+    popper,
+    disabled,
+    startIcon,
+    buttonSx,
+}: Props) {
     const [open, setOpen] = useState<boolean>(false);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -21,7 +28,12 @@ function ButtonWithPopper({ messageId, popper, startIcon, buttonSx }: Props) {
 
     return (
         <>
-            <Button startIcon={startIcon} onClick={togglePopper} sx={buttonSx}>
+            <Button
+                disabled={disabled}
+                startIcon={startIcon}
+                onClick={togglePopper}
+                sx={buttonSx}
+            >
                 <FormattedMessage id={messageId} />
             </Button>
 
