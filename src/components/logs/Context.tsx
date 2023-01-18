@@ -13,6 +13,7 @@ import { hasLength, incrementInterval, timeoutCleanUp } from 'utils/misc-utils';
 
 interface Props extends BaseComponentProps {
     token: string | null;
+    jobCompleted?: boolean;
     disableIntervalFetching?: boolean;
     fetchAll?: boolean;
 }
@@ -22,6 +23,7 @@ type LogsContextValue = {
     logs: ViewLogs_Line[];
     networkFailure: boolean;
     stopped: boolean;
+    fetchingCanSafelyStop: boolean;
 };
 
 const MAX_EMPTY_CALLS = 90; // about 1.5 minute
@@ -31,6 +33,7 @@ const LogsContext = createContext<LogsContextValue | null>(null);
 const LogsContextProvider = ({
     children,
     token,
+    jobCompleted,
     disableIntervalFetching,
     fetchAll,
 }: Props) => {
@@ -49,6 +52,7 @@ const LogsContextProvider = ({
     const [logs, setLogs] = useState<ViewLogs_Line[]>([]);
     const [stopped, setStopped] = useState(false);
     const [networkFailure, setNetworkFailure] = useState(false);
+    const [fetchingCanSafelyStop, setFetchingCanSafelyStop] = useState(false);
 
     const fetchLogs = async (offsetVal: number) => {
         const queryParams = {
@@ -66,10 +70,19 @@ const LogsContextProvider = ({
         }
     };
 
-    const stopLogs = (networkFailed?: boolean) => {
+    // The clean up that needs ran when logs stop
+    //  broken out so when the job completes it can stop
+    //  logs without showing warnings
+    const stopCleanUp = (newCurrentValue: number) => {
         timeoutCleanUp(timeoutRef.current);
+        emptyResponses.current = newCurrentValue;
+    };
+
+    // Used when the logs have stopped due to how many
+    //  empty responses it has recieved or network error
+    const stopLogs = (networkFailed?: boolean) => {
+        stopCleanUp(emptyResponses.current + 1);
         setStopped(true);
-        emptyResponses.current = emptyResponses.current + 1;
         if (networkFailed) {
             setNetworkFailure(true);
         }
@@ -130,6 +143,7 @@ const LogsContextProvider = ({
 
     const reset = useCallback(() => {
         emptyResponses.current = 0;
+        setFetchingCanSafelyStop(false);
         setNetworkFailure(false);
         setStopped(false);
         start();
@@ -148,9 +162,24 @@ const LogsContextProvider = ({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token, disableIntervalFetching, fetchAll]);
 
+    useEffect(() => {
+        console.log('job completed effect');
+        // If the job completed then we only want to check for logs
+        //  2 more times and then stop
+        if (jobCompleted) {
+            setFetchingCanSafelyStop(true);
+            stopCleanUp(MAX_EMPTY_CALLS - 2);
+            start();
+            console.log('make it larger');
+        }
+        // We only if the job completed to kick off the final fetching
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [jobCompleted]);
+
     return (
         <LogsContext.Provider
             value={{
+                fetchingCanSafelyStop,
                 logs,
                 networkFailure,
                 stopped,
