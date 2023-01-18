@@ -722,10 +722,6 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.tab.collectionSchema': `Specification`,
     'workflows.collectionSelector.tab.resourceConfig': `Config`,
 
-    'workflows.collectionSelector.rediscoverDialog.title': `Are you sure?`,
-    'workflows.collectionSelector.rediscoverDialog.message1': `Proceeding with this action will replace the current capture configuration with one generated automatically by Flow. Discovery identifies one or more resources — tables, data streams, or the equivalent — and generates bindings so that each will be mapped to a data collection in Flow.`,
-    'workflows.collectionSelector.rediscoverDialog.message2': `If there are any aspects of your current capture configuration you would like to preserve, take note of them before proceeding with this action.`,
-
     'workflows.collectionSelector.schemaEdit.cta.syncSchema': `Synchronize Schema`,
     'workflows.collectionSelector.schemaEdit.header': `CLI`,
     'workflows.collectionSelector.schemaEdit.flowctlDocLink': `https://docs.estuary.dev/concepts/flowctl/`,
@@ -740,7 +736,7 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.collectionSelector.schemaEdit.alert.message.schemaUpdateError': `An error was encountered fetching your updated collection schema to display. This does not mean that there was a problem updating the server. Open the CLI popper and click the Synchronize Schema button to try again.`,
 
     'workflows.collectionSelector.schemaInference.header': `Schema Inference`,
-    'workflows.collectionSelector.schemaInference.message': `Flow can help you tighten your collection schemas. It will review the documents in a collection and approximate the shape of your data.`,
+    'workflows.collectionSelector.schemaInference.message': `Flow can help you tighten your collection specification. It will review the documents in a collection and approximate the shape of your data.`,
     'workflows.collectionSelector.schemaInference.message.schemaDiff': `The difference between the current collection specification and the specification containing the inferred schema is highlighted below.`,
     'workflows.collectionSelector.schemaInference.message.documentsRead': `A total of {documents_read} documents were evaluated to generate the inferred schema.`,
     'workflows.collectionSelector.schemaInference.alert.noDocuments.header': `No Documents Found`,
