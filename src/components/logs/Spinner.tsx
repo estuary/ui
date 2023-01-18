@@ -16,15 +16,21 @@ interface Props {
 
 function Spinner({ severity, runningKey, stoppedKey }: Props) {
     const intl = useIntl();
-    const { stopped } = useLogsContext();
+    const { stopped, fetchingCanSafelyStop } = useLogsContext();
 
     const lineContent = useMemo(() => {
+        // We only want to show the custom stopped key when things are
+        //  safely stopping. Otherwise just show the paused message.
+        if (fetchingCanSafelyStop) {
+            return intl.formatMessage({
+                id: stoppedKey ?? 'logs.paused',
+            });
+        }
+
         return intl.formatMessage({
-            id: stopped
-                ? stoppedKey ?? 'logs.paused'
-                : runningKey ?? 'logs.default',
+            id: stopped ? 'logs.paused' : runningKey ?? 'logs.default',
         });
-    }, [intl, runningKey, stopped, stoppedKey]);
+    }, [fetchingCanSafelyStop, intl, runningKey, stopped, stoppedKey]);
 
     return (
         <LogLine
