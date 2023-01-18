@@ -7,7 +7,7 @@ import useGlobalSearchParams, {
 import { useLiveSpecsExtWithSpec } from 'hooks/useLiveSpecsExt';
 import { BaseComponentProps } from 'types';
 
-function EntityExistsGuard({ children }: BaseComponentProps) {
+function EntityExistenceGuard({ children }: BaseComponentProps) {
     const liveSpecId = useGlobalSearchParams(GlobalSearchParams.LIVE_SPEC_ID);
 
     const entityType = useEntityType();
@@ -34,4 +34,4 @@ function EntityExistsGuard({ children }: BaseComponentProps) {
     }
 }
 
-export default EntityExistsGuard;
+export default EntityExistenceGuard;

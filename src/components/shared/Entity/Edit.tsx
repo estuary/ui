@@ -12,7 +12,7 @@ import { EditorStoreState } from 'components/editor/Store/types';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import { getConnectorImageDetails } from 'components/shared/Entity/DetailsForm/Form';
-import EntityExistsGuard from 'components/shared/Entity/Edit/EntityExistsGuard';
+import EntityExistenceGuard from 'components/shared/Entity/Edit/EntityExistenceGuard';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
 import EntityError from 'components/shared/Entity/Error';
 import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedChangesPrompt';
@@ -390,7 +390,7 @@ function EntityEdit({
         (showCollections && !resourceConfigStoreHydrated);
 
     return (
-        <EntityExistsGuard>
+        <EntityExistenceGuard>
             {toolbar}
 
             {errorSummary}
@@ -453,7 +453,7 @@ function EntityEdit({
                     </ErrorBoundryWrapper>
                 </>
             )}
-        </EntityExistsGuard>
+        </EntityExistenceGuard>
     );
 }
 
