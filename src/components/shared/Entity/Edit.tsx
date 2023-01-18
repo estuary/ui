@@ -12,7 +12,6 @@ import { EditorStoreState } from 'components/editor/Store/types';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import { getConnectorImageDetails } from 'components/shared/Entity/DetailsForm/Form';
-import EntityExistenceGuard from 'components/shared/Entity/Edit/EntityExistenceGuard';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
 import EntityError from 'components/shared/Entity/Error';
 import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedChangesPrompt';
@@ -26,10 +25,7 @@ import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import useDraft, { DraftQuery } from 'hooks/useDraft';
 import { DraftSpecQuery, DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
-import {
-    LiveSpecsExtQueryWithSpec,
-    useLiveSpecsExtWithSpec,
-} from 'hooks/useLiveSpecsExt';
+import { LiveSpecsExtQueryWithSpec } from 'hooks/useLiveSpecsExt';
 import { isEmpty } from 'lodash';
 import { ReactNode, useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -79,12 +75,12 @@ interface Props {
         DraftSpecSwrMetadata,
         'draftSpecs' | 'isValidating' | 'error'
     >;
+    initialSpec: LiveSpecsExtQueryWithSpec;
     callFailed: (formState: any, subscription?: RealtimeSubscription) => void;
     resetState: () => void;
     errorSummary: ReactNode;
     toolbar: ReactNode;
     RediscoverButton?: ReactNode;
-    showCollections?: boolean;
 }
 
 interface DiscoveryData {
@@ -234,12 +230,12 @@ function EntityEdit({
     entityType,
     readOnly,
     draftSpecMetadata,
+    initialSpec,
     callFailed,
     resetState,
     errorSummary,
     toolbar,
     RediscoverButton,
-    showCollections,
 }: Props) {
     useBrowserTitle(title);
 
@@ -249,9 +245,8 @@ function EntityEdit({
     });
 
     // Check for properties being passed in
-    const [connectorId, liveSpecId, lastPubId] = useGlobalSearchParams([
+    const [connectorId, lastPubId] = useGlobalSearchParams([
         GlobalSearchParams.CONNECTOR_ID,
-        GlobalSearchParams.LIVE_SPEC_ID,
         GlobalSearchParams.LAST_PUB_ID,
     ]);
 
@@ -264,10 +259,6 @@ function EntityEdit({
     const {
         connectorTags: [initialConnectorTag],
     } = useConnectorWithTagDetail(entityType, connectorId);
-
-    const {
-        liveSpecs: [initialSpec],
-    } = useLiveSpecsExtWithSpec(liveSpecId, entityType);
 
     const { drafts, isValidating: isValidatingDrafts } = useDraft(
         isEmpty(initialSpec) ? null : initialSpec.catalog_name
@@ -386,11 +377,10 @@ function EntityEdit({
     useUnsavedChangesPrompt(!exitWhenLogsClose && promptDataLoss, resetState);
 
     const storeHydrationIncomplete =
-        !endpointConfigStoreHydrated ||
-        (showCollections && !resourceConfigStoreHydrated);
+        !endpointConfigStoreHydrated || !resourceConfigStoreHydrated;
 
     return (
-        <EntityExistenceGuard>
+        <>
             {toolbar}
 
             {errorSummary}
@@ -436,7 +426,7 @@ function EntityEdit({
                         </ErrorBoundryWrapper>
                     ) : null}
 
-                    {showCollections && hasLength(imageTag.id) ? (
+                    {hasLength(imageTag.id) ? (
                         <ErrorBoundryWrapper>
                             <CollectionConfig
                                 draftSpecs={taskDraftSpec}
@@ -453,7 +443,7 @@ function EntityEdit({
                     </ErrorBoundryWrapper>
                 </>
             )}
-        </EntityExistenceGuard>
+        </>
     );
 }
 

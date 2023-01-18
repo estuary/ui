@@ -1,21 +1,19 @@
 import { Stack, Typography } from '@mui/material';
 import FullPageSpinner from 'components/fullPage/Spinner';
-import { useEntityType } from 'context/EntityContext';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { useLiveSpecsExtWithSpec } from 'hooks/useLiveSpecsExt';
+import { LiveSpecsExtQueryWithSpec } from 'hooks/useLiveSpecsExt';
 import { BaseComponentProps } from 'types';
 
-function EntityExistenceGuard({ children }: BaseComponentProps) {
-    const liveSpecId = useGlobalSearchParams(GlobalSearchParams.LIVE_SPEC_ID);
+interface Props extends BaseComponentProps {
+    liveSpecs: LiveSpecsExtQueryWithSpec[];
+    checkingEntityExistence: boolean;
+}
 
-    const entityType = useEntityType();
-
-    const { liveSpecs, isValidating: checkingExistence } =
-        useLiveSpecsExtWithSpec(liveSpecId, entityType);
-
-    if (checkingExistence) {
+function EntityExistenceGuard({
+    liveSpecs,
+    checkingEntityExistence,
+    children,
+}: Props) {
+    if (checkingEntityExistence) {
         return <FullPageSpinner />;
     } else if (liveSpecs.length === 0) {
         return (
