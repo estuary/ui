@@ -57,7 +57,7 @@ function PageContainer({ children, hideBackground, pageTitleProps }: Props) {
             {notification ? (
                 <Snackbar
                     open={displayAlert}
-                    autoHideDuration={5000}
+                    autoHideDuration={7500}
                     onClose={handlers.notificationClose}
                 >
                     <AlertBox severity={notification.severity} short>
