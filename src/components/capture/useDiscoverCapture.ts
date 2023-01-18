@@ -3,6 +3,7 @@ import { createEntityDraft } from 'api/drafts';
 import { getDraftSpecsBySpecType } from 'api/draftSpecs';
 import {
     useEditorStore_isSaving,
+    useEditorStore_persistedDraftId,
     useEditorStore_resetState,
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
@@ -24,6 +25,7 @@ import {
 import {
     useDetailsForm_connectorImage_connectorId,
     useDetailsForm_connectorImage_id,
+    useDetailsForm_connectorImage_imagePath,
     useDetailsForm_details_entityName,
     useDetailsForm_errorsExist,
     useDetailsForm_setDraftedEntityName,
@@ -57,6 +59,7 @@ import { Entity } from 'types';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 import {
     modifyDiscoveredDraftSpec,
+    modifyExistingCaptureDraftSpec,
     SupabaseConfig,
 } from 'utils/workflow-utils';
 
@@ -74,7 +77,7 @@ function useDiscoverCapture(
     entityType: Entity,
     callFailed: Function,
     postGenerateMutate: Function,
-    options?: { initiateRediscovery: boolean }
+    options?: { initiateRediscovery?: boolean; initiateDiscovery?: boolean }
 ) {
     const supabaseClient = useClient();
 
@@ -84,12 +87,12 @@ function useDiscoverCapture(
     const editWorkflow = workflow === 'capture_edit';
 
     // Draft Editor Store
+    const persistedDraftId = useEditorStore_persistedDraftId();
+    const setPersistedDraftId = useEditorStore_setPersistedDraftId();
     const setDraftId = useEditorStore_setId();
 
-    // Editor Store
     const isSaving = useEditorStore_isSaving();
     const resetEditorState = useEditorStore_resetState();
-    const setPersistedDraftId = useEditorStore_setPersistedDraftId();
 
     // Form State Store
     const formActive = useFormStateStore_isActive();
@@ -102,6 +105,7 @@ function useDiscoverCapture(
     const detailsFormsHasErrors = useDetailsForm_errorsExist();
     const imageConnectorId = useDetailsForm_connectorImage_connectorId();
     const imageConnectorTagId = useDetailsForm_connectorImage_id();
+    const imagePath = useDetailsForm_connectorImage_imagePath();
     const setDraftedEntityName = useDetailsForm_setDraftedEntityName();
 
     // Endpoint Config Store
@@ -304,18 +308,6 @@ function useDiscoverCapture(
             } else {
                 resetEditorState(true);
 
-                const draftsResponse = await createEntityDraft(entityName);
-                if (draftsResponse.error) {
-                    return callFailed({
-                        error: {
-                            title: 'captureCreate.generate.failedErrorTitle',
-                            error: draftsResponse.error,
-                        },
-                    });
-                }
-
-                const draftId = draftsResponse.data[0].id;
-
                 const selectedEndpointConfig = serverUpdateRequired
                     ? endpointConfigData
                     : serverEndpointConfigData;
@@ -330,34 +322,95 @@ function useDiscoverCapture(
                     { overrideJsonFormDefaults: true }
                 );
 
-                const discoverResponse = await discover(
-                    entityName,
-                    encryptedEndpointConfig.data,
-                    imageConnectorTagId,
-                    draftId
-                );
-                if (discoverResponse.error) {
-                    return callFailed({
-                        error: {
-                            title: 'captureCreate.generate.failedErrorTitle',
-                            error: discoverResponse.error,
-                        },
-                    });
-                }
-                createDiscoversSubscription(
-                    draftId,
-                    endpointConfigData,
-                    resourceConfig
-                );
+                if (
+                    options?.initiateRediscovery ||
+                    options?.initiateDiscovery
+                ) {
+                    const draftsResponse = await createEntityDraft(entityName);
+                    if (draftsResponse.error) {
+                        return callFailed({
+                            error: {
+                                title: 'captureCreate.generate.failedErrorTitle',
+                                error: draftsResponse.error,
+                            },
+                        });
+                    }
 
-                setFormState({
-                    logToken: discoverResponse.data[0].logs_token,
-                });
+                    const draftId = draftsResponse.data[0].id;
+
+                    const discoverResponse = await discover(
+                        entityName,
+                        encryptedEndpointConfig.data,
+                        imageConnectorTagId,
+                        draftId
+                    );
+                    if (discoverResponse.error) {
+                        return callFailed({
+                            error: {
+                                title: 'captureCreate.generate.failedErrorTitle',
+                                error: discoverResponse.error,
+                            },
+                        });
+                    }
+                    createDiscoversSubscription(
+                        draftId,
+                        endpointConfigData,
+                        resourceConfig
+                    );
+
+                    setFormState({
+                        logToken: discoverResponse.data[0].logs_token,
+                    });
+                } else if (persistedDraftId) {
+                    const draftSpecsResponse =
+                        await modifyExistingCaptureDraftSpec(
+                            persistedDraftId,
+                            imagePath,
+                            encryptedEndpointConfig.data,
+                            resourceConfig
+                        );
+
+                    if (draftSpecsResponse.error) {
+                        return callFailed({
+                            error: {
+                                title: 'captureCreate.generate.failedErrorTitle',
+                                error: draftSpecsResponse.error,
+                            },
+                        });
+                    }
+
+                    setEncryptedEndpointConfig({
+                        data: draftSpecsResponse.data[0].spec.endpoint.connector
+                            .config,
+                    });
+
+                    setPreviousEndpointConfig({ data: endpointConfigData });
+
+                    setDraftId(persistedDraftId);
+
+                    void postGenerateMutate();
+
+                    setFormState({
+                        status: FormStatus.GENERATED,
+                    });
+                } else {
+                    // TODO (optimization): This condition should be nearly impossible to reach, but we currently do not have a means to produce
+                    //   an error in this scenario. ValidationErrorSummary is not suitable for this scenario and EntityError, the error component
+                    //   that surfaces form state errors, is only rendered in the event a persisted draft ID is present. Since the likelihood of
+                    //   reaching this code block is slim, I am going to add a solution in a fast-follow to the schema inference changes.
+                }
             }
         },
         [
             callFailed,
             createDiscoversSubscription,
+            postGenerateMutate,
+            resetEditorState,
+            setEncryptedEndpointConfig,
+            setFormState,
+            setPreviousEndpointConfig,
+            setDraftId,
+            updateFormStatus,
             detailsFormsHasErrors,
             endpointConfigData,
             endpointConfigErrorsExist,
@@ -365,13 +418,14 @@ function useDiscoverCapture(
             entityName,
             imageConnectorId,
             imageConnectorTagId,
-            resetEditorState,
+            imagePath,
+            options?.initiateDiscovery,
+            options?.initiateRediscovery,
+            persistedDraftId,
             resourceConfig,
             resourceConfigHasErrors,
             serverEndpointConfigData,
             serverUpdateRequired,
-            setFormState,
-            updateFormStatus,
         ]
     );
 

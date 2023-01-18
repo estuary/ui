@@ -254,7 +254,7 @@ export const createControlElement = (ref: string): ControlElement => ({
 const wrapInLayoutIfNecessary = (
     uischema: UISchemaElement,
     layoutType: string
-): Layout => {
+): UISchemaElement | Layout => {
     if (!isEmpty(uischema) && !isLayout(uischema)) {
         const verticalLayout: Layout = createLayout(layoutType);
         verticalLayout.elements.push(uischema);

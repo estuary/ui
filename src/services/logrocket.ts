@@ -1,5 +1,5 @@
 import { User } from '@supabase/supabase-js';
-import filterObject from 'filter-obj';
+import { includeKeys } from 'filter-obj';
 import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 import setupLogRocketReact from 'logrocket-react';
@@ -79,7 +79,7 @@ const processBody = (
 
     if (action === 'filter') {
         (originalIsArray ? obj : [obj]).forEach((el) => {
-            const filteredBody = filterObject(el, allowedKeys);
+            const filteredBody = includeKeys(el, allowedKeys);
             response.push(filteredBody);
         });
     } else {

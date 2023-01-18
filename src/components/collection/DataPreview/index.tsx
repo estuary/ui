@@ -4,7 +4,7 @@ import { AlertTitle, Box, Stack, Typography } from '@mui/material';
 import ListView from 'components/collection/DataPreview/ListView';
 import AlertBox from 'components/shared/AlertBox';
 import { useJournalData, useJournalsForCollection } from 'hooks/useJournalData';
-import { useLiveSpecs_spec } from 'hooks/useLiveSpecs';
+import { LiveSpecsQuery_spec, useLiveSpecs_spec } from 'hooks/useLiveSpecs';
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
@@ -31,17 +31,18 @@ export function DataPreview({ collectionName }: Props) {
         `datapreview-${collectionName}`,
         [collectionName]
     );
-    const spec = useMemo(() => publicationSpecs[0], [publicationSpecs]);
+    const spec = useMemo(
+        () => publicationSpecs[0] as LiveSpecsQuery_spec | undefined,
+        [publicationSpecs]
+    );
 
-    // TODO (typing) we need to fix typing
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const journals = useJournalsForCollection(spec?.catalog_name);
     const { data: journalsData, isValidating: journalsLoading } = journals;
 
     // TODO (typing) we need to fix typing
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const journal = useMemo(() => journalsData?.journals?.[0], [journalsData]);
-    const journalData = useJournalData(journal?.name, 20);
+    const journalData = useJournalData(journal?.name, 20, collectionName);
     const isLoading = journalsLoading || journalData.loading;
 
     return (
@@ -130,7 +131,7 @@ export function DataPreview({ collectionName }: Props) {
                     </AlertBox>
                 </Box>
             ) : null}
-            {(journalData.data?.documents.length ?? 0) > 0 ? (
+            {(journalData.data?.documents.length ?? 0) > 0 && spec ? (
                 <ListView journalData={journalData} spec={spec} />
             ) : null}
             {/*             : (

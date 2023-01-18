@@ -12,7 +12,6 @@ import AuthenticatedOnlyContext from 'context/Authenticated';
 import { EntityContextProvider } from 'context/EntityContext';
 import { WorkflowContextProvider } from 'context/Workflow';
 import { OAuthPopup } from 'hooks/forks/react-use-oauth2/components';
-import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import Admin from 'pages/Admin';
 import Auth from 'pages/Auth';
 import Captures from 'pages/Captures';
@@ -27,10 +26,6 @@ import { isProduction } from 'utils/env-utils';
 import { authenticatedRoutes, unauthenticatedRoutes } from './routes';
 
 const Authenticated = () => {
-    // TODO: Determine whether a context provider or a hook should be used to fetch the initial auth gateway URL and token.
-    // The context provider results in a duped, gateway auth token API call.
-    useGatewayAuthToken();
-
     return (
         <AuthenticatedOnlyContext>
             <Routes>
@@ -48,6 +43,11 @@ const Authenticated = () => {
                 <Route element={<AppLayout />}>
                     <Route
                         path={authenticatedRoutes.home.path}
+                        element={<Home />}
+                    />
+                    {/*This is a QUICK fix so when someone comes through register they won't land on a page not found page*/}
+                    <Route
+                        path={unauthenticatedRoutes.register.path}
                         element={<Home />}
                     />
 

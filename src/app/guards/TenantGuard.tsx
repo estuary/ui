@@ -3,7 +3,7 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
-import NoGrants from 'pages/NoGrants';
+import { useMemo } from 'react';
 import { BaseComponentProps } from 'types';
 import OnboardGuard from './OnboardGuard';
 
@@ -12,7 +12,13 @@ import OnboardGuard from './OnboardGuard';
 const hiddenSearchParam = 'please_show';
 
 function TenantGuard({ children }: BaseComponentProps) {
-    const showBeta = useGlobalSearchParams(GlobalSearchParams.HIDDEN_SHOW_BETA);
+    const showTenantCreation = useGlobalSearchParams(
+        GlobalSearchParams.HIDDEN_SHOW_BETA
+    );
+    const showBeta = useMemo(
+        () => showTenantCreation === hiddenSearchParam,
+        [showTenantCreation]
+    );
 
     const {
         combinedGrants,
@@ -24,12 +30,8 @@ function TenantGuard({ children }: BaseComponentProps) {
 
     if (checkingGrants) {
         return <FullPageSpinner />;
-    } else if (combinedGrants.length === 0) {
-        if (showBeta === hiddenSearchParam) {
-            return <OnboardGuard grantsMutate={mutate} />;
-        } else {
-            return <NoGrants />;
-        }
+    } else if (combinedGrants.length === 0 || showBeta) {
+        return <OnboardGuard grantsMutate={mutate} forceDisplay={showBeta} />;
     } else {
         // eslint-disable-next-line react/jsx-no-useless-fragment
         return <>{children}</>;
