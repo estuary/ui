@@ -7,7 +7,6 @@ interface Props {
 }
 
 function SpinnerIcon({ severity, stopped }: Props) {
-    console.log('severity', severity);
     return (
         <CircularProgress
             variant={severity || stopped ? 'determinate' : undefined}
