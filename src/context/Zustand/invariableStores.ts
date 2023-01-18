@@ -13,6 +13,16 @@ import { createResourceConfigStore } from 'stores/ResourceConfig/Store';
 import { createShardDetailStore } from 'stores/ShardDetail/Store';
 import { createStorageMappingsStore } from 'stores/StorageMappings/Store';
 import { MessagePrefixes } from 'types';
+import { create } from 'zustand';
+
+export const useBoundStore = create(() => ({
+    ...createShardDetailStore(ShardDetailStoreNames.CAPTURE, 'capture'),
+    ...createShardDetailStore(
+        ShardDetailStoreNames.MATERIALIZATION,
+        'materialization'
+    ),
+    ...createShardDetailStore(ShardDetailStoreNames.COLLECTION, 'collection'),
+}));
 
 const invariableStores = {
     // Shard Detail Store
