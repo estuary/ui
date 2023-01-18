@@ -56,6 +56,7 @@ function PageContainer({ children, hideBackground, pageTitleProps }: Props) {
         >
             {notification ? (
                 <Snackbar
+                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
                     open={displayAlert}
                     autoHideDuration={7500}
                     onClose={handlers.notificationClose}
