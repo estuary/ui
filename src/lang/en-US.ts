@@ -16,6 +16,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.disabled': `Disabled`,
     'common.inProgress': `In Progress`,
     'common.done': `Done`,
+    'common.testing': `Testing`,
     'common.saving': `Saving`,
     'common.saved': `Saved`,
     'common.invalid': `Invalid`,
@@ -374,7 +375,7 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
 };
 
 const LogsDialog: ResolvedIntlConfig['messages'] = {
-    'logs.default': `Waiting for logs...`,
+    'logs.default': ` `,
     'logs.paused': `paused`,
     'logs.restartLink': `click here`,
     'logs.tooManyEmpty': `Logs for this build may have ended. {restartCTA} to start waiting for new logs again.`,
