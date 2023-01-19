@@ -8,16 +8,13 @@ import {
     useBindingsEditorStore_setLoadingInferredSchema,
 } from 'components/editor/Bindings/Store/hooks';
 import { useEntityWorkflow } from 'context/Workflow';
+import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import { isEmpty } from 'lodash';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useLocalStorage, useUnmountPromise } from 'react-use';
+import { useUnmountPromise } from 'react-use';
 import getInferredSchema from 'services/schema-inference';
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
-import {
-    getStoredGatewayAuthConfig,
-    LocalStorageKeys,
-} from 'utils/localStorage-utils';
 
 function SchemaInferenceButton() {
     const workflow = useEntityWorkflow();
@@ -37,12 +34,11 @@ function SchemaInferenceButton() {
 
     const [open, setOpen] = useState<boolean>(false);
 
-    const [gatewayConfig] = useLocalStorage(
-        LocalStorageKeys.GATEWAY,
-        getStoredGatewayAuthConfig()
-    );
-
     const resolveWhileMounted = useUnmountPromise();
+
+    const { data: gatewayConfig } = useGatewayAuthToken(
+        currentCollection ? [currentCollection] : null
+    );
 
     const openSchemaInferenceDialog = (
         event: React.MouseEvent<HTMLElement>
