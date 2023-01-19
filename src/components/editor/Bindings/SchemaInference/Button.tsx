@@ -34,11 +34,11 @@ function SchemaInferenceButton() {
 
     const [open, setOpen] = useState<boolean>(false);
 
-    const resolveWhileMounted = useUnmountPromise();
-
     const { data: gatewayConfig } = useGatewayAuthToken(
         currentCollection ? [currentCollection] : null
     );
+
+    const resolveWhileMounted = useUnmountPromise();
 
     const openSchemaInferenceDialog = (
         event: React.MouseEvent<HTMLElement>
