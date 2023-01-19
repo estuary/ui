@@ -2,7 +2,7 @@ import { useEntityType } from 'context/EntityContext';
 import { useZustandStore } from 'context/Zustand/provider';
 import { ResourceConfigStoreNames } from 'stores/names';
 import { Entity } from 'types';
-import shallow from 'zustand/shallow';
+import { shallow } from 'zustand/shallow';
 import { ResourceConfigState } from './types';
 
 // Selector Hooks

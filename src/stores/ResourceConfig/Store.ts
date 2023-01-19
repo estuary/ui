@@ -20,7 +20,7 @@ import { ResourceConfigStoreNames } from 'stores/names';
 import { Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import create, { StoreApi } from 'zustand';
+import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import { ResourceConfigDictionary, ResourceConfigState } from './types';
 
