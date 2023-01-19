@@ -12,7 +12,7 @@ import { Dispatch, SetStateAction } from 'react';
 import { CallSupabaseResponse } from 'services/supabase';
 import { BindingsEditorStoreNames } from 'stores/names';
 import { devtoolsOptions } from 'utils/store-utils';
-import create, { StoreApi } from 'zustand';
+import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 
 const processDraftSpecResponse = (
