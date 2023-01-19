@@ -1,6 +1,6 @@
 import { AlertColor } from '@mui/material';
 import { devtoolsOptions } from 'utils/store-utils';
-import create from 'zustand';
+import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 export interface Notification {
