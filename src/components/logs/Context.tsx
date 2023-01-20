@@ -163,14 +163,12 @@ const LogsContextProvider = ({
     }, [token, disableIntervalFetching, fetchAll]);
 
     useEffect(() => {
-        console.log('job completed effect');
         // If the job completed then we only want to check for logs
         //  2 more times and then stop
         if (jobCompleted) {
             setFetchingCanSafelyStop(true);
             stopCleanUp(MAX_EMPTY_CALLS - 2);
             start();
-            console.log('make it larger');
         }
         // We only if the job completed to kick off the final fetching
         // eslint-disable-next-line react-hooks/exhaustive-deps
