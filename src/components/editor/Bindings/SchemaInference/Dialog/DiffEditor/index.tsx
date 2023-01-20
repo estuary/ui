@@ -4,10 +4,10 @@ import { BindingsEditorSchemaSkeleton } from 'components/collection/CollectionSk
 import InferenceDiffEditorFooter from 'components/editor/Bindings/SchemaInference/Dialog/DiffEditor/Footer';
 import InferenceDiffEditorHeader from 'components/editor/Bindings/SchemaInference/Dialog/DiffEditor/Header';
 import {
+    useBindingsEditorStore_collectionData,
     useBindingsEditorStore_inferredSpec,
     useBindingsEditorStore_loadingInferredSchema,
 } from 'components/editor/Bindings/Store/hooks';
-import { CollectionData } from 'components/editor/Bindings/types';
 import { DEFAULT_HEIGHT } from 'components/editor/MonacoEditor';
 import AlertBox from 'components/shared/AlertBox';
 import {
@@ -15,22 +15,28 @@ import {
     monacoEditorComponentBackground,
     monacoEditorWidgetBackground,
 } from 'context/Theme';
+import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { stringifyJSON } from 'services/stringify';
 
 interface Props {
-    collectionData: CollectionData;
     height?: number;
 }
 
-function InferenceDiffEditor({
-    collectionData,
-    height = DEFAULT_HEIGHT,
-}: Props) {
+function InferenceDiffEditor({ height = DEFAULT_HEIGHT }: Props) {
     const theme = useTheme();
 
     // Bindings Editor Store
     const inferredSpec = useBindingsEditorStore_inferredSpec();
+    const collectionData = useBindingsEditorStore_collectionData();
+
+    const original = useMemo(() => {
+        if (collectionData) {
+            return stringifyJSON(collectionData.spec);
+        }
+
+        return null;
+    }, [collectionData]);
 
     const loadingInferredSchema =
         useBindingsEditorStore_loadingInferredSchema();
@@ -39,11 +45,11 @@ function InferenceDiffEditor({
         <Box sx={{ my: 3, border: defaultOutline[theme.palette.mode] }}>
             <InferenceDiffEditorHeader />
 
-            {inferredSpec ? (
+            {inferredSpec && original ? (
                 <>
                     <DiffEditor
                         height={`${height}px`}
-                        original={stringifyJSON(collectionData.spec)}
+                        original={original}
                         modified={stringifyJSON(inferredSpec)}
                         theme={
                             monacoEditorComponentBackground[theme.palette.mode]
