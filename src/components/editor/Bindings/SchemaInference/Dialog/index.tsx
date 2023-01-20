@@ -12,14 +12,12 @@ import SchemaApplicationErroredAlert from 'components/editor/Bindings/SchemaInfe
 import CancelButton from 'components/editor/Bindings/SchemaInference/Dialog/CancelButton';
 import InferenceDiffEditor from 'components/editor/Bindings/SchemaInference/Dialog/DiffEditor';
 import UpdateSchemaButton from 'components/editor/Bindings/SchemaInference/Dialog/UpdateSchemaButton';
-import { CollectionData } from 'components/editor/Bindings/types';
 import { glassBkgWithoutBlur } from 'context/Theme';
 import { Dispatch, SetStateAction } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
 
 interface Props {
-    collectionData: CollectionData;
     open: boolean;
     setOpen: Dispatch<SetStateAction<boolean>>;
     height?: number;
@@ -27,12 +25,7 @@ interface Props {
 
 const TITLE_ID = 'inferred-schema-dialog-title';
 
-function SchemaInferenceDialog({
-    collectionData,
-    open,
-    setOpen,
-    height,
-}: Props) {
+function SchemaInferenceDialog({ open, setOpen, height }: Props) {
     // Resource Config Store
     const currentCollection = useResourceConfig_currentCollection();
 
@@ -75,19 +68,13 @@ function SchemaInferenceDialog({
                     <LowDocumentCountAlert />
                 </Stack>
 
-                <InferenceDiffEditor
-                    collectionData={collectionData}
-                    height={height}
-                />
+                <InferenceDiffEditor height={height} />
             </DialogContent>
 
             <DialogActions>
                 <CancelButton setOpen={setOpen} />
 
-                <UpdateSchemaButton
-                    collectionData={collectionData}
-                    setOpen={setOpen}
-                />
+                <UpdateSchemaButton setOpen={setOpen} />
             </DialogActions>
         </Dialog>
     ) : null;
