@@ -54,16 +54,16 @@ function SchemaInferenceButton() {
                 .then(
                     (response) => {
                         if (Object.hasOwn(collectionData.spec, 'writeSchema')) {
-                            const { writeSchema, ...additionalSpecKeys } =
+                            const { ...additionalSpecKeys } =
                                 collectionData.spec;
 
                             setInferredSpec(
                                 !isEmpty(response.schema)
                                     ? {
+                                          ...additionalSpecKeys,
                                           writeSchema:
                                               collectionData.spec.writeSchema,
                                           readSchema: response.schema,
-                                          ...additionalSpecKeys,
                                       }
                                     : null
                             );
@@ -74,10 +74,10 @@ function SchemaInferenceButton() {
                             setInferredSpec(
                                 !isEmpty(response.schema)
                                     ? {
+                                          ...additionalSpecKeys,
                                           writeSchema:
                                               collectionData.spec.schema,
                                           readSchema: response.schema,
-                                          ...additionalSpecKeys,
                                       }
                                     : null
                             );
@@ -111,11 +111,7 @@ function SchemaInferenceButton() {
                     <FormattedMessage id="workflows.collectionSelector.cta.schemaInference" />
                 </Button>
 
-                <SchemaInferenceDialog
-                    collectionData={collectionData}
-                    open={open}
-                    setOpen={setOpen}
-                />
+                <SchemaInferenceDialog open={open} setOpen={setOpen} />
             </>
         ) : (
             <Skeleton variant="rectangular" width={125} />
