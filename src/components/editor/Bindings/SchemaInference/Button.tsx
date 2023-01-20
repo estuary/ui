@@ -53,12 +53,12 @@ function SchemaInferenceButton() {
             )
                 .then(
                     (response) => {
-                        let inferredSchema = null;
+                        let inferredSpec = null;
                         if (Object.hasOwn(collectionData.spec, 'writeSchema')) {
                             const { ...additionalSpecKeys } =
                                 collectionData.spec;
 
-                            inferredSchema = !isEmpty(response.schema)
+                            inferredSpec = !isEmpty(response.schema)
                                 ? {
                                       ...additionalSpecKeys,
                                       writeSchema:
@@ -71,7 +71,7 @@ function SchemaInferenceButton() {
                             const { schema, ...additionalSpecKeys } =
                                 collectionData.spec;
 
-                            inferredSchema = !isEmpty(response.schema)
+                            inferredSpec = !isEmpty(response.schema)
                                 ? {
                                       ...additionalSpecKeys,
                                       writeSchema: collectionData.spec.schema,
@@ -80,7 +80,7 @@ function SchemaInferenceButton() {
                                 : null;
                         }
 
-                        setInferredSpec(inferredSchema);
+                        setInferredSpec(inferredSpec);
                         setDocumentsRead(response.documents_read);
                     },
                     (error) => {
