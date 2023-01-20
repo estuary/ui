@@ -19,6 +19,7 @@ interface Props extends BaseComponentProps {
     short?: boolean;
     hideIcon?: boolean;
     title?: string | ReactNode;
+    onClose?: () => void;
 }
 
 const SHARED_STYLING = {
@@ -35,7 +36,7 @@ const HEADER_MESSAGE = {
 };
 
 const AlertBox = forwardRef<any, Props>(function NavLinkRef(
-    { short, severity, hideIcon, title, children },
+    { short, severity, hideIcon, title, children, onClose },
     ref
 ) {
     const iconComponentStyling = useMemo(
@@ -82,6 +83,7 @@ const AlertBox = forwardRef<any, Props>(function NavLinkRef(
                 info: <InfoOutlinedIcon sx={iconComponentStyling} />,
                 success: <TaskAltOutlinedIcon sx={iconComponentStyling} />,
             }}
+            onClose={onClose}
             sx={{
                 'backgroundColor': (theme) =>
                     alertBackground[theme.palette.mode],
@@ -92,6 +94,17 @@ const AlertBox = forwardRef<any, Props>(function NavLinkRef(
                 '& > .MuiAlert-message': {
                     p: 1,
                 },
+                '& > .MuiAlert-action': short
+                    ? {
+                          margin: 0,
+                          padding: 1,
+                          paddingTop: 0.5,
+                          alignItems: 'center',
+                      }
+                    : {
+                          margin: 0,
+                          padding: 1,
+                      },
                 '& > .MuiAlert-icon': short
                     ? {
                           ...SHARED_STYLING,

@@ -74,6 +74,15 @@ export const useFormStateStore_error = () => {
     >(storeName(workflow), (state) => state.formState.error);
 };
 
+export const useFormStateStore_message = () => {
+    const workflow = useEntityWorkflow();
+
+    return useZustandStore<
+        EntityFormState,
+        EntityFormState['formState']['message']
+    >(storeName(workflow), (state) => state.formState.message);
+};
+
 export const useFormStateStore_setFormState = () => {
     const workflow = useEntityWorkflow();
 

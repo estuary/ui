@@ -5,13 +5,16 @@ import ExistingSchemaCommands from 'components/editor/Bindings/SchemaEdit/Comman
 import EditCommandsWrapper from 'components/editor/Bindings/SchemaEdit/Commands/Wrapper';
 import { useBindingsEditorStore_collectionData } from 'components/editor/Bindings/Store/hooks';
 import ButtonWithPopper from 'components/shared/ButtonWithPopper';
+import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 
 function SchemaEditButton() {
     // Bindings Editor Store
     const collectionData = useBindingsEditorStore_collectionData();
+    const isActive = useFormStateStore_isActive();
 
     return collectionData ? (
         <ButtonWithPopper
+            disabled={isActive}
             messageId="workflows.collectionSelector.cta.schemaEdit"
             popper={
                 <EditCommandsWrapper>

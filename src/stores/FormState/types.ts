@@ -1,3 +1,4 @@
+import { AlertColor } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { MessagePrefixes } from 'types';
 
@@ -11,6 +12,10 @@ export interface FormState {
         title: string;
         error?: PostgrestError;
     } | null;
+    message: {
+        key: string | null;
+        severity: AlertColor | null;
+    };
 }
 
 export enum FormStatus {

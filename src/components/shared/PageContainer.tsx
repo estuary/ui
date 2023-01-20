@@ -56,11 +56,16 @@ function PageContainer({ children, hideBackground, pageTitleProps }: Props) {
         >
             {notification ? (
                 <Snackbar
+                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
                     open={displayAlert}
-                    autoHideDuration={5000}
+                    autoHideDuration={7500}
                     onClose={handlers.notificationClose}
                 >
-                    <AlertBox severity={notification.severity} short>
+                    <AlertBox
+                        severity={notification.severity}
+                        short
+                        onClose={handlers.notificationClose}
+                    >
                         {`${notification.title}. ${notification.description}`}
                     </AlertBox>
                 </Snackbar>
