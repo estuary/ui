@@ -17,8 +17,8 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.inProgress': `In Progress`,
     'common.done': `Done`,
     'common.testing': `Testing`,
-    'common.saving': `Saving`,
-    'common.saved': `Saved`,
+    'common.saving': `Publishing`,
+    'common.saved': `Published`,
     'common.invalid': `Invalid`,
     'common.fail': `Failed`,
     'common.success': `Success`,
@@ -91,6 +91,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
 const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.cancel': `Cancel`,
     'cta.close': `Close`,
+    'cta.dismiss': `Dismiss`,
     'cta.continue': `Continue`,
     'cta.delete': `Delete`,
     'cta.download': `Download`,
