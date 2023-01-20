@@ -54,33 +54,30 @@ function SchemaInferenceButton() {
                 .then(
                     (response) => {
                         let inferredSchema = null;
-                        if (!isEmpty(response.schema)) {
-                            if (
-                                Object.hasOwn(
-                                    collectionData.spec,
-                                    'writeSchema'
-                                )
-                            ) {
-                                const { ...additionalSpecKeys } =
-                                    collectionData.spec;
+                        if (Object.hasOwn(collectionData.spec, 'writeSchema')) {
+                            const { ...additionalSpecKeys } =
+                                collectionData.spec;
 
-                                inferredSchema = {
-                                    ...additionalSpecKeys,
-                                    writeSchema:
-                                        collectionData.spec.writeSchema,
-                                    readSchema: response.schema,
-                                };
-                            } else {
-                                // Need to remove schema from the keys
-                                const { schema, ...additionalSpecKeys } =
-                                    collectionData.spec;
+                            inferredSchema = !isEmpty(response.schema)
+                                ? {
+                                      ...additionalSpecKeys,
+                                      writeSchema:
+                                          collectionData.spec.writeSchema,
+                                      readSchema: response.schema,
+                                  }
+                                : null;
+                        } else {
+                            // Removing schema from the object
+                            const { schema, ...additionalSpecKeys } =
+                                collectionData.spec;
 
-                                inferredSchema = {
-                                    ...additionalSpecKeys,
-                                    writeSchema: collectionData.spec.schema,
-                                    readSchema: response.schema,
-                                };
-                            }
+                            inferredSchema = !isEmpty(response.schema)
+                                ? {
+                                      ...additionalSpecKeys,
+                                      writeSchema: collectionData.spec.schema,
+                                      readSchema: response.schema,
+                                  }
+                                : null;
                         }
 
                         setInferredSpec(inferredSchema);
@@ -88,6 +85,7 @@ function SchemaInferenceButton() {
                     },
                     (error) => {
                         setInferredSpec(error?.code === 404 ? null : undefined);
+
                         setDocumentsRead(undefined);
                     }
                 )
