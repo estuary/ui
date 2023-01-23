@@ -267,7 +267,7 @@ const PageNotFound: ResolvedIntlConfig['messages'] = {
 };
 
 const EntityNotFound: ResolvedIntlConfig['messages'] = {
-    'entityNotFound.heading': `Sorry, that page cannot be found.`,
+    'entityNotFound.heading': `Sorry, that entity cannot be found.`,
     'entityNotFound.message': `The entity you are looking for could not be found. This is likely because it has been deleted.`,
 };
 
