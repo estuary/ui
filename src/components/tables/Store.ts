@@ -10,7 +10,7 @@ import {
     StoreWithHydration,
 } from 'stores/Hydration';
 import { devtoolsOptions } from 'utils/store-utils';
-import create, { StoreApi } from 'zustand';
+import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 
 export interface StatsSchema {

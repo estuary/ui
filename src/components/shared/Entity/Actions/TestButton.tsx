@@ -51,7 +51,12 @@ function EntityTestButton({
                         id={`${messagePrefix}.test.waitMessage`}
                     />
                 }
-                actionComponent={<LogDialogActions close={closeLogs} />}
+                actionComponent={
+                    <LogDialogActions
+                        close={closeLogs}
+                        closeCtaKey="cta.dismiss"
+                    />
+                }
             />
             <EntityCreateSave
                 dryRun

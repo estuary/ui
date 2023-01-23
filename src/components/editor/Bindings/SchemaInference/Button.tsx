@@ -8,16 +8,13 @@ import {
     useBindingsEditorStore_setLoadingInferredSchema,
 } from 'components/editor/Bindings/Store/hooks';
 import { useEntityWorkflow } from 'context/Workflow';
+import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import { isEmpty } from 'lodash';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useLocalStorage, useUnmountPromise } from 'react-use';
+import { useUnmountPromise } from 'react-use';
 import getInferredSchema from 'services/schema-inference';
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
-import {
-    getStoredGatewayAuthConfig,
-    LocalStorageKeys,
-} from 'utils/localStorage-utils';
 
 function SchemaInferenceButton() {
     const workflow = useEntityWorkflow();
@@ -37,9 +34,8 @@ function SchemaInferenceButton() {
 
     const [open, setOpen] = useState<boolean>(false);
 
-    const [gatewayConfig] = useLocalStorage(
-        LocalStorageKeys.GATEWAY,
-        getStoredGatewayAuthConfig()
+    const { data: gatewayConfig } = useGatewayAuthToken(
+        currentCollection ? [currentCollection] : null
     );
 
     const resolveWhileMounted = useUnmountPromise();
@@ -57,36 +53,34 @@ function SchemaInferenceButton() {
             )
                 .then(
                     (response) => {
+                        let inferredSpec = null;
                         if (Object.hasOwn(collectionData.spec, 'writeSchema')) {
-                            const { writeSchema, ...additionalSpecKeys } =
+                            const { ...additionalSpecKeys } =
                                 collectionData.spec;
 
-                            setInferredSpec(
-                                !isEmpty(response.schema)
-                                    ? {
-                                          writeSchema:
-                                              collectionData.spec.writeSchema,
-                                          readSchema: response.schema,
-                                          ...additionalSpecKeys,
-                                      }
-                                    : null
-                            );
+                            inferredSpec = !isEmpty(response.schema)
+                                ? {
+                                      ...additionalSpecKeys,
+                                      writeSchema:
+                                          collectionData.spec.writeSchema,
+                                      readSchema: response.schema,
+                                  }
+                                : null;
                         } else {
+                            // Removing schema from the object
                             const { schema, ...additionalSpecKeys } =
                                 collectionData.spec;
 
-                            setInferredSpec(
-                                !isEmpty(response.schema)
-                                    ? {
-                                          writeSchema:
-                                              collectionData.spec.schema,
-                                          readSchema: response.schema,
-                                          ...additionalSpecKeys,
-                                      }
-                                    : null
-                            );
+                            inferredSpec = !isEmpty(response.schema)
+                                ? {
+                                      ...additionalSpecKeys,
+                                      writeSchema: collectionData.spec.schema,
+                                      readSchema: response.schema,
+                                  }
+                                : null;
                         }
 
+                        setInferredSpec(inferredSpec);
                         setDocumentsRead(response.documents_read);
                     },
                     (error) => {
@@ -115,11 +109,7 @@ function SchemaInferenceButton() {
                     <FormattedMessage id="workflows.collectionSelector.cta.schemaInference" />
                 </Button>
 
-                <SchemaInferenceDialog
-                    collectionData={collectionData}
-                    open={open}
-                    setOpen={setOpen}
-                />
+                <SchemaInferenceDialog open={open} setOpen={setOpen} />
             </>
         ) : (
             <Skeleton variant="rectangular" width={125} />

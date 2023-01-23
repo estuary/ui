@@ -5,10 +5,13 @@ import { FormattedMessage } from 'react-intl';
 import { useLogsContext } from './Context';
 
 function StoppedAlert() {
-    const { networkFailure, stopped, reset } = useLogsContext();
+    const { networkFailure, stopped, reset, fetchingCanSafelyStop } =
+        useLogsContext();
+
+    const showAlert = !fetchingCanSafelyStop && stopped;
 
     return (
-        <Collapse in={stopped}>
+        <Collapse in={showAlert}>
             <AlertBox severity="info" short>
                 <FormattedMessage
                     id={
