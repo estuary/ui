@@ -37,11 +37,17 @@ const commonColumns = baseColumns.concat([
 export interface CaptureQuery extends LiveSpecsExtBaseQuery {
     writes_to: string[];
 }
+export interface CaptureQueryWithSpec extends CaptureQuery {
+    spec: any;
+}
 export interface CaptureQueryWithStats extends CaptureQuery {
     stats?: CatalogStats;
 }
 export interface MaterializationQuery extends LiveSpecsExtBaseQuery {
     reads_from: string[];
+}
+export interface MaterializationQueryWithSpec extends MaterializationQuery {
+    spec: any;
 }
 export interface MaterializationQueryWithStats extends MaterializationQuery {
     stats?: CatalogStats;
@@ -52,8 +58,14 @@ export interface CollectionQueryWithStats extends CollectionQuery {
 }
 
 const captureColumns = commonColumns.concat(['writes_to']).join(',');
+const captureColumnsWithSpec = commonColumns
+    .concat(['writes_to', 'spec'])
+    .join(',');
 
 const materializationsColumns = commonColumns.concat(['reads_from']).join(',');
+const materializationsColumnsWithSpec = commonColumns
+    .concat(['reads_from', 'spec'])
+    .join(',');
 
 const collectionColumns = baseColumns.join(',');
 
@@ -187,13 +199,15 @@ const getLiveSpecsByCatalogNames = async (
 };
 
 const getLiveSpecsByConnectorId = async <
-    T = CaptureQuery[] | MaterializationQuery[]
+    T = CaptureQueryWithSpec[] | MaterializationQueryWithSpec[]
 >(
     specType: EntityWithCreateWorkflow,
     connectorTagId: string
 ) => {
     const taskColumns: string =
-        specType === 'capture' ? captureColumns : materializationsColumns;
+        specType === 'capture'
+            ? captureColumnsWithSpec
+            : materializationsColumnsWithSpec;
 
     const columns = taskColumns.concat(',connector_tag_id');
 

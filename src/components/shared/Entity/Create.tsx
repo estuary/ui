@@ -10,7 +10,7 @@ import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
 import EntityError from 'components/shared/Entity/Error';
-import ExistingEntityCard from 'components/shared/Entity/ExistingEntityCards/ExistingEntityCard';
+import ExistingEntityCard from 'components/shared/Entity/ExistingEntityCards';
 import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedChangesPrompt';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
