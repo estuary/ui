@@ -10,6 +10,8 @@ const storeName = (entityType: Entity): ShardDetailStoreNames => {
             return ShardDetailStoreNames.CAPTURE;
         case 'materialization':
             return ShardDetailStoreNames.MATERIALIZATION;
+        case 'collection':
+            return ShardDetailStoreNames.COLLECTION;
         default: {
             throw new Error('Invalid ShardDetail store name');
         }
@@ -31,6 +33,24 @@ export const useShardDetail_setShards = () => {
     return useZustandStore<ShardDetailStore, ShardDetailStore['setShards']>(
         storeName(entityType),
         (state) => state.setShards
+    );
+};
+
+export const useShardDetail_error = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<ShardDetailStore, ShardDetailStore['error']>(
+        storeName(entityType),
+        (state) => state.error
+    );
+};
+
+export const useShardDetail_setError = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<ShardDetailStore, ShardDetailStore['setError']>(
+        storeName(entityType),
+        (state) => state.setError
     );
 };
 

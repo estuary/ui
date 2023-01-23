@@ -1,3 +1,7 @@
+export enum BindingsEditorStoreNames {
+    GENERAL = 'general_bindings_editor',
+}
+
 export enum DetailsFormStoreNames {
     CAPTURE = 'capture-details-form',
     MATERIALIZATION = 'materialization-details-form',
@@ -25,23 +29,32 @@ export enum ResourceConfigStoreNames {
 }
 
 export enum SelectTableStoreNames {
-    ACCESS_GRANTS = 'AccessGrants-Selectable-Table',
+    ACCESS_GRANTS_USERS = 'AccessGrants-Selectable-Table-Users',
+    ACCESS_GRANTS_PREFIXES = 'AccessGrants-Selectable-Table-Prefixes',
     CAPTURE = 'Captures-Selectable-Table',
     COLLECTION = 'Collections-Selectable-Table',
     CONNECTOR = 'Connectors-Selectable-Table',
     MATERIALIZATION = 'Materializations-Selectable-Table',
+    STORAGE_MAPPINGS = 'Storage-Mappings-Selectable-Table',
 }
 
 export enum ShardDetailStoreNames {
     CAPTURE = 'Capture-Shard-Detail',
     MATERIALIZATION = 'Materialization-Shard-Detail',
+    COLLECTION = 'Collection-Shard-Detail',
+}
+
+export enum AdminStoreNames {
+    STORAGE_MAPPINGS = 'Storage-Mappings',
 }
 
 export type StoreName =
+    | BindingsEditorStoreNames
     | DetailsFormStoreNames
     | EditorStoreNames
     | EndpointConfigStoreNames
     | FormStateStoreNames
     | ResourceConfigStoreNames
     | SelectTableStoreNames
-    | ShardDetailStoreNames;
+    | ShardDetailStoreNames
+    | AdminStoreNames;

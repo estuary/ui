@@ -49,7 +49,10 @@ function OIDCs({ isRegister }: Props) {
                     provider,
                 },
                 {
-                    redirectTo,
+                    redirectTo: isRegister
+                        ? window.location.origin
+                        : redirectTo,
+                    shouldCreateUser: isRegister,
                 }
             );
             if (error) loginFailed(provider);

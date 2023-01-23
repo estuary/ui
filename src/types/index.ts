@@ -86,6 +86,30 @@ export interface JoinedAppliedDirective extends AppliedDirective<any> {
     ['directives.spec->>type']: undefined;
 }
 
+export interface StorageMappingStore {
+    provider: string;
+    bucket: string;
+    prefix: string;
+}
+export interface StorageMappings {
+    id: string;
+    // detail: string;
+    catalog_prefix: string;
+    spec: { stores: StorageMappingStore[] };
+    // created_at: string;
+    updated_at: string;
+}
+
+export interface Tenants {
+    id: string;
+    tasks_quota: number;
+    collections_quota: number;
+    detail: string;
+    tenant: string;
+    created_at: string;
+    updated_at: string;
+}
+
 export interface CatalogStats {
     catalog_name: string;
     grain: string;

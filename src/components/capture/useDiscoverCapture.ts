@@ -3,6 +3,7 @@ import { createEntityDraft } from 'api/drafts';
 import { getDraftSpecsBySpecType } from 'api/draftSpecs';
 import {
     useEditorStore_isSaving,
+    useEditorStore_persistedDraftId,
     useEditorStore_resetState,
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
@@ -12,7 +13,6 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useClient } from 'hooks/supabase-swr';
-import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 import { useCallback, useMemo } from 'react';
 import { CustomEvents } from 'services/logrocket';
@@ -25,6 +25,7 @@ import {
 import {
     useDetailsForm_connectorImage_connectorId,
     useDetailsForm_connectorImage_id,
+    useDetailsForm_connectorImage_imagePath,
     useDetailsForm_details_entityName,
     useDetailsForm_errorsExist,
     useDetailsForm_setDraftedEntityName,
@@ -58,6 +59,7 @@ import { Entity } from 'types';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 import {
     modifyDiscoveredDraftSpec,
+    modifyExistingCaptureDraftSpec,
     SupabaseConfig,
 } from 'utils/workflow-utils';
 
@@ -75,25 +77,22 @@ function useDiscoverCapture(
     entityType: Entity,
     callFailed: Function,
     postGenerateMutate: Function,
-    options?: { initiateRediscovery: boolean }
+    options?: { initiateRediscovery?: boolean; initiateDiscovery?: boolean }
 ) {
     const supabaseClient = useClient();
 
-    const [initialConnectorId, lastPubId] = useGlobalSearchParams([
-        GlobalSearchParams.CONNECTOR_ID,
-        GlobalSearchParams.LAST_PUB_ID,
-    ]);
+    const [lastPubId] = useGlobalSearchParams([GlobalSearchParams.LAST_PUB_ID]);
 
     const workflow = useEntityWorkflow();
     const editWorkflow = workflow === 'capture_edit';
 
     // Draft Editor Store
+    const persistedDraftId = useEditorStore_persistedDraftId();
+    const setPersistedDraftId = useEditorStore_setPersistedDraftId();
     const setDraftId = useEditorStore_setId();
 
-    // Editor Store
     const isSaving = useEditorStore_isSaving();
     const resetEditorState = useEditorStore_resetState();
-    const setPersistedDraftId = useEditorStore_setPersistedDraftId();
 
     // Form State Store
     const formActive = useFormStateStore_isActive();
@@ -106,6 +105,7 @@ function useDiscoverCapture(
     const detailsFormsHasErrors = useDetailsForm_errorsExist();
     const imageConnectorId = useDetailsForm_connectorImage_connectorId();
     const imageConnectorTagId = useDetailsForm_connectorImage_id();
+    const imagePath = useDetailsForm_connectorImage_imagePath();
     const setDraftedEntityName = useDetailsForm_setDraftedEntityName();
 
     // Endpoint Config Store
@@ -131,10 +131,6 @@ function useDiscoverCapture(
     const resourceConfigHasErrors =
         useResourceConfig_resourceConfigErrorsExist();
     const resetCollections = useResourceConfig_resetConfigAndCollections();
-
-    const endpointConfigErrorFlag = editWorkflow
-        ? endpointConfigErrorsExist
-        : endpointConfigErrorsExist || isEmpty(endpointConfigData);
 
     const storeDiscoveredCollections = useCallback(
         async (
@@ -302,7 +298,7 @@ function useDiscoverCapture(
 
             if (
                 detailsFormsHasErrors ||
-                endpointConfigErrorFlag ||
+                endpointConfigErrorsExist ||
                 resourceConfigHasErrors
             ) {
                 return setFormState({
@@ -311,18 +307,6 @@ function useDiscoverCapture(
                 });
             } else {
                 resetEditorState(true);
-
-                const draftsResponse = await createEntityDraft(entityName);
-                if (draftsResponse.error) {
-                    return callFailed({
-                        error: {
-                            title: 'captureCreate.generate.failedErrorTitle',
-                            error: draftsResponse.error,
-                        },
-                    });
-                }
-
-                const draftId = draftsResponse.data[0].id;
 
                 const selectedEndpointConfig = serverUpdateRequired
                     ? endpointConfigData
@@ -338,60 +322,106 @@ function useDiscoverCapture(
                     { overrideJsonFormDefaults: true }
                 );
 
-                let catalogName = entityName;
-
-                if (editWorkflow && imageConnectorId === initialConnectorId) {
-                    // The discovery RPC will insert a row into the draft spec-related tables for the given task with verbiage
-                    // identifying the external source appended to the task name (e.g., '/source-postgres'). To limit duplication
-                    // of draft spec-related data, the aforementioned external source identifier is removed from the task name
-                    // prior to executing the discovery RPC.
-                    const lastSlashIndex = entityName.lastIndexOf('/');
-
-                    if (lastSlashIndex !== -1) {
-                        catalogName = entityName.slice(0, lastSlashIndex);
+                if (
+                    options?.initiateRediscovery ||
+                    options?.initiateDiscovery
+                ) {
+                    const draftsResponse = await createEntityDraft(entityName);
+                    if (draftsResponse.error) {
+                        return callFailed({
+                            error: {
+                                title: 'captureCreate.generate.failedErrorTitle',
+                                error: draftsResponse.error,
+                            },
+                        });
                     }
-                }
 
-                const discoverResponse = await discover(
-                    catalogName,
-                    encryptedEndpointConfig.data,
-                    imageConnectorTagId,
-                    draftId
-                );
-                if (discoverResponse.error) {
-                    return callFailed({
-                        error: {
-                            title: 'captureCreate.generate.failedErrorTitle',
-                            error: discoverResponse.error,
-                        },
+                    const draftId = draftsResponse.data[0].id;
+
+                    const discoverResponse = await discover(
+                        entityName,
+                        encryptedEndpointConfig.data,
+                        imageConnectorTagId,
+                        draftId
+                    );
+                    if (discoverResponse.error) {
+                        return callFailed({
+                            error: {
+                                title: 'captureCreate.generate.failedErrorTitle',
+                                error: discoverResponse.error,
+                            },
+                        });
+                    }
+                    createDiscoversSubscription(
+                        draftId,
+                        endpointConfigData,
+                        resourceConfig
+                    );
+
+                    setFormState({
+                        logToken: discoverResponse.data[0].logs_token,
                     });
-                }
-                createDiscoversSubscription(
-                    draftId,
-                    endpointConfigData,
-                    resourceConfig
-                );
+                } else if (persistedDraftId) {
+                    const draftSpecsResponse =
+                        await modifyExistingCaptureDraftSpec(
+                            persistedDraftId,
+                            imagePath,
+                            encryptedEndpointConfig.data,
+                            resourceConfig
+                        );
 
-                setFormState({
-                    logToken: discoverResponse.data[0].logs_token,
-                });
+                    if (draftSpecsResponse.error) {
+                        return callFailed({
+                            error: {
+                                title: 'captureCreate.generate.failedErrorTitle',
+                                error: draftSpecsResponse.error,
+                            },
+                        });
+                    }
+
+                    setEncryptedEndpointConfig({
+                        data: draftSpecsResponse.data[0].spec.endpoint.connector
+                            .config,
+                    });
+
+                    setPreviousEndpointConfig({ data: endpointConfigData });
+
+                    setDraftId(persistedDraftId);
+
+                    void postGenerateMutate();
+
+                    setFormState({
+                        status: FormStatus.GENERATED,
+                    });
+                } else {
+                    // TODO (optimization): This condition should be nearly impossible to reach, but we currently do not have a means to produce
+                    //   an error in this scenario. ValidationErrorSummary is not suitable for this scenario and EntityError, the error component
+                    //   that surfaces form state errors, is only rendered in the event a persisted draft ID is present. Since the likelihood of
+                    //   reaching this code block is slim, I am going to add a solution in a fast-follow to the schema inference changes.
+                }
             }
         },
         [
-            createDiscoversSubscription,
-            resetEditorState,
-            setFormState,
-            updateFormStatus,
             callFailed,
+            createDiscoversSubscription,
+            postGenerateMutate,
+            resetEditorState,
+            setEncryptedEndpointConfig,
+            setFormState,
+            setPreviousEndpointConfig,
+            setDraftId,
+            updateFormStatus,
             detailsFormsHasErrors,
-            editWorkflow,
             endpointConfigData,
-            endpointConfigErrorFlag,
+            endpointConfigErrorsExist,
             endpointSchema,
             entityName,
             imageConnectorId,
             imageConnectorTagId,
-            initialConnectorId,
+            imagePath,
+            options?.initiateDiscovery,
+            options?.initiateRediscovery,
+            persistedDraftId,
             resourceConfig,
             resourceConfigHasErrors,
             serverEndpointConfigData,

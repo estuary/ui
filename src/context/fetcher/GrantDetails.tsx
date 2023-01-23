@@ -10,13 +10,11 @@ export interface CombinedGrantsExtQuery {
     object_role: string;
 }
 
-interface PreFetchData {
-    grantDetails: CombinedGrantsExtQuery[];
-}
+const GrantDetailsContext = createContext<CombinedGrantsExtQuery[] | null>(
+    null
+);
 
-const PreFetchDataContext = createContext<PreFetchData | null>(null);
-
-const PreFetchDataProvider = ({ children }: BaseComponentProps) => {
+const GrantDetailsContextProvider = ({ children }: BaseComponentProps) => {
     const combinedGrantsQuery = useQuery<CombinedGrantsExtQuery>(
         TABLES.COMBINED_GRANTS_EXT,
         { columns: `id, object_role` },
@@ -24,31 +22,29 @@ const PreFetchDataProvider = ({ children }: BaseComponentProps) => {
     );
     const { data: grants, isValidating } = useSelect(combinedGrantsQuery);
 
-    const value: PreFetchData | null = grants?.data
-        ? { grantDetails: grants.data }
-        : null;
+    const value = grants?.data ? grants.data : null;
 
     if (isValidating || value === null) {
         return <FullPageSpinner />;
     }
 
     return (
-        <PreFetchDataContext.Provider value={value}>
+        <GrantDetailsContext.Provider value={value}>
             {children}
-        </PreFetchDataContext.Provider>
+        </GrantDetailsContext.Provider>
     );
 };
 
-const usePreFetchData = () => {
-    const context = useContext(PreFetchDataContext);
+const useGrantDetails = () => {
+    const context = useContext(GrantDetailsContext);
 
     if (context === null) {
         throw new Error(
-            'usePreFetchData must be used within a PreFetchDataProvider'
+            'useGrantDetails must be used within a GrantDetailsContextProvider'
         );
     }
 
     return context;
 };
 
-export { PreFetchDataProvider, usePreFetchData };
+export { GrantDetailsContextProvider, useGrantDetails };

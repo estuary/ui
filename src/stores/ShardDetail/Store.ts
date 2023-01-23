@@ -3,8 +3,9 @@ import { ReplicaStatusCode } from 'data-plane-gateway/types/gen/consumer/protoco
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import produce from 'immer';
 import { ShardDetailStoreNames } from 'stores/names';
+import { Entity } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
-import create, { StoreApi } from 'zustand';
+import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import {
     ShardDetails,
@@ -13,90 +14,6 @@ import {
     ShardStatusMessageIds,
     TaskShardDetails,
 } from './types';
-
-const evaluateTaskShardStatus = (
-    { spec, status }: Shard,
-    defaultStatusColor: ShardStatusColor
-): TaskShardDetails => {
-    if (status.length === 1) {
-        switch (status[0].code) {
-            case 'FAILED':
-                return {
-                    messageId: ShardStatusMessageIds.FAILED,
-                    color: errorMain,
-                };
-            case 'PRIMARY':
-                return {
-                    messageId: ShardStatusMessageIds.PRIMARY,
-                    color: successMain,
-                };
-            case 'IDLE':
-                return {
-                    messageId: ShardStatusMessageIds.IDLE,
-                    color: warningMain,
-                };
-            case 'STANDBY':
-                return {
-                    messageId: ShardStatusMessageIds.STANDBY,
-                    color: warningMain,
-                };
-            case 'BACKFILL':
-                return {
-                    messageId: ShardStatusMessageIds.BACKFILL,
-                    color: warningMain,
-                };
-            default:
-                return {
-                    messageId: ShardStatusMessageIds.NONE,
-                    color: defaultStatusColor,
-                };
-        }
-    } else if (status.length > 1) {
-        const statusCodes: (ReplicaStatusCode | undefined)[] = status.map(
-            ({ code }) => code
-        );
-
-        if (statusCodes.find((code) => code === 'FAILED')) {
-            return {
-                messageId: ShardStatusMessageIds.FAILED,
-                color: errorMain,
-            };
-        } else if (statusCodes.find((code) => code === 'PRIMARY')) {
-            return {
-                messageId: ShardStatusMessageIds.PRIMARY,
-                color: successMain,
-            };
-        } else if (statusCodes.find((code) => code === 'IDLE')) {
-            return {
-                messageId: ShardStatusMessageIds.IDLE,
-                color: warningMain,
-            };
-        } else if (statusCodes.find((code) => code === 'STANDBY')) {
-            return {
-                messageId: ShardStatusMessageIds.STANDBY,
-                color: warningMain,
-            };
-        } else if (statusCodes.find((code) => code === 'BACKFILL')) {
-            return {
-                messageId: ShardStatusMessageIds.BACKFILL,
-                color: warningMain,
-            };
-        } else {
-            return {
-                messageId: ShardStatusMessageIds.NONE,
-                color: defaultStatusColor,
-            };
-        }
-    } else {
-        return {
-            messageId: spec.disable
-                ? ShardStatusMessageIds.DISABLED
-                : ShardStatusMessageIds.NONE,
-            color: defaultStatusColor,
-            disabled: spec.disable,
-        };
-    }
-};
 
 // TODO: Consider unifying this function with the one below in a similar fashion as evaluateTaskShardStatus.
 const evaluateShardStatusColor = (
@@ -184,9 +101,21 @@ const evaluateShardStatusCode = ({
     }
 };
 
+const evaluateTaskShardStatus = (
+    shard: Shard,
+    defaultStatusColor: ShardStatusColor
+): TaskShardDetails => {
+    return {
+        messageId: evaluateShardStatusCode(shard),
+        color: evaluateShardStatusColor(shard, defaultStatusColor),
+        disabled: shard.spec.disable,
+    };
+};
+
 export const getInitialState = (
     set: NamedSet<ShardDetailStore>,
-    get: StoreApi<ShardDetailStore>['getState']
+    get: StoreApi<ShardDetailStore>['getState'],
+    entityType: Entity
 ): ShardDetailStore => {
     return {
         shards: [],
@@ -197,6 +126,16 @@ export const getInitialState = (
                 }),
                 false,
                 'Shard List Set'
+            );
+        },
+        error: null,
+        setError: (error) => {
+            set(
+                produce((state) => {
+                    state.error = error;
+                }),
+                false,
+                'Shard List Error Set'
             );
         },
         getTaskShards: (catalogNamespace, shards) => {
@@ -213,25 +152,45 @@ export const getInitialState = (
                 : [];
         },
         getTaskShardDetails: (taskShards, defaultStatusColor) => {
+            const { error } = get();
+
             const defaultTaskShardDetail = {
                 messageId: ShardStatusMessageIds.NONE,
                 color: defaultStatusColor,
+                shard: null,
             };
 
             if (taskShards.length > 0) {
-                const statusIndicators = taskShards.map((shard) =>
-                    evaluateTaskShardStatus(shard, defaultStatusColor)
-                );
+                const statusIndicators = taskShards.map((shard) => ({
+                    ...evaluateTaskShardStatus(shard, defaultStatusColor),
+                    shard,
+                }));
 
                 return statusIndicators.length > 0
                     ? statusIndicators
                     : [defaultTaskShardDetail];
+            } else if (entityType === 'collection') {
+                const messageId = error
+                    ? ShardStatusMessageIds.NONE
+                    : ShardStatusMessageIds.COLLECTION;
+                const color = error ? defaultStatusColor : successMain;
+
+                return [
+                    {
+                        messageId,
+                        color,
+                        shard: null,
+                    },
+                ];
             } else {
                 return [defaultTaskShardDetail];
             }
         },
         getTaskStatusColor: (taskShardDetails, defaultStatusColor) => {
-            if (taskShardDetails.length === 1) {
+            const { error } = get();
+            if (error) {
+                return defaultStatusColor;
+            } else if (taskShardDetails.length === 1) {
                 return taskShardDetails[0].color;
             } else if (taskShardDetails.length > 1) {
                 const statusMessageIds: ShardStatusMessageIds[] =
@@ -265,6 +224,8 @@ export const getInitialState = (
                 } else {
                     return defaultStatusColor;
                 }
+            } else if (entityType === 'collection') {
+                return successMain;
             } else {
                 return defaultStatusColor;
             }
@@ -325,8 +286,14 @@ export const getInitialState = (
     };
 };
 
-export const createShardDetailStore = (key: ShardDetailStoreNames) => {
+export const createShardDetailStore = (
+    key: ShardDetailStoreNames,
+    entityType: Entity
+) => {
     return create<ShardDetailStore>()(
-        devtools((set, get) => getInitialState(set, get), devtoolsOptions(key))
+        devtools(
+            (set, get) => getInitialState(set, get, entityType),
+            devtoolsOptions(key)
+        )
     );
 };

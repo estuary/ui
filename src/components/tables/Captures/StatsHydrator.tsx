@@ -2,10 +2,12 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
+import { useTenantDetails } from 'context/fetcher/Tenant';
 import { useZustandStore } from 'context/Zustand/provider';
 import { useEffect } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
 import { BaseComponentProps } from 'types';
+import { hasLength } from 'utils/misc-utils';
 
 // Hydrator
 interface StatsHydratorProps extends BaseComponentProps {
@@ -16,6 +18,8 @@ const StatsHydrator = ({
     children,
     selectableTableStoreName,
 }: StatsHydratorProps) => {
+    const tenants = useTenantDetails();
+
     const queryLoading = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['query']['loading']
@@ -32,10 +36,10 @@ const StatsHydrator = ({
     >(selectableTableStoreName, selectableTableStoreSelectors.stats.set);
 
     useEffect(() => {
-        if (!queryLoading && queryResponse) {
+        if (hasLength(tenants) && !queryLoading && queryResponse) {
             setStats();
         }
-    }, [queryLoading, queryResponse, setStats]);
+    }, [queryLoading, queryResponse, setStats, tenants]);
 
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <>{children}</>;

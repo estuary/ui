@@ -42,7 +42,7 @@ import { concat, includes, orderBy } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 import keys from 'lodash/keys';
 import startCase from 'lodash/startCase';
-import { Annotations, Formats, Options, Patterns } from 'types/jsonforms';
+import { Annotations, Formats, Options } from 'types/jsonforms';
 import { ADVANCED, CONTAINS_REQUIRED_FIELDS } from './shared';
 
 /////////////////////////////////////////////////////////
@@ -254,7 +254,7 @@ export const createControlElement = (ref: string): ControlElement => ({
 const wrapInLayoutIfNecessary = (
     uischema: UISchemaElement,
     layoutType: string
-): Layout => {
+): UISchemaElement | Layout => {
     if (!isEmpty(uischema) && !isLayout(uischema)) {
         const verticalLayout: Layout = createLayout(layoutType);
         verticalLayout.elements.push(uischema);
@@ -502,16 +502,8 @@ const generateUISchema = (
         addOption(controlObject, Options.format, Formats.dateTime);
     } else if (isDateText(jsonSchema)) {
         addOption(controlObject, Options.format, Formats.date);
-        if (controlObject.options) {
-            controlObject.options.dateFormat = Patterns.date;
-            controlObject.options.dateSaveFormat = Patterns.date;
-        }
     } else if (isTimeText(jsonSchema)) {
         addOption(controlObject, Options.format, Formats.time);
-        if (controlObject.options) {
-            controlObject.options.timeFormat = Patterns.time;
-            controlObject.options.timeSaveFormat = Patterns.time;
-        }
     }
 
     switch (types[0]) {

@@ -2,6 +2,7 @@ import { RealtimeSubscription } from '@supabase/supabase-js';
 import { authenticatedRoutes } from 'app/routes';
 import CaptureGenerateButton from 'components/capture/GenerateButton';
 import RediscoverButton from 'components/capture/RediscoverButton';
+import { useBindingsEditorStore_resetState } from 'components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
@@ -52,6 +53,9 @@ function CaptureEdit() {
     const { connectorTags } = useConnectorWithTagDetail(entityType);
     const hasConnectors = connectorTags.length > 0;
 
+    // Bindings Editor Store
+    const resetBindingsEditorStore = useBindingsEditorStore_resetState();
+
     // Details Form Store
     const imageTag = useDetailsForm_connectorImage();
     const detailsFormErrorsExist = useDetailsForm_errorsExist();
@@ -94,6 +98,7 @@ function CaptureEdit() {
         resetResourceConfigState();
         resetFormState();
         resetEditorStore();
+        resetBindingsEditorStore();
     };
 
     const helpers = {

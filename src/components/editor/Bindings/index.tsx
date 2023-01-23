@@ -1,6 +1,6 @@
 import { Typography, useTheme } from '@mui/material';
 import {
-    BindingsEditorSkeleton,
+    BindingsEditorConfigSkeleton,
     BindingsSelectorSkeleton,
 } from 'components/collection/CollectionSkeletons';
 import BindingsEditor from 'components/editor/Bindings/Editor';
@@ -120,21 +120,10 @@ function BindingsMultiEditor({
             discoveredCollections.length > 0 &&
             draftSpecs.length > 0
         ) {
-            let truncatedServerCatalogName: string | null = null;
-
             const catalogNameOnServer = draftSpecs[0].catalog_name;
 
-            const lastSlashIndex = catalogNameOnServer.lastIndexOf('/');
-
-            if (lastSlashIndex !== -1) {
-                truncatedServerCatalogName = catalogNameOnServer.slice(
-                    0,
-                    lastSlashIndex
-                );
-            }
-
-            return truncatedServerCatalogName
-                ? truncatedServerCatalogName !== catalogName
+            return catalogNameOnServer
+                ? !catalogNameOnServer.startsWith(catalogName)
                 : false;
         } else {
             return false;
@@ -180,7 +169,7 @@ function BindingsMultiEditor({
                 details={
                     <BindingsEditor
                         loading={fetchingSpecs}
-                        skeleton={<BindingsEditorSkeleton />}
+                        skeleton={<BindingsEditorConfigSkeleton />}
                         readOnly={readOnly}
                     />
                 }
@@ -188,6 +177,7 @@ function BindingsMultiEditor({
                     alternativeReflexContainerBackground[theme.palette.mode]
                 }
                 displayBorder={true}
+                height={550}
             />
         </>
     );

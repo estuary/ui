@@ -1,6 +1,7 @@
 import { PostgrestError } from '@supabase/postgrest-js';
 import { TABLES } from 'services/supabase';
 import { KeyedMutator } from 'swr';
+import { Entity } from 'types';
 import { SuccessResponse, useQuery, useSelect } from './supabase-swr/';
 
 export interface DraftSpecQuery {
@@ -29,7 +30,8 @@ const defaultResponse: DraftSpecQuery[] = [];
 
 function useDraftSpecs(
     draftId: string | null,
-    lastPubId?: string | null
+    lastPubId?: string | null,
+    specType?: Entity | null
 ): DraftSpecSwrMetadata {
     const draftSpecQuery = useQuery<DraftSpecQuery>(
         TABLES.DRAFT_SPECS,
@@ -40,6 +42,10 @@ function useDraftSpecs(
 
                 if (lastPubId) {
                     queryBuilder = queryBuilder.eq('expect_pub_id', lastPubId);
+                }
+
+                if (specType) {
+                    queryBuilder = queryBuilder.eq('spec_type', specType);
                 }
 
                 return queryBuilder.eq('draft_id', draftId as string);

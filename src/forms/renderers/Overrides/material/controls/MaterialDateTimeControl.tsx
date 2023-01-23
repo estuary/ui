@@ -80,7 +80,7 @@ export const Custom_MaterialDateTimeControl = (props: ControlProps) => {
     const intl = useIntl();
     const popupState = usePopupState({
         variant: 'popover',
-        popupId: `date-time-${id}`,
+        popupId: `date-time-picker-${id}`,
     });
 
     // We have a special handler that formats the date so that
@@ -132,7 +132,7 @@ export const Custom_MaterialDateTimeControl = (props: ControlProps) => {
                     <IconButton
                         aria-label={intl.formatMessage(
                             {
-                                id: 'datePicker.buttom.ariaLabel',
+                                id: 'dateTimePicker.button.ariaLabel',
                             },
                             {
                                 label,

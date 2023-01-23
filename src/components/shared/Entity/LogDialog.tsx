@@ -7,6 +7,7 @@ import {
 import Logs from 'components/logs';
 import { logDialogBackground } from 'context/Theme';
 import { ReactNode } from 'react';
+import { useFormStateStore_message } from 'stores/FormState/hooks';
 import ErrorBoundryWrapper from '../ErrorBoundryWrapper';
 
 interface Props {
@@ -19,6 +20,8 @@ interface Props {
 const TITLE_ID = 'logs-dialog-title';
 
 function LogDialog({ open, token, actionComponent, title }: Props) {
+    const { key, severity } = useFormStateStore_message();
+
     return (
         <Dialog
             open={open}
@@ -38,7 +41,19 @@ function LogDialog({ open, token, actionComponent, title }: Props) {
 
             <DialogContent>
                 <ErrorBoundryWrapper>
-                    <Logs token={token} height={350} />
+                    <Logs
+                        token={token}
+                        height={350}
+                        loadingLineSeverity={severity}
+                        spinnerMessages={
+                            key
+                                ? {
+                                      stoppedKey: key,
+                                      runningKey: key,
+                                  }
+                                : undefined
+                        }
+                    />
                 </ErrorBoundryWrapper>
             </DialogContent>
 

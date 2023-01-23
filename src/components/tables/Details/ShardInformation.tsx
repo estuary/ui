@@ -27,10 +27,10 @@ import {
     useShardDetail_getTaskShards,
     useShardDetail_shards,
 } from 'stores/ShardDetail/hooks';
-import { EntityWithCreateWorkflow } from 'types';
+import { Entity } from 'types';
 
 interface Props {
-    entityType?: EntityWithCreateWorkflow;
+    entityType?: Entity;
 }
 
 const rowsPerPage = 3;
@@ -88,6 +88,10 @@ function ShardInformation({ entityType }: Props) {
 
     return taskShards.length > 0 ? (
         <>
+            <Typography variant="subtitle1">
+                <FormattedMessage id="detailsPanel.status.header" />
+            </Typography>
+
             <ShardErrors shards={taskShards} />
 
             <Grid item xs={12}>

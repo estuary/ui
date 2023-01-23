@@ -1,19 +1,13 @@
 /* eslint-disable no-await-in-loop */
 import { Auth } from '@supabase/ui';
-import { usePreFetchData } from 'context/PreFetchData';
 import {
     JournalClient,
     JournalSelector,
     parseJournalDocuments,
 } from 'data-plane-gateway';
+import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useLocalStorage } from 'react-use';
-import getGatewayAuthConfig from 'services/gateway-auth-config';
 import useSWR from 'swr';
-import {
-    getStoredGatewayAuthConfig,
-    LocalStorageKeys,
-} from 'utils/localStorage-utils';
 
 enum ErrorFlags {
     TOKEN_NOT_FOUND = 'Unauthenticated',
@@ -21,14 +15,11 @@ enum ErrorFlags {
     OPERATION_INVALID = 'Unauthorized',
 }
 
-const useJournalsForCollection = (collectionName: string) => {
+const useJournalsForCollection = (collectionName: string | undefined) => {
     const { session } = Auth.useUser();
-    const { grantDetails } = usePreFetchData();
 
-    const [gatewayConfig, setGatewayConfig] = useLocalStorage(
-        LocalStorageKeys.GATEWAY,
-        getStoredGatewayAuthConfig()
-    );
+    const { data: gatewayConfig, refresh: refreshAuthToken } =
+        useGatewayAuthToken(collectionName ? [collectionName] : []);
 
     const journalClient = useMemo(() => {
         if (gatewayConfig?.gateway_url && gatewayConfig.token) {
@@ -73,21 +64,13 @@ const useJournalsForCollection = (collectionName: string) => {
             errorRetryInterval: undefined,
             refreshInterval: undefined,
             revalidateOnFocus: false,
-            onError: (error) => {
+            onError: async (error) => {
                 if (
                     session &&
                     (`${error}`.includes(ErrorFlags.TOKEN_INVALID) ||
                         `${error}`.includes(ErrorFlags.TOKEN_NOT_FOUND))
                 ) {
-                    const prefixes: string[] = grantDetails.map(
-                        ({ object_role }) => object_role
-                    );
-
-                    getGatewayAuthConfig(prefixes, session.access_token)
-                        .then(([response]) => {
-                            setGatewayConfig(response);
-                        })
-                        .catch((configError) => Promise.reject(configError));
+                    await refreshAuthToken();
                 }
 
                 console.error(error);
@@ -219,12 +202,12 @@ function isJournalRecord(val: any): val is JournalRecord {
 const useJournalData = (
     journalName?: string,
     desiredCount: number = 50,
+    collectionName?: string,
     // 16mb, which is the max document size, ensuring we'll always get at least 1 doc if it exists
     maxBytes: number = 16 * 10 ** 6
 ) => {
-    const [gatewayConfig] = useLocalStorage(
-        LocalStorageKeys.GATEWAY,
-        getStoredGatewayAuthConfig()
+    const { data: gatewayConfig } = useGatewayAuthToken(
+        collectionName ? [collectionName] : []
     );
 
     const journalClient = useMemo(() => {

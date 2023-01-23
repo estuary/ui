@@ -1,10 +1,10 @@
 import produce from 'immer';
 import { MessagePrefixes } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
-import create, { StoreApi } from 'zustand';
+import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import { FormStateStoreNames } from '../names';
-import { EntityFormState, FormStatus } from './types';
+import { EntityFormState, FormState, FormStatus } from './types';
 
 const formActive = (status: FormStatus) => {
     return (
@@ -23,6 +23,40 @@ const formIdle = (status: FormStatus) => {
     );
 };
 
+const getMessageSettings = (
+    formStatus: FormStatus,
+    isActive: boolean
+): FormState['message'] => {
+    if (formStatus === FormStatus.TESTED || formStatus === FormStatus.SAVED) {
+        return {
+            key: 'common.success',
+            severity: 'success',
+        };
+    } else if (formStatus === FormStatus.FAILED) {
+        return {
+            key: 'common.fail',
+            severity: 'error',
+        };
+    } else if (isActive) {
+        let key = 'common.running';
+        if (formStatus === FormStatus.TESTING) {
+            key = 'common.testing';
+        } else if (formStatus === FormStatus.SAVING) {
+            key = 'common.saving';
+        }
+
+        return {
+            key,
+            severity: null,
+        };
+    }
+
+    return {
+        key: null,
+        severity: null,
+    };
+};
+
 const initialFormState = {
     displayValidation: false,
     status: FormStatus.INIT,
@@ -30,6 +64,10 @@ const initialFormState = {
     exitWhenLogsClose: false,
     logToken: null,
     error: null,
+    message: {
+        key: null,
+        severity: null,
+    },
 };
 
 const getInitialStateData = (
@@ -57,10 +95,15 @@ const getInitialState = (
         set(
             produce((state: EntityFormState) => {
                 const { formState } = get();
-
                 state.formState = { ...formState, ...newState };
                 state.isIdle = formIdle(state.formState.status);
-                state.isActive = formActive(state.formState.status);
+
+                const formIsActive = formActive(state.formState.status);
+                state.isActive = formIsActive;
+                state.formState.message = getMessageSettings(
+                    state.formState.status,
+                    formIsActive
+                );
             }),
             false,
             'Form State Changed'
@@ -73,7 +116,13 @@ const getInitialState = (
                 state.formState = { ...initialFormState };
                 state.formState.status = status;
                 state.isIdle = formIdle(status);
-                state.isActive = formActive(status);
+
+                const formIsActive = formActive(status);
+                state.isActive = formIsActive;
+                state.formState.message = getMessageSettings(
+                    state.formState.status,
+                    formIsActive
+                );
             }),
             false,
             'Form Status Updated'

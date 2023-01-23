@@ -16,8 +16,9 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.disabled': `Disabled`,
     'common.inProgress': `In Progress`,
     'common.done': `Done`,
-    'common.saving': `Saving`,
-    'common.saved': `Saved`,
+    'common.testing': `Testing`,
+    'common.saving': `Publishing`,
+    'common.saved': `Published`,
     'common.invalid': `Invalid`,
     'common.fail': `Failed`,
     'common.success': `Success`,
@@ -31,6 +32,11 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.version': `version`,
     'common.tenant': `Prefix`,
     'common.recommended': `Recommended`,
+    'common.copied': `Copied`,
+    'common.copyFailed': `Failed to copy`,
+    'common.synchronizing': `Synchronizing`,
+    'common.synchronized': `Synchronized`,
+    'common.outOfSync': `Out of Sync`,
 
     // Aria
     'aria.openExpand': `show more`,
@@ -43,6 +49,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'terms.materialization': `Materialization`,
     'terms.capture': `Capture`,
     'terms.documentation': `Docs`,
+    'terms.storageMapping': `Storage Mappings`,
 
     // Common fields
     'entityPrefix.label': `Prefix`,
@@ -84,6 +91,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
 const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.cancel': `Cancel`,
     'cta.close': `Close`,
+    'cta.dismiss': `Dismiss`,
     'cta.continue': `Continue`,
     'cta.delete': `Delete`,
     'cta.download': `Download`,
@@ -171,6 +179,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.admin.api': `CLI - API`,
     'routeTitle.admin.connectors': `Connectors`,
     'routeTitle.admin.cookies': `Cookie Preferences`,
+    'routeTitle.admin.storageMappings': `${CommonMessages['terms.storageMapping']}`,
     'routeTitle.captureCreate': `Create Capture`,
     'routeTitle.captureEdit': `Edit Capture`,
     'routeTitle.captures': `Captures`,
@@ -196,6 +205,7 @@ const BrowserTitles: ResolvedIntlConfig['messages'] = {
     'browserTitle.admin.api': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.api']}`,
     'browserTitle.admin.connectors': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.connectors']}`,
     'browserTitle.admin.cookies': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.cookies']}`,
+    'browserTitle.admin.storageMappings': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.admin.storageMappings']}`,
     'browserTitle.captureCreate': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureCreate']}`,
     'browserTitle.captureEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureEdit']}`,
     'browserTitle.captures': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captures']}`,
@@ -331,19 +341,26 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.data.capability': `Capability`,
     'entityTable.data.objectRole': `Object`,
     'entityTable.data.lastPubUserFullName': `Last Updated By`,
+    'entityTable.data.catalogPrefix': `Catalog Prefix`,
+    'entityTable.data.provider': `Provider`,
+    'entityTable.data.bucket': `Bucket`,
+    'entityTable.data.prefix': `Prefix`,
+    'entityTable.data.storagePrefix': `Prefix`,
 
-    'entityTable.stats.bytes_written_by_me': `Bytes Written`,
-    'entityTable.stats.docs_written_by_me': `Docs Written`,
-    'entityTable.stats.bytes_read_by_me': `Bytes Read`,
-    'entityTable.stats.docs_read_by_me': `Docs Read`,
+    'entityTable.stats.bytes_read': `Bytes Read`,
+    'entityTable.stats.docs_read': `Docs Read`,
+    'entityTable.stats.bytes_written': `Bytes Written`,
+    'entityTable.stats.docs_written': `Docs Written`,
 
-    'entityTable.stats.bytes_written_to_me': `Bytes Written`,
-    'entityTable.stats.docs_written_to_me': `Docs Written`,
-    'entityTable.stats.bytes_read_to_me': `Bytes Read`,
-    'entityTable.stats.docs_read_to_me': `Docs Read`,
+    'entityTable.stats.written': `Data Written`,
+    'entityTable.stats.read': `Data Read`,
+    'entityTable.stats.docs': `{docCount} {docCount, plural,
+        one {doc}
+        other {docs}
+    }`,
 
     'entityTable.stats.error': `Failed to fetch stats.`,
-    'entityTable.stats.filterMenu': `Stats for {currentOption}`,
+    'entityTable.stats.filterMenu': `Stats for`,
 
     'entityTable.unmatchedFilter.header': `No results found.`,
     'entityTable.unmatchedFilter.message': `We couldn't find any data matching your search. Please try a different filter.`,
@@ -359,7 +376,7 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
 };
 
 const LogsDialog: ResolvedIntlConfig['messages'] = {
-    'logs.default': `Waiting for logs...`,
+    'logs.default': ` `,
     'logs.paused': `paused`,
     'logs.restartLink': `click here`,
     'logs.tooManyEmpty': `Logs for this build may have ended. {restartCTA} to start waiting for new logs again.`,
@@ -379,6 +396,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.tabs.connectors': `Connectors`,
     'admin.tabs.api': `CLI-API`,
     'admin.tabs.cookies': `Cookie Preferences`,
+    'admin.tabs.storageMappings': `${CommonMessages['terms.storageMapping']}`,
 };
 
 const Welcome: ResolvedIntlConfig['messages'] = {
@@ -387,10 +405,27 @@ const Welcome: ResolvedIntlConfig['messages'] = {
 
 const AccessGrants: ResolvedIntlConfig['messages'] = {
     'accessGrantsTable.header': `Captures`,
-    'accessGrantsTable.title': `Users`,
-    'accessGrantsTable.filterLabel': `Filter User or Object`,
+    'accessGrantsTable.users.title': `Users`,
+    'accessGrantsTable.prefixes.title': `Prefixes`,
+    'accessGrantsTable.users.filterLabel': `Filter User or Object`,
+    'accessGrantsTable.prefixes.filterLabel': `Filter Prefix or Object`,
     'accessGrants.message1': `No results found.`,
     'accessGrants.message2': `We couldn't find any results matching your search. Please try a different filter.`,
+};
+
+const StorageMappings: ResolvedIntlConfig['messages'] = {
+    'storageMappings.header': `Cloud Storage`,
+    'storageMappingsTable.title': `Storage Locations`,
+    'storageMappingsTable.filterLabel': `Filter by Prefix`,
+    'storageMappingsTable.message1': `No results found.`,
+    'storageMappingsTable.message2': `We couldn't find any results matching your search. Please try a different filter.`,
+    'storageMappings.prefix.description': `The Flow prefix you want to configure`,
+    'storageMappings.provider.label': `Provider`,
+    'storageMappings.provider.description': `The provider (ex: S3, GCP) you are using`,
+    'storageMappings.bucket.label': `Bucket`,
+    'storageMappings.bucket.description': `The name of the bucket you have setup to store data in.`,
+    'storageMappings.lastUpdated.label': `Last Updated`,
+    'storageMappings.message': `Below are all the ${CommonMessages['terms.storageMapping']} that you have read or admin access to. These are the locations that your data is stored. You currently cannot edit these in the UI. If you need an update please contact support.`,
 };
 
 const ConnectorsPage: ResolvedIntlConfig['messages'] = {
@@ -677,15 +712,45 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.error.initForm': `An issue was encountered initializing the form.`,
     'workflows.error.initFormSection': `An issue was encountered initializing this section of the form.`,
 
-    'workflows.collectionSelector.label.listHeader': `Collections`,
-    'workflows.collectionSelector.label.discoveredCollections': `Discovered Collections`,
-    'workflows.collectionSelector.label.existingCollections': `Existing Collections`,
     'workflows.collectionSelector.cta.delete': `Remove All`,
     'workflows.collectionSelector.cta.rediscover': `Refresh`,
+    'workflows.collectionSelector.cta.schemaEdit': `CLI`,
+    'workflows.collectionSelector.cta.schemaInference': `Schema Inference`,
+    'workflows.collectionSelector.error.title.missingCollectionSchema': `Failed to fetch collection specification`,
+    'workflows.collectionSelector.header.collectionSchema': `Collection Specification`,
+    'workflows.collectionSelector.label.discoveredCollections': `Discovered Collections`,
+    'workflows.collectionSelector.label.existingCollections': `Existing Collections`,
+    'workflows.collectionSelector.label.listHeader': `Collections`,
+    'workflows.collectionSelector.tab.collectionSchema': `Specification`,
+    'workflows.collectionSelector.tab.resourceConfig': `Config`,
 
-    'workflows.collectionSelector.rediscoverDialog.title': `Are you sure?`,
-    'workflows.collectionSelector.rediscoverDialog.message1': `Proceeding with this action will replace the current capture configuration with one generated automatically by Flow. Discovery identifies one or more resources — tables, data streams, or the equivalent — and generates bindings so that each will be mapped to a data collection in Flow.`,
-    'workflows.collectionSelector.rediscoverDialog.message2': `If there are any aspects of your current capture configuration you would like to preserve, take note of them before proceeding with this action.`,
+    'workflows.collectionSelector.schemaEdit.cta.syncSchema': `Synchronize Schema`,
+    'workflows.collectionSelector.schemaEdit.header': `CLI`,
+    'workflows.collectionSelector.schemaEdit.flowctlDocLink': `https://docs.estuary.dev/concepts/flowctl/`,
+    'workflows.collectionSelector.schemaEdit.description': `Use the commands below to edit the schema for this collection. Once executed, click the Synchronize Schema button below to pull the changes on the server into the UI.`,
+    'workflows.collectionSelector.schemaEdit.message1': `Pull down the draft to edit`,
+    'workflows.collectionSelector.schemaEdit.message2': `Push your changes up to the server`,
+    'workflows.collectionSelector.schemaEdit.discoveredCollection.command1': `flowctl draft select --id {draftId} && flowctl draft develop`,
+    'workflows.collectionSelector.schemaEdit.discoveredCollection.command2': `flowctl draft author --source <flow_catalog_file_location>`,
+    'workflows.collectionSelector.schemaEdit.existingCollection.command1': `flowctl draft select --id {draftId}`,
+    'workflows.collectionSelector.schemaEdit.existingCollection.command2': `flowctl catalog draft --name {catalogName} && flowctl draft develop`,
+    'workflows.collectionSelector.schemaEdit.existingCollection.command3': `flowctl draft author --source <flow_catalog_file_location>`,
+    'workflows.collectionSelector.schemaEdit.alert.message.schemaUpdateError': `An error was encountered fetching your updated collection schema to display. This does not mean that there was a problem updating the server. Open the CLI popper and click the Synchronize Schema button to try again.`,
+
+    'workflows.collectionSelector.schemaInference.header': `Schema Inference`,
+    'workflows.collectionSelector.schemaInference.message': `Flow can help you tighten your collection specification. It will review the documents in a collection and approximate the shape of your data.`,
+    'workflows.collectionSelector.schemaInference.message.schemaDiff': `The difference between the current collection specification and the specification containing the inferred schema is highlighted below.`,
+    'workflows.collectionSelector.schemaInference.message.documentsRead': `A total of {documents_read} documents were evaluated to generate the inferred schema.`,
+    'workflows.collectionSelector.schemaInference.alert.noDocuments.header': `No Documents Found`,
+    'workflows.collectionSelector.schemaInference.alert.noDocuments.message': `We were unable to find any documents in this collection. Consequently, could not infer the shape of its data.`,
+    'workflows.collectionSelector.schemaInference.alert.lowDocumentCount.header': `Low Document Count`,
+    'workflows.collectionSelector.schemaInference.alert.lowDocumentCount.message': `Fewer documents than desired were found. This could mean that your collection isn't seeing very much data.`,
+    'workflows.collectionSelector.schemaInference.alert.generalError.header': `Server Error`,
+    'workflows.collectionSelector.schemaInference.alert.inferenceService.message': `This is not something you did wrong. An error was encountered while inferring the shape of the documents in this collection.`,
+    'workflows.collectionSelector.schemaInference.alert.patchService.message': `This is not something you did wrong. An error was encountered while applying the inferred schema. Please try again and, if the error persists {docLink}`,
+    'workflows.collectionSelector.schemaInference.alert.patchService.message.docLink': `contact support`,
+    'workflows.collectionSelector.schemaInference.alert.patchService.message.docPath': `mailto:support@estuary.dev`,
+    'workflows.collectionSelector.schemaInference.cta.continue': `Apply Inferred Schema`,
 };
 
 const ShardStatus: ResolvedIntlConfig['messages'] = {
@@ -695,6 +760,7 @@ const ShardStatus: ResolvedIntlConfig['messages'] = {
     'shardStatus.standby': `PENDING`,
     'shardStatus.backfill': `PENDING`,
     'shardStatus.disabled': `DISABLED`,
+    'shardStatus.basicCollection': `Collection`,
     'shardStatus.none': `No shard status found.`,
 };
 
@@ -743,8 +809,10 @@ const Tenant: ResolvedIntlConfig['messages'] = {
     'tenant.docs.message.link': `https://docs.estuary.dev/concepts/catalogs/#namespace`,
 };
 
-const DateTimeRenderer: ResolvedIntlConfig['messages'] = {
-    'datePicker.buttom.ariaLabel': `Open date time picker for {label}`,
+const CustomRenderers: ResolvedIntlConfig['messages'] = {
+    'dateTimePicker.button.ariaLabel': `Open date time picker for {label}`,
+    'datePicker.button.ariaLabel': `Open date picker for {label}`,
+    'timePicker.button.ariaLabel': `Open time picker for {label}`,
 };
 
 const enUSMessages: ResolvedIntlConfig['messages'] = {
@@ -789,7 +857,8 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...Workflows,
     ...Legal,
     ...Tenant,
-    ...DateTimeRenderer,
+    ...CustomRenderers,
+    ...StorageMappings,
 };
 
 export default enUSMessages;

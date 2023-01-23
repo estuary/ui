@@ -6,13 +6,14 @@ import { FormStatus } from 'stores/FormState/types';
 
 interface Props {
     close: any;
+    closeCtaKey?: string;
     materialize?: {
         action: any;
         title: string;
     };
 }
 
-function LogDialogActions({ close, materialize }: Props) {
+function LogDialogActions({ close, closeCtaKey, materialize }: Props) {
     const formStatus = useFormStateStore_status();
 
     return (
@@ -23,7 +24,7 @@ function LogDialogActions({ close, materialize }: Props) {
 
             <Stack direction="row" spacing={2}>
                 <Button onClick={close}>
-                    <FormattedMessage id="cta.close" />
+                    <FormattedMessage id={closeCtaKey ?? 'cta.close'} />
                 </Button>
 
                 {materialize ? (

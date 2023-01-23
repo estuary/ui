@@ -2,6 +2,7 @@ import { generateCaptureDraftSpec, modifyDraftSpec } from 'api/draftSpecs';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { CallSupabaseResponse } from 'services/supabase';
 import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
+import { Schema } from 'types';
 
 const mergeResourceConfigs = (
     queryData: DraftSpecQuery,
@@ -9,7 +10,7 @@ const mergeResourceConfigs = (
     restrictedDiscoveredCollections: string[]
 ): ResourceConfigDictionary => {
     const existingCollections = Object.keys(resourceConfig);
-    const mergedResourceConfig = {};
+    const mergedResourceConfig: ResourceConfigDictionary = {};
 
     Object.entries(resourceConfig).forEach(([key, value]) => {
         mergedResourceConfig[key] = value;
@@ -73,4 +74,26 @@ export const modifyDiscoveredDraftSpec = async (
         supabaseConfig?.catalogName,
         supabaseConfig?.lastPubId
     );
+};
+
+export const modifyExistingCaptureDraftSpec = async (
+    draftId: string,
+    connectorImage: string,
+    encryptedEndpointConfig: Schema,
+    resourceConfig: ResourceConfigDictionary
+): Promise<CallSupabaseResponse<any>> => {
+    const draftSpec = generateCaptureDraftSpec(
+        {
+            connector: {
+                image: connectorImage,
+                config: encryptedEndpointConfig,
+            },
+        },
+        resourceConfig
+    );
+
+    return modifyDraftSpec(draftSpec, {
+        draft_id: draftId,
+        spec_type: 'capture',
+    });
 };

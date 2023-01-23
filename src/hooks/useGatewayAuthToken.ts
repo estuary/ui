@@ -42,20 +42,39 @@ const fetcher = (
     });
 };
 
-const useGatewayAuthToken = () => {
+const useGatewayAuthToken = (prefixes: string[] | null) => {
     const { session } = Auth.useUser();
 
     const { data: grants } = useSelectNew<CombinedGrantsExtQuery>(
         getGrantsForAuthToken()
     );
 
-    const prefixes: string[] =
+    const allowed_prefixes: string[] =
         grants?.data.map(({ object_role }) => object_role) ?? [];
+
+    const authorized_prefixes = prefixes
+        ? prefixes.filter((prefix) =>
+              allowed_prefixes.find((allowed_prefix) =>
+                  prefix.startsWith(allowed_prefix)
+              )
+          )
+        : [];
+
+    if (prefixes) {
+        if (
+            authorized_prefixes.length !== prefixes.length &&
+            grants !== undefined
+        ) {
+            console.warn(
+                'Attempt to fetch auth token for prefixes that you do not have permissions on: ',
+                prefixes.filter((prefix) => !allowed_prefixes.includes(prefix))
+            );
+        }
+    }
 
     const gatewayConfig = getStoredGatewayAuthConfig();
 
     let jwt: JWTPayload | undefined;
-
     try {
         jwt = gatewayConfig ? decodeJwt(gatewayConfig.token) : undefined;
     } catch {
@@ -63,26 +82,31 @@ const useGatewayAuthToken = () => {
     }
 
     let tokenExpired = true;
-
     if (jwt?.exp) {
         tokenExpired = isBefore(jwt.exp * 1000, Date.now());
     }
 
-    return useSWR(
-        (!gatewayConfig?.token || tokenExpired) && prefixes.length > 0
-            ? [gatewayAuthTokenEndpoint, prefixes, session?.access_token]
+    const response = useSWR(
+        tokenExpired || authorized_prefixes.length > 0
+            ? [
+                  gatewayAuthTokenEndpoint,
+                  authorized_prefixes,
+                  session?.access_token,
+              ]
             : null,
         fetcher,
         {
-            onSuccess: ([response]) => {
-                storeGatewayAuthConfig(response);
+            onSuccess: ([config]) => {
+                storeGatewayAuthConfig(config);
             },
             onError: (error) => {
                 // TODO: Remove console.log call.
-                console.log(error);
+                console.error(error);
             },
         }
     );
+
+    return { data: response.data?.[0], refresh: () => response.mutate() };
 };
 
 export default useGatewayAuthToken;
