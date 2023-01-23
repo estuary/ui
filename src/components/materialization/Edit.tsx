@@ -11,7 +11,6 @@ import MaterializeGenerateButton from 'components/materialization/EditGenerateBu
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityEdit from 'components/shared/Entity/Edit';
-import EntityExistenceGuard from 'components/shared/Entity/Edit/EntityExistenceGuard';
 import EntityToolbar from 'components/shared/Entity/Header';
 import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
 import PageContainer from 'components/shared/PageContainer';
@@ -21,7 +20,6 @@ import useGlobalSearchParams, {
 import { useClient } from 'hooks/supabase-swr';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import useDraftSpecs from 'hooks/useDraftSpecs';
-import { useLiveSpecsExtWithSpec } from 'hooks/useLiveSpecsExt';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CustomEvents } from 'services/logrocket';
@@ -41,10 +39,7 @@ import { useResourceConfig_resetState } from 'stores/ResourceConfig/hooks';
 import ResourceConfigHydrator from 'stores/ResourceConfig/Hydrator';
 
 function MaterializationEdit() {
-    const [lastPubId, liveSpecId] = useGlobalSearchParams([
-        GlobalSearchParams.LAST_PUB_ID,
-        GlobalSearchParams.LIVE_SPEC_ID,
-    ]);
+    const lastPubId = useGlobalSearchParams(GlobalSearchParams.LAST_PUB_ID);
     const navigate = useNavigate();
 
     const entityType = 'materialization';
@@ -84,9 +79,6 @@ function MaterializationEdit() {
         persistedDraftId,
         lastPubId
     );
-
-    const { liveSpecs, isValidating: checkingEntityExistence } =
-        useLiveSpecsExtWithSpec(liveSpecId, entityType);
 
     // Reset the catalog if the connector changes
     useEffect(() => {
@@ -157,58 +149,48 @@ function MaterializationEdit() {
                 header: authenticatedRoutes.materializations.edit.title,
             }}
         >
-            <EntityExistenceGuard
-                liveSpecs={liveSpecs}
-                checkingEntityExistence={checkingEntityExistence}
-            >
-                <ResourceConfigHydrator>
-                    <EntityEdit
-                        title="browserTitle.materializationEdit"
-                        entityType={entityType}
-                        readOnly={{ detailsForm: true }}
-                        draftSpecMetadata={draftSpecsMetadata}
-                        initialSpec={liveSpecs[0]}
-                        callFailed={helpers.callFailed}
-                        resetState={resetState}
-                        errorSummary={
-                            <ValidationErrorSummary
-                                errorsExist={detailsFormErrorsExist}
-                            />
-                        }
-                        toolbar={
-                            <EntityToolbar
-                                GenerateButton={
-                                    <MaterializeGenerateButton
-                                        disabled={!hasConnectors}
-                                        callFailed={helpers.callFailed}
-                                        mutateDraftSpecs={mutateDraftSpecs}
-                                    />
-                                }
-                                TestButton={
-                                    <EntityTestButton
-                                        disabled={!hasConnectors}
-                                        callFailed={helpers.callFailed}
-                                        closeLogs={handlers.closeLogs}
-                                        logEvent={
-                                            CustomEvents.MATERIALIZATION_TEST
-                                        }
-                                    />
-                                }
-                                SaveButton={
-                                    <EntitySaveButton
-                                        disabled={!draftId}
-                                        callFailed={helpers.callFailed}
-                                        closeLogs={handlers.closeLogs}
-                                        logEvent={
-                                            CustomEvents.MATERIALIZATION_EDIT
-                                        }
-                                    />
-                                }
-                            />
-                        }
-                    />
-                </ResourceConfigHydrator>
-            </EntityExistenceGuard>
+            <ResourceConfigHydrator>
+                <EntityEdit
+                    title="browserTitle.materializationEdit"
+                    entityType={entityType}
+                    readOnly={{ detailsForm: true }}
+                    draftSpecMetadata={draftSpecsMetadata}
+                    callFailed={helpers.callFailed}
+                    resetState={resetState}
+                    errorSummary={
+                        <ValidationErrorSummary
+                            errorsExist={detailsFormErrorsExist}
+                        />
+                    }
+                    toolbar={
+                        <EntityToolbar
+                            GenerateButton={
+                                <MaterializeGenerateButton
+                                    disabled={!hasConnectors}
+                                    callFailed={helpers.callFailed}
+                                    mutateDraftSpecs={mutateDraftSpecs}
+                                />
+                            }
+                            TestButton={
+                                <EntityTestButton
+                                    disabled={!hasConnectors}
+                                    callFailed={helpers.callFailed}
+                                    closeLogs={handlers.closeLogs}
+                                    logEvent={CustomEvents.MATERIALIZATION_TEST}
+                                />
+                            }
+                            SaveButton={
+                                <EntitySaveButton
+                                    disabled={!draftId}
+                                    callFailed={helpers.callFailed}
+                                    closeLogs={handlers.closeLogs}
+                                    logEvent={CustomEvents.MATERIALIZATION_EDIT}
+                                />
+                            }
+                        />
+                    }
+                />
+            </ResourceConfigHydrator>
         </PageContainer>
     );
 }

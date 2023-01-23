@@ -25,7 +25,10 @@ import useCombinedGrantsExt from 'hooks/useCombinedGrantsExt';
 import useConnectorWithTagDetail from 'hooks/useConnectorWithTagDetail';
 import useDraft, { DraftQuery } from 'hooks/useDraft';
 import { DraftSpecQuery, DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
-import { LiveSpecsExtQueryWithSpec } from 'hooks/useLiveSpecsExt';
+import {
+    LiveSpecsExtQueryWithSpec,
+    useLiveSpecsExtWithSpec,
+} from 'hooks/useLiveSpecsExt';
 import { isEmpty } from 'lodash';
 import { ReactNode, useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -75,7 +78,6 @@ interface Props {
         DraftSpecSwrMetadata,
         'draftSpecs' | 'isValidating' | 'error'
     >;
-    initialSpec: LiveSpecsExtQueryWithSpec;
     callFailed: (formState: any, subscription?: RealtimeSubscription) => void;
     resetState: () => void;
     errorSummary: ReactNode;
@@ -230,7 +232,6 @@ function EntityEdit({
     entityType,
     readOnly,
     draftSpecMetadata,
-    initialSpec,
     callFailed,
     resetState,
     errorSummary,
@@ -245,8 +246,9 @@ function EntityEdit({
     });
 
     // Check for properties being passed in
-    const [connectorId, lastPubId] = useGlobalSearchParams([
+    const [connectorId, liveSpecId, lastPubId] = useGlobalSearchParams([
         GlobalSearchParams.CONNECTOR_ID,
+        GlobalSearchParams.LIVE_SPEC_ID,
         GlobalSearchParams.LAST_PUB_ID,
     ]);
 
@@ -259,6 +261,10 @@ function EntityEdit({
     const {
         connectorTags: [initialConnectorTag],
     } = useConnectorWithTagDetail(entityType, connectorId);
+
+    const {
+        liveSpecs: [initialSpec],
+    } = useLiveSpecsExtWithSpec(liveSpecId, entityType);
 
     const { drafts, isValidating: isValidatingDrafts } = useDraft(
         isEmpty(initialSpec) ? null : initialSpec.catalog_name
