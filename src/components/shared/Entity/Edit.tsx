@@ -83,7 +83,6 @@ interface Props {
     errorSummary: ReactNode;
     toolbar: ReactNode;
     RediscoverButton?: ReactNode;
-    showCollections?: boolean;
 }
 
 interface DiscoveryData {
@@ -238,7 +237,6 @@ function EntityEdit({
     errorSummary,
     toolbar,
     RediscoverButton,
-    showCollections,
 }: Props) {
     useBrowserTitle(title);
 
@@ -385,8 +383,7 @@ function EntityEdit({
     useUnsavedChangesPrompt(!exitWhenLogsClose && promptDataLoss, resetState);
 
     const storeHydrationIncomplete =
-        !endpointConfigStoreHydrated ||
-        (showCollections && !resourceConfigStoreHydrated);
+        !endpointConfigStoreHydrated || !resourceConfigStoreHydrated;
 
     return (
         <>
@@ -435,7 +432,7 @@ function EntityEdit({
                         </ErrorBoundryWrapper>
                     ) : null}
 
-                    {showCollections && hasLength(imageTag.id) ? (
+                    {hasLength(imageTag.id) ? (
                         <ErrorBoundryWrapper>
                             <CollectionConfig
                                 draftSpecs={taskDraftSpec}

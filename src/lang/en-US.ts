@@ -185,6 +185,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.captures': `Captures`,
     'routeTitle.collections': `Collections`,
     'routeTitle.directives': `Directives`,
+    'routeTitle.error.entityNotFound': `Entity Not Found`,
     'routeTitle.error.pageNotFound': `Page Not Found`,
     'routeTitle.login': `Login`,
     'routeTitle.loginLoading': `Checking Credentials`,
@@ -210,6 +211,7 @@ const BrowserTitles: ResolvedIntlConfig['messages'] = {
     'browserTitle.captureEdit': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captureEdit']}`,
     'browserTitle.captures': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.captures']}`,
     'browserTitle.collections': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.collections']}`,
+    'browserTitle.error.entityNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.entityNotFound']}`,
     'browserTitle.error.pageNotFound': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.error.pageNotFound']}`,
     'browserTitle.login': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.login']}`,
     'browserTitle.noGrants': `${CommonMessages['common.browserTitle']} · ${RouteTitles['routeTitle.noGrants']}`,
@@ -264,6 +266,11 @@ const Home: ResolvedIntlConfig['messages'] = {
 const PageNotFound: ResolvedIntlConfig['messages'] = {
     'pageNotFound.heading': `Sorry, that page cannot be found.`,
     'pageNotFound.message': `Try searching for a page below or go directly to your {dashboard}.`,
+};
+
+const EntityNotFound: ResolvedIntlConfig['messages'] = {
+    'entityNotFound.heading': `Sorry, that entity cannot be found.`,
+    'entityNotFound.message': `The entity you are looking for could not be found. This is likely because it has been deleted.`,
 };
 
 // TODO (password reset) not active
@@ -859,6 +866,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...Tenant,
     ...CustomRenderers,
     ...StorageMappings,
+    ...EntityNotFound,
 };
 
 export default enUSMessages;

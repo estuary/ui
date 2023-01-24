@@ -1,3 +1,4 @@
+import EntityExistenceGuard from 'app/guards/EntityExistenceGuard';
 import AppLayout from 'AppLayout';
 import AccessGrants from 'components/admin/AccessGrants';
 import AdminApi from 'components/admin/Api';
@@ -89,7 +90,9 @@ const Authenticated = () => {
                                 <EntityContextProvider value="capture">
                                     <WorkflowContextProvider value="capture_edit">
                                         <EndpointConfigProvider>
-                                            <CaptureEdit />
+                                            <EntityExistenceGuard>
+                                                <CaptureEdit />
+                                            </EntityExistenceGuard>
                                         </EndpointConfigProvider>
                                     </WorkflowContextProvider>
                                 </EntityContextProvider>
@@ -130,7 +133,9 @@ const Authenticated = () => {
                                 <EntityContextProvider value="materialization">
                                     <WorkflowContextProvider value="materialization_edit">
                                         <EndpointConfigProvider>
-                                            <MaterializationEdit />
+                                            <EntityExistenceGuard>
+                                                <MaterializationEdit />
+                                            </EntityExistenceGuard>
                                         </EndpointConfigProvider>
                                     </WorkflowContextProvider>
                                 </EntityContextProvider>
