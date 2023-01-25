@@ -155,7 +155,6 @@ function MaterializationEdit() {
                     entityType={entityType}
                     readOnly={{ detailsForm: true }}
                     draftSpecMetadata={draftSpecsMetadata}
-                    showCollections
                     callFailed={helpers.callFailed}
                     resetState={resetState}
                     errorSummary={
