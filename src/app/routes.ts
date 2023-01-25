@@ -64,6 +64,10 @@ export const authenticatedRoutes = {
         title: 'routeTitle.collections',
         path: '/collections',
     },
+    details: {
+        title: 'routeTitle.collections',
+        path: '/details/:catalogName*',
+    },
     home: {
         title: 'routeTitle.home',
         path: '/',

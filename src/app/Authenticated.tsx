@@ -17,6 +17,7 @@ import Admin from 'pages/Admin';
 import Auth from 'pages/Auth';
 import Captures from 'pages/Captures';
 import Collections from 'pages/Collections';
+import Details from 'pages/Details';
 import TestJsonForms from 'pages/dev/TestJsonForms';
 import PageNotFound from 'pages/error/PageNotFound';
 import Home from 'pages/Home';
@@ -50,6 +51,11 @@ const Authenticated = () => {
                     <Route
                         path={unauthenticatedRoutes.register.path}
                         element={<Home />}
+                    />
+
+                    <Route
+                        path={authenticatedRoutes.details.path}
+                        element={<Details />}
                     />
 
                     <Route
