@@ -10,7 +10,7 @@ import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
 import EntityError from 'components/shared/Entity/Error';
-import ExistingEntityCard from 'components/shared/Entity/ExistingEntityCards';
+import ExistingEntityCards from 'components/shared/Entity/ExistingEntityCards';
 import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedChangesPrompt';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
@@ -117,6 +117,8 @@ function EntityCreate({
     const resourceConfigServerUpdateRequired =
         useResourceConfig_serverUpdateRequired();
 
+    const [createNewTask, setCreateNewTask] = useState<boolean>(false);
+
     const { draftSpecs } = draftSpecMetadata;
 
     const taskDraftSpec = useMemo(
@@ -153,9 +155,16 @@ function EntityCreate({
     ]);
 
     // TODO (defect): Trigger the prompt data loss modal if the resource config section changes.
+    // TODO (defect): Prevent prompt data loss dialog from appearing when transitioning to edit workflow.
     const promptDataLoss = detailsFormChanged() || endpointConfigChanged();
 
     useUnsavedChangesPrompt(!exitWhenLogsClose && promptDataLoss, resetState);
+
+    // TODO (defect): Allow the create form to appear on reload of the page.
+    const displayExistingEntityOptions = useMemo(
+        () => !showConnectorTiles && !createNewTask,
+        [showConnectorTiles, createNewTask]
+    );
 
     const displayResourceConfig =
         entityType === 'materialization'
@@ -177,15 +186,18 @@ function EntityCreate({
                 <ConnectorTiles protocolPreset={entityType} replaceOnNavigate />
             </Collapse>
 
-            <Collapse in={!showConnectorTiles} unmountOnExit>
+            <Collapse in={displayExistingEntityOptions} unmountOnExit>
                 <Typography sx={{ mb: 2 }}>
                     Placeholder for some instructions.
                 </Typography>
 
-                <ExistingEntityCard entityType={entityType} />
+                <ExistingEntityCards
+                    entityType={entityType}
+                    setCreateNewTask={setCreateNewTask}
+                />
             </Collapse>
 
-            <Collapse in={!showConnectorTiles} unmountOnExit>
+            <Collapse in={createNewTask} unmountOnExit>
                 {connectorTagsError ? (
                     <Error error={connectorTagsError} />
                 ) : (

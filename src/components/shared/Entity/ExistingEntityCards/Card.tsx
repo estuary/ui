@@ -32,28 +32,24 @@ function ExistingEntityCard({ queryData }: Props) {
 
     const theme = useTheme();
 
-    const [selection, setSelection] = useState<
-        CaptureQueryWithSpec | MaterializationQueryWithSpec | null
-    >(null);
     const [detailsExpanded, setDetailsExpanded] = useState<boolean>(false);
 
     const handlers = {
         editTask: () => {
-            if (!isEmpty(selection)) {
+            if (!isEmpty(queryData)) {
                 navigate(
                     getPathWithParams(
                         authenticatedRoutes.captures.edit.fullPath,
                         {
                             [GlobalSearchParams.CONNECTOR_ID]:
-                                selection.connector_id,
-                            [GlobalSearchParams.LIVE_SPEC_ID]: selection.id,
+                                queryData.connector_id,
+                            [GlobalSearchParams.LIVE_SPEC_ID]: queryData.id,
                             [GlobalSearchParams.LAST_PUB_ID]:
-                                selection.last_pub_id,
+                                queryData.last_pub_id,
                         }
                     )
                 );
             }
-            setSelection(null);
         },
         toggleDetailsPanel: () => setDetailsExpanded(!detailsExpanded),
     };
@@ -61,6 +57,7 @@ function ExistingEntityCard({ queryData }: Props) {
     return queryData ? (
         <>
             <Paper
+                elevation={0}
                 sx={{
                     'borderRadius': 5,
                     'background': semiTransparentBackground[theme.palette.mode],
@@ -121,6 +118,7 @@ function ExistingEntityCard({ queryData }: Props) {
 
             <Collapse in={detailsExpanded}>
                 <Paper
+                    elevation={0}
                     sx={{
                         p: 2,
                         mx: 1,
