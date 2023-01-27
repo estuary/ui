@@ -11,6 +11,7 @@ import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
 import EntityError from 'components/shared/Entity/Error';
 import ExistingEntityCards from 'components/shared/Entity/ExistingEntityCards';
+import { useExistingEntity_createNewTask } from 'components/shared/Entity/ExistingEntityCards/Store/hooks';
 import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedChangesPrompt';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
@@ -104,6 +105,9 @@ function EntityCreate({
     const endpointConfigServerUpdateRequired =
         useEndpointConfig_serverUpdateRequired();
 
+    // Existing Entity Store
+    const createNewTask = useExistingEntity_createNewTask();
+
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
 
@@ -116,8 +120,6 @@ function EntityCreate({
     // Resource Config Store
     const resourceConfigServerUpdateRequired =
         useResourceConfig_serverUpdateRequired();
-
-    const [createNewTask, setCreateNewTask] = useState<boolean>(false);
 
     const { draftSpecs } = draftSpecMetadata;
 
@@ -191,10 +193,7 @@ function EntityCreate({
                     Placeholder for some instructions.
                 </Typography>
 
-                <ExistingEntityCards
-                    entityType={entityType}
-                    setCreateNewTask={setCreateNewTask}
-                />
+                <ExistingEntityCards />
             </Collapse>
 
             <Collapse in={createNewTask} unmountOnExit>

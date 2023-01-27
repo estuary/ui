@@ -12,6 +12,7 @@ import {
 import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
+import { useExistingEntity_resetState } from 'components/shared/Entity/ExistingEntityCards/Store/hooks';
 import EntityToolbar from 'components/shared/Entity/Header';
 import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
 import PageContainer from 'components/shared/PageContainer';
@@ -63,6 +64,9 @@ function CaptureCreate() {
     // Endpoint Config Store
     const resetEndpointConfigState = useEndpointConfigStore_reset();
 
+    // Existing Entity Store
+    const resetExistingEntityState = useExistingEntity_resetState();
+
     // Form State Store
     const setFormState = useFormStateStore_setFormState();
     const resetFormState = useFormStateStore_resetState();
@@ -88,6 +92,7 @@ function CaptureCreate() {
         resetFormState();
         resetEditorStore();
         resetBindingsEditorStore();
+        resetExistingEntityState();
     };
 
     const helpers = {

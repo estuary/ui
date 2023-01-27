@@ -1,58 +1,26 @@
 import { Add } from '@mui/icons-material';
 import { Box, ButtonBase, Grid, Typography } from '@mui/material';
-import {
-    CaptureQueryWithSpec,
-    getLiveSpecsByConnectorId,
-    MaterializationQueryWithSpec,
-} from 'api/liveSpecsExt';
 import ExistingEntityCard from 'components/shared/Entity/ExistingEntityCards/Card';
+import {
+    useExistingEntity_queryData,
+    useExistingEntity_setCreateNewTask,
+} from 'components/shared/Entity/ExistingEntityCards/Store/hooks';
 import {
     alternateConnectorImageBackgroundSx,
     semiTransparentBackground,
     semiTransparentBackgroundIntensified,
 } from 'context/Theme';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { EntityWithCreateWorkflow } from 'types';
 
-interface Props {
-    entityType: EntityWithCreateWorkflow;
-    setCreateNewTask: Dispatch<SetStateAction<boolean>>;
-}
+function ExistingEntityCards() {
+    // Existing Entity Store
+    const queryData = useExistingEntity_queryData();
 
-const getExistingEntities = async (
-    entityType: EntityWithCreateWorkflow,
-    connectorId: string
-) => {
-    const response = await getLiveSpecsByConnectorId(entityType, connectorId);
-
-    return response;
-};
-
-function ExistingEntityCards({ entityType, setCreateNewTask }: Props) {
-    const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
-
-    const [query, setQuery] = useState<
-        CaptureQueryWithSpec[] | MaterializationQueryWithSpec[] | null
-    >(null);
-
-    useEffect(() => {
-        getExistingEntities(entityType, connectorId).then(
-            (response) => {
-                setQuery(response.data);
-            },
-            () => {
-                setQuery(null);
-            }
-        );
-    }, [setQuery, connectorId, entityType]);
+    const setCreateNewTask = useExistingEntity_setCreateNewTask();
 
     return (
         <Grid container spacing={{ xs: 2, md: 3 }}>
-            {query && query.length > 0
-                ? query.map((data, index) => (
+            {queryData && queryData.length > 0
+                ? queryData.map((data, index) => (
                       <Grid key={`existing-entity-card-${index}`} item xs={12}>
                           <ExistingEntityCard queryData={data} />
                       </Grid>

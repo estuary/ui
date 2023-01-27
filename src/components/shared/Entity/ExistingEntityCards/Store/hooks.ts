@@ -1,0 +1,67 @@
+import { ExistingEntityState } from 'components/shared/Entity/ExistingEntityCards/Store/types';
+import { useEntityType } from 'context/EntityContext';
+import { useZustandStore } from 'context/Zustand/provider';
+import { ExistingEntityStoreNames } from 'stores/names';
+import { Entity } from 'types';
+
+const getStoreName = (entityType: Entity): ExistingEntityStoreNames => {
+    if (entityType === 'capture' || entityType === 'materialization') {
+        return ExistingEntityStoreNames.GENERAL;
+    } else {
+        throw new Error('Invalid ExistingEntity store name');
+    }
+};
+
+export const useExistingEntity_hydrateState = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ExistingEntityState,
+        ExistingEntityState['hydrateState']
+    >(getStoreName(entityType), (state) => state.hydrateState);
+};
+
+export const useExistingEntity_createNewTask = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ExistingEntityState,
+        ExistingEntityState['createNewTask']
+    >(getStoreName(entityType), (state) => state.createNewTask);
+};
+
+export const useExistingEntity_setCreateNewTask = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ExistingEntityState,
+        ExistingEntityState['setCreateNewTask']
+    >(getStoreName(entityType), (state) => state.setCreateNewTask);
+};
+
+export const useExistingEntity_queryData = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ExistingEntityState,
+        ExistingEntityState['queryData']
+    >(getStoreName(entityType), (state) => state.queryData);
+};
+
+export const useExistingEntity_setQueryData = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ExistingEntityState,
+        ExistingEntityState['setQueryData']
+    >(getStoreName(entityType), (state) => state.setQueryData);
+};
+
+export const useExistingEntity_resetState = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ExistingEntityState,
+        ExistingEntityState['resetState']
+    >(getStoreName(entityType), (state) => state.resetState);
+};
