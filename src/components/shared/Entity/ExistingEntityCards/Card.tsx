@@ -92,16 +92,12 @@ function ExistingEntityCard({ queryData }: Props) {
                         />
                     </Box>
 
-                    <Box sx={{ ml: 2 }}>
-                        <Typography
-                            variant="h6"
-                            align="left"
-                            sx={{ width: 'max-content' }}
-                        >
+                    <Box sx={{ ml: 2, textAlign: 'left' }}>
+                        <Typography sx={{ width: 'max-content', mb: 0.5 }}>
                             {queryData.catalog_name}
                         </Typography>
 
-                        <Typography align="left">
+                        <Typography variant="caption">
                             <FormattedDate
                                 day="numeric"
                                 month="long"

@@ -66,10 +66,7 @@ function ExistingEntityCards() {
                             </Box>
 
                             <Box sx={{ ml: 2 }}>
-                                <Typography
-                                    variant="h6"
-                                    sx={{ width: 'max-content' }}
-                                >
+                                <Typography sx={{ width: 'max-content' }}>
                                     Create new
                                 </Typography>
                             </Box>
