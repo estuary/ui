@@ -3,9 +3,10 @@ import { Cable } from '@mui/icons-material';
 interface Props {
     imageSrc: string | null | undefined;
     maxHeight?: number;
+    padding?: string | number;
 }
 
-function ConnectorLogo({ imageSrc, maxHeight }: Props) {
+function ConnectorLogo({ imageSrc, maxHeight, padding }: Props) {
     if (imageSrc) {
         return (
             <img
@@ -15,7 +16,7 @@ function ConnectorLogo({ imageSrc, maxHeight }: Props) {
                 style={{
                     width: 'auto',
                     maxHeight: maxHeight ?? 75,
-                    padding: '0 1rem',
+                    padding: padding ?? '0 1rem',
                 }}
             />
         );

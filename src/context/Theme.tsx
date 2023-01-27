@@ -353,7 +353,7 @@ export const connectorImageBackgroundSx: SxProps<Theme> = {
 };
 
 export const alternateConnectorImageBackgroundSx: SxProps<Theme> = {
-    height: 75,
+    height: 50,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',

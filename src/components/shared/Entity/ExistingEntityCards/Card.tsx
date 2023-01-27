@@ -88,7 +88,8 @@ function ExistingEntityCard({ queryData }: Props) {
                     <Box sx={alternateConnectorImageBackgroundSx}>
                         <ConnectorLogo
                             imageSrc={queryData.image}
-                            maxHeight={50}
+                            maxHeight={35}
+                            padding="0 0.5rem"
                         />
                     </Box>
 
@@ -108,7 +109,7 @@ function ExistingEntityCard({ queryData }: Props) {
                     </Box>
                 </Box>
 
-                <Button onClick={handlers.editTask} sx={{ mr: 2 }}>
+                <Button onClick={handlers.editTask} sx={{ mr: 1 }}>
                     Edit
                 </Button>
             </ButtonBase>

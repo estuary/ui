@@ -59,7 +59,7 @@ function ExistingEntityCards() {
                             <Box
                                 sx={{
                                     ...alternateConnectorImageBackgroundSx,
-                                    width: 80,
+                                    width: 51,
                                 }}
                             >
                                 <Add />
