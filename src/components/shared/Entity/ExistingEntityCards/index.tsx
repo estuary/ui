@@ -18,60 +18,66 @@ function ExistingEntityCards() {
     const setCreateNewTask = useExistingEntity_setCreateNewTask();
 
     return (
-        <Grid container spacing={{ xs: 2, md: 3 }}>
-            {queryData && queryData.length > 0
-                ? queryData.map((data, index) => (
-                      <Grid key={`existing-entity-card-${index}`} item xs={12}>
-                          <ExistingEntityCard queryData={data} />
-                      </Grid>
-                  ))
-                : null}
+        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Grid container spacing={{ xs: 2 }} sx={{ maxWidth: 1500 }}>
+                {queryData && queryData.length > 0
+                    ? queryData.map((data, index) => (
+                          <Grid
+                              key={`existing-entity-card-${index}`}
+                              item
+                              xs={12}
+                          >
+                              <ExistingEntityCard queryData={data} />
+                          </Grid>
+                      ))
+                    : null}
 
-            <Grid item xs={12}>
-                <ButtonBase
-                    onClick={() => setCreateNewTask(true)}
-                    sx={{
-                        'width': '100%',
-                        'borderRadius': 5,
-                        'background': (theme) =>
-                            semiTransparentBackground[theme.palette.mode],
-                        'padding': 1,
-                        '&:hover': {
-                            background: (theme) =>
-                                semiTransparentBackgroundIntensified[
-                                    theme.palette.mode
-                                ],
-                        },
-                    }}
-                >
-                    <Box
+                <Grid item xs={12}>
+                    <ButtonBase
+                        onClick={() => setCreateNewTask(true)}
                         sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            flexGrow: 1,
+                            'width': '100%',
+                            'borderRadius': 5,
+                            'background': (theme) =>
+                                semiTransparentBackground[theme.palette.mode],
+                            'padding': 1,
+                            '&:hover': {
+                                background: (theme) =>
+                                    semiTransparentBackgroundIntensified[
+                                        theme.palette.mode
+                                    ],
+                            },
                         }}
                     >
                         <Box
                             sx={{
-                                ...alternateConnectorImageBackgroundSx,
-                                width: 80,
+                                display: 'flex',
+                                alignItems: 'center',
+                                flexGrow: 1,
                             }}
                         >
-                            <Add />
-                        </Box>
-
-                        <Box sx={{ ml: 2 }}>
-                            <Typography
-                                variant="h6"
-                                sx={{ width: 'max-content' }}
+                            <Box
+                                sx={{
+                                    ...alternateConnectorImageBackgroundSx,
+                                    width: 80,
+                                }}
                             >
-                                Create new
-                            </Typography>
+                                <Add />
+                            </Box>
+
+                            <Box sx={{ ml: 2 }}>
+                                <Typography
+                                    variant="h6"
+                                    sx={{ width: 'max-content' }}
+                                >
+                                    Create new
+                                </Typography>
+                            </Box>
                         </Box>
-                    </Box>
-                </ButtonBase>
+                    </ButtonBase>
+                </Grid>
             </Grid>
-        </Grid>
+        </Box>
     );
 }
 

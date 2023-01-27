@@ -1,12 +1,19 @@
 import Editor from '@monaco-editor/react';
-import { Box, Collapse, Paper, Typography, useTheme } from '@mui/material';
+import {
+    Box,
+    Button,
+    ButtonBase,
+    Collapse,
+    Paper,
+    Typography,
+    useTheme,
+} from '@mui/material';
 import {
     CaptureQueryWithSpec,
     MaterializationQueryWithSpec,
 } from 'api/liveSpecsExt';
 import { authenticatedRoutes } from 'app/routes';
 import ConnectorLogo from 'components/connectors/card/Logo';
-import OptionsMenu from 'components/shared/Entity/ExistingEntityCards/OptionsMenu';
 import {
     alternateConnectorImageBackgroundSx,
     monacoEditorComponentBackground,
@@ -56,65 +63,59 @@ function ExistingEntityCard({ queryData }: Props) {
 
     return queryData ? (
         <>
-            <Paper
-                elevation={0}
+            <ButtonBase
+                onClick={handlers.toggleDetailsPanel}
                 sx={{
-                    'borderRadius': 5,
-                    'background': semiTransparentBackground[theme.palette.mode],
+                    'width': '100%',
                     'padding': 1,
+                    'background': semiTransparentBackground[theme.palette.mode],
                     '&:hover': {
                         background:
                             semiTransparentBackgroundIntensified[
                                 theme.palette.mode
                             ],
                     },
+                    'borderRadius': 5,
                 }}
             >
                 <Box
                     sx={{
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'space-between',
+                        flexGrow: 1,
                     }}
                 >
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            flexGrow: 1,
-                        }}
-                    >
-                        <Box sx={alternateConnectorImageBackgroundSx}>
-                            <ConnectorLogo
-                                imageSrc={queryData.image}
-                                maxHeight={50}
-                            />
-                        </Box>
+                    <Box sx={alternateConnectorImageBackgroundSx}>
+                        <ConnectorLogo
+                            imageSrc={queryData.image}
+                            maxHeight={50}
+                        />
+                    </Box>
 
-                        <Box sx={{ ml: 2 }}>
-                            <Typography
-                                variant="h6"
-                                sx={{ width: 'max-content' }}
-                            >
-                                {queryData.catalog_name}
-                            </Typography>
+                    <Box sx={{ ml: 2 }}>
+                        <Typography
+                            variant="h6"
+                            align="left"
+                            sx={{ width: 'max-content' }}
+                        >
+                            {queryData.catalog_name}
+                        </Typography>
 
+                        <Typography align="left">
                             <FormattedDate
                                 day="numeric"
                                 month="long"
                                 year="numeric"
                                 value={queryData.updated_at}
                             />
-                        </Box>
+                        </Typography>
                     </Box>
-
-                    <OptionsMenu
-                        detailsExpanded={detailsExpanded}
-                        toggleDetailsPanel={handlers.toggleDetailsPanel}
-                        editTask={handlers.editTask}
-                    />
                 </Box>
-            </Paper>
+
+                <Button onClick={handlers.editTask} sx={{ mr: 2 }}>
+                    Edit
+                </Button>
+            </ButtonBase>
 
             <Collapse in={detailsExpanded}>
                 <Paper
