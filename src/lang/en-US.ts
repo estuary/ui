@@ -713,6 +713,11 @@ const MaterializationEdit: ResolvedIntlConfig['messages'] = {
     'materializationEdit.testNotification.desc': `Your materialization succeeded in a dry run and can be saved.`,
 };
 
+const ExistingEntityCheck: ResolvedIntlConfig['messages'] = {
+    'existingEntityCheck.toolbar.label.filter': `Search existing tasks`,
+    'existingEntityCheck.toolbar.label.sortDirection': `Sort Direction`,
+};
+
 // TODO (optimization): Consolidate duplicate create and edit messages.
 const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.error.endpointConfig.empty': `${endpointConfigHeader} empty`,
@@ -867,6 +872,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CustomRenderers,
     ...StorageMappings,
     ...EntityNotFound,
+    ...ExistingEntityCheck,
 };
 
 export default enUSMessages;

@@ -1,5 +1,6 @@
 import { PostgrestError, PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import { createClient, User } from '@supabase/supabase-js';
+import { ToPostgrestFilterBuilder } from 'hooks/supabase-swr';
 import { forEach, isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 import { JobStatus, SortDirection } from 'types';
@@ -93,6 +94,47 @@ export type Pagination = { from: number; to: number };
 export type Protocol<Data> = { column: keyof Data; value: string | null };
 export const defaultTableFilter = <Data>(
     query: PostgrestFilterBuilder<Data>,
+    searchParam: Array<keyof Data | any>, // TODO (typing) added any because of how Supabase handles keys. Hoping Supabase 2.0 fixes https://github.com/supabase/supabase-js/issues/170
+    searchQuery: string | null,
+    sorting: SortingProps<Data>[],
+    pagination?: Pagination,
+    protocol?: Protocol<Data>
+) => {
+    let queryBuilder = query;
+
+    if (searchQuery) {
+        queryBuilder = queryBuilder.or(
+            searchParam
+                .map((param) => {
+                    return `${param}.ilike.*${searchQuery}*`;
+                })
+                .join(',')
+        );
+    }
+
+    forEach(sorting, (sort) => {
+        queryBuilder = queryBuilder.order(sort.col, {
+            ascending: sort.direction === 'asc',
+        });
+    });
+
+    if (pagination) {
+        queryBuilder = queryBuilder.range(pagination.from, pagination.to);
+    }
+
+    if (protocol?.value) {
+        queryBuilder = queryBuilder.filter(
+            protocol.column,
+            'eq',
+            protocol.value
+        );
+    }
+
+    return queryBuilder;
+};
+
+export const distributedTableFilter = <Data>(
+    query: ToPostgrestFilterBuilder<Data>,
     searchParam: Array<keyof Data | any>, // TODO (typing) added any because of how Supabase handles keys. Hoping Supabase 2.0 fixes https://github.com/supabase/supabase-js/issues/170
     searchQuery: string | null,
     sorting: SortingProps<Data>[],

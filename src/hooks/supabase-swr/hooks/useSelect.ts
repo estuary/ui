@@ -1,7 +1,10 @@
 import { PostgrestError } from '@supabase/postgrest-js';
-import { SuccessResponse } from 'hooks/supabase-swr/types';
+import {
+    SuccessResponse,
+    ToDistributedSuccessResponse,
+} from 'hooks/supabase-swr/types';
 import useSWR, { SWRConfiguration, SWRResponse } from 'swr';
-import { Query } from '../query';
+import { Query, ToDistributedQuery } from '../query';
 import useFetcher, { FetcherType } from './useFetcher';
 
 const useSelect = <Data>(
@@ -21,6 +24,14 @@ export const useSelectNew = <Data>(
         () => fetcher.throwOnError(),
         swrConfig
     );
+};
+
+export const useDistributedSelect = <Data>(
+    query: ToDistributedQuery<Data>,
+    swrConfig?: Omit<SWRConfiguration, 'fetcher'>
+): SWRResponse<ToDistributedSuccessResponse<Data>, PostgrestError> => {
+    const fetcher = useFetcher<Data>(FetcherType.MULTIPLE);
+    return useSWR(query, fetcher, swrConfig);
 };
 
 export default useSelect;

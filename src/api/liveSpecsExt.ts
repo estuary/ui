@@ -58,12 +58,12 @@ export interface CollectionQueryWithStats extends CollectionQuery {
 }
 
 const captureColumns = commonColumns.concat(['writes_to']).join(',');
-const captureColumnsWithSpec = commonColumns
+export const captureColumnsWithSpec = commonColumns
     .concat(['writes_to', 'spec'])
     .join(',');
 
 const materializationsColumns = commonColumns.concat(['reads_from']).join(',');
-const materializationsColumnsWithSpec = commonColumns
+export const materializationsColumnsWithSpec = commonColumns
     .concat(['reads_from', 'spec'])
     .join(',');
 
