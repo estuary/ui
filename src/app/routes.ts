@@ -54,6 +54,11 @@ export const authenticatedRoutes = {
             path: `create`,
             fullPath: '/captures/create',
         },
+        details: {
+            title: 'routeTitle.captureDetails',
+            path: 'details',
+            fullPath: '/captures/details',
+        },
         edit: {
             title: 'routeTitle.captureEdit',
             path: `edit`,
@@ -63,6 +68,11 @@ export const authenticatedRoutes = {
     collections: {
         title: 'routeTitle.collections',
         path: '/collections',
+        details: {
+            title: 'routeTitle.collectionDetails',
+            path: 'details',
+            fullPath: '/collections/details',
+        },
     },
     details: {
         title: 'routeTitle.collections',
@@ -79,6 +89,11 @@ export const authenticatedRoutes = {
             title: 'routeTitle.materializationCreate',
             path: 'create',
             fullPath: '/materializations/create',
+        },
+        details: {
+            title: 'routeTitle.materializationDetails',
+            path: 'details',
+            fullPath: '/materializations/details',
         },
         edit: {
             title: 'routeTitle.materializationEdit',

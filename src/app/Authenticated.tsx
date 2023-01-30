@@ -53,19 +53,21 @@ const Authenticated = () => {
                         element={<Home />}
                     />
 
-                    <Route
-                        path={authenticatedRoutes.details.path}
-                        element={<Details />}
-                    />
+                    <Route path={authenticatedRoutes.collections.path}>
+                        <Route
+                            path=""
+                            element={
+                                <EntityContextProvider value="collection">
+                                    <Collections />
+                                </EntityContextProvider>
+                            }
+                        />
 
-                    <Route
-                        path={authenticatedRoutes.collections.path}
-                        element={
-                            <EntityContextProvider value="collection">
-                                <Collections />
-                            </EntityContextProvider>
-                        }
-                    />
+                        <Route
+                            path={authenticatedRoutes.collections.details.path}
+                            element={<Details />}
+                        />
+                    </Route>
 
                     <Route path={authenticatedRoutes.captures.path}>
                         <Route
@@ -103,6 +105,11 @@ const Authenticated = () => {
                                     </WorkflowContextProvider>
                                 </EntityContextProvider>
                             }
+                        />
+
+                        <Route
+                            path={authenticatedRoutes.captures.details.path}
+                            element={<Details />}
                         />
                     </Route>
 
@@ -146,6 +153,14 @@ const Authenticated = () => {
                                     </WorkflowContextProvider>
                                 </EntityContextProvider>
                             }
+                        />
+
+                        <Route
+                            path={
+                                authenticatedRoutes.materializations.details
+                                    .path
+                            }
+                            element={<Details />}
                         />
                     </Route>
 
