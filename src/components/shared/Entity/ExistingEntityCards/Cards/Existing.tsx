@@ -23,7 +23,7 @@ import {
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { isEmpty } from 'lodash';
 import { useState } from 'react';
-import { FormattedDate } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router';
 import { stringifyJSON } from 'services/stringify';
 import { getPathWithParams } from 'utils/misc-utils';
@@ -38,6 +38,7 @@ function ExistingEntityCard({ queryData }: Props) {
     const navigate = useNavigate();
 
     const theme = useTheme();
+    const intl = useIntl();
 
     const [detailsExpanded, setDetailsExpanded] = useState<boolean>(false);
 
@@ -103,18 +104,27 @@ function ExistingEntityCard({ queryData }: Props) {
                         </Typography>
 
                         <Typography variant="caption">
-                            <FormattedDate
-                                day="numeric"
-                                month="long"
-                                year="numeric"
-                                value={queryData.updated_at}
-                            />
+                            {intl.formatMessage(
+                                {
+                                    id: 'existingEntityCheck.existingCard.label.lastPublished',
+                                },
+                                {
+                                    date: intl.formatDate(
+                                        queryData.updated_at,
+                                        {
+                                            day: 'numeric',
+                                            month: 'long',
+                                            year: 'numeric',
+                                        }
+                                    ),
+                                }
+                            )}
                         </Typography>
                     </Box>
                 </Box>
 
                 <Button onClick={handlers.editTask} sx={{ mr: 1 }}>
-                    Edit
+                    <FormattedMessage id="existingEntityCheck.existingCard.cta.edit" />
                 </Button>
             </ButtonBase>
 

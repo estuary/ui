@@ -717,6 +717,9 @@ const ExistingEntityCheck: ResolvedIntlConfig['messages'] = {
     'existingEntityCheck.toolbar.label.filter': `Search existing tasks`,
     'existingEntityCheck.toolbar.label.sortDirection': `Sort Direction`,
 
+    'existingEntityCheck.existingCard.label.lastPublished': `Last published on {date}`,
+    'existingEntityCheck.existingCard.cta.edit': `Edit`,
+
     'existingEntityCheck.newCard.label': `Create a new {connectorName} {entityType}`,
 };
 
