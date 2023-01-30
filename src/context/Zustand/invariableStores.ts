@@ -2,11 +2,13 @@ import { createBindingsEditorStore } from 'components/editor/Bindings/Store/crea
 import { createEditorStore } from 'components/editor/Store/create';
 import { createExistingEntityStore } from 'components/shared/Entity/ExistingEntityCards/Store/create';
 import { createSelectableTableStore } from 'components/tables/Store';
+import { createEndpointConfigStore } from 'stores/EndpointConfig/Store';
 import { createFormStateStore } from 'stores/FormState/Store';
 import {
     AdminStoreNames,
     BindingsEditorStoreNames,
     EditorStoreNames,
+    EndpointConfigStoreNames,
     ExistingEntityStoreNames,
     FormStateStoreNames,
     ResourceConfigStoreNames,
@@ -28,6 +30,11 @@ const invariableStores = {
     [EditorStoreNames.CAPTURE]: createEditorStore(EditorStoreNames.CAPTURE),
     [EditorStoreNames.MATERIALIZATION]: createEditorStore(
         EditorStoreNames.MATERIALIZATION
+    ),
+
+    // Endpoint Config Store
+    [EndpointConfigStoreNames.GENERAL]: createEndpointConfigStore(
+        EndpointConfigStoreNames.GENERAL
     ),
 
     // Existing Entity Store - used only in create workflows

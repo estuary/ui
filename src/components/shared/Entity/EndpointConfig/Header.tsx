@@ -2,7 +2,7 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { Divider, Typography } from '@mui/material';
 import ExternalLink from 'components/shared/ExternalLink';
 import { FormattedMessage } from 'react-intl';
-import { useEndpointConfigStore_errorsExist } from 'stores/EndpointConfig';
+import { useEndpointConfigStore_errorsExist } from 'stores/EndpointConfig/hooks';
 
 interface Props {
     docsPath?: string;

@@ -48,7 +48,7 @@ import {
     useEndpointConfigStore_changed,
     useEndpointConfig_hydrated,
     useEndpointConfig_serverUpdateRequired,
-} from 'stores/EndpointConfig';
+} from 'stores/EndpointConfig/hooks';
 import {
     useFormStateStore_error,
     useFormStateStore_exitWhenLogsClose,

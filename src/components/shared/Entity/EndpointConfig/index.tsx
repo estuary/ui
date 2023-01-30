@@ -22,7 +22,7 @@ import {
     useEndpointConfigStore_setEndpointSchema,
     useEndpointConfigStore_setPreviousEndpointConfig,
     useEndpointConfig_setServerUpdateRequired,
-} from 'stores/EndpointConfig';
+} from 'stores/EndpointConfig/hooks';
 import { Schema } from 'types';
 
 interface Props {

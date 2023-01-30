@@ -25,7 +25,6 @@ function ExistingEntityHydrator({ children }: BaseComponentProps) {
         ) {
             hydrateState(entityType).then(
                 () => {
-                    console.log('here');
                     setHydrated(true);
                 },
                 () => {
