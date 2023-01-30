@@ -7,7 +7,6 @@ import EntityName from 'components/tables/cells/EntityName';
 import OptionsMenu from 'components/tables/cells/OptionsMenu';
 import RowSelect from 'components/tables/cells/RowSelect';
 import TimeStamp from 'components/tables/cells/TimeStamp';
-import DetailsPanel from 'components/tables/Details/DetailsPanel';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
@@ -17,15 +16,15 @@ import { useTenantDetails } from 'context/fetcher/Tenant';
 import { getEntityTableRowSx } from 'context/Theme';
 import { useZustandStore } from 'context/Zustand/provider';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
+import useDetailsNavigator from 'hooks/useDetailsNavigator';
 import useShardsList from 'hooks/useShardsList';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SelectTableStoreNames } from 'stores/names';
 import { useShardDetail_setShards } from 'stores/ShardDetail/hooks';
 import { getPathWithParams, hasLength } from 'utils/misc-utils';
 import Bytes from '../cells/stats/Bytes';
 import Docs from '../cells/stats/Docs';
-import useCaptureColumns from './useCaptureColumns';
 
 interface RowsProps {
     data: CaptureQueryWithStats[];
@@ -42,11 +41,11 @@ export interface RowProps {
 
 function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
     const navigate = useNavigate();
+    const detailsNavigator = useDetailsNavigator(
+        authenticatedRoutes.captures.details.fullPath
+    );
     const theme = useTheme();
-    const tableColumns = useCaptureColumns();
     const tenantDetails = useTenantDetails();
-
-    const [detailsExpanded, setDetailsExpanded] = useState(false);
 
     const handlers = {
         clickMaterialize: () => {
@@ -71,72 +70,59 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
                 })
             );
         },
-        toggleDetailsPanel: () => setDetailsExpanded(!detailsExpanded),
+        toggleDetailsPanel: () => detailsNavigator(row),
     };
 
     return (
-        <>
-            <TableRow
-                hover
-                onClick={() => handlers.clickRow(row.id)}
-                selected={isSelected}
-                sx={getEntityTableRowSx(theme, detailsExpanded)}
-            >
-                <RowSelect isSelected={isSelected} name={row.catalog_name} />
+        <TableRow
+            hover
+            onClick={() => handlers.clickRow(row.id)}
+            selected={isSelected}
+            sx={getEntityTableRowSx(theme, false)}
+        >
+            <RowSelect isSelected={isSelected} name={row.catalog_name} />
 
-                <EntityName
-                    name={row.catalog_name}
-                    showEntityStatus={showEntityStatus}
-                />
-
-                <Connector
-                    connectorImage={row.image}
-                    connectorName={row.title}
-                    imageTag={`${row.connector_image_name}${row.connector_image_tag}`}
-                />
-
-                {hasLength(tenantDetails) ? (
-                    <>
-                        <Bytes
-                            val={
-                                stats
-                                    ? stats[row.catalog_name]
-                                          ?.bytes_written_by_me
-                                    : null
-                            }
-                        />
-
-                        <Docs
-                            val={
-                                stats
-                                    ? stats[row.catalog_name]
-                                          ?.docs_written_by_me
-                                    : null
-                            }
-                        />
-                    </>
-                ) : null}
-
-                <ChipList strings={row.writes_to} />
-
-                <TimeStamp time={row.updated_at} />
-
-                <OptionsMenu
-                    detailsExpanded={detailsExpanded}
-                    toggleDetailsPanel={handlers.toggleDetailsPanel}
-                    editTask={handlers.editTask}
-                />
-            </TableRow>
-
-            <DetailsPanel
-                detailsExpanded={detailsExpanded}
-                lastPubId={row.last_pub_id}
-                colSpan={tableColumns.length + 1}
-                entityType="capture"
-                entityName={row.catalog_name}
-                collectionNames={row.writes_to}
+            <EntityName
+                name={row.catalog_name}
+                showEntityStatus={showEntityStatus}
             />
-        </>
+
+            <Connector
+                connectorImage={row.image}
+                connectorName={row.title}
+                imageTag={`${row.connector_image_name}${row.connector_image_tag}`}
+            />
+
+            {hasLength(tenantDetails) ? (
+                <>
+                    <Bytes
+                        val={
+                            stats
+                                ? stats[row.catalog_name]?.bytes_written_by_me
+                                : null
+                        }
+                    />
+
+                    <Docs
+                        val={
+                            stats
+                                ? stats[row.catalog_name]?.docs_written_by_me
+                                : null
+                        }
+                    />
+                </>
+            ) : null}
+
+            <ChipList strings={row.writes_to} />
+
+            <TimeStamp time={row.updated_at} />
+
+            <OptionsMenu
+                detailsExpanded={false}
+                toggleDetailsPanel={handlers.toggleDetailsPanel}
+                editTask={handlers.editTask}
+            />
+        </TableRow>
     );
 }
 
