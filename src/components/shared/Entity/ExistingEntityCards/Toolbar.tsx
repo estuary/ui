@@ -36,7 +36,7 @@ const inputProps: Partial<FilledInputProps> = {
     sx: {
         borderRadius: 5,
         backgroundColor: (theme) =>
-            semiTransparentBackgroundIntensified[theme.palette.mode],
+            semiTransparentBackground[theme.palette.mode],
     },
 };
 
@@ -49,7 +49,7 @@ const toolbarSectionSx: SxProps<Theme> = {
     },
     '& .MuiFilledInput-root:hover, .MuiFilledInput-root.Mui-focused': {
         backgroundColor: (theme) =>
-            semiTransparentBackground[theme.palette.mode],
+            semiTransparentBackgroundIntensified[theme.palette.mode],
     },
 };
 
