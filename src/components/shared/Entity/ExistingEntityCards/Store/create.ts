@@ -9,10 +9,11 @@ import { devtools, NamedSet } from 'zustand/middleware';
 
 const getInitialStateData = (): Pick<
     ExistingEntityState,
-    'queryData' | 'createNewTask'
+    'connectorName' | 'createNewTask' | 'queryData'
 > => ({
-    queryData: null,
+    connectorName: null,
     createNewTask: false,
+    queryData: null,
 });
 
 const getInitialState = (
@@ -33,6 +34,16 @@ const getInitialState = (
             );
         },
 
+        setConnectorName: (value) => {
+            set(
+                produce((state: ExistingEntityState) => {
+                    state.connectorName = value;
+                }),
+                false,
+                'Connector Name Set'
+            );
+        },
+
         setCreateNewTask: (value) => {
             set(
                 produce((state: ExistingEntityState) => {
@@ -44,9 +55,9 @@ const getInitialState = (
         },
 
         hydrateState: async (entityType, connectorId) => {
-            const { setCreateNewTask, setHydrationErrorsExist } = get();
-
             if (connectorId) {
+                const { setCreateNewTask, setHydrationErrorsExist } = get();
+
                 const { data, error } = await getLiveSpecsByConnectorId(
                     entityType,
                     connectorId
@@ -58,9 +69,10 @@ const getInitialState = (
                 }
 
                 if (data && data.length > 0) {
-                    const { setQueryData } = get();
+                    const { setQueryData, setConnectorName } = get();
 
                     setQueryData(data);
+                    setConnectorName(data[0].title);
                 } else {
                     setCreateNewTask(true);
                 }

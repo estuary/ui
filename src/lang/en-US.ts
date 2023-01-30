@@ -716,6 +716,8 @@ const MaterializationEdit: ResolvedIntlConfig['messages'] = {
 const ExistingEntityCheck: ResolvedIntlConfig['messages'] = {
     'existingEntityCheck.toolbar.label.filter': `Search existing tasks`,
     'existingEntityCheck.toolbar.label.sortDirection': `Sort Direction`,
+
+    'existingEntityCheck.newCard.label': `Create a new {connectorName} {entityType}`,
 };
 
 // TODO (optimization): Consolidate duplicate create and edit messages.

@@ -57,6 +57,15 @@ export const useExistingEntity_createNewTask = () => {
     >(getStoreName(entityType), (state) => state.createNewTask);
 };
 
+export const useExistingEntity_connectorName = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ExistingEntityState,
+        ExistingEntityState['connectorName']
+    >(getStoreName(entityType), (state) => state.connectorName);
+};
+
 export const useExistingEntity_setCreateNewTask = () => {
     const entityType = useEntityType();
 

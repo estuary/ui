@@ -1,14 +1,22 @@
 import { Add } from '@mui/icons-material';
 import { Box, ButtonBase, Typography } from '@mui/material';
-import { useExistingEntity_setCreateNewTask } from 'components/shared/Entity/ExistingEntityCards/Store/hooks';
+import {
+    useExistingEntity_connectorName,
+    useExistingEntity_setCreateNewTask,
+} from 'components/shared/Entity/ExistingEntityCards/Store/hooks';
+import { useEntityType } from 'context/EntityContext';
 import {
     alternateConnectorImageBackgroundSx,
     semiTransparentBackground,
     semiTransparentBackgroundIntensified,
 } from 'context/Theme';
+import { FormattedMessage } from 'react-intl';
 
 function NewEntityCard() {
+    const entityType = useEntityType();
+
     // Existing Entity Store
+    const connectorName = useExistingEntity_connectorName();
     const setCreateNewTask = useExistingEntity_setCreateNewTask();
 
     return (
@@ -46,7 +54,10 @@ function NewEntityCard() {
 
                 <Box sx={{ ml: 2 }}>
                     <Typography sx={{ width: 'max-content' }}>
-                        Create new
+                        <FormattedMessage
+                            id="existingEntityCheck.newCard.label"
+                            values={{ connectorName, entityType }}
+                        />
                     </Typography>
                 </Box>
             </Box>
