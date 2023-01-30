@@ -68,7 +68,11 @@ function ExistingEntityCard({ queryData }: Props) {
                 sx={{
                     'width': '100%',
                     'padding': 1,
-                    'background': semiTransparentBackground[theme.palette.mode],
+                    'background': detailsExpanded
+                        ? semiTransparentBackgroundIntensified[
+                              theme.palette.mode
+                          ]
+                        : semiTransparentBackground[theme.palette.mode],
                     '&:hover': {
                         background:
                             semiTransparentBackgroundIntensified[
