@@ -29,7 +29,7 @@ function ExistingEntityCards() {
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
-    const protocol = useEntityType();
+    const entityType = useEntityType();
 
     // Existing Entity Store
     const queryData = useExistingEntity_queryData();
@@ -75,7 +75,7 @@ function ExistingEntityCards() {
         CaptureQueryWithSpec | MaterializationQueryWithSpec
     > = useMemo(() => {
         return getLiveSpecs_existingTasks(
-            protocol,
+            entityType,
             connectorTagId,
             searchQuery,
             [
@@ -85,7 +85,7 @@ function ExistingEntityCards() {
                 },
             ]
         );
-    }, [columnToSort, searchQuery, sortDirection]);
+    }, [connectorTagId, entityType, searchQuery, sortDirection]);
 
     const { data: useSelectResponse } = useDistributedSelectNew<
         CaptureQueryWithSpec | MaterializationQueryWithSpec
