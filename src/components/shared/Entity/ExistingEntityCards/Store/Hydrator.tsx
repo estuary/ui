@@ -5,10 +5,14 @@ import {
     useExistingEntity_setHydrationErrorsExist,
 } from 'components/shared/Entity/ExistingEntityCards/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
-import { useEffectOnce } from 'react-use';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
+import { useEffect } from 'react';
 import { BaseComponentProps } from 'types';
 
 function ExistingEntityHydrator({ children }: BaseComponentProps) {
+    const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
     const entityType = useEntityType();
 
     const hydrated = useExistingEntity_hydrated();
@@ -18,12 +22,13 @@ function ExistingEntityHydrator({ children }: BaseComponentProps) {
 
     const hydrateState = useExistingEntity_hydrateState();
 
-    useEffectOnce(() => {
+    useEffect(() => {
         if (
             !hydrated &&
+            connectorId &&
             (entityType === 'capture' || entityType === 'materialization')
         ) {
-            hydrateState(entityType).then(
+            hydrateState(entityType, connectorId).then(
                 () => {
                     setHydrated(true);
                 },
@@ -33,7 +38,14 @@ function ExistingEntityHydrator({ children }: BaseComponentProps) {
                 }
             );
         }
-    });
+    }, [
+        hydrateState,
+        setHydrated,
+        setHydrationErrorsExist,
+        connectorId,
+        entityType,
+        hydrated,
+    ]);
 
     return <div>{children}</div>;
 }

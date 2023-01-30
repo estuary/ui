@@ -1,6 +1,5 @@
 import { getLiveSpecsByConnectorId } from 'api/liveSpecsExt';
 import { ExistingEntityState } from 'components/shared/Entity/ExistingEntityCards/Store/types';
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import { getStoreWithHydrationSettings } from 'stores/Hydration';
 import { ExistingEntityStoreNames } from 'stores/names';
@@ -44,12 +43,7 @@ const getInitialState = (
             );
         },
 
-        hydrateState: async (entityType) => {
-            const searchParams = new URLSearchParams(window.location.search);
-            const connectorId = searchParams.get(
-                GlobalSearchParams.CONNECTOR_ID
-            );
-
+        hydrateState: async (entityType, connectorId) => {
             const { setCreateNewTask, setHydrationErrorsExist } = get();
 
             if (connectorId) {

@@ -12,7 +12,10 @@ export interface ExistingEntityState extends StoreWithHydration {
     createNewTask: boolean;
     setCreateNewTask: (value: ExistingEntityState['createNewTask']) => void;
 
-    hydrateState: (entityType: EntityWithCreateWorkflow) => Promise<void>;
+    hydrateState: (
+        entityType: EntityWithCreateWorkflow,
+        connectorId: string
+    ) => Promise<void>;
 
     resetState: () => void;
 }

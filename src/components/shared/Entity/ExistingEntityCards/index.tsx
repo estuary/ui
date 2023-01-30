@@ -38,39 +38,6 @@ function ExistingEntityCards() {
     const [searchQuery, setSearchQuery] = useState<string | null>(null);
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
-    // TODO (optimization): Decide whether to follow the entity table query approach or stick with useQuery.
-    // const liveSpecQuery: ToDistributedQuery<
-    //     CaptureQueryWithSpec | MaterializationQueryWithSpec
-    // > = useDistributiveQuery<
-    //     CaptureQueryWithSpec | MaterializationQueryWithSpec
-    // >(
-    //     TABLES.LIVE_SPECS_EXT,
-    //     {
-    //         columns:
-    //             protocol === 'capture'
-    //                 ? captureColumnsWithSpec
-    //                 : materializationsColumnsWithSpec,
-    //         filter: (query) => {
-    //             return distributedTableFilter<
-    //                 CaptureQueryWithSpec | MaterializationQueryWithSpec
-    //             >(
-    //                 query,
-    //                 [columnToSort],
-    //                 searchQuery,
-    //                 [
-    //                     {
-    //                         col: columnToSort,
-    //                         direction: sortDirection,
-    //                     },
-    //                 ],
-    //                 undefined,
-    //                 { column: 'spec_type', value: protocol }
-    //             );
-    //         },
-    //     },
-    //     [searchQuery, sortDirection, protocol]
-    // );
-
     const liveSpecQuery: ToPostgrestFilterBuilder<
         CaptureQueryWithSpec | MaterializationQueryWithSpec
     > = useMemo(() => {
