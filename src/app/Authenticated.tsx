@@ -65,7 +65,11 @@ const Authenticated = () => {
 
                         <Route
                             path={authenticatedRoutes.collections.details.path}
-                            element={<Details />}
+                            element={
+                                <EntityContextProvider value="collection">
+                                    <Details />
+                                </EntityContextProvider>
+                            }
                         />
                     </Route>
 
@@ -109,7 +113,11 @@ const Authenticated = () => {
 
                         <Route
                             path={authenticatedRoutes.captures.details.path}
-                            element={<Details />}
+                            element={
+                                <EntityContextProvider value="capture">
+                                    <Details />
+                                </EntityContextProvider>
+                            }
                         />
                     </Route>
 
@@ -160,7 +168,11 @@ const Authenticated = () => {
                                 authenticatedRoutes.materializations.details
                                     .path
                             }
-                            element={<Details />}
+                            element={
+                                <EntityContextProvider value="materialization">
+                                    <Details />
+                                </EntityContextProvider>
+                            }
                         />
                     </Route>
 
