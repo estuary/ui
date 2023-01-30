@@ -6,8 +6,11 @@ import AdminConnectors from 'components/admin/Connectors';
 import AdminCookies from 'components/admin/Cookies';
 import StorageMappings from 'components/admin/StorageMappings';
 import CaptureCreate from 'components/capture/Create';
+import CaptureDetails from 'components/capture/Details';
 import CaptureEdit from 'components/capture/Edit';
+import CollectionDetails from 'components/collection/Details';
 import MaterializationCreate from 'components/materialization/Create';
+import MaterializationDetails from 'components/materialization/Details';
 import MaterializationEdit from 'components/materialization/Edit';
 import AuthenticatedOnlyContext from 'context/Authenticated';
 import { EntityContextProvider } from 'context/EntityContext';
@@ -17,7 +20,6 @@ import Admin from 'pages/Admin';
 import Auth from 'pages/Auth';
 import Captures from 'pages/Captures';
 import Collections from 'pages/Collections';
-import Details from 'pages/Details';
 import TestJsonForms from 'pages/dev/TestJsonForms';
 import PageNotFound from 'pages/error/PageNotFound';
 import Home from 'pages/Home';
@@ -65,11 +67,7 @@ const Authenticated = () => {
 
                         <Route
                             path={authenticatedRoutes.collections.details.path}
-                            element={
-                                <EntityContextProvider value="collection">
-                                    <Details />
-                                </EntityContextProvider>
-                            }
+                            element={<CollectionDetails />}
                         />
                     </Route>
 
@@ -113,11 +111,7 @@ const Authenticated = () => {
 
                         <Route
                             path={authenticatedRoutes.captures.details.path}
-                            element={
-                                <EntityContextProvider value="capture">
-                                    <Details />
-                                </EntityContextProvider>
-                            }
+                            element={<CaptureDetails />}
                         />
                     </Route>
 
@@ -168,11 +162,7 @@ const Authenticated = () => {
                                 authenticatedRoutes.materializations.details
                                     .path
                             }
-                            element={
-                                <EntityContextProvider value="materialization">
-                                    <Details />
-                                </EntityContextProvider>
-                            }
+                            element={<MaterializationDetails />}
                         />
                     </Route>
 

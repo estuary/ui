@@ -75,7 +75,7 @@ export const authenticatedRoutes = {
         },
     },
     details: {
-        title: 'routeTitle.collections',
+        title: 'routeTitle.details',
         path: '/details',
     },
     home: {
