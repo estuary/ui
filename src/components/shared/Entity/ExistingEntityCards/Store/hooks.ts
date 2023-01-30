@@ -12,6 +12,33 @@ const getStoreName = (entityType: Entity): ExistingEntityStoreNames => {
     }
 };
 
+export const useExistingEntity_hydrated = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ExistingEntityState,
+        ExistingEntityState['hydrated']
+    >(getStoreName(entityType), (state) => state.hydrated);
+};
+
+export const useExistingEntity_setHydrated = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ExistingEntityState,
+        ExistingEntityState['setHydrated']
+    >(getStoreName(entityType), (state) => state.setHydrated);
+};
+
+export const useExistingEntity_setHydrationErrorsExist = () => {
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        ExistingEntityState,
+        ExistingEntityState['setHydrationErrorsExist']
+    >(getStoreName(entityType), (state) => state.setHydrationErrorsExist);
+};
+
 export const useExistingEntity_hydrateState = () => {
     const entityType = useEntityType();
 

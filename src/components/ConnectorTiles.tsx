@@ -12,9 +12,7 @@ import {
 } from '@mui/material';
 import ConnectorCard from 'components/connectors/card';
 import ConnectorToolbar from 'components/ConnectorToolbar';
-import { useExistingEntity_hydrateState } from 'components/shared/Entity/ExistingEntityCards/Store/hooks';
 import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
-import { useEntityType } from 'context/EntityContext';
 import {
     semiTransparentBackground,
     semiTransparentBackgroundIntensified,
@@ -100,10 +98,6 @@ function ConnectorTiles({
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
-    const entityType = useEntityType();
-
-    const hydrateExistingEntityState = useExistingEntity_hydrateState();
-
     const [protocol, setProtocol] = useState<string | null>(
         protocolPreset ?? null
     );
@@ -155,10 +149,6 @@ function ConnectorTiles({
             row.connector_tags[0].id,
             replaceOnNavigate
         );
-
-        if (entityType === 'capture' || entityType === 'materialization') {
-            hydrateExistingEntityState(entityType);
-        }
     };
 
     useEffect(() => {

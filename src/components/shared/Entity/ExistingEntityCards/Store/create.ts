@@ -50,12 +50,7 @@ const getInitialState = (
                 GlobalSearchParams.CONNECTOR_ID
             );
 
-            const {
-                hydrated,
-                setCreateNewTask,
-                setHydrated,
-                setHydrationErrorsExist,
-            } = get();
+            const { setCreateNewTask, setHydrationErrorsExist } = get();
 
             if (connectorId) {
                 const { data, error } = await getLiveSpecsByConnectorId(
@@ -75,10 +70,6 @@ const getInitialState = (
                 } else {
                     setCreateNewTask(true);
                 }
-            }
-
-            if (!hydrated) {
-                setHydrated(true);
             }
         },
 

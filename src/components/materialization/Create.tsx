@@ -10,6 +10,7 @@ import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
 import { useExistingEntity_resetState } from 'components/shared/Entity/ExistingEntityCards/Store/hooks';
+import ExistingEntityHydrator from 'components/shared/Entity/ExistingEntityCards/Store/Hydrator';
 import EntityToolbar from 'components/shared/Entity/Header';
 import ValidationErrorSummary from 'components/shared/Entity/ValidationErrorSummary';
 import PageContainer from 'components/shared/PageContainer';
@@ -132,45 +133,49 @@ function MaterializationCreate() {
             }}
         >
             <ResourceConfigHydrator>
-                <EntityCreate
-                    title="browserTitle.materializationCreate"
-                    entityType={entityType}
-                    draftSpecMetadata={draftSpecsMetadata}
-                    resetState={resetState}
-                    errorSummary={
-                        <ValidationErrorSummary
-                            errorsExist={detailsFormErrorsExist}
-                        />
-                    }
-                    toolbar={
-                        <EntityToolbar
-                            GenerateButton={
-                                <MaterializeGenerateButton
-                                    disabled={!hasConnectors}
-                                    callFailed={helpers.callFailed}
-                                />
-                            }
-                            TestButton={
-                                <EntityTestButton
-                                    disabled={!hasConnectors}
-                                    callFailed={helpers.callFailed}
-                                    closeLogs={handlers.closeLogs}
-                                    logEvent={CustomEvents.MATERIALIZATION_TEST}
-                                />
-                            }
-                            SaveButton={
-                                <EntitySaveButton
-                                    disabled={!draftId}
-                                    callFailed={helpers.callFailed}
-                                    closeLogs={handlers.closeLogs}
-                                    logEvent={
-                                        CustomEvents.MATERIALIZATION_CREATE
-                                    }
-                                />
-                            }
-                        />
-                    }
-                />
+                <ExistingEntityHydrator>
+                    <EntityCreate
+                        title="browserTitle.materializationCreate"
+                        entityType={entityType}
+                        draftSpecMetadata={draftSpecsMetadata}
+                        resetState={resetState}
+                        errorSummary={
+                            <ValidationErrorSummary
+                                errorsExist={detailsFormErrorsExist}
+                            />
+                        }
+                        toolbar={
+                            <EntityToolbar
+                                GenerateButton={
+                                    <MaterializeGenerateButton
+                                        disabled={!hasConnectors}
+                                        callFailed={helpers.callFailed}
+                                    />
+                                }
+                                TestButton={
+                                    <EntityTestButton
+                                        disabled={!hasConnectors}
+                                        callFailed={helpers.callFailed}
+                                        closeLogs={handlers.closeLogs}
+                                        logEvent={
+                                            CustomEvents.MATERIALIZATION_TEST
+                                        }
+                                    />
+                                }
+                                SaveButton={
+                                    <EntitySaveButton
+                                        disabled={!draftId}
+                                        callFailed={helpers.callFailed}
+                                        closeLogs={handlers.closeLogs}
+                                        logEvent={
+                                            CustomEvents.MATERIALIZATION_CREATE
+                                        }
+                                    />
+                                }
+                            />
+                        }
+                    />
+                </ExistingEntityHydrator>
             </ResourceConfigHydrator>
         </PageContainer>
     );
