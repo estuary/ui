@@ -4,7 +4,7 @@ import {
     ToDistributedSuccessResponse,
 } from 'hooks/supabase-swr/types';
 import useSWR, { SWRConfiguration, SWRResponse } from 'swr';
-import { Query, ToDistributedQuery } from '../query';
+import { Query } from '../query';
 import useFetcher, { FetcherType } from './useFetcher';
 
 const useSelect = <Data>(
@@ -26,12 +26,15 @@ export const useSelectNew = <Data>(
     );
 };
 
-export const useDistributedSelect = <Data>(
-    query: ToDistributedQuery<Data>,
+export const useDistributedSelectNew = <Data>(
+    fetcher: any,
     swrConfig?: Omit<SWRConfiguration, 'fetcher'>
 ): SWRResponse<ToDistributedSuccessResponse<Data>, PostgrestError> => {
-    const fetcher = useFetcher<Data>(FetcherType.MULTIPLE);
-    return useSWR(query, fetcher, swrConfig);
+    return useSWR(
+        fetcher ? fetcher.url.href : null,
+        () => fetcher.throwOnError(),
+        swrConfig
+    );
 };
 
 export default useSelect;

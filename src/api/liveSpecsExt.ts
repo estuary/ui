@@ -4,6 +4,7 @@ import {
     CONNECTOR_IMAGE,
     CONNECTOR_TITLE,
     defaultTableFilter,
+    distributedTableFilter,
     handleFailure,
     handleSuccess,
     QUERY_PARAM_CONNECTOR_TITLE,
@@ -136,6 +137,36 @@ const getLiveSpecs_collections = (
     return queryBuilder;
 };
 
+const getLiveSpecs_existingTasks = (
+    specType: Entity,
+    connectorTagId: string,
+    searchQuery: string | null,
+    sorting: SortingProps<any>[]
+) => {
+    const taskColumns: string =
+        specType === 'capture'
+            ? captureColumnsWithSpec
+            : materializationsColumnsWithSpec;
+
+    const columns = taskColumns.concat(',connector_tag_id');
+
+    let queryBuilder = supabaseClient
+        .from(TABLES.LIVE_SPECS_EXT)
+        .select(columns, {
+            count: 'exact',
+        })
+        .eq('connector_tag_id', connectorTagId);
+
+    queryBuilder = distributedTableFilter<
+        CaptureQueryWithSpec | MaterializationQueryWithSpec
+    >(queryBuilder, ['catalog_name'], searchQuery, sorting).eq(
+        'spec_type',
+        specType
+    );
+
+    return queryBuilder;
+};
+
 // Multipurpose queries
 export interface LiveSpecsExtQuery_ByCatalogName {
     catalog_name: string;
@@ -224,6 +255,7 @@ const getLiveSpecsByConnectorId = async <
 export {
     getLiveSpecs_captures,
     getLiveSpecs_collections,
+    getLiveSpecs_existingTasks,
     getLiveSpecs_materializations,
     getLiveSpecsByCatalogName,
     getLiveSpecsByCatalogNames,

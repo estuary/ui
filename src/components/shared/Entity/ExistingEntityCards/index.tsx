@@ -1,9 +1,8 @@
 import { Box, Grid, useMediaQuery, useTheme } from '@mui/material';
 import {
-    captureColumnsWithSpec,
     CaptureQueryWithSpec,
+    getLiveSpecs_existingTasks,
     MaterializationQueryWithSpec,
-    materializationsColumnsWithSpec,
 } from 'api/liveSpecsExt';
 import ExistingEntityCard from 'components/shared/Entity/ExistingEntityCards/Cards/Existing';
 import NewEntityCard from 'components/shared/Entity/ExistingEntityCards/Cards/New';
@@ -13,15 +12,20 @@ import {
 } from 'components/shared/Entity/ExistingEntityCards/Store/hooks';
 import ExistingEntityCardToolbar from 'components/shared/Entity/ExistingEntityCards/Toolbar';
 import { useEntityType } from 'context/EntityContext';
-import { ToDistributedQuery } from 'hooks/supabase-swr';
-import useDistributiveQuery from 'hooks/supabase-swr/hooks/useDistributiveQuery';
-import { useDistributedSelect } from 'hooks/supabase-swr/hooks/useSelect';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
+import { ToPostgrestFilterBuilder } from 'hooks/supabase-swr';
+import { useDistributedSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
 import { useEffect, useMemo, useState } from 'react';
-import { distributedTableFilter, TABLES } from 'services/supabase';
 
 const columnToSort = 'catalog_name';
 
 function ExistingEntityCards() {
+    const connectorTagId = useGlobalSearchParams(
+        GlobalSearchParams.CONNECTOR_ID
+    );
+
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -35,40 +39,55 @@ function ExistingEntityCards() {
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
     // TODO (optimization): Decide whether to follow the entity table query approach or stick with useQuery.
-    const liveSpecQuery: ToDistributedQuery<
-        CaptureQueryWithSpec | MaterializationQueryWithSpec
-    > = useDistributiveQuery<
-        CaptureQueryWithSpec | MaterializationQueryWithSpec
-    >(
-        TABLES.LIVE_SPECS_EXT,
-        {
-            columns:
-                protocol === 'capture'
-                    ? captureColumnsWithSpec
-                    : materializationsColumnsWithSpec,
-            filter: (query) => {
-                return distributedTableFilter<
-                    CaptureQueryWithSpec | MaterializationQueryWithSpec
-                >(
-                    query,
-                    [columnToSort],
-                    searchQuery,
-                    [
-                        {
-                            col: columnToSort,
-                            direction: sortDirection,
-                        },
-                    ],
-                    undefined,
-                    { column: 'spec_type', value: protocol }
-                );
-            },
-        },
-        [searchQuery, sortDirection, protocol]
-    );
+    // const liveSpecQuery: ToDistributedQuery<
+    //     CaptureQueryWithSpec | MaterializationQueryWithSpec
+    // > = useDistributiveQuery<
+    //     CaptureQueryWithSpec | MaterializationQueryWithSpec
+    // >(
+    //     TABLES.LIVE_SPECS_EXT,
+    //     {
+    //         columns:
+    //             protocol === 'capture'
+    //                 ? captureColumnsWithSpec
+    //                 : materializationsColumnsWithSpec,
+    //         filter: (query) => {
+    //             return distributedTableFilter<
+    //                 CaptureQueryWithSpec | MaterializationQueryWithSpec
+    //             >(
+    //                 query,
+    //                 [columnToSort],
+    //                 searchQuery,
+    //                 [
+    //                     {
+    //                         col: columnToSort,
+    //                         direction: sortDirection,
+    //                     },
+    //                 ],
+    //                 undefined,
+    //                 { column: 'spec_type', value: protocol }
+    //             );
+    //         },
+    //     },
+    //     [searchQuery, sortDirection, protocol]
+    // );
 
-    // TODO (defect): Create a useDistributedSelectNew hook and remove useDistributedSelect.
-    const { data: useSelectResponse } = useDistributedSelect<
+    const liveSpecQuery: ToPostgrestFilterBuilder<
+        CaptureQueryWithSpec | MaterializationQueryWithSpec
+    > = useMemo(() => {
+        return getLiveSpecs_existingTasks(
+            protocol,
+            connectorTagId,
+            searchQuery,
+            [
+                {
+                    col: columnToSort,
+                    direction: sortDirection,
+                },
+            ]
+        );
+    }, [columnToSort, searchQuery, sortDirection]);
+
+    const { data: useSelectResponse } = useDistributedSelectNew<
         CaptureQueryWithSpec | MaterializationQueryWithSpec
     >(liveSpecQuery);
 
