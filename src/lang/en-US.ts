@@ -720,9 +720,9 @@ const ExistingEntityCheck: ResolvedIntlConfig['messages'] = {
     'existingEntityCheck.toolbar.label.sortDirection': `Sort Direction`,
 
     'existingEntityCheck.existingCard.label.lastPublished': `Last published on {date}`,
-    'existingEntityCheck.existingCard.cta.edit': `Edit`,
+    'existingEntityCheck.existingCard.label.edit': `Edit`,
 
-    'existingEntityCheck.newCard.label': `Create a new {connectorName} {entityType}`,
+    'existingEntityCheck.newCard.label': `New {connectorName} {entityType}`,
 };
 
 // TODO (optimization): Consolidate duplicate create and edit messages.

@@ -1,7 +1,6 @@
 import Editor from '@monaco-editor/react';
 import {
     Box,
-    Button,
     ButtonBase,
     Collapse,
     Paper,
@@ -66,7 +65,7 @@ function ExistingEntityCard({ queryData }: Props) {
     return queryData ? (
         <>
             <ButtonBase
-                onClick={handlers.toggleDetailsPanel}
+                onClick={handlers.editTask}
                 sx={{
                     'width': '100%',
                     'padding': 1,
@@ -124,9 +123,9 @@ function ExistingEntityCard({ queryData }: Props) {
                     </Box>
                 </Box>
 
-                <Button onClick={handlers.editTask} sx={{ mr: 1 }}>
-                    <FormattedMessage id="existingEntityCheck.existingCard.cta.edit" />
-                </Button>
+                <Typography sx={{ mr: 2 }}>
+                    <FormattedMessage id="existingEntityCheck.existingCard.label.edit" />
+                </Typography>
             </ButtonBase>
 
             <Collapse in={detailsExpanded}>
