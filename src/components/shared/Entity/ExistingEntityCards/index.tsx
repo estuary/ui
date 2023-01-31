@@ -1,4 +1,4 @@
-import { Box, Grid, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Divider, Grid, useMediaQuery, useTheme } from '@mui/material';
 import {
     CaptureQueryWithSpec,
     getLiveSpecs_existingTasks,
@@ -97,6 +97,10 @@ function ExistingEntityCards() {
                           </Grid>
                       ))
                     : null}
+
+                <Grid item xs={12} sx={{ my: 2 }}>
+                    <Divider flexItem />
+                </Grid>
 
                 <Grid item xs={12}>
                     <NewEntityCard />

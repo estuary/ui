@@ -22,7 +22,7 @@ import {
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { isEmpty } from 'lodash';
 import { useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router';
 import { stringifyJSON } from 'services/stringify';
 import { getPathWithParams } from 'utils/misc-utils';
@@ -122,10 +122,6 @@ function ExistingEntityCard({ queryData }: Props) {
                         </Typography>
                     </Box>
                 </Box>
-
-                <Typography sx={{ mr: 2 }}>
-                    <FormattedMessage id="existingEntityCheck.existingCard.label.edit" />
-                </Typography>
             </ButtonBase>
 
             <Collapse in={detailsExpanded}>

@@ -3,6 +3,7 @@ import ConnectorTiles from 'components/ConnectorTiles';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import ExistingEntityCards from 'components/shared/Entity/ExistingEntityCards';
 import {
+    useExistingEntity_connectorName,
     useExistingEntity_createNewTask,
     useExistingEntity_hydrated,
 } from 'components/shared/Entity/ExistingEntityCards/Store/hooks';
@@ -32,6 +33,7 @@ function EntityCreateConfig({ title, entityType }: Props) {
     // Existing Entity Store
     const existingEntityStoreHydrated = useExistingEntity_hydrated();
     const createNewTask = useExistingEntity_createNewTask();
+    const connectorName = useExistingEntity_connectorName();
 
     const [showConnectorTiles, setShowConnectorTiles] = useState<
         boolean | null
@@ -71,8 +73,25 @@ function EntityCreateConfig({ title, entityType }: Props) {
             <Collapse in={!showConnectorTiles} unmountOnExit>
                 {existingEntityStoreHydrated ? (
                     <>
+                        <Typography variant="h5" sx={{ mb: 1 }}>
+                            <FormattedMessage
+                                id="existingEntityCheck.heading"
+                                values={{ entityType, connectorName }}
+                            />
+                        </Typography>
+
                         <Typography sx={{ mb: 2 }}>
-                            <FormattedMessage id="existingEntityCheck.instructions" />
+                            <FormattedMessage
+                                id="existingEntityCheck.instructions"
+                                values={{ entityType, connectorName }}
+                            />
+                        </Typography>
+
+                        <Typography sx={{ mb: 3 }}>
+                            <FormattedMessage
+                                id="existingEntityCheck.instructions2"
+                                values={{ entityType, connectorName }}
+                            />
                         </Typography>
 
                         <ExistingEntityCards />
