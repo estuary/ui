@@ -1,19 +1,15 @@
-import {
-    Stack,
-    TableCell,
-    Typography,
-    useMediaQuery,
-    useTheme,
-} from '@mui/material';
+import { Link, Stack, TableCell, useMediaQuery, useTheme } from '@mui/material';
 import EntityStatus from 'components/tables/cells/EntityStatus';
 import { tableBorderSx } from 'context/Theme';
+import { NavLink } from 'react-router-dom';
 
 interface Props {
     name: string;
     showEntityStatus: boolean;
+    detailsLink: string;
 }
 
-function EntityName({ name, showEntityStatus }: Props) {
+function EntityName({ name, detailsLink, showEntityStatus }: Props) {
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -33,7 +29,9 @@ function EntityName({ name, showEntityStatus }: Props) {
             >
                 {showEntityStatus ? <EntityStatus name={name} /> : null}
 
-                <Typography
+                <Link
+                    component={NavLink}
+                    to={detailsLink}
                     sx={
                         belowMd
                             ? {
@@ -44,7 +42,7 @@ function EntityName({ name, showEntityStatus }: Props) {
                     }
                 >
                     {name}
-                </Typography>
+                </Link>
             </Stack>
         </TableCell>
     );
