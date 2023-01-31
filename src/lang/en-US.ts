@@ -714,6 +714,8 @@ const MaterializationEdit: ResolvedIntlConfig['messages'] = {
 };
 
 const ExistingEntityCheck: ResolvedIntlConfig['messages'] = {
+    'existingEntityCheck.instructions': `Placeholder for some instructions.`,
+
     'existingEntityCheck.toolbar.label.filter': `Search existing tasks`,
     'existingEntityCheck.toolbar.label.sortDirection': `Sort Direction`,
 

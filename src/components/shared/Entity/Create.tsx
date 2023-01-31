@@ -190,7 +190,7 @@ function EntityCreate({
 
             <Collapse in={displayExistingEntityOptions} unmountOnExit>
                 <Typography sx={{ mb: 2 }}>
-                    Placeholder for some instructions.
+                    <FormattedMessage id="existingEntityCheck.instructions" />
                 </Typography>
 
                 <ExistingEntityCards />
