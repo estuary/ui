@@ -38,7 +38,7 @@ interface RowsProps {
 
 function Row({ row, stats, showEntityStatus }: RowProps) {
     const detailsNavigator = useDetailsNavigator(
-        authenticatedRoutes.collections.details.fullPath
+        authenticatedRoutes.collections.details.overview.fullPath
     );
     const theme = useTheme();
     const tenantDetails = useTenantDetails();

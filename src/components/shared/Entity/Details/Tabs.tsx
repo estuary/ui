@@ -38,6 +38,12 @@ function DetailTabs() {
     const tabs = useMemo(
         () =>
             tabProps.map((tabProp, index) => {
+                // Since we have capture, materialization, and collection paths
+                //  it is easier to just make the link go "up" once and then
+                //  change the path. Hardcoding the search params here so they
+                //  do not get removed during navigation.
+                const to = `../${tabProp.path}?${searchParams}`;
+
                 if (pathname.includes(tabProp.path)) {
                     setSelectedTab(index);
                 }
@@ -49,7 +55,7 @@ function DetailTabs() {
                             id: tabProp.label,
                         })}
                         component={Link}
-                        to={`${tabProp.path}?${searchParams}`}
+                        to={to}
                     />
                 );
             }),

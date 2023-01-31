@@ -1,59 +1,54 @@
-import { Box, Divider, Grid, Typography } from '@mui/material';
-import { DataPreview } from 'components/collection/DataPreview';
+import { Box, Divider, Stack, Typography } from '@mui/material';
 import { createEditorStore } from 'components/editor/Store/create';
-import { useEntityType } from 'context/EntityContext';
 import { LocalZustandProvider } from 'context/LocalZustand';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useBrowserTitle from 'hooks/useBrowserTitle';
-import { FormattedMessage } from 'react-intl';
 import { EditorStoreNames } from 'stores/names';
-import EditorAndLogs from './EditorAndLogs';
-import ShardInformation from './ShardInformation';
+import { useDetailsPage } from './context';
+import History from './History';
+import Overview from './Overview';
+import Status from './Status';
 import DetailTabs from './Tabs';
 
 function EntityDetails() {
     useBrowserTitle('browserTitle.details');
-    const entityType = useEntityType();
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
-    const lastPubId = useGlobalSearchParams(GlobalSearchParams.LAST_PUB_ID);
-
-    const isCollection = entityType === 'collection';
+    const page = useDetailsPage();
 
     return (
-        <Box>
-            <DetailTabs />
-            {catalogName}
-            <LocalZustandProvider
-                createStore={createEditorStore(EditorStoreNames.GENERAL)}
-            >
-                <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                        <ShardInformation entityType={entityType} />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Typography variant="subtitle1">
-                            <FormattedMessage id="detailsPanel.specification.header" />
-                        </Typography>
-                        <EditorAndLogs
-                            collectionNames={[catalogName]}
-                            lastPubId={lastPubId}
-                            disableLogs={true}
-                            localZustandScope={true}
-                        />
-                    </Grid>
-
+        <LocalZustandProvider
+            createStore={createEditorStore(EditorStoreNames.GENERAL)}
+        >
+            <Box>
+                <Stack direction="column" spacing={2} sx={{ m: 1 }}>
+                    <Typography
+                        component="span"
+                        variant="h6"
+                        sx={{
+                            alignItems: 'center',
+                        }}
+                    >
+                        {catalogName}
+                    </Typography>
                     <Divider />
+                    <DetailTabs />
+                </Stack>
 
-                    {catalogName && isCollection ? (
-                        <Grid item xs={12}>
-                            <DataPreview collectionName={catalogName} />
-                        </Grid>
-                    ) : null}
-                </Grid>
-            </LocalZustandProvider>
-        </Box>
+                <Box sx={{ m: 1 }}>
+                    {page === 'shards' ? (
+                        <Status />
+                    ) : page === 'history' ? (
+                        <History />
+                    ) : page === 'spec' ? (
+                        <>I am the spec</>
+                    ) : (
+                        <Overview />
+                    )}
+                </Box>
+            </Box>
+        </LocalZustandProvider>
     );
 }
 

@@ -42,7 +42,7 @@ interface RowProps {
 function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
     const navigate = useNavigate();
     const detailsNavigator = useDetailsNavigator(
-        authenticatedRoutes.materializations.details.fullPath
+        authenticatedRoutes.materializations.details.overview.fullPath
     );
     const theme = useTheme();
     const tenantDetails = useTenantDetails();

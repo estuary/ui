@@ -12,6 +12,7 @@ import CollectionDetails from 'components/collection/Details';
 import MaterializationCreate from 'components/materialization/Create';
 import MaterializationDetails from 'components/materialization/Details';
 import MaterializationEdit from 'components/materialization/Edit';
+import { DetailsPageContextProvider } from 'components/shared/Entity/Details/context';
 import AuthenticatedOnlyContext from 'context/Authenticated';
 import { EntityContextProvider } from 'context/EntityContext';
 import { WorkflowContextProvider } from 'context/Workflow';
@@ -67,8 +68,55 @@ const Authenticated = () => {
 
                         <Route
                             path={authenticatedRoutes.collections.details.path}
-                            element={<CollectionDetails />}
-                        />
+                        >
+                            <Route
+                                path={
+                                    authenticatedRoutes.collections.details
+                                        .overview.path
+                                }
+                                element={
+                                    <DetailsPageContextProvider value="overview">
+                                        <CollectionDetails />
+                                    </DetailsPageContextProvider>
+                                }
+                            />
+
+                            <Route
+                                path={
+                                    authenticatedRoutes.collections.details
+                                        .shards.path
+                                }
+                                element={
+                                    <DetailsPageContextProvider value="shards">
+                                        <CollectionDetails />
+                                    </DetailsPageContextProvider>
+                                }
+                            />
+
+                            <Route
+                                path={
+                                    authenticatedRoutes.collections.details.spec
+                                        .path
+                                }
+                                element={
+                                    <DetailsPageContextProvider value="spec">
+                                        <CollectionDetails />
+                                    </DetailsPageContextProvider>
+                                }
+                            />
+
+                            <Route
+                                path={
+                                    authenticatedRoutes.collections.details
+                                        .history.path
+                                }
+                                element={
+                                    <DetailsPageContextProvider value="history">
+                                        <CollectionDetails />
+                                    </DetailsPageContextProvider>
+                                }
+                            />
+                        </Route>
                     </Route>
 
                     <Route path={authenticatedRoutes.captures.path}>
@@ -110,14 +158,16 @@ const Authenticated = () => {
                         />
 
                         <Route path={authenticatedRoutes.captures.details.path}>
-                            <Route path="" element={<CaptureDetails />} />
-
                             <Route
                                 path={
                                     authenticatedRoutes.captures.details
                                         .overview.path
                                 }
-                                element={<CaptureDetails />}
+                                element={
+                                    <DetailsPageContextProvider value="overview">
+                                        <CaptureDetails />
+                                    </DetailsPageContextProvider>
+                                }
                             />
 
                             <Route
@@ -125,7 +175,11 @@ const Authenticated = () => {
                                     authenticatedRoutes.captures.details.shards
                                         .path
                                 }
-                                element={<CaptureDetails />}
+                                element={
+                                    <DetailsPageContextProvider value="shards">
+                                        <CaptureDetails />
+                                    </DetailsPageContextProvider>
+                                }
                             />
 
                             <Route
@@ -133,7 +187,11 @@ const Authenticated = () => {
                                     authenticatedRoutes.captures.details.spec
                                         .path
                                 }
-                                element={<CaptureDetails />}
+                                element={
+                                    <DetailsPageContextProvider value="spec">
+                                        <CaptureDetails />
+                                    </DetailsPageContextProvider>
+                                }
                             />
 
                             <Route
@@ -141,7 +199,11 @@ const Authenticated = () => {
                                     authenticatedRoutes.captures.details.history
                                         .path
                                 }
-                                element={<CaptureDetails />}
+                                element={
+                                    <DetailsPageContextProvider value="history">
+                                        <CaptureDetails />
+                                    </DetailsPageContextProvider>
+                                }
                             />
                         </Route>
                     </Route>
@@ -195,16 +257,15 @@ const Authenticated = () => {
                             }
                         >
                             <Route
-                                path=""
-                                element={<MaterializationDetails />}
-                            />
-
-                            <Route
                                 path={
                                     authenticatedRoutes.materializations.details
                                         .overview.path
                                 }
-                                element={<MaterializationDetails />}
+                                element={
+                                    <DetailsPageContextProvider value="overview">
+                                        <MaterializationDetails />
+                                    </DetailsPageContextProvider>
+                                }
                             />
 
                             <Route
@@ -212,7 +273,11 @@ const Authenticated = () => {
                                     authenticatedRoutes.materializations.details
                                         .shards.path
                                 }
-                                element={<MaterializationDetails />}
+                                element={
+                                    <DetailsPageContextProvider value="shards">
+                                        <MaterializationDetails />
+                                    </DetailsPageContextProvider>
+                                }
                             />
 
                             <Route
@@ -220,7 +285,11 @@ const Authenticated = () => {
                                     authenticatedRoutes.materializations.details
                                         .spec.path
                                 }
-                                element={<MaterializationDetails />}
+                                element={
+                                    <DetailsPageContextProvider value="spec">
+                                        <MaterializationDetails />
+                                    </DetailsPageContextProvider>
+                                }
                             />
 
                             <Route
@@ -228,7 +297,11 @@ const Authenticated = () => {
                                     authenticatedRoutes.materializations.details
                                         .history.path
                                 }
-                                element={<MaterializationDetails />}
+                                element={
+                                    <DetailsPageContextProvider value="history">
+                                        <MaterializationDetails />
+                                    </DetailsPageContextProvider>
+                                }
                             />
                         </Route>
                     </Route>
