@@ -6,8 +6,10 @@ import useConstant from 'use-constant';
 
 function DetailTabs() {
     const intl = useIntl();
+
     const [searchParams] = useSearchParams();
     const { pathname } = useLocation();
+
     const [selectedTab, setSelectedTab] = useState(0);
 
     const tabProps = useConstant(() => {
@@ -46,7 +48,6 @@ function DetailTabs() {
                         label={intl.formatMessage({
                             id: tabProp.label,
                         })}
-                        iconPosition="start"
                         component={Link}
                         to={`${tabProp.path}?${searchParams}`}
                     />

@@ -109,10 +109,41 @@ const Authenticated = () => {
                             }
                         />
 
-                        <Route
-                            path={authenticatedRoutes.captures.details.path}
-                            element={<CaptureDetails />}
-                        />
+                        <Route path={authenticatedRoutes.captures.details.path}>
+                            <Route path="" element={<CaptureDetails />} />
+
+                            <Route
+                                path={
+                                    authenticatedRoutes.captures.details
+                                        .overview.path
+                                }
+                                element={<CaptureDetails />}
+                            />
+
+                            <Route
+                                path={
+                                    authenticatedRoutes.captures.details.shards
+                                        .path
+                                }
+                                element={<CaptureDetails />}
+                            />
+
+                            <Route
+                                path={
+                                    authenticatedRoutes.captures.details.spec
+                                        .path
+                                }
+                                element={<CaptureDetails />}
+                            />
+
+                            <Route
+                                path={
+                                    authenticatedRoutes.captures.details.history
+                                        .path
+                                }
+                                element={<CaptureDetails />}
+                            />
+                        </Route>
                     </Route>
 
                     <Route path={authenticatedRoutes.materializations.path}>
@@ -162,8 +193,44 @@ const Authenticated = () => {
                                 authenticatedRoutes.materializations.details
                                     .path
                             }
-                            element={<MaterializationDetails />}
-                        />
+                        >
+                            <Route
+                                path=""
+                                element={<MaterializationDetails />}
+                            />
+
+                            <Route
+                                path={
+                                    authenticatedRoutes.materializations.details
+                                        .overview.path
+                                }
+                                element={<MaterializationDetails />}
+                            />
+
+                            <Route
+                                path={
+                                    authenticatedRoutes.materializations.details
+                                        .shards.path
+                                }
+                                element={<MaterializationDetails />}
+                            />
+
+                            <Route
+                                path={
+                                    authenticatedRoutes.materializations.details
+                                        .spec.path
+                                }
+                                element={<MaterializationDetails />}
+                            />
+
+                            <Route
+                                path={
+                                    authenticatedRoutes.materializations.details
+                                        .history.path
+                                }
+                                element={<MaterializationDetails />}
+                            />
+                        </Route>
                     </Route>
 
                     <Route path={authenticatedRoutes.admin.path}>
