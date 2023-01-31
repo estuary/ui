@@ -56,7 +56,7 @@ export const authenticatedRoutes = {
         },
         details: {
             title: 'routeTitle.captureDetails',
-            path: 'details',
+            path: 'details*',
             fullPath: '/captures/details',
         },
         edit: {
@@ -70,7 +70,7 @@ export const authenticatedRoutes = {
         path: '/collections',
         details: {
             title: 'routeTitle.collectionDetails',
-            path: 'details',
+            path: 'details*',
             fullPath: '/collections/details',
         },
     },
@@ -92,7 +92,7 @@ export const authenticatedRoutes = {
         },
         details: {
             title: 'routeTitle.materializationDetails',
-            path: 'details',
+            path: 'details*',
             fullPath: '/materializations/details',
         },
         edit: {

@@ -11,6 +11,7 @@ import { FormattedMessage } from 'react-intl';
 import { EditorStoreNames } from 'stores/names';
 import EditorAndLogs from './EditorAndLogs';
 import ShardInformation from './ShardInformation';
+import DetailTabs from './Tabs';
 
 function EntityDetails() {
     useBrowserTitle('browserTitle.details');
@@ -22,6 +23,7 @@ function EntityDetails() {
 
     return (
         <Box>
+            <DetailTabs />
             {catalogName}
             <LocalZustandProvider
                 createStore={createEditorStore(EditorStoreNames.GENERAL)}

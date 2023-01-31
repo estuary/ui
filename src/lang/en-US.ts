@@ -823,6 +823,13 @@ const Tenant: ResolvedIntlConfig['messages'] = {
     'tenant.docs.message.link': `https://docs.estuary.dev/concepts/catalogs/#namespace`,
 };
 
+const Details: ResolvedIntlConfig['messages'] = {
+    'details.tabs.overview': `Overview`,
+    'details.tabs.spec': `Spec`,
+    'details.tabs.shardStatus': `Status`,
+    'details.tabs.history': `History`,
+};
+
 const CustomRenderers: ResolvedIntlConfig['messages'] = {
     'dateTimePicker.button.ariaLabel': `Open date time picker for {label}`,
     'datePicker.button.ariaLabel': `Open date picker for {label}`,
@@ -874,6 +881,7 @@ const enUSMessages: ResolvedIntlConfig['messages'] = {
     ...CustomRenderers,
     ...StorageMappings,
     ...EntityNotFound,
+    ...Details,
 };
 
 export default enUSMessages;
