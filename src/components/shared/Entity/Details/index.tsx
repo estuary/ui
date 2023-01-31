@@ -9,6 +9,7 @@ import { EditorStoreNames } from 'stores/names';
 import { useDetailsPage } from './context';
 import History from './History';
 import Overview from './Overview';
+import Spec from './Spec';
 import Status from './Status';
 import DetailTabs from './Tabs';
 
@@ -42,7 +43,7 @@ function EntityDetails() {
                     ) : page === 'history' ? (
                         <History />
                     ) : page === 'spec' ? (
-                        <>I am the spec</>
+                        <Spec />
                     ) : (
                         <Overview />
                     )}
