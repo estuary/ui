@@ -113,7 +113,7 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
                 </>
             ) : null}
 
-            <ChipList strings={row.writes_to} />
+            <ChipList strings={row.writes_to} maxChips={5} />
 
             <TimeStamp time={row.updated_at} />
 

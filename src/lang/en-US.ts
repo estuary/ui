@@ -123,6 +123,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.login.github': `Sign in with GitHub`,
     'cta.register.github': `Register with GitHub`,
     'cta.configure': `Configure`,
+    'cta.showAll': `Show All`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
@@ -385,6 +386,7 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'optionMenu.option.detailsPanel.display': `View details`,
     'optionMenu.option.detailsPanel.hide': `Hide details`,
     'optionMenu.option.edit': `Edit specification`,
+    'entityTable.moreEntities': `{count} more`,
 };
 
 const LogsDialog: ResolvedIntlConfig['messages'] = {

@@ -108,7 +108,7 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
                 </>
             ) : null}
 
-            <ChipList strings={row.reads_from} />
+            <ChipList strings={row.reads_from} maxChips={5} />
 
             <TimeStamp time={row.updated_at} />
 
