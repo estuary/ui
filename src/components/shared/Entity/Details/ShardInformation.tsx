@@ -88,10 +88,6 @@ function ShardInformation({ entityType }: Props) {
 
     return taskShards.length > 0 ? (
         <>
-            <Typography variant="subtitle1">
-                <FormattedMessage id="detailsPanel.status.header" />
-            </Typography>
-
             <ShardErrors shards={taskShards} />
 
             <Grid item xs={12}>
