@@ -7,14 +7,11 @@ import {
 import ExistingEntityCard from 'components/shared/Entity/ExistingEntityCards/Cards/Existing';
 import NewEntityCard from 'components/shared/Entity/ExistingEntityCards/Cards/New';
 import {
-    useExistingEntity_createNewTask,
-    useExistingEntity_hydrated,
     useExistingEntity_queryData,
     useExistingEntity_resetState,
     useExistingEntity_setQueryData,
 } from 'components/shared/Entity/ExistingEntityCards/Store/hooks';
 import ExistingEntityCardToolbar from 'components/shared/Entity/ExistingEntityCards/Toolbar';
-import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
 import { useEntityType } from 'context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
@@ -28,7 +25,6 @@ const columnToSort = 'catalog_name';
 
 function ExistingEntityCards() {
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
-    const navigateToCreate = useEntityCreateNavigate();
 
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
@@ -36,9 +32,6 @@ function ExistingEntityCards() {
     const entityType = useEntityType();
 
     // Existing Entity Store
-    const hydrated = useExistingEntity_hydrated();
-    const createNewTask = useExistingEntity_createNewTask();
-
     const queryData = useExistingEntity_queryData();
     const setQueryData = useExistingEntity_setQueryData();
 
@@ -71,17 +64,6 @@ function ExistingEntityCards() {
         () => (useSelectResponse ? useSelectResponse.data : []),
         [useSelectResponse]
     );
-
-    useEffect(() => {
-        if (
-            hydrated &&
-            connectorId &&
-            createNewTask &&
-            (entityType === 'capture' || entityType === 'materialization')
-        ) {
-            navigateToCreate(entityType, connectorId, true, true);
-        }
-    }, [navigateToCreate, connectorId, createNewTask, entityType, hydrated]);
 
     useEffect(() => {
         setQueryData(selectData);

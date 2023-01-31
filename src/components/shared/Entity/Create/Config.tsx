@@ -1,6 +1,12 @@
 import { Collapse, Typography } from '@mui/material';
 import ConnectorTiles from 'components/ConnectorTiles';
+import FullPageSpinner from 'components/fullPage/Spinner';
 import ExistingEntityCards from 'components/shared/Entity/ExistingEntityCards';
+import {
+    useExistingEntity_createNewTask,
+    useExistingEntity_hydrated,
+} from 'components/shared/Entity/ExistingEntityCards/Store/hooks';
+import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -21,6 +27,12 @@ function EntityCreateConfig({ title, entityType }: Props) {
         GlobalSearchParams.CONNECTOR_ID,
     ]);
 
+    const navigateToCreate = useEntityCreateNavigate();
+
+    // Existing Entity Store
+    const existingEntityStoreHydrated = useExistingEntity_hydrated();
+    const createNewTask = useExistingEntity_createNewTask();
+
     const [showConnectorTiles, setShowConnectorTiles] = useState<
         boolean | null
     >(null);
@@ -32,6 +44,18 @@ function EntityCreateConfig({ title, entityType }: Props) {
             setShowConnectorTiles(true);
         }
     }, [connectorId]);
+
+    useEffect(() => {
+        if (existingEntityStoreHydrated && connectorId && createNewTask) {
+            navigateToCreate(entityType, connectorId, true, true);
+        }
+    }, [
+        navigateToCreate,
+        connectorId,
+        createNewTask,
+        entityType,
+        existingEntityStoreHydrated,
+    ]);
 
     if (showConnectorTiles === null) return null;
     return (
@@ -45,11 +69,17 @@ function EntityCreateConfig({ title, entityType }: Props) {
             </Collapse>
 
             <Collapse in={!showConnectorTiles} unmountOnExit>
-                <Typography sx={{ mb: 2 }}>
-                    <FormattedMessage id="existingEntityCheck.instructions" />
-                </Typography>
+                {existingEntityStoreHydrated ? (
+                    <>
+                        <Typography sx={{ mb: 2 }}>
+                            <FormattedMessage id="existingEntityCheck.instructions" />
+                        </Typography>
 
-                <ExistingEntityCards />
+                        <ExistingEntityCards />
+                    </>
+                ) : (
+                    <FullPageSpinner />
+                )}
             </Collapse>
         </>
     );
