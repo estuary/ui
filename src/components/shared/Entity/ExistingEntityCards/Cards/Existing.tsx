@@ -45,17 +45,18 @@ function ExistingEntityCard({ queryData }: Props) {
     const handlers = {
         editTask: () => {
             if (!isEmpty(queryData)) {
+                const baseURL =
+                    queryData.spec_type === 'capture'
+                        ? authenticatedRoutes.captures.edit.fullPath
+                        : authenticatedRoutes.materializations.edit.fullPath;
+
                 navigate(
-                    getPathWithParams(
-                        authenticatedRoutes.captures.edit.fullPath,
-                        {
-                            [GlobalSearchParams.CONNECTOR_ID]:
-                                queryData.connector_id,
-                            [GlobalSearchParams.LIVE_SPEC_ID]: queryData.id,
-                            [GlobalSearchParams.LAST_PUB_ID]:
-                                queryData.last_pub_id,
-                        }
-                    )
+                    getPathWithParams(baseURL, {
+                        [GlobalSearchParams.CONNECTOR_ID]:
+                            queryData.connector_id,
+                        [GlobalSearchParams.LIVE_SPEC_ID]: queryData.id,
+                        [GlobalSearchParams.LAST_PUB_ID]: queryData.last_pub_id,
+                    })
                 );
             }
         },

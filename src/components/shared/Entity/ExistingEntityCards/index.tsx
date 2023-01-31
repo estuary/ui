@@ -8,6 +8,7 @@ import ExistingEntityCard from 'components/shared/Entity/ExistingEntityCards/Car
 import NewEntityCard from 'components/shared/Entity/ExistingEntityCards/Cards/New';
 import {
     useExistingEntity_queryData,
+    useExistingEntity_resetState,
     useExistingEntity_setQueryData,
 } from 'components/shared/Entity/ExistingEntityCards/Store/hooks';
 import ExistingEntityCardToolbar from 'components/shared/Entity/ExistingEntityCards/Toolbar';
@@ -18,13 +19,12 @@ import useGlobalSearchParams, {
 import { ToPostgrestFilterBuilder } from 'hooks/supabase-swr';
 import { useDistributedSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
 import { useEffect, useMemo, useState } from 'react';
+import { useUnmount } from 'react-use';
 
 const columnToSort = 'catalog_name';
 
 function ExistingEntityCards() {
-    const connectorTagId = useGlobalSearchParams(
-        GlobalSearchParams.CONNECTOR_ID
-    );
+    const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
@@ -35,6 +35,8 @@ function ExistingEntityCards() {
     const queryData = useExistingEntity_queryData();
     const setQueryData = useExistingEntity_setQueryData();
 
+    const resetExistingEntityState = useExistingEntity_resetState();
+
     const [searchQuery, setSearchQuery] = useState<string | null>(null);
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
@@ -43,7 +45,7 @@ function ExistingEntityCards() {
     > = useMemo(() => {
         return getLiveSpecs_existingTasks(
             entityType,
-            connectorTagId,
+            connectorId,
             searchQuery,
             [
                 {
@@ -52,7 +54,7 @@ function ExistingEntityCards() {
                 },
             ]
         );
-    }, [connectorTagId, entityType, searchQuery, sortDirection]);
+    }, [connectorId, entityType, searchQuery, sortDirection]);
 
     const { data: useSelectResponse } = useDistributedSelectNew<
         CaptureQueryWithSpec | MaterializationQueryWithSpec
@@ -66,6 +68,10 @@ function ExistingEntityCards() {
     useEffect(() => {
         setQueryData(selectData);
     }, [setQueryData, selectData]);
+
+    useUnmount(() => {
+        resetExistingEntityState();
+    });
 
     // TODO (optimization): Add an existing entity card loading state.
     return (

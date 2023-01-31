@@ -6,8 +6,10 @@ import AdminConnectors from 'components/admin/Connectors';
 import AdminCookies from 'components/admin/Cookies';
 import StorageMappings from 'components/admin/StorageMappings';
 import CaptureCreate from 'components/capture/Create';
+import CaptureCreateConfig from 'components/capture/Create/Config';
 import CaptureEdit from 'components/capture/Edit';
 import MaterializationCreate from 'components/materialization/Create';
+import MaterializationCreateConfig from 'components/materialization/Create/Config';
 import MaterializationEdit from 'components/materialization/Edit';
 import AuthenticatedOnlyContext from 'context/Authenticated';
 import { EntityContextProvider } from 'context/EntityContext';
@@ -75,6 +77,17 @@ const Authenticated = () => {
                             element={
                                 <EntityContextProvider value="capture">
                                     <WorkflowContextProvider value="capture_create">
+                                        <CaptureCreateConfig />
+                                    </WorkflowContextProvider>
+                                </EntityContextProvider>
+                            }
+                        />
+
+                        <Route
+                            path={authenticatedRoutes.captures.createNew.path}
+                            element={
+                                <EntityContextProvider value="capture">
+                                    <WorkflowContextProvider value="capture_create">
                                         <CaptureCreate />
                                     </WorkflowContextProvider>
                                 </EntityContextProvider>
@@ -108,6 +121,20 @@ const Authenticated = () => {
                         <Route
                             path={
                                 authenticatedRoutes.materializations.create.path
+                            }
+                            element={
+                                <EntityContextProvider value="materialization">
+                                    <WorkflowContextProvider value="materialization_create">
+                                        <MaterializationCreateConfig />
+                                    </WorkflowContextProvider>
+                                </EntityContextProvider>
+                            }
+                        />
+
+                        <Route
+                            path={
+                                authenticatedRoutes.materializations.createNew
+                                    .path
                             }
                             element={
                                 <EntityContextProvider value="materialization">
