@@ -37,7 +37,7 @@ interface RowsProps {
 }
 
 function Row({ row, stats, showEntityStatus }: RowProps) {
-    const detailsNavigator = useDetailsNavigator(
+    const { generatePath, navigateToPath } = useDetailsNavigator(
         authenticatedRoutes.collections.details.overview.fullPath
     );
     const theme = useTheme();
@@ -73,6 +73,7 @@ function Row({ row, stats, showEntityStatus }: RowProps) {
             <EntityName
                 name={row.catalog_name}
                 showEntityStatus={showEntityStatus}
+                detailsLink={generatePath(row)}
             />
 
             {hasLength(tenantDetails) ? (
@@ -88,7 +89,7 @@ function Row({ row, stats, showEntityStatus }: RowProps) {
             <Actions>
                 <ExpandDetails
                     onClick={() => {
-                        detailsNavigator(row);
+                        navigateToPath(row);
                     }}
                     expanded={false}
                 />

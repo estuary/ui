@@ -41,7 +41,7 @@ export interface RowProps {
 
 function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
     const navigate = useNavigate();
-    const detailsNavigator = useDetailsNavigator(
+    const { generatePath, navigateToPath } = useDetailsNavigator(
         authenticatedRoutes.captures.details.overview.fullPath
     );
     const theme = useTheme();
@@ -70,7 +70,7 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
                 })
             );
         },
-        toggleDetailsPanel: () => detailsNavigator(row),
+        openDetails: () => navigateToPath(row),
     };
 
     return (
@@ -85,6 +85,7 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
             <EntityName
                 name={row.catalog_name}
                 showEntityStatus={showEntityStatus}
+                detailsLink={generatePath(row)}
             />
 
             <Connector
@@ -119,7 +120,7 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
 
             <OptionsMenu
                 detailsExpanded={false}
-                toggleDetailsPanel={handlers.toggleDetailsPanel}
+                toggleDetailsPanel={handlers.openDetails}
                 editTask={handlers.editTask}
             />
         </TableRow>
