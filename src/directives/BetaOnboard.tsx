@@ -113,10 +113,6 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                 </Typography>
 
                 <Typography>
-                    <FormattedMessage id="tenant.message.2" />
-                </Typography>
-
-                <Typography>
                     <FormattedMessage
                         id="tenant.docs.message"
                         values={{
@@ -157,7 +153,9 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                         })}
                         error={nameMissing}
                         id="requestedTenant"
-                        label={<FormattedMessage id="common.tenant" />}
+                        label={
+                            <FormattedMessage id="common.tenant.creationForm" />
+                        }
                         value={requestedTenant}
                         onChange={(event) =>
                             handlers.update(event.target.value)
