@@ -143,11 +143,11 @@ function ExistingEntityCards() {
                         </Grid>
 
                         <Grid item xs={12}>
-                            <ExistingEntityCardSkeleton />
+                            <ExistingEntityCardSkeleton opacity="66%" />
                         </Grid>
 
                         <Grid item xs={12}>
-                            <ExistingEntityCardSkeleton />
+                            <ExistingEntityCardSkeleton opacity="33%" />
                         </Grid>
                     </>
                 ) : (

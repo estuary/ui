@@ -1,7 +1,11 @@
 import { Box, Skeleton } from '@mui/material';
 import { semiTransparentBackground } from 'context/Theme';
 
-function ExistingEntityCardSkeleton() {
+interface Props {
+    opacity?: string;
+}
+
+function ExistingEntityCardSkeleton({ opacity }: Props) {
     return (
         <Box
             sx={{
@@ -11,6 +15,7 @@ function ExistingEntityCardSkeleton() {
                 background: (theme) =>
                     semiTransparentBackground[theme.palette.mode],
                 borderRadius: 5,
+                opacity,
             }}
         >
             <Skeleton
