@@ -59,12 +59,12 @@ export interface CollectionQueryWithStats extends CollectionQuery {
 }
 
 const captureColumns = commonColumns.concat(['writes_to']).join(',');
-export const captureColumnsWithSpec = commonColumns
+const captureColumnsWithSpec = commonColumns
     .concat(['writes_to', 'spec'])
     .join(',');
 
 const materializationsColumns = commonColumns.concat(['reads_from']).join(',');
-export const materializationsColumnsWithSpec = commonColumns
+const materializationsColumnsWithSpec = commonColumns
     .concat(['reads_from', 'spec'])
     .join(',');
 
@@ -229,9 +229,7 @@ const getLiveSpecsByCatalogNames = async (
     return errors[0] ?? res[0];
 };
 
-const getLiveSpecsByConnectorId = async <
-    T = CaptureQueryWithSpec[] | MaterializationQueryWithSpec[]
->(
+const getLiveSpecsByConnectorId = async (
     specType: EntityWithCreateWorkflow,
     connectorTagId: string
 ) => {
@@ -247,7 +245,12 @@ const getLiveSpecsByConnectorId = async <
         .select(columns)
         .eq('connector_tag_id', connectorTagId)
         .eq('spec_type', specType)
-        .then(handleSuccess<T>, handleFailure);
+        .then(
+            handleSuccess<
+                CaptureQueryWithSpec[] | MaterializationQueryWithSpec[]
+            >,
+            handleFailure
+        );
 
     return data;
 };
