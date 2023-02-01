@@ -4,10 +4,6 @@ import {
     ButtonBase,
     Collapse,
     Paper,
-    styled,
-    Tooltip,
-    tooltipClasses,
-    TooltipProps,
     Typography,
     useTheme,
 } from '@mui/material';
@@ -17,6 +13,7 @@ import {
 } from 'api/liveSpecsExt';
 import { authenticatedRoutes } from 'app/routes';
 import ConnectorLogo from 'components/connectors/card/Logo';
+import CustomWidthTooltip from 'components/shared/CustomWidthTooltip';
 import {
     alternateConnectorImageBackgroundSx,
     monacoEditorComponentBackground,
@@ -36,17 +33,6 @@ interface Props {
 }
 
 const EDITOR_HEIGHT = 396;
-
-const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
-    <Tooltip {...props} classes={{ popper: className }} />
-))({
-    [`& .${tooltipClasses.tooltip}`]: {
-        maxWidth: 400,
-    },
-    [`& .${tooltipClasses.popper}`]: {
-        overflowWrap: 'break-word',
-    },
-});
 
 function ExistingEntityCard({ queryData }: Props) {
     const navigate = useNavigate();
