@@ -115,7 +115,7 @@ function ExistingEntityCards() {
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-            <Grid container spacing={{ xs: 2 }} sx={{ maxWidth: 1500 }}>
+            <Grid container spacing={{ xs: 2 }}>
                 <Grid item xs={12}>
                     <ExistingEntityCardToolbar
                         belowMd={belowMd}

@@ -4,6 +4,10 @@ import {
     ButtonBase,
     Collapse,
     Paper,
+    styled,
+    Tooltip,
+    tooltipClasses,
+    TooltipProps,
     Typography,
     useTheme,
 } from '@mui/material';
@@ -32,6 +36,17 @@ interface Props {
 }
 
 const EDITOR_HEIGHT = 396;
+
+const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
+    <Tooltip {...props} classes={{ popper: className }} />
+))({
+    [`& .${tooltipClasses.tooltip}`]: {
+        maxWidth: 400,
+    },
+    [`& .${tooltipClasses.popper}`]: {
+        overflowWrap: 'break-word',
+    },
+});
 
 function ExistingEntityCard({ queryData }: Props) {
     const navigate = useNavigate();
@@ -69,6 +84,7 @@ function ExistingEntityCard({ queryData }: Props) {
                 sx={{
                     'width': '100%',
                     'padding': 1,
+                    'justifyContent': 'flex-start',
                     'background': detailsExpanded
                         ? semiTransparentBackgroundIntensified[
                               theme.palette.mode
@@ -83,44 +99,44 @@ function ExistingEntityCard({ queryData }: Props) {
                     'borderRadius': 5,
                 }}
             >
+                <Box sx={alternateConnectorImageBackgroundSx}>
+                    <ConnectorLogo
+                        imageSrc={queryData.image}
+                        maxHeight={35}
+                        padding="0 0.5rem"
+                    />
+                </Box>
+
                 <Box
                     sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        flexGrow: 1,
+                        minWidth: 0,
+                        ml: 2,
+                        textAlign: 'left',
                     }}
                 >
-                    <Box sx={alternateConnectorImageBackgroundSx}>
-                        <ConnectorLogo
-                            imageSrc={queryData.image}
-                            maxHeight={35}
-                            padding="0 0.5rem"
-                        />
-                    </Box>
-
-                    <Box sx={{ ml: 2, textAlign: 'left' }}>
-                        <Typography sx={{ width: 'max-content', mb: 0.5 }}>
+                    <CustomWidthTooltip
+                        title={queryData.catalog_name}
+                        placement="bottom-start"
+                    >
+                        <Typography noWrap sx={{ mb: 0.5 }}>
                             {queryData.catalog_name}
                         </Typography>
+                    </CustomWidthTooltip>
 
-                        <Typography variant="caption">
-                            {intl.formatMessage(
-                                {
-                                    id: 'existingEntityCheck.existingCard.label.lastPublished',
-                                },
-                                {
-                                    date: intl.formatDate(
-                                        queryData.updated_at,
-                                        {
-                                            day: 'numeric',
-                                            month: 'long',
-                                            year: 'numeric',
-                                        }
-                                    ),
-                                }
-                            )}
-                        </Typography>
-                    </Box>
+                    <Typography variant="caption">
+                        {intl.formatMessage(
+                            {
+                                id: 'existingEntityCheck.existingCard.label.lastPublished',
+                            },
+                            {
+                                date: intl.formatDate(queryData.updated_at, {
+                                    day: 'numeric',
+                                    month: 'long',
+                                    year: 'numeric',
+                                }),
+                            }
+                        )}
+                    </Typography>
                 </Box>
             </ButtonBase>
 
