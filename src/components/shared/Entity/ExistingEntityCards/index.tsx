@@ -6,6 +6,7 @@ import {
 } from 'api/liveSpecsExt';
 import ExistingEntityCard from 'components/shared/Entity/ExistingEntityCards/Cards/Existing';
 import NewEntityCard from 'components/shared/Entity/ExistingEntityCards/Cards/New';
+import ExistingEntityCardSkeleton from 'components/shared/Entity/ExistingEntityCards/Skeleton';
 import {
     useExistingEntity_queryData,
     useExistingEntity_resetState,
@@ -74,7 +75,6 @@ function ExistingEntityCards() {
         resetExistingEntityState();
     });
 
-    // TODO (optimization): Add an existing entity card loading state.
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
             <Grid container spacing={{ xs: 2 }} sx={{ maxWidth: 1500 }}>
@@ -87,17 +87,31 @@ function ExistingEntityCards() {
                     />
                 </Grid>
 
-                {queryData && queryData.length > 0
-                    ? queryData.map((data, index) => (
-                          <Grid
-                              key={`existing-entity-card-${index}`}
-                              item
-                              xs={12}
-                          >
-                              <ExistingEntityCard queryData={data} />
-                          </Grid>
-                      ))
-                    : null}
+                {queryData && queryData.length > 0 ? (
+                    queryData.map((data, index) => (
+                        <Grid
+                            key={`existing-entity-card-${index}`}
+                            item
+                            xs={12}
+                        >
+                            <ExistingEntityCard queryData={data} />
+                        </Grid>
+                    ))
+                ) : (
+                    <>
+                        <Grid item xs={12}>
+                            <ExistingEntityCardSkeleton />
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <ExistingEntityCardSkeleton />
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <ExistingEntityCardSkeleton />
+                        </Grid>
+                    </>
+                )}
 
                 <Grid item xs={12} sx={{ my: 2 }}>
                     <Divider flexItem />
