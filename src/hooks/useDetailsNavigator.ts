@@ -15,7 +15,17 @@ type Row =
 function useDetailsNavigator(path: string) {
     const navigate = useNavigate();
 
-    const detailsNavigator = useCallback(
+    const generatePath = useCallback(
+        (row: Row) => {
+            return getPathWithParams(path, {
+                [GlobalSearchParams.CATALOG_NAME]: row.catalog_name,
+                [GlobalSearchParams.LAST_PUB_ID]: row.last_pub_id,
+            });
+        },
+        [path]
+    );
+
+    const navigateToPath = useCallback(
         (row: Row) => {
             navigate(
                 getPathWithParams(path, {
@@ -26,7 +36,7 @@ function useDetailsNavigator(path: string) {
         },
         [navigate, path]
     );
-    return detailsNavigator;
+    return { generatePath, navigateToPath };
 }
 
 export default useDetailsNavigator;
