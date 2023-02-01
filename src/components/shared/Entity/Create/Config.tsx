@@ -73,13 +73,6 @@ function EntityCreateConfig({ title, entityType }: Props) {
             <Collapse in={!showConnectorTiles} unmountOnExit>
                 {existingEntityStoreHydrated ? (
                     <>
-                        <Typography variant="h5" sx={{ mb: 1 }}>
-                            <FormattedMessage
-                                id="existingEntityCheck.heading"
-                                values={{ entityType, connectorName }}
-                            />
-                        </Typography>
-
                         <Typography sx={{ mb: 2 }}>
                             <FormattedMessage
                                 id="existingEntityCheck.instructions"
