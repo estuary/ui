@@ -62,7 +62,7 @@ function CollectionPicker({ readOnly = false }: Props) {
         CollectionData[]
     >([]);
     const [missingInput, setMissingInput] = useState(false);
-    const [inputValue, setInputValue] = useState<any>('');
+    const [inputValue, setInputValue] = useState('');
 
     const {
         liveSpecs,
