@@ -812,7 +812,7 @@ const Tenant: ResolvedIntlConfig['messages'] = {
     'tenant.input.placeholder': `acmeCo`,
     'tenant.errorMessage.empty': `You must provide a name before continuing.`,
 
-    'tenant.docs.message': `To see a detail explination please view our {link}`,
+    'tenant.docs.message': `To see a detailed explanation please view our {link}`,
     'tenant.docs.message.link': `https://docs.estuary.dev/concepts/catalogs/#namespace`,
 };
 
