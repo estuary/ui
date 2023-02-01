@@ -1,6 +1,5 @@
-import { Collapse, Typography } from '@mui/material';
+import { Box, CircularProgress, Collapse, Typography } from '@mui/material';
 import ConnectorTiles from 'components/ConnectorTiles';
-import FullPageSpinner from 'components/fullPage/Spinner';
 import ExistingEntityCards from 'components/shared/Entity/ExistingEntityCards';
 import {
     useExistingEntity_connectorName,
@@ -90,7 +89,22 @@ function EntityCreateConfig({ title, entityType }: Props) {
                         <ExistingEntityCards />
                     </>
                 ) : (
-                    <FullPageSpinner />
+                    <Box
+                        sx={{
+                            height: 500,
+                            borderRadius: 5,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: 1,
+                        }}
+                    >
+                        <CircularProgress />
+
+                        <Typography sx={{ ml: 2 }}>
+                            <FormattedMessage id="common.loading" />
+                        </Typography>
+                    </Box>
                 )}
             </Collapse>
         </>
