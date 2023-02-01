@@ -4,7 +4,6 @@ import {
     debounce,
     FilledInputProps,
     Grid,
-    SortDirection,
     SxProps,
     TextField,
     Theme,
@@ -22,13 +21,14 @@ import {
     useRef,
 } from 'react';
 import { useIntl } from 'react-intl';
+import { SortDirection } from 'types';
 import useConstant from 'use-constant';
 
 interface Props {
     belowMd: boolean;
     gridSpacing: number;
     setSearchQuery: Dispatch<SetStateAction<string | null>>;
-    setSortDirection: Dispatch<SetStateAction<'asc' | 'desc'>>;
+    setSortDirection: Dispatch<SetStateAction<SortDirection>>;
 }
 
 const inputProps: Partial<FilledInputProps> = {

@@ -20,6 +20,7 @@ import { ToPostgrestFilterBuilder } from 'hooks/supabase-swr';
 import { useDistributedSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
 import { useEffect, useMemo, useState } from 'react';
 import { useUnmount } from 'react-use';
+import { SortDirection } from 'types';
 
 const columnToSort = 'catalog_name';
 
@@ -38,7 +39,7 @@ function ExistingEntityCards() {
     const resetExistingEntityState = useExistingEntity_resetState();
 
     const [searchQuery, setSearchQuery] = useState<string | null>(null);
-    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+    const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
 
     const liveSpecQuery: ToPostgrestFilterBuilder<
         CaptureQueryWithSpec | MaterializationQueryWithSpec
