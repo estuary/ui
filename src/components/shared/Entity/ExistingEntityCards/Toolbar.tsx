@@ -115,7 +115,7 @@ function ExistingEntityCardToolbar({
                     justifyContent: 'flex-end',
                 }}
             >
-                <Grid item xs={12} md={4}>
+                <Grid item xs={8} md={4}>
                     <TextField
                         autoFocus
                         label={intl.formatMessage({

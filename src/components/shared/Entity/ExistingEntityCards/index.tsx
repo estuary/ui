@@ -1,4 +1,12 @@
-import { Box, Divider, Grid, useMediaQuery, useTheme } from '@mui/material';
+import {
+    Box,
+    Divider,
+    Grid,
+    Paper,
+    Typography,
+    useMediaQuery,
+    useTheme,
+} from '@mui/material';
 import {
     CaptureQueryWithSpec,
     getLiveSpecs_existingTasks,
@@ -14,14 +22,28 @@ import {
 } from 'components/shared/Entity/ExistingEntityCards/Store/hooks';
 import ExistingEntityCardToolbar from 'components/shared/Entity/ExistingEntityCards/Toolbar';
 import { useEntityType } from 'context/EntityContext';
+import { semiTransparentBackground } from 'context/Theme';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { ToPostgrestFilterBuilder } from 'hooks/supabase-swr';
 import { useDistributedSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { FormattedMessage } from 'react-intl';
 import { useUnmount } from 'react-use';
-import { SortDirection } from 'types';
+import {
+    SortDirection,
+    TableIntlConfig,
+    TableState,
+    TableStatuses,
+} from 'types';
+import { getEmptyTableHeader, getEmptyTableMessage } from 'utils/table-utils';
+
+const intlConfig: TableIntlConfig = {
+    header: 'existingEntityCheck.filter.unmatched.header',
+    message: 'existingEntityCheck.filter.unmatched.message',
+    disableDoclink: true,
+};
 
 const columnToSort = 'catalog_name';
 
@@ -30,6 +52,8 @@ function ExistingEntityCards() {
 
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
+
+    const isFiltering = useRef(false);
 
     const entityType = useEntityType();
 
@@ -41,6 +65,10 @@ function ExistingEntityCards() {
 
     const [searchQuery, setSearchQuery] = useState<string | null>(null);
     const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+
+    const [tableState, setTableState] = useState<TableState>({
+        status: TableStatuses.LOADING,
+    });
 
     const liveSpecQuery: ToPostgrestFilterBuilder<
         CaptureQueryWithSpec | MaterializationQueryWithSpec
@@ -58,7 +86,7 @@ function ExistingEntityCards() {
         );
     }, [connectorId, entityType, searchQuery, sortDirection]);
 
-    const { data: useSelectResponse } = useDistributedSelectNew<
+    const { data: useSelectResponse, isValidating } = useDistributedSelectNew<
         CaptureQueryWithSpec | MaterializationQueryWithSpec
     >(liveSpecQuery);
 
@@ -70,6 +98,16 @@ function ExistingEntityCards() {
     useEffect(() => {
         setQueryData(selectData);
     }, [setQueryData, selectData]);
+
+    useEffect(() => {
+        if (queryData && queryData.length > 0) {
+            setTableState({ status: TableStatuses.DATA_FETCHED });
+        } else if (isFiltering.current) {
+            setTableState({ status: TableStatuses.UNMATCHED_FILTER });
+        } else {
+            setTableState({ status: TableStatuses.NO_EXISTING_DATA });
+        }
+    }, [queryData, isValidating]);
 
     useUnmount(() => {
         resetExistingEntityState();
@@ -97,7 +135,8 @@ function ExistingEntityCards() {
                             <ExistingEntityCard queryData={data} />
                         </Grid>
                     ))
-                ) : (
+                ) : isValidating ||
+                  tableState.status === TableStatuses.LOADING ? (
                     <>
                         <Grid item xs={12}>
                             <ExistingEntityCardSkeleton />
@@ -111,6 +150,44 @@ function ExistingEntityCards() {
                             <ExistingEntityCardSkeleton />
                         </Grid>
                     </>
+                ) : (
+                    <Grid item xs={12}>
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                height: 230,
+                                borderRadius: 5,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'center',
+                                background:
+                                    semiTransparentBackground[
+                                        theme.palette.mode
+                                    ],
+                                padding: 1,
+                            }}
+                        >
+                            <Typography
+                                variant="h6"
+                                align="center"
+                                sx={{ mb: 1 }}
+                            >
+                                <FormattedMessage
+                                    id={getEmptyTableHeader(
+                                        tableState.status,
+                                        intlConfig
+                                    )}
+                                />
+                            </Typography>
+
+                            <Typography component="div" align="center">
+                                {getEmptyTableMessage(
+                                    tableState.status,
+                                    intlConfig
+                                )}
+                            </Typography>
+                        </Paper>
+                    </Grid>
                 )}
 
                 <Grid item xs={12} sx={{ my: 2 }}>

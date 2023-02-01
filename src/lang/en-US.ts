@@ -722,6 +722,8 @@ const ExistingEntityCheck: ResolvedIntlConfig['messages'] = {
     'existingEntityCheck.toolbar.label.sortDirection': `Sort Direction`,
 
     'existingEntityCheck.existingCard.label.lastPublished': `Last published on {date}`,
+    'existingEntityCheck.filter.unmatched.header': `No results found.`,
+    'existingEntityCheck.filter.unmatched.message': `We couldn't find any data matching your search. Please try a different filter.`,
 
     'existingEntityCheck.newCard.label': `New {connectorName} {entityType}`,
 };
