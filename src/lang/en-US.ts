@@ -31,6 +31,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.noUnDo': `This action cannot be undone.`,
     'common.version': `version`,
     'common.tenant': `Prefix`,
+    'common.tenant.creationForm': `Name`,
     'common.recommended': `Recommended`,
     'common.copied': `Copied`,
     'common.copyFailed': `Failed to copy`,
@@ -803,8 +804,7 @@ const Legal: ResolvedIntlConfig['messages'] = {
 
 const Tenant: ResolvedIntlConfig['messages'] = {
     'tenant.heading': `Organization Name`,
-    'tenant.message.1': `The organization name will be used as a prefix on everything you create within Estuary. This helps with scoping, controlling access, labeling ownership, and more.`,
-    'tenant.message.2': `This begins as private but becomes public if you share anything or invite others to join your organization.`,
+    'tenant.message.1': `The organization name will be used as a prefix for everything you create within Estuary.  It will only be public if you share data with other organizations.`,
 
     'tenant.expectations': `You can use letters, numbers, periods, underscores, and hyphens`,
     'tenant.expectations.error': `Sorry, only letters(a-z), numbers(0-9), periods(.), underscores(_), and hyphens(-) allowed.`,
