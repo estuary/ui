@@ -22,9 +22,11 @@ import {
 } from 'context/Theme';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { isEmpty } from 'lodash';
+import LogRocket from 'logrocket';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router';
+import { CustomEvents } from 'services/logrocket';
 import { stringifyJSON } from 'services/stringify';
 import { getPathWithParams } from 'utils/misc-utils';
 
@@ -33,6 +35,16 @@ interface Props {
 }
 
 const EDITOR_HEIGHT = 396;
+
+const trackEvent = (
+    logEvent: CustomEvents,
+    data: CaptureQueryWithSpec | MaterializationQueryWithSpec
+) => {
+    LogRocket.track(logEvent, {
+        id: data.id,
+        connector_tag_id: data.connector_id,
+    });
+};
 
 function ExistingEntityCard({ queryData }: Props) {
     const navigate = useNavigate();
@@ -45,6 +57,13 @@ function ExistingEntityCard({ queryData }: Props) {
     const handlers = {
         editTask: () => {
             if (!isEmpty(queryData)) {
+                const logEvent =
+                    queryData.spec_type === 'capture'
+                        ? CustomEvents.CAPTURE_CREATE_CONFIG_EDIT
+                        : CustomEvents.MATERIALIZATION_CREATE_CONFIG_EDIT;
+
+                trackEvent(logEvent, queryData);
+
                 const baseURL =
                     queryData.spec_type === 'capture'
                         ? authenticatedRoutes.captures.edit.fullPath

@@ -11,7 +11,16 @@ import {
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
+import LogRocket from 'logrocket';
 import { FormattedMessage } from 'react-intl';
+import { CustomEvents } from 'services/logrocket';
+import { DEFAULT_FILTER } from 'services/supabase';
+
+const trackEvent = (logEvent: CustomEvents, connectorId?: string) => {
+    LogRocket.track(logEvent, {
+        connector_tag_id: connectorId ?? DEFAULT_FILTER,
+    });
+};
 
 function NewEntityCard() {
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
@@ -25,6 +34,13 @@ function NewEntityCard() {
 
     const createNewTask = () => {
         if (entityType === 'capture' || entityType === 'materialization') {
+            const logEvent =
+                entityType === 'capture'
+                    ? CustomEvents.CAPTURE_CREATE_CONFIG_CREATE
+                    : CustomEvents.MATERIALIZATION_CREATE_CONFIG_CREATE;
+
+            trackEvent(logEvent, connectorId);
+
             navigateToCreate(entityType, connectorId, false, true);
         }
     };
