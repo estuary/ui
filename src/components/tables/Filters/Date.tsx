@@ -53,9 +53,13 @@ function DateFilter({ disabled, header, selectableTableStoreName }: Props) {
 
     return (
         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-            <Typography sx={{ whiteSpace: 'nowrap' }}>
+            <Typography
+                component="span"
+                sx={{ mt: 0.5, fontWeight: 500, whiteSpace: 'nowrap' }}
+            >
                 <FormattedMessage id={header} />
             </Typography>
+
             <Button
                 id="stat-filter-selector-button"
                 aria-controls={open ? 'stat-filter-selector-menu' : undefined}
@@ -76,6 +80,7 @@ function DateFilter({ disabled, header, selectableTableStoreName }: Props) {
             >
                 <FormattedMessage id={`filter.time.${currentOption}`} />
             </Button>
+
             <Menu
                 id="stat-filter-selector-menu"
                 anchorEl={anchorEl}

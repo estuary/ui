@@ -23,7 +23,7 @@ interface Props extends BaseComponentProps {
 }
 
 const SHARED_STYLING = {
-    borderRadius: 4,
+    borderRadius: 2,
     borderTopRightRadius: 0,
     borderBottomRightRadius: 0,
 };

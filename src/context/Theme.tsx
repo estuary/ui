@@ -14,7 +14,28 @@ import { useLocalStorage } from 'react-use';
 import { BaseComponentProps } from 'types';
 import { LocalStorageKeys } from 'utils/localStorage-utils';
 
-// Navigation width
+// The code block commented out directly below is how the typography variants can be extended
+// or existing variants disabled.
+//
+// declare module '@mui/material/styles' {
+//     interface TypographyVariants {
+//         sampleProp: React.CSSProperties;
+//     }
+
+//     // allow configuration using `createTheme`
+//     interface TypographyVariantsOptions {
+//         sampleProp?: React.CSSProperties;
+//     }
+// }
+
+// // Update the Typography's variant prop options
+// declare module '@mui/material/Typography' {
+//     interface TypographyPropsVariantOverrides {
+//         sampleProp: true;
+//     }
+// }
+
+// Navigation Width
 export enum NavWidths {
     MOBILE = 0,
     RAIL = 48,
@@ -304,18 +325,19 @@ export const secondaryButtonHoverBackground = {
 };
 
 const expandedRowBgColor = {
-    light: slate[50],
+    light: '#F7F9FC',
     dark: slate[800],
 };
 export const getEntityTableRowSx = (
     theme: Theme,
-    detailsExpanded: boolean
+    detailsExpanded: boolean,
+    pointerCursor?: 'pointer'
 ): SxProps<Theme> => {
     return {
         background: detailsExpanded
             ? expandedRowBgColor[theme.palette.mode]
             : null,
-        cursor: 'pointer',
+        cursor: pointerCursor ?? 'default',
     };
 };
 
@@ -400,6 +422,7 @@ const themeSettings = createTheme({
                 //   https://github.com/marmelab/react-admin/blob/master/packages/ra-ui-materialui/src/defaultTheme.ts
                 disableRipple: true,
                 sx: {
+                    'fontSize': 14,
                     '&.Mui-focusVisible::after, &:hover::after': {
                         backgroundColor: 'currentColor',
                         borderRadius: 'inherit',
@@ -426,6 +449,7 @@ const themeSettings = createTheme({
             },
             styleOverrides: {
                 root: {
+                    fontSize: 14,
                     borderRadius: 4,
                 },
             },
@@ -438,6 +462,7 @@ const themeSettings = createTheme({
                 root: {
                     paddingLeft: 8,
                     paddingRight: 8,
+                    fontSize: 14,
                 },
             },
         },
@@ -466,6 +491,12 @@ const themeSettings = createTheme({
             '"Segoe UI Emoji"',
             '"Segoe UI Symbol"',
         ].join(','),
+        body1: {
+            fontSize: 14,
+        },
+        button: {
+            fontSize: 14,
+        },
     },
 } as ThemeOptions);
 

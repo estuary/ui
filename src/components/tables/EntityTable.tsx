@@ -242,12 +242,15 @@ function EntityTable({
         return (
             <>
                 <TableRow sx={styling}>{loadingRow}</TableRow>
+
                 <TableRow sx={{ ...styling, opacity: '75%' }}>
                     {loadingRow}
                 </TableRow>
+
                 <TableRow sx={{ ...styling, opacity: '50%' }}>
                     {loadingRow}
                 </TableRow>
+
                 <TableRow
                     sx={{
                         ...styling,
@@ -277,6 +280,7 @@ function EntityTable({
                 <Stack direction="row" spacing={1}>
                     {enableSelection ? <Title header={header} /> : null}
                 </Stack>
+
                 <Toolbar
                     disableGutters
                     sx={{
@@ -299,6 +303,7 @@ function EntityTable({
                         }}
                     >
                         <SearchIcon sx={{ mb: 0.9, mr: 0.5, fontSize: 18 }} />
+
                         <TextField
                             id="capture-search-box"
                             label={intl.formatMessage({
@@ -314,6 +319,7 @@ function EntityTable({
             <Box sx={{ mb: 2, mx: 2 }}>
                 <TableContainer component={Box}>
                     <Table
+                        size="small"
                         sx={{ minWidth: 350 }}
                         aria-label={intl.formatMessage({
                             id: 'entityTable.title',
@@ -358,6 +364,7 @@ function EntityTable({
                                                     onClick={handlers.sort(
                                                         column.field
                                                     )}
+                                                    sx={{ pl: 1 }}
                                                 >
                                                     {column.headerIntlKey ? (
                                                         <FormattedMessage
@@ -389,15 +396,16 @@ function EntityTable({
                                     <TableCell colSpan={columns.length}>
                                         <Box
                                             sx={{
+                                                p: 2,
                                                 display: 'flex',
                                                 justifyContent: 'center',
                                             }}
                                         >
                                             <Box width={450}>
                                                 <Typography
-                                                    variant="h6"
+                                                    variant="subtitle2"
                                                     align="center"
-                                                    sx={{ mb: 2 }}
+                                                    sx={{ mb: 1 }}
                                                 >
                                                     <FormattedMessage
                                                         id={getEmptyTableHeader(
@@ -406,6 +414,7 @@ function EntityTable({
                                                         )}
                                                     />
                                                 </Typography>
+
                                                 <Typography component="div">
                                                     {getEmptyTableMessage(
                                                         tableState.status,

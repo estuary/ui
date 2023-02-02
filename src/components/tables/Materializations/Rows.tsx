@@ -73,7 +73,7 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
                 hover
                 onClick={() => handlers.clickRow(row.id)}
                 selected={isSelected}
-                sx={getEntityTableRowSx(theme, detailsExpanded)}
+                sx={getEntityTableRowSx(theme, detailsExpanded, 'pointer')}
             >
                 <RowSelect isSelected={isSelected} name={row.catalog_name} />
 

@@ -117,7 +117,7 @@ const IconMenu = ({
                     }
                 }
                 PaperProps={{
-                    elevation: 0,
+                    elevation: 1,
                     sx: {
                         ...arrowSx,
                         '& .MuiAvatar-root': {
@@ -126,14 +126,15 @@ const IconMenu = ({
                             mr: 1,
                             width: 32,
                         },
-                        'filter': 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                        // 'filter':
+                        //     'rgb(50 50 93 / 2%) 0px 2px 5px -1px, rgb(0 0 0 / 5%) 0px 1px 3px -1px',
                         'mt': 1.5,
                         'overflow': 'visible',
                         'bgcolor': (theme) =>
                             theme.palette.mode === 'dark'
                                 ? 'primary.dark'
-                                : indigo[200],
-                        'borderRadius': '10px',
+                                : 'white',
+                        'borderRadius': 3,
                     },
                 }}
             >

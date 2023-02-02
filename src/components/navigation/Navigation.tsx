@@ -129,8 +129,9 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                                 component="a"
                                 onClick={openNavigation}
                                 sx={{
-                                    whiteSpace: 'nowrap',
+                                    minHeight: 45,
                                     px: 1.5,
+                                    whiteSpace: 'nowrap',
                                 }}
                             >
                                 <ListItemIcon sx={{ minWidth: 36 }}>
