@@ -80,7 +80,7 @@ export const getPagination = (currPage: number, size: number) => {
     return { from, to };
 };
 
-const emptyRowHeight = 80;
+const emptyRowHeight = 45;
 const rowsPerPageOptions = [10, 25, 50];
 
 // TODO (tables) I think we should switch this to React Table soon

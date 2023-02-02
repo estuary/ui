@@ -69,7 +69,7 @@ function Row({ row, stats, showEntityStatus }: RowProps) {
         <>
             <TableRow
                 key={`Entity-${row.id}`}
-                sx={getEntityTableRowSx(theme, detailsExpanded, 'pointer')}
+                sx={getEntityTableRowSx(theme, detailsExpanded)}
             >
                 <EntityName
                     name={row.catalog_name}

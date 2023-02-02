@@ -1,7 +1,7 @@
 import { Container, Paper, Snackbar, Toolbar, useTheme } from '@mui/material';
 import { PageTitleProps } from 'components/navigation/PageTitle';
 import Topbar from 'components/navigation/TopBar';
-import { glassBkgWithBlur } from 'context/Theme';
+import { paperBackground } from 'context/Theme';
 import { ReactNode, useEffect, useState } from 'react';
 import useNotificationStore, {
     NotificationState,
@@ -23,7 +23,7 @@ const selectors = {
 
 function PageContainer({ children, hideBackground, pageTitleProps }: Props) {
     const theme = useTheme();
-    const backgroundSx = glassBkgWithBlur[theme.palette.mode];
+    const backgroundSx = paperBackground[theme.palette.mode];
 
     const notification = useNotificationStore(selectors.notification);
 

@@ -19,7 +19,7 @@ import {
 import MuiDrawer from '@mui/material/Drawer';
 import { authenticatedRoutes } from 'app/routes';
 import ModeSwitch from 'components/navigation/ModeSwitch';
-import { glassBkgWithBlur } from 'context/Theme';
+import { paperBackground } from 'context/Theme';
 import { useIntl } from 'react-intl';
 import ListItemLink from './ListItemLink';
 
@@ -41,7 +41,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
         onNavigationToggle(false);
     };
 
-    const paperBackground = glassBkgWithBlur[theme.palette.mode];
+    const backgroundSx = paperBackground[theme.palette.mode];
 
     return (
         <MuiDrawer
@@ -57,7 +57,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                         `${paperTheme.transitions.duration.shortest}ms`,
                     width,
                     border: 0,
-                    ...paperBackground,
+                    ...backgroundSx,
                 },
                 'transition': (drawerTheme) =>
                     `${drawerTheme.transitions.duration.shortest}ms`,

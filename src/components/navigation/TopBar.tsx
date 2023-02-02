@@ -5,7 +5,7 @@ import CompanyLogo from 'components/graphics/CompanyLogo';
 import HelpMenu from 'components/menus/HelpMenu';
 import UserMenu from 'components/menus/UserMenu';
 import PageTitle, { PageTitleProps } from 'components/navigation/PageTitle';
-import { glassBkgWithBlur, zIndexIncrement } from 'context/Theme';
+import { zIndexIncrement } from 'context/Theme';
 
 interface Props {
     pageTitleProps?: PageTitleProps;
@@ -17,14 +17,11 @@ const Topbar = ({ pageTitleProps }: Props) => {
         color: theme.palette.text.primary,
     };
 
-    const paperBackground = glassBkgWithBlur[theme.palette.mode];
-
     return (
         <MuiAppBar
             sx={{
                 position: 'fixed',
                 zIndex: theme.zIndex.drawer + zIndexIncrement,
-                ...paperBackground,
             }}
         >
             <Toolbar
@@ -40,6 +37,7 @@ const Topbar = ({ pageTitleProps }: Props) => {
                     divider={<Divider orientation="vertical" flexItem />}
                 >
                     <CompanyLogo />
+
                     {pageTitleProps ? (
                         <PageTitle
                             header={pageTitleProps.header}

@@ -80,6 +80,19 @@ export const sample_blue = {
     900: '#0F1B70',
 };
 
+export const sample_grey = {
+    100: '#F7F9FC',
+    200: '#F0F4F9',
+    300: '#E1E9F4',
+    400: '#D3DEEE',
+    500: '#C4D3E9',
+
+    600: '#1C2E3A',
+    700: '#16253B',
+    800: '#111C2C',
+    900: '#0B131E',
+};
+
 export const slate = {
     15: '#F6FAFF',
     25: '#EEF8FF',
@@ -127,7 +140,7 @@ const xs = 0;
 // TODO: Balance the light mode color palette.
 const lightMode: PaletteOptions = {
     background: {
-        default: '#F7F9FC',
+        default: sample_grey[100],
     },
     contrastThreshold,
     error: {
@@ -159,19 +172,19 @@ const lightMode: PaletteOptions = {
 
 const darkMode: PaletteOptions = {
     background: {
-        default: slate[800],
+        default: sample_grey[900],
     },
     contrastThreshold,
     mode: 'dark',
     primary: {
-        main: teal[300],
+        main: sample_blue[200],
         dark: teal[500],
     },
     secondary: {
         main: teal[100],
     },
     text: {
-        primary: slate[15],
+        primary: sample_grey[300],
         secondary: slate[100],
     },
     tonalOffset,
@@ -229,12 +242,12 @@ export const typographyTruncation: TypographyProps = {
 
 // TODO (Colors) need to follow a pattern where all colors are in the theme file.
 //      this is one way to handle the light/dark mode:
-export const glassBkgWithBlur = {
+export const paperBackground = {
     light: {
         background: 'white',
     },
     dark: {
-        background: 'rgb(13, 43, 67)',
+        background: sample_grey[800],
     },
 };
 
@@ -250,12 +263,12 @@ export const glassBkgWithoutBlur = {
 };
 
 export const semiTransparentBackground = {
-    light: 'rgba(216, 233, 245, 0.75)',
+    light: sample_grey[100],
     dark: 'rgba(172, 199, 220, 0.12)',
 };
 
 export const semiTransparentBackgroundIntensified = {
-    light: 'rgba(216, 233, 245, 1)',
+    light: sample_grey[200],
     dark: 'rgba(172, 199, 220, 0.18)',
 };
 
@@ -287,7 +300,9 @@ export const alertBackground = {
     light: 'white',
     dark: semiTransparentBackgroundIntensified.dark,
 };
-export const connectorCardLogoBackground = 'rgba(172, 199, 220, 0.30)';
+
+// RGB translation of #E1E9F4
+export const connectorCardLogoBackground = 'rgba(225, 233, 244, 0.30)';
 
 export const monacoEditorHeaderBackground = {
     light: 'white',
@@ -325,20 +340,24 @@ export const secondaryButtonHoverBackground = {
 };
 
 const expandedRowBgColor = {
-    light: '#F7F9FC',
+    light: sample_grey[100],
     dark: slate[800],
 };
 export const getEntityTableRowSx = (
     theme: Theme,
-    detailsExpanded: boolean,
-    pointerCursor?: 'pointer'
+    detailsExpanded: boolean
 ): SxProps<Theme> => {
     return {
         background: detailsExpanded
             ? expandedRowBgColor[theme.palette.mode]
             : null,
-        cursor: pointerCursor ?? 'default',
+        cursor: 'pointer',
     };
+};
+
+export const detailsPanelBgColor = {
+    light: sample_grey[300],
+    dark: sample_grey[900],
 };
 
 export const truncateTextSx: SxProps<Theme> = {
@@ -374,7 +393,7 @@ export const LINK_BUTTON_STYLING: SxProps<Theme> = {
     },
 };
 
-export const connectorImageBackgroundRadius = 5;
+export const connectorImageBackgroundRadius = 3;
 export const connectorImageBackgroundSx: SxProps<Theme> = {
     width: '100%',
     height: 125,
@@ -553,10 +572,10 @@ const ThemeProvider = ({ children }: BaseComponentProps) => {
                 MuiAppBar: {
                     styleOverrides: {
                         root: {
-                            backgroundColor:
+                            background:
                                 palette.mode === 'dark'
-                                    ? slate[800]
-                                    : slate[50],
+                                    ? sample_grey[800]
+                                    : 'white',
                             boxShadow: 'none',
                             color: palette.text?.primary,
                         },

@@ -13,7 +13,7 @@ import { createEditorStore } from 'components/editor/Store/create';
 import EditorAndLogs from 'components/tables/Details/EditorAndLogs';
 import ShardInformation from 'components/tables/Details/ShardInformation';
 import { LocalZustandProvider } from 'context/LocalZustand';
-import { getEntityTableRowSx, tableBorderSx } from 'context/Theme';
+import { detailsPanelBgColor, tableBorderSx } from 'context/Theme';
 import { concat } from 'lodash';
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -63,7 +63,8 @@ function DetailsPanel({
                         pb: 0,
                         mb: 2,
                         mt: 0,
-                        ...getEntityTableRowSx(theme, detailsExpanded),
+                        backgroundColor:
+                            detailsPanelBgColor[theme.palette.mode],
                     }}
                     unmountOnExit
                 >
