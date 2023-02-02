@@ -4,7 +4,7 @@ import { useEntityType } from 'context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import ShardInformation from './ShardInformation';
+import ShardInformation from '../Shard/Information';
 
 function Overview() {
     const entityType = useEntityType();

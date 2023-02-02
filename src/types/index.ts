@@ -185,6 +185,11 @@ export enum TableStatuses {
     UNMATCHED_FILTER = 'UNMATCHED_FILTER',
 }
 
+export interface TableColumns {
+    field: string | null;
+    headerIntlKey?: string | null;
+}
+
 export interface TableState {
     status: TableStatuses;
     error?: PostgrestError;

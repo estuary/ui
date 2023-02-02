@@ -1,7 +1,6 @@
 import SearchIcon from '@mui/icons-material/Search';
 import {
     Box,
-    Skeleton,
     Stack,
     Table,
     TableBody,
@@ -38,16 +37,16 @@ import { useEffectOnce } from 'react-use';
 import { SelectTableStoreNames } from 'stores/names';
 import {
     SortDirection,
+    TableColumns,
     TableIntlConfig,
     TableState,
     TableStatuses,
 } from 'types';
 import { getEmptyTableHeader, getEmptyTableMessage } from 'utils/table-utils';
+import TableLoadingRows from './Loading';
 import { RowSelectorProps } from './RowActions/types';
 
-export interface ColumnProps {
-    field: string | null;
-    headerIntlKey?: string | null;
+export interface ColumnProps extends TableColumns {
     renderHeader?: (
         index: number,
         storeName: SelectTableStoreNames
@@ -80,7 +79,6 @@ export const getPagination = (currPage: number, size: number) => {
     return { from, to };
 };
 
-const emptyRowHeight = 80;
 const rowsPerPageOptions = [10, 25, 50];
 
 // TODO (tables) I think we should switch this to React Table soon
@@ -229,40 +227,6 @@ function EntityTable({
         },
     };
 
-    const loadingRows = useMemo(() => {
-        const styling = { height: emptyRowHeight };
-        const loadingRow = columns.map((column, index) => {
-            return (
-                <TableCell key={`loading-${column.field}-${index}`}>
-                    <Skeleton variant="rectangular" />
-                </TableCell>
-            );
-        });
-
-        return (
-            <>
-                <TableRow sx={styling}>{loadingRow}</TableRow>
-                <TableRow sx={{ ...styling, opacity: '75%' }}>
-                    {loadingRow}
-                </TableRow>
-                <TableRow sx={{ ...styling, opacity: '50%' }}>
-                    {loadingRow}
-                </TableRow>
-                <TableRow
-                    sx={{
-                        ...styling,
-                        'opacity': '25%',
-                        '& .MuiTableCell-root': {
-                            borderBottom: 'transparent',
-                        },
-                    }}
-                >
-                    {loadingRow}
-                </TableRow>
-            </>
-        );
-    }, [columns]);
-
     const dataRows = useMemo(
         () =>
             selectData && selectData.length > 0
@@ -383,7 +347,7 @@ function EntityTable({
                                 dataRows
                             ) : isValidating ||
                               tableState.status === TableStatuses.LOADING ? (
-                                loadingRows
+                                <TableLoadingRows columns={columns} />
                             ) : (
                                 <TableRow>
                                     <TableCell colSpan={columns.length}>
