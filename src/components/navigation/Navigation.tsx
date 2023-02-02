@@ -12,8 +12,6 @@ import {
     ListItemIcon,
     ListItemText,
     Stack,
-    SxProps,
-    Theme,
     Toolbar,
     Tooltip,
     useTheme,
@@ -33,11 +31,7 @@ interface NavigationProps {
 
 const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
     const intl = useIntl();
-
     const theme = useTheme();
-    const iconSx: SxProps<Theme> = {
-        color: theme.palette.text.primary,
-    };
 
     const openNavigation = () => {
         onNavigationToggle(true);
@@ -71,6 +65,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
             }}
         >
             <Toolbar />
+
             <Stack
                 sx={{
                     height: '100%',
@@ -85,27 +80,27 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                         })}
                     >
                         <ListItemLink
-                            icon={<HomeIcon sx={iconSx} />}
+                            icon={<HomeIcon />}
                             title={authenticatedRoutes.home.title}
                             link={authenticatedRoutes.home.path}
                         />
                         <ListItemLink
-                            icon={<InputIcon sx={iconSx} />}
+                            icon={<InputIcon />}
                             title={authenticatedRoutes.captures.title}
                             link={authenticatedRoutes.captures.path}
                         />
                         <ListItemLink
-                            icon={<FormatListNumberedIcon sx={iconSx} />}
+                            icon={<FormatListNumberedIcon />}
                             title={authenticatedRoutes.collections.title}
                             link={authenticatedRoutes.collections.path}
                         />
                         <ListItemLink
-                            icon={<StorageIcon sx={iconSx} />}
+                            icon={<StorageIcon />}
                             title={authenticatedRoutes.materializations.title}
                             link={authenticatedRoutes.materializations.path}
                         />
                         <ListItemLink
-                            icon={<AdminPanelSettingsIcon sx={iconSx} />}
+                            icon={<AdminPanelSettingsIcon />}
                             title={authenticatedRoutes.admin.title}
                             link={authenticatedRoutes.admin.path}
                         />
@@ -113,23 +108,16 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                 </Box>
 
                 <Box>
-                    <Box
-                        sx={{
-                            pb: 1,
-                            pl: open ? 2 : 1,
-                        }}
-                    >
-                        <ModeSwitch hideText={!open} />
-                    </Box>
-
                     <List
                         aria-label={intl.formatMessage({
                             id: 'navigation.toggle.ariaLabel',
                         })}
                         sx={{
-                            py: 0,
+                            py: 1,
                         }}
                     >
+                        <ModeSwitch />
+
                         <Tooltip
                             title={intl.formatMessage({
                                 id: 'navigation.toggle.ariaLabel',
@@ -142,14 +130,13 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                                 onClick={openNavigation}
                                 sx={{
                                     whiteSpace: 'nowrap',
-                                    minHeight: 60,
-                                    maxHeight: 60,
+                                    px: 1.5,
                                 }}
                             >
-                                <ListItemIcon sx={{}}>
+                                <ListItemIcon sx={{ minWidth: 36 }}>
                                     <KeyboardDoubleArrowLeftIcon
                                         sx={{
-                                            ...iconSx,
+                                            color: theme.palette.text.primary,
                                             transform: open
                                                 ? 'scaleX(1)'
                                                 : 'scaleX(-1)',
@@ -157,6 +144,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                                         }}
                                     />
                                 </ListItemIcon>
+
                                 <ListItemText
                                     primary={intl.formatMessage({
                                         id: 'navigation.collapse',

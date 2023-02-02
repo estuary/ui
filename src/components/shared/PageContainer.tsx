@@ -1,4 +1,4 @@
-import { Box, Container, Snackbar, Toolbar, useTheme } from '@mui/material';
+import { Container, Paper, Snackbar, Toolbar, useTheme } from '@mui/material';
 import { PageTitleProps } from 'components/navigation/PageTitle';
 import Topbar from 'components/navigation/TopBar';
 import { glassBkgWithBlur } from 'context/Theme';
@@ -72,17 +72,21 @@ function PageContainer({ children, hideBackground, pageTitleProps }: Props) {
             ) : null}
 
             <Topbar pageTitleProps={pageTitleProps} />
+
             <Toolbar />
 
-            <Box
+            <Paper
                 sx={{
                     p: 2,
                     width: '100%',
+                    boxShadow:
+                        'rgb(50 50 93 / 2%) 0px 2px 5px -1px, rgb(0 0 0 / 5%) 0px 1px 3px -1px',
+                    borderRadius: 3,
                     ...backgroundMixin,
                 }}
             >
                 {children}
-            </Box>
+            </Paper>
         </Container>
     );
 }

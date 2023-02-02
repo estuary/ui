@@ -17,8 +17,8 @@ import { LocalStorageKeys } from 'utils/localStorage-utils';
 // Navigation width
 export enum NavWidths {
     MOBILE = 0,
-    RAIL = 57,
-    FULL = 225,
+    RAIL = 48,
+    FULL = 200,
 }
 
 // Colors
@@ -45,6 +45,18 @@ export const indigo = {
     600: '#27419F',
     700: '#132C85',
     800: '#051B6C',
+};
+
+export const sample_blue = {
+    100: '#DCE6FE',
+    200: '#BACDFD',
+    300: '#96B0F9',
+    400: '#7A97F3',
+    500: '#5072EB',
+    600: '#3A56CA',
+    700: '#283EA9',
+    800: '#192A88',
+    900: '#0F1B70',
 };
 
 export const slate = {
@@ -94,7 +106,7 @@ const xs = 0;
 // TODO: Balance the light mode color palette.
 const lightMode: PaletteOptions = {
     background: {
-        default: '#F5F6FA',
+        default: '#F7F9FC',
     },
     contrastThreshold,
     error: {
@@ -105,8 +117,8 @@ const lightMode: PaletteOptions = {
     },
     mode: 'light',
     primary: {
-        main: indigo[400],
-        dark: indigo[500],
+        main: sample_blue[600],
+        dark: sample_blue[400],
     },
     secondary: {
         main: indigo[600],
@@ -366,7 +378,7 @@ const themeSettings = createTheme({
         MuiAlert: {
             styleOverrides: {
                 root: {
-                    borderRadius: 10,
+                    borderRadius: 6,
                 },
             },
         },
@@ -414,7 +426,7 @@ const themeSettings = createTheme({
             },
             styleOverrides: {
                 root: {
-                    borderRadius: 10,
+                    borderRadius: 4,
                 },
             },
         },
