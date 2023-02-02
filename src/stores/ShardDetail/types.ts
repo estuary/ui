@@ -16,7 +16,7 @@ export enum ShardStatusMessageIds {
 }
 
 // The hex string additions correspond to slate[25] | slate[800].
-export type ShardStatusColor = SemanticColor | '#EEF8FF' | '#04192A';
+export type ShardStatusColor = SemanticColor | '#EEF8FF' | '#E1E9F4';
 
 export interface TaskShardDetails {
     messageId: ShardStatusMessageIds;

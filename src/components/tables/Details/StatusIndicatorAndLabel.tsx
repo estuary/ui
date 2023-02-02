@@ -25,7 +25,7 @@ function StatusIndicatorAndLabel({ shard }: Props) {
         useShardDetail_evaluateShardProcessingState();
 
     const defaultStatusColor: ShardStatusColor =
-        theme.palette.mode === 'dark' ? '#EEF8FF' : '#04192A';
+        theme.palette.mode === 'dark' ? '#EEF8FF' : '#E1E9F4';
 
     const statusMessageId = getShardStatusMessageId(shardId);
 
