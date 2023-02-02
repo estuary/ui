@@ -124,6 +124,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.login.github': `Sign in with GitHub`,
     'cta.register.github': `Register with GitHub`,
     'cta.configure': `Configure`,
+    'cta.showAll': `Show All`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
@@ -375,6 +376,7 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
 
     'entityTable.technicalDifficulties.header': `There was an issue getting your data.`,
     'entityTable.technicalDifficulties.message': `We apologize for the inconvenience. You'll find a message describing the issue at the top of the page.`,
+    'entityTable.moreEntities': `{count} more`,
 
     'optionMenu.ariaLabel': `Open Option Menu`,
     'optionMenu.tooltip': `Options`,
