@@ -86,9 +86,17 @@ function ShardInformation({ entityType }: Props) {
         background: theme.palette.background.paper,
     };
 
-    return taskShards.length > 0 ? (
+    if (!(taskShards.length > 0)) {
+        return null;
+    }
+
+    return (
         <>
-            <ShardErrors shards={taskShards} />
+            <Typography variant="subtitle1">
+                <FormattedMessage id="detailsPanel.status.header" />
+            </Typography>
+
+            <ShardErrors />
 
             <Grid item xs={12}>
                 <TableContainer>
@@ -188,7 +196,7 @@ function ShardInformation({ entityType }: Props) {
                 </TableContainer>
             </Grid>
         </>
-    ) : null;
+    );
 }
 
 export default ShardInformation;

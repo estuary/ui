@@ -52,11 +52,6 @@ const captures = {
             path: 'spec',
             fullPath: '/captures/details/spec',
         },
-        shards: {
-            title: 'routeTitle.captureDetails.shards',
-            path: 'shards',
-            fullPath: '/captures/details/shards',
-        },
         history: {
             title: 'routeTitle.captureDetails.history',
             path: 'history',
@@ -86,11 +81,6 @@ const collections = {
             title: 'routeTitle.collectionDetails.spec',
             path: 'spec',
             fullPath: '/collections/details/spec',
-        },
-        shards: {
-            title: 'routeTitle.collectionDetails.shards',
-            path: 'shards',
-            fullPath: '/collections/details/shards',
         },
         history: {
             title: 'routeTitle.collectionDetails.history',
@@ -126,11 +116,6 @@ const materializations = {
             title: 'routeTitle.materializationDetails.spec',
             path: 'spec',
             fullPath: '/materializations/details/spec',
-        },
-        shards: {
-            title: 'routeTitle.materializationDetails.shards',
-            path: 'shards',
-            fullPath: '/materializations/details/shards',
         },
         history: {
             title: 'routeTitle.materializationDetails.history',

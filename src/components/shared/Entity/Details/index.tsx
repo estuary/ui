@@ -10,7 +10,6 @@ import { useDetailsPage } from './context';
 import History from './History';
 import Overview from './Overview';
 import Spec from './Spec';
-import Status from './Status';
 import DetailTabs from './Tabs';
 
 function EntityDetails() {
@@ -38,9 +37,8 @@ function EntityDetails() {
                 </Stack>
 
                 <Box sx={{ m: 1 }}>
-                    {page === 'shards' ? (
-                        <Status />
-                    ) : page === 'history' ? (
+                    {/* TODO (details:history) not currently live but is here to make sure it can render*/}
+                    {page === 'history' ? (
                         <History />
                     ) : page === 'spec' ? (
                         <Spec />

@@ -22,14 +22,11 @@ function DetailTabs() {
                 label: 'details.tabs.spec',
                 path: 'spec',
             },
-            {
-                label: 'details.tabs.shardStatus',
-                path: 'shards',
-            },
-            {
-                label: 'details.tabs.history',
-                path: 'history',
-            },
+            // TODO (details:history) not currently live but is here to make sure it can render
+            // {
+            //     label: 'details.tabs.history',
+            //     path: 'history',
+            // },
         ];
 
         return response;

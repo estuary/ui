@@ -1,9 +1,10 @@
-import { Divider, Grid } from '@mui/material';
+import { Card, CardContent, Grid } from '@mui/material';
 import { DataPreview } from 'components/collection/DataPreview';
 import { useEntityType } from 'context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
+import ShardInformation from './ShardInformation';
 
 function Overview() {
     const entityType = useEntityType();
@@ -13,13 +14,20 @@ function Overview() {
     return (
         <Grid container spacing={2}>
             <Grid item xs={12}>
-                This is the overview page
+                <Card>
+                    <CardContent>
+                        <ShardInformation entityType={entityType} />
+                    </CardContent>
+                </Card>
             </Grid>
 
-            <Divider />
             {catalogName && isCollection ? (
                 <Grid item xs={12}>
-                    <DataPreview collectionName={catalogName} />
+                    <Card>
+                        <CardContent>
+                            <DataPreview collectionName={catalogName} />
+                        </CardContent>
+                    </Card>
                 </Grid>
             ) : null}
         </Grid>

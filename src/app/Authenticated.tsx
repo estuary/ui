@@ -83,18 +83,6 @@ const Authenticated = () => {
 
                             <Route
                                 path={
-                                    authenticatedRoutes.collections.details
-                                        .shards.path
-                                }
-                                element={
-                                    <DetailsPageContextProvider value="shards">
-                                        <CollectionDetails />
-                                    </DetailsPageContextProvider>
-                                }
-                            />
-
-                            <Route
-                                path={
                                     authenticatedRoutes.collections.details.spec
                                         .path
                                 }
@@ -165,18 +153,6 @@ const Authenticated = () => {
                                 }
                                 element={
                                     <DetailsPageContextProvider value="overview">
-                                        <CaptureDetails />
-                                    </DetailsPageContextProvider>
-                                }
-                            />
-
-                            <Route
-                                path={
-                                    authenticatedRoutes.captures.details.shards
-                                        .path
-                                }
-                                element={
-                                    <DetailsPageContextProvider value="shards">
                                         <CaptureDetails />
                                     </DetailsPageContextProvider>
                                 }
@@ -263,18 +239,6 @@ const Authenticated = () => {
                                 }
                                 element={
                                     <DetailsPageContextProvider value="overview">
-                                        <MaterializationDetails />
-                                    </DetailsPageContextProvider>
-                                }
-                            />
-
-                            <Route
-                                path={
-                                    authenticatedRoutes.materializations.details
-                                        .shards.path
-                                }
-                                element={
-                                    <DetailsPageContextProvider value="shards">
                                         <MaterializationDetails />
                                     </DetailsPageContextProvider>
                                 }

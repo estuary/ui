@@ -1,4 +1,4 @@
-import { Grid, Typography } from '@mui/material';
+import { Card, CardContent, Grid, Typography } from '@mui/material';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -12,15 +12,20 @@ function Spec() {
     return (
         <Grid container spacing={2}>
             <Grid item xs={12}>
-                <Typography variant="subtitle1">
-                    <FormattedMessage id="detailsPanel.specification.header" />
-                </Typography>
-                <EditorAndLogs
-                    collectionNames={[catalogName]}
-                    lastPubId={lastPubId}
-                    disableLogs={true}
-                    localZustandScope={true}
-                />
+                <Card>
+                    <CardContent>
+                        <Typography variant="subtitle1">
+                            <FormattedMessage id="detailsPanel.specification.header" />
+                        </Typography>
+
+                        <EditorAndLogs
+                            collectionNames={[catalogName]}
+                            lastPubId={lastPubId}
+                            disableLogs={true}
+                            localZustandScope={true}
+                        />
+                    </CardContent>
+                </Card>
             </Grid>
         </Grid>
     );
