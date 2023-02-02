@@ -20,7 +20,10 @@ import {
     useResourceConfig_setRestrictedDiscoveredCollections,
 } from 'stores/ResourceConfig/hooks';
 import useConstant from 'use-constant';
-import { detectRemoveOptionWithBackspace } from 'utils/mui-utils';
+import {
+    detectAutoCompleteInputReset,
+    detectRemoveOptionWithBackspace,
+} from 'utils/mui-utils';
 
 interface Props {
     readOnly?: boolean;
@@ -59,6 +62,7 @@ function CollectionPicker({ readOnly = false }: Props) {
         CollectionData[]
     >([]);
     const [missingInput, setMissingInput] = useState(false);
+    const [inputValue, setInputValue] = useState('');
 
     const {
         liveSpecs,
@@ -226,10 +230,19 @@ function CollectionPicker({ readOnly = false }: Props) {
                 getOptionLabel={(option) => option.name}
                 isOptionEqualToValue={(option, value) => isEqual(option, value)}
                 value={collectionValues}
+                inputValue={inputValue}
                 size="small"
                 filterSelectedOptions
                 fullWidth
                 onChange={handlers.updateCollections}
+                onInputChange={(_event, newInputValue, reason) => {
+                    const inputBeingReset =
+                        detectAutoCompleteInputReset(reason);
+
+                    if (!inputBeingReset) {
+                        setInputValue(newInputValue);
+                    }
+                }}
                 blurOnSelect={false}
                 disableCloseOnSelect
                 disableClearable
