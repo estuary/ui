@@ -12,7 +12,11 @@ function Spec() {
                             <FormattedMessage id="detailsPanel.specification.header" />
                         </Typography>
 
-                        <MonacoEditor localZustandScope={true} disabled />
+                        <MonacoEditor
+                            localZustandScope={true}
+                            disabled
+                            height={500}
+                        />
                     </CardContent>
                 </Card>
             </Grid>
