@@ -91,7 +91,7 @@ function ShardInformation({ entityType }: Props) {
 
             {taskShards.length > 0 ? (
                 <>
-                    <ShardErrors />
+                    <ShardErrors shards={taskShards} />
 
                     <Grid item xs={12}>
                         <TableContainer>
