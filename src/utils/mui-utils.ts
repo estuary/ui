@@ -1,4 +1,7 @@
-import { AutocompleteChangeReason } from '@mui/material';
+import {
+    AutocompleteChangeReason,
+    AutocompleteInputChangeReason,
+} from '@mui/material';
 import { KeyboardEvent, SyntheticEvent } from 'react';
 
 // This function detects whether the user is attempting to remove
@@ -14,4 +17,12 @@ export const detectRemoveOptionWithBackspace = (
         (event as KeyboardEvent).key === 'Backspace' &&
         reason === 'removeOption'
     );
+};
+
+// Allow us to detect when an autocomplete input is getting reset
+// after a user has selected
+export const detectAutoCompleteInputReset = (
+    reason: AutocompleteInputChangeReason
+) => {
+    return reason === 'reset';
 };

@@ -2,7 +2,7 @@ import { Box, TableCell } from '@mui/material';
 import { tableBorderSx } from 'context/Theme';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import ChipWrapper from './ChipWrapper';
+import ChipWrapper from './Wrapper';
 
 interface Props {
     disabled?: boolean;

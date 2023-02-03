@@ -120,7 +120,7 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
 
             <OptionsMenu
                 detailsExpanded={false}
-                toggleDetailsPanel={handlers.openDetails}
+                toggleDetailsPanel={() => {}}
                 editTask={handlers.editTask}
             />
         </TableRow>
