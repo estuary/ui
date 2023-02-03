@@ -1,4 +1,4 @@
-import { Card, CardContent, Grid } from '@mui/material';
+import { Divider, Grid } from '@mui/material';
 import { DataPreview } from 'components/collection/DataPreview';
 import { useEntityType } from 'context/EntityContext';
 import useGlobalSearchParams, {
@@ -14,20 +14,14 @@ function Overview() {
     return (
         <Grid container spacing={2}>
             <Grid item xs={12}>
-                <Card>
-                    <CardContent>
-                        <ShardInformation entityType={entityType} />
-                    </CardContent>
-                </Card>
+                <ShardInformation entityType={entityType} />
             </Grid>
 
             {catalogName && isCollection ? (
                 <Grid item xs={12}>
-                    <Card>
-                        <CardContent>
-                            <DataPreview collectionName={catalogName} />
-                        </CardContent>
-                    </Card>
+                    <Divider />
+
+                    <DataPreview collectionName={catalogName} />
                 </Grid>
             ) : null}
         </Grid>

@@ -1,6 +1,7 @@
 import {
     Box,
     Grid,
+    Stack,
     SxProps,
     Table,
     TableBody,
@@ -84,11 +85,16 @@ function ShardInformation({ entityType }: Props) {
     };
 
     return (
-        <>
-            <Typography variant="subtitle1">
+        <Stack direction="column" spacing={2} sx={{ m: 2 }}>
+            <Typography
+                component="span"
+                variant="h6"
+                sx={{
+                    alignItems: 'center',
+                }}
+            >
                 <FormattedMessage id="detailsPanel.status.header" />
             </Typography>
-
             {taskShards.length > 0 ? (
                 <>
                     <ShardErrors shards={taskShards} />
@@ -200,7 +206,7 @@ function ShardInformation({ entityType }: Props) {
                     </Grid>
                 </>
             ) : null}
-        </>
+        </Stack>
     );
 }
 

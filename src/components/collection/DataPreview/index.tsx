@@ -46,7 +46,7 @@ export function DataPreview({ collectionName }: Props) {
     const isLoading = journalsLoading || journalData.loading;
 
     return (
-        <Grid item xs={12}>
+        <Grid item xs={12} sx={{ m: 2 }}>
             <Stack
                 justifyContent="space-between"
                 direction="row"
@@ -58,7 +58,13 @@ export function DataPreview({ collectionName }: Props) {
                     spacing={2}
                     sx={{ alignItems: 'center' }}
                 >
-                    <Typography variant="subtitle1">
+                    <Typography
+                        component="span"
+                        variant="h6"
+                        sx={{
+                            alignItems: 'center',
+                        }}
+                    >
                         <FormattedMessage id="detailsPanel.dataPreview.header" />
                     </Typography>
 
