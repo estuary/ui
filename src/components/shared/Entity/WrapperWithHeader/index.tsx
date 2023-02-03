@@ -1,5 +1,6 @@
 import { Accordion, AccordionDetails } from '@mui/material';
 import Header from 'components/shared/Entity/WrapperWithHeader/Header';
+import { slateOutline } from 'context/Theme';
 import { ReactNode, useEffect, useState } from 'react';
 
 interface Props {
@@ -9,6 +10,7 @@ interface Props {
     disableClose?: boolean;
     mountClosed?: boolean;
     readOnly?: boolean;
+    hideBorder?: boolean;
 }
 
 const expandOnMount = (
@@ -31,6 +33,7 @@ function WrapperWithHeader({
     disableClose,
     mountClosed,
     readOnly,
+    hideBorder,
 }: Props) {
     const [expanded, setExpanded] = useState(
         expandOnMount(mountClosed, readOnly)
@@ -53,7 +56,7 @@ function WrapperWithHeader({
             expanded={expanded}
             onChange={handlers.change}
             sx={{
-                my: 2,
+                borderBottom: expanded || hideBorder ? 'none' : slateOutline,
             }}
         >
             <Header
@@ -63,6 +66,7 @@ function WrapperWithHeader({
             >
                 {header}
             </Header>
+
             <AccordionDetails>{children}</AccordionDetails>
         </Accordion>
     );

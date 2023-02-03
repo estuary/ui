@@ -18,8 +18,11 @@ function CatalogEditor({ messageId }: Props) {
         return (
             <WrapperWithHeader
                 header={
-                    <FormattedMessage id="entityCreate.catalogEditor.heading" />
+                    <Typography variant="subtitle1">
+                        <FormattedMessage id="entityCreate.catalogEditor.heading" />
+                    </Typography>
                 }
+                hideBorder
             >
                 <>
                     <Typography sx={{ mb: 2 }}>

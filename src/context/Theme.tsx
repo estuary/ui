@@ -227,7 +227,7 @@ export const defaultOutline = {
 };
 
 // TODO (optimization): Replace instances of outlineSx with slateOutline.
-export const slateOutline = `1px solid ${slate[200]}`;
+export const slateOutline = `1px solid ${sample_grey[400]}`;
 
 export const outlineSx: SxProps<Theme> = {
     border: `1px solid ${slate[200]}`,
@@ -563,7 +563,7 @@ const ThemeProvider = ({ children }: BaseComponentProps) => {
                             backgroundColor:
                                 palette.mode === 'dark'
                                     ? 'transparent'
-                                    : 'rgba(255, 255, 255, 0.6)',
+                                    : 'white',
                             boxShadow: 'none',
                             overflow: 'hidden',
                         },

@@ -16,7 +16,7 @@ function DetailsFormHeader({ messagePrefix }: Props) {
                 <ErrorOutlineIcon color="error" sx={{ pr: 1 }} />
             ) : null}
 
-            <Typography>
+            <Typography variant="subtitle1">
                 <FormattedMessage id={`${messagePrefix}.details.heading`} />
             </Typography>
         </>

@@ -4,6 +4,7 @@ import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec, updateDraftSpec } from 'api/draftSpecs';
 import CollectionConfig from 'components/collection/Config';
 import {
+    useEditorStore_id,
     useEditorStore_persistedDraftId,
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
@@ -276,6 +277,7 @@ function EntityEdit({
     const detailsFormChanged = useDetailsForm_changed();
 
     // Draft Editor Store
+    const draftId = useEditorStore_id();
     const setDraftId = useEditorStore_setId();
 
     const persistedDraftId = useEditorStore_persistedDraftId();
@@ -428,6 +430,7 @@ function EntityEdit({
                             <EndpointConfig
                                 connectorImage={imageTag.id}
                                 readOnly={readOnly.endpointConfigForm}
+                                hideBorder={!hasLength(imageTag.id)}
                             />
                         </ErrorBoundryWrapper>
                     ) : null}
@@ -437,6 +440,7 @@ function EntityEdit({
                             <CollectionConfig
                                 draftSpecs={taskDraftSpec}
                                 readOnly={readOnly.resourceConfigForm}
+                                hideBorder={!draftId}
                                 RediscoverButton={RediscoverButton}
                             />
                         </ErrorBoundryWrapper>

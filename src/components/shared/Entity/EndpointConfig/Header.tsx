@@ -17,19 +17,14 @@ function EndpointConfigHeader({ docsPath }: Props) {
                 <ErrorOutlineIcon color="error" sx={{ pr: 1 }} />
             ) : null}
 
-            <Typography>
+            <Typography variant="subtitle1">
                 <FormattedMessage id="entityCreate.endpointConfig.heading" />
             </Typography>
 
             {docsPath && docsPath.length > 0 ? (
                 <>
-                    <Divider
-                        orientation="vertical"
-                        flexItem
-                        sx={{
-                            mx: 1,
-                        }}
-                    />
+                    <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
+
                     <ExternalLink link={docsPath}>
                         <FormattedMessage id="entityCreate.ctas.docs" />
                     </ExternalLink>

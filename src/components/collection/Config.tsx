@@ -1,4 +1,5 @@
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import { Typography } from '@mui/material';
 import MessageWithLink from 'components/content/MessageWithLink';
 import BindingsMultiEditor from 'components/editor/Bindings';
 import AlertBox from 'components/shared/AlertBox';
@@ -16,12 +17,14 @@ import {
 interface Props {
     draftSpecs: DraftSpecQuery[];
     readOnly?: boolean;
+    hideBorder?: boolean;
     RediscoverButton?: ReactNode;
 }
 
 function CollectionConfig({
     draftSpecs,
     readOnly = false,
+    hideBorder,
     RediscoverButton,
 }: Props) {
     // Form State Store
@@ -43,15 +46,18 @@ function CollectionConfig({
 
     return (
         <WrapperWithHeader
+            hideBorder={hideBorder}
             header={
                 <>
                     {hasErrors ? (
                         <ErrorOutlineIcon color="error" sx={{ pr: 1 }} />
                     ) : null}
 
-                    <FormattedMessage
-                        id={`${messagePrefix}.collections.heading`}
-                    />
+                    <Typography variant="subtitle1">
+                        <FormattedMessage
+                            id={`${messagePrefix}.collections.heading`}
+                        />
+                    </Typography>
                 </>
             }
         >

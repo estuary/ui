@@ -1,6 +1,5 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AccordionSummary, Fade, Typography } from '@mui/material';
-import { slate } from 'context/Theme';
 import { FormattedMessage } from 'react-intl';
 import { BaseComponentProps } from 'types';
 
@@ -15,8 +14,11 @@ function Header({ children, disableClose, expanded, readOnly }: Props) {
         <AccordionSummary
             expandIcon={!disableClose ? <ExpandMoreIcon /> : undefined}
             sx={{
-                backgroundColor: (theme) =>
-                    theme.palette.mode === 'dark' ? 'transparent' : slate[50],
+                'backgroundColor': (theme) =>
+                    theme.palette.mode === 'dark' ? 'transparent' : 'white',
+                '& .MuiAccordionSummary-content': {
+                    alignItems: 'center',
+                },
             }}
         >
             {children}
