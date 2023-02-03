@@ -24,6 +24,7 @@ function Description({ sx, step }: Props) {
                 <Typography variant={belowMd ? 'h4' : 'h3'} component="span">
                     <FormattedMessage id={`home.hero.${step}.title`} />
                 </Typography>
+
                 <Typography variant={belowMd ? 'h6' : 'h5'} component="span">
                     <FormattedMessage
                         id={`home.hero.${step}.message`}

@@ -1,6 +1,6 @@
 import { useTheme } from '@mui/material';
-import darkWelcome from 'images/welcome_dark.png';
-import lightWelcome from 'images/welcome_light.png';
+import darkWelcome from 'images/welcome_dark.svg';
+import lightWelcome from 'images/welcome_light.svg';
 import { useIntl } from 'react-intl';
 
 function WelcomeImage() {

@@ -87,7 +87,7 @@ export const sample_grey = {
     400: '#D3DEEE',
     500: '#C4D3E9',
 
-    600: '#1C2E3A',
+    600: '#1C2E4A',
     700: '#16253B',
     800: '#111C2C',
     900: '#0B131E',
@@ -155,7 +155,7 @@ const lightMode: PaletteOptions = {
         dark: sample_blue[400],
     },
     secondary: {
-        main: indigo[600],
+        main: sample_blue[800],
     },
     success: {
         main: successMain,
@@ -181,7 +181,7 @@ const darkMode: PaletteOptions = {
         dark: teal[500],
     },
     secondary: {
-        main: teal[100],
+        main: sample_blue[400],
     },
     text: {
         primary: sample_grey[300],
