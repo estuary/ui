@@ -1,22 +1,30 @@
 import { supabaseClient, TABLES } from 'services/supabase';
-import { Entity } from 'types';
+import { Schema } from 'types';
 
 export interface PublicationSpecsExt_PublicationHistory {
-    draft_id: string;
+    live_spec_id: string;
+    pub_id: string;
+    detail: null;
+    published_at: string; //Date
+    spec: Schema;
+    spec_type: string;
+    user_id: string;
     catalog_name: string;
-    spec_type: Entity;
-    updated_at: string;
+    last_pub_id: string;
+    user_email: string;
+    user_full_name: null;
+    user_avatar_url: null;
 }
 
 export const getPublicationHistoryByCatalogName = (catalogName: string) => {
     // const data = await supabaseClient
-    // 	.from(TABLES.PUBLICATION_SPECS_EXT)
-    // 	.select(`*`)
-    // 	.eq('catalog_name', catalogName)
-    // 	.then(
-    // 		handleSuccess<PublicationSpecsExt_PublicationHistory>,
-    // 		handleFailure
-    // 	);
+    //  .from(TABLES.PUBLICATION_SPECS_EXT)
+    //  .select(`*`)
+    //  .eq('catalog_name', catalogName)
+    //  .then(
+    //      handleSuccess<PublicationSpecsExt_PublicationHistory>,
+    //      handleFailure
+    //  );
 
     // return data;
 
