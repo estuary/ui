@@ -22,11 +22,11 @@ function Hydrator({
 }: Props) {
     const { liveSpecs: publicationSpecs, error: pubSpecsError } =
         useLiveSpecs_spec(
-            `editorandlogs-${collectionNames?.join('-')}`,
+            `editorStore-${collectionNames?.join('-')}`,
             collectionNames
         );
-    const setSpecs = useEditorStore_setSpecs({ localScope: localZustandScope });
 
+    const setSpecs = useEditorStore_setSpecs({ localScope: localZustandScope });
     const setId = useEditorStore_setId({ localScope: localZustandScope });
 
     useEffect(() => {
