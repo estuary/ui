@@ -7,6 +7,7 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { EditorStoreNames } from 'stores/names';
+import ShardHydrator from '../Shard/Hydrator';
 import { useDetailsPage } from './context';
 import History from './History';
 import Overview from './Overview';
@@ -28,32 +29,34 @@ function EntityDetails() {
                 lastPubId={lastPubId}
                 localZustandScope={true}
             >
-                <Box>
-                    <Stack direction="column" spacing={2} sx={{ m: 1 }}>
-                        <Typography
-                            component="span"
-                            variant="h6"
-                            sx={{
-                                alignItems: 'center',
-                            }}
-                        >
-                            {catalogName}
-                        </Typography>
-                        <Divider />
-                        <DetailTabs />
-                    </Stack>
+                <ShardHydrator lastPubId={lastPubId} catalogName={catalogName}>
+                    <Box>
+                        <Stack direction="column" spacing={2} sx={{ m: 1 }}>
+                            <Typography
+                                component="span"
+                                variant="h6"
+                                sx={{
+                                    alignItems: 'center',
+                                }}
+                            >
+                                {catalogName}
+                            </Typography>
+                            <Divider />
+                            <DetailTabs />
+                        </Stack>
 
-                    <Box sx={{ m: 1 }}>
-                        {/* TODO (details:history) not currently live but is here to make sure it can render*/}
-                        {page === 'history' ? (
-                            <History />
-                        ) : page === 'spec' ? (
-                            <Spec />
-                        ) : (
-                            <Overview />
-                        )}
+                        <Box sx={{ m: 1 }}>
+                            {/* TODO (details:history) not currently live but is here to make sure it can render*/}
+                            {page === 'history' ? (
+                                <History />
+                            ) : page === 'spec' ? (
+                                <Spec />
+                            ) : (
+                                <Overview />
+                            )}
+                        </Box>
                     </Box>
-                </Box>
+                </ShardHydrator>
             </EditorHydrator>
         </LocalZustandProvider>
     );
