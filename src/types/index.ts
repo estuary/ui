@@ -144,16 +144,19 @@ export interface Grants {
     id: string;
 }
 
-export interface LiveSpecsExtBaseQuery {
+export interface LiveSpecsExtBareMinimum {
     catalog_name: string;
+    id: string;
+    spec_type: Entity;
+}
+
+export interface LiveSpecsExtBaseQuery extends LiveSpecsExtBareMinimum {
     connector_id: string;
     connector_image_name: string | null;
     connector_image_tag: string | null;
     image: string;
     title: string;
-    id: string;
     last_pub_id: string;
-    spec_type: Entity;
     updated_at: string;
 }
 
