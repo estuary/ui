@@ -4,7 +4,7 @@ import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import LogRocket from 'logrocket';
 import { useMemo } from 'react';
 import useSWR from 'swr';
-import { LiveSpecsExtBaseQuery } from 'types';
+import { LiveSpecsExtBareMinimum } from 'types';
 
 enum ErrorFlags {
     TOKEN_NOT_FOUND = 'Unauthenticated',
@@ -15,7 +15,7 @@ enum ErrorFlags {
 // These status do not change often so checking every 30 seconds is probably enough
 const INTERVAL = 30000;
 
-const useShardsList = <T extends LiveSpecsExtBaseQuery>(specs: T[]) => {
+const useShardsList = <T extends LiveSpecsExtBareMinimum>(specs: T[]) => {
     const { session } = Auth.useUser();
 
     const { data: gatewayConfig, refresh: refreshAccess } = useGatewayAuthToken(
