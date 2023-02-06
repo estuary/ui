@@ -91,6 +91,7 @@ const IconMenu = ({
                         aria-haspopup="true"
                         aria-expanded={open ? 'true' : undefined}
                         onClick={handlers.click}
+                        sx={{ color: (theme) => theme.palette.text.primary }}
                     >
                         {icon}
                     </IconButton>

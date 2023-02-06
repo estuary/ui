@@ -1,4 +1,3 @@
-import SearchIcon from '@mui/icons-material/Search';
 import {
     Box,
     Skeleton,
@@ -16,6 +15,7 @@ import {
     Toolbar,
     Typography,
 } from '@mui/material';
+import TablePaginationActions from 'components/tables/PaginationActions';
 import RowSelector from 'components/tables/RowActions/RowSelector';
 import {
     SelectableTableStore,
@@ -23,6 +23,7 @@ import {
 } from 'components/tables/Store';
 import Title from 'components/tables/Title';
 import { useZustandStore } from 'context/Zustand/provider';
+import { ArrowDown, Search } from 'iconoir-react';
 import { debounce } from 'lodash';
 import {
     ChangeEvent,
@@ -302,7 +303,12 @@ function EntityTable({
                             m: 0,
                         }}
                     >
-                        <SearchIcon sx={{ mb: 0.9, mr: 0.5, fontSize: 18 }} />
+                        <Search
+                            style={{
+                                marginBottom: '0.25rem',
+                                marginRight: '0.5rem',
+                            }}
+                        />
 
                         <TextField
                             id="capture-search-box"
@@ -351,6 +357,7 @@ function EntityTable({
                                         >
                                             {selectData && column.field ? (
                                                 <TableSortLabel
+                                                    IconComponent={ArrowDown}
                                                     active={
                                                         columnToSort ===
                                                         column.field
@@ -364,7 +371,12 @@ function EntityTable({
                                                     onClick={handlers.sort(
                                                         column.field
                                                     )}
-                                                    sx={{ pl: 1 }}
+                                                    sx={{
+                                                        '& .MuiTableSortLabel-icon':
+                                                            {
+                                                                fontSize: 14,
+                                                            },
+                                                    }}
                                                 >
                                                     {column.headerIntlKey ? (
                                                         <FormattedMessage
@@ -432,6 +444,9 @@ function EntityTable({
                             <TableFooter>
                                 <TableRow>
                                     <TablePagination
+                                        ActionsComponent={
+                                            TablePaginationActions
+                                        }
                                         rowsPerPageOptions={rowsPerPageOptions}
                                         count={selectDataCount}
                                         rowsPerPage={rowsPerPage}

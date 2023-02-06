@@ -1,6 +1,4 @@
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
 import { Button, ButtonGroup, Menu, MenuItem, Stack } from '@mui/material';
 import DeleteButton from 'components/tables/RowActions/Delete/Button';
 import DisableEnableButton from 'components/tables/RowActions/DisableEnable/Button';
@@ -10,6 +8,7 @@ import {
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
 import { useZustandStore } from 'context/Zustand/provider';
+import { MinusSquare, Square } from 'iconoir-react';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
@@ -56,11 +55,7 @@ function RowSelector({
                     variant="text"
                     onClick={handlers.toggleSelection}
                 >
-                    {hasSelections ? (
-                        <IndeterminateCheckBoxIcon />
-                    ) : (
-                        <CheckBoxOutlineBlankIcon />
-                    )}
+                    {hasSelections ? <MinusSquare /> : <Square />}
                 </Button>
                 <Button
                     id="row-selector-button"

@@ -6,7 +6,9 @@ interface Props {
 }
 
 const IconoirProvider = ({ children }: Props) => {
-    return <IconProvider>{children}</IconProvider>;
+    return (
+        <IconProvider iconProps={{ fontSize: '14px' }}>{children}</IconProvider>
+    );
 };
 
 export default IconoirProvider;

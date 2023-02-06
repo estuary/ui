@@ -1,4 +1,3 @@
-import FilterListIcon from '@mui/icons-material/FilterList';
 import {
     Button,
     CircularProgress,
@@ -10,6 +9,7 @@ import {
 import { StatsFilter } from 'api/stats';
 import { LINK_BUTTON_STYLING } from 'context/Theme';
 import { useZustandStore } from 'context/Zustand/provider';
+import { Filter } from 'iconoir-react';
 import React, { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
@@ -72,7 +72,7 @@ function DateFilter({ disabled, header, selectableTableStoreName }: Props) {
                     !disabled && stats === null ? (
                         <CircularProgress size={15} />
                     ) : (
-                        <FilterListIcon />
+                        <Filter style={{ fontSize: 13 }} />
                     )
                 }
                 disabled={disabled}
