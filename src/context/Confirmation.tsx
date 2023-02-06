@@ -6,10 +6,6 @@ import {
     DialogContent,
     DialogTitle,
 } from '@mui/material';
-import {
-    secondaryButtonBackground,
-    secondaryButtonHoverBackground,
-} from 'context/Theme';
 import { createContext, ReactNode, useContext, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { BaseComponentProps } from 'types';
@@ -101,19 +97,7 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
                 </DialogContent>
 
                 <DialogActions sx={{ p: '16px 24px' }}>
-                    <Button
-                        onClick={handlers.dismiss}
-                        sx={{
-                            'backgroundColor': (theme) =>
-                                secondaryButtonBackground[theme.palette.mode],
-                            '&:hover': {
-                                backgroundColor: (theme) =>
-                                    secondaryButtonHoverBackground[
-                                        theme.palette.mode
-                                    ],
-                            },
-                        }}
-                    >
+                    <Button variant="outlined" onClick={handlers.dismiss}>
                         <FormattedMessage id={settings.cancelText} />
                     </Button>
 

@@ -14,6 +14,7 @@ function SchemaEditButton() {
 
     return collectionData ? (
         <ButtonWithPopper
+            variant="text"
             disabled={isActive}
             messageId="workflows.collectionSelector.cta.schemaEdit"
             popper={

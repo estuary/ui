@@ -76,7 +76,6 @@ function RowSelector({
             </ButtonGroup>
 
             <ButtonGroup
-                variant="contained"
                 aria-label={intl.formatMessage({
                     id: 'capturesTable.ctaGroup.aria',
                 })}

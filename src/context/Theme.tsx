@@ -294,16 +294,6 @@ export const codeBackground = {
     dark: 'rgba(172, 199, 220, 0.12)',
 };
 
-export const secondaryButtonBackground = {
-    light: slate[100],
-    dark: slate[50],
-};
-
-export const secondaryButtonHoverBackground = {
-    light: slate[200],
-    dark: slate[100],
-};
-
 const expandedRowBgColor = {
     light: sample_grey[100],
     dark: slate[800],

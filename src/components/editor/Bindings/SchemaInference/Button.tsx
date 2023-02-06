@@ -103,6 +103,7 @@ function SchemaInferenceButton() {
         return collectionData ? (
             <>
                 <Button
+                    variant="text"
                     startIcon={<DataObject />}
                     onClick={openSchemaInferenceDialog}
                 >
