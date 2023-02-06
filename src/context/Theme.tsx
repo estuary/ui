@@ -152,7 +152,6 @@ const lightMode: PaletteOptions = {
     mode: 'light',
     primary: {
         main: sample_blue[600],
-        dark: sample_blue[400],
     },
     secondary: {
         main: sample_blue[800],
@@ -178,7 +177,6 @@ const darkMode: PaletteOptions = {
     mode: 'dark',
     primary: {
         main: sample_blue[200],
-        dark: teal[500],
     },
     secondary: {
         main: sample_blue[400],
