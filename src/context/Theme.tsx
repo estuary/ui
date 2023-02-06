@@ -226,24 +226,10 @@ export const typographyTruncation: TypographyProps = {
 
 // TODO (Colors) need to follow a pattern where all colors are in the theme file.
 //      this is one way to handle the light/dark mode:
-export const paperBackground = {
-    light: {
-        background: 'white',
-    },
-    dark: {
-        background: sample_grey[800],
-    },
-};
 
-export const glassBkgWithoutBlur = {
-    light: {
-        background: 'white',
-        borderRadius: 5,
-    },
-    dark: {
-        background: 'rgb(13, 43, 67)',
-        borderRadius: 5,
-    },
+export const paperBackground = {
+    light: 'white',
+    dark: sample_grey[800],
 };
 
 export const semiTransparentBackground = {
@@ -550,6 +536,13 @@ const ThemeProvider = ({ children }: BaseComponentProps) => {
                                     : 'white',
                             boxShadow: 'none',
                             color: palette.text?.primary,
+                        },
+                    },
+                },
+                MuiDialog: {
+                    styleOverrides: {
+                        paper: {
+                            borderRadius: 6,
                         },
                     },
                 },

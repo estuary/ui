@@ -23,7 +23,6 @@ const selectors = {
 
 function PageContainer({ children, hideBackground, pageTitleProps }: Props) {
     const theme = useTheme();
-    const backgroundSx = paperBackground[theme.palette.mode];
 
     const notification = useNotificationStore(selectors.notification);
 
@@ -45,7 +44,9 @@ function PageContainer({ children, hideBackground, pageTitleProps }: Props) {
         },
     };
 
-    const backgroundMixin = hideBackground ? {} : backgroundSx;
+    const backgroundMixin = hideBackground
+        ? 'none'
+        : paperBackground[theme.palette.mode];
 
     return (
         <Container
@@ -82,7 +83,7 @@ function PageContainer({ children, hideBackground, pageTitleProps }: Props) {
                     boxShadow:
                         'rgb(50 50 93 / 2%) 0px 2px 5px -1px, rgb(0 0 0 / 5%) 0px 1px 3px -1px',
                     borderRadius: 3,
-                    ...backgroundMixin,
+                    background: backgroundMixin,
                 }}
             >
                 {children}

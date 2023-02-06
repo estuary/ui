@@ -6,7 +6,7 @@ import {
     selectableTableStoreSelectors,
 } from 'components/tables/Store';
 import { useConfirmationModalContext } from 'context/Confirmation';
-import { glassBkgWithoutBlur } from 'context/Theme';
+import { paperBackground } from 'context/Theme';
 import { useZustandStore } from 'context/Zustand/provider';
 import { ReactNode, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -100,9 +100,8 @@ function RowActionButton({
                 maxWidth="md"
                 sx={{
                     '& .MuiPaper-root.MuiDialog-paper': {
-                        backgroundColor: (themes) =>
-                            glassBkgWithoutBlur[themes.palette.mode],
-                        borderRadius: 5,
+                        background: (theme) =>
+                            paperBackground[theme.palette.mode],
                     },
                 }}
             >

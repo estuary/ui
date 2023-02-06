@@ -41,8 +41,6 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
         onNavigationToggle(false);
     };
 
-    const backgroundSx = paperBackground[theme.palette.mode];
-
     return (
         <MuiDrawer
             anchor="left"
@@ -57,7 +55,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                         `${paperTheme.transitions.duration.shortest}ms`,
                     width,
                     border: 0,
-                    ...backgroundSx,
+                    background: paperBackground[theme.palette.mode],
                 },
                 'transition': (drawerTheme) =>
                     `${drawerTheme.transitions.duration.shortest}ms`,

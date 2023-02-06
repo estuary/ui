@@ -12,7 +12,7 @@ import SchemaApplicationErroredAlert from 'components/editor/Bindings/SchemaInfe
 import CancelButton from 'components/editor/Bindings/SchemaInference/Dialog/CancelButton';
 import InferenceDiffEditor from 'components/editor/Bindings/SchemaInference/Dialog/DiffEditor';
 import UpdateSchemaButton from 'components/editor/Bindings/SchemaInference/Dialog/UpdateSchemaButton';
-import { glassBkgWithoutBlur } from 'context/Theme';
+import { paperBackground } from 'context/Theme';
 import { Dispatch, SetStateAction } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
@@ -36,9 +36,7 @@ function SchemaInferenceDialog({ open, setOpen, height }: Props) {
             aria-labelledby={TITLE_ID}
             sx={{
                 '& .MuiPaper-root.MuiDialog-paper': {
-                    backgroundColor: (theme) =>
-                        glassBkgWithoutBlur[theme.palette.mode],
-                    borderRadius: 5,
+                    background: (theme) => paperBackground[theme.palette.mode],
                 },
             }}
         >

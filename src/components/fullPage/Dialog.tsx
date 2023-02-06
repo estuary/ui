@@ -1,6 +1,6 @@
-import { Box, Paper, useTheme } from '@mui/material';
+import { Box, Paper } from '@mui/material';
 import CompanyLogo from 'components/graphics/CompanyLogo';
-import { glassBkgWithoutBlur } from 'context/Theme';
+import { paperBackground } from 'context/Theme';
 import { BaseComponentProps } from 'types';
 
 interface Props extends BaseComponentProps {
@@ -8,10 +8,6 @@ interface Props extends BaseComponentProps {
 }
 
 function FullPageDialog({ children }: Props) {
-    const theme = useTheme();
-
-    const dialogBackground = glassBkgWithoutBlur[theme.palette.mode];
-
     return (
         <Box
             sx={{
@@ -32,7 +28,7 @@ function FullPageDialog({ children }: Props) {
                     alignItems: 'center',
                     justifyContent: 'center',
                     p: 3,
-                    ...dialogBackground,
+                    background: (theme) => paperBackground[theme.palette.mode],
                 }}
             >
                 <CompanyLogo />

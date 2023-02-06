@@ -7,7 +7,7 @@ import {
     DialogTitle,
 } from '@mui/material';
 import {
-    glassBkgWithoutBlur,
+    paperBackground,
     secondaryButtonBackground,
     secondaryButtonHoverBackground,
 } from 'context/Theme';
@@ -88,9 +88,8 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
                 aria-describedby={DESCRIPTION_ID}
                 sx={{
                     '& .MuiPaper-root.MuiDialog-paper': {
-                        backgroundColor: (theme) =>
-                            glassBkgWithoutBlur[theme.palette.mode],
-                        borderRadius: 5,
+                        background: (theme) =>
+                            paperBackground[theme.palette.mode],
                     },
                 }}
             >
