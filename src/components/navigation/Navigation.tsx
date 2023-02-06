@@ -1,10 +1,4 @@
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 //TODO (UI / UX) - These icons are not final
-import HomeIcon from '@mui/icons-material/Home';
-import InputIcon from '@mui/icons-material/Input';
-import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
-import StorageIcon from '@mui/icons-material/Storage';
 import {
     Box,
     List,
@@ -20,6 +14,14 @@ import MuiDrawer from '@mui/material/Drawer';
 import { authenticatedRoutes } from 'app/routes';
 import ModeSwitch from 'components/navigation/ModeSwitch';
 import { paperBackground } from 'context/Theme';
+import {
+    CloudDownload,
+    CloudUpload,
+    DatabaseScript,
+    FastArrowLeft,
+    HomeSimple,
+    Settings,
+} from 'iconoir-react';
 import { useIntl } from 'react-intl';
 import ListItemLink from './ListItemLink';
 
@@ -78,27 +80,27 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                         })}
                     >
                         <ListItemLink
-                            icon={<HomeIcon />}
+                            icon={<HomeSimple />}
                             title={authenticatedRoutes.home.title}
                             link={authenticatedRoutes.home.path}
                         />
                         <ListItemLink
-                            icon={<InputIcon />}
+                            icon={<CloudUpload />}
                             title={authenticatedRoutes.captures.title}
                             link={authenticatedRoutes.captures.path}
                         />
                         <ListItemLink
-                            icon={<FormatListNumberedIcon />}
+                            icon={<DatabaseScript />}
                             title={authenticatedRoutes.collections.title}
                             link={authenticatedRoutes.collections.path}
                         />
                         <ListItemLink
-                            icon={<StorageIcon />}
+                            icon={<CloudDownload />}
                             title={authenticatedRoutes.materializations.title}
                             link={authenticatedRoutes.materializations.path}
                         />
                         <ListItemLink
-                            icon={<AdminPanelSettingsIcon />}
+                            icon={<Settings />}
                             title={authenticatedRoutes.admin.title}
                             link={authenticatedRoutes.admin.path}
                         />
@@ -133,9 +135,8 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                                 }}
                             >
                                 <ListItemIcon sx={{ minWidth: 36 }}>
-                                    <KeyboardDoubleArrowLeftIcon
-                                        sx={{
-                                            color: theme.palette.text.primary,
+                                    <FastArrowLeft
+                                        style={{
                                             transform: open
                                                 ? 'scaleX(1)'
                                                 : 'scaleX(-1)',
