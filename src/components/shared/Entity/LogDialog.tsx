@@ -31,9 +31,8 @@ function LogDialog({ open, token, actionComponent, title }: Props) {
             sx={{
                 'minWidth': (theme) => theme.breakpoints.values.sm,
                 '& .MuiDialog-paper': {
-                    backgroundColor: (theme) =>
+                    background: (theme) =>
                         logDialogBackground[theme.palette.mode],
-                    borderRadius: 5,
                 },
             }}
         >

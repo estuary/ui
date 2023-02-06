@@ -6,7 +6,7 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
-import { logDialogBackground, popperIndex } from 'context/Theme';
+import { paperBackground, popperIndex } from 'context/Theme';
 import { Dispatch, ReactNode, SetStateAction } from 'react';
 
 interface Props {
@@ -45,10 +45,9 @@ function PopperWrapper({ children, anchorEl, open, setOpen }: Props) {
                             sx={{
                                 maxWidth: belowMd ? 450 : 650,
                                 p: 2,
-                                borderRadius: 5,
+                                borderRadius: 3,
                                 boxShadow: 2,
-                                bgcolor:
-                                    logDialogBackground[theme.palette.mode],
+                                bgcolor: paperBackground[theme.palette.mode],
                             }}
                         >
                             {children}
