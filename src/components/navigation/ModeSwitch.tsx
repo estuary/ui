@@ -1,5 +1,3 @@
-import ModeNightIcon from '@mui/icons-material/ModeNight';
-import WbSunnyIcon from '@mui/icons-material/WbSunny';
 import {
     ListItemButton,
     ListItemIcon,
@@ -8,6 +6,7 @@ import {
     useTheme,
 } from '@mui/material';
 import { useColorMode } from 'context/Theme';
+import { HalfMoon, SunLight } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 function ModeSwitch() {
@@ -34,9 +33,9 @@ function ModeSwitch() {
                     sx={{ minWidth: 36, color: theme.palette.text.primary }}
                 >
                     {theme.palette.mode === 'dark' ? (
-                        <ModeNightIcon />
+                        <HalfMoon />
                     ) : (
-                        <WbSunnyIcon />
+                        <SunLight />
                     )}
                 </ListItemIcon>
 
