@@ -38,12 +38,12 @@ function ConnectorCard({
                     <Box>
                         <Stack
                             sx={{
-                                marginBottom: !recommended ? 1 : 2,
+                                marginBottom: recommended ? 1 : 2,
                             }}
                         >
                             <Box
                                 sx={
-                                    !recommended
+                                    recommended
                                         ? {
                                               ...connectorImageBackgroundSx,
                                               mb: 0,
@@ -69,7 +69,7 @@ function ConnectorCard({
                                 </Stack>
                             </Box>
 
-                            {!recommended ? (
+                            {recommended ? (
                                 <Box
                                     sx={{
                                         bgcolor: '#D2DEEE',
