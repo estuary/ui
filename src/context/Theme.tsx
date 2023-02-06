@@ -156,8 +156,8 @@ const lightMode: PaletteOptions = {
         main: successMain,
     },
     text: {
-        primary: slate[800],
-        secondary: indigo[800],
+        primary: sample_grey[900],
+        secondary: sample_blue[800],
     },
     tonalOffset,
     warning: {
@@ -179,7 +179,7 @@ const darkMode: PaletteOptions = {
     },
     text: {
         primary: sample_grey[300],
-        secondary: slate[100],
+        secondary: sample_grey[500],
     },
     tonalOffset,
 };
