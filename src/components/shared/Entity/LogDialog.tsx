@@ -5,7 +5,6 @@ import {
     DialogTitle,
 } from '@mui/material';
 import Logs from 'components/logs';
-import { logDialogBackground } from 'context/Theme';
 import { ReactNode } from 'react';
 import { useFormStateStore_message } from 'stores/FormState/hooks';
 import ErrorBoundryWrapper from '../ErrorBoundryWrapper';
@@ -29,11 +28,7 @@ function LogDialog({ open, token, actionComponent, title }: Props) {
             fullWidth
             aria-labelledby={TITLE_ID}
             sx={{
-                'minWidth': (theme) => theme.breakpoints.values.sm,
-                '& .MuiDialog-paper': {
-                    background: (theme) =>
-                        logDialogBackground[theme.palette.mode],
-                },
+                minWidth: (theme) => theme.breakpoints.values.sm,
             }}
         >
             <DialogTitle id={TITLE_ID}>{title}</DialogTitle>

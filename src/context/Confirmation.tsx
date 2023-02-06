@@ -7,7 +7,6 @@ import {
     DialogTitle,
 } from '@mui/material';
 import {
-    paperBackground,
     secondaryButtonBackground,
     secondaryButtonHoverBackground,
 } from 'context/Theme';
@@ -86,12 +85,6 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
                 onClose={handlers.dismiss}
                 aria-labelledby={LABEL_ID}
                 aria-describedby={DESCRIPTION_ID}
-                sx={{
-                    '& .MuiPaper-root.MuiDialog-paper': {
-                        background: (theme) =>
-                            paperBackground[theme.palette.mode],
-                    },
-                }}
             >
                 <DialogTitle id={LABEL_ID}>
                     <FormattedMessage id={settings.title} />

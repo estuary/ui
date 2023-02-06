@@ -294,11 +294,6 @@ export const codeBackground = {
     dark: 'rgba(172, 199, 220, 0.12)',
 };
 
-export const logDialogBackground = {
-    light: sample_grey[100],
-    dark: sample_grey[800],
-};
-
 export const secondaryButtonBackground = {
     light: slate[100],
     dark: slate[50],
@@ -443,13 +438,6 @@ const themeSettings = createTheme({
                 },
             },
         },
-        MuiDialog: {
-            styleOverrides: {
-                paper: {
-                    borderRadius: 6,
-                },
-            },
-        },
         MuiTabs: {
             ...baseBackground,
             defaultProps: {
@@ -543,6 +531,17 @@ const ThemeProvider = ({ children }: BaseComponentProps) => {
                                     : 'white',
                             boxShadow: 'none',
                             color: palette.text?.primary,
+                        },
+                    },
+                },
+                MuiDialog: {
+                    styleOverrides: {
+                        paper: {
+                            background:
+                                paperBackground[
+                                    palette.mode === 'dark' ? 'dark' : 'light'
+                                ],
+                            borderRadius: 6,
                         },
                     },
                 },

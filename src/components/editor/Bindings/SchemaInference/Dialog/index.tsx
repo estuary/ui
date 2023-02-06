@@ -12,7 +12,6 @@ import SchemaApplicationErroredAlert from 'components/editor/Bindings/SchemaInfe
 import CancelButton from 'components/editor/Bindings/SchemaInference/Dialog/CancelButton';
 import InferenceDiffEditor from 'components/editor/Bindings/SchemaInference/Dialog/DiffEditor';
 import UpdateSchemaButton from 'components/editor/Bindings/SchemaInference/Dialog/UpdateSchemaButton';
-import { paperBackground } from 'context/Theme';
 import { Dispatch, SetStateAction } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
@@ -30,16 +29,7 @@ function SchemaInferenceDialog({ open, setOpen, height }: Props) {
     const currentCollection = useResourceConfig_currentCollection();
 
     return currentCollection ? (
-        <Dialog
-            open={open}
-            maxWidth="lg"
-            aria-labelledby={TITLE_ID}
-            sx={{
-                '& .MuiPaper-root.MuiDialog-paper': {
-                    background: (theme) => paperBackground[theme.palette.mode],
-                },
-            }}
-        >
+        <Dialog open={open} maxWidth="lg" aria-labelledby={TITLE_ID}>
             <DialogTitle
                 component="div"
                 sx={{ display: 'flex', alignItems: 'center' }}
