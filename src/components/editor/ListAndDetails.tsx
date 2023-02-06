@@ -5,7 +5,7 @@ import {
     DEFAULT_HEIGHT,
     DEFAULT_TOOLBAR_HEIGHT,
 } from 'components/editor/MonacoEditor';
-import { reflexSplitterBackground, slateOutline } from 'context/Theme';
+import { defaultOutline, reflexSplitterBackground } from 'context/Theme';
 import { ReactNode } from 'react';
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
 
@@ -53,7 +53,9 @@ function ListAndDetails({
                             height: '100%',
                             display: 'flex',
                             flexDirection: 'column',
-                            border: displayBorder ? slateOutline : undefined,
+                            border: displayBorder
+                                ? defaultOutline[theme.palette.mode]
+                                : undefined,
                         }}
                     >
                         {list}
@@ -78,7 +80,9 @@ function ListAndDetails({
                     minSize={MIN_RESIZE_WIDTH}
                     style={{
                         overflow: 'auto',
-                        border: displayBorder ? slateOutline : undefined,
+                        border: displayBorder
+                            ? defaultOutline[theme.palette.mode]
+                            : undefined,
                     }}
                 >
                     <div className="pane-content">{details}</div>

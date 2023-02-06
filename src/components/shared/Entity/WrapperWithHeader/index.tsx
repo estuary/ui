@@ -1,6 +1,6 @@
-import { Accordion, AccordionDetails } from '@mui/material';
+import { Accordion, AccordionDetails, useTheme } from '@mui/material';
 import Header from 'components/shared/Entity/WrapperWithHeader/Header';
-import { slateOutline } from 'context/Theme';
+import { defaultOutline } from 'context/Theme';
 import { ReactNode, useEffect, useState } from 'react';
 
 interface Props {
@@ -35,6 +35,8 @@ function WrapperWithHeader({
     readOnly,
     hideBorder,
 }: Props) {
+    const theme = useTheme();
+
     const [expanded, setExpanded] = useState(
         expandOnMount(mountClosed, readOnly)
     );
@@ -56,7 +58,10 @@ function WrapperWithHeader({
             expanded={expanded}
             onChange={handlers.change}
             sx={{
-                borderBottom: expanded || hideBorder ? 'none' : slateOutline,
+                borderBottom:
+                    expanded || hideBorder
+                        ? 'none'
+                        : defaultOutline[theme.palette.mode],
             }}
         >
             <Header

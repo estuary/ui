@@ -1,5 +1,5 @@
 import { Chip as MuiChip, styled, Tooltip } from '@mui/material';
-import { outlineSx } from 'context/Theme';
+import { defaultOutline } from 'context/Theme';
 import { FormattedMessage } from 'react-intl';
 import { stripPathing } from 'utils/misc-utils';
 
@@ -40,12 +40,12 @@ function ChipWrapper({ disabled, onClick, stripPath, title, val }: Props) {
                     disabled={disabled}
                     onClick={onClick}
                     sx={{
-                        ...outlineSx,
+                        'maxWidth': 200,
+                        'border': (theme) => defaultOutline[theme.palette.mode],
                         // TODO (typing) Figure out how to use truncateTextSx here
                         'whiteSpace': 'nowrap',
                         'overflow': 'hidden',
                         'textOverflow': 'ellipsis',
-                        'maxWidth': 200,
                         '&:hover': {
                             ...chipListHoverStyling,
                             background: (hoverTheme) =>

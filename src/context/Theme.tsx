@@ -120,10 +120,6 @@ export const infoMain: SemanticColor = '#4FD6FF';
 const contrastThreshold = 5;
 const tonalOffset = 0.1;
 
-// Borders
-// const borderWidth = 2;
-// const borderColor = "rgba(0, 0, 0, 0.13)";
-
 export const logoColors = {
     purple: '#5974ea',
     teal: '#75d4d5',
@@ -205,30 +201,20 @@ const chipDeleteIndex = buttonHoverIndex + zIndexIncrement;
 // JSONForms accordion is hardcoded to 20 so making this "1 higher"
 const accordionButton = zIndexIncrement * 5;
 
-// Styles
+// Borders
 
-// TODO (optimization): Store the outline style as a detached configuration that
-//   can be applied to the assortment of CSS border properties.
-export const tableBorderSx: SxProps<Theme> = {
-    borderBottom: `1px solid ${slate[200]}`,
+// Light is an RGB translation of #0B131E; Dark is an RGB translation of #F7F9FC.
+export const defaultOutline = {
+    light: `1px solid rgba(11, 19, 30, 0.12)`,
+    dark: `1px solid rgba(247, 249, 252, 0.12)`,
 };
+
+// Styles
 
 export const tableAlternateRowsSx: SxProps<Theme> = {
     '& tr:nth-of-type(even)': {
         backgroundColor: (theme) => theme.palette.action.hover,
     },
-};
-
-export const defaultOutline = {
-    light: '1px solid rgba(0, 0, 0, 0.12)',
-    dark: '1px solid rgba(255, 255, 255, 0.12)',
-};
-
-// TODO (optimization): Replace instances of outlineSx with slateOutline.
-export const slateOutline = `1px solid ${sample_grey[400]}`;
-
-export const outlineSx: SxProps<Theme> = {
-    border: `1px solid ${slate[200]}`,
 };
 
 export const typographyTruncation: TypographyProps = {
@@ -471,18 +457,6 @@ const themeSettings = createTheme({
                 },
             },
         },
-        MuiTableCell: {
-            defaultProps: {
-                sx: tableBorderSx,
-            },
-            styleOverrides: {
-                root: {
-                    paddingLeft: 8,
-                    paddingRight: 8,
-                    fontSize: 14,
-                },
-            },
-        },
         MuiTabs: {
             ...baseBackground,
             defaultProps: {
@@ -576,6 +550,19 @@ const ThemeProvider = ({ children }: BaseComponentProps) => {
                                     : 'white',
                             boxShadow: 'none',
                             color: palette.text?.primary,
+                        },
+                    },
+                },
+                MuiTableCell: {
+                    styleOverrides: {
+                        root: {
+                            paddingLeft: 8,
+                            paddingRight: 8,
+                            fontSize: 14,
+                            borderBottom:
+                                defaultOutline[
+                                    palette.mode === 'dark' ? 'dark' : 'light'
+                                ],
                         },
                     },
                 },

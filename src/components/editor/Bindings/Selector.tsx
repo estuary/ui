@@ -21,7 +21,7 @@ import CollectionPicker from 'components/collection/Picker';
 import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
 import {
     alternativeDataGridHeader,
-    slateOutline,
+    defaultOutline,
     typographyTruncation,
 } from 'context/Theme';
 import { useEntityWorkflow } from 'context/Workflow';
@@ -215,8 +215,8 @@ function BindingSelector({
             <Box
                 sx={{
                     ml: 'auto',
-                    borderTop: slateOutline,
-                    borderLeft: slateOutline,
+                    borderTop: (theme) => defaultOutline[theme.palette.mode],
+                    borderLeft: (theme) => defaultOutline[theme.palette.mode],
                 }}
             >
                 <Stack
@@ -281,14 +281,17 @@ function BindingSelector({
                             cursor: 'pointer',
                         },
                         '& .MuiDataGrid-cell': {
-                            borderBottom: slateOutline,
+                            borderBottom: (theme) =>
+                                defaultOutline[theme.palette.mode],
                         },
                         '& .MuiDataGrid-columnSeparator': {
                             display: 'none',
                         },
                         '& .MuiDataGrid-columnHeaders': {
-                            borderTop: slateOutline,
-                            borderBottom: slateOutline,
+                            borderTop: (theme) =>
+                                defaultOutline[theme.palette.mode],
+                            borderBottom: (theme) =>
+                                defaultOutline[theme.palette.mode],
                             bgcolor: (theme) =>
                                 alternativeDataGridHeader[theme.palette.mode],
                         },

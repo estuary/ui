@@ -13,7 +13,7 @@ import { createEditorStore } from 'components/editor/Store/create';
 import EditorAndLogs from 'components/tables/Details/EditorAndLogs';
 import ShardInformation from 'components/tables/Details/ShardInformation';
 import { LocalZustandProvider } from 'context/LocalZustand';
-import { detailsPanelBgColor, tableBorderSx } from 'context/Theme';
+import { detailsPanelBgColor } from 'context/Theme';
 import { concat } from 'lodash';
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -53,7 +53,6 @@ function DetailsPanel({
                 sx={{
                     pb: 0,
                     pt: 0,
-                    ...tableBorderSx,
                 }}
                 colSpan={colSpan}
             >
