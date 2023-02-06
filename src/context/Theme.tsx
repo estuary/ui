@@ -232,14 +232,16 @@ export const paperBackground = {
     dark: sample_grey[800],
 };
 
+// RGB translation of #F7F9FC.
 export const semiTransparentBackground = {
     light: sample_grey[100],
-    dark: 'rgba(172, 199, 220, 0.12)',
+    dark: 'rgba(247, 249, 252, 0.05)',
 };
 
+// RGB translation of #F7F9FC.
 export const semiTransparentBackgroundIntensified = {
     light: sample_grey[200],
-    dark: 'rgba(172, 199, 220, 0.18)',
+    dark: 'rgba(247, 249, 252, 0.08)',
 };
 
 export const jsonFormsGroupHeaders = {
@@ -252,9 +254,10 @@ export const reflexSplitterBackground = {
     dark: slate[200],
 };
 
+// RGB translation of #F7F9FC.
 export const alternativeReflexContainerBackground = {
     light: 'white',
-    dark: 'rgba(172, 199, 220, 0.05)',
+    dark: 'rgba(247, 249, 252, 0.05)',
 };
 
 export const alternativeDataGridHeader = {
@@ -271,9 +274,6 @@ export const alertBackground = {
     dark: semiTransparentBackgroundIntensified.dark,
 };
 
-// RGB translation of #E1E9F4
-export const connectorCardLogoBackground = 'rgba(225, 233, 244, 0.30)';
-
 export const monacoEditorHeaderBackground = {
     light: 'white',
     dark: '#121212',
@@ -289,9 +289,10 @@ export const monacoEditorComponentBackground = {
     dark: 'vs-dark',
 };
 
+// RGB translation of #F7F9FC.
 export const codeBackground = {
     light: slate[50],
-    dark: 'rgba(172, 199, 220, 0.12)',
+    dark: 'rgba(247, 249, 252, 0.05)',
 };
 
 const expandedRowBgColor = {
@@ -348,6 +349,12 @@ export const LINK_BUTTON_STYLING: SxProps<Theme> = {
     },
 };
 
+// Light is an RGB translation of #E1E9F4; Light is an RGB translation of #F7F9FC.
+export const connectorCardLogoBackground = {
+    light: 'rgba(225, 233, 244, 0.30)',
+    dark: 'rgba(247, 249, 252, 0.08)',
+};
+
 export const connectorImageBackgroundRadius = 3;
 export const connectorImageBackgroundSx: SxProps<Theme> = {
     width: '100%',
@@ -357,7 +364,7 @@ export const connectorImageBackgroundSx: SxProps<Theme> = {
     alignItems: 'center',
     marginBottom: 2,
     borderRadius: connectorImageBackgroundRadius,
-    background: connectorCardLogoBackground,
+    background: (theme) => connectorCardLogoBackground[theme.palette.mode],
 };
 
 const themeSettings = createTheme({
