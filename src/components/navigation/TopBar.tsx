@@ -1,6 +1,6 @@
 import { Divider, Stack, Toolbar } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
-import { SxProps, Theme, useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import CompanyLogo from 'components/graphics/CompanyLogo';
 import HelpMenu from 'components/menus/HelpMenu';
 import UserMenu from 'components/menus/UserMenu';
@@ -13,9 +13,6 @@ interface Props {
 
 const Topbar = ({ pageTitleProps }: Props) => {
     const theme = useTheme();
-    const iconSx: SxProps<Theme> = {
-        color: theme.palette.text.primary,
-    };
 
     return (
         <MuiAppBar
@@ -49,7 +46,7 @@ const Topbar = ({ pageTitleProps }: Props) => {
                 <Stack direction="row" sx={{ alignItems: 'center' }}>
                     <HelpMenu />
 
-                    <UserMenu iconSx={iconSx} />
+                    <UserMenu iconColor={theme.palette.text.primary} />
                 </Stack>
             </Toolbar>
         </MuiAppBar>
