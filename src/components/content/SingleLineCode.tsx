@@ -1,4 +1,3 @@
-import { Check, ContentCopy } from '@mui/icons-material';
 import {
     Box,
     Button,
@@ -8,7 +7,7 @@ import {
     useTheme,
 } from '@mui/material';
 import { codeBackground } from 'context/Theme';
-import { WarningCircle } from 'iconoir-react';
+import { Check, Copy, WarningCircle } from 'iconoir-react';
 import { ReactNode, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -27,13 +26,13 @@ const getButtonIcon = (
 ): ReactNode => {
     switch (buttonState) {
         case 'success':
-            return <Check />;
+            return <Check style={{ color: theme.palette.success.main }} />;
         case 'error':
             return (
                 <WarningCircle style={{ color: theme.palette.error.main }} />
             );
         default:
-            return <ContentCopy />;
+            return <Copy style={{ color: theme.palette.primary.main }} />;
     }
 };
 
