@@ -52,7 +52,7 @@ function AccessGrantsTable({ showUser }: Props) {
         : 'accessGrantsTable.prefixes.filterLabel';
 
     return (
-        <Box>
+        <Box sx={{ mb: showUser ? 8 : 0 }}>
             <TableHydrator
                 query={query}
                 selectableTableStoreName={
