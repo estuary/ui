@@ -1,5 +1,5 @@
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { AccordionSummary, Fade, Typography } from '@mui/material';
+import { AccordionSummary, Fade, Typography, useTheme } from '@mui/material';
+import { NavArrowDown } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 import { BaseComponentProps } from 'types';
 
@@ -10,11 +10,19 @@ interface Props extends BaseComponentProps {
 }
 
 function Header({ children, disableClose, expanded, readOnly }: Props) {
+    const theme = useTheme();
+
     return (
         <AccordionSummary
-            expandIcon={!disableClose ? <ExpandMoreIcon /> : undefined}
+            expandIcon={
+                !disableClose ? (
+                    <NavArrowDown
+                        style={{ color: theme.palette.text.primary }}
+                    />
+                ) : undefined
+            }
             sx={{
-                'backgroundColor': (theme) =>
+                'backgroundColor':
                     theme.palette.mode === 'dark' ? 'transparent' : 'white',
                 '& .MuiAccordionSummary-content': {
                     alignItems: 'center',
@@ -24,7 +32,7 @@ function Header({ children, disableClose, expanded, readOnly }: Props) {
             {children}
 
             <Fade in={!expanded}>
-                <Typography sx={{ ml: 'auto' }}>
+                <Typography sx={{ ml: 'auto', mr: 1 }}>
                     <FormattedMessage
                         id={readOnly ? 'cta.expandToView' : 'cta.expandToEdit'}
                     />

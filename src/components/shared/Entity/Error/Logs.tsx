@@ -1,8 +1,8 @@
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Button, Collapse, Stack } from '@mui/material';
+import { Button, Collapse, Stack, useTheme } from '@mui/material';
 import Logs, { type LogProps } from 'components/logs';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { LINK_BUTTON_STYLING } from 'context/Theme';
+import { NavArrowDown } from 'iconoir-react';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
@@ -19,6 +19,8 @@ function ErrorLogs({
     height,
     logProps,
 }: ErrorLogsProps) {
+    const theme = useTheme();
+
     const heightVal = height ?? 250;
     const [showLogs, setShowLogs] = useState(defaultOpen ?? false);
 
@@ -34,13 +36,14 @@ function ErrorLogs({
                     sx={{ ...LINK_BUTTON_STYLING, width: 'max-content' }}
                     onClick={toggleLogs}
                     endIcon={
-                        <ExpandMoreIcon
-                            sx={{
+                        <NavArrowDown
+                            style={{
+                                fontSize: 14,
+                                color: theme.palette.text.primary,
                                 transform: `rotate(${
                                     showLogs ? '180' : '0'
                                 }deg)`,
-                                transition: (theme) =>
-                                    `${theme.transitions.duration.shortest}ms`,
+                                transition: `${theme.transitions.duration.shortest}ms`,
                             }}
                         />
                     }
