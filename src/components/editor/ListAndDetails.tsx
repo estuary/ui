@@ -1,4 +1,3 @@
-import { DragIndicator } from '@mui/icons-material';
 import { useTheme } from '@mui/material';
 import Box from '@mui/material/Box';
 import {
@@ -6,6 +5,7 @@ import {
     DEFAULT_TOOLBAR_HEIGHT,
 } from 'components/editor/MonacoEditor';
 import { defaultOutline, getReflexSplitterBackground } from 'context/Theme';
+import { MoreVert } from 'iconoir-react';
 import { ReactNode } from 'react';
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
 
@@ -51,7 +51,6 @@ function ListAndDetails({
                     <div
                         className="pane-content"
                         style={{
-                            // height: heightVal,
                             height: '100%',
                             display: 'flex',
                             flexDirection: 'column',
@@ -77,7 +76,7 @@ function ListAndDetails({
                         ),
                     }}
                 >
-                    <DragIndicator />
+                    <MoreVert style={{ color: theme.palette.text.primary }} />
                 </ReflexSplitter>
 
                 <ReflexElement
