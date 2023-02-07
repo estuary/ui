@@ -23,7 +23,7 @@ import {
 } from 'components/tables/Store';
 import Title from 'components/tables/Title';
 import { useZustandStore } from 'context/Zustand/provider';
-import { ArrowDown, Search } from 'iconoir-react';
+import { ArrowDown } from 'iconoir-react';
 import { debounce } from 'lodash';
 import {
     ChangeEvent,
@@ -303,20 +303,15 @@ function EntityTable({
                             m: 0,
                         }}
                     >
-                        <Search
-                            style={{
-                                marginBottom: '0.25rem',
-                                marginRight: '0.5rem',
-                            }}
-                        />
-
                         <TextField
                             id="capture-search-box"
                             label={intl.formatMessage({
                                 id: filterLabel,
                             })}
-                            variant="standard"
+                            variant="outlined"
+                            size="small"
                             onChange={handlers.filterTable}
+                            sx={{ '& .MuiInputBase-root': { borderRadius: 3 } }}
                         />
                     </Box>
                 </Toolbar>
