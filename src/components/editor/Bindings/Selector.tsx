@@ -1,5 +1,4 @@
 import { Clear } from '@mui/icons-material';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import {
     Box,
     Button,
@@ -8,6 +7,7 @@ import {
     ListItemText,
     Stack,
     Typography,
+    useTheme,
 } from '@mui/material';
 import {
     DataGrid,
@@ -25,6 +25,7 @@ import {
     typographyTruncation,
 } from 'context/Theme';
 import { useEntityWorkflow } from 'context/Workflow';
+import { WarningCircle } from 'iconoir-react';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
@@ -120,6 +121,8 @@ function BindingSelector({
     readOnly,
     RediscoverButton,
 }: BindingSelectorProps) {
+    const theme = useTheme();
+
     const onSelectTimeOut = useRef<number | null>(null);
 
     const workflow = useEntityWorkflow();
@@ -173,7 +176,13 @@ function BindingSelector({
                 if (currentConfig.errors.length > 0) {
                     return (
                         <>
-                            <ErrorOutlineIcon color="error" sx={{ pr: 1 }} />
+                            <WarningCircle
+                                style={{
+                                    marginRight: 4,
+                                    fontSize: 12,
+                                    color: theme.palette.error.main,
+                                }}
+                            />
 
                             <Row
                                 collection={params.row}
@@ -215,8 +224,8 @@ function BindingSelector({
             <Box
                 sx={{
                     ml: 'auto',
-                    borderTop: (theme) => defaultOutline[theme.palette.mode],
-                    borderLeft: (theme) => defaultOutline[theme.palette.mode],
+                    borderTop: defaultOutline[theme.palette.mode],
+                    borderLeft: defaultOutline[theme.palette.mode],
                 }}
             >
                 <Stack
@@ -281,18 +290,15 @@ function BindingSelector({
                             cursor: 'pointer',
                         },
                         '& .MuiDataGrid-cell': {
-                            borderBottom: (theme) =>
-                                defaultOutline[theme.palette.mode],
+                            borderBottom: defaultOutline[theme.palette.mode],
                         },
                         '& .MuiDataGrid-columnSeparator': {
                             display: 'none',
                         },
                         '& .MuiDataGrid-columnHeaders': {
-                            borderTop: (theme) =>
-                                defaultOutline[theme.palette.mode],
-                            borderBottom: (theme) =>
-                                defaultOutline[theme.palette.mode],
-                            bgcolor: (theme) =>
+                            borderTop: defaultOutline[theme.palette.mode],
+                            borderBottom: defaultOutline[theme.palette.mode],
+                            bgcolor:
                                 alternativeDataGridHeader[theme.palette.mode],
                         },
                         '& .MuiDataGrid-columnHeader:hover': {

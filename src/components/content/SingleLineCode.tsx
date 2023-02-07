@@ -1,6 +1,14 @@
-import { Check, ContentCopy, ErrorOutline } from '@mui/icons-material';
-import { Box, Button, Tooltip, Typography } from '@mui/material';
+import { Check, ContentCopy } from '@mui/icons-material';
+import {
+    Box,
+    Button,
+    Theme,
+    Tooltip,
+    Typography,
+    useTheme,
+} from '@mui/material';
 import { codeBackground } from 'context/Theme';
+import { WarningCircle } from 'iconoir-react';
 import { ReactNode, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -13,12 +21,17 @@ type TransientButtonState = 'success' | 'error' | undefined;
 
 const borderRadius = 3;
 
-const getButtonIcon = (buttonState: TransientButtonState): ReactNode => {
+const getButtonIcon = (
+    theme: Theme,
+    buttonState: TransientButtonState
+): ReactNode => {
     switch (buttonState) {
         case 'success':
             return <Check />;
         case 'error':
-            return <ErrorOutline />;
+            return (
+                <WarningCircle style={{ color: theme.palette.error.main }} />
+            );
         default:
             return <ContentCopy />;
     }
@@ -26,6 +39,7 @@ const getButtonIcon = (buttonState: TransientButtonState): ReactNode => {
 
 function SingleLineCode({ formattedMessage, subsequentCommandExists }: Props) {
     const intl = useIntl();
+    const theme = useTheme();
 
     const [transientButtonState, setTransientButtonState] =
         useState<TransientButtonState>(undefined);
@@ -50,7 +64,7 @@ function SingleLineCode({ formattedMessage, subsequentCommandExists }: Props) {
             sx={{
                 mb: subsequentCommandExists ? 1 : undefined,
                 display: 'flex',
-                bgcolor: (theme) => codeBackground[theme.palette.mode],
+                bgcolor: codeBackground[theme.palette.mode],
                 borderRadius,
             }}
         >
@@ -92,7 +106,7 @@ function SingleLineCode({ formattedMessage, subsequentCommandExists }: Props) {
                         borderBottomRightRadius: borderRadius,
                     }}
                 >
-                    {getButtonIcon(transientButtonState)}
+                    {getButtonIcon(theme, transientButtonState)}
                 </Button>
             </Tooltip>
         </Box>

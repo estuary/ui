@@ -1,10 +1,10 @@
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import { Typography } from '@mui/material';
+import { Typography, useTheme } from '@mui/material';
 import MessageWithLink from 'components/content/MessageWithLink';
 import BindingsMultiEditor from 'components/editor/Bindings';
 import AlertBox from 'components/shared/AlertBox';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { WarningCircle } from 'iconoir-react';
 import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useFormStateStore_messagePrefix } from 'stores/FormState/hooks';
@@ -27,6 +27,8 @@ function CollectionConfig({
     hideBorder,
     RediscoverButton,
 }: Props) {
+    const theme = useTheme();
+
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
 
@@ -50,7 +52,13 @@ function CollectionConfig({
             header={
                 <>
                     {hasErrors ? (
-                        <ErrorOutlineIcon color="error" sx={{ pr: 1 }} />
+                        <WarningCircle
+                            style={{
+                                marginRight: 4,
+                                fontSize: 12,
+                                color: theme.palette.error.main,
+                            }}
+                        />
                     ) : null}
 
                     <Typography variant="subtitle1">
