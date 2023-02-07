@@ -36,7 +36,7 @@ import { Box, Hidden, IconButton, Popover, Stack } from '@mui/material';
 import { LocalizationProvider, StaticTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { format } from 'date-fns';
-import { bindPopover, bindTrigger } from 'material-ui-popup-state/hooks';
+import { bindFocus, bindPopover } from 'material-ui-popup-state/hooks';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Patterns } from 'types/jsonforms';
@@ -131,7 +131,7 @@ export const Custom_MaterialTimeControl = (props: ControlProps) => {
                         )}
                         disabled={!enabled}
                         ref={buttonRef}
-                        {...bindTrigger(state)}
+                        {...bindFocus(state)}
                     >
                         <ScheduleIcon />
                     </IconButton>
