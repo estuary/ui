@@ -24,7 +24,7 @@ function EntityStatus({ name }: Props) {
     const theme = useTheme();
 
     const defaultStatusColor: ShardStatusColor =
-        theme.palette.mode === 'dark' ? '#EEF8FF' : '#E1E9F4';
+        theme.palette.mode === 'dark' ? '#E1E9F4' : '#C4D3E9';
 
     const [taskShardDetails, setTaskShardDetails] = useState<
         TaskShardDetailsWithShard[]

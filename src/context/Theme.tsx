@@ -43,31 +43,6 @@ export enum NavWidths {
 }
 
 // Colors
-export const teal = {
-    25: '#E6FFFF',
-    50: '#CDFBFB',
-    100: '#ABEDEE',
-    200: '#8BE1E2',
-    300: '#6DD4D5',
-    400: '#4DBABC',
-    500: '#32A0A3',
-    600: '#1C8789',
-    700: '#0C6E70',
-    800: '#015556',
-};
-
-export const indigo = {
-    50: '#D6DFFF',
-    100: '#B8C6F9',
-    200: '#97AAEC',
-    300: '#798FDF',
-    400: '#5072EB',
-    500: '#3F59B8',
-    600: '#27419F',
-    700: '#132C85',
-    800: '#051B6C',
-};
-
 export const sample_blue = {
     100: '#DCE6FE',
     200: '#BACDFD',
@@ -91,21 +66,6 @@ export const sample_grey = {
     700: '#16253B',
     800: '#111C2C',
     900: '#0B131E',
-};
-
-export const slate = {
-    15: '#F6FAFF',
-    25: '#EEF8FF',
-    50: '#D8E9F5',
-    '50_a': 'rgba(216, 233, 245, 1)',
-    100: '#ACC7DC',
-    200: '#85A7C2',
-    300: '#638AA9',
-    400: '#466F8F',
-    500: '#2E5676',
-    600: '#1B3F5C',
-    700: '#0D2B43',
-    800: '#04192A',
 };
 
 // Status Colors
@@ -232,6 +192,11 @@ export const paperBackground = {
     dark: sample_grey[800],
 };
 
+export const paperBackgroundImage = {
+    light: 'none',
+    dark: 'linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05))',
+};
+
 // RGB translation of #F7F9FC.
 export const semiTransparentBackground = {
     light: sample_grey[100],
@@ -245,13 +210,20 @@ export const semiTransparentBackgroundIntensified = {
 };
 
 export const jsonFormsGroupHeaders = {
-    light: slate[25],
+    light: 'white',
     dark: 'transparent',
 };
 
-export const reflexSplitterBackground = {
-    light: slate[25],
-    dark: slate[200],
+export const getReflexSplitterBackground = (
+    theme: Theme,
+    codeEditorPresent: boolean
+) => {
+    if (theme.palette.mode === 'light') {
+        return 'white';
+    } else {
+        // RGB translation of #F7F9FC.
+        return codeEditorPresent ? '#0A0A0A' : 'rgba(247, 249, 252, 0.30)';
+    }
 };
 
 // RGB translation of #F7F9FC.
@@ -291,13 +263,13 @@ export const monacoEditorComponentBackground = {
 
 // RGB translation of #F7F9FC.
 export const codeBackground = {
-    light: slate[50],
+    light: sample_grey[200],
     dark: 'rgba(247, 249, 252, 0.05)',
 };
 
 const expandedRowBgColor = {
     light: sample_grey[100],
-    dark: slate[800],
+    dark: 'rgba(247, 249, 252, 0.05)',
 };
 export const getEntityTableRowSx = (
     theme: Theme,
@@ -311,8 +283,9 @@ export const getEntityTableRowSx = (
     };
 };
 
+// Light is an RGB translation of #E1E9F4.
 export const detailsPanelBgColor = {
-    light: sample_grey[300],
+    light: 'rgba(225, 233, 244, 0.70)',
     dark: sample_grey[900],
 };
 

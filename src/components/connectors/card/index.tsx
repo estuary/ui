@@ -4,6 +4,7 @@ import Tile from 'components/shared/Tile';
 import {
     connectorImageBackgroundRadius,
     connectorImageBackgroundSx,
+    sample_grey,
 } from 'context/Theme';
 import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -72,7 +73,7 @@ function ConnectorCard({
                             {recommended ? (
                                 <Box
                                     sx={{
-                                        bgcolor: '#D2DEEE',
+                                        bgcolor: sample_grey[400],
                                         color: 'black',
                                         fontWeight: 500,
                                         borderBottomLeftRadius:
