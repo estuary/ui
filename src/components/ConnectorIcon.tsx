@@ -1,5 +1,5 @@
-import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import { Avatar, Box } from '@mui/material';
+import { QuestionMark } from 'iconoir-react';
 
 interface Props {
     size?: number;
@@ -29,8 +29,8 @@ function ConnectorIcon({ size = defaultSize, iconPath }: Props) {
                     />
                 </Avatar>
             ) : (
-                <QuestionMarkIcon
-                    sx={{
+                <QuestionMark
+                    style={{
                         height: size,
                         width: size,
                     }}
