@@ -47,7 +47,8 @@ const Topbar = ({ pageTitleProps }: Props) => {
                 </Stack>
 
                 <Stack direction="row" sx={{ alignItems: 'center' }}>
-                    <HelpMenu iconSx={iconSx} />
+                    <HelpMenu />
+
                     <UserMenu iconSx={iconSx} />
                 </Stack>
             </Toolbar>
