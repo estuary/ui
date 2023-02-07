@@ -1,6 +1,10 @@
 import { usePopupState } from 'material-ui-popup-state/hooks';
 import { useMemo, useRef } from 'react';
 
+// TODO (accessibility) Setting the `disableAutoFocus` means this pop up is not
+//   accessible at all. We do this because it makes the showing/hiding when clicking
+//   make a lot more sense. When auto focus is on if you click away from the picker
+//   it does not close.
 function useDatePickerState(key: string) {
     const state = usePopupState({
         variant: 'popover',
@@ -20,7 +24,7 @@ function useDatePickerState(key: string) {
                 }
             },
         };
-    }, [state, buttonRef]);
+    }, [state]);
 
     return {
         state,
