@@ -1,4 +1,3 @@
-import { AddBox, OpenInNew } from '@mui/icons-material';
 import {
     Box,
     Button,
@@ -22,6 +21,7 @@ import {
     ConnectorWithTagDetailQuery,
     CONNECTOR_WITH_TAG_QUERY,
 } from 'hooks/useConnectorWithTagDetail';
+import { AddSquare, OpenNewWindow } from 'iconoir-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
@@ -211,7 +211,14 @@ function ConnectorTiles({
                     .concat(
                         <ConnectorCard
                             key="connector-request-tile"
-                            logo={<AddBox sx={{ fontSize: '4rem' }} />}
+                            logo={
+                                <AddSquare
+                                    style={{
+                                        fontSize: '3rem',
+                                        color: theme.palette.text.primary,
+                                    }}
+                                />
+                            }
                             details={
                                 <Typography component="p">
                                     <FormattedMessage id="connectors.main.message2.alt" />
@@ -224,7 +231,11 @@ function ConnectorTiles({
                                     })}
                                     target="_blank"
                                     rel="noopener"
-                                    endIcon={<OpenInNew />}
+                                    endIcon={
+                                        <OpenNewWindow
+                                            style={{ fontSize: 14 }}
+                                        />
+                                    }
                                 >
                                     <FormattedMessage id="connectorTable.actionsCta.connectorRequest" />
                                 </Button>
