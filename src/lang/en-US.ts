@@ -72,10 +72,10 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'commin.pathShort.prefix': '.../{path}',
 
     // Alert messages
-    'alert.error': 'Error!',
-    'alert.warning': 'Warning!',
-    'alert.success': 'Success!',
-    'alert.info': 'Important!',
+    'alert.error': 'Error',
+    'alert.warning': 'Warning',
+    'alert.success': 'Success',
+    'alert.info': 'Important',
 
     // Used in directives
     'directives.returning': `Welcome back. You still need to provide some information before using the application.`,
