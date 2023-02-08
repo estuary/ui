@@ -220,13 +220,14 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
                 </DialogContent>
 
                 <DialogActions>
-                    <Button onClick={cancel} color="primary">
+                    <Button variant="text" onClick={cancel} color="primary">
                         No
                     </Button>
 
                     <Button
                         onClick={confirm}
                         color="primary"
+                        variant="outlined"
                         autoFocus
                         id={`oneOf-${id}-confirm-yes`}
                     >

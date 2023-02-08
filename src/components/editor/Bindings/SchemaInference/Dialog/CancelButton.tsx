@@ -21,7 +21,7 @@ function CancelButton({ setOpen }: Props) {
     };
 
     return (
-        <Button variant="outlined" onClick={closeConfirmationDialog}>
+        <Button variant="text" onClick={closeConfirmationDialog}>
             <FormattedMessage id="cta.cancel" />
         </Button>
     );
