@@ -11,7 +11,7 @@ export const externalLinkStyling = {
     bgcolor: 'none',
     color: 'text.primary',
     fontSize: 14,
-    fontWeight: 700,
+    fontWeight: 500,
     px: 3,
     py: 1.5,
     textTransform: 'uppercase',

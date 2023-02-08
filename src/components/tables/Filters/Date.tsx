@@ -7,7 +7,7 @@ import {
     Typography,
 } from '@mui/material';
 import { StatsFilter } from 'api/stats';
-import { LINK_BUTTON_STYLING } from 'context/Theme';
+import { linkButtonSx } from 'context/Theme';
 import { useZustandStore } from 'context/Zustand/provider';
 import { Filter } from 'iconoir-react';
 import React, { useState } from 'react';
@@ -76,7 +76,7 @@ function DateFilter({ disabled, header, selectableTableStoreName }: Props) {
                     )
                 }
                 disabled={disabled}
-                sx={{ ...LINK_BUTTON_STYLING }}
+                sx={{ ...linkButtonSx }}
             >
                 <FormattedMessage id={`filter.time.${currentOption}`} />
             </Button>

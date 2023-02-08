@@ -310,14 +310,13 @@ export const jsonFormsPadding: SxProps<Theme> = {
 };
 
 // Used to make buttons look like a normal(ish) link
-export const LINK_BUTTON_STYLING: SxProps<Theme> = {
+export const linkButtonSx: SxProps<Theme> = {
     'px': 1,
     'py': 0,
     'fontWeight': 500,
     'zIndex': headerLinkIndex,
     'textDecoration': 'underline',
     '&:hover, &:focus': {
-        fontWeight: 700,
         textDecoration: 'underline',
     },
 };

@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import { LINK_BUTTON_STYLING } from 'context/Theme';
+import { linkButtonSx } from 'context/Theme';
 import { OpenNewWindow } from 'iconoir-react';
 import { ReactNode } from 'react';
 
@@ -26,7 +26,7 @@ const ExternalLink = ({ children, link, hideIcon }: Props) => {
             rel="noopener"
             color="secondary"
             onClick={onClick}
-            sx={LINK_BUTTON_STYLING}
+            sx={linkButtonSx}
         >
             {children}
         </Button>

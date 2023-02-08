@@ -1,7 +1,7 @@
 import { Button, Collapse, Stack, useTheme } from '@mui/material';
 import Logs, { type LogProps } from 'components/logs';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import { LINK_BUTTON_STYLING } from 'context/Theme';
+import { linkButtonSx } from 'context/Theme';
 import { NavArrowDown } from 'iconoir-react';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -33,7 +33,7 @@ function ErrorLogs({
             <Stack spacing={2}>
                 <Button
                     variant="text"
-                    sx={{ ...LINK_BUTTON_STYLING, width: 'max-content' }}
+                    sx={{ ...linkButtonSx, width: 'max-content' }}
                     onClick={toggleLogs}
                     endIcon={
                         <NavArrowDown
