@@ -39,7 +39,7 @@ function ErrorLogs({
                         <NavArrowDown
                             style={{
                                 fontSize: 14,
-                                color: theme.palette.text.primary,
+                                color: theme.palette.primary.main,
                                 transform: `rotate(${
                                     showLogs ? '180' : '0'
                                 }deg)`,
