@@ -51,17 +51,14 @@ export function DataPreview({ collectionName }: Props) {
                 justifyContent="space-between"
                 direction="row"
                 spacing={2}
-                sx={{ mb: 1 }}
+                sx={{ mb: 2 }}
             >
                 <Stack
                     direction="row"
                     spacing={2}
                     sx={{ alignItems: 'center' }}
                 >
-                    <Typography
-                        variant="subtitle1"
-                        sx={{ mb: 2, fontWeight: 500 }}
-                    >
+                    <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
                         <FormattedMessage id="detailsPanel.dataPreview.header" />
                     </Typography>
 
