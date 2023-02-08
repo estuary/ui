@@ -1,4 +1,3 @@
-import { DataObject } from '@mui/icons-material';
 import { Button, Skeleton } from '@mui/material';
 import SchemaInferenceDialog from 'components/editor/Bindings/SchemaInference/Dialog';
 import {
@@ -102,11 +101,7 @@ function SchemaInferenceButton() {
     } else {
         return collectionData ? (
             <>
-                <Button
-                    variant="text"
-                    startIcon={<DataObject />}
-                    onClick={openSchemaInferenceDialog}
-                >
+                <Button variant="text" onClick={openSchemaInferenceDialog}>
                     <FormattedMessage id="workflows.collectionSelector.cta.schemaInference" />
                 </Button>
 

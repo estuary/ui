@@ -1,6 +1,6 @@
-import { Terminal } from '@mui/icons-material';
 import { Box, Typography } from '@mui/material';
 import ExternalLink from 'components/shared/ExternalLink';
+import { TerminalTag } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 function EditCommandsHeader() {
@@ -16,7 +16,7 @@ function EditCommandsHeader() {
             }}
         >
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Terminal />
+                <TerminalTag />
 
                 <Typography variant="h6" sx={{ ml: 1 }}>
                     <FormattedMessage id="workflows.collectionSelector.schemaEdit.header" />

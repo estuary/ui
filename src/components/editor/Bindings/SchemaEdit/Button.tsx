@@ -1,4 +1,3 @@
-import { Terminal } from '@mui/icons-material';
 import { Skeleton } from '@mui/material';
 import DiscoveredSchemaCommands from 'components/editor/Bindings/SchemaEdit/Commands/DiscoveredSchema';
 import ExistingSchemaCommands from 'components/editor/Bindings/SchemaEdit/Commands/ExistingSchema';
@@ -26,7 +25,6 @@ function SchemaEditButton() {
                     )}
                 </EditCommandsWrapper>
             }
-            startIcon={<Terminal />}
         />
     ) : (
         <Skeleton variant="rectangular" width={75} />
