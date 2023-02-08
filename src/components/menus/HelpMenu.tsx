@@ -9,7 +9,7 @@ function HelpMenu() {
     return (
         <IconMenu
             ariaLabel={intl.formatMessage({ id: 'helpMenu.ariaLabel' })}
-            icon={<HelpCircle fontSize={18} />}
+            icon={<HelpCircle />}
             identifier="help-menu"
             tooltip={intl.formatMessage({ id: 'helpMenu.tooltip' })}
         >
