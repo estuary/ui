@@ -1,5 +1,6 @@
-import { Avatar, Box, Button, Grid, Stack, Typography } from '@mui/material';
+import { Box, Button, Grid, Typography } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
+import Step from 'components/hero/Step';
 import HeroTabs, { tabProps } from 'components/hero/Tabs';
 import WelcomeImage from 'components/hero/WelcomeImage';
 import { NavArrowRight, Plus } from 'iconoir-react';
@@ -75,35 +76,7 @@ function HeroImageAndDescription() {
                 ) : (
                     <>
                         <Grid item xs={4}>
-                            <Stack
-                                direction="row"
-                                spacing={1}
-                                sx={{
-                                    mb: 1.5,
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                }}
-                            >
-                                <Avatar
-                                    sx={{
-                                        width: 30,
-                                        height: 30,
-                                        backgroundColor: (theme) =>
-                                            theme.palette.secondary.main,
-                                        fontSize: 16,
-                                    }}
-                                >
-                                    1
-                                </Avatar>
-
-                                <Typography variant="h6">
-                                    <FormattedMessage id="terms.capture" />
-                                </Typography>
-                            </Stack>
-
-                            <Typography variant="subtitle1">
-                                <FormattedMessage id="home.hero.companyDetails.step1" />
-                            </Typography>
+                            <Step stepNumber={1} entityType="capture" />
                         </Grid>
 
                         <Grid
@@ -133,35 +106,7 @@ function HeroImageAndDescription() {
                         </Grid>
 
                         <Grid item xs={4}>
-                            <Stack
-                                direction="row"
-                                spacing={1}
-                                sx={{
-                                    mb: 1.5,
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                }}
-                            >
-                                <Avatar
-                                    sx={{
-                                        width: 30,
-                                        height: 30,
-                                        backgroundColor: (theme) =>
-                                            theme.palette.secondary.main,
-                                        fontSize: 16,
-                                    }}
-                                >
-                                    2
-                                </Avatar>
-
-                                <Typography variant="h6">
-                                    <FormattedMessage id="terms.materialization" />
-                                </Typography>
-                            </Stack>
-
-                            <Typography variant="subtitle1">
-                                <FormattedMessage id="home.hero.companyDetails.step2" />
-                            </Typography>
+                            <Step stepNumber={2} entityType="materialization" />
                         </Grid>
                     </>
                 )}
