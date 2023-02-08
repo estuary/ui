@@ -1,4 +1,3 @@
-import { Clear } from '@mui/icons-material';
 import {
     Box,
     Button,
@@ -25,7 +24,7 @@ import {
     typographyTruncation,
 } from 'context/Theme';
 import { useEntityWorkflow } from 'context/Workflow';
-import { WarningCircle } from 'iconoir-react';
+import { Cancel, WarningCircle } from 'iconoir-react';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
@@ -100,8 +99,9 @@ function Row({ collection, task, workflow, disabled }: RowProps) {
                 disabled={disabled}
                 size="small"
                 onClick={handlers.removeCollection}
+                sx={{ color: (theme) => theme.palette.text.primary }}
             >
-                <Clear />
+                <Cancel />
             </IconButton>
         </>
     );
