@@ -4,11 +4,13 @@ module.exports = {
         'eslint-config-kentcdodds/jest',
         'eslint-config-kentcdodds/jsx-a11y',
         'eslint-config-kentcdodds/react',
+        'plugin:typescript-sort-keys/recommended',
     ],
     parserOptions: {
         project: './tsconfig.json',
         tsconfigRootDir: __dirname,
     },
+    plugins: ['typescript-sort-keys'],
     rules: {
         // Only turning off right now to see more actual issues
         '@typescript-eslint/no-explicit-any': 'off',
@@ -20,7 +22,12 @@ module.exports = {
         '@typescript-eslint/no-unsafe-member-access': 'off',
 
         // Keeping stuff ordered correctly
-        // '@typescript-eslint/member-ordering': 'warn',
+        // 'typescript-sort-keys/interface': [
+        //     'error',
+        //     'asc',
+        //     { natural: true, requiredFirst: true },
+        // ],
+        // 'typescript-sort-keys/string-enum': 'error',
 
         // Helpful for dev... maybe make different settings for "final code"?
         'no-console': 'off',
