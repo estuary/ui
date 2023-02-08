@@ -1,4 +1,5 @@
-import CloudSyncIcon from '@mui/icons-material/CloudSync';
+import { Typography } from '@mui/material';
+import { DatabaseBackup } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
@@ -8,8 +9,11 @@ interface Props {
 function Saving({ iconSize }: Props) {
     return (
         <>
-            <FormattedMessage id="common.saving" />
-            <CloudSyncIcon sx={{ fontSize: iconSize }} />
+            <Typography>
+                <FormattedMessage id="common.saving" />
+            </Typography>
+
+            <DatabaseBackup style={{ fontSize: iconSize }} />
         </>
     );
 }
