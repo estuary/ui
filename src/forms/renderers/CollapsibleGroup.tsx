@@ -12,7 +12,7 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import { jsonFormsGroupHeaders } from 'context/Theme';
+import { defaultOutline, jsonFormsGroupHeaders } from 'context/Theme';
 import { NavArrowDown } from 'iconoir-react';
 import { ADVANCED, CONTAINS_REQUIRED_FIELDS } from 'services/jsonforms/shared';
 
@@ -52,7 +52,14 @@ const CollapsibleGroupRenderer = ({
 
     return (
         <Hidden xsUp={!visible}>
-            <Accordion defaultExpanded={expand}>
+            <Accordion
+                defaultExpanded={expand}
+                sx={{
+                    borderBottom: expand
+                        ? 'none'
+                        : defaultOutline[theme.palette.mode],
+                }}
+            >
                 <AccordionSummary
                     expandIcon={
                         <NavArrowDown
@@ -64,7 +71,9 @@ const CollapsibleGroupRenderer = ({
                             jsonFormsGroupHeaders[theme.palette.mode],
                     }}
                 >
-                    <Typography>{uischema.label}</Typography>
+                    <Typography sx={{ fontWeight: 500 }}>
+                        {uischema.label}
+                    </Typography>
                 </AccordionSummary>
 
                 <AccordionDetails>
