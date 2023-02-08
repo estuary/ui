@@ -1,8 +1,8 @@
-import { Add, ArrowRight } from '@mui/icons-material';
 import { Avatar, Box, Button, Grid, Stack, Typography } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
 import HeroTabs, { tabProps } from 'components/hero/Tabs';
 import WelcomeImage from 'components/hero/WelcomeImage';
+import { NavArrowRight, Plus } from 'iconoir-react';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { NavLink } from 'react-router-dom';
@@ -54,7 +54,9 @@ function HeroImageAndDescription() {
                             }}
                         >
                             <Button
-                                endIcon={<ArrowRight />}
+                                endIcon={
+                                    <NavArrowRight style={{ fontSize: 14 }} />
+                                }
                                 onClick={switchToDetailsTab}
                                 sx={{ minWidth: 160 }}
                             >
@@ -110,7 +112,9 @@ function HeroImageAndDescription() {
                                 }
                             >
                                 <Button
-                                    startIcon={<Add />}
+                                    startIcon={
+                                        <Plus style={{ fontSize: 14 }} />
+                                    }
                                     sx={{ minWidth: 160 }}
                                 >
                                     <FormattedMessage id="capturesTable.cta.new" />
