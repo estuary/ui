@@ -280,7 +280,9 @@ function ConnectorTiles({
                             item
                             xs={2}
                             md={4}
-                            lg={3}
+                            lg={2}
+                            xl={2}
+                            sx={{ maxWidth: 275 }}
                         >
                             {skeleton}
                         </Grid>

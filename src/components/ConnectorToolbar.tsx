@@ -8,10 +8,7 @@ import {
     Theme,
     Toolbar,
 } from '@mui/material';
-import {
-    semiTransparentBackground,
-    semiTransparentBackgroundIntensified,
-} from 'context/Theme';
+import { semiTransparentBackgroundIntensified } from 'context/Theme';
 import { ConnectorWithTagDetailQuery } from 'hooks/useConnectorWithTagDetail';
 import { debounce } from 'lodash';
 import {
@@ -43,14 +40,7 @@ interface ProtocolOption {
     message: string;
 }
 
-const inputProps: Partial<FilledInputProps> = {
-    disableUnderline: true,
-    sx: {
-        borderRadius: 3,
-        backgroundColor: (theme) =>
-            semiTransparentBackground[theme.palette.mode],
-    },
-};
+const inputProps: Partial<FilledInputProps> = { sx: { borderRadius: 3 } };
 
 const toolbarSectionSx: SxProps<Theme> = {
     '& .MuiFilledInput-root:hover, .MuiFilledInput-root.Mui-focused': {
@@ -185,7 +175,8 @@ function ConnectorToolbar({
                         label={intl.formatMessage({
                             id: 'connectorTable.filterLabel',
                         })}
-                        variant="filled"
+                        variant="outlined"
+                        size="small"
                         InputProps={inputProps}
                         onChange={handlers.filterTiles}
                         sx={{
@@ -212,7 +203,8 @@ function ConnectorToolbar({
                                 label={intl.formatMessage({
                                     id: 'connectorTable.label.sortBy',
                                 })}
-                                variant="filled"
+                                variant="outlined"
+                                size="small"
                             />
                         )}
                         defaultValue={intl.formatMessage({
@@ -242,7 +234,8 @@ function ConnectorToolbar({
                                 label={intl.formatMessage({
                                     id: 'connectorTable.label.sortDirection',
                                 })}
-                                variant="filled"
+                                variant="outlined"
+                                size="small"
                             />
                         )}
                         defaultValue={intl.formatMessage({
@@ -273,7 +266,8 @@ function ConnectorToolbar({
                                     label={intl.formatMessage({
                                         id: 'connectorTable.data.protocol',
                                     })}
-                                    variant="filled"
+                                    variant="outlined"
+                                    size="small"
                                 />
                             )}
                             defaultValue={intl.formatMessage({

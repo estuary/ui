@@ -199,13 +199,13 @@ export const paperBackgroundImage = {
 
 // RGB translation of #F7F9FC.
 export const semiTransparentBackground = {
-    light: sample_grey[100],
+    light: 'white',
     dark: 'rgba(247, 249, 252, 0.05)',
 };
 
-// RGB translation of #F7F9FC.
+// Light is an RGB translation of #0B131E; Dark is an RGB translation of #F7F9FC.
 export const semiTransparentBackgroundIntensified = {
-    light: sample_grey[200],
+    light: 'rgba(11, 19, 30, 0.04)',
     dark: 'rgba(247, 249, 252, 0.08)',
 };
 

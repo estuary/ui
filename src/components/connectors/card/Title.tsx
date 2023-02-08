@@ -8,8 +8,8 @@ function ConnectorCardTitle({ title }: Props) {
     return (
         <Typography
             component="div"
-            variant="h6"
             marginBottom={1}
+            fontSize={18}
             fontWeight="400"
         >
             {title}
