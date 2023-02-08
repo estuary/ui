@@ -12,7 +12,7 @@ import { ReactNode, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 interface Props {
-    formattedMessage: string;
+    value: string;
     subsequentCommandExists?: boolean;
 }
 
@@ -36,7 +36,7 @@ const getButtonIcon = (
     }
 };
 
-function SingleLineCode({ formattedMessage, subsequentCommandExists }: Props) {
+function SingleLineCode({ value, subsequentCommandExists }: Props) {
     const intl = useIntl();
     const theme = useTheme();
 
@@ -44,7 +44,7 @@ function SingleLineCode({ formattedMessage, subsequentCommandExists }: Props) {
         useState<TransientButtonState>(undefined);
 
     const copyToClipboard = () => {
-        navigator.clipboard.writeText(formattedMessage).then(
+        navigator.clipboard.writeText(value).then(
             () => {
                 setTransientButtonState('success');
 
@@ -61,6 +61,7 @@ function SingleLineCode({ formattedMessage, subsequentCommandExists }: Props) {
     return (
         <Box
             sx={{
+                maxWidth: 1000,
                 mb: subsequentCommandExists ? 1 : undefined,
                 display: 'flex',
                 bgcolor: codeBackground[theme.palette.mode],
@@ -76,7 +77,7 @@ function SingleLineCode({ formattedMessage, subsequentCommandExists }: Props) {
                     textOverflow: 'unset',
                 }}
             >
-                {formattedMessage}
+                {value}
             </Typography>
 
             <Tooltip

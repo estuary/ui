@@ -51,17 +51,17 @@ function ExistingSchemaCommands() {
             </Typography>
 
             <SingleLineCode
-                formattedMessage={pullDraftCommands[1]}
+                value={pullDraftCommands[1]}
                 subsequentCommandExists={true}
             />
 
-            <SingleLineCode formattedMessage={pullDraftCommands[2]} />
+            <SingleLineCode value={pullDraftCommands[2]} />
 
             <Typography sx={{ mt: 3, mb: 1 }}>
                 <FormattedMessage id="workflows.collectionSelector.schemaEdit.message2" />
             </Typography>
 
-            <SingleLineCode formattedMessage={pushLocalEditsCommand} />
+            <SingleLineCode value={pushLocalEditsCommand} />
         </>
     );
 }
