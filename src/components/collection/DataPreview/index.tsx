@@ -58,7 +58,10 @@ export function DataPreview({ collectionName }: Props) {
                     spacing={2}
                     sx={{ alignItems: 'center' }}
                 >
-                    <Typography variant="subtitle1">
+                    <Typography
+                        variant="subtitle1"
+                        sx={{ mb: 2, fontWeight: 500 }}
+                    >
                         <FormattedMessage id="detailsPanel.dataPreview.header" />
                     </Typography>
 

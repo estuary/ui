@@ -79,7 +79,10 @@ function DetailsPanel({
                                 </Grid>
 
                                 <Grid item xs={12}>
-                                    <Typography variant="subtitle1">
+                                    <Typography
+                                        variant="subtitle1"
+                                        sx={{ mb: 2, fontWeight: 500 }}
+                                    >
                                         <FormattedMessage id="detailsPanel.specification.header" />
                                     </Typography>
 
@@ -91,14 +94,18 @@ function DetailsPanel({
                                     />
                                 </Grid>
 
-                                <Divider />
-
                                 {entityName && isCollection ? (
-                                    <Grid item xs={12}>
-                                        <DataPreview
-                                            collectionName={entityName}
-                                        />
-                                    </Grid>
+                                    <>
+                                        <Grid item xs={12}>
+                                            <Divider />
+                                        </Grid>
+
+                                        <Grid item xs={12}>
+                                            <DataPreview
+                                                collectionName={entityName}
+                                            />
+                                        </Grid>
+                                    </>
                                 ) : null}
                             </Grid>
                         </LocalZustandProvider>
