@@ -14,6 +14,8 @@ import {
     TextField,
     Toolbar,
     Typography,
+    useMediaQuery,
+    useTheme,
 } from '@mui/material';
 import TablePaginationActions from 'components/tables/PaginationActions';
 import RowSelector from 'components/tables/RowActions/RowSelector';
@@ -107,6 +109,9 @@ function EntityTable({
     const isFiltering = useRef(false);
 
     const intl = useIntl();
+
+    const theme = useTheme();
+    const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
     const isValidating = useZustandStore<
         SelectableTableStore,
@@ -289,7 +294,7 @@ function EntityTable({
                     sx={{
                         display: 'flex',
                         justifyContent: 'space-between',
-                        alignItems: 'baseline',
+                        alignItems: 'start',
                     }}
                 >
                     {enableSelection ? (
@@ -306,7 +311,10 @@ function EntityTable({
                         variant="outlined"
                         size="small"
                         onChange={handlers.filterTable}
-                        sx={{ '& .MuiInputBase-root': { borderRadius: 3 } }}
+                        sx={{
+                            'width': belowMd ? 'auto' : 350,
+                            '& .MuiInputBase-root': { borderRadius: 3 },
+                        }}
                     />
                 </Toolbar>
             </Box>
@@ -323,7 +331,7 @@ function EntityTable({
                         <TableHead>
                             <TableRow
                                 sx={{
-                                    background: (theme) =>
+                                    background:
                                         theme.palette.background.default,
                                 }}
                             >
