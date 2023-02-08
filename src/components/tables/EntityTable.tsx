@@ -296,24 +296,16 @@ function EntityTable({
                         <Title header={header} />
                     )}
 
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            alignItems: 'flex-end',
-                            m: 0,
-                        }}
-                    >
-                        <TextField
-                            id="capture-search-box"
-                            label={intl.formatMessage({
-                                id: filterLabel,
-                            })}
-                            variant="outlined"
-                            size="small"
-                            onChange={handlers.filterTable}
-                            sx={{ '& .MuiInputBase-root': { borderRadius: 3 } }}
-                        />
-                    </Box>
+                    <TextField
+                        id="capture-search-box"
+                        label={intl.formatMessage({
+                            id: filterLabel,
+                        })}
+                        variant="outlined"
+                        size="small"
+                        onChange={handlers.filterTable}
+                        sx={{ '& .MuiInputBase-root': { borderRadius: 3 } }}
+                    />
                 </Toolbar>
             </Box>
 
