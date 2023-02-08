@@ -41,7 +41,7 @@ function HeroImageAndDescription() {
             <Grid container spacing={2} sx={{ mt: 2 }}>
                 {tabProps[activeTab].value === 'overview' ? (
                     <>
-                        <Grid item xs={12}>
+                        <Grid item xs={12} sx={{ mb: 0.25 }}>
                             <Typography variant="subtitle1" align="center">
                                 <FormattedMessage
                                     id="home.hero.companyOverview.description"
