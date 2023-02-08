@@ -1,6 +1,6 @@
 import { Checkbox, TableCell } from '@mui/material';
-import CheckSquare from 'components/icons/CheckSquare';
 import { Square } from 'iconoir-react';
+import CheckSquare from 'icons/CheckSquare';
 
 interface Props {
     isSelected: boolean;
