@@ -15,7 +15,7 @@ function HeroImageAndDescription() {
     };
 
     return (
-        <Box sx={{ mx: 'auto', maxWidth: 1000 }}>
+        <Box sx={{ mx: 'auto', pb: 3, maxWidth: 1000 }}>
             <Grid container spacing={2}>
                 <Grid item xs={12}>
                     <HeroTabs
@@ -28,6 +28,7 @@ function HeroImageAndDescription() {
                     item
                     xs={12}
                     sx={{
+                        display: 'flex',
                         alignContent: 'center',
                         justifyContent: 'center',
                     }}
@@ -41,7 +42,14 @@ function HeroImageAndDescription() {
                     <>
                         <Grid item xs={12}>
                             <Typography variant="subtitle1" align="center">
-                                <FormattedMessage id="home.hero.companyOverview.description" />
+                                <FormattedMessage
+                                    id="home.hero.companyOverview.description"
+                                    values={{
+                                        b: (companyName) => (
+                                            <b>{companyName}</b>
+                                        ),
+                                    }}
+                                />
                             </Typography>
                         </Grid>
 
@@ -60,7 +68,7 @@ function HeroImageAndDescription() {
                                 onClick={switchToDetailsTab}
                                 sx={{ minWidth: 160 }}
                             >
-                                How it works
+                                <FormattedMessage id="home.hero.companyOverview.cta" />
                             </Button>
                         </Grid>
                     </>
@@ -73,6 +81,7 @@ function HeroImageAndDescription() {
                                 sx={{
                                     mb: 1.5,
                                     alignItems: 'center',
+                                    justifyContent: 'center',
                                 }}
                             >
                                 <Avatar
@@ -102,6 +111,7 @@ function HeroImageAndDescription() {
                             xs={4}
                             sx={{
                                 display: 'flex',
+                                alignItems: 'center',
                                 justifyContent: 'center',
                             }}
                         >
@@ -117,7 +127,7 @@ function HeroImageAndDescription() {
                                     }
                                     sx={{ minWidth: 160 }}
                                 >
-                                    <FormattedMessage id="capturesTable.cta.new" />
+                                    <FormattedMessage id="home.hero.companyDetails.cta" />
                                 </Button>
                             </NavLink>
                         </Grid>
@@ -129,6 +139,7 @@ function HeroImageAndDescription() {
                                 sx={{
                                     mb: 1.5,
                                     alignItems: 'center',
+                                    justifyContent: 'center',
                                 }}
                             >
                                 <Avatar

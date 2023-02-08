@@ -11,7 +11,7 @@ function WelcomeImage() {
         <img
             src={theme.palette.mode === 'dark' ? darkWelcome : lightWelcome}
             style={{ marginBottom: 16 }}
-            width="100%"
+            width="75%"
             alt={intl.formatMessage({ id: 'welcome.image.alt' })}
         />
     );
