@@ -6,6 +6,10 @@ import {
 import { BaseComponentProps } from 'types';
 
 type TileProps = BaseComponentProps;
+
+const boxShadow =
+    'rgb(50 50 93 / 7%) 0px 3px 6px -1px, rgb(0 0 0 / 10%) 0px 2px 4px -1px';
+
 function Tile({ children }: TileProps) {
     return (
         <Paper
@@ -17,10 +21,10 @@ function Tile({ children }: TileProps) {
                 'flexGrow': 1,
                 'background': (theme) =>
                     semiTransparentBackground[theme.palette.mode],
-                'boxShadow':
-                    'rgb(50 50 93 / 7%) 0px 2px 5px -1px, rgb(0 0 0 / 10%) 0px 1px 3px -1px',
+                boxShadow,
                 'borderRadius': 3,
                 '&:hover': {
+                    boxShadow,
                     background: (theme) =>
                         semiTransparentBackgroundIntensified[
                             theme.palette.mode
