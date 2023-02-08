@@ -19,6 +19,9 @@ module.exports = {
         '@typescript-eslint/no-unsafe-call': 'off',
         '@typescript-eslint/no-unsafe-member-access': 'off',
 
+        // Keeping stuff ordered correctly
+        // '@typescript-eslint/member-ordering': 'warn',
+
         // Helpful for dev... maybe make different settings for "final code"?
         'no-console': 'off',
 
