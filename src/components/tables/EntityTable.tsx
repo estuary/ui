@@ -279,7 +279,9 @@ function EntityTable({
         <Box data-public>
             <Box sx={{ mx: 2 }}>
                 <Stack direction="row" spacing={1}>
-                    {enableSelection ? <Title header={header} /> : null}
+                    {enableSelection ? (
+                        <Title header={header} marginBottom={2} />
+                    ) : null}
                 </Stack>
 
                 <Toolbar
