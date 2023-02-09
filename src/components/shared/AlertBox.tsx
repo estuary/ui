@@ -53,7 +53,7 @@ const AlertBox = forwardRef<any, Props>(function NavLinkRef(
                       marginRight: 'auto',
                   }
                 : undefined,
-        [short]
+        [short, theme.palette.mode]
     );
 
     const header = useMemo(
