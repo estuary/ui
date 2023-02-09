@@ -23,7 +23,10 @@ function LogDialogActions({ close, closeCtaKey, materialize }: Props) {
             </Box>
 
             <Stack direction="row" spacing={2}>
-                <Button onClick={close}>
+                <Button
+                    variant={materialize ? 'outlined' : 'contained'}
+                    onClick={close}
+                >
                     <FormattedMessage id={closeCtaKey ?? 'cta.close'} />
                 </Button>
 

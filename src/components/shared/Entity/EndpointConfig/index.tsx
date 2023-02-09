@@ -28,9 +28,14 @@ import { Schema } from 'types';
 interface Props {
     connectorImage: string;
     readOnly?: boolean;
+    hideBorder?: boolean;
 }
 
-function EndpointConfig({ connectorImage, readOnly = false }: Props) {
+function EndpointConfig({
+    connectorImage,
+    readOnly = false,
+    hideBorder,
+}: Props) {
     const intl = useIntl();
 
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
@@ -99,6 +104,7 @@ function EndpointConfig({ connectorImage, readOnly = false }: Props) {
                 mountClosed={editWorkflow}
                 forceClose={forceClose}
                 readOnly={readOnly}
+                hideBorder={hideBorder}
                 header={
                     <EndpointConfigHeader
                         docsPath={connectorTag.documentation_url}

@@ -1,6 +1,6 @@
 import {
     Box,
-    Grid,
+    Divider,
     SxProps,
     Table,
     TableBody,
@@ -18,7 +18,7 @@ import { useEditorStore_specs } from 'components/editor/Store/hooks';
 import ExternalLink from 'components/shared/ExternalLink';
 import ShardErrors from 'components/tables/Details/ShardErrors';
 import StatusIndicatorAndLabel from 'components/tables/Details/StatusIndicatorAndLabel';
-import { slate } from 'context/Theme';
+import { sample_grey } from 'context/Theme';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
 import { MouseEvent, useEffect, useState } from 'react';
@@ -88,109 +88,105 @@ function ShardInformation({ entityType }: Props) {
 
     return taskShards.length > 0 ? (
         <>
-            <Typography variant="subtitle1">
+            <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 500 }}>
                 <FormattedMessage id="detailsPanel.status.header" />
             </Typography>
 
             <ShardErrors shards={taskShards} />
 
-            <Grid item xs={12}>
-                <TableContainer>
-                    <Table>
-                        <TableHead>
-                            <TableRow sx={{ ...tableHeaderFooterSx }}>
-                                <TableCell colSpan={columns.length}>
+            <TableContainer>
+                <Table>
+                    <TableHead>
+                        <TableRow sx={{ ...tableHeaderFooterSx }}>
+                            <TableCell colSpan={columns.length}>
+                                <Box
+                                    sx={{
+                                        width: '100%',
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                    }}
+                                >
+                                    <Typography
+                                        component="span"
+                                        align="center"
+                                        sx={{ width: '100%' }}
+                                    >
+                                        <FormattedMessage id="detailsPanel.shardDetails.title" />
+                                    </Typography>
+
                                     <Box
                                         sx={{
-                                            width: '100%',
-                                            display: 'flex',
-                                            justifyContent: 'space-between',
+                                            minWidth: 'max-content',
+                                            position: 'sticky',
+                                            right: 0,
                                         }}
                                     >
-                                        <Typography
-                                            component="span"
-                                            align="center"
-                                            sx={{ width: '100%' }}
+                                        <ExternalLink
+                                            link={intl.formatMessage({
+                                                id: 'detailsPanel.shardDetails.docPath',
+                                            })}
                                         >
-                                            <FormattedMessage id="detailsPanel.shardDetails.title" />
-                                        </Typography>
-
-                                        <Box
-                                            sx={{
-                                                minWidth: 'max-content',
-                                                position: 'sticky',
-                                                right: 0,
-                                            }}
-                                        >
-                                            <ExternalLink
-                                                link={intl.formatMessage({
-                                                    id: 'detailsPanel.shardDetails.docPath',
-                                                })}
-                                            >
-                                                <FormattedMessage id="detailsPanel.shardDetails.docLink" />
-                                            </ExternalLink>
-                                        </Box>
+                                            <FormattedMessage id="detailsPanel.shardDetails.docLink" />
+                                        </ExternalLink>
                                     </Box>
+                                </Box>
+                            </TableCell>
+                        </TableRow>
+                        <TableRow sx={{ ...tableHeaderFooterSx }}>
+                            {columns.map((column, index) => (
+                                <TableCell key={`${column.field}-${index}`}>
+                                    <Typography>
+                                        {column.headerIntlKey ? (
+                                            <FormattedMessage
+                                                id={column.headerIntlKey}
+                                            />
+                                        ) : null}
+                                    </Typography>
                                 </TableCell>
-                            </TableRow>
-                            <TableRow sx={{ ...tableHeaderFooterSx }}>
-                                {columns.map((column, index) => (
-                                    <TableCell key={`${column.field}-${index}`}>
-                                        <Typography>
-                                            {column.headerIntlKey ? (
-                                                <FormattedMessage
-                                                    id={column.headerIntlKey}
-                                                />
-                                            ) : null}
-                                        </Typography>
+                            ))}
+                        </TableRow>
+                    </TableHead>
+
+                    <TableBody>
+                        {taskShards
+                            .slice(
+                                page * rowsPerPage,
+                                page * rowsPerPage + rowsPerPage
+                            )
+                            .map((shard) => (
+                                <TableRow
+                                    key={shard.spec.id}
+                                    sx={{
+                                        background:
+                                            theme.palette.mode === 'dark'
+                                                ? '#252526'
+                                                : sample_grey[100],
+                                    }} // This is the hex code for the monaco editor background in dark mode.
+                                >
+                                    <StatusIndicatorAndLabel shard={shard} />
+
+                                    <TableCell>
+                                        <Typography>{shard.spec.id}</Typography>
                                     </TableCell>
-                                ))}
-                            </TableRow>
-                        </TableHead>
+                                </TableRow>
+                            ))}
+                    </TableBody>
 
-                        <TableBody>
-                            {taskShards
-                                .slice(
-                                    page * rowsPerPage,
-                                    page * rowsPerPage + rowsPerPage
-                                )
-                                .map((shard) => (
-                                    <TableRow
-                                        key={shard.spec.id}
-                                        sx={{
-                                            background:
-                                                theme.palette.mode === 'dark'
-                                                    ? '#252526'
-                                                    : slate[15],
-                                        }} // This is the hex code for the monaco editor background in dark mode.
-                                    >
-                                        <StatusIndicatorAndLabel
-                                            shard={shard}
-                                        />
+                    <TableFooter>
+                        <TableRow sx={{ ...tableHeaderFooterSx }}>
+                            <TablePagination
+                                count={taskShards.length}
+                                rowsPerPageOptions={[rowsPerPage]}
+                                rowsPerPage={rowsPerPage}
+                                page={page}
+                                onPageChange={changePage}
+                            />
+                        </TableRow>
+                    </TableFooter>
+                </Table>
+            </TableContainer>
 
-                                        <TableCell>
-                                            <Typography>
-                                                {shard.spec.id}
-                                            </Typography>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                        </TableBody>
-
-                        <TableFooter>
-                            <TableRow sx={{ ...tableHeaderFooterSx }}>
-                                <TablePagination
-                                    count={taskShards.length}
-                                    rowsPerPageOptions={[rowsPerPage]}
-                                    rowsPerPage={rowsPerPage}
-                                    page={page}
-                                    onPageChange={changePage}
-                                />
-                            </TableRow>
-                        </TableFooter>
-                    </Table>
-                </TableContainer>
-            </Grid>
+            <Divider sx={{ mt: 4 }} />
         </>
     ) : null;
 }

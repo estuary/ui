@@ -1,23 +1,21 @@
 import { Box, TableCell } from '@mui/material';
-import { tableBorderSx } from 'context/Theme';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import ChipWrapper from './Wrapper';
 
 interface Props {
-    disabled?: boolean;
     strings: string[];
+    disabled?: boolean;
     maxChips?: number;
 }
 
 const chipListWrapperStyling = {
-    ...tableBorderSx,
     minWidth: 100,
     maxHeight: 100,
     overflow: 'auto',
 };
 
-function ChipList({ disabled, strings, maxChips }: Props) {
+function ChipList({ strings, disabled, maxChips }: Props) {
     const intl = useIntl();
 
     const [maxRender, setMaxRender] = useState(maxChips ?? strings.length);

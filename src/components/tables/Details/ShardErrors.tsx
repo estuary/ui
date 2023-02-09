@@ -1,5 +1,4 @@
 import Editor from '@monaco-editor/react';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
     Accordion,
     AccordionDetails,
@@ -12,6 +11,7 @@ import {
     useTheme,
 } from '@mui/material';
 import { Shard } from 'data-plane-gateway/types/shard_client';
+import { NavArrowDown } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 import { useShardDetail_getShardDetails } from 'stores/ShardDetail/hooks';
 import { ShardDetails } from 'stores/ShardDetail/types';
@@ -53,7 +53,14 @@ function ShardErrors({ shards }: Props) {
                         shardDetails.errors && (
                             <Accordion key={shardDetails.id}>
                                 <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon />}
+                                    expandIcon={
+                                        <NavArrowDown
+                                            style={{
+                                                color: theme.palette.text
+                                                    .primary,
+                                            }}
+                                        />
+                                    }
                                 >
                                     <Typography>{shardDetails.id}</Typography>
                                 </AccordionSummary>

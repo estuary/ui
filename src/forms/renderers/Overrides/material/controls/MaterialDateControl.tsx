@@ -34,11 +34,11 @@ import {
     MuiInputText,
 } from '@jsonforms/material-renderers';
 import { withJsonFormsControlProps } from '@jsonforms/react';
-import EventIcon from '@mui/icons-material/Event';
 import { Box, Hidden, IconButton, Popover, Stack } from '@mui/material';
 import { LocalizationProvider, StaticDatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { format } from 'date-fns';
+import { Calendar } from 'iconoir-react';
 import {
     bindPopover,
     bindTrigger,
@@ -105,7 +105,7 @@ export const Custom_MaterialDateControl = (props: ControlProps) => {
                         disabled={!enabled}
                         {...bindTrigger(popupState)}
                     >
-                        <EventIcon />
+                        <Calendar />
                     </IconButton>
                 </Box>
 

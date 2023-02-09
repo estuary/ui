@@ -11,7 +11,7 @@ import {
     useEditorStore_setCurrentCatalog,
     useEditorStore_specs,
 } from 'components/editor/Store/hooks';
-import { slate } from 'context/Theme';
+import { defaultOutline } from 'context/Theme';
 import { useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
@@ -112,15 +112,17 @@ function EditorFileSelector({ localZustandScope }: Props) {
                         cursor: 'pointer',
                     },
                     '& .MuiDataGrid-cell': {
-                        borderBottom: `1px solid ${slate[200]}`,
+                        borderBottom: (theme) =>
+                            defaultOutline[theme.palette.mode],
                     },
                     '& .MuiDataGrid-columnHeaders': {
-                        borderBottom: `1px solid ${slate[200]}`,
+                        borderBottom: (theme) =>
+                            defaultOutline[theme.palette.mode],
                     },
                     '& .MuiDataGrid-columnSeparator': {
                         display: 'none',
                     },
-                    'border': `1px solid ${slate[200]}`,
+                    'border': (theme) => defaultOutline[theme.palette.mode],
                 }}
             />
         );

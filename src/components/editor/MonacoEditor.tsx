@@ -27,7 +27,7 @@ export interface Props {
 export const DEFAULT_TOOLBAR_HEIGHT = 20;
 export const DEFAULT_HEIGHT = 330;
 export const DEFAULT_TOTAL_HEIGHT = DEFAULT_TOOLBAR_HEIGHT + DEFAULT_HEIGHT;
-const ICON_SIZE = 15;
+const ICON_SIZE = 14;
 
 function MonacoEditor({
     localZustandScope,
@@ -169,8 +169,11 @@ function MonacoEditor({
                     }}
                 >
                     <Stack
+                        spacing={1}
                         direction="row"
                         sx={{
+                            py: 0.5,
+                            px: 1,
                             justifyContent: 'end',
                             alignItems: 'center',
                         }}

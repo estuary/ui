@@ -1,8 +1,3 @@
-import BackupIcon from '@mui/icons-material/Backup';
-import CookieIcon from '@mui/icons-material/Cookie';
-import GroupIcon from '@mui/icons-material/Group';
-import MediationIcon from '@mui/icons-material/Mediation';
-import TerminalIcon from '@mui/icons-material/Terminal';
 import { Box, Tab, Tabs } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
 import { useMemo, useState } from 'react';
@@ -20,22 +15,18 @@ function AdminTabs() {
         const response = [
             {
                 label: 'admin.tabs.users',
-                icon: GroupIcon,
                 path: authenticatedRoutes.admin.accessGrants.fullPath,
             },
             {
                 label: 'admin.tabs.storageMappings',
-                icon: BackupIcon,
                 path: authenticatedRoutes.admin.storageMappings.fullPath,
             },
             {
                 label: 'admin.tabs.connectors',
-                icon: MediationIcon,
                 path: authenticatedRoutes.admin.connectors.fullPath,
             },
             {
                 label: 'admin.tabs.api',
-                icon: TerminalIcon,
                 path: authenticatedRoutes.admin.api.fullPath,
             },
         ];
@@ -44,7 +35,6 @@ function AdminTabs() {
         if (osanoActive()) {
             response.push({
                 label: 'admin.tabs.cookies',
-                icon: CookieIcon,
                 path: authenticatedRoutes.admin.cookies.fullPath,
             });
         }
@@ -65,8 +55,6 @@ function AdminTabs() {
                         label={intl.formatMessage({
                             id: tabProp.label,
                         })}
-                        icon={<tabProp.icon />}
-                        iconPosition="start"
                         component={Link}
                         to={tabProp.path}
                     />

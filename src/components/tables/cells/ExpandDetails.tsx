@@ -1,5 +1,5 @@
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { Button } from '@mui/material';
+import { NavArrowDown } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
@@ -28,9 +28,10 @@ function ExpandDetails({
             }}
             endIcon={
                 // TODO (duplication) this is copied a few times
-                <KeyboardArrowDownIcon
-                    sx={{
+                <NavArrowDown
+                    style={{
                         marginRight: 0,
+                        fontSize: 14,
                         transform: `rotate(${expanded ? '180' : '0'}deg)`,
                         transition: 'all 250ms ease-in-out',
                     }}

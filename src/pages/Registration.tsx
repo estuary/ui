@@ -14,7 +14,6 @@ import {
 import { Auth } from '@supabase/ui';
 import FullPageDialog from 'components/fullPage/Dialog';
 import ExternalLink from 'components/shared/ExternalLink';
-import { slate } from 'context/Theme';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import React, { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -66,7 +65,7 @@ const Registration = () => {
         mb: 3,
         backgroundColor: theme.palette.background.default,
         label: {
-            color: theme.palette.mode === 'dark' ? slate[50] : 'text.primary',
+            color: theme.palette.text.primary,
         },
     };
 

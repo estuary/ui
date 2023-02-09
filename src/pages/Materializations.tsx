@@ -1,9 +1,9 @@
-import AddIcon from '@mui/icons-material/Add';
 import { Box, Button, SxProps, Theme, Toolbar } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
 import PageContainer from 'components/shared/PageContainer';
 import MaterializationsTable from 'components/tables/Materializations';
 import useBrowserTitle from 'hooks/useBrowserTitle';
+import { Plus } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 import { NavLink } from 'react-router-dom';
 
@@ -34,7 +34,10 @@ const Materializations = () => {
                     style={{ textDecoration: 'none' }}
                     to={authenticatedRoutes.materializations.create.fullPath}
                 >
-                    <Button size="large" startIcon={<AddIcon />}>
+                    <Button
+                        size="large"
+                        startIcon={<Plus style={{ fontSize: 14 }} />}
+                    >
                         <FormattedMessage id="materializationsTable.cta.new" />
                     </Button>
                 </NavLink>

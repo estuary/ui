@@ -34,11 +34,11 @@ import {
     MuiInputText,
 } from '@jsonforms/material-renderers';
 import { withJsonFormsControlProps } from '@jsonforms/react';
-import ScheduleIcon from '@mui/icons-material/Schedule';
 import { Box, Hidden, IconButton, Popover, Stack } from '@mui/material';
 import { LocalizationProvider, StaticTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { format } from 'date-fns';
+import { Clock } from 'iconoir-react';
 import {
     bindPopover,
     bindTrigger,
@@ -134,7 +134,7 @@ export const Custom_MaterialTimeControl = (props: ControlProps) => {
                         disabled={!enabled}
                         {...bindTrigger(popupState)}
                     >
-                        <ScheduleIcon />
+                        <Clock />
                     </IconButton>
                 </Box>
 

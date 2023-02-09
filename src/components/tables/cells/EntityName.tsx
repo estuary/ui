@@ -6,7 +6,6 @@ import {
     useTheme,
 } from '@mui/material';
 import EntityStatus from 'components/tables/cells/EntityStatus';
-import { tableBorderSx } from 'context/Theme';
 
 interface Props {
     name: string;
@@ -20,7 +19,6 @@ function EntityName({ name, showEntityStatus }: Props) {
     return (
         <TableCell
             sx={{
-                ...tableBorderSx,
                 minWidth: 250,
                 maxWidth: 'min-content',
             }}

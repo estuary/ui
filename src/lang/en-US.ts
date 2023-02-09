@@ -72,10 +72,10 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'commin.pathShort.prefix': '.../{path}',
 
     // Alert messages
-    'alert.error': 'Error!',
-    'alert.warning': 'Warning!',
-    'alert.success': 'Success!',
-    'alert.info': 'Important!',
+    'alert.error': 'Error',
+    'alert.warning': 'Warning',
+    'alert.success': 'Success',
+    'alert.info': 'Important',
 
     // Used in directives
     'directives.returning': `Welcome back. You still need to provide some information before using the application.`,
@@ -251,6 +251,16 @@ const Header: ResolvedIntlConfig['messages'] = {
 const Home: ResolvedIntlConfig['messages'] = {
     'home.main.header': `Welcome to Flow!`,
     'home.main.description': `Click the Captures icon on the menu bar to get started.`,
+
+    'home.hero.tab.companyOverview': `What we do`,
+    'home.hero.tab.companyDetails': `How it works`,
+
+    'home.hero.companyOverview.cta': `How it works`,
+    'home.hero.companyOverview.description': `<b>${CommonMessages.productName}</b> helps you sync your data between the sources that produce it and destinations that consume it in real-time.`,
+
+    'home.hero.companyDetails.cta': `New capture`,
+    'home.hero.companyDetails.step1': `Set up real-time data ingestion from your sources. Click “New Capture” to get started.`,
+    'home.hero.companyDetails.step2': `Keep destination systems up to date with Materializations: low latency views of your data.`,
 
     'home.hero.one.title': `Step 1`,
     'home.hero.one.message': `Start at the {emphasis} page to setup real-time data ingestion from your sources.`,

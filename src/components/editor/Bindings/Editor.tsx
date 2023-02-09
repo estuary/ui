@@ -34,7 +34,7 @@ interface Props {
     readOnly?: boolean;
 }
 
-const ICON_SIZE = 15;
+const ICON_SIZE = 14;
 const EDITOR_HEIGHT = 396;
 const EDITOR_TOOLBAR_HEIGHT = 34;
 const EDITOR_TOTAL_HEIGHT = EDITOR_TOOLBAR_HEIGHT + EDITOR_HEIGHT + 2;

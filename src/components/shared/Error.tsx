@@ -1,4 +1,3 @@
-import { ExpandMore } from '@mui/icons-material';
 import {
     AlertTitle,
     Box,
@@ -8,10 +7,12 @@ import {
     Paper,
     Stack,
     Typography,
+    useTheme,
 } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
 import MessageWithLink from 'components/content/MessageWithLink';
 import KeyValueList, { KeyValue } from 'components/shared/KeyValueList';
+import { NavArrowDown } from 'iconoir-react';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
@@ -24,6 +25,7 @@ export interface ErrorProps {
 
 function Error({ error, hideTitle }: ErrorProps) {
     const intl = useIntl();
+    const theme = useTheme();
 
     const [expanded, setExpanded] = useState(false);
 
@@ -104,7 +106,11 @@ function Error({ error, hideTitle }: ErrorProps) {
                                     transition: 'all 250ms ease-in-out',
                                 }}
                             >
-                                <ExpandMore />
+                                <NavArrowDown
+                                    style={{
+                                        color: theme.palette.text.primary,
+                                    }}
+                                />
                             </IconButton>
                             <Collapse
                                 in={expanded}

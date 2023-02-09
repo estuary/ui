@@ -1,4 +1,5 @@
-import CloudOffIcon from '@mui/icons-material/CloudOff';
+import { Typography } from '@mui/material';
+import { DbWarning } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
@@ -8,8 +9,11 @@ interface Props {
 function Invalid({ iconSize }: Props) {
     return (
         <>
-            <FormattedMessage id="common.invalid" />
-            <CloudOffIcon sx={{ fontSize: iconSize }} />
+            <Typography>
+                <FormattedMessage id="common.invalid" />
+            </Typography>
+
+            <DbWarning style={{ fontSize: iconSize }} />
         </>
     );
 }
