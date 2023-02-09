@@ -81,94 +81,103 @@ function ExistingEntityCard({ queryData }: Props) {
         toggleDetailsPanel: () => setDetailsExpanded(!detailsExpanded),
     };
 
-    return queryData ? (
-        <>
-            <ButtonBase
-                onClick={handlers.editTask}
-                sx={{
-                    'width': '100%',
-                    'padding': 1,
-                    'justifyContent': 'flex-start',
-                    'background': detailsExpanded
-                        ? semiTransparentBackgroundIntensified[
-                              theme.palette.mode
-                          ]
-                        : semiTransparentBackground[theme.palette.mode],
-                    '&:hover': {
-                        background:
-                            semiTransparentBackgroundIntensified[
-                                theme.palette.mode
-                            ],
-                    },
-                    'borderRadius': 5,
-                }}
-            >
-                <Box sx={alternateConnectorImageBackgroundSx}>
-                    <ConnectorLogo
-                        imageSrc={queryData.image}
-                        maxHeight={35}
-                        padding="0 0.5rem"
-                    />
-                </Box>
-
-                <Box
+    if (!queryData) {
+        return null;
+    } else {
+        return (
+            <>
+                <ButtonBase
+                    onClick={handlers.editTask}
                     sx={{
-                        minWidth: 0,
-                        ml: 2,
-                        textAlign: 'left',
+                        'width': '100%',
+                        'padding': 1,
+                        'justifyContent': 'flex-start',
+                        'background': detailsExpanded
+                            ? semiTransparentBackgroundIntensified[
+                                  theme.palette.mode
+                              ]
+                            : semiTransparentBackground[theme.palette.mode],
+                        '&:hover': {
+                            background:
+                                semiTransparentBackgroundIntensified[
+                                    theme.palette.mode
+                                ],
+                        },
+                        'borderRadius': 5,
                     }}
                 >
-                    <CustomWidthTooltip
-                        title={queryData.catalog_name}
-                        placement="bottom-start"
+                    <Box sx={alternateConnectorImageBackgroundSx}>
+                        <ConnectorLogo
+                            imageSrc={queryData.image}
+                            maxHeight={35}
+                            padding="0 0.5rem"
+                        />
+                    </Box>
+
+                    <Box
+                        sx={{
+                            minWidth: 0,
+                            ml: 2,
+                            textAlign: 'left',
+                        }}
                     >
-                        <Typography noWrap sx={{ mb: 0.5 }}>
-                            {queryData.catalog_name}
+                        <CustomWidthTooltip
+                            title={queryData.catalog_name}
+                            placement="bottom-start"
+                        >
+                            <Typography noWrap sx={{ mb: 0.5 }}>
+                                {queryData.catalog_name}
+                            </Typography>
+                        </CustomWidthTooltip>
+
+                        <Typography variant="caption">
+                            {intl.formatMessage(
+                                {
+                                    id: 'existingEntityCheck.existingCard.label.lastPublished',
+                                },
+                                {
+                                    date: intl.formatDate(
+                                        queryData.updated_at,
+                                        {
+                                            day: 'numeric',
+                                            month: 'long',
+                                            year: 'numeric',
+                                        }
+                                    ),
+                                }
+                            )}
                         </Typography>
-                    </CustomWidthTooltip>
+                    </Box>
+                </ButtonBase>
 
-                    <Typography variant="caption">
-                        {intl.formatMessage(
-                            {
-                                id: 'existingEntityCheck.existingCard.label.lastPublished',
-                            },
-                            {
-                                date: intl.formatDate(queryData.updated_at, {
-                                    day: 'numeric',
-                                    month: 'long',
-                                    year: 'numeric',
-                                }),
+                <Collapse in={detailsExpanded}>
+                    <Paper
+                        elevation={0}
+                        sx={{
+                            p: 2,
+                            mx: 1,
+                            background:
+                                semiTransparentBackground[theme.palette.mode],
+                        }}
+                    >
+                        <Editor
+                            height={EDITOR_HEIGHT}
+                            value={stringifyJSON(queryData.spec.endpoint)}
+                            defaultLanguage="json"
+                            theme={
+                                monacoEditorComponentBackground[
+                                    theme.palette.mode
+                                ]
                             }
-                        )}
-                    </Typography>
-                </Box>
-            </ButtonBase>
-
-            <Collapse in={detailsExpanded}>
-                <Paper
-                    elevation={0}
-                    sx={{
-                        p: 2,
-                        mx: 1,
-                        background:
-                            semiTransparentBackground[theme.palette.mode],
-                    }}
-                >
-                    <Editor
-                        height={EDITOR_HEIGHT}
-                        value={stringifyJSON(queryData.spec.endpoint)}
-                        defaultLanguage="json"
-                        theme={
-                            monacoEditorComponentBackground[theme.palette.mode]
-                        }
-                        saveViewState={false}
-                        path={queryData.catalog_name}
-                        options={{ readOnly: true }}
-                    />
-                </Paper>
-            </Collapse>
-        </>
-    ) : null;
+                            saveViewState={false}
+                            path={queryData.catalog_name}
+                            options={{ readOnly: true }}
+                        />
+                    </Paper>
+                </Collapse>
+            </>
+        );
+    }
 }
 
 export default ExistingEntityCard;
