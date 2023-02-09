@@ -18,7 +18,7 @@ export enum EndpointConfigStoreNames {
 }
 
 export enum ExistingEntityStoreNames {
-    GENERAL = 'general_existing_entity',
+    GENERAL = 'general-existing-entity',
 }
 
 export enum FormStateStoreNames {
